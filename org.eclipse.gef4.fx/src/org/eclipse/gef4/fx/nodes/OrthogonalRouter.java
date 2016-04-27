@@ -273,12 +273,12 @@ public class OrthogonalRouter extends AbstractRouter {
 	@Override
 	protected Point getAnchoredReferencePoint(Connection connection,
 			int index) {
-		if (index < 0 || index >= connection.getPoints().size()) {
+		if (index < 0 || index >= connection.getPointsUnmodifiable().size()) {
 			throw new IndexOutOfBoundsException();
 		}
 
 		IGeometry referenceGeometry = null;
-		int referenceIndex = index < connection.getPoints().size() - 1
+		int referenceIndex = index < connection.getPointsUnmodifiable().size() - 1
 				? index + 1 : index - 1;
 		referenceGeometry = getAnchorageGeometry(connection, referenceIndex);
 		if (referenceGeometry != null) {
@@ -413,7 +413,7 @@ public class OrthogonalRouter extends AbstractRouter {
 
 	@Override
 	public void route(Connection connection) {
-		if (connection.getPoints().size() < 2) {
+		if (connection.getPointsUnmodifiable().size() < 2) {
 			// we cannot route if the connection does not have at least start
 			// and end points.
 			return;
@@ -436,7 +436,7 @@ public class OrthogonalRouter extends AbstractRouter {
 		// will be computed.
 		Vector inDirection = null;
 		Vector outDirection = null;
-		for (int i = 0; i < connection.getPoints().size() - 1; i++) {
+		for (int i = 0; i < connection.getPointsUnmodifiable().size() - 1; i++) {
 			IAnchor anchor = connection.getAnchor(i);
 			if (anchor instanceof DynamicAnchor) {
 				updateComputationParameters(connection, i);
@@ -511,9 +511,9 @@ public class OrthogonalRouter extends AbstractRouter {
 		Vector moveHorizontally = new Vector(outDirection.x, 0);
 
 		if (i == 0 && connection.isStartConnected()
-				|| i == connection.getPoints().size() - 2
+				|| i == connection.getPointsUnmodifiable().size() - 2
 						&& connection.isEndConnected()) {
-			if (i == 0 && i != connection.getPoints().size() - 2) {
+			if (i == 0 && i != connection.getPointsUnmodifiable().size() - 2) {
 				// move left/right if current point is on top or
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i, currentPoint)) {
@@ -527,7 +527,7 @@ public class OrthogonalRouter extends AbstractRouter {
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
 				}
-			} else if (i != 0 && i == connection.getPoints().size() - 2) {
+			} else if (i != 0 && i == connection.getPointsUnmodifiable().size() - 2) {
 				// move left/right if next point is on top or
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i + 1, currentPoint
@@ -640,7 +640,7 @@ public class OrthogonalRouter extends AbstractRouter {
 		// completely horizontal/vertical is not allowed for connected
 		// anchors
 		if (i == 0 && connection.isStartConnected()
-				&& i != connection.getPoints().size() - 2) {
+				&& i != connection.getPointsUnmodifiable().size() - 2) {
 			// start point, connected
 			if (currentDirection.isVertical()) {
 				boolean isLeft = isLeft(connection, i, currentPoint);
@@ -669,7 +669,7 @@ public class OrthogonalRouter extends AbstractRouter {
 					currentDirection = new Vector(0, -offset);
 				}
 			}
-		} else if (i != 0 && i == connection.getPoints().size() - 2
+		} else if (i != 0 && i == connection.getPointsUnmodifiable().size() - 2
 				&& connection.isEndConnected()) {
 			// end point, connected
 			if (currentDirection.isHorizontal()) {
@@ -707,7 +707,7 @@ public class OrthogonalRouter extends AbstractRouter {
 					currentDirection = new Vector(-offset, 0);
 				}
 			}
-		} else if (i == 0 && i == connection.getPoints().size() - 2
+		} else if (i == 0 && i == connection.getPointsUnmodifiable().size() - 2
 				&& connection.isStartConnected()
 				&& connection.isEndConnected()) {
 			// start and end point, connected
@@ -760,7 +760,7 @@ public class OrthogonalRouter extends AbstractRouter {
 		// set orientation hint for first and last anchor
 		AnchorKey anchorKey = connection.getAnchorKey(index);
 		IAnchor anchor = connection.getAnchor(index);
-		if (index == 0 || index == connection.getPoints().size() - 1) {
+		if (index == 0 || index == connection.getPointsUnmodifiable().size() - 1) {
 			// update orientation hint
 			Point neighborPoint = connection
 					.getPoint(index == 0 ? index + 1 : index - 1);

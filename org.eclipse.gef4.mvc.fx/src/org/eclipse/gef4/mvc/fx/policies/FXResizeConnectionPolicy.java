@@ -121,7 +121,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 		super.init();
 		// save initial anchor positions
 		Connection connection = getHost().getVisual();
-		initialPositions = connection.getPoints().toArray(new Point[] {});
+		initialPositions = connection.getPointsUnmodifiable().toArray(new Point[] {});
 		// compute relative positions
 		Bounds layoutBounds = connection.getLayoutBounds();
 		relX = new Double[initialPositions.length];

@@ -49,7 +49,7 @@ public class StraightRouter extends AbstractRouter {
 	@Override
 	protected Point getAnchoredReferencePoint(Connection connection,
 			int index) {
-		if (index < 0 || index >= connection.getPoints().size()) {
+		if (index < 0 || index >= connection.getPointsUnmodifiable().size()) {
 			throw new IndexOutOfBoundsException();
 		}
 
@@ -91,7 +91,7 @@ public class StraightRouter extends AbstractRouter {
 
 	private Point getNeighbor(Connection connection, int anchorIndex,
 			int step) {
-		List<IAnchor> anchors = connection.getAnchors();
+		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
 		IAnchor anchor = anchors.get(anchorIndex);
 		if (!(anchor instanceof DynamicAnchor)) {
 			throw new IllegalStateException(
@@ -153,10 +153,10 @@ public class StraightRouter extends AbstractRouter {
 
 	@Override
 	public void route(Connection connection) {
-		if (connection.getPoints().size() < 2) {
+		if (connection.getPointsUnmodifiable().size() < 2) {
 			return;
 		}
-		List<IAnchor> anchors = connection.getAnchors();
+		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
 		for (int i = 0; i < anchors.size(); i++) {
 			// we do not have to update the reference point for the
 			// given key, because the corresponding position just

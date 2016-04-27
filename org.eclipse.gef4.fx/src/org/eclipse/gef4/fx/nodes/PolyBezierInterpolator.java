@@ -30,7 +30,7 @@ public class PolyBezierInterpolator extends AbstractInterpolator {
 
 	@Override
 	protected ICurve computeCurve(Connection connection) {
-		List<Point> points = connection.getPoints();
+		List<Point> points = connection.getPointsUnmodifiable();
 		if (points.size() < 2) {
 			return new Line(0, 0, 0, 0);
 		}

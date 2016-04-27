@@ -122,7 +122,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		}
 		// compute initial anchor positions (inverse transformed)
 		initialPositions = getBendConnectionOperation().getConnection()
-				.getPoints().toArray(new Point[] {});
+				.getPointsUnmodifiable().toArray(new Point[] {});
 		for (int i : getIndicesOfUnconnectedAnchors()) {
 			initialPositions[i] = inverse.getTransformed(initialPositions[i]);
 		}

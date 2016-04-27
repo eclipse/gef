@@ -24,8 +24,8 @@ public class DotBSplineRouter extends StraightRouter {
 	protected void updateComputationParameters(Connection connection,
 			int anchorIndex) {
 		if (anchorIndex == 0
-				|| anchorIndex == connection.getAnchors().size() - 1) {
-			IAnchor anchor = connection.getAnchors().get(anchorIndex);
+				|| anchorIndex == connection.getAnchorsUnmodifiable().size() - 1) {
+			IAnchor anchor = connection.getAnchorsUnmodifiable().get(anchorIndex);
 			AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
 			if (anchor instanceof DynamicAnchor) {
 				((DynamicAnchor) anchor)

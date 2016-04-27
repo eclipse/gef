@@ -403,7 +403,7 @@ public class FXBendConnectionPolicyTests {
 	public static int getConnectionIndex(Connection connection, int explicitAnchorIndex) {
 		int explicitCount = -1;
 
-		for (int i = 0; i < connection.getPoints().size(); i++) {
+		for (int i = 0; i < connection.getPointsUnmodifiable().size(); i++) {
 			IAnchor a = connection.getAnchor(i);
 			if (!connection.getRouter().isImplicitAnchor(a)) {
 				explicitCount++;
@@ -434,7 +434,7 @@ public class FXBendConnectionPolicyTests {
 
 	public int countExplicit(Connection connection) {
 		int numExplicit = 0;
-		for (IAnchor anchor : connection.getAnchors()) {
+		for (IAnchor anchor : connection.getAnchorsUnmodifiable()) {
 			if (!connection.getRouter().isImplicitAnchor(anchor)) {
 				numExplicit++;
 			}
@@ -485,7 +485,7 @@ public class FXBendConnectionPolicyTests {
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -521,7 +521,7 @@ public class FXBendConnectionPolicyTests {
 		});
 
 		// check if router inserted implicit points
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 
 		// create new segment between 2nd implicit and end
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
@@ -551,7 +551,7 @@ public class FXBendConnectionPolicyTests {
 		int firstAnchorHandle = explicit.get(1);
 		Point firstAnchorHandleInitialPosition = getPosition(bendPolicy, firstAnchorHandle);
 		int secondAnchorHandle = explicit.get(2);
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 
 		// copy first point if connected
 		if (isFirstConnected) {
@@ -573,35 +573,35 @@ public class FXBendConnectionPolicyTests {
 		// movement
 		bendPolicy.select(firstAnchorHandle);
 		bendPolicy.select(secondAnchorHandle);
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move new segment up
 		bendPolicy.move(new Point(), new Point(0, -50));
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move new segment further up
 		bendPolicy.move(new Point(), new Point(0, -100));
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move new segment further up
 		bendPolicy.move(new Point(), new Point(0, -150));
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move new segment down a bit
 		bendPolicy.move(new Point(), new Point(0, -120));
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move new segment down a bit
 		bendPolicy.move(new Point(), new Point(0, -60));
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move new segment back to its original position
 		bendPolicy.move(new Point(), new Point());
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 
 		// commit (i.e. normalize)
 		bendPolicy.commit();
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 	}
 
 	@Test
@@ -641,7 +641,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 
 		// verify that way point is present
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
@@ -660,18 +660,18 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point(-wayPoint.getDistance(getPosition(bendPolicy, endAnchorHandle)), 0));
 
 		// verify that the point is removed
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move back to restore the overlain anchor
 		bendPolicy.move(new Point(), new Point());
 
 		// verify point is present again
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
 
 		// verify point is present after commit
 		bendPolicy.commit();
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
 	}
 
@@ -713,7 +713,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -789,7 +789,7 @@ public class FXBendConnectionPolicyTests {
 				.get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// add translation to connection
 		connection.getVisual().setTranslateX(100);
@@ -881,7 +881,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -898,7 +898,7 @@ public class FXBendConnectionPolicyTests {
 
 		// copy start point and end point
 		bendPolicy.init();
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 
@@ -926,13 +926,13 @@ public class FXBendConnectionPolicyTests {
 		// move segment back
 		bendPolicy.move(new Point(), new Point());
 		// check number of points
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 
 		// check number of points after commit
 		bendPolicy.commit();
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 	}
 
 	@Test
@@ -973,7 +973,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -1045,7 +1045,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -1145,7 +1145,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -1263,7 +1263,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -1359,7 +1359,7 @@ public class FXBendConnectionPolicyTests {
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		bendPolicy.init();
 
@@ -1372,11 +1372,11 @@ public class FXBendConnectionPolicyTests {
 
 		// copy both connected end points
 		int leftCopy = bendPolicy.createAfter(startHandle, getPosition(bendPolicy, startHandle));
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(getPosition(bendPolicy, startHandle), getPosition(bendPolicy, leftCopy));
 
 		int rightCopy = bendPolicy.createBefore(endHandle, getPosition(bendPolicy, endHandle));
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(getPosition(bendPolicy, endHandle), getPosition(bendPolicy, rightCopy));
 
 		// select the copies for movement
@@ -1387,14 +1387,14 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point(0, 100));
 
 		// check if points are correct
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move back to get a double overlay
 		bendPolicy.move(new Point(), new Point());
 		bendPolicy.commit();
 
 		// check if points have been removed
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 	}
 
 	@Test
@@ -1497,7 +1497,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// create control points
 		bendPolicy.init();
@@ -1507,7 +1507,7 @@ public class FXBendConnectionPolicyTests {
 		int thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, new Point(200, 210));
 		bendPolicy.createAfter(thirdWayAnchorHandle, new Point(200, 100));
 		// check if points are correct
-		assertEquals(7, connection.getVisual().getPoints().size());
+		assertEquals(7, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(new Point(100, 100), connection.getVisual().getPoint(1));
 		assertEquals(new Point(100, 200), connection.getVisual().getPoint(2));
 		assertEquals(new Point(200, 210), connection.getVisual().getPoint(3));
@@ -1519,13 +1519,13 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.select(thirdWayAnchorHandle);
 		bendPolicy.move(new Point(), new Point(0, -95));
 		// check if the overlaying was removed
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move segment so that also the third way anchor overlays the fourth
 		// way anchor, i.e. it is a double overlay
 		bendPolicy.move(new Point(), new Point(0, -105));
 		// check if the overlaying anchors were removed
-		assertEquals(5, connection.getVisual().getPoints().size());
+		assertEquals(5, connection.getVisual().getPointsUnmodifiable().size());
 		// check that the overlain anchors have the same position as before
 		assertEquals(new Point(100, 100), connection.getVisual().getPoint(1));
 		assertEquals(new Point(200, 100), connection.getVisual().getPoint(2));
@@ -1534,7 +1534,7 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point());
 		bendPolicy.commit();
 		// check that all anchors have been restored
-		assertEquals(7, connection.getVisual().getPoints().size());
+		assertEquals(7, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(new Point(100, 100), connection.getVisual().getPoint(1));
 		assertEquals(new Point(100, 200), connection.getVisual().getPoint(2));
 		assertEquals(new Point(200, 210), connection.getVisual().getPoint(3));
@@ -1579,7 +1579,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// create control points
 		bendPolicy.init();
@@ -1589,7 +1589,7 @@ public class FXBendConnectionPolicyTests {
 		int thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, new Point(200, 200));
 		bendPolicy.createAfter(thirdWayAnchorHandle, new Point(200, 100));
 		// check if points are correct
-		assertEquals(7, connection.getVisual().getPoints().size());
+		assertEquals(7, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(new Point(100, 100), connection.getVisual().getPoint(1));
 		assertEquals(new Point(100, 210), connection.getVisual().getPoint(2));
 		assertEquals(new Point(200, 200), connection.getVisual().getPoint(3));
@@ -1601,13 +1601,13 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.select(thirdWayAnchorHandle);
 		bendPolicy.move(new Point(), new Point(0, -95));
 		// check if the overlaying was removed
-		assertEquals(6, connection.getVisual().getPoints().size());
+		assertEquals(6, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move segment so that also the third way anchor overlays the fourth
 		// way anchor, i.e. it is a double overlay
 		bendPolicy.move(new Point(), new Point(0, -105));
 		// check if the overlaying anchors were removed
-		assertEquals(5, connection.getVisual().getPoints().size());
+		assertEquals(5, connection.getVisual().getPointsUnmodifiable().size());
 		// check that the overlain anchors have the same position as before
 		assertEquals(new Point(100, 100), connection.getVisual().getPoint(1));
 		assertEquals(new Point(200, 100), connection.getVisual().getPoint(2));
@@ -1616,7 +1616,7 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point());
 		bendPolicy.commit();
 		// check that all anchors have been restored
-		assertEquals(7, connection.getVisual().getPoints().size());
+		assertEquals(7, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(new Point(100, 100), connection.getVisual().getPoint(1));
 		assertEquals(new Point(100, 210), connection.getVisual().getPoint(2));
 		assertEquals(new Point(200, 200), connection.getVisual().getPoint(3));
@@ -1660,7 +1660,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// create control points
 		bendPolicy.init();
@@ -1670,7 +1670,7 @@ public class FXBendConnectionPolicyTests {
 		int thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, new Point(200, 200));
 		bendPolicy.createAfter(thirdWayAnchorHandle, new Point(200, 100));
 		// check if points are correct
-		assertEquals(7, connection.getVisual().getPoints().size());
+		assertEquals(7, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(new Point(100, 100), connection.getVisual().getPoint(1));
 		assertEquals(new Point(100, 200), connection.getVisual().getPoint(2));
 		assertEquals(new Point(200, 200), connection.getVisual().getPoint(3));
@@ -1682,7 +1682,7 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point(0, -100));
 		bendPolicy.commit();
 		// check if points have been removed
-		assertEquals(5, connection.getVisual().getPoints().size());
+		assertEquals(5, connection.getVisual().getPointsUnmodifiable().size());
 	}
 
 	@Test
@@ -1738,7 +1738,7 @@ public class FXBendConnectionPolicyTests {
 		// create way point 20 px to the right of the existing one
 		bendPolicy.createAfter(firstWayPointAnchorHandle, wayPoint.getTranslated(20, 0));
 		// verify that the point is inserted
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 
 		// select first way point
 		bendPolicy.select(firstWayPointAnchorHandle);
@@ -1747,11 +1747,11 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point(20, 0));
 
 		// verify that the point is removed
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// verify point is removed after commit
 		bendPolicy.commit();
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 	}
 
 	@Test
@@ -1791,7 +1791,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		System.out.println("before setting strategy");
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
@@ -1813,7 +1813,7 @@ public class FXBendConnectionPolicyTests {
 					((DynamicAnchor) anchor).getComputationParameter(anchorKey, PreferredOrientation.class)
 							.set(Orientation.HORIZONTAL);
 					referencePointParameter.set(new Point(310, 40));
-				} else if (index == connection.getPoints().size() - 1) {
+				} else if (index == connection.getPointsUnmodifiable().size() - 1) {
 					((DynamicAnchor) anchor).getComputationParameter(anchorKey, PreferredOrientation.class)
 							.set(Orientation.HORIZONTAL);
 					referencePointParameter.set(new Point(50, 95));
@@ -1825,7 +1825,7 @@ public class FXBendConnectionPolicyTests {
 
 		// verify router inserted two control points
 		assertEquals(2, countExplicit(connection.getVisual()));
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 
 		// verify control points share X coordinate
 		assertEquals(connection.getVisual().getPoint(1).x, connection.getVisual().getPoint(2).x, 0.5);
@@ -1842,7 +1842,7 @@ public class FXBendConnectionPolicyTests {
 		// move down to endPoint height
 		bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y));
 		assertEquals(3, countExplicit(connection.getVisual()));
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 		equalsUnprecise(new Point(startPoint.x, endPoint.y), connection.getVisual().getPoint(1));
@@ -1851,7 +1851,7 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point());
 		// check number of points and their positions
 		assertEquals(3, countExplicit(connection.getVisual()));
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 
@@ -1859,7 +1859,7 @@ public class FXBendConnectionPolicyTests {
 		// implicit points
 		bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y - 5));
 		assertEquals(3, countExplicit(connection.getVisual()));
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 		equalsUnprecise(new Point(startPoint.x, endPoint.y), connection.getVisual().getPoint(1));
@@ -1867,7 +1867,7 @@ public class FXBendConnectionPolicyTests {
 		// move further down so that the segment is restored
 		bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y + 15));
 		assertEquals(4, countExplicit(connection.getVisual()));
-		assertEquals(5, connection.getVisual().getPoints().size());
+		assertEquals(5, connection.getVisual().getPointsUnmodifiable().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 
 		// check that segment is "unsnapped", i.e. end point is still on initial
@@ -1882,7 +1882,7 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.commit();
 		// check number of points and their positions
 		assertEquals(3, countExplicit(connection.getVisual()));
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 	}
@@ -2133,7 +2133,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 
 		// verify that way point is present
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
@@ -2153,18 +2153,18 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.move(new Point(), new Point(distance, 0));
 
 		// verify that the point is removed
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move back to restore the overlain anchor
 		bendPolicy.move(new Point(), new Point());
 
 		// verify point is present again
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
 
 		// verify point is present after commit
 		bendPolicy.commit();
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
 	}
 
@@ -2205,7 +2205,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 
 		// verify that way point is present
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
@@ -2227,14 +2227,14 @@ public class FXBendConnectionPolicyTests {
 		double distance = wayPoint.getDistance(endPoint) - 5;
 		bendPolicy.move(new Point(), new Point(distance, 0));
 		// verify that the point is removed
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// verify that the end point is still at the same location
 		assertEquals(endPoint, getPosition(bendPolicy, endPointHandle - 1));
 
 		// verify point is removed after commit
 		bendPolicy.commit();
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(endPoint, getPosition(bendPolicy, endPointHandle - 1));
 	}
 
@@ -2275,7 +2275,7 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 
 		// verify that way point is present
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
@@ -2298,19 +2298,19 @@ public class FXBendConnectionPolicyTests {
 		assertEquals(wayPoint.getTranslated(distance, 0), getPosition(bendPolicy, wayPointAnchorHandle));
 
 		// verify that the point is removed
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		// move back to the left to restore the overlain anchor
 		bendPolicy.move(new Point(), new Point());
 		assertEquals(wayPoint, getPosition(bendPolicy, wayPointAnchorHandle));
 
 		// verify point is present again
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
 
 		// verify point is present after commit
 		bendPolicy.commit();
-		assertEquals(3, connection.getVisual().getPoints().size());
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
 	}
 

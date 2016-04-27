@@ -28,7 +28,7 @@ public class PolylineInterpolator extends AbstractInterpolator {
 
 	@Override
 	protected ICurve computeCurve(Connection connection) {
-		return new Polyline(connection.getPoints().toArray(new Point[] {}));
+		return new Polyline(connection.getPointsUnmodifiable().toArray(new Point[] {}));
 	}
 
 }

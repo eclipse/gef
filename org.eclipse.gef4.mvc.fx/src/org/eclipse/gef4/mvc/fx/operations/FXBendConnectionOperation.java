@@ -53,7 +53,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 		super("Bend");
 		this.connection = connection;
 		this.initialAnchors = new ArrayList<>(
-				onlyExplicit(connection.getAnchors()));
+				onlyExplicit(connection.getAnchorsUnmodifiable()));
 		this.newAnchors = new ArrayList<>(initialAnchors);
 	}
 
@@ -62,7 +62,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 			throws ExecutionException {
 		if (connection != null) {
 			// update anchors (if needed)
-			if (!onlyExplicit(connection.getAnchors()).equals(newAnchors)) {
+			if (!onlyExplicit(connection.getAnchorsUnmodifiable()).equals(newAnchors)) {
 				connection.setAnchors(newAnchors);
 			}
 			// pass positions for connected anchors to the connection router
@@ -95,7 +95,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 	public int getConnectionIndex(int explicitAnchorIndex) {
 		int explicitCount = -1;
 
-		for (int i = 0; i < getConnection().getPoints().size(); i++) {
+		for (int i = 0; i < getConnection().getAnchorsUnmodifiable().size(); i++) {
 			IAnchor a = getConnection().getAnchor(i);
 			if (!getConnection().getRouter().isImplicitAnchor(a)) {
 				explicitCount++;
@@ -138,7 +138,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 	 * {@link DynamicAnchor}s with a position hint.
 	 */
 	protected void hintAnchorPositions() {
-		List<IAnchor> anchors = getConnection().getAnchors();
+		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
 		List<IAnchor> explicitAnchors = onlyExplicit(anchors);
 		if (connection.getStartAnchor() instanceof DynamicAnchor
 				&& explicitAnchors.get(0) == connection.getStartAnchor()) {
@@ -226,7 +226,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 			throws ExecutionException {
 		if (connection != null) {
 			// check if we have to update anchors here
-			if (!onlyExplicit(connection.getAnchors()).equals(initialAnchors)) {
+			if (!onlyExplicit(connection.getAnchorsUnmodifiable()).equals(initialAnchors)) {
 				connection.setAnchors(initialAnchors);
 			}
 			// pass positions for connected anchors to the connection router

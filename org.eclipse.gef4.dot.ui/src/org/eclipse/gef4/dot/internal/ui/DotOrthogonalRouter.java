@@ -30,7 +30,7 @@ public class DotOrthogonalRouter extends OrthogonalRouter {
 	protected Point getAnchoredReferencePoint(Connection connection, int index) {
 		if (index == 0) {
 			return startReferencePoint;
-		} else if (index == connection.getAnchors().size() - 1) {
+		} else if (index == connection.getAnchorsUnmodifiable().size() - 1) {
 			return endReferencePoint;
 		} else {
 			return super.getAnchoredReferencePoint(connection, index);

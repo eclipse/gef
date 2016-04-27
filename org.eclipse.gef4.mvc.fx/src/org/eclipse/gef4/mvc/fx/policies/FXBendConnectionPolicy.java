@@ -127,7 +127,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			IVisualPart<Node, ? extends Connection> connectionPart) {
 		List<BendPoint> bendPoints = new ArrayList<>();
 		Connection connection = connectionPart.getVisual();
-		List<IAnchor> anchors = connection.getAnchors();
+		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
 		for (int i = 0; i < anchors.size(); i++) {
 			IAnchor a = anchors.get(i);
 			if (!connection.getRouter().isImplicitAnchor(a)) {
@@ -401,7 +401,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 *         the given index.
 	 */
 	protected int getExplicitIndex(int startConnectionIndex, int step) {
-		List<IAnchor> anchors = getConnection().getAnchors();
+		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
 		IConnectionRouter router = getConnection().getRouter();
 		for (int i = startConnectionIndex; i >= 0
 				&& i < anchors.size(); i += step) {
@@ -777,10 +777,10 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		locallyExecuteOperation();
 
 		// determine all connection anchors
-		List<IAnchor> anchors = getConnection().getAnchors();
+		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
 
 		// determine corresponding positions
-		List<Point> positions = getConnection().getPoints();
+		List<Point> positions = getConnection().getPointsUnmodifiable();
 
 		// test each explicit static anchor for removal potential
 		int explicitIndex = 0; // start is explicit
@@ -973,7 +973,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	private void showAnchors(String message) {
 		List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
 		String anchorsString = "";
-		for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++) {
+		for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable().size(); i++) {
 			IAnchor anchor = getConnection().getAnchor(i);
 			if (getConnection().getRouter().isImplicitAnchor(anchor)) {
 				anchorsString = anchorsString + " - "
@@ -1021,7 +1021,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// check that positions are present for the given indices within the
 		// connection. if not all are present, return without applying any
 		// modifications.
-		List<Point> points = getConnection().getPoints();
+		List<Point> points = getConnection().getPointsUnmodifiable();
 		int selectionStartIndex = selectedExplicitAnchorIndices.get(0);
 		int firstIndex = overlainPointIndicesRelativeToSelection[0];
 		int lastIndex = overlainPointIndicesRelativeToSelection[overlainPointIndicesRelativeToSelection.length
