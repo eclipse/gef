@@ -42,6 +42,7 @@ public interface IConnectionRouter {
 	 * @return <code>true</code> if the given {@link IAnchor} is implicit,
 	 *         otherwise <code>false</code>.
 	 */
+	// TODO: rename to isRouterAnchor ?
 	public boolean isImplicitAnchor(IAnchor anchor);
 
 	/**
@@ -53,8 +54,12 @@ public interface IConnectionRouter {
 	public ReadOnlyMapProperty<AnchorKey, Point> positionHintsProperty();
 
 	/**
-	 * Adjusts the {@link Connection connection's} points (if necessary), which
-	 * includes computing reference points for {@link DynamicAnchor}s (if any).
+	 * Adjusts the {@link Connection connection's} anchors (if necessary) to
+	 * satisfy certain routing constraints. This includes insertion of
+	 * 'implicit' anchors, as well as updating the positions of existing anchors
+	 * (which includes manipulating the
+	 * {@link org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter
+	 * computation parameters} of {@link DynamicAnchor dynamic anchors}.
 	 *
 	 * @param connection
 	 *            The {@link Connection} to route.

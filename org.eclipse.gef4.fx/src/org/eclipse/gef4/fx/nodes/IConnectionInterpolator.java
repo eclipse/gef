@@ -13,25 +13,26 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import org.eclipse.gef4.geometry.planar.ICurve;
-
 /**
- * An {@link IConnectionInterpolator} is responsible for
- * {@link #interpolate(Connection) computing} an {@link ICurve} that represents
- * the geometry of the {@link Connection}.
+ * An {@link IConnectionInterpolator} is responsible for updating the
+ * {@link Connection}'s {@link Connection#getCurveNode() curve node} (which
+ * includes to properly clip it at the start and end decorations), as well as
+ * for arranging the decorations.
  */
 public interface IConnectionInterpolator {
 
 	/**
-	 * An {@link ICurve} that is interpolated through the {@link Connection}'s
-	 * points.
+	 * Interpolates the given {@link Connection}, i.e updates its
+	 * {@link Connection#getCurveNode() curve node} to reflect a respective
+	 * geometry. The {@link IConnectionInterpolator} is also responsible of
+	 * arranging the connection's {@link Connection#getStartDecoration() start}
+	 * and {@link Connection#getEndDecoration() end} decorations (and has to
+	 * ensure the curve node is properly clipped to not render through the
+	 * decorations).
 	 *
 	 * @param connection
-	 *            The {@link Connection} for which to interpolate an
-	 *            {@link ICurve}.
-	 * @return The {@link ICurve} that was interpolated through the
-	 *         {@link Connection}'s points.
+	 *            The {@link Connection} to interpolate.
 	 */
-	ICurve interpolate(Connection connection);
+	void interpolate(Connection connection);
 
 }

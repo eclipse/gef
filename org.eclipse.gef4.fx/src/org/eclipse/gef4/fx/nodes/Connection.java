@@ -27,12 +27,8 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
-import org.eclipse.gef4.fx.utils.Geometry2Shape;
-import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
-import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -49,13 +45,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
 
 /**
  * A (binary) {@link Connection} is a visual curve, whose appearance is defined
@@ -309,133 +300,6 @@ public class Connection extends Group {
 	 */
 	protected ReadOnlyMapProperty<AnchorKey, IAnchor> anchorsProperty() {
 		return anchorsProperty.getReadOnlyProperty();
-	}
-
-	/**
-	 * Arranges the given decoration according to the passed-in values.
-	 *
-	 * @param decoration
-	 *            The decoration {@link Node} to arrange.
-	 * @param start
-	 *            The offset for the decoration visual.
-	 * @param direction
-	 *            The direction of the {@link Connection} at the point where the
-	 *            decoration is arranged.
-	 */
-	protected void arrangeDecoration(Shape decoration, Point start,
-			Vector direction) {
-		decoration.getTransforms().clear();
-
-		// arrange on start of curve.
-		decoration.getTransforms().add(new Translate(start.x, start.y));
-
-		// arrange on curve direction
-		if (!direction.isNull()) {
-			Angle angleCW = new Vector(1, 0).getAngleCW(direction);
-			decoration.getTransforms().add(new Rotate(angleCW.deg(), 0, 0));
-		}
-
-		// compensate stroke (ensure decoration 'ends' at curve end).
-		decoration.getTransforms().add(
-				new Translate(-NodeUtils.getShapeBounds(decoration).getX(), 0));
-	}
-
-	/**
-	 * Updates the end decoration of this {@link Connection}.
-	 */
-	protected void arrangeEndDecoration() {
-		if (endDecoration == null) {
-			return;
-		}
-
-		// determine curve end point and curve end direction
-		Point endPoint = getEndPoint();
-		ICurve curve = getCurveNode().getGeometry();
-		if (curve == null || endPoint == null) {
-			return;
-		}
-
-		BezierCurve[] beziers = curve.toBezier();
-		if (beziers.length == 0) {
-			return;
-		}
-
-		BezierCurve endDerivative = beziers[beziers.length - 1].getDerivative();
-		Point slope = endDerivative.get(1);
-		if (slope.equals(0, 0)) {
-			/*
-			 * This is the case when beziers[-1] is a degenerated curve where
-			 * the last control point equals the end point. As a work around, we
-			 * evaluate the derivative at t = 0.99.
-			 */
-			slope = endDerivative.get(0.99);
-		}
-		Vector endDirection = new Vector(slope.getNegated());
-
-		arrangeDecoration(endDecoration, endPoint, endDirection);
-	}
-
-	/**
-	 * Updates the start decoration of this {@link Connection}.
-	 */
-	protected void arrangeStartDecoration() {
-		if (startDecoration == null) {
-			return;
-		}
-
-		// determine curve start point and curve start direction
-		Point startPoint = getStartPoint();
-		ICurve curve = getCurveNode().getGeometry();
-		if (curve == null || startPoint == null) {
-			return;
-		}
-
-		BezierCurve[] beziers = curve.toBezier();
-		if (beziers.length == 0) {
-			return;
-		}
-
-		BezierCurve startDerivative = beziers[0].getDerivative();
-		Point slope = startDerivative.get(0);
-		if (slope.equals(0, 0)) {
-			/*
-			 * This is the case when beziers[0] is a degenerated curve where the
-			 * start point equals the first control point. As a work around, we
-			 * evaluate the derivative at t = 0.01.
-			 */
-			slope = startDerivative.get(0.01);
-		}
-		Vector curveStartDirection = new Vector(slope);
-		arrangeDecoration(startDecoration, startPoint, curveStartDirection);
-	}
-
-	/**
-	 * Adjusts the curveClip so that the curve node does not paint through the
-	 * given decoration.
-	 *
-	 * @param curveClip
-	 *            A shape that represents the clip of the curve node,
-	 *            interpreted in scene coordinates.
-	 * @param decoration
-	 *            The decoration to clip the curve node from.
-	 * @return A shape representing the resulting clip, interpreted in scene
-	 *         coordinates.
-	 */
-	protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
-		// first intersect curve shape with decoration layout bounds,
-		// then subtract the curve shape from the result, and the decoration
-		// from that
-		Path decorationShapeBounds = new Path(
-				Geometry2Shape.toPathElements(NodeUtils
-						.localToScene(decoration,
-								NodeUtils.getShapeBounds(decoration))
-						.toPath()));
-		decorationShapeBounds.setFill(Color.RED);
-		Shape clip = Shape.intersect(decorationShapeBounds,
-				curveNode.getGeometricShape());
-		clip = Shape.subtract(clip, decoration);
-		clip = Shape.subtract(curveClip, clip);
-		return clip;
 	}
 
 	/**
@@ -983,58 +847,34 @@ public class Connection extends Group {
 			return;
 		}
 		inRefresh = true;
-		
-		// TODO: guard against router value being null
-		getRouter().route(this);
-		ICurve newGeometry = getInterpolator().interpolate(this);
 
 		// clear visuals except for the curveNode
 		getChildren().retainAll(curveNode);
 
-		// compute new curve (this can lead to another refreshGeometry() call
-		// which is not executed)
-		if (!newGeometry.equals(curveNode.getGeometry())) {
-			// TODO: we need to prevent positions are re-calculated as a result
-			// of the changed geometry. -> the static anchors should not update
-			// their positions because of layout bounds changes.
-			// System.out.println("New geometry: " + newGeometry);
-			curveNode.setGeometry(newGeometry);
+		// update our anchors/points
+		if (getRouter() != null) {
+			getRouter().route(this);
+		} else {
+			throw new IllegalStateException(
+					"An IConnectionRouter is mandatory for a Connection.");
 		}
 
 		// z-order decorations above curve
 		if (startDecoration != null) {
 			getChildren().add(startDecoration);
-			arrangeStartDecoration();
 		}
 		if (endDecoration != null) {
 			getChildren().add(endDecoration);
-			arrangeEndDecoration();
 		}
 
-		if (!newGeometry.getBounds().isEmpty()
-				&& (startDecoration != null || endDecoration != null)) {
-			// XXX Use scene coordinates, as the clip node does not provide a
-			// parent
-			Bounds layoutBounds = curveNode
-					.localToScene(curveNode.getLayoutBounds());
-			Shape clip = new Rectangle(layoutBounds.getMinX(),
-					layoutBounds.getMinY(), layoutBounds.getWidth(),
-					layoutBounds.getHeight());
-			clip.setFill(Color.RED);
-			if (startDecoration != null) {
-				clip = clipAtDecoration(clip, startDecoration);
-			}
-			if (endDecoration != null) {
-				clip = clipAtDecoration(clip, endDecoration);
-			}
-			// XXX: All CAG operations deliver result shapes that reflect areas
-			// in scene coordinates.
-			clip.getTransforms().add(Geometry2FX
-					.toFXAffine(NodeUtils.getSceneToLocalTx(curveNode)));
-			curveNode.setClip(clip);
+		// update the curve node, arrange and clip the decorations
+		if (getInterpolator() != null) {
+			getInterpolator().interpolate(this);
 		} else {
-			curveNode.setClip(null);
+			throw new IllegalStateException(
+					"An IConnectionInterpolator is mandatory for a Connection.");
 		}
+
 		inRefresh = false;
 	}
 

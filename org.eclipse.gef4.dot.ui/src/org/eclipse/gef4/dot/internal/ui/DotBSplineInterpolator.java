@@ -19,8 +19,8 @@ import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.gef4.fx.nodes.AbstractInterpolator;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
@@ -49,10 +49,10 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
  * @author anyssen
  *
  */
-public class DotBSplineInterpolator implements IConnectionInterpolator {
+public class DotBSplineInterpolator extends AbstractInterpolator {
 
 	@Override
-	public ICurve interpolate(Connection connection) {
+	protected ICurve computeCurve(Connection connection) {
 		Point start = connection.getStartPoint();
 		Point end = connection.getEndPoint();
 

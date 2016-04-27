@@ -24,10 +24,10 @@ import org.eclipse.gef4.geometry.planar.Polyline;
  * @author mwienand
  *
  */
-public class PolylineInterpolator implements IConnectionInterpolator {
+public class PolylineInterpolator extends AbstractInterpolator {
 
 	@Override
-	public ICurve interpolate(Connection connection) {
+	protected ICurve computeCurve(Connection connection) {
 		return new Polyline(connection.getPoints().toArray(new Point[] {}));
 	}
 

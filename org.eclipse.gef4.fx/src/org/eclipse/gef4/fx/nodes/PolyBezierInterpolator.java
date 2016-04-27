@@ -20,17 +20,16 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 /**
- * The {@link PolyBezierInterpolator} interpolates a cubic Bezier
- * spline through the supplied {@link Point way points}.
+ * The {@link PolyBezierInterpolator} interpolates a cubic Bezier spline through
+ * the supplied {@link Point way points}.
  *
  * @author mwienand
  *
  */
-public class PolyBezierInterpolator
-		implements IConnectionInterpolator {
+public class PolyBezierInterpolator extends AbstractInterpolator {
 
 	@Override
-	public ICurve interpolate(Connection connection) {
+	protected ICurve computeCurve(Connection connection) {
 		List<Point> points = connection.getPoints();
 		if (points.size() < 2) {
 			return new Line(0, 0, 0, 0);
