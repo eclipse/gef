@@ -14,7 +14,9 @@ package org.eclipse.gef4.fx.utils;
 
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
@@ -167,6 +169,50 @@ public class NodeUtils {
 					.concatenate(tx);
 		}
 		return tx;
+	}
+
+	/**
+	 * Computes the nearest common ancestor for two given nodes.
+	 *
+	 * @param source
+	 *            The first node.
+	 * @param target
+	 *            The second node.
+	 * @return The nearest common ancestor in the scene graph.
+	 */
+	public static Node getNearestCommonAncestor(Node source, Node target) {
+		if (source == target) {
+			return source;
+		}
+
+		Set<Node> parents = new HashSet<>();
+		Node m = source;
+		Node n = target;
+		while (m != null || n != null) {
+			if (m != null) {
+				if (parents.contains(m)) {
+					return m;
+				}
+				parents.add(m);
+				if (n != null && parents.contains(n)) {
+					return n;
+				}
+				m = m.getParent();
+			}
+			if (n != null) {
+				if (parents.contains(n)) {
+					return n;
+				}
+				parents.add(n);
+				if (m != null && parents.contains(m)) {
+					return m;
+				}
+				n = n.getParent();
+			}
+		}
+
+		// could not find a common parent
+		return null;
 	}
 
 	/**
@@ -330,6 +376,23 @@ public class NodeUtils {
 	}
 
 	/**
+	 * Transforms the given {@link Point} from the local coordinate system of
+	 * the given {@link Node} into the coordinate system of the {@link Node} 's
+	 * parent.
+	 *
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param p
+	 *            The {@link Point} to transform.
+	 * @return The new, transformed {@link Point}.
+	 */
+	public static Point localToParent(Node n, Point p) {
+		AffineTransform localToParentTx = FX2Geometry
+				.toAffineTransform(n.getLocalToParentTransform());
+		return localToParentTx.getTransformed(p);
+	}
+
+	/**
 	 * Transforms the given {@link IGeometry} from the local coordinate system
 	 * of the given {@link Node} into scene coordinates.
 	 *
@@ -383,6 +446,32 @@ public class NodeUtils {
 			throw new IllegalStateException(e);
 		}
 		return g.getTransformed(parentToLocalTx);
+	}
+
+	/**
+	 * Transforms the given {@link Point} from the parent coordinate system of
+	 * the given {@link Node} into the local coordinate system of the
+	 * {@link Node}.
+	 *
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param p
+	 *            The {@link Point} to transform.
+	 * @return The new, transformed {@link Point}.
+	 */
+	public static Point parentToLocal(Node n, Point p) {
+		// retrieve transform from scene to target parent, by inverting target
+		// parent to scene
+		AffineTransform localToParentTx = FX2Geometry
+				.toAffineTransform(n.getLocalToParentTransform());
+		AffineTransform parentToLocalTx = null;
+		try {
+			parentToLocalTx = localToParentTx.getCopy().invert();
+		} catch (NoninvertibleTransformException e) {
+			// TODO: How do we recover from this?!
+			throw new IllegalStateException(e);
+		}
+		return parentToLocalTx.getTransformed(p);
 	}
 
 	/**

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import com.google.common.collect.HashMultimap;
@@ -76,7 +77,6 @@ public abstract class AbstractAnchor implements IAnchor {
 	// TODO: push this down to dynamic anchor (as its only needed there)
 	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
 
-	// TODO: push this down to dynamic anchor (as its only needed there)
 	private ChangeListener<Scene> anchoredSceneChangeListener = new ChangeListener<Scene>() {
 		@Override
 		public void changed(ObservableValue<? extends Scene> observable,
@@ -106,25 +106,28 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 	};
 
-	private ChangeListener<Scene> anchorageSceneChangeListener = new ChangeListener<Scene>() {
-		@Override
-		public void changed(ObservableValue<? extends Scene> observable,
-				Scene oldValue, Scene newValue) {
-			if (oldValue != null) {
-				// System.out.println("Try to unregister VCLs because anchorage
-				// "
-				// + getAnchorage() + " lost scene reference.");
-				unregisterVCLs();
-			}
-			if (newValue != null) {
-				// System.out.println("Try to register VCLs because anchorage "
-				// + getAnchorage() + " obtained scene reference.");
-				registerVCLs();
-			}
-		}
-	};
-
 	private ChangeListener<Node> anchorageChangeListener = new ChangeListener<Node>() {
+
+		private ChangeListener<Scene> anchorageSceneChangeListener = new ChangeListener<Scene>() {
+			@Override
+			public void changed(ObservableValue<? extends Scene> observable,
+					Scene oldValue, Scene newValue) {
+				if (oldValue != null) {
+					// System.out.println("Try to unregister VCLs because
+					// anchorage
+					// "
+					// + getAnchorage() + " lost scene reference.");
+					unregisterVCLs();
+				}
+				if (newValue != null) {
+					// System.out.println("Try to register VCLs because
+					// anchorage "
+					// + getAnchorage() + " obtained scene reference.");
+					registerVCLs();
+				}
+			}
+		};
+
 		@Override
 		public void changed(ObservableValue<? extends Node> observable,
 				Node oldAnchorage, Node newAnchorage) {
@@ -158,6 +161,9 @@ public abstract class AbstractAnchor implements IAnchor {
 	 */
 	public AbstractAnchor(Node anchorage) {
 		anchorageProperty.addListener(anchorageChangeListener);
+		// XXX Set anchorage after registering the anchorageChangeListener, so
+		// that its addition is properly tracked (and change listeners are
+		// attached)
 		setAnchorage(anchorage);
 	}
 
@@ -187,8 +193,12 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	private boolean canRegister(Node anchored) {
-		return getAnchorage() != null && getAnchorage().getScene() != null
-				&& anchored != null && anchored.getScene() != null;
+		// we can register if there is a common ancestor
+		if (getAnchorage() == null || anchored == null) {
+			return false;
+		}
+		return NodeUtils.getNearestCommonAncestor(getAnchorage(),
+				anchored) != null;
 	}
 
 	/**
@@ -234,12 +244,18 @@ public abstract class AbstractAnchor implements IAnchor {
 				// With JavaSE-1.8 this would not be necessary.
 				// TODO: Remove when dropping support for JavaSE-1.7
 				if (System.getProperty("java.version").startsWith("1.7.0")) {
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							updatePositions(anchored);
-						}
-					});
+					try {
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								updatePositions(anchored);
+							}
+						});
+					} catch (IllegalStateException e) {
+						// if the update is performed while the toolkit was not
+						// initialized, no reason to defer its update
+						updatePositions(anchored);
+					}
 				} else {
 					updatePositions(anchored);
 				}
