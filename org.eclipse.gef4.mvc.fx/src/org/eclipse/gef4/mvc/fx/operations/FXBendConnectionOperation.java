@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -139,31 +138,40 @@ public class FXBendConnectionOperation extends AbstractOperation
 	 * {@link DynamicAnchor}s with a position hint.
 	 */
 	protected void hintAnchorPositions() {
-		List<IAnchor> anchors = onlyExplicit(getConnection().getAnchors());
-		if (anchors.get(0) instanceof DynamicAnchor) {
-			IAnchor referenceAnchor = anchors.get(1);
-			AnchorKey referenceAnchorKey = getConnection()
-					.getAnchorKey(getConnectionIndex(1));
-			Point referencePoint = referenceAnchor
-					.getPosition(referenceAnchorKey);
-			getConnection().getRouter().positionHintsProperty()
-					.put(getConnection().getStartAnchorKey(), referencePoint);
-			System.out.println("Set reference point for "
-					+ getConnection().getStartAnchorKey() + " to "
-					+ referencePoint);
+		List<IAnchor> anchors = getConnection().getAnchors();
+		List<IAnchor> explicitAnchors = onlyExplicit(anchors);
+		if (connection.getStartAnchor() instanceof DynamicAnchor
+				&& explicitAnchors.get(0) == connection.getStartAnchor()) {
+			for (int i = 1; i < anchors.size(); i++) {
+				if (!getConnection().getRouter()
+						.isImplicitAnchor(anchors.get(i))) {
+					Point referencePoint = connection.getPoint(i);
+					getConnection().getRouter().positionHintsProperty().put(
+							getConnection().getStartAnchorKey(),
+							referencePoint);
+					System.out.println("Set reference point for "
+							+ getConnection().getStartAnchorKey() + " to "
+							+ referencePoint);
+					break;
+				}
+			}
 		}
-		int lastIndex = anchors.size() - 1;
-		if (anchors.get(lastIndex) instanceof DynamicAnchor) {
-			IAnchor referenceAnchor = anchors.get(lastIndex - 1);
-			AnchorKey referenceAnchorKey = getConnection()
-					.getAnchorKey(getConnectionIndex(lastIndex - 1));
-			Point referencePoint = referenceAnchor
-					.getPosition(referenceAnchorKey);
-			getConnection().getRouter().positionHintsProperty()
-					.put(getConnection().getEndAnchorKey(), referencePoint);
-			System.out.println("Set reference point for "
-					+ getConnection().getEndAnchorKey() + " to "
-					+ referencePoint);
+		if (connection.getEndAnchor() instanceof DynamicAnchor
+				&& explicitAnchors.get(explicitAnchors.size() - 1) == connection
+						.getEndAnchor()) {
+			for (int i = anchors.size() - 2; i >= 0; i--) {
+				if (!getConnection().getRouter()
+						.isImplicitAnchor(anchors.get(i))) {
+					Point referencePoint = connection
+							.getPoint(explicitAnchors.size() - 1 - 1);
+					getConnection().getRouter().positionHintsProperty().put(
+							getConnection().getEndAnchorKey(), referencePoint);
+					System.out.println("Set reference point for "
+							+ getConnection().getEndAnchorKey() + " to "
+							+ referencePoint);
+					break;
+				}
+			}
 		}
 	}
 
