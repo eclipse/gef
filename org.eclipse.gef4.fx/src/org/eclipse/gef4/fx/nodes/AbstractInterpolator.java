@@ -52,7 +52,7 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 	 *            The direction of the {@link Connection} at the point where the
 	 *            decoration is arranged.
 	 */
-	protected void arrangeDecoration(Shape decoration, Point offset,
+	protected void arrangeDecoration(Node decoration, Point offset,
 			Vector direction) {
 		decoration.getTransforms().clear();
 
@@ -70,7 +70,7 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 				new Translate(-NodeUtils.getShapeBounds(decoration).getX(), 0));
 	}
 
-	private void arrangeEndDecoration(Shape endDecoration, ICurve curve,
+	private void arrangeEndDecoration(Node endDecoration, ICurve curve,
 			Point endPoint) {
 		if (endDecoration == null) {
 			return;
@@ -102,7 +102,7 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 		arrangeDecoration(endDecoration, endPoint, endDirection);
 	}
 
-	private void arrangeStartDecoration(Shape startDecoration, ICurve curve,
+	private void arrangeStartDecoration(Node startDecoration, ICurve curve,
 			Point startPoint) {
 		// TODO: check if we can use curve.get(0) to obtain start point
 
@@ -188,13 +188,13 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 			curveNode.setGeometry(newGeometry);
 		}
 
-		Shape startDecoration = connection.getStartDecoration();
+		Node startDecoration = connection.getStartDecoration();
 		if (startDecoration != null) {
 			arrangeStartDecoration(startDecoration, newGeometry,
 					connection.getStartPoint());
 		}
 
-		Shape endDecoration = connection.getEndDecoration();
+		Node endDecoration = connection.getEndDecoration();
 		if (endDecoration != null) {
 			arrangeEndDecoration(endDecoration, newGeometry,
 					connection.getEndPoint());
@@ -210,13 +210,15 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 					layoutBounds.getMinY(), layoutBounds.getWidth(),
 					layoutBounds.getHeight());
 			clip.setFill(Color.RED);
-			if (startDecoration != null) {
+			// can only clip Shape decorations
+			if (startDecoration != null && startDecoration instanceof Shape) {
 				clip = clipAtDecoration(curveNode.getGeometricShape(), clip,
-						startDecoration);
+						(Shape) startDecoration);
 			}
-			if (endDecoration != null) {
+			// can only clip Shape decorations
+			if (endDecoration != null && endDecoration instanceof Shape) {
 				clip = clipAtDecoration(curveNode.getGeometricShape(), clip,
-						endDecoration);
+						(Shape) endDecoration);
 			}
 			// XXX: All CAG operations deliver result shapes that reflect areas
 			// in scene coordinates.

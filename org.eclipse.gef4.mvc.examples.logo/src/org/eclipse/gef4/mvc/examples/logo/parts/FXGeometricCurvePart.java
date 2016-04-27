@@ -310,8 +310,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 			break;
 		}
 
-		Shape startDecorationVisual = visual.getStartDecoration();
-		Shape endDecorationVisual = visual.getEndDecoration();
+		Shape startDecorationVisual = (Shape) visual.getStartDecoration();
+		Shape endDecorationVisual = (Shape) visual.getEndDecoration();
 
 		// stroke paint
 		if (visual.getCurveNode().getStroke() != content.getStroke()) {

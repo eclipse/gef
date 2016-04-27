@@ -45,7 +45,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
 /**
@@ -98,12 +97,13 @@ public class Connection extends Group {
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
 	// visuals
+	// TODO use property for curve node??
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
 
-	// TODO: use properties (JavaFX Property) for decorations
-	private Shape startDecoration = null;
+	// TODO: use property for decorations
+	private Node startDecoration = null;
+	private Node endDecoration = null;
 
-	private Shape endDecoration = null;
 	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
 			new StraightRouter());
 
@@ -589,13 +589,13 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns the end decoration {@link Shape} of this {@link Connection}, or
+	 * Returns the end decoration {@link Node} of this {@link Connection}, or
 	 * <code>null</code>.
 	 *
-	 * @return The end decoration {@link Shape} of this {@link Connection}, or
+	 * @return The end decoration {@link Node} of this {@link Connection}, or
 	 *         <code>null</code>.
 	 */
-	public Shape getEndDecoration() {
+	public Node getEndDecoration() {
 		return endDecoration;
 	}
 
@@ -715,13 +715,13 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns the start decoration {@link Shape} of this {@link Connection}, or
+	 * Returns the start decoration {@link Node} of this {@link Connection}, or
 	 * <code>null</code>.
 	 *
-	 * @return The start decoration {@link Shape } of this {@link Connection},
-	 *         or <code>null</code>.
+	 * @return The start decoration {@link Node } of this {@link Connection}, or
+	 *         <code>null</code>.
 	 */
-	public Shape getStartDecoration() {
+	public Node getStartDecoration() {
 		return startDecoration;
 	}
 
@@ -1185,16 +1185,16 @@ public class Connection extends Group {
 	 * Sets the end decoration {@link Node} of this {@link Connection} to the
 	 * given value.
 	 *
-	 * @param endDeco
+	 * @param decoration
 	 *            The new end decoration {@link Node} for this
 	 *            {@link Connection}.
 	 */
-	public void setEndDecoration(Shape endDeco) {
+	public void setEndDecoration(Node decoration) {
 		if (endDecoration != null) {
 			endDecoration.layoutBoundsProperty()
 					.removeListener(decorationLayoutBoundsListener);
 		}
-		endDecoration = endDeco;
+		endDecoration = decoration;
 		if (endDecoration != null) {
 			endDecoration.layoutBoundsProperty()
 					.addListener(decorationLayoutBoundsListener);
@@ -1277,16 +1277,16 @@ public class Connection extends Group {
 	 * Sets the start decoration {@link Node} of this {@link Connection} to the
 	 * given value.
 	 *
-	 * @param startDeco
+	 * @param decoration
 	 *            The new start decoration {@link Node} for this
 	 *            {@link Connection}.
 	 */
-	public void setStartDecoration(Shape startDeco) {
+	public void setStartDecoration(Node decoration) {
 		if (startDecoration != null) {
 			startDecoration.layoutBoundsProperty()
 					.removeListener(decorationLayoutBoundsListener);
 		}
-		startDecoration = startDeco;
+		startDecoration = decoration;
 		if (startDecoration != null) {
 			startDecoration.layoutBoundsProperty()
 					.addListener(decorationLayoutBoundsListener);

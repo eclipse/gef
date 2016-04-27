@@ -44,7 +44,6 @@ import com.google.inject.Provider;
 
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
-import javafx.scene.shape.Shape;
 
 /**
  * The {@link EdgePart} is the controller for an {@link Edge} content object. It
@@ -268,7 +267,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		}
 
 		// custom decoration
-		Shape sourceDecoration = ZestProperties.getSourceDecoration(edge);
+		Node sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
 			// apply curve CSS style
@@ -276,7 +275,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				sourceDecoration.setStyle(connCssStyle);
 			}
 		}
-		Shape targetDecoration = ZestProperties.getTargetDecoration(edge);
+		Node targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
 			// apply curve CSS style
