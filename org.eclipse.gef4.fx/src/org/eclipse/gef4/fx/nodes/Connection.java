@@ -76,7 +76,7 @@ public class Connection extends Group {
 	/**
 	 * CSS class assigned to decoration visuals.
 	 */
-	public static final String CSS_CLASS_DECORATION = "decoration";
+	private static final String CSS_CLASS_DECORATION = "decoration";
 
 	/**
 	 * The <i>id</i> used to identify the start point of this connection at the
@@ -100,9 +100,8 @@ public class Connection extends Group {
 	// TODO use property for curve node??
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
 
-	// TODO: use property for decorations
-	private Node startDecoration = null;
-	private Node endDecoration = null;
+	private ObjectProperty<Node> startDecorationProperty = new SimpleObjectProperty<>();
+	private ObjectProperty<Node> endDecorationProperty = new SimpleObjectProperty<>();
 
 	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
 			new StraightRouter());
@@ -128,19 +127,6 @@ public class Connection extends Group {
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
 
-	// refresh on decoration bounds changes (stroke width)
-	private ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
-		@Override
-		public void changed(ObservableValue<? extends Bounds> observable,
-				Bounds oldValue, Bounds newValue) {
-			// refresh decoration clip in case the layout bounds of
-			// the decorations have changed
-			// TODO: optimize that only the decorations are refreshed in this
-			// case
-			refresh();
-		}
-	};
-
 	/**
 	 * Constructs a new {@link Connection} whose start and end point are set to
 	 * <code>null</code>.
@@ -163,6 +149,66 @@ public class Connection extends Group {
 						refresh();
 					}
 				});
+
+		routerProperty.addListener(new ChangeListener<IConnectionRouter>() {
+			@Override
+			public void changed(
+					ObservableValue<? extends IConnectionRouter> observable,
+					IConnectionRouter oldValue, IConnectionRouter newValue) {
+				refresh();
+			}
+		});
+
+		interpolatorProperty
+				.addListener(new ChangeListener<IConnectionInterpolator>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends IConnectionInterpolator> observable,
+							IConnectionInterpolator oldValue,
+							IConnectionInterpolator newValue) {
+						refresh();
+					}
+				});
+
+		ChangeListener<Node> decorationListener = new ChangeListener<Node>() {
+
+			final ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Bounds> observable,
+						Bounds oldValue, Bounds newValue) {
+					// refresh decoration clip in case the layout bounds of
+					// the decorations have changed
+					refresh();
+				}
+			};
+
+			@Override
+			public void changed(ObservableValue<? extends Node> observable,
+					Node oldValue, Node newValue) {
+				if (oldValue != null) {
+					oldValue.layoutBoundsProperty()
+							.removeListener(decorationLayoutBoundsListener);
+					ObservableList<String> styleClasses = oldValue
+							.getStyleClass();
+					if (styleClasses.contains(CSS_CLASS_DECORATION)) {
+						styleClasses.remove(CSS_CLASS_DECORATION);
+					}
+				}
+				if (newValue != null) {
+					newValue.layoutBoundsProperty()
+							.addListener(decorationLayoutBoundsListener);
+					ObservableList<String> styleClasses = newValue
+							.getStyleClass();
+					if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
+						styleClasses.add(CSS_CLASS_DECORATION);
+					}
+				}
+				refresh();
+			}
+		};
+		startDecorationProperty.addListener(decorationListener);
+		endDecorationProperty.addListener(decorationListener);
 
 		// add the curve node
 		getChildren().add(curveNode);
@@ -596,7 +642,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Node getEndDecoration() {
-		return endDecoration;
+		return endDecorationProperty.get();
 	}
 
 	/**
@@ -722,7 +768,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Node getStartDecoration() {
-		return startDecoration;
+		return startDecorationProperty.get();
 	}
 
 	/**
@@ -860,11 +906,11 @@ public class Connection extends Group {
 		}
 
 		// z-order decorations above curve
-		if (startDecoration != null) {
-			getChildren().add(startDecoration);
+		if (getStartDecoration() != null) {
+			getChildren().add(getStartDecoration());
 		}
-		if (endDecoration != null) {
-			getChildren().add(endDecoration);
+		if (getEndDecoration() != null) {
+			getChildren().add(getEndDecoration());
 		}
 
 		// update the curve node, arrange and clip the decorations
@@ -1190,21 +1236,7 @@ public class Connection extends Group {
 	 *            {@link Connection}.
 	 */
 	public void setEndDecoration(Node decoration) {
-		if (endDecoration != null) {
-			endDecoration.layoutBoundsProperty()
-					.removeListener(decorationLayoutBoundsListener);
-		}
-		endDecoration = decoration;
-		if (endDecoration != null) {
-			endDecoration.layoutBoundsProperty()
-					.addListener(decorationLayoutBoundsListener);
-
-			ObservableList<String> styleClasses = endDecoration.getStyleClass();
-			if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
-				styleClasses.add(CSS_CLASS_DECORATION);
-			}
-		}
-		refresh();
+		endDecorationProperty.set(decoration);
 	}
 
 	/**
@@ -1244,7 +1276,6 @@ public class Connection extends Group {
 	 */
 	public void setRouter(IConnectionRouter router) {
 		routerProperty.set(router);
-		refresh();
 	}
 
 	/**
@@ -1282,22 +1313,7 @@ public class Connection extends Group {
 	 *            {@link Connection}.
 	 */
 	public void setStartDecoration(Node decoration) {
-		if (startDecoration != null) {
-			startDecoration.layoutBoundsProperty()
-					.removeListener(decorationLayoutBoundsListener);
-		}
-		startDecoration = decoration;
-		if (startDecoration != null) {
-			startDecoration.layoutBoundsProperty()
-					.addListener(decorationLayoutBoundsListener);
-
-			ObservableList<String> styleClasses = startDecoration
-					.getStyleClass();
-			if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
-				styleClasses.add(CSS_CLASS_DECORATION);
-			}
-		}
-		refresh();
+		startDecorationProperty.set(decoration);
 	}
 
 	/**
