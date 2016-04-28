@@ -125,8 +125,9 @@ public class Shape2Geometry {
 
 	/**
 	 * Returns an {@link IGeometry} that describes the geometric outline of the
-	 * passed-in {@link Shape}. The conversion is supported for the following
-	 * {@link Shape}s:
+	 * given {@link Shape}, i.e. excluding the stroke.
+	 * <p>
+	 * The conversion is supported for the following {@link Shape}s:
 	 * <ul>
 	 * <li>{@link Arc}
 	 * <li>{@link Circle}
