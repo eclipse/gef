@@ -386,6 +386,20 @@ public class Connection extends Group {
 		return anchorsUnmodifiableProperty.getReadOnlyProperty();
 	}
 
+	private List<Point> computePoints() {
+		List<Point> computedPoints = new ArrayList<>();
+		if (getStartPoint() != null) {
+			computedPoints.add(getStartPoint());
+		}
+		for (Point p : getControlPoints()) {
+			computedPoints.add(p);
+		}
+		if (getEndPoint() != null) {
+			computedPoints.add(getEndPoint());
+		}
+		return computedPoints;
+	}
+
 	/**
 	 * Creates a position change listener (PCL) which {@link #refresh()
 	 * refreshes} this {@link Connection} upon anchor position changes
@@ -712,10 +726,22 @@ public class Connection extends Group {
 	 * @return The {@link Point}s constituting this {@link Connection}.
 	 */
 	public ObservableList<Point> getPointsUnmodifiable() {
-		// TODO: this update here should not be necessary; we should replace it
-		// with defensive code that fails (because we have missed something if
-		// positions are out of sync here)
-		updatePoints();
+		// List<Point> computedPoints = computePoints();
+		// if (computedPoints.size() != points.size()) {
+		// throw new IllegalStateException(
+		// "Computed points and points are out of sync. There are "
+		// + points.size() + " points, but "
+		// + computedPoints.size() + " have been computed.");
+		// }
+		// for (int i = 0; i < computedPoints.size(); i++) {
+		// if (!computedPoints.get(i).equals(points.get(i))) {
+		// throw new IllegalStateException(
+		// "Computed points and points are out of sync. Point at index "
+		// + i + " was computed as "
+		// + computedPoints.get(i) + " but is "
+		// + points.get(i));
+		// }
+		// }
 		return pointsUnmodifiableProperty.get();
 	}
 
@@ -891,17 +917,16 @@ public class Connection extends Group {
 	 * </ol>
 	 */
 	protected void refresh() {
-		// TODO: Guarding should be prevented by disabling listener while
-		// refreshing
 		// guard against recomputing the curve while recomputing the curve
 		if (inRefresh) {
 			return;
 		}
 		inRefresh = true;
 
-		// update points in case they are not in sync yet. This can happen when
-		// refresh is called from within a PCL change, but other (related) PCL
-		// change have not been processed (map changes are not atomic).
+		// XXX: We have to update points here in case they are not in sync yet.
+		// This can happen when refresh is called from within a PCL change, but
+		// other (related) PCL changes have not been processed (map changes are
+		// not atomic).
 		updatePoints();
 
 		// clear visuals except for the curveNode
@@ -1172,6 +1197,8 @@ public class Connection extends Group {
 		}
 	}
 
+	// TODO: offer setPoints()
+
 	/**
 	 * Replaces all control anchorsByKeys of this {@link Connection} with the
 	 * given {@link List} of {@link IAnchor}s.
@@ -1191,8 +1218,6 @@ public class Connection extends Group {
 		inRefresh = oldInRefresh;
 		refresh();
 	}
-
-	// TODO: offer setPoints()
 
 	/**
 	 * Sets the control anchor for the given control anchor index to an
@@ -1382,16 +1407,7 @@ public class Connection extends Group {
 	}
 
 	private void updatePoints() {
-		List<Point> computedPoints = new ArrayList<>();
-		if (getStartPoint() != null) {
-			computedPoints.add(getStartPoint());
-		}
-		for (Point p : getControlPoints()) {
-			computedPoints.add(p);
-		}
-		if (getEndPoint() != null) {
-			computedPoints.add(getEndPoint());
-		}
+		List<Point> computedPoints = computePoints();
 		if (computedPoints.size() != points.size()) {
 			throw new IllegalStateException(
 					"Computed points and points are out of sync.");
