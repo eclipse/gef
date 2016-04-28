@@ -22,12 +22,10 @@ import java.util.Map.Entry;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -244,7 +242,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	protected void doRefreshVisual(Connection visual) {
 		Edge edge = getContent();
 		Map<String, Object> attrs = edge.attributesProperty();
-		GeometryNode<ICurve> curveNode = visual.getCurveNode();
+		Node curveNode = visual.getCurveNode();
 
 		// css class
 		if (attrs.containsKey(ZestProperties.CSS_CLASS__NE)) {
