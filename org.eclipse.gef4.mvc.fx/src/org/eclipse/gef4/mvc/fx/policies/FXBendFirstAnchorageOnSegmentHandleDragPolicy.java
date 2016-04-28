@@ -284,8 +284,6 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 					.makeExplicit(connectionIndex, connectionIndex).get(0));
 		}
 
-		// move initially to remove a possible overlay
-		bendPolicy.move(new Point(), new Point());
 		updateHandles();
 	}
 

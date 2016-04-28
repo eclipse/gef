@@ -153,9 +153,6 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 		// select segment
 		bendPolicy.selectSegment(segmentIndex);
-
-		// move initially to remove a potentially overlain anchor
-		bendPolicy.move(initialMouseInScene, initialMouseInScene);
 		updateHandles();
 	}
 
