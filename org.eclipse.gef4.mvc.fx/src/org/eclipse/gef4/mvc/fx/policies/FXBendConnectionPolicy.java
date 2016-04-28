@@ -98,6 +98,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
 
 	/**
+	 * The overlay threshold, i.e. the distance between two points so that they
+	 * are regarded as overlying.
+	 */
+	protected static final double DEFAULT_SEGMENT_OVERLAY_THRESHOLD = 6;
+
+	/**
 	 * Retrieves the content element represented by the anchor's anchorage.
 	 *
 	 * @param viewer
@@ -171,7 +177,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
-		// showAnchors("pre-norm:");
+		showAnchors("pre-norm:");
 		normalize();
 		showAnchors("commit:");
 
@@ -507,12 +513,19 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 * @return The overlay threshold.
 	 */
 	protected double getOverlayThreshold() {
+		if (getConnection().getRouter() instanceof OrthogonalRouter
+				&& selectedExplicitAnchorIndices.size() == 2) {
+			// TODO: grid cell size
+			return DEFAULT_SEGMENT_OVERLAY_THRESHOLD;
+		}
+		// depending grid cell size
 		GridModel model = getHost().getRoot().getViewer()
 				.getAdapter(GridModel.class);
 		if (model != null && model.isSnapToGrid()) {
 			return Math.min(model.getGridCellWidth(), model.getGridCellHeight())
 					/ 4;
 		}
+		// fallback to default
 		return DEFAULT_OVERLAY_THRESHOLD;
 	}
 
@@ -974,7 +987,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	private void showAnchors(String message) {
 		List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
 		String anchorsString = "";
-		for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable().size(); i++) {
+		for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
+				.size(); i++) {
 			IAnchor anchor = getConnection().getAnchor(i);
 			if (getConnection().getRouter().isImplicitAnchor(anchor)) {
 				anchorsString = anchorsString + " - "
@@ -1028,11 +1042,13 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		int firstIndex = overlainPointIndicesRelativeToSelection[0];
 		int lastIndex = overlainPointIndicesRelativeToSelection[overlainPointIndicesRelativeToSelection.length
 				- 1];
-		if (selectionStartIndex + firstIndex < 0
+		int selectionStartIndexInConnection = getBendOperation()
+				.getConnectionIndex(selectionStartIndex);
+		if (selectionStartIndexInConnection + firstIndex < 0
 				|| selectionStartIndex + firstIndex >= points.size()) {
 			return false;
 		}
-		if (selectionStartIndex + lastIndex < 0
+		if (selectionStartIndexInConnection + lastIndex < 0
 				|| selectionStartIndex + lastIndex >= points.size()) {
 			return false;
 		}
@@ -1049,6 +1065,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// modifications.
 		double p = isSelectionHorizontal ? overlainPoints.get(0).y
 				: overlainPoints.get(0).x;
+
+		System.out.println("same coordinate = " + p);
+
 		for (int i = 1; i < overlainPoints.size(); i++) {
 			Point q = overlainPoints.get(i);
 			if (isSelectionHorizontal && !isUnpreciseEquals(p, q.y)
@@ -1066,8 +1085,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// compute the (provisional) resulting segment from the given overlain
 		// indices. the first index is the start index for the result, the last
 		// index is the end index for the result.
-		Point resultStart = overlainPoints.get(0);
-		Point resultEnd = overlainPoints.get(overlainPoints.size() - 1);
+		Point resultStart = overlainPoints.get(0).getCopy();
+		Point resultEnd = overlainPoints.get(overlainPoints.size() - 1)
+				.getCopy();
 
 		// compute the distance between the selected segment and the overlain
 		// result segment. if the distance is above the removal threshold,
@@ -1077,7 +1097,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		double distance = Math
 				.abs(isSelectionHorizontal ? resultStart.y - selectionStart.y
 						: resultStart.x - selectionStart.x);
-		if (distance > DEFAULT_OVERLAY_THRESHOLD) {
+		if (distance > getOverlayThreshold()) {
 			return false;
 		}
 
