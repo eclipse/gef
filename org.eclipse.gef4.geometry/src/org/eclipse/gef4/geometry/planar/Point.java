@@ -216,7 +216,7 @@ public class Point implements Cloneable, Serializable {
 	 * @return a new array, which contains copies of the given {@link Point}s at
 	 *         the respective index positions
 	 */
-	public static final Point[] getCopy(Point[] points) {
+	public static final Point[] getCopy(Point... points) {
 		if (points == null) {
 			throw new IllegalArgumentException("points may not be null.");
 		}
@@ -236,7 +236,7 @@ public class Point implements Cloneable, Serializable {
 	 * @return a new array, which contains a copy of each {@link Point} of the
 	 *         given array of points at the respective reverse index
 	 */
-	public static final Point[] getReverseCopy(Point[] points) {
+	public static final Point[] getReverseCopy(Point... points) {
 		Point[] reversed = new Point[points.length];
 		for (int i = 0; i < points.length; i++) {
 			reversed[i] = points[points.length - i - 1].getCopy();
@@ -280,7 +280,7 @@ public class Point implements Cloneable, Serializable {
 	 *            The points from which to choose the one with minimal distance.
 	 * @return One of the candidates with minimal distance.
 	 */
-	public static Point nearest(Point referencePoint, Point[] candidates) {
+	public static Point nearest(Point referencePoint, Point... candidates) {
 		if (candidates.length == 0) {
 			return null;
 		}
