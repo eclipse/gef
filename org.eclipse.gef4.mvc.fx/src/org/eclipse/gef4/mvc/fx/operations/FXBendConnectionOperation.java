@@ -21,10 +21,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
@@ -62,13 +60,10 @@ public class FXBendConnectionOperation extends AbstractOperation
 			throws ExecutionException {
 		if (connection != null) {
 			// update anchors (if needed)
-			if (!onlyExplicit(connection.getAnchorsUnmodifiable()).equals(newAnchors)) {
+			if (!onlyExplicit(connection.getAnchorsUnmodifiable())
+					.equals(newAnchors)) {
 				connection.setAnchors(newAnchors);
 			}
-			// pass positions for connected anchors to the connection router
-			hintAnchorPositions();
-			// route so that the hints are applied
-			getConnection().getRouter().route(getConnection());
 		}
 		return Status.OK_STATUS;
 	}
@@ -95,7 +90,8 @@ public class FXBendConnectionOperation extends AbstractOperation
 	public int getConnectionIndex(int explicitAnchorIndex) {
 		int explicitCount = -1;
 
-		for (int i = 0; i < getConnection().getAnchorsUnmodifiable().size(); i++) {
+		for (int i = 0; i < getConnection().getAnchorsUnmodifiable()
+				.size(); i++) {
 			IAnchor a = getConnection().getAnchor(i);
 			if (!getConnection().getRouter().isImplicitAnchor(a)) {
 				explicitCount++;
@@ -131,48 +127,6 @@ public class FXBendConnectionOperation extends AbstractOperation
 	 */
 	public List<IAnchor> getNewAnchors() {
 		return newAnchors;
-	}
-
-	/**
-	 * Provides the {@link Connection}'s connected start and end
-	 * {@link DynamicAnchor}s with a position hint.
-	 */
-	protected void hintAnchorPositions() {
-		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
-		List<IAnchor> explicitAnchors = onlyExplicit(anchors);
-		if (connection.getStartAnchor() instanceof DynamicAnchor
-				&& explicitAnchors.get(0) == connection.getStartAnchor()) {
-			for (int i = 1; i < anchors.size(); i++) {
-				if (!getConnection().getRouter()
-						.isImplicitAnchor(anchors.get(i))) {
-					Point referencePoint = connection.getPoint(i);
-					getConnection().getRouter().positionHintsProperty().put(
-							getConnection().getStartAnchorKey(),
-							referencePoint);
-					System.out.println("Set reference point for "
-							+ getConnection().getStartAnchorKey() + " to "
-							+ referencePoint);
-					break;
-				}
-			}
-		}
-		if (connection.getEndAnchor() instanceof DynamicAnchor
-				&& explicitAnchors.get(explicitAnchors.size() - 1) == connection
-						.getEndAnchor()) {
-			for (int i = anchors.size() - 2; i >= 0; i--) {
-				if (!getConnection().getRouter()
-						.isImplicitAnchor(anchors.get(i))) {
-					Point referencePoint = connection
-							.getPoint(explicitAnchors.size() - 1 - 1);
-					getConnection().getRouter().positionHintsProperty().put(
-							getConnection().getEndAnchorKey(), referencePoint);
-					System.out.println("Set reference point for "
-							+ getConnection().getEndAnchorKey() + " to "
-							+ referencePoint);
-					break;
-				}
-			}
-		}
 	}
 
 	@Override
@@ -226,13 +180,10 @@ public class FXBendConnectionOperation extends AbstractOperation
 			throws ExecutionException {
 		if (connection != null) {
 			// check if we have to update anchors here
-			if (!onlyExplicit(connection.getAnchorsUnmodifiable()).equals(initialAnchors)) {
+			if (!onlyExplicit(connection.getAnchorsUnmodifiable())
+					.equals(initialAnchors)) {
 				connection.setAnchors(initialAnchors);
 			}
-			// pass positions for connected anchors to the connection router
-			hintAnchorPositions();
-			// route so that the hints are applied
-			getConnection().getRouter().route(getConnection());
 		}
 		return Status.OK_STATUS;
 	}

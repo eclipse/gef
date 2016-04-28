@@ -14,11 +14,13 @@ package org.eclipse.gef4.mvc.fx.policies;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
@@ -33,9 +35,11 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXUpdateAnchorHintsOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
@@ -151,12 +155,11 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	}
 
 	private List<Integer> selectedExplicitAnchorIndices = new ArrayList<>();
-
 	private List<Point> selectedInitialPositions = new ArrayList<>();
-
 	private List<IAnchor> preMoveExplicitAnchors = new ArrayList<>();
-
+	private Map<AnchorKey, Point> preMoveHints = new HashMap<>();
 	private boolean isSelectionHorizontal = false;
+	private boolean usePreMoveHints = false;
 
 	/**
 	 * Determines if the anchor at the given explicit index can be replaced with
@@ -197,6 +200,40 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		}
 
 		return updateOperation;
+	}
+
+	private Map<AnchorKey, Point> computeHints() {
+		Map<AnchorKey, Point> hints = new HashMap<>();
+		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
+		List<IAnchor> explicitAnchors = getBendOperation().getNewAnchors();
+		if (getConnection().getStartAnchor() instanceof DynamicAnchor
+				&& explicitAnchors.get(0) == getConnection().getStartAnchor()) {
+			for (int i = 1; i < anchors.size(); i++) {
+				if (!getConnection().getRouter()
+						.isImplicitAnchor(anchors.get(i))) {
+					Point referencePoint = getConnection().getPoint(i);
+					hints.put(getConnection().getStartAnchorKey(),
+							referencePoint);
+					break;
+				}
+			}
+		}
+		if (getConnection().getEndAnchor() instanceof DynamicAnchor
+				&& explicitAnchors
+						.get(explicitAnchors.size() - 1) == getConnection()
+								.getEndAnchor()) {
+			for (int i = anchors.size() - 2; i >= 0; i--) {
+				if (!getConnection().getRouter()
+						.isImplicitAnchor(anchors.get(i))) {
+					Point referencePoint = getConnection()
+							.getPoint(explicitAnchors.size() - 1 - 1);
+					hints.put(getConnection().getEndAnchorKey(),
+							referencePoint);
+					break;
+				}
+			}
+		}
+		return hints;
 	}
 
 	/**
@@ -245,7 +282,11 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new FXBendConnectionOperation(getConnection());
+		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
+				"BendPlusHints");
+		fwdOp.add(new FXBendConnectionOperation(getConnection()));
+		fwdOp.add(new FXUpdateAnchorHintsOperation(getConnection()));
+		return fwdOp;
 	}
 
 	/**
@@ -342,7 +383,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 *         operation created by {@link #createOperation()}.
 	 */
 	protected FXBendConnectionOperation getBendOperation() {
-		return (FXBendConnectionOperation) super.getOperation();
+		return (FXBendConnectionOperation) ((AbstractCompositeOperation) super.getOperation())
+				.getOperations().get(0);
 	}
 
 	@SuppressWarnings("serial")
@@ -555,11 +597,18 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				getBendOperation().getConnectionIndex(explicitAnchorIndex));
 	}
 
+	private FXUpdateAnchorHintsOperation getUpdateHintsOperation() {
+		return (FXUpdateAnchorHintsOperation) ((AbstractCompositeOperation) super.getOperation())
+				.getOperations().get(1);
+	}
+
 	@Override
 	public void init() {
 		selectedExplicitAnchorIndices.clear();
 		selectedInitialPositions.clear();
 		preMoveExplicitAnchors.clear();
+		preMoveHints.clear();
+		usePreMoveHints = false;
 		super.init();
 		showAnchors("init:");
 	}
@@ -624,6 +673,28 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	private boolean isUnpreciseEquals(double y0, double y1) {
 		return Math.abs(y0 - y1) < 1;
+	}
+
+	@Override
+	protected void locallyExecuteOperation() {
+		// locally execute bend operation
+		try {
+			getBendOperation().execute(null, null);
+		} catch (Exception x) {
+			throw new IllegalStateException(x);
+		}
+		// apply hints
+		if (usePreMoveHints) {
+			getUpdateHintsOperation().setNewHints(preMoveHints);
+		} else {
+			getUpdateHintsOperation().setNewHints(computeHints());
+		}
+		// locally execute hints operation
+		try {
+			getUpdateHintsOperation().execute(null, null);
+		} catch (Exception x) {
+			throw new IllegalStateException(x);
+		}
 	}
 
 	/**
@@ -727,10 +798,17 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				double y1 = selectedInitialPositions.get(1).y;
 				isSelectionHorizontal = isUnpreciseEquals(y0, y1);
 			}
+			// save initial pre-move hints
+			preMoveHints.clear();
+			preMoveHints.putAll(computeHints());
 		} else {
 			// restore initial pre-move explicit anchors
 			getBendOperation().setNewAnchors(preMoveExplicitAnchors);
+			// restore initial pre-move hints
+			getUpdateHintsOperation().setNewHints(preMoveHints);
+			usePreMoveHints = true;
 			locallyExecuteOperation();
+			usePreMoveHints = false;
 		}
 		showAnchors("After Restore:");
 
