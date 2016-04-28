@@ -39,21 +39,9 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 		extends AbstractFeedbackPart<Node, V> {
 
 	private final Map<IVisualPart<Node, ? extends Node>, Integer> anchorageLinkCount = new HashMap<>();
-
-	private final VisualChangeListener visualListener = new VisualChangeListener() {
-		@Override
-		protected void boundsInLocalChanged(Bounds oldBounds,
-				Bounds newBounds) {
-			refreshVisual();
-		}
-
-		@Override
-		protected void localToParentTransformChanged(Node observed,
-				Transform oldTransform, Transform newTransform) {
-			refreshVisual();
-		}
-	};
-
+	// XXX: VisualChangeListener is stateful, so we need to maintain a separate
+	// one for each anchorage
+	private final Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 	private ListChangeListener<Point> geometryListener = new ListChangeListener<Point>() {
 
 		@Override
@@ -72,8 +60,21 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 
 		if (count == 0) {
 			Node anchorageVisual = anchorage.getVisual();
+			VisualChangeListener listener = new VisualChangeListener() {
+				@Override
+				protected void boundsInLocalChanged(Bounds oldBounds,
+						Bounds newBounds) {
+					refreshVisual();
+				}
 
-			visualListener.register(anchorageVisual, getVisual());
+				@Override
+				protected void localToParentTransformChanged(Node observed,
+						Transform oldTransform, Transform newTransform) {
+					refreshVisual();
+				}
+			};
+			visualChangeListeners.put(anchorage, listener);
+			listener.register(anchorage.getVisual(), getVisual());
 			// for connections, we need to refresh the handle if the
 			// connection's geometry changes, too
 			if (anchorageVisual instanceof Connection) {
@@ -96,12 +97,12 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 		if (count == 1) {
 			// now we are sure that we do not need to listen to visual changes
 			// of this anchorage any more
+			visualChangeListeners.remove(anchorage).unregister();
 			Node anchorageVisual = anchorage.getVisual();
 			if (anchorageVisual instanceof Connection) {
 				((Connection) anchorageVisual).pointsUnmodifiableProperty()
 						.removeListener(geometryListener);
 			}
-			visualListener.unregister();
 		}
 
 		if (count > 1) {

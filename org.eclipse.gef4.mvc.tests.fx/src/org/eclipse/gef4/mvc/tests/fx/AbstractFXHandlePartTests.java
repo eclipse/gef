@@ -119,6 +119,11 @@ public class AbstractFXHandlePartTests {
 		return ReflectionUtils.getPrivateFieldValue(hp, "anchorageLinkCount");
 	}
 
+	protected Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> getVisualChangeListeners(
+			AbstractFXHandlePart<Node> hp) {
+		return ReflectionUtils.getPrivateFieldValue(hp, "visualChangeListeners");
+	}
+
 	/**
 	 * Tests that an {@link AbstractFXHandlePart} only registers a single
 	 * {@link VisualChangeListener} per anchorage (even if there are several
@@ -133,26 +138,32 @@ public class AbstractFXHandlePartTests {
 		rp.addChild(cp);
 		rp.addChild(hp);
 		assertNull(getAnchorageLinkCount(hp).get(cp));
+		assertEquals(0, getVisualChangeListeners(hp).size());
 		// check we have a single visual change listener after anchoring
 		// the handle part
 		hp.attachToAnchorage(cp, "r1");
 		assertEquals(1, getAnchorageLinkCount(hp).get(cp).intValue());
+		assertEquals(1, getVisualChangeListeners(hp).size());
 		// check we still have only a single change listener after
 		// anchoring the
 		// same handle part with a different role
 		hp.attachToAnchorage(cp, "r2");
 		assertEquals(2, getAnchorageLinkCount(hp).get(cp).intValue());
+		assertEquals(1, getVisualChangeListeners(hp).size());
 		// check we still have a visual change listener, even if one
 		// anchorage
 		// is removed
 		hp.detachFromAnchorage(cp, "r2");
 		assertEquals(1, getAnchorageLinkCount(hp).get(cp).intValue());
+		assertEquals(1, getVisualChangeListeners(hp).size());
 		// ensure no visual change listener is registered any more
 		hp.detachFromAnchorage(cp, "r1");
 		assertNull(getAnchorageLinkCount(hp).get(cp));
+		assertEquals(0, getVisualChangeListeners(hp).size());
 		// re-attach and assure the map is intialized again
 		hp.attachToAnchorage(cp, "r1");
 		assertEquals(1, getAnchorageLinkCount(hp).get(cp).intValue());
+		assertEquals(1, getVisualChangeListeners(hp).size());
 	}
 
 }
