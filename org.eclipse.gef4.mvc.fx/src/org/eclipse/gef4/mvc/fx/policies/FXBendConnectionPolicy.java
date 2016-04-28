@@ -1163,9 +1163,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// compute the (provisional) resulting segment from the given overlain
 		// indices. the first index is the start index for the result, the last
 		// index is the end index for the result.
-		Point resultStart = overlainPoints.get(0).getCopy();
-		Point resultEnd = overlainPoints.get(overlainPoints.size() - 1)
-				.getCopy();
+		Point resultStart = overlainPoints.get(0);
+		Point resultEnd = overlainPoints.get(overlainPoints.size() - 1);
 
 		// compute the distance between the selected segment and the overlain
 		// result segment. if the distance is above the removal threshold,
