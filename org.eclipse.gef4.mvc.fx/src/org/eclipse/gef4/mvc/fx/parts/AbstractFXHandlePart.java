@@ -16,13 +16,12 @@ import java.util.Map;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
@@ -38,9 +37,30 @@ import javafx.scene.transform.Transform;
 abstract public class AbstractFXHandlePart<V extends Node>
 		extends AbstractHandlePart<Node, V> {
 
-	private final Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 	private final Map<IVisualPart<Node, ? extends Node>, Integer> anchorageLinkCount = new HashMap<>();
-	private final Map<IVisualPart<Node, ? extends Node>, ChangeListener<ICurve>> geometryChangeListeners = new HashMap<>();
+
+	private ListChangeListener<Point> geometryListener = new ListChangeListener<Point>() {
+
+		@Override
+		public void onChanged(ListChangeListener.Change<? extends Point> c) {
+			refreshVisual();
+		}
+
+	};
+
+	private final VisualChangeListener visualListener = new VisualChangeListener() {
+		@Override
+		protected void boundsInLocalChanged(Bounds oldBounds,
+				Bounds newBounds) {
+			refreshVisual();
+		}
+
+		@Override
+		protected void localToParentTransformChanged(Node observed,
+				Transform oldTransform, Transform newTransform) {
+			refreshVisual();
+		}
+	};
 
 	@Override
 	protected void attachToAnchorageVisual(
@@ -51,48 +71,23 @@ abstract public class AbstractFXHandlePart<V extends Node>
 				: anchorageLinkCount.get(anchorage);
 
 		if (count == 0) {
-			VisualChangeListener listener = new VisualChangeListener() {
-				@Override
-				protected void boundsInLocalChanged(Bounds oldBounds,
-						Bounds newBounds) {
-					refreshVisual();
-				}
+			Node anchorageVisual = anchorage.getVisual();
 
-				@Override
-				protected void localToParentTransformChanged(Node observed,
-						Transform oldTransform, Transform newTransform) {
-					refreshVisual();
-				}
-			};
-			visualChangeListeners.put(anchorage, listener);
-			listener.register(anchorage.getVisual(), getVisual());
-
+			visualListener.register(anchorageVisual, getVisual());
 			// for connections, we need to refresh the handle if the
 			// connection's geometry changes, too
-			Node anchorageVisual = anchorage.getVisual();
 			if (anchorageVisual instanceof Connection) {
 				Connection connection = (Connection) anchorageVisual;
-				ChangeListener<ICurve> geometryListener = new ChangeListener<ICurve>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends ICurve> observable,
-							ICurve oldValue, ICurve newValue) {
-						refreshVisual();
-					}
-				};
-				connection.getCurveNode().geometryProperty()
+				connection.pointsUnmodifiableProperty()
 						.addListener(geometryListener);
-				geometryChangeListeners.put(anchorage, geometryListener);
 			}
 		}
-
 		anchorageLinkCount.put(anchorage, count + 1);
 	}
 
 	@Override
 	protected void detachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-
 		// infer current number of links
 		int count = anchorageLinkCount.get(anchorage);
 
@@ -101,13 +96,12 @@ abstract public class AbstractFXHandlePart<V extends Node>
 		if (count == 1) {
 			// now we are sure that we do not need to listen to visual changes
 			// of this anchorage any more
-			visualChangeListeners.remove(anchorage).unregister();
-			ChangeListener<ICurve> geometryListener = geometryChangeListeners
-					.remove(anchorage);
-			if (geometryListener != null) {
-				((Connection) anchorage.getVisual()).getCurveNode()
-						.geometryProperty().removeListener(geometryListener);
+			Node anchorageVisual = anchorage.getVisual();
+			if (anchorageVisual instanceof Connection) {
+				((Connection) anchorageVisual).pointsUnmodifiableProperty()
+						.removeListener(geometryListener);
 			}
+			visualListener.unregister();
 		}
 
 		if (count > 0) {
@@ -116,5 +110,4 @@ abstract public class AbstractFXHandlePart<V extends Node>
 			anchorageLinkCount.remove(anchorage);
 		}
 	}
-
 }

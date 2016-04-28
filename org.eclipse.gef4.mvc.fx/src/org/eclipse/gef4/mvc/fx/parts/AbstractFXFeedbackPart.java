@@ -11,15 +11,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
@@ -36,6 +38,8 @@ import javafx.scene.transform.Transform;
 abstract public class AbstractFXFeedbackPart<V extends Node>
 		extends AbstractFeedbackPart<Node, V> {
 
+	private final Map<IVisualPart<Node, ? extends Node>, Integer> anchorageLinkCount = new HashMap<>();
+
 	private final VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
 		protected void boundsInLocalChanged(Bounds oldBounds,
@@ -50,10 +54,10 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 		}
 	};
 
-	private ChangeListener<ICurve> geometryListener = new ChangeListener<ICurve>() {
+	private ListChangeListener<Point> geometryListener = new ListChangeListener<Point>() {
+
 		@Override
-		public void changed(ObservableValue<? extends ICurve> observable,
-				ICurve oldValue, ICurve newValue) {
+		public void onChanged(ListChangeListener.Change<? extends Point> c) {
 			refreshVisual();
 		}
 	};
@@ -61,25 +65,49 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		Node anchorageVisual = anchorage.getVisual();
-		visualListener.register(anchorageVisual, getVisual());
-		if (anchorageVisual instanceof Connection) {
-			Connection connection = (Connection) anchorageVisual;
-			connection.getCurveNode().geometryProperty()
-					.addListener(geometryListener);
+		// we only add one visual change listener per anchorage, so we need to
+		// keep track of the number of links to an anchorage (roles)
+		int count = anchorageLinkCount.get(anchorage) == null ? 0
+				: anchorageLinkCount.get(anchorage);
+
+		if (count == 0) {
+			Node anchorageVisual = anchorage.getVisual();
+
+			visualListener.register(anchorageVisual, getVisual());
+			// for connections, we need to refresh the handle if the
+			// connection's geometry changes, too
+			if (anchorageVisual instanceof Connection) {
+				Connection connection = (Connection) anchorageVisual;
+				connection.pointsUnmodifiableProperty()
+						.addListener(geometryListener);
+			}
 		}
+		anchorageLinkCount.put(anchorage, count + 1);
 	}
 
 	@Override
 	protected void detachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		Node anchorageVisual = anchorage.getVisual();
-		if (anchorageVisual instanceof Connection) {
-			Connection connection = (Connection) anchorageVisual;
-			connection.getCurveNode().geometryProperty()
-					.removeListener(geometryListener);
-		}
-		visualListener.unregister();
-	}
+		// infer current number of links
+		int count = anchorageLinkCount.get(anchorage);
 
+		// the anchorage might be registered under a different roles, only
+		// remove the listener if there is no link left
+		if (count == 1) {
+			// now we are sure that we do not need to listen to visual changes
+			// of this anchorage any more
+			Node anchorageVisual = anchorage.getVisual();
+			if (anchorageVisual instanceof Connection) {
+				((Connection) anchorageVisual).pointsUnmodifiableProperty()
+						.removeListener(geometryListener);
+			}
+			visualListener.unregister();
+		}
+
+		if (count > 0) {
+			anchorageLinkCount.put(anchorage, count - 1);
+		} else {
+			anchorageLinkCount.remove(anchorage);
+		}
+	}
 }
