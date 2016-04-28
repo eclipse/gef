@@ -116,19 +116,11 @@ public class NodeLayoutBehaviorTests {
 		method.setAccessible(true);
 		method.invoke(behavior, new Object[] {});
 
-		/*
-		 * <i>location</i> is the center, <i>translate-xy</i> is the top left
-		 * corner, therefore we expect <code>translate-xy = location - size /
-		 * 2</code>.
-		 */
+		// zest position is top-left, while layout location is center
 		Affine affine = Geometry2FX
 				.toFXAffine(behavior.getHost().getAdapter(FXTransformPolicy.class).getCurrentTransform());
-		// FIXME: as size is not set (in case there are no child nodes), this
-		// seems to be invalid
-		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(affine.getTx(), affine.getTy()));
-		// TODO: fixme assertEquals(size, new
-		// Dimension(visual.getLayoutBounds().getWidth(),
-		// visual.getLayoutBounds().getHeight()));
+		assertEquals(location.getTranslated(size.getScaled(-0.5)),
+				new Point(affine.getTx(), affine.getTy()));
 	}
 
 	@Test
@@ -147,14 +139,16 @@ public class NodeLayoutBehaviorTests {
 
 		assertEquals(visual.isResizable(), LayoutProperties.isResizable(nodeLayout));
 
-		// TODO: check whether this is correct
+		// zest position is top-left, while layout location is center
 		Bounds layoutBounds = visual.getLayoutBounds();
-		assertEquals(location,
-				LayoutProperties.getLocation(nodeLayout).translate(-layoutBounds.getMinX(), -layoutBounds.getMinY()));
+		double minX = layoutBounds.getMinX();
+		double minY = layoutBounds.getMinY();
+		double maxX = layoutBounds.getMaxX();
+		double maxY = layoutBounds.getMaxY();
+		assertEquals(location, LayoutProperties.getLocation(nodeLayout).translate(-minX - ((maxX - minX) / 2),
+				-minY - ((maxY - minY) / 2)));
 		assertEquals(new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight()),
 				LayoutProperties.getSize(nodeLayout));
-
-		// TODO: test with resizable figure as well
 	}
 
 }
