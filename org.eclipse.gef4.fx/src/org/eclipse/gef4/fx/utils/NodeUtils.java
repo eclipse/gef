@@ -22,7 +22,6 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -91,9 +90,11 @@ public class NodeUtils {
 	}
 
 	/**
-	 * Returns an {@link IGeometry} that corresponds to the geometric outline of
-	 * the given {@link Node}. The {@link IGeometry} is specified within the
-	 * local coordinate system of the given {@link Node}.
+	 * Returns an {@link IGeometry} that corresponds whose outline represents
+	 * the geometric outline of the given {@link Node}, excluding its stroke.
+	 * <p>
+	 * The {@link IGeometry} is specified within the local coordinate system of
+	 * the given {@link Node}.
 	 * <p>
 	 * The following {@link Node}s are supported:
 	 * <ul>
@@ -120,9 +121,8 @@ public class NodeUtils {
 	 */
 	public static IGeometry getGeometricOutline(Node visual) {
 		if (visual instanceof Connection) {
-			GeometryNode<ICurve> curveNode = ((Connection) visual)
-					.getCurveNode();
-			return localToParent(curveNode, curveNode.getGeometry());
+			Node curveNode = ((Connection) visual).getCurveNode();
+			return localToParent(curveNode, getGeometricOutline(curveNode));
 		} else if (visual instanceof GeometryNode) {
 			return ((GeometryNode<?>) visual).getGeometry();
 		} else if (visual instanceof Shape && !(visual instanceof Text)
@@ -338,7 +338,11 @@ public class NodeUtils {
 	}
 
 	/**
-	 * Creates a geometry representing the outline of the given {@link Node} .
+	 * Creates a geometry whose outline represents the outline of the given
+	 * {@link Node}, including its stroke.
+	 * <p>
+	 * The {@link IGeometry} is specified within the local coordinate system of
+	 * the given {@link Node}.
 	 *
 	 * @param node
 	 *            The node to infer an outline geometry for.
