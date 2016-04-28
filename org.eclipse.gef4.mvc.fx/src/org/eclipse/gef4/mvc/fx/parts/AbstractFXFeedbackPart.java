@@ -104,7 +104,7 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 			visualListener.unregister();
 		}
 
-		if (count > 0) {
+		if (count > 1) {
 			anchorageLinkCount.put(anchorage, count - 1);
 		} else {
 			anchorageLinkCount.remove(anchorage);

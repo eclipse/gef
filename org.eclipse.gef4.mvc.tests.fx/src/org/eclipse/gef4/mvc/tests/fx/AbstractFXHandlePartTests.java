@@ -13,6 +13,7 @@
 package org.eclipse.gef4.mvc.tests.fx;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -86,11 +87,6 @@ public class AbstractFXHandlePartTests {
 		}
 
 		@Override
-		protected void doRefreshVisual(Node visual) {
-			// nothing to do
-		}
-
-		@Override
 		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
@@ -98,6 +94,11 @@ public class AbstractFXHandlePartTests {
 		@Override
 		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
+		}
+
+		@Override
+		protected void doRefreshVisual(Node visual) {
+			// nothing to do
 		}
 	};
 
@@ -114,9 +115,8 @@ public class AbstractFXHandlePartTests {
 		}
 	};
 
-	protected Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> getVisualChangeListeners(
-			AbstractFXHandlePart<Node> hp) {
-		return ReflectionUtils.getPrivateFieldValue(hp, "visualChangeListeners");
+	protected Map<IVisualPart<Node, ? extends Node>, Integer> getAnchorageLinkCount(AbstractFXHandlePart<Node> hp) {
+		return ReflectionUtils.getPrivateFieldValue(hp, "anchorageLinkCount");
 	}
 
 	/**
@@ -132,26 +132,27 @@ public class AbstractFXHandlePartTests {
 		// visual)
 		rp.addChild(cp);
 		rp.addChild(hp);
-		assertEquals(0, getVisualChangeListeners(hp).size());
-
+		assertNull(getAnchorageLinkCount(hp).get(cp));
 		// check we have a single visual change listener after anchoring
-		// the
-		// handle part
+		// the handle part
 		hp.attachToAnchorage(cp, "r1");
-		assertEquals(1, getVisualChangeListeners(hp).size());
+		assertEquals(1, getAnchorageLinkCount(hp).get(cp).intValue());
 		// check we still have only a single change listener after
 		// anchoring the
 		// same handle part with a different role
 		hp.attachToAnchorage(cp, "r2");
-		assertEquals(1, getVisualChangeListeners(hp).size());
+		assertEquals(2, getAnchorageLinkCount(hp).get(cp).intValue());
 		// check we still have a visual change listener, even if one
 		// anchorage
 		// is removed
 		hp.detachFromAnchorage(cp, "r2");
-		assertEquals(1, getVisualChangeListeners(hp).size());
+		assertEquals(1, getAnchorageLinkCount(hp).get(cp).intValue());
 		// ensure no visual change listener is registered any more
 		hp.detachFromAnchorage(cp, "r1");
-		assertEquals(0, getVisualChangeListeners(hp).size());
+		assertNull(getAnchorageLinkCount(hp).get(cp));
+		// re-attach and assure the map is intialized again
+		hp.attachToAnchorage(cp, "r1");
+		assertEquals(1, getAnchorageLinkCount(hp).get(cp).intValue());
 	}
 
 }
