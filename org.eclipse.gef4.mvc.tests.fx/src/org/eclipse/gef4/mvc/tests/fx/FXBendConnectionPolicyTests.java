@@ -1281,8 +1281,8 @@ public class FXBendConnectionPolicyTests {
 		// create control points
 		bendPolicy.init();
 		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
-		Point firstWayPoint = new Point(startPoint.x + 100, startPoint.y - 25);
-		Point secondWayPoint = new Point(startPoint.x + 100, endPoint.y + 25);
+		Point firstWayPoint = new Point(startPoint.x + 100, startPoint.y);
+		Point secondWayPoint = new Point(startPoint.x + 100, endPoint.y);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, firstWayPoint);
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, secondWayPoint);
 		// start point and end point changed due to the new control points

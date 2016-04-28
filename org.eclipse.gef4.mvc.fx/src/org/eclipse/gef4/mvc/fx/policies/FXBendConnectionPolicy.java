@@ -204,34 +204,22 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	private Map<AnchorKey, Point> computeHints() {
 		Map<AnchorKey, Point> hints = new HashMap<>();
-		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
-		List<IAnchor> explicitAnchors = getBendOperation().getNewAnchors();
 		if (getConnection().getStartAnchor() instanceof DynamicAnchor
-				&& explicitAnchors.get(0) == getConnection().getStartAnchor()) {
-			for (int i = 1; i < anchors.size(); i++) {
-				if (!getConnection().getRouter()
-						.isImplicitAnchor(anchors.get(i))) {
-					Point referencePoint = getConnection().getPoint(i);
-					hints.put(getConnection().getStartAnchorKey(),
-							referencePoint);
-					break;
-				}
-			}
+				&& getConnection().getPointsUnmodifiable().size() > 1) {
+			Point startPoint = getConnection().getStartPoint();
+			Point neighbor = getConnection().getPoint(1);
+			Point translated = startPoint.getTranslated(
+					startPoint.getDifference(neighbor).getScaled(0.5));
+			hints.put(getConnection().getStartAnchorKey(), translated);
 		}
 		if (getConnection().getEndAnchor() instanceof DynamicAnchor
-				&& explicitAnchors
-						.get(explicitAnchors.size() - 1) == getConnection()
-								.getEndAnchor()) {
-			for (int i = anchors.size() - 2; i >= 0; i--) {
-				if (!getConnection().getRouter()
-						.isImplicitAnchor(anchors.get(i))) {
-					Point referencePoint = getConnection()
-							.getPoint(explicitAnchors.size() - 1 - 1);
-					hints.put(getConnection().getEndAnchorKey(),
-							referencePoint);
-					break;
-				}
-			}
+				&& getConnection().getPointsUnmodifiable().size() > 1) {
+			Point endPoint = getConnection().getEndPoint();
+			Point neighbor = getConnection().getPoint(
+					getConnection().getPointsUnmodifiable().size() - 2);
+			Point translated = endPoint.getTranslated(
+					endPoint.getDifference(neighbor).getScaled(0.5));
+			hints.put(getConnection().getEndAnchorKey(), translated);
 		}
 		return hints;
 	}
@@ -1116,25 +1104,26 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// modifications.
 		List<Point> points = Arrays.asList(Point.getCopy(getConnection()
 				.getPointsUnmodifiable().toArray(new Point[] {})));
-		int selectionStartIndex = selectedExplicitAnchorIndices.get(0);
 		int firstIndex = overlainPointIndicesRelativeToSelection[0];
 		int lastIndex = overlainPointIndicesRelativeToSelection[overlainPointIndicesRelativeToSelection.length
 				- 1];
 		int selectionStartIndexInConnection = getBendOperation()
-				.getConnectionIndex(selectionStartIndex);
+				.getConnectionIndex(selectedExplicitAnchorIndices.get(0));
 		if (selectionStartIndexInConnection + firstIndex < 0
-				|| selectionStartIndex + firstIndex >= points.size()) {
+				|| selectionStartIndexInConnection + firstIndex >= points
+						.size()) {
 			return false;
 		}
 		if (selectionStartIndexInConnection + lastIndex < 0
-				|| selectionStartIndex + lastIndex >= points.size()) {
+				|| selectionStartIndexInConnection + lastIndex >= points
+						.size()) {
 			return false;
 		}
 
 		// evaluate positions for the given indices
 		List<Point> overlainPoints = new ArrayList<>();
 		for (int i = 0; i < overlainPointIndicesRelativeToSelection.length; i++) {
-			overlainPoints.add(points.get(selectionStartIndex
+			overlainPoints.add(points.get(selectionStartIndexInConnection
 					+ overlainPointIndicesRelativeToSelection[i]));
 		}
 
@@ -1169,8 +1158,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// compute the distance between the selected segment and the overlain
 		// result segment. if the distance is above the removal threshold,
 		// return without applying any modifications.
-		Point selectionStart = points.get(selectionStartIndex);
-		Point selectionEnd = points.get(selectionStartIndex + 1);
+		Point selectionStart = points.get(selectionStartIndexInConnection);
+		Point selectionEnd = points.get(selectionStartIndexInConnection + 1);
 		double distance = Math
 				.abs(isSelectionHorizontal ? resultStart.y - selectionStart.y
 						: resultStart.x - selectionStart.x);
@@ -1208,10 +1197,10 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		System.out.println("result: " + resultStart + " -> " + resultEnd);
 
 		// make the result segment explicit
-		int overlayStartIndex = Math.min(selectionStartIndex,
-				selectionStartIndex + firstIndex);
-		int overlayEndIndex = Math.max(selectionStartIndex + 1,
-				selectionStartIndex + lastIndex);
+		int overlayStartIndex = Math.min(selectionStartIndexInConnection,
+				selectionStartIndexInConnection + firstIndex);
+		int overlayEndIndex = Math.max(selectionStartIndexInConnection + 1,
+				selectionStartIndexInConnection + lastIndex);
 
 		List<Integer> explicit = makeExplicit(overlayStartIndex,
 				overlayEndIndex);
