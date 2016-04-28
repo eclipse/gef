@@ -1923,7 +1923,7 @@ public class FXBendConnectionPolicyTests {
 		// save initial start point of second connection
 		ConnectionPart secondConnectionPart = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		Point initialP1 = secondConnectionPart.getVisual().getCurveNode().getGeometry().toBezier()[0].getP1();
+		Point secondConnectionStart = secondConnectionPart.getVisual().getStartPoint();
 		secondConnectionPart.getVisual().getCurveNode().setStrokeWidth(5);
 
 		// move mouse to first connection
@@ -1931,10 +1931,10 @@ public class FXBendConnectionPolicyTests {
 				.get(contents.get(contents.size() - 2));
 		firstConnectionPart.getVisual().getCurveNode().setStrokeWidth(5);
 		Robot robot = new Robot();
-		Point firstConnectionStart = firstConnectionPart.getVisual().getCurveNode().getGeometry().toBezier()[0]
-				.get(0.5);
+		Point firstConnectionMid = firstConnectionPart.getVisual().getStartPoint().getTranslated(firstConnectionPart
+				.getVisual().getStartPoint().getDifference(firstConnectionPart.getVisual().getPoint(1)).getScaled(0.5));
 
-		ctx.moveTo(robot, firstConnectionPart.getVisual(), firstConnectionStart.x, firstConnectionStart.y);
+		ctx.moveTo(robot, firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
 
 		// drag connection down by 10px
 		ctx.mousePress(robot, java.awt.event.InputEvent.BUTTON1_MASK);
@@ -1974,7 +1974,7 @@ public class FXBendConnectionPolicyTests {
 		assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable().contains(secondPart));
 
 		// check the second connection was moved too
-		assertNotEquals(initialP1, secondConnectionPart.getVisual().getCurveNode().getGeometry().toBezier()[0].getP1());
+		assertNotEquals(secondConnectionStart, secondConnectionPart.getVisual().getStartPoint());
 	}
 
 	/**
