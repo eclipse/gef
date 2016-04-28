@@ -14,11 +14,10 @@ package org.eclipse.gef4.mvc.fx.policies;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -127,18 +126,19 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		// determine curve in scene coordinates
 		Connection connection = bendPolicy.getConnection();
 
-		ICurve curve = connection.getCurveNode().getGeometry();
-		ICurve curveInScene = (ICurve) NodeUtils
-				.localToScene(connection.getCurveNode(), curve);
+		// construct polyline for connection points
+		Polyline polyline = new Polyline(
+				connection.getPointsUnmodifiable().toArray(new Point[] {}));
+		Polyline polylineInScene = (Polyline) NodeUtils.localToScene(connection,
+				polyline);
 
 		// determine pressed segment (nearest to mouse)
-		BezierCurve[] beziersInScene = curveInScene.toBezier();
+		Line[] segmentsInScene = polylineInScene.getCurves();
 		double minDistance = -1;
 		int segmentIndex = -1;
-		for (int i = 0; i < beziersInScene.length; i++) {
-			BezierCurve bc = beziersInScene[i];
-			Line line = bc.toLine();
-			Point projection = line.getProjection(initialMouseInScene);
+		for (int i = 0; i < segmentsInScene.length; i++) {
+			Line segment = segmentsInScene[i];
+			Point projection = segment.getProjection(initialMouseInScene);
 			double distance = projection.getDistance(initialMouseInScene);
 			if (minDistance < 0 || distance < minDistance) {
 				minDistance = distance;
