@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -1021,7 +1022,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// check that positions are present for the given indices within the
 		// connection. if not all are present, return without applying any
 		// modifications.
-		List<Point> points = getConnection().getPointsUnmodifiable();
+		List<Point> points = Arrays.asList(Point.getCopy(getConnection()
+				.getPointsUnmodifiable().toArray(new Point[] {})));
 		int selectionStartIndex = selectedExplicitAnchorIndices.get(0);
 		int firstIndex = overlainPointIndicesRelativeToSelection[0];
 		int lastIndex = overlainPointIndicesRelativeToSelection[overlainPointIndicesRelativeToSelection.length

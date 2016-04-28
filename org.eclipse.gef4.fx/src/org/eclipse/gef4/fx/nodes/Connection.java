@@ -30,10 +30,10 @@ import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
-import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -70,6 +70,46 @@ import javafx.scene.transform.Transform;
  *
  */
 public class Connection extends Group {
+
+	private final class AnchorsUnmodifiableProperty
+			extends ReadOnlyListWrapperEx<IAnchor> {
+
+		@Override
+		public void fireValueChangedEvent() {
+			super.fireValueChangedEvent();
+		}
+
+		@Override
+		public ObservableList<IAnchor> get() {
+			return FXCollections.unmodifiableObservableList(CollectionUtils
+					.observableList(new ArrayList<>(getAnchorsUnmodifiable())));
+		}
+
+		@Override
+		public Object getBean() {
+			return Connection.this;
+		}
+	}
+
+	private final class PointsUnmodifiableProperty
+			extends ReadOnlyListWrapperEx<Point> {
+
+		@Override
+		public void fireValueChangedEvent() {
+			super.fireValueChangedEvent();
+		}
+
+		@Override
+		public ObservableList<Point> get() {
+			return FXCollections.unmodifiableObservableList(CollectionUtils
+					.observableList(new ArrayList<>(getPointsUnmodifiable())));
+		}
+
+		@Override
+		public Object getBean() {
+			return Connection.this;
+		}
+	}
 
 	/**
 	 * CSS class assigned to decoration visuals.
@@ -109,13 +149,11 @@ public class Connection extends Group {
 
 	private ObservableList<IAnchor> anchors = CollectionUtils
 			.observableArrayList();
-	private ReadOnlyListWrapper<IAnchor> anchorsUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
-			FXCollections.unmodifiableObservableList(anchors));
-
 	private ObservableList<Point> points = CollectionUtils
 			.observableArrayList();
-	private ReadOnlyListWrapper<Point> pointsUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
-			FXCollections.unmodifiableObservableList(points));
+
+	private PointsUnmodifiableProperty pointsUnmodifiableProperty = new PointsUnmodifiableProperty();
+	private AnchorsUnmodifiableProperty anchorsUnmodifiableProperty = new AnchorsUnmodifiableProperty();
 
 	// maintain anchors in a map, and their related keys additionally in an
 	// ordered set, so we can determine appropriate indexes or anchor keys.
@@ -157,9 +195,6 @@ public class Connection extends Group {
 		// disable resizing children which would change their layout positions
 		// in some cases
 		setAutoSizeChildren(false);
-
-		// ensure connection does not paint further than geometric end points
-		// getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
 
 		curveNode.localToParentTransformProperty()
 				.addListener(new ChangeListener<Transform>() {
@@ -386,20 +421,6 @@ public class Connection extends Group {
 		return anchorsUnmodifiableProperty.getReadOnlyProperty();
 	}
 
-	private List<Point> computePoints() {
-		List<Point> computedPoints = new ArrayList<>();
-		if (getStartPoint() != null) {
-			computedPoints.add(getStartPoint());
-		}
-		for (Point p : getControlPoints()) {
-			computedPoints.add(p);
-		}
-		if (getEndPoint() != null) {
-			computedPoints.add(getEndPoint());
-		}
-		return computedPoints;
-	}
-
 	/**
 	 * Creates a position change listener (PCL) which {@link #refresh()
 	 * refreshes} this {@link Connection} upon anchor position changes
@@ -420,16 +441,14 @@ public class Connection extends Group {
 					MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 				if (change.getKey().equals(anchorKey)) {
 					if (change.wasAdded() && change.wasRemoved()) {
-						points.set(getAnchorIndex(anchorKey),
-								FX2Geometry.toPoint(getCurveNode()
-										.localToParent(Geometry2FX.toFXPoint(
-												change.getValueAdded()))));
+						Point newPoint = FX2Geometry.toPoint(
+								getCurveNode().localToParent(Geometry2FX
+										.toFXPoint(change.getValueAdded())));
+						if (!points.get(getAnchorIndex(anchorKey))
+								.equals(newPoint)) {
+							points.set(getAnchorIndex(anchorKey), newPoint);
+						}
 					}
-					// XXX: As map changes are not atomic, it may be that other
-					// points were already updated but the position change is
-					// notified later; refresh will update positions as a first
-					// step because of this (otherwise the router may obtain
-					// stale positions).
 					refresh();
 				}
 			}
@@ -446,7 +465,7 @@ public class Connection extends Group {
 	 * @return The anchor at the given index.
 	 */
 	public IAnchor getAnchor(int index) {
-		return anchors.get(index);
+		return anchorsByKeys.get(getAnchorKey(index));
 	}
 
 	/**
@@ -458,6 +477,7 @@ public class Connection extends Group {
 	 * @return The anchor index for the given {@link AnchorKey}.
 	 */
 	protected int getAnchorIndex(AnchorKey anchorKey) {
+		// TODO: improve performance
 		return new ArrayList<>(sortedAnchorKeys).indexOf(anchorKey);
 	}
 
@@ -471,6 +491,7 @@ public class Connection extends Group {
 	 */
 	// TODO: this should not be exposed -> make protected
 	public AnchorKey getAnchorKey(int anchorIndex) {
+		// TODO: improve performance
 		return new ArrayList<>(sortedAnchorKeys).get(anchorIndex);
 	}
 
@@ -483,7 +504,7 @@ public class Connection extends Group {
 	 *         to this {@link Connection}.
 	 */
 	public ObservableList<IAnchor> getAnchorsUnmodifiable() {
-		return anchorsUnmodifiableProperty.get();
+		return FXCollections.unmodifiableObservableList(anchors);
 	}
 
 	/**
@@ -493,8 +514,21 @@ public class Connection extends Group {
 	 *
 	 * @return The logical center of this {@link Connection}.
 	 */
+	// TODO: we would better delegate this to interpolator, as there we can
+	// exchange the logic
 	public Point getCenter() {
-		BezierCurve[] bezierCurves = getCurveNode().getGeometry().toBezier();
+		BezierCurve[] bezierCurves = null;
+		if (curveNode instanceof GeometryNode
+				&& ((GeometryNode<?>) getCurveNode())
+						.getGeometry() instanceof ICurve) {
+			bezierCurves = ((ICurve) ((GeometryNode<?>) getCurveNode())
+					.getGeometry()).toBezier();
+		} else {
+			bezierCurves = PolyBezier
+					.interpolateCubic(
+							getPointsUnmodifiable().toArray(new Point[] {}))
+					.toBezier();
+		}
 		if (bezierCurves.length % 2 == 0) {
 			return getPoint((int) (getPointsUnmodifiable().size() - 0.5) / 2);
 		} else {
@@ -707,15 +741,7 @@ public class Connection extends Group {
 	 * @see #getPointsUnmodifiable()
 	 */
 	public Point getPoint(int index) {
-		IAnchor anchor = getAnchor(index);
-		if (anchor == null) {
-			return null;
-		}
-		if (!anchor.isAttached(getAnchorKey(index))) {
-			return null;
-		}
-		return FX2Geometry.toPoint(getCurveNode().localToParent(Geometry2FX
-				.toFXPoint(anchor.getPosition(getAnchorKey(index)))));
+		return points.get(index);
 	}
 
 	/**
@@ -726,23 +752,7 @@ public class Connection extends Group {
 	 * @return The {@link Point}s constituting this {@link Connection}.
 	 */
 	public ObservableList<Point> getPointsUnmodifiable() {
-		// List<Point> computedPoints = computePoints();
-		// if (computedPoints.size() != points.size()) {
-		// throw new IllegalStateException(
-		// "Computed points and points are out of sync. There are "
-		// + points.size() + " points, but "
-		// + computedPoints.size() + " have been computed.");
-		// }
-		// for (int i = 0; i < computedPoints.size(); i++) {
-		// if (!computedPoints.get(i).equals(points.get(i))) {
-		// throw new IllegalStateException(
-		// "Computed points and points are out of sync. Point at index "
-		// + i + " was computed as "
-		// + computedPoints.get(i) + " but is "
-		// + points.get(i));
-		// }
-		// }
-		return pointsUnmodifiableProperty.get();
+		return FXCollections.unmodifiableObservableList(points);
 	}
 
 	/**
@@ -923,12 +933,6 @@ public class Connection extends Group {
 		}
 		inRefresh = true;
 
-		// XXX: We have to update points here in case they are not in sync yet.
-		// This can happen when refresh is called from within a PCL change, but
-		// other (related) PCL changes have not been processed (map changes are
-		// not atomic).
-		updatePoints();
-
 		// clear visuals except for the curveNode
 		getChildren().retainAll(curveNode);
 
@@ -955,8 +959,10 @@ public class Connection extends Group {
 			throw new IllegalStateException(
 					"An IConnectionInterpolator is mandatory for a Connection.");
 		}
-
 		inRefresh = false;
+
+		anchorsUnmodifiableProperty.fireValueChangedEvent();
+		pointsUnmodifiableProperty.fireValueChangedEvent();
 	}
 
 	private void registerPCL(AnchorKey anchorKey, IAnchor anchor) {
@@ -1118,7 +1124,6 @@ public class Connection extends Group {
 					"Inconsistent state: control anchor for index " + index
 							+ " is null.");
 		}
-
 		removeAnchor(anchorKey, oldAnchor);
 	}
 
@@ -1131,6 +1136,58 @@ public class Connection extends Group {
 	 */
 	public ObjectProperty<IConnectionRouter> routerProperty() {
 		return routerProperty;
+	}
+
+	/**
+	 * Replaces the anchor currently registered for the given {@link AnchorKey}
+	 * with the given {@link IAnchor}.
+	 *
+	 * @param anchorKey
+	 *            The {@link AnchorKey} under which the {@link IAnchor} is to be
+	 *            registered.
+	 * @param anchor
+	 *            The {@link IAnchor} which is inserted.
+	 */
+	protected void setAnchor(AnchorKey anchorKey, IAnchor anchor) {
+		if (anchorKey == null) {
+			throw new IllegalArgumentException("anchorKey may not be null.");
+		}
+		if (anchorKey.getAnchored() != getCurveNode()) {
+			throw new IllegalArgumentException(
+					"anchorKey may only be anchored to curve node");
+		}
+		if (!anchorsByKeys.containsKey(anchorKey)) {
+			if (sortedAnchorKeys.contains(anchorKey)) {
+				throw new IllegalStateException(
+						"anchorKey is not contained but key is registered in control anchor key map.");
+
+			}
+		}
+		if (anchor == null) {
+			throw new IllegalArgumentException("anchor may not be null.");
+		}
+
+		IAnchor oldAnchor = anchorsByKeys.put(anchorKey, anchor);
+		unregisterPCL(anchorKey, oldAnchor);
+
+		// detach anchor key from old anchor
+		oldAnchor.detach(anchorKey);
+
+		// attach anchor key to new anchor
+		anchor.attach(anchorKey);
+
+		// update anchor
+		int anchorIndex = getAnchorIndex(anchorKey);
+		anchors.set(anchorIndex, anchor);
+		// update position (if changed)
+		Point newPosition = FX2Geometry.toPoint(getCurveNode().localToParent(
+				Geometry2FX.toFXPoint(anchor.getPosition(anchorKey))));
+		if (!newPosition.equals(points.get(anchorIndex))) {
+			points.set(anchorIndex, newPosition);
+		}
+
+		registerPCL(anchorKey, anchor);
+		refresh();
 	}
 
 	/**
@@ -1187,13 +1244,10 @@ public class Connection extends Group {
 		IAnchor oldAnchor = anchorsByKeys.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
-				// suppress refresh, as addAnchor() will cause a refresh as well
-				boolean oldInRefresh = inRefresh;
-				inRefresh = true;
-				removeAnchor(anchorKey, oldAnchor);
-				inRefresh = oldInRefresh;
+				setAnchor(anchorKey, anchor);
+			} else {
+				addAnchor(anchorKey, anchor);
 			}
-			addAnchor(anchorKey, anchor);
 		}
 	}
 
@@ -1207,14 +1261,20 @@ public class Connection extends Group {
 	 *            The new control {@link IAnchor}s for this {@link Connection}.
 	 */
 	public void setControlAnchors(List<IAnchor> anchors) {
+		int controlSize = getControlAnchors().size();
 		boolean oldInRefresh = inRefresh;
 		inRefresh = true;
-
-		removeAllControlPoints();
-		for (int i = 0; i < anchors.size(); i++) {
+		int i = 0;
+		for (; i < controlSize && i < anchors.size(); i++) {
+			setControlAnchor(i, anchors.get(i));
+		}
+		for (; i < anchors.size(); i++) {
 			addControlAnchor(i, anchors.get(i));
 		}
-
+		int initialRemovalIndex = i;
+		for (; i < controlSize; i++) {
+			removeControlAnchor(controlSize - 1 - (i - initialRemovalIndex));
+		}
 		inRefresh = oldInRefresh;
 		refresh();
 	}
@@ -1232,8 +1292,6 @@ public class Connection extends Group {
 		if (controlPointInLocal == null) {
 			controlPointInLocal = new Point();
 		}
-		// TODO: if the anchor is already a static anchor, we could simply
-		// update its reference position
 		IAnchor anchor = new StaticAnchor(this, controlPointInLocal);
 		setControlAnchor(index, anchor);
 	}
@@ -1280,13 +1338,10 @@ public class Connection extends Group {
 		IAnchor oldAnchor = anchorsByKeys.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
-				// suppress refresh, as addAnchor() will cause a refresh as well
-				boolean oldInRefresh = inRefresh;
-				inRefresh = true;
-				removeAnchor(anchorKey, oldAnchor);
-				inRefresh = oldInRefresh;
+				setAnchor(anchorKey, anchor);
+			} else {
+				addAnchor(anchorKey, anchor);
 			}
-			addAnchor(anchorKey, anchor);
 		}
 	}
 
@@ -1314,8 +1369,6 @@ public class Connection extends Group {
 		if (endPointInLocal == null) {
 			endPointInLocal = new Point();
 		}
-		// TODO: if the anchor is already a static anchor, we could simply
-		// update its reference position
 		IAnchor anchor = new StaticAnchor(this, endPointInLocal);
 		setEndAnchor(anchor);
 	}
@@ -1359,13 +1412,10 @@ public class Connection extends Group {
 		IAnchor oldAnchor = anchorsByKeys.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
-				// suppress refresh, as addAnchor() will cause a refresh as well
-				boolean oldInRefresh = inRefresh;
-				inRefresh = true;
-				removeAnchor(anchorKey, oldAnchor);
-				inRefresh = oldInRefresh;
+				setAnchor(anchorKey, anchor);
+			} else {
+				addAnchor(anchorKey, anchor);
 			}
-			addAnchor(anchorKey, anchor);
 		}
 	}
 
@@ -1393,8 +1443,6 @@ public class Connection extends Group {
 		if (startPointInLocal == null) {
 			startPointInLocal = new Point();
 		}
-		// TODO: if the anchor is already a static anchor, we could simply
-		// update its reference position
 		IAnchor anchor = new StaticAnchor(this, startPointInLocal);
 		setStartAnchor(anchor);
 	}
@@ -1403,20 +1451,6 @@ public class Connection extends Group {
 		if (anchorPCL.containsKey(anchorKey)) {
 			anchor.positionsUnmodifiableProperty()
 					.removeListener(anchorPCL.remove(anchorKey));
-		}
-	}
-
-	private void updatePoints() {
-		List<Point> computedPoints = computePoints();
-		if (computedPoints.size() != points.size()) {
-			throw new IllegalStateException(
-					"Computed points and points are out of sync.");
-		}
-		// update points
-		for (int i = 0; i < computedPoints.size(); i++) {
-			if (!computedPoints.get(i).equals(points.get(i))) {
-				points.set(i, computedPoints.get(i));
-			}
 		}
 	}
 
