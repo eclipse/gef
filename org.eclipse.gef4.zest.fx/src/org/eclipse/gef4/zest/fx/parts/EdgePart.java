@@ -248,7 +248,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		// css style
 		String curveCssStyle = ZestProperties.getCurveCssStyle(edge);
 		if (attrs.containsKey(ZestProperties.CURVE_CSS_STYLE__E)) {
-			visual.setStyle(curveCssStyle);
+			visual.getCurve().setStyle(curveCssStyle);
 		}
 
 		// custom decoration
