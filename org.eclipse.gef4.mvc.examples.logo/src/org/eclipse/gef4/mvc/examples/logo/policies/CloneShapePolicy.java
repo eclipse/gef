@@ -15,18 +15,31 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 
+import javafx.scene.effect.Effect;
+import javafx.scene.paint.Paint;
+
 // only applicable for FXGeometricShapePart
 public class CloneShapePolicy extends AbstractCloneContentPolicy {
 
 	@Override
 	public Object cloneContent() {
 		FXGeometricShape originalShape = getHost().getContent();
-		// TODO: Copy Fill and Effect
 		FXGeometricShape shape = new FXGeometricShape((IShape) originalShape.getGeometry().getCopy(),
-				originalShape.getTransform().getCopy(), originalShape.getFill(), originalShape.getEffect());
-		shape.setStroke(originalShape.getStroke());
+				originalShape.getTransform().getCopy(), copyPaint(originalShape.getFill()),
+				copyEffect(originalShape.getEffect()));
+		shape.setStroke(copyPaint(originalShape.getStroke()));
 		shape.setStrokeWidth(originalShape.getStrokeWidth());
 		return shape;
+	}
+
+	private Effect copyEffect(Effect effect) {
+		// FIXME: Do not use deprecated method to copy Effect.
+		return effect.impl_copy();
+	}
+
+	private Paint copyPaint(Paint paint) {
+		// TODO: Verify this is sufficient.
+		return Paint.valueOf(paint.toString());
 	}
 
 	@Override
