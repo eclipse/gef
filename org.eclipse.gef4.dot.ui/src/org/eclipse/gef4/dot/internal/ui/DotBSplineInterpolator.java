@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
-import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.AbstractInterpolator;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
@@ -70,17 +69,13 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 		// whether the first and last control point have to be evaluated.
 		Point startReference = connection
 				.getStartAnchor() instanceof DynamicAnchor
-						? getProjectionReferencePoint(
-								(DynamicAnchor) connection.getStartAnchor(),
-								connection.getStartAnchorKey())
-						: ((StaticAnchor) connection.getStartAnchor())
-								.getReferencePosition();
+						? connection.positionHintsByKeysProperty()
+								.get(connection.getStartAnchorKey())
+						: connection.getStartPoint();
 		Point endReference = connection.getEndAnchor() instanceof DynamicAnchor
-				? getProjectionReferencePoint(
-						((DynamicAnchor) connection.getEndAnchor()),
-						connection.getEndAnchorKey())
-				: ((StaticAnchor) connection.getEndAnchor())
-						.getReferencePosition();
+				? connection.positionHintsByKeysProperty()
+						.get(connection.getEndAnchorKey())
+				: connection.getEndPoint();
 
 		// the first and last control point may be equal to the start and end
 		// anchor reference points, in which case we have to ignore the control
