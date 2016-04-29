@@ -22,6 +22,7 @@ import javafx.beans.property.ReadOnlySetWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
+import javafx.collections.SetChangeListener.Change;
 
 /**
  * A replacement for {@link ReadOnlySetWrapper} to fix the following JavaFX
@@ -86,6 +87,20 @@ public abstract class ReadOnlySetPropertyBaseEx<E>
 			return false;
 		}
 		return get().equals(other);
+	}
+
+	@Override
+	protected void fireValueChangedEvent() {
+		if (helper != null) {
+			helper.fireValueChangedEvent();
+		}
+	}
+
+	@Override
+	protected void fireValueChangedEvent(Change<? extends E> change) {
+		if (helper != null) {
+			helper.fireValueChangedEvent(change);
+		}
 	}
 
 	@Override

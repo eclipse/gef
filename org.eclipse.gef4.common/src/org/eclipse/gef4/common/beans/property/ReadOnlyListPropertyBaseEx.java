@@ -21,6 +21,7 @@ import javafx.beans.property.ReadOnlyListPropertyBase;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 
 /**
@@ -86,6 +87,20 @@ public abstract class ReadOnlyListPropertyBaseEx<E>
 			return false;
 		}
 		return get().equals(other);
+	}
+
+	@Override
+	protected void fireValueChangedEvent() {
+		if (helper != null) {
+			helper.fireValueChangedEvent();
+		}
+	}
+
+	@Override
+	protected void fireValueChangedEvent(Change<? extends E> change) {
+		if (helper != null) {
+			helper.fireValueChangedEvent(change);
+		}
 	}
 
 	@Override

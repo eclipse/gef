@@ -105,6 +105,21 @@ public abstract class ReadOnlyMapPropertyBaseEx<K, V>
 	}
 
 	@Override
+	protected void fireValueChangedEvent() {
+		if (helper != null) {
+			helper.fireValueChangedEvent();
+		}
+	}
+
+	@Override
+	protected void fireValueChangedEvent(
+			MapChangeListener.Change<? extends K, ? extends V> change) {
+		if (helper != null) {
+			helper.fireValueChangedEvent(change);
+		}
+	}
+
+	@Override
 	public int hashCode() {
 		// XXX: As we rely on equality to remove a binding again, we have to
 		// ensure the hash code is the same for a pair of given properties.
