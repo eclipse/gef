@@ -1,0 +1,62 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *       Tamas Miklossy  (itemis AG) - Initial text 
+ *******************************************************************************/
+ 
+/* 
+ * The StyledGraph2 directed graph represents the different node and egde styles. 
+ */
+digraph StyledGraph2{
+    rankdir=LR
+    /* Nodes can have drawing styles: */
+     1[style=bold                        label="bold"                    ] 
+     2[style=dashed                      label="dashed"                  ]
+     3[style=diagonals                   label="diagonals"               ] 
+     4[style=dotted                      label="dotted"                  ] 
+     5[style=filled                      label="filled"                  ]
+     6[style=invis                       label="invis"                   ]
+     7[style=radial                      label="radial"                  ]
+     8[style=rounded                     label="rounded"                 ]
+     9[style=solid                       label="solid"                   ]
+    10[style=striped                     label="striped"                 ]
+    11[style=wedged                      label="wedged"                  ]
+    12[style="bold, dashed"              label="bold, dashed"            ] 
+    13[style="dashed, bold"              label="dashed, bold"            ]
+    14[style="bold, dotted"              label="bold, dotted"            ] 
+    15[style="dotted, bold"              label="dotted, bold"            ] 
+    16[style="filled, dashed"            label="filled, dashed"          ]
+    17[style="dashed, filled"            label="dashed, filled"          ]
+    18[style="bold, filled"              label="bold, filled"            ]
+    19[style="filled, bold"              label="filled, bold"            ]
+    20[style="bold, diagonals"           label="bold, diagonals"         ]
+    21[style="diagonals, bold"           label="diagonals, bold"         ]
+    22[style="diagonals, filled"         label="diagonals, filled"       ]
+    23[style="filled, diagonals"         label="filled, diagonals"       ]
+    24[style="diagonals, filled, bold"   label="diagonals, filled, bold" ]
+    25[style="filled, bold, diagonals"   label="filled, bold, diagonals" ]
+    26[style=""                          label="default"                 ]
+    27[                                  label="default"                 ]
+     
+    /* Edges can have drawing styles: */
+     1->2[style=bold                     label="bold"                    ]
+     3->4[style=dashed                   label="dashed"                  ]
+     5->6[style=dotted                   label="dotted"                  ]
+     7->8[style=invis                    label="invis"                   ]
+     9->10[style=solid                   label="solid"                   ]
+    11->12[style=tapered                 label="tapered"                 ]
+    13->14[style=""                      label="default"                 ]
+    15->16[                              label="default"                 ]
+    17->18[style="bold, dashed"          label="bold, dashed"            ]
+    19->20[style="dashed, bold"          label="dashed, bold"            ]
+    21->22[style="bold, dotted"          label="bold, dotted"            ]
+    23->24[style="dotted, bold"          label="dotted, bold"            ]
+    25->26[style="bold, tapered"         label="bold, tapered"           ]
+    27->28[style="tapered, bold"         label="tapered, bold"           ]
+}
