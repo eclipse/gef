@@ -322,8 +322,7 @@ public class OrthogonalRouter extends AbstractRouter {
 				AnchorKey anchorKey = connection.getAnchorKey(index);
 				if (connection.pointHintsByKeysProperty()
 						.containsKey(anchorKey)) {
-					return connection.pointHintsByKeysProperty()
-							.get(anchorKey);
+					return connection.pointHintsByKeysProperty().get(anchorKey);
 				}
 
 				// XXX: if index and reference index both point to anchors that
@@ -555,12 +554,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				// move left/right if current point is on top or
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i, currentPoint)) {
-					System.out.println("1");
+					// System.out.println("1");
 					// point on top or bottom, move vertically
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveVertically);
 				} else {
-					System.out.println("2");
+					// System.out.println("2");
 					// point on left/right, move horizontally
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
@@ -571,12 +570,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i + 1, currentPoint
 						.getTranslated(outDirection.x, outDirection.y))) {
-					System.out.println("3");
+					// System.out.println("3");
 					// point on top or bottom, move horizontally
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
 				} else {
-					System.out.println("4");
+					// System.out.println("4");
 					// point on left/right, move vertically
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveVertically);
@@ -590,13 +589,13 @@ public class OrthogonalRouter extends AbstractRouter {
 						currentPoint.getTranslated(outDirection.x,
 								outDirection.y));
 				if (currentIsTopOrBottom && nextIsTopOrBottom) {
-					System.out.println("5");
+					// System.out.println("5");
 					// both top/bottom
 					controlPointManipulator.addRoutingPoints(i + 1,
 							currentPoint, 0, outDirection.y / 2, outDirection.x,
 							outDirection.y / 2);
 				} else if (!currentIsTopOrBottom && !nextIsTopOrBottom) {
-					System.out.println("6");
+					// System.out.println("6");
 					// both left/right
 					controlPointManipulator.addRoutingPoints(i + 1,
 							currentPoint, outDirection.x / 2, 0,
@@ -604,12 +603,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				} else {
 					// on different sides
 					if (currentIsTopOrBottom) {
-						System.out.println("7");
+						// System.out.println("7");
 						// use x coordinate of current point
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
 					} else {
-						System.out.println("8");
+						// System.out.println("8");
 						// use y coordinate of current point
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
@@ -618,7 +617,7 @@ public class OrthogonalRouter extends AbstractRouter {
 			}
 		} else {
 			if (inDirection == null) {
-				System.out.println("9");
+				// System.out.println("9");
 				// move horizontally first
 				outDirection = controlPointManipulator
 						.addRoutingPoint(moveHorizontally);
@@ -628,12 +627,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				if (inDirection.isHorizontal()) {
 					if (inDirection.x < 0 && outDirection.x < 0
 							|| inDirection.x > 0 && outDirection.x > 0) {
-						System.out.println("10");
+						// System.out.println("10");
 						// prolong current direction horizontally
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
 					} else {
-						System.out.println("11");
+						// System.out.println("11");
 						// move vertically first
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
@@ -641,12 +640,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				} else {
 					if (inDirection.y < 0 && outDirection.y < 0
 							|| inDirection.y > 0 && outDirection.y > 0) {
-						System.out.println("12");
+						// System.out.println("12");
 						// prolong current direction vertically
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
 					} else {
-						System.out.println("13");
+						// System.out.println("13");
 						// move horizontally first
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);

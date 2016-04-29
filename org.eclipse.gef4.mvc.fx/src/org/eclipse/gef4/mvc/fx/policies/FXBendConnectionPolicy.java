@@ -180,7 +180,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	public ITransactionalOperation commit() {
 		showAnchors("pre-norm:");
 		normalize();
-		showAnchors("commit:");
+		// showAnchors("commit:");
 
 		ITransactionalOperation commit = super.commit();
 		if (commit == null || commit.isNoOp()) {
@@ -586,7 +586,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		preMoveEndHint = null;
 		usePreMoveHints = false;
 		super.init();
-		showAnchors("init:");
+		// showAnchors("init:");
 	}
 
 	/**
@@ -755,7 +755,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 */
 	public void move(Point initialMouseInScene, Point currentMouseInScene) {
 		checkInitialized();
-		showAnchors("Before Restore:");
+		// showAnchors("Before Restore:");
 
 		// determine selection status
 		int numPoints = selectedExplicitAnchorIndices.size();
@@ -790,7 +790,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			locallyExecuteOperation();
 			usePreMoveHints = false;
 		}
-		showAnchors("After Restore:");
+		// showAnchors("After Restore:");
 
 		// constrain movement in one direction for segment based connections
 		Point mouseDeltaInLocal = getMouseDeltaInLocal(initialMouseInScene,
@@ -828,11 +828,11 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 							canConnect));
 		}
 		locallyExecuteOperation();
-		showAnchors("After Move:");
+		// showAnchors("After Move:");
 
 		// remove overlain
 		removeOverlain();
-		showAnchors("After RemoveOverlain:");
+		// showAnchors("After RemoveOverlain:");
 	}
 
 	/**
@@ -1125,7 +1125,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		double p = isSelectionHorizontal ? overlainPoints.get(0).y
 				: overlainPoints.get(0).x;
 
-		System.out.println("same coordinate = " + p);
+		// System.out.println("same coordinate = " + p);
 
 		for (int i = 1; i < overlainPoints.size(); i++) {
 			Point q = overlainPoints.get(i);
@@ -1159,11 +1159,11 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			return false;
 		}
 
-		System.out.println("=== Segment Overlay ===");
-		System.out.println("selection: " + selectedExplicitAnchorIndices);
-		System.out.println(
-				"overlain: " + toList(overlainPointIndicesRelativeToSelection));
-		System.out.println("distance: " + distance);
+		// System.out.println("=== Segment Overlay ===");
+		// System.out.println("selection: " + selectedExplicitAnchorIndices);
+		// System.out.println(
+		// "overlain: " + toList(overlainPointIndicesRelativeToSelection));
+		// System.out.println("distance: " + distance);
 
 		// at this point, the overlay is confirmed and needs to be removed.
 		// therefore, the overlap of selection and result needs to be removed
@@ -1186,7 +1186,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			}
 		}
 
-		System.out.println("result: " + resultStart + " -> " + resultEnd);
+		// System.out.println("result: " + resultStart + " -> " + resultEnd);
 
 		// make the result segment explicit
 		int overlayStartIndex = Math.min(selectionStartIndexInConnection,
@@ -1196,7 +1196,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 		List<Integer> explicit = makeExplicit(overlayStartIndex,
 				overlayEndIndex);
-		showAnchors("After makeExplicit:");
+				// showAnchors("After makeExplicit:");
 
 		// remove the selection and the other overlain anchors
 		int removedCount = 0;

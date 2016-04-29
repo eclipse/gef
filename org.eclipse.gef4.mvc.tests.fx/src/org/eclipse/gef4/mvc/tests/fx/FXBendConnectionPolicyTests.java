@@ -1763,12 +1763,12 @@ public class FXBendConnectionPolicyTests {
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
-		System.out.println("before setting strategy");
+		// System.out.println("before setting strategy");
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
 				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
 				.setComputationStrategy(new OrthogonalProjectionStrategy());
-		System.out.println("after setting strategy");
+				// System.out.println("after setting strategy");
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages

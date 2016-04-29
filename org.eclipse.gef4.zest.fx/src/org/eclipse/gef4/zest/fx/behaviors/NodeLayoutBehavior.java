@@ -95,7 +95,8 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		} else {
 			preLayoutSize = new Dimension(maxx - minx, maxy - miny);
 		}
-		System.out.println("pre layout size of " + content + ": " + preLayoutSize);
+		// System.out.println("pre layout size of " + content + ": " +
+		// preLayoutSize);
 		LayoutProperties.setSize(content, preLayoutSize.getCopy());
 
 		// initialize location (layout location is center while visual position
