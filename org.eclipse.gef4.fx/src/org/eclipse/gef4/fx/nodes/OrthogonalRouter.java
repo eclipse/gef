@@ -320,8 +320,10 @@ public class OrthogonalRouter extends AbstractRouter {
 				// XXX: if a position hint is supplied for the current index,
 				// return that hint as the reference point.
 				AnchorKey anchorKey = connection.getAnchorKey(index);
-				if (positionHintsProperty().containsKey(anchorKey)) {
-					return positionHintsProperty().get(anchorKey);
+				if (connection.positionHintsByKeysProperty()
+						.containsKey(anchorKey)) {
+					return connection.positionHintsByKeysProperty()
+							.get(anchorKey);
 				}
 
 				// XXX: if index and reference index both point to anchors that
@@ -401,11 +403,6 @@ public class OrthogonalRouter extends AbstractRouter {
 		Point point = FX2Geometry.toPoint(pointInScene);
 		Polygon[] triangles = getTriangles(connection, i);
 		return triangles[2].contains(point);
-	}
-
-	@Override
-	public boolean wasInserted(IAnchor anchor) {
-		return anchor instanceof OrthogonalPolylineRouterAnchor;
 	}
 
 	private boolean isLeft(Connection connection, int i, Point currentPoint) {
@@ -827,6 +824,11 @@ public class OrthogonalRouter extends AbstractRouter {
 			((DynamicAnchor) anchor).getComputationParameter(anchorKey,
 					PreferredOrientation.class).set(hint);
 		}
+	}
+
+	@Override
+	public boolean wasInserted(IAnchor anchor) {
+		return anchor instanceof OrthogonalPolylineRouterAnchor;
 	}
 
 }

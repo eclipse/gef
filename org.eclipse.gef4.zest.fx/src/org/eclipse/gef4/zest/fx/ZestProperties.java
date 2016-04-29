@@ -101,6 +101,18 @@ public class ZestProperties {
 	public static final String CURVE__E = "edge-curve";
 
 	/**
+	 * This attribute determines the start point being used for the
+	 * visualization of the edge.
+	 */
+	public static final String START_POINT__E = "edge-start-point";
+
+	/**
+	 * This attribute determines the end point being used for the visualization
+	 * of the edge.
+	 */
+	public static final String END_POINT__E = "edge-end-point";
+
+	/**
 	 * This attribute determines the CSS style for an edge. This attribute does
 	 * not have a default value.
 	 *
@@ -383,6 +395,18 @@ public class ZestProperties {
 	 */
 	public static String getCurveCssStyle(Edge edge) {
 		return (String) edge.attributesProperty().get(CURVE_CSS_STYLE__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #END_POINT__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the end {@link Point} is determined.
+	 * @return The end {@link Point} of the given {@link Edge}.
+	 */
+	public static Point getEndPoint(Edge edge) {
+		return (Point) edge.attributesProperty().get(END_POINT__E);
 	}
 
 	/**
@@ -776,6 +800,19 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #START_POINT__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the start {@link Point} is
+	 *            determined.
+	 * @return The start {@link Point} of the given {@link Edge}.
+	 */
+	public static Point getStartPoint(Edge edge) {
+		return (Point) edge.attributesProperty().get(START_POINT__E);
+	}
+
+	/**
 	 * Returns the value of the {@link #TARGET_DECORATION__E} attribute of the
 	 * given {@link Edge}.
 	 *
@@ -936,7 +973,7 @@ public class ZestProperties {
 
 	/**
 	 * Sets the value of the {@link #SHAPE__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge}, for which to set the value of the
@@ -960,6 +997,20 @@ public class ZestProperties {
 	 */
 	public static void setCurveCssStyle(Edge edge, String connCssStyle) {
 		edge.attributesProperty().put(CURVE_CSS_STYLE__E, connCssStyle);
+	}
+
+	/**
+	 * Sets the value of the {@link #END_POINT__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge}, for which to set the value of the
+	 *            {@link #END_POINT__E} attribute.
+	 * @param endPoint
+	 *            The end {@link Point} for the given {@link Edge}.
+	 */
+	public static void setEndPoint(Edge edge, Point endPoint) {
+		edge.attributesProperty().put(END_POINT__E, endPoint);
 	}
 
 	/**
@@ -1389,6 +1440,20 @@ public class ZestProperties {
 	 */
 	public static void setSourceLabelPosition(Edge edge, Point labelPosition) {
 		edge.attributesProperty().put(SOURCE_LABEL_POSITION__E, labelPosition);
+	}
+
+	/**
+	 * Sets the value of the {@link #START_POINT__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge}, for which to set the value of the
+	 *            {@link #START_POINT__E} attribute.
+	 * @param startPoint
+	 *            The start Point for the given {@link Edge}.
+	 */
+	public static void setStartPoint(Edge edge, Point startPoint) {
+		edge.attributesProperty().put(START_POINT__E, startPoint);
 	}
 
 	/**

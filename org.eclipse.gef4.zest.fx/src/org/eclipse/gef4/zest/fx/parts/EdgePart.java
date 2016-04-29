@@ -282,7 +282,19 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			visual.setInterpolator(interpolator);
 		}
 
+		// hints for start/end
+		// TODO: Use as start/end point.
+		Point startPointHint = ZestProperties.getStartPoint(edge);
+		if (startPointHint != null) {
+			visual.positionHintsByKeysProperty().put(visual.getStartAnchorKey(), startPointHint);
+		}
+		Point endPointHint = ZestProperties.getEndPoint(edge);
+		if (endPointHint != null) {
+			visual.positionHintsByKeysProperty().put(visual.getEndAnchorKey(), endPointHint);
+		}
+
 		// control points
+		// TODO: Only use for control points, start/end should be separate.
 		List<Point> controlPoints = new ArrayList<>(ZestProperties.getControlPoints(edge));
 		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
 			if (!controlPoints.isEmpty()) {

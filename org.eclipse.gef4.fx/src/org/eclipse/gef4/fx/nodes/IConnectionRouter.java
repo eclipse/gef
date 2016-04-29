@@ -13,14 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import java.util.Map;
-
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
-import org.eclipse.gef4.geometry.planar.Point;
-
-import javafx.beans.property.ReadOnlyMapProperty;
 
 /**
  * An {@link IConnectionRouter} is responsible for {@link #route(Connection)
@@ -31,14 +25,6 @@ import javafx.beans.property.ReadOnlyMapProperty;
  * @author anyssen
  */
 public interface IConnectionRouter {
-
-	/**
-	 * A {@link Map} that stores reference points for {@link AnchorKey}s.
-	 *
-	 * @return A {@link Map} that stores reference points for {@link AnchorKey}
-	 *         s.
-	 */
-	public ReadOnlyMapProperty<AnchorKey, Point> positionHintsProperty();
 
 	/**
 	 * Adjusts the {@link Connection connection's} anchors (if necessary) to

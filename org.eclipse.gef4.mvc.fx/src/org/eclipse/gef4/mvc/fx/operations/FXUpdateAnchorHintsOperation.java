@@ -72,7 +72,7 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 
 	private Map<AnchorKey, Point> queryHints() {
 		ReadOnlyMapProperty<AnchorKey, Point> positionHintsProperty = connection
-				.getRouter().positionHintsProperty();
+				.positionHintsByKeysProperty();
 		return new HashMap<>(positionHintsProperty.get());
 	}
 
@@ -83,9 +83,9 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 	}
 
 	private void setHints(Map<AnchorKey, Point> hints) {
-		if (!connection.getRouter().positionHintsProperty().equals(hints)) {
-			connection.getRouter().positionHintsProperty().clear();
-			connection.getRouter().positionHintsProperty().putAll(hints);
+		if (!connection.positionHintsByKeysProperty().equals(hints)) {
+			connection.positionHintsByKeysProperty().clear();
+			connection.positionHintsByKeysProperty().putAll(hints);
 		}
 	}
 

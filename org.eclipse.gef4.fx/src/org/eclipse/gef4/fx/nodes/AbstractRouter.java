@@ -13,23 +13,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.beans.property.ReadOnlyMapProperty;
-import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.collections.FXCollections;
-
 /**
  * Abstract base class for {@link IConnectionRouter}s.
  */
 public abstract class AbstractRouter implements IConnectionRouter {
-
-	private ReadOnlyMapWrapper<AnchorKey, Point> positionHintsProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections.<AnchorKey, Point> observableHashMap());
 
 	/**
 	 * Computes the reference point for the dynamic anchor at the given index.
@@ -43,11 +35,6 @@ public abstract class AbstractRouter implements IConnectionRouter {
 	 */
 	protected abstract Point getAnchoredReferencePoint(Connection connection,
 			int index);
-
-	@Override
-	public ReadOnlyMapProperty<AnchorKey, Point> positionHintsProperty() {
-		return positionHintsProperty.getReadOnlyProperty();
-	}
 
 	/**
 	 * Update's the reference point of the anchor with the given index.
@@ -74,4 +61,5 @@ public abstract class AbstractRouter implements IConnectionRouter {
 			referencePointParameter.set(newRef);
 		}
 	}
+
 }

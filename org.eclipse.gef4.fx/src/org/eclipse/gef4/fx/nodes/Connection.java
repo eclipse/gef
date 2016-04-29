@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListPropertyBaseEx;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ListListenerHelperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
@@ -39,6 +40,7 @@ import javafx.beans.property.ReadOnlyBooleanPropertyBase;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerPropertyBase;
 import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -235,6 +237,9 @@ public class Connection extends Group {
 	 * specific control points at control point anchorsByKeys.
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
+
+	private ReadOnlyMapWrapperEx<AnchorKey, Point> positionHintsByKeysProperty = new ReadOnlyMapWrapperEx<>(
+			FXCollections.<AnchorKey, Point> observableHashMap());
 
 	private ObjectProperty<Node> curveProperty = new SimpleObjectProperty<>();
 	private ObjectProperty<Node> startDecorationProperty = null;
@@ -1061,6 +1066,17 @@ public class Connection extends Group {
 			pointsUnmodifiableProperty = new PointsUnmodifiableProperty();
 		}
 		return pointsUnmodifiableProperty;
+	}
+
+	/**
+	 * Returns a {@link ReadOnlyMapProperty} for the position hints by anchor
+	 * keys.
+	 *
+	 * @return A {@link ReadOnlyMapProperty} for the position hints by anchor
+	 *         keys.
+	 */
+	public ReadOnlyMapProperty<AnchorKey, Point> positionHintsByKeysProperty() {
+		return positionHintsByKeysProperty.getReadOnlyProperty();
 	}
 
 	/**
