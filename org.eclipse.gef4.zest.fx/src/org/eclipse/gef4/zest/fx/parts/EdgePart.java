@@ -108,7 +108,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 
 	@Override
 	public void bendContent(List<org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint> bendPoints) {
-		List<Point> waypoints = new ArrayList<>();
+		List<Point> positions = new ArrayList<>();
+		boolean attachedSource = false;
+		boolean attachedTarget = false;
+		// collect positions and de-/attach source & target
 		for (int i = 0; i < bendPoints.size(); i++) {
 			BendPoint bp = bendPoints.get(i);
 			if (i == 0) {
@@ -122,7 +125,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 					}
 					if (newSource != null) {
 						attachToContentAnchorage(newSource, SOURCE_ROLE);
+						attachedSource = true;
 					}
+				} else if (oldSource != null) {
+					attachedSource = true;
 				}
 			}
 			if (i == bendPoints.size() - 1) {
@@ -136,16 +142,26 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 					}
 					if (newTarget != null) {
 						attachToContentAnchorage(newTarget, TARGET_ROLE);
+						attachedTarget = true;
 					}
+				} else if (oldTarget != null) {
+					attachedTarget = true;
 				}
 			}
 			if (!bp.isAttached()) {
-				waypoints.add(bp.getPosition());
+				positions.add(bp.getPosition());
 			}
 		}
-		// TODO ZestProperties.setStartPoint();
-		// TODO ZestProperties.setEndPoint();
-		ZestProperties.setControlPoints(getContent(), waypoints);
+		// update properties
+		if (!attachedSource && positions.size() > 0) {
+			ZestProperties.setStartPoint(getContent(), positions.remove(0));
+		}
+		if (!attachedTarget && positions.size() > 0) {
+			ZestProperties.setEndPoint(getContent(), positions.remove(positions.size() - 1));
+		}
+		if (positions.size() > 0) {
+			ZestProperties.setControlPoints(getContent(), positions);
+		}
 	}
 
 	@Override
@@ -277,39 +293,42 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			visual.setRouter(router);
 		}
 
+		// interpolator
 		IConnectionInterpolator interpolator = ZestProperties.getInterpolator(edge);
 		if (interpolator != null) {
 			visual.setInterpolator(interpolator);
 		}
 
-		// hints for start/end
-		// TODO: Use as start/end point.
-		Point startPointHint = ZestProperties.getStartPoint(edge);
-		if (startPointHint != null) {
-			visual.positionHintsByKeysProperty().put(visual.getStartAnchorKey(), startPointHint);
+		// start point or hint
+		Point startPoint = ZestProperties.getStartPoint(edge);
+		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
+			if (startPoint != null) {
+				visual.setStartPoint(startPoint);
+			}
+		} else {
+			if (startPoint != null) {
+				visual.positionHintsByKeysProperty().put(visual.getStartAnchorKey(), startPoint);
+			} else {
+				visual.positionHintsByKeysProperty().remove(visual.getStartAnchorKey());
+			}
 		}
-		Point endPointHint = ZestProperties.getEndPoint(edge);
-		if (endPointHint != null) {
-			visual.positionHintsByKeysProperty().put(visual.getEndAnchorKey(), endPointHint);
+
+		// end point or hint
+		Point endPoint = ZestProperties.getStartPoint(edge);
+		if (!getContentAnchoragesUnmodifiable().containsValue(TARGET_ROLE)) {
+			if (endPoint != null) {
+				visual.setEndPoint(endPoint);
+			}
+		} else {
+			if (endPoint != null) {
+				visual.positionHintsByKeysProperty().put(visual.getEndAnchorKey(), endPoint);
+			} else {
+				visual.positionHintsByKeysProperty().remove(visual.getEndAnchorKey());
+			}
 		}
 
 		// control points
-		// TODO: Only use for control points, start/end should be separate.
 		List<Point> controlPoints = new ArrayList<>(ZestProperties.getControlPoints(edge));
-		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
-			if (!controlPoints.isEmpty()) {
-				visual.setStartPoint(controlPoints.remove(0));
-			} else {
-				visual.setStartPoint(new Point());
-			}
-		}
-		if (!getContentAnchoragesUnmodifiable().containsValue(TARGET_ROLE)) {
-			if (!controlPoints.isEmpty()) {
-				visual.setEndPoint(controlPoints.remove(controlPoints.size() - 1));
-			} else {
-				visual.setEndPoint(new Point());
-			}
-		}
 		if (!visual.getControlPoints().equals(controlPoints)) {
 			visual.setControlPoints(controlPoints);
 		}
