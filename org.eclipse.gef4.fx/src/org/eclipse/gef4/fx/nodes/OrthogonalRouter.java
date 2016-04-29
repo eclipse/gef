@@ -33,6 +33,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -226,6 +227,39 @@ public class OrthogonalRouter extends AbstractRouter {
 	private static final double OFFSET = 15;
 
 	/**
+	 * Iterates the connection's points starting at the first candidate index (
+	 * <i>anchorIndex</i> + <i>step</i>) and stepping by the given step. Returns
+	 * the index of the first point that is not contained within the given
+	 * anchorage geometry. If all points are contained within the given
+	 * anchorage geometry, the first reference candidate (i.e.
+	 * <i>anchorIndex</i> + <i>step</i>) is returned.
+	 *
+	 * @param connection
+	 *            The connection.
+	 * @param anchorIndex
+	 *            The start index within the connection's points.
+	 * @param anchorageGeometry
+	 *            The anchorage geometry.
+	 * @param step
+	 *            The step that is used to iterate the connection's points.
+	 * @return The index of the first point that is not contained within the
+	 *         anchorage geometry.
+	 */
+	private int findReferenceIndex(Connection connection, int anchorIndex,
+			IGeometry anchorageGeometry, int step) {
+		ObservableList<Point> points = connection.getPointsUnmodifiable();
+		int startIndex = anchorIndex + step;
+		for (int i = startIndex; step < 0 ? i >= 0
+				: i < points.size(); i += step) {
+			Point point = points.get(i);
+			if (!anchorageGeometry.contains(point)) {
+				return i;
+			}
+		}
+		return startIndex;
+	}
+
+	/**
 	 * Retrieves the geometry of the anchorage at the given index, in case the
 	 * respective anchor is connected.
 	 *
@@ -276,13 +310,12 @@ public class OrthogonalRouter extends AbstractRouter {
 		if (index < 0 || index >= connection.getPointsUnmodifiable().size()) {
 			throw new IndexOutOfBoundsException();
 		}
-
-		IGeometry referenceGeometry = null;
-		int referenceIndex = index < connection.getPointsUnmodifiable().size() - 1
-				? index + 1 : index - 1;
-		referenceGeometry = getAnchorageGeometry(connection, referenceIndex);
+		IGeometry geometry = getAnchorageGeometry(connection, index);
+		int referenceIndex = findReferenceIndex(connection, index, geometry,
+				index < connection.getPointsUnmodifiable().size() - 1 ? 1 : -1);
+		IGeometry referenceGeometry = getAnchorageGeometry(connection,
+				referenceIndex);
 		if (referenceGeometry != null) {
-			IGeometry geometry = getAnchorageGeometry(connection, index);
 			if (geometry != null) {
 				// XXX: if a position hint is supplied for the current index,
 				// return that hint as the reference point.
