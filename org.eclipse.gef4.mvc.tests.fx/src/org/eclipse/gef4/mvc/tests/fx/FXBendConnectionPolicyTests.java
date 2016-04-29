@@ -1982,11 +1982,11 @@ public class FXBendConnectionPolicyTests {
 	 * FXBendConnectionPolicy$AnchorHandle@3eb7ff78},
 	 * <ul>
 	 * <li>DA anchorage geometry in scene = Polygon: (349.49988,
-	 * 56.54434506500246) -> (359.9554149349976, 66.99988000000002) ->
-	 * (349.49988, 77.45541493499758) -> (339.04434506500246, 66.99988000000002)
-	 * -> (349.49988, 56.54434506500246)
-	 * <li>DA anchor key = AnchorKey
-	 * <start> <GeometryNode@333e01c6[styleClass=curve]>
+	 * 56.54434506500246) -&gt; (359.9554149349976, 66.99988000000002) -&gt;
+	 * (349.49988, 77.45541493499758) -&gt; (339.04434506500246,
+	 * 66.99988000000002) -&gt; (349.49988, 56.54434506500246)
+	 * <li>DA anchor key = AnchorKey &lt;start&gt;
+	 * &lt;GeometryNode@333e01c6[styleClass=curve]&gt;
 	 * <li>DA anchored reference point = Point(356.25, -365.87)
 	 * </ul>
 	 * <li>class
@@ -2004,11 +2004,11 @@ public class FXBendConnectionPolicyTests {
 	 * FXBendConnectionPolicy$AnchorHandle@1c5f6292}
 	 * <ul>
 	 * <li>DA anchorage geometry in scene = Polygon: (338.49988,
-	 * 237.54434506500243) -> (348.9554149349976, 247.99988) -> (338.49988,
-	 * 258.4554149349975) -> (328.04434506500246, 247.99988) -> (338.49988,
-	 * 237.54434506500243)
-	 * <li>DA anchor key = AnchorKey
-	 * <end> <GeometryNode@333e01c6[styleClass=curve]>
+	 * 237.54434506500243) -&gt; (348.9554149349976, 247.99988) -&gt;
+	 * (338.49988, 258.4554149349975) -&gt; (328.04434506500246, 247.99988)
+	 * -&gt; (338.49988, 237.54434506500243)
+	 * <li>DA anchor key = AnchorKey &lt;end&gt;
+	 * &lt;GeometryNode@333e01c6[styleClass=curve]&gt;
 	 * <li>DA anchored reference point = Point(350.01, -190.0)
 	 * </ul>
 	 * </ol>

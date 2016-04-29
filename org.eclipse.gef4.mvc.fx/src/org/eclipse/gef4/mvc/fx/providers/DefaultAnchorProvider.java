@@ -12,12 +12,12 @@
 package org.eclipse.gef4.mvc.fx.providers;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.fx.anchors.ChopBoxStrategy;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
-import org.eclipse.gef4.fx.anchors.ProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -34,7 +34,7 @@ import javafx.scene.Node;
  * {@link DynamicAnchor}s for anchored {@link IVisualPart}s depending on their
  * visual. For {@link Connection} visuals with an {@link OrthogonalRouter}, a
  * {@link DynamicAnchor} with an {@link OrthogonalProjectionStrategy} is used.
- * Otherwise, a {@link DynamicAnchor} with a {@link ProjectionStrategy} is used.
+ * Otherwise, a {@link DynamicAnchor} with a {@link ChopBoxStrategy} is used.
  */
 public class DefaultAnchorProvider
 		extends IAdaptable.Bound.Impl<IVisualPart<Node, ? extends Node>>
@@ -111,7 +111,7 @@ public class DefaultAnchorProvider
 	 */
 	protected IAnchor getDefaultAnchor() {
 		if (defaultAnchor == null) {
-			defaultAnchor = createDynamicAnchor(new ProjectionStrategy());
+			defaultAnchor = createDynamicAnchor(new ChopBoxStrategy());
 		}
 		return defaultAnchor;
 	}
