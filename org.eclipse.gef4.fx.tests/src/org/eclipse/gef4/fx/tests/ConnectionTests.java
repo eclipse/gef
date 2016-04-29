@@ -34,8 +34,8 @@ public class ConnectionTests {
 		Connection connection = new Connection();
 		// ensure the local coordinate system of the curve node differs from
 		// that of the connection
-		connection.getCurveNode().setTranslateX(5);
-		connection.getCurveNode().setTranslateY(5);
+		connection.getCurve().setTranslateX(5);
+		connection.getCurve().setTranslateY(5);
 
 		connection.setStartPoint(startPoint);
 		connection.addControlPoint(0, wayPoint);
@@ -55,8 +55,8 @@ public class ConnectionTests {
 		assertEquals(endPoint, points.get(2));
 
 		// check positions are still valid after changing translation
-		connection.getCurveNode().setTranslateX(50);
-		connection.getCurveNode().setTranslateY(50);
+		connection.getCurve().setTranslateX(50);
+		connection.getCurve().setTranslateY(50);
 		
 		assertEquals(3, points.size());
 		assertEquals(3, anchors.size());

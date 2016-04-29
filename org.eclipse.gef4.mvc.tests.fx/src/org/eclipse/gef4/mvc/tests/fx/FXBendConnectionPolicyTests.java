@@ -36,6 +36,7 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.CursorUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
@@ -1924,12 +1925,12 @@ public class FXBendConnectionPolicyTests {
 		ConnectionPart secondConnectionPart = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
 		Point secondConnectionStart = secondConnectionPart.getVisual().getStartPoint();
-		secondConnectionPart.getVisual().getCurveNode().setStrokeWidth(5);
+		((GeometryNode<?>) secondConnectionPart.getVisual().getCurve()).setStrokeWidth(5);
 
 		// move mouse to first connection
 		ConnectionPart firstConnectionPart = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 2));
-		firstConnectionPart.getVisual().getCurveNode().setStrokeWidth(5);
+		((GeometryNode<?>) firstConnectionPart.getVisual().getCurve()).setStrokeWidth(5);
 		Robot robot = new Robot();
 		Point firstConnectionMid = firstConnectionPart.getVisual().getStartPoint().getTranslated(firstConnectionPart
 				.getVisual().getStartPoint().getDifference(firstConnectionPart.getVisual().getPoint(1)).getScaled(0.5));

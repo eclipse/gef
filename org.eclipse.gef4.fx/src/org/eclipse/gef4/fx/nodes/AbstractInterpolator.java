@@ -165,7 +165,7 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 
 	/**
 	 * Computes an {@link ICurve} geometry from the {@link Connection}'s points,
-	 * which is used to update the {@link Connection#getCurveNode() curve node}.
+	 * which is used to update the {@link Connection#getCurve() curve node}.
 	 *
 	 * @param connection
 	 *            The {@link Connection}, for which to compute a new
@@ -179,10 +179,16 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
 		ICurve newGeometry = computeCurve(connection);
-		GeometryNode<ICurve> curveNode = connection.getCurveNode();
-		if (!newGeometry.equals(curveNode.getGeometry())) {
-			// TODO: we need to prevent positions are re-calculated as a result
-			// of the changed geometry. -> the static anchors should not update
+		// XXX: we can only deal with geometry nodes so far
+		@SuppressWarnings("unchecked")
+		GeometryNode<ICurve> curveNode = (GeometryNode<ICurve>) connection
+				.getCurve();
+		if (curveNode instanceof GeometryNode
+				&& !newGeometry.equals(curveNode.getGeometry())) {
+			// TODO: we need to prevent positions are re-calculated as a
+			// result
+			// of the changed geometry. -> the static anchors should not
+			// update
 			// their positions because of layout bounds changes.
 			// System.out.println("New geometry: " + newGeometry);
 			curveNode.setGeometry(newGeometry);

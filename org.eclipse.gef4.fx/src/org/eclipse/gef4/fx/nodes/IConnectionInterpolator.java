@@ -15,7 +15,7 @@ package org.eclipse.gef4.fx.nodes;
 
 /**
  * An {@link IConnectionInterpolator} is responsible for updating the
- * {@link Connection}'s {@link Connection#getCurveNode() curve node} (which
+ * {@link Connection}'s {@link Connection#getCurve() curve node} (which
  * includes to properly clip it at the start and end decorations), as well as
  * for arranging the decorations.
  */
@@ -23,7 +23,7 @@ public interface IConnectionInterpolator {
 
 	/**
 	 * Interpolates the given {@link Connection}, i.e updates its
-	 * {@link Connection#getCurveNode() curve node} to reflect a respective
+	 * {@link Connection#getCurve() curve node} to reflect a respective
 	 * geometry. The {@link IConnectionInterpolator} is also responsible of
 	 * arranging the connection's {@link Connection#getStartDecoration() start}
 	 * and {@link Connection#getEndDecoration() end} decorations (and has to

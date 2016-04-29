@@ -12,6 +12,8 @@
 package org.eclipse.gef4.mvc.fx.behaviors;
 
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -41,6 +43,7 @@ public class FXConnectionClickableAreaBehavior extends AbstractBehavior<Node> {
 		}
 	};
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doActivate() {
 		clickableAreaBinding = new DoubleBinding() {
@@ -52,8 +55,10 @@ public class FXConnectionClickableAreaBehavior extends AbstractBehavior<Node> {
 				return Math.min(localClickableWidth, ABSOLUTE_CLICKABLE_WIDTH);
 			}
 		};
-		getHost().getVisual().getCurveNode().clickableAreaWidthProperty()
-				.bind(clickableAreaBinding);
+		// TODO: bind to the curve property of the connection and update the
+		// binding in case the curve node is changed
+		((GeometryNode<ICurve>) getHost().getVisual().getCurve())
+				.clickableAreaWidthProperty().bind(clickableAreaBinding);
 		((FXViewer) getHost().getRoot().getViewer()).getCanvas()
 				.getContentTransform().mxxProperty()
 				.addListener(scaleXListener);

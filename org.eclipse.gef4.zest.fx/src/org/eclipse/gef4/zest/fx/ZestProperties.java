@@ -95,6 +95,12 @@ public class ZestProperties {
 	public static final String LABEL__NE = "label";
 
 	/**
+	 * This attribute determines the curve being used for visualization of the
+	 * edge.
+	 */
+	public static final String CURVE__E = "edge-curve";
+
+	/**
 	 * This attribute determines the CSS style for an edge. This attribute does
 	 * not have a default value.
 	 *
@@ -351,6 +357,20 @@ public class ZestProperties {
 			return (String) ((Provider<?>) value).get();
 		}
 		return (String) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #CURVE__E} attribute of the given
+	 * {@link Node}.
+	 *
+	 * @param edge
+	 *            The {@link Node} for which to return the value of its
+	 *            {@link #CURVE__E} attribute.
+	 * @return A {@link javafx.scene.Node} that represents the visualization of
+	 *         the edge.
+	 */
+	public static javafx.scene.Node getCurve(Edge edge) {
+		return (javafx.scene.Node) edge.attributesProperty().get(CURVE__E);
 	}
 
 	/**
@@ -912,6 +932,21 @@ public class ZestProperties {
 	 */
 	public static void setCssId(Node node, String cssId) {
 		node.attributesProperty().put(CSS_ID__NE, cssId);
+	}
+
+	/**
+	 * Sets the value of the {@link #SHAPE__N} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge}, for which to set the value of the
+	 *            {@link #CURVE__E} attribute.
+	 * @param curve
+	 *            The {@link javafx.scene.Node} that is used to visualize the
+	 *            connection.
+	 */
+	public static void setCurve(Edge edge, javafx.scene.Node curve) {
+		edge.attributesProperty().put(CURVE__E, curve);
 	}
 
 	/**

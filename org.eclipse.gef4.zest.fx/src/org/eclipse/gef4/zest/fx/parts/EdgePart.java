@@ -68,8 +68,8 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	public static final String CSS_CLASS = "edge";
 
 	/**
-	 * The CSS class that is assigned to the {@link Connection#getCurveNode()
-	 * curve node} of the {@link Connection} of this {@link EdgePart}.
+	 * The CSS class that is assigned to the {@link Connection#getCurve() curve
+	 * node} of the {@link Connection} of this {@link EdgePart}.
 	 */
 	public static final String CSS_CLASS_CURVE = "curve";
 
@@ -167,7 +167,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	protected Connection createVisual() {
 		Connection visual = new Connection();
 		visual.getStyleClass().add(CSS_CLASS);
-		visual.getCurveNode().getStyleClass().add(CSS_CLASS_CURVE);
+
+		// initialize style class for (default) curve
+		visual.getCurve().getStyleClass().add(CSS_CLASS_CURVE);
+
 		return visual;
 	}
 
@@ -242,7 +245,8 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	protected void doRefreshVisual(Connection visual) {
 		Edge edge = getContent();
 		Map<String, Object> attrs = edge.attributesProperty();
-		Node curveNode = visual.getCurveNode();
+
+		refreshCurve();
 
 		// css class
 		if (attrs.containsKey(ZestProperties.CSS_CLASS__NE)) {
@@ -259,9 +263,9 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		}
 
 		// css style
-		String connCssStyle = ZestProperties.getCurveCssStyle(edge);
+		String curveCssStyle = ZestProperties.getCurveCssStyle(edge);
 		if (attrs.containsKey(ZestProperties.CURVE_CSS_STYLE__E)) {
-			curveNode.setStyle(connCssStyle);
+			visual.setStyle(curveCssStyle);
 		}
 
 		// custom decoration
@@ -269,16 +273,16 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
 			// apply curve CSS style
-			if (connCssStyle != null) {
-				sourceDecoration.setStyle(connCssStyle);
+			if (curveCssStyle != null) {
+				sourceDecoration.setStyle(curveCssStyle);
 			}
 		}
 		Node targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
 			// apply curve CSS style
-			if (connCssStyle != null) {
-				targetDecoration.setStyle(connCssStyle);
+			if (curveCssStyle != null) {
+				targetDecoration.setStyle(curveCssStyle);
 			}
 		}
 
@@ -317,6 +321,22 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	@Override
 	public Edge getContent() {
 		return (Edge) super.getContent();
+	}
+
+	/**
+	 * Returns the {@link Node} that displays the edge.
+	 *
+	 * @return The {@link Node} used to display the edge.
+	 */
+	public Node getCurve() {
+		return getVisual().getCurve();
+	}
+
+	private void refreshCurve() {
+		Node curve = ZestProperties.getCurve(getContent());
+		if (getVisual().getCurve() != curve && curve != null) {
+			getVisual().setCurve(curve);
+		}
 	}
 
 	@Override

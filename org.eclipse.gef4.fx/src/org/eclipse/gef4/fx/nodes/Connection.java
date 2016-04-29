@@ -52,24 +52,24 @@ import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
 /**
- * A (binary) {@link Connection} is a visual curve, whose appearance is defined
- * through a single start and end point, and a set of control points, which may
- * be 'connected', i.e. be attached to an {@link IAnchor}. The exact curve shape
- * is determined by an {@link IConnectionRouter}, which is responsible of
- * computing an {@link ICurve} geometry for a given {@link Connection} (which is
- * then rendered using a {@link GeometryNode}).
+ * A (binary) {@link Connection} is a visual curveProperty, whose appearance is
+ * defined through a single start and end point, and a set of control points,
+ * which may be 'connected', i.e. be attached to an {@link IAnchor}. The exact
+ * curveProperty shape is determined by an {@link IConnectionRouter}, which is
+ * responsible of computing an {@link ICurve} geometry for a given
+ * {@link Connection} (which is then rendered using a {@link GeometryNode}).
  * <p>
  * Whether the control points are interpreted as way points (that lie on the
- * curve) or as 'real' control points depends on the
+ * curveProperty) or as 'real' control points depends on the
  * {@link IConnectionInterpolator}. While {@link PolylineInterpolator} and
  * {@link PolyBezierInterpolator} interpret control points to be way points,
  * other routers may e.g. interpret them as the control points of a
  * {@link BezierCurve}.
  * <P>
- * In addition to the curve shape, the visual appearance of a {@link Connection}
- * can be controlled via start and end decorations. They will be rendered
- * 'on-top' of the curve shape and the curve shape will be properly clipped at
- * the decorations (so it does not paint through).
+ * In addition to the curveProperty shape, the visual appearance of a
+ * {@link Connection} can be controlled via start and end decorations. They will
+ * be rendered 'on-top' of the curveProperty shape and the curveProperty shape
+ * will be properly clipped at the decorations (so it does not paint through).
  *
  * @author mwienand
  * @author anyssen
@@ -236,10 +236,7 @@ public class Connection extends Group {
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
-	// visuals
-	// TODO use Node property for curve node (and make it exchangeable)
-	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
-
+	private ObjectProperty<Node> curveProperty = new SimpleObjectProperty<>();
 	private ObjectProperty<Node> startDecorationProperty = null;
 	private ObjectProperty<Node> endDecorationProperty = null;
 
@@ -353,18 +350,36 @@ public class Connection extends Group {
 					}
 				});
 
-		// add the curve node
-		curveNode.localToParentTransformProperty()
-				.addListener(new ChangeListener<Transform>() {
+		curveProperty.addListener(new ChangeListener<Node>() {
+			private ChangeListener<Transform> transformListener = new ChangeListener<Transform>() {
 
-					@Override
-					public void changed(
-							ObservableValue<? extends Transform> observable,
-							Transform oldValue, Transform newValue) {
-						refresh();
-					}
-				});
-		getChildren().add(curveNode);
+				@Override
+				public void changed(
+						ObservableValue<? extends Transform> observable,
+						Transform oldValue, Transform newValue) {
+					refresh();
+				}
+			};
+
+			@Override
+			public void changed(ObservableValue<? extends Node> observable,
+					Node oldValue, Node newValue) {
+				if (oldValue != null) {
+					getChildren().remove(oldValue);
+					oldValue.localToParentTransformProperty()
+							.removeListener(transformListener);
+				}
+				if (newValue != null) {
+					newValue.localToParentTransformProperty()
+							.removeListener(transformListener);
+					getChildren().add(newValue);
+				}
+				refresh();
+			}
+		});
+
+		// set default curve
+		setCurve(new GeometryNode<ICurve>());
 	}
 
 	/**
@@ -385,9 +400,9 @@ public class Connection extends Group {
 		if (anchorKey == null) {
 			throw new IllegalArgumentException("anchorKey may not be null.");
 		}
-		if (anchorKey.getAnchored() != getCurveNode()) {
+		if (anchorKey.getAnchored() != getCurve()) {
 			throw new IllegalArgumentException(
-					"anchorKey may only be anchored to curve node");
+					"anchorKey may only be anchored to curveProperty node");
 		}
 		if (!anchorsByKeys.containsKey(anchorKey)) {
 			if (sortedAnchorKeys.contains(anchorKey)) {
@@ -440,7 +455,7 @@ public class Connection extends Group {
 		// update lists
 		anchors.add(getAnchorIndex(anchorKey), anchor);
 		points.add(getAnchorIndex(anchorKey),
-				FX2Geometry.toPoint(getCurveNode().localToParent(
+				FX2Geometry.toPoint(getCurve().localToParent(
 						Geometry2FX.toFXPoint(anchor.getPosition(anchorKey)))));
 
 		if (!anchorKey.equals(getStartAnchorKey())
@@ -457,7 +472,7 @@ public class Connection extends Group {
 
 				anchors.add(getAnchorIndex(ak), a);
 				points.add(getAnchorIndex(ak),
-						FX2Geometry.toPoint(getCurveNode().localToParent(
+						FX2Geometry.toPoint(getCurve().localToParent(
 								Geometry2FX.toFXPoint(a.getPosition(ak)))));
 
 				registerPCL(ak, a);
@@ -541,8 +556,8 @@ public class Connection extends Group {
 					MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 				if (change.getKey().equals(anchorKey)) {
 					if (change.wasAdded() && change.wasRemoved()) {
-						Point newPoint = FX2Geometry.toPoint(
-								getCurveNode().localToParent(Geometry2FX
+						Point newPoint = FX2Geometry
+								.toPoint(getCurve().localToParent(Geometry2FX
 										.toFXPoint(change.getValueAdded())));
 						if (!points.get(getAnchorIndex(anchorKey))
 								.equals(newPoint)) {
@@ -553,6 +568,15 @@ public class Connection extends Group {
 				}
 			}
 		};
+	}
+
+	/**
+	 * Returns a property wrapping the curve {@link Node}.
+	 *
+	 * @return The curve {@link Node} used to visualize the connection.
+	 */
+	public ObjectProperty<Node> curveProperty() {
+		return curveProperty;
 	}
 
 	/**
@@ -623,8 +647,8 @@ public class Connection extends Group {
 
 	/**
 	 * Computes the 'logical' center point of the {@link Connection}, which is
-	 * the middle control point position (in case the curve consists of an even
-	 * number of segment) or the middle point of the middle segment.
+	 * the middle control point position (in case the curveProperty consists of
+	 * an even number of segment) or the middle point of the middle segment.
 	 *
 	 * @return The logical center of this {@link Connection}.
 	 */
@@ -632,10 +656,9 @@ public class Connection extends Group {
 	// exchange the logic
 	public Point getCenter() {
 		BezierCurve[] bezierCurves = null;
-		if (curveNode instanceof GeometryNode
-				&& ((GeometryNode<?>) getCurveNode())
-						.getGeometry() instanceof ICurve) {
-			bezierCurves = ((ICurve) ((GeometryNode<?>) getCurveNode())
+		if (getCurve() instanceof GeometryNode && ((GeometryNode<?>) getCurve())
+				.getGeometry() instanceof ICurve) {
+			bezierCurves = ((ICurve) ((GeometryNode<?>) getCurve())
 					.getGeometry()).toBezier();
 		} else {
 			bezierCurves = PolyBezier
@@ -697,7 +720,7 @@ public class Connection extends Group {
 	 * @return The {@link AnchorKey} for the given control anchor index.
 	 */
 	protected AnchorKey getControlAnchorKey(int index) {
-		return new AnchorKey(getCurveNode(), CONTROL_POINT_ROLE_PREFIX + index);
+		return new AnchorKey(getCurve(), CONTROL_POINT_ROLE_PREFIX + index);
 	}
 
 	/**
@@ -751,7 +774,7 @@ public class Connection extends Group {
 		if (!anchor.isAttached(getControlAnchorKey(index))) {
 			return null;
 		}
-		return FX2Geometry.toPoint(getCurveNode().localToParent(Geometry2FX
+		return FX2Geometry.toPoint(getCurve().localToParent(Geometry2FX
 				.toFXPoint(anchor.getPosition(getControlAnchorKey(index)))));
 	}
 
@@ -772,12 +795,13 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns the {@link GeometryNode} which displays the curve geometry.
+	 * Returns the {@link Node} which displays the curveProperty geometry. Will
+	 * be a {@link GeometryNode} by default.
 	 *
-	 * @return The {@link GeometryNode} which displays the curve geometry.
+	 * @return The {@link Node} which displays the curveProperty geometry.
 	 */
-	public GeometryNode<ICurve> getCurveNode() {
-		return curveNode;
+	public Node getCurve() {
+		return curveProperty.get();
 	}
 
 	/**
@@ -793,14 +817,14 @@ public class Connection extends Group {
 
 	/**
 	 * Returns the end {@link AnchorKey} for this {@link Connection}. An end
-	 * {@link AnchorKey} uses the {@link #getCurveNode() curve node} as its
+	 * {@link AnchorKey} uses the {@link #getCurve() curveProperty node} as its
 	 * anchored and <code>"end"</code> as its role.
 	 *
 	 * @return The end {@link AnchorKey} for this {@link Connection}.
 	 */
 	// TODO: AnchorKeys should not be exposed -> make protected
 	public AnchorKey getEndAnchorKey() {
-		return new AnchorKey(getCurveNode(), END_ROLE);
+		return new AnchorKey(getCurve(), END_ROLE);
 	}
 
 	/**
@@ -835,7 +859,7 @@ public class Connection extends Group {
 		if (!anchor.isAttached(getEndAnchorKey())) {
 			return null;
 		}
-		return FX2Geometry.toPoint(getCurveNode().localToParent(
+		return FX2Geometry.toPoint(getCurve().localToParent(
 				Geometry2FX.toFXPoint(anchor.getPosition(getEndAnchorKey()))));
 	}
 
@@ -896,14 +920,14 @@ public class Connection extends Group {
 
 	/**
 	 * Returns the start {@link AnchorKey} for this {@link Connection}. A start
-	 * {@link AnchorKey} uses the {@link #getCurveNode() curve node} as its
+	 * {@link AnchorKey} uses the {@link #getCurve() curveProperty node} as its
 	 * anchored and <code>"start"</code> as its role.
 	 *
 	 * @return The start {@link AnchorKey} for this {@link Connection}.
 	 */
 	// TODO: AnchorKeys should not be exposed -> make protected
 	public AnchorKey getStartAnchorKey() {
-		return new AnchorKey(getCurveNode(), START_ROLE);
+		return new AnchorKey(getCurve(), START_ROLE);
 	}
 
 	/**
@@ -938,7 +962,7 @@ public class Connection extends Group {
 		if (!anchor.isAttached(getStartAnchorKey())) {
 			return null;
 		}
-		return FX2Geometry.toPoint(getCurveNode().localToParent(Geometry2FX
+		return FX2Geometry.toPoint(getCurve().localToParent(Geometry2FX
 				.toFXPoint(anchor.getPosition(getStartAnchorKey()))));
 	}
 
@@ -1046,22 +1070,23 @@ public class Connection extends Group {
 	 * this {@link Connection},</li>
 	 * <li>computes an {@link ICurve} geometry through those {@link Point}s
 	 * using the {@link IConnectionRouter} of this {@link Connection},</li>
-	 * <li>replaces the geometry of the {@link #getCurveNode() curve node} with
-	 * that {@link ICurve},</li>
+	 * <li>replaces the geometry of the {@link #getCurve() curveProperty node}
+	 * with that {@link ICurve},</li>
 	 * <li>arranges the {@link #getStartDecoration() start decoration} and
 	 * {@link #getEndDecoration() end decoration} of this {@link Connection}.
 	 * </li>
 	 * </ol>
 	 */
 	protected void refresh() {
-		// guard against recomputing the curve while recomputing the curve
+		// guard against recomputing the curveProperty while recomputing the
+		// curveProperty
 		if (inRefresh) {
 			return;
 		}
 		inRefresh = true;
 
-		// clear visuals except for the curveNode
-		getChildren().retainAll(curveNode);
+		// clear visuals except for the curveProperty
+		getChildren().retainAll(getCurve());
 
 		// update our anchorsByKeys/points
 		if (getRouter() != null) {
@@ -1071,7 +1096,7 @@ public class Connection extends Group {
 					"An IConnectionRouter is mandatory for a Connection.");
 		}
 
-		// z-order decorations above curve
+		// z-order decorations above curveProperty
 		if (getStartDecoration() != null) {
 			getChildren().add(getStartDecoration());
 		}
@@ -1079,7 +1104,7 @@ public class Connection extends Group {
 			getChildren().add(getEndDecoration());
 		}
 
-		// update the curve node, arrange and clip the decorations
+		// update the curveProperty node, arrange and clip the decorations
 		if (getInterpolator() != null) {
 			getInterpolator().interpolate(this);
 		} else {
@@ -1209,7 +1234,7 @@ public class Connection extends Group {
 
 				anchors.add(getAnchorIndex(ak), a);
 				points.add(getAnchorIndex(ak),
-						FX2Geometry.toPoint(getCurveNode().localToParent(
+						FX2Geometry.toPoint(getCurve().localToParent(
 								Geometry2FX.toFXPoint(a.getPosition(ak)))));
 
 				registerPCL(ak, a);
@@ -1285,9 +1310,9 @@ public class Connection extends Group {
 		if (anchorKey == null) {
 			throw new IllegalArgumentException("anchorKey may not be null.");
 		}
-		if (anchorKey.getAnchored() != getCurveNode()) {
+		if (anchorKey.getAnchored() != getCurve()) {
 			throw new IllegalArgumentException(
-					"anchorKey may only be anchored to curve node");
+					"anchorKey may only be anchored to curveProperty node");
 		}
 		if (!anchorsByKeys.containsKey(anchorKey)) {
 			if (sortedAnchorKeys.contains(anchorKey)) {
@@ -1313,7 +1338,7 @@ public class Connection extends Group {
 		int anchorIndex = getAnchorIndex(anchorKey);
 		anchors.set(anchorIndex, anchor);
 		// update position (if changed)
-		Point newPosition = FX2Geometry.toPoint(getCurveNode().localToParent(
+		Point newPosition = FX2Geometry.toPoint(getCurve().localToParent(
 				Geometry2FX.toFXPoint(anchor.getPosition(anchorKey))));
 		if (!newPosition.equals(points.get(anchorIndex))) {
 			points.set(anchorIndex, newPosition);
@@ -1452,6 +1477,16 @@ public class Connection extends Group {
 		}
 		inRefresh = oldInRefresh;
 		refresh();
+	}
+
+	/**
+	 * Sets the {@link Node} that is used to render the connection.
+	 *
+	 * @param curve
+	 *            The new curveProperty node.
+	 */
+	public void setCurve(Node curve) {
+		this.curveProperty.set(curve);
 	}
 
 	/**

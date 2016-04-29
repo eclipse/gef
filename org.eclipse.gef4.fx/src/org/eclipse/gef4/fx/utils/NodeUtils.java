@@ -121,7 +121,7 @@ public class NodeUtils {
 	 */
 	public static IGeometry getGeometricOutline(Node visual) {
 		if (visual instanceof Connection) {
-			Node curveNode = ((Connection) visual).getCurveNode();
+			Node curveNode = ((Connection) visual).getCurve();
 			return localToParent(curveNode, getGeometricOutline(curveNode));
 		} else if (visual instanceof GeometryNode) {
 			return ((GeometryNode<?>) visual).getGeometry();

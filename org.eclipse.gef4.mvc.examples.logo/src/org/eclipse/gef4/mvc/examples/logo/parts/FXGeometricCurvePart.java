@@ -22,6 +22,7 @@ import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.nodes.PolyBezierInterpolator;
 import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
@@ -181,7 +182,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 	protected Connection createVisual() {
 		Connection visual = new Connection();
 		visual.setInterpolator(new PolyBezierInterpolator());
-		visual.getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
+		((GeometryNode<?>) visual.getCurve()).setStrokeLineCap(StrokeLineCap.BUTT);
 		return visual;
 	}
 
@@ -314,8 +315,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		Shape endDecorationVisual = (Shape) visual.getEndDecoration();
 
 		// stroke paint
-		if (visual.getCurveNode().getStroke() != content.getStroke()) {
-			visual.getCurveNode().setStroke(content.getStroke());
+		if (((GeometryNode<?>) visual.getCurve()).getStroke() != content.getStroke()) {
+			((GeometryNode<?>) visual.getCurve()).setStroke(content.getStroke());
 		}
 		if (startDecorationVisual != null && startDecorationVisual.getStroke() != content.getStroke()) {
 			startDecorationVisual.setStroke(content.getStroke());
@@ -325,8 +326,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		}
 
 		// stroke width
-		if (visual.getCurveNode().getStrokeWidth() != content.getStrokeWidth()) {
-			visual.getCurveNode().setStrokeWidth(content.getStrokeWidth());
+		if (((GeometryNode<?>) visual.getCurve()).getStrokeWidth() != content.getStrokeWidth()) {
+			((GeometryNode<?>) visual.getCurve()).setStrokeWidth(content.getStrokeWidth());
 		}
 		if (startDecorationVisual != null && startDecorationVisual.getStrokeWidth() != content.getStrokeWidth()) {
 			startDecorationVisual.setStrokeWidth(content.getStrokeWidth());
@@ -340,8 +341,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		for (double d : content.getDashes()) {
 			dashList.add(d);
 		}
-		if (!visual.getCurveNode().getStrokeDashArray().equals(dashList)) {
-			visual.getCurveNode().getStrokeDashArray().setAll(dashList);
+		if (!((GeometryNode<?>) visual.getCurve()).getStrokeDashArray().equals(dashList)) {
+			((GeometryNode<?>) visual.getCurve()).getStrokeDashArray().setAll(dashList);
 		}
 
 		// connection router
