@@ -1836,7 +1836,7 @@ public class FXBendConnectionPolicyTests {
 
 		// check that segment is "unsnapped", i.e. end point is still on initial
 		// y coordinate
-		Point endPositionHint = connection.getVisual().getEndPositionHint();
+		Point endPositionHint = connection.getVisual().getEndPointHint();
 		assertEquals(connection.getVisual().getEndPoint().y, endPositionHint.y, 0.5);
 		// TODO: Ensure position hints are correctly restored.
 

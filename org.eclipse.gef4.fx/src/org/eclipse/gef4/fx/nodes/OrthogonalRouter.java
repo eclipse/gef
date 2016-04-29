@@ -320,9 +320,9 @@ public class OrthogonalRouter extends AbstractRouter {
 				// XXX: if a position hint is supplied for the current index,
 				// return that hint as the reference point.
 				AnchorKey anchorKey = connection.getAnchorKey(index);
-				if (connection.positionHintsByKeysProperty()
+				if (connection.pointHintsByKeysProperty()
 						.containsKey(anchorKey)) {
-					return connection.positionHintsByKeysProperty()
+					return connection.pointHintsByKeysProperty()
 							.get(anchorKey);
 				}
 

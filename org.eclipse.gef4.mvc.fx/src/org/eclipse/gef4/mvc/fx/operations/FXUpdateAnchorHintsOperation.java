@@ -40,10 +40,10 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 	public FXUpdateAnchorHintsOperation(Connection connection) {
 		super("UpdateAnchorHints()");
 		this.connection = connection;
-		this.initialStartHint = connection.getStartPositionHint() == null ? null
-				: connection.getStartPositionHint().getCopy();
-		this.initialEndHint = connection.getEndPositionHint() == null ? null
-				: connection.getEndPositionHint().getCopy();
+		this.initialStartHint = connection.getStartPointHint() == null ? null
+				: connection.getStartPointHint().getCopy();
+		this.initialEndHint = connection.getEndPointHint() == null ? null
+				: connection.getEndPointHint().getCopy();
 		this.newStartHint = initialStartHint == null ? null
 				: initialStartHint.getCopy();
 		this.newEndHint = initialEndHint == null ? null
@@ -81,13 +81,13 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 	}
 
 	private void setHints(Point startHint, Point endHint) {
-		Point currentStartHint = connection.getStartPositionHint();
+		Point currentStartHint = connection.getStartPointHint();
 		if (currentStartHint == null || !currentStartHint.equals(startHint)) {
-			connection.setStartPositionHint(startHint);
+			connection.setStartPointHint(startHint);
 		}
-		Point currentEndHint = connection.getEndPositionHint();
+		Point currentEndHint = connection.getEndPointHint();
 		if (currentEndHint == null || !currentEndHint.equals(endHint)) {
-			connection.setEndPositionHint(endHint);
+			connection.setEndPointHint(endHint);
 		}
 	}
 

@@ -238,7 +238,7 @@ public class Connection extends Group {
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
-	private ReadOnlyMapWrapperEx<AnchorKey, Point> positionHintsByKeysProperty = new ReadOnlyMapWrapperEx<>(
+	private ReadOnlyMapWrapperEx<AnchorKey, Point> pointHintsByKeysProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 
 	private ObjectProperty<Node> curveProperty = new SimpleObjectProperty<>();
@@ -880,9 +880,9 @@ public class Connection extends Group {
 	 * @return The currently set end position hint or <code>null</code> if no
 	 *         hint is present.
 	 */
-	public Point getEndPositionHint() {
-		if (positionHintsByKeysProperty.containsKey(getEndAnchorKey())) {
-			return positionHintsByKeysProperty.get(getEndAnchorKey());
+	public Point getEndPointHint() {
+		if (pointHintsByKeysProperty.containsKey(getEndAnchorKey())) {
+			return pointHintsByKeysProperty.get(getEndAnchorKey());
 		}
 		return null;
 	}
@@ -997,9 +997,9 @@ public class Connection extends Group {
 	 * @return The currently set start position hint or <code>null</code> if no
 	 *         hint is present.
 	 */
-	public Point getStartPositionHint() {
-		if (positionHintsByKeysProperty.containsKey(getStartAnchorKey())) {
-			return positionHintsByKeysProperty.get(getStartAnchorKey());
+	public Point getStartPointHint() {
+		if (pointHintsByKeysProperty.containsKey(getStartAnchorKey())) {
+			return pointHintsByKeysProperty.get(getStartAnchorKey());
 		}
 		return null;
 	}
@@ -1108,8 +1108,8 @@ public class Connection extends Group {
 	 * @return A {@link ReadOnlyMapProperty} for the position hints by anchor
 	 *         keys.
 	 */
-	protected ReadOnlyMapProperty<AnchorKey, Point> positionHintsByKeysProperty() {
-		return positionHintsByKeysProperty.getReadOnlyProperty();
+	protected ReadOnlyMapProperty<AnchorKey, Point> pointHintsByKeysProperty() {
+		return pointHintsByKeysProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -1129,7 +1129,7 @@ public class Connection extends Group {
 				throw new IllegalStateException(
 						"Re-attach failed: no previous curve, but anchor keys present.");
 			}
-			if (!positionHintsByKeysProperty.isEmpty()) {
+			if (!pointHintsByKeysProperty.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no previous curve, but anchor keys present.");
 			}
@@ -1145,7 +1145,7 @@ public class Connection extends Group {
 				throw new IllegalStateException(
 						"Re-attach failed: no new curve, but anchor keys present.");
 			}
-			if (!positionHintsByKeysProperty.isEmpty()) {
+			if (!pointHintsByKeysProperty.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no new curve, but anchor keys present.");
 			}
@@ -1171,9 +1171,9 @@ public class Connection extends Group {
 				newSortedKeys.add(newAk);
 
 				// update position hint
-				if (positionHintsByKeysProperty.containsKey(oldAk)) {
-					positionHintsByKeysProperty.put(newAk,
-							positionHintsByKeysProperty.remove(oldAk));
+				if (pointHintsByKeysProperty.containsKey(oldAk)) {
+					pointHintsByKeysProperty.put(newAk,
+							pointHintsByKeysProperty.remove(oldAk));
 				}
 				// XXX: anchors and points are staying the same, no need to
 				// update
@@ -1672,13 +1672,13 @@ public class Connection extends Group {
 	 * @param endPositionHint
 	 *            The new end position hint.
 	 */
-	public void setEndPositionHint(Point endPositionHint) {
+	public void setEndPointHint(Point endPositionHint) {
 		if (endPositionHint == null) {
-			if (positionHintsByKeysProperty.containsKey(getEndAnchorKey())) {
-				positionHintsByKeysProperty.remove(getEndAnchorKey());
+			if (pointHintsByKeysProperty.containsKey(getEndAnchorKey())) {
+				pointHintsByKeysProperty.remove(getEndAnchorKey());
 			}
 		} else {
-			positionHintsByKeysProperty.put(getEndAnchorKey(), endPositionHint);
+			pointHintsByKeysProperty.put(getEndAnchorKey(), endPositionHint);
 		}
 	}
 
@@ -1795,13 +1795,13 @@ public class Connection extends Group {
 	 * @param startPositionHint
 	 *            The new start position hint.
 	 */
-	public void setStartPositionHint(Point startPositionHint) {
+	public void setStartPointHint(Point startPositionHint) {
 		if (startPositionHint == null) {
-			if (positionHintsByKeysProperty.containsKey(getStartAnchorKey())) {
-				positionHintsByKeysProperty.remove(getStartAnchorKey());
+			if (pointHintsByKeysProperty.containsKey(getStartAnchorKey())) {
+				pointHintsByKeysProperty.remove(getStartAnchorKey());
 			}
 		} else {
-			positionHintsByKeysProperty.put(getStartAnchorKey(),
+			pointHintsByKeysProperty.put(getStartAnchorKey(),
 					startPositionHint);
 		}
 	}

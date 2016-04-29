@@ -312,7 +312,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				visual.setStartPoint(startPoint);
 			}
 		} else {
-			visual.setStartPositionHint(startPoint);
+			visual.setStartPointHint(startPoint);
 		}
 
 		// end point or hint
@@ -322,7 +322,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				visual.setEndPoint(endPoint);
 			}
 		} else {
-			visual.setEndPositionHint(endPoint);
+			visual.setEndPointHint(endPoint);
 		}
 
 		// control points
