@@ -240,8 +240,8 @@ public class Connection extends Group {
 	// TODO use Node property for curve node (and make it exchangeable)
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
 
-	private ObjectProperty<Node> startDecorationProperty = new SimpleObjectProperty<>();
-	private ObjectProperty<Node> endDecorationProperty = new SimpleObjectProperty<>();
+	private ObjectProperty<Node> startDecorationProperty = null;
+	private ObjectProperty<Node> endDecorationProperty = null;
 
 	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
 			new StraightRouter());
@@ -289,6 +289,41 @@ public class Connection extends Group {
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
 
+	private ChangeListener<Node> decorationListener = new ChangeListener<Node>() {
+
+		final ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable,
+					Bounds oldValue, Bounds newValue) {
+				// refresh decoration clip in case the layout bounds of
+				// the decorations have changed
+				refresh();
+			}
+		};
+
+		@Override
+		public void changed(ObservableValue<? extends Node> observable,
+				Node oldValue, Node newValue) {
+			if (oldValue != null) {
+				oldValue.layoutBoundsProperty()
+						.removeListener(decorationLayoutBoundsListener);
+				ObservableList<String> styleClasses = oldValue.getStyleClass();
+				if (styleClasses.contains(CSS_CLASS_DECORATION)) {
+					styleClasses.remove(CSS_CLASS_DECORATION);
+				}
+			}
+			if (newValue != null) {
+				newValue.layoutBoundsProperty()
+						.addListener(decorationLayoutBoundsListener);
+				ObservableList<String> styleClasses = newValue.getStyleClass();
+				if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
+					styleClasses.add(CSS_CLASS_DECORATION);
+				}
+			}
+			refresh();
+		}
+	};
+
 	/**
 	 * Constructs a new {@link Connection} whose start and end point are set to
 	 * <code>null</code>.
@@ -297,17 +332,6 @@ public class Connection extends Group {
 		// disable resizing children which would change their layout positions
 		// in some cases
 		setAutoSizeChildren(false);
-
-		curveNode.localToParentTransformProperty()
-				.addListener(new ChangeListener<Transform>() {
-
-					@Override
-					public void changed(
-							ObservableValue<? extends Transform> observable,
-							Transform oldValue, Transform newValue) {
-						refresh();
-					}
-				});
 
 		routerProperty.addListener(new ChangeListener<IConnectionRouter>() {
 			@Override
@@ -329,47 +353,17 @@ public class Connection extends Group {
 					}
 				});
 
-		ChangeListener<Node> decorationListener = new ChangeListener<Node>() {
-
-			final ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
-				@Override
-				public void changed(
-						ObservableValue<? extends Bounds> observable,
-						Bounds oldValue, Bounds newValue) {
-					// refresh decoration clip in case the layout bounds of
-					// the decorations have changed
-					refresh();
-				}
-			};
-
-			@Override
-			public void changed(ObservableValue<? extends Node> observable,
-					Node oldValue, Node newValue) {
-				if (oldValue != null) {
-					oldValue.layoutBoundsProperty()
-							.removeListener(decorationLayoutBoundsListener);
-					ObservableList<String> styleClasses = oldValue
-							.getStyleClass();
-					if (styleClasses.contains(CSS_CLASS_DECORATION)) {
-						styleClasses.remove(CSS_CLASS_DECORATION);
-					}
-				}
-				if (newValue != null) {
-					newValue.layoutBoundsProperty()
-							.addListener(decorationLayoutBoundsListener);
-					ObservableList<String> styleClasses = newValue
-							.getStyleClass();
-					if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
-						styleClasses.add(CSS_CLASS_DECORATION);
-					}
-				}
-				refresh();
-			}
-		};
-		startDecorationProperty.addListener(decorationListener);
-		endDecorationProperty.addListener(decorationListener);
-
 		// add the curve node
+		curveNode.localToParentTransformProperty()
+				.addListener(new ChangeListener<Transform>() {
+
+					@Override
+					public void changed(
+							ObservableValue<? extends Transform> observable,
+							Transform oldValue, Transform newValue) {
+						refresh();
+					}
+				});
 		getChildren().add(curveNode);
 	}
 
@@ -559,6 +553,20 @@ public class Connection extends Group {
 				}
 			}
 		};
+	}
+
+	/**
+	 * Returns an {@link ObjectProperty} wrapping the end decoration
+	 * {@link Node}.
+	 *
+	 * @return A property wrapping the end decoration.
+	 */
+	public ObjectProperty<Node> endDecorationProperty() {
+		if (endDecorationProperty == null) {
+			endDecorationProperty = new SimpleObjectProperty<>();
+			endDecorationProperty.addListener(decorationListener);
+		}
+		return endDecorationProperty;
 	}
 
 	/**
@@ -802,6 +810,9 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Node getEndDecoration() {
+		if (endDecorationProperty == null) {
+			return null;
+		}
 		return endDecorationProperty.get();
 	}
 
@@ -901,6 +912,9 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Node getStartDecoration() {
+		if (startDecorationProperty == null) {
+			return null;
+		}
 		return startDecorationProperty.get();
 	}
 
@@ -1339,6 +1353,8 @@ public class Connection extends Group {
 		refresh();
 	}
 
+	// TODO: offer setPoints()
+
 	/**
 	 * Sets the control anchor for the given control anchor index to the given
 	 * {@link IAnchor}.
@@ -1366,8 +1382,6 @@ public class Connection extends Group {
 			}
 		}
 	}
-
-	// TODO: offer setPoints()
 
 	/**
 	 * Replaces all control anchorsByKeys of this {@link Connection} with the
@@ -1470,7 +1484,7 @@ public class Connection extends Group {
 	 *            {@link Connection}.
 	 */
 	public void setEndDecoration(Node decoration) {
-		endDecorationProperty.set(decoration);
+		endDecorationProperty().set(decoration);
 	}
 
 	/**
@@ -1544,7 +1558,7 @@ public class Connection extends Group {
 	 *            {@link Connection}.
 	 */
 	public void setStartDecoration(Node decoration) {
-		startDecorationProperty.set(decoration);
+		startDecorationProperty().set(decoration);
 	}
 
 	/**
@@ -1561,6 +1575,20 @@ public class Connection extends Group {
 		}
 		IAnchor anchor = new StaticAnchor(this, startPointInLocal);
 		setStartAnchor(anchor);
+	}
+
+	/**
+	 * Returns an {@link ObjectProperty} wrapping the start decoration
+	 * {@link Node}.
+	 *
+	 * @return An Object Property wrapping the start decoration.
+	 */
+	public ObjectProperty<Node> startDecorationProperty() {
+		if (startDecorationProperty == null) {
+			startDecorationProperty = new SimpleObjectProperty<>();
+			startDecorationProperty.addListener(decorationListener);
+		}
+		return startDecorationProperty;
 	}
 
 	private void unregisterPCL(AnchorKey anchorKey, IAnchor anchor) {
