@@ -40,7 +40,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
-import org.eclipse.gef4.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -78,6 +77,7 @@ import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
 import org.eclipse.gef4.zest.fx.policies.TransformLabelPolicy;
 import org.eclipse.gef4.zest.fx.policies.TranslateSelectedAndRelocateLabelsOnDragPolicy;
+import org.eclipse.gef4.zest.fx.providers.NodePartAnchorProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Provider;
@@ -413,7 +413,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
 
 		// anchor provider
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DefaultAnchorProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodePartAnchorProvider.class);
 
 		// feedback and handles
 		adapterMapBinder
