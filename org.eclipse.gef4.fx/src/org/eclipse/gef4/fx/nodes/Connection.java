@@ -494,14 +494,14 @@ public class Connection extends Group {
 	 * @param index
 	 *            The position where the {@link IAnchor} is inserted within the
 	 *            control point anchorsByKeys of this {@link Connection}.
-	 * @param controlPointInLocal
+	 * @param controlPoint
 	 *            The position for the specified control point.
 	 */
-	public void addControlPoint(int index, Point controlPointInLocal) {
-		if (controlPointInLocal == null) {
-			controlPointInLocal = new Point();
+	public void addControlPoint(int index, Point controlPoint) {
+		if (controlPoint == null) {
+			throw new IllegalArgumentException("controlPoint may not be null.");
 		}
-		IAnchor anchor = new StaticAnchor(this, controlPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, controlPoint);
 		addControlAnchor(index, anchor);
 	}
 
@@ -742,6 +742,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getControlPoint(int index) {
+		// TODO: retrieve from pointsUnmodifiable list rather then computing it.
 		IAnchor anchor = getControlAnchor(index);
 		if (anchor == null) {
 			throw new IllegalArgumentException(
@@ -826,6 +827,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getEndPoint() {
+		// TODO: retrieve from pointsUnmodifiable list rather then computing it.
 		IAnchor anchor = getEndAnchor();
 		if (anchor == null) {
 			return null;
@@ -928,6 +930,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getStartPoint() {
+		// TODO: retrieve from pointsUnmodifiable list rather then computing it.
 		IAnchor anchor = getStartAnchor();
 		if (anchor == null) {
 			return null;
@@ -1321,12 +1324,11 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Replaces all {@link #getAnchorsUnmodifiable() anchorsByKeys} of this
-	 * {@link Connection} with the given {@link IAnchor}s, i.e. the first given
-	 * {@link IAnchor} replaces the currently assigned start anchor, the last
-	 * given {@link IAnchor} replaces the currently assigned end anchor, and the
-	 * intermediate {@link IAnchor}s replace the currently assigned control
-	 * anchorsByKeys.
+	 * Replaces all anchors of this {@link Connection} with the given
+	 * {@link IAnchor}s, i.e. the first given {@link IAnchor} replaces the
+	 * currently assigned start anchor, the last given {@link IAnchor} replaces
+	 * the currently assigned end anchor, and the intermediate {@link IAnchor}s
+	 * replace the currently assigned control anchorsByKeys.
 	 *
 	 * @param anchors
 	 *            The new {@link IAnchor}s for this {@link Connection}.
@@ -1352,8 +1354,6 @@ public class Connection extends Group {
 		inRefresh = oldInRefresh;
 		refresh();
 	}
-
-	// TODO: offer setPoints()
 
 	/**
 	 * Sets the control anchor for the given control anchor index to the given
@@ -1415,14 +1415,16 @@ public class Connection extends Group {
 	 *
 	 * @param index
 	 *            The control anchor index of the control anchor to replace.
-	 * @param controlPointInLocal
-	 *            The new control {@link Point} for that index.
+	 * @param controlPoint
+	 *            The new control {@link Point} for the respective index within
+	 *            local coordinates of the {@link Connection}.
 	 */
-	public void setControlPoint(int index, Point controlPointInLocal) {
-		if (controlPointInLocal == null) {
-			controlPointInLocal = new Point();
+	public void setControlPoint(int index, Point controlPoint) {
+		if (controlPoint == null) {
+			throw new IllegalArgumentException(
+					"control point may not be null.");
 		}
-		IAnchor anchor = new StaticAnchor(this, controlPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, controlPoint);
 		setControlAnchor(index, anchor);
 	}
 
@@ -1492,14 +1494,15 @@ public class Connection extends Group {
 	 * {@link Connection} to an {@link StaticAnchor} yielding the given
 	 * {@link Point}.
 	 *
-	 * @param endPointInLocal
-	 *            The new end {@link Point} for this {@link Connection}.
+	 * @param endPoint
+	 *            The new end {@link Point} within local coordinates of the
+	 *            {@link Connection}.
 	 */
-	public void setEndPoint(Point endPointInLocal) {
-		if (endPointInLocal == null) {
-			endPointInLocal = new Point();
+	public void setEndPoint(Point endPoint) {
+		if (endPoint == null) {
+			throw new IllegalArgumentException("endPoint may not be null.");
 		}
-		IAnchor anchor = new StaticAnchor(this, endPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, endPoint);
 		setEndAnchor(anchor);
 	}
 
@@ -1513,6 +1516,38 @@ public class Connection extends Group {
 	 */
 	public void setInterpolator(IConnectionInterpolator interpolator) {
 		interpolatorProperty.set(interpolator);
+	}
+
+	/**
+	 * Replaces all anchors of this {@link Connection} with the given
+	 * {@link IAnchor}s, i.e. the first given {@link IAnchor} replaces the
+	 * currently assigned start anchor, the last given {@link IAnchor} replaces
+	 * the currently assigned end anchor, and the intermediate {@link IAnchor}s
+	 * replace the currently assigned control anchorsByKeys.
+	 *
+	 * @param points
+	 *            The new {@link Point}s for this {@link Connection}.
+	 * @throws IllegalArgumentException
+	 *             when less than 2 {@link IAnchor}s are given.
+	 */
+	public void setPoints(List<Point> points) {
+		if (points.size() < 2) {
+			throw new IllegalArgumentException(
+					"At least two points have to be provided.");
+		}
+
+		// prevent refresh before all points are properly set
+		boolean oldInRefresh = inRefresh;
+		inRefresh = true;
+		setStartPoint(points.get(0));
+		if (points.size() > 2) {
+			setControlPoints(points.subList(1, points.size() - 1));
+		} else {
+			removeAllControlPoints();
+		}
+		setEndPoint(points.get(points.size() - 1));
+		inRefresh = oldInRefresh;
+		refresh();
 	}
 
 	/**
@@ -1566,14 +1601,15 @@ public class Connection extends Group {
 	 * {@link Connection} to an {@link StaticAnchor} yielding the given
 	 * {@link Point}.
 	 *
-	 * @param startPointInLocal
-	 *            The new start {@link Point} for this {@link Connection}.
+	 * @param startPoint
+	 *            The new start {@link Point} within local coordinates of the
+	 *            {@link Connection}.
 	 */
-	public void setStartPoint(Point startPointInLocal) {
-		if (startPointInLocal == null) {
-			startPointInLocal = new Point();
+	public void setStartPoint(Point startPoint) {
+		if (startPoint == null) {
+			throw new IllegalArgumentException("startPoint may not be null.");
 		}
-		IAnchor anchor = new StaticAnchor(this, startPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, startPoint);
 		setStartAnchor(anchor);
 	}
 
