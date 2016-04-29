@@ -146,7 +146,7 @@ public class StraightRouter extends AbstractRouter {
 	}
 
 	@Override
-	public boolean isImplicitAnchor(IAnchor anchor) {
+	public boolean wasInserted(IAnchor anchor) {
 		return false;
 	}
 

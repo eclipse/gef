@@ -141,7 +141,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
 		for (int i = 0; i < anchors.size(); i++) {
 			IAnchor a = anchors.get(i);
-			if (!connection.getRouter().isImplicitAnchor(a)) {
+			if (!connection.getRouter().wasInserted(a)) {
 				if (connection.isConnected(i)) {
 					bendPoints.add(new BendPoint(
 							FXBendConnectionPolicy.getAnchorageContent(
@@ -443,7 +443,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		for (int i = startConnectionIndex; i >= 0
 				&& i < anchors.size(); i += step) {
 			IAnchor anchor = anchors.get(i);
-			if (!router.isImplicitAnchor(anchor)) {
+			if (!router.wasInserted(anchor)) {
 				// found an explicit anchor => iterate explicit anchors to find
 				// the one with matching connection index
 				List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
@@ -631,7 +631,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 */
 	public boolean isExplicit(int connectionIndex) {
 		IAnchor anchor = getConnection().getAnchor(connectionIndex);
-		return !getConnection().getRouter().isImplicitAnchor(anchor);
+		return !getConnection().getRouter().wasInserted(anchor);
 	}
 
 	/**
@@ -867,7 +867,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		boolean removed = false;
 		for (int i = 1; i < anchors.size() - 1; i++) {
 			IAnchor anchor = anchors.get(i);
-			if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
+			if (!getConnection().getRouter().wasInserted(anchor)) {
 				// found an explicit anchor
 				explicitIndex++;
 
@@ -889,12 +889,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 							getConnection().localToScene(prev.x, prev.y));
 					// make previous and next explicit
 					if (getConnection().getRouter()
-							.isImplicitAnchor(anchors.get(i + 1))) {
+							.wasInserted(anchors.get(i + 1))) {
 						// make next explicit
 						makeExplicit(i + 1);
 					}
 					if (getConnection().getRouter()
-							.isImplicitAnchor(anchors.get(i - 1))) {
+							.wasInserted(anchors.get(i - 1))) {
 						// make previous explicit
 						// XXX: We need to insert a point manually here and
 						// cannot rely on makeExplicit() because the indices
@@ -1056,7 +1056,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
 				.size(); i++) {
 			IAnchor anchor = getConnection().getAnchor(i);
-			if (getConnection().getRouter().isImplicitAnchor(anchor)) {
+			if (getConnection().getRouter().wasInserted(anchor)) {
 				anchorsString = anchorsString + " - "
 						+ anchor.getClass().toString() + "["
 						+ getConnection().getPoint(i) + "],\n";

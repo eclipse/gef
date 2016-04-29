@@ -93,7 +93,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 		for (int i = 0; i < getConnection().getAnchorsUnmodifiable()
 				.size(); i++) {
 			IAnchor a = getConnection().getAnchor(i);
-			if (!getConnection().getRouter().isImplicitAnchor(a)) {
+			if (!getConnection().getRouter().wasInserted(a)) {
 				explicitCount++;
 			}
 			if (explicitCount == explicitAnchorIndex) {
@@ -144,7 +144,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 		Iterator<IAnchor> it = explicit.iterator();
 		while (it.hasNext()) {
 			IAnchor anchor = it.next();
-			if (connection.getRouter().isImplicitAnchor(anchor)) {
+			if (connection.getRouter().wasInserted(anchor)) {
 				it.remove();
 			}
 		}

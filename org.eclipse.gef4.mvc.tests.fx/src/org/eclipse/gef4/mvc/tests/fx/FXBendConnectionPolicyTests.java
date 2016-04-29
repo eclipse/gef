@@ -406,7 +406,7 @@ public class FXBendConnectionPolicyTests {
 
 		for (int i = 0; i < connection.getPointsUnmodifiable().size(); i++) {
 			IAnchor a = connection.getAnchor(i);
-			if (!connection.getRouter().isImplicitAnchor(a)) {
+			if (!connection.getRouter().wasInserted(a)) {
 				explicitCount++;
 			}
 			if (explicitCount == explicitAnchorIndex) {
@@ -436,7 +436,7 @@ public class FXBendConnectionPolicyTests {
 	public int countExplicit(Connection connection) {
 		int numExplicit = 0;
 		for (IAnchor anchor : connection.getAnchorsUnmodifiable()) {
-			if (!connection.getRouter().isImplicitAnchor(anchor)) {
+			if (!connection.getRouter().wasInserted(anchor)) {
 				numExplicit++;
 			}
 		}

@@ -33,19 +33,6 @@ import javafx.beans.property.ReadOnlyMapProperty;
 public interface IConnectionRouter {
 
 	/**
-	 * Returns <code>true</code> if the given {@link IAnchor} was added by this
-	 * {@link IConnectionRouter} during {@link #route(Connection)}. Otherwise
-	 * returns <code>false</code>.
-	 *
-	 * @param anchor
-	 *            The {@link IAnchor} that is tested for implicitness.
-	 * @return <code>true</code> if the given {@link IAnchor} is implicit,
-	 *         otherwise <code>false</code>.
-	 */
-	// TODO: rename to isRouterAnchor ?
-	public boolean isImplicitAnchor(IAnchor anchor);
-
-	/**
 	 * A {@link Map} that stores reference points for {@link AnchorKey}s.
 	 *
 	 * @return A {@link Map} that stores reference points for {@link AnchorKey}
@@ -65,5 +52,17 @@ public interface IConnectionRouter {
 	 *            The {@link Connection} to route.
 	 */
 	public void route(Connection connection);
+
+	/**
+	 * Returns <code>true</code> if the given {@link IAnchor} was added by this
+	 * {@link IConnectionRouter} during {@link #route(Connection)}. Otherwise
+	 * returns <code>false</code>.
+	 *
+	 * @param anchor
+	 *            The {@link IAnchor} that is tested for implicitness.
+	 * @return <code>true</code> if the given {@link IAnchor} is implicit,
+	 *         otherwise <code>false</code>.
+	 */
+	public boolean wasInserted(IAnchor anchor);
 
 }

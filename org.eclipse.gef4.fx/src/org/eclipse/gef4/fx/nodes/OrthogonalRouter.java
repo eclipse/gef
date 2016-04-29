@@ -404,7 +404,7 @@ public class OrthogonalRouter extends AbstractRouter {
 	}
 
 	@Override
-	public boolean isImplicitAnchor(IAnchor anchor) {
+	public boolean wasInserted(IAnchor anchor) {
 		return anchor instanceof OrthogonalPolylineRouterAnchor;
 	}
 
