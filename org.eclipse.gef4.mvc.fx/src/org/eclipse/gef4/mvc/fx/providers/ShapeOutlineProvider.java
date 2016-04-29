@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.providers;
 
-import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -30,8 +30,9 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class ShapeOutlineProvider extends
-		AbstractBoundProvider<IGeometry, IVisualPart<Node, ? extends Node>> {
+public class ShapeOutlineProvider
+		extends IAdaptable.Bound.Impl<IVisualPart<Node, ? extends Node>>
+		implements Provider<IGeometry> {
 
 	@Override
 	public IGeometry get() {

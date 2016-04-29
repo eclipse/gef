@@ -18,6 +18,7 @@ import com.google.common.reflect.TypeToken;
 
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableMap;
 
 /**
@@ -63,6 +64,33 @@ public interface IAdaptable {
 	public static interface Bound<A extends IAdaptable> {
 
 		/**
+		 * Default implementation of {@link Bound} that manages a
+		 * {@link ReadOnlyObjectProperty} for the {@link IAdaptable}.
+		 *
+		 * @param <T>
+		 *            The type of {@link IAdaptable} which this class is bound
+		 *            to.
+		 */
+		public static class Impl<T extends IAdaptable> implements Bound<T> {
+			private ReadOnlyObjectWrapper<T> adaptableProperty = new ReadOnlyObjectWrapper<>();
+
+			@Override
+			public ReadOnlyObjectProperty<T> adaptableProperty() {
+				return adaptableProperty;
+			}
+
+			@Override
+			public T getAdaptable() {
+				return adaptableProperty.get();
+			}
+
+			@Override
+			public void setAdaptable(T adaptable) {
+				adaptableProperty.set(adaptable);
+			}
+		}
+
+		/**
 		 * A read-only object property providing the {@link IAdaptable} this
 		 * {@link IAdaptable.Bound} is bound to.
 		 *
@@ -94,6 +122,7 @@ public interface IAdaptable {
 		 *            {@link IAdaptable.Bound}.
 		 */
 		void setAdaptable(A adaptable);
+
 	}
 
 	/**
@@ -172,7 +201,7 @@ public interface IAdaptable {
 	 * An adapter 'matching' the {@link TypeToken} key is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
-	 * given type key (see {@link TypeToken#isAssignableFrom(TypeToken)}.
+	 * given type key (see {@link TypeToken#isAssignableFrom(TypeToken)} .
 	 * <p>
 	 * If there is more than one adapter that 'matches' the given
 	 * {@link TypeToken} key, it will return the single adapter that is
@@ -215,7 +244,7 @@ public interface IAdaptable {
 	 * Returns all adapters 'matching' the given {@link Class} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
-	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
+	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)} ).
 	 *
 	 * @param <T>
 	 *            The adapter type.

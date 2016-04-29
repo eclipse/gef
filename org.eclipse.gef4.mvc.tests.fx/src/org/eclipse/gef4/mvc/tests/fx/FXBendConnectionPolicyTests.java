@@ -33,7 +33,6 @@ import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
-import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
@@ -54,7 +53,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
+import org.eclipse.gef4.mvc.fx.providers.DefaultAnchorProvider;
+import org.eclipse.gef4.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -67,11 +67,9 @@ import org.junit.Test;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
@@ -141,11 +139,9 @@ public class FXBendConnectionPolicyTests {
 		public static final String START_ROLE = "start";
 		public static final String END_ROLE = "end";
 
-		@SuppressWarnings("serial")
 		@Override
 		protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-			IAnchor anchor = anchorage.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
-			}).get();
+			IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
 			if (role.equals(START_ROLE)) {
 				// TODO: we could provide a visitor that initializes the
 				// required keys for the supported strategies
@@ -216,14 +212,11 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
-	public static class TestAnchorProvider extends DynamicAnchorProvider {
+	public static class TestAnchorProvider extends DefaultAnchorProvider {
 		@Override
-		protected DynamicAnchor createAnchor(IComputationStrategy computationStrategy) {
-			DynamicAnchor anchor = computationStrategy == null ? new DynamicAnchor(getAdaptable().getVisual())
-					: new DynamicAnchor(getAdaptable().getVisual(), computationStrategy);
+		protected void setupComputationParameters(DynamicAnchor anchor) {
 			anchor.getComputationParameter(AnchorageReferenceGeometry.class)
 					.set((IShape) ((IContentPart<?, ?>) getAdaptable()).getContent());
-			return anchor;
 		}
 	}
 

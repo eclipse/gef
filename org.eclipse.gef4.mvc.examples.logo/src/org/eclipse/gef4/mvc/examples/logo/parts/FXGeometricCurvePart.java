@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
@@ -30,19 +29,17 @@ import org.eclipse.gef4.fx.nodes.StraightRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.Decoration;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.RoutingStyle;
+import org.eclipse.gef4.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef4.mvc.parts.IBendableContentPart;
 import org.eclipse.gef4.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -111,42 +108,20 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		}
 	};
 
-	@SuppressWarnings("serial")
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		Provider<? extends IAnchor> anchorProvider = null;
-		if (getContent().getRoutingStyle().equals(RoutingStyle.ORTHOGONAL)) {
-			anchorProvider = anchorage.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
-			}, MvcLogoExampleModule.ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE));
-		} else {
-			anchorProvider = anchorage.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
-			}, MvcLogoExampleModule.STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE));
-		}
-		if (anchorProvider == null)
-
-		{
-			throw new IllegalStateException("Require <Provider<IAnchor>> adapter at <" + anchorage.getClass() + ">.");
-		}
-
-		IAnchor anchor = anchorProvider.get();
-		if (role.equals(START_ROLE))
-
-		{
+		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
+		if (role.equals(START_ROLE)) {
 			// System.out.println(
 			// "Setting start anchor of curve " + this + " to " + anchor);
 			getVisual().setStartAnchor(anchor);
-		} else if (role.equals(END_ROLE))
-
-		{
+		} else if (role.equals(END_ROLE)) {
 			// System.out.println(
 			// "Setting end anchor of curve " + this + " to " + anchor);
 			getVisual().setEndAnchor(anchor);
-		} else
-
-		{
+		} else {
 			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")

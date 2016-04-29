@@ -19,11 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
-import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
@@ -37,6 +35,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXUpdateAnchorHintsOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
+import org.eclipse.gef4.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
@@ -375,7 +374,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				.getOperations().get(0);
 	}
 
-	@SuppressWarnings("serial")
 	private IAnchor getCompatibleAnchor(
 			List<IContentPart<Node, ? extends Node>> partsUnderMouse) {
 		for (IContentPart<Node, ? extends Node> part : partsUnderMouse) {
@@ -384,26 +382,10 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			}
 			// TODO: this is not correct; we should not hard-code the compatible
 			// anchor via the computation strategy.
-			Map<AdapterKey<? extends Provider<? extends IAnchor>>, Provider<? extends IAnchor>> anchorProviders = part
-					.getAdapters(new TypeToken<Provider<? extends IAnchor>>() {
-					});
-			if (anchorProviders != null && !anchorProviders.isEmpty()) {
-				for (Provider<? extends IAnchor> anchorProvider : anchorProviders
-						.values()) {
-					IAnchor anchor = anchorProvider.get();
-					if (anchor != null) {
-						if (getConnection()
-								.getRouter() instanceof OrthogonalRouter) {
-							if (anchor instanceof DynamicAnchor
-									&& ((DynamicAnchor) anchor)
-											.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
-								return anchor;
-							}
-						} else {
-							return anchor;
-						}
-					}
-				}
+			IAnchor anchor = part.getAdapter(IAnchorProvider.class)
+					.get(getHost());
+			if (anchor != null) {
+				return anchor;
 			}
 		}
 		return null;

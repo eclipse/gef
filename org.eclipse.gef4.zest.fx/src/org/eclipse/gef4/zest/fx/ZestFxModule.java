@@ -16,7 +16,6 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
@@ -41,6 +40,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -78,7 +78,6 @@ import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
 import org.eclipse.gef4.zest.fx.policies.TransformLabelPolicy;
 import org.eclipse.gef4.zest.fx.policies.TranslateSelectedAndRelocateLabelsOnDragPolicy;
-import org.eclipse.gef4.zest.fx.providers.NodePartAnchorProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Provider;
@@ -97,24 +96,11 @@ import javafx.scene.Node;
  */
 public class ZestFxModule extends MvcFxModule {
 
-	/**
-	 * Role under which an anchor provider for straight routing is registered.
-	 */
-	public static final String STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE = "straightRoutingAnchorProvider";
-
-	/**
-	 * Role under which an anchor provider for orthogonal routing is registered.
-	 */
-	public static final String ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE = "orthogonalRoutingAnchorProvider";
-
 	@Override
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
-
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
-
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
-
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
@@ -427,15 +413,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
 
 		// anchor provider
-		adapterMapBinder.addBinding(AdapterKey.role(STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE))
-				.to(NodePartAnchorProvider.class);
-		adapterMapBinder.addBinding(AdapterKey.role(ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE))
-				.toProvider(new Provider<NodePartAnchorProvider>() {
-					@Override
-					public NodePartAnchorProvider get() {
-						return new NodePartAnchorProvider(new OrthogonalProjectionStrategy());
-					}
-				});
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DefaultAnchorProvider.class);
 
 		// feedback and handles
 		adapterMapBinder

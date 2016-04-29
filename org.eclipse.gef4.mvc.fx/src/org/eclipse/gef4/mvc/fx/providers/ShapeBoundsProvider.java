@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.providers;
 
-import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -31,8 +31,9 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class ShapeBoundsProvider extends
-		AbstractBoundProvider<IGeometry, IVisualPart<Node, ? extends Node>> {
+public class ShapeBoundsProvider
+		extends IAdaptable.Bound.Impl<IVisualPart<Node, ? extends Node>>
+		implements Provider<IGeometry> {
 
 	private double leftPadding;
 	private double topPadding;

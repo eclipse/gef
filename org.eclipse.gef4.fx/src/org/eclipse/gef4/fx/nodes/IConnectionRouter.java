@@ -63,6 +63,8 @@ public interface IConnectionRouter {
 	 * @return <code>true</code> if the given {@link IAnchor} is implicit,
 	 *         otherwise <code>false</code>.
 	 */
+	// TODO: Query explicit anchors using IBendableContentPart so that implicit
+	// anchors can be identified without needing this method.
 	public boolean wasInserted(IAnchor anchor);
 
 }

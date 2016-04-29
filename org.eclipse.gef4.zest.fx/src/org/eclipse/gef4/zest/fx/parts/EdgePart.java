@@ -19,26 +19,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
-import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef4.mvc.parts.IBendableContentPart;
 import org.eclipse.gef4.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
 
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
@@ -98,22 +94,9 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		}
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		Provider<? extends IAnchor> anchorProvider = null;
-		if (ZestProperties.getRouter(getContent()) != null
-				&& ZestProperties.getRouter(getContent()) instanceof OrthogonalRouter) {
-			anchorProvider = anchorage.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
-			}, ZestFxModule.ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE));
-		} else {
-			anchorProvider = anchorage.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
-			}, ZestFxModule.STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE));
-		}
-		if (anchorProvider == null) {
-			throw new IllegalStateException("Require <Provider<IAnchor>> adapter at <" + anchorage.getClass() + ">.");
-		}
-		IAnchor anchor = anchorProvider == null ? null : anchorProvider.get();
+		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
 		if (role.equals(SOURCE_ROLE)) {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals(TARGET_ROLE)) {
