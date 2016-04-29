@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
@@ -110,8 +109,6 @@ public class FXBendConnectionPolicyTests {
 	private static class ConnectionContent {
 		public org.eclipse.gef4.geometry.planar.IShape anchorageStart;
 		public org.eclipse.gef4.geometry.planar.IShape anchorageEnd;
-		public Point startReferencePoint;
-		public Point endReferencePoint;
 		public boolean isSimple;
 
 		public ConnectionContent(org.eclipse.gef4.geometry.planar.IShape start,
@@ -124,8 +121,6 @@ public class FXBendConnectionPolicyTests {
 				org.eclipse.gef4.geometry.planar.IShape end, Point startRef, Point endRef) {
 			anchorageStart = start;
 			anchorageEnd = end;
-			startReferencePoint = startRef;
-			endReferencePoint = endRef;
 		}
 
 		public Point getWayPoint() {
@@ -143,28 +138,9 @@ public class FXBendConnectionPolicyTests {
 		protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 			IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
 			if (role.equals(START_ROLE)) {
-				// TODO: we could provide a visitor that initializes the
-				// required keys for the supported strategies
-				// provide parameters for projection computation strategies
 				getVisual().setStartAnchor(anchor);
-				if (getContent().startReferencePoint != null) {
-					((DynamicAnchor) anchor)
-							.getComputationParameter(getVisual().getStartAnchorKey(), AnchoredReferencePoint.class)
-							.set(getContent().startReferencePoint);
-				}
-				((DynamicAnchor) anchor)
-						.getComputationParameter(getVisual().getStartAnchorKey(), PreferredOrientation.class)
-						.set(Orientation.VERTICAL);
 			} else if (role.equals(END_ROLE)) {
 				getVisual().setEndAnchor(anchor);
-				if (getContent().endReferencePoint != null) {
-					((DynamicAnchor) anchor)
-							.getComputationParameter(getVisual().getEndAnchorKey(), AnchoredReferencePoint.class)
-							.set(getContent().endReferencePoint);
-				}
-				((DynamicAnchor) anchor)
-						.getComputationParameter(getVisual().getEndAnchorKey(), PreferredOrientation.class)
-						.set(Orientation.VERTICAL);
 			} else {
 				throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 			}
@@ -1799,18 +1775,12 @@ public class FXBendConnectionPolicyTests {
 		connection.getVisual().setRouter(new OrthogonalRouter() {
 			@Override
 			protected void updateComputationParameters(Connection connection, int index) {
-				AnchorKey anchorKey = connection.getAnchorKey(index);
-				IAnchor anchor = connection.getAnchor(index);
-				AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) connection.getAnchor(index))
-						.getComputationParameter(anchorKey, AnchoredReferencePoint.class);
 				if (index == 0) {
-					((DynamicAnchor) anchor).getComputationParameter(anchorKey, PreferredOrientation.class)
-							.set(Orientation.HORIZONTAL);
-					referencePointParameter.set(new Point(310, 40));
+					getComputationParameter(connection, index, PreferredOrientation.class).set(Orientation.HORIZONTAL);
+					getComputationParameter(connection, index, AnchoredReferencePoint.class).set(new Point(310, 40));
 				} else if (index == connection.getPointsUnmodifiable().size() - 1) {
-					((DynamicAnchor) anchor).getComputationParameter(anchorKey, PreferredOrientation.class)
-							.set(Orientation.HORIZONTAL);
-					referencePointParameter.set(new Point(50, 95));
+					getComputationParameter(connection, index, PreferredOrientation.class).set(Orientation.HORIZONTAL);
+					getComputationParameter(connection, index, AnchoredReferencePoint.class).set(new Point(50, 95));
 				} else {
 					super.updateComputationParameters(connection, index);
 				}
@@ -1866,8 +1836,7 @@ public class FXBendConnectionPolicyTests {
 
 		// check that segment is "unsnapped", i.e. end point is still on initial
 		// y coordinate
-		Point endPositionHint = connection.getVisual().positionHintsByKeysProperty()
-				.get(connection.getVisual().getEndAnchorKey());
+		Point endPositionHint = connection.getVisual().getEndPositionHint();
 		assertEquals(connection.getVisual().getEndPoint().y, endPositionHint.y, 0.5);
 		// TODO: Ensure position hints are correctly restored.
 

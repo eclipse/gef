@@ -69,13 +69,10 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 		// whether the first and last control point have to be evaluated.
 		Point startReference = connection
 				.getStartAnchor() instanceof DynamicAnchor
-						? connection.positionHintsByKeysProperty()
-								.get(connection.getStartAnchorKey())
+						? connection.getStartPositionHint()
 						: connection.getStartPoint();
 		Point endReference = connection.getEndAnchor() instanceof DynamicAnchor
-				? connection.positionHintsByKeysProperty()
-						.get(connection.getEndAnchorKey())
-				: connection.getEndPoint();
+				? connection.getEndPositionHint() : connection.getEndPoint();
 
 		// the first and last control point may be equal to the start and end
 		// anchor reference points, in which case we have to ignore the control

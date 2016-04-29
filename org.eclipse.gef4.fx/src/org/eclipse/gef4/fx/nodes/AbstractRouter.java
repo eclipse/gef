@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
@@ -37,6 +37,26 @@ public abstract class AbstractRouter implements IConnectionRouter {
 			int index);
 
 	/**
+	 * Returns the specified parameter for the given index.
+	 *
+	 * @param <T>
+	 *            The value type.
+	 * @param connection
+	 *            The Connection.
+	 * @param index
+	 *            The index.
+	 * @param parameterType
+	 *            The type of the parameter.
+	 * @return The parameter.
+	 */
+	protected <T extends Parameter<?>> T getComputationParameter(
+			Connection connection, int index, Class<T> parameterType) {
+		return ((DynamicAnchor) connection.getAnchor(index))
+				.getComputationParameter(connection.getAnchorKey(index),
+						parameterType);
+	}
+
+	/**
 	 * Update's the reference point of the anchor with the given index.
 	 *
 	 * @param connection
@@ -48,10 +68,8 @@ public abstract class AbstractRouter implements IConnectionRouter {
 	protected void updateComputationParameters(Connection connection,
 			int index) {
 		// only update if necessary (when it changes)
-		AnchorKey anchorKey = connection.getAnchorKey(index);
-		AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) connection
-				.getAnchor(index)).getComputationParameter(anchorKey,
-						AnchoredReferencePoint.class);
+		AnchoredReferencePoint referencePointParameter = getComputationParameter(
+				connection, index, AnchoredReferencePoint.class);
 		Point oldRef = referencePointParameter.get();
 
 		// if we have a position hint for the anchor, we need to use this as the

@@ -357,7 +357,6 @@ public class Connection extends Group {
 
 		curveProperty.addListener(new ChangeListener<Node>() {
 			private ChangeListener<Transform> transformListener = new ChangeListener<Transform>() {
-
 				@Override
 				public void changed(
 						ObservableValue<? extends Transform> observable,
@@ -377,8 +376,8 @@ public class Connection extends Group {
 					oldValue.localToParentTransformProperty()
 							.removeListener(transformListener);
 				}
-				// TODO: we need to re-attach all anchors, as these are bound to
-				// the curve node
+
+				reattachAnchorKeys(oldValue, newValue);
 
 				if (newValue != null) {
 					newValue.localToParentTransformProperty()
@@ -639,8 +638,7 @@ public class Connection extends Group {
 	 *            The anchor index for which to determine the {@link AnchorKey}.
 	 * @return The {@link AnchorKey} for the given anchor index.
 	 */
-	// TODO: this should not be exposed -> make protected
-	public AnchorKey getAnchorKey(int anchorIndex) {
+	protected AnchorKey getAnchorKey(int anchorIndex) {
 		// TODO: improve performance
 		return new ArrayList<>(sortedAnchorKeys).get(anchorIndex);
 	}
@@ -835,7 +833,7 @@ public class Connection extends Group {
 	 * @return The end {@link AnchorKey} for this {@link Connection}.
 	 */
 	// TODO: AnchorKeys should not be exposed -> make protected
-	public AnchorKey getEndAnchorKey() {
+	protected AnchorKey getEndAnchorKey() {
 		return new AnchorKey(getCurve(), END_ROLE);
 	}
 
@@ -873,6 +871,20 @@ public class Connection extends Group {
 		}
 		return FX2Geometry.toPoint(getCurve().localToParent(
 				Geometry2FX.toFXPoint(anchor.getPosition(getEndAnchorKey()))));
+	}
+
+	/**
+	 * Returns the currently set end position hint or <code>null</code> if no
+	 * hint is present.
+	 *
+	 * @return The currently set end position hint or <code>null</code> if no
+	 *         hint is present.
+	 */
+	public Point getEndPositionHint() {
+		if (positionHintsByKeysProperty.containsKey(getEndAnchorKey())) {
+			return positionHintsByKeysProperty.get(getEndAnchorKey());
+		}
+		return null;
 	}
 
 	/**
@@ -938,7 +950,7 @@ public class Connection extends Group {
 	 * @return The start {@link AnchorKey} for this {@link Connection}.
 	 */
 	// TODO: AnchorKeys should not be exposed -> make protected
-	public AnchorKey getStartAnchorKey() {
+	protected AnchorKey getStartAnchorKey() {
 		return new AnchorKey(getCurve(), START_ROLE);
 	}
 
@@ -976,6 +988,20 @@ public class Connection extends Group {
 		}
 		return FX2Geometry.toPoint(getCurve().localToParent(Geometry2FX
 				.toFXPoint(anchor.getPosition(getStartAnchorKey()))));
+	}
+
+	/**
+	 * Returns the currently set start position hint or <code>null</code> if no
+	 * hint is present.
+	 *
+	 * @return The currently set start position hint or <code>null</code> if no
+	 *         hint is present.
+	 */
+	public Point getStartPositionHint() {
+		if (positionHintsByKeysProperty.containsKey(getStartAnchorKey())) {
+			return positionHintsByKeysProperty.get(getStartAnchorKey());
+		}
+		return null;
 	}
 
 	/**
@@ -1082,8 +1108,84 @@ public class Connection extends Group {
 	 * @return A {@link ReadOnlyMapProperty} for the position hints by anchor
 	 *         keys.
 	 */
-	public ReadOnlyMapProperty<AnchorKey, Point> positionHintsByKeysProperty() {
+	protected ReadOnlyMapProperty<AnchorKey, Point> positionHintsByKeysProperty() {
 		return positionHintsByKeysProperty.getReadOnlyProperty();
+	}
+
+	/**
+	 * Re-attaches all {@link AnchorKey}s that are managed by this
+	 * {@link Connection}.
+	 *
+	 * @param oldValue
+	 *            The previous anchored {@link Node}.
+	 * @param newValue
+	 *            The new anchored {@link Node}.
+	 */
+	protected void reattachAnchorKeys(Node oldValue, Node newValue) {
+		if (oldValue == null) {
+			// In case the old value was null, we should not have any anchor
+			// keys to re-attach.
+			if (!anchorsByKeys.isEmpty()) {
+				throw new IllegalStateException(
+						"Re-attach failed: no previous curve, but anchor keys present.");
+			}
+			if (!positionHintsByKeysProperty.isEmpty()) {
+				throw new IllegalStateException(
+						"Re-attach failed: no previous curve, but anchor keys present.");
+			}
+			if (!sortedAnchorKeys.isEmpty()) {
+				throw new IllegalStateException(
+						"Re-attach failed: no previous curve, but anchor keys present.");
+			}
+			return;
+		} else if (newValue == null) {
+			// In case the new value was null, we should not have any anchor
+			// keys to re-attach.
+			if (!anchorsByKeys.isEmpty()) {
+				throw new IllegalStateException(
+						"Re-attach failed: no new curve, but anchor keys present.");
+			}
+			if (!positionHintsByKeysProperty.isEmpty()) {
+				throw new IllegalStateException(
+						"Re-attach failed: no new curve, but anchor keys present.");
+			}
+			if (!sortedAnchorKeys.isEmpty()) {
+				throw new IllegalStateException(
+						"Re-attach failed: no new curve, but anchor keys present.");
+			}
+			return;
+		} else {
+			// Re-attach all anchor keys.
+			List<AnchorKey> newSortedKeys = new ArrayList<>();
+			for (AnchorKey oldAk : sortedAnchorKeys) {
+				// query anchor for oldAk
+				IAnchor anchor = anchorsByKeys.get(oldAk);
+
+				// unregister old anchor key
+				unregisterPCL(oldAk, anchor);
+				anchorsByKeys.remove(oldAk);
+				anchor.detach(oldAk);
+
+				// create anchor key (new curve, same role)
+				AnchorKey newAk = new AnchorKey(newValue, oldAk.getId());
+				newSortedKeys.add(newAk);
+
+				// update position hint
+				if (positionHintsByKeysProperty.containsKey(oldAk)) {
+					positionHintsByKeysProperty.put(newAk,
+							positionHintsByKeysProperty.remove(oldAk));
+				}
+				// XXX: anchors and points are staying the same, no need to
+				// update
+
+				// register new anchor key
+				anchorsByKeys.put(newAk, anchor);
+				anchor.attach(newAk);
+				registerPCL(newAk, anchor);
+			}
+			sortedAnchorKeys.clear();
+			sortedAnchorKeys.addAll(newSortedKeys);
+		}
 	}
 
 	/**
@@ -1565,6 +1667,22 @@ public class Connection extends Group {
 	}
 
 	/**
+	 * Sets the end position hint to the given value.
+	 *
+	 * @param endPositionHint
+	 *            The new end position hint.
+	 */
+	public void setEndPositionHint(Point endPositionHint) {
+		if (endPositionHint == null) {
+			if (positionHintsByKeysProperty.containsKey(getEndAnchorKey())) {
+				positionHintsByKeysProperty.remove(getEndAnchorKey());
+			}
+		} else {
+			positionHintsByKeysProperty.put(getEndAnchorKey(), endPositionHint);
+		}
+	}
+
+	/**
 	 * Sets the {@link IConnectionInterpolator} of this {@link Connection} to
 	 * the given {@link IConnectionInterpolator}.
 	 *
@@ -1669,6 +1787,23 @@ public class Connection extends Group {
 		}
 		IAnchor anchor = new StaticAnchor(this, startPoint);
 		setStartAnchor(anchor);
+	}
+
+	/**
+	 * Sets the start position hint to the given value.
+	 *
+	 * @param startPositionHint
+	 *            The new start position hint.
+	 */
+	public void setStartPositionHint(Point startPositionHint) {
+		if (startPositionHint == null) {
+			if (positionHintsByKeysProperty.containsKey(getStartAnchorKey())) {
+				positionHintsByKeysProperty.remove(getStartAnchorKey());
+			}
+		} else {
+			positionHintsByKeysProperty.put(getStartAnchorKey(),
+					startPositionHint);
+		}
 	}
 
 	/**

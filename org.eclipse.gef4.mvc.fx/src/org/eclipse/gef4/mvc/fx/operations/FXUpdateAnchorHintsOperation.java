@@ -11,33 +11,27 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
-import javafx.beans.property.ReadOnlyMapProperty;
-
 /**
- *
- * @author mwienand
  *
  */
 public class FXUpdateAnchorHintsOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final Connection connection;
-	private final Map<AnchorKey, Point> initialHints;
-	private final Map<AnchorKey, Point> newHints;
+	private final Point initialStartHint;
+	private final Point initialEndHint;
+	private Point newStartHint;
+	private Point newEndHint;
 
 	/**
 	 * @param connection
@@ -46,15 +40,21 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 	public FXUpdateAnchorHintsOperation(Connection connection) {
 		super("UpdateAnchorHints()");
 		this.connection = connection;
-		this.initialHints = queryHints();
-		this.newHints = new HashMap<>(initialHints);
+		this.initialStartHint = connection.getStartPositionHint() == null ? null
+				: connection.getStartPositionHint().getCopy();
+		this.initialEndHint = connection.getEndPositionHint() == null ? null
+				: connection.getEndPositionHint().getCopy();
+		this.newStartHint = initialStartHint == null ? null
+				: initialStartHint.getCopy();
+		this.newEndHint = initialEndHint == null ? null
+				: initialEndHint.getCopy();
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
-			setHints(newHints);
+			setHints(newStartHint, newEndHint);
 			connection.getRouter().route(connection);
 		}
 		return Status.OK_STATUS;
@@ -67,13 +67,11 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 
 	@Override
 	public boolean isNoOp() {
-		return initialHints.equals(newHints);
-	}
-
-	private Map<AnchorKey, Point> queryHints() {
-		ReadOnlyMapProperty<AnchorKey, Point> positionHintsProperty = connection
-				.positionHintsByKeysProperty();
-		return new HashMap<>(positionHintsProperty.get());
+		boolean startHintEquals = initialStartHint == null
+				? newStartHint == null : initialStartHint.equals(newStartHint);
+		boolean endHintEquals = initialEndHint == null ? newEndHint == null
+				: initialEndHint.equals(newEndHint);
+		return startHintEquals && endHintEquals;
 	}
 
 	@Override
@@ -82,30 +80,37 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 		return execute(monitor, info);
 	}
 
-	private void setHints(Map<AnchorKey, Point> hints) {
-		if (!connection.positionHintsByKeysProperty().equals(hints)) {
-			connection.positionHintsByKeysProperty().clear();
-			connection.positionHintsByKeysProperty().putAll(hints);
+	private void setHints(Point startHint, Point endHint) {
+		Point currentStartHint = connection.getStartPositionHint();
+		if (currentStartHint == null || !currentStartHint.equals(startHint)) {
+			connection.setStartPositionHint(startHint);
+		}
+		Point currentEndHint = connection.getEndPositionHint();
+		if (currentEndHint == null || !currentEndHint.equals(endHint)) {
+			connection.setEndPositionHint(endHint);
 		}
 	}
 
 	/**
-	 * Clears the map of new hints are inserts all entries provided by the given
-	 * map.
+	 * Sets the new hints.
 	 *
-	 * @param newHints
-	 *            A map that contains the new hints.
+	 * @param newStartHint
+	 *            The new start hint.
+	 * @param newEndHint
+	 *            The new end hint.
+	 *
 	 */
-	public void setNewHints(Map<AnchorKey, Point> newHints) {
-		this.newHints.clear();
-		this.newHints.putAll(newHints);
+	public void setNewHints(Point newStartHint, Point newEndHint) {
+		this.newStartHint = newStartHint == null ? null
+				: newStartHint.getCopy();
+		this.newEndHint = newEndHint == null ? null : newEndHint.getCopy();
 	}
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
-			setHints(initialHints);
+			setHints(initialStartHint, initialEndHint);
 		}
 		return Status.OK_STATUS;
 	}

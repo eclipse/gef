@@ -312,11 +312,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				visual.setStartPoint(startPoint);
 			}
 		} else {
-			if (startPoint != null) {
-				visual.positionHintsByKeysProperty().put(visual.getStartAnchorKey(), startPoint);
-			} else {
-				visual.positionHintsByKeysProperty().remove(visual.getStartAnchorKey());
-			}
+			visual.setStartPositionHint(startPoint);
 		}
 
 		// end point or hint
@@ -326,11 +322,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				visual.setEndPoint(endPoint);
 			}
 		} else {
-			if (endPoint != null) {
-				visual.positionHintsByKeysProperty().put(visual.getEndAnchorKey(), endPoint);
-			} else {
-				visual.positionHintsByKeysProperty().remove(visual.getEndAnchorKey());
-			}
+			visual.setEndPositionHint(endPoint);
 		}
 
 		// control points

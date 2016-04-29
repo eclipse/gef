@@ -14,12 +14,9 @@ package org.eclipse.gef4.mvc.fx.policies;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
@@ -156,8 +153,10 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	private List<Integer> selectedExplicitAnchorIndices = new ArrayList<>();
 	private List<Point> selectedInitialPositions = new ArrayList<>();
 	private List<IAnchor> preMoveExplicitAnchors = new ArrayList<>();
-	private Map<AnchorKey, Point> preMoveHints = new HashMap<>();
+	private Point preMoveStartHint = null;
+	private Point preMoveEndHint = null;
 	private boolean isSelectionHorizontal = false;
+	// TODO: remove usePreMoveHints
 	private boolean usePreMoveHints = false;
 
 	/**
@@ -201,16 +200,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		return updateOperation;
 	}
 
-	private Map<AnchorKey, Point> computeHints() {
-		Map<AnchorKey, Point> hints = new HashMap<>();
-		if (getConnection().getStartAnchor() instanceof DynamicAnchor
-				&& getConnection().getPointsUnmodifiable().size() > 1) {
-			Point startPoint = getConnection().getStartPoint();
-			Point neighbor = getConnection().getPoint(1);
-			Point translated = startPoint.getTranslated(
-					startPoint.getDifference(neighbor).getScaled(0.5));
-			hints.put(getConnection().getStartAnchorKey(), translated);
-		}
+	private Point computeEndHint() {
 		if (getConnection().getEndAnchor() instanceof DynamicAnchor
 				&& getConnection().getPointsUnmodifiable().size() > 1) {
 			Point endPoint = getConnection().getEndPoint();
@@ -218,9 +208,21 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 					getConnection().getPointsUnmodifiable().size() - 2);
 			Point translated = endPoint.getTranslated(
 					endPoint.getDifference(neighbor).getScaled(0.5));
-			hints.put(getConnection().getEndAnchorKey(), translated);
+			return translated;
 		}
-		return hints;
+		return null;
+	}
+
+	private Point computeStartHint() {
+		if (getConnection().getStartAnchor() instanceof DynamicAnchor
+				&& getConnection().getPointsUnmodifiable().size() > 1) {
+			Point startPoint = getConnection().getStartPoint();
+			Point neighbor = getConnection().getPoint(1);
+			Point translated = startPoint.getTranslated(
+					startPoint.getDifference(neighbor).getScaled(0.5));
+			return translated;
+		}
+		return null;
 	}
 
 	/**
@@ -580,7 +582,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		selectedExplicitAnchorIndices.clear();
 		selectedInitialPositions.clear();
 		preMoveExplicitAnchors.clear();
-		preMoveHints.clear();
+		preMoveStartHint = null;
+		preMoveEndHint = null;
 		usePreMoveHints = false;
 		super.init();
 		showAnchors("init:");
@@ -658,9 +661,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		}
 		// apply hints
 		if (usePreMoveHints) {
-			getUpdateHintsOperation().setNewHints(preMoveHints);
+			getUpdateHintsOperation().setNewHints(preMoveStartHint,
+					preMoveEndHint);
 		} else {
-			getUpdateHintsOperation().setNewHints(computeHints());
+			Point newStartHint = computeStartHint();
+			Point newEndHint = computeEndHint();
+			getUpdateHintsOperation().setNewHints(newStartHint, newEndHint);
 		}
 		// locally execute hints operation
 		try {
@@ -772,13 +778,14 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				isSelectionHorizontal = isUnpreciseEquals(y0, y1);
 			}
 			// save initial pre-move hints
-			preMoveHints.clear();
-			preMoveHints.putAll(computeHints());
+			preMoveStartHint = computeStartHint();
+			preMoveEndHint = computeEndHint();
 		} else {
 			// restore initial pre-move explicit anchors
 			getBendOperation().setNewAnchors(preMoveExplicitAnchors);
 			// restore initial pre-move hints
-			getUpdateHintsOperation().setNewHints(preMoveHints);
+			getUpdateHintsOperation().setNewHints(preMoveStartHint,
+					preMoveEndHint);
 			usePreMoveHints = true;
 			locallyExecuteOperation();
 			usePreMoveHints = false;
