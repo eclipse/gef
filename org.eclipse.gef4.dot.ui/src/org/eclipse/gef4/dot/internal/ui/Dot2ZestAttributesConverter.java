@@ -27,6 +27,7 @@ import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedNodeShape;
 import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedShape;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
+import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
@@ -137,13 +138,13 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// convert edge style
 		String dotStyle = DotAttributes.getStyle(dot);
 		String connectionCssStyle = null;
-		if (DotAttributes.STYLE__E__DASHED.equals(dotStyle)) {
+		if (EdgeStyle.DASHED.toString().equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-dash-array: 7 7;"; //$NON-NLS-1$
-		} else if (DotAttributes.STYLE__E__DOTTED.equals(dotStyle)) {
+		} else if (EdgeStyle.DOTTED.toString().equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
-		} else if (DotAttributes.STYLE__E__BOLD.equals(dotStyle)) {
+		} else if (EdgeStyle.BOLD.toString().equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
-		} else if (DotAttributes.STYLE__E__INVIS.equals(dotStyle)) {
+		} else if (EdgeStyle.INVIS.toString().equals(dotStyle)) {
 			// mark as invisible
 			ZestProperties.setInvisible(zest, true);
 		}

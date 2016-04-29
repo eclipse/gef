@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fabian Steeg and others.
+ * Copyright (c) 2009, 2016 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +8,14 @@
  *
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Tamas Miklossy (itemis AG) - Add support for all dot attributes (bug #461506)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.dot.examples;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotExport;
+import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
 import org.eclipse.gef4.graph.Graph;
 
 public final class DotExportExample {
@@ -26,7 +30,7 @@ public final class DotExportExample {
 				.attr(DotAttributes.LABEL__GNE, "Node 2")//
 				.edge("n1", "n2")
 				.attr(DotAttributes.LABEL__GNE, "A dotted edge")
-				.attr(DotAttributes.STYLE__E, DotAttributes.STYLE__E__DOTTED)
+				.attr(DotAttributes.STYLE__E, EdgeStyle.DOTTED.toString())
 				.build();
 
 		/* Export the graph to a DOT string or a DOT file: */

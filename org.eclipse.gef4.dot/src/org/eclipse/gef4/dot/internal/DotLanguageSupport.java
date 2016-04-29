@@ -23,16 +23,19 @@ import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotPointStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotShapeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotSplineTypeStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.DotStyleStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotArrowTypeParser;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotPointParser;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotShapeParser;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotSplineTypeParser;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotStyleParser;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.validation.DotArrowTypeJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotPointJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotShapeJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotSplineTypeJavaValidator;
+import org.eclipse.gef4.dot.internal.parser.validation.DotStyleJavaValidator;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.serializer.ISerializer;
@@ -361,6 +364,28 @@ public class DotLanguageSupport {
 	 */
 	public static final ISerializer SPLINETYPE_SERIALIZER = splineTypeInjector
 			.getInstance(ISerializer.class);
+
+	private static final Injector styleInjector = new DotStyleStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	/**
+	 * The serializer for style attribute values.
+	 */
+	public static final ISerializer STYLE_SERIALIZER = styleInjector
+			.getInstance(ISerializer.class);
+
+	/**
+	 * The validator for style attribute values.
+	 */
+	// TODO: move to DotJavaValidator
+	public static final DotStyleJavaValidator STYLE_VALIDATOR = styleInjector
+			.getInstance(DotStyleJavaValidator.class);
+
+	/**
+	 * The parser for style attribute values.
+	 */
+	public static final DotStyleParser STYLE_PARSER = styleInjector
+			.getInstance(DotStyleParser.class);
 
 	/**
 	 * The validator for splinetype attribute values.

@@ -9,7 +9,8 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)
  *                                - Add support for polygon-based node shapes (bug #441352)
- *                                - modify grammar to allow empty attribute lists (bug #461506)		
+ *                                - modify grammar to allow empty attribute lists (bug #461506)
+ *                                - Add support for all dot attributes (bug #461506)		
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
@@ -136,6 +137,16 @@ public class DotParserTests {
 	@Test
 	public void testPolygonBasedNodeShapes() {
 		testFile("nodeshapes_polygon_based.dot");
+	}
+
+	@Test
+	public void testStyledGraph() {
+		testFile("styled_graph.dot");
+	}
+
+	@Test
+	public void testStyledGraph2() {
+		testFile("styled_graph2.dot");
 	}
 
 	private void testFile(String fileName) {

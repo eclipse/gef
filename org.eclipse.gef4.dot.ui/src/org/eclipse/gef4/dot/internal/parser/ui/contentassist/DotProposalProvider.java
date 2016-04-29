@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Fabian Steeg and others.
+ * Copyright (c) 2010, 2016 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +9,8 @@
  * Contributors:
  *     Fabian Steeg    - intial Xtext generation (see bug #277380)
  *     Alexander Nyßen - initial implementation
- *     
+ *     Tamas Miklossy (itemis AG) - Add support for all dot attributes (bug #461506)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.parser.ui.contentassist;
 
@@ -17,6 +19,7 @@ import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef4.dot.internal.parser.services.DotGrammarAccess;
+import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EcoreUtil2;
@@ -56,12 +59,13 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			Attribute attribute = (Attribute) model;
 			if (DotJavaValidator.isEdgeAttribute(attribute)
 					&& DotAttributes.STYLE__E.equals(attribute.getName())) {
-				for (String edgeStyle : DotAttributes.STYLE__E__VALUES) {
+				for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {
 					// quote attribute value if needed only
 					final String proposedValue = DotTerminalConverters
-							.needsToBeQuoted(edgeStyle)
-									? DotTerminalConverters.quote(edgeStyle)
-									: edgeStyle;
+							.needsToBeQuoted(edgeStyle.toString())
+									? DotTerminalConverters
+											.quote(edgeStyle.toString())
+									: edgeStyle.toString();
 					acceptor.accept(
 							createCompletionProposal(proposedValue, context));
 				}

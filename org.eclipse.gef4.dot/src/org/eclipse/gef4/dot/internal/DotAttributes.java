@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 itemis AG and others.
+ * Copyright (c) 2014, 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,7 +11,7 @@
  *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Tamas Miklossy (itemis AG)   - Add support for arrowType edge decorations (bug #477980)
  *                                  - Add support for polygon-based node shapes (bug #441352)
- *
+ *                                  - Add support for all dot attributes (bug #461506)
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal;
 
@@ -308,62 +308,9 @@ public class DotAttributes {
 
 	/**
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
-	 * dotted, etc. Possible values are defined by {@link #STYLE__E__VALUES}.
-	 * The default value is defined by {@link #STYLE__E__DEFAULT}.
+	 * dotted, etc.
 	 */
 	public static final String STYLE__E = "style";
-
-	/**
-	 * This {@link #STYLE__E} value specifies that the edge is rendered bold.
-	 */
-	public static final String STYLE__E__BOLD = "bold";
-
-	/**
-	 * This {@link #STYLE__E} value specifies that the edge is rendered dashed.
-	 */
-	public static final String STYLE__E__DASHED = "dashed";
-
-	/**
-	 * This {@link #STYLE__E} value specifies that the edge is rendered dotted.
-	 */
-	public static final String STYLE__E__DOTTED = "dotted";
-
-	/**
-	 * This {@link #STYLE__E} value specifies that the edge is rendered
-	 * invisible.
-	 */
-	public static final String STYLE__E__INVIS = "invis";
-
-	/**
-	 * This {@link #STYLE__E} value specifies that the edge is rendered solid.
-	 */
-	public static final String STYLE__E__SOLID = "solid";
-
-	/**
-	 * This {@link #STYLE__E} value specifies that the edge is rendered tapered.
-	 */
-	public static final String STYLE__E__TAPERED = "tapered";
-
-	/**
-	 * This {@link #STYLE__E} value specifies that the edge is rendered with the
-	 * void, which means the the original Dot default value is used.
-	 */
-	public static final String STYLE__E__VOID = "";
-
-	/**
-	 * Defines the default value for the {@link #STYLE__E} property, which is
-	 * {@link #STYLE__E__SOLID}.
-	 */
-	public static final String STYLE__E__DEFAULT = STYLE__E__SOLID;
-
-	/**
-	 * Defines all possible values for the {@link #STYLE__E} property.
-	 */
-	// TODO: convert into enum
-	public static final Set<String> STYLE__E__VALUES = new HashSet<>(
-			Arrays.asList(STYLE__E__DASHED, STYLE__E__DOTTED, STYLE__E__SOLID,
-					STYLE__E__INVIS, STYLE__E__BOLD, STYLE__E__TAPERED,
-					STYLE__E__VOID));
 
 	/**
 	 * Specifies the 'tail_lp' attribute (tail label position) of an edge.
@@ -1820,8 +1767,7 @@ public class DotAttributes {
 	 * @param style
 	 *            The new value for the {@link #STYLE__E} property.
 	 * @throws IllegalArgumentException
-	 *             when the given <i>style</i> value is not supported, i.e. not
-	 *             contained within {@link #STYLE__E__VALUES}.
+	 *             when the given <i>style</i> value is not supported.
 	 */
 	public static void setStyle(Edge edge, String style) {
 		validate(AttributeContext.EDGE, STYLE__E, style);

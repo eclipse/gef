@@ -11,7 +11,7 @@
  *                        integration of attribute grammars
  *      Tamas Miklossy  - support for junit test plugin generation
  *                      - support for formatter API generation
- *                      - integration of shape attribute grammar 
+ *                      - integration of shape/style attribute grammar 
  *******************************************************************************/
 module org.eclipse.gef4.dot.internal.parser.Dot
 
@@ -205,6 +205,37 @@ Workflow {
 		}
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotShape.xtext"// Java API to access grammar elements (required by several other fragments)
+			fileExtensions = "dot_shape"
+			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
+
+			// a custom ResourceFactory for use with EMF
+			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
+
+			// generates Java API for the generated EPackages
+			fragment = ecore.EMFGeneratorFragment auto-inject {
+			// has to be explicitly set for headless execution (Tycho)
+				javaModelDirectory = "/${projectName}/src-gen"
+			}
+
+			// Java-based validator
+			fragment = validation.JavaValidatorFragment auto-inject {}
+						
+			// formatter API
+			fragment = formatting.FormatterFragment auto-inject {}
+
+			// serializer 2.0
+			fragment = serializer.SerializerFragment auto-inject {
+				generateStub = false
+			}
+
+			// The antlr parser generator fragment
+			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
+
+			// generates junit test support classes into Generator#pathTestProject
+			fragment = junit.Junit4Fragment auto-inject {}
+		}
+		language = auto-inject {
+			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotStyle.xtext" // Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dot_shape"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 

@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fabian Steeg and others.
+ * Copyright (c) 2009, 2016 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +8,8 @@
  *
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Tamas Miklossy (itemis AG) - Add support for all dot attributes (bug #461506)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
@@ -23,6 +26,7 @@ import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotParser;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
+import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -111,7 +115,7 @@ public final class DotInterpreterTests {
 				.interpret(parse("graph Sample{1;2;1->2[style=dashed]}")) //$NON-NLS-1$
 				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.STYLE__E__DASHED,
+		Assert.assertEquals(EdgeStyle.DASHED.toString(),
 				DotAttributes.getStyle(graph.getEdges().get(0)));
 	}
 
@@ -121,7 +125,7 @@ public final class DotInterpreterTests {
 				.interpret(parse("graph Sample{edge[style=dashed];1;2;1--2}")) //$NON-NLS-1$
 				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.STYLE__E__DASHED,
+		Assert.assertEquals(EdgeStyle.DASHED.toString(),
 				DotAttributes.getStyle(graph.getEdges().get(0)));
 	}
 

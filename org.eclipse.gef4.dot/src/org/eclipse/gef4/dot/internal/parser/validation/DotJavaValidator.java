@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,11 @@ import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef4.dot.internal.parser.point.PointPackage;
 import org.eclipse.gef4.dot.internal.parser.shape.ShapePackage;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplinetypePackage;
+import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
+import org.eclipse.gef4.dot.internal.parser.style.NodeStyle;
+import org.eclipse.gef4.dot.internal.parser.style.Style;
+import org.eclipse.gef4.dot.internal.parser.style.StyleItem;
+import org.eclipse.gef4.dot.internal.parser.style.StylePackage;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
@@ -225,11 +231,46 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.01);
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.02);
-		} else if (DotAttributes.STYLE__E.equals(name)) {
-			return validateStringAttributeValue(name, unquotedValue, "style",
-					DotAttributes.STYLE__E__VALUES);
+		} else if (DotAttributes.STYLE__E.equals(name)
+				&& !unquotedValue.isEmpty()) {
+			// validate style using delegate parser and validator (DotStyle
+			// grammar)
+			List<Diagnostic> grammarFindings = validateObjectAttributeValue(
+					DotLanguageSupport.STYLE_PARSER,
+					DotLanguageSupport.STYLE_VALIDATOR, name, unquotedValue,
+					StylePackage.Literals.STYLE, "style");
+			if (!grammarFindings.isEmpty()) {
+				return grammarFindings;
+			}
+			// validate according to the corresponding NodeStyle/EdgeStyle enums
+			IParseResult parseResult = DotLanguageSupport.STYLE_PARSER
+					.parse(new StringReader(unquotedValue));
+			Style style = (Style) parseResult.getRootASTElement();
+
+			Set<String> validValues = new HashSet<>();
+			if (AttributeContext.NODE.equals(context)) {
+				for (NodeStyle nodeStyle : NodeStyle.values()) {
+					validValues.add(nodeStyle.toString());
+				}
+			} else if (AttributeContext.EDGE.equals(context)) {
+				for (EdgeStyle edgeStyle : EdgeStyle.values()) {
+					validValues.add(edgeStyle.toString());
+				}
+			}
+
+			if (validValues != null) {
+				List<Diagnostic> combinedFindings = new ArrayList<>();
+
+				// check each style item with the corresponding parser
+				for (StyleItem styleItem : style.getStyleItems()) {
+					combinedFindings.addAll(validateStringAttributeValue(name,
+							styleItem.getName(), "style", validValues));
+				}
+				return combinedFindings;
+			}
 		}
 		return Collections.emptyList();
+
 	}
 
 	/**
