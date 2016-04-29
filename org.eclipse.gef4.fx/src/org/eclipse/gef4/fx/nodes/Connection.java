@@ -369,16 +369,23 @@ public class Connection extends Group {
 			@Override
 			public void changed(ObservableValue<? extends Node> observable,
 					Node oldValue, Node newValue) {
+				boolean oldInRefresh = inRefresh;
+				inRefresh = true;
+
 				if (oldValue != null) {
 					getChildren().remove(oldValue);
 					oldValue.localToParentTransformProperty()
 							.removeListener(transformListener);
 				}
+				// TODO: we need to re-attach all anchors, as these are bound to
+				// the curve node
+
 				if (newValue != null) {
 					newValue.localToParentTransformProperty()
 							.removeListener(transformListener);
 					getChildren().add(newValue);
 				}
+				inRefresh = oldInRefresh;
 				refresh();
 			}
 		});
