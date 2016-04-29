@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.beans.property.ReadOnlyListPropertyBaseEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
+import org.eclipse.gef4.common.collections.ListListenerHelperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
@@ -33,11 +34,16 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanPropertyBase;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerPropertyBase;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
@@ -72,7 +78,7 @@ import javafx.scene.transform.Transform;
 public class Connection extends Group {
 
 	private final class AnchorsUnmodifiableProperty
-			extends ReadOnlyListWrapperEx<IAnchor> {
+			extends LazyReadOnlyListPropertyBase<IAnchor> {
 
 		@Override
 		public void fireValueChangedEvent() {
@@ -81,33 +87,129 @@ public class Connection extends Group {
 
 		@Override
 		public ObservableList<IAnchor> get() {
-			return FXCollections.unmodifiableObservableList(CollectionUtils
-					.observableList(new ArrayList<>(getAnchorsUnmodifiable())));
+			return getAnchorsUnmodifiable();
+		}
+	}
+
+	private abstract class LazyReadOnlyListPropertyBase<E>
+			extends ReadOnlyListPropertyBaseEx<E> {
+
+		private class EmptyProperty extends ReadOnlyBooleanPropertyBase {
+
+			@Override
+			protected void fireValueChangedEvent() {
+				super.fireValueChangedEvent();
+			}
+
+			@Override
+			public boolean get() {
+				return isEmpty();
+			}
+
+			@Override
+			public Object getBean() {
+				return LazyReadOnlyListPropertyBase.this;
+			}
+
+			@Override
+			public String getName() {
+				return "empty";
+			}
+		}
+
+		private class SizeProperty extends ReadOnlyIntegerPropertyBase {
+			@Override
+			protected void fireValueChangedEvent() {
+				super.fireValueChangedEvent();
+			}
+
+			@Override
+			public int get() {
+				return size();
+			}
+
+			@Override
+			public Object getBean() {
+				return LazyReadOnlyListPropertyBase.this;
+			}
+
+			@Override
+			public String getName() {
+				return "size";
+			}
+		}
+
+		private ReadOnlyBooleanProperty emptyProperty;
+		private ReadOnlyIntegerProperty sizeProperty;
+
+		private ObservableList<E> lazyValue = CollectionUtils
+				.observableArrayList();
+
+		public LazyReadOnlyListPropertyBase() {
+			// lazy listener will forward changes of lazy value, which will be
+			// updated within fireValueChangeEvent()
+			lazyValue.addListener(new ListChangeListener<E>() {
+
+				@Override
+				public void onChanged(
+						ListChangeListener.Change<? extends E> c) {
+					fireValueChangedEvent(
+							new ListListenerHelperEx.AtomicChange<>(get(), c));
+				}
+			});
+		}
+
+		@Override
+		public ReadOnlyBooleanProperty emptyProperty() {
+			if (emptyProperty == null) {
+				emptyProperty = new EmptyProperty();
+			}
+			return emptyProperty;
+		}
+
+		@Override
+		public void fireValueChangedEvent() {
+			// XXX fireValueChangedEvent() is overwritten, so it can be called
+			// from within refresh to notify about changes (the list change
+			// event will be computed from the old and current value). We thus
+			// overwrite getValue() to return a copy (so a change can be
+			// computed from oldValue and currentValue). Note that list
+			// change events will never be notified via
+			// fireValueChangedEvent(Change), as ReadOnlyListPropertyBaseEx is
+			// no WritableValue (so we do not have to guard this in addition).
+			lazyValue.setAll(get());
 		}
 
 		@Override
 		public Object getBean() {
 			return Connection.this;
+		}
+
+		@Override
+		public String getName() {
+			return "points";
+		}
+
+		@Override
+		public ReadOnlyIntegerProperty sizeProperty() {
+			if (sizeProperty == null) {
+				sizeProperty = new SizeProperty();
+			}
+			return sizeProperty;
 		}
 	}
 
 	private final class PointsUnmodifiableProperty
-			extends ReadOnlyListWrapperEx<Point> {
-
-		@Override
-		public void fireValueChangedEvent() {
-			super.fireValueChangedEvent();
-		}
+			extends LazyReadOnlyListPropertyBase<Point> {
 
 		@Override
 		public ObservableList<Point> get() {
-			return FXCollections.unmodifiableObservableList(CollectionUtils
-					.observableList(new ArrayList<>(getPointsUnmodifiable())));
+			return getPointsUnmodifiable();
 		}
 
 		@Override
-		public Object getBean() {
-			return Connection.this;
+		public String getName() {
+			return "points";
 		}
 	}
 
@@ -152,8 +254,8 @@ public class Connection extends Group {
 	private ObservableList<Point> points = CollectionUtils
 			.observableArrayList();
 
-	private PointsUnmodifiableProperty pointsUnmodifiableProperty = new PointsUnmodifiableProperty();
-	private AnchorsUnmodifiableProperty anchorsUnmodifiableProperty = new AnchorsUnmodifiableProperty();
+	private PointsUnmodifiableProperty pointsUnmodifiableProperty = null;
+	private AnchorsUnmodifiableProperty anchorsUnmodifiableProperty = null;
 
 	// maintain anchors in a map, and their related keys additionally in an
 	// ordered set, so we can determine appropriate indexes or anchor keys.
@@ -418,7 +520,11 @@ public class Connection extends Group {
 	 *         {@link Connection}'s anchors.
 	 */
 	public ReadOnlyListProperty<IAnchor> anchorsUnmodifiableProperty() {
-		return anchorsUnmodifiableProperty.getReadOnlyProperty();
+		// property is created lazily to save memory
+		if (anchorsUnmodifiableProperty == null) {
+			anchorsUnmodifiableProperty = new AnchorsUnmodifiableProperty();
+		}
+		return anchorsUnmodifiableProperty;
 	}
 
 	/**
@@ -909,7 +1015,11 @@ public class Connection extends Group {
 	 *         {@link Connection}'s points.
 	 */
 	public ReadOnlyListProperty<Point> pointsUnmodifiableProperty() {
-		return pointsUnmodifiableProperty.getReadOnlyProperty();
+		// property is created lazily to save memory
+		if (pointsUnmodifiableProperty == null) {
+			pointsUnmodifiableProperty = new PointsUnmodifiableProperty();
+		}
+		return pointsUnmodifiableProperty;
 	}
 
 	/**
@@ -959,10 +1069,16 @@ public class Connection extends Group {
 			throw new IllegalStateException(
 					"An IConnectionInterpolator is mandatory for a Connection.");
 		}
-		inRefresh = false;
 
-		anchorsUnmodifiableProperty.fireValueChangedEvent();
-		pointsUnmodifiableProperty.fireValueChangedEvent();
+		// notify properties (which are lazily created)
+		if (anchorsUnmodifiableProperty != null) {
+			anchorsUnmodifiableProperty.fireValueChangedEvent();
+		}
+		if (pointsUnmodifiableProperty != null) {
+			pointsUnmodifiableProperty.fireValueChangedEvent();
+		}
+
+		inRefresh = false;
 	}
 
 	private void registerPCL(AnchorKey anchorKey, IAnchor anchor) {
