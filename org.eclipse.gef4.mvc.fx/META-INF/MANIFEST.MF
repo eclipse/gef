@@ -3,6 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 MVC.FX
 Bundle-SymbolicName: org.eclipse.gef4.mvc.fx
 Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse GEF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)",
@@ -11,17 +13,15 @@ Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.gef4.geometry;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.gef4.geometry.convert.fx;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.gef4.mvc;bundle-version="[1.0.0,2.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.mvc.fx;x-internal:=true,
- org.eclipse.gef4.mvc.fx.behaviors;x-internal:=true,
- org.eclipse.gef4.mvc.fx.domain;x-internal:=true,
- org.eclipse.gef4.mvc.fx.operations;x-internal:=true,
- org.eclipse.gef4.mvc.fx.parts;x-internal:=true,
- org.eclipse.gef4.mvc.fx.policies;x-internal:=true,
- org.eclipse.gef4.mvc.fx.providers;x-internal:=true,
- org.eclipse.gef4.mvc.fx.tools;x-internal:=true,
- org.eclipse.gef4.mvc.fx.viewer;x-internal:=true
-Bundle-Vendor: Eclipse GEF
+Export-Package: org.eclipse.gef4.mvc.fx;uses:="com.google.inject.multibindings",
+ org.eclipse.gef4.mvc.fx.behaviors,
+ org.eclipse.gef4.mvc.fx.domain,
+ org.eclipse.gef4.mvc.fx.operations,
+ org.eclipse.gef4.mvc.fx.parts;uses:="com.google.inject",
+ org.eclipse.gef4.mvc.fx.policies,
+ org.eclipse.gef4.mvc.fx.providers;uses:="com.google.inject",
+ org.eclipse.gef4.mvc.fx.tools,
+ org.eclipse.gef4.mvc.fx.viewer
 Bundle-Activator: org.eclipse.gef4.mvc.fx.MvcFxBundle
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.collect;version="[12.0.0,16.0.0)",

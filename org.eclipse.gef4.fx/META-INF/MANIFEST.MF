@@ -5,11 +5,12 @@ Bundle-SymbolicName: org.eclipse.gef4.fx
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.fx.anchors;x-internal:=true,
- org.eclipse.gef4.fx.gestures;x-internal:=true,
- org.eclipse.gef4.fx.listeners;x-internal:=true,
- org.eclipse.gef4.fx.nodes;x-internal:=true,
- org.eclipse.gef4.fx.utils;x-internal:=true
+Export-Package: org.eclipse.gef4.fx,
+ org.eclipse.gef4.fx.anchors;uses:="com.google.common.collect",
+ org.eclipse.gef4.fx.gestures,
+ org.eclipse.gef4.fx.listeners,
+ org.eclipse.gef4.fx.nodes,
+ org.eclipse.gef4.fx.utils
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.gef4.common;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.gef4.geometry;bundle-version="[1.0.0,2.0.0)",
