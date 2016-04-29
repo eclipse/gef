@@ -69,9 +69,7 @@ public abstract class AbstractRouter implements IConnectionRouter {
 
 		// if we have a position hint for the anchor, we need to use this as the
 		// reference point
-		Point newRef = positionHintsProperty().containsKey(anchorKey)
-				? positionHintsProperty().get(anchorKey)
-				: getAnchoredReferencePoint(connection, index);
+		Point newRef = getAnchoredReferencePoint(connection, index);
 		if (oldRef == null || !newRef.equals(oldRef)) {
 			referencePointParameter.set(newRef);
 		}

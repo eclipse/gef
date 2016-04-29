@@ -284,10 +284,17 @@ public class OrthogonalRouter extends AbstractRouter {
 		if (referenceGeometry != null) {
 			IGeometry geometry = getAnchorageGeometry(connection, index);
 			if (geometry != null) {
+				// XXX: if a position hint is supplied for the current index,
+				// return that hint as the reference point.
+				AnchorKey anchorKey = connection.getAnchorKey(index);
+				if (positionHintsProperty().containsKey(anchorKey)) {
+					return positionHintsProperty().get(anchorKey);
+				}
+
 				// XXX: if index and reference index both point to anchors that
 				// use a reference geometry, we have to compute a horizontal or
 				// vertical projection between both geometries (if existent)
-				// before falling back.
+				// before falling back to the super strategy.
 				Rectangle bounds = geometry.getBounds();
 				Rectangle refBounds = referenceGeometry.getBounds();
 
@@ -436,7 +443,8 @@ public class OrthogonalRouter extends AbstractRouter {
 		// will be computed.
 		Vector inDirection = null;
 		Vector outDirection = null;
-		for (int i = 0; i < connection.getPointsUnmodifiable().size() - 1; i++) {
+		for (int i = 0; i < connection.getPointsUnmodifiable().size()
+				- 1; i++) {
 			IAnchor anchor = connection.getAnchor(i);
 			if (anchor instanceof DynamicAnchor) {
 				updateComputationParameters(connection, i);
@@ -527,7 +535,8 @@ public class OrthogonalRouter extends AbstractRouter {
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
 				}
-			} else if (i != 0 && i == connection.getPointsUnmodifiable().size() - 2) {
+			} else if (i != 0
+					&& i == connection.getPointsUnmodifiable().size() - 2) {
 				// move left/right if next point is on top or
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i + 1, currentPoint
@@ -760,7 +769,8 @@ public class OrthogonalRouter extends AbstractRouter {
 		// set orientation hint for first and last anchor
 		AnchorKey anchorKey = connection.getAnchorKey(index);
 		IAnchor anchor = connection.getAnchor(index);
-		if (index == 0 || index == connection.getPointsUnmodifiable().size() - 1) {
+		if (index == 0
+				|| index == connection.getPointsUnmodifiable().size() - 1) {
 			// update orientation hint
 			Point neighborPoint = connection
 					.getPoint(index == 0 ? index + 1 : index - 1);
