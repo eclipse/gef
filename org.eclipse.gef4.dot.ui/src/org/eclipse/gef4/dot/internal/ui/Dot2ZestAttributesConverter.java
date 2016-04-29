@@ -27,10 +27,15 @@ import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedNodeShape;
 import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedShape;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
+import org.eclipse.gef4.fx.nodes.StraightRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Ellipse;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -206,6 +211,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
 		}
 
+		// create edge curve
+		GeometryNode<ICurve> curve = new GeometryNode<>();
+		ZestProperties.setCurve(zest, curve);
+
 		// only convert layout information in native mode, as the results
 		// will otherwise not match
 		if (!options().emulateLayout) {
@@ -235,20 +244,33 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					// do not use control points
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
-					ZestProperties.setRouter(zest,
-							new DotStraightRouter(bSplineControlPoints.get(0),
-									bSplineControlPoints.get(
-											bSplineControlPoints.size() - 1)));
+
+					StraightRouter router = new StraightRouter();
+					ZestProperties.setRouter(zest, router);
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.START_ROLE),
+							bSplineControlPoints.get(0));
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.END_ROLE),
+							bSplineControlPoints
+									.get(bSplineControlPoints.size() - 1));
 				} else if (DotAttributes.SPLINES__G__POLYLINE.equals(splines)) {
 					// use polyline interpolator
 					// use straight router
 					// use control points (without start/end) TODO: verify
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
-					ZestProperties.setRouter(zest,
-							new DotStraightRouter(bSplineControlPoints.get(0),
-									bSplineControlPoints.get(
-											bSplineControlPoints.size() - 1)));
+
+					StraightRouter router = new StraightRouter();
+					ZestProperties.setRouter(zest, router);
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.START_ROLE),
+							bSplineControlPoints.get(0));
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.END_ROLE),
+							bSplineControlPoints
+									.get(bSplineControlPoints.size() - 1));
+
 					ZestProperties.setControlPoints(zest, bSplineControlPoints
 							.subList(1, bSplineControlPoints.size() - 1));
 				} else if (DotAttributes.SPLINES__G__ORTHO.equals(splines)) {
@@ -257,10 +279,17 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					// normalize control points for orthogonal lines
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
-					ZestProperties.setRouter(zest,
-							new DotOrthogonalRouter(bSplineControlPoints.get(0),
-									bSplineControlPoints.get(
-											bSplineControlPoints.size() - 1)));
+					OrthogonalRouter router = new OrthogonalRouter();
+					ZestProperties.setRouter(zest, router);
+
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.START_ROLE),
+							bSplineControlPoints.get(0));
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.END_ROLE),
+							bSplineControlPoints
+									.get(bSplineControlPoints.size() - 1));
+
 					ZestProperties.setControlPoints(zest,
 							computeZestOrthogonalControlPoints(
 									bSplineControlPoints));
@@ -277,10 +306,15 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 							new DotBSplineInterpolator());
 					// use start/end as reference points for the anchor
 					// computation
-					ZestProperties.setRouter(zest,
-							new DotBSplineRouter(bSplineControlPoints.get(0),
-									bSplineControlPoints.get(
-											bSplineControlPoints.size() - 1)));
+					StraightRouter router = new StraightRouter();
+					ZestProperties.setRouter(zest, router);
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.START_ROLE),
+							bSplineControlPoints.get(0));
+					router.positionHintsProperty().put(
+							new AnchorKey(curve, Connection.END_ROLE),
+							bSplineControlPoints
+									.get(bSplineControlPoints.size() - 1));
 					// first and last way point are provided by start and end
 					// anchor, so we need to remove them as control points
 					ZestProperties.setControlPoints(zest, bSplineControlPoints

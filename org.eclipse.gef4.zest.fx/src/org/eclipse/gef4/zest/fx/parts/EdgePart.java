@@ -143,6 +143,8 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				waypoints.add(bp.getPosition());
 			}
 		}
+		// TODO ZestProperties.setStartPoint();
+		// TODO ZestProperties.setEndPoint();
 		ZestProperties.setControlPoints(getContent(), waypoints);
 	}
 

@@ -222,13 +222,13 @@ public class Connection extends Group {
 	 * The <i>id</i> used to identify the start point of this connection at the
 	 * start anchor.
 	 */
-	private static final String START_ROLE = "start";
+	public static final String START_ROLE = "start";
 
 	/**
 	 * The <i>id</i> used to identify the end point of this connection at the
 	 * end anchor.
 	 */
-	private static final String END_ROLE = "end";
+	public static final String END_ROLE = "end";
 
 	/**
 	 * Prefix for the default <i>ids</i> used by this connection to identify
