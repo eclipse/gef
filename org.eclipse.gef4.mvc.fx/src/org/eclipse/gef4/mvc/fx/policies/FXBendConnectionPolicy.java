@@ -382,10 +382,13 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			}
 			// TODO: this is not correct; we should not hard-code the compatible
 			// anchor via the computation strategy.
-			IAnchor anchor = part.getAdapter(IAnchorProvider.class)
-					.get(getHost());
-			if (anchor != null) {
-				return anchor;
+			IAnchorProvider anchorProvider = part
+					.getAdapter(IAnchorProvider.class);
+			if (anchorProvider != null) {
+				IAnchor anchor = anchorProvider.get(getHost());
+				if (anchor != null) {
+					return anchor;
+				}
 			}
 		}
 		return null;

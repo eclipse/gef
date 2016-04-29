@@ -21,10 +21,9 @@ public class CloneShapePolicy extends AbstractCloneContentPolicy {
 	@Override
 	public Object cloneContent() {
 		FXGeometricShape originalShape = getHost().getContent();
-		FXGeometricShape shape = new FXGeometricShape(
-				(IShape) originalShape.getGeometry().getCopy(),
-				originalShape.getTransform(), originalShape.getFill(),
-				originalShape.getEffect());
+		// TODO: Copy Fill and Effect
+		FXGeometricShape shape = new FXGeometricShape((IShape) originalShape.getGeometry().getCopy(),
+				originalShape.getTransform().getCopy(), originalShape.getFill(), originalShape.getEffect());
 		shape.setStroke(originalShape.getStroke());
 		shape.setStrokeWidth(originalShape.getStrokeWidth());
 		return shape;

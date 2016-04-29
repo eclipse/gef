@@ -153,15 +153,21 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			}
 		}
 		// update properties
-		if (!attachedSource && positions.size() > 0) {
-			ZestProperties.setStartPoint(getContent(), positions.remove(0));
+		if (!attachedSource) {
+			if (positions.size() > 0) {
+				ZestProperties.setStartPoint(getContent(), positions.remove(0));
+			} else {
+				throw new IllegalStateException("No start point provided.");
+			}
 		}
-		if (!attachedTarget && positions.size() > 0) {
-			ZestProperties.setEndPoint(getContent(), positions.remove(positions.size() - 1));
+		if (!attachedTarget) {
+			if (positions.size() > 0) {
+				ZestProperties.setEndPoint(getContent(), positions.remove(positions.size() - 1));
+			} else {
+				throw new IllegalStateException("No start point provided.");
+			}
 		}
-		if (positions.size() > 0) {
-			ZestProperties.setControlPoints(getContent(), positions);
-		}
+		ZestProperties.setControlPoints(getContent(), positions);
 	}
 
 	@Override
