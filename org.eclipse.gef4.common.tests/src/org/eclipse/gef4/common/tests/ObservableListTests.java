@@ -33,7 +33,6 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.beans.property.SimpleListPropertyEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ListListenerHelperEx.AtomicChange;
-import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -657,8 +656,8 @@ public class ObservableListTests {
 				.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 					@Override
 					public void uncaughtException(Thread t, Throwable e) {
-						if (e instanceof AssumptionViolatedException) {
-							throw (AssumptionViolatedException) e;
+						if (e instanceof RuntimeException) {
+							throw (RuntimeException) e;
 						}
 					}
 				});
