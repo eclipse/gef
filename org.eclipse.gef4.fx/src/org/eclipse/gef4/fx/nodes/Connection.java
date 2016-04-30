@@ -16,12 +16,12 @@ package org.eclipse.gef4.fx.nodes;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListPropertyBaseEx;
-import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ListListenerHelperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
@@ -34,13 +34,14 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
+import com.google.common.collect.Iterators;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanPropertyBase;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerPropertyBase;
 import javafx.beans.property.ReadOnlyListProperty;
-import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -238,30 +239,18 @@ public class Connection extends Group {
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
-	private ReadOnlyMapWrapperEx<AnchorKey, Point> pointHintsByKeysProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections.<AnchorKey, Point> observableHashMap());
-
 	private ObjectProperty<Node> curveProperty = new SimpleObjectProperty<>();
 	private ObjectProperty<Node> startDecorationProperty = null;
 	private ObjectProperty<Node> endDecorationProperty = null;
-
 	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
 			new StraightRouter());
-
 	private ObjectProperty<IConnectionInterpolator> interpolatorProperty = new SimpleObjectProperty<IConnectionInterpolator>(
 			new PolylineInterpolator());
-
-	private ObservableList<IAnchor> anchors = CollectionUtils
-			.observableArrayList();
-	private ObservableList<Point> points = CollectionUtils
-			.observableArrayList();
-
-	private PointsUnmodifiableProperty pointsUnmodifiableProperty = null;
-	private AnchorsUnmodifiableProperty anchorsUnmodifiableProperty = null;
 
 	// maintain anchors in a map, and their related keys additionally in an
 	// ordered set, so we can determine appropriate indexes or anchor keys.
 	private Map<AnchorKey, IAnchor> anchorsByKeys = new HashMap<>();
+	private Map<AnchorKey, Point> pointHintsByKeys = new HashMap<>();
 	private TreeSet<AnchorKey> sortedAnchorKeys = new TreeSet<>(
 			new Comparator<AnchorKey>() {
 
@@ -287,10 +276,14 @@ public class Connection extends Group {
 				}
 			});
 
-	// refresh geometry on position changes
-	private boolean inRefresh = false;
-	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
+	private ObservableList<IAnchor> anchors = CollectionUtils
+			.observableArrayList();
+	private ObservableList<Point> points = CollectionUtils
+			.observableArrayList();
+	private PointsUnmodifiableProperty pointsUnmodifiableProperty = null;
+	private AnchorsUnmodifiableProperty anchorsUnmodifiableProperty = null;
 
+	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
 	private ChangeListener<Node> decorationListener = new ChangeListener<Node>() {
 
 		final ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
@@ -325,6 +318,7 @@ public class Connection extends Group {
 			refresh();
 		}
 	};
+	private boolean inRefresh = false;
 
 	/**
 	 * Constructs a new {@link Connection} whose start and end point are set to
@@ -391,6 +385,10 @@ public class Connection extends Group {
 
 		// set default curve
 		setCurve(new GeometryNode<ICurve>());
+
+		// init start and end points
+		setStartPoint(new Point());
+		setEndPoint(new Point());
 	}
 
 	/**
@@ -426,9 +424,12 @@ public class Connection extends Group {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
+		AnchorKey startAnchorKey = getStartAnchorKey();
+		AnchorKey endAnchorKey = getEndAnchorKey();
+
 		List<IAnchor> controlAnchorsToMove = new ArrayList<>();
-		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())) {
+		if (!anchorKey.equals(startAnchorKey)
+				&& !anchorKey.equals(endAnchorKey)) {
 			int controlAnchorIndex = getControlAnchorIndex(anchorKey);
 			// remove all control points at a larger index
 			int pointCount = sortedAnchorKeys.size();
@@ -436,16 +437,16 @@ public class Connection extends Group {
 				// (temporarily) remove all anchorsByKeys that are to be moved
 				// up
 				AnchorKey ak = getAnchorKey(i);
-				if (!ak.equals(getStartAnchorKey())
-						&& !ak.equals(getEndAnchorKey())) {
+				if (!ak.equals(startAnchorKey) && !ak.equals(endAnchorKey)) {
 					if (getControlAnchorIndex(ak) >= controlAnchorIndex) {
 						IAnchor a = getAnchor(i);
 
 						unregisterPCL(ak, a);
 
 						controlAnchorsToMove.add(0, a);
-						points.remove(getAnchorIndex(ak));
-						anchors.remove(getAnchorIndex(ak));
+						int anchorIndex = getAnchorIndex(ak);
+						points.remove(anchorIndex);
+						anchors.remove(anchorIndex);
 
 						sortedAnchorKeys.remove(ak);
 						anchorsByKeys.remove(ak);
@@ -469,20 +470,22 @@ public class Connection extends Group {
 				FX2Geometry.toPoint(getCurve().localToParent(
 						Geometry2FX.toFXPoint(anchor.getPosition(anchorKey)))));
 
-		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())) {
+		if (!anchorKey.equals(startAnchorKey)
+				&& !anchorKey.equals(endAnchorKey)) {
 			int controlIndex = getControlAnchorIndex(anchorKey);
-			// re-add all controlpoints at a larger index
+			// re-add all control points at a larger index
 			for (int i = 0; i < controlAnchorsToMove.size(); i++) {
 				AnchorKey ak = getControlAnchorKey(controlIndex + i + 1);
 				IAnchor a = controlAnchorsToMove.get(i);
+
 				sortedAnchorKeys.add(ak);
 				anchorsByKeys.put(ak, a);
 
 				a.attach(ak);
 
-				anchors.add(getAnchorIndex(ak), a);
-				points.add(getAnchorIndex(ak),
+				int anchorIndex = getAnchorIndex(ak);
+				anchors.add(anchorIndex, a);
+				points.add(anchorIndex,
 						FX2Geometry.toPoint(getCurve().localToParent(
 								Geometry2FX.toFXPoint(a.getPosition(ak)))));
 
@@ -623,11 +626,19 @@ public class Connection extends Group {
 	 * @param anchorKey
 	 *            The {@link AnchorKey} for which the anchor index is
 	 *            determined.
-	 * @return The anchor index for the given {@link AnchorKey}.
+	 * @return The anchor index for the given {@link AnchorKey} or
+	 *         <code>-1</code> in case the anchor key is not contained.
 	 */
 	protected int getAnchorIndex(AnchorKey anchorKey) {
-		// TODO: improve performance
-		return new ArrayList<>(sortedAnchorKeys).indexOf(anchorKey);
+		int index = 0;
+		Iterator<AnchorKey> iterator = sortedAnchorKeys.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().equals(anchorKey)) {
+				return index;
+			}
+			index++;
+		}
+		return -1;
 	}
 
 	/**
@@ -639,8 +650,7 @@ public class Connection extends Group {
 	 * @return The {@link AnchorKey} for the given anchor index.
 	 */
 	protected AnchorKey getAnchorKey(int anchorIndex) {
-		// TODO: improve performance
-		return new ArrayList<>(sortedAnchorKeys).get(anchorIndex);
+		return Iterators.get(sortedAnchorKeys.iterator(), anchorIndex);
 	}
 
 	/**
@@ -775,17 +785,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getControlPoint(int index) {
-		// TODO: retrieve from pointsUnmodifiable list rather then computing it.
-		IAnchor anchor = getControlAnchor(index);
-		if (anchor == null) {
-			throw new IllegalArgumentException(
-					"No controlpoint at index " + index);
-		}
-		if (!anchor.isAttached(getControlAnchorKey(index))) {
-			return null;
-		}
-		return FX2Geometry.toPoint(getCurve().localToParent(Geometry2FX
-				.toFXPoint(anchor.getPosition(getControlAnchorKey(index)))));
+		return points.get(getAnchorIndex(getControlAnchorKey(index)));
 	}
 
 	/**
@@ -861,16 +861,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getEndPoint() {
-		// TODO: retrieve from pointsUnmodifiable list rather then computing it.
-		IAnchor anchor = getEndAnchor();
-		if (anchor == null) {
-			return null;
-		}
-		if (!anchor.isAttached(getEndAnchorKey())) {
-			return null;
-		}
-		return FX2Geometry.toPoint(getCurve().localToParent(
-				Geometry2FX.toFXPoint(anchor.getPosition(getEndAnchorKey()))));
+		return points.get(getAnchorIndex(getEndAnchorKey()));
 	}
 
 	/**
@@ -881,8 +872,9 @@ public class Connection extends Group {
 	 *         hint is present.
 	 */
 	public Point getEndPointHint() {
-		if (pointHintsByKeysProperty.containsKey(getEndAnchorKey())) {
-			return pointHintsByKeysProperty.get(getEndAnchorKey());
+		AnchorKey endAnchorKey = getEndAnchorKey();
+		if (pointHintsByKeys.containsKey(endAnchorKey)) {
+			return pointHintsByKeys.get(endAnchorKey);
 		}
 		return null;
 	}
@@ -978,16 +970,7 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getStartPoint() {
-		// TODO: retrieve from pointsUnmodifiable list rather then computing it.
-		IAnchor anchor = getStartAnchor();
-		if (anchor == null) {
-			return null;
-		}
-		if (!anchor.isAttached(getStartAnchorKey())) {
-			return null;
-		}
-		return FX2Geometry.toPoint(getCurve().localToParent(Geometry2FX
-				.toFXPoint(anchor.getPosition(getStartAnchorKey()))));
+		return points.get(getAnchorIndex(getStartAnchorKey()));
 	}
 
 	/**
@@ -998,8 +981,9 @@ public class Connection extends Group {
 	 *         hint is present.
 	 */
 	public Point getStartPointHint() {
-		if (pointHintsByKeysProperty.containsKey(getStartAnchorKey())) {
-			return pointHintsByKeysProperty.get(getStartAnchorKey());
+		AnchorKey startAnchorKey = getStartAnchorKey();
+		if (pointHintsByKeys.containsKey(startAnchorKey)) {
+			return pointHintsByKeys.get(startAnchorKey);
 		}
 		return null;
 	}
@@ -1102,17 +1086,6 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns a {@link ReadOnlyMapProperty} for the position hints by anchor
-	 * keys.
-	 *
-	 * @return A {@link ReadOnlyMapProperty} for the position hints by anchor
-	 *         keys.
-	 */
-	protected ReadOnlyMapProperty<AnchorKey, Point> pointHintsByKeysProperty() {
-		return pointHintsByKeysProperty.getReadOnlyProperty();
-	}
-
-	/**
 	 * Re-attaches all {@link AnchorKey}s that are managed by this
 	 * {@link Connection}.
 	 *
@@ -1129,7 +1102,7 @@ public class Connection extends Group {
 				throw new IllegalStateException(
 						"Re-attach failed: no previous curve, but anchor keys present.");
 			}
-			if (!pointHintsByKeysProperty.isEmpty()) {
+			if (!pointHintsByKeys.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no previous curve, but anchor keys present.");
 			}
@@ -1145,7 +1118,7 @@ public class Connection extends Group {
 				throw new IllegalStateException(
 						"Re-attach failed: no new curve, but anchor keys present.");
 			}
-			if (!pointHintsByKeysProperty.isEmpty()) {
+			if (!pointHintsByKeys.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no new curve, but anchor keys present.");
 			}
@@ -1171,9 +1144,8 @@ public class Connection extends Group {
 				newSortedKeys.add(newAk);
 
 				// update position hint
-				if (pointHintsByKeysProperty.containsKey(oldAk)) {
-					pointHintsByKeysProperty.put(newAk,
-							pointHintsByKeysProperty.remove(oldAk));
+				if (pointHintsByKeys.containsKey(oldAk)) {
+					pointHintsByKeys.put(newAk, pointHintsByKeys.remove(oldAk));
 				}
 				// XXX: anchors and points are staying the same, no need to
 				// update
@@ -1303,11 +1275,14 @@ public class Connection extends Group {
 			}
 		}
 
+		AnchorKey startAnchorKey = getStartAnchorKey();
+		AnchorKey endAnchorKey = getEndAnchorKey();
+
 		unregisterPCL(anchorKey, anchor);
 
 		List<IAnchor> controlAnchorsToMove = new ArrayList<>();
-		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())) {
+		if (!anchorKey.equals(startAnchorKey)
+				&& !anchorKey.equals(endAnchorKey)) {
 			int controlAnchorIndex = getControlAnchorIndex(anchorKey);
 			// remove all control points at a larger index
 			int pointCount = sortedAnchorKeys.size();
@@ -1315,8 +1290,7 @@ public class Connection extends Group {
 				// (temporarily) remove all anchorsByKeys that are to be moved
 				// up
 				AnchorKey ak = getAnchorKey(i);
-				if (!ak.equals(getStartAnchorKey())
-						&& !ak.equals(getEndAnchorKey())) {
+				if (!ak.equals(startAnchorKey) && !ak.equals(endAnchorKey)) {
 					if (getControlAnchorIndex(ak) > controlAnchorIndex) {
 						IAnchor a = getAnchor(i);
 
@@ -1324,8 +1298,9 @@ public class Connection extends Group {
 
 						controlAnchorsToMove.add(0, a);
 
-						points.remove(getAnchorIndex(ak));
-						anchors.remove(getAnchorIndex(ak));
+						int anchorIndex = getAnchorIndex(ak);
+						points.remove(anchorIndex);
+						anchors.remove(anchorIndex);
 
 						sortedAnchorKeys.remove(ak);
 						anchorsByKeys.remove(ak);
@@ -1344,8 +1319,8 @@ public class Connection extends Group {
 
 		anchor.detach(anchorKey);
 
-		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())) {
+		if (!anchorKey.equals(startAnchorKey)
+				&& !anchorKey.equals(endAnchorKey)) {
 			int controlIndex = getControlAnchorIndex(anchorKey);
 			// re-add all control points at a larger index
 			for (int i = 0; i < controlAnchorsToMove.size(); i++) {
@@ -1357,8 +1332,9 @@ public class Connection extends Group {
 
 				a.attach(ak);
 
-				anchors.add(getAnchorIndex(ak), a);
-				points.add(getAnchorIndex(ak),
+				int anchorIndex = getAnchorIndex(ak);
+				anchors.add(anchorIndex, a);
+				points.add(anchorIndex,
 						FX2Geometry.toPoint(getCurve().localToParent(
 								Geometry2FX.toFXPoint(a.getPosition(ak)))));
 
@@ -1673,12 +1649,13 @@ public class Connection extends Group {
 	 *            The new end position hint.
 	 */
 	public void setEndPointHint(Point endPositionHint) {
+		AnchorKey endAnchorKey = getEndAnchorKey();
 		if (endPositionHint == null) {
-			if (pointHintsByKeysProperty.containsKey(getEndAnchorKey())) {
-				pointHintsByKeysProperty.remove(getEndAnchorKey());
+			if (pointHintsByKeys.containsKey(endAnchorKey)) {
+				pointHintsByKeys.remove(endAnchorKey);
 			}
 		} else {
-			pointHintsByKeysProperty.put(getEndAnchorKey(), endPositionHint);
+			pointHintsByKeys.put(endAnchorKey, endPositionHint);
 		}
 	}
 
@@ -1796,13 +1773,13 @@ public class Connection extends Group {
 	 *            The new start position hint.
 	 */
 	public void setStartPointHint(Point startPositionHint) {
+		AnchorKey startAnchorKey = getStartAnchorKey();
 		if (startPositionHint == null) {
-			if (pointHintsByKeysProperty.containsKey(getStartAnchorKey())) {
-				pointHintsByKeysProperty.remove(getStartAnchorKey());
+			if (pointHintsByKeys.containsKey(startAnchorKey)) {
+				pointHintsByKeys.remove(startAnchorKey);
 			}
 		} else {
-			pointHintsByKeysProperty.put(getStartAnchorKey(),
-					startPositionHint);
+			pointHintsByKeys.put(startAnchorKey, startPositionHint);
 		}
 	}
 
@@ -1826,5 +1803,4 @@ public class Connection extends Group {
 					.removeListener(anchorPCL.remove(anchorKey));
 		}
 	}
-
 }
