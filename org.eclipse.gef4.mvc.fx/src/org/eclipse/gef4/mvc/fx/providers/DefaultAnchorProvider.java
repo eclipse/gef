@@ -69,7 +69,7 @@ public class DefaultAnchorProvider
 	 * {@link #getAdaptable()} as its anchorage and passing-in the given
 	 * {@link IComputationStrategy}. Also sets up the computation parameters for
 	 * the newly constructed anchor using
-	 * {@link #setupComputationParameters(DynamicAnchor)}.
+	 * {@link #initializeComputationParameters(DynamicAnchor)}.
 	 *
 	 * @param strategy
 	 *            The {@link IComputationStrategy} to use.
@@ -78,7 +78,7 @@ public class DefaultAnchorProvider
 	protected DynamicAnchor createDynamicAnchor(IComputationStrategy strategy) {
 		DynamicAnchor anchor = new DynamicAnchor(getAdaptable().getVisual(),
 				strategy);
-		setupComputationParameters(anchor);
+		initializeComputationParameters(anchor);
 		return anchor;
 	}
 
@@ -139,7 +139,7 @@ public class DefaultAnchorProvider
 	 *            The {@link DynamicAnchor} for which to initialize computation
 	 *            parameters.
 	 */
-	protected void setupComputationParameters(final DynamicAnchor anchor) {
+	protected void initializeComputationParameters(final DynamicAnchor anchor) {
 		anchor.getComputationParameter(AnchorageReferenceGeometry.class)
 				.bind(new ObjectBinding<IGeometry>() {
 					{
