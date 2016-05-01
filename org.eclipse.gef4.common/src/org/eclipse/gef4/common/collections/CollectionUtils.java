@@ -14,6 +14,8 @@
 package org.eclipse.gef4.common.collections;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -182,6 +184,13 @@ public class CollectionUtils {
 	 * Returns a (modifiable) new {@link ObservableList} wrapping an
 	 * {@link ArrayList}.
 	 *
+	 * Please note that in order to obtain proper change notifications when
+	 * sorting the returned {@link ObservableList},
+	 * {@link #sort(ObservableList)} or
+	 * {@link #sort(ObservableList, Comparator)} have to be used instead of
+	 * {@link FXCollections#sort(ObservableList)} and
+	 * {@link FXCollections#sort(ObservableList, Comparator)}.
+	 *
 	 * @param <E>
 	 *            The element type of the {@link ObservableList}. The
 	 *            {@link List} to wrap.
@@ -189,6 +198,43 @@ public class CollectionUtils {
 	 */
 	public static <E> ObservableList<E> observableArrayList() {
 		return observableList(new ArrayList<E>());
+	}
+
+	/**
+	 * Create a new {@link ObservableList} that is backed by an
+	 * {@link ArrayList} that contains the contents of the given
+	 * {@link Collection}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableList}.
+	 * @param collection
+	 *            The {@link Collection} that provides the initial contents of
+	 *            the to be created {@link ObservableList}.
+	 * @return A new {@link ObservableList} containing the given contents.
+	 */
+	public static <E> ObservableList<E> observableArrayList(
+			Collection<? extends E> collection) {
+		ObservableList<E> list = observableArrayList();
+		list.addAll(collection);
+		return list;
+	}
+
+	/**
+	 * Creates a new {@link ObservableList} that contains the given elements.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableList}.
+	 *
+	 * @return a newly created observableArrayList
+	 * @param elements
+	 *            The elements that will be added to the returned
+	 *            {@link ObservableList}
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> ObservableList<E> observableArrayList(E... elements) {
+		ObservableList<E> list = observableArrayList();
+		list.addAll(elements);
+		return list;
 	}
 
 	/**
@@ -220,6 +266,13 @@ public class CollectionUtils {
 	/**
 	 * Returns a (modifiable) new {@link ObservableList} wrapping the given
 	 * {@link List}.
+	 *
+	 * Please note that in order to obtain proper change notifications when
+	 * sorting the returned {@link ObservableList},
+	 * {@link #sort(ObservableList)} or
+	 * {@link #sort(ObservableList, Comparator)} have to be used instead of
+	 * {@link FXCollections#sort(ObservableList)} and
+	 * {@link FXCollections#sort(ObservableList, Comparator)}.
 	 *
 	 * @param <E>
 	 *            The element type of the {@link ObservableList}.
@@ -270,6 +323,45 @@ public class CollectionUtils {
 			throw new NullPointerException();
 		}
 		return new ObservableSetMultimapWrapper<>(setMultimap);
+	}
+
+	/**
+	 * Sorts the given {@link ObservableList} using the default
+	 * {@link Comparator} .
+	 *
+	 * @param <E>
+	 *            The value type of the {@link ObservableList}.
+	 * @param observableList
+	 *            The {@link ObservableList} to sort.
+	 */
+	public static <E extends Comparable<? super E>> void sort(
+			ObservableList<E> observableList) {
+		if (observableList instanceof ObservableListWrapperEx) {
+			((ObservableListWrapperEx<? extends E>) observableList).sort();
+		} else {
+			FXCollections.sort(observableList);
+		}
+	}
+
+	/**
+	 * Sorts the given {@link ObservableList} using the given {@link Comparator}
+	 * .
+	 *
+	 * @param <E>
+	 *            The value type of the {@link ObservableList}.
+	 * @param observableList
+	 *            The {@link ObservableList} to sort.
+	 * @param comparator
+	 *            The {@link Comparator} to use.
+	 */
+	public static <E> void sort(ObservableList<E> observableList,
+			Comparator<? super E> comparator) {
+		if (observableList instanceof ObservableListWrapperEx) {
+			((ObservableListWrapperEx<? extends E>) observableList)
+					.sort(comparator);
+		} else {
+			FXCollections.sort(observableList, comparator);
+		}
 	}
 
 	/**
