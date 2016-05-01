@@ -22,6 +22,7 @@ import java.util.Scanner;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotExport;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
 import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -96,19 +97,19 @@ public class DotExportTests {
 		Graph.Builder graph = new Graph.Builder();
 		graph.attr(DotAttributes._NAME__GNE, "LayoutMapping")
 				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
-				.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__DOT);
+				.attr(DotAttributes.LAYOUT__G, Layout.DOT.toString());
 		assertTrue("'dot'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"dot\""));
-		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__TWOPI);
+		graph.attr(DotAttributes.LAYOUT__G, Layout.TWOPI.toString());
 		assertTrue("'twopi'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"twopi\""));
-		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__OSAGE);
+		graph.attr(DotAttributes.LAYOUT__G, Layout.OSAGE.toString());
 		assertTrue("'osage'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"osage\""));
-		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__FDP);
+		graph.attr(DotAttributes.LAYOUT__G, Layout.FDP.toString());
 		assertTrue("'fdp'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"fdp\""));
-		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__SFDP);
+		graph.attr(DotAttributes.LAYOUT__G, Layout.SFDP.toString());
 		assertTrue("'sfdp'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"sfdp\""));
 	}

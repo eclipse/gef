@@ -22,9 +22,11 @@ import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedNodeShape;
 import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedShape;
+import org.eclipse.gef4.dot.internal.parser.splines.Splines;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
@@ -219,8 +221,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (!options().emulateLayout) {
 			// splines attribute defines connection type
 			String splines = DotAttributes.getSplines(dot.getGraph());
-			if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
-					|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
+			if (Splines.EMPTY.toString().equals(splines)
+					|| Splines.NONE.toString().equals(splines)) {
 				// mark as invisible
 				ZestProperties.setInvisible(zest, true);
 			}
@@ -236,8 +238,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 				// mapping to Zest depends on value of 'splines' graph
 				// attribute
-				if (DotAttributes.SPLINES__G__LINE.equals(splines)
-						|| DotAttributes.SPLINES__G__FALSE.equals(splines)) {
+				if (Splines.LINE.toString().equals(splines)
+						|| Splines.FALSE.toString().equals(splines)) {
 					// use polyline interpolator
 					// use straight router
 					// do not use control points
@@ -248,7 +250,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 							bSplineControlPoints.get(0));
 					ZestProperties.setEndPoint(zest, bSplineControlPoints
 							.get(bSplineControlPoints.size() - 1));
-				} else if (DotAttributes.SPLINES__G__POLYLINE.equals(splines)) {
+				} else if (Splines.POLYLINE.toString().equals(splines)) {
 					// use polyline interpolator
 					// use straight router
 					// use control points (without start/end) TODO: verify
@@ -261,7 +263,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 							.get(bSplineControlPoints.size() - 1));
 					ZestProperties.setControlPoints(zest, bSplineControlPoints
 							.subList(1, bSplineControlPoints.size() - 1));
-				} else if (DotAttributes.SPLINES__G__ORTHO.equals(splines)) {
+				} else if (Splines.ORTHO.toString().equals(splines)) {
 					// use polyline interpolator
 					// use orthogonal router
 					// normalize control points for orthogonal lines
@@ -277,7 +279,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 									bSplineControlPoints));
 					// XXX: OrthogonalProjectionStrategy is set within EdgePart
 					// when an anchor is attached.
-				} else if (DotAttributes.SPLINES__G__COMPOUND.equals(splines)) {
+				} else if (Splines.COMPOUND.toString().equals(splines)) {
 					// TODO
 				} else {
 					// splines = spline, true and unset
@@ -511,15 +513,14 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// convert layout and rankdir to LayoutAlgorithm
 			Object dotLayout = DotAttributes.getLayout(dot);
 			ILayoutAlgorithm algo = null;
-			if (DotAttributes.LAYOUT__G__CIRCO.equals(dotLayout)
-					|| DotAttributes.LAYOUT__G__NEATO.equals(dotLayout)
-					|| DotAttributes.LAYOUT__G__TWOPI.equals(dotLayout)) {
+			if (Layout.CIRCO.toString().equals(dotLayout) || Layout.NEATO.toString().equals(dotLayout)
+					|| Layout.TWOPI.toString().equals(dotLayout)) {
 				algo = new RadialLayoutAlgorithm();
-			} else if (DotAttributes.LAYOUT__G__FDP.equals(dotLayout)
-					|| DotAttributes.LAYOUT__G__SFDP.equals(dotLayout)) {
+			} else if (Layout.FDP.toString().equals(dotLayout)
+					|| Layout.SFDP.toString().equals(dotLayout)) {
 				algo = new SpringLayoutAlgorithm();
-			} else if (DotAttributes.LAYOUT__G__GRID.equals(dotLayout)
-					|| DotAttributes.LAYOUT__G__OSAGE.equals(dotLayout)) {
+			} else if (Layout.GRID.toString().equals(dotLayout)
+					|| Layout.OSAGE.toString().equals(dotLayout)) {
 				algo = new GridLayoutAlgorithm();
 			} else {
 				Rankdir dotRankdir = DotAttributes.getRankdirParsed(dot);

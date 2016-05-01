@@ -16,6 +16,7 @@ package org.eclipse.gef4.dot.tests;
 import java.io.File;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
 import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -173,7 +174,7 @@ public final class DotTestUtils {
 		Graph.Builder graph = new Graph.Builder()
 				.attr(DotAttributes._NAME__GNE, "StyledGraph")
 				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
-				.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__DOT);
+				.attr(DotAttributes.LAYOUT__G, Layout.DOT.toString());
 
 		/* Nodes: */
 		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$

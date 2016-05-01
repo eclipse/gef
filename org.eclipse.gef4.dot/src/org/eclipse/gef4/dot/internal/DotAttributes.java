@@ -16,10 +16,7 @@
 package org.eclipse.gef4.dot.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
@@ -27,9 +24,11 @@ import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
 import org.eclipse.gef4.dot.internal.parser.point.Point;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.shape.Shape;
+import org.eclipse.gef4.dot.internal.parser.splines.Splines;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator.AttributeContext;
@@ -49,8 +48,6 @@ import com.google.inject.Injector;
  * @author anyssen
  *
  */
-// TODO: Define explicit enum types for enumerated string values. Provided them
-// as parsed values as well.
 public class DotAttributes {
 
 	private static final Injector dotInjector = new DotStandaloneSetup()
@@ -141,71 +138,7 @@ public class DotAttributes {
 	public static final String LABEL__GNE = "label";
 
 	/**
-	 * This {@link #LAYOUT__G} value specifies that the "circo" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__CIRCO = "circo";
-
-	/**
-	 * This {@link #LAYOUT__G} value specifies that the "dot" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__DOT = "dot";
-
-	/**
-	 * This {@link #LAYOUT__G} value specifies that the "fdp" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__FDP = "fdp";
-
-	/**
-	 * This {@link #LAYOUT__G} value specifies that the "grid" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__GRID = "grid";
-
-	/**
-	 * This {@link #LAYOUT__G} value specifies that the "neato" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__NEATO = "neato";
-
-	/**
-	 * This {@link #LAYOUT__G} value specifies that the "osage" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__OSAGE = "osage";
-
-	/**
-	 * This {@link #LAYOUT__G} value specifies that the "sfdp" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__SFDP = "sfdp";
-
-	/**
-	 * This {@link #LAYOUT__G} value specifies that the "twopi" layout algorithm
-	 * is to be used for laying out the graph.
-	 */
-	public static final String LAYOUT__G__TWOPI = "twopi";
-
-	/**
-	 * Defines the default value for the {@link #LAYOUT__G} property, which is
-	 * {@link #LAYOUT__G__DOT}.
-	 */
-	public static final String LAYOUT__G__DEFAULT = LAYOUT__G__DOT;
-
-	/**
-	 * Defines all possible values for the {@link #LAYOUT__G} property.
-	 */
-	public static final Set<String> LAYOUT__G__VALUES = new HashSet<>(
-			Arrays.asList(LAYOUT__G__DOT, LAYOUT__G__OSAGE, LAYOUT__G__GRID,
-					LAYOUT__G__TWOPI, LAYOUT__G__CIRCO, LAYOUT__G__NEATO,
-					LAYOUT__G__FDP, LAYOUT__G__SFDP));
-
-	/**
-	 * Specifies the layout algorithm which shall be used to layout the graph.
-	 * Possible values are defined by {@link #LAYOUT__G__VALUES}. The default
-	 * value is defined by {@link #LAYOUT__G__DEFAULT}.
+	 * Specifies the 'layout' attribute of a graph.
 	 */
 	public static final String LAYOUT__G = "layout";
 
@@ -245,66 +178,6 @@ public class DotAttributes {
 	 * edges are to be rendered.
 	 */
 	public static final String SPLINES__G = "splines";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that no edges are to be drawn.
-	 * This is a synonym of {@link #SPLINES__G__EMPTY}
-	 */
-	public static final String SPLINES__G__NONE = "none";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that no edges are to be drawn.
-	 * This is a synonym of {@link #SPLINES__G__NONE}
-	 */
-	public static final String SPLINES__G__EMPTY = "";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that lines are to be used.
-	 */
-	public static final String SPLINES__G__LINE = "line";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that lines are to be used. This
-	 * is a synonym of {@link #SPLINES__G__LINE}
-	 */
-	public static final String SPLINES__G__FALSE = "false";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that splines are to be used.
-	 */
-	public static final String SPLINES__G__SPLINE = "spline";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that straight polylines are to
-	 * be used.
-	 */
-	public static final String SPLINES__G__POLYLINE = "polyline";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that orthogonal polylines are to
-	 * be used.
-	 */
-	public static final String SPLINES__G__ORTHO = "ortho";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that splines are to be used.
-	 * This is a synonym of {@link #SPLINES__G__SPLINE}
-	 */
-	public static final String SPLINES__G__TRUE = "true";
-
-	/**
-	 * This {@link #SPLINES__G} value indicates that 'compound' are to be used.
-	 */
-	public static final String SPLINES__G__COMPOUND = "compound";
-
-	/**
-	 * The possible values of the {@link #SPLINES__G} attribute.
-	 */
-	public static final Set<String> SPLINES__G__VALUES = new HashSet<>(
-			Arrays.asList(SPLINES__G__EMPTY, SPLINES__G__NONE,
-					SPLINES__G__FALSE, SPLINES__G__LINE, SPLINES__G__POLYLINE,
-					SPLINES__G__ORTHO, SPLINES__G__SPLINE, SPLINES__G__TRUE,
-					SPLINES__G__COMPOUND));
 
 	/**
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
@@ -700,6 +573,20 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #LAYOUT__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LAYOUT__G} property.
+	 * @return The value of the {@link #LAYOUT__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static Layout getLayoutParsed(Graph graph) {
+		return Layout.get(getLayout(graph));
+	}
+
+	/**
 	 * Returns the value of the {@link #LP__E} property of the given
 	 * {@link Node}.
 	 * 
@@ -958,6 +845,20 @@ public class DotAttributes {
 	 */
 	public static String getSplines(Graph graph) {
 		return (String) graph.attributesProperty().get(SPLINES__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #SPLINES__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #SPLINES__G} property.
+	 * @return The value of the {@link #SPLINES__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static Splines getSplinesParsed(Graph graph) {
+		return Splines.get(getSplines(graph));
 	}
 
 	/**
@@ -1490,12 +1391,25 @@ public class DotAttributes {
 	 * @param layout
 	 *            The new value for the {@link #LAYOUT__G} property.
 	 * @throws IllegalArgumentException
-	 *             when the given <i>layout</i> value is not supported, i.e. not
-	 *             contained within {@link #LAYOUT__G__VALUES}.
+	 *             when the given <i>layout</i> value is not supported.
 	 */
 	public static void setLayout(Graph graph, String layout) {
 		validate(AttributeContext.GRAPH, LAYOUT__G, layout);
 		graph.attributesProperty().put(LAYOUT__G, layout);
+	}
+
+	/**
+	 * Sets the {@link #LAYOUT__G} property of the given {@link Graph} to the
+	 * given <i>layoutParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LAYOUT__G} property.
+	 * @param layoutParsed
+	 *            The new value for the {@link #LAYOUT__G} property.
+	 */
+	public static void setLayoutParsed(Graph graph, Layout layoutParsed) {
+		setLayout(graph, layoutParsed.toString());
 	}
 
 	/**
@@ -1755,6 +1669,20 @@ public class DotAttributes {
 	public static void setSplines(Graph graph, String splines) {
 		validate(AttributeContext.GRAPH, SPLINES__G, splines);
 		graph.attributesProperty().put(SPLINES__G, splines);
+	}
+
+	/**
+	 * Sets the {@link #SPLINES__G} property of the given {@link Graph} to the
+	 * given <i>splinesParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #SPLINES__G} property.
+	 * @param splinesParsed
+	 *            The new value for the {@link #SPLINES__G} property.
+	 */
+	public static void setSplinesParsed(Graph graph, Splines splinesParsed) {
+		setSplines(graph, splinesParsed.toString());
 	}
 
 	/**

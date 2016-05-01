@@ -38,6 +38,7 @@ import org.eclipse.gef4.dot.internal.parser.dot.NodeId;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Stmt;
 import org.eclipse.gef4.dot.internal.parser.dot.util.DotSwitch;
+import org.eclipse.gef4.dot.internal.parser.splines.Splines;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Builder;
@@ -163,10 +164,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					.parseAttributeValue(
 							DotLanguageSupport.BOOL_PARSER, splines);
 			if (booleanValue != null) {
-				DotAttributes.setSplines(graph,
-						Boolean.TRUE.equals(booleanValue)
-								? DotAttributes.SPLINES__G__TRUE
-								: DotAttributes.SPLINES__G__FALSE);
+				DotAttributes.setSplinesParsed(graph,
+						Boolean.TRUE.equals(booleanValue) ? Splines.TRUE
+								: Splines.FALSE);
 			} else {
 				DotAttributes.setSplines(graph, splines);
 			}

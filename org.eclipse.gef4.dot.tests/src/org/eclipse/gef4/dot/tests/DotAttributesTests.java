@@ -31,6 +31,7 @@ import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.point.Point;
 import org.eclipse.gef4.dot.internal.parser.point.PointFactory;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
+import org.eclipse.gef4.dot.internal.parser.splines.Splines;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplinetypeFactory;
@@ -149,37 +150,108 @@ public class DotAttributesTests {
 		String validGraphSplines = "compound";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
 
-		// TODO: add test cases for setting the graph spline attribute to
-		// "curved"
+		validGraphSplines = "curved";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
 
 		validGraphSplines = "false";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
 
 		validGraphSplines = "line";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
 
 		validGraphSplines = "none";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
 
 		validGraphSplines = "spline";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
 
 		validGraphSplines = "polyline";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
 
 		validGraphSplines = "ortho";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
 
 		validGraphSplines = "true";
 		DotAttributes.setSplines(g, validGraphSplines);
 		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
+
+		// set valid parsed values
+		Splines validGraphSplinesParsed = Splines.COMPOUND;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.CURVED;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.EMPTY;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.EMPTY, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.FALSE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.LINE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.NONE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.ORTHO;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.POLYLINE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.SPLINE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.TRUE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
 
 		// set invalid string values
 		try {
@@ -187,7 +259,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of '', 'compound', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
+					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of 'compound', 'curved', '', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
 					e.getMessage());
 		}
 	}

@@ -24,6 +24,7 @@ import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.DotInterpreter;
 import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotParser;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
@@ -155,7 +156,7 @@ public final class DotInterpreterTests {
 		Graph graph = interpreter
 				.interpret(parse("graph Sample{graph[layout=fdp];1;}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.LAYOUT__G__FDP,
+		Assert.assertEquals(Layout.FDP.toString(),
 				DotAttributes.getLayout(graph));
 	}
 
@@ -165,7 +166,7 @@ public final class DotInterpreterTests {
 				.interpret(parse("graph Sample{graph[layout=osage];1;}")) //$NON-NLS-1$
 				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.LAYOUT__G__OSAGE,
+		Assert.assertEquals(Layout.OSAGE.toString(),
 				DotAttributes.getLayout(graph));
 	}
 
@@ -175,7 +176,7 @@ public final class DotInterpreterTests {
 				.interpret(parse("graph Sample{graph[layout=twopi];1;}")) //$NON-NLS-1$
 				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.LAYOUT__G__TWOPI,
+		Assert.assertEquals(Layout.TWOPI.toString(),
 				DotAttributes.getLayout(graph));
 	}
 
@@ -184,7 +185,7 @@ public final class DotInterpreterTests {
 		Graph graph = interpreter
 				.interpret(parse("graph Sample{graph[layout=dot];1;}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
+		Assert.assertEquals(Layout.DOT.toString(),
 				DotAttributes.getLayout(graph));
 	}
 
@@ -195,7 +196,7 @@ public final class DotInterpreterTests {
 						parse("graph Sample{graph[layout=dot];rankdir=LR;1;}")) //$NON-NLS-1$
 				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
+		Assert.assertEquals(Layout.DOT.toString(),
 				DotAttributes.getLayout(graph));
 		Assert.assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(graph));
 	}

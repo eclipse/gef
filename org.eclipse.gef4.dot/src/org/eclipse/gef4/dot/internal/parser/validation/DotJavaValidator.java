@@ -17,13 +17,12 @@ package org.eclipse.gef4.dot.internal.parser.validation;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.Diagnostic;
@@ -51,8 +50,10 @@ import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtSubgraph;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
 import org.eclipse.gef4.dot.internal.parser.point.PointPackage;
 import org.eclipse.gef4.dot.internal.parser.shape.ShapePackage;
+import org.eclipse.gef4.dot.internal.parser.splines.Splines;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplinetypePackage;
 import org.eclipse.gef4.dot.internal.parser.style.EdgeStyle;
 import org.eclipse.gef4.dot.internal.parser.style.NodeStyle;
@@ -175,8 +176,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			List<Diagnostic> booleanCaseFindings = validateBooleanAttributeValue(
 					name, unquotedValue);
 			List<Diagnostic> stringCaseFindings = validateStringAttributeValue(
-					name, unquotedValue, "splines string",
-					DotAttributes.SPLINES__G__VALUES);
+					name, unquotedValue, "splines string", Splines.values());
 			if (booleanCaseFindings.isEmpty() || stringCaseFindings.isEmpty()) {
 				return Collections.emptyList();
 			} else {
@@ -188,7 +188,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			}
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
 			return validateStringAttributeValue(name, unquotedValue, "layout",
-					DotAttributes.LAYOUT__G__VALUES);
+					Layout.values());
 		} else if (DotAttributes.DIR__E.equals(name)) {
 			// dirType enum
 			return validateEnumAttributeValue(DotLanguageSupport.DIRTYPE_PARSER,
@@ -247,15 +247,11 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					.parse(new StringReader(unquotedValue));
 			Style style = (Style) parseResult.getRootASTElement();
 
-			Set<String> validValues = new HashSet<>();
+			Object[] validValues = null;
 			if (AttributeContext.NODE.equals(context)) {
-				for (NodeStyle nodeStyle : NodeStyle.values()) {
-					validValues.add(nodeStyle.toString());
-				}
+				validValues = NodeStyle.values();
 			} else if (AttributeContext.EDGE.equals(context)) {
-				for (EdgeStyle edgeStyle : EdgeStyle.values()) {
-					validValues.add(edgeStyle.toString());
-				}
+				validValues = EdgeStyle.values();
 			}
 
 			if (validValues != null) {
@@ -522,9 +518,9 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 	}
 
-	private String getFormattedValues(Set<String> values) {
+	private String getFormattedValues(Object[] values) {
 		StringBuilder sb = new StringBuilder();
-		for (String value : new TreeSet<>(values)) {
+		for (Object value : new TreeSet<>(Arrays.asList(values))) {
 			if (sb.length() > 0) {
 				sb.append(", ");
 			}
@@ -551,18 +547,21 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 	private List<Diagnostic> validateStringAttributeValue(
 			final String attributeName, String attributeValue,
-			String attributeTypeName, Set<String> validValues) {
-		if (!validValues.contains(attributeValue)) {
-			// TODO: we should probably only issue a warning here
-			return Collections.<Diagnostic> singletonList(
-					createSemanticAttributeValueProblem(Diagnostic.ERROR,
-							attributeValue, attributeTypeName,
-							"Value should be one of "
-									+ getFormattedValues(validValues) + ".",
-							null));
-		} else {
-			return Collections.emptyList();
+			String attributeTypeName, Object[] validValues) {
+		for (Object validValue : validValues) {
+			if (validValue.toString().equals(attributeValue)) {
+				return Collections.emptyList();
+			}
 		}
+
+		// TODO: we should probably only issue a warning here
+		return Collections
+				.<Diagnostic> singletonList(
+						createSemanticAttributeValueProblem(Diagnostic.ERROR,
+								attributeValue, attributeTypeName,
+								"Value should be one of "
+										+ getFormattedValues(validValues) + ".",
+								null));
 	}
 
 	private List<Diagnostic> validateObjectAttributeValue(final IParser parser,
