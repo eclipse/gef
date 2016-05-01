@@ -406,7 +406,8 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 		 * we fall back to the values given in resize() in case they differ from
 		 * the computed bounds.
 		 *
-		 * FIXME: Re-implement this fix by only using public API (bug #443954)
+		 * FIXME [JDK-internal]: Re-implement this fix by only using public API
+		 * (bug #443954)
 		 */
 		Bounds layoutBounds = super.impl_computeLayoutBounds();
 		double width = Double.isNaN(resizeWidth) ? layoutBounds.getWidth()

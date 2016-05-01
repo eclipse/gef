@@ -70,7 +70,7 @@ public class FXCanvasEx extends FXCanvas {
 				// FIXME [JDK-internal]: Set platform cursor on CursorFrame so
 				// that it can be retrieved by FXCanvas' HostContainer (which
 				// ultimately sets the cursor on the FXCanvas); unfortunately,
-				// this is not possible using public API
+				// this is not possible using public API.
 				try {
 					Method currentCursorFrameAccessor = Cursor.class
 							.getDeclaredMethod("getCurrentFrame",
