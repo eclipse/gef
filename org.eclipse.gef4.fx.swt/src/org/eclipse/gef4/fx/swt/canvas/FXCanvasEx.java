@@ -25,8 +25,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
-import com.sun.javafx.cursor.CursorFrame;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
@@ -71,15 +69,20 @@ public class FXCanvasEx extends FXCanvas {
 						(int) hotspotY);
 				// XXX: Set platform cursor on CursorFrame so that it can be
 				// retrieved by FXCanvas' HostContainer (which ultimately sets
-				// the cursor on the FXCanvas)
+				// the cursor on the FXCanvas); unfortunately, this is not
+				// possible using public API
 				try {
 					Method currentCursorFrameAccessor = Cursor.class
 							.getDeclaredMethod("getCurrentFrame",
 									new Class[] {});
 					currentCursorFrameAccessor.setAccessible(true);
-					CursorFrame currentCursorFrame = (CursorFrame) currentCursorFrameAccessor
+					Object currentCursorFrame = currentCursorFrameAccessor
 							.invoke(newCursor, new Object[] {});
-					currentCursorFrame.setPlatforCursor(
+					Method platformCursorProvider = currentCursorFrame
+							.getClass().getMethod("setPlatforCursor",
+									new Class[] { Class.class, Object.class });
+					platformCursorProvider.setAccessible(true);
+					platformCursorProvider.invoke(currentCursorFrame,
 							org.eclipse.swt.graphics.Cursor.class, swtCursor);
 				} catch (Exception e) {
 					e.printStackTrace();
