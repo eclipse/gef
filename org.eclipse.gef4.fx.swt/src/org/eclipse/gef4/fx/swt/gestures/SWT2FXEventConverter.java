@@ -46,6 +46,9 @@ import javafx.scene.input.ZoomEvent;
  * @author anyssen
  * @author mwienand
  */
+// FIXME [JDK-internal] TKSceneListener, which is used to compensate
+// https://bugs.openjdk.java.net/browse/JDK-8143596, is not public API. We need
+// to remove it as soon as FXCanvas supports touch events properly.
 public class SWT2FXEventConverter {
 
 	/**
