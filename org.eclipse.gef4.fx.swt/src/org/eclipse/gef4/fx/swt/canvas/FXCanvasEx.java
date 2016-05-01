@@ -57,7 +57,7 @@ public class FXCanvasEx extends FXCanvas {
 				Cursor oldCursor, Cursor newCursor) {
 			// XXX: SWTCursors does support image cursors yet
 			// (https://bugs.openjdk.java.net/browse/JDK-8088147); we compensate
-			// this here
+			// this here (using JDK-internal API)
 			if (newCursor instanceof ImageCursor) {
 				// custom cursor, convert image
 				ImageData imageData = SWTFXUtils.fromFXImage(
@@ -67,10 +67,10 @@ public class FXCanvasEx extends FXCanvas {
 				org.eclipse.swt.graphics.Cursor swtCursor = new org.eclipse.swt.graphics.Cursor(
 						getDisplay(), imageData, (int) hotspotX,
 						(int) hotspotY);
-				// XXX: Set platform cursor on CursorFrame so that it can be
-				// retrieved by FXCanvas' HostContainer (which ultimately sets
-				// the cursor on the FXCanvas); unfortunately, this is not
-				// possible using public API
+				// FIXME [JDK-internal]: Set platform cursor on CursorFrame so
+				// that it can be retrieved by FXCanvas' HostContainer (which
+				// ultimately sets the cursor on the FXCanvas); unfortunately,
+				// this is not possible using public API
 				try {
 					Method currentCursorFrameAccessor = Cursor.class
 							.getDeclaredMethod("getCurrentFrame",
@@ -78,6 +78,8 @@ public class FXCanvasEx extends FXCanvas {
 					currentCursorFrameAccessor.setAccessible(true);
 					Object currentCursorFrame = currentCursorFrameAccessor
 							.invoke(newCursor, new Object[] {});
+					// there is a spelling-mistake in the internal API
+					// (setPlatformCursor -> setPlatforCursor)
 					Method platformCursorProvider = currentCursorFrame
 							.getClass().getMethod("setPlatforCursor",
 									new Class[] { Class.class, Object.class });
