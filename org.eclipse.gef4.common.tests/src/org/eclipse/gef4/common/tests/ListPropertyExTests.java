@@ -33,7 +33,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.inject.Provider;
-import com.sun.javafx.collections.ObservableListWrapper;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.value.ChangeListener;
@@ -124,8 +123,7 @@ public class ListPropertyExTests {
 		assertFalse(property2.isBound());
 
 		// change value of first property
-		ObservableList<Integer> newValue = new ObservableListWrapper<>(
-				new ArrayList<Integer>());
+		ObservableList<Integer> newValue = FXCollections.observableArrayList();
 		newValue.add(1);
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -133,7 +131,7 @@ public class ListPropertyExTests {
 		assertEquals(property1, property2);
 
 		// change value of second property
-		newValue = new ObservableListWrapper<>(new ArrayList<Integer>());
+		newValue = FXCollections.observableArrayList();
 		newValue.add(2);
 		property2.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -144,7 +142,7 @@ public class ListPropertyExTests {
 		property2.unbindBidirectional(property1);
 		assertFalse(property1.isBound());
 		assertFalse(property2.isBound());
-		newValue = new ObservableListWrapper<>(new ArrayList<Integer>());
+		newValue = FXCollections.observableArrayList();
 		newValue.add(3);
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -199,8 +197,7 @@ public class ListPropertyExTests {
 		property.addListener(changeListener2);
 		property.removeListener(changeListener2);
 
-		ObservableList<Integer> newValue = new ObservableListWrapper<>(
-				new ArrayList<Integer>());
+		ObservableList<Integer> newValue = FXCollections.observableArrayList();
 		newValue.add(1);
 		changeListener.addExpectation(property.get(), newValue);
 		property.set(newValue);

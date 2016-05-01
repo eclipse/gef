@@ -32,7 +32,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.inject.Provider;
-import com.sun.javafx.collections.ObservableMapWrapper;
 
 import javafx.beans.property.MapProperty;
 import javafx.beans.value.ChangeListener;
@@ -198,8 +197,8 @@ public class MapPropertyExTests {
 		assertFalse(property2.isBound());
 
 		// change value of first property
-		ObservableMap<Integer, String> newValue = new ObservableMapWrapper<>(
-				new HashMap<Integer, String>());
+		ObservableMap<Integer, String> newValue = FXCollections
+				.observableMap(new HashMap<Integer, String>());
 		newValue.put(1, "1-1");
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -207,7 +206,7 @@ public class MapPropertyExTests {
 		assertEquals(property1, property2);
 
 		// change value of second property
-		newValue = new ObservableMapWrapper<>(new HashMap<Integer, String>());
+		newValue = FXCollections.observableMap(new HashMap<Integer, String>());
 		newValue.put(2, "2-1");
 		property2.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -218,7 +217,7 @@ public class MapPropertyExTests {
 		property2.unbindBidirectional(property1);
 		assertFalse(property1.isBound());
 		assertFalse(property2.isBound());
-		newValue = new ObservableMapWrapper<>(new HashMap<Integer, String>());
+		newValue = FXCollections.observableMap(new HashMap<Integer, String>());
 		newValue.put(3, "3-1");
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -272,8 +271,8 @@ public class MapPropertyExTests {
 		assertFalse(property2.isBound());
 
 		// change value of first property
-		ObservableMap<Integer, String> newValue = new ObservableMapWrapper<>(
-				new HashMap<Integer, String>());
+		ObservableMap<Integer, String> newValue = FXCollections
+				.observableMap(new HashMap<Integer, String>());
 		newValue.put(1, "1-1");
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -281,7 +280,7 @@ public class MapPropertyExTests {
 		assertEquals(property1, property2);
 
 		// change value of second property
-		newValue = new ObservableMapWrapper<>(new HashMap<Integer, String>());
+		newValue = FXCollections.observableMap(new HashMap<Integer, String>());
 		newValue.put(2, "2-1");
 		property2.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -292,7 +291,7 @@ public class MapPropertyExTests {
 		property2.unbindContentBidirectional(property1);
 		assertFalse(property1.isBound());
 		assertFalse(property2.isBound());
-		newValue = new ObservableMapWrapper<>(new HashMap<Integer, String>());
+		newValue = FXCollections.observableMap(new HashMap<Integer, String>());
 		newValue.put(3, "3-1");
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -347,8 +346,8 @@ public class MapPropertyExTests {
 		property.addListener(changeListener2);
 		property.removeListener(changeListener2);
 
-		ObservableMap<Integer, String> newValue = new ObservableMapWrapper<>(
-				new HashMap<Integer, String>());
+		ObservableMap<Integer, String> newValue = FXCollections
+				.observableMap(new HashMap<Integer, String>());
 		changeListener.addExpectation(property.get(), newValue);
 		newValue.put(1, "1");
 		property.set(newValue);

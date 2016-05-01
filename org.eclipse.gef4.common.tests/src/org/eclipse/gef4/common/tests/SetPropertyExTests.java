@@ -32,7 +32,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.inject.Provider;
-import com.sun.javafx.collections.ObservableSetWrapper;
 
 import javafx.beans.property.SetProperty;
 import javafx.beans.value.ChangeListener;
@@ -183,8 +182,8 @@ public class SetPropertyExTests {
 		assertFalse(property2.isBound());
 
 		// change value of first property
-		ObservableSet<Integer> newValue = new ObservableSetWrapper<>(
-				new HashSet<Integer>());
+		ObservableSet<Integer> newValue = FXCollections
+				.observableSet(new HashSet<Integer>());
 		newValue.add(1);
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -192,7 +191,7 @@ public class SetPropertyExTests {
 		assertEquals(property1, property2);
 
 		// change value of second property
-		newValue = new ObservableSetWrapper<>(new HashSet<Integer>());
+		newValue = FXCollections.observableSet(new HashSet<Integer>());
 		newValue.add(2);
 		property2.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -203,7 +202,7 @@ public class SetPropertyExTests {
 		property2.unbindBidirectional(property1);
 		assertFalse(property1.isBound());
 		assertFalse(property2.isBound());
-		newValue = new ObservableSetWrapper<>(new HashSet<Integer>());
+		newValue = FXCollections.observableSet(new HashSet<Integer>());
 		newValue.add(3);
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -258,8 +257,8 @@ public class SetPropertyExTests {
 		property.addListener(changeListener2);
 		property.removeListener(changeListener2);
 
-		ObservableSet<Integer> newValue = new ObservableSetWrapper<>(
-				new HashSet<Integer>());
+		ObservableSet<Integer> newValue = FXCollections
+				.observableSet(new HashSet<Integer>());
 		changeListener.addExpectation(property.get(), newValue);
 		newValue.add(1);
 		property.set(newValue);
