@@ -201,7 +201,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, unquotedValue,
 					ArrowtypePackage.Literals.ARROW_TYPE, "arrowType");
 		} else if (DotAttributes.POS__NE.equals(name)) {
-			// validate point (node) or splinetype (edge)
+			// validate point (node) or splinetype (edge) using delegate parser
+			// and validator
 			if (AttributeContext.NODE.equals(context)) {
 				return validateObjectAttributeValue(
 						DotLanguageSupport.POINT_PARSER,
@@ -233,8 +234,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.02);
 		} else if (DotAttributes.STYLE__E.equals(name)
 				&& !unquotedValue.isEmpty()) {
-			// validate style using delegate parser and validator (DotStyle
-			// grammar)
+			// validate style using delegate parser and validator
 			List<Diagnostic> grammarFindings = validateObjectAttributeValue(
 					DotLanguageSupport.STYLE_PARSER,
 					DotLanguageSupport.STYLE_VALIDATOR, name, unquotedValue,
@@ -247,23 +247,21 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					.parse(new StringReader(unquotedValue));
 			Style style = (Style) parseResult.getRootASTElement();
 
-			Object[] validValues = null;
+			List<Diagnostic> findings = new ArrayList<>();
 			if (AttributeContext.NODE.equals(context)) {
-				validValues = NodeStyle.values();
-			} else if (AttributeContext.EDGE.equals(context)) {
-				validValues = EdgeStyle.values();
-			}
-
-			if (validValues != null) {
-				List<Diagnostic> combinedFindings = new ArrayList<>();
-
 				// check each style item with the corresponding parser
 				for (StyleItem styleItem : style.getStyleItems()) {
-					combinedFindings.addAll(validateStringAttributeValue(name,
-							styleItem.getName(), "style", validValues));
+					findings.addAll(validateStringAttributeValue(name,
+							styleItem.getName(), "style", NodeStyle.values()));
 				}
-				return combinedFindings;
+			} else if (AttributeContext.EDGE.equals(context)) {
+				// check each style item with the corresponding parser
+				for (StyleItem styleItem : style.getStyleItems()) {
+					findings.addAll(validateStringAttributeValue(name,
+							styleItem.getName(), "style", EdgeStyle.values()));
+				}
 			}
+			return findings;
 		}
 		return Collections.emptyList();
 
@@ -553,7 +551,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				return Collections.emptyList();
 			}
 		}
-
 		// TODO: we should probably only issue a warning here
 		return Collections
 				.<Diagnostic> singletonList(
