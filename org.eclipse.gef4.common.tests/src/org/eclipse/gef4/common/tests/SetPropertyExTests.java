@@ -150,9 +150,8 @@ public class SetPropertyExTests {
 
 					@Override
 					public SetProperty<Integer> get() {
-						return new SimpleSetPropertyEx<>(
-								new ObservableSetWrapper<>(
-										new HashSet<Integer>()));
+						return new SimpleSetPropertyEx<>(FXCollections
+								.observableSet(new HashSet<Integer>()));
 					}
 				} }, { new Provider<SetProperty<Integer>>() {
 
@@ -160,9 +159,8 @@ public class SetPropertyExTests {
 					public SetProperty<Integer> get() {
 						// Replacement for ReadOnlySetWrapper which fixes
 						// https://bugs.openjdk.java.net/browse/JDK-8136465)
-						return new ReadOnlySetWrapperEx<>(
-								new ObservableSetWrapper<>(
-										new HashSet<Integer>()));
+						return new ReadOnlySetWrapperEx<>(FXCollections
+								.observableSet(new HashSet<Integer>()));
 					}
 				} } });
 	}

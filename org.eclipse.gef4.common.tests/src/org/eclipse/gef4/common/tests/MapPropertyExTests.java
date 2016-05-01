@@ -164,9 +164,8 @@ public class MapPropertyExTests {
 					public MapProperty<Integer, String> get() {
 						// Replacement for SimpleMapProperty which fixes
 						// https://bugs.openjdk.java.net/browse/JDK-8136465)
-						return new SimpleMapPropertyEx<>(
-								new ObservableMapWrapper<>(
-										new HashMap<Integer, String>()));
+						return new SimpleMapPropertyEx<>(FXCollections
+								.observableMap(new HashMap<Integer, String>()));
 					}
 				} }, { new Provider<MapProperty<Integer, String>>() {
 
@@ -174,9 +173,8 @@ public class MapPropertyExTests {
 					public MapProperty<Integer, String> get() {
 						// Replacement for ReadOnlyMapWrapper which fixes
 						// https://bugs.openjdk.java.net/browse/JDK-8136465)
-						return new ReadOnlyMapWrapperEx<>(
-								new ObservableMapWrapper<>(
-										new HashMap<Integer, String>()));
+						return new ReadOnlyMapWrapperEx<>(FXCollections
+								.observableMap(new HashMap<Integer, String>()));
 					}
 				} } });
 	}

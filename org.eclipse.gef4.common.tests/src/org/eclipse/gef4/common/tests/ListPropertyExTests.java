@@ -38,6 +38,7 @@ import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.property.ListProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 @RunWith(Parameterized.class)
@@ -89,9 +90,8 @@ public class ListPropertyExTests {
 
 					@Override
 					public ListProperty<Integer> get() {
-						return new SimpleListPropertyEx<>(
-								new ObservableListWrapper<>(
-										new ArrayList<Integer>()));
+						return new SimpleListPropertyEx<>(FXCollections
+								.observableList(new ArrayList<Integer>()));
 					}
 				} }, { new Provider<ListProperty<Integer>>() {
 
@@ -99,9 +99,8 @@ public class ListPropertyExTests {
 					public ListProperty<Integer> get() {
 						// Replacement for ReadOnlySetWrapper which fixes
 						// https://bugs.openjdk.java.net/browse/JDK-8136465)
-						return new ReadOnlyListWrapperEx<>(
-								new ObservableListWrapper<>(
-										new ArrayList<Integer>()));
+						return new ReadOnlyListWrapperEx<>(FXCollections
+								.observableList(new ArrayList<Integer>()));
 					}
 				} } });
 	}
