@@ -86,7 +86,7 @@ public class FXCanvasEx extends FXCanvas {
 							org.eclipse.swt.graphics.Cursor.class, swtCursor);
 				} catch (Exception e) {
 					throw new IllegalStateException(
-							"Failed to set platform cursor on the current frame.",
+							"Failed to set platform cursor on the current cursor frame.",
 							e);
 				}
 			}
