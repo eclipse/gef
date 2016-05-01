@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListPropertyBaseEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
@@ -247,26 +247,27 @@ public class Connection extends Group {
 	private ObjectProperty<IConnectionInterpolator> interpolatorProperty = new SimpleObjectProperty<IConnectionInterpolator>(
 			new PolylineInterpolator());
 
-	// maintain anchors in a map, and their related keys additionally in an
-	// ordered set, so we can determine appropriate indexes or anchor keys.
-	private Map<AnchorKey, IAnchor> anchorsByKeys = new HashMap<>();
-	private Map<AnchorKey, Point> pointHintsByKeys = new HashMap<>();
-	private TreeSet<AnchorKey> sortedAnchorKeys = new TreeSet<>(
+	// XXX: Maintain anchors in a sorted map, so we can use it to determine the
+	// mapping between anchor keys and anchor indexes.
+	private TreeMap<AnchorKey, IAnchor> anchorsByKeys = new TreeMap<>(
 			new Comparator<AnchorKey>() {
 
 				@Override
 				public int compare(AnchorKey o1, AnchorKey o2) {
-					if (o1.equals(o2)) {
+					if (o1.getId().equals(o2.getId())) {
 						return 0;
 					} else {
-						if (getStartAnchorKey().equals(o1)) {
+						if (getStartAnchorKey().getId().equals(o1.getId())) {
 							return -1;
-						} else if (getEndAnchorKey().equals(o1)) {
+						} else if (getEndAnchorKey().getId()
+								.equals(o1.getId())) {
 							return 1;
 						} else {
-							if (getStartAnchorKey().equals(o2)) {
+							if (getStartAnchorKey().getId()
+									.equals(o2.getId())) {
 								return 1;
-							} else if (getEndAnchorKey().equals(o2)) {
+							} else if (getEndAnchorKey().getId()
+									.equals(o2.getId())) {
 								return -1;
 							}
 							return getControlAnchorIndex(o1)
@@ -275,6 +276,7 @@ public class Connection extends Group {
 					}
 				}
 			});
+	private Map<AnchorKey, Point> hintsByKeys = new HashMap<>();
 
 	private ObservableList<IAnchor> anchors = CollectionUtils
 			.observableArrayList();
@@ -283,7 +285,7 @@ public class Connection extends Group {
 	private PointsUnmodifiableProperty pointsUnmodifiableProperty = null;
 	private AnchorsUnmodifiableProperty anchorsUnmodifiableProperty = null;
 
-	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
+	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorsPCL = new HashMap<>();
 	private ChangeListener<Node> decorationListener = new ChangeListener<Node>() {
 
 		final ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
@@ -413,13 +415,6 @@ public class Connection extends Group {
 			throw new IllegalArgumentException(
 					"anchorKey may only be anchored to curveProperty node");
 		}
-		if (!anchorsByKeys.containsKey(anchorKey)) {
-			if (sortedAnchorKeys.contains(anchorKey)) {
-				throw new IllegalStateException(
-						"anchorKey is not contained but key is registered in control anchor key map.");
-
-			}
-		}
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
@@ -432,7 +427,7 @@ public class Connection extends Group {
 				&& !anchorKey.equals(endAnchorKey)) {
 			int controlAnchorIndex = getControlAnchorIndex(anchorKey);
 			// remove all control points at a larger index
-			int pointCount = sortedAnchorKeys.size();
+			int pointCount = anchorsByKeys.size();
 			for (int i = pointCount - 1; i >= 0; i--) {
 				// (temporarily) remove all anchorsByKeys that are to be moved
 				// up
@@ -448,7 +443,6 @@ public class Connection extends Group {
 						points.remove(anchorIndex);
 						anchors.remove(anchorIndex);
 
-						sortedAnchorKeys.remove(ak);
 						anchorsByKeys.remove(ak);
 
 						a.detach(ak);
@@ -459,7 +453,6 @@ public class Connection extends Group {
 
 		// update anchor map and list
 		anchorsByKeys.put(anchorKey, anchor);
-		sortedAnchorKeys.add(anchorKey);
 
 		// attach anchor key
 		anchor.attach(anchorKey);
@@ -478,7 +471,6 @@ public class Connection extends Group {
 				AnchorKey ak = getControlAnchorKey(controlIndex + i + 1);
 				IAnchor a = controlAnchorsToMove.get(i);
 
-				sortedAnchorKeys.add(ak);
 				anchorsByKeys.put(ak, a);
 
 				a.attach(ak);
@@ -631,7 +623,7 @@ public class Connection extends Group {
 	 */
 	protected int getAnchorIndex(AnchorKey anchorKey) {
 		int index = 0;
-		Iterator<AnchorKey> iterator = sortedAnchorKeys.iterator();
+		Iterator<AnchorKey> iterator = anchorsByKeys.keySet().iterator();
 		while (iterator.hasNext()) {
 			if (iterator.next().equals(anchorKey)) {
 				return index;
@@ -650,7 +642,7 @@ public class Connection extends Group {
 	 * @return The {@link AnchorKey} for the given anchor index.
 	 */
 	protected AnchorKey getAnchorKey(int anchorIndex) {
-		return Iterators.get(sortedAnchorKeys.iterator(), anchorIndex);
+		return Iterators.get(anchorsByKeys.keySet().iterator(), anchorIndex);
 	}
 
 	/**
@@ -751,11 +743,11 @@ public class Connection extends Group {
 	 *         anchorsByKeys} currently assigned to this {@link Connection}.
 	 */
 	public List<IAnchor> getControlAnchors() {
-		int controlAnchorsCount = sortedAnchorKeys.size();
-		if (sortedAnchorKeys.contains(getStartAnchorKey())) {
+		int controlAnchorsCount = anchorsByKeys.size();
+		if (anchorsByKeys.containsKey(getStartAnchorKey())) {
 			controlAnchorsCount--;
 		}
-		if (sortedAnchorKeys.contains(getEndAnchorKey())) {
+		if (anchorsByKeys.containsKey(getEndAnchorKey())) {
 			controlAnchorsCount--;
 		}
 		List<IAnchor> controlAnchors = new ArrayList<>(controlAnchorsCount);
@@ -873,8 +865,8 @@ public class Connection extends Group {
 	 */
 	public Point getEndPointHint() {
 		AnchorKey endAnchorKey = getEndAnchorKey();
-		if (pointHintsByKeys.containsKey(endAnchorKey)) {
-			return pointHintsByKeys.get(endAnchorKey);
+		if (hintsByKeys.containsKey(endAnchorKey)) {
+			return hintsByKeys.get(endAnchorKey);
 		}
 		return null;
 	}
@@ -982,8 +974,8 @@ public class Connection extends Group {
 	 */
 	public Point getStartPointHint() {
 		AnchorKey startAnchorKey = getStartAnchorKey();
-		if (pointHintsByKeys.containsKey(startAnchorKey)) {
-			return pointHintsByKeys.get(startAnchorKey);
+		if (hintsByKeys.containsKey(startAnchorKey)) {
+			return hintsByKeys.get(startAnchorKey);
 		}
 		return null;
 	}
@@ -1089,48 +1081,39 @@ public class Connection extends Group {
 	 * Re-attaches all {@link AnchorKey}s that are managed by this
 	 * {@link Connection}.
 	 *
-	 * @param oldValue
+	 * @param oldAnchored
 	 *            The previous anchored {@link Node}.
-	 * @param newValue
+	 * @param newAnchored
 	 *            The new anchored {@link Node}.
 	 */
-	protected void reattachAnchorKeys(Node oldValue, Node newValue) {
-		if (oldValue == null) {
+	protected void reattachAnchorKeys(Node oldAnchored, Node newAnchored) {
+		if (oldAnchored == null) {
 			// In case the old value was null, we should not have any anchor
 			// keys to re-attach.
 			if (!anchorsByKeys.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no previous curve, but anchor keys present.");
 			}
-			if (!pointHintsByKeys.isEmpty()) {
-				throw new IllegalStateException(
-						"Re-attach failed: no previous curve, but anchor keys present.");
-			}
-			if (!sortedAnchorKeys.isEmpty()) {
+			if (!hintsByKeys.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no previous curve, but anchor keys present.");
 			}
 			return;
-		} else if (newValue == null) {
+		} else if (newAnchored == null) {
 			// In case the new value was null, we should not have any anchor
 			// keys to re-attach.
 			if (!anchorsByKeys.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no new curve, but anchor keys present.");
 			}
-			if (!pointHintsByKeys.isEmpty()) {
-				throw new IllegalStateException(
-						"Re-attach failed: no new curve, but anchor keys present.");
-			}
-			if (!sortedAnchorKeys.isEmpty()) {
+			if (!hintsByKeys.isEmpty()) {
 				throw new IllegalStateException(
 						"Re-attach failed: no new curve, but anchor keys present.");
 			}
 			return;
 		} else {
 			// Re-attach all anchor keys.
-			List<AnchorKey> newSortedKeys = new ArrayList<>();
-			for (AnchorKey oldAk : sortedAnchorKeys) {
+			for (AnchorKey oldAk : new ArrayList<>(anchorsByKeys.keySet())) {
 				// query anchor for oldAk
 				IAnchor anchor = anchorsByKeys.get(oldAk);
 
@@ -1140,12 +1123,11 @@ public class Connection extends Group {
 				anchor.detach(oldAk);
 
 				// create anchor key (new curve, same role)
-				AnchorKey newAk = new AnchorKey(newValue, oldAk.getId());
-				newSortedKeys.add(newAk);
+				AnchorKey newAk = new AnchorKey(newAnchored, oldAk.getId());
 
 				// update position hint
-				if (pointHintsByKeys.containsKey(oldAk)) {
-					pointHintsByKeys.put(newAk, pointHintsByKeys.remove(oldAk));
+				if (hintsByKeys.containsKey(oldAk)) {
+					hintsByKeys.put(newAk, hintsByKeys.remove(oldAk));
 				}
 				// XXX: anchors and points are staying the same, no need to
 				// update
@@ -1155,8 +1137,6 @@ public class Connection extends Group {
 				anchor.attach(newAk);
 				registerPCL(newAk, anchor);
 			}
-			sortedAnchorKeys.clear();
-			sortedAnchorKeys.addAll(newSortedKeys);
 		}
 	}
 
@@ -1221,10 +1201,10 @@ public class Connection extends Group {
 	}
 
 	private void registerPCL(AnchorKey anchorKey, IAnchor anchor) {
-		if (!anchorPCL.containsKey(anchorKey)) {
+		if (!anchorsPCL.containsKey(anchorKey)) {
 			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
 					anchorKey);
-			anchorPCL.put(anchorKey, pcl);
+			anchorsPCL.put(anchorKey, pcl);
 			anchor.positionsUnmodifiableProperty().addListener(pcl);
 		}
 	}
@@ -1240,11 +1220,11 @@ public class Connection extends Group {
 	 * Removes all control points of this {@link Connection}.
 	 */
 	public void removeAllControlPoints() {
-		int controlPointsCount = sortedAnchorKeys.size();
-		if (sortedAnchorKeys.contains(getStartAnchorKey())) {
+		int controlPointsCount = anchorsByKeys.size();
+		if (anchorsByKeys.containsKey(getStartAnchorKey())) {
 			controlPointsCount--;
 		}
-		if (sortedAnchorKeys.contains(getEndAnchorKey())) {
+		if (anchorsByKeys.containsKey(getEndAnchorKey())) {
 			controlPointsCount--;
 		}
 		for (int i = controlPointsCount - 1; i >= 0; i--) {
@@ -1268,12 +1248,6 @@ public class Connection extends Group {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
-		if (anchorsByKeys.containsKey(anchorKey)) {
-			if (!sortedAnchorKeys.contains(anchorKey)) {
-				throw new IllegalStateException(
-						"anchorKey is contained but key is not registered in control anchor key map.");
-			}
-		}
 
 		AnchorKey startAnchorKey = getStartAnchorKey();
 		AnchorKey endAnchorKey = getEndAnchorKey();
@@ -1285,7 +1259,7 @@ public class Connection extends Group {
 				&& !anchorKey.equals(endAnchorKey)) {
 			int controlAnchorIndex = getControlAnchorIndex(anchorKey);
 			// remove all control points at a larger index
-			int pointCount = sortedAnchorKeys.size();
+			int pointCount = anchorsByKeys.size();
 			for (int i = pointCount - 1; i >= 0; i--) {
 				// (temporarily) remove all anchorsByKeys that are to be moved
 				// up
@@ -1302,7 +1276,6 @@ public class Connection extends Group {
 						points.remove(anchorIndex);
 						anchors.remove(anchorIndex);
 
-						sortedAnchorKeys.remove(ak);
 						anchorsByKeys.remove(ak);
 
 						a.detach(ak);
@@ -1314,7 +1287,6 @@ public class Connection extends Group {
 		points.remove(getAnchorIndex(anchorKey));
 		anchors.remove(getAnchorIndex(anchorKey));
 
-		sortedAnchorKeys.remove(anchorKey);
 		anchorsByKeys.remove(anchorKey);
 
 		anchor.detach(anchorKey);
@@ -1327,7 +1299,6 @@ public class Connection extends Group {
 				AnchorKey ak = getControlAnchorKey(controlIndex + i);
 				IAnchor a = controlAnchorsToMove.get(i);
 
-				sortedAnchorKeys.add(ak);
 				anchorsByKeys.put(ak, a);
 
 				a.attach(ak);
@@ -1414,13 +1385,6 @@ public class Connection extends Group {
 		if (anchorKey.getAnchored() != getCurve()) {
 			throw new IllegalArgumentException(
 					"anchorKey may only be anchored to curveProperty node");
-		}
-		if (!anchorsByKeys.containsKey(anchorKey)) {
-			if (sortedAnchorKeys.contains(anchorKey)) {
-				throw new IllegalStateException(
-						"anchorKey is not contained but key is registered in control anchor key map.");
-
-			}
 		}
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
@@ -1651,11 +1615,11 @@ public class Connection extends Group {
 	public void setEndPointHint(Point endPositionHint) {
 		AnchorKey endAnchorKey = getEndAnchorKey();
 		if (endPositionHint == null) {
-			if (pointHintsByKeys.containsKey(endAnchorKey)) {
-				pointHintsByKeys.remove(endAnchorKey);
+			if (hintsByKeys.containsKey(endAnchorKey)) {
+				hintsByKeys.remove(endAnchorKey);
 			}
 		} else {
-			pointHintsByKeys.put(endAnchorKey, endPositionHint);
+			hintsByKeys.put(endAnchorKey, endPositionHint);
 		}
 	}
 
@@ -1775,11 +1739,11 @@ public class Connection extends Group {
 	public void setStartPointHint(Point startPositionHint) {
 		AnchorKey startAnchorKey = getStartAnchorKey();
 		if (startPositionHint == null) {
-			if (pointHintsByKeys.containsKey(startAnchorKey)) {
-				pointHintsByKeys.remove(startAnchorKey);
+			if (hintsByKeys.containsKey(startAnchorKey)) {
+				hintsByKeys.remove(startAnchorKey);
 			}
 		} else {
-			pointHintsByKeys.put(startAnchorKey, startPositionHint);
+			hintsByKeys.put(startAnchorKey, startPositionHint);
 		}
 	}
 
@@ -1798,9 +1762,9 @@ public class Connection extends Group {
 	}
 
 	private void unregisterPCL(AnchorKey anchorKey, IAnchor anchor) {
-		if (anchorPCL.containsKey(anchorKey)) {
+		if (anchorsPCL.containsKey(anchorKey)) {
 			anchor.positionsUnmodifiableProperty()
-					.removeListener(anchorPCL.remove(anchorKey));
+					.removeListener(anchorsPCL.remove(anchorKey));
 		}
 	}
 }
