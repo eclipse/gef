@@ -25,6 +25,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
@@ -160,9 +161,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			// XXX: splines can either be a defined enum value or a bool value
 			// (which is mapped to respective enum values); we use the enum
 			// values alone and thus map the bool value here
-			Boolean booleanValue = DotLanguageSupport
-					.parseAttributeValue(
-							DotLanguageSupport.BOOL_PARSER, splines);
+			Boolean booleanValue = DotLanguageSupport.parseAttributeValue(
+					DotLanguageSupport.BOOL_PARSER, splines);
 			if (booleanValue != null) {
 				DotAttributes.setSplinesParsed(graph,
 						Boolean.TRUE.equals(booleanValue) ? Splines.TRUE
@@ -558,16 +558,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	}
 
 	private String escaped(String id) {
-		if (id == null) {
-			return null;
-		}
-		return id
-				/* In DOT, an ID can be quoted... */
-				.replaceAll("^\"|\"$", "") //$NON-NLS-1$//$NON-NLS-2$
-				/*
-				 * ...and may contain escaped quotes, see footnote on
-				 * http://www.graphviz.org/doc/info/lang.html
-				 */
-				.replaceAll("\\\\\"", "\""); //$NON-NLS-1$//$NON-NLS-2$
+		return DotTerminalConverters.unquote(id);
 	}
 }

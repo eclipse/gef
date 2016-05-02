@@ -118,7 +118,8 @@ public class DotTerminalConverters
 
 	/**
 	 * Turns the given {@link String} value into a quoted string, if it is not
-	 * already quoted.
+	 * already quoted, i.e. adds quotation marks to start and end, and escapes
+	 * any contained quotes.
 	 * 
 	 * @param value
 	 *            The {@link String} value to quote if needed.
@@ -128,7 +129,7 @@ public class DotTerminalConverters
 	 */
 	public static String quote(String value) {
 		if (!isQuoted(value)) {
-			return "\"" + value + "\"";
+			return "\"" + value.replaceAll("\"", "\\\\\"") + "\"";
 		}
 		return value;
 	}
@@ -147,9 +148,9 @@ public class DotTerminalConverters
 	}
 
 	/**
-	 * Turns the given {@link String} value into an unquoted string, if it is
-	 * quoted, i.e. removes the first and last character if the string starts
-	 * and ends with a quotation mark.
+	 * Turns the given {@link String} value into an unquoted string, i.e.
+	 * removes the first and last character if the string starts and ends with a
+	 * quotation mark and transfers all escaped quotes into normal quotes.
 	 * 
 	 * @param value
 	 *            The {@link String} value to unquote if needed.
@@ -158,9 +159,16 @@ public class DotTerminalConverters
 	 *         it is not quoted.
 	 */
 	public static String unquote(String value) {
-		if (isQuoted(value)) {
-			return value.substring(1, value.length() - 1);
+		if (value == null) {
+			return null;
 		}
-		return value;
+		return value
+				/* In DOT, an ID can be quoted... */
+				.replaceAll("^\"|\"$", "") //$NON-NLS-1$//$NON-NLS-2$
+				/*
+				 * ...and may contain escaped quotes (see footnote on
+				 * http://www.graphviz.org/doc/info/lang.html)
+				 */
+				.replaceAll("\\\\\"", "\""); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

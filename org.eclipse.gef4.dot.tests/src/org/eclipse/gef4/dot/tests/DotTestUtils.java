@@ -93,7 +93,7 @@ public final class DotTestUtils {
 
 		/* Nodes: */
 		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
-				.attr(DotAttributes.LABEL__GNE, "one").buildNode();
+				.attr(DotAttributes.LABEL__GNE, "one \"1\"").buildNode();
 		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2") //$NON-NLS-1$
 				.attr(DotAttributes.LABEL__GNE, "two").buildNode();
 		Node n3 = new Node.Builder().attr(DotAttributes._NAME__GNE, "3") //$NON-NLS-1$

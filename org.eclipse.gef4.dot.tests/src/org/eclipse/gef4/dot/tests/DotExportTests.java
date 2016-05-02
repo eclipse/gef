@@ -53,7 +53,7 @@ public class DotExportTests {
 		String dot = new DotExport().exportDot(graph);
 		String fileContents = DotFileUtils
 				.read(new File(RESOURCES_TESTS + fileName));
-		assertEquals(dot, fileContents);
+		assertEquals(fileContents, dot);
 
 		/* DotExport adds stripping of blank lines and file output: */
 		DotExport dotExport = new DotExport();

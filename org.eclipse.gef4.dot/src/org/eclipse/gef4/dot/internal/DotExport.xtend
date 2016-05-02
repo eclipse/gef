@@ -19,6 +19,7 @@ import org.eclipse.gef4.graph.Graph
 import org.eclipse.gef4.graph.Node
 
 import static org.eclipse.gef4.dot.internal.DotAttributes.*
+import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters
 
 /**
  * A serializer that creates a Graphviz DOT string or file from a {@link Graph} with {@link DotAttributes}.
@@ -91,6 +92,6 @@ class DotExport {
 	}
 
 	private def printNonMetaAttributes(IAttributeStore store, String separator) {
-		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '="' + value + '"'].sort.join(separator + " ")
+		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + DotTerminalConverters.quote(value as String)].sort.join(separator + " ")
 	}
 }
