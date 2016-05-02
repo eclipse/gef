@@ -102,6 +102,24 @@ public class LineTests {
 	}
 
 	@Test
+	public void test_get() {
+		Line l1 = new Line(100, 100, 200, 200);
+		assertEquals(new Point(100, 100), l1.get(0));
+		assertEquals(new Point(125, 125), l1.get(0.25));
+		assertEquals(new Point(150, 150), l1.get(0.5));
+		assertEquals(new Point(175, 175), l1.get(0.75));
+		assertEquals(new Point(200, 200), l1.get(1));
+
+		Line l2 = new Line(200, 200, 100, 100);
+		assertEquals(new Point(200, 200), l2.get(0));
+		assertEquals(new Point(175, 175), l2.get(0.25));
+		assertEquals(new Point(150, 150), l2.get(0.5));
+		assertEquals(new Point(125, 125), l2.get(0.75));
+		assertEquals(new Point(100, 100), l2.get(1));
+
+	}
+
+	@Test
 	public void test_getBounds() {
 		Line l1 = new Line(0, 0, 5, 0);
 		Rectangle bounds = l1.getBounds();

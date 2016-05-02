@@ -144,6 +144,16 @@ public class Line extends BezierCurve {
 						&& PrecisionUtils.equal(y1, getY2());
 	}
 
+	@Override
+	public Point get(double t) {
+		// XXX: Overwritten to improve performance for the Line case.
+		if (t < 0 || t > 1) {
+			throw new IllegalArgumentException("t out of range: " + t);
+		}
+		return new Point(((1 - t) * getX1() + t * getX2()),
+				((1 - t) * getY1() + t * getY2()));
+	}
+
 	/**
 	 * Returns the smallest {@link Rectangle} containing this {@link Line}'s
 	 * start and end point
@@ -310,6 +320,8 @@ public class Line extends BezierCurve {
 		return super.getIntersections(curve);
 	}
 
+	// TODO: add specialized getOverlap()
+
 	/**
 	 * Calculates the distance between the {@link Point start} and the
 	 * {@link Point end point} of this {@link Line}.
@@ -320,8 +332,6 @@ public class Line extends BezierCurve {
 	public double getLength() {
 		return getP1().getDistance(getP2());
 	}
-
-	// TODO: add specialized getOverlap()
 
 	/**
 	 * Returns an array, which contains two {@link Point}s representing the
