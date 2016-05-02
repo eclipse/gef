@@ -1245,14 +1245,13 @@ public class InfiniteCanvas extends Region {
 	 * viewport, it will touch the top border of the viewport after revealing.
 	 * When the child node's bottom side is below the viewport, it will touch
 	 * the bottom border of the viewport after revealing.
-	 * <p>
-	 * TODO: When the child node does not fit within the viewport bounds, it is
-	 * not revealed.
 	 *
 	 * @param child
 	 *            The child {@link Node} to reveal.
 	 */
 	public void reveal(Node child) {
+		// TODO: When the child node does not fit within the viewport bounds, it
+		// is not revealed.
 		Bounds bounds = sceneToLocal(
 				child.localToScene(child.getBoundsInLocal()));
 		if (bounds.getHeight() <= getHeight()) {

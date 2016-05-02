@@ -27,7 +27,7 @@ import javafx.scene.input.KeyEvent;
  * @author mwienand
  *
  */
-public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<Node>implements IFXOnTypePolicy {
+public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnTypePolicy {
 
 	@Override
 	public NodePart getHost() {
@@ -55,8 +55,6 @@ public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<N
 
 	@Override
 	public void unfocus() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

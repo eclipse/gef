@@ -195,8 +195,6 @@ public class TagCloudViewer extends ContentViewer {
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/*

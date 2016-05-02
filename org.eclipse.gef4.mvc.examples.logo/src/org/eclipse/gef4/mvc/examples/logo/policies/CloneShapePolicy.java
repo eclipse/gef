@@ -33,7 +33,7 @@ public class CloneShapePolicy extends AbstractCloneContentPolicy {
 	}
 
 	private Effect copyEffect(Effect effect) {
-		// FIXME: Do not use deprecated method to copy Effect.
+		// FIXME [JDK-internal]: Do not use deprecated method to copy Effect.
 		return effect.impl_copy();
 	}
 

@@ -664,9 +664,9 @@ public class Connection extends Group {
 	 *
 	 * @return The logical center of this {@link Connection}.
 	 */
-	// TODO: we would better delegate this to interpolator, as there we can
-	// exchange the logic
 	public Point getCenter() {
+		// TODO: we would better delegate this to interpolator, as there we can
+		// exchange the logic
 		BezierCurve[] bezierCurves = null;
 		if (getCurve() instanceof GeometryNode && ((GeometryNode<?>) getCurve())
 				.getGeometry() instanceof ICurve) {

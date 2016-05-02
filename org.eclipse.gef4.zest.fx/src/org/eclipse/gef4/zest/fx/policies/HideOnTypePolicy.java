@@ -28,7 +28,7 @@ import javafx.scene.input.KeyEvent;
  * @author mwienand
  *
  */
-public class HideOnTypePolicy extends AbstractInteractionPolicy<Node>implements IFXOnTypePolicy {
+public class HideOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnTypePolicy {
 
 	@Override
 	public NodePart getHost() {
@@ -39,7 +39,7 @@ public class HideOnTypePolicy extends AbstractInteractionPolicy<Node>implements 
 	public void pressed(KeyEvent event) {
 		KeyCode keyCode = event.getCode();
 		if (KeyCode.P.equals(keyCode)) {
-			HidePolicy hidePolicy = getHost().<HidePolicy> getAdapter(HidePolicy.class);
+			HidePolicy hidePolicy = getHost().<HidePolicy>getAdapter(HidePolicy.class);
 			init(hidePolicy);
 			hidePolicy.hide();
 			commit(hidePolicy);
@@ -56,8 +56,6 @@ public class HideOnTypePolicy extends AbstractInteractionPolicy<Node>implements 
 
 	@Override
 	public void unfocus() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

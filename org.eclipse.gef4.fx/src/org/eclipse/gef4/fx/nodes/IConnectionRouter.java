@@ -48,6 +48,8 @@ public interface IConnectionRouter {
 	 *            The {@link IAnchor} that is tested for implicitness.
 	 * @return <code>true</code> if the given {@link IAnchor} is implicit,
 	 *         otherwise <code>false</code>.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	// TODO: Query explicit anchors using IBendableContentPart so that implicit
 	// anchors can be identified without needing this method.

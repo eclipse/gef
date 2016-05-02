@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -82,11 +82,6 @@ public class CubicCurveTests {
 
 		// p is the top-left point: (y-coordinates are inverted)
 		assertEquals(curve.getBounds().getTopLeft(), p);
-	}
-
-	@Test
-	public void test_getIntersections_containment() {
-		// TODO
 	}
 
 	@Test

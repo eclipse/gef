@@ -168,8 +168,6 @@ public class FXPanOnTypePolicy extends AbstractInteractionPolicy<Node>
 
 	@Override
 	public void unfocus() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**

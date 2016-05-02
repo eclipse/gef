@@ -104,8 +104,6 @@ public class FXDeleteSelectedOnTypePolicy
 
 	@Override
 	public void unfocus() {
-		// TODO Auto-generated method stub
-
 	}
 
 }
