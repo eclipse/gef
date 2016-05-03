@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.activate;
 
-import java.beans.PropertyChangeSupport;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -50,7 +49,7 @@ public class ActivatableSupport {
 
 	/**
 	 * Creates a new {@link ActivatableSupport} for the given source
-	 * {@link IActivatable} and a related {@link PropertyChangeSupport}.
+	 * {@link IActivatable}.
 	 *
 	 * @param source
 	 *            The {@link IActivatable} that encloses the to be created
