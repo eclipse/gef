@@ -92,6 +92,6 @@ class DotExport {
 	}
 
 	private def printNonMetaAttributes(IAttributeStore store, String separator) {
-		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + DotTerminalConverters.quote(value as String)].sort.join(separator + " ")
+		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + DotTerminalConverters.quote(value.toString)].sort.join(separator + " ")
 	}
 }
