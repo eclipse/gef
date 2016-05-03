@@ -69,10 +69,8 @@ public abstract class AbstractAnchor implements IAnchor {
 
 	private ObservableMap<AnchorKey, Point> positions = FXCollections
 			.observableHashMap();
-	private ObservableMap<AnchorKey, Point> positionsUnmodifiable = FXCollections
-			.unmodifiableObservableMap(positions);
-	private ReadOnlyMapWrapper<AnchorKey, Point> positionsUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(
-			positionsUnmodifiable);
+	private ObservableMap<AnchorKey, Point> positionsUnmodifiable;
+	private ReadOnlyMapWrapper<AnchorKey, Point> positionsUnmodifiableProperty;
 
 	// TODO: push this down to dynamic anchor (as its only needed there)
 	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
@@ -330,6 +328,15 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	@Override
+	public ObservableMap<AnchorKey, Point> getPositionsUnmodifiable() {
+		if (positionsUnmodifiable == null) {
+			positionsUnmodifiable = FXCollections
+					.unmodifiableObservableMap(positions);
+		}
+		return positionsUnmodifiable;
+	}
+
+	@Override
 	public boolean isAttached(AnchorKey key) {
 		return keysByNode.containsKey(key.getAnchored())
 				&& keysByNode.get(key.getAnchored()).contains(key);
@@ -337,6 +344,10 @@ public abstract class AbstractAnchor implements IAnchor {
 
 	@Override
 	public ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty() {
+		if (positionsUnmodifiableProperty == null) {
+			positionsUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(
+					getPositionsUnmodifiable());
+		}
 		return positionsUnmodifiableProperty.getReadOnlyProperty();
 	}
 

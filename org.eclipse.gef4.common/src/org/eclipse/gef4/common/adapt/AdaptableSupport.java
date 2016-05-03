@@ -59,9 +59,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	// deterministic order)
 	private ObservableMap<AdapterKey<?>, Object> adapters = FXCollections
 			.observableMap(new TreeMap<AdapterKey<?>, Object>());
-	private ObservableMap<AdapterKey<?>, Object> adaptersUnmodifiable = FXCollections
-			.unmodifiableObservableMap(adapters);
-	private ReadOnlyMapWrapperEx<AdapterKey<?>, Object> adaptersUnmodifiableProperty = null;
+	private ObservableMap<AdapterKey<?>, Object> adaptersUnmodifiable;
+	private ReadOnlyMapWrapperEx<AdapterKey<?>, Object> adaptersUnmodifiableProperty;
 	private A source;
 
 	/**
@@ -78,8 +77,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			throw new IllegalArgumentException("source may not be null.");
 		}
 		this.source = source;
-		this.adaptersUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(source,
-				IAdaptable.ADAPTERS_PROPERTY, adaptersUnmodifiable);
 	}
 
 	private void activateAdapters() {
@@ -95,7 +92,12 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 *
 	 * @return A read-only map property.
 	 */
+	// TODO: renamed to adaptersUnmodifiableProperty
 	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+		if (adaptersUnmodifiableProperty == null) {
+			adaptersUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(source,
+					IAdaptable.ADAPTERS_PROPERTY, getAdapters());
+		}
 		return adaptersUnmodifiableProperty.getReadOnlyProperty();
 	}
 
@@ -268,7 +270,12 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * @return An unmodifiable observable map containing the registered adapters
 	 *         under their {@link AdapterKey}s as a copy.
 	 */
+	// TODO: rename to getAdaptersUnmodifiable
 	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+		if (adaptersUnmodifiable == null) {
+			adaptersUnmodifiable = FXCollections
+					.unmodifiableObservableMap(adapters);
+		}
 		return adaptersUnmodifiable;
 	}
 

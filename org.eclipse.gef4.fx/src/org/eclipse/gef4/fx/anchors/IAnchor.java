@@ -15,6 +15,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 
 /**
@@ -85,6 +86,20 @@ public interface IAnchor {
 	Point getPosition(AnchorKey key);
 
 	/**
+	 * Provides an observable read-only (map) with positions (in local
+	 * coordinates of the anchored {@link Node}s) for all attached
+	 * {@link AnchorKey}s. The positions will be updated for all attached
+	 * {@link AnchorKey}s if the attached {@link Node}s or the anchorage
+	 * {@link Node}, the {@link IAnchor} is bound to, or any of their ancestors
+	 * changes in a way that will effect the positions (within the local
+	 * coordinate space of the attached {@link Node}s).
+	 *
+	 * @return A read-only observable map storing positions for all attached
+	 *         {@link AnchorKey}s.
+	 */
+	public ObservableMap<AnchorKey, Point> getPositionsUnmodifiable();
+
+	/**
 	 * Determines if the given {@link AnchorKey} is currently attached to this
 	 * {@link IAnchor}.
 	 *
@@ -107,6 +122,6 @@ public interface IAnchor {
 	 * @return A read-only (map) property storing positions for all attached
 	 *         {@link AnchorKey}s.
 	 */
-	ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty();
+	public ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty();
 
 }

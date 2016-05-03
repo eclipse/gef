@@ -82,24 +82,18 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	private ObservableList<IVisualPart<VR, ? extends VR>> children = CollectionUtils
 			.observableArrayList();
-	private ObservableList<IVisualPart<VR, ? extends VR>> childrenUnmodifiable = FXCollections
-			.unmodifiableObservableList(children);
-	private ReadOnlyListWrapperEx<IVisualPart<VR, ? extends VR>> childrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
-			this, CHILDREN_PROPERTY, childrenUnmodifiable);
+	private ObservableList<IVisualPart<VR, ? extends VR>> childrenUnmodifiable;
+	private ReadOnlyListWrapperEx<IVisualPart<VR, ? extends VR>> childrenUnmodifiableProperty;
 
 	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = CollectionUtils
 			.observableHashMultimap();
-	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiable = CollectionUtils
-			.unmodifiableObservableSetMultimap(anchorages);
-	private ReadOnlySetMultimapWrapper<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
-			anchoragesUnmodifiable);
+	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiable;
+	private ReadOnlySetMultimapWrapper<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiableProperty;
 
 	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoreds = CollectionUtils
 			.observableHashMultiset();
-	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiable = CollectionUtils
-			.unmodifiableObservableMultiset(anchoreds);
-	private ReadOnlyMultisetWrapper<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiableProperty = new ReadOnlyMultisetWrapper<>(
-			anchoredsUnmodifiable);
+	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiable;
+	private ReadOnlyMultisetWrapper<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiableProperty;
 
 	private BooleanProperty refreshVisualProperty = new SimpleBooleanProperty(
 			this, REFRESH_VISUAL_PROPERTY, true);
@@ -226,11 +220,19 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public ReadOnlySetMultimapProperty<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiableProperty() {
+		if (anchoragesUnmodifiableProperty == null) {
+			anchoragesUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
+					getAnchoragesUnmodifiable());
+		}
 		return anchoragesUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	@Override
 	public ReadOnlyMultisetProperty<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiableProperty() {
+		if (anchoredsUnmodifiableProperty == null) {
+			anchoredsUnmodifiableProperty = new ReadOnlyMultisetWrapper<>(
+					getAnchoredsUnmodifiable());
+		}
 		return anchoredsUnmodifiableProperty.getReadOnlyProperty();
 	}
 
@@ -302,6 +304,10 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public ReadOnlyListProperty<IVisualPart<VR, ? extends VR>> childrenProperty() {
+		if (childrenUnmodifiableProperty == null) {
+			childrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(this,
+					CHILDREN_PROPERTY, getChildrenUnmodifiable());
+		}
 		return childrenUnmodifiableProperty.getReadOnlyProperty();
 	}
 
@@ -508,11 +514,19 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchoragesUnmodifiable() {
+		if (anchoragesUnmodifiable == null) {
+			anchoragesUnmodifiable = CollectionUtils
+					.unmodifiableObservableSetMultimap(anchorages);
+		}
 		return anchoragesUnmodifiable;
 	}
 
 	@Override
 	public ObservableMultiset<IVisualPart<VR, ? extends VR>> getAnchoredsUnmodifiable() {
+		if (anchoredsUnmodifiable == null) {
+			anchoredsUnmodifiable = CollectionUtils
+					.unmodifiableObservableMultiset(anchoreds);
+		}
 		return anchoredsUnmodifiable;
 	}
 
@@ -523,6 +537,10 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public ObservableList<IVisualPart<VR, ? extends VR>> getChildrenUnmodifiable() {
+		if (childrenUnmodifiable == null) {
+			childrenUnmodifiable = FXCollections
+					.unmodifiableObservableList(children);
+		}
 		return childrenUnmodifiable;
 	}
 

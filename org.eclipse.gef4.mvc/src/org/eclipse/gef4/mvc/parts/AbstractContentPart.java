@@ -63,17 +63,13 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	private ObservableList<Object> contentChildren = CollectionUtils
 			.observableArrayList();
 
-	private ObservableList<Object> contentChildrenUnmodifiable = FXCollections
-			.unmodifiableObservableList(contentChildren);
-	private ReadOnlyListWrapper<Object> contentChildrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
-			this, CONTENT_CHILDREN_PROPERTY, contentChildrenUnmodifiable);
+	private ObservableList<Object> contentChildrenUnmodifiable;
+	private ReadOnlyListWrapper<Object> contentChildrenUnmodifiableProperty;
 
 	private ObservableSetMultimap<Object, String> contentAnchorages = CollectionUtils
 			.observableHashMultimap();
-	private ObservableSetMultimap<Object, String> contentAnchoragesUnmodifiable = CollectionUtils
-			.unmodifiableObservableSetMultimap(contentAnchorages);
-	private ReadOnlySetMultimapWrapper<Object, String> contentAnchoragesUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
-			this, CONTENT_ANCHORAGES_PROPERTY, contentAnchoragesUnmodifiable);
+	private ObservableSetMultimap<Object, String> contentAnchoragesUnmodifiable;
+	private ReadOnlySetMultimapWrapper<Object, String> contentAnchoragesUnmodifiableProperty;
 
 	/**
 	 * Creates a new {@link AbstractContentPart}.
@@ -175,11 +171,21 @@ public abstract class AbstractContentPart<VR, V extends VR>
 
 	@Override
 	public ReadOnlySetMultimapProperty<Object, String> contentAnchoragesUnmodifiableProperty() {
+		if (contentAnchoragesUnmodifiableProperty == null) {
+			contentAnchoragesUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
+					this, CONTENT_ANCHORAGES_PROPERTY,
+					getContentAnchoragesUnmodifiable());
+		}
 		return contentAnchoragesUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	@Override
 	public ReadOnlyListProperty<Object> contentChildrenUnmodifiableProperty() {
+		if (contentChildrenUnmodifiableProperty == null) {
+			contentChildrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
+					this, CONTENT_CHILDREN_PROPERTY,
+					getContentChildrenUnmodifiable());
+		}
 		return contentChildrenUnmodifiableProperty.getReadOnlyProperty();
 	}
 
@@ -337,11 +343,19 @@ public abstract class AbstractContentPart<VR, V extends VR>
 
 	@Override
 	public ObservableSetMultimap<Object, String> getContentAnchoragesUnmodifiable() {
+		if (contentAnchoragesUnmodifiable == null) {
+			contentAnchoragesUnmodifiable = CollectionUtils
+					.unmodifiableObservableSetMultimap(contentAnchorages);
+		}
 		return contentAnchoragesUnmodifiable;
 	}
 
 	@Override
 	public ObservableList<Object> getContentChildrenUnmodifiable() {
+		if (contentChildrenUnmodifiable == null) {
+			contentChildrenUnmodifiable = FXCollections
+					.unmodifiableObservableList(contentChildren);
+		}
 		return contentChildrenUnmodifiable;
 	}
 
