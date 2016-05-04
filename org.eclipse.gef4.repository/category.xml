@@ -135,6 +135,10 @@
    <feature url="features/org.eclipse.gef4.zest.fx.compatibility.equinox_1.0.0.qualifier.jar" id="org.eclipse.gef4.zest.fx.compatibility.equinox" version="1.0.0.qualifier">
       <category name="Equinox Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
+   <bundle id="com.google.guava" version="15.0.0.qualifier"/>
+   <bundle id="com.google.inject" version="3.0.0.qualifier"/>
+   <bundle id="com.google.inject.assistedinject" version="3.0.0.qualifier"/>
+   <bundle id="com.google.inject.multibindings" version="3.0.0.qualifier"/>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
    <category-def name="GEF4 FX" label="GEF4 FX"/>
    <category-def name="GEF4 Zest" label="GEF4 Zest"/>

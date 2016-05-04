@@ -47,6 +47,7 @@
 								</goals>
 								<configuration>
 									<associateSites>
+									<!--  TODO: refer to e(fx)clipse and other dependencies directly) -->
 										<site>http://download.eclipse.org/releases/mars</site>
 									</associateSites>
 								</configuration>

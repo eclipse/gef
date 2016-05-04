@@ -23,7 +23,7 @@
 <unit id="com.google.inject" version="3.0.0.v201312141243"/>
 <unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
 <unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20160308060251/repository/"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20160501200945/repository/"/>
 </location>
 </locations>
 </target>
