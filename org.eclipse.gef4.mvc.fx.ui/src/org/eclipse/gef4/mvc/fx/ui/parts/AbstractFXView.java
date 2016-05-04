@@ -17,7 +17,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
+import org.eclipse.gef4.mvc.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -48,17 +48,18 @@ public abstract class AbstractFXView extends ViewPart {
 
 	@Inject
 	private IFXCanvasFactory canvasFactory;
+	private FXCanvas canvas = null;
 
 	@Inject(optional = true)
 	private ISelectionProvider selectionProvider;
-
 	private SelectionForwarder<Node> selectionForwarder;
 
-	private FXCanvas canvas = null;
+	@Inject(optional = true)
+	private IPropertySheetPageFactory propertySheetPageFactory;
+	private IPropertySheetPage propertySheetPage;
 
 	private UndoRedoActionGroup undoRedoActionGroup;
 	private DeleteActionHandler deleteActionHandler;
-	private IPropertySheetPage propertySheetPage;
 
 	/**
 	 * Constructs a new {@link AbstractFXView} that uses the given
@@ -111,6 +112,20 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
+	 * Creates an {@link IPropertySheetPage} using the injected
+	 * {@link IPropertySheetPageFactory}, if present.
+	 *
+	 * @return An {@link IPropertySheetPage}, or <code>null</code> in case no
+	 *         factory was injected.
+	 */
+	protected IPropertySheetPage createPropertySheetPage() {
+		if (propertySheetPageFactory != null) {
+			return propertySheetPageFactory.create(this);
+		}
+		return null;
+	}
+
+	/**
 	 * Deactivates this {@link AbstractFXView} by deactivating its
 	 * {@link FXDomain} that was previously injected.
 	 */
@@ -131,6 +146,10 @@ public abstract class AbstractFXView extends ViewPart {
 			getSite().setSelectionProvider(null);
 		}
 
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.dispose();
+		}
+
 		deleteActionHandler.init(null);
 
 		domain.dispose();
@@ -149,21 +168,9 @@ public abstract class AbstractFXView extends ViewPart {
 		// contribute to Properties view
 		else if (IPropertySheetPage.class.equals(key)) {
 			if (propertySheetPage == null) {
-				// TODO: use assisted inject here, so UndoablePropertySheetPage
-				// can be bound in module
-				propertySheetPage = new UndoablePropertySheetPage(
-						(IOperationHistory) getAdapter(IOperationHistory.class),
-						(IUndoContext) getAdapter(IUndoContext.class),
-						(UndoRedoActionGroup) getAdapter(
-								UndoRedoActionGroup.class));
+				propertySheetPage = createPropertySheetPage();
 			}
 			return propertySheetPage;
-		} else if (UndoRedoActionGroup.class.equals(key)) {
-			if (undoRedoActionGroup == null) {
-				undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
-						(IUndoContext) getAdapter(IUndoContext.class), true);
-			}
-			return undoRedoActionGroup;
 		} else if (IUndoContext.class.equals(key)) {
 			return domain.getUndoContext();
 		} else if (IOperationHistory.class.equals(key)) {
@@ -184,15 +191,6 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Returns the {@link FXDomain} that was previously injected.
-	 *
-	 * @return The {@link FXDomain} that was previously injected.
-	 */
-	protected FXDomain getDomain() {
-		return domain;
-	}
-
-	/**
 	 * Returns the {@link FXViewer} of the {@link FXDomain} that was previously
 	 * injected.
 	 *
@@ -200,8 +198,17 @@ public abstract class AbstractFXView extends ViewPart {
 	 *         injected.
 	 */
 	protected FXViewer getContentViewer() {
-		return domain.getAdapter(AdapterKey.get(FXViewer.class,
-				FXDomain.CONTENT_VIEWER_ROLE));
+		return domain.getAdapter(
+				AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+	}
+
+	/**
+	 * Returns the {@link FXDomain} that was previously injected.
+	 *
+	 * @return The {@link FXDomain} that was previously injected.
+	 */
+	protected FXDomain getDomain() {
+		return domain;
 	}
 
 	/**
@@ -222,16 +229,12 @@ public abstract class AbstractFXView extends ViewPart {
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 
-		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) getAdapter(
-				UndoRedoActionGroup.class);
-
-		if (undoRedoActionGroup != null) {
-			undoRedoActionGroup.fillActionBars(site.getActionBars());
-		}
+		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
+				(IUndoContext) getAdapter(IUndoContext.class), true);
+		undoRedoActionGroup.fillActionBars(site.getActionBars());
 
 		deleteActionHandler = new DeleteActionHandler();
 		deleteActionHandler.init(getContentViewer());
-
 		site.getActionBars().setGlobalActionHandler(
 				ActionFactory.DELETE.getId(), deleteActionHandler);
 

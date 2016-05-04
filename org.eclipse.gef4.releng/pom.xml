@@ -53,6 +53,11 @@
 							<artifactId>guice-multibindings</artifactId>
 							<version>3.0</version>
 						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.google.inject.extensions</groupId>
+							<artifactId>guice-assistedinject</artifactId>
+							<version>3.0</version>
+						</extraClasspathElement>
 					</extraClasspathElements>
 				</configuration>
 			</plugin>

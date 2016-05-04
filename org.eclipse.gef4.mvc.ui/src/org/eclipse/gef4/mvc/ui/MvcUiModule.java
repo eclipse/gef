@@ -13,10 +13,14 @@ package org.eclipse.gef4.mvc.ui;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef4.mvc.ui.parts.DefaultSelectionProvider;
+import org.eclipse.gef4.mvc.ui.properties.IPropertySheetPageFactory;
+import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * The {@link MvcUiModule} contains Eclipse UI specific bindings in the context
@@ -37,6 +41,17 @@ public class MvcUiModule extends AbstractModule {
 	}
 
 	/**
+	 * Binds a factory for assisted injection of
+	 * {@link UndoablePropertySheetPage} as {@link IPropertySheetPage}.
+	 */
+	protected void bindIPropertySheetPageFactory() {
+		install(new FactoryModuleBuilder()
+				.implement(IPropertySheetPage.class,
+						UndoablePropertySheetPage.class)
+				.build(IPropertySheetPageFactory.class));
+	}
+
+	/**
 	 * Binds {@link ISelectionProvider} to {@link DefaultSelectionProvider}.
 	 */
 	protected void bindISelectionProvider() {
@@ -49,6 +64,6 @@ public class MvcUiModule extends AbstractModule {
 		// bindings related to workbench integration
 		bindISelectionProvider();
 		bindIOperationHistory();
+		bindIPropertySheetPageFactory();
 	}
-
 }

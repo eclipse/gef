@@ -22,7 +22,7 @@ import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
+import org.eclipse.gef4.mvc.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -55,19 +55,20 @@ public abstract class AbstractFXEditor extends EditorPart {
 
 	@Inject
 	private IFXCanvasFactory canvasFactory;
+	private FXCanvas canvas = null;
 
 	@Inject(optional = true)
 	private ISelectionProvider selectionProvider;
-
 	private SelectionForwarder<Node> selectionForwarder;
 
-	private FXCanvas canvas = null;
-
-	private UndoRedoActionGroup undoRedoActionGroup;
+	@Inject(optional = true)
+	private IPropertySheetPageFactory propertySheetPageFactory;
 	private IPropertySheetPage propertySheetPage;
 
 	private IOperationHistoryListener operationHistoryListener;
 	private boolean isDirty;
+
+	private UndoRedoActionGroup undoRedoActionGroup;
 
 	/**
 	 * Constructs a new {@link AbstractFXEditor} and uses the given
@@ -115,6 +116,20 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
+	 * Creates an {@link IPropertySheetPage} using the injected
+	 * {@link IPropertySheetPageFactory}, if present.
+	 *
+	 * @return An {@link IPropertySheetPage}, or <code>null</code> in case no
+	 *         factory was injected.
+	 */
+	protected IPropertySheetPage createPropertySheetPage() {
+		if (propertySheetPageFactory != null) {
+			return propertySheetPageFactory.create(this);
+		}
+		return null;
+	}
+
+	/**
 	 * Deactivates the editor by deactivating its {@link FXDomain}.
 	 */
 	protected void deactivate() {
@@ -132,6 +147,10 @@ public abstract class AbstractFXEditor extends EditorPart {
 		// unregister operation history listener
 		domain.getOperationHistory()
 				.removeOperationHistoryListener(operationHistoryListener);
+
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.dispose();
+		}
 
 		// unregister selection provider
 		if (selectionProvider != null) {
@@ -154,19 +173,9 @@ public abstract class AbstractFXEditor extends EditorPart {
 		// contribute to Properties view
 		else if (IPropertySheetPage.class.equals(key)) {
 			if (propertySheetPage == null) {
-				propertySheetPage = new UndoablePropertySheetPage(
-						(IOperationHistory) getAdapter(IOperationHistory.class),
-						(IUndoContext) getAdapter(IUndoContext.class),
-						(UndoRedoActionGroup) getAdapter(
-								UndoRedoActionGroup.class));
+				propertySheetPage = createPropertySheetPage();
 			}
 			return propertySheetPage;
-		} else if (UndoRedoActionGroup.class.equals(key)) {
-			if (undoRedoActionGroup == null) {
-				undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
-						(IUndoContext) getAdapter(IUndoContext.class), true);
-			}
-			return undoRedoActionGroup;
 		} else if (IUndoContext.class.equals(key)) {
 			return domain.getUndoContext();
 		} else if (IOperationHistory.class.equals(key)) {
@@ -206,8 +215,8 @@ public abstract class AbstractFXEditor extends EditorPart {
 	 */
 	// TODO: rename to content viewer (or main viewer)
 	protected FXViewer getViewer() {
-		return domain.getAdapter(AdapterKey.get(FXViewer.class,
-				FXDomain.CONTENT_VIEWER_ROLE));
+		return domain.getAdapter(
+				AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 	}
 
 	/**
@@ -255,6 +264,11 @@ public abstract class AbstractFXEditor extends EditorPart {
 				}
 			}
 		};
+
+		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
+				(IUndoContext) getAdapter(IUndoContext.class), true);
+		undoRedoActionGroup.fillActionBars(site.getActionBars());
+
 		getDomain().getOperationHistory()
 				.addOperationHistoryListener(operationHistoryListener);
 	}
