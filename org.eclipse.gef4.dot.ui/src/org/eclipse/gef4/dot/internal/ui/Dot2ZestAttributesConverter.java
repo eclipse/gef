@@ -72,8 +72,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		 * the given dot, and set as value of the
 		 * {@link ZestProperties#LAYOUT_ALGORITHM__G} attribute. If set to
 		 * <code>false</code> (i.e. native layout is performed via Graphviz and
-		 * position information is already provided in the dot input), the
-		 * {@link ZestProperties#LAYOUT_ALGORITHM__G} should remain unset.
+		 * position and size information is already provided in the dot input),
+		 * the {@link ZestProperties#LAYOUT_ALGORITHM__G} should remain unset.
 		 */
 		public boolean emulateLayout = true;
 
@@ -453,29 +453,40 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// Convert position and size; as node position is interpreted as
 		// center,
 		// we need to know the size in order to infer correct zest positions
-		String dotPos = DotAttributes.getPos(dot);
 		String dotHeight = DotAttributes.getHeight(dot);
 		String dotWidth = DotAttributes.getWidth(dot);
-		if (dotWidth != null && dotHeight != null) {
-			// dot default scaling is 72 DPI
-			// TODO: if dpi option is set, we should probably use it!
-			double zestHeight = Double.parseDouble(dotHeight) * 72; // inches
-			double zestWidth = Double.parseDouble(dotWidth) * 72; // inches
-			ZestProperties.setSize(zest, new Dimension(zestWidth, zestHeight));
 
-			if (dotPos != null && !options().ignorePositions) {
-				// node position is interpreted as center of node in Dot,
-				// and
-				// top-left in Zest
-				org.eclipse.gef4.dot.internal.parser.point.Point dotPosParsed = DotAttributes
-						.getPosParsed(dot);
-				ZestProperties.setPosition(zest, computeZestPosition(
-						dotPosParsed, zestWidth, zestHeight));
-				// if a position is marked as input-only in Dot, have Zest
-				// ignore it
-				ZestProperties.setLayoutIrrelevant(zest,
-						dotPosParsed.isInputOnly());
-			}
+		// default width is 0.75 inches
+		double zestWidth = (dotWidth == null ? 0.75
+				: Double.parseDouble(dotWidth)) * 72;
+		// default height is 0.5 inches
+		double zestHeight = (dotHeight == null ? 0.5
+				: Double.parseDouble(dotHeight)) * 72;
+		if (options().emulateLayout && !Boolean.TRUE
+				.equals(DotAttributes.getFixedSizeParsed(dot))) {
+			// if we are to emulate dot and fixedsize=true is not given, we have
+			// to compute the size to enclose image, label, and margin.
+			// TODO: also enclose image and margin
+			Dimension labelSize = computeZestLabelSize(dotLabel);
+			ZestProperties.setSize(zest, Dimension
+					.max(new Dimension(zestWidth, zestHeight), labelSize));
+		} else {
+			ZestProperties.setSize(zest, new Dimension(zestWidth, zestHeight));
+		}
+
+		String dotPos = DotAttributes.getPos(dot);
+		if (dotPos != null && !options().ignorePositions) {
+			// node position is interpreted as center of node in Dot,
+			// and
+			// top-left in Zest
+			org.eclipse.gef4.dot.internal.parser.point.Point dotPosParsed = DotAttributes
+					.getPosParsed(dot);
+			ZestProperties.setPosition(zest,
+					computeZestPosition(dotPosParsed, zestWidth, zestHeight));
+			// if a position is marked as input-only in Dot, have Zest
+			// ignore it
+			ZestProperties.setLayoutIrrelevant(zest,
+					dotPosParsed.isInputOnly());
 		}
 
 		// external label position (xlp)
@@ -501,10 +512,15 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	private Point computeZestLabelPosition(
 			org.eclipse.gef4.dot.internal.parser.point.Point dotLabelPosition,
 			String labelText) {
-		// TODO: respect font settings (font name and size)
-		Bounds labelSize = new Text(labelText).getLayoutBounds();
+		Dimension labelSize = computeZestLabelSize(labelText);
 		return computeZestPosition(dotLabelPosition, labelSize.getWidth(),
 				labelSize.getHeight());
+	}
+
+	private Dimension computeZestLabelSize(String labelText) {
+		// TODO: respect font settings (font name and size)
+		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
+		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
 	}
 
 	protected void convertAttributes(Graph dot, Graph zest) {
@@ -513,7 +529,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// convert layout and rankdir to LayoutAlgorithm
 			Object dotLayout = DotAttributes.getLayout(dot);
 			ILayoutAlgorithm algo = null;
-			if (Layout.CIRCO.toString().equals(dotLayout) || Layout.NEATO.toString().equals(dotLayout)
+			if (Layout.CIRCO.toString().equals(dotLayout)
+					|| Layout.NEATO.toString().equals(dotLayout)
 					|| Layout.TWOPI.toString().equals(dotLayout)) {
 				algo = new RadialLayoutAlgorithm();
 			} else if (Layout.FDP.toString().equals(dotLayout)
