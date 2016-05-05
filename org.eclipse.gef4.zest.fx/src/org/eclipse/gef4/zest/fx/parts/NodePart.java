@@ -266,14 +266,15 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 			@Override
 			public void resize(double w, double h) {
+				// for shape we use the exact size
+				shape.resize(w, h);
 				// for vbox we use the preferred size
 				vbox.setPrefSize(w, h);
 				vbox.autosize();
-				// for shape we use the exact size
-				shape.resize(w, h);
 				// and we relocate it to be horizontally and vertically centered
+				// w.r.t. the shape
 				Bounds vboxBounds = vbox.getLayoutBounds();
-				shape.relocate((vboxBounds.getWidth() - w) / 2, (vboxBounds.getHeight() - h) / 2);
+				vbox.relocate((w - vboxBounds.getWidth()) / 2, (h - vboxBounds.getHeight()) / 2);
 			};
 		};
 
