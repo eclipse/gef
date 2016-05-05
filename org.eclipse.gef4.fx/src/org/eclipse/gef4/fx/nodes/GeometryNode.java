@@ -37,6 +37,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
@@ -73,6 +74,8 @@ import javafx.scene.shape.StrokeType;
  * @param <T>
  *            An {@link IGeometry} used to define this {@link GeometryNode}
  */
+// TODO: We should rather extend Region here, as it supports handling the
+// preferred resizable range
 public class GeometryNode<T extends IGeometry> extends Parent {
 
 	private Path geometricShape = new Path();
@@ -95,6 +98,19 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 			}
 		}
 	};
+
+	private Double minWidth = 0.01;
+	private DoubleProperty minWidthProperty;
+	private double minHeight = 0.01;
+	private DoubleProperty minHeightProperty;
+	private double maxWidth = Double.MAX_VALUE;
+	private DoubleProperty maxWidthProperty;
+	private double maxHeight = Double.MAX_VALUE;
+	private DoubleProperty maxHeightProperty;
+	private double prefWidth = Region.USE_COMPUTED_SIZE;
+	private DoubleProperty prefWidthProperty;
+	private double prefHeight = Region.USE_COMPUTED_SIZE;
+	private DoubleProperty prefHeightProperty;
 
 	/**
 	 * Constructs a new {@link GeometryNode} without an {@link IGeometry}.
@@ -304,9 +320,81 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 		return geometryProperty.getValue();
 	}
 
+	/**
+	 * Returns the maximum height of this {@link GeometryNode}.
+	 *
+	 * @return The maximum height.
+	 */
+	public double getMaxHeight() {
+		if (maxHeightProperty != null) {
+			return maxHeightProperty.get();
+		}
+		return maxHeight;
+	}
+
+	/**
+	 * Returns the maximum width of this {@link GeometryNode}.
+	 *
+	 * @return The maximum width.
+	 */
+	public double getMaxWidth() {
+		if (maxWidthProperty != null) {
+			return maxWidthProperty.get();
+		}
+		return maxWidth;
+	}
+
+	/**
+	 * Returns the minimum height of this {@link GeometryNode}.
+	 *
+	 * @return The minimum height.
+	 */
+	public double getMinHeight() {
+		if (minHeightProperty != null) {
+			return minHeightProperty.get();
+		}
+		return minHeight;
+	}
+
+	/**
+	 * Returns the minimum width of this {@link GeometryNode}.
+	 *
+	 * @return The minimum width.
+	 */
+	public double getMinWidth() {
+		if (minWidthProperty != null) {
+			return minWidthProperty.get();
+		}
+		return minWidth;
+	}
+
 	private PathElement[] getPathElements() {
 		return Geometry2Shape
 				.toPathElements(geometryProperty.getValue().toPath());
+	}
+
+	/**
+	 * Returns the preferred height of this {@link GeometryNode}.
+	 *
+	 * @return The preferred height.
+	 */
+	public double getPrefHeight() {
+		if (prefHeightProperty != null) {
+			return prefHeightProperty.get();
+		}
+		return prefHeight;
+	}
+
+	/**
+	 * Returns the preferred width of this {@link GeometryNode}.
+	 *
+	 * @return The preferred width.
+	 */
+	public double getPrefWidth() {
+		if (prefWidthProperty != null) {
+			return prefWidthProperty.get();
+		}
+		return prefWidth;
 	}
 
 	/**
@@ -435,34 +523,142 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 
 	@Override
 	public double maxHeight(double width) {
-		return prefHeight(width);
+		double maxHeight = (maxHeightProperty != null ? maxHeightProperty.get()
+				: this.maxHeight);
+		if (Region.USE_PREF_SIZE == maxHeight) {
+			return prefHeight(width);
+		}
+		return maxHeight;
+	}
+
+	/**
+	 * Returns a double property for the maximum height of this
+	 * {@link GeometryNode}.
+	 *
+	 * @return A writable double property.
+	 */
+	public DoubleProperty maxHeightProperty() {
+		if (maxHeightProperty == null) {
+			maxHeightProperty = new SimpleDoubleProperty(maxHeight);
+		}
+		return maxHeightProperty;
 	}
 
 	@Override
 	public double maxWidth(double height) {
-		return prefWidth(height);
+		double maxWidth = (maxWidthProperty != null ? maxWidthProperty.get()
+				: this.maxWidth);
+		if (Region.USE_PREF_SIZE == maxWidth) {
+			return prefWidth(height);
+		}
+		return maxWidth;
+	}
+
+	/**
+	 * Returns a double property for the maximum width of this
+	 * {@link GeometryNode}.
+	 *
+	 * @return A writable double property.
+	 */
+	public DoubleProperty maxWidthProperty() {
+		if (maxWidthProperty == null) {
+			maxWidthProperty = new SimpleDoubleProperty(maxWidth);
+		}
+		return maxWidthProperty;
 	}
 
 	@Override
 	public double minHeight(double width) {
-		return prefHeight(width);
+		double minHeight = (minHeightProperty != null ? minHeightProperty.get()
+				: this.minHeight);
+		if (Region.USE_PREF_SIZE == minHeight) {
+			return prefHeight(width);
+		}
+		return minHeight;
+	}
+
+	/**
+	 * Returns a double property for the minimum height of this
+	 * {@link GeometryNode}.
+	 *
+	 * @return A writable double property.
+	 */
+	public DoubleProperty minHeightProperty() {
+		if (minHeightProperty == null) {
+			minHeightProperty = new SimpleDoubleProperty(minHeight);
+		}
+		return minHeightProperty;
 	}
 
 	@Override
 	public double minWidth(double height) {
-		return prefWidth(height);
+		double minWidth = (minWidthProperty != null ? minWidthProperty.get()
+				: this.minWidth);
+		if (Region.USE_PREF_SIZE == minWidth) {
+			return prefWidth(height);
+		}
+		return minWidth;
+	}
+
+	/**
+	 * Returns a double property for the minimum width of this
+	 * {@link GeometryNode}.
+	 *
+	 * @return A writable double property.
+	 */
+	public DoubleProperty minWidthProperty() {
+		if (minWidthProperty == null) {
+			minWidthProperty = new SimpleDoubleProperty(minWidth);
+		}
+		return minWidthProperty;
 	}
 
 	@Override
 	public double prefHeight(double width) {
-		final double result = getLayoutBounds().getHeight();
-		return Double.isNaN(result) || result < 0 ? 0 : result;
+		double prefHeight = (prefHeightProperty != null
+				? prefHeightProperty.get() : this.prefHeight);
+		if (Region.USE_COMPUTED_SIZE == prefHeight) {
+			final double result = getLayoutBounds().getHeight();
+			return Double.isNaN(result) || result < 0 ? 0 : result;
+		}
+		return prefHeight;
+	}
+
+	/**
+	 * Returns a double property for the preferred height of this
+	 * {@link GeometryNode}.
+	 *
+	 * @return A writable double property.
+	 */
+	public DoubleProperty prefHeightProperty() {
+		if (prefHeightProperty == null) {
+			prefHeightProperty = new SimpleDoubleProperty(prefHeight);
+		}
+		return prefHeightProperty;
 	}
 
 	@Override
 	public double prefWidth(double height) {
-		final double result = getLayoutBounds().getWidth();
-		return Double.isNaN(result) || result < 0 ? 0 : result;
+		double prefWidth = (prefWidthProperty != null ? prefWidthProperty.get()
+				: this.prefWidth);
+		if (Region.USE_COMPUTED_SIZE == prefWidth) {
+			final double result = getLayoutBounds().getWidth();
+			return Double.isNaN(result) || result < 0 ? 0 : result;
+		}
+		return prefWidth;
+	}
+
+	/**
+	 * Returns a double property for the preferred width of this
+	 * {@link GeometryNode}.
+	 *
+	 * @return A writable double property.
+	 */
+	public DoubleProperty prefWidthProperty() {
+		if (prefWidthProperty == null) {
+			prefWidthProperty = new SimpleDoubleProperty(prefWidth);
+		}
+		return prefWidthProperty;
 	}
 
 	@Override
@@ -682,6 +878,126 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 */
 	public void setGeometry(T geometry) {
 		this.geometryProperty.setValue(geometry);
+	}
+
+	/**
+	 * Sets the maximum height of this {@link GeometryNode}. Has to be a
+	 * positive value or {@link Region#USE_PREF_SIZE} in case the preferred size
+	 * should be used.
+	 *
+	 * @param maxHeight
+	 *            The maximum size of this {@link GeometryNode}.
+	 */
+	public void setMaxHeight(double maxHeight) {
+		if (maxHeight <= 0 && maxHeight != Region.USE_PREF_SIZE) {
+			throw new IllegalArgumentException(
+					"maxHeight has to be greater zero or Region.USE_PREF_SIZE.");
+		}
+		if (maxHeightProperty != null) {
+			maxHeightProperty.set(maxHeight);
+		} else {
+			this.maxHeight = maxHeight;
+		}
+	}
+
+	/**
+	 * Sets the maximum width of this {@link GeometryNode}. Has to be a positive
+	 * value or {@link Region#USE_PREF_SIZE} in case the preferred size should
+	 * be used.
+	 *
+	 * @param maxWidth
+	 *            The maximum width.
+	 */
+	public void setMaxWidth(double maxWidth) {
+		if (maxWidth <= 0 && maxWidth != Region.USE_PREF_SIZE) {
+			throw new IllegalArgumentException(
+					"maxWidth has to be greater zero or Region.USE_PREF_SIZE.");
+		}
+		if (maxWidthProperty != null) {
+			maxWidthProperty.set(maxWidth);
+		} else {
+			this.maxWidth = maxWidth;
+		}
+	}
+
+	/**
+	 * Set the minimum height for this {@link GeometryNode}. Has to be a
+	 * positive value or {@link Region#USE_PREF_SIZE} in case the preferred size
+	 * should be used.
+	 *
+	 * @param minHeight
+	 *            The minimum height.
+	 */
+	public void setMinHeight(double minHeight) {
+		if (minHeight <= 0 && minHeight != Region.USE_PREF_SIZE) {
+			throw new IllegalArgumentException(
+					"minHeight has to be greater zero or Region.USE_PREF_SIZE.");
+		}
+		if (minHeightProperty != null) {
+			minHeightProperty.set(minHeight);
+		} else {
+			this.minHeight = minHeight;
+		}
+	}
+
+	/**
+	 * Set the minimum width for this {@link GeometryNode}. Has to be a positive
+	 * value or {@link Region#USE_PREF_SIZE} in case the preferred size should
+	 * be used.
+	 *
+	 * @param minWidth
+	 *            The minimum width.
+	 */
+	public void setMinWidth(double minWidth) {
+		if (minWidth <= 0 && minWidth != Region.USE_PREF_SIZE) {
+			throw new IllegalArgumentException(
+					"minWidth has to be greater zero or Region.USE_PREF_SIZE.");
+		}
+		if (minWidthProperty != null) {
+			minWidthProperty.set(minWidth);
+		} else {
+			this.minWidth = minWidth;
+		}
+	}
+
+	/**
+	 * Sets the preferred height of this {@link GeometryNode}. May be a value
+	 * greater zero or {@link Region#USE_COMPUTED_SIZE}, in which case the
+	 * layout bounds height will be used.
+	 *
+	 * @param prefHeight
+	 *            The preferred height or {@link Region#USE_COMPUTED_SIZE}.
+	 */
+	public void setPrefHeight(double prefHeight) {
+		if (prefHeight <= 0 && prefHeight != Region.USE_COMPUTED_SIZE) {
+			throw new IllegalArgumentException(
+					"prefHeight has to be a positive value or Region.USE_COMPUTED_SIZE.");
+		}
+		if (prefHeightProperty != null) {
+			prefHeightProperty.set(prefHeight);
+		} else {
+			this.prefHeight = prefHeight;
+		}
+	}
+
+	/**
+	 * Sets the preferred width of this {@link GeometryNode}. May be a value
+	 * greater zero or {@link Region#USE_COMPUTED_SIZE}, in which case the
+	 * layout bounds width will be used.
+	 *
+	 * @param prefWidth
+	 *            The preferred width or {@link Region#USE_COMPUTED_SIZE}.
+	 */
+	public void setPrefWidth(double prefWidth) {
+		if (prefWidth <= 0 && prefWidth != Region.USE_COMPUTED_SIZE) {
+			throw new IllegalArgumentException(
+					"prefWidth has to be a positive value or Region.USE_COMPUTED_SIZE.");
+		}
+		if (prefWidthProperty != null) {
+			prefWidthProperty.set(prefWidth);
+		} else {
+			this.prefWidth = prefWidth;
+		}
 	}
 
 	/**
