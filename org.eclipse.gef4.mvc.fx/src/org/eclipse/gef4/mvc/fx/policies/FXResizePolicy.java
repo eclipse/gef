@@ -21,6 +21,7 @@ import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 
 /**
  * The {@link FXResizePolicy} is an {@link AbstractTransactionPolicy} that
@@ -29,6 +30,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
+// TODO: respect max width and height
 public class FXResizePolicy extends AbstractResizePolicy<Node> {
 
 	@Override
@@ -50,7 +52,15 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 	 * @return The minimum height.
 	 */
 	protected double getMinimumHeight() {
-		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
+		Node visualToResize = getVisualToResize();
+		double computedMinHeight = -1;
+		if (visualToResize instanceof Region) {
+			computedMinHeight = ((Region) visualToResize).getMinHeight();
+		} else if (visualToResize.isResizable()) {
+			computedMinHeight = visualToResize.minHeight(-1);
+		}
+		return Math.max(computedMinHeight,
+				FXCircleSegmentHandlePart.DEFAULT_SIZE);
 	}
 
 	/**
@@ -60,7 +70,15 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 	 * @return The minimum width.
 	 */
 	protected double getMinimumWidth() {
-		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
+		Node visualToResize = getVisualToResize();
+		double computedMinWidth = -1;
+		if (visualToResize instanceof Region) {
+			computedMinWidth = ((Region) visualToResize).getMinWidth();
+		} else if (visualToResize.isResizable()) {
+			computedMinWidth = visualToResize.minWidth(-1);
+		}
+		return Math.max(computedMinWidth,
+				FXCircleSegmentHandlePart.DEFAULT_SIZE);
 	}
 
 	/**
@@ -97,14 +115,16 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 
 		// ensure visual is not resized below threshold
 		if (resizable) {
+			double minimumWidth = getMinimumWidth();
+			double minimumHeight = getMinimumHeight();
 			if (resizeOperation.getInitialSize().width
-					+ layoutDw < getMinimumWidth()) {
-				layoutDw = getMinimumWidth()
+					+ layoutDw < minimumWidth) {
+				layoutDw = minimumWidth
 						- resizeOperation.getInitialSize().width;
 			}
 			if (resizeOperation.getInitialSize().height
-					+ layoutDh < getMinimumHeight()) {
-				layoutDh = getMinimumHeight()
+					+ layoutDh < minimumHeight) {
+				layoutDh = minimumHeight
 						- resizeOperation.getInitialSize().height;
 			}
 		}
