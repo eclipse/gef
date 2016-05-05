@@ -43,508 +43,6 @@ import org.junit.Test;
 public class DotAttributesTests {
 
 	@Test
-	public void graph_forcelabels() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		String validGraphForceLabels = "true";
-		DotAttributes.setForceLabels(g, validGraphForceLabels);
-		assertEquals(validGraphForceLabels, DotAttributes.getForceLabels(g));
-
-		validGraphForceLabels = "false";
-		DotAttributes.setForceLabels(g, validGraphForceLabels);
-		assertEquals(validGraphForceLabels, DotAttributes.getForceLabels(g));
-
-		// set valid parsed values
-		boolean validGraphForceLabelsParsed = true;
-		DotAttributes.setForceLabelsParsed(g, validGraphForceLabelsParsed);
-		assertEquals(validGraphForceLabelsParsed,
-				DotAttributes.getForceLabelsParsed(g));
-
-		validGraphForceLabelsParsed = false;
-		DotAttributes.setForceLabelsParsed(g, validGraphForceLabelsParsed);
-		assertEquals(validGraphForceLabelsParsed,
-				DotAttributes.getForceLabelsParsed(g));
-
-		// TODO: add test cases for setting invalid graph forcelabels
-	}
-
-	@Test
-	public void graph_id() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		final String validGraphId = "graphId";
-		DotAttributes.setId(g, validGraphId);
-		assertEquals(validGraphId, DotAttributes.getId(g));
-
-		// TODO: add test cases for setting invalid graph id (e.g. a not unique
-		// id)
-	}
-
-	@Test
-	public void graph_layout() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		String validGraphLayout = "circo";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		validGraphLayout = "dot";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		validGraphLayout = "fdp";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		validGraphLayout = "grid";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		validGraphLayout = "neato";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		validGraphLayout = "osage";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		validGraphLayout = "sfdp";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		validGraphLayout = "twopi";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-
-		// set invalid string values
-		try {
-			DotAttributes.setLayout(g, "foo");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'circo', 'dot', 'fdp', 'grid', 'neato', 'osage', 'sfdp', 'twopi'.",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void graph_name() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		final String validGraphName = "simpleGraph";
-		DotAttributes._setName(g, validGraphName);
-		assertEquals(validGraphName, DotAttributes._getName(g));
-
-		// TODO: add test cases for setting invalid graph name (e.g. a keyword)
-	}
-
-	@Test
-	public void graph_splines() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		String validGraphSplines = "compound";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "curved";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "false";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "line";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "none";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "spline";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "polyline";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "ortho";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplines = "true";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
-
-		// set valid parsed values
-		Splines validGraphSplinesParsed = Splines.COMPOUND;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.CURVED;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.EMPTY;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.EMPTY, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.FALSE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.LINE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.NONE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.ORTHO;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.POLYLINE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.SPLINE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
-
-		validGraphSplinesParsed = Splines.TRUE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
-		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
-
-		// set invalid string values
-		try {
-			DotAttributes.setSplines(g, "foo");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of 'compound', 'curved', '', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void graph_rankdir() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		String validGraphRankdir = "LR";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(g));
-
-		validGraphRankdir = "RL";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.RL, DotAttributes.getRankdirParsed(g));
-
-		validGraphRankdir = "TB";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.TB, DotAttributes.getRankdirParsed(g));
-
-		validGraphRankdir = "BT";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.BT, DotAttributes.getRankdirParsed(g));
-
-		// set valid parsed values
-		Rankdir validGraphRankdirParsed = Rankdir.LR;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
-		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
-		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
-
-		validGraphRankdirParsed = Rankdir.RL;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
-		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
-		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
-
-		validGraphRankdirParsed = Rankdir.TB;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
-		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
-		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
-
-		validGraphRankdirParsed = Rankdir.BT;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
-		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
-		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
-
-		// set invalid string values
-		try {
-			DotAttributes.setRankdir(g, "foo");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set graph attribute 'rankdir' to 'foo'. The value 'foo' is not a syntactically correct rankdir: The given value 'foo' has to be one of 'TB', 'LR', 'BT', 'RL'.",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void graph_type() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		String validGraphType = "graph";
-		DotAttributes._setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes._getType(g));
-
-		validGraphType = "digraph";
-		DotAttributes._setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes._getType(g));
-
-		// set invalid string values
-		try {
-			DotAttributes._setType(g, "foo");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set graph attribute \"type\" to \"foo\"; supported values: graph, digraph",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void node_height() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		String validNodeHeight = "0.56";
-		DotAttributes.setHeight(n, validNodeHeight);
-		assertEquals(validNodeHeight, DotAttributes.getHeight(n));
-
-		// set the minimum valid value
-		validNodeHeight = "0.02";
-		DotAttributes.setHeight(n, validNodeHeight);
-		assertEquals(validNodeHeight, DotAttributes.getHeight(n));
-
-		// set valid parsed values
-		Double validNodeHeightParsed = 0.1;
-		DotAttributes.setHeightParsed(n, validNodeHeightParsed);
-		assertEquals(validNodeHeightParsed, DotAttributes.getHeightParsed(n));
-
-		validNodeHeightParsed = 9.9;
-		DotAttributes.setHeightParsed(n, validNodeHeightParsed);
-		assertEquals(validNodeHeightParsed, DotAttributes.getHeightParsed(n));
-
-		// set syntactically invalid values
-		try {
-			DotAttributes.setHeight(n, "47x, 11");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set node attribute 'height' to '47x, 11'. The value '47x, 11' is not a syntactically correct double: For input string: \"47x, 11\".",
-					e.getMessage());
-		}
-
-		// set syntactically correct, but semantically invalid values
-		try {
-			DotAttributes.setHeight(n, "0.01");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set node attribute 'height' to '0.01'. The double value '0.01' is not semantically correct: Value may not be smaller than 0.02.",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void node_id() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		final String validNodeId = "nodeId";
-		DotAttributes.setId(n, validNodeId);
-		assertEquals(validNodeId, DotAttributes.getId(n));
-
-		// TODO: add test cases for setting invalid node id (e.g. a not unique
-		// id)
-	}
-
-	@Test
-	public void node_label() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		final String validNodeLabel = "nodeLabel";
-		DotAttributes.setLabel(n, validNodeLabel);
-		assertEquals(validNodeLabel, DotAttributes.getLabel(n));
-
-		// TODO: add test cases for setting invalid node label
-	}
-
-	@Test
-	public void node_name() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		final String validNodeName = "simpleNode";
-		DotAttributes._setName(n, validNodeName);
-		assertEquals(validNodeName, DotAttributes._getName(n));
-
-		// TODO: add test case for setting invalid node name (e.g. a keyword)
-	}
-
-	@Test
-	public void node_pos() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		DotAttributes.setPos(n, "47, 11");
-		DotAttributes.setPos(n, "34.5, 45.3!");
-		DotAttributes.setPos(n, "-221.31,936.82");
-
-		// set valid parsed values
-		Point pos = PointFactory.eINSTANCE.createPoint();
-		pos.setX(33);
-		pos.setY(54.6);
-		pos.setInputOnly(true);
-		DotAttributes.setPosParsed(n, pos);
-		assertEquals("33.0, 54.6!", DotAttributes.getPos(n));
-		assertTrue(EcoreUtil.equals(DotAttributes.getPosParsed(n), pos));
-
-		// set invalid string values
-		try {
-			DotAttributes.setPos(n, "47x, 11");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set node attribute 'pos' to '47x, 11'. The value '47x, 11' is not a syntactically correct point: No viable alternative at character 'x'.",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void node_width() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		String validNodeWidth = "0.56";
-		DotAttributes.setWidth(n, validNodeWidth);
-		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
-
-		validNodeWidth = "76";
-		DotAttributes.setWidth(n, validNodeWidth);
-		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
-
-		// set the minimum valid value
-		validNodeWidth = "0.01";
-		DotAttributes.setWidth(n, validNodeWidth);
-		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
-
-		// set valid parsed values
-		Double validNodeWidthParsed = 0.1;
-		DotAttributes.setWidthParsed(n, validNodeWidthParsed);
-		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(n));
-
-		validNodeWidthParsed = 9.9;
-		DotAttributes.setWidthParsed(n, validNodeWidthParsed);
-		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(n));
-
-		// set syntactically invalid values
-		try {
-			DotAttributes.setWidth(n, "47x, 11");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set node attribute 'width' to '47x, 11'. The value '47x, 11' is not a syntactically correct double: For input string: \"47x, 11\".",
-					e.getMessage());
-		}
-
-		// set syntactically correct, but semantically invalid values
-		try {
-			DotAttributes.setWidth(n, "0.009");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set node attribute 'width' to '0.009'. The double value '0.009' is not semantically correct: Value may not be smaller than 0.01.",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void node_xlp() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		DotAttributes.setXlp(n, "47, 11");
-		DotAttributes.setXlp(n, "34.5, 45.3!");
-
-		// set valid parsed values
-		Point xlp = PointFactory.eINSTANCE.createPoint();
-		xlp.setX(33);
-		xlp.setY(54.6);
-		xlp.setInputOnly(true);
-		DotAttributes.setXlpParsed(n, xlp);
-		assertEquals("33.0, 54.6!", DotAttributes.getXlp(n));
-		assertTrue(EcoreUtil.equals(DotAttributes.getXlpParsed(n), xlp));
-
-		// TODO: add test cases for setting invalid node exterior label
-		// positions
-	}
-
-	@Test
-	public void node_xlabel() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		final String validNodeXLabel = "nodeXLabel";
-		DotAttributes.setXLabel(n, validNodeXLabel);
-		assertEquals(validNodeXLabel, DotAttributes.getXLabel(n));
-
-		// TODO: add test cases for setting invalid node xlabel
-	}
-
-	@Test
 	public void edge_arrowhead() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
@@ -773,6 +271,18 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void edge_headlabel() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// set valid string values
+		String validEdgeHeadLabel = "simpleEdgeLabel";
+		DotAttributes.setHeadLabel(edge, validEdgeHeadLabel);
+		assertEquals(validEdgeHeadLabel, DotAttributes.getHeadLabel(edge));
+	}
+
+	@Test
 	public void edge_headlp() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
@@ -799,15 +309,32 @@ public class DotAttributesTests {
 	}
 
 	@Test
-	public void edge_headlabel() {
+	public void edge_id() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values
-		String validEdgeHeadLabel = "simpleEdgeLabel";
-		DotAttributes.setHeadLabel(edge, validEdgeHeadLabel);
-		assertEquals(validEdgeHeadLabel, DotAttributes.getHeadLabel(edge));
+		final String validEdgeId = "nodeId";
+		DotAttributes.setId(edge, validEdgeId);
+		assertEquals(validEdgeId, DotAttributes.getId(edge));
+
+		// TODO: add test cases for setting invalid edge id (e.g. a not unique
+		// id)
+	}
+
+	@Test
+	public void edge_label() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// set valid string values
+		final String validEdgeLabel = "edgeLabel";
+		DotAttributes.setLabel(edge, validEdgeLabel);
+		assertEquals(validEdgeLabel, DotAttributes.getLabel(edge));
+
+		// TODO: add test cases for setting invalid edge label
 	}
 
 	@Test
@@ -830,35 +357,6 @@ public class DotAttributesTests {
 				DotAttributes.getLpParsed(edge)));
 
 		// TODO: add test cases for setting invalid edge label positions
-	}
-
-	@Test
-	public void edge_label() {
-		Node n1 = new Node.Builder().buildNode();
-		Node n2 = new Node.Builder().buildNode();
-		Edge edge = new Edge.Builder(n1, n2).buildEdge();
-
-		// set valid string values
-		final String validEdgeLabel = "edgeLabel";
-		DotAttributes.setLabel(edge, validEdgeLabel);
-		assertEquals(validEdgeLabel, DotAttributes.getLabel(edge));
-
-		// TODO: add test cases for setting invalid edge label
-	}
-
-	@Test
-	public void edge_id() {
-		Node n1 = new Node.Builder().buildNode();
-		Node n2 = new Node.Builder().buildNode();
-		Edge edge = new Edge.Builder(n1, n2).buildEdge();
-
-		// set valid string values
-		final String validEdgeId = "nodeId";
-		DotAttributes.setId(edge, validEdgeId);
-		assertEquals(validEdgeId, DotAttributes.getId(edge));
-
-		// TODO: add test cases for setting invalid edge id (e.g. a not unique
-		// id)
 	}
 
 	@Test
@@ -1050,6 +548,18 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void edge_taillabel() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// set valid string values
+		String validEdgeTailLabel = "simpleEdgeLabel";
+		DotAttributes.setTailLabel(edge, validEdgeTailLabel);
+		assertEquals(validEdgeTailLabel, DotAttributes.getTailLabel(edge));
+	}
+
+	@Test
 	public void edge_taillp() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
@@ -1076,15 +586,17 @@ public class DotAttributesTests {
 	}
 
 	@Test
-	public void edge_taillabel() {
+	public void edge_xlabel() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values
-		String validEdgeTailLabel = "simpleEdgeLabel";
-		DotAttributes.setTailLabel(edge, validEdgeTailLabel);
-		assertEquals(validEdgeTailLabel, DotAttributes.getTailLabel(edge));
+		final String validEdgeXLabel = "edgeXLabel";
+		DotAttributes.setXLabel(edge, validEdgeXLabel);
+		assertEquals(validEdgeXLabel, DotAttributes.getXLabel(edge));
+
+		// TODO: add test cases for setting invalid edge xlabel
 	}
 
 	@Test
@@ -1110,16 +622,531 @@ public class DotAttributesTests {
 	}
 
 	@Test
-	public void edge_xlabel() {
-		Node n1 = new Node.Builder().buildNode();
-		Node n2 = new Node.Builder().buildNode();
-		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+	public void graph_forcelabels() {
+		Graph g = new Graph.Builder().build();
 
 		// set valid string values
-		final String validEdgeXLabel = "edgeXLabel";
-		DotAttributes.setXLabel(edge, validEdgeXLabel);
-		assertEquals(validEdgeXLabel, DotAttributes.getXLabel(edge));
+		String validGraphForceLabels = "true";
+		DotAttributes.setForceLabels(g, validGraphForceLabels);
+		assertEquals(validGraphForceLabels, DotAttributes.getForceLabels(g));
 
-		// TODO: add test cases for setting invalid edge xlabel
+		validGraphForceLabels = "false";
+		DotAttributes.setForceLabels(g, validGraphForceLabels);
+		assertEquals(validGraphForceLabels, DotAttributes.getForceLabels(g));
+
+		// set valid parsed values
+		boolean validGraphForceLabelsParsed = true;
+		DotAttributes.setForceLabelsParsed(g, validGraphForceLabelsParsed);
+		assertEquals(validGraphForceLabelsParsed,
+				DotAttributes.getForceLabelsParsed(g));
+
+		validGraphForceLabelsParsed = false;
+		DotAttributes.setForceLabelsParsed(g, validGraphForceLabelsParsed);
+		assertEquals(validGraphForceLabelsParsed,
+				DotAttributes.getForceLabelsParsed(g));
+
+		// TODO: add test cases for setting invalid graph forcelabels
+	}
+
+	@Test
+	public void graph_id() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		final String validGraphId = "graphId";
+		DotAttributes.setId(g, validGraphId);
+		assertEquals(validGraphId, DotAttributes.getId(g));
+
+		// TODO: add test cases for setting invalid graph id (e.g. a not unique
+		// id)
+	}
+
+	@Test
+	public void graph_layout() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphLayout = "circo";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		validGraphLayout = "dot";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		validGraphLayout = "fdp";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		validGraphLayout = "grid";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		validGraphLayout = "neato";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		validGraphLayout = "osage";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		validGraphLayout = "sfdp";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		validGraphLayout = "twopi";
+		DotAttributes.setLayout(g, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+
+		// set invalid string values
+		try {
+			DotAttributes.setLayout(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'circo', 'dot', 'fdp', 'grid', 'neato', 'osage', 'sfdp', 'twopi'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void graph_name() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		final String validGraphName = "simpleGraph";
+		DotAttributes._setName(g, validGraphName);
+		assertEquals(validGraphName, DotAttributes._getName(g));
+
+		// TODO: add test cases for setting invalid graph name (e.g. a keyword)
+	}
+
+	@Test
+	public void graph_rankdir() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphRankdir = "LR";
+		DotAttributes.setRankdir(g, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
+		assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(g));
+
+		validGraphRankdir = "RL";
+		DotAttributes.setRankdir(g, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
+		assertEquals(Rankdir.RL, DotAttributes.getRankdirParsed(g));
+
+		validGraphRankdir = "TB";
+		DotAttributes.setRankdir(g, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
+		assertEquals(Rankdir.TB, DotAttributes.getRankdirParsed(g));
+
+		validGraphRankdir = "BT";
+		DotAttributes.setRankdir(g, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
+		assertEquals(Rankdir.BT, DotAttributes.getRankdirParsed(g));
+
+		// set valid parsed values
+		Rankdir validGraphRankdirParsed = Rankdir.LR;
+		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		assertEquals(validGraphRankdirParsed.toString(),
+				DotAttributes.getRankdir(g));
+		assertEquals(validGraphRankdirParsed,
+				DotAttributes.getRankdirParsed(g));
+
+		validGraphRankdirParsed = Rankdir.RL;
+		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		assertEquals(validGraphRankdirParsed.toString(),
+				DotAttributes.getRankdir(g));
+		assertEquals(validGraphRankdirParsed,
+				DotAttributes.getRankdirParsed(g));
+
+		validGraphRankdirParsed = Rankdir.TB;
+		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		assertEquals(validGraphRankdirParsed.toString(),
+				DotAttributes.getRankdir(g));
+		assertEquals(validGraphRankdirParsed,
+				DotAttributes.getRankdirParsed(g));
+
+		validGraphRankdirParsed = Rankdir.BT;
+		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		assertEquals(validGraphRankdirParsed.toString(),
+				DotAttributes.getRankdir(g));
+		assertEquals(validGraphRankdirParsed,
+				DotAttributes.getRankdirParsed(g));
+
+		// set invalid string values
+		try {
+			DotAttributes.setRankdir(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'rankdir' to 'foo'. The value 'foo' is not a syntactically correct rankdir: The given value 'foo' has to be one of 'TB', 'LR', 'BT', 'RL'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void graph_splines() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphSplines = "compound";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "curved";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "false";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "line";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "none";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "spline";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "polyline";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "ortho";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplines = "true";
+		DotAttributes.setSplines(g, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
+		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
+
+		// set valid parsed values
+		Splines validGraphSplinesParsed = Splines.COMPOUND;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.CURVED;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.EMPTY;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.EMPTY, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.FALSE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.LINE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.NONE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.ORTHO;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.POLYLINE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.SPLINE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
+
+		validGraphSplinesParsed = Splines.TRUE;
+		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		assertEquals(validGraphSplinesParsed.toString(),
+				DotAttributes.getSplines(g));
+		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
+
+		// set invalid string values
+		try {
+			DotAttributes.setSplines(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of 'compound', 'curved', '', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void graph_type() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphType = "graph";
+		DotAttributes._setType(g, validGraphType);
+		assertEquals(validGraphType, DotAttributes._getType(g));
+
+		validGraphType = "digraph";
+		DotAttributes._setType(g, validGraphType);
+		assertEquals(validGraphType, DotAttributes._getType(g));
+
+		// set invalid string values
+		try {
+			DotAttributes._setType(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute \"type\" to \"foo\"; supported values: graph, digraph",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_fixedsize() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		String validNodeFixedSize = "true";
+		DotAttributes.setFixedSize(n, validNodeFixedSize);
+		assertEquals(validNodeFixedSize, DotAttributes.getFixedSize(n));
+
+		validNodeFixedSize = "false";
+		DotAttributes.setFixedSize(n, validNodeFixedSize);
+		assertEquals(validNodeFixedSize, DotAttributes.getFixedSize(n));
+
+		// set valid parsed values
+		boolean validNodeFixedSizeParsed = true;
+		DotAttributes.setFixedSizeParsed(n, validNodeFixedSizeParsed);
+		assertEquals(validNodeFixedSizeParsed,
+				DotAttributes.getFixedSizeParsed(n));
+
+		validNodeFixedSizeParsed = false;
+		DotAttributes.setFixedSizeParsed(n, validNodeFixedSizeParsed);
+		assertEquals(validNodeFixedSizeParsed,
+				DotAttributes.getFixedSizeParsed(n));
+
+		// TODO: add test cases for setting invalid graph fixedsize
+	}
+
+	@Test
+	public void node_height() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		String validNodeHeight = "0.56";
+		DotAttributes.setHeight(n, validNodeHeight);
+		assertEquals(validNodeHeight, DotAttributes.getHeight(n));
+
+		// set the minimum valid value
+		validNodeHeight = "0.02";
+		DotAttributes.setHeight(n, validNodeHeight);
+		assertEquals(validNodeHeight, DotAttributes.getHeight(n));
+
+		// set valid parsed values
+		Double validNodeHeightParsed = 0.1;
+		DotAttributes.setHeightParsed(n, validNodeHeightParsed);
+		assertEquals(validNodeHeightParsed, DotAttributes.getHeightParsed(n));
+
+		validNodeHeightParsed = 9.9;
+		DotAttributes.setHeightParsed(n, validNodeHeightParsed);
+		assertEquals(validNodeHeightParsed, DotAttributes.getHeightParsed(n));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setHeight(n, "47x, 11");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'height' to '47x, 11'. The value '47x, 11' is not a syntactically correct double: For input string: \"47x, 11\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setHeight(n, "0.01");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'height' to '0.01'. The double value '0.01' is not semantically correct: Value may not be smaller than 0.02.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_id() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		final String validNodeId = "nodeId";
+		DotAttributes.setId(n, validNodeId);
+		assertEquals(validNodeId, DotAttributes.getId(n));
+
+		// TODO: add test cases for setting invalid node id (e.g. a not unique
+		// id)
+	}
+
+	@Test
+	public void node_label() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		final String validNodeLabel = "nodeLabel";
+		DotAttributes.setLabel(n, validNodeLabel);
+		assertEquals(validNodeLabel, DotAttributes.getLabel(n));
+
+		// TODO: add test cases for setting invalid node label
+	}
+
+	@Test
+	public void node_name() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		final String validNodeName = "simpleNode";
+		DotAttributes._setName(n, validNodeName);
+		assertEquals(validNodeName, DotAttributes._getName(n));
+
+		// TODO: add test case for setting invalid node name (e.g. a keyword)
+	}
+
+	@Test
+	public void node_pos() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		DotAttributes.setPos(n, "47, 11");
+		DotAttributes.setPos(n, "34.5, 45.3!");
+		DotAttributes.setPos(n, "-221.31,936.82");
+
+		// set valid parsed values
+		Point pos = PointFactory.eINSTANCE.createPoint();
+		pos.setX(33);
+		pos.setY(54.6);
+		pos.setInputOnly(true);
+		DotAttributes.setPosParsed(n, pos);
+		assertEquals("33.0, 54.6!", DotAttributes.getPos(n));
+		assertTrue(EcoreUtil.equals(DotAttributes.getPosParsed(n), pos));
+
+		// set invalid string values
+		try {
+			DotAttributes.setPos(n, "47x, 11");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'pos' to '47x, 11'. The value '47x, 11' is not a syntactically correct point: No viable alternative at character 'x'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_width() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		String validNodeWidth = "0.56";
+		DotAttributes.setWidth(n, validNodeWidth);
+		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
+
+		validNodeWidth = "76";
+		DotAttributes.setWidth(n, validNodeWidth);
+		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
+
+		// set the minimum valid value
+		validNodeWidth = "0.01";
+		DotAttributes.setWidth(n, validNodeWidth);
+		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
+
+		// set valid parsed values
+		Double validNodeWidthParsed = 0.1;
+		DotAttributes.setWidthParsed(n, validNodeWidthParsed);
+		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(n));
+
+		validNodeWidthParsed = 9.9;
+		DotAttributes.setWidthParsed(n, validNodeWidthParsed);
+		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(n));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setWidth(n, "47x, 11");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'width' to '47x, 11'. The value '47x, 11' is not a syntactically correct double: For input string: \"47x, 11\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setWidth(n, "0.009");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'width' to '0.009'. The double value '0.009' is not semantically correct: Value may not be smaller than 0.01.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_xlabel() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		final String validNodeXLabel = "nodeXLabel";
+		DotAttributes.setXLabel(n, validNodeXLabel);
+		assertEquals(validNodeXLabel, DotAttributes.getXLabel(n));
+
+		// TODO: add test cases for setting invalid node xlabel
+	}
+
+	@Test
+	public void node_xlp() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		DotAttributes.setXlp(n, "47, 11");
+		DotAttributes.setXlp(n, "34.5, 45.3!");
+
+		// set valid parsed values
+		Point xlp = PointFactory.eINSTANCE.createPoint();
+		xlp.setX(33);
+		xlp.setY(54.6);
+		xlp.setInputOnly(true);
+		DotAttributes.setXlpParsed(n, xlp);
+		assertEquals("33.0, 54.6!", DotAttributes.getXlp(n));
+		assertTrue(EcoreUtil.equals(DotAttributes.getXlpParsed(n), xlp));
+
+		// TODO: add test cases for setting invalid node exterior label
+		// positions
 	}
 }

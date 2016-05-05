@@ -109,6 +109,11 @@ public class DotAttributes {
 	public static final String DISTORTION__N = "distortion";
 
 	/**
+	 * Specifies the 'fixedsize' attribute of a node.
+	 */
+	public static final String FIXEDSIZE__N = "fixedsize";
+
+	/**
 	 * Specifies the 'forcelabels' attribute of a graph.
 	 */
 	public static final String FORCELABELS__G = "forcelabels";
@@ -211,6 +216,124 @@ public class DotAttributes {
 	 * edge.
 	 */
 	public static final String XLP__NE = "xlp";
+
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String _getName(Edge edge) {
+		return (String) edge.attributesProperty().get(_NAME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String _getName(Graph graph) {
+		return (String) graph.attributesProperty().get(_NAME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *         {@link Node}.
+	 */
+	public static String _getName(Node node) {
+		return (String) node.attributesProperty().get(_NAME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #_TYPE__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #_TYPE__G} property.
+	 * @return The value of the {@link #_TYPE__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String _getType(Graph graph) {
+		return (String) graph.attributesProperty().get(_TYPE__G);
+	}
+
+	/**
+	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
+	 * given <i>name</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @param name
+	 *            The new value for the {@link #_NAME__GNE} property.
+	 */
+	public static void _setName(Edge edge, String name) {
+		edge.attributesProperty().put(_NAME__GNE, name);
+	}
+
+	/**
+	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
+	 * given <i>name</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @param name
+	 *            The new value for the {@link #_NAME__GNE} property.
+	 */
+	public static void _setName(Graph graph, String name) {
+		graph.attributesProperty().put(_NAME__GNE, name);
+	}
+
+	/**
+	 * Sets the {@link #_NAME__GNE} property of the given {@link Node} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @param id
+	 *            The new value for the {@link #_NAME__GNE} property.
+	 */
+	public static void _setName(Node node, String id) {
+		node.attributesProperty().put(_NAME__GNE, id);
+	}
+
+	/**
+	 * Sets the {@link #_TYPE__G} property of the given {@link Graph} to the
+	 * given <i>type</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #_TYPE__G} property.
+	 * @param type
+	 *            The new value for the {@link #_TYPE__G} property.
+	 */
+	public static void _setType(Graph graph, String type) {
+		if (!_TYPE__G__GRAPH.equals(type) && !_TYPE__G__DIGRAPH.equals(type)) {
+			throw new IllegalArgumentException(
+					"Cannot set graph attribute \"type\" to \"" + type
+							+ "\"; supported values: " + _TYPE__G__GRAPH + ", "
+							+ _TYPE__G__DIGRAPH);
+		}
+		graph.attributesProperty().put(_TYPE__G, type);
+	}
 
 	private static List<Diagnostic> filter(List<Diagnostic> diagnostics,
 			int severity) {
@@ -368,6 +491,35 @@ public class DotAttributes {
 	public static Double getDistortionParsed(Node node) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.DOUBLE_PARSER, getDistortion(node));
+	}
+
+	/**
+	 * Returns the value of the {@link #FIXEDSIZE__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FIXEDSIZE__N} property.
+	 * @return The value of the {@link #FIXEDSIZE__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getFixedSize(Node node) {
+		return (String) node.getAttributes().get(FIXEDSIZE__N);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #FIXEDSIZE__N} property of the
+	 * given {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FIXEDSIZE__N} property, parsed as a {@link Boolean} .
+	 * @return The value of the {@link #FIXEDSIZE__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static Boolean getFixedSizeParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.BOOL_PARSER, getFixedSize(node));
 	}
 
 	/**
@@ -626,48 +778,6 @@ public class DotAttributes {
 	public static Point getLpParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getLp(edge));
-	}
-
-	/**
-	 * Returns the value of the {@link #_NAME__GNE} property of the given
-	 * {@link Edge}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @return The value of the {@link #_NAME__GNE} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String _getName(Edge edge) {
-		return (String) edge.attributesProperty().get(_NAME__GNE);
-	}
-
-	/**
-	 * Returns the value of the {@link #_NAME__GNE} property of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @return The value of the {@link #_NAME__GNE} property of the given
-	 *         {@link Graph}.
-	 */
-	public static String _getName(Graph graph) {
-		return (String) graph.attributesProperty().get(_NAME__GNE);
-	}
-
-	/**
-	 * Returns the value of the {@link #_NAME__GNE} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @return The value of the {@link #_NAME__GNE} property of the given
-	 *         {@link Node}.
-	 */
-	public static String _getName(Node node) {
-		return (String) node.attributesProperty().get(_NAME__GNE);
 	}
 
 	/**
@@ -974,20 +1084,6 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #_TYPE__G} property of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #_TYPE__G} property.
-	 * @return The value of the {@link #_TYPE__G} property of the given
-	 *         {@link Graph}.
-	 */
-	public static String _getType(Graph graph) {
-		return (String) graph.attributesProperty().get(_TYPE__G);
-	}
-
-	/**
 	 * Returns the value of the {@link #WIDTH__N} property of the given
 	 * {@link Node}.
 	 * 
@@ -1268,6 +1364,34 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #FIXEDSIZE__N} property of the given {@link Node} to the
+	 * given <i>fixedSize</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FIXEDSIZE__N} property.
+	 * @param fixedSize
+	 *            The new value for the {@link #FIXEDSIZE__N} property.
+	 */
+	public static void setFixedSize(Node node, String fixedSize) {
+		node.getAttributes().put(FIXEDSIZE__N, fixedSize);
+	}
+
+	/**
+	 * Sets the {@link #FIXEDSIZE__N} property of the given {@link Node} to the
+	 * given <i>fixedSizeParsed</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FIXEDSIZE__N} property.
+	 * @param fixedSizeParsed
+	 *            The new value for the {@link #FIXEDSIZE__N} property.
+	 */
+	public static void setFixedSizeParsed(Node node, Boolean fixedSizeParsed) {
+		setFixedSize(node, fixedSizeParsed.toString());
+	}
+
+	/**
 	 * Sets the {@link #FORCELABELS__G} property of the given {@link Graph} to
 	 * the given <i>forceLabels</i> value.
 	 * 
@@ -1513,48 +1637,6 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
-	 * given <i>name</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @param name
-	 *            The new value for the {@link #_NAME__GNE} property.
-	 */
-	public static void _setName(Edge edge, String name) {
-		edge.attributesProperty().put(_NAME__GNE, name);
-	}
-
-	/**
-	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
-	 * given <i>name</i> value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @param name
-	 *            The new value for the {@link #_NAME__GNE} property.
-	 */
-	public static void _setName(Graph graph, String name) {
-		graph.attributesProperty().put(_NAME__GNE, name);
-	}
-
-	/**
-	 * Sets the {@link #_NAME__GNE} property of the given {@link Node} to the
-	 * given <i>id</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @param id
-	 *            The new value for the {@link #_NAME__GNE} property.
-	 */
-	public static void _setName(Node node, String id) {
-		node.attributesProperty().put(_NAME__GNE, id);
-	}
-
-	/**
 	 * Sets the {@link #POS__NE} property of the given {@link Edge} to the given
 	 * <i>pos</i> value.
 	 * 
@@ -1643,35 +1725,6 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
-	 * given <i>sides</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SIDES__N} property.
-	 * @param sides
-	 *            The new value for the {@link #SIDES__N} property.
-	 */
-	public static void setSides(Node node, String sides) {
-		validate(AttributeContext.NODE, SIDES__N, sides);
-		node.attributesProperty().put(SIDES__N, sides);
-	}
-
-	/**
-	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
-	 * given <i>sidesParsed</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SIDES__N} property.
-	 * @param sidesParsed
-	 *            The new value for the {@link #SIDES__N} property.
-	 */
-	public static void setSidesParsed(Node node, Integer sidesParsed) {
-		setSides(node, sidesParsed.toString());
-	}
-
-	/**
 	 * Sets the {@link #SHAPE__N} property of the given {@link Node} to the
 	 * given <i>shape</i> value.
 	 * 
@@ -1699,6 +1752,35 @@ public class DotAttributes {
 	public static void setShapeParsed(Node node, Shape shapeParsed) {
 		setShape(node,
 				serialize(DotLanguageSupport.SHAPE_SERIALIZER, shapeParsed));
+	}
+
+	/**
+	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
+	 * given <i>sides</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SIDES__N} property.
+	 * @param sides
+	 *            The new value for the {@link #SIDES__N} property.
+	 */
+	public static void setSides(Node node, String sides) {
+		validate(AttributeContext.NODE, SIDES__N, sides);
+		node.attributesProperty().put(SIDES__N, sides);
+	}
+
+	/**
+	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
+	 * given <i>sidesParsed</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SIDES__N} property.
+	 * @param sidesParsed
+	 *            The new value for the {@link #SIDES__N} property.
+	 */
+	public static void setSidesParsed(Node node, Integer sidesParsed) {
+		setSides(node, sidesParsed.toString());
 	}
 
 	/**
@@ -1868,26 +1950,6 @@ public class DotAttributes {
 	public static void setTailLpParsed(Edge edge, Point tailLpParsed) {
 		setTailLp(edge,
 				serialize(DotLanguageSupport.POINT_SERIALIZER, tailLpParsed));
-	}
-
-	/**
-	 * Sets the {@link #_TYPE__G} property of the given {@link Graph} to the
-	 * given <i>type</i> value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #_TYPE__G} property.
-	 * @param type
-	 *            The new value for the {@link #_TYPE__G} property.
-	 */
-	public static void _setType(Graph graph, String type) {
-		if (!_TYPE__G__GRAPH.equals(type) && !_TYPE__G__DIGRAPH.equals(type)) {
-			throw new IllegalArgumentException(
-					"Cannot set graph attribute \"type\" to \"" + type
-							+ "\"; supported values: " + _TYPE__G__GRAPH + ", "
-							+ _TYPE__G__DIGRAPH);
-		}
-		graph.attributesProperty().put(_TYPE__G, type);
 	}
 
 	/**

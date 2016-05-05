@@ -266,6 +266,13 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			DotAttributes.setHeight(node, height);
 		}
 
+		// fixedsize
+		String fixedSize = getAttributeValue(nodeStmt,
+				DotAttributes.FIXEDSIZE__N);
+		if (fixedSize != null) {
+			DotAttributes.setFixedSize(node, fixedSize);
+		}
+
 		// shape
 		String shape = getAttributeValue(nodeStmt, DotAttributes.SHAPE__N);
 		if (shape != null) {
@@ -474,6 +481,10 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			if (globalNodeAttributes.containsKey(DotAttributes.HEIGHT__N)) {
 				DotAttributes.setHeight(node,
 						globalNodeAttributes.get(DotAttributes.HEIGHT__N));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.FIXEDSIZE__N)) {
+				DotAttributes.setFixedSize(node,
+						globalNodeAttributes.get(DotAttributes.FIXEDSIZE__N));
 			}
 		}
 		return nodesByName.get(nodeName);
