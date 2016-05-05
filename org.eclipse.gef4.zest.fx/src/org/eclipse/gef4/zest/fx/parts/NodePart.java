@@ -238,17 +238,43 @@ public class NodePart extends AbstractFXContentPart<Group>
 	protected Group createVisual() {
 		// container set-up
 		final Group group = new Group() {
+
 			@Override
 			public boolean isResizable() {
 				return true;
 			}
 
 			@Override
+			public double maxHeight(double width) {
+				return vbox.maxHeight(width);
+			};
+
+			@Override
+			public double maxWidth(double height) {
+				return vbox.maxWidth(height);
+			}
+
+			@Override
+			public double minHeight(double width) {
+				return vbox.minHeight(width);
+			}
+
+			@Override
+			public double minWidth(double height) {
+				return vbox.minWidth(height);
+			}
+
+			@Override
 			public void resize(double w, double h) {
+				// for vbox we use the preferred size
 				vbox.setPrefSize(w, h);
 				vbox.autosize();
-				shape.resize(vbox.getLayoutBounds().getWidth(), vbox.getLayoutBounds().getHeight());
-			}
+				// for shape we use the exact size
+				shape.resize(w, h);
+				// and we relocate it to be horizontally and vertically centered
+				Bounds vboxBounds = vbox.getLayoutBounds();
+				shape.relocate((vboxBounds.getWidth() - w) / 2, (vboxBounds.getHeight() - h) / 2);
+			};
 		};
 
 		// create shape for border and background
@@ -265,10 +291,10 @@ public class NodePart extends AbstractFXContentPart<Group>
 		labelText.setText(NODE_LABEL_EMPTY);
 		labelText.getStyleClass().add(CSS_CLASS_LABEL);
 
-		// put image and text next to each other at the top of the node
 		HBox hbox = new HBox();
 		hbox.getChildren().addAll(iconImageView, labelText);
 		hbox.setAlignment(Pos.CENTER);
+		hbox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
 		nestedContentPane = createNestedContentPane();
 		nestedContentStackPane = new StackPane();
@@ -286,6 +312,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 		vbox = new VBox();
 		vbox.setMouseTransparent(true);
 		vbox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+		vbox.setAlignment(Pos.CENTER);
 		vbox.getChildren().addAll(hbox);
 
 		// place the box below the other visuals
