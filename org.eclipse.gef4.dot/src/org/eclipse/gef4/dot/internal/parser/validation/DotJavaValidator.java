@@ -167,7 +167,13 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		String unquotedValue = DotTerminalConverters.unquote(value);
 
 		// use parser (and validator) for respective attribute type
-		if (DotAttributes.RANKDIR__G.equals(name)) {
+		if (DotAttributes.FORCELABELS__G.equals(name)) {
+			return validateBooleanAttributeValue(DotAttributes.FORCELABELS__G,
+					unquotedValue);
+		} else if (DotAttributes.FIXEDSIZE__N.equals(name)) {
+			return validateBooleanAttributeValue(DotAttributes.FIXEDSIZE__N,
+					unquotedValue);
+		} else if (DotAttributes.RANKDIR__G.equals(name)) {
 			return validateEnumAttributeValue(DotLanguageSupport.RANKDIR_PARSER,
 					name, unquotedValue, "rankdir");
 		} else if (DotAttributes.SPLINES__G.equals(name)) {
@@ -200,6 +206,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					DotLanguageSupport.ARROWTYPE_PARSER,
 					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, unquotedValue,
 					ArrowtypePackage.Literals.ARROW_TYPE, "arrowType");
+		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
+			return validateDoubleAttributeValue(name, unquotedValue, 0.0);
 		} else if (DotAttributes.POS__NE.equals(name)) {
 			// validate point (node) or splinetype (edge) using delegate parser
 			// and validator
@@ -226,8 +234,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateDoubleAttributeValue(name, unquotedValue, -100.0);
 		} else if (DotAttributes.DISTORTION__N.equals(name)) {
 			return validateDoubleAttributeValue(name, unquotedValue, -100.0);
-		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
-			return validateDoubleAttributeValue(name, unquotedValue, 0.0);
 		} else if (DotAttributes.WIDTH__N.equals(name)) {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.01);
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
