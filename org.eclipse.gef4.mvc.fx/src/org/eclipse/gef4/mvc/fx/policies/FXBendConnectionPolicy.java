@@ -572,6 +572,26 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				getBendOperation().getConnectionIndex(explicitAnchorIndex));
 	}
 
+	/**
+	 * Returns the horizontal granularity for "snap-to-grid" where
+	 * <code>1</code> means it will snap to integer grid positions.
+	 *
+	 * @return The horizontal granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityX() {
+		return 1;
+	}
+
+	/**
+	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
+	 * means it will snap to integer grid positions.
+	 *
+	 * @return The vertical granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityY() {
+		return 1;
+	}
+
 	private FXUpdateAnchorHintsOperation getUpdateHintsOperation() {
 		return (FXUpdateAnchorHintsOperation) ((AbstractCompositeOperation) super.getOperation())
 				.getOperations().get(1);
@@ -815,7 +835,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 							getHost().getRoot().getViewer()
 									.<GridModel> getAdapter(GridModel.class),
 							selectedPointCurrentPositionInLocal.x,
-							selectedPointCurrentPositionInLocal.y, 0.5, 0.5);
+							selectedPointCurrentPositionInLocal.y,
+							getSnapToGridGranularityX(),
+							getSnapToGridGranularityY());
 			selectedPointCurrentPositionInLocal
 					.translate(snapToGridOffset.getNegated());
 

@@ -109,6 +109,26 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		return indices;
 	}
 
+	/**
+	 * Returns the horizontal granularity for "snap-to-grid" where
+	 * <code>1</code> means it will snap to integer grid positions.
+	 *
+	 * @return The horizontal granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityX() {
+		return 1;
+	}
+
+	/**
+	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
+	 * means it will snap to integer grid positions.
+	 *
+	 * @return The vertical granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityY() {
+		return 1;
+	}
+
 	@Override
 	public void init() {
 		// super#init() so that the policy is properly initialized
@@ -144,10 +164,11 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 			Point pTx = newTransform.getTransformed(p);
 			double nx = pTx.x;
 			double ny = pTx.y;
-			// TODO: make stepping (0.5) configurable
-			Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
-					.getViewer().<GridModel> getAdapter(GridModel.class), nx,
-					ny, 0.5, 0.5);
+			Dimension snapToGridOffset = getSnapToGridOffset(
+					getHost().getRoot().getViewer()
+							.<GridModel> getAdapter(GridModel.class),
+					nx, ny, getSnapToGridGranularityX(),
+					getSnapToGridGranularityY());
 			getBendConnectionOperation().getNewAnchors().set(i,
 					new StaticAnchor(getHost().getVisual(),
 							new Point(nx - snapToGridOffset.width,
