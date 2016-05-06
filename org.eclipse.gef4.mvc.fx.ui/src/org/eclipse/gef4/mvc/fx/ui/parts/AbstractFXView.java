@@ -17,6 +17,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.ui.parts.ISelectionProviderFactory;
 import org.eclipse.gef4.mvc.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
@@ -26,13 +27,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import javafx.embed.swt.FXCanvas;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 
 /**
@@ -51,8 +52,8 @@ public abstract class AbstractFXView extends ViewPart {
 	private FXCanvas canvas = null;
 
 	@Inject(optional = true)
+	private ISelectionProviderFactory selectionProviderFactory;
 	private ISelectionProvider selectionProvider;
-	private SelectionForwarder<Node> selectionForwarder;
 
 	@Inject(optional = true)
 	private IPropertySheetPageFactory propertySheetPageFactory;
@@ -104,8 +105,11 @@ public abstract class AbstractFXView extends ViewPart {
 		// hook viewer controls and selection forwarder
 		hookViewers();
 
-		// register listener to provide selection to workbench
-		registerWorkbenchSelectionForwarder(getContentViewer());
+		// register selection provider (if we want to a provide selection)
+		if (selectionProviderFactory != null) {
+			selectionProvider = selectionProviderFactory.create(this);
+			getSite().setSelectionProvider(selectionProvider);
+		}
 
 		// activate domain
 		activate();
@@ -144,6 +148,9 @@ public abstract class AbstractFXView extends ViewPart {
 		// unregister selection provider
 		if (selectionProvider != null) {
 			getSite().setSelectionProvider(null);
+			if (selectionProvider instanceof IDisposable) {
+				((IDisposable) selectionProvider).dispose();
+			}
 		}
 
 		if (undoRedoActionGroup != null) {
@@ -207,16 +214,25 @@ public abstract class AbstractFXView extends ViewPart {
 	 *
 	 * @return The {@link FXDomain} that was previously injected.
 	 */
-	protected FXDomain getDomain() {
+	public FXDomain getDomain() {
 		return domain;
+	}
+
+	/**
+	 * Returns the {@link ISelectionProvider} used by this
+	 * {@link AbstractFXView}. May be <code>null</code> in case no injection
+	 * provider is used.
+	 *
+	 * @return {@link ISelectionProvider}
+	 */
+	public ISelectionProvider getSelectionProvider() {
+		return selectionProvider;
 	}
 
 	/**
 	 * Hooks all viewers that are part of this {@link AbstractFXView} into the
 	 * {@link FXCanvas} that was previously created by the injected
-	 * {@link IFXCanvasFactory}. Also registers listeners for the propagation of
-	 * a selection from the Eclipse Workbench to this {@link AbstractFXView} and
-	 * vice versa.
+	 * {@link IFXCanvasFactory}.
 	 */
 	protected void hookViewers() {
 		// by default we only have a single (content) viewer, so hook its
@@ -237,26 +253,6 @@ public abstract class AbstractFXView extends ViewPart {
 		deleteActionHandler.init(getContentViewer());
 		site.getActionBars().setGlobalActionHandler(
 				ActionFactory.DELETE.getId(), deleteActionHandler);
-
-		// register selection provider (if we want to a provide selection)
-		if (selectionProvider != null) {
-			site.setSelectionProvider(selectionProvider);
-		}
-	}
-
-	/**
-	 * Registers listeners to synchronize selection with workbench.
-	 *
-	 * @param contentViewer
-	 *            Viewer of which the selection is synchronized with the
-	 *            workbench.
-	 */
-	protected void registerWorkbenchSelectionForwarder(
-			final FXViewer contentViewer) {
-		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder<>(selectionProvider,
-					contentViewer);
-		}
 	}
 
 	@Override
@@ -265,16 +261,10 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Unhooks all viewers that are part of this {@link AbstractFXView} by
-	 * unregistering the selection listeners.
+	 * Unhooks all viewers that are part of this {@link AbstractFXView}.
 	 */
-	// TODO: What about taking the visuals out of the canvas?
 	protected void unhookViewers() {
-		// unregister listener to provide selections
-		if (selectionForwarder != null) {
-			selectionForwarder.dispose();
-			selectionForwarder = null;
-		}
+		// TODO: What about taking the visuals out of the canvas?
 	}
 
 }

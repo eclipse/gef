@@ -66,7 +66,7 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 		// out of sync with the file system.
 		if (activeEditor instanceof AbstractFXEditor) {
 			deleteActionHandler
-					.init(((AbstractFXEditor) activeEditor).getViewer());
+					.init(((AbstractFXEditor) activeEditor).getContentViewer());
 		}
 	}
 }

@@ -12,10 +12,8 @@
 package org.eclipse.gef4.mvc.ui;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.gef4.mvc.ui.parts.DefaultSelectionProvider;
 import org.eclipse.gef4.mvc.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
@@ -51,18 +49,9 @@ public class MvcUiModule extends AbstractModule {
 				.build(IPropertySheetPageFactory.class));
 	}
 
-	/**
-	 * Binds {@link ISelectionProvider} to {@link DefaultSelectionProvider}.
-	 */
-	protected void bindISelectionProvider() {
-		binder().bind(ISelectionProvider.class)
-				.to(DefaultSelectionProvider.class);
-	}
-
 	@Override
 	protected void configure() {
 		// bindings related to workbench integration
-		bindISelectionProvider();
 		bindIOperationHistory();
 		bindIPropertySheetPageFactory();
 	}
