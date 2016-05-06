@@ -122,6 +122,24 @@ public class ZestProperties {
 	public static final String CURVE_CSS_STYLE__E = "edge-curve-css-style";
 
 	/**
+	 * This attribute determines the CSS style for the source decoration of an
+	 * edge. This attribute does not have a default value.
+	 *
+	 * @see #getSourceDecorationCssStyle(Edge)
+	 * @see #setSourceDecorationCssStyle(Edge, String)
+	 */
+	public static final String SOURCE_DECORATION_CSS_STYLE__E = "edge-source-decoration-css-style";
+
+	/**
+	 * This attribute determines the CSS style for the target decoration of an
+	 * edge. This attribute does not have a default value.
+	 *
+	 * @see #getTargetDecorationCssStyle(Edge)
+	 * @see #setTargetDecorationCssStyle(Edge, String)
+	 */
+	public static final String TARGET_DECORATION_CSS_STYLE__E = "edge-target-decoration-css-style";
+
+	/**
 	 * This attribute determines the way points that are passed along to the
 	 * {@link #ROUTER__E} in addition to the start and end point, which are
 	 * provided by the {@link Connection} and computed by {@link IAnchor}s at
@@ -764,6 +782,19 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E}
+	 * attribute of the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source decoration CSS style is
+	 *            determined.
+	 * @return The source decoration CSS style of the given {@link Edge}.
+	 */
+	public static String getSourceDecorationCssStyle(Edge edge) {
+		return (String) edge.attributesProperty().get(SOURCE_DECORATION_CSS_STYLE__E);
+	}
+
+	/**
 	 * Returns the value of the {@link #SOURCE_LABEL__E} attribute of the given
 	 * {@link Edge}.
 	 *
@@ -822,6 +853,19 @@ public class ZestProperties {
 	 */
 	public static javafx.scene.Node getTargetDecoration(Edge edge) {
 		return (javafx.scene.Node) edge.attributesProperty().get(TARGET_DECORATION__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #TARGET_DECORATION_CSS_STYLE__E}
+	 * attribute of the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration CSS style is
+	 *            determined.
+	 * @return The target decoration CSS style of the given {@link Edge}.
+	 */
+	public static String getTargetDecorationCssStyle(Edge edge) {
+		return (String) edge.attributesProperty().get(TARGET_DECORATION_CSS_STYLE__E);
 	}
 
 	/**
@@ -992,11 +1036,11 @@ public class ZestProperties {
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the curve CSS style is changed.
-	 * @param connCssStyle
+	 * @param curveCssStyle
 	 *            The new curve CSS style for the given {@link Edge}.
 	 */
-	public static void setCurveCssStyle(Edge edge, String connCssStyle) {
-		edge.attributesProperty().put(CURVE_CSS_STYLE__E, connCssStyle);
+	public static void setCurveCssStyle(Edge edge, String curveCssStyle) {
+		edge.attributesProperty().put(CURVE_CSS_STYLE__E, curveCssStyle);
 	}
 
 	/**
@@ -1402,6 +1446,21 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E} attribute
+	 * of the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source decoration CSS style is
+	 *            changed.
+	 * @param sourceDecorationCssStyle
+	 *            The new source decoration CSS style for the given {@link Edge}
+	 *            .
+	 */
+	public static void setSourceDecorationCssStyle(Edge edge, String sourceDecorationCssStyle) {
+		edge.attributesProperty().put(SOURCE_DECORATION_CSS_STYLE__E, sourceDecorationCssStyle);
+	}
+
+	/**
 	 * Sets the value of the {@link #SOURCE_LABEL__E} attribute of the given
 	 * {@link Edge} to the given provider.
 	 *
@@ -1467,6 +1526,21 @@ public class ZestProperties {
 	 */
 	public static void setTargetDecoration(Edge edge, javafx.scene.Node targetDecoration) {
 		edge.attributesProperty().put(TARGET_DECORATION__E, targetDecoration);
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_DECORATION_CSS_STYLE__E} attribute
+	 * of the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source decoration CSS style is
+	 *            changed.
+	 * @param targetDecorationCssStyle
+	 *            The new target decoration CSS style for the given {@link Edge}
+	 *            .
+	 */
+	public static void setTargetDecorationCssStyle(Edge edge, String targetDecorationCssStyle) {
+		edge.attributesProperty().put(TARGET_DECORATION_CSS_STYLE__E, targetDecorationCssStyle);
 	}
 
 	/**

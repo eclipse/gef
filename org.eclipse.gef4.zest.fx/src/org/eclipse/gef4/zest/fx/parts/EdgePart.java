@@ -295,25 +295,27 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		Node sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
-			// ensure decoration class is set
+			// apply CSS class
 			if (!sourceDecoration.getStyleClass().contains(CSS_CLASS_DECORATION)) {
 				sourceDecoration.getStyleClass().add(CSS_CLASS_DECORATION);
 			}
-			// apply curve CSS style
-			if (curveCssStyle != null) {
-				sourceDecoration.setStyle(curveCssStyle);
+			// apply CSS style
+			String sourceDecorationCssStyle = ZestProperties.getCurveCssStyle(edge);
+			if (sourceDecorationCssStyle != null) {
+				sourceDecoration.setStyle(sourceDecorationCssStyle);
 			}
 		}
 		Node targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
-			// ensure decoration class is set
+			// apply CSS class
 			if (!targetDecoration.getStyleClass().contains(CSS_CLASS_DECORATION)) {
 				targetDecoration.getStyleClass().add(CSS_CLASS_DECORATION);
 			}
-			// apply curve CSS style
-			if (curveCssStyle != null) {
-				targetDecoration.setStyle(curveCssStyle);
+			// apply CSS style
+			String targetDecorationCssStyle = ZestProperties.getTargetDecorationCssStyle(edge);
+			if (targetDecorationCssStyle != null) {
+				targetDecoration.setStyle(targetDecorationCssStyle);
 			}
 		}
 
