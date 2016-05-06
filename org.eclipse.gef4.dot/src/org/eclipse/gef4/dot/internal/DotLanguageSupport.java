@@ -160,8 +160,7 @@ public class DotLanguageSupport {
 					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
 							Diagnostic.ERROR, rawValue, -1,
 							"Value has to be one of "
-									+ getFormattedValues(DirType.values())
-									+ ".",
+									+ getFormattedValues(DirType.values()),
 							new Object[] {})));
 		}
 	};

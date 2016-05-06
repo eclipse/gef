@@ -263,9 +263,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					// TODO: remove unnecessary period at the end of the error
-					// message
-					"Cannot set edge attribute 'dir' to 'foo'. The value 'foo' is not a syntactically correct dirType: Value has to be one of 'forward', 'back', 'both', 'none'..",
+					"Cannot set edge attribute 'dir' to 'foo'. The value 'foo' is not a syntactically correct dirType: Value has to be one of 'forward', 'back', 'both', 'none'.",
 					e.getMessage());
 		}
 	}
@@ -645,7 +643,15 @@ public class DotAttributesTests {
 		assertEquals(validGraphForceLabelsParsed,
 				DotAttributes.getForceLabelsParsed(g));
 
-		// TODO: add test cases for setting invalid graph forcelabels
+		// set invalid string values
+		try {
+			DotAttributes.setForceLabels(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'forcelabels' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value.",
+					e.getMessage());
+		}
 	}
 
 	@Test
@@ -904,6 +910,58 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of 'compound', 'curved', '', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_distortion() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		String validNodeDistortion = "5";
+		DotAttributes.setDistortion(n, validNodeDistortion);
+		assertEquals(validNodeDistortion, DotAttributes.getDistortion(n));
+		assertEquals(5.0, DotAttributes.getDistortionParsed(n).doubleValue(),
+				0.0);
+
+		// set the minimum valid value
+		validNodeDistortion = "-100.0";
+		DotAttributes.setDistortion(n, validNodeDistortion);
+		assertEquals(validNodeDistortion, DotAttributes.getDistortion(n));
+		assertEquals(-100.0, DotAttributes.getDistortionParsed(n).doubleValue(),
+				0.0);
+
+		// set valid parsed values
+		Double validNodeDistortionParsed = 10.0;
+		DotAttributes.setDistortionParsed(n, validNodeDistortionParsed);
+		assertEquals("10.0", DotAttributes.getDistortion(n));
+		assertEquals(validNodeDistortionParsed,
+				DotAttributes.getDistortionParsed(n));
+
+		validNodeDistortionParsed = 9.9;
+		DotAttributes.setDistortionParsed(n, validNodeDistortionParsed);
+		assertEquals("9.9", DotAttributes.getDistortion(n));
+		assertEquals(validNodeDistortionParsed,
+				DotAttributes.getDistortionParsed(n));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setDistortion(n, "42x");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'distortion' to '42x'. The value '42x' is not a syntactically correct double: For input string: \"42x\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setDistortion(n, "-100.01");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'distortion' to '-100.01'. The double value '-100.01' is not semantically correct: Value may not be smaller than -100.0.",
 					e.getMessage());
 		}
 	}

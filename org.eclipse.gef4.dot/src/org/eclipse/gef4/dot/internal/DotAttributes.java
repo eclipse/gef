@@ -504,7 +504,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static String getFixedSize(Node node) {
-		return (String) node.getAttributes().get(FIXEDSIZE__N);
+		return (String) node.attributesProperty().get(FIXEDSIZE__N);
 	}
 
 	/**
@@ -533,7 +533,7 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static String getForceLabels(Graph graph) {
-		return (String) graph.getAttributes().get(FORCELABELS__G);
+		return (String) graph.attributesProperty().get(FORCELABELS__G);
 	}
 
 	/**
@@ -1215,6 +1215,8 @@ public class DotAttributes {
 	 *            {@link #ARROWHEAD__E} property.
 	 * @param arrowHead
 	 *            The new value for the {@link #ARROWHEAD__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowHead</i> value is not supported.
 	 */
 	public static void setArrowHead(Edge edge, String arrowHead) {
 		validate(AttributeContext.EDGE, ARROWHEAD__E, arrowHead);
@@ -1230,6 +1232,8 @@ public class DotAttributes {
 	 *            {@link #ARROWHEAD__E} property.
 	 * @param arrowHeadParsed
 	 *            The new value for the {@link #ARROWHEAD__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowHeadParsed</i> value is not supported.
 	 */
 	public static void setArrowHeadParsed(Edge edge,
 			ArrowType arrowHeadParsed) {
@@ -1314,6 +1318,8 @@ public class DotAttributes {
 	 *            {@link #DIR__E} property.
 	 * @param dir
 	 *            The new value for the {@link #DIR__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>dir</i> value is not supported.
 	 */
 	public static void setDir(Edge edge, String dir) {
 		validate(AttributeContext.EDGE, DIR__E, dir);
@@ -1329,6 +1335,8 @@ public class DotAttributes {
 	 *            {@link #DIR__E} property.
 	 * @param dirParsed
 	 *            The new value for the {@link #DIR__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>dirParsed</i> value is not supported.
 	 */
 	public static void setDirParsed(Edge edge, DirType dirParsed) {
 		setDir(edge, dirParsed.toString());
@@ -1343,6 +1351,8 @@ public class DotAttributes {
 	 *            {@link #DISTORTION__N} property.
 	 * @param distortion
 	 *            The new value for the {@link #DISTORTION__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>distortion</i> value is not supported.
 	 */
 	public static void setDistortion(Node node, String distortion) {
 		validate(AttributeContext.NODE, DISTORTION__N, distortion);
@@ -1358,6 +1368,9 @@ public class DotAttributes {
 	 *            {@link #DISTORTION__N} property.
 	 * @param distortionParsed
 	 *            The new value for the {@link #DISTORTION__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>distortionParsed</i> value is not
+	 *             supported.
 	 */
 	public static void setDistortionParsed(Node node, Double distortionParsed) {
 		setDistortion(node, distortionParsed.toString());
@@ -1374,7 +1387,7 @@ public class DotAttributes {
 	 *            The new value for the {@link #FIXEDSIZE__N} property.
 	 */
 	public static void setFixedSize(Node node, String fixedSize) {
-		node.getAttributes().put(FIXEDSIZE__N, fixedSize);
+		node.attributesProperty().put(FIXEDSIZE__N, fixedSize);
 	}
 
 	/**
@@ -1400,9 +1413,12 @@ public class DotAttributes {
 	 *            {@link #FORCELABELS__G} property.
 	 * @param forceLabels
 	 *            The new value for the {@link #FORCELABELS__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>forceLabels</i> value is not supported.
 	 */
 	public static void setForceLabels(Graph graph, String forceLabels) {
-		graph.getAttributes().put(FORCELABELS__G, forceLabels);
+		validate(AttributeContext.GRAPH, FORCELABELS__G, forceLabels);
+		graph.attributesProperty().put(FORCELABELS__G, forceLabels);
 	}
 
 	/**
@@ -1414,6 +1430,9 @@ public class DotAttributes {
 	 *            {@link #FORCELABELS__G} property.
 	 * @param forceLabelsParsed
 	 *            The new value for the {@link #FORCELABELS__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>forceLabelsParsed</i> value is not
+	 *             supported.
 	 */
 	public static void setForceLabelsParsed(Graph graph,
 			Boolean forceLabelsParsed) {
@@ -1472,10 +1491,12 @@ public class DotAttributes {
 	 *            {@link #HEIGHT__N} property.
 	 * @param height
 	 *            The new value for the {@link #HEIGHT__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>height</i> value is not supported.
 	 */
 	public static void setHeight(Node node, String height) {
 		validate(AttributeContext.NODE, HEIGHT__N, height);
-		node.getAttributes().put(HEIGHT__N, height);
+		node.attributesProperty().put(HEIGHT__N, height);
 	}
 
 	/**
@@ -1487,6 +1508,8 @@ public class DotAttributes {
 	 *            {@link #HEIGHT__N} property.
 	 * @param heightParsed
 	 *            The new value for the {@link #HEIGHT__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>heightParsed</i> value is not supported.
 	 */
 	public static void setHeightParsed(Node node, Double heightParsed) {
 		setHeight(node, heightParsed.toString());
@@ -1603,6 +1626,8 @@ public class DotAttributes {
 	 *            {@link #LAYOUT__G} property.
 	 * @param layoutParsed
 	 *            The new value for the {@link #LAYOUT__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>layoutParsed</i> value is not supported.
 	 */
 	public static void setLayoutParsed(Graph graph, Layout layoutParsed) {
 		setLayout(graph, layoutParsed.toString());
@@ -1645,10 +1670,12 @@ public class DotAttributes {
 	 *            {@link #POS__NE} property.
 	 * @param pos
 	 *            The new value for the {@link #POS__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pos</i> value is not supported.
 	 */
 	public static void setPos(Edge edge, String pos) {
 		validate(AttributeContext.EDGE, POS__NE, pos);
-		edge.getAttributes().put(POS__NE, pos);
+		edge.attributesProperty().put(POS__NE, pos);
 	}
 
 	/**
@@ -1660,10 +1687,12 @@ public class DotAttributes {
 	 *            {@link #POS__NE} property.
 	 * @param pos
 	 *            The new value for the {@link #POS__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pos</i> value is not supported.
 	 */
 	public static void setPos(Node node, String pos) {
 		validate(AttributeContext.NODE, POS__NE, pos);
-		node.getAttributes().put(POS__NE, pos);
+		node.attributesProperty().put(POS__NE, pos);
 	}
 
 	/**
@@ -1675,6 +1704,8 @@ public class DotAttributes {
 	 *            {@link #POS__NE} property.
 	 * @param posParsed
 	 *            The new value for the {@link #POS__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>posParsed</i> value is not supported.
 	 */
 	public static void setPosParsed(Edge edge, SplineType posParsed) {
 		setPos(edge,
@@ -1690,6 +1721,8 @@ public class DotAttributes {
 	 *            {@link #POS__NE} property.
 	 * @param posParsed
 	 *            The new value for the {@link #POS__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>posParsed</i> value is not supported.
 	 */
 	public static void setPosParsed(Node node, Point posParsed) {
 		setPos(node, serialize(DotLanguageSupport.POINT_SERIALIZER, posParsed));
@@ -1704,6 +1737,8 @@ public class DotAttributes {
 	 *            {@link #RANKDIR__G} property.
 	 * @param rankdir
 	 *            The new value for the {@link #RANKDIR__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>rankdir</i> value is not supported.
 	 */
 	public static void setRankdir(Graph graph, String rankdir) {
 		validate(AttributeContext.GRAPH, RANKDIR__G, rankdir);
@@ -1719,6 +1754,8 @@ public class DotAttributes {
 	 *            {@link #RANKDIR__G} property.
 	 * @param rankdirParsed
 	 *            The new value for the {@link #RANKDIR__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>rankdirParsed</i> value is not supported.
 	 */
 	public static void setRankdirParsed(Graph graph, Rankdir rankdirParsed) {
 		setRankdir(graph, rankdirParsed.toString());
@@ -1733,6 +1770,8 @@ public class DotAttributes {
 	 *            {@link #SHAPE__N} property.
 	 * @param shape
 	 *            The new value for the {@link #SHAPE__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>shape</i> value is not supported.
 	 */
 	public static void setShape(Node node, String shape) {
 		validate(AttributeContext.NODE, SHAPE__N, shape);
@@ -1748,6 +1787,8 @@ public class DotAttributes {
 	 *            {@link #SHAPE__N} property.
 	 * @param shapeParsed
 	 *            The new value for the {@link #SHAPE__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>shapeParsed</i> value is not supported.
 	 */
 	public static void setShapeParsed(Node node, Shape shapeParsed) {
 		setShape(node,
@@ -1763,6 +1804,8 @@ public class DotAttributes {
 	 *            {@link #SIDES__N} property.
 	 * @param sides
 	 *            The new value for the {@link #SIDES__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>sides</i> value is not supported.
 	 */
 	public static void setSides(Node node, String sides) {
 		validate(AttributeContext.NODE, SIDES__N, sides);
@@ -1778,6 +1821,8 @@ public class DotAttributes {
 	 *            {@link #SIDES__N} property.
 	 * @param sidesParsed
 	 *            The new value for the {@link #SIDES__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>sidesParsed</i> value is not supported.
 	 */
 	public static void setSidesParsed(Node node, Integer sidesParsed) {
 		setSides(node, sidesParsed.toString());
@@ -1792,6 +1837,8 @@ public class DotAttributes {
 	 *            {@link #SKEW__N} property.
 	 * @param skew
 	 *            The new value for the {@link #SKEW__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>skew</i> value is not supported.
 	 */
 	public static void setSkew(Node node, String skew) {
 		validate(AttributeContext.NODE, SKEW__N, skew);
@@ -1807,6 +1854,8 @@ public class DotAttributes {
 	 *            {@link #SKEW__N} property.
 	 * @param skewParsed
 	 *            The new value for the {@link #SKEW__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>skewParsed</i> value is not supported.
 	 */
 	public static void setSkewParsed(Node node, Double skewParsed) {
 		setSkew(node, skewParsed.toString());
@@ -1838,6 +1887,8 @@ public class DotAttributes {
 	 *            {@link #SPLINES__G} property.
 	 * @param splinesParsed
 	 *            The new value for the {@link #SPLINES__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>splinesParsed</i> value is not supported.
 	 */
 	public static void setSplinesParsed(Graph graph, Splines splinesParsed) {
 		setSplines(graph, splinesParsed.toString());
@@ -1886,6 +1937,8 @@ public class DotAttributes {
 	 *            {@link #STYLE__E} property.
 	 * @param styleParsed
 	 *            The new value for the {@link #STYLE__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>styleParsed</i> value is not supported.
 	 */
 	public static void setStyleParsed(Edge edge, Style styleParsed) {
 		setStyle(edge,
@@ -1961,10 +2014,12 @@ public class DotAttributes {
 	 *            {@link #WIDTH__N} property.
 	 * @param width
 	 *            The new value for the {@link #WIDTH__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>width</i> value is not supported.
 	 */
 	public static void setWidth(Node node, String width) {
 		validate(AttributeContext.NODE, WIDTH__N, width);
-		node.getAttributes().put(WIDTH__N, width);
+		node.attributesProperty().put(WIDTH__N, width);
 	}
 
 	/**
@@ -1976,6 +2031,8 @@ public class DotAttributes {
 	 *            {@link #WIDTH__N} property.
 	 * @param widthParsed
 	 *            The new value for the {@link #WIDTH__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>widthParsed</i> value is not supported.
 	 */
 	public static void setWidthParsed(Node node, Double widthParsed) {
 		setWidth(node, widthParsed.toString());
