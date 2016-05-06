@@ -93,7 +93,7 @@ public class EdgeLabelPart extends AbstractLabelPart {
 				getText().setText(label);
 			}
 			if (attrs.containsKey(ZestProperties.EXTERNAL_LABEL_CSS_STYLE__NE)) {
-				String textCssStyle = ZestProperties.getLabelCssStyle(edge);
+				String textCssStyle = ZestProperties.getExternalLabelCssStyle(edge);
 				getVisual().setStyle(textCssStyle);
 			}
 		} else if (ZestProperties.SOURCE_LABEL__E.equals(getContent().getValue())) {
@@ -101,10 +101,18 @@ public class EdgeLabelPart extends AbstractLabelPart {
 			if (label != null) {
 				getText().setText(label);
 			}
+			if (attrs.containsKey(ZestProperties.SOURCE_LABEL_CSS_STYLE__E)) {
+				String textCssStyle = ZestProperties.getSourceLabelCssStyle(edge);
+				getVisual().setStyle(textCssStyle);
+			}
 		} else if (ZestProperties.TARGET_LABEL__E.equals(getContent().getValue())) {
 			String label = ZestProperties.getTargetLabel(edge);
 			if (label != null) {
 				getText().setText(label);
+			}
+			if (attrs.containsKey(ZestProperties.TARGET_LABEL_CSS_STYLE__E)) {
+				String textCssStyle = ZestProperties.getTargetLabelCssStyle(edge);
+				getVisual().setStyle(textCssStyle);
 			}
 		}
 

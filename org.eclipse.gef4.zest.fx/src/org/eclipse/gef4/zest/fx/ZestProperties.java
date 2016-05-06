@@ -178,6 +178,24 @@ public class ZestProperties {
 	public static final String LABEL_CSS_STYLE__E = "element-label-css-style";
 
 	/**
+	 * This attribute determines the CSS style for the source edge label. This
+	 * attribute does not have a default value.
+	 *
+	 * @see #getSourceLabelCssStyle(Edge)
+	 * @see #setSourceLabelCssStyle(Edge, String)
+	 */
+	public static final String SOURCE_LABEL_CSS_STYLE__E = "edge-source-label-css-style";
+
+	/**
+	 * This attribute determines the CSS style for the target edge label. This
+	 * attribute does not have a default value.
+	 *
+	 * @see #getTargetLabelCssStyle(Edge)
+	 * @see #setTargetLabelCssStyle(Edge, String)
+	 */
+	public static final String TARGET_LABEL_CSS_STYLE__E = "edge-target-label-css-style";
+
+	/**
 	 * This attribute determines the CSS style for an external node or edge
 	 * label. This attribute does not have a default value.
 	 *
@@ -460,8 +478,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL_CSS_STYLE__E} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute
+	 * of the given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the label CSS style is determined.
@@ -813,6 +831,19 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #SOURCE_LABEL_CSS_STYLE__E} attribute of
+	 * the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label CSS style is
+	 *            determined.
+	 * @return The source label CSS style of the given {@link Edge}.
+	 */
+	public static String getSourceLabelCssStyle(Edge edge) {
+		return (String) edge.attributesProperty().get(SOURCE_LABEL_CSS_STYLE__E);
+	}
+
+	/**
 	 * Returns the value of the {@link #SOURCE_LABEL_POSITION__E} attribute of
 	 * the given {@link Edge}.
 	 *
@@ -884,6 +915,19 @@ public class ZestProperties {
 			return (String) ((Provider<?>) value).get();
 		}
 		return (String) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #TARGET_LABEL_CSS_STYLE__E} attribute of
+	 * the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label CSS style is
+	 *            determined.
+	 * @return The target label CSS style of the given {@link Edge}.
+	 */
+	public static String getTargetLabelCssStyle(Edge edge) {
+		return (String) edge.attributesProperty().get(TARGET_LABEL_CSS_STYLE__E);
 	}
 
 	/**
@@ -1488,6 +1532,20 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #SOURCE_LABEL_CSS_STYLE__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label CSS style is
+	 *            changed.
+	 * @param sourceLabelCssStyle
+	 *            The new source label CSS style for the given {@link Edge} .
+	 */
+	public static void setSourceLabelCssStyle(Edge edge, String sourceLabelCssStyle) {
+		edge.attributesProperty().put(SOURCE_LABEL_CSS_STYLE__E, sourceLabelCssStyle);
+	}
+
+	/**
 	 * Sets the value of the {@link #SOURCE_LABEL_POSITION__E} attribute of the
 	 * given {@link Edge} to the given value.
 	 *
@@ -1533,7 +1591,7 @@ public class ZestProperties {
 	 * of the given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the source decoration CSS style is
+	 *            The {@link Edge} of which the target decoration CSS style is
 	 *            changed.
 	 * @param targetDecorationCssStyle
 	 *            The new target decoration CSS style for the given {@link Edge}
@@ -1568,6 +1626,20 @@ public class ZestProperties {
 	 */
 	public static void setTargetLabel(Edge edge, String targetLabel) {
 		edge.attributesProperty().put(TARGET_LABEL__E, targetLabel);
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_LABEL_CSS_STYLE__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label CSS style is
+	 *            changed.
+	 * @param targetLabelCssStyle
+	 *            The new target label CSS style for the given {@link Edge} .
+	 */
+	public static void setTargetLabelCssStyle(Edge edge, String targetLabelCssStyle) {
+		edge.attributesProperty().put(TARGET_LABEL_CSS_STYLE__E, targetLabelCssStyle);
 	}
 
 	/**
