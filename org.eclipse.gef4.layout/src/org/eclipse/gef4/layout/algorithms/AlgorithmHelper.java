@@ -56,43 +56,36 @@ class AlgorithmHelper {
 	 */
 	public static void fitWithinBounds(Node[] entities,
 			Rectangle destinationBounds, boolean resize) {
-		Rectangle startingBounds = getLayoutBounds(entities, false);
-		double sizeScale = Math.min(
-				destinationBounds.getWidth() / startingBounds.getWidth(),
-				destinationBounds.getHeight() / startingBounds.getHeight());
 		if (entities.length == 1) {
 			fitSingleEntity(entities[0], destinationBounds, resize);
 			return;
 		}
+		Rectangle startingBounds = getLayoutBounds(entities, false);
+		double sizeScale = Math.min(
+				destinationBounds.getWidth() / startingBounds.getWidth(),
+				destinationBounds.getHeight() / startingBounds.getHeight());
 		for (int i = 0; i < entities.length; i++) {
 			Node entity = entities[i];
 			Dimension size = LayoutProperties.getSize(entity);
 			if (LayoutProperties.isMovable(entity)) {
 				Point location = LayoutProperties.getLocation(entity);
-				double percentX = (location.x - startingBounds.getX())
-						/ (startingBounds.getWidth());
-				double percentY = (location.y - startingBounds.getY())
-						/ (startingBounds.getHeight());
-
+				double percentX = startingBounds.getWidth() == 0 ? 0
+						: (location.x - startingBounds.getX())
+								/ (startingBounds.getWidth());
+				double percentY = startingBounds.getHeight() == 0 ? 0
+						: (location.y - startingBounds.getY())
+								/ (startingBounds.getHeight());
 				if (resize && LayoutProperties.isResizable(entity)) {
 					size.width *= sizeScale;
 					size.height *= sizeScale;
 					LayoutProperties.setSize(entity, new Dimension(size));
 				}
-
 				location.x = destinationBounds.getX() + size.width / 2
 						+ percentX
 								* (destinationBounds.getWidth() - size.width);
 				location.y = destinationBounds.getY() + size.height / 2
 						+ percentY
 								* (destinationBounds.getHeight() - size.height);
-
-				// TODO: investigate cause for NaN values
-				if (Double.isNaN(location.x) || Double.isNaN(location.y)) {
-					location.x = 0;
-					location.y = 0;
-				}
-				LayoutProperties.setLocation(entity, new Point(location));
 			} else if (resize && LayoutProperties.isResizable(entity)) {
 				LayoutProperties.setSize(entity, size.getScaled(sizeScale));
 			}

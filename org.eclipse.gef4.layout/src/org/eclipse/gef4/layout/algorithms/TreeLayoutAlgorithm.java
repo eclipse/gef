@@ -188,21 +188,21 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		internalApplyLayout();
 
 		Node[] entities = context.getNodes();
-
-		if (resize)
+		if (resize) {
 			AlgorithmHelper.maximizeSizes(entities);
+		}
 		scaleEntities(entities);
 	}
 
 	private void scaleEntities(Node[] entities) {
 		if (nodeSpace == null) {
-			Rectangle bounds2 = new Rectangle(bounds);
+			Rectangle resizedBounds = new Rectangle(bounds);
 			int insets = 4;
-			bounds2.setX(bounds2.getX() + insets);
-			bounds2.setY(bounds2.getY() + insets);
-			bounds2.setWidth(bounds2.getWidth() - 2 * insets);
-			bounds2.setHeight(bounds2.getHeight() - 2 * insets);
-			AlgorithmHelper.fitWithinBounds(entities, bounds2, resize);
+			resizedBounds.setX(resizedBounds.getX() + insets);
+			resizedBounds.setY(resizedBounds.getY() + insets);
+			resizedBounds.setWidth(resizedBounds.getWidth() - 2 * insets);
+			resizedBounds.setHeight(resizedBounds.getHeight() - 2 * insets);
+			AlgorithmHelper.fitWithinBounds(entities, resizedBounds, resize);
 		}
 	}
 
