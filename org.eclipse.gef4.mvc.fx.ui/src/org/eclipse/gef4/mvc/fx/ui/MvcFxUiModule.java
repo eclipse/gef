@@ -18,7 +18,6 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXEditor;
 import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.ui.MvcUiModule;
 import org.eclipse.gef4.mvc.ui.parts.ContentSelectionProvider;
 import org.eclipse.gef4.mvc.ui.parts.ISelectionProviderFactory;
@@ -26,10 +25,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.google.common.reflect.TypeToken;
-
 import javafx.embed.swt.FXCanvas;
-import javafx.scene.Node;
 
 /**
  * The {@link MvcFxUiModule} contains Eclipse UI specific bindings in the
@@ -67,28 +63,22 @@ public class MvcFxUiModule extends MvcUiModule {
 					@Override
 					public ISelectionProvider create(
 							IWorkbenchPart workbenchPart) {
-						SelectionModel<Node> selectionModel = null;
+						FXViewer contentViewer = null;
 						if (workbenchPart instanceof AbstractFXView) {
-							selectionModel = ((AbstractFXView) workbenchPart)
+							contentViewer = ((AbstractFXView) workbenchPart)
 									.getDomain()
 									.getAdapter(AdapterKey.get(FXViewer.class,
-											FXDomain.CONTENT_VIEWER_ROLE))
-									.getAdapter(
-											new TypeToken<SelectionModel<Node>>() {
-							});
+											FXDomain.CONTENT_VIEWER_ROLE));
 						} else if (workbenchPart instanceof AbstractFXEditor) {
-							selectionModel = ((AbstractFXEditor) workbenchPart)
+							contentViewer = ((AbstractFXEditor) workbenchPart)
 									.getDomain()
 									.getAdapter(AdapterKey.get(FXViewer.class,
-											FXDomain.CONTENT_VIEWER_ROLE))
-									.getAdapter(
-											new TypeToken<SelectionModel<Node>>() {
-							});
+											FXDomain.CONTENT_VIEWER_ROLE));
 						} else {
 							throw new IllegalArgumentException(
 									"Cannot handle " + workbenchPart);
 						}
-						return new ContentSelectionProvider<>(selectionModel);
+						return new ContentSelectionProvider<>(contentViewer);
 					}
 				});
 	}

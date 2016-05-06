@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -47,49 +48,37 @@ public class ContentSelectionProvider<VR>
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends IContentPart<VR, ? extends VR>> c) {
-			// forward selection changes to selection provider (in case
-			// there is any)
-			ISelection oldSelectedContent = getSelection();
-			if (c.getList().isEmpty()) {
-				if (oldSelectedContent == null
-						|| !oldSelectedContent.isEmpty()) {
-					setSelection(StructuredSelection.EMPTY);
-				}
-			} else {
-				// extract content elements of selected parts
-				List<? extends IContentPart<VR, ? extends VR>> selectedContentParts = c
-						.getList();
-				List<Object> selectedContentElements = new ArrayList<>(
-						selectedContentParts.size());
-				for (IContentPart<VR, ? extends VR> cp : selectedContentParts) {
-					selectedContentElements.add(cp.getContent());
-				}
-				// set the content elements as the new selection on the
-				// selection provider
-				StructuredSelection newSelectedContent = new StructuredSelection(
-						selectedContentElements);
-				if (!newSelectedContent.equals(oldSelectedContent)) {
-					setSelection(newSelectedContent);
-				}
+			// notify listeners that selection has changed
+			final SelectionChangedEvent e = new SelectionChangedEvent(
+					ContentSelectionProvider.this, getSelection());
+			for (final ISelectionChangedListener l : selectionChangedListeners) {
+				SafeRunner.run(new SafeRunnable() {
+					@Override
+					public void run() {
+						l.selectionChanged(e);
+					}
+				});
 			}
 		}
 	}
 
 	private final SelectionObserver selectionObserver = new SelectionObserver();
 	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<>();
+	private IViewer<VR> viewer;
 	private SelectionModel<VR> selectionModel;
-	private ISelection selection;
 
 	/**
 	 * Creates a new {@link ContentSelectionProvider} for the given
 	 * {@link SelectionModel}.
 	 *
-	 * @param selectionModel
-	 *            The {@link SelectionModel} part to associate this
-	 *            {@link ContentSelectionProvider} with.
+	 * @param viewer
+	 *            The {@link IViewer} to associate this
+	 *            {@link ContentSelectionProvider} to.
 	 */
-	public ContentSelectionProvider(SelectionModel<VR> selectionModel) {
-		this.selectionModel = selectionModel;
+	@SuppressWarnings("unchecked")
+	public ContentSelectionProvider(IViewer<VR> viewer) {
+		this.viewer = viewer;
+		this.selectionModel = viewer.getAdapter(SelectionModel.class);
 		selectionModel.getSelectionUnmodifiable()
 				.addListener(selectionObserver);
 	}
@@ -110,6 +99,19 @@ public class ContentSelectionProvider<VR>
 
 	@Override
 	public ISelection getSelection() {
+		ISelection selection = StructuredSelection.EMPTY;
+		if (!selectionModel.getSelectionUnmodifiable().isEmpty()) {
+			// extract content elements of selected parts
+			List<? extends IContentPart<VR, ? extends VR>> selectedContentParts = selectionModel
+					.getSelectionUnmodifiable();
+			List<Object> selectedContentElements = new ArrayList<>(
+					selectedContentParts.size());
+			for (IContentPart<VR, ? extends VR> cp : selectedContentParts) {
+				selectedContentElements.add(cp.getContent());
+			}
+			// return the content elements as our selection
+			selection = new StructuredSelection(selectedContentElements);
+		}
 		return selection;
 	}
 
@@ -121,15 +123,28 @@ public class ContentSelectionProvider<VR>
 
 	@Override
 	public void setSelection(ISelection selection) {
-		final SelectionChangedEvent e = new SelectionChangedEvent(this,
-				selection);
-		for (final ISelectionChangedListener l : selectionChangedListeners) {
-			SafeRunner.run(new SafeRunnable() {
-				@Override
-				public void run() {
-					l.selectionChanged(e);
+		// update the selection model, which will lead to an update of our
+		// selection and to listener notification.
+		if (selection.isEmpty()) {
+			if (!selectionModel.getSelectionUnmodifiable().isEmpty()) {
+				selectionModel.clearSelection();
+			}
+		} else if (selection instanceof StructuredSelection) {
+			// find the content parts associated with the selection
+			Object[] selected = ((StructuredSelection) selection).toArray();
+			List<IContentPart<VR, ? extends VR>> parts = new ArrayList<>(
+					selected.length);
+			for (Object content : selected) {
+				IContentPart<VR, ? extends VR> part = viewer.getContentPartMap()
+						.get(content);
+				if (part != null) {
+					parts.add(part);
 				}
-			});
+			}
+			// set the content parts as the new selection to the SelectionModel
+			if (!selectionModel.getSelectionUnmodifiable().equals(parts)) {
+				selectionModel.setSelection(parts);
+			}
 		}
 	}
 }
