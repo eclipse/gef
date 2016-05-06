@@ -18,20 +18,33 @@ import java.util.List;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
 public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 
+	private final ChangeListener<? super Boolean> snapToGridObserver = new ChangeListener<Boolean>() {
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+			applySnapToGrid(newValue);
+		}
+	};
+
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().add(index, child.getVisual());
+	}
+
+	protected void applySnapToGrid(boolean snapToGrid) {
+		getViewer().getAdapter(GridModel.class).setSnapToGrid(snapToGrid);
 	}
 
 	@Override
@@ -42,14 +55,25 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected void doActivate() {
+		super.doActivate();
+		// register snap-to-grid property listener
+		getContent().snapToGridProperty().addListener(snapToGridObserver);
+	}
+
+	@Override
 	protected void doAddContentChild(Object contentChild, int index) {
 		if (!(contentChild instanceof AbstractFXGeometricElement)) {
-			throw new IllegalArgumentException(
-					"Cannot add content child: wrong type!");
+			throw new IllegalArgumentException("Cannot add content child: wrong type!");
 		}
+		getContent().getShapeVisuals().add(index, (AbstractFXGeometricElement<?>) contentChild);
+	}
 
-		getContent().getShapeVisuals().add(index,
-				(AbstractFXGeometricElement<?>) contentChild);
+	@Override
+	protected void doDeactivate() {
+		// unregister snap-to-grid property listener
+		getContent().snapToGridProperty().removeListener(snapToGridObserver);
+		super.doDeactivate();
 	}
 
 	@Override
@@ -66,7 +90,8 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 
 	@Override
 	protected void doRefreshVisual(Group visual) {
-		// nothing to do
+		// apply snap-to-grid from model
+		applySnapToGrid(getContent().isSnapToGrid());
 	}
 
 	@Override
@@ -85,8 +110,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
 	}
 

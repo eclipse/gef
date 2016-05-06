@@ -178,7 +178,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
-		showAnchors("pre-norm:");
+		// showAnchors("pre-norm:");
 		normalize();
 		// showAnchors("commit:");
 
@@ -516,7 +516,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				.getTranslated(FX2Geometry
 						.toPoint(getConnection().sceneToLocal(Geometry2FX
 								.toFXPoint(initialMousePositionInScene)))
-				.getNegated());
+						.getNegated());
 		return deltaInLocal;
 	}
 
@@ -1196,7 +1196,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 		List<Integer> explicit = makeExplicit(overlayStartIndex,
 				overlayEndIndex);
-				// showAnchors("After makeExplicit:");
+		// showAnchors("After makeExplicit:");
 
 		// remove the selection and the other overlain anchors
 		int removedCount = 0;

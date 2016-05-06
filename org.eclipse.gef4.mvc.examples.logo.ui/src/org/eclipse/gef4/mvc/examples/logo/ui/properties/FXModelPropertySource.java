@@ -40,7 +40,7 @@ public class FXModelPropertySource implements IPropertySource {
 	@Override
 	public Object getPropertyValue(Object id) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return model.isSnapToGrid();
+			return Boolean.toString(model.isSnapToGrid());
 		} else {
 			return null;
 		}
@@ -65,7 +65,7 @@ public class FXModelPropertySource implements IPropertySource {
 	@Override
 	public void setPropertyValue(Object id, Object value) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.setSnapToGrid((Boolean) value);
+			model.setSnapToGrid(Boolean.parseBoolean((String) value));
 		}
 	}
 

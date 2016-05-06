@@ -133,6 +133,17 @@ public class MvcLogoExampleView extends AbstractFXView {
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class)) {
 					@Override
+					public void setValues(Object[] objects) {
+						if (objects == null || objects.length == 0) {
+							// TODO: test
+							objects = new Object[] { getContentViewer()
+									.getAdapter(ContentModel.class)
+									.getContents().get(0) };
+						}
+						super.setValues(objects);
+					}
+
+					@Override
 					protected void valueChanged(
 							UndoablePropertySheetEntry child,
 							ITransactionalOperation operation) {
