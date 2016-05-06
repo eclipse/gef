@@ -69,6 +69,11 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	 */
 	public static final String CSS_CLASS_CURVE = "curve";
 
+	/**
+	 * CSS class assigned to the decorations.
+	 */
+	public static final String CSS_CLASS_DECORATION = "decoration";
+
 	private MapChangeListener<String, Object> edgeAttributesObserver = new MapChangeListener<String, Object>() {
 
 		@Override
@@ -178,6 +183,17 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		// initialize style class for (default) curve
 		visual.getCurve().getStyleClass().add(CSS_CLASS_CURVE);
 
+		// initialized style class for (default) decorations
+		if (visual.getStartDecoration() != null) {
+			if (!visual.getStartDecoration().getStyleClass().contains(CSS_CLASS_DECORATION)) {
+				visual.getStartDecoration().getStyleClass().add(CSS_CLASS_DECORATION);
+			}
+		}
+		if (visual.getEndDecoration() != null) {
+			if (!visual.getEndDecoration().getStyleClass().contains(CSS_CLASS_DECORATION)) {
+				visual.getEndDecoration().getStyleClass().add(CSS_CLASS_DECORATION);
+			}
+		}
 		return visual;
 	}
 
@@ -279,6 +295,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		Node sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
+			// ensure decoration class is set
+			if (!sourceDecoration.getStyleClass().contains(CSS_CLASS_DECORATION)) {
+				sourceDecoration.getStyleClass().add(CSS_CLASS_DECORATION);
+			}
 			// apply curve CSS style
 			if (curveCssStyle != null) {
 				sourceDecoration.setStyle(curveCssStyle);
@@ -287,6 +307,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		Node targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
+			// ensure decoration class is set
+			if (!targetDecoration.getStyleClass().contains(CSS_CLASS_DECORATION)) {
+				targetDecoration.getStyleClass().add(CSS_CLASS_DECORATION);
+			}
 			// apply curve CSS style
 			if (curveCssStyle != null) {
 				targetDecoration.setStyle(curveCssStyle);
@@ -350,6 +374,9 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		Node curve = ZestProperties.getCurve(getContent());
 		if (getVisual().getCurve() != curve && curve != null) {
 			getVisual().setCurve(curve);
+			if (!curve.getStyleClass().contains(CSS_CLASS_CURVE)) {
+				curve.getStyleClass().add(CSS_CLASS_CURVE);
+			}
 		}
 	}
 

@@ -217,11 +217,6 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * CSS class assigned to decoration visuals.
-	 */
-	private static final String CSS_CLASS_DECORATION = "decoration";
-
-	/**
 	 * The <i>id</i> used to identify the start point of this connection at the
 	 * start anchor.
 	 */
@@ -304,18 +299,10 @@ public class Connection extends Group {
 			if (oldValue != null) {
 				oldValue.layoutBoundsProperty()
 						.removeListener(decorationLayoutBoundsListener);
-				ObservableList<String> styleClasses = oldValue.getStyleClass();
-				if (styleClasses.contains(CSS_CLASS_DECORATION)) {
-					styleClasses.remove(CSS_CLASS_DECORATION);
-				}
 			}
 			if (newValue != null) {
 				newValue.layoutBoundsProperty()
 						.addListener(decorationLayoutBoundsListener);
-				ObservableList<String> styleClasses = newValue.getStyleClass();
-				if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
-					styleClasses.add(CSS_CLASS_DECORATION);
-				}
 			}
 			refresh();
 		}

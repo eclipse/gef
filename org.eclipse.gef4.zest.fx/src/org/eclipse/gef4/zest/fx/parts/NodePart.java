@@ -211,6 +211,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 		GeometryNode<?> shape = new GeometryNode<>(new org.eclipse.gef4.geometry.planar.Rectangle());
 		shape.setUserData(DEFAULT_SHAPE_ROLE); // TODO: we need a proper
 												// mechanism to
+		shape.getStyleClass().add(CSS_CLASS_SHAPE);
 		// handle
 		// padding
 		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
@@ -280,7 +281,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 		// create shape for border and background
 		shape = createDefaultShape();
-		shape.getStyleClass().add(CSS_CLASS_SHAPE);
 
 		// initialize image view
 		iconImageView = new ImageView();
@@ -549,6 +549,9 @@ public class NodePart extends AbstractFXContentPart<Group>
 				((GeometryNode<?>) shape).setStrokeType(StrokeType.INSIDE);
 			} else if (shape instanceof Shape) {
 				((Shape) shape).setStrokeType(StrokeType.INSIDE);
+			}
+			if (!shape.getStyleClass().contains(CSS_CLASS_SHAPE)) {
+				shape.getStyleClass().add(CSS_CLASS_SHAPE);
 			}
 			getVisual().getChildren().add(0, shape);
 		}
