@@ -14,18 +14,22 @@ package org.eclipse.gef4.mvc.fx.policies;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 
 import com.google.common.reflect.TypeToken;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -46,9 +50,22 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		if (isInvalid) {
 			return;
 		}
-
-		Point currentMouseInScene = new Point(e.getSceneX(), e.getSceneY());
-		getBendPolicy().move(initialMouseInScene, currentMouseInScene);
+		Point2D endPointInParent = getHost().getVisual().getParent()
+				.sceneToLocal(e.getSceneX(), e.getSceneY());
+		Dimension snapToGridOffset = AbstractTransformPolicy
+				.getSnapToGridOffset(
+						getHost().getRoot().getViewer().<GridModel> getAdapter(
+								GridModel.class),
+						endPointInParent.getX(), endPointInParent.getY(),
+						getSnapToGridGranularityX(),
+						getSnapToGridGranularityY());
+		endPointInParent = new Point2D(
+				endPointInParent.getX() - snapToGridOffset.width,
+				endPointInParent.getY() - snapToGridOffset.height);
+		Point2D endPointInScene = getHost().getVisual().getParent()
+				.localToScene(endPointInParent);
+		getBendPolicy().move(initialMouseInScene,
+				FX2Geometry.toPoint(endPointInScene));
 		updateHandles();
 	}
 
@@ -86,6 +103,26 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	@Override
 	public IVisualPart<Node, Connection> getHost() {
 		return (IVisualPart<Node, Connection>) super.getHost();
+	}
+
+	/**
+	 * Returns the horizontal granularity for "snap-to-grid" where
+	 * <code>1</code> means it will snap to integer grid positions.
+	 *
+	 * @return The horizontal granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityX() {
+		return 1;
+	}
+
+	/**
+	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
+	 * means it will snap to integer grid positions.
+	 *
+	 * @return The vertical granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityY() {
+		return 1;
 	}
 
 	@Override

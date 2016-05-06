@@ -19,8 +19,10 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -59,10 +61,17 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 						.sceneToLocal(0, 0);
 				Point2D endInParent = getHost().getVisual().getParent()
 						.sceneToLocal(delta.width, delta.height);
+				Dimension snapToGridOffset = AbstractTransformPolicy
+						.getSnapToGridOffset(getHost().getRoot().getViewer()
+								.<GridModel> getAdapter(GridModel.class),
+								endInParent.getX(), endInParent.getY(),
+								getSnapToGridGranularityX(),
+								getSnapToGridGranularityY());
 				Point2D deltaInParent = new Point2D(
-						endInParent.getX() - startInParent.getX(),
-						endInParent.getY() - startInParent.getY());
-				// TODO: snap to grid
+						endInParent.getX() - snapToGridOffset.width
+								- startInParent.getX(),
+						endInParent.getY() - snapToGridOffset.height
+								- startInParent.getY());
 				policy.setPostTranslate(translationIndices.get(part),
 						deltaInParent.getX(), deltaInParent.getY());
 			}
@@ -108,6 +117,26 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	 */
 	protected Point getInitialMouseLocationInScene() {
 		return initialMouseLocationInScene;
+	}
+
+	/**
+	 * Returns the horizontal granularity for "snap-to-grid" where
+	 * <code>1</code> means it will snap to integer grid positions.
+	 *
+	 * @return The horizontal granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityX() {
+		return 1;
+	}
+
+	/**
+	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
+	 * means it will snap to integer grid positions.
+	 *
+	 * @return The vertical granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityY() {
+		return 1;
 	}
 
 	/**

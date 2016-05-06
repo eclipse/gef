@@ -14,8 +14,10 @@ package org.eclipse.gef4.mvc.fx.policies;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -24,10 +26,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
 /**
- * The {@link FXResizeTranslateFirstAnchorageOnHandleDragPolicy} is an {@link IFXOnDragPolicy}
- * that handles the resize and relocation of its (selected) first anchorage when
- * an {@link AbstractFXSegmentHandlePart} of the box selection of the first
- * anchorage is dragged with the mouse.
+ * The {@link FXResizeTranslateFirstAnchorageOnHandleDragPolicy} is an
+ * {@link IFXOnDragPolicy} that handles the resize and relocation of its
+ * (selected) first anchorage when an {@link AbstractFXSegmentHandlePart} of the
+ * box selection of the first anchorage is dragged with the mouse.
  *
  * @author mwienand
  *
@@ -60,11 +62,24 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		if (invalidGesture) {
 			return;
 		}
-		// compute delta in local coordinates
+		// compute end point
 		Node visual = getTargetPart().getVisual();
 		Point2D startLocal = visual.sceneToLocal(initialPointerLocation.x,
 				initialPointerLocation.y);
 		Point2D endLocal = visual.sceneToLocal(e.getSceneX(), e.getSceneY());
+		// snap to grid
+		Point2D endParent = visual.localToParent(endLocal);
+		Dimension snapToGridOffset = AbstractTransformPolicy
+				.getSnapToGridOffset(
+						getHost().getRoot().getViewer().<GridModel> getAdapter(
+								GridModel.class),
+						endParent.getX(), endParent.getY(),
+						getSnapToGridGranularityX(),
+						getSnapToGridGranularityY());
+		endLocal = visual.parentToLocal(
+				endParent.getX() - snapToGridOffset.width,
+				endParent.getY() - snapToGridOffset.height);
+		// compute delta in local coordinates
 		double deltaX = endLocal.getX() - startLocal.getX();
 		double deltaY = endLocal.getY() - startLocal.getY();
 		// determine current layout position in local coordinates
@@ -141,6 +156,26 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 	 */
 	protected FXResizePolicy getResizePolicy() {
 		return getTargetPart().getAdapter(FXResizePolicy.class);
+	}
+
+	/**
+	 * Returns the horizontal granularity for "snap-to-grid" where
+	 * <code>1</code> means it will snap to integer grid positions.
+	 *
+	 * @return The horizontal granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityX() {
+		return 1;
+	}
+
+	/**
+	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
+	 * means it will snap to integer grid positions.
+	 *
+	 * @return The vertical granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityY() {
+		return 1;
 	}
 
 	/**

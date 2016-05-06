@@ -23,8 +23,10 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -99,8 +101,31 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		if (selectionBounds == null) {
 			return;
 		}
+		if (targetParts.isEmpty()) {
+			return;
+		}
 
-		Rectangle sel = updateSelectionBounds(e);
+		// snap to grid
+		IContentPart<Node, ? extends Node> firstTargetPart = targetParts.get(0);
+		Node firstVisual = firstTargetPart.getVisual();
+		Point2D endPointInParent = firstVisual.localToParent(
+				firstVisual.sceneToLocal(e.getSceneX(), e.getSceneY()));
+		Dimension snapToGridOffset = AbstractTransformPolicy
+				.getSnapToGridOffset(
+						getHost().getRoot().getViewer().<GridModel> getAdapter(
+								GridModel.class),
+						endPointInParent.getX(), endPointInParent.getY(),
+						getSnapToGridGranularityX(),
+						getSnapToGridGranularityY());
+		endPointInParent = new Point2D(
+				endPointInParent.getX() - snapToGridOffset.width,
+				endPointInParent.getY() - snapToGridOffset.height);
+		Point2D endPointInScene = firstVisual.getParent()
+				.localToScene(endPointInParent);
+		// update selection bounds
+		Rectangle sel = updateSelectionBounds(
+				FX2Geometry.toPoint(endPointInScene));
+
 		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
 			// compute initial and new bounds for this target
 			Bounds initialBounds = getBounds(selectionBounds, targetPart);
@@ -239,6 +264,26 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 			bounds.union(getVisualBounds(cp));
 		}
 		return bounds;
+	}
+
+	/**
+	 * Returns the horizontal granularity for "snap-to-grid" where
+	 * <code>1</code> means it will snap to integer grid positions.
+	 *
+	 * @return The horizontal granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityX() {
+		return 1;
+	}
+
+	/**
+	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
+	 * means it will snap to integer grid positions.
+	 *
+	 * @return The vertical granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityY() {
+		return 1;
 	}
 
 	/**
@@ -391,11 +436,11 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	 * @param mouseLocation
 	 * @return
 	 */
-	private Rectangle updateSelectionBounds(MouseEvent e) {
+	private Rectangle updateSelectionBounds(Point endPointInScene) {
 		Rectangle sel = selectionBounds.getCopy();
 
-		double dx = e.getSceneX() - initialMouseLocation.x;
-		double dy = e.getSceneY() - initialMouseLocation.y;
+		double dx = endPointInScene.x - initialMouseLocation.x;
+		double dy = endPointInScene.y - initialMouseLocation.y;
 
 		int segment = getHost().getSegmentIndex();
 		if (segment == 0 || segment == 3) {

@@ -113,8 +113,8 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 		double layoutDw = resizable ? dw : 0;
 		double layoutDh = resizable ? dh : 0;
 
-		// ensure visual is not resized below threshold
-		if (resizable) {
+		if (resizable && layoutDw != 0 && layoutDh != 0) {
+			// ensure visual is not resized below threshold
 			double minimumWidth = getMinimumWidth();
 			double minimumHeight = getMinimumHeight();
 			if (resizeOperation.getInitialSize().width

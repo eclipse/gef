@@ -18,10 +18,8 @@ import java.util.List;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
-import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.BendContentOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IBendableContentPart;
@@ -109,26 +107,6 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		return indices;
 	}
 
-	/**
-	 * Returns the horizontal granularity for "snap-to-grid" where
-	 * <code>1</code> means it will snap to integer grid positions.
-	 *
-	 * @return The horizontal granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityX() {
-		return 1;
-	}
-
-	/**
-	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
-	 * means it will snap to integer grid positions.
-	 *
-	 * @return The vertical granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityY() {
-		return 1;
-	}
-
 	@Override
 	public void init() {
 		// super#init() so that the policy is properly initialized
@@ -160,19 +138,10 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	protected void updateTransformOperation(AffineTransform newTransform) {
 		// transform all anchor points
 		for (int i : getIndicesOfUnconnectedAnchors()) {
-			Point p = initialPositions[i];
-			Point pTx = newTransform.getTransformed(p);
-			double nx = pTx.x;
-			double ny = pTx.y;
-			Dimension snapToGridOffset = getSnapToGridOffset(
-					getHost().getRoot().getViewer()
-							.<GridModel> getAdapter(GridModel.class),
-					nx, ny, getSnapToGridGranularityX(),
-					getSnapToGridGranularityY());
+			Point pTx = newTransform.getTransformed(initialPositions[i]);
 			getBendConnectionOperation().getNewAnchors().set(i,
 					new StaticAnchor(getHost().getVisual(),
-							new Point(nx - snapToGridOffset.width,
-									ny - snapToGridOffset.height)));
+							new Point(pTx.x, pTx.y)));
 		}
 	}
 }

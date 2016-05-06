@@ -110,8 +110,10 @@ public class FXTransformPolicy extends AbstractTransformPolicy<Node> {
 
 	@Override
 	protected void updateTransformOperation(AffineTransform newTransform) {
-		((FXTransformOperation) getOperation())
-				.setNewTransform(Geometry2FX.toFXAffine(newTransform));
+		// transform to JavaFX Affine
+		Affine affine = Geometry2FX.toFXAffine(newTransform);
+		// update operation
+		((FXTransformOperation) getOperation()).setNewTransform(affine);
 	}
 
 }

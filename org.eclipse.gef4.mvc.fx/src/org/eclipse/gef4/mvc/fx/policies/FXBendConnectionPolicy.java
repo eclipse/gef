@@ -27,7 +27,6 @@ import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXUpdateAnchorHintsOperation;
@@ -45,7 +44,6 @@ import org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractBendPolicy;
-import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -572,26 +570,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				getBendOperation().getConnectionIndex(explicitAnchorIndex));
 	}
 
-	/**
-	 * Returns the horizontal granularity for "snap-to-grid" where
-	 * <code>1</code> means it will snap to integer grid positions.
-	 *
-	 * @return The horizontal granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityX() {
-		return 1;
-	}
-
-	/**
-	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
-	 * means it will snap to integer grid positions.
-	 *
-	 * @return The vertical granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityY() {
-		return 1;
-	}
-
 	private FXUpdateAnchorHintsOperation getUpdateHintsOperation() {
 		return (FXUpdateAnchorHintsOperation) ((AbstractCompositeOperation) super.getOperation())
 				.getOperations().get(1);
@@ -827,19 +805,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		for (int i = 0; i < selectedExplicitAnchorIndices.size(); i++) {
 			Point selectedPointCurrentPositionInLocal = selectedInitialPositions
 					.get(i).getTranslated(mouseDeltaInLocal);
-
-			// snap-to-grid
-			// TODO: make snapping (0.5) configurable
-			Dimension snapToGridOffset = AbstractTransformPolicy
-					.getSnapToGridOffset(
-							getHost().getRoot().getViewer()
-									.<GridModel> getAdapter(GridModel.class),
-							selectedPointCurrentPositionInLocal.x,
-							selectedPointCurrentPositionInLocal.y,
-							getSnapToGridGranularityX(),
-							getSnapToGridGranularityY());
-			selectedPointCurrentPositionInLocal
-					.translate(snapToGridOffset.getNegated());
 
 			int explicitAnchorIndex = selectedExplicitAnchorIndices.get(i);
 			boolean canConnect = canConnect(explicitAnchorIndex);

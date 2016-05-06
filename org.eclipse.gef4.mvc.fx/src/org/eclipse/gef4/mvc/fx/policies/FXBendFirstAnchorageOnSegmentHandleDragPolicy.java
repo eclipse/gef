@@ -25,9 +25,11 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -71,9 +73,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		public int compare(IHandlePart<Node, ? extends Node> interactedWith,
 				IHandlePart<Node, ? extends Node> other) {
 			Bounds otherBounds = other.getVisual().getLayoutBounds();
-			Point2D otherPosition = other.getVisual()
-					.localToScene(otherBounds.getMinX()
-							+ otherBounds.getWidth() / 2,
+			Point2D otherPosition = other.getVisual().localToScene(
+					otherBounds.getMinX() + otherBounds.getWidth() / 2,
 					otherBounds.getMinY() + otherBounds.getHeight() / 2);
 			// only useful to find the most similar part
 			return (int) (handlePositionInScene
@@ -90,20 +91,34 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		boolean isHorizontal = isOrthogonal
 				&& getBendPolicy(targetPart).isSelectionHorizontal();
 
+		Point2D endPointInParent = targetPart.getVisual().getParent()
+				.sceneToLocal(e.getSceneX(), e.getSceneY());
+		Dimension snapToGridOffset = AbstractTransformPolicy
+				.getSnapToGridOffset(
+						getHost().getRoot().getViewer().<GridModel> getAdapter(
+								GridModel.class),
+						endPointInParent.getX(), endPointInParent.getY(),
+						getSnapToGridGranularityX(),
+						getSnapToGridGranularityY());
+		endPointInParent = new Point2D(
+				endPointInParent.getX() - snapToGridOffset.width,
+				endPointInParent.getY() - snapToGridOffset.height);
+		Point2D endPointInScene = targetPart.getVisual().getParent()
+				.localToScene(endPointInParent);
 		getBendPolicy(targetPart).move(initialMouseInScene,
-				new Point(e.getSceneX(), e.getSceneY()));
+				FX2Geometry.toPoint(endPointInScene));
 
 		if (isOrthogonal) {
 			if (isHorizontal) {
 				// can only move vertically
-				handlePositionInScene.setY(e.getSceneY());
+				handlePositionInScene.setY(endPointInScene.getY());
 			} else {
 				// can only move horizontally
-				handlePositionInScene.setX(e.getSceneX());
+				handlePositionInScene.setX(endPointInScene.getX());
 			}
 		} else {
-			handlePositionInScene.setX(e.getSceneX());
-			handlePositionInScene.setY(e.getSceneY());
+			handlePositionInScene.setX(endPointInScene.getX());
+			handlePositionInScene.setY(endPointInScene.getY());
 		}
 
 		updateHandles();
@@ -144,6 +159,26 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	@Override
 	public AbstractFXSegmentHandlePart<? extends Node> getHost() {
 		return (AbstractFXSegmentHandlePart<? extends Node>) super.getHost();
+	}
+
+	/**
+	 * Returns the horizontal granularity for "snap-to-grid" where
+	 * <code>1</code> means it will snap to integer grid positions.
+	 *
+	 * @return The horizontal granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityX() {
+		return 1;
+	}
+
+	/**
+	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
+	 * means it will snap to integer grid positions.
+	 *
+	 * @return The vertical granularity for "snap-to-grid".
+	 */
+	protected double getSnapToGridGranularityY() {
+		return 1;
 	}
 
 	/**
