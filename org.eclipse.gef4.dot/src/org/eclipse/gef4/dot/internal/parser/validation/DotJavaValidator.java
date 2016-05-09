@@ -268,6 +268,13 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				}
 			}
 			return findings;
+		} else if (DotAttributes.HEAD_LP__E.equals(name)
+				|| DotAttributes.LP__GE.equals(name)
+				|| DotAttributes.TAIL_LP__E.equals(name)
+				|| DotAttributes.XLP__NE.equals(name)) {
+			return validateObjectAttributeValue(DotLanguageSupport.POINT_PARSER,
+					DotLanguageSupport.POINT_VALIDATOR, name, unquotedValue,
+					PointPackage.Literals.POINT, "point");
 		}
 		return Collections.emptyList();
 

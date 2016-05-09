@@ -28,13 +28,23 @@ import org.eclipse.gef4.dot.internal.parser.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.DeprecatedShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.PrimitiveShape;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
 import org.eclipse.gef4.dot.internal.parser.point.Point;
 import org.eclipse.gef4.dot.internal.parser.point.PointFactory;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
+import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedNodeShape;
+import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedShape;
+import org.eclipse.gef4.dot.internal.parser.shape.RecordBasedNodeShape;
+import org.eclipse.gef4.dot.internal.parser.shape.RecordBasedShape;
+import org.eclipse.gef4.dot.internal.parser.shape.Shape;
+import org.eclipse.gef4.dot.internal.parser.shape.ShapeFactory;
 import org.eclipse.gef4.dot.internal.parser.splines.Splines;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplinetypeFactory;
+import org.eclipse.gef4.dot.internal.parser.style.Style;
+import org.eclipse.gef4.dot.internal.parser.style.StyleFactory;
+import org.eclipse.gef4.dot.internal.parser.style.StyleItem;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -303,7 +313,15 @@ public class DotAttributesTests {
 		assertTrue(EcoreUtil.equals(validEdgeHeadLpParsed,
 				DotAttributes.getHeadLpParsed(edge)));
 
-		// TODO: add test cases for setting invalid edge head label positions
+		// set invalid string values
+		try {
+			DotAttributes.setHeadLp(edge, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'head_lp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
 	}
 
 	@Test
@@ -331,8 +349,6 @@ public class DotAttributesTests {
 		final String validEdgeLabel = "edgeLabel";
 		DotAttributes.setLabel(edge, validEdgeLabel);
 		assertEquals(validEdgeLabel, DotAttributes.getLabel(edge));
-
-		// TODO: add test cases for setting invalid edge label
 	}
 
 	@Test
@@ -354,7 +370,15 @@ public class DotAttributesTests {
 		assertTrue(EcoreUtil.equals(validEdgeLpParsed,
 				DotAttributes.getLpParsed(edge)));
 
-		// TODO: add test cases for setting invalid edge label positions
+		// set invalid string values
+		try {
+			DotAttributes.setLp(edge, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'lp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
 	}
 
 	@Test
@@ -506,41 +530,63 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values
-		String validEdgeStyle = "bold";
+		String[] validEdgeStyleItems = { "bold", "dashed", "dotted", "invis",
+				"solid", "tapered" };
+
+		for (String validEdgeStyleItem : validEdgeStyleItems) {
+			DotAttributes.setStyle(edge, validEdgeStyleItem);
+			assertEquals(validEdgeStyleItem, DotAttributes.getStyle(edge));
+
+			Style styleParsed = StyleFactory.eINSTANCE.createStyle();
+			StyleItem styleItem = StyleFactory.eINSTANCE.createStyleItem();
+			styleItem.setName(validEdgeStyleItem);
+			styleParsed.getStyleItems().add(styleItem);
+			assertTrue(EcoreUtil.equals(styleParsed,
+					DotAttributes.getStyleParsed(edge)));
+		}
+
+		String validEdgeStyle = "";
 		DotAttributes.setStyle(edge, validEdgeStyle);
 		assertEquals(validEdgeStyle, DotAttributes.getStyle(edge));
 
-		validEdgeStyle = "dashed";
-		DotAttributes.setStyle(edge, validEdgeStyle);
-		assertEquals(validEdgeStyle, DotAttributes.getStyle(edge));
+		// set valid parsed values
+		Style styleParsed = StyleFactory.eINSTANCE.createStyle();
+		StyleItem styleItem1 = StyleFactory.eINSTANCE.createStyleItem();
+		styleItem1.setName("bold");
+		StyleItem styleItem2 = StyleFactory.eINSTANCE.createStyleItem();
+		styleItem2.setName("dashed");
 
-		validEdgeStyle = "dotted";
-		DotAttributes.setStyle(edge, validEdgeStyle);
-		assertEquals(validEdgeStyle, DotAttributes.getStyle(edge));
+		styleParsed.getStyleItems().add(styleItem1);
+		styleParsed.getStyleItems().add(styleItem2);
+		DotAttributes.setStyleParsed(edge, styleParsed);
+		assertEquals("bold , dashed", DotAttributes.getStyle(edge));
 
-		validEdgeStyle = "invis";
-		DotAttributes.setStyle(edge, validEdgeStyle);
-		assertEquals(validEdgeStyle, DotAttributes.getStyle(edge));
+		// set syntactically invalid values
+		try {
+			DotAttributes.setStyle(edge, "bold, ");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'style' to 'bold, '. The value 'bold, ' is not a syntactically correct style: Mismatched input '<EOF>' expecting RULE_NAME.",
+					e.getMessage());
+		}
 
-		validEdgeStyle = "solid";
-		DotAttributes.setStyle(edge, validEdgeStyle);
-		assertEquals(validEdgeStyle, DotAttributes.getStyle(edge));
-
-		validEdgeStyle = "tapered";
-		DotAttributes.setStyle(edge, validEdgeStyle);
-		assertEquals(validEdgeStyle, DotAttributes.getStyle(edge));
-
-		validEdgeStyle = "";
-		DotAttributes.setStyle(edge, validEdgeStyle);
-		assertEquals(validEdgeStyle, DotAttributes.getStyle(edge));
-
-		// set invalid string values
+		// set syntactically correct, but semantically invalid values
 		try {
 			DotAttributes.setStyle(edge, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set edge attribute 'style' to 'foo'. The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'invis', 'solid', 'tapered'.",
+					e.getMessage());
+		}
+
+		try {
+			DotAttributes.setStyle(edge, "diagonals");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'style' to 'diagonals'. The style value 'diagonals' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'invis', 'solid', 'tapered'.",
 					e.getMessage());
 		}
 	}
@@ -580,7 +626,15 @@ public class DotAttributesTests {
 		assertTrue(EcoreUtil.equals(validEdgeTailLpParsed,
 				DotAttributes.getTailLpParsed(edge)));
 
-		// TODO: add test cases for setting invalid edge tail label positions
+		// set invalid string values
+		try {
+			DotAttributes.setTailLp(edge, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'tail_lp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
 	}
 
 	@Test
@@ -593,8 +647,6 @@ public class DotAttributesTests {
 		final String validEdgeXLabel = "edgeXLabel";
 		DotAttributes.setXLabel(edge, validEdgeXLabel);
 		assertEquals(validEdgeXLabel, DotAttributes.getXLabel(edge));
-
-		// TODO: add test cases for setting invalid edge xlabel
 	}
 
 	@Test
@@ -615,8 +667,15 @@ public class DotAttributesTests {
 		assertEquals("33.0, 54.6", DotAttributes.getXlp(edge));
 		assertTrue(EcoreUtil.equals(DotAttributes.getXlpParsed(edge), xlp));
 
-		// TODO: add test cases for setting invalid edge exterior label
-		// positions
+		// set invalid string values
+		try {
+			DotAttributes.setXlp(edge, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'xlp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
 	}
 
 	@Test
@@ -668,6 +727,16 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void graph_label() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		final String validGraphLabel = "graphLabel";
+		DotAttributes.setLabel(g, validGraphLabel);
+		assertEquals(validGraphLabel, DotAttributes.getLabel(g));
+	}
+
+	@Test
 	public void graph_layout() {
 		Graph g = new Graph.Builder().build();
 
@@ -675,34 +744,97 @@ public class DotAttributesTests {
 		String validGraphLayout = "circo";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.CIRCO, DotAttributes.getLayoutParsed(g));
 
 		validGraphLayout = "dot";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.DOT, DotAttributes.getLayoutParsed(g));
 
 		validGraphLayout = "fdp";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.FDP, DotAttributes.getLayoutParsed(g));
 
 		validGraphLayout = "grid";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.GRID, DotAttributes.getLayoutParsed(g));
 
 		validGraphLayout = "neato";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.NEATO, DotAttributes.getLayoutParsed(g));
 
 		validGraphLayout = "osage";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.OSAGE, DotAttributes.getLayoutParsed(g));
 
 		validGraphLayout = "sfdp";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.SFDP, DotAttributes.getLayoutParsed(g));
 
 		validGraphLayout = "twopi";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
+		assertEquals(Layout.TWOPI, DotAttributes.getLayoutParsed(g));
+
+		// set valid parsed values
+		Layout validGraphLayoutParsed = Layout.CIRCO;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.DOT;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.CIRCO;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.FDP;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.GRID;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.NEATO;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.OSAGE;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.SFDP;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+
+		validGraphLayoutParsed = Layout.TWOPI;
+		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		assertEquals(validGraphLayoutParsed.toString(),
+				DotAttributes.getLayout(g));
+		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
 
 		// set invalid string values
 		try {
@@ -711,6 +843,35 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'circo', 'dot', 'fdp', 'grid', 'neato', 'osage', 'sfdp', 'twopi'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void graph_lp() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphLp = "0.0,1.1";
+		DotAttributes.setLp(g, validGraphLp);
+		assertEquals(validGraphLp, DotAttributes.getLp(g));
+
+		// set valid parsed values
+		Point validGraphLpParsed = PointFactory.eINSTANCE.createPoint();
+		validGraphLpParsed.setX(2.2);
+		validGraphLpParsed.setY(3.3);
+		DotAttributes.setLpParsed(g, validGraphLpParsed);
+		assertTrue(EcoreUtil.equals(validGraphLpParsed,
+				DotAttributes.getLpParsed(g)));
+		assertEquals("2.2, 3.3", DotAttributes.getLp(g));
+
+		// set invalid string values
+		try {
+			DotAttributes.setLp(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'lp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
 					e.getMessage());
 		}
 	}
@@ -915,6 +1076,30 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void graph_type() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphType = "graph";
+		DotAttributes._setType(g, validGraphType);
+		assertEquals(validGraphType, DotAttributes._getType(g));
+
+		validGraphType = "digraph";
+		DotAttributes._setType(g, validGraphType);
+		assertEquals(validGraphType, DotAttributes._getType(g));
+
+		// set invalid string values
+		try {
+			DotAttributes._setType(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute \"type\" to \"foo\"; supported values: graph, digraph",
+					e.getMessage());
+		}
+	}
+
+	@Test
 	public void node_distortion() {
 		Node n = new Node.Builder().buildNode();
 
@@ -967,30 +1152,6 @@ public class DotAttributesTests {
 	}
 
 	@Test
-	public void graph_type() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		String validGraphType = "graph";
-		DotAttributes._setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes._getType(g));
-
-		validGraphType = "digraph";
-		DotAttributes._setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes._getType(g));
-
-		// set invalid string values
-		try {
-			DotAttributes._setType(g, "foo");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set graph attribute \"type\" to \"foo\"; supported values: graph, digraph",
-					e.getMessage());
-		}
-	}
-
-	@Test
 	public void node_fixedsize() {
 		Node n = new Node.Builder().buildNode();
 
@@ -1014,7 +1175,15 @@ public class DotAttributesTests {
 		assertEquals(validNodeFixedSizeParsed,
 				DotAttributes.getFixedSizeParsed(n));
 
-		// TODO: add test cases for setting invalid graph fixedsize
+		// set invalid string values
+		try {
+			DotAttributes.setFixedSize(n, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'fixedsize' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value.",
+					e.getMessage());
+		}
 	}
 
 	@Test
@@ -1082,8 +1251,6 @@ public class DotAttributesTests {
 		final String validNodeLabel = "nodeLabel";
 		DotAttributes.setLabel(n, validNodeLabel);
 		assertEquals(validNodeLabel, DotAttributes.getLabel(n));
-
-		// TODO: add test cases for setting invalid node label
 	}
 
 	@Test
@@ -1123,6 +1290,239 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set node attribute 'pos' to '47x, 11'. The value '47x, 11' is not a syntactically correct point: No viable alternative at character 'x'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_shape() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid (polygon based) string values
+		String[] validPolygonBasedNodeShapes = { "assembly", "box", "box3d",
+				"cds", "circle", "component", "cylinder", "diamond",
+				"doublecircle", "doubleoctagon", "egg", "ellipse",
+				"fivepoverhang", "folder", "hexagon", "house", "insulator",
+				"invhouse", "invtrapezium", "invtriangle", "larrow",
+				"lpromoter", "Mcircle", "Mdiamond", "Msquare", "none", "note",
+				"noverhang", "octagon", "oval", "parallelogram", "pentagon",
+				"plain", "plaintext", "point", "polygon", "primersite",
+				"promoter", "proteasesite", "proteinstab", "rarrow", "rect",
+				"rectangle", "restrictionsite", "ribosite", "rnastab",
+				"rpromoter", "septagon", "signature", "square", "star", "tab",
+				"terminator", "threepoverhang", "trapezium", "triangle",
+				"tripleoctagon", "underline", "utr" };
+
+		for (String validPolygonBasedNodeShape : validPolygonBasedNodeShapes) {
+			DotAttributes.setShape(n, validPolygonBasedNodeShape);
+			assertEquals(validPolygonBasedNodeShape, DotAttributes.getShape(n));
+
+			Shape shapeParsed = ShapeFactory.eINSTANCE.createShape();
+			PolygonBasedShape polygonBasedShape = ShapeFactory.eINSTANCE
+					.createPolygonBasedShape();
+			polygonBasedShape.setShape(
+					PolygonBasedNodeShape.get(validPolygonBasedNodeShape));
+			shapeParsed.setShape(polygonBasedShape);
+			assertTrue(EcoreUtil.equals(shapeParsed,
+					DotAttributes.getShapeParsed(n)));
+		}
+
+		// set valid (record based) string values
+		String[] validRecordBasedNodeShapes = { "record", "Mrecord" };
+
+		for (String validRecordBasedNodeShape : validRecordBasedNodeShapes) {
+			DotAttributes.setShape(n, validRecordBasedNodeShape);
+			assertEquals(validRecordBasedNodeShape, DotAttributes.getShape(n));
+
+			Shape shapeParsed = ShapeFactory.eINSTANCE.createShape();
+			RecordBasedShape recordBasedShape = ShapeFactory.eINSTANCE
+					.createRecordBasedShape();
+			recordBasedShape.setShape(
+					RecordBasedNodeShape.get(validRecordBasedNodeShape));
+			shapeParsed.setShape(recordBasedShape);
+			assertTrue(EcoreUtil.equals(shapeParsed,
+					DotAttributes.getShapeParsed(n)));
+		}
+
+		// set valid parsed values
+		Shape validNodeShapeParsed = ShapeFactory.eINSTANCE.createShape();
+		PolygonBasedShape polygonBasedShape = ShapeFactory.eINSTANCE
+				.createPolygonBasedShape();
+		polygonBasedShape.setShape(PolygonBasedNodeShape.BOX);
+		validNodeShapeParsed.setShape(polygonBasedShape);
+		DotAttributes.setShapeParsed(n, validNodeShapeParsed);
+		assertEquals("box", DotAttributes.getShape(n));
+
+		// set invalid string values
+		try {
+			DotAttributes.setShape(n, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'shape' to 'foo'. The value 'foo' is not a syntactically correct shape: Mismatched character 'o' expecting 'l'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_sides() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		String validNodeSides = "5";
+		DotAttributes.setSides(n, validNodeSides);
+		assertEquals(validNodeSides, DotAttributes.getSides(n));
+		assertEquals(5, DotAttributes.getSidesParsed(n).intValue());
+
+		// set the minimum valid value
+		validNodeSides = "0";
+		DotAttributes.setSides(n, validNodeSides);
+		assertEquals(validNodeSides, DotAttributes.getSides(n));
+		assertEquals(0, DotAttributes.getSidesParsed(n).intValue());
+
+		// set valid parsed values
+		Integer validNodeSidesParsed = 3;
+		DotAttributes.setSidesParsed(n, validNodeSidesParsed);
+		assertEquals("3", DotAttributes.getSides(n));
+		assertEquals(validNodeSidesParsed, DotAttributes.getSidesParsed(n));
+
+		validNodeSidesParsed = 42;
+		DotAttributes.setSidesParsed(n, validNodeSidesParsed);
+		assertEquals("42", DotAttributes.getSides(n));
+		assertEquals(validNodeSidesParsed, DotAttributes.getSidesParsed(n));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setSides(n, "42x");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'sides' to '42x'. The value '42x' is not a syntactically correct int: For input string: \"42x\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setSides(n, "-1");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'sides' to '-1'. The int value '-1' is not semantically correct: Value may not be smaller than 0.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_skew() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid string values
+		String validNodeSkew = "5";
+		DotAttributes.setSkew(n, validNodeSkew);
+		assertEquals(validNodeSkew, DotAttributes.getSkew(n));
+		assertEquals(5.0, DotAttributes.getSkewParsed(n).doubleValue(), 0.0);
+
+		// set the minimum valid value
+		validNodeSkew = "-100.0";
+		DotAttributes.setSkew(n, validNodeSkew);
+		assertEquals(validNodeSkew, DotAttributes.getSkew(n));
+		assertEquals(-100.0, DotAttributes.getSkewParsed(n).doubleValue(), 0.0);
+
+		// set valid parsed values
+		Double validNodeSkewParsed = 10.0;
+		DotAttributes.setSkewParsed(n, validNodeSkewParsed);
+		assertEquals("10.0", DotAttributes.getSkew(n));
+		assertEquals(validNodeSkewParsed, DotAttributes.getSkewParsed(n));
+
+		validNodeSkewParsed = 9.9;
+		DotAttributes.setSkewParsed(n, validNodeSkewParsed);
+		assertEquals("9.9", DotAttributes.getSkew(n));
+		assertEquals(validNodeSkewParsed, DotAttributes.getSkewParsed(n));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setSkew(n, "42x");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'skew' to '42x'. The value '42x' is not a syntactically correct double: For input string: \"42x\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setSkew(n, "-100.01");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'skew' to '-100.01'. The double value '-100.01' is not semantically correct: Value may not be smaller than -100.0.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_style() {
+		Node node = new Node.Builder().buildNode();
+
+		// set valid string values
+		String[] validNodeStyleItems = { "bold", "dashed", "diagonals",
+				"dotted", "filled", "invis", "radial", "rounded", "solid",
+				"striped", "wedged" };
+
+		for (String validNodeStyleItem : validNodeStyleItems) {
+			DotAttributes.setStyle(node, validNodeStyleItem);
+			assertEquals(validNodeStyleItem, DotAttributes.getStyle(node));
+
+			Style styleParsed = StyleFactory.eINSTANCE.createStyle();
+			StyleItem styleItem = StyleFactory.eINSTANCE.createStyleItem();
+			styleItem.setName(validNodeStyleItem);
+			styleParsed.getStyleItems().add(styleItem);
+			assertTrue(EcoreUtil.equals(styleParsed,
+					DotAttributes.getStyleParsed(node)));
+		}
+
+		String validNodeStyle = "";
+		DotAttributes.setStyle(node, validNodeStyle);
+		assertEquals(validNodeStyle, DotAttributes.getStyle(node));
+
+		// set valid parsed values
+		Style styleParsed = StyleFactory.eINSTANCE.createStyle();
+		StyleItem styleItem1 = StyleFactory.eINSTANCE.createStyleItem();
+		styleItem1.setName("bold");
+		StyleItem styleItem2 = StyleFactory.eINSTANCE.createStyleItem();
+		styleItem2.setName("dashed");
+
+		styleParsed.getStyleItems().add(styleItem1);
+		styleParsed.getStyleItems().add(styleItem2);
+		DotAttributes.setStyleParsed(node, styleParsed);
+		assertEquals("bold , dashed", DotAttributes.getStyle(node));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setStyle(node, "bold, ");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'style' to 'bold, '. The value 'bold, ' is not a syntactically correct style: Mismatched input '<EOF>' expecting RULE_NAME.",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setStyle(node, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'style' to 'foo'. The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'diagonals', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped', 'wedged'.",
+					e.getMessage());
+		}
+
+		try {
+			DotAttributes.setStyle(node, "tapered");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'style' to 'tapered'. The style value 'tapered' is not semantically correct: Value should be one of 'bold', 'dashed', 'diagonals', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped', 'wedged'.",
 					e.getMessage());
 		}
 	}
@@ -1183,8 +1583,6 @@ public class DotAttributesTests {
 		final String validNodeXLabel = "nodeXLabel";
 		DotAttributes.setXLabel(n, validNodeXLabel);
 		assertEquals(validNodeXLabel, DotAttributes.getXLabel(n));
-
-		// TODO: add test cases for setting invalid node xlabel
 	}
 
 	@Test
@@ -1204,7 +1602,14 @@ public class DotAttributesTests {
 		assertEquals("33.0, 54.6!", DotAttributes.getXlp(n));
 		assertTrue(EcoreUtil.equals(DotAttributes.getXlpParsed(n), xlp));
 
-		// TODO: add test cases for setting invalid node exterior label
-		// positions
+		// set invalid string values
+		try {
+			DotAttributes.setXlp(n, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'xlp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
 	}
 }

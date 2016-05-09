@@ -149,9 +149,9 @@ public class DotAttributes {
 	public static final String LAYOUT__G = "layout";
 
 	/**
-	 * Specifies 'lp' attribute (label position) of an edge.
+	 * Specifies the 'lp' attribute (label position) of a graph or edge.
 	 */
-	public static final String LP__E = "lp";
+	public static final String LP__GE = "lp";
 
 	/**
 	 * Specifies the 'pos' attribute of a node or edge.
@@ -738,12 +738,12 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LAYOUT__G} property of the given
-	 * {@link Graph}.
+	 * Returns the (parsed) value of the {@link #LAYOUT__G} property of the
+	 * given {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LAYOUT__G} property.
+	 *            {@link #LAYOUT__G} property, parsed as a {@link Layout}.
 	 * @return The value of the {@link #LAYOUT__G} property of the given
 	 *         {@link Graph}.
 	 */
@@ -752,32 +752,61 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LP__E} property of the given
+	 * Returns the value of the {@link #LP__GE} property of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #LP__E} property.
-	 * @return The value of the {@link #LP__E} property of the given
+	 *            {@link #LP__GE} property.
+	 * @return The value of the {@link #LP__GE} property of the given
 	 *         {@link Edge}.
 	 */
 	public static String getLp(Edge edge) {
-		return (String) edge.attributesProperty().get(LP__E);
+		return (String) edge.attributesProperty().get(LP__GE);
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #LP__E} property of the given
+	 * Returns the value of the {@link #LP__GE} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LP__GE} property.
+	 * @return The value of the {@link #LP__GE} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String getLp(Graph graph) {
+		return (String) graph.attributesProperty().get(LP__GE);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #LP__GE} property of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #LP__E} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #LP__E} property of the given
+	 *            {@link #LP__GE} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #LP__GE} property of the given
 	 *         {@link Edge}.
 	 */
 	public static Point getLpParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getLp(edge));
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #LP__GE} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LP__GE} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #LP__GE} property of the given
+	 *         {@link Graph}.
+	 */
+	public static Point getLpParsed(Graph graph) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.POINT_PARSER, getLp(graph));
 	}
 
 	/**
@@ -1385,8 +1414,11 @@ public class DotAttributes {
 	 *            {@link #FIXEDSIZE__N} property.
 	 * @param fixedSize
 	 *            The new value for the {@link #FIXEDSIZE__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fixedSize</i> value is not supported.
 	 */
 	public static void setFixedSize(Node node, String fixedSize) {
+		validate(AttributeContext.NODE, FIXEDSIZE__N, fixedSize);
 		node.attributesProperty().put(FIXEDSIZE__N, fixedSize);
 	}
 
@@ -1399,6 +1431,8 @@ public class DotAttributes {
 	 *            {@link #FIXEDSIZE__N} property.
 	 * @param fixedSizeParsed
 	 *            The new value for the {@link #FIXEDSIZE__N} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fixedSizeParsed</i> value is not supported.
 	 */
 	public static void setFixedSizeParsed(Node node, Boolean fixedSizeParsed) {
 		setFixedSize(node, fixedSizeParsed.toString());
@@ -1462,8 +1496,11 @@ public class DotAttributes {
 	 *            {@link #HEAD_LP__E} property.
 	 * @param headLp
 	 *            The new value for the {@link #HEAD_LP__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>headLp</i> value is not supported.
 	 */
 	public static void setHeadLp(Edge edge, String headLp) {
+		validate(AttributeContext.EDGE, HEAD_LP__E, headLp);
 		edge.attributesProperty().put(HEAD_LP__E, headLp);
 	}
 
@@ -1476,6 +1513,8 @@ public class DotAttributes {
 	 *            {@link #HEAD_LP__E} property.
 	 * @param headLpParsed
 	 *            The new value for the {@link #HEAD_LP__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>headLpParsed</i> value is not supported.
 	 */
 	public static void setHeadLpParsed(Edge edge, Point headLpParsed) {
 		setHeadLp(edge,
@@ -1582,7 +1621,6 @@ public class DotAttributes {
 	 *            The new value for the {@link #LABEL__GNE} property.
 	 */
 	public static void setLabel(Graph graph, String label) {
-		validate(AttributeContext.GRAPH, LABEL__GNE, label);
 		graph.attributesProperty().put(LABEL__GNE, label);
 	}
 
@@ -1634,31 +1672,69 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #LP__E} property of the given {@link Edge} to the given
+	 * Sets the {@link #LP__GE} property of the given {@link Edge} to the given
 	 * <i>lp</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #LP__E} property.
+	 *            {@link #LP__GE} property.
 	 * @param lp
-	 *            The new value for the {@link #LP__E} property.
+	 *            The new value for the {@link #LP__GE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>lp</i> value is not supported.
 	 */
 	public static void setLp(Edge edge, String lp) {
-		edge.attributesProperty().put(LP__E, lp);
+		validate(AttributeContext.EDGE, LP__GE, lp);
+		edge.attributesProperty().put(LP__GE, lp);
 	}
 
 	/**
-	 * Sets the {@link #LP__E} property of the given {@link Edge} to the given
+	 * Sets the {@link #LP__GE} property of the given {@link Graph} to the given
+	 * <i>lp</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LP__GE} property.
+	 * @param lp
+	 *            The new value for the {@link #LP__GE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>lp</i> value is not supported.
+	 */
+	public static void setLp(Graph graph, String lp) {
+		validate(AttributeContext.GRAPH, LP__GE, lp);
+		graph.attributesProperty().put(LP__GE, lp);
+	}
+
+	/**
+	 * Sets the {@link #LP__GE} property of the given {@link Edge} to the given
 	 * <i>lpParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #LP__E} property.
+	 *            {@link #LP__GE} property.
 	 * @param lpParsed
-	 *            The new value for the {@link #LP__E} property.
+	 *            The new value for the {@link #LP__GE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>lpParsed</i> value is not supported.
 	 */
 	public static void setLpParsed(Edge edge, Point lpParsed) {
 		setLp(edge, serialize(DotLanguageSupport.POINT_SERIALIZER, lpParsed));
+	}
+
+	/**
+	 * Sets the {@link #LP__GE} property of the given {@link Graph} to the given
+	 * <i>lpParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LP__GE} property.
+	 * @param lpParsed
+	 *            The new value for the {@link #LP__GE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>lpParsed</i> value is not supported.
+	 */
+	public static void setLpParsed(Graph graph, Point lpParsed) {
+		setLp(graph, serialize(DotLanguageSupport.POINT_SERIALIZER, lpParsed));
 	}
 
 	/**
@@ -1985,8 +2061,11 @@ public class DotAttributes {
 	 *            {@link #TAIL_LP__E} property.
 	 * @param tailLp
 	 *            The new value for the {@link #TAIL_LP__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>tailLp</i> value is not supported.
 	 */
 	public static void setTailLp(Edge edge, String tailLp) {
+		validate(AttributeContext.EDGE, TAIL_LP__E, tailLp);
 		edge.attributesProperty().put(TAIL_LP__E, tailLp);
 	}
 
@@ -1999,6 +2078,8 @@ public class DotAttributes {
 	 *            {@link #TAIL_LP__E} property.
 	 * @param tailLpParsed
 	 *            The new value for the {@link #TAIL_LP__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>tailLpParsed</i> value is not supported.
 	 */
 	public static void setTailLpParsed(Edge edge, Point tailLpParsed) {
 		setTailLp(edge,
@@ -2075,8 +2156,11 @@ public class DotAttributes {
 	 *            {@link #XLP__NE} property.
 	 * @param xlp
 	 *            The new value for the {@link #XLP__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>xlp</i> value is not supported.
 	 */
 	public static void setXlp(Edge edge, String xlp) {
+		validate(AttributeContext.EDGE, XLP__NE, xlp);
 		edge.attributesProperty().put(XLP__NE, xlp);
 	}
 
@@ -2089,8 +2173,11 @@ public class DotAttributes {
 	 *            {@link #XLP__NE} property.
 	 * @param xlp
 	 *            The new value for the {@link #XLP__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>xlp</i> value is not supported.
 	 */
 	public static void setXlp(Node node, String xlp) {
+		validate(AttributeContext.NODE, XLP__NE, xlp);
 		node.attributesProperty().put(XLP__NE, xlp);
 	}
 
@@ -2103,6 +2190,8 @@ public class DotAttributes {
 	 *            {@link #XLP__NE} property.
 	 * @param xlpParsed
 	 *            The new value for the {@link #XLP__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>xlpParsed</i> value is not supported.
 	 */
 	public static void setXlpParsed(Edge edge, Point xlpParsed) {
 		setXlp(edge, serialize(DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
@@ -2117,6 +2206,8 @@ public class DotAttributes {
 	 *            {@link #XLP__NE} property.
 	 * @param xlpParsed
 	 *            The new value for the {@link #XLP__NE} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>xlpParsed</i> value is not supported.
 	 */
 	public static void setXlpParsed(Node node, Point xlpParsed) {
 		setXlp(node, serialize(DotLanguageSupport.POINT_SERIALIZER, xlpParsed));

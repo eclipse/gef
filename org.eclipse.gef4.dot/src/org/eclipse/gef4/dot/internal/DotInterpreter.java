@@ -297,7 +297,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	public Object caseEdgeStmtNode(EdgeStmtNode object) {
 		currentEdgeId = getAttributeValue(object, DotAttributes.ID__GNE);
 		currentEdgeLabel = getAttributeValue(object, DotAttributes.LABEL__GNE);
-		currentEdgeLp = getAttributeValue(object, DotAttributes.LP__E);
+		currentEdgeLp = getAttributeValue(object, DotAttributes.LP__GE);
 		currentEdgeXLabel = getAttributeValue(object, DotAttributes.XLABEL__NE);
 		currentEdgeXlp = getAttributeValue(object, DotAttributes.XLP__NE);
 		currentEdgeStyle = getAttributeValue(object, DotAttributes.STYLE__E);
