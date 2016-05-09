@@ -56,67 +56,67 @@ public class DotParserTests {
 
 	@Test
 	public void testEmptyGraph() {
-		testString("graph {}");
+		testString(DotSampleGraphs.EMPTY);
 	}
 
 	@Test
 	public void testEmptyDirectedGraph() {
-		testString("digraph {}");
+		testString(DotSampleGraphs.EMPTY_DIRECTED);
 	}
 
 	@Test
 	public void testEmptyStrictGraph() {
-		testString("strict graph {}");
+		testString(DotSampleGraphs.EMPTY_STRICT);
 	}
 
 	@Test
 	public void testEmptyStrictDirectedGraph() {
-		testString("strict digraph {}");
+		testString(DotSampleGraphs.EMPTY_STRICT_DIRECTED);
 	}
 
 	@Test
 	public void testGraphWithOneNode() {
-		testString("graph {n1}");
+		testString(DotSampleGraphs.ONE_NODE);
 	}
 
 	@Test
 	public void testGraphWithOneNodeAndEmptyNodeAttributeList() {
-		testString("graph {n1[]}");
+		testString(DotSampleGraphs.EMPTY_NODE_ATTRIBUTE_LIST);
 	}
 
 	@Test
 	public void testGraphWithOneEdge() {
-		testString("graph {n1--n2}");
+		testString(DotSampleGraphs.ONE_EDGE);
+	}
+
+	@Test
+	public void testDirectedGraphWithOneEdge() {
+		testString(DotSampleGraphs.ONE_DIRECTED_EDGE);
 	}
 
 	@Test
 	public void testGraphWithOneEdgeAndEmptyEdgeAttributeList() {
-		testString("graph {n1--n2[]}");
+		testString(DotSampleGraphs.EMPTY_EDGE_ATTRIBUTE_LIST);
+	}
+
+	@Test
+	public void testDirectedGraphWithOneEdgeAndEmptyEdgeAttributeList() {
+		testString(DotSampleGraphs.EMPTY_DIRECTED_EDGE_ATTRIBUTE_LIST);
 	}
 
 	@Test
 	public void testGraphWithEmptyGraphAttributeStatement() {
-		testString("graph {graph[]}");
+		testString(DotSampleGraphs.EMPTY_GRAPH_ATTRIBUTE_STATEMENT);
 	}
 
 	@Test
 	public void testGraphWithEmptyNodeAttributeStatement() {
-		testString("graph {node[]}");
+		testString(DotSampleGraphs.EMPTY_NODE_ATTRIBUTE_STATEMENT);
 	}
 
 	@Test
 	public void testGraphWithEmptyEdgeAttributeStatement() {
-		testString("graph {edge[]}");
-	}
-
-	@Test
-	public void testArrowShapesSingle() {
-		testFile("arrowshapes_single.dot");
-	}
-
-	@Test
-	public void testArrowShapesMultiple() {
-		testFile("arrowshapes_multiple.dot");
+		testString(DotSampleGraphs.EMPTY_EDGE_ATTRIBUTE_STATEMENT);
 	}
 
 	@Test
@@ -125,7 +125,7 @@ public class DotParserTests {
 	}
 
 	@Test
-	public void testArrowshapesDirectionBoth() {
+	public void testArrowShapesDirectionBoth() {
 		testFile("arrowshapes_direction_both.dot");
 	}
 
@@ -135,8 +135,88 @@ public class DotParserTests {
 	}
 
 	@Test
-	public void testPolygonBasedNodeShapes() {
+	public void testArrowShapesMultiple() {
+		testFile("arrowshapes_multiple.dot");
+	}
+
+	@Test
+	public void testArrowShapesSingle() {
+		testFile("arrowshapes_single.dot");
+	}
+
+	@Test
+	public void testAttributesGraph() {
+		testFile("attributes_graph.dot");
+	}
+
+	@Test
+	public void testBasicDirectedGraph() {
+		testFile("basic_directed_graph.dot");
+	}
+
+	@Test
+	public void testGlobalEdgeGraph() {
+		testFile("global_edge_graph.dot");
+	}
+
+	@Test
+	public void testGlobalNodeGraph() {
+		testFile("global_node_graph.dot");
+	}
+
+	@Test
+	public void testIdMatchesKeyword() {
+		testFile("id_matches_keyword.dot");
+	}
+
+	@Test
+	public void testLabeledGraph() {
+		testFile("labeled_graph.dot");
+	}
+
+	@Test
+	public void testLayoutGridGraph() {
+		testFile("layout_grid_graph.dot");
+	}
+
+	@Test
+	public void testLayoutRadialGraph() {
+		testFile("layout_radial_graph.dot");
+	}
+
+	@Test
+	public void testLayoutSpringGraph() {
+		testFile("layout_spring_graph.dot");
+	}
+
+	@Test
+	public void testLayoutTreeGraph() {
+		testFile("layout_tree_graph.dot");
+	}
+
+	@Test
+	public void testNodeShapesPolygonBased() {
 		testFile("nodeshapes_polygon_based.dot");
+	}
+
+	@Test
+	public void testNodeGroups() {
+		testFile("node_groups.dot");
+	}
+
+	@Test
+	public void testSampleInput() {
+		testFile("sample_input.dot");
+	}
+
+	@Test
+	public void testSimpleDigraph() {
+		testFile("simple_digraph.dot");
+	}
+
+	@Test
+	public void testSimpleGraph() {
+		testFile("simple_graph.dot");
 	}
 
 	@Test
