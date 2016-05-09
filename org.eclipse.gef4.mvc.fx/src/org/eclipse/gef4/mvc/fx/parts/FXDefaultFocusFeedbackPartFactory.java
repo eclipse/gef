@@ -40,6 +40,11 @@ public class FXDefaultFocusFeedbackPartFactory
 		implements IFeedbackPartFactory<Node> {
 
 	/**
+	 * Defines the binding name for the focus feedback color.
+	 */
+	public static final String FOCUS_FEEDBACK_COLOR = "FOCUS_FEEDBACK_COLOR";
+
+	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
 	 * used to generate focus feedback.
 	 */

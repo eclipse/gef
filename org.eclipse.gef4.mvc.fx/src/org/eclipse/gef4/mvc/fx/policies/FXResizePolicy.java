@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeOperation;
-import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractResizePolicy;
@@ -60,7 +60,7 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 			computedMinHeight = visualToResize.minHeight(-1);
 		}
 		return Math.max(computedMinHeight,
-				FXCircleSegmentHandlePart.DEFAULT_SIZE);
+				FXSquareSegmentHandlePart.DEFAULT_SIZE);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 			computedMinWidth = visualToResize.minWidth(-1);
 		}
 		return Math.max(computedMinWidth,
-				FXCircleSegmentHandlePart.DEFAULT_SIZE);
+				FXSquareSegmentHandlePart.DEFAULT_SIZE);
 	}
 
 	/**

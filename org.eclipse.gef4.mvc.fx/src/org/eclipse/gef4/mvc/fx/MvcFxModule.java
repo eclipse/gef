@@ -70,6 +70,7 @@ import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 /**
  * The Guice module which contains all (default) bindings related to the MVC.FX
@@ -256,6 +257,16 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Creates a default binding for the fill color of create handles.
+	 */
+	protected void bindInsertHandleColor() {
+		binder().bind(Color.class)
+				.annotatedWith(Names
+						.named(FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR))
+				.toInstance(Color.WHITE);
+	}
+
+	/**
 	 * Adds a binding for {@link CreationPolicy} to the {@link AdapterMap}
 	 * binder for {@link AbstractRootPart}.
 	 *
@@ -309,6 +320,16 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXFocusAndSelectOnClickPolicy.class);
+	}
+
+	/**
+	 * Creates a default binding for the focus color.
+	 */
+	protected void bindFocusFeedbackColor() {
+		binder().bind(Color.class)
+				.annotatedWith(Names
+						.named(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_COLOR))
+				.toInstance(Color.web("#8ec0fc"));
 	}
 
 	/**
@@ -857,6 +878,16 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Creates a default binding for the hover feedback color.
+	 */
+	protected void bindHoverFeedbackColor() {
+		binder().bind(Color.class)
+				.annotatedWith(Names
+						.named(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR))
+				.toInstance(Color.web("#5a61af"));
+	}
+
+	/**
 	 * Binds {@link HoverModel}, parameterized by {@link Node} to the
 	 * {@link FXViewer} adaptable scope.
 	 */
@@ -940,6 +971,36 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Create a default binding for the fill color of move handles.
+	 */
+	protected void bindMoveHandleColor() {
+		binder().bind(Color.class)
+				.annotatedWith(Names
+						.named(FXDefaultSelectionHandlePartFactory.MOVE_HANDLE_COLOR))
+				.toInstance(Color.web("#7986cb"));
+	}
+
+	/**
+	 * Creates a default binding for the primary selection color.
+	 */
+	protected void bindPrimarySelectionFeedbackColor() {
+		binder().bind(Color.class)
+				.annotatedWith(Names
+						.named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR))
+				.toInstance(Color.web("#3f51b5"));
+	}
+
+	/**
+	 * Creates a default binding for the secondary selection color.
+	 */
+	protected void bindSecondarySelectionFeedbackColor() {
+		binder().bind(Color.class)
+				.annotatedWith(Names
+						.named(FXDefaultSelectionFeedbackPartFactory.SECONDARY_SELECTION_FEEDBACK_COLOR))
+				.toInstance(Color.web("#9fa8da"));
+	}
+
+	/**
 	 * Adds a binding for {@link SelectionBehavior}, parameterized by
 	 * {@link Node}, to the {@link AdapterMap} binder for
 	 * {@link AbstractFXContentPart}.
@@ -1015,6 +1076,14 @@ public class MvcFxModule extends MvcModule<Node> {
 		// bind default factories for handles and feedback
 		bindIHandlePartFactories();
 		bindIFeedbackPartFactories();
+
+		// bind colors for feedback and handles
+		bindFocusFeedbackColor();
+		bindPrimarySelectionFeedbackColor();
+		bindSecondarySelectionFeedbackColor();
+		bindHoverFeedbackColor();
+		bindInsertHandleColor();
+		bindMoveHandleColor();
 
 		// bind default viewer models
 		bindHoverModel();

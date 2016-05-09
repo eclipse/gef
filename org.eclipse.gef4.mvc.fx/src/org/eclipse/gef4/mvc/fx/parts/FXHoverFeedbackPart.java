@@ -11,17 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 
-import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
@@ -37,16 +35,9 @@ import javafx.scene.shape.StrokeType;
 public class FXHoverFeedbackPart
 		extends AbstractFXFeedbackPart<GeometryNode<IGeometry>> {
 
-	/**
-	 * The default stroke color for this part's visualization.
-	 */
-	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
-
-	/**
-	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
-	 * used to query the {@link Effect} for this part's visualization.
-	 */
-	public static final String EFFECT_PROVIDER = "HoverFeedbackEffectProvider";
+	@Inject
+	@Named(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR)
+	private Color hoverStroke;
 
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
@@ -67,7 +58,7 @@ public class FXHoverFeedbackPart
 
 		// hover specific
 		visual.setEffect(getHoverFeedbackEffect());
-		visual.setStroke(DEFAULT_STROKE);
+		visual.setStroke(hoverStroke);
 		return visual;
 	}
 
@@ -113,22 +104,10 @@ public class FXHoverFeedbackPart
 	 *         <code>Provider&lt;Effect&gt;</code> of this part's first
 	 *         anchorage.
 	 */
-	@SuppressWarnings("serial")
 	public Effect getHoverFeedbackEffect() {
-		Provider<? extends Effect> effectProvider = null;
-		if (!getAnchoragesUnmodifiable().isEmpty()) {
-			IVisualPart<Node, ? extends Node> host = getAnchoragesUnmodifiable().keys()
-					.iterator().next();
-			effectProvider = host.getAdapter(
-					AdapterKey.get(new TypeToken<Provider<? extends Effect>>() {
-					}, EFFECT_PROVIDER));
-		}
-		if (effectProvider == null) {
-			DropShadow effect = new DropShadow();
-			effect.setRadius(3);
-			return effect;
-		}
-		return effectProvider.get();
+		DropShadow effect = new DropShadow();
+		effect.setRadius(3);
+		return effect;
 	}
 
 	/**

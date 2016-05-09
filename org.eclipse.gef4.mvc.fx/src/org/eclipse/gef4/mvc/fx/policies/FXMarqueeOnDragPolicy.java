@@ -21,7 +21,7 @@ import java.util.Queue;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
-import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -29,6 +29,9 @@ import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -125,6 +128,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 		return containedNodes;
 	}
 
+	@Inject
+	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
+	private Color selectionStroke;
+
 	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	// stores upon press() if the press-drag-release gesture is invalid
@@ -151,7 +158,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 			protected Rectangle createVisual() {
 				Rectangle visual = new Rectangle();
 				visual.setFill(Color.TRANSPARENT);
-				visual.setStroke(FXCircleSegmentHandlePart.DEFAULT_STROKE);
+				visual.setStroke(selectionStroke);
 				visual.setStrokeWidth(1);
 				visual.setStrokeType(StrokeType.CENTERED);
 				visual.getStrokeDashArray().setAll(5d, 5d);

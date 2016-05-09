@@ -50,6 +50,16 @@ public class FXDefaultSelectionFeedbackPartFactory
 		implements IFeedbackPartFactory<Node> {
 
 	/**
+	 * The binding name for the primary selection color.
+	 */
+	public static final String PRIMARY_SELECTION_FEEDBACK_COLOR = "PRIMARY_SELECTION_FEEDBACK_COLOR";
+
+	/**
+	 * The binding name for the secondary selection color.
+	 */
+	public static final String SECONDARY_SELECTION_FEEDBACK_COLOR = "SECONDARY_SELECTION_FEEDBACK_COLOR";
+
+	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
 	 * used to generate selection feedback.
 	 */

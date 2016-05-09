@@ -40,6 +40,11 @@ public class FXDefaultHoverFeedbackPartFactory
 		implements IFeedbackPartFactory<Node> {
 
 	/**
+	 * The binding name for the primary selection color.
+	 */
+	public static final String HOVER_FEEDBACK_COLOR = "HOVER_FEEDBACK_COLOR";
+
+	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
 	 * used to generate hover feedback.
 	 */

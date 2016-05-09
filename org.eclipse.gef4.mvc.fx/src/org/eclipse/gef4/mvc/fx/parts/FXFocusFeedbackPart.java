@@ -25,7 +25,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
@@ -38,12 +40,11 @@ import javafx.scene.shape.StrokeType;
 public class FXFocusFeedbackPart
 		extends AbstractFXFeedbackPart<GeometryNode<IGeometry>> {
 
-	private static final double STROKE_WIDTH = 1.5d;
+	private static final double DEFAULT_STROKE_WIDTH = 1.5d;
 
-	/**
-	 * The default stroke color for this part's visualization.
-	 */
-	public static final Color DEFAULT_STROKE = Color.web("#8ec0fc");
+	@Inject
+	@Named(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_COLOR)
+	private Color focusStroke;
 
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
@@ -68,8 +69,8 @@ public class FXFocusFeedbackPart
 		visual.setMouseTransparent(true);
 		visual.setManaged(false);
 		visual.setStrokeType(StrokeType.OUTSIDE);
-		visual.setStrokeWidth(STROKE_WIDTH);
-		visual.setStroke(DEFAULT_STROKE);
+		visual.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+		visual.setStroke(focusStroke);
 		return visual;
 	}
 
@@ -124,11 +125,12 @@ public class FXFocusFeedbackPart
 			// stroke centered
 			visual.setStrokeType(StrokeType.CENTERED);
 			if (selected.contains(anchorage)) {
-				visual.setStrokeWidth(FXSelectionFeedbackPart.STROKE_WIDTH * 3);
+				visual.setStrokeWidth(
+						FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH * 2);
 				// XXX: place behind selection feedback
 				visual.toBack();
 			} else {
-				visual.setStrokeWidth(STROKE_WIDTH);
+				visual.setStrokeWidth(DEFAULT_STROKE_WIDTH);
 			}
 		} else {
 			// stroke outside
@@ -136,17 +138,18 @@ public class FXFocusFeedbackPart
 			// TODO: adjust stroke width to get hair lines
 			// increase geometry size if selected
 			if (selected.contains(anchorage)) {
-				visual.resizeGeometry(
-						feedbackGeometry.getBounds().getWidth()
-								+ FXSelectionFeedbackPart.STROKE_WIDTH * 2,
+				visual.resizeGeometry(feedbackGeometry.getBounds().getWidth()
+						+ FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH * 2,
 						feedbackGeometry.getBounds().getHeight()
-								+ FXSelectionFeedbackPart.STROKE_WIDTH * 2);
-				visual.setGeometry(
-						feedbackGeometry.getTransformed(new AffineTransform(1,
-								0, 0, 1, -FXSelectionFeedbackPart.STROKE_WIDTH,
-								-FXSelectionFeedbackPart.STROKE_WIDTH)));
+								+ FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH
+										* 2);
+				visual.setGeometry(feedbackGeometry
+						.getTransformed(new AffineTransform(1, 0, 0, 1,
+								-FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH,
+								-FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH)));
 			}
 		}
+		visual.toBack();
 	}
 
 	/**

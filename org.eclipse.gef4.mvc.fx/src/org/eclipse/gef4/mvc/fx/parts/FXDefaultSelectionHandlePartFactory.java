@@ -49,6 +49,16 @@ public class FXDefaultSelectionHandlePartFactory
 		implements IHandlePartFactory<Node> {
 
 	/**
+	 * A binding key for the fill color of intra segment handles.
+	 */
+	public static final String INSERT_HANDLE_COLOR = "INSERT_HANDLE_COLOR";
+
+	/**
+	 * A binding key for the fill color of segment end handles.
+	 */
+	public static final String MOVE_HANDLE_COLOR = "MOVE_HANDLE_COLOR";
+
+	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
 	 * used to generate selection handles.
 	 */

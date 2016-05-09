@@ -16,6 +16,8 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -35,33 +37,21 @@ public class FXCircleSegmentHandlePart
 		extends AbstractFXSegmentHandlePart<Circle> {
 
 	/**
-	 * The default stroke color for this part's visualization.
-	 */
-	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
-
-	/**
-	 * The default fill color for this part's visualization.
-	 */
-	public static final Color DEFAULT_FILL = Color.WHITE;
-
-	/**
-	 * The default fill color for this part's visualization when it's anchorage
-	 * is an {@link Connection} and this handle part represents a connected
-	 * point of that {@link Connection}.
-	 */
-	public static final Color CONNECTED_FILL = Color.web("#ff0000");
-
-	/**
-	 * The default fill color for this part's visualization when it's anchorage
-	 * is an {@link Connection} and this handle part represents an unconnected
-	 * point of that {@link Connection}.
-	 */
-	public static final Color UNCONNECTED_FILL = Color.web("#d5faff");
-
-	/**
 	 * The default size for this part's visualization.
 	 */
-	public static final double DEFAULT_SIZE = 5d;
+	protected static final double DEFAULT_SIZE = 5;
+
+	@Inject
+	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
+	private Color stroke;
+
+	@Inject
+	@Named(FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR)
+	private Color insertFill;
+
+	@Inject
+	@Named(FXDefaultSelectionHandlePartFactory.MOVE_HANDLE_COLOR)
+	private Color moveFill;
 
 	/**
 	 * Creates the visual representation of this selection handle.
@@ -72,8 +62,8 @@ public class FXCircleSegmentHandlePart
 	protected Circle createVisual() {
 		Circle circle = new Circle(DEFAULT_SIZE / 2d);
 		// initialize invariant visual properties
-		circle.setStroke(DEFAULT_STROKE);
-		circle.setFill(DEFAULT_FILL);
+		circle.setStroke(stroke);
+		circle.setFill(moveFill);
 		circle.setStrokeWidth(1);
 		circle.setStrokeType(StrokeType.OUTSIDE);
 		return circle;
@@ -88,10 +78,8 @@ public class FXCircleSegmentHandlePart
 	/**
 	 * Updates the color of this part's visualization. If this handle part
 	 * represents a way or end point of an {@link Connection}, it's color will
-	 * be set to {@link #CONNECTED_FILL} if that handle is connected to another
-	 * part, and {@link #UNCONNECTED_FILL} otherwise. If this handle part
-	 * represents a middle point on a segment, it's color will be set to
-	 * {@link #DEFAULT_FILL}.
+	 * be set to indicate whether the handle is connected to another part or
+	 * not.
 	 */
 	protected void updateColor() {
 		// only update when bound to anchorage
@@ -106,9 +94,10 @@ public class FXCircleSegmentHandlePart
 			return;
 		}
 		if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
-			// handle in the middle of a segment
-			visual.setFill(FXCircleSegmentHandlePart.DEFAULT_FILL);
+			visual.setFill(insertFill);
+			visual.setRadius(DEFAULT_SIZE * 2d / 5d);
 		} else {
+			visual.setRadius(DEFAULT_SIZE / 2d);
 			// determine connected state for end point handles
 			boolean connected = false;
 			IVisualPart<Node, ? extends Node> targetPart = anchorages.keySet()
@@ -126,9 +115,9 @@ public class FXCircleSegmentHandlePart
 			}
 			// update color according to connected state
 			if (connected) {
-				visual.setFill(CONNECTED_FILL);
+				visual.setFill(Color.RED);
 			} else {
-				visual.setFill(UNCONNECTED_FILL);
+				visual.setFill(moveFill);
 			}
 		}
 	}

@@ -24,7 +24,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -43,17 +45,15 @@ public class FXSelectionFeedbackPart
 	/**
 	 * The stroke width for selection feedback.
 	 */
-	public static final double STROKE_WIDTH = 1.5d;
+	protected static final double DEFAULT_STROKE_WIDTH = 1.5d;
 
-	/**
-	 * The primary selection {@link Color}.
-	 */
-	public static final Color PRIMARY_COLOR = Color.BLACK;
+	@Inject
+	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
+	private Color primarySelectionStroke;
 
-	/**
-	 * The secondary selection {@link Color}.
-	 */
-	public static final Color SECONDARY_COLOR = Color.web("#666666");
+	@Inject
+	@Named(FXDefaultSelectionFeedbackPartFactory.SECONDARY_SELECTION_FEEDBACK_COLOR)
+	private Color secondarySelectionStroke;
 
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
@@ -69,7 +69,7 @@ public class FXSelectionFeedbackPart
 		feedbackVisual.setFill(Color.TRANSPARENT);
 		feedbackVisual.setMouseTransparent(true);
 		feedbackVisual.setManaged(false);
-		feedbackVisual.setStrokeWidth(STROKE_WIDTH);
+		feedbackVisual.setStrokeWidth(DEFAULT_STROKE_WIDTH);
 		return feedbackVisual;
 	}
 
@@ -108,12 +108,12 @@ public class FXSelectionFeedbackPart
 				}).getSelectionUnmodifiable();
 		if (selected.get(0) == anchorage) {
 			// primary selection
-			visual.setStroke(PRIMARY_COLOR);
+			visual.setStroke(primarySelectionStroke);
 			// XXX: place before focus feedback
 			visual.toFront();
 		} else {
 			// secondary selection
-			visual.setStroke(SECONDARY_COLOR);
+			visual.setStroke(secondarySelectionStroke);
 		}
 	}
 

@@ -19,6 +19,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -38,25 +40,32 @@ public class FXRectangleSegmentHandlePart
 	/**
 	 * The default width for this part's visualization.
 	 */
-	public static final double DEFAULT_WIDTH = 3;
+	protected static final double DEFAULT_WIDTH = 4;
 
 	/**
 	 * The default length for this part's visualization.
 	 */
-	public static final double DEFAULT_LENGTH = 8;
+	protected static final double DEFAULT_LENGTH = 8;
 
-	/**
-	 * The default stroke color for this part's visualization.
-	 */
-	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
+	@Inject
+	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
+	private Color selectionStroke;
+
+	@Inject
+	@Named(FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR)
+	private Color insertFill;
+
+	@Inject
+	@Named(FXDefaultSelectionHandlePartFactory.MOVE_HANDLE_COLOR)
+	private Color moveFill;
 
 	@Override
 	protected javafx.scene.shape.Rectangle createVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
 		visual.setTranslateX(-DEFAULT_LENGTH / 2);
 		visual.setTranslateY(-DEFAULT_WIDTH / 2);
-		visual.setFill(FXCircleSegmentHandlePart.DEFAULT_FILL);
-		visual.setStroke(DEFAULT_STROKE);
+		visual.setFill(moveFill);
+		visual.setStroke(selectionStroke);
 		visual.setWidth(DEFAULT_LENGTH);
 		visual.setHeight(DEFAULT_WIDTH);
 		visual.setStrokeWidth(1);
@@ -73,11 +82,8 @@ public class FXRectangleSegmentHandlePart
 	/**
 	 * Updates the color of this part's visualization. If this handle part
 	 * represents a way or end point of an {@link Connection}, it's color will
-	 * be set to {@link FXCircleSegmentHandlePart#CONNECTED_FILL} if that handle
-	 * is connected to another part, and
-	 * {@link FXCircleSegmentHandlePart#UNCONNECTED_FILL} otherwise. If this
-	 * handle part represents a middle point on a segment, it's color will be
-	 * set to {@link FXCircleSegmentHandlePart#DEFAULT_FILL}.
+	 * be set to indicate whether the handle is connected to another part or
+	 * not.
 	 */
 	protected void updateColor() {
 		// only update when bound to anchorage
@@ -93,13 +99,21 @@ public class FXRectangleSegmentHandlePart
 		}
 
 		if (getSegmentParameter() == 0.5) {
-			// handle in the middle of a segment
-			visual.setFill(FXCircleSegmentHandlePart.UNCONNECTED_FILL);
+			// move handle in the middle of a segment
+			visual.setFill(moveFill);
 		} else if (getSegmentParameter() != 0.0
 				&& getSegmentParameter() != 1.0) {
-			// quarter handles
-			visual.setFill(FXCircleSegmentHandlePart.DEFAULT_FILL);
+			// quarter handles (creation)
+			visual.setFill(insertFill);
+			visual.setWidth(DEFAULT_LENGTH * 4d / 5d);
+			visual.setHeight(DEFAULT_WIDTH * 4d / 5d);
+			visual.setTranslateX(-DEFAULT_LENGTH / 2d + DEFAULT_LENGTH / 10d);
+			visual.setTranslateY(-DEFAULT_WIDTH / 2d + DEFAULT_WIDTH / 10d);
 		} else {
+			visual.setTranslateX(-DEFAULT_LENGTH / 2);
+			visual.setTranslateY(-DEFAULT_WIDTH / 2);
+			visual.setWidth(DEFAULT_LENGTH);
+			visual.setHeight(DEFAULT_WIDTH);
 			// end point handles
 			boolean connected = false;
 			IVisualPart<Node, ? extends Node> targetPart = anchorages.keySet()
@@ -117,9 +131,9 @@ public class FXRectangleSegmentHandlePart
 			}
 			// update color according to connected state
 			if (connected) {
-				visual.setFill(FXCircleSegmentHandlePart.CONNECTED_FILL);
+				visual.setFill(Color.RED);
 			} else {
-				visual.setFill(FXCircleSegmentHandlePart.UNCONNECTED_FILL);
+				visual.setFill(moveFill);
 			}
 		}
 	}
