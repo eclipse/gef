@@ -186,6 +186,9 @@ public abstract class AbstractFXEditor extends EditorPart {
 				propertySheetPage = createPropertySheetPage();
 			}
 			return propertySheetPage;
+		} else if (UndoRedoActionGroup.class.equals(key)) {
+			// used by action bar contributor
+			return undoRedoActionGroup;
 		} else if (IUndoContext.class.equals(key)) {
 			return domain.getUndoContext();
 		} else if (IOperationHistory.class.equals(key)) {
