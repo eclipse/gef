@@ -35,8 +35,6 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -288,13 +286,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 		// create shape for border and background
 		shape = createDefaultShape();
-		shape.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				System.out.println("shape bounds of part " + this + " changed: " + newValue);
-			}
-		});
 
 		// initialize image view
 		iconImageView = new ImageView();
@@ -310,13 +301,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 		hbox.getChildren().addAll(iconImageView, labelText);
 		hbox.setAlignment(Pos.CENTER);
 		hbox.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
-		hbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				System.out.println("hbox bounds of part " + this + " changed: " + newValue);
-			}
-		});
 
 		nestedContentPane = createNestedContentPane();
 		nestedContentStackPane = new StackPane();
@@ -336,23 +320,9 @@ public class NodePart extends AbstractFXContentPart<Group>
 		vbox.setAlignment(Pos.CENTER);
 		vbox.getChildren().addAll(hbox);
 		vbox.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
-		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				System.out.println("vbox bounds of part " + this + " changed: " + newValue);
-			}
-		});
 
 		// place the box below the other visuals
 		group.getChildren().addAll(shape, vbox);
-		group.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				System.out.println("group bounds of part " + this + " changed: " + newValue);
-			}
-		});
 		return group;
 	}
 
