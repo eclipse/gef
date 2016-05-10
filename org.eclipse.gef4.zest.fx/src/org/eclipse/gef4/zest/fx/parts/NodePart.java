@@ -35,6 +35,8 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -122,16 +124,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 * The default height of the nested graph area.
 	 */
 	protected static final double DEFAULT_CHILDREN_PANE_HEIGHT = 300;
-
-	/**
-	 * The minimum width for the nested graph area.
-	 */
-	protected static final double CHILDREN_PANE_WIDTH_THRESHOLD = 100;
-
-	/**
-	 * The minimum height for the nested graph area.
-	 */
-	protected static final double CHILDREN_PANE_HEIGHT_THRESHOLD = 100;
 
 	/**
 	 * The default zoom factor that is applied to the nested graph area.
@@ -246,9 +238,14 @@ public class NodePart extends AbstractFXContentPart<Group>
 			}
 
 			@Override
+			protected void layoutChildren() {
+				// we directly layout our children from within resize
+			};
+
+			@Override
 			public double maxHeight(double width) {
 				return vbox.maxHeight(width);
-			};
+			}
 
 			@Override
 			public double maxWidth(double height) {
@@ -263,6 +260,16 @@ public class NodePart extends AbstractFXContentPart<Group>
 			@Override
 			public double minWidth(double height) {
 				return vbox.minWidth(height);
+			}
+
+			@Override
+			public double prefHeight(double width) {
+				return vbox.prefHeight(width);
+			}
+
+			@Override
+			public double prefWidth(double height) {
+				return vbox.prefWidth(height);
 			}
 
 			@Override
@@ -281,6 +288,13 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 		// create shape for border and background
 		shape = createDefaultShape();
+		shape.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
+				System.out.println("shape bounds of part " + this + " changed: " + newValue);
+			}
+		});
 
 		// initialize image view
 		iconImageView = new ImageView();
@@ -295,7 +309,14 @@ public class NodePart extends AbstractFXContentPart<Group>
 		HBox hbox = new HBox();
 		hbox.getChildren().addAll(iconImageView, labelText);
 		hbox.setAlignment(Pos.CENTER);
-		hbox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+		hbox.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+		hbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
+				System.out.println("hbox bounds of part " + this + " changed: " + newValue);
+			}
+		});
 
 		nestedContentPane = createNestedContentPane();
 		nestedContentStackPane = new StackPane();
@@ -312,12 +333,26 @@ public class NodePart extends AbstractFXContentPart<Group>
 		// put nested content stack pane below image and text
 		vbox = new VBox();
 		vbox.setMouseTransparent(true);
-		vbox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 		vbox.setAlignment(Pos.CENTER);
 		vbox.getChildren().addAll(hbox);
+		vbox.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
+				System.out.println("vbox bounds of part " + this + " changed: " + newValue);
+			}
+		});
 
 		// place the box below the other visuals
 		group.getChildren().addAll(shape, vbox);
+		group.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
+				System.out.println("group bounds of part " + this + " changed: " + newValue);
+			}
+		});
 		return group;
 	}
 
@@ -399,7 +434,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 			if (isNesting()) {
 				if (!vbox.getChildren().contains(nestedContentAnchorPane)) {
 					vbox.getChildren().add(nestedContentAnchorPane);
-					if (vbox.getPrefWidth() == 0 && vbox.getPrefHeight() == 0) {
+					if (vbox.getPrefWidth() == Region.USE_COMPUTED_SIZE
+							&& vbox.getPrefHeight() == Region.USE_COMPUTED_SIZE) {
 						vbox.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
 								DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
 						vbox.autosize();
@@ -416,7 +452,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 			} else {
 				if (vbox.getChildren().contains(nestedContentAnchorPane)) {
 					vbox.getChildren().remove(nestedContentAnchorPane);
-					vbox.setPrefSize(0, 0);
+					vbox.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 					vbox.autosize();
 				}
 			}
@@ -439,6 +475,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 		Dimension size = ZestProperties.getSize(node);
 		if (size != null) {
 			getVisual().resize(size.width, size.height);
+		} else {
+			getVisual().autosize();
 		}
 	}
 
