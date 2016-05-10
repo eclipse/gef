@@ -21,8 +21,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.activate.ActivatableSupport;
-import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.graph.Edge;
@@ -57,7 +55,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.embed.swt.FXCanvas;
 import javafx.embed.swt.SWTFXUtils;
@@ -73,41 +70,14 @@ import javafx.scene.Scene;
  */
 public class ZestContentViewer extends ContentViewer {
 
-	private final class SelectionNotifier
-			implements ListChangeListener<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>>, IActivatable {
-
-		private ActivatableSupport acs = new ActivatableSupport(this);
-
-		@Override
-		public void activate() {
-			acs.activate();
-		}
-
-		@Override
-		public ReadOnlyBooleanProperty activeProperty() {
-			return acs.activeProperty();
-		}
-
-		@Override
-		public void deactivate() {
-			acs.deactivate();
-		}
-
-		@Override
-		public boolean isActive() {
-			return acs.isActive();
-		}
-
+	private ListChangeListener<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> selectionNotifier = new ListChangeListener<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>>() {
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> c) {
-			if (isActive()) {
-				fireSelectionChanged(new SelectionChangedEvent(ZestContentViewer.this, getSelection()));
-			}
+			fireSelectionChanged(new SelectionChangedEvent(ZestContentViewer.this, getSelection()));
 		}
-	}
+	};
 
-	private SelectionNotifier selectionNotifier = new SelectionNotifier();
 	private Injector injector;
 	private FXCanvas canvas;
 	private FXDomain domain;
@@ -168,7 +138,6 @@ public class ZestContentViewer extends ContentViewer {
 		canvas.setScene(new Scene(viewer.getCanvas()));
 
 		getSelectionModel().getSelectionUnmodifiable().addListener(selectionNotifier);
-		selectionNotifier.activate();
 
 		// activate domain
 		domain.activate();
@@ -455,6 +424,7 @@ public class ZestContentViewer extends ContentViewer {
 	 *
 	 * @return The {@link FXViewer} that displays the contents.
 	 */
+	// TODO: rename to getContentViewer()
 	public FXViewer getFXViewer() {
 		return viewer;
 	}
@@ -505,7 +475,6 @@ public class ZestContentViewer extends ContentViewer {
 
 	@Override
 	protected void handleDispose(DisposeEvent event) {
-		selectionNotifier.deactivate();
 		getSelectionModel().getSelectionUnmodifiable().removeListener(selectionNotifier);
 
 		domain.deactivate();
