@@ -424,7 +424,6 @@ public class ZestContentViewer extends ContentViewer {
 	 *
 	 * @return The {@link FXViewer} that displays the contents.
 	 */
-	// TODO: rename to getContentViewer()
 	public FXViewer getFXViewer() {
 		return viewer;
 	}
