@@ -49,49 +49,43 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	public static final String DASHES_PROPERTY = "dashes";
 
 	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
-		if (waypoints == null || waypoints.length == 0) {
-			waypoints = new Point[] { new Point(), new Point() };
-		} else if (waypoints.length == 1) {
-			waypoints = new Point[] { new Point(), waypoints[0] };
+		if (waypoints == null || waypoints.length < 2) {
+			throw new IllegalArgumentException("Need at least two waypoints.");
 		}
 		return PolyBezier.interpolateCubic(waypoints);
 	}
 
-	private final ReadOnlyListWrapperEx<Point> wayPointsProperty = new ReadOnlyListWrapperEx<>(
-			this, WAY_POINTS_PROPERTY,
-			CollectionUtils.<Point> observableArrayList());
-	private final ObjectProperty<Decoration> sourceDecorationProperty = new SimpleObjectProperty<>(
-			this, SOURCE_DECORATION_PROPERTY, Decoration.NONE);
-	private final ObjectProperty<Decoration> targetDecorationProperty = new SimpleObjectProperty<>(
-			this, TARGET_DECORATION_PROPERTY, Decoration.NONE);
-	private final ObjectProperty<RoutingStyle> routingStyleProperty = new SimpleObjectProperty<>(
-			this, ROUTING_STYLE_PROPERTY, RoutingStyle.STRAIGHT);
-	private final ReadOnlyListWrapperEx<Double> dashesProperty = new ReadOnlyListWrapperEx<>(
-			this, DASHES_PROPERTY,
+	private final ReadOnlyListWrapperEx<Point> wayPointsProperty = new ReadOnlyListWrapperEx<>(this,
+			WAY_POINTS_PROPERTY, CollectionUtils.<Point> observableArrayList());
+	private final ObjectProperty<Decoration> sourceDecorationProperty = new SimpleObjectProperty<>(this,
+			SOURCE_DECORATION_PROPERTY, Decoration.NONE);
+	private final ObjectProperty<Decoration> targetDecorationProperty = new SimpleObjectProperty<>(this,
+			TARGET_DECORATION_PROPERTY, Decoration.NONE);
+	private final ObjectProperty<RoutingStyle> routingStyleProperty = new SimpleObjectProperty<>(this,
+			ROUTING_STYLE_PROPERTY, RoutingStyle.STRAIGHT);
+	private final ReadOnlyListWrapperEx<Double> dashesProperty = new ReadOnlyListWrapperEx<>(this, DASHES_PROPERTY,
 			CollectionUtils.<Double> observableArrayList());
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<>();
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<>();
 
-	public FXGeometricCurve(Point[] waypoints, Paint stroke, double strokeWidth,
-			Double[] dashes, Effect effect) {
-		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth,
-				effect);
+	public FXGeometricCurve(Point[] waypoints, Paint stroke, double strokeWidth, Double[] dashes, Effect effect) {
+		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth, effect);
+		if (waypoints.length < 2) {
+			throw new IllegalArgumentException("At least start and end point need to be specified,");
+		}
 		wayPointsProperty.addAll(Arrays.asList(waypoints));
 		dashesProperty.addAll(dashes);
 	}
 
-	public void addSourceAnchorage(
-			AbstractFXGeometricElement<? extends IGeometry> anchored) {
+	public void addSourceAnchorage(AbstractFXGeometricElement<? extends IGeometry> anchored) {
 		sourceAnchorages.add(anchored);
 	}
 
-	public void addTargetAnchorage(
-			AbstractFXGeometricElement<? extends IGeometry> anchored) {
+	public void addTargetAnchorage(AbstractFXGeometricElement<? extends IGeometry> anchored) {
 		targetAnchorages.add(anchored);
 	}
 
 	public void addWayPoint(int i, Point p) {
-		// TODO: check index != 0 && index != end
 		List<Point> points = getWayPointsCopy();
 		points.add(i, p);
 		setWayPoints(points.toArray(new Point[] {}));
@@ -170,7 +164,9 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public void setWayPoints(Point... waypoints) {
-		// cache waypoints and polybezier
+		if (waypoints.length < 2) {
+			throw new IllegalArgumentException("Need at least two waypoints.");
+		}
 		this.wayPointsProperty.setAll(Arrays.asList(waypoints));
 		setGeometry(constructCurveFromWayPoints(waypoints));
 	}

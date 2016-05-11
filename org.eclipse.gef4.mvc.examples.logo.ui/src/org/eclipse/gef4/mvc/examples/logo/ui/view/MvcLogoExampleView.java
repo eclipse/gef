@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.view;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -160,10 +161,31 @@ public class MvcLogoExampleView extends AbstractFXView {
 								// clear way anchors using bend policy
 								FXCurvePropertySource ps = (FXCurvePropertySource) changeRoutingStyleOperation
 										.getPropertySource();
+
+								// preserve first and last waypoint, but clear
+								// all intermediate points
+								List<Point> newWaypoints = new ArrayList<>();
+								List<Point> currentWaypoints = ps.getCurve().getWayPointsCopy();
+								if (currentWaypoints.size() > 0) {
+									newWaypoints.add(currentWaypoints.get(0));
+								}
+								else {
+									newWaypoints.add(new Point());
+								}
+								if (currentWaypoints.size() > 1) {
+									newWaypoints
+											.add(currentWaypoints
+													.get(currentWaypoints
+															.size() - 1));
+								}
+								else {
+									newWaypoints.add(new Point());
+								}
+
 								ChangeWayPointsOperation clearWaypointsOperation = new ChangeWayPointsOperation(
 										"Clear waypoints", ps.getCurve(),
-										ps.getCurve().getWayPointsCopy(),
-										Collections.<Point> emptyList());
+										currentWaypoints,
+										newWaypoints);
 								AbstractCompositeOperation c = new ForwardUndoCompositeOperation(
 										"Change routing style");
 								c.add(changeRoutingStyleOperation);

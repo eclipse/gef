@@ -138,12 +138,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 					// TODO: introduce setter so this is more concise
 					getContent().addSourceAnchorage(
 							(AbstractFXGeometricElement<? extends IGeometry>) bp.getContentAnchorage());
+					// update start hint
+					waypoints.add(bp.getPosition());
 				}
 				if (i == bendPoints.size() - 1) {
 					// update end anchorage
 					// TODO: introduce setter so this is more concise
 					getContent().addTargetAnchorage(
 							(AbstractFXGeometricElement<? extends IGeometry>) bp.getContentAnchorage());
+					// update end point hint
+					waypoints.add(bp.getPosition());
 				}
 			} else {
 				waypoints.add(bp.getPosition());
@@ -233,19 +237,17 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		}
 
 		if (!getContentAnchoragesUnmodifiable().containsValue(START_ROLE)) {
-			if (!wayPoints.isEmpty()) {
-				visual.setStartPoint(wayPoints.remove(0));
-			} else {
-				visual.setStartPoint(new Point());
-			}
+			visual.setStartPoint(wayPoints.remove(0));
+		} else {
+			visual.setStartPointHint(wayPoints.remove(0));
 		}
+
 		if (!getContentAnchoragesUnmodifiable().containsValue(END_ROLE)) {
-			if (!wayPoints.isEmpty()) {
-				visual.setEndPoint(wayPoints.remove(wayPoints.size() - 1));
-			} else {
-				visual.setEndPoint(new Point());
-			}
+			visual.setEndPoint(wayPoints.remove(wayPoints.size() - 1));
+		} else {
+			visual.setEndPointHint(wayPoints.remove(wayPoints.size() - 1));
 		}
+
 		if (!visual.getControlPoints().equals(wayPoints)) {
 			visual.setControlPoints(wayPoints);
 		}

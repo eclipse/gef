@@ -237,17 +237,21 @@ public class FXGeometricModel {
 
 	// selection bounds
 	// TODO: add transform to the curves
-	private final FXGeometricCurve selectionBoundsTopLine = new FXGeometricCurve(new Point[] { new Point(140, 24) },
-			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
+	private final FXGeometricCurve selectionBoundsTopLine = new FXGeometricCurve(
+			new Point[] { new Point(), new Point(140, 24), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
+			GEF_DASH_PATTERN, null);
 
-	private final FXGeometricCurve selectionBoundsLeftLine = new FXGeometricCurve(new Point[] { new Point(19, 70) },
-			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
+	private final FXGeometricCurve selectionBoundsLeftLine = new FXGeometricCurve(
+			new Point[] { new Point(), new Point(19, 70), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
+			GEF_DASH_PATTERN, null);
 
-	private final FXGeometricCurve selectionBoundsBottomLine = new FXGeometricCurve(new Point[] { new Point(140, 118) },
-			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, new Double[] { 15d, 10d }, null);
+	private final FXGeometricCurve selectionBoundsBottomLine = new FXGeometricCurve(
+			new Point[] { new Point(), new Point(140, 118), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
+			new Double[] { 15d, 10d }, null);
 
-	private final FXGeometricCurve selectionBoundsRightLine = new FXGeometricCurve(new Point[] { new Point(250, 70) },
-			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, new Double[] { 15d, 10d }, null);
+	private final FXGeometricCurve selectionBoundsRightLine = new FXGeometricCurve(
+			new Point[] { new Point(), new Point(250, 70), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
+			new Double[] { 15d, 10d }, null);
 	// g shapes
 	// TODO: create multi shape visual for G shape
 	private final FXGeometricShape gBaseShape = new FXGeometricShape(createGBaseShapeGeometry(),

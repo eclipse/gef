@@ -36,13 +36,19 @@ public interface IBendableContentPart<VR, V extends VR>
 		 *
 		 * @param contentAnchorage
 		 *            The content anchorage, to which the point is attached.
+		 * @param position
+		 *            A position (hint) for the attached bend point.
 		 */
-		public BendPoint(Object contentAnchorage) {
+		public BendPoint(Object contentAnchorage, Point position) {
 			if (contentAnchorage == null) {
 				throw new IllegalArgumentException(
 						"contentAnchorage may not be null.");
 			}
+			if (position == null) {
+				throw new IllegalArgumentException("position may not be null");
+			}
 			this.contentAnchorage = contentAnchorage;
+			this.position = position;
 		}
 
 		/**
@@ -68,9 +74,11 @@ public interface IBendableContentPart<VR, V extends VR>
 		}
 
 		/**
-		 * The position of the unattached bend point.
+		 * The position of the unattached bend point or the (optional) position
+		 * hint for an attached bend point.
 		 *
-		 * @return A point representing the position.
+		 * @return A point representing the position if the bend point is not
+		 *         attached, or a position hint for an attached bend point.
 		 */
 		public Point getPosition() {
 			return position;
@@ -91,8 +99,7 @@ public interface IBendableContentPart<VR, V extends VR>
 	}
 
 	/**
-	 * Bends the content element as specified through the given control points
-	 * or anchorages.
+	 * Bends the content element as specified through the given bend points.
 	 *
 	 * @param bendPoints
 	 *            The bend points.

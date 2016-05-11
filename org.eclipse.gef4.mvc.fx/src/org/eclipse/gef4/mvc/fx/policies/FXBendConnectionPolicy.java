@@ -122,7 +122,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	}
 
 	/**
-	 * Retrieves the current bend points of the connection.
+	 * Retrieves the current bend points of the connection, which include the
+	 * start and end points, as well as the control points.
 	 *
 	 * @param connectionPart
 	 *            The connection part whose bend points to infer.
@@ -137,9 +138,19 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			IAnchor a = anchors.get(i);
 			if (!connection.getRouter().wasInserted(a)) {
 				if (connection.isConnected(i)) {
+					// provide a position hint for a connected bend point
+					Point positionHint = connection.getPoint(i);
+					if (i == 0 && connection.getStartPointHint() != null) {
+						positionHint = connection.getStartPointHint();
+					}
+					if (i == anchors.size() - 1
+							&& connection.getEndPointHint() != null) {
+						positionHint = connection.getEndPointHint();
+					}
 					bendPoints.add(new BendPoint(
 							FXBendConnectionPolicy.getAnchorageContent(
-									connectionPart.getRoot().getViewer(), a)));
+									connectionPart.getRoot().getViewer(), a),
+							positionHint));
 				} else {
 					bendPoints.add(new BendPoint(connection.getPoint(i)));
 				}
@@ -1029,30 +1040,30 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		select(secondAnchorHandle);
 	}
 
-	private void showAnchors(String message) {
-		List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-		String anchorsString = "";
-		for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
-				.size(); i++) {
-			IAnchor anchor = getConnection().getAnchor(i);
-			if (getConnection().getRouter().wasInserted(anchor)) {
-				anchorsString = anchorsString + " - "
-						+ anchor.getClass().toString() + "["
-						+ getConnection().getPoint(i) + "],\n";
-			} else {
-				anchorsString = anchorsString
-						+ (selectedExplicitAnchorIndices.contains(j) ? "(*)"
-								: " * ")
-						+ anchor.getClass().toString() + "["
-						+ getConnection().getPoint(i) + " :: "
-						+ NodeUtils.localToScene(getConnection(),
-								getConnection().getPoint(i))
-						+ "]" + " (" + newAnchors.get(j) + "),\n";
-				j++;
-			}
-		}
-		System.out.println(message + "\n" + anchorsString);
-	}
+	// private void showAnchors(String message) {
+	// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
+	// String anchorsString = "";
+	// for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
+	// .size(); i++) {
+	// IAnchor anchor = getConnection().getAnchor(i);
+	// if (getConnection().getRouter().wasInserted(anchor)) {
+	// anchorsString = anchorsString + " - "
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + "],\n";
+	// } else {
+	// anchorsString = anchorsString
+	// + (selectedExplicitAnchorIndices.contains(j) ? "(*)"
+	// : " * ")
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + " :: "
+	// + NodeUtils.localToScene(getConnection(),
+	// getConnection().getPoint(i))
+	// + "]" + " (" + newAnchors.get(j) + "),\n";
+	// j++;
+	// }
+	// }
+	// System.out.println(message + "\n" + anchorsString);
+	// }
 
 	/**
 	 * Tests if the current selection complies to the overlay specified by the
@@ -1212,13 +1223,13 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		return true;
 	}
 
-	private List<Integer> toList(int[] array) {
-		List<Integer> list = new ArrayList<>();
-		for (int item : array) {
-			list.add(item);
-		}
-		return list;
-	}
+	// private List<Integer> toList(int[] array) {
+	// List<Integer> list = new ArrayList<>();
+	// for (int item : array) {
+	// list.add(item);
+	// }
+	// return list;
+	// }
 
 	@Override
 	public String toString() {
