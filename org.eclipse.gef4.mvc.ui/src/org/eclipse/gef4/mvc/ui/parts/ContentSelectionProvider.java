@@ -115,6 +115,17 @@ public class ContentSelectionProvider<VR>
 		return selection;
 	}
 
+	/**
+	 * Returns the {@link IViewer} this {@link ContentSelectionProvider} is
+	 * bound to.
+	 *
+	 * @return The {@link IViewer} this {@link ContentSelectionProvider} is
+	 *         bound to.
+	 */
+	protected IViewer<VR> getViewer() {
+		return viewer;
+	}
+
 	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
