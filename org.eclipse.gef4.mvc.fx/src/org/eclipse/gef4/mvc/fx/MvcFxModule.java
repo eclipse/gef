@@ -52,7 +52,9 @@ import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.tools.ITargetPolicyResolver;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
@@ -62,6 +64,7 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
@@ -205,6 +208,24 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Adds a binding for {@link ContentModel} to the {@link AdapterMap} binder
+	 * for {@link AbstractViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindContentModelAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(ContentModel.class);
+	}
+
+	/**
 	 * Binds {@link ContentPartPool}, parameterized by {@link Node}, to the
 	 * {@link FXViewer} adaptable scope.
 	 */
@@ -247,23 +268,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindContentViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// bind root part
-		bindFXRootPartAsContentViewerAdapter(adapterMapBinder);
-		// bind parameterized default viewer models (others are already bound in
-		// superclass)
+		bindContentModelAsContentViewerAdapter(adapterMapBinder);
+		bindGridModelAsContentViewerAdapter(adapterMapBinder);
 		bindFocusModelAsContentViewerAdapter(adapterMapBinder);
 		bindHoverModelAsContentViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsContentViewerAdapter(adapterMapBinder);
-	}
-
-	/**
-	 * Creates a default binding for the fill color of create handles.
-	 */
-	protected void bindInsertHandleColor() {
-		binder().bind(Color.class)
-				.annotatedWith(Names
-						.named(FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR))
-				.toInstance(Color.WHITE);
+		bindFXRootPartAsContentViewerAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -831,6 +841,24 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Adds a binding for {@link GridModel} to the {@link AdapterMap} binder for
+	 * {@link AbstractViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindGridModelAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(GridModel.class);
+	}
+
+	/**
 	 * Binds {@link FXHoverBehavior} to the {@link HoverBehavior}, parameterized
 	 * with {@link Node}.
 	 */
@@ -958,6 +986,16 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME))
 				.to(FXDefaultHoverHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
+	}
+
+	/**
+	 * Creates a default binding for the fill color of create handles.
+	 */
+	protected void bindInsertHandleColor() {
+		binder().bind(Color.class)
+				.annotatedWith(Names
+						.named(FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR))
+				.toInstance(Color.WHITE);
 	}
 
 	/**

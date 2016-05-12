@@ -61,6 +61,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -318,9 +319,7 @@ public class FXBendConnectionPolicyTests {
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
 		}
 
-		@Override
 		protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			super.bindAbstractViewerAdapters(adapterMapBinder);
 			// bind content part factory
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TestContentPartFactory.class);
 		}
@@ -346,6 +345,7 @@ public class FXBendConnectionPolicyTests {
 		@Override
 		protected void configure() {
 			super.configure();
+			bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
 			// contents
 			bindAnchorageAdapters(AdapterMaps.getAdapterMapBinder(binder(), AnchoragePart.class));
 			bindConnectionAdapters(AdapterMaps.getAdapterMapBinder(binder(), ConnectionPart.class));

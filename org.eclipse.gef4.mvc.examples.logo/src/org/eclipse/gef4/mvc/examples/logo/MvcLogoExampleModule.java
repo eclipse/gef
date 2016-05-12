@@ -330,6 +330,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindPaletteViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		bindContentModelAsContentViewerAdapter(adapterMapBinder);
 		// bind root part
 		bindFXRootPartAsPaletteViewerAdapter(adapterMapBinder);
 		// bind parameterized default viewer models

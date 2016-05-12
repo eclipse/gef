@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -32,6 +33,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef4.mvc.tools.ITool;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -89,9 +91,7 @@ public class FXClickDragToolTests {
 			throws InterruptedException, InvocationTargetException, AWTException {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
-			@Override
 			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-				super.bindAbstractViewerAdapters(adapterMapBinder);
 				// bind content part factory
 				adapterMapBinder.addBinding(AdapterKey.defaultRole()).toInstance(new IContentPartFactory<Node>() {
 					@Override
@@ -112,6 +112,7 @@ public class FXClickDragToolTests {
 			protected void configure() {
 				super.configure();
 				bindDomain();
+				bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
 			}
 		});
 

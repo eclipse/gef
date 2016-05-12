@@ -24,15 +24,11 @@ import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.domain.IDomain;
-import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
-import org.eclipse.gef4.mvc.viewer.AbstractViewer;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
@@ -173,26 +169,6 @@ public class MvcModule<VR> extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractViewer} and
-	 * all sub-classes. May be overwritten by sub-classes to change the default
-	 * bindings.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractViewer} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindAbstractViewerAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// bind (default) viewer models as adapters
-		bindContentModelAsAbstractViewerAdapter(adapterMapBinder);
-		bindGridModelAsAbstractViewerAdapter(adapterMapBinder);
-	}
-
-	/**
 	 * Adds (default) {@link AdapterMap} binding for {@link AbstractVisualPart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
@@ -208,57 +184,6 @@ public class MvcModule<VR> extends AbstractModule {
 	protected void bindAbstractVisualPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// nothing to bind by default
-	}
-
-	/**
-	 * Binds {@link ContentModel} in adaptable scope of {@link IViewer}.
-	 */
-	protected void bindContentModel() {
-		binder().bind(ContentModel.class)
-				.in(AdaptableScopes.typed(IViewer.class));
-	}
-
-	/**
-	 * Adds a binding for {@link ContentModel} to the {@link AdapterMap} binder
-	 * for {@link AbstractViewer}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractViewer} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindContentModelAsAbstractViewerAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ContentModel.class);
-	}
-
-	/**
-	 * Binds {@link GridModel} in adaptable scope of {@link IViewer}.
-	 */
-	protected void bindGridModel() {
-		binder().bind(GridModel.class).in(AdaptableScopes.typed(IViewer.class));
-	}
-
-	/**
-	 * Adds a binding for {@link GridModel} to the {@link AdapterMap} binder for
-	 * {@link AbstractViewer}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractViewer} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindGridModelAsAbstractViewerAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(GridModel.class);
 	}
 
 	/**
@@ -288,17 +213,9 @@ public class MvcModule<VR> extends AbstractModule {
 		bindIUndoContext();
 		bindIOperationHistory();
 
-		// bind default viewer models
-		bindContentModel();
-		bindGridModel();
-
 		// bind domain adapters
 		bindAbstractDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				AbstractDomain.class));
-
-		// bind viewer adapters
-		bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				AbstractViewer.class));
 
 		// bind visual part adapters
 		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),

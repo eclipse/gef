@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
@@ -31,6 +32,7 @@ import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXApplicationThreadRule;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -113,10 +115,14 @@ public class FXTransformPolicyTests {
 				adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformPolicy.class);
 			}
 
-			@Override
 			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-				super.bindAbstractViewerAdapters(adapterMapBinder);
 				adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TxContentPartFactory.class);
+			}
+
+			@Override
+			protected void configure() {
+				super.configure();
+				bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
 			}
 		});
 		injector.injectMembers(this);

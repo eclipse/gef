@@ -254,6 +254,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 		AnchorPane.setRightAnchor(paletteRootNode, 0d);
 		AnchorPane.setTopAnchor(paletteRootNode, 0d);
 		// disable grid layer for palette
+
 		paletteRootNode.setZoomGrid(false);
 		paletteRootNode.setShowGrid(false);
 		paletteRootNode.setHorizontalScrollBarPolicy(ScrollBarPolicy.NEVER);

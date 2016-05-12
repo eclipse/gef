@@ -19,6 +19,7 @@ import java.awt.Robot;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
@@ -30,6 +31,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef4.mvc.tools.ITool;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -86,9 +88,7 @@ public class FXTypeToolTests {
 	public void singleExecutionTransactionUsedForInteraction() throws InterruptedException, AWTException {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
-			@Override
 			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-				super.bindAbstractViewerAdapters(adapterMapBinder);
 				// bind content part factory
 				adapterMapBinder.addBinding(AdapterKey.defaultRole()).toInstance(new IContentPartFactory<Node>() {
 					@Override
@@ -109,6 +109,7 @@ public class FXTypeToolTests {
 			protected void configure() {
 				super.configure();
 				bindDomain();
+				bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
 			}
 		});
 		injector.injectMembers(this);

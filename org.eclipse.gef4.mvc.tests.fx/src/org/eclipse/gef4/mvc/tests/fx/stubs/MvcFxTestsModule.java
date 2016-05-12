@@ -16,11 +16,14 @@ import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.tests.stubs.cell.CellContentPartFactory;
 import org.eclipse.gef4.mvc.tests.stubs.cell.CellRootPart;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.TypeLiteral;
@@ -51,9 +54,9 @@ public class MvcFxTestsModule extends MvcModule<Node> {
 		});
 	}
 
-	@Override
 	protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindAbstractViewerAdapters(adapterMapBinder);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentModel.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(GridModel.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
 		});
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(new TypeLiteral<HoverModel<Node>>() {
@@ -74,6 +77,8 @@ public class MvcFxTestsModule extends MvcModule<Node> {
 
 		binder().bind(new TypeLiteral<IViewer<Node>>() {
 		}).to(MvcFxTestsViewer.class);
+
+		bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
 
 		// bind root part
 		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {

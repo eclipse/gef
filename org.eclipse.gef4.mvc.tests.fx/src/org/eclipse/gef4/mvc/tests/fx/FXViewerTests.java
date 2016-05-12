@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -26,6 +27,7 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -42,9 +44,7 @@ public class FXViewerTests {
 	public void properAdapterRegistration() {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
-			@Override
 			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-				super.bindAbstractViewerAdapters(adapterMapBinder);
 				// bind content part factory
 				adapterMapBinder.addBinding(AdapterKey.defaultRole()).toInstance(new IContentPartFactory<Node>() {
 					@Override
@@ -53,6 +53,12 @@ public class FXViewerTests {
 						return null;
 					}
 				});
+			}
+
+			@Override
+			protected void configure() {
+				super.configure();
+				bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
 			}
 		});
 		FXDomain domain = new FXDomain();

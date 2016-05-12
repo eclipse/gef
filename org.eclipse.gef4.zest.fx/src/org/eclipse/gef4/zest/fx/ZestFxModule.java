@@ -105,16 +105,10 @@ public class ZestFxModule extends MvcFxModule {
 				.to(ShapeBoundsProvider.class);
 	}
 
-	@Override
-	protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindAbstractViewerAdapters(adapterMapBinder);
-		bindNavigationModelAsAbstractViewerAdapter(adapterMapBinder);
-	}
-
 	/**
 	 * Adds a binding for an {@link IContentPartFactory} to the given
 	 * {@link MapBinder}.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to which a binding is added.
 	 */
@@ -125,6 +119,7 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindContentViewerAdapters(adapterMapBinder);
+		bindNavigationModelAsContentViewerAdapter(adapterMapBinder);
 		// content part factory
 		bindContentPartFactoryAsContentViewerAdapter(adapterMapBinder);
 		// models
@@ -339,7 +334,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
 	 */
-	protected void bindNavigationModelAsAbstractViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+	protected void bindNavigationModelAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NavigationModel.class);
 	}
 
