@@ -65,6 +65,9 @@ public class BendContentOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// TODO (bug #493515): retrieve current bend points from
+		// bendableContentPart and only
+		// call bendContent if a change occurred.
 		bendableContentPart.bendContent(finalBendPoints);
 		return Status.OK_STATUS;
 	}
@@ -89,6 +92,9 @@ public class BendContentOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// TODO (bug #493515): retrieve current bend points from
+		// bendableContentPart and only
+		// call bendContent if a change occurred.
 		bendableContentPart.bendContent(initialBendPoints);
 		return Status.OK_STATUS;
 	}

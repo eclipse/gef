@@ -129,6 +129,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 *            The connection part whose bend points to infer.
 	 * @return The list of bend points.
 	 */
+	// TODO (bug #493515): Migrate into an operation of IBendableContentPart
 	static List<BendPoint> getCurrentBendPoints(
 			IVisualPart<Node, ? extends Connection> connectionPart) {
 		List<BendPoint> bendPoints = new ArrayList<>();
