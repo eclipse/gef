@@ -28,6 +28,7 @@ import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
+import org.eclipse.gef4.mvc.examples.logo.behaviors.PaletteFocusBehavior;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.examples.logo.ui.properties.FXCurvePropertySource;
@@ -232,7 +233,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 		viewersPane.getChildren().addAll(contentRootNode, paletteRootNode);
 		// create palette indicator
 		Pane paletteIndicator = new Pane();
-		paletteIndicator.setStyle("-fx-background-color: darkgrey;");
+		paletteIndicator.setStyle("-fx-background-color: rgba(128,128,128,1);");
 		paletteIndicator.setMaxSize(10d, Double.MAX_VALUE);
 		paletteIndicator.setMinSize(10d, 0d);
 		// show palette indicator next to the viewer area
@@ -254,13 +255,11 @@ public class MvcLogoExampleView extends AbstractFXView {
 		AnchorPane.setRightAnchor(paletteRootNode, 0d);
 		AnchorPane.setTopAnchor(paletteRootNode, 0d);
 		// disable grid layer for palette
-
 		paletteRootNode.setZoomGrid(false);
 		paletteRootNode.setShowGrid(false);
 		paletteRootNode.setHorizontalScrollBarPolicy(ScrollBarPolicy.NEVER);
 		// set palette background
-		paletteRootNode
-				.setStyle("-fx-background-color: rgba(0.5, 0.5, 0.5, 0.5);");
+		paletteRootNode.setStyle(PaletteFocusBehavior.DEFAULT_STYLE);
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(hbox));
 	}

@@ -17,6 +17,7 @@ import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
+import org.eclipse.gef4.mvc.examples.logo.behaviors.PaletteFocusBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
@@ -68,6 +69,7 @@ import org.eclipse.gef4.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -109,6 +111,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTraverseFocusOnTypePolicy.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
+	}
+
+	protected void bindContentModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentModel.class);
 	}
 
 	@Override
@@ -284,7 +290,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindFXRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXRootPart.class)
+		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(FXRootPart.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
@@ -316,6 +322,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(PaletteFocusBehavior.class);
+	}
+
 	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link FXViewer} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
@@ -330,7 +340,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindPaletteViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		bindContentModelAsContentViewerAdapter(adapterMapBinder);
+		bindContentModelAsPaletteViewerAdapter(adapterMapBinder);
 		// bind root part
 		bindFXRootPartAsPaletteViewerAdapter(adapterMapBinder);
 		// bind parameterized default viewer models
@@ -339,6 +349,25 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
 		// bind content part factory
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoPaletteContentPartFactory.class);
+	}
+
+	protected void bindPaletteViewerRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// register (default) interaction policies (which are based on viewer
+		// models and do not depend on transaction policies)
+		bindFocusAndSelectOnClickPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXHoverOnHoverPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
+		// register change viewport policy
+		bindFXChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
+		// register default behaviors
+		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		// XXX: PaletteFocusBehavior only changes the viewer focus and default
+		// styles.
+		bindPaletteFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		// bind focus traversal policy
+		bindFocusTraversalPolicyAsFXRootPartAdapter(adapterMapBinder);
 	}
 
 	@SuppressWarnings("serial")
@@ -374,6 +403,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// bind additional adapters for the palette vierwer
 		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXViewer.class, PALETTE_VIEWER_ROLE));
+
+		// bind additional adapters for the palette vierwer root part
+		bindPaletteViewerRootPartAdapters(
+				AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class, PALETTE_VIEWER_ROLE));
 	}
 
 }

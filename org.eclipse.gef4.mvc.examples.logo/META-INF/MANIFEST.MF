@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.gef4.mvc.examples.logo;x-friends:="org.eclipse.gef4.mvc.examples.logo.ui,org.eclipse.gef4.mvc.examples.logo.web",
+ org.eclipse.gef4.mvc.examples.logo.behaviors;x-friends:="org.eclipse.gef4.mvc.examples.logo.ui,org.eclipse.gef4.mvc.examples.logo.web",
  org.eclipse.gef4.mvc.examples.logo.model;x-friends:="org.eclipse.gef4.mvc.examples.logo.ui,org.eclipse.gef4.mvc.examples.logo.web",
  org.eclipse.gef4.mvc.examples.logo.parts;x-friends:="org.eclipse.gef4.mvc.examples.logo.ui,org.eclipse.gef4.mvc.examples.logo.web",
  org.eclipse.gef4.mvc.examples.logo.policies;x-friends:="org.eclipse.gef4.mvc.examples.logo.ui,org.eclipse.gef4.mvc.examples.logo.web"

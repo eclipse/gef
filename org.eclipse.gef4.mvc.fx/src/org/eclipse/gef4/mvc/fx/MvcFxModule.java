@@ -277,6 +277,43 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link FXRootPart} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindContentViewerRootPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// register (default) interaction policies (which are based on viewer
+		// models and do not depend on transaction policies)
+		bindFocusAndSelectOnClickPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXMarqueeOnDragPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXHoverOnHoverPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXZoomOnPinchSpreadPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
+		// register change viewport policy
+		bindFXChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
+		// register default behaviors
+		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		bindGridBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		bindFXFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		// creation and deletion policy
+		bindCreationPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindDeletionPolicyAsFXRootPartAdapter(adapterMapBinder);
+		// bind focus traversal policy
+		bindFocusTraversalPolicyAsFXRootPartAdapter(adapterMapBinder);
+	}
+
+	/**
 	 * Adds a binding for {@link CreationPolicy} to the {@link AdapterMap}
 	 * binder for {@link AbstractRootPart}.
 	 *
@@ -632,43 +669,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link FXRootPart} and all
-	 * sub-classes. May be overwritten by sub-classes to change the default
-	 * bindings.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindFXRootPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// register (default) interaction policies (which are based on viewer
-		// models and do not depend on transaction policies)
-		bindFocusAndSelectOnClickPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXMarqueeOnDragPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXHoverOnHoverPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXZoomOnPinchSpreadPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
-		// register change viewport policy
-		bindFXChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
-		// register default behaviors
-		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		bindGridBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		bindFXFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		// creation and deletion policy
-		bindCreationPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindDeletionPolicyAsFXRootPartAdapter(adapterMapBinder);
-		// bind focus traversal policy
-		bindFocusTraversalPolicyAsFXRootPartAdapter(adapterMapBinder);
-	}
-
-	/**
 	 * Adds a binding for {@link IRootPart}, parameterized by {@link Node}, to
 	 * the {@link AdapterMap} binder for {@link FXViewer}.
 	 *
@@ -682,7 +682,8 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXRootPartAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDomain.CONTENT_VIEWER_ROLE))
 				.to(FXRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
@@ -1154,8 +1155,8 @@ public class MvcFxModule extends MvcModule<Node> {
 				FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 
 		// bind additional adapters for FXRootPart
-		bindFXRootPartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class));
+		bindContentViewerRootPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXRootPart.class, FXDomain.CONTENT_VIEWER_ROLE));
 
 		// bind additional adapters for FX specific visual parts
 		bindAbstractFXContentPartAdapters(AdapterMaps

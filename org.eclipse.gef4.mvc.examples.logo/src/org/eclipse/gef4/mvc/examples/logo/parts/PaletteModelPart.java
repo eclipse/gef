@@ -20,6 +20,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
@@ -32,7 +33,11 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 
 	@Override
 	protected VBox createVisual() {
-		return new VBox();
+		VBox vbox = new VBox();
+		// define padding and spacing
+		vbox.setPadding(new Insets(10));
+		vbox.setSpacing(10d);
+		return vbox;
 	}
 
 	@Override

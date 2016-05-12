@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.examples.AbstractMvcExample;
-import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.examples.logo.model.PaletteModel;
 
@@ -29,8 +28,8 @@ public class MvcLogoExample extends AbstractMvcExample {
 		return Collections.singletonList(new FXGeometricModel());
 	}
 
-	public static List<AbstractFXGeometricElement<?>> createPaletteContents() {
-		return new PaletteModel().getCreatableGeometries();
+	public static List<PaletteModel> createPaletteContents() {
+		return Collections.singletonList(new PaletteModel());
 	}
 
 	public static void main(String[] args) {

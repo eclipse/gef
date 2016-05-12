@@ -100,6 +100,19 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 		hasViewerFocusedFeedback = true;
 	}
 
+	/**
+	 * Transfers the keyboard focus to JavaFX, i.e. calls
+	 * {@link Node#requestFocus()} on the visual of the focus part, or on the
+	 * root visual if no part is focused.
+	 */
+	protected void applyFocusToVisual() {
+		if (focusPart == null) {
+			viewer.getRootPart().getVisual().requestFocus();
+		} else {
+			focusPart.getVisual().requestFocus();
+		}
+	}
+
 	@SuppressWarnings("serial")
 	@Override
 	protected void doActivate() {
@@ -178,19 +191,6 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 			((FXViewer) viewer).getCanvas().setStyle(FXViewer.DEFAULT_STYLE);
 		}
 		hasViewerFocusedFeedback = false;
-	}
-
-	/**
-	 * Transfers the keyboard focus to JavaFX, i.e. calls
-	 * {@link Node#requestFocus()} on the visual of the focus part, or on the
-	 * root visual if no part is focused.
-	 */
-	protected void applyFocusToVisual() {
-		if (focusPart == null) {
-			viewer.getRootPart().getVisual().requestFocus();
-		} else {
-			focusPart.getVisual().requestFocus();
-		}
 	}
 
 }

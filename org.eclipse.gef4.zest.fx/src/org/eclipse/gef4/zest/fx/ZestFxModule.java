@@ -21,6 +21,7 @@ import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
@@ -124,6 +125,19 @@ public class ZestFxModule extends MvcFxModule {
 		bindContentPartFactoryAsContentViewerAdapter(adapterMapBinder);
 		// models
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
+	}
+
+	@Override
+	protected void bindContentViewerRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindContentViewerRootPartAdapters(adapterMapBinder);
+
+		adapterMapBinder.addBinding(AdapterKey.role("open-parent-graph")).to(OpenParentGraphOnDoubleClickPolicy.class);
+
+		// keyboard focus traversal
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTraverseFocusOnTypePolicy.class);
+
+		// select focused on type
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
 	}
 
 	/**
@@ -248,21 +262,8 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	@Override
-	protected void bindFXRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindFXRootPartAdapters(adapterMapBinder);
-
-		adapterMapBinder.addBinding(AdapterKey.role("open-parent-graph")).to(OpenParentGraphOnDoubleClickPolicy.class);
-
-		// keyboard focus traversal
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTraverseFocusOnTypePolicy.class);
-
-		// select focused on type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
-	}
-
-	@Override
 	protected void bindFXRootPartAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ZestFxRootPart.class)
+		adapterMapBinder.addBinding(AdapterKey.role(FXDomain.CONTENT_VIEWER_ROLE)).to(ZestFxRootPart.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
@@ -278,7 +279,6 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("resize-relocate-first-anchorage"))
 				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
-
 		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
 	}
 
