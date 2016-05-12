@@ -181,10 +181,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindContentBehaviorAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<ContentBehavior<Node>>() {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<ContentBehavior<Node>>() {
+				})).to(new TypeLiteral<ContentBehavior<Node>>() {
 				});
 	}
 
@@ -200,10 +202,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindContentBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<ContentBehavior<Node>>() {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<ContentBehavior<Node>>() {
+				})).to(new TypeLiteral<ContentBehavior<Node>>() {
 				});
 	}
 
@@ -325,10 +329,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindCreationPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<CreationPolicy<Node>>() {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<CreationPolicy<Node>>() {
+				})).to(new TypeLiteral<CreationPolicy<Node>>() {
 				});
 	}
 
@@ -344,10 +350,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindDeletionPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<DeletionPolicy<Node>>() {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<DeletionPolicy<Node>>() {
+				})).to(new TypeLiteral<DeletionPolicy<Node>>() {
 				});
 	}
 
@@ -1052,10 +1060,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindSelectionBehaviorAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<SelectionBehavior<Node>>() {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<SelectionBehavior<Node>>() {
+				})).to(new TypeLiteral<SelectionBehavior<Node>>() {
 				});
 	}
 
@@ -1071,10 +1081,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindSelectionBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<SelectionBehavior<Node>>() {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<SelectionBehavior<Node>>() {
+				})).to(new TypeLiteral<SelectionBehavior<Node>>() {
 				});
 	}
 

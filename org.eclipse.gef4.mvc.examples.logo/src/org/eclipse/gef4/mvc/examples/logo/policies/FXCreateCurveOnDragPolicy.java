@@ -45,8 +45,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
-		implements IFXOnDragPolicy {
+public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	private FXCircleSegmentHandlePart bendTargetPart;
 	private Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies;
@@ -85,11 +84,9 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		dragPolicies = null;
 	}
 
-	protected FXCircleSegmentHandlePart findBendTargetPart(
-			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
+	protected FXCircleSegmentHandlePart findBendTargetPart(FXGeometricCurvePart curvePart, EventTarget eventTarget) {
 		// find last segment handle part
-		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = curvePart
-				.getAnchoredsUnmodifiable();
+		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = curvePart.getAnchoredsUnmodifiable();
 		for (IVisualPart<Node, ? extends Node> anchored : anchoreds) {
 			if (anchored instanceof FXCircleSegmentHandlePart) {
 				FXCircleSegmentHandlePart circleSegmentHandlePart = (FXCircleSegmentHandlePart) anchored;
@@ -103,15 +100,13 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	protected Point getLocation(MouseEvent e) {
-		Point2D location = ((FXViewer) getHost().getRoot().getViewer())
-				.getCanvas().getContentGroup()
+		Point2D location = ((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		return new Point(location.getX(), location.getY());
 	}
 
 	protected FXGeometricShapePart getShapePart() {
-		return (FXGeometricShapePart) getHost().getAnchoragesUnmodifiable()
-				.keySet().iterator().next();
+		return (FXGeometricShapePart) getHost().getAnchoragesUnmodifiable().keySet().iterator().next();
 	}
 
 	@Override
@@ -122,29 +117,23 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 	@Override
 	public void press(MouseEvent event) {
 		// find model part
-		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot()
-				.getChildrenUnmodifiable().get(0);
+		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot().getChildrenUnmodifiable().get(0);
 		if (!(modelPart instanceof FXGeometricModelPart)) {
-			throw new IllegalStateException(
-					"Cannot find FXGeometricModelPart.");
+			throw new IllegalStateException("Cannot find FXGeometricModelPart.");
 		}
 
 		// create new curve
-		FXGeometricCurve curve = new FXGeometricCurve(new Point[] {},
-				FXGeometricModel.GEF_COLOR_GREEN,
-				FXGeometricModel.GEF_STROKE_WIDTH,
-				FXGeometricModel.GEF_DASH_PATTERN, null);
+		FXGeometricCurve curve = new FXGeometricCurve(new Point[] { new Point(), new Point() },
+				FXGeometricModel.GEF_COLOR_GREEN, FXGeometricModel.GEF_STROKE_WIDTH, FXGeometricModel.GEF_DASH_PATTERN,
+				null);
 		curve.addSourceAnchorage(getShapePart().getContent());
 
 		// create using CreationPolicy from root part
-		CreationPolicy<Node> creationPolicy = getHost().getRoot()
-				.getAdapter(new TypeToken<CreationPolicy<Node>>() {
-				});
+		CreationPolicy<Node> creationPolicy = getHost().getRoot().getAdapter(new TypeToken<CreationPolicy<Node>>() {
+		});
 		init(creationPolicy);
-
-		curvePart = (FXGeometricCurvePart) creationPolicy.create(curve,
-				(FXGeometricModelPart) modelPart, HashMultimap
-						.<IContentPart<Node, ? extends Node>, String> create());
+		curvePart = (FXGeometricCurvePart) creationPolicy.create(curve, (FXGeometricModelPart) modelPart,
+				HashMultimap.<IContentPart<Node, ? extends Node>, String> create());
 		commit(creationPolicy);
 
 		// disable refresh visuals for the curvePart
@@ -155,17 +144,15 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 
 		// build operation to deselect all but the new curve part
 		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
-				getHost().getRoot().getViewer()
-						.getAdapter(new TypeToken<SelectionModel<Node>>() {
-						}).getSelectionUnmodifiable());
+				getHost().getRoot().getViewer().getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelectionUnmodifiable());
 		toBeDeselected.remove(curvePart);
-		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(
-				getHost().getRoot().getViewer(), toBeDeselected);
+		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(getHost().getRoot().getViewer(),
+				toBeDeselected);
 
 		// execute on stack
 		try {
-			getHost().getRoot().getViewer().getDomain()
-					.execute(deselectOperation);
+			getHost().getRoot().getViewer().getDomain().execute(deselectOperation);
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}
@@ -173,8 +160,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		// find bend target part
 		bendTargetPart = findBendTargetPart(curvePart, event.getTarget());
 		if (bendTargetPart != null) {
-			dragPolicies = bendTargetPart
-					.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
+			dragPolicies = bendTargetPart.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
 		}
 		if (dragPolicies != null) {
 			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
