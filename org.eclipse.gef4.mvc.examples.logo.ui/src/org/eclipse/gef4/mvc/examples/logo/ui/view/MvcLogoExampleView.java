@@ -50,6 +50,7 @@ import com.google.inject.util.Modules;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -252,6 +253,13 @@ public class MvcLogoExampleView extends AbstractFXView {
 		AnchorPane.setTopAnchor(contentRootNode, 0d);
 		AnchorPane.setRightAnchor(paletteRootNode, 0d);
 		AnchorPane.setTopAnchor(paletteRootNode, 0d);
+		// disable grid layer for palette
+		paletteRootNode.setZoomGrid(false);
+		paletteRootNode.setShowGrid(false);
+		paletteRootNode.setHorizontalScrollBarPolicy(ScrollBarPolicy.NEVER);
+		// set palette background
+		paletteRootNode
+				.setStyle("-fx-background-color: rgba(0.5, 0.5, 0.5, 0.5);");
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(hbox));
 	}

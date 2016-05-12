@@ -29,7 +29,7 @@ public class MvcLogoExample extends AbstractMvcExample {
 		return Collections.singletonList(new FXGeometricModel());
 	}
 
-	public static List<AbstractFXGeometricElement> createPaletteContents() {
+	public static List<AbstractFXGeometricElement<?>> createPaletteContents() {
 		return new PaletteModel().getCreatableGeometries();
 	}
 

@@ -95,6 +95,16 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		return dashesProperty.getReadOnlyProperty();
 	}
 
+	public FXGeometricCurve getCopy() {
+		FXGeometricCurve copy = new FXGeometricCurve(getWayPointsCopy().toArray(new Point[] {}), getStroke(),
+				getStrokeWidth(), getDashes(), getEffect());
+		copy.setTransform(getTransform());
+		copy.setRoutingStyle(getRoutingStyle());
+		copy.setSourceDecoration(getSourceDecoration());
+		copy.setTargetDecoration(getTargetDecoration());
+		return copy;
+	}
+
 	public Double[] getDashes() {
 		return dashesProperty.get().toArray(new Double[] {});
 	}

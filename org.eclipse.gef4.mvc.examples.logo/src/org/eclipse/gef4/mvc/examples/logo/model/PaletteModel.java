@@ -22,26 +22,22 @@ import javafx.scene.paint.Color;
 public class PaletteModel {
 
 	private static final FXGeometricShape HANDLE_PROTO_GEOMETRY = new FXGeometricShape(
-			FXGeometricModel.createHandleShapeGeometry(),
-			new AffineTransform(1, 0, 0, 1, 23, 5), Color.WHITE,
+			FXGeometricModel.createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 23, 5), Color.WHITE,
 			FXGeometricModel.GEF_SHADOW_EFFECT);
 	private static final FXGeometricShape CURSOR_PROTO_GEOMETRY = new FXGeometricShape(
-			FXGeometricModel.createCursorShapeGeometry(),
-			new AffineTransform(1, 0, 0, 1, 5, 32), Color.WHITE, 2, Color.BLACK,
-			FXGeometricModel.GEF_SHADOW_EFFECT);
+			FXGeometricModel.createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1, 5, 32), Color.WHITE, 2,
+			Color.BLACK, FXGeometricModel.GEF_SHADOW_EFFECT);
 	private static final FXGeometricCurve CURVE_PROTO_GEOMETRY = new FXGeometricCurve(
-			new Point[] { new Point(15, 105), new Point(30, 125),
-					new Point(55, 100) },
-			FXGeometricModel.GEF_COLOR_GREEN, FXGeometricModel.GEF_STROKE_WIDTH,
-			new Double[] {}, null);
+			new Point[] { new Point(15, 105), new Point(30, 125), new Point(55, 100) },
+			FXGeometricModel.GEF_COLOR_GREEN, FXGeometricModel.GEF_STROKE_WIDTH, new Double[] {}, null);
 
-	private final List<AbstractFXGeometricElement> creatableGeometricElements = new ArrayList<>();
+	private final List<AbstractFXGeometricElement<?>> creatableGeometricElements = new ArrayList<>();
 
 	public PaletteModel() {
 		initCreatableGeometries();
 	}
 
-	public List<AbstractFXGeometricElement> getCreatableGeometries() {
+	public List<AbstractFXGeometricElement<?>> getCreatableGeometries() {
 		return creatableGeometricElements;
 	}
 

@@ -30,22 +30,19 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> anchorages = new HashSet<>();
 
-	private final ObjectProperty<Paint> fillProperty = new SimpleObjectProperty<>(
-			this, FILL_PROPERTY);
+	private final ObjectProperty<Paint> fillProperty = new SimpleObjectProperty<>(this, FILL_PROPERTY);
 
-	public FXGeometricShape(IShape shape, AffineTransform transform,
-			Color stroke, double strokeWidth, Paint fill, Effect effect) {
+	public FXGeometricShape(IShape shape, AffineTransform transform, Color stroke, double strokeWidth, Paint fill,
+			Effect effect) {
 		super(shape, transform, stroke, strokeWidth, effect);
 		setFill(fill);
 	}
 
-	public FXGeometricShape(IShape shape, AffineTransform transform, Paint fill,
-			Effect effect) {
+	public FXGeometricShape(IShape shape, AffineTransform transform, Paint fill, Effect effect) {
 		this(shape, transform, new Color(0, 0, 0, 1), 1.0, fill, effect);
 	}
 
-	public void addAnchorage(
-			AbstractFXGeometricElement<? extends IGeometry> anchorage) {
+	public void addAnchorage(AbstractFXGeometricElement<? extends IGeometry> anchorage) {
 		this.anchorages.add(anchorage);
 	}
 
@@ -55,6 +52,12 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 
 	public Set<AbstractFXGeometricElement<? extends IGeometry>> getAnchorages() {
 		return anchorages;
+	}
+
+	public FXGeometricShape getCopy() {
+		FXGeometricShape copy = new FXGeometricShape(getGeometry(), getTransform(), (Color) getStroke(),
+				getStrokeWidth(), getFill(), getEffect());
+		return copy;
 	}
 
 	public Paint getFill() {

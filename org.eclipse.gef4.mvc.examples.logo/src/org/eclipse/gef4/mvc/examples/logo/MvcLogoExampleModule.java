@@ -24,6 +24,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHoverHandlePartFactory;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoPaletteContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
@@ -335,6 +336,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFocusModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindHoverModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
+		// bind content part factory
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoPaletteContentPartFactory.class);
 	}
 
 	@SuppressWarnings("serial")
