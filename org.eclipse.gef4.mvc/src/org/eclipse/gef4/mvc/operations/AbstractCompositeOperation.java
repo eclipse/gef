@@ -233,6 +233,12 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 				ITransactionalOperation op = operations.get(i);
 				if (op.isNoOp()) {
 					operations.remove(i);
+				} else if (op instanceof AbstractCompositeOperation) {
+					// unwrap recursively
+					ITransactionalOperation unwrapped = ((AbstractCompositeOperation) operations
+							.get(i)).unwrap(filterNoOps);
+					operations.remove(i);
+					operations.add(i, unwrapped);
 				}
 			}
 		}
