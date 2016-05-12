@@ -57,7 +57,7 @@ public class SetRefreshVisualOperation<VR> extends AbstractOperation
 	 */
 	public SetRefreshVisualOperation(IVisualPart<VR, ? extends VR> part,
 			boolean from, boolean to) {
-		super("Enable/Disable Visual Refresh");
+		super(to ? "Enable Visual Refresh" : "Disable Visual Refresh");
 		this.part = part;
 		this.from = from;
 		this.to = to;

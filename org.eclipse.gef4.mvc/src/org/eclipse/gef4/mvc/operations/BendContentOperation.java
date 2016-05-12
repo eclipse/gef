@@ -56,7 +56,7 @@ public class BendContentOperation<VR> extends AbstractOperation
 			IBendableContentPart<VR, ? extends VR> bendableContentPart,
 			List<BendPoint> initialBendPoints,
 			List<BendPoint> finalBendPoints) {
-		super("Update Content Size");
+		super("Bend Content");
 		this.bendableContentPart = bendableContentPart;
 		this.initialBendPoints = initialBendPoints;
 		this.finalBendPoints = finalBendPoints;

@@ -50,7 +50,7 @@ public class DeselectOperation<VR> extends AbstractOperation
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
-	public static final String DEFAULT_LABEL = "Select";
+	public static final String DEFAULT_LABEL = "Deselect";
 
 	private IViewer<VR> viewer;
 	private List<IContentPart<VR, ? extends VR>> initialSelection;

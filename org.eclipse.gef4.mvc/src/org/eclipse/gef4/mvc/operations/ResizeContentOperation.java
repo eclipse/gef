@@ -53,7 +53,7 @@ public class ResizeContentOperation<VR> extends AbstractOperation
 	public ResizeContentOperation(
 			IResizableContentPart<VR, ? extends VR> resizableContentPart,
 			Dimension initialSize, Dimension finalSize) {
-		super("Update Content Size");
+		super("Resize Content");
 		this.resizableContentPart = resizableContentPart;
 		this.initialSize = initialSize;
 		this.finalSize = finalSize;

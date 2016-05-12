@@ -51,7 +51,7 @@ public class TransformContentOperation<VR> extends AbstractOperation
 	public TransformContentOperation(
 			ITransformableContentPart<VR, ? extends VR> transformableContentPart,
 			AffineTransform deltaTransform) {
-		super("Update Content Transform");
+		super("Transform Content");
 		this.transformableContentPart = transformableContentPart;
 		this.currentDelta = new AffineTransform();
 		this.finalDelta = deltaTransform;

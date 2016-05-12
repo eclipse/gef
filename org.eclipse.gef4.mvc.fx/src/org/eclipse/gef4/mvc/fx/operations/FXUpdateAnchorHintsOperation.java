@@ -38,7 +38,7 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 	 *            The {@link Connection}.
 	 */
 	public FXUpdateAnchorHintsOperation(Connection connection) {
-		super("UpdateAnchorHints()");
+		super("Update Anchor Hints");
 		this.connection = connection;
 		this.initialStartHint = connection.getStartPointHint() == null ? null
 				: connection.getStartPointHint().getCopy();
