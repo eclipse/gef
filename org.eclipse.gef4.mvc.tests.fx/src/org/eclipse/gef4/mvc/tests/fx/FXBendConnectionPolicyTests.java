@@ -69,7 +69,6 @@ import com.google.common.collect.SetMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 import javafx.geometry.Orientation;
@@ -319,6 +318,13 @@ public class FXBendConnectionPolicyTests {
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
 		}
 
+		@Override
+		protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+			super.bindAbstractViewerAdapters(adapterMapBinder);
+			// bind content part factory
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TestContentPartFactory.class);
+		}
+
 		protected void bindAnchorageAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 			// transform policy
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformPolicy.class);
@@ -337,17 +343,9 @@ public class FXBendConnectionPolicyTests {
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendConnectionPolicy.class);
 		}
 
-		protected void bindIContentPartFactory() {
-			binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-			}).toInstance(new TestContentPartFactory());
-		}
-
 		@Override
 		protected void configure() {
 			super.configure();
-
-			bindIContentPartFactory();
-
 			// contents
 			bindAnchorageAdapters(AdapterMaps.getAdapterMapBinder(binder(), AnchoragePart.class));
 			bindConnectionAdapters(AdapterMaps.getAdapterMapBinder(binder(), ConnectionPart.class));

@@ -82,8 +82,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			@SuppressWarnings("serial")
 			SelectionModel<VR> selectionModel = viewer
 					.getAdapter(new TypeToken<SelectionModel<VR>>() {
-			}.where(new TypeParameter<VR>() {
-			}, Types.<VR> argumentOf(viewer.getClass())));
+					}.where(new TypeParameter<VR>() {
+					}, Types.<VR> argumentOf(viewer.getClass())));
 			if (selectionModel != null) {
 				selectionModel.clearSelection();
 			}
@@ -91,8 +91,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			@SuppressWarnings("serial")
 			HoverModel<VR> hoverModel = viewer
 					.getAdapter(new TypeToken<HoverModel<VR>>() {
-			}.where(new TypeParameter<VR>() {
-			}, Types.<VR> argumentOf(viewer.getClass())));
+					}.where(new TypeParameter<VR>() {
+					}, Types.<VR> argumentOf(viewer.getClass())));
 			if (hoverModel != null) {
 				hoverModel.clearHover();
 			}
@@ -138,10 +138,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 					HashMultimap.create(change.getSetMultimap()));
 		}
 	};
-
-	@Inject
-	// scoped to single instance within viewer
-	private IContentPartFactory<VR> contentPartFactory;
 
 	@Inject
 	// scoped to single instance within viewer
@@ -247,6 +243,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 				// before
 				switchAdaptableScopes();
 				// System.out.println("CREATE " + content);
+				IContentPartFactory<VR> contentPartFactory = getContentPartFactory();
 				contentPart = contentPartFactory.createContentPart(content,
 						this, Collections.emptyMap());
 				if (contentPart == null) {
@@ -275,6 +272,21 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		ContentModel contentModel = getHost().getRoot().getViewer()
 				.getAdapter(ContentModel.class);
 		return contentModel;
+	}
+
+	/**
+	 * Returns the {@link IContentPartFactory} of the current viewer.
+	 *
+	 * @return the {@link IContentPartFactory} of the current viewer.
+	 */
+	protected IContentPartFactory<VR> getContentPartFactory() {
+		IViewer<VR> viewer = getHost().getRoot().getViewer();
+		@SuppressWarnings("serial")
+		IContentPartFactory<VR> cpFactory = viewer
+				.getAdapter(new TypeToken<IContentPartFactory<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		return cpFactory;
 	}
 
 	/**

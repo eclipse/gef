@@ -57,9 +57,6 @@ import com.google.inject.Inject;
 public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 	@Inject
-	private IContentPartFactory<VR> contentPartFactory;
-
-	@Inject
 	private ContentPartPool<VR> contentPartPool;
 
 	/**
@@ -100,7 +97,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		}
 
 		// create content part beforehand
-		IContentPart<VR, ? extends VR> contentPart = contentPartFactory
+		IContentPart<VR, ? extends VR> contentPart = getContentPartFactory()
 				.createContentPart(content, null, null);
 		// establish relationships to parent and anchored parts
 		contentPart.setContent(content);
@@ -192,7 +189,8 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	public IContentPart<VR, ? extends VR> create(Object content,
 			IContentPart<VR, ? extends VR> parent,
 			SetMultimap<IContentPart<VR, ? extends VR>, String> anchoreds) {
-		return create(content, parent, parent.getChildrenUnmodifiable().size(), anchoreds);
+		return create(content, parent, parent.getChildrenUnmodifiable().size(),
+				anchoreds);
 	}
 
 	/**
@@ -242,6 +240,21 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	protected AbstractCompositeOperation getCompositeOperation() {
 		return (AbstractCompositeOperation) getOperation();
+	}
+
+	/**
+	 * Returns the {@link IContentPartFactory} of the current viewer.
+	 *
+	 * @return the {@link IContentPartFactory} of the current viewer.
+	 */
+	protected IContentPartFactory<VR> getContentPartFactory() {
+		IViewer<VR> viewer = getHost().getRoot().getViewer();
+		@SuppressWarnings("serial")
+		IContentPartFactory<VR> cpFactory = viewer
+				.getAdapter(new TypeToken<IContentPartFactory<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		return cpFactory;
 	}
 
 }

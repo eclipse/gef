@@ -40,7 +40,6 @@ import com.google.common.collect.SetMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 import javafx.embed.swing.JFXPanel;
@@ -114,15 +113,10 @@ public class FXTransformPolicyTests {
 				adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformPolicy.class);
 			}
 
-			protected void bindIContentPartFactory() {
-				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-				}).toInstance(new TxContentPartFactory());
-			}
-
 			@Override
-			protected void configure() {
-				super.configure();
-				bindIContentPartFactory();
+			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+				super.bindAbstractViewerAdapters(adapterMapBinder);
+				adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TxContentPartFactory.class);
 			}
 		});
 		injector.injectMembers(this);

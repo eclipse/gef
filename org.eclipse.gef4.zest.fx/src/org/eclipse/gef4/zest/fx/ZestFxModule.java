@@ -111,10 +111,23 @@ public class ZestFxModule extends MvcFxModule {
 		bindNavigationModelAsAbstractViewerAdapter(adapterMapBinder);
 	}
 
+	/**
+	 * Adds a binding for an {@link IContentPartFactory} to the given
+	 * {@link MapBinder}.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to which a binding is added.
+	 */
+	protected void bindContentPartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ZestFxContentPartFactory.class);
+	}
+
 	@Override
 	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindContentViewerAdapters(adapterMapBinder);
-
+		// content part factory
+		bindContentPartFactoryAsContentViewerAdapter(adapterMapBinder);
+		// models
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
 	}
 
@@ -309,14 +322,6 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideFirstAnchorageOnClickPolicy.class);
 	}
 
-	/**
-	 * Binds {@link IContentPartFactory} to {@link ZestFxContentPartFactory}.
-	 */
-	protected void bindIContentPartFactory() {
-		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).to(ZestFxContentPartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
-	}
-
 	@Override
 	protected void bindIHandlePartFactories() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
@@ -506,8 +511,6 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void configure() {
 		super.configure();
-
-		bindIContentPartFactory();
 
 		bindGraphPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GraphPart.class));
 		bindNodePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodePart.class));

@@ -17,12 +17,10 @@ package org.eclipse.gef4.zest.examples.jface;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider;
 import org.eclipse.gef4.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
@@ -44,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.MapBinder;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -179,11 +177,10 @@ public class JFaceCustomNodeExample {
 	}
 
 	public static class CustomModule extends ZestFxJFaceModule {
-		@Override
-		protected void bindIContentPartFactory() {
-			binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-			}).to(CustomContentPartFactory.class)
-					.in(AdaptableScopes.typed(FXViewer.class));
+		protected void bindContentPartFactoryAsContentViewerAdapter(
+				MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+			adapterMapBinder.addBinding(AdapterKey.defaultRole())
+					.to(CustomContentPartFactory.class);
 		}
 	}
 

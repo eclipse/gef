@@ -18,7 +18,6 @@ import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.tests.stubs.cell.CellContentPartFactory;
 import org.eclipse.gef4.mvc.tests.stubs.cell.CellRootPart;
@@ -61,6 +60,9 @@ public class MvcTestsModule extends MvcModule<Object> {
 		});
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(new TypeLiteral<SelectionModel<Object>>() {
 		});
+		// bind content part factory
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(new TypeLiteral<CellContentPartFactory<Object>>() {
+		});
 	}
 
 	@Override
@@ -73,15 +75,9 @@ public class MvcTestsModule extends MvcModule<Object> {
 		binder().bind(new TypeLiteral<IViewer<Object>>() {
 		}).to(MvcTestsViewer.class);
 
-		// bind content part factory
-		binder().bind(new TypeLiteral<IContentPartFactory<Object>>() {
-		}).to(new TypeLiteral<CellContentPartFactory<Object>>() {
-		});
-
 		// bind root part
 		binder().bind(new TypeLiteral<IRootPart<Object, ? extends Object>>() {
 		}).to(new TypeLiteral<CellRootPart<Object, Object>>() {
 		});
-
 	}
 }

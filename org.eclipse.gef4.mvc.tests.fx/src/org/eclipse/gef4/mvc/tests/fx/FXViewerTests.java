@@ -31,7 +31,7 @@ import org.junit.Test;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.MapBinder;
 
 import javafx.scene.Node;
 
@@ -42,13 +42,11 @@ public class FXViewerTests {
 	public void properAdapterRegistration() {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
-
 			@Override
-			protected void configure() {
-				super.configure();
-				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-				}).toInstance(new IContentPartFactory<Node>() {
-
+			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+				super.bindAbstractViewerAdapters(adapterMapBinder);
+				// bind content part factory
+				adapterMapBinder.addBinding(AdapterKey.defaultRole()).toInstance(new IContentPartFactory<Node>() {
 					@Override
 					public IContentPart<Node, ? extends Node> createContentPart(Object content,
 							IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {

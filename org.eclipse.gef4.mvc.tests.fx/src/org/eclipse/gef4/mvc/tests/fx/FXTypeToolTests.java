@@ -36,7 +36,7 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.MapBinder;
 import com.sun.glass.events.KeyEvent;
 
 import javafx.scene.Node;
@@ -86,6 +86,19 @@ public class FXTypeToolTests {
 	public void singleExecutionTransactionUsedForInteraction() throws InterruptedException, AWTException {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
+			@Override
+			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+				super.bindAbstractViewerAdapters(adapterMapBinder);
+				// bind content part factory
+				adapterMapBinder.addBinding(AdapterKey.defaultRole()).toInstance(new IContentPartFactory<Node>() {
+					@Override
+					public IContentPart<Node, ? extends Node> createContentPart(Object content,
+							IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+						return null;
+					}
+				});
+			}
+
 			protected void bindDomain() {
 				// stub the domain to be able to keep track of opened execution
 				// transactions
@@ -96,21 +109,12 @@ public class FXTypeToolTests {
 			protected void configure() {
 				super.configure();
 				bindDomain();
-				// bind IContentPartFactory
-				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-				}).toInstance(new IContentPartFactory<Node>() {
-					@Override
-					public IContentPart<Node, ? extends Node> createContentPart(Object content,
-							IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
-						return null;
-					}
-				});
 			}
 		});
 		injector.injectMembers(this);
 
-		InfiniteCanvas infiniteCanvas = domain
-				.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE)).getCanvas();
+		InfiniteCanvas infiniteCanvas = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE))
+				.getCanvas();
 		ctx.createScene(infiniteCanvas, 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
