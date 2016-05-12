@@ -33,6 +33,13 @@ public class FXGridBehavior extends AbstractBehavior<Node> {
 	protected void doActivate() {
 		GridModel gridModel = getHost().getRoot().getViewer()
 				.getAdapter(GridModel.class);
+		if (gridModel == null) {
+			// XXX: FXGridBehavior should not be registered in the first place.
+			// However, it is hard to determine if it should be registered or
+			// not. Therefore, we need to test for null here as it is always
+			// registered. See bug #493523.
+			return;
+		}
 		InfiniteCanvas canvas = getCanvas();
 		canvas.showGridProperty().bind(gridModel.showGridProperty());
 		canvas.zoomGridProperty().bind(gridModel.zoomGridProperty());
