@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoPaletteContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoSelectionHandlePartFactory;
+import org.eclipse.gef4.mvc.examples.logo.parts.PaletteElementPart;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOnClickPolicy;
@@ -322,6 +323,12 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	protected void bindPaletteElementPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+	}
+
 	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(PaletteFocusBehavior.class);
 	}
@@ -401,12 +408,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFXCreateCurveHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), FXCreateCurveHoverHandlePart.class));
 
-		// bind additional adapters for the palette vierwer
+		// palette
 		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXViewer.class, PALETTE_VIEWER_ROLE));
-
-		// bind additional adapters for the palette vierwer root part
 		bindPaletteViewerRootPartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class, PALETTE_VIEWER_ROLE));
+		bindPaletteElementPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), PaletteElementPart.class));
 	}
 
 }

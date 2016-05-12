@@ -21,6 +21,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.SetMultimap;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
@@ -28,7 +30,8 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		getVisual().getChildren().add(index, child.getVisual());
+		// wrap child.visual in group so that it is not resizable
+		getVisual().getChildren().add(index, new Group(child.getVisual()));
 	}
 
 	@Override
@@ -37,6 +40,8 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 		// define padding and spacing
 		vbox.setPadding(new Insets(10));
 		vbox.setSpacing(10d);
+		// fixed at top/right position
+		vbox.setAlignment(Pos.TOP_RIGHT);
 		return vbox;
 	}
 
@@ -47,7 +52,7 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 
 	@Override
 	protected List<? extends Object> doGetContentChildren() {
-		return getContent().getCreatableGeometries();
+		return getContent().getCreatableShapes();
 	}
 
 	@Override
@@ -62,7 +67,7 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		Node removed = getVisual().getChildren().remove(index);
-		if (removed != child.getVisual()) {
+		if (!(removed instanceof Group) || ((Group) removed).getChildren().get(0) != child.getVisual()) {
 			throw new IllegalStateException("Child visual was not removed!");
 		}
 	}

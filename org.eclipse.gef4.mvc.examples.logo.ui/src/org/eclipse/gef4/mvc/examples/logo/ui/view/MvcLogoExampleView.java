@@ -49,9 +49,11 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -227,7 +229,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 		InfiniteCanvas contentRootNode = contentViewer.getCanvas();
 		// determine palette root node
 		final FXViewer paletteViewer = getPaletteViewer();
-		InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
+		final InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
 		// arrange viewers above each other
 		AnchorPane viewersPane = new AnchorPane();
 		viewersPane.getChildren().addAll(contentRootNode, paletteRootNode);
@@ -252,6 +254,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 		AnchorPane.setLeftAnchor(contentRootNode, 0d);
 		AnchorPane.setRightAnchor(contentRootNode, 0d);
 		AnchorPane.setTopAnchor(contentRootNode, 0d);
+		AnchorPane.setBottomAnchor(paletteRootNode, 0d);
 		AnchorPane.setRightAnchor(paletteRootNode, 0d);
 		AnchorPane.setTopAnchor(paletteRootNode, 0d);
 		// disable grid layer for palette
@@ -260,6 +263,21 @@ public class MvcLogoExampleView extends AbstractFXView {
 		paletteRootNode.setHorizontalScrollBarPolicy(ScrollBarPolicy.NEVER);
 		// set palette background
 		paletteRootNode.setStyle(PaletteFocusBehavior.DEFAULT_STYLE);
+		// hide palette at first
+		paletteRootNode.setVisible(false);
+		// register listener to show/hide palette
+		paletteIndicator.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				paletteRootNode.setVisible(true);
+			}
+		});
+		paletteRootNode.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				paletteRootNode.setVisible(false);
+			}
+		});
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(hbox));
 	}

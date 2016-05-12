@@ -16,16 +16,16 @@ import java.util.List;
 
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
+import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
 import com.google.common.collect.SetMultimap;
 
-public class PaletteElementPart extends AbstractFXContentPart<GeometryNode<IGeometry>> {
+public class PaletteElementPart extends AbstractFXContentPart<GeometryNode<IShape>> {
 
 	@Override
-	protected GeometryNode<IGeometry> createVisual() {
+	protected GeometryNode<IShape> createVisual() {
 		return new GeometryNode<>();
 	}
 
@@ -40,13 +40,17 @@ public class PaletteElementPart extends AbstractFXContentPart<GeometryNode<IGeom
 	}
 
 	@Override
-	protected void doRefreshVisual(GeometryNode<IGeometry> visual) {
+	protected void doRefreshVisual(GeometryNode<IShape> visual) {
 		visual.setGeometry(getContent().getGeometry());
+		visual.setStroke(getContent().getStroke());
+		visual.setStrokeWidth(getContent().getStrokeWidth());
+		visual.setFill(getContent().getFill());
+		visual.setEffect(getContent().getEffect());
 	}
 
 	@Override
-	public AbstractFXGeometricElement<?> getContent() {
-		return (AbstractFXGeometricElement<?>) super.getContent();
+	public FXGeometricShape getContent() {
+		return (FXGeometricShape) super.getContent();
 	}
 
 }

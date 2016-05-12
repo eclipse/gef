@@ -14,7 +14,7 @@ package org.eclipse.gef4.mvc.examples.logo.parts;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.model.PaletteModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
@@ -34,11 +34,11 @@ public class FXLogoPaletteContentPartFactory implements IContentPartFactory<Node
 			Map<Object, Object> contextMap) {
 		if (content instanceof PaletteModel) {
 			return injector.getInstance(PaletteModelPart.class);
-		} else if (content instanceof AbstractFXGeometricElement) {
+		} else if (content instanceof FXGeometricShape) {
 			return injector.getInstance(PaletteElementPart.class);
 		} else {
 			throw new IllegalArgumentException(content.getClass().toString());
 		}
-	};
+	}
 
 }
