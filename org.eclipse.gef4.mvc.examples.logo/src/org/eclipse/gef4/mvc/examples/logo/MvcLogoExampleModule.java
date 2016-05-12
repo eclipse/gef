@@ -28,8 +28,10 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoPaletteContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.PaletteElementPart;
+import org.eclipse.gef4.mvc.examples.logo.parts.PaletteModelPart;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.CreateAndTranslateOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
@@ -325,6 +327,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindPaletteElementPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateAndTranslateOnDragPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 	}
@@ -361,7 +364,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindPaletteViewerRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
-		bindFocusAndSelectOnClickPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXHoverOnHoverPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
@@ -369,7 +371,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFXChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register default behaviors
 		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// XXX: PaletteFocusBehavior only changes the viewer focus and default
 		// styles.
 		bindPaletteFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
@@ -413,6 +414,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindPaletteViewerRootPartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class, PALETTE_VIEWER_ROLE));
 		bindPaletteElementPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), PaletteElementPart.class));
+		AdapterMaps.getAdapterMapBinder(binder(), PaletteModelPart.class).addBinding(AdapterKey.defaultRole())
+				.to(FXHoverOnHoverPolicy.class);
 	}
 
 }

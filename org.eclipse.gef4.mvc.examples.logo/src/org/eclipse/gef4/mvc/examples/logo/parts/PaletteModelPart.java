@@ -37,6 +37,7 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 	@Override
 	protected VBox createVisual() {
 		VBox vbox = new VBox();
+		vbox.setPickOnBounds(true);
 		// define padding and spacing
 		vbox.setPadding(new Insets(10));
 		vbox.setSpacing(10d);
