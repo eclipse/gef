@@ -43,6 +43,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
@@ -66,9 +67,13 @@ import org.eclipse.gef4.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.HoverModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -106,6 +111,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
 	}
 
+	@SuppressWarnings("serial")
+	protected void bindFocusModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<FocusModel<Node>>() {
+		})).to(new TypeLiteral<FocusModel<Node>>() {
+		});
+	}
+
 	protected void bindFXCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
@@ -121,7 +133,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	@Override
 	protected void bindFXDomainAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXDomainAdapters(adapterMapBinder);
-		// bindFXPaletteViewerAsFXDomainAdapter(adapterMapBinder);
+		bindFXPaletteViewerAsFXDomainAdapter(adapterMapBinder);
 	}
 
 	protected void bindFXGeometricCurvePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -264,6 +276,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
+	protected void bindFXRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXRootPart.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+	}
+
 	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -273,6 +290,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// multi selection: scale relocate on handle drag without modifier
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizeTransformSelectedOnHandleDragPolicy.class);
+	}
+
+	@SuppressWarnings("serial")
+	protected void bindHoverModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<HoverModel<Node>>() {
+		})).to(new TypeLiteral<HoverModel<Node>>() {
+		});
 	}
 
 	protected void bindIContentPartFactory() {
@@ -288,6 +312,35 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME)).to(FXLogoHoverHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
+	}
+
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link FXViewer} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindPaletteViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// bind root part
+		bindFXRootPartAsPaletteViewerAdapter(adapterMapBinder);
+		// bind parameterized default viewer models
+		bindFocusModelAsPaletteViewerAdapter(adapterMapBinder);
+		bindHoverModelAsPaletteViewerAdapter(adapterMapBinder);
+		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
+	}
+
+	@SuppressWarnings("serial")
+	protected void bindSelectionModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<SelectionModel<Node>>() {
+		})).to(new TypeLiteral<SelectionModel<Node>>() {
+		});
 	}
 
 	@Override
@@ -315,6 +368,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXDeleteHoverHandlePart.class));
 		bindFXCreateCurveHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), FXCreateCurveHoverHandlePart.class));
+
+		// bind additional adapters for the palette vierwer
+		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXViewer.class, PALETTE_VIEWER_ROLE));
 	}
 
 }

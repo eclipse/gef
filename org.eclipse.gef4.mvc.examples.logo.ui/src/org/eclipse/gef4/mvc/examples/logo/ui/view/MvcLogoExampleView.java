@@ -50,6 +50,10 @@ import com.google.inject.util.Modules;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 
 public class MvcLogoExampleView extends AbstractFXView {
 
@@ -97,14 +101,10 @@ public class MvcLogoExampleView extends AbstractFXView {
 		}
 	}
 
-	// private static final String SPLIT_PANE_STYLE = "-fx-background-color:
-	// white;";
-
 	private UndoablePropertySheetEntry rootEntry;
 
 	// TODO: create AbstractFXView via an executable extension factory
-	// (obtaining the
-	// injector via the bundle)
+	// (obtaining the injector via the bundle)
 	public MvcLogoExampleView() {
 		super(Guice.createInjector(Modules.override(new MvcLogoExampleModule())
 				.with(new MvcLogoExampleUiModule())));
@@ -113,12 +113,12 @@ public class MvcLogoExampleView extends AbstractFXView {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
 		contentModel.getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
-		// // set palette contents
-		// FXViewer paletteViewer = getPaletteViewer();
-		// ContentModel paletteContentModel = paletteViewer
-		// .getAdapter(ContentModel.class);
-		// paletteContentModel.getContents()
-		// .setAll(MvcLogoExample.createPaletteContents());
+		// set palette contents
+		FXViewer paletteViewer = getPaletteViewer();
+		ContentModel paletteContentModel = paletteViewer
+				.getAdapter(ContentModel.class);
+		paletteContentModel.getContents()
+				.setAll(MvcLogoExample.createPaletteContents());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -165,27 +165,23 @@ public class MvcLogoExampleView extends AbstractFXView {
 								// preserve first and last waypoint, but clear
 								// all intermediate points
 								List<Point> newWaypoints = new ArrayList<>();
-								List<Point> currentWaypoints = ps.getCurve().getWayPointsCopy();
+								List<Point> currentWaypoints = ps.getCurve()
+										.getWayPointsCopy();
 								if (currentWaypoints.size() > 0) {
 									newWaypoints.add(currentWaypoints.get(0));
-								}
-								else {
+								} else {
 									newWaypoints.add(new Point());
 								}
 								if (currentWaypoints.size() > 1) {
-									newWaypoints
-											.add(currentWaypoints
-													.get(currentWaypoints
-															.size() - 1));
-								}
-								else {
+									newWaypoints.add(currentWaypoints
+											.get(currentWaypoints.size() - 1));
+								} else {
 									newWaypoints.add(new Point());
 								}
 
 								ChangeWayPointsOperation clearWaypointsOperation = new ChangeWayPointsOperation(
 										"Clear waypoints", ps.getCurve(),
-										currentWaypoints,
-										newWaypoints);
+										currentWaypoints, newWaypoints);
 								AbstractCompositeOperation c = new ForwardUndoCompositeOperation(
 										"Change routing style");
 								c.add(changeRoutingStyleOperation);
@@ -227,20 +223,37 @@ public class MvcLogoExampleView extends AbstractFXView {
 		// determine content root node
 		final FXViewer contentViewer = getContentViewer();
 		InfiniteCanvas contentRootNode = contentViewer.getCanvas();
-		getCanvas().setScene(new Scene(contentRootNode));
-		// // determine palette root node
-		// final FXViewer paletteViewer = getPaletteViewer();
-		// InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
-		// // arrange both viewers in split pane
-		// SplitPane splitPane = new SplitPane();
-		// splitPane.getItems().addAll(contentRootNode, paletteRootNode);
-		// // fix palette width
-		// SplitPane.setResizableWithParent(paletteRootNode, false);
-		// paletteRootNode.setPrefWidth(145);
-		// // make splitpane background white
-		// splitPane.setStyle(SPLIT_PANE_STYLE);
-		// // create scene and populate canvas
-		// getCanvas().setScene(new Scene(splitPane));
+		// determine palette root node
+		final FXViewer paletteViewer = getPaletteViewer();
+		InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
+		// arrange viewers above each other
+		AnchorPane viewersPane = new AnchorPane();
+		viewersPane.getChildren().addAll(contentRootNode, paletteRootNode);
+		// create palette indicator
+		Pane paletteIndicator = new Pane();
+		paletteIndicator.setStyle("-fx-background-color: darkgrey;");
+		paletteIndicator.setMaxSize(10d, Double.MAX_VALUE);
+		paletteIndicator.setMinSize(10d, 0d);
+		// show palette indicator next to the viewer area
+		HBox hbox = new HBox();
+		hbox.getChildren().addAll(viewersPane, paletteIndicator);
+		// ensure hbox fills the whole space
+		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		hbox.setMinSize(0, 0);
+		hbox.setFillHeight(true);
+		// no spacing between viewers and palette indicator
+		hbox.setSpacing(0d);
+		// ensure viewers fill the space
+		HBox.setHgrow(viewersPane, Priority.ALWAYS);
+		viewersPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		AnchorPane.setBottomAnchor(contentRootNode, 0d);
+		AnchorPane.setLeftAnchor(contentRootNode, 0d);
+		AnchorPane.setRightAnchor(contentRootNode, 0d);
+		AnchorPane.setTopAnchor(contentRootNode, 0d);
+		AnchorPane.setRightAnchor(paletteRootNode, 0d);
+		AnchorPane.setTopAnchor(paletteRootNode, 0d);
+		// create scene and populate canvas
+		getCanvas().setScene(new Scene(hbox));
 	}
 
 }
