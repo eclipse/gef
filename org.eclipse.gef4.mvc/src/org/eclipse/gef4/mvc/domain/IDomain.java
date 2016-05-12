@@ -24,6 +24,7 @@ import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.dispose.IDisposable;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -82,7 +83,8 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	 *             In case an exception occurred during the execution of the
 	 *             operation.
 	 */
-	public void execute(IUndoableOperation operation) throws ExecutionException;
+	public void execute(ITransactionalOperation operation)
+			throws ExecutionException;
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.
@@ -138,9 +140,10 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	/**
 	 * Opens a new transaction or adds the given {@link ITool} to the currently
 	 * opened transaction for executing operations (via
-	 * {@link #execute(IUndoableOperation)}) on the {@link IOperationHistory}
-	 * used by this {@link IDomain} (see {@link #getOperationHistory()}), using
-	 * the {@link IUndoContext} of this {@link IDomain}.
+	 * {@link #execute(ITransactionalOperation)}) on the
+	 * {@link IOperationHistory} used by this {@link IDomain} (see
+	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
+	 * {@link IDomain}.
 	 *
 	 * @param tool
 	 *            The {@link ITool} starting/joining the transaction.

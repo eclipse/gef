@@ -14,12 +14,12 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 import java.util.ArrayList;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.jface.action.Action;
@@ -130,7 +130,7 @@ public class DeleteActionHandler extends Action {
 				getSelectionModel().getSelectionUnmodifiable())) {
 			deletionPolicy.delete(s);
 		}
-		IUndoableOperation deleteOperation = deletionPolicy.commit();
+		ITransactionalOperation deleteOperation = deletionPolicy.commit();
 		if (deleteOperation != null) {
 			try {
 				viewer.getDomain().execute(deleteOperation);

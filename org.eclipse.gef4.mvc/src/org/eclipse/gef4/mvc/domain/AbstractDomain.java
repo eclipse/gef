@@ -20,7 +20,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.common.activate.ActivatableSupport;
@@ -129,6 +128,21 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		return ads.adaptersProperty();
 	}
 
+	/**
+	 * Applies the undo context to the given operation. May be overwritten by
+	 * clients to filter out operations that should not be undoable in the given
+	 * context.
+	 *
+	 * @param operation
+	 *            The {@link ITransactionalOperation} to apply the
+	 *            {@link #getUndoContext()} to.
+	 */
+	protected void applyUndoContext(ITransactionalOperation operation) {
+		// if (operation.isContentRelevant()) {
+		operation.addContext(getUndoContext());
+		// }
+	}
+
 	@Override
 	public void closeExecutionTransaction(ITool<VR> tool) {
 		// if (!transactionContext.contains(tool)) {
@@ -155,6 +169,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 				// adjust the label of the transaction
 				transaction.setLabel(transaction.getOperations().iterator()
 						.next().getLabel());
+				// only add undo context if we have a content related change
+				applyUndoContext(transaction);
 				getOperationHistory().add(transaction);
 			}
 			transaction = null;
@@ -172,8 +188,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	 */
 	protected AbstractCompositeOperation createExecutionTransaction() {
 		ReverseUndoCompositeOperation transaction = new ReverseUndoCompositeOperation(
-				"Transaction");
-		transaction.addContext(getUndoContext());
+				Long.toString(System.currentTimeMillis()));
 		return transaction;
 	}
 
@@ -197,17 +212,15 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public void execute(IUndoableOperation operation)
+	public void execute(ITransactionalOperation operation)
 			throws ExecutionException {
 		// reduce composite operations
 		if (operation instanceof AbstractCompositeOperation) {
 			operation = ((AbstractCompositeOperation) operation).unwrap(true);
 		}
 		// do not execute NoOps
-		if (operation instanceof ITransactionalOperation) {
-			if (((ITransactionalOperation) operation).isNoOp()) {
-				return;
-			}
+		if (operation.isNoOp()) {
+			return;
 		}
 		// check if we can execute operation
 		if (!operation.canExecute()) {
@@ -219,7 +232,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 			transaction.add(operation);
 		} else {
 			// execute operation directly on operation history
-			operation.addContext(getUndoContext());
+			applyUndoContext(operation);
 			getOperationHistory().execute(operation, new NullProgressMonitor(),
 					null);
 		}

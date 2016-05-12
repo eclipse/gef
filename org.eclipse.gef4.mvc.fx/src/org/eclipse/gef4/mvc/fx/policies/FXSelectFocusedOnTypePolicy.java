@@ -14,9 +14,9 @@ package org.eclipse.gef4.mvc.fx.policies;
 import java.util.Collections;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -31,8 +31,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link FXSelectFocusedOnTypePolicy} implements (de-)selecting a focused part via
- * the keyboard.
+ * The {@link FXSelectFocusedOnTypePolicy} implements (de-)selecting a focused
+ * part via the keyboard.
  *
  * @author mwienand
  *
@@ -60,7 +60,7 @@ public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				});
 
-		IUndoableOperation op = null;
+		ITransactionalOperation op = null;
 		if (host instanceof IRootPart) {
 			// clear the selection if on the root part/background
 			op = new DeselectOperation<>(viewer,

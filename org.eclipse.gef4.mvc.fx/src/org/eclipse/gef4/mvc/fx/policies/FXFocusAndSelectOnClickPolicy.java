@@ -15,11 +15,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -82,7 +82,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 
 			// create selection change operation(s)
 			boolean wasDeselected = false;
-			IUndoableOperation selectionChangeOperation = null;
+			ITransactionalOperation selectionChangeOperation = null;
 			if (selectionModel.isSelected(contentPart)) {
 				if (append) {
 					// deselect the host
