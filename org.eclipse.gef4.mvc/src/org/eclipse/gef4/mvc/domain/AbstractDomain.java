@@ -218,7 +218,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 			operation.execute(new NullProgressMonitor(), null);
 			transaction.add(operation);
 		} else {
-			// exectue operation directly on operation history
+			// execute operation directly on operation history
 			operation.addContext(getUndoContext());
 			getOperationHistory().execute(operation, new NullProgressMonitor(),
 					null);
