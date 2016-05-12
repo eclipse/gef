@@ -1,6 +1,5 @@
 package org.eclipse.gef4.mvc.parts;
 
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 
 /**
@@ -21,8 +20,7 @@ public interface IResizableContentPart<VR, V extends VR>
 		extends IContentPart<VR, V> {
 
 	/**
-	 * Resizes the content element as specified by the given
-	 * {@link AffineTransform}.
+	 * Resizes the content element as specified by the given {@link Dimension}.
 	 *
 	 * @param size
 	 *            The new size.
