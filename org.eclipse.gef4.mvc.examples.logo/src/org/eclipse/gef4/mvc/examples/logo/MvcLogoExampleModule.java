@@ -76,6 +76,7 @@ import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
 import com.google.common.reflect.TypeToken;
@@ -316,6 +317,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		});
 	}
 
+	protected void bindIContentPartFactory() {
+		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+		}).toInstance(new FXLogoContentPartFactory());
+	}
+
 	@Override
 	protected void bindIHandlePartFactories() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
@@ -396,6 +402,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	@Override
 	protected void configure() {
 		super.configure();
+
+		bindIContentPartFactory();
 
 		// contents
 		bindFXGeometricModelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXGeometricModelPart.class));

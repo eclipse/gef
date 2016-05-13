@@ -58,6 +58,7 @@ import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -271,6 +272,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindContentViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		bindIContentPartFactoryAsContentViewerAdapter(adapterMapBinder);
 		bindContentModelAsContentViewerAdapter(adapterMapBinder);
 		bindGridModelAsContentViewerAdapter(adapterMapBinder);
 		bindFocusModelAsContentViewerAdapter(adapterMapBinder);
@@ -930,6 +932,19 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(new TypeToken<HoverModel<Node>>() {
 				})).to(new TypeLiteral<HoverModel<Node>>() {
+				});
+	}
+
+	/**
+	 * Binds {@link IContentPartFactory} as an adapter for the content viewer.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} for the content viewer.
+	 */
+	protected void bindIContentPartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(new TypeLiteral<IContentPartFactory<Node>>() {
 				});
 	}
 
