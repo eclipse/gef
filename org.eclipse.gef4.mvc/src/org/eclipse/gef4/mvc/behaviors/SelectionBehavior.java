@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -30,8 +31,6 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import javafx.collections.ListChangeListener;
 
@@ -48,18 +47,16 @@ import javafx.collections.ListChangeListener;
 public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 
 	/**
-	 * The name of the named injection that is used within this
-	 * {@link SelectionBehavior} to obtain an {@link IHandlePartFactory}.
+	 * The adapter role for the {@link IFeedbackPartFactory} that is used to
+	 * generate hover feedback parts.
 	 */
-	public static final String PART_FACTORIES_BINDING_NAME = "selection";
+	public static final String SELECTION_FEEDBACK_PART_FACTORY = "SELECTION_FEEDBACK_PART_FACTORY";
 
-	@Inject
-	@Named(PART_FACTORIES_BINDING_NAME)
-	private IFeedbackPartFactory<VR> feedbackPartFactory;
-
-	@Inject
-	@Named(PART_FACTORIES_BINDING_NAME)
-	private IHandlePartFactory<VR> handlePartFactory;
+	/**
+	 * The adapter role for the {@link IHandlePartFactory} that is used to
+	 * generate hover handle parts.
+	 */
+	public static final String SELECTION_HANDLE_PART_FACTORY = "SELECTION_HANDLE_PART_FACTORY";
 
 	private ListChangeListener<IContentPart<VR, ? extends VR>> selectionObserver = new ListChangeListener<IContentPart<VR, ? extends VR>>() {
 		@Override
@@ -90,10 +87,10 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 		if (getHost() instanceof IRootPart && selected.size() > 1) {
 			// add feedback and handles
 			switchAdaptableScopes();
-			addFeedback(selected, feedbackPartFactory.createFeedbackParts(
+			addFeedback(selected, getFeedbackPartFactory().createFeedbackParts(
 					selected, this, Collections.emptyMap()));
-			addHandles(selected, handlePartFactory.createHandleParts(selected,
-					this, Collections.emptyMap()));
+			addHandles(selected, getHandlePartFactory()
+					.createHandleParts(selected, this, Collections.emptyMap()));
 		} else if (selected.contains(getHost())) {
 			// reveal the clicked part
 			// TODO: this should be encapsulated in an operation by the
@@ -103,11 +100,11 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			List<IVisualPart<VR, ? extends VR>> targets = Collections
 					.<IVisualPart<VR, ? extends VR>> singletonList(getHost());
 			switchAdaptableScopes();
-			addFeedback(targets, feedbackPartFactory.createFeedbackParts(
+			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(
 					targets, this, Collections.emptyMap()));
 			if (selected.get(0) == getHost() && selected.size() <= 1) {
-				addHandles(targets, handlePartFactory.createHandleParts(targets,
-						this, Collections.emptyMap()));
+				addHandles(targets, getHandlePartFactory().createHandleParts(
+						targets, this, Collections.emptyMap()));
 			}
 		}
 	}
@@ -136,25 +133,33 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 	}
 
 	/**
-	 * Returns the {@link IFeedbackPartFactory} that was injected into this
-	 * {@link HoverBehavior}.
+	 * Returns the {@link IFeedbackPartFactory} for selection feedback.
 	 *
-	 * @return the {@link IFeedbackPartFactory} that was injected into this
-	 *         {@link HoverBehavior}.
+	 * @return The {@link IFeedbackPartFactory} for selection feedback.
 	 */
+	@SuppressWarnings("serial")
 	protected IFeedbackPartFactory<VR> getFeedbackPartFactory() {
-		return feedbackPartFactory;
+		IViewer<VR> viewer = getHost().getRoot().getViewer();
+		return viewer.getAdapter(
+				AdapterKey.get(new TypeToken<IFeedbackPartFactory<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())),
+						SELECTION_FEEDBACK_PART_FACTORY));
 	}
 
 	/**
-	 * Returns the {@link IHandlePartFactory} that was injected into this
-	 * {@link SelectionBehavior}.
+	 * Returns the {@link IHandlePartFactory} for selection feedback.
 	 *
-	 * @return the {@link IHandlePartFactory} that was injected into this
-	 *         {@link SelectionBehavior}.
+	 * @return The {@link IHandlePartFactory} for selection feedback.
 	 */
+	@SuppressWarnings("serial")
 	protected IHandlePartFactory<VR> getHandlePartFactory() {
-		return handlePartFactory;
+		IViewer<VR> viewer = getHost().getRoot().getViewer();
+		return viewer.getAdapter(
+				AdapterKey.get(new TypeToken<IHandlePartFactory<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())),
+						SELECTION_HANDLE_PART_FACTORY));
 	}
 
 	/**
@@ -214,7 +219,7 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			IHandlePart<VR, ? extends VR> interactedWith) {
 		// determine new handles
 		switchAdaptableScopes();
-		List<IHandlePart<VR, ? extends VR>> newHandles = handlePartFactory
+		List<IHandlePart<VR, ? extends VR>> newHandles = getHandlePartFactory()
 				.createHandleParts(Collections.singletonList(getHost()), this,
 						Collections.emptyMap());
 		// compare to current handles => remove/add as needed

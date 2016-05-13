@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.utils.CursorUtils;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
-import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.models.HoverModel;
@@ -27,9 +27,9 @@ import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import com.google.common.reflect.TypeToken;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
@@ -105,10 +105,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		return false;
 	}
 
-	@Inject
-	@Named(PART_FACTORIES_BINDING_NAME)
-	private IHandlePartFactory<Node> handlePartFactory;
-
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();
 
 	private boolean isFeedback;
@@ -175,14 +171,16 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	/**
-	 * Returns the {@link IHandlePartFactory} that was injected into this
-	 * {@link SelectionBehavior}.
+	 * Returns the {@link IHandlePartFactory} for hover handles.
 	 *
-	 * @return the {@link IHandlePartFactory} that was injected into this
-	 *         {@link SelectionBehavior}.
+	 * @return the {@link IHandlePartFactory} for hover handles.
 	 */
+	@SuppressWarnings("serial")
 	protected IHandlePartFactory<Node> getHandlePartFactory() {
-		return handlePartFactory;
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		return viewer.getAdapter(
+				AdapterKey.get(new TypeToken<IHandlePartFactory<Node>>() {
+				}, HOVER_HANDLE_PART_FACTORY));
 	}
 
 	/**

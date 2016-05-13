@@ -15,19 +15,17 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,11 +45,9 @@ import javafx.scene.Node;
 public class FXFocusBehavior extends AbstractBehavior<Node> {
 
 	/**
-	 * The name of the named injection that is used within this
-	 * {@link FXFocusBehavior} to obtain an {@link IFeedbackPartFactory} or
-	 * {@link IHandlePartFactory}.
+	 * The adapter role for the "focus" {@link IFeedbackPartFactory}.
 	 */
-	public static final String PART_FACTORIES_BINDING_NAME = "focus";
+	public static final String FOCUS_FEEDBACK_PART_FACTORY = "FOCUS_FEEDBACK_PART_FACTORY";
 
 	private IContentPart<Node, ? extends Node> focusPart;
 	private boolean isViewerFocused;
@@ -67,14 +63,6 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 			refreshFocusFeedback();
 		}
 	};
-
-	@Inject
-	@Named(PART_FACTORIES_BINDING_NAME)
-	private IFeedbackPartFactory<Node> feedbackPartFactory;
-
-	// @Inject
-	// @Named(PART_FACTORIES_BINDING_NAME)
-	// private IHandlePartFactory<Node> handlePartFactory;
 
 	private FocusModel<Node> focusModel;
 
@@ -144,6 +132,19 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
+	 * Returns the {@link IFeedbackPartFactory} for selection feedback.
+	 *
+	 * @return The {@link IFeedbackPartFactory} for selection feedback.
+	 */
+	@SuppressWarnings("serial")
+	protected IFeedbackPartFactory<Node> getFeedbackPartFactory() {
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		return viewer.getAdapter(
+				AdapterKey.get(new TypeToken<IFeedbackPartFactory<Node>>() {
+				}, FOCUS_FEEDBACK_PART_FACTORY));
+	}
+
+	/**
 	 * Returns the {@link FocusModel} at which this {@link FXFocusBehavior} is
 	 * registered for changes.
 	 *
@@ -175,7 +176,7 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 			if (hasFeedback && !isFocused) {
 				removeFeedback(targets);
 			} else if (!hasFeedback && isFocused) {
-				List<IFeedbackPart<Node, ? extends Node>> feedbackParts = feedbackPartFactory
+				List<IFeedbackPart<Node, ? extends Node>> feedbackParts = getFeedbackPartFactory()
 						.createFeedbackParts(targets, FXFocusBehavior.this,
 								Collections.emptyMap());
 				addFeedback(targets, feedbackParts);

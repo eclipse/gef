@@ -14,16 +14,16 @@ package org.eclipse.gef4.mvc.behaviors;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -41,14 +41,16 @@ import javafx.beans.value.ObservableValue;
 public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 
 	/**
-	 * The name of the named injection that is used within this
-	 * {@link HoverBehavior} to obtain an {@link IFeedbackPartFactory}.
+	 * The adapter role for the {@link IFeedbackPartFactory} that is used to
+	 * generate hover feedback parts.
 	 */
-	public static final String PART_FACTORIES_BINDING_NAME = "hover";
+	public static final String HOVER_FEEDBACK_PART_FACTORY = "HOVER_FEEDBACK_PART_FACTORY";
 
-	@Inject
-	@Named(PART_FACTORIES_BINDING_NAME)
-	private IFeedbackPartFactory<VR> feedbackPartFactory;
+	/**
+	 * The adapter role for the {@link IHandlePartFactory} that is used to
+	 * generate hover handle parts.
+	 */
+	public static final String HOVER_HANDLE_PART_FACTORY = "HOVER_HANDLE_PART_FACTORY";
 
 	private ChangeListener<IVisualPart<VR, ? extends VR>> hoverObserver = new ChangeListener<IVisualPart<VR, ? extends VR>>() {
 		@Override
@@ -88,14 +90,18 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	}
 
 	/**
-	 * Returns the {@link IFeedbackPartFactory} that was injected into this
-	 * {@link HoverBehavior}.
+	 * Returns the {@link IFeedbackPartFactory} for hover feedback.
 	 *
-	 * @return the {@link IFeedbackPartFactory} that was injected into this
-	 *         {@link HoverBehavior}.
+	 * @return The {@link IFeedbackPartFactory} for hover feedback.
 	 */
+	@SuppressWarnings("serial")
 	protected IFeedbackPartFactory<VR> getFeedbackPartFactory() {
-		return feedbackPartFactory;
+		IViewer<VR> viewer = getHost().getRoot().getViewer();
+		return viewer.getAdapter(
+				AdapterKey.get(new TypeToken<IFeedbackPartFactory<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())),
+						HOVER_FEEDBACK_PART_FACTORY));
 	}
 
 	/**
@@ -130,7 +136,7 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 			switchAdaptableScopes();
 			List<IVisualPart<VR, ? extends VR>> targets = Collections
 					.<IVisualPart<VR, ? extends VR>> singletonList(getHost());
-			addFeedback(targets, feedbackPartFactory.createFeedbackParts(
+			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(
 					targets, this, Collections.emptyMap()));
 		} else if (getHost() == oldHovered && getHost() != newHovered) {
 			removeFeedback(Collections.singletonList(getHost()));

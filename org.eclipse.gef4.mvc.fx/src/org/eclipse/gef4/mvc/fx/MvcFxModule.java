@@ -71,7 +71,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.name.Names;
 
 import javafx.scene.Node;
 
@@ -279,6 +278,12 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindHoverModelAsContentViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsContentViewerAdapter(adapterMapBinder);
 		bindFXRootPartAsContentViewerAdapter(adapterMapBinder);
+		bindFocusFeedbackPartFactoryAsContentViewerAdapter(adapterMapBinder);
+		bindHoverFeedbackPartFactoryAsContentViewerAdapter(adapterMapBinder);
+		bindSelectionFeedbackPartFactoryAsContentViewerAdapter(
+				adapterMapBinder);
+		bindHoverHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
+		bindSelectionHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -376,6 +381,21 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXFocusAndSelectOnClickPolicy.class);
+	}
+
+	/**
+	 * Binds the {@link IFeedbackPartFactory} that is used to generate focus
+	 * feedback.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} for content viewer adapters.
+	 */
+	protected void bindFocusFeedbackPartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXFocusBehavior.FOCUS_FEEDBACK_PART_FACTORY))
+				.to(FXDefaultFocusFeedbackPartFactory.class);
 	}
 
 	/**
@@ -906,6 +926,36 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Binds the {@link IFeedbackPartFactory} that is used to generate hover
+	 * feedback.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} for content viewer adapters.
+	 */
+	protected void bindHoverFeedbackPartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(HoverBehavior.HOVER_FEEDBACK_PART_FACTORY))
+				.to(FXDefaultHoverFeedbackPartFactory.class);
+	}
+
+	/**
+	 * Binds the {@link IHandlePartFactory} that is used to generate hover
+	 * handles.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} for content viewer adapters.
+	 */
+	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
+				.to(FXDefaultHoverHandlePartFactory.class);
+	}
+
+	/**
 	 * Binds {@link HoverModel}, parameterized by {@link Node} to the
 	 * {@link FXViewer} adaptable scope.
 	 */
@@ -941,54 +991,13 @@ public class MvcFxModule extends MvcModule<Node> {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} for the content viewer.
 	 */
+	// TODO: Instead of binding to an interface here, we should require a
+	// binding of the actual content part factory.
 	protected void bindIContentPartFactoryAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<IContentPartFactory<Node>>() {
 				});
-	}
-
-	/**
-	 * Binds {@link FXDefaultHoverFeedbackPartFactory} (named
-	 * {@link HoverBehavior#PART_FACTORIES_BINDING_NAME}) and
-	 * {@link FXDefaultSelectionFeedbackPartFactory} (named
-	 * {@link SelectionBehavior#PART_FACTORIES_BINDING_NAME}) for
-	 * {@link IFeedbackPartFactory}, in adaptable scope of {@link FXViewer}.
-	 */
-	protected void bindIFeedbackPartFactories() {
-		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).annotatedWith(
-				Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(FXDefaultSelectionFeedbackPartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
-		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(FXDefaultHoverFeedbackPartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
-		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).annotatedWith(
-				Names.named(FXFocusBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(FXDefaultFocusFeedbackPartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
-	}
-
-	/**
-	 * Binds {@link FXDefaultSelectionHandlePartFactory} (named
-	 * {@link SelectionBehavior#PART_FACTORIES_BINDING_NAME}) and
-	 * {@link FXDefaultHoverHandlePartFactory} (named
-	 * {@link HoverBehavior#PART_FACTORIES_BINDING_NAME}) for
-	 * {@link IHandlePartFactory}, in adaptable scope of {@link FXViewer}.
-	 */
-	protected void bindIHandlePartFactories() {
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(
-				Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(FXDefaultSelectionHandlePartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(FXDefaultHoverHandlePartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	/**
@@ -1045,6 +1054,36 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Binds the {@link IFeedbackPartFactory} that is used to generate selection
+	 * feedback.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} for content viewer adapters.
+	 */
+	protected void bindSelectionFeedbackPartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(SelectionBehavior.SELECTION_FEEDBACK_PART_FACTORY))
+				.to(FXDefaultSelectionFeedbackPartFactory.class);
+	}
+
+	/**
+	 * Binds the {@link IHandlePartFactory} that is used to generate selection
+	 * handles.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} for content viewer adapters.
+	 */
+	protected void bindSelectionHandlePartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(SelectionBehavior.SELECTION_HANDLE_PART_FACTORY))
+				.to(FXDefaultSelectionHandlePartFactory.class);
+	}
+
+	/**
 	 * Binds {@link SelectionModel}, parameterized by {@link Node}, in adaptable
 	 * scope of {@link FXViewer}.
 	 */
@@ -1077,10 +1116,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	@Override
 	protected void configure() {
 		super.configure();
-
-		// bind default factories for handles and feedback
-		bindIHandlePartFactories();
-		bindIFeedbackPartFactories();
 
 		// bind default viewer models
 		bindHoverModel();

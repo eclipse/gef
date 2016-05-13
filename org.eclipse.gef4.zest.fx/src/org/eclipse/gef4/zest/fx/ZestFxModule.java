@@ -45,7 +45,6 @@ import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior;
@@ -84,7 +83,6 @@ import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.name.Names;
 
 import javafx.scene.Node;
 
@@ -303,22 +301,18 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideFirstAnchorageOnClickPolicy.class);
 	}
 
+	@Override
+	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
+				.to(ZestFxHoverHandlePartFactory.class);
+	}
+
 	/**
 	 * Binds {@link IContentPartFactory} to {@link ZestFxContentPartFactory}.
 	 */
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).to(ZestFxContentPartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
-	}
-
-	@Override
-	protected void bindIHandlePartFactories() {
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(ZestFxSelectionHandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME)).to(ZestFxHoverHandlePartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	/**
@@ -462,6 +456,13 @@ public class ZestFxModule extends MvcFxModule {
 
 		// normalize on drag
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXNormalizeConnectedOnDragPolicy.class);
+	}
+
+	@Override
+	protected void bindSelectionHandlePartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_HANDLE_PART_FACTORY))
+				.to(ZestFxSelectionHandlePartFactory.class);
 	}
 
 	/**

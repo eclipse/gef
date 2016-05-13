@@ -40,6 +40,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClick
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
@@ -77,14 +78,12 @@ import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.name.Names;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -127,6 +126,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		super.bindContentViewerAdapters(adapterMapBinder);
 		// bind content part factory
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoContentPartFactory.class);
+	}
+
+	protected void bindFocusFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXFocusBehavior.FOCUS_FEEDBACK_PART_FACTORY))
+				.to(FXDefaultFocusFeedbackPartFactory.class);
 	}
 
 	@SuppressWarnings("serial")
@@ -310,6 +314,22 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizeTransformSelectedOnHandleDragPolicy.class);
 	}
 
+	protected void bindHoverFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_FEEDBACK_PART_FACTORY))
+				.to(FXDefaultHoverFeedbackPartFactory.class);
+	}
+
+	protected void bindHoverHandleFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
+				.to(FXDefaultHoverHandlePartFactory.class);
+	}
+
+	@Override
+	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
+				.to(FXLogoHoverHandlePartFactory.class);
+	}
+
 	@SuppressWarnings("serial")
 	protected void bindHoverModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<HoverModel<Node>>() {
@@ -320,16 +340,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).toInstance(new FXLogoContentPartFactory());
-	}
-
-	@Override
-	protected void bindIHandlePartFactories() {
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(FXLogoSelectionHandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME)).to(FXLogoHoverHandlePartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	protected void bindPaletteElementPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -357,13 +367,19 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindPaletteViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// bind models
 		bindContentModelAsPaletteViewerAdapter(adapterMapBinder);
-		// bind root part
-		bindFXRootPartAsPaletteViewerAdapter(adapterMapBinder);
-		// bind parameterized default viewer models
 		bindFocusModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindHoverModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
+		// bind root part
+		bindFXRootPartAsPaletteViewerAdapter(adapterMapBinder);
+		// add hover feedback factory
+		bindSelectionFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
+		bindSelectionHandleFactoryAsPaletteViewerAdapter(adapterMapBinder);
+		bindHoverFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
+		bindHoverHandleFactoryAsPaletteViewerAdapter(adapterMapBinder);
+		bindFocusFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		// bind content part factory
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoPaletteContentPartFactory.class);
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR_PROVIDER))
@@ -390,6 +406,24 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindPaletteFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// bind focus traversal policy
 		bindFocusTraversalPolicyAsFXRootPartAdapter(adapterMapBinder);
+	}
+
+	protected void bindSelectionFeedbackFactoryAsPaletteViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_FEEDBACK_PART_FACTORY))
+				.to(FXDefaultSelectionFeedbackPartFactory.class);
+	}
+
+	protected void bindSelectionHandleFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_HANDLE_PART_FACTORY))
+				.to(FXDefaultSelectionHandlePartFactory.class);
+	}
+
+	@Override
+	protected void bindSelectionHandlePartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_HANDLE_PART_FACTORY))
+				.to(FXLogoSelectionHandlePartFactory.class);
 	}
 
 	@SuppressWarnings("serial")
