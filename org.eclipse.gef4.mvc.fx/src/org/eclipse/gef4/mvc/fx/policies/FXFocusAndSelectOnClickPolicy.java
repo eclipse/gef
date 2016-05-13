@@ -98,7 +98,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 				} else {
 					// clear old selection, host becomes the only selected
 					ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
-							"SetSelection()");
+							"Select");
 					revOp.add(new DeselectOperation<>(viewer, oldSelection));
 					revOp.add(new SelectOperation<>(viewer, singletonHostList));
 					selectionChangeOperation = revOp;

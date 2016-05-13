@@ -94,7 +94,7 @@ public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
 			} else {
 				// set selection
 				ReverseUndoCompositeOperation rvOp = new ReverseUndoCompositeOperation(
-						"SetSelection()");
+						"Select");
 				rvOp.add(new DeselectOperation<>(viewer,
 						selectionModel.getSelectionUnmodifiable()));
 				rvOp.add(new SelectOperation<>(viewer,
