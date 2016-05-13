@@ -290,6 +290,12 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		if (skew != null) {
 			DotAttributes.setSkew(node, skew);
 		}
+
+		// style
+		String style = getAttributeValue(nodeStmt, DotAttributes.STYLE__E);
+		if (style != null) {
+			DotAttributes.setStyle(node, style);
+		}
 		return super.caseNodeStmt(nodeStmt);
 	}
 
@@ -485,6 +491,26 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			if (globalNodeAttributes.containsKey(DotAttributes.FIXEDSIZE__N)) {
 				DotAttributes.setFixedSize(node,
 						globalNodeAttributes.get(DotAttributes.FIXEDSIZE__N));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.DISTORTION__N)) {
+				DotAttributes.setDistortion(node,
+						globalNodeAttributes.get(DotAttributes.DISTORTION__N));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.SHAPE__N)) {
+				DotAttributes.setShape(node,
+						globalNodeAttributes.get(DotAttributes.SHAPE__N));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.SIDES__N)) {
+				DotAttributes.setSides(node,
+						globalNodeAttributes.get(DotAttributes.SIDES__N));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.SKEW__N)) {
+				DotAttributes.setSkew(node,
+						globalNodeAttributes.get(DotAttributes.SKEW__N));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.STYLE__E)) {
+				DotAttributes.setStyle(node,
+						globalNodeAttributes.get(DotAttributes.STYLE__E));
 			}
 		}
 		return nodesByName.get(nodeName);
