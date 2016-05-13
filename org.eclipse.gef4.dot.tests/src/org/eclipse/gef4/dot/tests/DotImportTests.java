@@ -373,11 +373,11 @@ public final class DotImportTests {
 		Node[] nodes = createNodes();
 		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
 				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
-				.attr(DotAttributes.STYLE__E, "dashed") //$NON-NLS-1$
+				.attr(DotAttributes.STYLE__GNE, "dashed") //$NON-NLS-1$
 				.buildEdge();
 		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
 				.attr(DotAttributes._NAME__GNE, "3--4") //$NON-NLS-1$
-				.attr(DotAttributes.STYLE__E, "dashed") //$NON-NLS-1$
+				.attr(DotAttributes.STYLE__GNE, "dashed") //$NON-NLS-1$
 				.buildEdge();
 		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.EDGE_STYLE_GLOBAL);
@@ -742,9 +742,9 @@ public final class DotImportTests {
 		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
 				DotAttributes._TYPE__G__GRAPH);
 		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
-				.attr(DotAttributes.STYLE__E, "solid, dashed").buildNode();
+				.attr(DotAttributes.STYLE__GNE, "solid, dashed").buildNode();
 		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2") //$NON-NLS-1$
-				.attr(DotAttributes.STYLE__E, "solid, dashed").buildNode();
+				.attr(DotAttributes.STYLE__GNE, "solid, dashed").buildNode();
 		Graph expected = graph.nodes(n1, n2).build();
 		testStringImport(expected, DotTestGraphs.NODE_STYLE_GLOBAL);
 

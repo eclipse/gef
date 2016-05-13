@@ -292,7 +292,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		}
 
 		// style
-		String style = getAttributeValue(nodeStmt, DotAttributes.STYLE__E);
+		String style = getAttributeValue(nodeStmt, DotAttributes.STYLE__GNE);
 		if (style != null) {
 			DotAttributes.setStyle(node, style);
 		}
@@ -306,7 +306,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		currentEdgeLp = getAttributeValue(object, DotAttributes.LP__GE);
 		currentEdgeXLabel = getAttributeValue(object, DotAttributes.XLABEL__NE);
 		currentEdgeXlp = getAttributeValue(object, DotAttributes.XLP__NE);
-		currentEdgeStyle = getAttributeValue(object, DotAttributes.STYLE__E);
+		currentEdgeStyle = getAttributeValue(object, DotAttributes.STYLE__GNE);
 		currentEdgePos = getAttributeValue(object, DotAttributes.POS__NE);
 		currentEdgeHeadLabel = getAttributeValue(object,
 				DotAttributes.HEADLABEL__E);
@@ -389,9 +389,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// style
 		if (currentEdgeStyle != null) {
 			DotAttributes.setStyle(edge, currentEdgeStyle);
-		} else if (globalEdgeAttributes.containsKey(DotAttributes.STYLE__E)) {
+		} else if (globalEdgeAttributes.containsKey(DotAttributes.STYLE__GNE)) {
 			DotAttributes.setStyle(edge,
-					globalEdgeAttributes.get(DotAttributes.STYLE__E));
+					globalEdgeAttributes.get(DotAttributes.STYLE__GNE));
 		}
 
 		// arrow head
@@ -508,9 +508,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.setSkew(node,
 						globalNodeAttributes.get(DotAttributes.SKEW__N));
 			}
-			if (globalNodeAttributes.containsKey(DotAttributes.STYLE__E)) {
+			if (globalNodeAttributes.containsKey(DotAttributes.STYLE__GNE)) {
 				DotAttributes.setStyle(node,
-						globalNodeAttributes.get(DotAttributes.STYLE__E));
+						globalNodeAttributes.get(DotAttributes.STYLE__GNE));
 			}
 		}
 		return nodesByName.get(nodeName);

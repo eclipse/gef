@@ -238,7 +238,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.01);
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.02);
-		} else if (DotAttributes.STYLE__E.equals(name)
+		} else if (DotAttributes.STYLE__GNE.equals(name)
 				&& !unquotedValue.isEmpty()) {
 			// validate style using delegate parser and validator
 			List<Diagnostic> grammarFindings = validateObjectAttributeValue(

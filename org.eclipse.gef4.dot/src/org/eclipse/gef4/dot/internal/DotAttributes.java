@@ -41,9 +41,8 @@ import org.eclipse.xtext.serializer.ISerializer;
 import com.google.inject.Injector;
 
 /**
- * The {@link DotAttributes} class contains all properties which are supported
- * by {@link DotImport} and {@link DotExport}, i.e. they are set on the
- * resulting {@link Graph}.
+ * The {@link DotAttributes} class contains all attributes which are supported
+ * by {@link DotImport} and {@link DotExport}.
  * 
  * @author mwienand
  * @author anyssen
@@ -159,7 +158,7 @@ public class DotAttributes {
 	public static final String POS__NE = "pos";
 
 	/**
-	 * Specifies the rankdir property which is passed to the layout algorithm
+	 * Specifies the 'rankdir' attribute which is passed to the layout algorithm
 	 * which is used for laying out the graph.
 	 */
 	public static final String RANKDIR__G = "rankdir";
@@ -189,7 +188,7 @@ public class DotAttributes {
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
 	 * dotted, etc.
 	 */
-	public static final String STYLE__E = "style";
+	public static final String STYLE__GNE = "style";
 
 	/**
 	 * Specifies the 'tail_lp' attribute (tail label position) of an edge.
@@ -218,13 +217,13 @@ public class DotAttributes {
 	public static final String XLP__NE = "xlp";
 
 	/**
-	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *            {@link #_NAME__GNE} attribute.
+	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String _getName(Edge edge) {
@@ -232,13 +231,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *            {@link #_NAME__GNE} attribute.
+	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String _getName(Graph graph) {
@@ -246,13 +245,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #_NAME__GNE} property.
-	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *            {@link #_NAME__GNE} attribute.
+	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String _getName(Node node) {
@@ -260,13 +259,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #_TYPE__G} property of the given
+	 * Returns the value of the {@link #_TYPE__G} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #_TYPE__G} property.
-	 * @return The value of the {@link #_TYPE__G} property of the given
+	 *            {@link #_TYPE__G} attribute.
+	 * @return The value of the {@link #_TYPE__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String _getType(Graph graph) {
@@ -274,56 +273,56 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
+	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Graph} to the
 	 * given <i>name</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #_NAME__GNE} property.
+	 *            {@link #_NAME__GNE} attribute.
 	 * @param name
-	 *            The new value for the {@link #_NAME__GNE} property.
+	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
 	public static void _setName(Edge edge, String name) {
 		edge.attributesProperty().put(_NAME__GNE, name);
 	}
 
 	/**
-	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
+	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Graph} to the
 	 * given <i>name</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #_NAME__GNE} property.
+	 *            {@link #_NAME__GNE} attribute.
 	 * @param name
-	 *            The new value for the {@link #_NAME__GNE} property.
+	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
 	public static void _setName(Graph graph, String name) {
 		graph.attributesProperty().put(_NAME__GNE, name);
 	}
 
 	/**
-	 * Sets the {@link #_NAME__GNE} property of the given {@link Node} to the
+	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Node} to the
 	 * given <i>id</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #_NAME__GNE} property.
+	 *            {@link #_NAME__GNE} attribute.
 	 * @param id
-	 *            The new value for the {@link #_NAME__GNE} property.
+	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
 	public static void _setName(Node node, String id) {
 		node.attributesProperty().put(_NAME__GNE, id);
 	}
 
 	/**
-	 * Sets the {@link #_TYPE__G} property of the given {@link Graph} to the
+	 * Sets the {@link #_TYPE__G} attribute of the given {@link Graph} to the
 	 * given <i>type</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #_TYPE__G} property.
+	 *            {@link #_TYPE__G} attribute.
 	 * @param type
-	 *            The new value for the {@link #_TYPE__G} property.
+	 *            The new value for the {@link #_TYPE__G} attribute.
 	 */
 	public static void _setType(Graph graph, String type) {
 		if (!_TYPE__G__GRAPH.equals(type) && !_TYPE__G__DIGRAPH.equals(type)) {
@@ -347,13 +346,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #ARROWHEAD__E} property of the given
+	 * Returns the value of the {@link #ARROWHEAD__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWHEAD__E} property.
-	 * @return The value of the {@link #ARROWHEAD__E} property of the given
+	 *            {@link #ARROWHEAD__E} attribute.
+	 * @return The value of the {@link #ARROWHEAD__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getArrowHead(Edge edge) {
@@ -361,14 +360,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #ARROWHEAD__E} property of the
+	 * Returns the (parsed) value of the {@link #ARROWHEAD__E} attribute of the
 	 * given {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWHEAD__E} property, parsed as an {@link ArrowType}
-	 *            .
-	 * @return The value of the {@link #ARROWHEAD__E} property of the given
+	 *            {@link #ARROWHEAD__E} attribute, parsed as an
+	 *            {@link ArrowType} .
+	 * @return The value of the {@link #ARROWHEAD__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowHeadParsed(Edge edge) {
@@ -377,13 +376,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #ARROWSIZE__E} property of the given
+	 * Returns the value of the {@link #ARROWSIZE__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWSIZE__E} property.
-	 * @return The value of the {@link #ARROWSIZE__E} property of the given
+	 *            {@link #ARROWSIZE__E} attribute.
+	 * @return The value of the {@link #ARROWSIZE__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getArrowSize(Edge edge) {
@@ -391,13 +390,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #ARROWSIZE__E} property of the
+	 * Returns the (parsed) value of the {@link #ARROWSIZE__E} attribute of the
 	 * given {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWSIZE__E} property, parsed as a {@link Double}.
-	 * @return The value of the {@link #ARROWSIZE__E} property of the given
+	 *            {@link #ARROWSIZE__E} attribute, parsed as a {@link Double}.
+	 * @return The value of the {@link #ARROWSIZE__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static Double getArrowSizeParsed(Edge edge) {
@@ -406,13 +405,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #ARROWTAIL__E} property of the given
+	 * Returns the value of the {@link #ARROWTAIL__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWTAIL__E} property.
-	 * @return The value of the {@link #ARROWTAIL__E} property of the given
+	 *            {@link #ARROWTAIL__E} attribute.
+	 * @return The value of the {@link #ARROWTAIL__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getArrowTail(Edge edge) {
@@ -420,14 +419,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #ARROWTAIL__E} property of the
+	 * Returns the (parsed) value of the {@link #ARROWTAIL__E} attribute of the
 	 * given {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWTAIL__E} property, parsed as an {@link ArrowType}
-	 *            .
-	 * @return The value of the {@link #ARROWTAIL__E} property of the given
+	 *            {@link #ARROWTAIL__E} attribute, parsed as an
+	 *            {@link ArrowType} .
+	 * @return The value of the {@link #ARROWTAIL__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowTailParsed(Edge edge) {
@@ -436,13 +435,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #DIR__E} property of the given
+	 * Returns the value of the {@link #DIR__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #DIR__E} property.
-	 * @return The value of the {@link #DIR__E} property of the given
+	 *            {@link #DIR__E} attribute.
+	 * @return The value of the {@link #DIR__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getDir(Edge edge) {
@@ -450,13 +449,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #DIR__E} property of the given
+	 * Returns the (parsed) value of the {@link #DIR__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #DIR__E} property, parsed as a {@link DirType}.
-	 * @return The value of the {@link #DIR__E} property of the given
+	 *            {@link #DIR__E} attribute, parsed as a {@link DirType}.
+	 * @return The value of the {@link #DIR__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static DirType getDirParsed(Edge edge) {
@@ -465,13 +464,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #DISTORTION__N} property of the given
+	 * Returns the value of the {@link #DISTORTION__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #DISTORTION__N} property.
-	 * @return The value of the {@link #DISTORTION__N} property of the given
+	 *            {@link #DISTORTION__N} attribute.
+	 * @return The value of the {@link #DISTORTION__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getDistortion(Node node) {
@@ -479,13 +478,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #DISTORTION__N} property of the
+	 * Returns the (parsed) value of the {@link #DISTORTION__N} attribute of the
 	 * given {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #DISTORTION__N} property, parsed as a {@link Double}.
-	 * @return The value of the {@link #DISTORTION__N} property of the given
+	 *            {@link #DISTORTION__N} attribute, parsed as a {@link Double}.
+	 * @return The value of the {@link #DISTORTION__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Double getDistortionParsed(Node node) {
@@ -494,13 +493,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #FIXEDSIZE__N} property of the given
+	 * Returns the value of the {@link #FIXEDSIZE__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #FIXEDSIZE__N} property.
-	 * @return The value of the {@link #FIXEDSIZE__N} property of the given
+	 *            {@link #FIXEDSIZE__N} attribute.
+	 * @return The value of the {@link #FIXEDSIZE__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getFixedSize(Node node) {
@@ -508,13 +507,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #FIXEDSIZE__N} property of the
+	 * Returns the (parsed) value of the {@link #FIXEDSIZE__N} attribute of the
 	 * given {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #FIXEDSIZE__N} property, parsed as a {@link Boolean} .
-	 * @return The value of the {@link #FIXEDSIZE__N} property of the given
+	 *            {@link #FIXEDSIZE__N} attribute, parsed as a {@link Boolean} .
+	 * @return The value of the {@link #FIXEDSIZE__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Boolean getFixedSizeParsed(Node node) {
@@ -523,13 +522,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #FORCELABELS__G} property of the given
+	 * Returns the value of the {@link #FORCELABELS__G} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #FORCELABELS__G} property.
-	 * @return The value of the {@link #FORCELABELS__G} property of the given
+	 *            {@link #FORCELABELS__G} attribute.
+	 * @return The value of the {@link #FORCELABELS__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String getForceLabels(Graph graph) {
@@ -537,14 +536,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #FORCELABELS__G} property of the
-	 * given {@link Graph}.
+	 * Returns the (parsed) value of the {@link #FORCELABELS__G} attribute of
+	 * the given {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #FORCELABELS__G} property, parsed as a {@link Boolean}
+	 *            {@link #FORCELABELS__G} attribute, parsed as a {@link Boolean}
 	 *            .
-	 * @return The value of the {@link #FORCELABELS__G} property of the given
+	 * @return The value of the {@link #FORCELABELS__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static Boolean getForceLabelsParsed(Graph graph) {
@@ -568,13 +567,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #HEADLABEL__E} property of the given
+	 * Returns the value of the {@link #HEADLABEL__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #HEADLABEL__E} property.
-	 * @return The value of the {@link #HEADLABEL__E} property of the given
+	 *            {@link #HEADLABEL__E} attribute.
+	 * @return The value of the {@link #HEADLABEL__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getHeadLabel(Edge edge) {
@@ -582,13 +581,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #HEAD_LP__E} property of the given
+	 * Returns the value of the {@link #HEAD_LP__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #HEAD_LP__E} property.
-	 * @return The value of the {@link #HEAD_LP__E} property of the given
+	 *            {@link #HEAD_LP__E} attribute.
+	 * @return The value of the {@link #HEAD_LP__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getHeadLp(Edge edge) {
@@ -596,13 +595,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #HEAD_LP__E} property of the
+	 * Returns the (parsed) value of the {@link #HEAD_LP__E} attribute of the
 	 * given {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #HEAD_LP__E} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #HEAD_LP__E} property of the given
+	 *            {@link #HEAD_LP__E} attribute, parsed as a {@link Point}.
+	 * @return The value of the {@link #HEAD_LP__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static Point getHeadLpParsed(Edge edge) {
@@ -611,13 +610,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #HEIGHT__N} property of the given
+	 * Returns the value of the {@link #HEIGHT__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #HEIGHT__N} property.
-	 * @return The value of the {@link #HEIGHT__N} property of the given
+	 *            {@link #HEIGHT__N} attribute.
+	 * @return The value of the {@link #HEIGHT__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getHeight(Node node) {
@@ -625,13 +624,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #HEIGHT__N} property of the
+	 * Returns the (parsed) value of the {@link #HEIGHT__N} attribute of the
 	 * given {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #HEIGHT__N} property, parsed as a {@link Double}.
-	 * @return The value of the {@link #HEIGHT__N} property of the given
+	 *            {@link #HEIGHT__N} attribute, parsed as a {@link Double}.
+	 * @return The value of the {@link #HEIGHT__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Double getHeightParsed(Node node) {
@@ -640,13 +639,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #ID__GNE} property of the given
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ID__GNE} property.
-	 * @return The value of the {@link #ID__GNE} property of the given
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getId(Edge edge) {
@@ -654,13 +653,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #ID__GNE} property of the given
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #ID__GNE} property.
-	 * @return The value of the {@link #ID__GNE} property of the given
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String getId(Graph graph) {
@@ -668,13 +667,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #ID__GNE} property of the given
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #ID__GNE} property.
-	 * @return The value of the {@link #ID__GNE} property of the given
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getId(Node node) {
@@ -682,13 +681,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL__GNE} property of the given
+	 * Returns the value of the {@link #LABEL__GNE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #LABEL__GNE} property.
-	 * @return The value of the {@link #LABEL__GNE} property of the given
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getLabel(Edge edge) {
@@ -696,13 +695,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL__GNE} property of the given
+	 * Returns the value of the {@link #LABEL__GNE} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LABEL__GNE} property.
-	 * @return The value of the {@link #LABEL__GNE} property of the given
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String getLabel(Graph graph) {
@@ -710,13 +709,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL__GNE} property of the given
+	 * Returns the value of the {@link #LABEL__GNE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #LABEL__GNE} property.
-	 * @return The value of the {@link #LABEL__GNE} property of the given
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getLabel(Node node) {
@@ -724,13 +723,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LAYOUT__G} property of the given
+	 * Returns the value of the {@link #LAYOUT__G} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LAYOUT__G} property.
-	 * @return The value of the {@link #LAYOUT__G} property of the given
+	 *            {@link #LAYOUT__G} attribute.
+	 * @return The value of the {@link #LAYOUT__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String getLayout(Graph graph) {
@@ -738,13 +737,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #LAYOUT__G} property of the
+	 * Returns the (parsed) value of the {@link #LAYOUT__G} attribute of the
 	 * given {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LAYOUT__G} property, parsed as a {@link Layout}.
-	 * @return The value of the {@link #LAYOUT__G} property of the given
+	 *            {@link #LAYOUT__G} attribute, parsed as a {@link Layout}.
+	 * @return The value of the {@link #LAYOUT__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static Layout getLayoutParsed(Graph graph) {
@@ -752,13 +751,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LP__GE} property of the given
+	 * Returns the value of the {@link #LP__GE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #LP__GE} property.
-	 * @return The value of the {@link #LP__GE} property of the given
+	 *            {@link #LP__GE} attribute.
+	 * @return The value of the {@link #LP__GE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getLp(Edge edge) {
@@ -766,13 +765,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LP__GE} property of the given
+	 * Returns the value of the {@link #LP__GE} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LP__GE} property.
-	 * @return The value of the {@link #LP__GE} property of the given
+	 *            {@link #LP__GE} attribute.
+	 * @return The value of the {@link #LP__GE} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String getLp(Graph graph) {
@@ -780,13 +779,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #LP__GE} property of the given
+	 * Returns the (parsed) value of the {@link #LP__GE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #LP__GE} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #LP__GE} property of the given
+	 *            {@link #LP__GE} attribute, parsed as a {@link Point}.
+	 * @return The value of the {@link #LP__GE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static Point getLpParsed(Edge edge) {
@@ -795,13 +794,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #LP__GE} property of the given
+	 * Returns the (parsed) value of the {@link #LP__GE} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LP__GE} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #LP__GE} property of the given
+	 *            {@link #LP__GE} attribute, parsed as a {@link Point}.
+	 * @return The value of the {@link #LP__GE} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static Point getLpParsed(Graph graph) {
@@ -810,13 +809,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #POS__NE} property of the given
+	 * Returns the value of the {@link #POS__NE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #POS__NE} property.
-	 * @return The value of the {@link #POS__NE} property of the given
+	 *            {@link #POS__NE} attribute.
+	 * @return The value of the {@link #POS__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getPos(Edge edge) {
@@ -824,13 +823,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #POS__NE} property of the given
+	 * Returns the value of the {@link #POS__NE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #POS__NE} property.
-	 * @return The value of the {@link #POS__NE} property of the given
+	 *            {@link #POS__NE} attribute.
+	 * @return The value of the {@link #POS__NE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getPos(Node node) {
@@ -838,13 +837,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #POS__NE} property of the given
+	 * Returns the (parsed) value of the {@link #POS__NE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #POS__NE} property, parsed as a {@link SplineType}.
-	 * @return The value of the {@link #POS__NE} property of the given
+	 *            {@link #POS__NE} attribute, parsed as a {@link SplineType}.
+	 * @return The value of the {@link #POS__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static SplineType getPosParsed(Edge edge) {
@@ -853,13 +852,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #POS__NE} property of the given
+	 * Returns the (parsed) value of the {@link #POS__NE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #POS__NE} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #POS__NE} property of the given
+	 *            {@link #POS__NE} attribute, parsed as a {@link Point}.
+	 * @return The value of the {@link #POS__NE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Point getPosParsed(Node node) {
@@ -868,13 +867,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #RANKDIR__G} property of the given
+	 * Returns the value of the {@link #RANKDIR__G} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #RANKDIR__G} property.
-	 * @return The value of the {@link #RANKDIR__G} property of the given
+	 *            {@link #RANKDIR__G} attribute.
+	 * @return The value of the {@link #RANKDIR__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String getRankdir(Graph graph) {
@@ -882,13 +881,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #RANKDIR__G} property of the
+	 * Returns the (parsed) value of the {@link #RANKDIR__G} attribute of the
 	 * given {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #RANKDIR__G} property, parsed as a {@link Rankdir}.
-	 * @return The value of the {@link #RANKDIR__G} property of the given
+	 *            {@link #RANKDIR__G} attribute, parsed as a {@link Rankdir}.
+	 * @return The value of the {@link #RANKDIR__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static Rankdir getRankdirParsed(Graph graph) {
@@ -897,13 +896,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #SHAPE__N} property of the given
+	 * Returns the value of the {@link #SHAPE__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #SHAPE__N} property.
-	 * @return The value of the {@link #SHAPE__N} property of the given
+	 *            {@link #SHAPE__N} attribute.
+	 * @return The value of the {@link #SHAPE__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getShape(Node node) {
@@ -911,13 +910,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #SHAPE__N} property of the given
-	 * {@link Node}.
+	 * Returns the (parsed) value of the {@link #SHAPE__N} attribute of the
+	 * given {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #SHAPE__N} property, parsed as a {@link Shape}.
-	 * @return The value of the {@link #SHAPE__N} property of the given
+	 *            {@link #SHAPE__N} attribute, parsed as a {@link Shape}.
+	 * @return The value of the {@link #SHAPE__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Shape getShapeParsed(Node node) {
@@ -926,13 +925,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #SIDES__N} property of the given
+	 * Returns the value of the {@link #SIDES__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #SIDES__N} property.
-	 * @return The value of the {@link #SIDES__N} property of the given
+	 *            {@link #SIDES__N} attribute.
+	 * @return The value of the {@link #SIDES__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getSides(Node node) {
@@ -940,13 +939,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #SIDES__N} property of the given
-	 * {@link Node}.
+	 * Returns the (parsed) value of the {@link #SIDES__N} attribute of the
+	 * given {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #SIDES__N} property, parsed as an {@link Integer}.
-	 * @return The value of the {@link #SIDES__N} property of the given
+	 *            {@link #SIDES__N} attribute, parsed as an {@link Integer}.
+	 * @return The value of the {@link #SIDES__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Integer getSidesParsed(Node node) {
@@ -955,13 +954,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #SKEW__N} property of the given
+	 * Returns the value of the {@link #SKEW__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #SKEW__N} property.
-	 * @return The value of the {@link #SKEW__N} property of the given
+	 *            {@link #SKEW__N} attribute.
+	 * @return The value of the {@link #SKEW__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getSkew(Node node) {
@@ -969,13 +968,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #SKEW__N} property of the given
+	 * Returns the (parsed) value of the {@link #SKEW__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #SKEW__N} property, parsed as a {@link Double}.
-	 * @return The value of the {@link #SKEW__N} property of the given
+	 *            {@link #SKEW__N} attribute, parsed as a {@link Double}.
+	 * @return The value of the {@link #SKEW__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Double getSkewParsed(Node node) {
@@ -984,13 +983,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #SPLINES__G} property of the given
+	 * Returns the value of the {@link #SPLINES__G} attribute of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #SPLINES__G} property.
-	 * @return The value of the {@link #SPLINES__G} property of the given
+	 *            {@link #SPLINES__G} attribute.
+	 * @return The value of the {@link #SPLINES__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static String getSplines(Graph graph) {
@@ -998,13 +997,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #SPLINES__G} property of the
+	 * Returns the (parsed) value of the {@link #SPLINES__G} attribute of the
 	 * given {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #SPLINES__G} property, parsed as a {@link Boolean}.
-	 * @return The value of the {@link #SPLINES__G} property of the given
+	 *            {@link #SPLINES__G} attribute, parsed as a {@link Boolean}.
+	 * @return The value of the {@link #SPLINES__G} attribute of the given
 	 *         {@link Graph}.
 	 */
 	public static Splines getSplinesParsed(Graph graph) {
@@ -1012,41 +1011,41 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #STYLE__E} property of the given
+	 * Returns the value of the {@link #STYLE__GNE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #STYLE__E} property.
-	 * @return The value of the {@link #STYLE__E} property of the given
+	 *            {@link #STYLE__GNE} attribute.
+	 * @return The value of the {@link #STYLE__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(STYLE__E);
+		return (String) edge.attributesProperty().get(STYLE__GNE);
 	}
 
 	/**
-	 * Returns the value of the {@link #STYLE__E} property of the given
+	 * Returns the value of the {@link #STYLE__GNE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #STYLE__E} property.
-	 * @return The value of the {@link #STYLE__E} property of the given
+	 *            {@link #STYLE__GNE} attribute.
+	 * @return The value of the {@link #STYLE__GNE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getStyle(Node node) {
-		return (String) node.attributesProperty().get(STYLE__E);
+		return (String) node.attributesProperty().get(STYLE__GNE);
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #STYLE__E} property of the given
-	 * {@link Edge}.
+	 * Returns the (parsed) value of the {@link #STYLE__GNE} attribute of the
+	 * given {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #STYLE__E} property, parsed as a {@link Style}.
-	 * @return The value of the {@link #STYLE__E} property of the given
+	 *            {@link #STYLE__GNE} attribute, parsed as a {@link Style}.
+	 * @return The value of the {@link #STYLE__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static Style getStyleParsed(Edge edge) {
@@ -1055,13 +1054,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #STYLE__E} property of the given
-	 * {@link Node}.
+	 * Returns the (parsed) value of the {@link #STYLE__GNE} attribute of the
+	 * given {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #STYLE__E} property, parsed as a {@link Style}.
-	 * @return The value of the {@link #STYLE__E} property of the given
+	 *            {@link #STYLE__GNE} attribute, parsed as a {@link Style}.
+	 * @return The value of the {@link #STYLE__GNE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Style getStyleParsed(Node node) {
@@ -1070,13 +1069,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #TAILLABEL__E} property of the given
+	 * Returns the value of the {@link #TAILLABEL__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #TAILLABEL__E} property.
-	 * @return The value of the {@link #TAILLABEL__E} property of the given
+	 *            {@link #TAILLABEL__E} attribute.
+	 * @return The value of the {@link #TAILLABEL__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getTailLabel(Edge edge) {
@@ -1084,13 +1083,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #TAIL_LP__E} property of the given
+	 * Returns the value of the {@link #TAIL_LP__E} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #TAIL_LP__E} property.
-	 * @return The value of the {@link #TAIL_LP__E} property of the given
+	 *            {@link #TAIL_LP__E} attribute.
+	 * @return The value of the {@link #TAIL_LP__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getTailLp(Edge edge) {
@@ -1098,13 +1097,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #TAIL_LP__E} property of the
+	 * Returns the (parsed) value of the {@link #TAIL_LP__E} attribute of the
 	 * given {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #TAIL_LP__E} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #TAIL_LP__E} property of the given
+	 *            {@link #TAIL_LP__E} attribute, parsed as a {@link Point}.
+	 * @return The value of the {@link #TAIL_LP__E} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static Point getTailLpParsed(Edge edge) {
@@ -1113,13 +1112,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #WIDTH__N} property of the given
+	 * Returns the value of the {@link #WIDTH__N} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #WIDTH__N} property.
-	 * @return The value of the {@link #WIDTH__N} property of the given
+	 *            {@link #WIDTH__N} attribute.
+	 * @return The value of the {@link #WIDTH__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getWidth(Node node) {
@@ -1127,13 +1126,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #WIDTH__N} property of the given
-	 * {@link Node}.
+	 * Returns the (parsed) value of the {@link #WIDTH__N} attribute of the
+	 * given {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #WIDTH__N} property, parsed as a {@link Double}.
-	 * @return The value of the {@link #WIDTH__N} property of the given
+	 *            {@link #WIDTH__N} attribute, parsed as a {@link Double}.
+	 * @return The value of the {@link #WIDTH__N} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Double getWidthParsed(Node node) {
@@ -1142,13 +1141,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #XLABEL__NE} property of the given
+	 * Returns the value of the {@link #XLABEL__NE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #XLABEL__NE} property.
-	 * @return The value of the {@link #XLABEL__NE} property of the given
+	 *            {@link #XLABEL__NE} attribute.
+	 * @return The value of the {@link #XLABEL__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getXLabel(Edge edge) {
@@ -1156,13 +1155,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #XLABEL__NE} property of the given
+	 * Returns the value of the {@link #XLABEL__NE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #XLABEL__NE} property.
-	 * @return The value of the {@link #XLABEL__NE} property of the given
+	 *            {@link #XLABEL__NE} attribute.
+	 * @return The value of the {@link #XLABEL__NE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getXLabel(Node node) {
@@ -1170,13 +1169,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #XLP__NE} property of the given
+	 * Returns the value of the {@link #XLP__NE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #XLP__NE} property.
-	 * @return The value of the {@link #XLP__NE} property of the given
+	 *            {@link #XLP__NE} attribute.
+	 * @return The value of the {@link #XLP__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static String getXlp(Edge edge) {
@@ -1184,13 +1183,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #XLP__NE} property of the given
+	 * Returns the value of the {@link #XLP__NE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #XLP__NE} property.
-	 * @return The value of the {@link #XLP__NE} property of the given
+	 *            {@link #XLP__NE} attribute.
+	 * @return The value of the {@link #XLP__NE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static String getXlp(Node node) {
@@ -1198,13 +1197,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #XLP__NE} property of the given
+	 * Returns the (parsed) value of the {@link #XLP__NE} attribute of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #XLP__NE} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #XLP__NE} property of the given
+	 *            {@link #XLP__NE} attribute, parsed as a {@link Point}.
+	 * @return The value of the {@link #XLP__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
 	public static Point getXlpParsed(Edge edge) {
@@ -1213,13 +1212,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #XLP__NE} property of the given
+	 * Returns the (parsed) value of the {@link #XLP__NE} attribute of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #XLP__NE} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #XLP__NE} property of the given
+	 *            {@link #XLP__NE} attribute, parsed as a {@link Point}.
+	 * @return The value of the {@link #XLP__NE} attribute of the given
 	 *         {@link Node}.
 	 */
 	public static Point getXlpParsed(Node node) {
@@ -1236,14 +1235,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #ARROWHEAD__E} property of the given {@link Edge} to the
+	 * Sets the {@link #ARROWHEAD__E} attribute of the given {@link Edge} to the
 	 * given <i>arrowHead</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #ARROWHEAD__E} property.
+	 *            {@link #ARROWHEAD__E} attribute.
 	 * @param arrowHead
-	 *            The new value for the {@link #ARROWHEAD__E} property.
+	 *            The new value for the {@link #ARROWHEAD__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>arrowHead</i> value is not supported.
 	 */
@@ -1253,14 +1252,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #ARROWHEAD__E} property of the given {@link Edge} to the
+	 * Sets the {@link #ARROWHEAD__E} attribute of the given {@link Edge} to the
 	 * given <i>arrowHeadParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #ARROWHEAD__E} property.
+	 *            {@link #ARROWHEAD__E} attribute.
 	 * @param arrowHeadParsed
-	 *            The new value for the {@link #ARROWHEAD__E} property.
+	 *            The new value for the {@link #ARROWHEAD__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>arrowHeadParsed</i> value is not supported.
 	 */
@@ -1271,14 +1270,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #ARROWSIZE__E} property of the given {@link Edge} to the
+	 * Sets the {@link #ARROWSIZE__E} attribute of the given {@link Edge} to the
 	 * given <i>arrowSize</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #ARROWSIZE__E} property.
+	 *            {@link #ARROWSIZE__E} attribute.
 	 * @param arrowSize
-	 *            The new value for the {@link #ARROWSIZE__E} property.
+	 *            The new value for the {@link #ARROWSIZE__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>arrowSize</i> value is not supported.
 	 */
@@ -1288,14 +1287,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #ARROWSIZE__E} property of the given {@link Edge} to the
+	 * Sets the {@link #ARROWSIZE__E} attribute of the given {@link Edge} to the
 	 * given <i>arrowSizeParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #ARROWSIZE__E} property.
+	 *            {@link #ARROWSIZE__E} attribute.
 	 * @param arrowSizeParsed
-	 *            The new value for the {@link #ARROWSIZE__E} property.
+	 *            The new value for the {@link #ARROWSIZE__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>arrowSizeParsed</i> value is not supported.
 	 */
@@ -1304,14 +1303,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #ARROWTAIL__E} property of the given {@link Edge} to the
+	 * Sets the {@link #ARROWTAIL__E} attribute of the given {@link Edge} to the
 	 * given <i>arrowTail</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #ARROWTAIL__E} property.
+	 *            {@link #ARROWTAIL__E} attribute.
 	 * @param arrowTail
-	 *            The new value for the {@link #ARROWTAIL__E} property.
+	 *            The new value for the {@link #ARROWTAIL__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>arrowTail</i> value is not supported.
 	 */
@@ -1321,14 +1320,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #ARROWTAIL__E} property of the given {@link Edge} to the
+	 * Sets the {@link #ARROWTAIL__E} attribute of the given {@link Edge} to the
 	 * given <i>arrowTailParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #ARROWTAIL__E} property.
+	 *            {@link #ARROWTAIL__E} attribute.
 	 * @param arrowTailParsed
-	 *            The new value for the {@link #ARROWTAIL__E} property.
+	 *            The new value for the {@link #ARROWTAIL__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>arrowTailParsed</i> value is not supported.
 	 */
@@ -1339,14 +1338,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #DIR__E} property of the given {@link Edge} to the given
+	 * Sets the {@link #DIR__E} attribute of the given {@link Edge} to the given
 	 * <i>dir</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #DIR__E} property.
+	 *            {@link #DIR__E} attribute.
 	 * @param dir
-	 *            The new value for the {@link #DIR__E} property.
+	 *            The new value for the {@link #DIR__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>dir</i> value is not supported.
 	 */
@@ -1356,14 +1355,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #DIR__E} property of the given {@link Edge} to the given
+	 * Sets the {@link #DIR__E} attribute of the given {@link Edge} to the given
 	 * <i>dirParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #DIR__E} property.
+	 *            {@link #DIR__E} attribute.
 	 * @param dirParsed
-	 *            The new value for the {@link #DIR__E} property.
+	 *            The new value for the {@link #DIR__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>dirParsed</i> value is not supported.
 	 */
@@ -1372,14 +1371,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #DISTORTION__N} property of the given {@link Node} to the
-	 * given <i>distortion</i> value.
+	 * Sets the {@link #DISTORTION__N} attribute of the given {@link Node} to
+	 * the given <i>distortion</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #DISTORTION__N} property.
+	 *            {@link #DISTORTION__N} attribute.
 	 * @param distortion
-	 *            The new value for the {@link #DISTORTION__N} property.
+	 *            The new value for the {@link #DISTORTION__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>distortion</i> value is not supported.
 	 */
@@ -1389,14 +1388,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #DISTORTION__N} property of the given {@link Node} to the
-	 * given <i>distortionParsed</i> value.
+	 * Sets the {@link #DISTORTION__N} attribute of the given {@link Node} to
+	 * the given <i>distortionParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #DISTORTION__N} property.
+	 *            {@link #DISTORTION__N} attribute.
 	 * @param distortionParsed
-	 *            The new value for the {@link #DISTORTION__N} property.
+	 *            The new value for the {@link #DISTORTION__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>distortionParsed</i> value is not
 	 *             supported.
@@ -1406,14 +1405,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #FIXEDSIZE__N} property of the given {@link Node} to the
+	 * Sets the {@link #FIXEDSIZE__N} attribute of the given {@link Node} to the
 	 * given <i>fixedSize</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #FIXEDSIZE__N} property.
+	 *            {@link #FIXEDSIZE__N} attribute.
 	 * @param fixedSize
-	 *            The new value for the {@link #FIXEDSIZE__N} property.
+	 *            The new value for the {@link #FIXEDSIZE__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>fixedSize</i> value is not supported.
 	 */
@@ -1423,14 +1422,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #FIXEDSIZE__N} property of the given {@link Node} to the
+	 * Sets the {@link #FIXEDSIZE__N} attribute of the given {@link Node} to the
 	 * given <i>fixedSizeParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #FIXEDSIZE__N} property.
+	 *            {@link #FIXEDSIZE__N} attribute.
 	 * @param fixedSizeParsed
-	 *            The new value for the {@link #FIXEDSIZE__N} property.
+	 *            The new value for the {@link #FIXEDSIZE__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>fixedSizeParsed</i> value is not supported.
 	 */
@@ -1439,14 +1438,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #FORCELABELS__G} property of the given {@link Graph} to
+	 * Sets the {@link #FORCELABELS__G} attribute of the given {@link Graph} to
 	 * the given <i>forceLabels</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #FORCELABELS__G} property.
+	 *            {@link #FORCELABELS__G} attribute.
 	 * @param forceLabels
-	 *            The new value for the {@link #FORCELABELS__G} property.
+	 *            The new value for the {@link #FORCELABELS__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>forceLabels</i> value is not supported.
 	 */
@@ -1456,14 +1455,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #FORCELABELS__G} property of the given {@link Graph} to
+	 * Sets the {@link #FORCELABELS__G} attribute of the given {@link Graph} to
 	 * the given <i>forceLabelsParsed</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #FORCELABELS__G} property.
+	 *            {@link #FORCELABELS__G} attribute.
 	 * @param forceLabelsParsed
-	 *            The new value for the {@link #FORCELABELS__G} property.
+	 *            The new value for the {@link #FORCELABELS__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>forceLabelsParsed</i> value is not
 	 *             supported.
@@ -1474,28 +1473,28 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #HEADLABEL__E} property of the given {@link Edge} to the
+	 * Sets the {@link #HEADLABEL__E} attribute of the given {@link Edge} to the
 	 * given <i>headLabel</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #HEADLABEL__E} property.
+	 *            {@link #HEADLABEL__E} attribute.
 	 * @param headLabel
-	 *            The new value for the {@link #HEADLABEL__E} property.
+	 *            The new value for the {@link #HEADLABEL__E} attribute.
 	 */
 	public static void setHeadLabel(Edge edge, String headLabel) {
 		edge.attributesProperty().put(HEADLABEL__E, headLabel);
 	}
 
 	/**
-	 * Sets the {@link #HEAD_LP__E} property of the given {@link Edge} to the
+	 * Sets the {@link #HEAD_LP__E} attribute of the given {@link Edge} to the
 	 * given <i>headLp</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #HEAD_LP__E} property.
+	 *            {@link #HEAD_LP__E} attribute.
 	 * @param headLp
-	 *            The new value for the {@link #HEAD_LP__E} property.
+	 *            The new value for the {@link #HEAD_LP__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>headLp</i> value is not supported.
 	 */
@@ -1505,14 +1504,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #HEAD_LP__E} property of the given {@link Edge} to the
+	 * Sets the {@link #HEAD_LP__E} attribute of the given {@link Edge} to the
 	 * given <i>headLpParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #HEAD_LP__E} property.
+	 *            {@link #HEAD_LP__E} attribute.
 	 * @param headLpParsed
-	 *            The new value for the {@link #HEAD_LP__E} property.
+	 *            The new value for the {@link #HEAD_LP__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>headLpParsed</i> value is not supported.
 	 */
@@ -1522,14 +1521,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #HEIGHT__N} property of the given {@link Node} to the
+	 * Sets the {@link #HEIGHT__N} attribute of the given {@link Node} to the
 	 * given <i>height</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #HEIGHT__N} property.
+	 *            {@link #HEIGHT__N} attribute.
 	 * @param height
-	 *            The new value for the {@link #HEIGHT__N} property.
+	 *            The new value for the {@link #HEIGHT__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>height</i> value is not supported.
 	 */
@@ -1539,14 +1538,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #HEIGHT__N} property of the given {@link Node} to the
+	 * Sets the {@link #HEIGHT__N} attribute of the given {@link Node} to the
 	 * given <i>heightParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #HEIGHT__N} property.
+	 *            {@link #HEIGHT__N} attribute.
 	 * @param heightParsed
-	 *            The new value for the {@link #HEIGHT__N} property.
+	 *            The new value for the {@link #HEIGHT__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>heightParsed</i> value is not supported.
 	 */
@@ -1555,98 +1554,98 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #ID__GNE} property of the given {@link Edge} to the given
-	 * <i>id</i> value.
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Edge} to the
+	 * given <i>id</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #ID__GNE} property.
+	 *            {@link #ID__GNE} attribute.
 	 * @param id
-	 *            The new value for the {@link #ID__GNE} property.
+	 *            The new value for the {@link #ID__GNE} attribute.
 	 */
 	public static void setId(Edge edge, String id) {
 		edge.attributesProperty().put(ID__GNE, id);
 	}
 
 	/**
-	 * Sets the {@link #ID__GNE} property of the given {@link Graph} to the
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Graph} to the
 	 * given <i>id</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #ID__GNE} property.
+	 *            {@link #ID__GNE} attribute.
 	 * @param id
-	 *            The new value for the {@link #ID__GNE} property.
+	 *            The new value for the {@link #ID__GNE} attribute.
 	 */
 	public static void setId(Graph graph, String id) {
 		graph.attributesProperty().put(ID__GNE, id);
 	}
 
 	/**
-	 * Sets the {@link #ID__GNE} property of the given {@link Node} to the given
-	 * <i>id</i> value.
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Node} to the
+	 * given <i>id</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #ID__GNE} property.
+	 *            {@link #ID__GNE} attribute.
 	 * @param id
-	 *            The new value for the {@link #ID__GNE} property.
+	 *            The new value for the {@link #ID__GNE} attribute.
 	 */
 	public static void setId(Node node, String id) {
 		node.attributesProperty().put(ID__GNE, id);
 	}
 
 	/**
-	 * Sets the {@link #LABEL__GNE} property of the given {@link Edge} to the
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Edge} to the
 	 * given <i>label</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #LABEL__GNE} property.
+	 *            {@link #LABEL__GNE} attribute.
 	 * @param label
-	 *            The new value for the {@link #LABEL__GNE} property.
+	 *            The new value for the {@link #LABEL__GNE} attribute.
 	 */
 	public static void setLabel(Edge edge, String label) {
 		edge.attributesProperty().put(LABEL__GNE, label);
 	}
 
 	/**
-	 * Sets the {@link #LABEL__GNE} property of the given {@link Graph} to the
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Graph} to the
 	 * given <i>label</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #LABEL__GNE} property.
+	 *            {@link #LABEL__GNE} attribute.
 	 * @param label
-	 *            The new value for the {@link #LABEL__GNE} property.
+	 *            The new value for the {@link #LABEL__GNE} attribute.
 	 */
 	public static void setLabel(Graph graph, String label) {
 		graph.attributesProperty().put(LABEL__GNE, label);
 	}
 
 	/**
-	 * Sets the {@link #LABEL__GNE} property of the given {@link Node} to the
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Node} to the
 	 * given <i>label</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #LABEL__GNE} property.
+	 *            {@link #LABEL__GNE} attribute.
 	 * @param label
-	 *            The new value for the {@link #LABEL__GNE} property.
+	 *            The new value for the {@link #LABEL__GNE} attribute.
 	 */
 	public static void setLabel(Node node, String label) {
 		node.attributesProperty().put(LABEL__GNE, label);
 	}
 
 	/**
-	 * Sets the {@link #LAYOUT__G} property of the given {@link Graph} to the
+	 * Sets the {@link #LAYOUT__G} attribute of the given {@link Graph} to the
 	 * given <i>layout</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #LAYOUT__G} property.
+	 *            {@link #LAYOUT__G} attribute.
 	 * @param layout
-	 *            The new value for the {@link #LAYOUT__G} property.
+	 *            The new value for the {@link #LAYOUT__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>layout</i> value is not supported.
 	 */
@@ -1656,14 +1655,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #LAYOUT__G} property of the given {@link Graph} to the
+	 * Sets the {@link #LAYOUT__G} attribute of the given {@link Graph} to the
 	 * given <i>layoutParsed</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #LAYOUT__G} property.
+	 *            {@link #LAYOUT__G} attribute.
 	 * @param layoutParsed
-	 *            The new value for the {@link #LAYOUT__G} property.
+	 *            The new value for the {@link #LAYOUT__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>layoutParsed</i> value is not supported.
 	 */
@@ -1672,14 +1671,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #LP__GE} property of the given {@link Edge} to the given
+	 * Sets the {@link #LP__GE} attribute of the given {@link Edge} to the given
 	 * <i>lp</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #LP__GE} property.
+	 *            {@link #LP__GE} attribute.
 	 * @param lp
-	 *            The new value for the {@link #LP__GE} property.
+	 *            The new value for the {@link #LP__GE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>lp</i> value is not supported.
 	 */
@@ -1689,14 +1688,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #LP__GE} property of the given {@link Graph} to the given
-	 * <i>lp</i> value.
+	 * Sets the {@link #LP__GE} attribute of the given {@link Graph} to the
+	 * given <i>lp</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #LP__GE} property.
+	 *            {@link #LP__GE} attribute.
 	 * @param lp
-	 *            The new value for the {@link #LP__GE} property.
+	 *            The new value for the {@link #LP__GE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>lp</i> value is not supported.
 	 */
@@ -1706,14 +1705,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #LP__GE} property of the given {@link Edge} to the given
+	 * Sets the {@link #LP__GE} attribute of the given {@link Edge} to the given
 	 * <i>lpParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #LP__GE} property.
+	 *            {@link #LP__GE} attribute.
 	 * @param lpParsed
-	 *            The new value for the {@link #LP__GE} property.
+	 *            The new value for the {@link #LP__GE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>lpParsed</i> value is not supported.
 	 */
@@ -1722,14 +1721,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #LP__GE} property of the given {@link Graph} to the given
-	 * <i>lpParsed</i> value.
+	 * Sets the {@link #LP__GE} attribute of the given {@link Graph} to the
+	 * given <i>lpParsed</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #LP__GE} property.
+	 *            {@link #LP__GE} attribute.
 	 * @param lpParsed
-	 *            The new value for the {@link #LP__GE} property.
+	 *            The new value for the {@link #LP__GE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>lpParsed</i> value is not supported.
 	 */
@@ -1738,14 +1737,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #POS__NE} property of the given {@link Edge} to the given
-	 * <i>pos</i> value.
+	 * Sets the {@link #POS__NE} attribute of the given {@link Edge} to the
+	 * given <i>pos</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #POS__NE} property.
+	 *            {@link #POS__NE} attribute.
 	 * @param pos
-	 *            The new value for the {@link #POS__NE} property.
+	 *            The new value for the {@link #POS__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>pos</i> value is not supported.
 	 */
@@ -1755,14 +1754,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #POS__NE} property of the given {@link Node} to the given
-	 * <i>pos</i> value.
+	 * Sets the {@link #POS__NE} attribute of the given {@link Node} to the
+	 * given <i>pos</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #POS__NE} property.
+	 *            {@link #POS__NE} attribute.
 	 * @param pos
-	 *            The new value for the {@link #POS__NE} property.
+	 *            The new value for the {@link #POS__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>pos</i> value is not supported.
 	 */
@@ -1772,14 +1771,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #POS__NE} property of the given {@link Edge} to the given
-	 * <i>posParsed</i> value.
+	 * Sets the {@link #POS__NE} attribute of the given {@link Edge} to the
+	 * given <i>posParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #POS__NE} property.
+	 *            {@link #POS__NE} attribute.
 	 * @param posParsed
-	 *            The new value for the {@link #POS__NE} property.
+	 *            The new value for the {@link #POS__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>posParsed</i> value is not supported.
 	 */
@@ -1789,14 +1788,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #POS__NE} property of the given {@link Node} to the given
-	 * <i>posParsed</i> value.
+	 * Sets the {@link #POS__NE} attribute of the given {@link Node} to the
+	 * given <i>posParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #POS__NE} property.
+	 *            {@link #POS__NE} attribute.
 	 * @param posParsed
-	 *            The new value for the {@link #POS__NE} property.
+	 *            The new value for the {@link #POS__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>posParsed</i> value is not supported.
 	 */
@@ -1805,14 +1804,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #RANKDIR__G} property of the given {@link Graph} to the
+	 * Sets the {@link #RANKDIR__G} attribute of the given {@link Graph} to the
 	 * given <i>rankdir</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #RANKDIR__G} property.
+	 *            {@link #RANKDIR__G} attribute.
 	 * @param rankdir
-	 *            The new value for the {@link #RANKDIR__G} property.
+	 *            The new value for the {@link #RANKDIR__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>rankdir</i> value is not supported.
 	 */
@@ -1822,14 +1821,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #RANKDIR__G} property of the given {@link Graph} to the
+	 * Sets the {@link #RANKDIR__G} attribute of the given {@link Graph} to the
 	 * given <i>rankdirParsed</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #RANKDIR__G} property.
+	 *            {@link #RANKDIR__G} attribute.
 	 * @param rankdirParsed
-	 *            The new value for the {@link #RANKDIR__G} property.
+	 *            The new value for the {@link #RANKDIR__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>rankdirParsed</i> value is not supported.
 	 */
@@ -1838,14 +1837,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SHAPE__N} property of the given {@link Node} to the
+	 * Sets the {@link #SHAPE__N} attribute of the given {@link Node} to the
 	 * given <i>shape</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SHAPE__N} property.
+	 *            {@link #SHAPE__N} attribute.
 	 * @param shape
-	 *            The new value for the {@link #SHAPE__N} property.
+	 *            The new value for the {@link #SHAPE__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>shape</i> value is not supported.
 	 */
@@ -1855,14 +1854,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SHAPE__N} property of the given {@link Node} to the
+	 * Sets the {@link #SHAPE__N} attribute of the given {@link Node} to the
 	 * given <i>shapeParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SHAPE__N} property.
+	 *            {@link #SHAPE__N} attribute.
 	 * @param shapeParsed
-	 *            The new value for the {@link #SHAPE__N} property.
+	 *            The new value for the {@link #SHAPE__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>shapeParsed</i> value is not supported.
 	 */
@@ -1872,14 +1871,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
+	 * Sets the {@link #SIDES__N} attribute of the given {@link Node} to the
 	 * given <i>sides</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SIDES__N} property.
+	 *            {@link #SIDES__N} attribute.
 	 * @param sides
-	 *            The new value for the {@link #SIDES__N} property.
+	 *            The new value for the {@link #SIDES__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>sides</i> value is not supported.
 	 */
@@ -1889,14 +1888,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
+	 * Sets the {@link #SIDES__N} attribute of the given {@link Node} to the
 	 * given <i>sidesParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SIDES__N} property.
+	 *            {@link #SIDES__N} attribute.
 	 * @param sidesParsed
-	 *            The new value for the {@link #SIDES__N} property.
+	 *            The new value for the {@link #SIDES__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>sidesParsed</i> value is not supported.
 	 */
@@ -1905,14 +1904,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SKEW__N} property of the given {@link Node} to the given
-	 * <i>skew</i> value.
+	 * Sets the {@link #SKEW__N} attribute of the given {@link Node} to the
+	 * given <i>skew</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SKEW__N} property.
+	 *            {@link #SKEW__N} attribute.
 	 * @param skew
-	 *            The new value for the {@link #SKEW__N} property.
+	 *            The new value for the {@link #SKEW__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>skew</i> value is not supported.
 	 */
@@ -1922,14 +1921,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SKEW__N} property of the given {@link Node} to the given
-	 * <i>skewParsed</i> value.
+	 * Sets the {@link #SKEW__N} attribute of the given {@link Node} to the
+	 * given <i>skewParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #SKEW__N} property.
+	 *            {@link #SKEW__N} attribute.
 	 * @param skewParsed
-	 *            The new value for the {@link #SKEW__N} property.
+	 *            The new value for the {@link #SKEW__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>skewParsed</i> value is not supported.
 	 */
@@ -1938,14 +1937,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SPLINES__G} property of the given {@link Graph} to the
+	 * Sets the {@link #SPLINES__G} attribute of the given {@link Graph} to the
 	 * given <i>splines</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #SPLINES__G} property.
+	 *            {@link #SPLINES__G} attribute.
 	 * @param splines
-	 *            The new value for the {@link #SPLINES__G} property.
+	 *            The new value for the {@link #SPLINES__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>splines</i> value is not supported.
 	 */
@@ -1955,14 +1954,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #SPLINES__G} property of the given {@link Graph} to the
+	 * Sets the {@link #SPLINES__G} attribute of the given {@link Graph} to the
 	 * given <i>splinesParsed</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #SPLINES__G} property.
+	 *            {@link #SPLINES__G} attribute.
 	 * @param splinesParsed
-	 *            The new value for the {@link #SPLINES__G} property.
+	 *            The new value for the {@link #SPLINES__G} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>splinesParsed</i> value is not supported.
 	 */
@@ -1971,48 +1970,48 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #STYLE__E} property of the given {@link Edge} to the
+	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Edge} to the
 	 * given <i>style</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #STYLE__E} property.
+	 *            {@link #STYLE__GNE} attribute.
 	 * @param style
-	 *            The new value for the {@link #STYLE__E} property.
+	 *            The new value for the {@link #STYLE__GNE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>style</i> value is not supported.
 	 */
 	public static void setStyle(Edge edge, String style) {
-		validate(AttributeContext.EDGE, STYLE__E, style);
-		edge.attributesProperty().put(STYLE__E, style);
+		validate(AttributeContext.EDGE, STYLE__GNE, style);
+		edge.attributesProperty().put(STYLE__GNE, style);
 	}
 
 	/**
-	 * Sets the {@link #STYLE__E} property of the given {@link Node} to the
+	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Node} to the
 	 * given <i>style</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #STYLE__E} property.
+	 *            {@link #STYLE__GNE} attribute.
 	 * @param style
-	 *            The new value for the {@link #STYLE__E} property.
+	 *            The new value for the {@link #STYLE__GNE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>style</i> value is not supported.
 	 */
 	public static void setStyle(Node node, String style) {
-		validate(AttributeContext.NODE, STYLE__E, style);
-		node.attributesProperty().put(STYLE__E, style);
+		validate(AttributeContext.NODE, STYLE__GNE, style);
+		node.attributesProperty().put(STYLE__GNE, style);
 	}
 
 	/**
-	 * Sets the {@link #STYLE__E} property of the given {@link Edge} to the
+	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Edge} to the
 	 * given <i>styleParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #STYLE__E} property.
+	 *            {@link #STYLE__GNE} attribute.
 	 * @param styleParsed
-	 *            The new value for the {@link #STYLE__E} property.
+	 *            The new value for the {@link #STYLE__GNE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>styleParsed</i> value is not supported.
 	 */
@@ -2022,14 +2021,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #STYLE__E} property of the given {@link Node} to the
+	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Node} to the
 	 * given <i>styleParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #STYLE__E} property.
+	 *            {@link #STYLE__GNE} attribute.
 	 * @param styleParsed
-	 *            The new value for the {@link #STYLE__E} property.
+	 *            The new value for the {@link #STYLE__GNE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>styleParsed</i> value is not supported.
 	 */
@@ -2039,28 +2038,28 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #TAILLABEL__E} property of the given {@link Edge} to the
+	 * Sets the {@link #TAILLABEL__E} attribute of the given {@link Edge} to the
 	 * given <i>tailLabel</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #TAILLABEL__E} property.
+	 *            {@link #TAILLABEL__E} attribute.
 	 * @param tailLabel
-	 *            The new value for the {@link #TAILLABEL__E} property.
+	 *            The new value for the {@link #TAILLABEL__E} attribute.
 	 */
 	public static void setTailLabel(Edge edge, String tailLabel) {
 		edge.attributesProperty().put(TAILLABEL__E, tailLabel);
 	}
 
 	/**
-	 * Sets the {@link #TAIL_LP__E} property of the given {@link Edge} to the
+	 * Sets the {@link #TAIL_LP__E} attribute of the given {@link Edge} to the
 	 * given <i>tailLp</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #TAIL_LP__E} property.
+	 *            {@link #TAIL_LP__E} attribute.
 	 * @param tailLp
-	 *            The new value for the {@link #TAIL_LP__E} property.
+	 *            The new value for the {@link #TAIL_LP__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>tailLp</i> value is not supported.
 	 */
@@ -2070,14 +2069,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #TAIL_LP__E} property of the given {@link Edge} to the
+	 * Sets the {@link #TAIL_LP__E} attribute of the given {@link Edge} to the
 	 * given <i>tailLpParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #TAIL_LP__E} property.
+	 *            {@link #TAIL_LP__E} attribute.
 	 * @param tailLpParsed
-	 *            The new value for the {@link #TAIL_LP__E} property.
+	 *            The new value for the {@link #TAIL_LP__E} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>tailLpParsed</i> value is not supported.
 	 */
@@ -2087,14 +2086,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #WIDTH__N} property of the given {@link Node} to the
+	 * Sets the {@link #WIDTH__N} attribute of the given {@link Node} to the
 	 * given <i>width</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #WIDTH__N} property.
+	 *            {@link #WIDTH__N} attribute.
 	 * @param width
-	 *            The new value for the {@link #WIDTH__N} property.
+	 *            The new value for the {@link #WIDTH__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>width</i> value is not supported.
 	 */
@@ -2104,14 +2103,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #WIDTH__N} property of the given {@link Node} to the
+	 * Sets the {@link #WIDTH__N} attribute of the given {@link Node} to the
 	 * given <i>widthParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #WIDTH__N} property.
+	 *            {@link #WIDTH__N} attribute.
 	 * @param widthParsed
-	 *            The new value for the {@link #WIDTH__N} property.
+	 *            The new value for the {@link #WIDTH__N} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>widthParsed</i> value is not supported.
 	 */
@@ -2120,42 +2119,42 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #XLABEL__NE} property of the given {@link Edge} to the
+	 * Sets the {@link #XLABEL__NE} attribute of the given {@link Edge} to the
 	 * given <i>xLabel</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #XLABEL__NE} property.
+	 *            {@link #XLABEL__NE} attribute.
 	 * @param xLabel
-	 *            The new value for the {@link #XLABEL__NE} property.
+	 *            The new value for the {@link #XLABEL__NE} attribute.
 	 */
 	public static void setXLabel(Edge edge, String xLabel) {
 		edge.attributesProperty().put(XLABEL__NE, xLabel);
 	}
 
 	/**
-	 * Sets the {@link #XLABEL__NE} property of the given {@link Node} to the
+	 * Sets the {@link #XLABEL__NE} attribute of the given {@link Node} to the
 	 * given <i>xLabel</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #XLABEL__NE} property.
+	 *            {@link #XLABEL__NE} attribute.
 	 * @param xLabel
-	 *            The new value for the {@link #XLABEL__NE} property.
+	 *            The new value for the {@link #XLABEL__NE} attribute.
 	 */
 	public static void setXLabel(Node node, String xLabel) {
 		node.attributesProperty().put(XLABEL__NE, xLabel);
 	}
 
 	/**
-	 * Sets the {@link #XLP__NE} property of the given {@link Edge} to the given
-	 * <i>xlp</i> value.
+	 * Sets the {@link #XLP__NE} attribute of the given {@link Edge} to the
+	 * given <i>xlp</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #XLP__NE} property.
+	 *            {@link #XLP__NE} attribute.
 	 * @param xlp
-	 *            The new value for the {@link #XLP__NE} property.
+	 *            The new value for the {@link #XLP__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>xlp</i> value is not supported.
 	 */
@@ -2165,14 +2164,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #XLP__NE} property of the given {@link Node} to the given
-	 * <i>xlp</i> value.
+	 * Sets the {@link #XLP__NE} attribute of the given {@link Node} to the
+	 * given <i>xlp</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #XLP__NE} property.
+	 *            {@link #XLP__NE} attribute.
 	 * @param xlp
-	 *            The new value for the {@link #XLP__NE} property.
+	 *            The new value for the {@link #XLP__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>xlp</i> value is not supported.
 	 */
@@ -2182,14 +2181,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #XLP__NE} property of the given {@link Edge} to the given
-	 * <i>xlpParsed</i> value.
+	 * Sets the {@link #XLP__NE} attribute of the given {@link Edge} to the
+	 * given <i>xlpParsed</i> value.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #XLP__NE} property.
+	 *            {@link #XLP__NE} attribute.
 	 * @param xlpParsed
-	 *            The new value for the {@link #XLP__NE} property.
+	 *            The new value for the {@link #XLP__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>xlpParsed</i> value is not supported.
 	 */
@@ -2198,14 +2197,14 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #XLP__NE} property of the given {@link Node} to the given
-	 * <i>xlpParsed</i> value.
+	 * Sets the {@link #XLP__NE} attribute of the given {@link Node} to the
+	 * given <i>xlpParsed</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
-	 *            {@link #XLP__NE} property.
+	 *            {@link #XLP__NE} attribute.
 	 * @param xlpParsed
-	 *            The new value for the {@link #XLP__NE} property.
+	 *            The new value for the {@link #XLP__NE} attribute.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>xlpParsed</i> value is not supported.
 	 */

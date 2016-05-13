@@ -58,7 +58,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
 			if (DotJavaValidator.isEdgeAttribute(attribute)
-					&& DotAttributes.STYLE__E.equals(attribute.getName())) {
+					&& DotAttributes.STYLE__GNE.equals(attribute.getName())) {
 				for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {
 					// quote attribute value if needed only
 					final String proposedValue = DotTerminalConverters

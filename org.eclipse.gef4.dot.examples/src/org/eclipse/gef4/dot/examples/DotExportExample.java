@@ -30,7 +30,7 @@ public final class DotExportExample {
 				.attr(DotAttributes.LABEL__GNE, "Node 2")//
 				.edge("n1", "n2")
 				.attr(DotAttributes.LABEL__GNE, "A dotted edge")
-				.attr(DotAttributes.STYLE__E, EdgeStyle.DOTTED.toString())
+				.attr(DotAttributes.STYLE__GNE, EdgeStyle.DOTTED.toString())
 				.build();
 
 		/* Export the graph to a DOT string or a DOT file: */
