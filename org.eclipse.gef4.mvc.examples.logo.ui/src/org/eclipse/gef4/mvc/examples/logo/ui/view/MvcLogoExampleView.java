@@ -49,7 +49,10 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -278,6 +281,36 @@ public class MvcLogoExampleView extends AbstractFXView {
 				paletteRootNode.setVisible(false);
 			}
 		});
+		paletteRootNode.getContentGroup().layoutBoundsProperty()
+				.addListener(new ChangeListener<Bounds>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends Bounds> observable,
+							Bounds oldValue, Bounds newValue) {
+						double scrollBarWidth = paletteRootNode
+								.getVerticalScrollBar().isVisible()
+										? paletteRootNode.getVerticalScrollBar()
+												.getLayoutBounds().getWidth()
+										: 0;
+						paletteRootNode.setPrefWidth(
+								newValue.getWidth() + scrollBarWidth);
+					}
+				});
+		paletteRootNode.getVerticalScrollBar().layoutBoundsProperty()
+				.addListener(new ChangeListener<Bounds>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends Bounds> observable,
+							Bounds oldValue, Bounds newValue) {
+						double contentWidth = paletteRootNode.getContentGroup()
+								.getLayoutBounds().getWidth();
+						double scrollBarWidth = paletteRootNode
+								.getVerticalScrollBar().isVisible()
+										? newValue.getWidth() : 0;
+						paletteRootNode
+								.setPrefWidth(contentWidth + scrollBarWidth);
+					}
+				});
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(hbox));
 	}
