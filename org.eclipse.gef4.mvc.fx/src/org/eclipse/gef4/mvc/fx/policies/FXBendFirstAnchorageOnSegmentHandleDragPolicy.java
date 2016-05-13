@@ -357,6 +357,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		}
 		commit(getBendPolicy(targetPart));
 		restoreRefreshVisuals(targetPart);
+
+		updateHandles();
 	}
 
 	@Override

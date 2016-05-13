@@ -197,17 +197,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			return null;
 		}
 
-		// chain a reselect operation here, so handles are properly updated
-		// TODO: move reselect into interaction policy
-		ForwardUndoCompositeOperation updateOperation = new ForwardUndoCompositeOperation(
-				commit.getLabel());
-		updateOperation.add(commit);
-		ReverseUndoCompositeOperation reselectOperation = createReselectOperation();
-		if (reselectOperation != null) {
-			updateOperation.add(reselectOperation);
-		}
-
-		return updateOperation;
+		return commit;
 	}
 
 	private Point computeEndHint() {
