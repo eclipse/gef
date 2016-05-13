@@ -61,7 +61,6 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
-import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -70,6 +69,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 import javafx.geometry.Orientation;
@@ -312,16 +312,12 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	private static class TestModule extends MvcFxModule {
+
 		@Override
 		protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 			super.bindAbstractContentPartAdapters(adapterMapBinder);
 			// focus and select on click
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
-		}
-
-		protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			// bind content part factory
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TestContentPartFactory.class);
 		}
 
 		protected void bindAnchorageAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -342,10 +338,15 @@ public class FXBendConnectionPolicyTests {
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendConnectionPolicy.class);
 		}
 
+		protected void bindIContentPartFactory() {
+			binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+			}).toInstance(new TestContentPartFactory());
+		}
+
 		@Override
 		protected void configure() {
 			super.configure();
-			bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
+			bindIContentPartFactory();
 			// contents
 			bindAnchorageAdapters(AdapterMaps.getAdapterMapBinder(binder(), AnchoragePart.class));
 			bindConnectionAdapters(AdapterMaps.getAdapterMapBinder(binder(), ConnectionPart.class));
