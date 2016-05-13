@@ -16,11 +16,11 @@ package org.eclipse.gef4.zest.examples;
 
 import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
@@ -29,7 +29,7 @@ import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.multibindings.MapBinder;
+import com.google.inject.TypeLiteral;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -70,10 +70,14 @@ public class CustomNodeExample extends AbstractZestExample {
 	public static class CustomModule extends ZestFxModule {
 
 		@Override
-		protected void bindContentPartFactoryAsContentViewerAdapter(
-				MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			adapterMapBinder.addBinding(AdapterKey.defaultRole())
-					.to(CustomContentPartFactory.class);
+		protected void configure() {
+			super.configure();
+			bindIContentPartFactory();
+		}
+
+		protected void bindIContentPartFactory() {
+			binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+			}).toInstance(new CustomContentPartFactory());
 		}
 
 	}
