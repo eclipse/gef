@@ -14,18 +14,29 @@ package org.eclipse.gef4.mvc.examples.logo.web;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
+import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleViewersComposite;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
+import org.eclipse.gef4.mvc.examples.logo.model.PaletteModel;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ContentModel;
 
 import com.google.inject.Module;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 
+// TODO: Better extend MvcLogoExample (same code).
 public class MvcLogoWebExample extends AbstractMvcExample {
 
 	public static List<FXGeometricModel> createDefaultContents() {
 		return Collections.singletonList(new FXGeometricModel());
+	}
+
+	public static List<PaletteModel> createPaletteContents() {
+		return Collections.singletonList(new PaletteModel());
 	}
 
 	public static void main(String[] args) {
@@ -37,12 +48,28 @@ public class MvcLogoWebExample extends AbstractMvcExample {
 	}
 
 	@Override
-	protected List<? extends Object> createContents() {
-		return createDefaultContents();
-	}
-
-	@Override
 	protected Module createModule() {
 		return new MvcLogoExampleModule();
 	}
+
+	protected FXViewer getPaletteViewer() {
+		return getDomain().getAdapter(AdapterKey.get(FXViewer.class,
+				MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
+	}
+
+	@Override
+	protected void hookViewers() {
+		getPrimaryStage().setScene(
+				new Scene(new MvcLogoExampleViewersComposite(getContentViewer(),
+						getPaletteViewer()).getComposite()));
+	}
+
+	@Override
+	protected void populateViewerContents() {
+		getContentViewer().getAdapter(ContentModel.class).getContents()
+				.setAll(createDefaultContents());
+		getPaletteViewer().getAdapter(ContentModel.class).getContents()
+				.setAll(createPaletteContents());
+	}
+
 }

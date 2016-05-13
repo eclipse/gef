@@ -11,15 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples;
 
-import java.util.List;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ContentModel;
 
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import javafx.application.Application;
@@ -29,24 +25,45 @@ import javafx.stage.Stage;
 public abstract class AbstractMvcExample extends Application {
 
 	protected final String title;
+	private Stage primaryStage;
+	private FXDomain domain;
 
 	public AbstractMvcExample(String title) {
 		this.title = title;
 	}
 
-	protected abstract List<? extends Object> createContents();
-
 	protected abstract Module createModule();
+
+	protected FXViewer getContentViewer() {
+		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+		return viewer;
+	}
+
+	protected FXDomain getDomain() {
+		return domain;
+	}
+
+	protected Stage getPrimaryStage() {
+		return primaryStage;
+	}
+
+	protected void hookViewers() {
+		primaryStage.setScene(new Scene(getContentViewer().getCanvas()));
+	}
+
+	protected abstract void populateViewerContents();
 
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
-		Injector injector = Guice.createInjector(createModule());
-		FXDomain domain = injector.getInstance(FXDomain.class);
+		this.primaryStage = primaryStage;
 
-		// hook the (single) viewer into the stage
-		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		primaryStage.setScene(new Scene(viewer.getCanvas()));
+		// create domain using guice
+		this.domain = Guice.createInjector(createModule()).getInstance(FXDomain.class);
 
+		// create viewers
+		hookViewers();
+
+		// set-up stage
 		primaryStage.setResizable(true);
 		primaryStage.setWidth(640);
 		primaryStage.setHeight(480);
@@ -54,10 +71,10 @@ public abstract class AbstractMvcExample extends Application {
 		primaryStage.sizeToScene();
 		primaryStage.show();
 
-		// activate domain only after viewers have been hooked
+		// activate domain
 		domain.activate();
 
-		// set viewer contents
-		viewer.getAdapter(ContentModel.class).getContents().setAll(createContents());
+		// load contents
+		populateViewerContents();
 	}
 }

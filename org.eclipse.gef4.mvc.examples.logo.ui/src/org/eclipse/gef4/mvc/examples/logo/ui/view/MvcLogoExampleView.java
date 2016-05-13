@@ -24,11 +24,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
-import org.eclipse.gef4.mvc.examples.logo.behaviors.PaletteFocusBehavior;
+import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleViewersComposite;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.examples.logo.ui.properties.FXCurvePropertySource;
@@ -49,18 +48,8 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 
 public class MvcLogoExampleView extends AbstractFXView {
 
@@ -227,102 +216,11 @@ public class MvcLogoExampleView extends AbstractFXView {
 
 	@Override
 	protected void hookViewers() {
-		// determine content root node
-		final FXViewer contentViewer = getContentViewer();
-		InfiniteCanvas contentRootNode = contentViewer.getCanvas();
-		// determine palette root node
-		final FXViewer paletteViewer = getPaletteViewer();
-		final InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
-		// arrange viewers above each other
-		AnchorPane viewersPane = new AnchorPane();
-		viewersPane.getChildren().addAll(contentRootNode, paletteRootNode);
-		// create palette indicator
-		Pane paletteIndicator = new Pane();
-		paletteIndicator.setStyle("-fx-background-color: rgba(128,128,128,1);");
-		paletteIndicator.setMaxSize(10d, Double.MAX_VALUE);
-		paletteIndicator.setMinSize(10d, 0d);
-		// show palette indicator next to the viewer area
-		HBox hbox = new HBox();
-		hbox.getChildren().addAll(viewersPane, paletteIndicator);
-		// ensure hbox fills the whole space
-		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		hbox.setMinSize(0, 0);
-		hbox.setFillHeight(true);
-		// no spacing between viewers and palette indicator
-		hbox.setSpacing(0d);
-		// ensure viewers fill the space
-		HBox.setHgrow(viewersPane, Priority.ALWAYS);
-		viewersPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		AnchorPane.setBottomAnchor(contentRootNode, 0d);
-		AnchorPane.setLeftAnchor(contentRootNode, 0d);
-		AnchorPane.setRightAnchor(contentRootNode, 0d);
-		AnchorPane.setTopAnchor(contentRootNode, 0d);
-		AnchorPane.setBottomAnchor(paletteRootNode, 0d);
-		AnchorPane.setRightAnchor(paletteRootNode, 0d);
-		AnchorPane.setTopAnchor(paletteRootNode, 0d);
-		// disable grid layer for palette
-		paletteRootNode.setZoomGrid(false);
-		paletteRootNode.setShowGrid(false);
-		paletteRootNode.setHorizontalScrollBarPolicy(ScrollBarPolicy.NEVER);
-		// set palette background
-		paletteRootNode.setStyle(PaletteFocusBehavior.DEFAULT_STYLE);
-		// hide palette at first
-		paletteRootNode.setVisible(false);
-		// register listener to show/hide palette
-		paletteIndicator.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				paletteRootNode.setVisible(true);
-			}
-		});
-		paletteRootNode.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				paletteRootNode.setVisible(false);
-			}
-		});
-		paletteRootNode.getContentGroup().layoutBoundsProperty()
-				.addListener(new ChangeListener<Bounds>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends Bounds> observable,
-							Bounds oldValue, Bounds newValue) {
-						double scrollBarWidth = paletteRootNode
-								.getVerticalScrollBar().isVisible()
-										? paletteRootNode.getVerticalScrollBar()
-												.getLayoutBounds().getWidth()
-										: 0;
-						paletteRootNode.setPrefWidth(
-								newValue.getWidth() + scrollBarWidth);
-					}
-				});
-		paletteRootNode.getVerticalScrollBar().visibleProperty()
-				.addListener(new ChangeListener<Boolean>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends Boolean> observable,
-							Boolean oldValue, Boolean newValue) {
-						double contentWidth = paletteRootNode.getContentGroup()
-								.getLayoutBounds().getWidth();
-						double scrollBarWidth = newValue
-								? paletteRootNode.getVerticalScrollBar()
-										.getLayoutBounds().getWidth()
-								: 0;
-						paletteRootNode
-								.setPrefWidth(contentWidth + scrollBarWidth);
-					}
-				});
-		paletteRootNode.addEventHandler(MouseEvent.MOUSE_PRESSED,
-				new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						if (event.getTarget() != paletteRootNode) {
-							paletteRootNode.setVisible(false);
-						}
-					}
-				});
+		// build viewers composite
+		MvcLogoExampleViewersComposite viewersComposite = new MvcLogoExampleViewersComposite(
+				getContentViewer(), getPaletteViewer());
 		// create scene and populate canvas
-		getCanvas().setScene(new Scene(hbox));
+		getCanvas().setScene(new Scene(viewersComposite.getComposite()));
 	}
 
 }

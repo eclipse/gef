@@ -14,13 +14,17 @@ package org.eclipse.gef4.mvc.examples.logo;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.examples.logo.model.PaletteModel;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ContentModel;
 
 import com.google.inject.Module;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 
 public class MvcLogoExample extends AbstractMvcExample {
 
@@ -41,13 +45,24 @@ public class MvcLogoExample extends AbstractMvcExample {
 	}
 
 	@Override
-	protected List<? extends Object> createContents() {
-		return createDefaultContents();
+	protected Module createModule() {
+		return new MvcLogoExampleModule();
+	}
+
+	protected FXViewer getPaletteViewer() {
+		return getDomain().getAdapter(AdapterKey.get(FXViewer.class, MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
 	}
 
 	@Override
-	protected Module createModule() {
-		return new MvcLogoExampleModule();
+	protected void hookViewers() {
+		getPrimaryStage().setScene(
+				new Scene(new MvcLogoExampleViewersComposite(getContentViewer(), getPaletteViewer()).getComposite()));
+	}
+
+	@Override
+	protected void populateViewerContents() {
+		getContentViewer().getAdapter(ContentModel.class).getContents().setAll(createDefaultContents());
+		getPaletteViewer().getAdapter(ContentModel.class).getContents().setAll(createPaletteContents());
 	}
 
 }

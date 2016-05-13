@@ -321,7 +321,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		reselectOperation.add(deselectOperation);
 		reselectOperation.add(selectOperation);
 		return reselectOperation;
-
 	}
 
 	/**

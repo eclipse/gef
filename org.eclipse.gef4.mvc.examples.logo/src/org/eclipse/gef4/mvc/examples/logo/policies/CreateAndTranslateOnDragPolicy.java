@@ -110,8 +110,6 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 	@SuppressWarnings("serial")
 	@Override
 	public void press(MouseEvent event) {
-		System.out.println("mxy = (" + event.getSceneX() + ", " + event.getSceneY() + ")");
-
 		// find model part
 		IRootPart<Node, ? extends Node> contentRoot = getContentViewer().getRootPart();
 		IVisualPart<Node, ? extends Node> modelPart = contentRoot.getChildrenUnmodifiable().get(0);
