@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -25,9 +26,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.name.Named;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
@@ -41,10 +40,6 @@ public class FXFocusFeedbackPart
 		extends AbstractFXFeedbackPart<GeometryNode<IGeometry>> {
 
 	private static final double DEFAULT_STROKE_WIDTH = 1.5d;
-
-	@Inject
-	@Named(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_COLOR)
-	private Color focusStroke;
 
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
@@ -70,7 +65,7 @@ public class FXFocusFeedbackPart
 		visual.setManaged(false);
 		visual.setStrokeType(StrokeType.OUTSIDE);
 		visual.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-		visual.setStroke(focusStroke);
+		visual.setStroke(getFocusStroke());
 		return visual;
 	}
 
@@ -162,6 +157,21 @@ public class FXFocusFeedbackPart
 	protected IGeometry getFeedbackGeometry() {
 		return NodeUtils.sceneToLocal(getVisual(),
 				feedbackGeometryProvider.get());
+	}
+
+	/**
+	 * Returns the {@link Color} that is used to stroke focus feedback.
+	 *
+	 * @return The {@link Color} that is used to stroke focus feedback.
+	 */
+	@SuppressWarnings("serial")
+	protected Color getFocusStroke() {
+		Provider<Color> focusFeedbackColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_COLOR_PROVIDER));
+		return focusFeedbackColorProvider == null
+				? FXDefaultFocusFeedbackPartFactory.DEFAULT_FOCUS_FEEDBACK_COLOR
+				: focusFeedbackColorProvider.get();
 	}
 
 	/**

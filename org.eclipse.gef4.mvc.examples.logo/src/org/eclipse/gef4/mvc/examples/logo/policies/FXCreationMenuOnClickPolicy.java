@@ -31,9 +31,7 @@ import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.name.Named;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -110,10 +108,6 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 		}
 		return node == parent;
 	}
-
-	@Inject
-	@Named(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR)
-	private Color hightlightColor;
 
 	/**
 	 * List of {@link IFXCreationMenuItem}s which can be constructed.
@@ -198,7 +192,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 		arrow.setStroke(ARROW_STROKE);
 		arrow.setFill(ARROW_FILL);
 		// effect
-		effectOnHover(arrow, new DropShadow(DROP_SHADOW_RADIUS, hightlightColor));
+		effectOnHover(arrow, new DropShadow(DROP_SHADOW_RADIUS, getHighlightColor()));
 		// action
 		arrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -216,7 +210,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 
 		// highlighting
 		templateGroup.setEffect(createDropShadowReflectionEffect(DROP_SHADOW_RADIUS, Color.TRANSPARENT));
-		effectOnHover(templateGroup, createDropShadowReflectionEffect(DROP_SHADOW_RADIUS, hightlightColor));
+		effectOnHover(templateGroup, createDropShadowReflectionEffect(DROP_SHADOW_RADIUS, getHighlightColor()));
 
 		// register click action
 		templateGroup.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -251,6 +245,20 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 				node.setEffect(oldEffect[0]);
 			}
 		});
+	}
+
+	/**
+	 * Returns the {@link Color} that is used to stroke hover feedback.
+	 *
+	 * @return The {@link Color} that is used to stroke hover feedback.
+	 */
+	@SuppressWarnings("serial")
+	protected Color getHighlightColor() {
+		Provider<Color> hoverFeedbackColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR_PROVIDER));
+		return hoverFeedbackColorProvider == null ? FXDefaultHoverFeedbackPartFactory.DEFAULT_HOVER_FEEDBACK_COLOR
+				: hoverFeedbackColorProvider.get();
 	}
 
 	private FXViewer getViewer() {

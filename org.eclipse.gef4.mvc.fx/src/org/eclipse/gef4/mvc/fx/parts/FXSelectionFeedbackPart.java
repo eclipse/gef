@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -24,9 +25,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.name.Named;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -46,14 +45,6 @@ public class FXSelectionFeedbackPart
 	 * The stroke width for selection feedback.
 	 */
 	protected static final double DEFAULT_STROKE_WIDTH = 1.5d;
-
-	@Inject
-	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
-	private Color primarySelectionStroke;
-
-	@Inject
-	@Named(FXDefaultSelectionFeedbackPartFactory.SECONDARY_SELECTION_FEEDBACK_COLOR)
-	private Color secondarySelectionStroke;
 
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
@@ -108,12 +99,12 @@ public class FXSelectionFeedbackPart
 				}).getSelectionUnmodifiable();
 		if (selected.get(0) == anchorage) {
 			// primary selection
-			visual.setStroke(primarySelectionStroke);
+			visual.setStroke(getPrimarySelectionColor());
 			// XXX: place before focus feedback
 			visual.toFront();
 		} else {
 			// secondary selection
-			visual.setStroke(secondarySelectionStroke);
+			visual.setStroke(getSecondarySelectionColor());
 		}
 	}
 
@@ -128,6 +119,36 @@ public class FXSelectionFeedbackPart
 	protected IGeometry getFeedbackGeometry() {
 		return NodeUtils.sceneToLocal(getVisual(),
 				feedbackGeometryProvider.get());
+	}
+
+	/**
+	 * Returns the primary selection {@link Color}.
+	 *
+	 * @return The primary selection {@link Color}.
+	 */
+	protected Color getPrimarySelectionColor() {
+		@SuppressWarnings("serial")
+		Provider<Color> connectedColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR_PROVIDER));
+		return connectedColorProvider == null
+				? FXDefaultSelectionFeedbackPartFactory.DEFAULT_PRIMARY_SELECTION_FEEDBACK_COLOR
+				: connectedColorProvider.get();
+	}
+
+	/**
+	 * Returns the primary selection {@link Color}.
+	 *
+	 * @return The primary selection {@link Color}.
+	 */
+	protected Color getSecondarySelectionColor() {
+		@SuppressWarnings("serial")
+		Provider<Color> connectedColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultSelectionFeedbackPartFactory.SECONDARY_SELECTION_FEEDBACK_COLOR_PROVIDER));
+		return connectedColorProvider == null
+				? FXDefaultSelectionFeedbackPartFactory.DEFAULT_SECONDARY_SELECTION_FEEDBACK_COLOR
+				: connectedColorProvider.get();
 	}
 
 	/**

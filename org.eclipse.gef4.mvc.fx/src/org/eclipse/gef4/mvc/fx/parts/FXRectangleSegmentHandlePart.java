@@ -19,11 +19,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
@@ -47,25 +44,13 @@ public class FXRectangleSegmentHandlePart
 	 */
 	protected static final double DEFAULT_LENGTH = 8;
 
-	@Inject
-	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
-	private Color selectionStroke;
-
-	@Inject
-	@Named(FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR)
-	private Color insertFill;
-
-	@Inject
-	@Named(FXDefaultSelectionHandlePartFactory.MOVE_HANDLE_COLOR)
-	private Color moveFill;
-
 	@Override
 	protected javafx.scene.shape.Rectangle createVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
 		visual.setTranslateX(-DEFAULT_LENGTH / 2);
 		visual.setTranslateY(-DEFAULT_WIDTH / 2);
-		visual.setFill(moveFill);
-		visual.setStroke(selectionStroke);
+		visual.setFill(getMoveFill());
+		visual.setStroke(getStroke());
 		visual.setWidth(DEFAULT_LENGTH);
 		visual.setHeight(DEFAULT_WIDTH);
 		visual.setStrokeWidth(1);
@@ -100,11 +85,11 @@ public class FXRectangleSegmentHandlePart
 
 		if (getSegmentParameter() == 0.5) {
 			// move handle in the middle of a segment
-			visual.setFill(moveFill);
+			visual.setFill(getMoveFill());
 		} else if (getSegmentParameter() != 0.0
 				&& getSegmentParameter() != 1.0) {
 			// quarter handles (creation)
-			visual.setFill(insertFill);
+			visual.setFill(getInsertFill());
 			visual.setWidth(DEFAULT_LENGTH * 4d / 5d);
 			visual.setHeight(DEFAULT_WIDTH * 4d / 5d);
 			visual.setTranslateX(-DEFAULT_LENGTH / 2d + DEFAULT_LENGTH / 10d);
@@ -131,9 +116,9 @@ public class FXRectangleSegmentHandlePart
 			}
 			// update color according to connected state
 			if (connected) {
-				visual.setFill(Color.RED);
+				visual.setFill(getConnectedFill());
 			} else {
-				visual.setFill(moveFill);
+				visual.setFill(getMoveFill());
 			}
 		}
 	}

@@ -30,6 +30,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -42,13 +43,19 @@ public class FXDefaultHoverFeedbackPartFactory
 	/**
 	 * The binding name for the primary selection color.
 	 */
-	public static final String HOVER_FEEDBACK_COLOR = "HOVER_FEEDBACK_COLOR";
+	public static final String HOVER_FEEDBACK_COLOR_PROVIDER = "HOVER_FEEDBACK_COLOR_PROVIDER";
 
 	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
 	 * used to generate hover feedback.
 	 */
 	public static final String HOVER_FEEDBACK_GEOMETRY_PROVIDER = "HOVER_FEEDBACK_GEOMETRY_PROVIDER";
+
+	/**
+	 * Defines the default {@link Color} for hover feedback.
+	 */
+	public static final Color DEFAULT_HOVER_FEEDBACK_COLOR = Color
+			.web("#5a61af");
 
 	@Inject
 	private Injector injector;

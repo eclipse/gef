@@ -16,11 +16,8 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 
@@ -41,18 +38,6 @@ public class FXCircleSegmentHandlePart
 	 */
 	protected static final double DEFAULT_SIZE = 5;
 
-	@Inject
-	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
-	private Color stroke;
-
-	@Inject
-	@Named(FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR)
-	private Color insertFill;
-
-	@Inject
-	@Named(FXDefaultSelectionHandlePartFactory.MOVE_HANDLE_COLOR)
-	private Color moveFill;
-
 	/**
 	 * Creates the visual representation of this selection handle.
 	 *
@@ -62,8 +47,8 @@ public class FXCircleSegmentHandlePart
 	protected Circle createVisual() {
 		Circle circle = new Circle(DEFAULT_SIZE / 2d);
 		// initialize invariant visual properties
-		circle.setStroke(stroke);
-		circle.setFill(moveFill);
+		circle.setStroke(getStroke());
+		circle.setFill(getMoveFill());
 		circle.setStrokeWidth(1);
 		circle.setStrokeType(StrokeType.OUTSIDE);
 		return circle;
@@ -94,7 +79,7 @@ public class FXCircleSegmentHandlePart
 			return;
 		}
 		if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
-			visual.setFill(insertFill);
+			visual.setFill(getInsertFill());
 			visual.setRadius(DEFAULT_SIZE * 2d / 5d);
 		} else {
 			visual.setRadius(DEFAULT_SIZE / 2d);
@@ -115,9 +100,9 @@ public class FXCircleSegmentHandlePart
 			}
 			// update color according to connected state
 			if (connected) {
-				visual.setFill(Color.RED);
+				visual.setFill(getConnectedFill());
 			} else {
-				visual.setFill(moveFill);
+				visual.setFill(getMoveFill());
 			}
 		}
 	}

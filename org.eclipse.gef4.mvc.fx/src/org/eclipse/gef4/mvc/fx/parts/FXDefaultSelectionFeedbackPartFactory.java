@@ -40,6 +40,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -52,12 +53,24 @@ public class FXDefaultSelectionFeedbackPartFactory
 	/**
 	 * The binding name for the primary selection color.
 	 */
-	public static final String PRIMARY_SELECTION_FEEDBACK_COLOR = "PRIMARY_SELECTION_FEEDBACK_COLOR";
+	public static final String PRIMARY_SELECTION_FEEDBACK_COLOR_PROVIDER = "PRIMARY_SELECTION_FEEDBACK_COLOR_PROVIDER";
+
+	/**
+	 * Defines the default {@link Color} for primary selection feedback.
+	 */
+	public static final Color DEFAULT_PRIMARY_SELECTION_FEEDBACK_COLOR = Color
+			.web("#3f51b5");
 
 	/**
 	 * The binding name for the secondary selection color.
 	 */
-	public static final String SECONDARY_SELECTION_FEEDBACK_COLOR = "SECONDARY_SELECTION_FEEDBACK_COLOR";
+	public static final String SECONDARY_SELECTION_FEEDBACK_COLOR_PROVIDER = "SECONDARY_SELECTION_FEEDBACK_COLOR_PROVIDER";
+
+	/**
+	 * Defines the default {@link Color} for secondary selection feedback.
+	 */
+	public static final Color DEFAULT_SECONDARY_SELECTION_FEEDBACK_COLOR = Color
+			.web("#9fa8da");
 
 	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be

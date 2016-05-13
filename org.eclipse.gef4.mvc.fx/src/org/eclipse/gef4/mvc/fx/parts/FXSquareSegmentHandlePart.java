@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
 /**
@@ -32,25 +28,18 @@ public class FXSquareSegmentHandlePart
 	 */
 	public static final double DEFAULT_SIZE = 4;
 
-	@Inject
-	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
-	private Color selectionStroke;
-
-	@Inject
-	@Named(FXDefaultSelectionHandlePartFactory.MOVE_HANDLE_COLOR)
-	private Color moveFill;
-
 	@Override
 	protected javafx.scene.shape.Rectangle createVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
 		visual.setTranslateX(-DEFAULT_SIZE / 2);
 		visual.setTranslateY(-DEFAULT_SIZE / 2);
-		visual.setFill(moveFill);
-		visual.setStroke(selectionStroke);
+		visual.setFill(getMoveFill());
+		visual.setStroke(getStroke());
 		visual.setWidth(DEFAULT_SIZE);
 		visual.setHeight(DEFAULT_SIZE);
 		visual.setStrokeWidth(1);
 		visual.setStrokeType(StrokeType.OUTSIDE);
 		return visual;
 	}
+
 }

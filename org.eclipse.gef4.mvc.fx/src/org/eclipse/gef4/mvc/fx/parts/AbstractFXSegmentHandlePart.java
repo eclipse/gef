@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -19,10 +20,12 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 
 /**
  * An {@link AbstractFXSegmentHandlePart} is bound to a segment of a poly-bezier
@@ -81,6 +84,51 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 			return (BezierCurve) NodeUtils.sceneToLocal(getVisual().getParent(),
 					segments[segmentIndex]);
 		}
+	}
+
+	/**
+	 * Returns the {@link Color} that is used to fill connected handles.
+	 *
+	 * @return The {@link Color} that is used to fill connected handles.
+	 */
+	protected Color getConnectedFill() {
+		@SuppressWarnings("serial")
+		Provider<Color> connectedColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultSelectionHandlePartFactory.CONNECTED_HANDLE_COLOR_PROVIDER));
+		return connectedColorProvider == null
+				? FXDefaultSelectionHandlePartFactory.DEFAULT_CONNECTED_HANDLE_COLOR
+				: connectedColorProvider.get();
+	}
+
+	/**
+	 * Returns the {@link Color} that is used to fill insertion handles.
+	 *
+	 * @return The {@link Color} that is used to fill insertion handles.
+	 */
+	protected Color getInsertFill() {
+		@SuppressWarnings("serial")
+		Provider<Color> connectedColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultSelectionHandlePartFactory.INSERT_HANDLE_COLOR_PROVIDER));
+		return connectedColorProvider == null
+				? FXDefaultSelectionHandlePartFactory.DEFAULT_INSERT_HANDLE_COLOR
+				: connectedColorProvider.get();
+	}
+
+	/**
+	 * Returns the {@link Color} that is used to fill movement handles.
+	 *
+	 * @return The {@link Color} that is used to fill movement handles.
+	 */
+	protected Color getMoveFill() {
+		@SuppressWarnings("serial")
+		Provider<Color> connectedColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultSelectionHandlePartFactory.MOVE_HANDLE_COLOR_PROVIDER));
+		return connectedColorProvider == null
+				? FXDefaultSelectionHandlePartFactory.DEFAULT_MOVE_HANDLE_COLOR
+				: connectedColorProvider.get();
 	}
 
 	/**
@@ -145,6 +193,21 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 	 */
 	protected BezierCurve[] getSegmentsInScene() {
 		return segments;
+	}
+
+	/**
+	 * Returns the {@link Color} that is used to stroke handles.
+	 *
+	 * @return The {@link Color} that is used to stroke handles.
+	 */
+	protected Color getStroke() {
+		@SuppressWarnings("serial")
+		Provider<Color> connectedColorProvider = getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR_PROVIDER));
+		return connectedColorProvider == null
+				? FXDefaultSelectionFeedbackPartFactory.DEFAULT_PRIMARY_SELECTION_FEEDBACK_COLOR
+				: connectedColorProvider.get();
 	}
 
 	/**

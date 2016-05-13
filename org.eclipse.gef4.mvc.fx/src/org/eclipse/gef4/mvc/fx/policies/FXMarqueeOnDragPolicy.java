@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
@@ -30,8 +31,8 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -128,10 +129,6 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 		return containedNodes;
 	}
 
-	@Inject
-	@Named(FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR)
-	private Color selectionStroke;
-
 	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	// stores upon press() if the press-drag-release gesture is invalid
@@ -158,7 +155,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 			protected Rectangle createVisual() {
 				Rectangle visual = new Rectangle();
 				visual.setFill(Color.TRANSPARENT);
-				visual.setStroke(selectionStroke);
+				visual.setStroke(getPrimarySelectionColor());
 				visual.setStrokeWidth(1);
 				visual.setStrokeType(StrokeType.CENTERED);
 				visual.getStrokeDashArray().setAll(5d, 5d);
@@ -236,6 +233,21 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 			}
 		}
 		return parts;
+	}
+
+	/**
+	 * Returns the primary selection {@link Color}.
+	 *
+	 * @return The primary selection {@link Color}.
+	 */
+	protected Color getPrimarySelectionColor() {
+		@SuppressWarnings("serial")
+		Provider<Color> connectedColorProvider = getHost().getRoot().getViewer()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Color>>() {
+				}, FXDefaultSelectionFeedbackPartFactory.PRIMARY_SELECTION_FEEDBACK_COLOR_PROVIDER));
+		return connectedColorProvider == null
+				? FXDefaultSelectionFeedbackPartFactory.DEFAULT_PRIMARY_SELECTION_FEEDBACK_COLOR
+				: connectedColorProvider.get();
 	}
 
 	@Override

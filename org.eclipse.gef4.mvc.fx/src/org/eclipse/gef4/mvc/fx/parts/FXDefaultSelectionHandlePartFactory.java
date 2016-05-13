@@ -39,6 +39,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -51,12 +52,32 @@ public class FXDefaultSelectionHandlePartFactory
 	/**
 	 * A binding key for the fill color of intra segment handles.
 	 */
-	public static final String INSERT_HANDLE_COLOR = "INSERT_HANDLE_COLOR";
+	public static final String INSERT_HANDLE_COLOR_PROVIDER = "INSERT_HANDLE_COLOR_PROVIDER";
 
 	/**
-	 * A binding key for the fill color of segment end handles.
+	 * Defines the default {@link Color} for insertion handles.
 	 */
-	public static final String MOVE_HANDLE_COLOR = "MOVE_HANDLE_COLOR";
+	public static final Color DEFAULT_INSERT_HANDLE_COLOR = Color.WHITE;
+
+	/**
+	 * An adapter role for the fill color of segment end handles.
+	 */
+	public static final String MOVE_HANDLE_COLOR_PROVIDER = "MOVE_HANDLE_COLOR_PROVIDER";
+
+	/**
+	 * Defines the default {@link Color} for movement handles.
+	 */
+	public static final Color DEFAULT_MOVE_HANDLE_COLOR = Color.web("#7986cb");
+
+	/**
+	 * An adapter role for the fill color of connected handles.
+	 */
+	public static final String CONNECTED_HANDLE_COLOR_PROVIDER = "CONNECTED_HANDLE_COLOR_PROVIDER";
+
+	/**
+	 * Defines the default {@link Color} for connected handles.
+	 */
+	public static final Color DEFAULT_CONNECTED_HANDLE_COLOR = Color.RED;
 
 	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be

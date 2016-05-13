@@ -30,6 +30,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -42,7 +43,13 @@ public class FXDefaultFocusFeedbackPartFactory
 	/**
 	 * Defines the binding name for the focus feedback color.
 	 */
-	public static final String FOCUS_FEEDBACK_COLOR = "FOCUS_FEEDBACK_COLOR";
+	public static final String FOCUS_FEEDBACK_COLOR_PROVIDER = "FOCUS_FEEDBACK_COLOR_PROVIDER";
+
+	/**
+	 * Defines the default {@link Color} for focus feedback.
+	 */
+	public static final Color DEFAULT_FOCUS_FEEDBACK_COLOR = Color
+			.web("#8ec0fc");
 
 	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
