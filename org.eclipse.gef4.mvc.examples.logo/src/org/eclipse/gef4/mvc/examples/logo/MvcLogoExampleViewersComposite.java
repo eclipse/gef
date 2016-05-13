@@ -49,7 +49,7 @@ public class MvcLogoExampleViewersComposite {
 
 		// show palette indicator next to the viewer area
 		composite = new HBox();
-		composite.getChildren().addAll(viewersPane, paletteIndicator);
+		composite.getChildren().addAll(paletteIndicator, viewersPane);
 
 		// ensure composite fills the whole space
 		composite.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -67,7 +67,7 @@ public class MvcLogoExampleViewersComposite {
 		AnchorPane.setRightAnchor(contentRootNode, 0d);
 		AnchorPane.setTopAnchor(contentRootNode, 0d);
 		AnchorPane.setBottomAnchor(paletteRootNode, 0d);
-		AnchorPane.setRightAnchor(paletteRootNode, 0d);
+		AnchorPane.setLeftAnchor(paletteRootNode, 0d);
 		AnchorPane.setTopAnchor(paletteRootNode, 0d);
 
 		// disable grid layer for palette

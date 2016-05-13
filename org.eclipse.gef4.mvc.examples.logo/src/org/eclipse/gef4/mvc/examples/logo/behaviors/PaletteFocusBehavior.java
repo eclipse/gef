@@ -19,8 +19,8 @@ import javafx.scene.Node;
 
 public class PaletteFocusBehavior extends FXFocusBehavior {
 
-	public static final String FOCUSED_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(128,128,128,0.5); -fx-border-color: #8ec0fc; -fx-border-width: 2;";
-	public static final String DEFAULT_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(128,128,128,0.5); -fx-border-color: rgba(128,128,128,1); -fx-border-width: 2;";
+	public static final String FOCUSED_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(128,128,128,0.75); -fx-border-color: #8ec0fc; -fx-border-width: 2;";
+	public static final String DEFAULT_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(128,128,128,0.75); -fx-border-color: rgba(128,128,128,1); -fx-border-width: 2;";
 
 	@Override
 	protected void addViewerFocusedFeedback() {
