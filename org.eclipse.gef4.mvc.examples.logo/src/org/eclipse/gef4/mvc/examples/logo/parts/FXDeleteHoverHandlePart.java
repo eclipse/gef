@@ -13,31 +13,26 @@ package org.eclipse.gef4.mvc.examples.logo.parts;
 
 import java.net.URL;
 
-import javafx.scene.image.Image;
-
 import org.eclipse.gef4.fx.nodes.HoverOverlayImageView;
 
-public class FXDeleteHoverHandlePart
-		extends AbstractLogoHoverHandlePart<HoverOverlayImageView> {
+import javafx.scene.image.Image;
+
+public class FXDeleteHoverHandlePart extends AbstractLogoHoverHandlePart<HoverOverlayImageView> {
 
 	public static final String IMG_DELETE = "/delete_obj.gif";
 	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
 
 	@Override
 	protected HoverOverlayImageView createVisual() {
-		URL overlayImageResource = FXDeleteHoverHandlePart.class
-				.getResource(IMG_DELETE);
+		URL overlayImageResource = FXDeleteHoverHandlePart.class.getResource(IMG_DELETE);
 		if (overlayImageResource == null) {
-			throw new IllegalStateException(
-					"Cannot find resource <" + IMG_DELETE + ">.");
+			throw new IllegalStateException("Cannot find resource <" + IMG_DELETE + ">.");
 		}
 		Image overlayImage = new Image(overlayImageResource.toExternalForm());
 
-		URL baseImageResource = FXDeleteHoverHandlePart.class
-				.getResource(IMG_DELETE_DISABLED);
+		URL baseImageResource = FXDeleteHoverHandlePart.class.getResource(IMG_DELETE_DISABLED);
 		if (baseImageResource == null) {
-			throw new IllegalStateException(
-					"Cannot find resource <" + IMG_DELETE_DISABLED + ">.");
+			throw new IllegalStateException("Cannot find resource <" + IMG_DELETE_DISABLED + ">.");
 		}
 		Image baseImage = new Image(baseImageResource.toExternalForm());
 
@@ -46,5 +41,4 @@ public class FXDeleteHoverHandlePart
 		blendImageView.overlayImageProperty().set(overlayImage);
 		return blendImageView;
 	}
-
 }

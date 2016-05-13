@@ -11,45 +11,34 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
+import java.net.URL;
 
-public class FXCreateCurveHoverHandlePart
-		extends AbstractLogoHoverHandlePart<StackPane> {
+import org.eclipse.gef4.fx.nodes.HoverOverlayImageView;
+
+import javafx.scene.image.Image;
+
+public class FXCreateCurveHoverHandlePart extends AbstractLogoHoverHandlePart<HoverOverlayImageView> {
+
+	public static final String IMG_ADD = "/add_obj.gif";
+	public static final String IMG_ADD_DISABLED = "/add_obj_disabled.gif";
 
 	@Override
-	protected StackPane createVisual() {
-		StackPane stackPane = new StackPane();
-		stackPane.setPickOnBounds(true);
-		stackPane.getStyleClass().add("FXCreateCurveHoverHandlePart");
-		stackPane.getStylesheets().add(
-				getClass().getResource("hoverhandles.css").toExternalForm());
-		final Circle shape = new Circle(7.5);
-		shape.setFill(Color.DARKGREY);
-		Text label = new Text("+");
-		label.setBoundsType(TextBoundsType.VISUAL);
-		stackPane.getChildren().addAll(shape, label);
+	protected HoverOverlayImageView createVisual() {
+		URL overlayImageResource = FXDeleteHoverHandlePart.class.getResource(IMG_ADD);
+		if (overlayImageResource == null) {
+			throw new IllegalStateException("Cannot find resource <" + IMG_ADD + ">.");
+		}
+		Image overlayImage = new Image(overlayImageResource.toExternalForm());
 
-		// add hover effect
-		stackPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				shape.setFill(Color.DARKGREEN);
-			}
-		});
-		stackPane.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				shape.setFill(Color.DARKGREY);
-			}
-		});
+		URL baseImageResource = FXDeleteHoverHandlePart.class.getResource(IMG_ADD_DISABLED);
+		if (baseImageResource == null) {
+			throw new IllegalStateException("Cannot find resource <" + IMG_ADD_DISABLED + ">.");
+		}
+		Image baseImage = new Image(baseImageResource.toExternalForm());
 
-		return stackPane;
+		HoverOverlayImageView blendImageView = new HoverOverlayImageView();
+		blendImageView.baseImageProperty().set(baseImage);
+		blendImageView.overlayImageProperty().set(overlayImage);
+		return blendImageView;
 	}
-
 }

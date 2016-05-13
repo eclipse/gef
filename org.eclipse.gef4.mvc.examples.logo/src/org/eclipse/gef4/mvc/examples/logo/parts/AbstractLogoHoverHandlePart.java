@@ -18,8 +18,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.scene.Node;
 
-public abstract class AbstractLogoHoverHandlePart<T extends Node>
-		extends AbstractFXHandlePart<T> {
+public abstract class AbstractLogoHoverHandlePart<T extends Node> extends AbstractFXHandlePart<T> {
 
 	private boolean registered = false;
 	private final SetMultimapChangeListener<IVisualPart<Node, ? extends Node>, String> parentAnchoragesChangeListener = new SetMultimapChangeListener<IVisualPart<Node, ? extends Node>, String>() {
@@ -31,7 +30,6 @@ public abstract class AbstractLogoHoverHandlePart<T extends Node>
 				register(getViewer());
 			}
 		}
-
 	};
 
 	@Override
@@ -51,12 +49,10 @@ public abstract class AbstractLogoHoverHandlePart<T extends Node>
 	@Override
 	public void setParent(IVisualPart<Node, ? extends Node> newParent) {
 		if (getParent() != null) {
-			getParent().getAnchoragesUnmodifiable()
-					.removeListener(parentAnchoragesChangeListener);
+			getParent().getAnchoragesUnmodifiable().removeListener(parentAnchoragesChangeListener);
 		}
 		if (newParent != null) {
-			newParent.getAnchoragesUnmodifiable()
-					.addListener(parentAnchoragesChangeListener);
+			newParent.getAnchoragesUnmodifiable().addListener(parentAnchoragesChangeListener);
 		}
 		super.setParent(newParent);
 	}
