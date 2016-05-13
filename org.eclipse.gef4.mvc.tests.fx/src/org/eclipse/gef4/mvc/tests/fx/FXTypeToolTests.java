@@ -19,7 +19,6 @@ import java.awt.Robot;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
@@ -31,14 +30,13 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.multibindings.MapBinder;
+import com.google.inject.TypeLiteral;
 import com.sun.glass.events.KeyEvent;
 
 import javafx.scene.Node;
@@ -88,9 +86,15 @@ public class FXTypeToolTests {
 	public void singleExecutionTransactionUsedForInteraction() throws InterruptedException, AWTException {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
-			protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-				// bind content part factory
-				adapterMapBinder.addBinding(AdapterKey.defaultRole()).toInstance(new IContentPartFactory<Node>() {
+			protected void bindDomain() {
+				// stub the domain to be able to keep track of opened execution
+				// transactions
+				binder().bind(FXDomain.class).to(FXDomainDriver.class);
+			}
+
+			protected void bindIContentPartFactory() {
+				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+				}).toInstance(new IContentPartFactory<Node>() {
 					@Override
 					public IContentPart<Node, ? extends Node> createContentPart(Object content,
 							IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
@@ -99,17 +103,11 @@ public class FXTypeToolTests {
 				});
 			}
 
-			protected void bindDomain() {
-				// stub the domain to be able to keep track of opened execution
-				// transactions
-				binder().bind(FXDomain.class).to(FXDomainDriver.class);
-			}
-
 			@Override
 			protected void configure() {
 				super.configure();
 				bindDomain();
-				bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), AbstractViewer.class));
+				bindIContentPartFactory();
 			}
 		});
 		injector.injectMembers(this);
