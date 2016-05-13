@@ -346,8 +346,8 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
 	 * resize and transform of the selected parts. Otherwise returns
 	 * <code>false</code>. Per default, returns <code>true</code> if
-	 * <code>&lt;Control&gt;</code> is pressed and at least two target parts are
-	 * present.
+	 * <code>&lt;Control&gt;</code> is not pressed and at least two target parts
+	 * are present.
 	 *
 	 * @param event
 	 *            The {@link ScrollEvent} in question.
@@ -355,7 +355,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	 *         should trigger panning, otherwise <code>false</code>.
 	 */
 	protected boolean isResizeTransform(MouseEvent event) {
-		return targetParts.size() > 1 && event.isControlDown();
+		return targetParts.size() > 1 && !event.isControlDown();
 	}
 
 	@Override
