@@ -20,6 +20,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.PaletteElementPart;
@@ -109,6 +110,8 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 	@SuppressWarnings("serial")
 	@Override
 	public void press(MouseEvent event) {
+		System.out.println("mxy = (" + event.getSceneX() + ", " + event.getSceneY() + ")");
+
 		// find model part
 		IRootPart<Node, ? extends Node> contentRoot = getContentViewer().getRootPart();
 		IVisualPart<Node, ? extends Node> modelPart = contentRoot.getChildrenUnmodifiable().get(0);
@@ -116,12 +119,22 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 			throw new IllegalStateException("Cannot find FXGeometricModelPart.");
 		}
 
+		// copy the prototype
+		FXGeometricShape copy = getHost().getContent().getCopy();
+		// determine coordinates of prototype's origin in model coordinates
+		Point2D localToScene = getHost().getVisual().localToScene(0, 0);
+		Point2D originInModel = modelPart.getVisual().sceneToLocal(localToScene.getX(), localToScene.getY());
+		// initially move to the originInModel
+		double[] matrix = copy.getTransform().getMatrix();
+		copy.getTransform().setTransform(matrix[0], matrix[1], matrix[2], matrix[3], originInModel.getX(),
+				originInModel.getY());
+
 		// create copy of host's geometry using CreationPolicy from root part
 		CreationPolicy<Node> creationPolicy = contentRoot.getAdapter(new TypeToken<CreationPolicy<Node>>() {
 		});
 		init(creationPolicy);
-		createdShapePart = (FXGeometricShapePart) creationPolicy.create(getHost().getContent().getCopy(),
-				(FXGeometricModelPart) modelPart, HashMultimap.<IContentPart<Node, ? extends Node>, String> create());
+		createdShapePart = (FXGeometricShapePart) creationPolicy.create(copy, (FXGeometricModelPart) modelPart,
+				HashMultimap.<IContentPart<Node, ? extends Node>, String> create());
 		commit(creationPolicy);
 
 		// disable refresh visuals for the created shape part
@@ -142,7 +155,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 			throw new RuntimeException(e);
 		}
 
-		// find bend target part
+		// find drag target part
 		dragPolicies = createdShapePart.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
 		if (dragPolicies != null) {
 			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {

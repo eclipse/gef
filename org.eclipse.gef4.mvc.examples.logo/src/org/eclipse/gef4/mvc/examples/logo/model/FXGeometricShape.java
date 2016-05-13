@@ -55,8 +55,8 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 	}
 
 	public FXGeometricShape getCopy() {
-		FXGeometricShape copy = new FXGeometricShape(getGeometry(), getTransform(), (Color) getStroke(),
-				getStrokeWidth(), getFill(), getEffect());
+		FXGeometricShape copy = new FXGeometricShape((IShape) getGeometry().getCopy(), getTransform().getCopy(),
+				(Color) getStroke(), getStrokeWidth(), getFill(), getEffect());
 		return copy;
 	}
 
