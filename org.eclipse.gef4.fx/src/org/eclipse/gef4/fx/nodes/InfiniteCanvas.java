@@ -903,7 +903,7 @@ public class InfiniteCanvas extends Region {
 	 *
 	 * @return The horizontal {@link ScrollBar}.
 	 */
-	protected ScrollBar getHorizontalScrollBar() {
+	public ScrollBar getHorizontalScrollBar() {
 		return horizontalScrollBar;
 	}
 
@@ -1000,7 +1000,7 @@ public class InfiniteCanvas extends Region {
 	 *
 	 * @return The vertical {@link ScrollBar}.
 	 */
-	protected ScrollBar getVerticalScrollBar() {
+	public ScrollBar getVerticalScrollBar() {
 		return verticalScrollBar;
 	}
 
