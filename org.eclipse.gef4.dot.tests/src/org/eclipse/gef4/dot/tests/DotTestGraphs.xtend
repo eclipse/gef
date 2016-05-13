@@ -12,7 +12,7 @@
 
 package org.eclipse.gef4.dot.tests
 
-class DotSampleGraphs {
+class DotTestGraphs {
 	
 	public static val EMPTY = '''
 		graph {}

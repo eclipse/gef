@@ -56,67 +56,67 @@ public class DotParserTests {
 
 	@Test
 	public void testEmptyGraph() {
-		testString(DotSampleGraphs.EMPTY);
+		testString(DotTestGraphs.EMPTY);
 	}
 
 	@Test
 	public void testEmptyDirectedGraph() {
-		testString(DotSampleGraphs.EMPTY_DIRECTED);
+		testString(DotTestGraphs.EMPTY_DIRECTED);
 	}
 
 	@Test
 	public void testEmptyStrictGraph() {
-		testString(DotSampleGraphs.EMPTY_STRICT);
+		testString(DotTestGraphs.EMPTY_STRICT);
 	}
 
 	@Test
 	public void testEmptyStrictDirectedGraph() {
-		testString(DotSampleGraphs.EMPTY_STRICT_DIRECTED);
+		testString(DotTestGraphs.EMPTY_STRICT_DIRECTED);
 	}
 
 	@Test
 	public void testGraphWithOneNode() {
-		testString(DotSampleGraphs.ONE_NODE);
+		testString(DotTestGraphs.ONE_NODE);
 	}
 
 	@Test
 	public void testGraphWithOneNodeAndEmptyNodeAttributeList() {
-		testString(DotSampleGraphs.EMPTY_NODE_ATTRIBUTE_LIST);
+		testString(DotTestGraphs.EMPTY_NODE_ATTRIBUTE_LIST);
 	}
 
 	@Test
 	public void testGraphWithOneEdge() {
-		testString(DotSampleGraphs.ONE_EDGE);
+		testString(DotTestGraphs.ONE_EDGE);
 	}
 
 	@Test
 	public void testDirectedGraphWithOneEdge() {
-		testString(DotSampleGraphs.ONE_DIRECTED_EDGE);
+		testString(DotTestGraphs.ONE_DIRECTED_EDGE);
 	}
 
 	@Test
 	public void testGraphWithOneEdgeAndEmptyEdgeAttributeList() {
-		testString(DotSampleGraphs.EMPTY_EDGE_ATTRIBUTE_LIST);
+		testString(DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_LIST);
 	}
 
 	@Test
 	public void testDirectedGraphWithOneEdgeAndEmptyEdgeAttributeList() {
-		testString(DotSampleGraphs.EMPTY_DIRECTED_EDGE_ATTRIBUTE_LIST);
+		testString(DotTestGraphs.EMPTY_DIRECTED_EDGE_ATTRIBUTE_LIST);
 	}
 
 	@Test
 	public void testGraphWithEmptyGraphAttributeStatement() {
-		testString(DotSampleGraphs.EMPTY_GRAPH_ATTRIBUTE_STATEMENT);
+		testString(DotTestGraphs.EMPTY_GRAPH_ATTRIBUTE_STATEMENT);
 	}
 
 	@Test
 	public void testGraphWithEmptyNodeAttributeStatement() {
-		testString(DotSampleGraphs.EMPTY_NODE_ATTRIBUTE_STATEMENT);
+		testString(DotTestGraphs.EMPTY_NODE_ATTRIBUTE_STATEMENT);
 	}
 
 	@Test
 	public void testGraphWithEmptyEdgeAttributeStatement() {
-		testString(DotSampleGraphs.EMPTY_EDGE_ATTRIBUTE_STATEMENT);
+		testString(DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_STATEMENT);
 	}
 
 	@Test
