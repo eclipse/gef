@@ -168,6 +168,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	private boolean isSelectionHorizontal = false;
 	// TODO: remove usePreMoveHints
 	private boolean usePreMoveHints = false;
+	private boolean isNormalizationNeeded = false;
 
 	/**
 	 * Determines if the anchor at the given explicit index can be replaced with
@@ -188,9 +189,11 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
-		// showAnchors("pre-norm:");
-		normalize();
-		// showAnchors("commit:");
+		if (isNormalizationNeeded) {
+			// showAnchors("pre-norm:");
+			normalize();
+			// showAnchors("commit:");
+		}
 
 		ITransactionalOperation commit = super.commit();
 		if (commit == null || commit.isNoOp()) {
@@ -239,6 +242,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 */
 	public int createAfter(int explicitAnchorIndex, Point mouseInScene) {
 		checkInitialized();
+		// create point => normalization needed after commit
+		isNormalizationNeeded = true;
 		// determine insertion index
 		int insertionIndex = explicitAnchorIndex + 1;
 		// insert new anchor
@@ -261,6 +266,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 */
 	public int createBefore(int explicitAnchorIndex, Point mouseInScene) {
 		checkInitialized();
+		// create point => normalization needed after commit
+		isNormalizationNeeded = true;
 		// determine insertion index
 		int insertionIndex = explicitAnchorIndex;
 		// insert new anchor
@@ -584,6 +591,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		preMoveStartHint = null;
 		preMoveEndHint = null;
 		usePreMoveHints = false;
+		isNormalizationNeeded = false;
 		super.init();
 		// showAnchors("init:");
 	}
@@ -700,6 +708,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 */
 	public List<Integer> makeExplicit(int startConnectionIndex,
 			int endConnectionIndex) {
+		// new explicit point => normalization needed
+		isNormalizationNeeded = true;
 		// find the anchor handle before the start index
 		List<ImplicitGroup> implicitGroups = new ArrayList<>();
 		boolean isStartExplicit = isExplicit(startConnectionIndex);
@@ -763,6 +773,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 		// save/restore explicit anchors
 		if (preMoveExplicitAnchors.isEmpty()) {
+			// first move => we need to normalize upon commit now
+			isNormalizationNeeded = true;
 			// save initial selected positions
 			for (int i = 0; i < selectedExplicitAnchorIndices.size(); i++) {
 				selectedInitialPositions.add(i,
