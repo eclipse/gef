@@ -92,7 +92,7 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractInteractionPolicy<Node>
 	 * @return <code>true</code> to indicate that the given {@link ScrollEvent}
 	 *         should trigger panning, otherwise <code>false</code>.
 	 */
-	protected boolean isPanning(ScrollEvent event) {
+	protected boolean isPan(ScrollEvent event) {
 		// Do not scroll when a modifier key (<Alt>, <Control>, <Meta>) is
 		// pressed.
 		return !(event.isAltDown() || event.isControlDown()
@@ -136,7 +136,7 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractInteractionPolicy<Node>
 	 * @return <code>true</code> if the given {@link ScrollEvent} should trigger
 	 *         zooming, otherwise <code>false</code>.
 	 */
-	protected boolean isZooming(ScrollEvent event) {
+	protected boolean isZoom(ScrollEvent event) {
 		return event.isControlDown() || event.isAltDown();
 	}
 
@@ -144,14 +144,14 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractInteractionPolicy<Node>
 	public void scroll(ScrollEvent event) {
 		// each event is tested for suitability so that you can switch between
 		// multiple scroll actions instantly when pressing/releasing modifiers
-		if (isPanning(event) && !isStopped()) {
+		if (isPan(event) && !isStopped()) {
 			// Determine horizontal and vertical translation.
 			Dimension delta = computeDelta(event);
 			// Stop scrolling at the content-bounds.
 			setStopped(stopAtContentBounds(delta));
 			// change viewport via operation
 			getViewportPolicy().scrollRelative(delta.width, delta.height);
-		} else if (isZooming(event)) {
+		} else if (isZoom(event)) {
 			getViewportPolicy().zoomRelative(
 					event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
 					event.getSceneY());

@@ -34,14 +34,30 @@ public class FXHoverOnHoverPolicy extends AbstractFXInteractionPolicy
 	@Override
 	public void hover(MouseEvent e) {
 		// do nothing in case there is an explicit event target
-		if (isRegistered(e.getTarget())
-				&& !isRegisteredForHost(e.getTarget())) {
+		if (!isHover(e)) {
 			return;
 		}
 
 		getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<HoverModel<Node>>() {
 				}).setHover(getHost());
+	}
+
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * hover. Otherwise returns <code>false</code>. Per default, returns
+	 * <code>true</code> if the mouse target is not registered in the visual
+	 * part map or it is registered for this {@link FXHoverOnHoverPolicy}'s
+	 * host.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link MouseEvent}
+	 *         should trigger hover, otherwise <code>false</code>.
+	 */
+	protected boolean isHover(MouseEvent event) {
+		return !isRegistered(event.getTarget())
+				|| isRegisteredForHost(event.getTarget());
 	}
 
 }

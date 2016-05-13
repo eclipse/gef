@@ -68,6 +68,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	private int initialSegmentIndex;
 	private double initialSegmentParameter;
 
+	private boolean isInvalid = false;
+
 	private Comparator<IHandlePart<Node, ? extends Node>> handleDistanceComparator = new Comparator<IHandlePart<Node, ? extends Node>>() {
 		@Override
 		public int compare(IHandlePart<Node, ? extends Node> interactedWith,
@@ -84,6 +86,10 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
+		if (isInvalid) {
+			return;
+		}
+
 		Connection connection = targetPart.getVisual();
 
 		boolean isOrthogonal = isSegmentDragged
@@ -126,6 +132,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	@Override
 	public void dragAborted() {
+		if (isInvalid) {
+			return;
+		}
 		restoreRefreshVisuals(targetPart);
 		rollback(getBendPolicy(targetPart));
 		updateHandles();
@@ -199,8 +208,27 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		getCursorSupport().restoreCursor();
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * bend, <code>false</code> otherwise. Otherwise returns <code>false</code>
+	 * . By default will always return <code>true</code>.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> if the given {@link MouseEvent} should trigger
+	 *         bend, otherwise <code>false</code>.
+	 */
+	protected boolean isBend(MouseEvent event) {
+		return true;
+	}
+
 	@Override
 	public void press(MouseEvent e) {
+		isInvalid = !isBend(e);
+		if (isInvalid) {
+			return;
+		}
+
 		isSegmentDragged = false;
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
 		handlePositionInScene = initialMouseInScene.getCopy();
@@ -324,6 +352,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
+		if (isInvalid) {
+			return;
+		}
 		commit(getBendPolicy(targetPart));
 		restoreRefreshVisuals(targetPart);
 	}

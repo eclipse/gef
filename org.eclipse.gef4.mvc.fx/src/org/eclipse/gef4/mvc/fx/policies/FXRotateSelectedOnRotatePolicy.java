@@ -45,6 +45,9 @@ public class FXRotateSelectedOnRotatePolicy
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
 	private List<IContentPart<Node, ? extends Node>> targetParts;
 
+	// gesture validity
+	private boolean invalidGesture = false;
+
 	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that should
 	 * be rotated by this policy. Per default, the whole {@link SelectionModel
@@ -84,8 +87,26 @@ public class FXRotateSelectedOnRotatePolicy
 		return part.getAdapter(FXTransformPolicy.class);
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link RotateEvent} should trigger
+	 * rotation. Otherwise returns <code>false</code>. Per default always
+	 * returns <code>true</code>.
+	 *
+	 * @param event
+	 *            The {@link RotateEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link RotateEvent}
+	 *         should trigger rotation, otherwise <code>false</code>.
+	 */
+	protected boolean isRotate(RotateEvent event) {
+		return true;
+	}
+
 	@Override
 	public void rotate(RotateEvent e) {
+		if (invalidGesture) {
+			return;
+		}
+
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
 		}
@@ -93,6 +114,10 @@ public class FXRotateSelectedOnRotatePolicy
 
 	@Override
 	public void rotationAborted() {
+		if (invalidGesture) {
+			return;
+		}
+
 		// roll back transform operations
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
@@ -105,6 +130,10 @@ public class FXRotateSelectedOnRotatePolicy
 
 	@Override
 	public void rotationFinished(RotateEvent e) {
+		if (invalidGesture) {
+			return;
+		}
+
 		// commit transform operations
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
@@ -119,6 +148,12 @@ public class FXRotateSelectedOnRotatePolicy
 	@Override
 	public void rotationStarted(RotateEvent e) {
 		targetParts = determineTargetParts();
+
+		invalidGesture = !isRotate(e);
+		if (invalidGesture) {
+			return;
+		}
+
 		Rectangle bounds = FXPartUtils
 				.getUnionedVisualBoundsInScene(targetParts);
 		if (bounds == null) {

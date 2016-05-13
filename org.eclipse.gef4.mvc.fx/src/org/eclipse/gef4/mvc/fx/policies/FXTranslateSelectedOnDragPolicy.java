@@ -46,10 +46,13 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	private List<IContentPart<Node, ? extends Node>> targetParts;
 	private CursorSupport cursorSupport = new CursorSupport(this);
 
+	// gesture validity
+	private boolean invalidGesture = false;
+
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		// abort this policy if no target parts could be found
-		if (targetParts == null) {
+		if (invalidGesture) {
 			return;
 		}
 
@@ -80,7 +83,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 
 	@Override
 	public void dragAborted() {
-		if (targetParts == null) {
+		if (invalidGesture) {
 			return;
 		}
 
@@ -173,13 +176,19 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		getCursorSupport().restoreCursor();
 	}
 
-	@Override
-	public void press(MouseEvent e) {
-		// save initial pointer location
-		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
-
-		// determine target parts
-		targetParts = getTargetParts();
+	/**
+	 * Returns whether the given {@link MouseEvent} should trigger translation.
+	 * Per default, will return <code>true</code> if we have more than one
+	 * target part or the single target part does not have a connection with an
+	 * orthogonal router.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> if the given {@link MouseEvent} should trigger
+	 *         translation, otherwise <code>false</code>.
+	 */
+	// TODO (bug #493418): This condition needs improvement
+	protected boolean isTranslate(MouseEvent event) {
 		// do not translate the only selected part if an
 		// FXBendOnSegmentDragPolicy is registered for that part and the part is
 		// an orthogonal connection
@@ -194,9 +203,24 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		}
 		if (targetParts == null || targetParts.isEmpty()) {
 			// abort this policy if no target parts could be found
-			targetParts = null;
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void press(MouseEvent e) {
+		// determine target parts
+		targetParts = getTargetParts();
+
+		// decide whether to perform translation
+		invalidGesture = !isTranslate(e);
+		if (invalidGesture) {
 			return;
 		}
+
+		// save initial pointer location
+		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
 
 		// initialize this policy for all determined target parts
 		for (IContentPart<Node, ? extends Node> part : targetParts) {
@@ -213,7 +237,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
 		// abort this policy if no target parts could be found
-		if (targetParts == null) {
+		if (invalidGesture) {
 			return;
 		}
 

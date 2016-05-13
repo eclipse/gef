@@ -49,7 +49,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 	@Override
 	public void click(MouseEvent e) {
 		// focus and select are only done on single click
-		if (e.getClickCount() > 1) {
+		if (!isFocusAndSelect(e)) {
 			return;
 		}
 
@@ -171,6 +171,20 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * focus and select. Otherwise returns <code>false</code>. Per default
+	 * returns <code>true</code> if a single mouse click is performed.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> if the given {@link MouseEvent} should trigger
+	 *         focus and select, otherwise <code>false</code>.
+	 */
+	protected boolean isFocusAndSelect(MouseEvent event) {
+		return event.getClickCount() <= 1;
 	}
 
 }

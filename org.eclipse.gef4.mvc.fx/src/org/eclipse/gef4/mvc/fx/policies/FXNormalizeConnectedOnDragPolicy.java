@@ -35,49 +35,30 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class FXNormalizeConnectedOnDragPolicy extends AbstractFXInteractionPolicy
-		implements IFXOnDragPolicy {
+public class FXNormalizeConnectedOnDragPolicy
+		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
-	private Set<IVisualPart<Node, ? extends Node>> connected;
+	private Set<IVisualPart<Node, ? extends Node>> targetParts;
+	private boolean invalidGesture = false;
 
-	@Override
-	public void drag(MouseEvent e, Dimension delta) {
-		if (connected == null) {
-			return;
-		}
-		for (IVisualPart<Node, ? extends Node> part : connected) {
-			part.getAdapter(FXBendConnectionPolicy.class).normalize();
-		}
-	}
-
-	@Override
-	public void dragAborted() {
-		if (connected == null) {
-			return;
-		}
-		for (IVisualPart<Node, ? extends Node> part : connected) {
-			rollback(part.getAdapter(FXBendConnectionPolicy.class));
-			restoreRefreshVisuals(part);
-		}
-		connected = null;
-	}
-
-	@Override
-	public void hideIndicationCursor() {
-	}
-
-	@Override
-	public void press(MouseEvent e) {
-		connected = Collections.newSetFromMap(
-				new IdentityHashMap<IVisualPart<Node, ? extends Node>, Boolean>());
+	/**
+	 * Determines the target parts for this policy.
+	 *
+	 * @return The {@link IVisualPart} that should be considered as target
+	 *         parts.
+	 */
+	protected Set<IVisualPart<Node, ? extends Node>> determineTargetParts() {
+		Set<IVisualPart<Node, ? extends Node>> targetParts = Collections
+				.newSetFromMap(
+						new IdentityHashMap<IVisualPart<Node, ? extends Node>, Boolean>());
 		for (IVisualPart<Node, ? extends Node> anchored : getHost()
 				.getAnchoredsUnmodifiable()) {
 			if (anchored instanceof IContentPart) {
 				FXBendConnectionPolicy bendConnectionPolicy = anchored
 						.getAdapter(FXBendConnectionPolicy.class);
 				if (bendConnectionPolicy != null
-						&& !connected.contains(anchored)) {
-					connected.add(anchored);
+						&& !targetParts.contains(anchored)) {
+					targetParts.add(anchored);
 				}
 			}
 		}
@@ -87,7 +68,7 @@ public class FXNormalizeConnectedOnDragPolicy extends AbstractFXInteractionPolic
 		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				});
-		Iterator<IVisualPart<Node, ? extends Node>> it = connected.iterator();
+		Iterator<IVisualPart<Node, ? extends Node>> it = targetParts.iterator();
 		while (it.hasNext()) {
 			IVisualPart<Node, ? extends Node> part = it.next();
 			if (part instanceof IContentPart && selectionModel
@@ -95,27 +76,76 @@ public class FXNormalizeConnectedOnDragPolicy extends AbstractFXInteractionPolic
 				it.remove();
 			}
 		}
+		return targetParts;
+	}
 
-		if (connected.isEmpty()) {
-			connected = null;
-		} else {
-			for (IVisualPart<Node, ? extends Node> part : connected) {
-				storeAndDisableRefreshVisuals(part);
-				init(part.getAdapter(FXBendConnectionPolicy.class));
-			}
+	@Override
+	public void drag(MouseEvent e, Dimension delta) {
+		if (invalidGesture) {
+			return;
+		}
+
+		for (IVisualPart<Node, ? extends Node> part : targetParts) {
+			part.getAdapter(FXBendConnectionPolicy.class).normalize();
+		}
+	}
+
+	@Override
+	public void dragAborted() {
+		if (invalidGesture) {
+			return;
+		}
+
+		for (IVisualPart<Node, ? extends Node> part : targetParts) {
+			rollback(part.getAdapter(FXBendConnectionPolicy.class));
+			restoreRefreshVisuals(part);
+		}
+		targetParts = null;
+	}
+
+	@Override
+	public void hideIndicationCursor() {
+	}
+
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * normalization. Otherwise returns <code>false</code>. Per default always
+	 * returns <code>true</code> if there are target parts.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link MouseEvent}
+	 *         should trigger normalization, otherwise <code>false</code>.
+	 */
+	protected boolean isNormalize(MouseEvent event) {
+		return !targetParts.isEmpty();
+	}
+
+	@Override
+	public void press(MouseEvent e) {
+		targetParts = determineTargetParts();
+
+		invalidGesture = !isNormalize(e);
+		if (invalidGesture) {
+			return;
+		}
+
+		for (IVisualPart<Node, ? extends Node> part : targetParts) {
+			storeAndDisableRefreshVisuals(part);
+			init(part.getAdapter(FXBendConnectionPolicy.class));
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		if (connected == null) {
+		if (invalidGesture) {
 			return;
 		}
-		for (IVisualPart<Node, ? extends Node> part : connected) {
+		for (IVisualPart<Node, ? extends Node> part : targetParts) {
 			commit(part.getAdapter(FXBendConnectionPolicy.class));
 			restoreRefreshVisuals(part);
 		}
-		connected = null;
+		targetParts = null;
 	}
 
 	@Override

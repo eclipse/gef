@@ -243,14 +243,23 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 		getCursorSupport().restoreCursor();
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * marquee selection. Otherwise returns <code>false</code>. Per default
+	 * returns <code>true</code> if the event target is not registered.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> if the given {@link KeyEvent} should trigger
+	 *         zooming, otherwise <code>false</code>.
+	 */
+	protected boolean isMarquee(MouseEvent event) {
+		return !isRegistered(event.getTarget());
+	}
+
 	@Override
 	public void press(MouseEvent e) {
-		if (e.getTarget() instanceof Node) {
-			Node node = (Node) e.getTarget();
-			IVisualPart<Node, ? extends Node> nodePart = FXPartUtils
-					.retrieveVisualPart(getHost().getRoot().getViewer(), node);
-			invalidGesture = nodePart != getHost().getRoot();
-		}
+		invalidGesture = !isMarquee(e);
 		if (invalidGesture) {
 			return;
 		}

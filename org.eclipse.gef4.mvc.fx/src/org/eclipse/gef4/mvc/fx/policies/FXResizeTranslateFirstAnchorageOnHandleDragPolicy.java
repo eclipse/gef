@@ -214,11 +214,26 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 				.size() > 1;
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * resize and translate. Otherwise returns <code>false</code>. Per default
+	 * returns <code>true</code> if <code>&lt;Control&gt;</code> is not pressed
+	 * and there is not more than single anchorage.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> if the given {@link MouseEvent} should trigger
+	 *         resize and translate, otherwise <code>false</code>.
+	 */
+	protected boolean isResizeTranslate(MouseEvent event) {
+		return !event.isControlDown() && !isMultiSelection();
+	}
+
 	@Override
 	public void press(MouseEvent e) {
 		setTargetPart(determineTargetPart());
-		if (e.isControlDown() || isMultiSelection()) {
-			invalidGesture = true;
+		invalidGesture = !isResizeTranslate(e);
+		if (invalidGesture) {
 			return;
 		}
 		storeAndDisableRefreshVisuals(getTargetPart());

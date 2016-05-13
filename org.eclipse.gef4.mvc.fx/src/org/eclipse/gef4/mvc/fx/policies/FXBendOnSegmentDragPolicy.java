@@ -130,9 +130,18 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		cursorSupport.restoreCursor();
 	}
 
-	@Override
-	public void press(MouseEvent e) {
-		isInvalid = false;
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * bending. Otherwise returns <code>false</code>. Per default returns
+	 * <code>true</code> if a single mouse click is performed.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> if the given {@link MouseEvent} should trigger
+	 *         focus and select, otherwise <code>false</code>.
+	 */
+	protected boolean isBend(MouseEvent event) {
+		boolean isInvalid = false;
 		if (!(getHost().getVisual().getRouter() instanceof OrthogonalRouter)) {
 			// abort if non-orthogonal
 			isInvalid = true;
@@ -146,6 +155,12 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 					}).getSelectionUnmodifiable();
 			isInvalid = selection.size() > 1 && selection.contains(host);
 		}
+		return !isInvalid;
+	}
+
+	@Override
+	public void press(MouseEvent e) {
+		isInvalid = !isBend(e);
 		if (isInvalid) {
 			return;
 		}

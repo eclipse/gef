@@ -59,6 +59,8 @@ public class FXPanOnTypePolicy extends AbstractInteractionPolicy<Node>
 	private long totalMillisLeft = 0;
 	private long totalMillisRight = 0;
 
+	private boolean invalidGesture = false;
+
 	/**
 	 * Returns the amount of units scrolled per second when a direction key is
 	 * pressed.
@@ -70,8 +72,31 @@ public class FXPanOnTypePolicy extends AbstractInteractionPolicy<Node>
 		return DEFAULT_SCROLL_AMOUNT_PER_SECOND;
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link KeyEvent} should trigger
+	 * panning. Otherwise returns <code>false</code>. Per default, will return
+	 * <code>true</code> if <code>&lt;Up&gt;</code>, <code>&lt;Down&gt;</code>,
+	 * <code>&lt;Left&gt;</code>, <code>&lt;Right&gt;</code>
+	 *
+	 * @param event
+	 *            The {@link KeyEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link KeyEvent}
+	 *         should trigger panning, otherwise <code>false</code>.
+	 */
+	protected boolean isPan(KeyEvent event) {
+		return event.getCode().equals(KeyCode.DOWN)
+				|| event.getCode().equals(KeyCode.UP)
+				|| event.getCode().equals(KeyCode.LEFT)
+				|| event.getCode().equals(KeyCode.RIGHT);
+	}
+
 	@Override
 	public void pressed(KeyEvent event) {
+		invalidGesture = !isPan(event);
+		if (invalidGesture) {
+			return;
+		}
+
 		long now = System.currentTimeMillis();
 		if (!isDown && event.getCode().equals(KeyCode.DOWN)) {
 			isDown = true;
@@ -128,6 +153,10 @@ public class FXPanOnTypePolicy extends AbstractInteractionPolicy<Node>
 
 	@Override
 	public void released(KeyEvent event) {
+		if (invalidGesture) {
+			return;
+		}
+
 		long now = System.currentTimeMillis();
 
 		if (event.getCode().equals(KeyCode.DOWN)) {

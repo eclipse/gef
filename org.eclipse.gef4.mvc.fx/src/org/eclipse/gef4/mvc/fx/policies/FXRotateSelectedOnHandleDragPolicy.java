@@ -184,11 +184,25 @@ public class FXRotateSelectedOnHandleDragPolicy
 		getCursorSupport().restoreCursor();
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * rotation. Otherwise returns <code>false</code>. Per default returns
+	 * <code>true</code> if <code>&lt;Control&gt;</code> is pressed.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} in question.
+	 * @return <code>true</code> if the given {@link MouseEvent} should trigger
+	 *         rotation, otherwise <code>false</code>.
+	 */
+	protected boolean isRotate(MouseEvent event) {
+		return event.isControlDown();
+	}
+
 	@Override
 	public void press(MouseEvent e) {
 		// do nothing when the user does not press control
-		if (!e.isControlDown()) {
-			invalidGesture = true;
+		invalidGesture = !isRotate(e);
+		if (invalidGesture) {
 			return;
 		}
 

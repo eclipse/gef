@@ -37,6 +37,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 
 /**
  * The {@link FXResizeTransformSelectedOnHandleDragPolicy} is an
@@ -341,11 +342,27 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		getCursorSupport().restoreCursor();
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
+	 * resize and transform of the selected parts. Otherwise returns
+	 * <code>false</code>. Per default, returns <code>true</code> if
+	 * <code>&lt;Control&gt;</code> is pressed and at least two target parts are
+	 * present.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link ScrollEvent}
+	 *         should trigger panning, otherwise <code>false</code>.
+	 */
+	protected boolean isResizeTransform(MouseEvent event) {
+		return targetParts.size() > 1 && event.isControlDown();
+	}
+
 	@Override
 	public void press(MouseEvent e) {
 		targetParts = getTargetParts();
-		if (targetParts.size() < 2 || e.isControlDown()) {
-			invalidGesture = true;
+		invalidGesture = !isResizeTransform(e);
+		if (invalidGesture) {
 			return;
 		}
 		// init resize context vars

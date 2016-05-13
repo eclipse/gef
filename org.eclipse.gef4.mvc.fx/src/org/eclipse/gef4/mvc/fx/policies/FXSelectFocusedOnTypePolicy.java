@@ -40,6 +40,20 @@ import javafx.scene.input.KeyEvent;
 public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
+	/**
+	 * Returns <code>true</code> if the given {@link KeyEvent} should trigger
+	 * selection. Otherwise returns <code>false</code>. Per default returns
+	 * <code>true</code> if <code>&lt;Space&gt;</code> is pressed.
+	 *
+	 * @param event
+	 *            The {@link KeyEvent} in question.
+	 * @return <code>true</code> if the given {@link KeyEvent} should trigger
+	 *         zooming, otherwise <code>false</code>.
+	 */
+	protected boolean isSelect(KeyEvent event) {
+		return KeyCode.SPACE.equals(event.getCode());
+	}
+
 	@Override
 	public void pressed(KeyEvent event) {
 		// only react to events fired directly at our host
@@ -49,7 +63,7 @@ public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
 		}
 
 		// only react to the SPACE key
-		if (!KeyCode.SPACE.equals(event.getCode())) {
+		if (!isSelect(event)) {
 			return;
 		}
 
