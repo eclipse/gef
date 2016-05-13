@@ -296,19 +296,29 @@ public class MvcLogoExampleView extends AbstractFXView {
 								newValue.getWidth() + scrollBarWidth);
 					}
 				});
-		paletteRootNode.getVerticalScrollBar().layoutBoundsProperty()
-				.addListener(new ChangeListener<Bounds>() {
+		paletteRootNode.getVerticalScrollBar().visibleProperty()
+				.addListener(new ChangeListener<Boolean>() {
 					@Override
 					public void changed(
-							ObservableValue<? extends Bounds> observable,
-							Bounds oldValue, Bounds newValue) {
+							ObservableValue<? extends Boolean> observable,
+							Boolean oldValue, Boolean newValue) {
 						double contentWidth = paletteRootNode.getContentGroup()
 								.getLayoutBounds().getWidth();
-						double scrollBarWidth = paletteRootNode
-								.getVerticalScrollBar().isVisible()
-										? newValue.getWidth() : 0;
+						double scrollBarWidth = newValue
+								? paletteRootNode.getVerticalScrollBar()
+										.getLayoutBounds().getWidth()
+								: 0;
 						paletteRootNode
 								.setPrefWidth(contentWidth + scrollBarWidth);
+					}
+				});
+		paletteRootNode.addEventHandler(MouseEvent.MOUSE_PRESSED,
+				new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent event) {
+						if (event.getTarget() != paletteRootNode) {
+							paletteRootNode.setVisible(false);
+						}
 					}
 				});
 		// create scene and populate canvas
