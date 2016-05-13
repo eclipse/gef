@@ -86,6 +86,7 @@ import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 public class MvcLogoExampleModule extends MvcFxModule {
 
@@ -359,6 +360,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
 		// bind content part factory
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoPaletteContentPartFactory.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR_PROVIDER))
+				.toInstance(new Provider<Color>() {
+					@Override
+					public Color get() {
+						return Color.WHITE;
+					}
+				});
 	}
 
 	protected void bindPaletteViewerRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
