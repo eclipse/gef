@@ -24,12 +24,14 @@ import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter.Kind;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlySetProperty;
 import javafx.beans.property.ReadOnlySetWrapper;
 import javafx.beans.value.ChangeListener;
@@ -252,26 +254,34 @@ public class DynamicAnchor extends AbstractAnchor {
 	};
 
 	/**
-	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual.
-	 * Uses the default computation strategy ( {@link ProjectionStrategy} ).
+	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual
+	 * that uses a {@link ChopBoxStrategy} as computation strategy. The anchor
+	 * will also add a default binding for the
+	 * {@link AnchorageReferenceGeometry} computation parameter, which is
+	 * required by the {@link ChopBoxStrategy}, that infers the geometry from
+	 * the anchorage's shape outline.
 	 *
 	 * @param anchorage
 	 *            The anchorage visual.
 	 */
-	public DynamicAnchor(Node anchorage) {
+	public DynamicAnchor(final Node anchorage) {
 		this(anchorage, new ChopBoxStrategy());
 	}
 
 	/**
 	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual
-	 * using the given {@link IComputationStrategy}.
+	 * using the given {@link IComputationStrategy}. The anchor will also add a
+	 * default binding for the {@link AnchorageReferenceGeometry} computation
+	 * parameter, inferring the geometry from the anchorage's shape outline, in
+	 * case this parameter is required by the given
+	 * {@link IComputationStrategy}.
 	 *
 	 * @param anchorage
 	 *            The anchorage visual.
 	 * @param computationStrategy
 	 *            The {@link IComputationStrategy} to use.
 	 */
-	public DynamicAnchor(Node anchorage,
+	public DynamicAnchor(final Node anchorage,
 			IComputationStrategy computationStrategy) {
 		super(anchorage);
 		setComputationStrategy(computationStrategy);
@@ -279,6 +289,23 @@ public class DynamicAnchor extends AbstractAnchor {
 				.addListener(anchorageComputationParametersChangeListener);
 		anchoredComputationParameters
 				.addListener(anchoredComputationParametersChangeListener);
+
+		// add default binding for the anchorage reference geometry (if required
+		// by the given computation strategy)
+		if (computationStrategy.getRequiredParameters()
+				.contains(AnchorageReferenceGeometry.class)) {
+			getComputationParameter(AnchorageReferenceGeometry.class)
+					.bind(new ObjectBinding<IGeometry>() {
+						{
+							bind(anchorage.layoutBoundsProperty());
+						}
+
+						@Override
+						protected IGeometry computeValue() {
+							return NodeUtils.getShapeOutline(anchorage);
+						}
+					});
+		}
 	}
 
 	/**
