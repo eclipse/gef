@@ -13,10 +13,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
 import javafx.event.EventHandler;
@@ -24,6 +26,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -42,6 +45,26 @@ public class ConnectionSnippet extends AbstractFxExample {
 	}
 
 	public static void main(String[] args) {
+		// XXX: This is a workaround for JDK-8143907, which happens in
+		// standalone
+		// applications on Mac OS X El Capitan
+		{
+			// TODO: Remove when dropping support for JavaSE-1.7
+			if (System.getProperty("java.version").startsWith("1.7.0")
+					&& System.getProperty("os.name").equals("Mac OS X")) {
+				try {
+					Class<?> macFontFinderClass = Class
+							.forName("com.sun.t2k.MacFontFinder");
+					Field psNameToPathMapField = macFontFinderClass
+							.getDeclaredField("psNameToPathMap");
+					psNameToPathMapField.setAccessible(true);
+					psNameToPathMapField.set(null,
+							new HashMap<String, String>());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		launch();
 	}
 
@@ -63,12 +86,19 @@ public class ConnectionSnippet extends AbstractFxExample {
 		Connection connection = new Connection();
 		connection.setEndDecoration(new ArrowHead());
 
+		// use a control as start, where layout bounds are always (0, 0, width,
+		// height); this demonstrates anchor positions are calculated properly
+		Label start = new Label("Some label");
+		start.setLayoutX(150);
+		start.setLayoutY(150);
+		makeDraggable(start);
+
 		// set start point and end anchor
-		connection.setStartPoint(new Point(150, 150));
+		connection.setStartAnchor(new DynamicAnchor(start));
 		connection.setEndAnchor(new DynamicAnchor(end));
 
 		Group root = new Group();
-		root.getChildren().addAll(end, connection);
+		root.getChildren().addAll(start, end, connection);
 		return new Scene(root, 300, 300);
 	}
 
