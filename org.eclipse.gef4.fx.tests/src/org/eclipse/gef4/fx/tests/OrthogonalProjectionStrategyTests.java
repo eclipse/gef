@@ -32,7 +32,11 @@ public class OrthogonalProjectionStrategyTests {
 	public void projectionOnRectangleWithoutOrientationPreference() {
 		javafx.scene.shape.Rectangle anchorage = new javafx.scene.shape.Rectangle(0, 0, 50, 50);
 		DynamicAnchor a = new DynamicAnchor(anchorage, new OrthogonalProjectionStrategy());
-		a.getComputationParameter(AnchorageReferenceGeometry.class).set(new Rectangle(0, 0, 50, 50));
+		AnchorageReferenceGeometry computationParameter = a.getComputationParameter(AnchorageReferenceGeometry.class);
+		if(computationParameter.isBound()){
+			computationParameter.unbind();
+		}
+		computationParameter.set(new Rectangle(0, 0, 50, 50));
 
 		javafx.scene.shape.Rectangle anchored = new javafx.scene.shape.Rectangle(100, 0, 50, 50);
 		AnchorKey anchorKey = new AnchorKey(anchored, "role");
@@ -52,7 +56,11 @@ public class OrthogonalProjectionStrategyTests {
 	public void projectionOnDiamondWithOrientationPreference() {
 		javafx.scene.shape.Polygon anchorage = new javafx.scene.shape.Polygon(0, 25, 25, 0, 50, 25, 25, 50);
 		DynamicAnchor a = new DynamicAnchor(anchorage, new OrthogonalProjectionStrategy());
-		a.getComputationParameter(AnchorageReferenceGeometry.class).set(new Polygon(0, 25, 25, 0, 50, 25, 25, 50));
+		AnchorageReferenceGeometry computationParameter = a.getComputationParameter(AnchorageReferenceGeometry.class);
+		if(computationParameter.isBound()){
+			computationParameter.unbind();
+		}
+		computationParameter.set(new Polygon(0, 25, 25, 0, 50, 25, 25, 50));
 
 		javafx.scene.shape.Rectangle anchored = new javafx.scene.shape.Rectangle(100, 0, 50, 50);
 		AnchorKey anchorKey = new AnchorKey(anchored, "role");
