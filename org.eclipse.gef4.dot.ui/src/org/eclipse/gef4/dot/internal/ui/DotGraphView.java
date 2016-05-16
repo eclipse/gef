@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Fabian Steeg (hbz), and others.
+ * Copyright (c) 2014, 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,11 +11,15 @@
  *     Matthias Wienand (itemis AG) - Refactorings and cleanups
  *     Alexander Nyßen (itemis AG) - Refactorings and cleanups
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
+ *                                - Render embedded dot graphs in native mode (bug #493694)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,6 +117,34 @@ public class DotGraphView extends ZestFxUiView {
 		 */
 		public String getDotString() {
 			return trimNonDotSuffix(trimNonDotPrefix());
+		}
+
+		/**
+		 * @return A temporary file containing the DOT string extracted from the
+		 *         input, or the {@code NO_DOT} constant, a valid DOT graph
+		 */
+		public File getDotTempFile() {
+			File tempFile = null;
+			try {
+				tempFile = File.createTempFile("tempDotExtractorFile", ".dot"); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (IOException e) {
+				System.err
+						.println("DotExtractor failed to create temp dot file"); //$NON-NLS-1$
+				e.printStackTrace();
+			}
+
+			if (tempFile != null) {
+				// use try-with-resources to utilize the AutoClosable
+				// functionality
+				try (BufferedWriter bw = new BufferedWriter(
+						new FileWriter(tempFile))) {
+					bw.write(getDotString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return tempFile;
 		}
 
 		private String trimNonDotPrefix() {
@@ -330,19 +362,36 @@ public class DotGraphView extends ZestFxUiView {
 		}
 
 		currentFile = file;
-		if (currentFile.getName().endsWith("." + EXTENSION)) { //$NON-NLS-1$
-			currentDot = DotFileUtils.read(currentFile);
+		boolean isEmbeddedDotFile = !currentFile.getName()
+				.endsWith("." + EXTENSION); //$NON-NLS-1$
+
+		DotExtractor dotExtractor = null;
+		if (isEmbeddedDotFile) {
+			dotExtractor = new DotExtractor(currentFile);
+			currentDot = dotExtractor.getDotString();
 		} else {
-			currentDot = new DotExtractor(currentFile).getDotString();
+			currentDot = DotFileUtils.read(currentFile);
 		}
 
 		// if Graphviz 'dot' executable is available, we use it for layout
 		// (native mode); otherwise we emulate layout with GEF4 Layout
 		// algorithms.
 		if (isNativeMode()) {
-			String[] result = DotExecutableUtils.executeDot(
-					new File(GraphvizPreferencePage.getDotExecutablePath()),
-					file, null, null);
+			String[] result;
+			if (isEmbeddedDotFile) {
+				File tempDotFile = dotExtractor.getDotTempFile();
+				if (tempDotFile == null) {
+					return false;
+				}
+				result = DotExecutableUtils.executeDot(
+						new File(GraphvizPreferencePage.getDotExecutablePath()),
+						tempDotFile, null, null);
+				tempDotFile.delete();
+			} else {
+				result = DotExecutableUtils.executeDot(
+						new File(GraphvizPreferencePage.getDotExecutablePath()),
+						file, null, null);
+			}
 			currentDot = result[0];
 		}
 		setGraphAsync(currentDot, currentFile);
