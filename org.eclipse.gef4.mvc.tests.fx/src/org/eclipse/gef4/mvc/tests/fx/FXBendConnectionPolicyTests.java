@@ -191,8 +191,13 @@ public class FXBendConnectionPolicyTests {
 	public static class TestAnchorProvider extends DefaultAnchorProvider {
 		@Override
 		protected void initializeComputationParameters(DynamicAnchor anchor) {
-			anchor.getComputationParameter(AnchorageReferenceGeometry.class)
-					.set((IShape) ((IContentPart<?, ?>) getAdaptable()).getContent());
+			AnchorageReferenceGeometry computationParameter = anchor
+					.getComputationParameter(AnchorageReferenceGeometry.class);
+			// if there is a default binding, remove it
+			if (computationParameter.isBound()) {
+				computationParameter.unbind();
+			}
+			computationParameter.set((IShape) ((IContentPart<?, ?>) getAdaptable()).getContent());
 		}
 	}
 
