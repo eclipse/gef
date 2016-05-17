@@ -1608,6 +1608,7 @@ public class Connection extends Group {
 		} else {
 			hintsByKeys.put(endAnchorKey, endPositionHint);
 		}
+		refresh();
 	}
 
 	/**
@@ -1732,6 +1733,7 @@ public class Connection extends Group {
 		} else {
 			hintsByKeys.put(startAnchorKey, startPositionHint);
 		}
+		refresh();
 	}
 
 	/**
