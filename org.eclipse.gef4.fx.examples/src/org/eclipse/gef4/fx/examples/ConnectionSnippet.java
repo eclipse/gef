@@ -17,9 +17,10 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
 import javafx.event.EventHandler;
@@ -80,12 +81,7 @@ public class ConnectionSnippet extends AbstractFxExample {
 		end1.setFill(Color.RED);
 		end1.setStrokeWidth(3);
 		end1.setStrokeType(StrokeType.OUTSIDE);
-
 		makeDraggable(end1);
-		System.out.println("GeometryNode geometric outline bounds: "
-				+ NodeUtils.getGeometricOutline(end1).getBounds());
-		System.out.println("GeometryNode shape outline bounds: "
-				+ NodeUtils.getShapeOutline(end1).getBounds());
 
 		// use a shape
 		javafx.scene.shape.Rectangle end2 = new javafx.scene.shape.Rectangle(
@@ -118,9 +114,12 @@ public class ConnectionSnippet extends AbstractFxExample {
 		connection1.setEndAnchor(new DynamicAnchor(end1));
 
 		Connection connection2 = new Connection();
+		connection2.setRouter(new OrthogonalRouter());
 		connection2.setEndDecoration(new ArrowHead());
-		connection2.setStartAnchor(new DynamicAnchor(start));
-		connection2.setEndAnchor(new DynamicAnchor(end2));
+		connection2.setStartAnchor(
+				new DynamicAnchor(start, new OrthogonalProjectionStrategy()));
+		connection2.setEndAnchor(
+				new DynamicAnchor(end2, new OrthogonalProjectionStrategy()));
 
 		Group root = new Group();
 		root.getChildren().addAll(start, end1, end2, connection1, connection2);
