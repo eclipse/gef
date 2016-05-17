@@ -88,7 +88,7 @@ public class FXHoverFeedbackPart
 	 *         provider.
 	 */
 	protected IGeometry getFeedbackGeometry() {
-		return NodeUtils.sceneToLocal(getVisual(),
+		return NodeUtils.sceneToLocal(getVisual().getParent(),
 				feedbackGeometryProvider.get());
 	}
 

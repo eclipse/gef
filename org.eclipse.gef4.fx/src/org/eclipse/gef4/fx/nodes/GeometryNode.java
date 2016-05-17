@@ -13,12 +13,13 @@
 package org.eclipse.gef4.fx.nodes;
 
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IScalable;
+import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.ITranslatable;
 import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -34,9 +35,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -55,7 +54,7 @@ import javafx.scene.shape.StrokeType;
  * bounds of a {@link GeometryNode} can be virtually extended for the purpose of
  * mouse hit-testing to realize a 'clickable area'.
  * <p>
- * Technically, a {@link GeometryNode} is a {@link Parent} that internally holds
+ * Technically, a {@link GeometryNode} is a {@link Region} that internally holds
  * a {@link Path geometric shape}, which is updated to reflect the given
  * {@link IGeometry}, and to which all visual properties are delegated. The
  * 'clickable' area is realized by a transparent, non-mouse transparent overlay
@@ -67,149 +66,173 @@ import javafx.scene.shape.StrokeType;
  * recognized by the {@link GeometryNode} unless the {@link #geometryProperty()
  * geometry property} is changed.
  *
- *
  * @author mwienand
  * @author anyssen
  *
  * @param <T>
- *            An {@link IGeometry} used to define this {@link GeometryNode}
+ *            An {@link IGeometry} used to define the geometric shape of this
+ *            {@link GeometryNode}
  */
-// TODO: We should rather extend Region here, as it supports handling the
-// preferred resizable range
-public class GeometryNode<T extends IGeometry> extends Parent {
+public class GeometryNode<T extends IGeometry> extends Region {
+
+	private static final double GEOMETRIC_SHAPE_MIN_WIDTH = 0.01;
+	private static final double GEOMETRIC_SHAPE_MIN_HEIGHT = 0.01;
 
 	private Path geometricShape = new Path();
-	private Path layoutBoundsComputationShape = new Path();
 	private Path clickableAreaShape = null;
 	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty();
 	private ObjectProperty<T> geometryProperty = new SimpleObjectProperty<>();
-
-	private double resizeWidth = Double.NaN;
-	private double resizeHeight = Double.NaN;
 
 	private ChangeListener<T> geometryChangeListener = new ChangeListener<T>() {
 		@Override
 		public void changed(ObservableValue<? extends T> observable, T oldValue,
 				T newValue) {
-			resizeWidth = Double.NaN;
-			resizeHeight = Double.NaN;
 			if (newValue != null) {
-				updateVisuals();
+				widthProperty().removeListener(widthListener);
+				heightProperty().removeListener(heightListener);
+				layoutXProperty().removeListener(layoutXListener);
+				layoutYProperty().removeListener(layoutYListener);
+
+				// XXX: We need to clear the size caches; even if we use
+				// computed sizes in the following, if not doing so the super
+				// call will use stale values.
+				requestLayout();
+
+				// update layoutX, layoutY, as well as layout bounds
+				GeometryNode.super.resize(computePrefWidth(newValue),
+						computePrefHeight(newValue));
+				GeometryNode.super.relocate(
+						newValue.getBounds().getX() - getStrokeOffset()
+								- getInsets().getLeft(),
+						newValue.getBounds().getY() - getStrokeOffset()
+								- getInsets().getTop());
+
+				widthProperty().addListener(widthListener);
+				heightProperty().addListener(heightListener);
+				layoutXProperty().addListener(layoutXListener);
+				layoutYProperty().addListener(layoutYListener);
+
+				// update visuals to reflect changes
+				updateShapes();
 			}
 		}
 	};
+	private ChangeListener<Number> widthListener = new ChangeListener<Number>() {
 
-	private Double minWidth = 0.01;
-	private DoubleProperty minWidthProperty;
-	private double minHeight = 0.01;
-	private DoubleProperty minHeightProperty;
-	private double maxWidth = Double.MAX_VALUE;
-	private DoubleProperty maxWidthProperty;
-	private double maxHeight = Double.MAX_VALUE;
-	private DoubleProperty maxHeightProperty;
-	private double prefWidth = Region.USE_COMPUTED_SIZE;
-	private DoubleProperty prefWidthProperty;
-	private double prefHeight = Region.USE_COMPUTED_SIZE;
-	private DoubleProperty prefHeightProperty;
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			geometryProperty.removeListener(geometryChangeListener);
+			resizeGeometryToMatchLayoutBoundsSize(newValue.doubleValue(),
+					getHeight());
+			geometryProperty.addListener(geometryChangeListener);
+		}
+	};
+	private ChangeListener<Number> heightListener = new ChangeListener<Number>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			geometryProperty.removeListener(geometryChangeListener);
+			resizeGeometryToMatchLayoutBoundsSize(getWidth(),
+					newValue.doubleValue());
+			geometryProperty.addListener(geometryChangeListener);
+		}
+	};
+	private ChangeListener<Number> layoutXListener = new ChangeListener<Number>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			geometryProperty.removeListener(geometryChangeListener);
+			relocateGeometryToMatchLayoutXY(newValue.doubleValue(),
+					getLayoutY());
+			geometryProperty.addListener(geometryChangeListener);
+		}
+	};
+	private ChangeListener<Number> layoutYListener = new ChangeListener<Number>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			geometryProperty.removeListener(geometryChangeListener);
+			relocateGeometryToMatchLayoutXY(getLayoutX(),
+					newValue.doubleValue());
+			geometryProperty.addListener(geometryChangeListener);
+		}
+	};
 
 	/**
 	 * Constructs a new {@link GeometryNode} without an {@link IGeometry}.
 	 */
 	public GeometryNode() {
-		// add geometric shape
-		getChildren().add(geometricShape);
+		// ensure only our children are mouse-sensitive
+		setPickOnBounds(false);
 
-		// Unfortunately those methods in Node that are responsible for handling
-		// CSS style (getStyleClass(), getStyle()) are final, thus cannot be
-		// delegated to the geometric shape. As Parent does not support CSS
-		// styling itself, we can at least 'forward' them.
-		getStyleClass().addListener(new ListChangeListener<String>() {
-
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends String> c) {
-				// delegate style classes to geometric shape
-				while (c.next()) {
-					if (c.wasPermutated() || c.wasUpdated()) {
-						geometricShape.getStyleClass().clear();
-						geometricShape.getStyleClass().addAll(getStyleClass());
-					} else {
-						geometricShape.getStyleClass()
-								.removeAll(c.getRemoved());
-						geometricShape.getStyleClass()
-								.addAll(c.getAddedSubList());
-					}
-				}
-			}
-		});
-		styleProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> observable,
-					String oldValue, String newValue) {
-				geometricShape.setStyle(newValue);
-			}
-		});
-
-		// ensure clickable area is added/removed as needed
-		clickableAreaWidth.addListener(new ChangeListener<Number>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-					Number oldValue, Number newValue) {
-				if (newValue != null
-						&& newValue.doubleValue() > geometricShape
-								.getStrokeWidth()
-						&& clickableAreaShape == null
-						&& geometryProperty.getValue() != null) {
-					// create and configure clickable area shape
-					clickableAreaShape = new Path(Geometry2Shape.toPathElements(
-							geometryProperty.getValue().toPath()));
-					clickableAreaShape
-							.setId("clickable area of GeometryNode " + this);
-					clickableAreaShape.setStroke(Color.TRANSPARENT);
-					clickableAreaShape.setMouseTransparent(false);
-					clickableAreaShape.strokeWidthProperty()
-							.bind(clickableAreaWidthProperty());
-					// add clickable area and binding only if its really used
-					getChildren().add(clickableAreaShape);
-				} else if ((newValue == null || newValue
-						.doubleValue() <= geometricShape.getStrokeWidth())
-						&& clickableAreaShape != null) {
-					getChildren().remove(clickableAreaShape);
-					clickableAreaShape.strokeWidthProperty().unbind();
-					clickableAreaShape = null;
-				}
-			}
-		});
-
-		// XXX: We cannot directly resize the underlying geometricShape so that
-		// its layout bounds reflect a specific width and height. Instead, we
-		// have to iterate until the desired layout bounds are obtained. As this
-		// would otherwise cause updates, we use a specific shape just for these
-		// calculations.
-		layoutBoundsComputationShape.strokeProperty()
-				.bind(geometricShape.strokeProperty());
-		layoutBoundsComputationShape.strokeLineCapProperty()
-				.bind(geometricShape.strokeLineCapProperty());
-		layoutBoundsComputationShape.strokeLineJoinProperty()
-				.bind(geometricShape.strokeLineJoinProperty());
-		layoutBoundsComputationShape.strokeMiterLimitProperty()
-				.bind(geometricShape.strokeMiterLimitProperty());
-		layoutBoundsComputationShape.strokeTypeProperty()
-				.bind(geometricShape.strokeTypeProperty());
-		layoutBoundsComputationShape.strokeWidthProperty()
-				.bind(geometricShape.strokeWidthProperty());
-		layoutBoundsComputationShape.fillProperty()
-				.bind(geometricShape.fillProperty());
-		layoutBoundsComputationShape.smoothProperty()
-				.bind(geometricShape.smoothProperty());
-		layoutBoundsComputationShape.fillRuleProperty()
-				.bind(geometricShape.fillRuleProperty());
-				// TODO: bind dash and CSS styling!!
+		setGeometricShape(geometricShape);
 
 		// update path elements whenever the geometry property is changed
 		geometryProperty.addListener(geometryChangeListener);
+
+		// stroke width and type affect the layout bounds, so we have to react
+		// to changes
+		strokeWidthProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+					Number oldValue, Number newValue) {
+				T geometry = geometryProperty.get();
+				if (geometry == null) {
+					return;
+				}
+
+				resize(prefWidth(-1), prefHeight(-1));
+				Rectangle geometricBounds = geometry.getBounds();
+				relocate(
+						geometricBounds.getX() - getStrokeOffset()
+								- getInsets().getLeft(),
+						geometricBounds.getY() - getStrokeOffset()
+								- getInsets().getTop());
+			}
+		});
+		strokeTypeProperty().addListener(new ChangeListener<StrokeType>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends StrokeType> observable,
+					StrokeType oldValue, StrokeType newValue) {
+				T geometry = geometryProperty.get();
+				if (geometry == null) {
+					return;
+				}
+
+				resize(prefWidth(-1), prefHeight(-1));
+				Rectangle geometricBounds = geometry.getBounds();
+				relocate(
+						geometricBounds.getX() - getStrokeOffset()
+								- getInsets().getLeft(),
+						geometricBounds.getY() - getStrokeOffset()
+								- getInsets().getTop());
+			}
+		});
+
+		// // TODO: enable for JavaFX-8 (using reflection until we drop support
+		// for java-1.7)
+		// insetsProperty().addListener(new ChangeListener<Insets>() {
+		//
+		// @Override
+		// public void changed(ObservableValue<? extends Insets> observable,
+		// Insets oldValue, Insets newValue) {
+		// resize(prefWidth(-1), prefHeight(-1));
+		// }
+		// });
+
+		// resize geometry in case width and height change
+		widthProperty().addListener(widthListener);
+		heightProperty().addListener(heightListener);
+
+		// relocate geometry in case layoutX, layoutY change
+		layoutXProperty().addListener(layoutXListener);
+		layoutYProperty().addListener(layoutYListener);
 	}
 
 	/**
@@ -235,6 +258,60 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 */
 	public DoubleProperty clickableAreaWidthProperty() {
 		return clickableAreaWidth;
+	}
+
+	private double computeGeometryMinHeight(T geometry) {
+		return geometry instanceof IShape ? GEOMETRIC_SHAPE_MIN_HEIGHT : 0;
+	}
+
+	private double computeGeometryMinWidth(T geometry) {
+		return geometry instanceof IShape ? GEOMETRIC_SHAPE_MIN_WIDTH : 0;
+	}
+
+	@Override
+	protected double computeMinHeight(double width) {
+		return computeMinHeight(geometryProperty.get());
+	}
+
+	private double computeMinHeight(T geometry) {
+		return computeGeometryMinHeight(geometry) + 2 * getStrokeOffset()
+				+ getInsets().getTop() + getInsets().getBottom();
+	}
+
+	@Override
+	protected double computeMinWidth(double height) {
+		return computeMinWidth(geometryProperty.get());
+	}
+
+	private double computeMinWidth(T geometry) {
+		return computeGeometryMinWidth(geometry) + 2 * getStrokeOffset()
+				+ getInsets().getLeft() + getInsets().getRight();
+	}
+
+	@Override
+	protected double computePrefHeight(double width) {
+		return computePrefHeight(geometryProperty.get());
+	}
+
+	private double computePrefHeight(T geometry) {
+		double geometricPrefHeight = Math.max(
+				geometry != null ? geometry.getBounds().getHeight() : 0,
+				computeGeometryMinHeight(geometry));
+		return geometricPrefHeight + 2 * getStrokeOffset()
+				+ getInsets().getTop() + getInsets().getBottom();
+	}
+
+	@Override
+	protected double computePrefWidth(double height) {
+		return computePrefWidth(geometryProperty.get());
+	}
+
+	private double computePrefWidth(T geometry) {
+		double geometricPrefWidth = Math.max(
+				geometry != null ? geometry.getBounds().getWidth() : 0,
+				computeGeometryMinWidth(geometry));
+		return geometricPrefWidth + 2 * getStrokeOffset()
+				+ getInsets().getLeft() + getInsets().getRight();
 	}
 
 	/**
@@ -307,7 +384,7 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 *
 	 * @return The geometric shape used by this {@link GeometryNode}.
 	 */
-	protected Shape getGeometricShape() {
+	protected Path getGeometricShape() {
 		return geometricShape;
 	}
 
@@ -317,84 +394,11 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 * @return The value of the geometry property.
 	 */
 	public T getGeometry() {
-		return geometryProperty.getValue();
-	}
-
-	/**
-	 * Returns the maximum height of this {@link GeometryNode}.
-	 *
-	 * @return The maximum height.
-	 */
-	public double getMaxHeight() {
-		if (maxHeightProperty != null) {
-			return maxHeightProperty.get();
-		}
-		return maxHeight;
-	}
-
-	/**
-	 * Returns the maximum width of this {@link GeometryNode}.
-	 *
-	 * @return The maximum width.
-	 */
-	public double getMaxWidth() {
-		if (maxWidthProperty != null) {
-			return maxWidthProperty.get();
-		}
-		return maxWidth;
-	}
-
-	/**
-	 * Returns the minimum height of this {@link GeometryNode}.
-	 *
-	 * @return The minimum height.
-	 */
-	public double getMinHeight() {
-		if (minHeightProperty != null) {
-			return minHeightProperty.get();
-		}
-		return minHeight;
-	}
-
-	/**
-	 * Returns the minimum width of this {@link GeometryNode}.
-	 *
-	 * @return The minimum width.
-	 */
-	public double getMinWidth() {
-		if (minWidthProperty != null) {
-			return minWidthProperty.get();
-		}
-		return minWidth;
+		return geometryProperty.get();
 	}
 
 	private PathElement[] getPathElements() {
-		return Geometry2Shape
-				.toPathElements(geometryProperty.getValue().toPath());
-	}
-
-	/**
-	 * Returns the preferred height of this {@link GeometryNode}.
-	 *
-	 * @return The preferred height.
-	 */
-	public double getPrefHeight() {
-		if (prefHeightProperty != null) {
-			return prefHeightProperty.get();
-		}
-		return prefHeight;
-	}
-
-	/**
-	 * Returns the preferred width of this {@link GeometryNode}.
-	 *
-	 * @return The preferred width.
-	 */
-	public double getPrefWidth() {
-		if (prefWidthProperty != null) {
-			return prefWidthProperty.get();
-		}
-		return prefWidth;
+		return Geometry2Shape.toPathElements(geometryProperty.get().toPath());
 	}
 
 	/**
@@ -463,6 +467,16 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 		return geometricShape.getStrokeMiterLimit();
 	}
 
+	private double getStrokeOffset() {
+		double offset = 0;
+		if (geometricShape.getStroke() != null
+				&& geometricShape.getStrokeType() != StrokeType.INSIDE) {
+			offset = (geometricShape.getStrokeType() == StrokeType.CENTERED
+					? 0.5 : 1) * geometricShape.getStrokeWidth();
+		}
+		return offset;
+	}
+
 	/**
 	 * Retrieves the value of the stroke type property.
 	 *
@@ -486,27 +500,6 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	@Override
-	protected Bounds impl_computeLayoutBounds() {
-		/*
-		 * We have to ensure, that the size that gets passed in to #resize() is
-		 * reflected in the layout bounds of this node. As we cannot compensate
-		 * the offset between geometric bounds and layout bounds in all cases,
-		 * we fall back to the values given in resize() in case they differ from
-		 * the computed bounds.
-		 *
-		 * FIXME [JDK-internal]: Re-implement this fix by only using public API
-		 * (bug #443954)
-		 */
-		Bounds layoutBounds = super.impl_computeLayoutBounds();
-		double width = Double.isNaN(resizeWidth) ? layoutBounds.getWidth()
-				: resizeWidth;
-		double height = Double.isNaN(resizeHeight) ? layoutBounds.getHeight()
-				: resizeHeight;
-		return Geometry2FX.toFXBounds(new Rectangle(layoutBounds.getMinX(),
-				layoutBounds.getMinY(), width, height));
-	}
-
-	@Override
 	public boolean isResizable() {
 		return true;
 	}
@@ -522,270 +515,77 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	@Override
-	public double maxHeight(double width) {
-		double maxHeight = (maxHeightProperty != null ? maxHeightProperty.get()
-				: this.maxHeight);
-		if (Region.USE_PREF_SIZE == maxHeight) {
-			return prefHeight(width);
-		}
-		return maxHeight;
+	public void relocate(double x, double y) {
+		// prevent unnecessary updates
+		layoutXProperty().removeListener(layoutXListener);
+		layoutYProperty().removeListener(layoutYListener);
+		super.relocate(x, y);
+		layoutXProperty().addListener(layoutXListener);
+		layoutYProperty().addListener(layoutYListener);
+
+		relocateGeometryToMatchLayoutXY(x, y);
 	}
 
 	/**
-	 * Returns a double property for the maximum height of this
-	 * {@link GeometryNode}.
+	 * Relocates the {@link #geometryProperty() geometry}.
 	 *
-	 * @return A writable double property.
+	 * @param x
+	 *            The new x coordinate
+	 * @param y
+	 *            The new y coordinate
 	 */
-	public DoubleProperty maxHeightProperty() {
-		if (maxHeightProperty == null) {
-			maxHeightProperty = new SimpleDoubleProperty(maxHeight);
+	@SuppressWarnings("unchecked")
+	public void relocateGeometry(double x, double y) {
+		T geometry = geometryProperty.getValue();
+		Rectangle geometryBounds = geometry.getBounds();
+		if (geometry instanceof ITranslatable) {
+			geometryProperty.set(((ITranslatable<T>) geometry).getTranslated(
+					x - geometryBounds.getX(), y - geometryBounds.getY()));
+		} else {
+			geometryProperty.set((T) geometry.getTransformed(
+					new AffineTransform().translate((x - geometryBounds.getX()),
+							(y - geometryBounds.getY()))));
 		}
-		return maxHeightProperty;
 	}
 
-	@Override
-	public double maxWidth(double height) {
-		double maxWidth = (maxWidthProperty != null ? maxWidthProperty.get()
-				: this.maxWidth);
-		if (Region.USE_PREF_SIZE == maxWidth) {
-			return prefWidth(height);
+	private void relocateGeometryToMatchLayoutXY(double layoutX,
+			double layoutY) {
+		// guard against null geometry
+		T geometry = geometryProperty.get();
+		if (geometry == null) {
+			return;
 		}
-		return maxWidth;
-	}
 
-	/**
-	 * Returns a double property for the maximum width of this
-	 * {@link GeometryNode}.
-	 *
-	 * @return A writable double property.
-	 */
-	public DoubleProperty maxWidthProperty() {
-		if (maxWidthProperty == null) {
-			maxWidthProperty = new SimpleDoubleProperty(maxWidth);
-		}
-		return maxWidthProperty;
-	}
-
-	@Override
-	public double minHeight(double width) {
-		double minHeight = (minHeightProperty != null ? minHeightProperty.get()
-				: this.minHeight);
-		if (Region.USE_PREF_SIZE == minHeight) {
-			return prefHeight(width);
-		}
-		return minHeight;
-	}
-
-	/**
-	 * Returns a double property for the minimum height of this
-	 * {@link GeometryNode}.
-	 *
-	 * @return A writable double property.
-	 */
-	public DoubleProperty minHeightProperty() {
-		if (minHeightProperty == null) {
-			minHeightProperty = new SimpleDoubleProperty(minHeight);
-		}
-		return minHeightProperty;
-	}
-
-	@Override
-	public double minWidth(double height) {
-		double minWidth = (minWidthProperty != null ? minWidthProperty.get()
-				: this.minWidth);
-		if (Region.USE_PREF_SIZE == minWidth) {
-			return prefWidth(height);
-		}
-		return minWidth;
-	}
-
-	/**
-	 * Returns a double property for the minimum width of this
-	 * {@link GeometryNode}.
-	 *
-	 * @return A writable double property.
-	 */
-	public DoubleProperty minWidthProperty() {
-		if (minWidthProperty == null) {
-			minWidthProperty = new SimpleDoubleProperty(minWidth);
-		}
-		return minWidthProperty;
-	}
-
-	@Override
-	public double prefHeight(double width) {
-		double prefHeight = (prefHeightProperty != null
-				? prefHeightProperty.get() : this.prefHeight);
-		if (Region.USE_COMPUTED_SIZE == prefHeight) {
-			final double result = getLayoutBounds().getHeight();
-			return Double.isNaN(result) || result < 0 ? 0 : result;
-		}
-		return prefHeight;
-	}
-
-	/**
-	 * Returns a double property for the preferred height of this
-	 * {@link GeometryNode}.
-	 *
-	 * @return A writable double property.
-	 */
-	public DoubleProperty prefHeightProperty() {
-		if (prefHeightProperty == null) {
-			prefHeightProperty = new SimpleDoubleProperty(prefHeight);
-		}
-		return prefHeightProperty;
-	}
-
-	@Override
-	public double prefWidth(double height) {
-		double prefWidth = (prefWidthProperty != null ? prefWidthProperty.get()
-				: this.prefWidth);
-		if (Region.USE_COMPUTED_SIZE == prefWidth) {
-			final double result = getLayoutBounds().getWidth();
-			return Double.isNaN(result) || result < 0 ? 0 : result;
-		}
-		return prefWidth;
-	}
-
-	/**
-	 * Returns a double property for the preferred width of this
-	 * {@link GeometryNode}.
-	 *
-	 * @return A writable double property.
-	 */
-	public DoubleProperty prefWidthProperty() {
-		if (prefWidthProperty == null) {
-			prefWidthProperty = new SimpleDoubleProperty(prefWidth);
-		}
-		return prefWidthProperty;
+		// geometry has to reflect final position relative to layout bounds,
+		// which are based on (0, 0)
+		geometryProperty.removeListener(geometryChangeListener);
+		relocateGeometry(layoutX + getStrokeOffset() + getInsets().getLeft(),
+				layoutY + getStrokeOffset() + getInsets().getTop());
+		geometryProperty.addListener(geometryChangeListener);
+		updateShapes();
 	}
 
 	@Override
 	public void resize(double width, double height) {
-		if (width < 0) {
-			throw new IllegalArgumentException("Cannot resize: width < 0.");
+		if (width < minWidth(-1)) {
+			throw new IllegalArgumentException(
+					"Cannot resize below mininmal width " + minWidth(-1)
+							+ ", so " + width + " is no valid width");
 		}
-		if (height < 0) {
-			throw new IllegalArgumentException("Cannot resize: height < 0.");
-		}
-
-		// guard against null geometry
-		if (geometryProperty.getValue() == null) {
-			return;
+		if (height < minHeight(-1)) {
+			throw new IllegalArgumentException(
+					"Cannot resize below mininmal height " + minHeight(-1)
+							+ ", so " + height + " is no valid height");
 		}
 
 		// prevent unnecessary updates
-		Bounds layoutBounds = getLayoutBounds();
-		if (layoutBounds.getWidth() == width
-				&& layoutBounds.getHeight() == height) {
-			// do nothing if layout bounds already match desired width and
-			// height
-			return;
-		}
+		widthProperty().removeListener(widthListener);
+		heightProperty().removeListener(heightListener);
+		super.resize(width, height);
+		widthProperty().addListener(widthListener);
+		heightProperty().addListener(heightListener);
 
-		// TODO: resize a dummy geometry and update the real one after we are
-		// finished, so listeners are not notified
-
-		// Disable listening to geometry changes while determine new geometry
-		// size (to match given visual bounds size)
-		geometryProperty.removeListener(geometryChangeListener);
-
-		// determine initial values for geometric size that are as close as
-		// possible to what we need for reaching the desired layout bounds.
-		double offset = 0;
-		if (geometricShape.getStroke() != null
-				&& geometricShape.getStrokeType() != StrokeType.INSIDE) {
-			// Path reserves 0.5 pixels around, so we substract 1 at the end
-			// (Rectangle does not do this)
-			offset = -(geometricShape.getStrokeType() == StrokeType.CENTERED ? 1
-					: 2) * geometricShape.getStrokeWidth() - 1;
-		}
-		double geometryWidth = width + offset;
-		double geometryHeight = height + offset;
-		if (geometryWidth < 0) {
-			geometryWidth = 0.00001;
-		}
-		if (geometryHeight < 0) {
-			geometryHeight = 0.00001;
-		}
-		resizeGeometry(geometryWidth, geometryHeight);
-		updateVisuals(layoutBoundsComputationShape);
-		layoutBounds = layoutBoundsComputationShape.getLayoutBounds();
-		double dw = layoutBounds.getWidth() - width;
-		double dh = layoutBounds.getHeight() - height;
-		double previousDw = Double.MAX_VALUE;
-		double previousDh = Double.MAX_VALUE;
-		// System.out
-		// .println("Layout bounds difference: (" + dw + ", " + dh + ")");
-		while (dw != 0 || dh != 0) {
-			if (Math.abs(previousDw) > Math.abs(dw) && Math.abs(dw) > 0.00001) {
-				geometryWidth -= dw;
-				if (geometryWidth < 0) {
-					geometryWidth = 0;
-				}
-			} else {
-				dw = 0;
-			}
-			if (Math.abs(previousDh) > Math.abs(dh) && Math.abs(dh) > 0.00001) {
-				geometryHeight -= dh;
-				if (geometryHeight < 0) {
-					geometryHeight = 0;
-				}
-			} else {
-				dh = 0;
-			}
-
-			resizeGeometry(geometryWidth, geometryHeight);
-			updateVisuals(layoutBoundsComputationShape);
-			layoutBounds = layoutBoundsComputationShape.getLayoutBounds();
-
-			previousDw = dw;
-			if (dw != 0) {
-				dw = layoutBounds.getWidth() - width;
-			}
-			previousDh = dh;
-			if (dh != 0) {
-				dh = layoutBounds.getHeight() - height;
-			}
-			// System.out.println(
-			// "Layout bounds difference: (" + dw + ", " + dh + ")");
-		}
-
-		// cache precise values, so they can be used as layout bounds within
-		// impl_computeLayoutBounds(); we will try to compute the geometry
-		// as close as possible, but we might not be able to resize it so
-		// that the computed layout bounds do precisely match the specified
-		// width and height; to not violate the resize contract (that the
-		// layout bounds match the specified width and height), we need the
-		// precise values.
-		if (layoutBounds.getWidth() != width) {
-			this.resizeWidth = width;
-			// System.err.println(
-			// "*** WARNING: Computed layout bounds width of GeometryNode "
-			// + this + "(" + layoutBounds.getWidth()
-			// + ") do not exactly match specified resize width ("
-			// + width
-			// + "). Layout bounds will use the specified resize width.");
-		} else {
-			resizeWidth = Double.NaN;
-		}
-		if (layoutBounds.getHeight() != height) {
-			this.resizeHeight = height;
-			// System.err.println(
-			// "*** WARNING: Computed layout bounds height of GeometryNode "
-			// + this + "(" + layoutBounds.getHeight()
-			// + ") do not exactly match specified resize height ("
-			// + height
-			// + "). Layout bounds will use the specified resize height.");
-		} else {
-			resizeHeight = Double.NaN;
-		}
-
-		// update geometry of underlying path (which should invalidate the
-		// layout bounds)
-		geometryProperty.addListener(geometryChangeListener);
-		updateVisuals(); // will trigger re-computation of layout bounds
+		resizeGeometryToMatchLayoutBoundsSize(width, height);
 	}
 
 	/**
@@ -799,26 +599,45 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	@SuppressWarnings("unchecked")
 	public void resizeGeometry(double width, double height) {
 		T geometry = geometryProperty.getValue();
+		double geometryMinWidth = computeGeometryMinWidth(geometry);
+		if (width < geometryMinWidth) {
+			throw new IllegalArgumentException(
+					"Cannot resize geometry below " + geometryMinWidth + ", so "
+							+ width + " is no valid width.");
+		}
+		double geometryMinHeight = computeGeometryMinHeight(geometry);
+		if (height < geometryMinHeight) {
+			throw new IllegalArgumentException(
+					"Cannot resize geometry below " + geometryMinHeight
+							+ ", so " + height + " is no valid height.");
+		}
 		if (geometry instanceof Rectangle) {
-			((Rectangle) geometry).setSize(width, height);
+			geometryProperty.set((T) ((Rectangle) geometry).getCopy()
+					.setSize(width, height));
 		} else if (geometry instanceof RoundedRectangle) {
-			((RoundedRectangle) geometry).setSize(width, height);
+			geometryProperty.set((T) ((RoundedRectangle) geometry).getCopy()
+					.setSize(width, height));
 		} else if (geometry instanceof Ellipse) {
-			((Ellipse) geometry).setSize(width, height);
+			geometryProperty.set(
+					(T) ((Ellipse) geometry).getCopy().setSize(width, height));
 		} else if (geometry instanceof Pie) {
-			((Pie) geometry).setSize(width, height);
+			geometryProperty
+					.set((T) ((Pie) geometry).getCopy().setSize(width, height));
 		} else if (geometry instanceof Arc) {
-			((Arc) geometry).setSize(width, height);
+			geometryProperty
+					.set((T) ((Arc) geometry).getCopy().setSize(width, height));
 		} else {
 			Rectangle geometricBounds = geometry.getBounds();
-			double sx = width / geometricBounds.getWidth();
-			double sy = height / geometricBounds.getHeight();
+			double sx = geometricBounds.getWidth() == 0 ? 1
+					: width / geometricBounds.getWidth();
+			double sy = geometricBounds.getHeight() == 0 ? 1
+					: height / geometricBounds.getHeight();
 			if (geometry instanceof IScalable) {
 				// Line, Polyline, PolyBezier, BezierCurve, CubicCurve,
 				// QuadraticCurve, Polygon, CurvedPolygon, Region, and Ring are
 				// not directly resizable but scalable
-				((IScalable<T>) geometry).scale(sx, sy, geometricBounds.getX(),
-						geometricBounds.getY());
+				geometryProperty.set(((IScalable<T>) geometry).getScaled(sx, sy,
+						geometricBounds.getX(), geometricBounds.getY()));
 			} else {
 				// apply transform to path
 				Point boundsOrigin = new Point(geometricBounds.getX(),
@@ -831,6 +650,48 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 								boundsOrigin.x, boundsOrigin.y)));
 			}
 		}
+	}
+
+	private void resizeGeometryToMatchLayoutBoundsSize(double layoutBoundsWidth,
+			double layoutBoundsHeight) {
+
+		// guard against null geometry
+		// TODO: check if required
+		T geometry = geometryProperty.get();
+		if (geometry == null) {
+			return;
+		}
+
+		// Disable listening to geometry changes while determine new geometry
+		// size (to match given visual bounds size)
+		geometryProperty.removeListener(geometryChangeListener);
+
+		// System.out.println("Resizing to " + width + ", " + height);
+
+		// the target width/height for the layout bounds (of the geometric
+		// shape) is without the insets and stroke
+		double strokeOffset = getStrokeOffset();
+		double geometryWidth = layoutBoundsWidth - getInsets().getLeft()
+				- getInsets().getRight() - 2 * strokeOffset;
+		double geometryMinWidth = computeGeometryMinWidth(geometry);
+		if (geometryWidth < geometryMinWidth) {
+			geometryWidth = geometryMinWidth;
+		}
+		double geometryHeight = layoutBoundsHeight - getInsets().getTop()
+				- getInsets().getBottom() - 2 * strokeOffset;
+		double geometryMinHeight = computeGeometryMinHeight(geometry);
+		if (geometryHeight < geometryMinHeight) {
+			geometryHeight = geometryMinHeight;
+		}
+		// System.out.println(
+		// "Resize Geometry to " + geometryWidth + ", " + geometryHeight);
+		resizeGeometry(geometryWidth, geometryHeight);
+		// System.out.println("... " + geometryProperty.get().getBounds());
+
+		// update geometry of underlying path (which should invalidate the
+		// layout bounds)
+		geometryProperty.addListener(geometryChangeListener);
+		updateShapes();
 	}
 
 	/**
@@ -870,6 +731,81 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	/**
+	 * Sets the geometric shape used by this {@link GeometryNode}.
+	 *
+	 * @param geometricShape
+	 *            The geometric shape.
+	 */
+	protected void setGeometricShape(final Path geometricShape) {
+		// add geometric shape
+		getChildren().add(geometricShape);
+
+		// Unfortunately those methods in Node that are responsible for handling
+		// CSS style (getStyleClass(), getStyle()) are final, thus cannot be
+		// delegated to the geometric shape. As Parent does not support CSS
+		// styling itself, we can at least 'forward' them.
+		getStyleClass().addListener(new ListChangeListener<String>() {
+
+			@Override
+			public void onChanged(
+					javafx.collections.ListChangeListener.Change<? extends String> c) {
+				// delegate style classes to geometric shape
+				while (c.next()) {
+					if (c.wasPermutated() || c.wasUpdated()) {
+						geometricShape.getStyleClass().clear();
+						geometricShape.getStyleClass().addAll(getStyleClass());
+					} else {
+						geometricShape.getStyleClass()
+								.removeAll(c.getRemoved());
+						geometricShape.getStyleClass()
+								.addAll(c.getAddedSubList());
+					}
+				}
+			}
+		});
+		styleProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable,
+					String oldValue, String newValue) {
+				geometricShape.setStyle(newValue);
+			}
+		});
+
+		// ensure clickable area is added/removed as needed
+		clickableAreaWidth.addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+					Number oldValue, Number newValue) {
+				if (newValue != null
+						&& newValue.doubleValue() > geometricShape
+								.getStrokeWidth()
+						&& clickableAreaShape == null
+						&& geometryProperty.getValue() != null) {
+					// create and configure clickable area shape
+					clickableAreaShape = new Path(Geometry2Shape.toPathElements(
+							geometryProperty.getValue().toPath()));
+					clickableAreaShape
+							.setId("clickable area of GeometryNode " + this);
+					clickableAreaShape.setStroke(Color.TRANSPARENT);
+					clickableAreaShape.setMouseTransparent(false);
+					clickableAreaShape.strokeWidthProperty()
+							.bind(clickableAreaWidthProperty());
+					// add clickable area and binding only if its really used
+					getChildren().add(clickableAreaShape);
+				} else if ((newValue == null || newValue
+						.doubleValue() <= geometricShape.getStrokeWidth())
+						&& clickableAreaShape != null) {
+					getChildren().remove(clickableAreaShape);
+					clickableAreaShape.strokeWidthProperty().unbind();
+					clickableAreaShape = null;
+				}
+			}
+		});
+	}
+
+	/**
 	 * Sets the {@link IGeometry} of this {@link GeometryNode} to the given
 	 * value.
 	 *
@@ -878,126 +814,6 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 */
 	public void setGeometry(T geometry) {
 		this.geometryProperty.setValue(geometry);
-	}
-
-	/**
-	 * Sets the maximum height of this {@link GeometryNode}. Has to be a
-	 * positive value or {@link Region#USE_PREF_SIZE} in case the preferred size
-	 * should be used.
-	 *
-	 * @param maxHeight
-	 *            The maximum size of this {@link GeometryNode}.
-	 */
-	public void setMaxHeight(double maxHeight) {
-		if (maxHeight <= 0 && maxHeight != Region.USE_PREF_SIZE) {
-			throw new IllegalArgumentException(
-					"maxHeight has to be greater zero or Region.USE_PREF_SIZE.");
-		}
-		if (maxHeightProperty != null) {
-			maxHeightProperty.set(maxHeight);
-		} else {
-			this.maxHeight = maxHeight;
-		}
-	}
-
-	/**
-	 * Sets the maximum width of this {@link GeometryNode}. Has to be a positive
-	 * value or {@link Region#USE_PREF_SIZE} in case the preferred size should
-	 * be used.
-	 *
-	 * @param maxWidth
-	 *            The maximum width.
-	 */
-	public void setMaxWidth(double maxWidth) {
-		if (maxWidth <= 0 && maxWidth != Region.USE_PREF_SIZE) {
-			throw new IllegalArgumentException(
-					"maxWidth has to be greater zero or Region.USE_PREF_SIZE.");
-		}
-		if (maxWidthProperty != null) {
-			maxWidthProperty.set(maxWidth);
-		} else {
-			this.maxWidth = maxWidth;
-		}
-	}
-
-	/**
-	 * Set the minimum height for this {@link GeometryNode}. Has to be a
-	 * positive value or {@link Region#USE_PREF_SIZE} in case the preferred size
-	 * should be used.
-	 *
-	 * @param minHeight
-	 *            The minimum height.
-	 */
-	public void setMinHeight(double minHeight) {
-		if (minHeight <= 0 && minHeight != Region.USE_PREF_SIZE) {
-			throw new IllegalArgumentException(
-					"minHeight has to be greater zero or Region.USE_PREF_SIZE.");
-		}
-		if (minHeightProperty != null) {
-			minHeightProperty.set(minHeight);
-		} else {
-			this.minHeight = minHeight;
-		}
-	}
-
-	/**
-	 * Set the minimum width for this {@link GeometryNode}. Has to be a positive
-	 * value or {@link Region#USE_PREF_SIZE} in case the preferred size should
-	 * be used.
-	 *
-	 * @param minWidth
-	 *            The minimum width.
-	 */
-	public void setMinWidth(double minWidth) {
-		if (minWidth <= 0 && minWidth != Region.USE_PREF_SIZE) {
-			throw new IllegalArgumentException(
-					"minWidth has to be greater zero or Region.USE_PREF_SIZE.");
-		}
-		if (minWidthProperty != null) {
-			minWidthProperty.set(minWidth);
-		} else {
-			this.minWidth = minWidth;
-		}
-	}
-
-	/**
-	 * Sets the preferred height of this {@link GeometryNode}. May be a value
-	 * greater zero or {@link Region#USE_COMPUTED_SIZE}, in which case the
-	 * layout bounds height will be used.
-	 *
-	 * @param prefHeight
-	 *            The preferred height or {@link Region#USE_COMPUTED_SIZE}.
-	 */
-	public void setPrefHeight(double prefHeight) {
-		if (prefHeight <= 0 && prefHeight != Region.USE_COMPUTED_SIZE) {
-			throw new IllegalArgumentException(
-					"prefHeight has to be a positive value or Region.USE_COMPUTED_SIZE.");
-		}
-		if (prefHeightProperty != null) {
-			prefHeightProperty.set(prefHeight);
-		} else {
-			this.prefHeight = prefHeight;
-		}
-	}
-
-	/**
-	 * Sets the preferred width of this {@link GeometryNode}. May be a value
-	 * greater zero or {@link Region#USE_COMPUTED_SIZE}, in which case the
-	 * layout bounds width will be used.
-	 *
-	 * @param prefWidth
-	 *            The preferred width or {@link Region#USE_COMPUTED_SIZE}.
-	 */
-	public void setPrefWidth(double prefWidth) {
-		if (prefWidth <= 0 && prefWidth != Region.USE_COMPUTED_SIZE) {
-			throw new IllegalArgumentException(
-					"prefWidth has to be a positive value or Region.USE_COMPUTED_SIZE.");
-		}
-		if (prefWidthProperty != null) {
-			prefWidthProperty.set(prefWidth);
-		} else {
-			this.prefWidth = prefWidth;
-		}
 	}
 
 	/**
@@ -1200,26 +1016,20 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 * properties of a geometry, you have to call this method in order to update
 	 * its visual counter part.
 	 */
-	// TODO: this needs to get called whenever the computed layout bounds change
-	private void updateVisuals() {
+	private void updateShapes() {
 		if (clickableAreaShape != null) {
-			updateVisuals(geometricShape, clickableAreaShape);
+			updateShapes(geometricShape, clickableAreaShape);
 		} else {
-			updateVisuals(geometricShape);
+			updateShapes(geometricShape);
 		}
 	}
 
-	private void updateVisuals(Path... paths) {
+	private void updateShapes(Path... paths) {
 		PathElement[] pathElements = getPathElements();
 		for (Path p : paths) {
-			// FIXME: JavaFX 8 sometimes throws an
-			// ArrayIndexOutOfBoundsException when updating the path elements.
-			// The exception occurs because JavaFX uses a dirty node counter
-			// that is not synchronized with the actual dirty nodes list. The
-			// list is empty, but the counter is positive, thus, an item is
-			// fetched that does not exist.
 			p.getElements().setAll(pathElements);
+			p.relocate((getWidth() - p.getLayoutBounds().getWidth()) / 2,
+					(getHeight() - p.getLayoutBounds().getHeight()) / 2);
 		}
 	}
-
 }

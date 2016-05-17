@@ -17,9 +17,9 @@ import java.util.Set;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -133,15 +133,17 @@ public class FXFocusFeedbackPart
 			// TODO: adjust stroke width to get hair lines
 			// increase geometry size if selected
 			if (selected.contains(anchorage)) {
-				visual.resizeGeometry(feedbackGeometry.getBounds().getWidth()
+				Rectangle feedbackBounds = feedbackGeometry.getBounds();
+				visual.resizeGeometry(feedbackBounds.getWidth()
 						+ FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH * 2,
-						feedbackGeometry.getBounds().getHeight()
+						feedbackBounds.getHeight()
 								+ FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH
 										* 2);
-				visual.setGeometry(feedbackGeometry
-						.getTransformed(new AffineTransform(1, 0, 0, 1,
-								-FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH,
-								-FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH)));
+				visual.relocateGeometry(
+						feedbackBounds.getX()
+								- FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH,
+						feedbackBounds.getY()
+								- FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH);
 			}
 		}
 		visual.toBack();
@@ -155,7 +157,7 @@ public class FXFocusFeedbackPart
 	 *         provider.
 	 */
 	protected IGeometry getFeedbackGeometry() {
-		return NodeUtils.sceneToLocal(getVisual(),
+		return NodeUtils.sceneToLocal(getVisual().getParent(),
 				feedbackGeometryProvider.get());
 	}
 

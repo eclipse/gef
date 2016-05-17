@@ -124,7 +124,21 @@ public class NodeUtils {
 			Node curveNode = ((Connection) visual).getCurve();
 			return localToParent(curveNode, getGeometricOutline(curveNode));
 		} else if (visual instanceof GeometryNode) {
-			return ((GeometryNode<?>) visual).getGeometry();
+			// XXX: The geometry's position is specified relative to the
+			// GeometryNode's layout bounds (which are fixed as (0, 0, width,
+			// height) and includes the layoutX, layoutY (which we have to
+			// compensate here)
+			GeometryNode<?> geometryNode = (GeometryNode<?>) visual;
+			IGeometry geometry = geometryNode.getGeometry();
+			if (geometry != null) {
+				return geometry.getTransformed(new AffineTransform().translate(
+						-geometryNode.getLayoutX(),
+						-geometryNode.getLayoutY()));
+			} else {
+				// if the geometry node has no geometry (yet), return an empty
+				// geometry
+				return new Rectangle();
+			}
 		} else if (visual instanceof Shape && !(visual instanceof Text)
 				&& !(visual instanceof SVGPath)) {
 			return Shape2Geometry.toGeometry((Shape) visual);
@@ -274,26 +288,20 @@ public class NodeUtils {
 	 */
 	public static IGeometry getResizedToShapeBounds(Node visual,
 			IGeometry geometry) {
-		Rectangle geomBounds = geometry.getBounds();
+		Rectangle geometricBounds = geometry.getBounds();
 		Rectangle shapeBounds = NodeUtils.getShapeBounds(visual);
-		double dw = shapeBounds.getWidth() - geomBounds.getWidth();
-		double dh = shapeBounds.getHeight() - geomBounds.getHeight();
+		double dw = shapeBounds.getWidth() - geometricBounds.getWidth();
+		double dh = shapeBounds.getHeight() - geometricBounds.getHeight();
 
 		// geometric bounds match shape bounds, so nothing to do
 		if (dw == 0 && dh == 0) {
 			return geometry;
 		}
 
-		// translate
-		double dx = -dw / 2;
-		double dy = -dh / 2;
-		GeometryNode<IGeometry> geometryNode = new GeometryNode<>(geometry
-				.getTransformed(new AffineTransform().translate(dx, dy)));
-
-		// resize
-		geometryNode.resizeGeometry(geomBounds.getWidth() + dw,
-				geomBounds.getHeight() + dh);
-
+		GeometryNode<IGeometry> geometryNode = new GeometryNode<>(geometry);
+		geometryNode.relocateGeometry(shapeBounds.getX(), shapeBounds.getY());
+		geometryNode.resizeGeometry(shapeBounds.getWidth(),
+				shapeBounds.getHeight());
 		return geometryNode.getGeometry();
 	}
 
@@ -329,10 +337,11 @@ public class NodeUtils {
 		// Polygons don't paint exactly to their layout bounds but remain 0.5
 		// pixels short in case they have a stroke and stroke type is CENTERED
 		// or OUTSIDE. We compensate this there.
-		double offset = node instanceof Polygon
-				&& ((Polygon) node).getStroke() != null
-				&& ((Polygon) node).getStrokeType() != StrokeType.INSIDE ? 0.5
-						: 0;
+		double offset = 0;
+		if (node instanceof Polygon && ((Polygon) node).getStroke() != null
+				&& ((Polygon) node).getStrokeType() != StrokeType.INSIDE) {
+			offset = 0.5;
+		}
 		return FX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
 				offset, offset);
 	}

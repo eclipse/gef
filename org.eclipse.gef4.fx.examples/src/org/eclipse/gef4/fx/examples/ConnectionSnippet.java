@@ -19,6 +19,7 @@ import java.util.HashMap;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
 import javafx.event.EventHandler;
@@ -74,17 +75,28 @@ public class ConnectionSnippet extends AbstractFxExample {
 
 	@Override
 	public Scene createScene() {
-		GeometryNode<RoundedRectangle> end = new GeometryNode<>(
-				new RoundedRectangle(0, 0, 30, 30, 20, 20));
-		end.setFill(Color.RED);
-		end.relocate(50, 50);
-		end.setStrokeWidth(3);
-		end.setStrokeType(StrokeType.OUTSIDE);
-		makeDraggable(end);
+		GeometryNode<RoundedRectangle> end1 = new GeometryNode<>(
+				new RoundedRectangle(50, 50, 30, 30, 20, 20));
+		end1.setFill(Color.RED);
+		end1.setStrokeWidth(3);
+		end1.setStrokeType(StrokeType.OUTSIDE);
 
-		// create connection, provide decoration
-		Connection connection = new Connection();
-		connection.setEndDecoration(new ArrowHead());
+		makeDraggable(end1);
+		System.out.println("GeometryNode geometric outline bounds: "
+				+ NodeUtils.getGeometricOutline(end1).getBounds());
+		System.out.println("GeometryNode shape outline bounds: "
+				+ NodeUtils.getShapeOutline(end1).getBounds());
+
+		// use a shape
+		javafx.scene.shape.Rectangle end2 = new javafx.scene.shape.Rectangle(
+				200, 50, 30, 30);
+		end2.setArcWidth(20);
+		end2.setArcHeight(20);
+		end2.setStroke(Color.BLACK);
+		end2.setFill(Color.RED);
+		end2.setStrokeWidth(3);
+		end2.setStrokeType(StrokeType.OUTSIDE);
+		makeDraggable(end2);
 
 		// use a control as start, where layout bounds are always (0, 0, width,
 		// height); this demonstrates anchor positions are calculated properly
@@ -92,13 +104,26 @@ public class ConnectionSnippet extends AbstractFxExample {
 		start.setLayoutX(150);
 		start.setLayoutY(150);
 		makeDraggable(start);
+		// start.setBackground(new Background(new BackgroundFill(Color.GREY,
+		// CornerRadii.EMPTY, new Insets(0))));
+		// start.setBorder(
+		// new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID,
+		// CornerRadii.EMPTY, new BorderWidths(10))));
 
 		// set start point and end anchor
-		connection.setStartAnchor(new DynamicAnchor(start));
-		connection.setEndAnchor(new DynamicAnchor(end));
+		// create connection, provide decoration
+		Connection connection1 = new Connection();
+		connection1.setEndDecoration(new ArrowHead());
+		connection1.setStartAnchor(new DynamicAnchor(start));
+		connection1.setEndAnchor(new DynamicAnchor(end1));
+
+		Connection connection2 = new Connection();
+		connection2.setEndDecoration(new ArrowHead());
+		connection2.setStartAnchor(new DynamicAnchor(start));
+		connection2.setEndAnchor(new DynamicAnchor(end2));
 
 		Group root = new Group();
-		root.getChildren().addAll(start, end, connection);
+		root.getChildren().addAll(start, end1, end2, connection1, connection2);
 		return new Scene(root, 300, 300);
 	}
 

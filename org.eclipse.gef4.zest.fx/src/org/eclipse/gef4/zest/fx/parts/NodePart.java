@@ -274,6 +274,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 			public void resize(double w, double h) {
 				// for shape we use the exact size
 				shape.resize(w, h);
+				shape.relocate(0, 0);
 				// for vbox we use the preferred size
 				vbox.setPrefSize(w, h);
 				vbox.autosize();
