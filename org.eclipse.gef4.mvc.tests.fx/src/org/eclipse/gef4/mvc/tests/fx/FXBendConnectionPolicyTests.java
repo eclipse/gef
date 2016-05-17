@@ -37,6 +37,7 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.CursorUtils;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
@@ -1778,10 +1779,12 @@ public class FXBendConnectionPolicyTests {
 			protected void updateComputationParameters(Connection connection, int index) {
 				if (index == 0) {
 					getComputationParameter(connection, index, PreferredOrientation.class).set(Orientation.HORIZONTAL);
-					getComputationParameter(connection, index, AnchoredReferencePoint.class).set(new Point(310, 40));
+					getComputationParameter(connection, index, AnchoredReferencePoint.class)
+							.set(NodeUtils.parentToLocal(connection.getCurve(), new Point(310, 40)));
 				} else if (index == connection.getPointsUnmodifiable().size() - 1) {
 					getComputationParameter(connection, index, PreferredOrientation.class).set(Orientation.HORIZONTAL);
-					getComputationParameter(connection, index, AnchoredReferencePoint.class).set(new Point(50, 95));
+					getComputationParameter(connection, index, AnchoredReferencePoint.class)
+							.set(NodeUtils.parentToLocal(connection.getCurve(), new Point(50, 95)));
 				} else {
 					super.updateComputationParameters(connection, index);
 				}
