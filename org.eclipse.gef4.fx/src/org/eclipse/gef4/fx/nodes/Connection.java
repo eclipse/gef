@@ -348,6 +348,16 @@ public class Connection extends Group {
 				}
 			};
 
+			private ChangeListener<Bounds> boundsListener = new ChangeListener<Bounds>() {
+
+				@Override
+				public void changed(
+						ObservableValue<? extends Bounds> observable,
+						Bounds oldValue, Bounds newValue) {
+					refresh();
+				}
+			};
+
 			@Override
 			public void changed(ObservableValue<? extends Node> observable,
 					Node oldValue, Node newValue) {
@@ -358,13 +368,16 @@ public class Connection extends Group {
 					getChildren().remove(oldValue);
 					oldValue.localToParentTransformProperty()
 							.removeListener(transformListener);
+					oldValue.layoutBoundsProperty()
+							.removeListener(boundsListener);
 				}
 
 				reattachAnchorKeys(oldValue, newValue);
 
 				if (newValue != null) {
+					newValue.layoutBoundsProperty().addListener(boundsListener);
 					newValue.localToParentTransformProperty()
-							.removeListener(transformListener);
+							.addListener(transformListener);
 					getChildren().add(newValue);
 				}
 				inRefresh = oldInRefresh;
