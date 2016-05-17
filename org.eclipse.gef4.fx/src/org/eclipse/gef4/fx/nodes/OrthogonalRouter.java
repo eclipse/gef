@@ -302,7 +302,9 @@ public class OrthogonalRouter extends AbstractRouter {
 	 * @param index
 	 *            The index specifying the anchor for which to provide a
 	 *            reference point.
-	 * @return The reference point for the anchor at the given index.
+	 * @return The reference point for the anchor at the given index in the
+	 *         local coordinate system of the anchored, which is the
+	 *         connection's curve.
 	 */
 	@Override
 	protected Point getAnchoredReferencePoint(Connection connection,
@@ -322,13 +324,15 @@ public class OrthogonalRouter extends AbstractRouter {
 				if (index == 0) {
 					Point startPointHint = connection.getStartPointHint();
 					if (startPointHint != null) {
-						return startPointHint;
+						return NodeUtils.parentToLocal(connection.getCurve(),
+								startPointHint);
 					}
 				} else if (index == connection.getPointsUnmodifiable().size()
 						- 1) {
 					Point endPointHint = connection.getEndPointHint();
 					if (endPointHint != null) {
-						return endPointHint;
+						return NodeUtils.parentToLocal(connection.getCurve(),
+								endPointHint);
 					}
 				}
 
@@ -344,11 +348,14 @@ public class OrthogonalRouter extends AbstractRouter {
 						refBounds.getX() + refBounds.getWidth());
 				if (x1 <= x2) {
 					// horizontal overlap => return vertically stable position
-					return new Point(x1 + (x2 - x1) / 2,
-							refBounds.getY() > bounds.getY()
-									+ bounds.getHeight() ? refBounds.getY()
-											: refBounds.getY()
-													+ refBounds.getHeight());
+					return NodeUtils.parentToLocal(connection.getCurve(),
+							new Point(x1 + (x2 - x1) / 2,
+									refBounds.getY() > bounds.getY()
+											+ bounds.getHeight()
+													? refBounds.getY()
+													: refBounds.getY()
+															+ refBounds
+																	.getHeight()));
 				}
 
 				double y1 = Math.max(bounds.getY(), refBounds.getY());
@@ -356,20 +363,26 @@ public class OrthogonalRouter extends AbstractRouter {
 						refBounds.getY() + refBounds.getHeight());
 				if (y1 <= y2) {
 					// vertical overlap => return horizontally stable position
-					return new Point(
-							refBounds.getX() > bounds.getX() + bounds.getWidth()
-									? refBounds.getX()
-									: refBounds.getX() + refBounds.getWidth(),
-							y1 + (y2 - y1) / 2);
+					return NodeUtils
+							.parentToLocal(connection.getCurve(),
+									new Point(refBounds.getX() > bounds.getX()
+											+ bounds.getWidth()
+													? refBounds.getX()
+													: refBounds.getX()
+															+ refBounds
+																	.getWidth(),
+											y1 + (y2 - y1) / 2));
 				}
 				// fallback to nearest bounds projection
 				// TODO: revise handling of this case -> we could optimize this
 				// by providing a desired direction
-				return getNearestBoundsProjection(referenceGeometry,
-						geometry.getBounds().getCenter());
+				return NodeUtils.parentToLocal(connection.getCurve(),
+						getNearestBoundsProjection(referenceGeometry,
+								geometry.getBounds().getCenter()));
 			}
 		}
-		return connection.getPoint(referenceIndex);
+		return NodeUtils.parentToLocal(connection.getCurve(),
+				connection.getPoint(referenceIndex));
 	}
 
 	private Point getNearestBoundsProjection(IGeometry g, Point p) {
@@ -811,11 +824,12 @@ public class OrthogonalRouter extends AbstractRouter {
 			Point neighborPoint = connection
 					.getPoint(index == 0 ? index + 1 : index - 1);
 			Point delta = neighborPoint
-					.getDifference(
-							((DynamicAnchor) anchor)
-									.getComputationParameter(anchorKey,
-											AnchoredReferencePoint.class)
-									.get());
+					.getDifference(NodeUtils.sceneToLocal(connection,
+							NodeUtils.localToScene(anchorKey.getAnchored(),
+									((DynamicAnchor) anchor)
+											.getComputationParameter(anchorKey,
+													AnchoredReferencePoint.class)
+											.get())));
 			Orientation hint = null;
 			if (Math.abs(delta.x) < 5
 					&& Math.abs(delta.x) < Math.abs(delta.y)) {

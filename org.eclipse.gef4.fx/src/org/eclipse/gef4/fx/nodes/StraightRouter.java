@@ -43,7 +43,9 @@ public class StraightRouter extends AbstractRouter {
 	 * @param index
 	 *            The index specifying the anchor for which to provide a
 	 *            reference point.
-	 * @return The reference point for the anchor at the given index.
+	 * @return The reference point for the anchor at the given index within the
+	 *         local coordinate system of the anchored, which is the
+	 *         Connection's curve.
 	 */
 	@Override
 	protected Point getAnchoredReferencePoint(Connection connection,
@@ -79,8 +81,9 @@ public class StraightRouter extends AbstractRouter {
 	// TODO: move to utility && replace with safe algorithm
 	private Point getCenter(Connection connection, Node anchorageNode) {
 		Point center = FX2Geometry
-				.toRectangle(connection.sceneToLocal(anchorageNode
-						.localToScene(anchorageNode.getLayoutBounds())))
+				.toRectangle(connection.getCurve()
+						.sceneToLocal(anchorageNode
+								.localToScene(anchorageNode.getLayoutBounds())))
 				.getCenter();
 		if (Double.isNaN(center.x) || Double.isNaN(center.y)) {
 			return null;
@@ -116,8 +119,8 @@ public class StraightRouter extends AbstractRouter {
 					throw new IllegalStateException(
 							"connection inconsistent (null position)");
 				}
-				Point2D local = anchorage.sceneToLocal(
-						connection.localToScene(position.x, position.y));
+				Point2D local = anchorage.sceneToLocal(anchorKey.getAnchored()
+						.localToScene(position.x, position.y));
 				// TODO: NPE maybe local is null?
 				if (!anchorage.contains(local)) {
 					return position;
@@ -146,11 +149,6 @@ public class StraightRouter extends AbstractRouter {
 	}
 
 	@Override
-	public boolean wasInserted(IAnchor anchor) {
-		return false;
-	}
-
-	@Override
 	public void route(Connection connection) {
 		if (connection.getPointsUnmodifiable().size() < 2) {
 			return;
@@ -164,6 +162,11 @@ public class StraightRouter extends AbstractRouter {
 				updateComputationParameters(connection, i);
 			}
 		}
+	}
+
+	@Override
+	public boolean wasInserted(IAnchor anchor) {
+		return false;
 	}
 
 }
