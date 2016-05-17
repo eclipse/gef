@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
@@ -238,6 +239,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 				@Override
 				protected void press(Node target, MouseEvent e) {
+					if (viewer instanceof FXViewer) {
+						InfiniteCanvas canvas = ((FXViewer) viewer).getCanvas();
+						if (e.getTarget() == canvas.getHorizontalScrollBar()
+								|| e.getTarget() == canvas
+										.getVerticalScrollBar()) {
+							// do not process events originating from scrollbars
+							return;
+						}
+					}
+
 					// show indication cursor on press so that the indication
 					// cursor is shown even when no mouse move event was
 					// previously fired
