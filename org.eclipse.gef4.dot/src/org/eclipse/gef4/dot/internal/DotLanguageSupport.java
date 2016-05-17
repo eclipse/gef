@@ -166,7 +166,7 @@ public class DotLanguageSupport {
 	};
 
 	/**
-	 * Parses the given value as a DOT rankdir.
+	 * A parser used to parse DOT rankdir values.
 	 */
 	public static IPrimitiveValueParser<Rankdir> RANKDIR_PARSER = new IPrimitiveValueParser<Rankdir>() {
 		@Override
@@ -290,7 +290,7 @@ public class DotLanguageSupport {
 	/**
 	 * The validator for arrowtype attribute values.
 	 */
-	// TODO: move to dotjavaValidator
+	// TODO: move to DotJavaValidator
 	public static final DotArrowTypeJavaValidator ARROWTYPE_VALIDATOR = arrowTypeInjector
 			.getInstance(DotArrowTypeJavaValidator.class);
 
@@ -333,7 +333,7 @@ public class DotLanguageSupport {
 	/**
 	 * The validator for shape attribute values.
 	 */
-	// TODO: move to dotjavaValidator
+	// TODO: move to DotJavaValidator
 	public static final DotShapeJavaValidator SHAPE_VALIDATOR = shapeInjector
 			.getInstance(DotShapeJavaValidator.class);
 

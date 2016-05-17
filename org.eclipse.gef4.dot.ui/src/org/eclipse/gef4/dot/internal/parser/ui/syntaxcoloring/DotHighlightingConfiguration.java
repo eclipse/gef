@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 itemis AG and others.
+ * Copyright (c) 2014, 2016 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class DotHighlightingConfiguration
 		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Keyword", //$NON-NLS-1$
 				keywordTextStyle());
 
-		// lexical hightlighting
+		// lexical highlighting
 		acceptor.acceptDefaultHighlighting(STRING_ID, "(Unquoted) String", //$NON-NLS-1$
 				stringTextStyle());
 		acceptor.acceptDefaultHighlighting(NUMERAL_ID, "Numeral", //$NON-NLS-1$

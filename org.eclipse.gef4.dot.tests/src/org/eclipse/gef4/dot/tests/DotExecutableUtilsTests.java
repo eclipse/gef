@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fabian Steeg, and others.
+ * Copyright (c) 2009, 2016 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -108,10 +108,6 @@ public class DotExecutableUtilsTests {
 	}
 
 	protected void testDotGeneration(final Graph graph, String fileName) {
-		/*
-		 * The DotExport class wraps the simple DotTemplate class, so when we
-		 * test DotExport, we also run the test in the test superclass:
-		 */
 		if (dotExecutablePath != null) {
 			File dotFile = DotFileUtils.write(new DotExport().exportDot(graph));
 			File image = DotExecutableUtils.renderImage(
@@ -125,8 +121,8 @@ public class DotExecutableUtilsTests {
 	@Test(timeout = 2000)
 	public void testComplexDot() throws Exception {
 		if (dotExecutablePath != null) {
-			File dotFile = new File(
-					"./resources/arrowshapes_direction_both.dot");
+			File dotFile = new File(DotTestUtils.RESOURCES_TESTS
+					+ "arrowshapes_direction_both.dot");
 			assertTrue(dotFile.exists());
 			String[] dotResult = DotExecutableUtils.executeDot(
 					new File(dotExecutablePath), dotFile, null, null);

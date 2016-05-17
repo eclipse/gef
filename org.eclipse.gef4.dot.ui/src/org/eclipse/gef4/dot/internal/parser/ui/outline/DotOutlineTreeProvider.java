@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2011,2014 Fabian Steeg. All rights reserved. This program and
- * the accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
+ * Copyright (c) 2011, 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * <p/>
+ *
  * Contributors:
- * Fabian Steeg
- * - initial API and implementation; see bug 277380
- * - custom outline labels, icons, and structure; see bug 452650
+ *     Fabian Steeg               - initial API and implementation (bug #277380)
+ *                                - custom outline labels, icons, and structure (bug #452650)
+ *     Tamas Miklossy (itemis AG) - minor renamings (bug #493745)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.parser.ui.outline;
 
@@ -28,7 +31,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	 * Treat node statements as leafs if they have no attributes.
 	 * 
 	 * @param node
-	 *            The `NodeStmt` model element
+	 *            The 'NodeStmt' model element
 	 * @return true if this node contains no attributes
 	 */
 	protected boolean _isLeaf(NodeStmt node) {
@@ -36,10 +39,10 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	/**
-	 * `EdgeRhs` elements are displayed as leafs and not expandable.
+	 * 'EdgeRhs' elements are displayed as leafs and not expandable.
 	 * 
 	 * @param edge
-	 *            The `EdgeRhs` model element
+	 *            The 'EdgeRhs' model element
 	 * @return true
 	 */
 	protected boolean _isLeaf(EdgeRhs edge) {
@@ -47,7 +50,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	/**
-	 * Skip the `AttrList` wrapper element in the outline structure.
+	 * Skip the 'AttrList' wrapper element in the outline structure.
 	 * 
 	 * @param parent
 	 *            The outline parent node.
@@ -57,7 +60,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	protected void _createChildren(IOutlineNode parent, AttrStmt stmt) {
 		if (stmt.getAttrLists().size() > 0) {
 			EList<Attribute> attributes = stmt.getAttrLists().get(0)
-					.getAttributes(); // skip the `AttrList`
+					.getAttributes(); // skip the 'AttrList'
 			for (Attribute attribute : attributes) {
 				createNode(parent, attribute);
 			}

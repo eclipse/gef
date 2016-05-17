@@ -331,7 +331,7 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values
-		final String validEdgeId = "nodeId";
+		final String validEdgeId = "edgeId";
 		DotAttributes.setId(edge, validEdgeId);
 		assertEquals(validEdgeId, DotAttributes.getId(edge));
 

@@ -178,6 +178,7 @@ public class DotValidatorTests {
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.DIR__E, 29,
 				3,
 				"The value 'foo' is not a syntactically correct dirType: Value has to be one of 'forward', 'back', 'both', 'none'.");
+
 		// verify that it is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
@@ -229,7 +230,7 @@ public class DotValidatorTests {
 				DotAttributes.DISTORTION__N,
 				"The double value '-100.0001' is not semantically correct: Value may not be smaller than -100.0");
 
-		// verify that this is the only reported issue
+		// verify that these are the only reported issues
 		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
 	}
 
@@ -261,7 +262,7 @@ public class DotValidatorTests {
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SIDES__N,
 				"The int value '-1' is not semantically correct: Value may not be smaller than 0.");
 
-		// verify that this is the only reported issue
+		// verify that these are the only reported issues
 		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
 	}
 
@@ -279,7 +280,7 @@ public class DotValidatorTests {
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SKEW__N,
 				"The double value '-100.1' is not semantically correct: Value may not be smaller than -100.0");
 
-		// verify that this is the only reported issue
+		// verify that these are the only reported issues
 		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
 	}
 

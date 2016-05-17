@@ -86,14 +86,17 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		 * Graph
 		 */
 		GRAPH,
+
 		/**
 		 * Subgraph/Cluster
 		 */
 		SUBGRAPH,
+
 		/**
 		 * Node
 		 */
 		NODE,
+
 		/**
 		 * Edge
 		 */
@@ -292,7 +295,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 */
 	// TODO: move to DotAttributes
 	public static boolean isNodeAttribute(Attribute attribute) {
-		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
+		// attribute nested below NodeStmt
 		if (getAncestorOfType(attribute, NodeStmt.class) != null) {
 			return true;
 		}
@@ -331,7 +334,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 */
 	// TODO: move to DotAttributes
 	public static boolean isGraphAttribute(Attribute attribute) {
-		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
+		// attribute is neither edge nor node nor subgraph attribute
 		if (isEdgeAttribute(attribute) || isNodeAttribute(attribute)
 				|| isSubgraphAttribute(attribute)) {
 			return false;

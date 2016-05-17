@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Fabian Steeg and others.
+ * Copyright (c) 2009, 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -46,10 +46,6 @@ public class DotExportTests {
 	}
 
 	protected void testDotGeneration(final Graph graph, String fileName) {
-		/*
-		 * The DotExport class wraps the simple DotTemplate class, so when we
-		 * test DotExport, we also run the test in the test superclass:
-		 */
 		String dot = new DotExport().exportDot(graph);
 		String fileContents = DotFileUtils
 				.read(new File(RESOURCES_TESTS + fileName));

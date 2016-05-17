@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fabian Steeg and others.
+ * Copyright (c) 2009, 2016 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +8,8 @@
  *
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Tamas Miklossy  (itemis AG) - implement additional test cases (bug #493136)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 

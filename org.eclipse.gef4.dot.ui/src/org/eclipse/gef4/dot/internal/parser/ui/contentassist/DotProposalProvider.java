@@ -60,7 +60,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			if (DotJavaValidator.isEdgeAttribute(attribute)
 					&& DotAttributes.STYLE__GNE.equals(attribute.getName())) {
 				for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {
-					// quote attribute value if needed only
+					// quote attribute value only if needed
 					final String proposedValue = DotTerminalConverters
 							.needsToBeQuoted(edgeStyle.toString())
 									? DotTerminalConverters

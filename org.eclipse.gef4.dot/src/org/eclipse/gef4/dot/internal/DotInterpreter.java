@@ -533,7 +533,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	/**
 	 * @param stmt
-	 *            The {@link Stmt} object, e.g. the object corresponding to
+	 *            The {@link NodeStmt} object, e.g. the object corresponding to
 	 *            "node[label="hi"]"
 	 * @param name
 	 *            The name of the attribute to get the value for, e.g. "label"

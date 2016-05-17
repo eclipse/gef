@@ -179,14 +179,13 @@ public class DotAttributes {
 	public static final String SKEW__N = "skew";
 
 	/**
-	 * Specifies the name of the 'splines' attribute. It is used to control how
-	 * edges are to be rendered.
+	 * Specifies the 'splines' attribute of a graph. It is used to control how
+	 * the edges are to be rendered.
 	 */
 	public static final String SPLINES__G = "splines";
 
 	/**
-	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
-	 * dotted, etc.
+	 * Specifies the 'style' attribute of a graph, node or edge.
 	 */
 	public static final String STYLE__GNE = "style";
 
@@ -512,7 +511,7 @@ public class DotAttributes {
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #FIXEDSIZE__N} attribute, parsed as a {@link Boolean} .
+	 *            {@link #FIXEDSIZE__N} attribute, parsed as a {@link Boolean}.
 	 * @return The value of the {@link #FIXEDSIZE__N} attribute of the given
 	 *         {@link Node}.
 	 */
