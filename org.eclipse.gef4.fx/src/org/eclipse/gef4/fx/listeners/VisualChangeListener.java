@@ -349,7 +349,10 @@ public abstract class VisualChangeListener {
 		}
 
 		// remove bounds listener
+		observed.layoutBoundsProperty().removeListener(layoutBoundsListener);
 		observed.boundsInLocalProperty().removeListener(boundsInLocalListener);
+		observed.boundsInParentProperty()
+				.removeListener(boundsInParentListener);
 
 		// remove transform listeners
 		for (ChangeListener<Transform> l : localToParentTransformListeners
