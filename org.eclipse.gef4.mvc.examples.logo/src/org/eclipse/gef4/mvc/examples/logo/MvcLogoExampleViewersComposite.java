@@ -49,6 +49,9 @@ public class MvcLogoExampleViewersComposite {
 
 		// show palette indicator next to the viewer area
 		composite = new HBox();
+		// XXX: Set transparent background for the composite HBox, because
+		// otherwise, the HBox will have a grey background.
+		composite.setStyle("-fx-background-color: transparent;");
 		composite.getChildren().addAll(paletteIndicator, viewersPane);
 
 		// ensure composite fills the whole space
