@@ -186,10 +186,8 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 		if (curveNode instanceof GeometryNode
 				&& !newGeometry.equals(curveNode.getGeometry())) {
 			// TODO: we need to prevent positions are re-calculated as a
-			// result
-			// of the changed geometry. -> the static anchors should not
-			// update
-			// their positions because of layout bounds changes.
+			// result of the changed geometry. -> the static anchors should not
+			// update their positions because of layout bounds changes.
 			// System.out.println("New geometry: " + newGeometry);
 			curveNode.setGeometry(newGeometry);
 		}
@@ -197,13 +195,13 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 		Node startDecoration = connection.getStartDecoration();
 		if (startDecoration != null) {
 			arrangeStartDecoration(startDecoration, newGeometry,
-					connection.getStartPoint());
+					newGeometry.getP1());
 		}
 
 		Node endDecoration = connection.getEndDecoration();
 		if (endDecoration != null) {
 			arrangeEndDecoration(endDecoration, newGeometry,
-					connection.getEndPoint());
+					newGeometry.getP2());
 		}
 
 		if (!newGeometry.getBounds().isEmpty()
