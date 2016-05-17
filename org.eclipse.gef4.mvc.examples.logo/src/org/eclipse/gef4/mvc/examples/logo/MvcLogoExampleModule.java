@@ -31,6 +31,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.PaletteElementPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.PaletteModelPart;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.ContentRestrictedChangeViewportPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CreateAndTranslateOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
@@ -101,9 +102,33 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
 	}
 
+	protected void bindContentModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentModel.class);
+	}
+
+	/**
+	 * Registers the {@link ContentRestrictedChangeViewportPolicy} as an adapter
+	 * at the given {@link MapBinder}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} where the
+	 *            {@link ContentRestrictedChangeViewportPolicy} is registered.
+	 */
+	protected void bindContentRestrictedChangeViewportPolicyAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentRestrictedChangeViewportPolicy.class);
+	}
+
 	@Override
-	protected void bindAbstractRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindAbstractRootPartAdapters(adapterMapBinder);
+	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindContentViewerAdapters(adapterMapBinder);
+		// bind content part factory
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoContentPartFactory.class);
+	}
+
+	@Override
+	protected void bindContentViewerRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindContentViewerRootPartAdapters(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCreationMenuOnClickPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.role(FXCreationMenuOnClickPolicy.MENU_ITEM_PROVIDER_ROLE))
 				.to(FXCreationMenuItemProvider.class);
@@ -115,17 +140,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTraverseFocusOnTypePolicy.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
-	}
-
-	protected void bindContentModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentModel.class);
-	}
-
-	@Override
-	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindContentViewerAdapters(adapterMapBinder);
-		// bind content part factory
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoContentPartFactory.class);
 	}
 
 	protected void bindFocusFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -398,7 +412,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register change viewport policy
-		bindFXChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindContentRestrictedChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register default behaviors
 		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// XXX: PaletteFocusBehavior only changes the viewer focus and default
