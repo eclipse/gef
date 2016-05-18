@@ -67,7 +67,7 @@ final public class DotExecutableUtils {
 				: new File(new File(outputFileName).getAbsolutePath())
 						.getParentFile().getAbsolutePath() + File.separator;
 		File outputFile = new File(outputFolder, resultFile);
-		String[] outputs = executeDot(dotExecutablePath, dotInputFile,
+		String[] outputs = executeDot(dotExecutablePath, false, dotInputFile,
 				outputFile, format);
 		if (!outputs[0].isEmpty()) {
 			System.out.println("Output from dot call: " + outputs[0]); //$NON-NLS-1$
@@ -84,6 +84,8 @@ final public class DotExecutableUtils {
 	 * @param dotExecutablePath
 	 *            The path of the local Graphviz 'dot' executable, e.g.
 	 *            "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe"
+	 * @param invertYAxis
+	 *            Whether to invert the y-axis or not.
 	 * @param dotInputFile
 	 *            The input file to pass to 'dot'.
 	 * @param outputFile
@@ -97,12 +99,15 @@ final public class DotExecutableUtils {
 	 *         the error stream.
 	 */
 	public static String[] executeDot(final File dotExecutablePath,
-			final File dotInputFile, final File outputFile,
-			final String outputFormat) {
+			final boolean invertYAxis, final File dotInputFile,
+			final File outputFile, final String outputFormat) {
 		File buffer = null;
 		boolean hasBuffer = false;
 		List<String> commands = new ArrayList<>();
 		commands.add(dotExecutablePath.getAbsolutePath());
+		if (invertYAxis) {
+			commands.add("-y");
+		}
 		if (outputFormat != null) {
 			commands.add("-T" + outputFormat);
 		}

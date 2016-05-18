@@ -88,7 +88,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		 * position information is to be inverted. If set to <code>false</code>,
 		 * it is to be transformed without inversion.
 		 */
-		public boolean invertYAxis = true;
+		public boolean invertYAxis = false;
 	}
 
 	@Override

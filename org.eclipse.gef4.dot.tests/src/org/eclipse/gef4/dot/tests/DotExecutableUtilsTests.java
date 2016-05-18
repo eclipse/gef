@@ -125,7 +125,7 @@ public class DotExecutableUtilsTests {
 					+ "arrowshapes_direction_both.dot");
 			assertTrue(dotFile.exists());
 			String[] dotResult = DotExecutableUtils.executeDot(
-					new File(dotExecutablePath), dotFile, null, null);
+					new File(dotExecutablePath), true, dotFile, null, null);
 			assertNotNull("Result should not be null", dotResult);
 		}
 	}

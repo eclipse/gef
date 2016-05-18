@@ -325,7 +325,7 @@ public class DotGraphView extends ZestFxUiView {
 		// y-axis mode (as by default y-axis is interpreted inverse in dot)
 		boolean isNativeMode = isNativeMode();
 		dot2ZestAttributeCopier.options().emulateLayout = !isNativeMode;
-		dot2ZestAttributeCopier.options().invertYAxis = true;
+		dot2ZestAttributeCopier.options().invertYAxis = false;
 		super.setGraph(dot2ZestGraphCopier.copy(graph));
 
 		// adjust viewport to scroll to top-left
@@ -385,12 +385,12 @@ public class DotGraphView extends ZestFxUiView {
 				}
 				result = DotExecutableUtils.executeDot(
 						new File(GraphvizPreferencePage.getDotExecutablePath()),
-						tempDotFile, null, null);
+						true, tempDotFile, null, null);
 				tempDotFile.delete();
 			} else {
 				result = DotExecutableUtils.executeDot(
 						new File(GraphvizPreferencePage.getDotExecutablePath()),
-						file, null, null);
+						true, file, null, null);
 			}
 			currentDot = result[0];
 		}
