@@ -42,7 +42,7 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 		vbox.setPadding(new Insets(10));
 		vbox.setSpacing(10d);
 		// fixed at top/right position
-		vbox.setAlignment(Pos.TOP_RIGHT);
+		vbox.setAlignment(Pos.TOP_LEFT);
 		return vbox;
 	}
 
