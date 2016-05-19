@@ -2,8 +2,8 @@
 <project name="generate-diffs" default="generate-diff-report" basedir=".">
 	<target name="generate-diff-report">
 		<apitooling.apifreeze eefile="${basedir}/JavaSE-1.7.ee" includelist="${basedir}/includelist.txt" excludelist="${basedir}/excludelist.txt" baseline="${basedir}/0.1.0-provisional-as-public" profile="${basedir}/0.2.0-provisional-as-public" report="${basedir}/0.1.0-0.2.0-diff.xml" debug="true" />
-		<apitooling.apifreeze eefile="${basedir}/JavaSE-1.7.ee" includelist="${basedir}/includelist.txt" excludelist="${basedir}/excludelist.txt" baseline="${basedir}/0.2.0-provisional-as-public" profile="${basedir}/0.3.0M5-provisional-as-public" report="${basedir}/0.2.0-0.3.0M5-diff.xml" debug="true" />
+		<apitooling.apifreeze eefile="${basedir}/JavaSE-1.7.ee" includelist="${basedir}/includelist.txt" excludelist="${basedir}/excludelist.txt" baseline="${basedir}/0.2.0-provisional-as-public" profile="${basedir}/1.0.0RC1" report="${basedir}/0.2.0-1.0.0RC1-diff.xml" debug="true" />
 		<apitooling.apifreeze_reportconversion xmlfile="${basedir}/0.1.0-0.2.0-diff.xml" htmlfile="${basedir}/0.1.0-0.2.0-diff.html" debug="true" />
-		<apitooling.apifreeze_reportconversion xmlfile="${basedir}/0.2.0-0.3.0M5-diff.xml" htmlfile="${basedir}/0.2.0-0.3.0M5-diff.html" debug="true" />
+		<apitooling.apifreeze_reportconversion xmlfile="${basedir}/0.2.0-1.0.0RC1-diff.xml" htmlfile="${basedir}/0.2.0-1.0.0RC1-diff.html" debug="true" />
 	</target>
 </project>
