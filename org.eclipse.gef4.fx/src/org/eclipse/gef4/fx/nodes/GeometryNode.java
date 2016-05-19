@@ -94,18 +94,28 @@ public class GeometryNode<T extends IGeometry> extends Region {
 				layoutYProperty().removeListener(layoutYListener);
 
 				// XXX: We need to clear the size caches; even if we use
-				// computed sizes in the following, if not doing so the super
+				// computed sizes in the following, if not doing so the
+				// super
 				// call will use stale values.
 				requestLayout();
 
 				// update layoutX, layoutY, as well as layout bounds
-				GeometryNode.super.resize(computePrefWidth(newValue),
-						computePrefHeight(newValue));
-				GeometryNode.super.relocate(
-						newValue.getBounds().getX() - getStrokeOffset()
-								- getInsets().getLeft(),
-						newValue.getBounds().getY() - getStrokeOffset()
-								- getInsets().getTop());
+				double computedWidth = computePrefWidth(newValue);
+				double computedHeight = computePrefHeight(newValue);
+				if (computedWidth != getWidth()
+						|| computedHeight != getHeight()) {
+					GeometryNode.super.resize(computedWidth,
+							computedHeight);
+				}
+				double computedLayoutX = newValue.getBounds().getX()
+						- getStrokeOffset() - getInsets().getLeft();
+				double computedLayoutY = newValue.getBounds().getY()
+						- getStrokeOffset() - getInsets().getTop();
+				if (getLayoutX() != computedLayoutX
+						|| getLayoutY() != computedLayoutY) {
+					GeometryNode.super.relocate(computedLayoutX,
+							computedLayoutY);
+				}
 
 				widthProperty().addListener(widthListener);
 				heightProperty().addListener(heightListener);
