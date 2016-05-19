@@ -84,10 +84,18 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		}
 	};
 
+	private boolean isPrepared;
+
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
+		}
+
+		// prepare upon first drag
+		if (!isPrepared) {
+			isPrepared = true;
+			prepareForManipulation(e.isShiftDown(), getBendPolicy(targetPart));
 		}
 
 		Connection connection = targetPart.getVisual();
@@ -222,52 +230,46 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		return true;
 	}
 
-	@Override
-	public void press(MouseEvent e) {
-		isInvalid = !isBend(e);
-		if (isInvalid) {
-			return;
-		}
-
-		isSegmentDragged = false;
-		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
-		handlePositionInScene = initialMouseInScene.getCopy();
-		AbstractFXSegmentHandlePart<? extends Node> hostPart = getHost();
-		initialSegmentIndex = hostPart.getSegmentIndex();
-		initialSegmentParameter = hostPart.getSegmentParameter();
-		targetPart = getTargetPart();
-
-		storeAndDisableRefreshVisuals(targetPart);
-		FXBendConnectionPolicy bendPolicy = getBendPolicy(targetPart);
-		init(bendPolicy);
-
-		if (hostPart.getSegmentParameter() == 0.5) {
-			if (e.isShiftDown() || targetPart.getVisual()
+	/**
+	 * Prepares the given {@link FXBendConnectionPolicy} for the manipulation of
+	 * its host part.
+	 *
+	 * @param isShiftDown
+	 *            <code>true</code> if shift is pressed, otherwise
+	 *            <code>false</code>.
+	 * @param bendPolicy
+	 *            {@link FXBendConnectionPolicy} of the target part.
+	 */
+	protected void prepareForManipulation(boolean isShiftDown,
+			FXBendConnectionPolicy bendPolicy) {
+		AbstractFXSegmentHandlePart<? extends Node> host = getHost();
+		if (host.getSegmentParameter() == 0.5) {
+			if (isShiftDown || targetPart.getVisual()
 					.getRouter() instanceof OrthogonalRouter) {
 				// move segment, copy ends when connected
-				bendPolicy.selectSegment(hostPart.getSegmentIndex());
+				bendPolicy.selectSegment(host.getSegmentIndex());
 				isSegmentDragged = true;
 			} else {
 				// create new way point in middle and move it (disabled for
 				// orthogonal connections)
 
 				Integer previousAnchorHandle = bendPolicy
-						.getExplicitIndexAtOrBefore(hostPart.getSegmentIndex());
+						.getExplicitIndexAtOrBefore(host.getSegmentIndex());
 				Integer newAnchorHandle = bendPolicy
 						.createAfter(previousAnchorHandle, initialMouseInScene);
 
 				// select for manipulation
 				bendPolicy.select(newAnchorHandle);
 			}
-		} else if (hostPart.getSegmentParameter() == 0.25
-				|| hostPart.getSegmentParameter() == 0.75) {
+		} else if (host.getSegmentParameter() == 0.25
+				|| host.getSegmentParameter() == 0.75) {
 			// split segment
 			isSegmentDragged = true;
-			boolean selectFirstHalve = hostPart.getSegmentParameter() == 0.25;
+			boolean selectFirstHalve = host.getSegmentParameter() == 0.25;
 
 			// determine segment indices for neighbor anchors
-			int firstSegmentIndex = hostPart.getSegmentIndex();
-			int secondSegmentIndex = hostPart.getSegmentIndex() + 1;
+			int firstSegmentIndex = host.getSegmentIndex();
+			int secondSegmentIndex = host.getSegmentIndex() + 1;
 
 			// determine middle of segment
 			Point firstPoint = targetPart.getVisual()
@@ -339,13 +341,34 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			bendPolicy.select(secondAnchorHandle);
 		} else {
 			// compute connection index from handle part data
-			int connectionIndex = hostPart.getSegmentIndex()
-					+ (hostPart.getSegmentParameter() == 1 ? 1 : 0);
+			int connectionIndex = host.getSegmentIndex()
+					+ (host.getSegmentParameter() == 1 ? 1 : 0);
 
 			// make anchor explicit if it is implicit
 			bendPolicy.select(bendPolicy
 					.makeExplicit(connectionIndex, connectionIndex).get(0));
 		}
+	}
+
+	@Override
+	public void press(MouseEvent e) {
+		isInvalid = !isBend(e);
+		if (isInvalid) {
+			return;
+		}
+
+		isPrepared = false;
+		isSegmentDragged = false;
+		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
+		handlePositionInScene = initialMouseInScene.getCopy();
+		AbstractFXSegmentHandlePart<? extends Node> hostPart = getHost();
+		initialSegmentIndex = hostPart.getSegmentIndex();
+		initialSegmentParameter = hostPart.getSegmentParameter();
+		targetPart = getTargetPart();
+
+		storeAndDisableRefreshVisuals(targetPart);
+		FXBendConnectionPolicy bendPolicy = getBendPolicy(targetPart);
+		init(bendPolicy);
 
 		updateHandles();
 	}

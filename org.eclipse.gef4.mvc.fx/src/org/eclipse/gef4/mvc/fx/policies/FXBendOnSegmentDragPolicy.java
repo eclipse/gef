@@ -44,12 +44,20 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	private CursorSupport cursorSupport = new CursorSupport(this);
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
+	private boolean isPrepared;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
 		}
+
+		// prepare for manipulation upon first drag
+		if (!isPrepared) {
+			isPrepared = true;
+			prepareForManipulation(getBendPolicy());
+		}
+
 		Point2D endPointInParent = getHost().getVisual().getParent()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		Dimension snapToGridOffset = AbstractTransformPolicy
@@ -158,23 +166,14 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		return !isInvalid;
 	}
 
-	@Override
-	public void press(MouseEvent e) {
-		isInvalid = !isBend(e);
-		if (isInvalid) {
-			return;
-		}
-
-		// save initial mouse position in scene coordinates
-		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
-
-		// disable refresh visuals for the host
-		storeAndDisableRefreshVisuals(getHost());
-
-		// initialize bend policy
-		FXBendConnectionPolicy bendPolicy = getBendPolicy();
-		init(bendPolicy);
-
+	/**
+	 * Prepares the given {@link FXBendConnectionPolicy} for the manipulation of
+	 * its host.
+	 *
+	 * @param bendPolicy
+	 *            The {@link FXBendConnectionPolicy} that is prepared.
+	 */
+	protected void prepareForManipulation(FXBendConnectionPolicy bendPolicy) {
 		// determine curve in scene coordinates
 		Connection connection = bendPolicy.getConnection();
 
@@ -205,6 +204,26 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 		// select segment
 		bendPolicy.selectSegment(segmentIndex);
+	}
+
+	@Override
+	public void press(MouseEvent e) {
+		isInvalid = !isBend(e);
+		if (isInvalid) {
+			return;
+		}
+
+		isPrepared = false;
+
+		// save initial mouse position in scene coordinates
+		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
+
+		// disable refresh visuals for the host
+		storeAndDisableRefreshVisuals(getHost());
+
+		// initialize bend policy
+		FXBendConnectionPolicy bendPolicy = getBendPolicy();
+		init(bendPolicy);
 		updateHandles();
 	}
 
