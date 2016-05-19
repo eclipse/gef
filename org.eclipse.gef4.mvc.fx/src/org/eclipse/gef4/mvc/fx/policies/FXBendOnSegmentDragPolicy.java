@@ -55,7 +55,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		// prepare for manipulation upon first drag
 		if (!isPrepared) {
 			isPrepared = true;
-			prepareForManipulation(getBendPolicy());
+			prepareBend(getBendPolicy());
 		}
 
 		Point2D endPointInParent = getHost().getVisual().getParent()
@@ -173,7 +173,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	 * @param bendPolicy
 	 *            The {@link FXBendConnectionPolicy} that is prepared.
 	 */
-	protected void prepareForManipulation(FXBendConnectionPolicy bendPolicy) {
+	private void prepareBend(FXBendConnectionPolicy bendPolicy) {
 		// determine curve in scene coordinates
 		Connection connection = bendPolicy.getConnection();
 

@@ -95,7 +95,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		// prepare upon first drag
 		if (!isPrepared) {
 			isPrepared = true;
-			prepareForManipulation(e.isShiftDown(), getBendPolicy(targetPart));
+			prepareBend(e.isShiftDown(), getBendPolicy(targetPart));
 		}
 
 		Connection connection = targetPart.getVisual();
@@ -240,7 +240,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	 * @param bendPolicy
 	 *            {@link FXBendConnectionPolicy} of the target part.
 	 */
-	protected void prepareForManipulation(boolean isShiftDown,
+	private void prepareBend(boolean isShiftDown,
 			FXBendConnectionPolicy bendPolicy) {
 		AbstractFXSegmentHandlePart<? extends Node> host = getHost();
 		if (host.getSegmentParameter() == 0.5) {
