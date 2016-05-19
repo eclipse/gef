@@ -104,8 +104,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 				double computedHeight = computePrefHeight(newValue);
 				if (computedWidth != getWidth()
 						|| computedHeight != getHeight()) {
-					GeometryNode.super.resize(computedWidth,
-							computedHeight);
+					GeometryNode.super.resize(computedWidth, computedHeight);
 				}
 				double computedLayoutX = newValue.getBounds().getX()
 						- getStrokeOffset() - getInsets().getLeft();
@@ -666,7 +665,6 @@ public class GeometryNode<T extends IGeometry> extends Region {
 			double layoutBoundsHeight) {
 
 		// guard against null geometry
-		// TODO: check if required
 		T geometry = geometryProperty.get();
 		if (geometry == null) {
 			return;
