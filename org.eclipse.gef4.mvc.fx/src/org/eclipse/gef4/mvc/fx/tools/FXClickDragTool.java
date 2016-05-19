@@ -241,11 +241,19 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				protected void press(Node target, MouseEvent e) {
 					if (viewer instanceof FXViewer) {
 						InfiniteCanvas canvas = ((FXViewer) viewer).getCanvas();
-						if (e.getTarget() == canvas.getHorizontalScrollBar()
-								|| e.getTarget() == canvas
-										.getVerticalScrollBar()) {
-							// do not process events originating from scrollbars
-							return;
+						// if any node in the target hierarchy is a scrollbar,
+						// do not process the event
+						if (e.getTarget() instanceof Node) {
+							Node targetNode = (Node) e.getTarget();
+							while (targetNode != null) {
+								if (targetNode == canvas
+										.getHorizontalScrollBar()
+										|| targetNode == canvas
+												.getVerticalScrollBar()) {
+									return;
+								}
+								targetNode = targetNode.getParent();
+							}
 						}
 					}
 
