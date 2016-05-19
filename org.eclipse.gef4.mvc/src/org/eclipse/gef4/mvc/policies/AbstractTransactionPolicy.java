@@ -46,9 +46,8 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that performs all
-	 * manipulations applied by the policy since the last {@link #init()} call.
-	 * When called multiple times in sequence, only the first call will yield an
-	 * operation, the subsequent calls will yield <code>null</code>.
+	 * manipulations applied by the policy since the previous {@link #init()}
+	 * call.
 	 *
 	 * @return An {@link ITransactionalOperation} that performs all
 	 *         manipulations applied by the policy since the last
@@ -104,8 +103,8 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	/**
 	 * Initializes the policy, so that the policy's "work" methods can be used.
 	 * Calling a "work" method while the policy is not initialized will result
-	 * in an {@link IllegalStateException}. It is safe to call {@link #init()}
-	 * multiple times in sequence.
+	 * in an {@link IllegalStateException}, as well as re-initializing before
+	 * committing or rolling back.
 	 */
 	public void init() {
 		checkUninitialized();
@@ -164,8 +163,8 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 
 	/**
 	 * Puts back this policy into an uninitialized state, reverting any changes
-	 * that have been applied via the policy's work methods last {@link #init()}
-	 * call.
+	 * that have been applied via the policy's work methods since the preceding
+	 * {@link #init()} call.
 	 */
 	public void rollback() {
 		// after rollback, we need to be re-initialized
