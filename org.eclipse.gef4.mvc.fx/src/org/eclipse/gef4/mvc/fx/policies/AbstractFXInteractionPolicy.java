@@ -64,6 +64,10 @@ public class AbstractFXInteractionPolicy
 	 */
 	protected boolean isRegistered(EventTarget eventTarget) {
 		IVisualPart<Node, ? extends Node> host = getHost();
+		if (host.getRoot() == null || host.getRoot().getViewer() == null) {
+			// host is not in visual-part-hierarchy or not in viewer
+			return false;
+		}
 		IViewer<Node> viewer = host.getRoot().getViewer();
 		if (eventTarget instanceof Node) {
 			return FXPartUtils.retrieveVisualPart(viewer,
@@ -86,6 +90,10 @@ public class AbstractFXInteractionPolicy
 	 */
 	protected boolean isRegisteredForHost(EventTarget eventTarget) {
 		IVisualPart<Node, ? extends Node> host = getHost();
+		if (host.getRoot() == null || host.getRoot().getViewer() == null) {
+			// host is not in visual-part-hierarchy or not in viewer
+			return false;
+		}
 		IViewer<Node> viewer = host.getRoot().getViewer();
 		if (eventTarget instanceof Node) {
 			return FXPartUtils.retrieveVisualPart(viewer,
