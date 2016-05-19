@@ -164,6 +164,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			} else {
 				throw new IllegalStateException("No start point provided.");
 			}
+		} else {
+			// XXX: Set start hint as Zest start point property so it can be
+			// used within doRefreshVisual().
+			ZestProperties.setStartPoint(getContent(), getVisual().getStartPointHint());
 		}
 		if (!attachedTarget) {
 			if (positions.size() > 0) {
@@ -171,6 +175,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			} else {
 				throw new IllegalStateException("No start point provided.");
 			}
+		} else {
+			// XXX: Set start hint as Zest start point property so it can be
+			// used within doRefreshVisual().
+			ZestProperties.setEndPoint(getContent(), getVisual().getEndPointHint());
 		}
 		ZestProperties.setControlPoints(getContent(), positions);
 	}
@@ -342,7 +350,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		}
 
 		// end point or hint
-		Point endPoint = ZestProperties.getStartPoint(edge);
+		Point endPoint = ZestProperties.getEndPoint(edge);
 		if (!getContentAnchoragesUnmodifiable().containsValue(TARGET_ROLE)) {
 			if (endPoint != null) {
 				visual.setEndPoint(endPoint);

@@ -55,7 +55,6 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 			throws ExecutionException {
 		if (connection != null) {
 			setHints(newStartHint, newEndHint);
-			connection.getRouter().route(connection);
 		}
 		return Status.OK_STATUS;
 	}
