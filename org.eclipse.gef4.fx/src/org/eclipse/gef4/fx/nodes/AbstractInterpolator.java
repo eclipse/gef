@@ -14,14 +14,17 @@ package org.eclipse.gef4.fx.nodes;
 
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
 import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -181,7 +184,7 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 		ICurve newGeometry = computeCurve(connection);
 		// XXX: we can only deal with geometry nodes so far
 		@SuppressWarnings("unchecked")
-		GeometryNode<ICurve> curveNode = (GeometryNode<ICurve>) connection
+		final GeometryNode<ICurve> curveNode = (GeometryNode<ICurve>) connection
 				.getCurve();
 		if (curveNode instanceof GeometryNode
 				&& !newGeometry.equals(curveNode.getGeometry())) {
@@ -207,13 +210,29 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 		if (!newGeometry.getBounds().isEmpty()
 				&& (startDecoration != null || endDecoration != null)) {
 			// XXX Use scene coordinates, as the clip node does not provide a
-			// parent
-			Bounds layoutBounds = curveNode
-					.localToScene(curveNode.getLayoutBounds());
-			Shape clip = new Rectangle(layoutBounds.getMinX(),
-					layoutBounds.getMinY(), layoutBounds.getWidth(),
-					layoutBounds.getHeight());
+			// parent.
+
+			// union curve node's children's bounds-in-parent
+			org.eclipse.gef4.geometry.planar.Rectangle unionBoundsInCurveNode = new org.eclipse.gef4.geometry.planar.Rectangle();
+			ObservableList<Node> childrenUnmodifiable = curveNode
+					.getChildrenUnmodifiable();
+			for (Node child : childrenUnmodifiable) {
+				Bounds boundsInParent = child.getBoundsInParent();
+				org.eclipse.gef4.geometry.planar.Rectangle rectangle = FX2Geometry
+						.toRectangle(boundsInParent);
+				unionBoundsInCurveNode.union(rectangle);
+			}
+
+			// convert unioned bounds to scene coordinates
+			Bounds visualBounds = curveNode.localToScene(
+					Geometry2FX.toFXBounds(unionBoundsInCurveNode));
+
+			// create clip
+			Shape clip = new Rectangle(visualBounds.getMinX(),
+					visualBounds.getMinY(), visualBounds.getWidth(),
+					visualBounds.getHeight());
 			clip.setFill(Color.RED);
+
 			// can only clip Shape decorations
 			if (startDecoration != null && startDecoration instanceof Shape) {
 				clip = clipAtDecoration(curveNode.getGeometricShape(), clip,
@@ -224,10 +243,14 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 				clip = clipAtDecoration(curveNode.getGeometricShape(), clip,
 						(Shape) endDecoration);
 			}
+
 			// XXX: All CAG operations deliver result shapes that reflect areas
 			// in scene coordinates.
-			clip.getTransforms().add(Geometry2FX
-					.toFXAffine(NodeUtils.getSceneToLocalTx(curveNode)));
+			AffineTransform sceneToLocalTx = NodeUtils
+					.getSceneToLocalTx(curveNode);
+			clip.getTransforms().add(Geometry2FX.toFXAffine(sceneToLocalTx));
+
+			// set clip
 			curveNode.setClip(clip);
 		} else {
 			curveNode.setClip(null);
