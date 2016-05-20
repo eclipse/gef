@@ -308,7 +308,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				sourceDecoration.getStyleClass().add(CSS_CLASS_DECORATION);
 			}
 			// apply CSS style
-			String sourceDecorationCssStyle = ZestProperties.getCurveCssStyle(edge);
+			String sourceDecorationCssStyle = ZestProperties.getSourceDecorationCssStyle(edge);
 			if (sourceDecorationCssStyle != null) {
 				sourceDecoration.setStyle(sourceDecorationCssStyle);
 			}
