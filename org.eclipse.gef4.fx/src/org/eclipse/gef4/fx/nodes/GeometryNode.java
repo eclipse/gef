@@ -407,7 +407,10 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	}
 
 	private PathElement[] getPathElements() {
-		return Geometry2Shape.toPathElements(geometryProperty.get().toPath());
+		return Geometry2Shape.toPathElements(geometryProperty.get()
+				.getTransformed(new AffineTransform()
+						.setToTranslation(-getLayoutX(), -getLayoutY()))
+				.toPath());
 	}
 
 	/**
@@ -1036,8 +1039,6 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		PathElement[] pathElements = getPathElements();
 		for (Path p : paths) {
 			p.getElements().setAll(pathElements);
-			p.relocate((getWidth() - p.getLayoutBounds().getWidth()) / 2,
-					(getHeight() - p.getLayoutBounds().getHeight()) / 2);
 		}
 	}
 }
