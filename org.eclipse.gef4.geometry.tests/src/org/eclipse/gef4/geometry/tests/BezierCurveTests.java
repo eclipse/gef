@@ -141,6 +141,7 @@ public class BezierCurveTests {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		assertEquals(new Rectangle(1, 1, 9, 9), c0.getBounds());
 
+		// test bounds computation reported in bug #494193
 		BezierCurve c1 = new BezierCurve(399.05999755859375, 96.6969985961914,
 				484.6500244140625, 209.1699981689453, 456.27001953125,
 				302.8699951171875, 438.55999755859375, 348.239990234375);
