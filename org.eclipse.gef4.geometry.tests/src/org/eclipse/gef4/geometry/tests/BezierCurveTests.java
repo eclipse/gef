@@ -18,8 +18,11 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.geom.CubicCurve2D;
 import java.util.Arrays;
 
+import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
+import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
 import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
@@ -145,7 +148,15 @@ public class BezierCurveTests {
 		BezierCurve c1 = new BezierCurve(399.05999755859375, 96.6969985961914,
 				484.6500244140625, 209.1699981689453, 456.27001953125,
 				302.8699951171875, 438.55999755859375, 348.239990234375);
-		assertEquals(85.59, c1.getBounds().getWidth(), 0.1);
+
+		// Check the bounds are comparable to those returned by
+		// Path2D.getBounds2D(), which returns the tight bounds
+		// as well
+		Rectangle awtPathBounds = AWT2Geometry
+				.toRectangle(Geometry2AWT.toAWTPath(c1.toPath()).getBounds2D());
+		assertEquals(awtPathBounds.getHeight(), c1.getBounds().getHeight(),
+				0.1);
+		assertEquals(awtPathBounds.getWidth(), c1.getBounds().getWidth(), 0.1);
 	}
 
 	@Test
@@ -169,6 +180,22 @@ public class BezierCurveTests {
 
 		BezierCurve c1 = new BezierCurve(1, 5, 5, 8, 10, 1);
 		assertEquals(new Rectangle(1, 1, 9, 7), c1.getControlBounds());
+
+		// Check the bounds are comparable to those returned by
+		// CubicCurve2D.getBounds2D(), which returns the control polygon bounds
+		// as well
+		BezierCurve c3 = new BezierCurve(399.05999755859375, 96.6969985961914,
+				484.6500244140625, 209.1699981689453, 456.27001953125,
+				302.8699951171875, 438.55999755859375, 348.239990234375);
+		Rectangle awtCubicCurveBounds = AWT2Geometry.toRectangle(
+				new CubicCurve2D.Double(399.05999755859375, 96.6969985961914,
+						484.6500244140625, 209.1699981689453, 456.27001953125,
+						302.8699951171875, 438.55999755859375, 348.239990234375)
+								.getBounds2D());
+		assertEquals(awtCubicCurveBounds.getHeight(),
+				c3.getControlBounds().getHeight(), 0.1);
+		assertEquals(awtCubicCurveBounds.getWidth(),
+				c3.getControlBounds().getWidth(), 0.1);
 	}
 
 	@Test
