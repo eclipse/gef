@@ -2090,32 +2090,32 @@ public class BezierCurve extends AbstractGeometry
 
 	@Override
 	public BezierCurve getScaled(double factor) {
-		return getCopy().getScaled(factor);
+		return getCopy().scale(factor);
 	}
 
 	@Override
 	public BezierCurve getScaled(double fx, double fy) {
-		return getCopy().getScaled(fx, fy);
+		return getCopy().scale(fx, fy);
 	}
 
 	@Override
 	public BezierCurve getScaled(double factor, double cx, double cy) {
-		return getCopy().getScaled(factor, cx, cy);
+		return getCopy().scale(factor, cx, cy);
 	}
 
 	@Override
 	public BezierCurve getScaled(double fx, double fy, double cx, double cy) {
-		return getCopy().getScaled(fx, fy, cx, cy);
+		return getCopy().scale(fx, fy, cx, cy);
 	}
 
 	@Override
 	public BezierCurve getScaled(double fx, double fy, Point center) {
-		return getCopy().getScaled(fx, fy, center);
+		return getCopy().scale(fx, fy, center);
 	}
 
 	@Override
 	public BezierCurve getScaled(double factor, Point center) {
-		return getCopy().getScaled(factor, center);
+		return getCopy().scale(factor, center);
 	}
 
 	/**

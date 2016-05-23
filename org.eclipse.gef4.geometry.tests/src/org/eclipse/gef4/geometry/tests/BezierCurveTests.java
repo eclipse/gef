@@ -272,6 +272,13 @@ public class BezierCurveTests {
 	}
 
 	@Test
+	public void test_getScaled() {
+		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
+		BezierCurve s0 = c0.getScaled(2, 0, 0);
+		assertEquals(new BezierCurve(2, 2, 2, 20, 20, 2, 20, 20), s0);
+	}
+
+	@Test
 	public void test_getTranslated() {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		BezierCurve t0 = c0.getTranslated(new Point(-1, 4));
