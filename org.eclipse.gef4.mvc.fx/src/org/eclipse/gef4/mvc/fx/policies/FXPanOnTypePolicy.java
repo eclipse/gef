@@ -12,10 +12,8 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -26,7 +24,7 @@ import javafx.scene.input.KeyEvent;
  * @author mwienand
  *
  */
-public class FXPanOnTypePolicy extends AbstractInteractionPolicy<Node>
+public class FXPanOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
 	/**

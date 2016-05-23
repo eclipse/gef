@@ -15,10 +15,8 @@ package org.eclipse.gef4.mvc.fx.policies;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
 
 /**
@@ -29,7 +27,7 @@ import javafx.scene.input.ScrollEvent;
  * @author mwienand
  *
  */
-public class FXPanOrZoomOnScrollPolicy extends AbstractInteractionPolicy<Node>
+public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnScrollPolicy {
 
 	private boolean stopped = false;
