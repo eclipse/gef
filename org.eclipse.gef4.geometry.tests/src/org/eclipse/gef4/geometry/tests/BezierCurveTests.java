@@ -149,14 +149,20 @@ public class BezierCurveTests {
 				484.6500244140625, 209.1699981689453, 456.27001953125,
 				302.8699951171875, 438.55999755859375, 348.239990234375);
 
+		Rectangle c1Bounds = c1.getBounds();
+		for (double i = 0; i <= 1; i += 1 / Math.pow(10, 6)) {
+			assertTrue(c1Bounds.contains(c1.get(i)));
+		}
+
 		// Check the bounds are comparable to those returned by
 		// Path2D.getBounds2D(), which returns the tight bounds
 		// as well
-		Rectangle awtPathBounds = AWT2Geometry
+		Rectangle c1Path2DBounds = AWT2Geometry
 				.toRectangle(Geometry2AWT.toAWTPath(c1.toPath()).getBounds2D());
-		assertEquals(awtPathBounds.getHeight(), c1.getBounds().getHeight(),
-				0.1);
-		assertEquals(awtPathBounds.getWidth(), c1.getBounds().getWidth(), 0.1);
+		assertEquals(c1Path2DBounds.getHeight(), c1Bounds.getHeight(), 0.1);
+		// XXX: The difference is larger than 0.1, because it seems that Path2D
+		// returns not really tight bounds
+		assertEquals(c1Path2DBounds.getWidth(), c1Bounds.getWidth(), 0.15);
 	}
 
 	@Test
@@ -187,14 +193,14 @@ public class BezierCurveTests {
 		BezierCurve c3 = new BezierCurve(399.05999755859375, 96.6969985961914,
 				484.6500244140625, 209.1699981689453, 456.27001953125,
 				302.8699951171875, 438.55999755859375, 348.239990234375);
-		Rectangle awtCubicCurveBounds = AWT2Geometry.toRectangle(
+		Rectangle c3CubicCurve2DBounds = AWT2Geometry.toRectangle(
 				new CubicCurve2D.Double(399.05999755859375, 96.6969985961914,
 						484.6500244140625, 209.1699981689453, 456.27001953125,
 						302.8699951171875, 438.55999755859375, 348.239990234375)
 								.getBounds2D());
-		assertEquals(awtCubicCurveBounds.getHeight(),
+		assertEquals(c3CubicCurve2DBounds.getHeight(),
 				c3.getControlBounds().getHeight(), 0.1);
-		assertEquals(awtCubicCurveBounds.getWidth(),
+		assertEquals(c3CubicCurve2DBounds.getWidth(),
 				c3.getControlBounds().getWidth(), 0.1);
 	}
 
