@@ -150,7 +150,7 @@
    <category-def name="GEF4 Common" label="GEF4 Common"/>
    <category-def name="Equinox Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)" label="Equinox Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)">
       <description>
-         The Equinox compatibility features should be installed if a uses constraint violation related to &apos;javax.annotation&apos; can be observed between &apos;org.eclipse.osgi&apos; and &apos;com.google.guava&apos; after installing GEF4 FX, GEF4 MVC, GEF4 MVC.FX, or GEF4 Zest.FX. This violation will occur only in certain situations, for which the cause has not been clearly identified yet. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=478461 for details.
+         The Equinox compatibility features should be installed if a uses constraint violation related to &apos;javax.annotation&apos; can be observed between &apos;org.eclipse.osgi&apos; and &apos;com.google.guava&apos; after installing GEF4 FX, GEF4 MVC, GEF4 MVC.FX, or GEF4 Zest.FX. This violation will occur only in certain situations. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=478461 for details.
       </description>
    </category-def>
 </site>
