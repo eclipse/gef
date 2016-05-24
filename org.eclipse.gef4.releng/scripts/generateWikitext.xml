@@ -8,10 +8,9 @@
 			<include name="org.eclipse.mylyn.wikitext.core_*.jar" />
 			<include name="org.eclipse.mylyn.wikitext.core.ant_*.jar" />
 			<include name="org.eclipse.mylyn.wikitext.mediawiki.core_*.jar" />
-			<include name="org.eclipse.mylyn.wikitext.mediawiki.core.ant_*.jar" />
 		</fileset>
 	</path>
-	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/mediawiki/core/ant/tasks.properties" />
+	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties" />
 
 	<property file="wikitextOptions.txt" />
 
