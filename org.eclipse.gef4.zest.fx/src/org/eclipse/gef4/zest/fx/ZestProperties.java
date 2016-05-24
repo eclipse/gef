@@ -175,7 +175,7 @@ public class ZestProperties {
 	 * @see #setLabelCssStyle(Node, String)
 	 * @see #setLabelCssStyle(Edge, String)
 	 */
-	public static final String LABEL_CSS_STYLE__E = "element-label-css-style";
+	public static final String LABEL_CSS_STYLE__NE = "element-label-css-style";
 
 	/**
 	 * This attribute determines the CSS style for the source edge label. This
@@ -490,8 +490,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL_CSS_STYLE__E} attribute of the
-	 * given {@link Node}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute
+	 * of the given {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the label CSS style is determined.
@@ -628,7 +628,7 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL_CSS_STYLE__E} attribute of the
+	 * Returns the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the
 	 * given {@link Edge}.
 	 *
 	 * @param edge
@@ -636,11 +636,11 @@ public class ZestProperties {
 	 * @return The label CSS style of the given {@link Edge}.
 	 */
 	public static String getLabelCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(LABEL_CSS_STYLE__E);
+		return (String) edge.attributesProperty().get(LABEL_CSS_STYLE__NE);
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL_CSS_STYLE__E} attribute of the
+	 * Returns the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the
 	 * given {@link Node}.
 	 *
 	 * @param node
@@ -648,7 +648,7 @@ public class ZestProperties {
 	 * @return The label CSS style of the given {@link Node}.
 	 */
 	public static String getLabelCssStyle(Node node) {
-		return (String) node.attributesProperty().get(LABEL_CSS_STYLE__E);
+		return (String) node.attributesProperty().get(LABEL_CSS_STYLE__NE);
 	}
 
 	/**
@@ -1321,7 +1321,7 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #LABEL_CSS_STYLE__E} attribute of the given
+	 * Sets the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the given
 	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
@@ -1330,11 +1330,11 @@ public class ZestProperties {
 	 *            The new label CSS style for the given {@link Edge}.
 	 */
 	public static void setLabelCssStyle(Edge edge, String textCssStyle) {
-		edge.attributesProperty().put(LABEL_CSS_STYLE__E, textCssStyle);
+		edge.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyle);
 	}
 
 	/**
-	 * Sets the value of the {@link #LABEL_CSS_STYLE__E} attribute of the given
+	 * Sets the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the given
 	 * {@link Node} to the given value.
 	 *
 	 * @param node
@@ -1343,7 +1343,7 @@ public class ZestProperties {
 	 *            The new node label CSS style for the given {@link Node}.
 	 */
 	public static void setLabelCssStyle(Node node, String textCssStyle) {
-		node.attributesProperty().put(LABEL_CSS_STYLE__E, textCssStyle);
+		node.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyle);
 	}
 
 	/**

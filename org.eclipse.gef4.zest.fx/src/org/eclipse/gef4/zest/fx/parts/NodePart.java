@@ -389,7 +389,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 			}
 
 		}
-		if (attrs.containsKey(ZestProperties.LABEL_CSS_STYLE__E)) {
+		if (attrs.containsKey(ZestProperties.LABEL_CSS_STYLE__NE)) {
 			if (getLabelText() != null) {
 				getLabelText().setStyle(ZestProperties.getLabelCssStyle(node));
 			}

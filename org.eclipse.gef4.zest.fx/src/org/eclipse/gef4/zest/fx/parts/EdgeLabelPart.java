@@ -83,7 +83,7 @@ public class EdgeLabelPart extends AbstractLabelPart {
 			if (label != null) {
 				getText().setText(label);
 			}
-			if (attrs.containsKey(ZestProperties.LABEL_CSS_STYLE__E)) {
+			if (attrs.containsKey(ZestProperties.LABEL_CSS_STYLE__NE)) {
 				String textCssStyle = ZestProperties.getLabelCssStyle(edge);
 				getVisual().setStyle(textCssStyle);
 			}
