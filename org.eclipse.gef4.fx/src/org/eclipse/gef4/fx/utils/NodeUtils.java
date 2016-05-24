@@ -23,6 +23,7 @@ import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.ITranslatable;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
@@ -131,9 +132,15 @@ public class NodeUtils {
 			GeometryNode<?> geometryNode = (GeometryNode<?>) visual;
 			IGeometry geometry = geometryNode.getGeometry();
 			if (geometry != null) {
-				return geometry.getTransformed(new AffineTransform().translate(
-						-geometryNode.getLayoutX(),
-						-geometryNode.getLayoutY()));
+				if (geometry instanceof ITranslatable) {
+					return ((ITranslatable<?>) geometry).getTranslated(
+							-geometryNode.getLayoutX(),
+							-geometryNode.getLayoutY());
+				} else {
+					return geometry.getTransformed(new AffineTransform()
+							.translate(-geometryNode.getLayoutX(),
+									-geometryNode.getLayoutY()));
+				}
 			} else {
 				// if the geometry node has no geometry (yet), return an empty
 				// geometry
