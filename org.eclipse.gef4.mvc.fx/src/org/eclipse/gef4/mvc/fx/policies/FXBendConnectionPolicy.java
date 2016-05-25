@@ -13,10 +13,8 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
@@ -33,20 +31,15 @@ import org.eclipse.gef4.mvc.fx.operations.FXUpdateAnchorHintsOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef4.mvc.models.GridModel;
-import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractBendPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
@@ -283,41 +276,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		fwdOp.add(new FXBendConnectionOperation(getConnection()));
 		fwdOp.add(new FXUpdateAnchorHintsOperation(getConnection()));
 		return fwdOp;
-	}
-
-	/**
-	 * Create an {@link IUndoableOperation} to re-select the host part.
-	 *
-	 * @return An {@link IUndoableOperation} that deselects and selects the root
-	 *         part.
-	 */
-	@SuppressWarnings("serial")
-	protected ReverseUndoCompositeOperation createReselectOperation() {
-		if (!(getHost() instanceof IContentPart) || !(getHost().getRoot()
-				.getViewer().getAdapter(new TypeToken<SelectionModel<Node>>() {
-				})
-				.isSelected((IContentPart<Node, ? extends Node>) getHost()))) {
-			return null;
-		}
-
-		// assemble deselect and select operations to form a reselect
-		ReverseUndoCompositeOperation reselectOperation = new ReverseUndoCompositeOperation(
-				"re-select");
-
-		// build "deselect host" operation
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(
-				viewer, Collections.singletonList(
-						(IContentPart<Node, Connection>) getHost()));
-
-		// build "select host" operation
-		SelectOperation<Node> selectOperation = new SelectOperation<>(viewer,
-				Collections.singletonList(
-						(IContentPart<Node, Connection>) getHost()));
-
-		reselectOperation.add(deselectOperation);
-		reselectOperation.add(selectOperation);
-		return reselectOperation;
 	}
 
 	/**

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2014 itemis AG and others.
+ * Copyright (c) 2016 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
@@ -29,8 +29,8 @@ import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
 /**
- * The {@link SelectOperation} can be used to change the {@link SelectionModel}
- * of an {@link IViewer}.
+ * The {@link ChangeSelectionOperation} can be used to change the
+ * {@link SelectionModel} of an {@link IViewer}.
  *
  * @author mwienand
  *
@@ -38,7 +38,7 @@ import com.google.common.reflect.TypeToken;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class SelectOperation<VR> extends AbstractOperation
+public class ChangeSelectionOperation<VR> extends AbstractOperation
 		implements ITransactionalOperation {
 
 	/**
@@ -49,45 +49,42 @@ public class SelectOperation<VR> extends AbstractOperation
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
-	public static final String DEFAULT_LABEL = "Select";
+	public static final String DEFAULT_LABEL = "Change selection";
 
 	private IViewer<VR> viewer;
 	private List<IContentPart<VR, ? extends VR>> initialSelection;
-	private List<IContentPart<VR, ? extends VR>> toBeSelected;
-	private List<IContentPart<VR, ? extends VR>> selected;
+	private List<IContentPart<VR, ? extends VR>> finalSelection;
 
 	/**
-	 * Creates a new {@link SelectOperation} to change the selection within the
-	 * given {@link IViewer} to prepend the given content parts. It uses the
-	 * {@link #DEFAULT_LABEL}.
+	 * Creates a new {@link ChangeSelectionOperation} to change the selection
+	 * within the given {@link IViewer} by removing the given
+	 * {@link IContentPart}s. The {@link #DEFAULT_LABEL} is used.
 	 *
 	 * @param viewer
 	 *            The {@link IViewer} for which the selection is changed.
-	 * @param toBeSelected
+	 * @param finalSelection
 	 *            The {@link IContentPart}s that are to be selected.
 	 */
-	public SelectOperation(IViewer<VR> viewer,
-			List<? extends IContentPart<VR, ? extends VR>> toBeSelected) {
-		this(DEFAULT_LABEL, viewer, toBeSelected);
+	public ChangeSelectionOperation(IViewer<VR> viewer,
+			List<? extends IContentPart<VR, ? extends VR>> finalSelection) {
+		this(DEFAULT_LABEL, viewer, finalSelection);
 	}
 
 	/**
-	 * * Creates a new {@link SelectOperation} to change the selection within
-	 * the given {@link IViewer} to prepend the given content parts. The given
-	 * label is used.
+	 * Creates a new {@link ChangeSelectionOperation} to change the selection.
 	 *
 	 * @param label
 	 *            The operation's label.
 	 * @param viewer
 	 *            The {@link IViewer} for which the selection is changed.
-	 * @param toBeSelected
+	 * @param finalSelection
 	 *            The {@link IContentPart}s that are to be selected.
 	 */
-	public SelectOperation(String label, IViewer<VR> viewer,
-			List<? extends IContentPart<VR, ? extends VR>> toBeSelected) {
+	public ChangeSelectionOperation(String label, IViewer<VR> viewer,
+			List<? extends IContentPart<VR, ? extends VR>> finalSelection) {
 		super(label);
 		this.viewer = viewer;
-		this.toBeSelected = new ArrayList<>(toBeSelected);
+		this.finalSelection = new ArrayList<>(finalSelection);
 		SelectionModel<VR> selectionModel = getSelectionModel();
 		initialSelection = new ArrayList<>(
 				selectionModel.getSelectionUnmodifiable());
@@ -97,10 +94,11 @@ public class SelectOperation<VR> extends AbstractOperation
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		selected = new ArrayList<>(toBeSelected);
-		selected.removeAll(
-				new ArrayList<>(selectionModel.getSelectionUnmodifiable()));
-		selectionModel.prependToSelection(selected);
+		ArrayList<IContentPart<VR, ? extends VR>> currentSelection = new ArrayList<>(
+				selectionModel.getSelectionUnmodifiable());
+		if (!currentSelection.equals(finalSelection)) {
+			selectionModel.setSelection(finalSelection);
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -118,6 +116,15 @@ public class SelectOperation<VR> extends AbstractOperation
 		return selectionModel;
 	}
 
+	/**
+	 * Returns the parts that are to be deleted.
+	 *
+	 * @return A reference to the to be deleted {@link IContentPart}s.
+	 */
+	public List<IContentPart<VR, ? extends VR>> getToBeDeselected() {
+		return finalSelection;
+	}
+
 	@Override
 	public boolean isContentRelevant() {
 		return false;
@@ -125,7 +132,7 @@ public class SelectOperation<VR> extends AbstractOperation
 
 	@Override
 	public boolean isNoOp() {
-		return initialSelection.containsAll(toBeSelected);
+		return initialSelection.equals(finalSelection);
 	}
 
 	@Override
@@ -138,7 +145,13 @@ public class SelectOperation<VR> extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		selectionModel.removeFromSelection(selected);
+
+		ArrayList<IContentPart<VR, ? extends VR>> currentSelection = new ArrayList<>(
+				selectionModel.getSelectionUnmodifiable());
+		if (!currentSelection.equals(initialSelection)) {
+			selectionModel.setSelection(initialSelection);
+		}
+
 		return Status.OK_STATUS;
 	}
 

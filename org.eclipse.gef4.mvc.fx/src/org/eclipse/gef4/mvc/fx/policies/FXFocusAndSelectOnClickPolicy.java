@@ -18,9 +18,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
+import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -59,10 +59,6 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				});
 
-		// query current selection
-		ObservableList<IContentPart<Node, ? extends Node>> oldSelection = selectionModel
-				.getSelectionUnmodifiable();
-
 		// perform different changes depending on host type
 		if (host instanceof IContentPart) {
 			IContentPart<Node, ? extends Node> contentPart = (IContentPart<Node, ? extends Node>) host;
@@ -97,11 +93,8 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 							singletonHostList);
 				} else {
 					// clear old selection, host becomes the only selected
-					ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
-							"Select");
-					revOp.add(new DeselectOperation<>(viewer, oldSelection));
-					revOp.add(new SelectOperation<>(viewer, singletonHostList));
-					selectionChangeOperation = revOp;
+					selectionChangeOperation = new ChangeSelectionOperation<>(
+							viewer, singletonHostList);
 				}
 			}
 

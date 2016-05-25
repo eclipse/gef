@@ -15,9 +15,9 @@ import java.util.Collections;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -93,13 +93,8 @@ public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
 				}
 			} else {
 				// set selection
-				ReverseUndoCompositeOperation rvOp = new ReverseUndoCompositeOperation(
-						"Select");
-				rvOp.add(new DeselectOperation<>(viewer,
-						selectionModel.getSelectionUnmodifiable()));
-				rvOp.add(new SelectOperation<>(viewer,
-						Collections.singletonList(contentPart)));
-				op = rvOp;
+				op = new ChangeSelectionOperation<>(viewer,
+						Collections.singletonList(contentPart));
 			}
 		}
 
