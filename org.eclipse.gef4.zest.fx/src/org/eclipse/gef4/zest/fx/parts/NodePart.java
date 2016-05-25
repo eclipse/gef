@@ -571,11 +571,17 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 */
 	protected void refreshTooltip() {
 		String tooltip = ZestProperties.getTooltip(getContent());
-		if (tooltipNode == null) {
-			tooltipNode = new Tooltip(tooltip);
-			Tooltip.install(getVisual(), tooltipNode);
+		if (tooltip != null && !tooltip.isEmpty()) {
+			if (tooltipNode == null) {
+				tooltipNode = new Tooltip(tooltip);
+				Tooltip.install(getVisual(), tooltipNode);
+			} else {
+				tooltipNode.setText(tooltip);
+			}
 		} else {
-			tooltipNode.setText(tooltip);
+			if (tooltipNode != null) {
+				Tooltip.uninstall(getVisual(), tooltipNode);
+			}
 		}
 	}
 
