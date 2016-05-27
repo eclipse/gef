@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.domain;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -165,10 +166,20 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 						"No transaction is currently active, while the transaction context sill contained tool "
 								+ tool + ".");
 			}
-			if (!transaction.getOperations().isEmpty()) {
-				// adjust the label of the transaction
-				transaction.setLabel(transaction.getOperations().iterator()
-						.next().getLabel());
+			List<ITransactionalOperation> operations = transaction
+					.getOperations();
+			if (!operations.isEmpty()) {
+				// use the concatenation of the operations' labels as the
+				// transaction label
+				StringBuffer label = new StringBuffer();
+				int operationCount = operations.size();
+				for (int i = 0; i < operationCount; i++) {
+					label.append(operations.get(i).getLabel());
+					if (operations.size() - 1 > i) {
+						label.append(", ");
+					}
+				}
+				transaction.setLabel(label.toString());
 				// only add undo context if we have a content related change
 				applyUndoContext(transaction);
 				getOperationHistory().add(transaction);
