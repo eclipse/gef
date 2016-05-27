@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
@@ -129,6 +131,39 @@ public class MvcLogoExampleView extends AbstractFXView {
 				rootEntry = new UndoablePropertySheetEntry(
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class)) {
+					// FIXME: Code copied from FXBendConnectionPolicy (see
+					// #494752)
+					private Point computeEndHint(Connection connection) {
+						if (connection.getEndAnchor() instanceof DynamicAnchor
+								&& connection.getPointsUnmodifiable()
+										.size() > 1) {
+							Point endPoint = connection.getEndPoint();
+							Point neighbor = connection.getPoint(
+									connection.getPointsUnmodifiable().size()
+											- 2);
+							Point translated = endPoint.getTranslated(endPoint
+									.getDifference(neighbor).getScaled(0.5));
+							return translated;
+						}
+						return null;
+					}
+
+					// FIXME: Code copied from FXBendConnectionPolicy (see
+					// #494752)
+					private Point computeStartHint(Connection connection) {
+						if (connection.getStartAnchor() instanceof DynamicAnchor
+								&& connection.getPointsUnmodifiable()
+										.size() > 1) {
+							Point startPoint = connection.getStartPoint();
+							Point neighbor = connection.getPoint(1);
+							Point translated = startPoint.getTranslated(
+									startPoint.getDifference(neighbor)
+											.getScaled(0.5));
+							return translated;
+						}
+						return null;
+					}
+
 					@Override
 					public void setValues(Object[] objects) {
 						if (objects == null || objects.length == 0) {
@@ -157,23 +192,20 @@ public class MvcLogoExampleView extends AbstractFXView {
 								// clear way anchors using bend policy
 								FXCurvePropertySource ps = (FXCurvePropertySource) changeRoutingStyleOperation
 										.getPropertySource();
+								IContentPart<Node, ? extends Node> contentPart = getContentViewer()
+										.getContentPartMap().get(ps.getCurve());
 
 								// preserve first and last waypoint, but clear
 								// all intermediate points
 								List<Point> newWaypoints = new ArrayList<>();
 								List<Point> currentWaypoints = ps.getCurve()
 										.getWayPointsCopy();
-								if (currentWaypoints.size() > 0) {
-									newWaypoints.add(currentWaypoints.get(0));
-								} else {
-									newWaypoints.add(new Point());
-								}
-								if (currentWaypoints.size() > 1) {
-									newWaypoints.add(currentWaypoints
-											.get(currentWaypoints.size() - 1));
-								} else {
-									newWaypoints.add(new Point());
-								}
+								// FIXME: Code copied from
+								// FXBendConnectionPolicy (see #494752)
+								newWaypoints.add(computeStartHint(
+										(Connection) contentPart.getVisual()));
+								newWaypoints.add(computeEndHint(
+										(Connection) contentPart.getVisual()));
 
 								ChangeWayPointsOperation clearWaypointsOperation = new ChangeWayPointsOperation(
 										"Clear waypoints", ps.getCurve(),
@@ -183,8 +215,6 @@ public class MvcLogoExampleView extends AbstractFXView {
 								c.add(changeRoutingStyleOperation);
 								c.add(clearWaypointsOperation);
 								// reselect
-								IContentPart<Node, ? extends Node> contentPart = getContentViewer()
-										.getContentPartMap().get(ps.getCurve());
 								IUndoableOperation deselectOperation = new DeselectOperation<>(
 										getContentViewer(),
 										Collections.singletonList(contentPart));
