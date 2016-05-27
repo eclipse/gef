@@ -154,14 +154,20 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 			// abort if non-orthogonal
 			isInvalid = true;
 		} else {
-			// abort if part of multiple selection
 			IVisualPart<Node, ? extends Node> host = getHost();
 			@SuppressWarnings("serial")
 			ObservableList<IContentPart<Node, ? extends Node>> selection = host
 					.getRoot().getViewer()
 					.getAdapter(new TypeToken<SelectionModel<Node>>() {
 					}).getSelectionUnmodifiable();
-			isInvalid = selection.size() > 1 && selection.contains(host);
+			if (selection.size() > 1 && selection.contains(host)) {
+				// abort if part of multiple selection
+				isInvalid = true;
+			} else if (!getHost().getVisual().isStartConnected()
+					&& !getHost().getVisual().isEndConnected()) {
+				// abort if unconnected
+				isInvalid = true;
+			}
 		}
 		return !isInvalid;
 	}

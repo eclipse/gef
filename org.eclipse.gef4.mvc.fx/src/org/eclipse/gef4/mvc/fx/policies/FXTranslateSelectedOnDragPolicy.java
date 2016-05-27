@@ -191,13 +191,16 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	protected boolean isTranslate(MouseEvent event) {
 		// do not translate the only selected part if an
 		// FXBendOnSegmentDragPolicy is registered for that part and the part is
-		// an orthogonal connection
+		// an orthogonal connection that is connected at source and/or target
 		if (targetParts.size() == 1 && targetParts.get(0)
 				.getAdapter(FXBendOnSegmentDragPolicy.class) != null) {
 			IContentPart<Node, ? extends Node> part = targetParts.get(0);
 			Node visual = part.getVisual();
-			if (visual instanceof Connection && ((Connection) visual)
-					.getRouter() instanceof OrthogonalRouter) {
+			if (visual instanceof Connection
+					&& ((Connection) visual)
+							.getRouter() instanceof OrthogonalRouter
+					&& (((Connection) visual).isStartConnected()
+							|| ((Connection) visual).isEndConnected())) {
 				targetParts = null;
 			}
 		}
