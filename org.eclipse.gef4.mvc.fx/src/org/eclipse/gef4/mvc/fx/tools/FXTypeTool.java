@@ -149,15 +149,19 @@ public class FXTypeTool extends AbstractTool<Node> {
 									}
 								}
 							}
-							if (activeViewer == null) {
-								// No focused viewer could be found for the
-								// target Scene.
-								return;
+							if (activeViewer != null) {
+								targetNode = activeViewer.getRootPart()
+										.getVisual();
 							}
-							targetNode = activeViewer.getRootPart().getVisual();
 						} else {
 							throw new IllegalStateException(
 									"Unsupported event target: " + target);
+						}
+
+						if (activeViewer == null) {
+							// no focused viewer could be found for the target
+							// scene
+							return;
 						}
 
 						// open execution transaction
