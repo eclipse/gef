@@ -64,6 +64,35 @@ public interface IBendableContentPart<VR, V extends VR>
 			this.position = position.getCopy();
 		}
 
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			BendPoint other = (BendPoint) obj;
+			if (contentAnchorage == null) {
+				if (other.contentAnchorage != null) {
+					return false;
+				}
+			} else if (!contentAnchorage.equals(other.contentAnchorage)) {
+				return false;
+			}
+			if (position == null) {
+				if (other.position != null) {
+					return false;
+				}
+			} else if (!position.equals(other.position)) {
+				return false;
+			}
+			return true;
+		}
+
 		/**
 		 * The content element to which the bend point is attached.
 		 *
@@ -84,6 +113,17 @@ public interface IBendableContentPart<VR, V extends VR>
 			return position;
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((contentAnchorage == null) ? 0
+					: contentAnchorage.hashCode());
+			result = prime * result
+					+ ((position == null) ? 0 : position.hashCode());
+			return result;
+		}
+
 		/**
 		 * Whether this bend point is defined through an attachment of a content
 		 * anchorage.
@@ -96,6 +136,19 @@ public interface IBendableContentPart<VR, V extends VR>
 			return contentAnchorage != null;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 *
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "BendPoint ["
+					+ (contentAnchorage != null
+							? "contentAnchorage=" + contentAnchorage + ", "
+							: "")
+					+ (position != null ? "position=" + position : "") + "]";
+		}
 	}
 
 	/**
