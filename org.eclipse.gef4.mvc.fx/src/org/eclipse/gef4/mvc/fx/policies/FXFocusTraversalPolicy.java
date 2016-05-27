@@ -221,7 +221,7 @@ public class FXFocusTraversalPolicy extends AbstractTransactionPolicy<Node> {
 	 * @return The {@link FXRevealOperation} that is used to reveal the focus
 	 *         part.
 	 */
-	protected FXRevealOperation getRevealOperation() {
+	private FXRevealOperation getRevealOperation() {
 		return (FXRevealOperation) ((AbstractCompositeOperation) getOperation())
 				.getOperations().get(1);
 	}
