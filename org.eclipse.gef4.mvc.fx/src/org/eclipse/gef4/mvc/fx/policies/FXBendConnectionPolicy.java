@@ -548,7 +548,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		preMoveExplicitAnchors.clear();
 		preMoveStartHint = null;
 		preMoveEndHint = null;
-		usePreMoveHints = false;
+		usePreMoveHints = true;
 		isNormalizationNeeded = false;
 		super.init();
 		// showAnchors("init:");
@@ -733,6 +733,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		if (preMoveExplicitAnchors.isEmpty()) {
 			// first move => we need to normalize upon commit now
 			isNormalizationNeeded = true;
+			usePreMoveHints = false;
 			// save initial selected positions
 			for (int i = 0; i < selectedExplicitAnchorIndices.size(); i++) {
 				selectedInitialPositions.add(i,
