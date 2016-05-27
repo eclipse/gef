@@ -15,8 +15,10 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
@@ -26,6 +28,7 @@ import org.eclipse.gef4.mvc.parts.IBendableContentPart;
 import org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
 /**
@@ -40,16 +43,19 @@ import javafx.scene.Node;
 public class FXTransformConnectionPolicy extends FXTransformPolicy {
 
 	private List<BendPoint> initialBendPoints;
-
-	private Point[] initialPositions;
+	private List<Point> initialConnectionPositions;
+	private List<Integer> movableConnectionIndices;
+	private List<Integer> movableOperationIndices;
 
 	@Override
 	public ITransactionalOperation commit() {
 		ITransactionalOperation commit = super.commit();
 
 		// clear state
-		initialPositions = null;
+		initialConnectionPositions = null;
 		initialBendPoints = null;
+		movableConnectionIndices = null;
+		movableOperationIndices = null;
 
 		return commit;
 	}
@@ -84,26 +90,26 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	}
 
 	/**
-	 * Returns the indices of all movable anchors. Only those anchors are
-	 * relocated by this policy.
+	 * Returns the indices of all movable anchors within the operation. Only
+	 * those anchors are relocated by this policy.
 	 *
 	 * @return {@link List} of {@link Integer}s specifying the anchors to
 	 *         relocate.
 	 */
 	protected List<Integer> getIndicesOfUnconnectedAnchors() {
-		FXBendConnectionOperation op = getBendConnectionOperation();
 		List<Integer> indices = new ArrayList<>();
-		if (!op.getConnection().isStartConnected()) {
-			indices.add(0);
-		}
-		for (int i = 0; i < op.getNewAnchors().size() - 2; i++) {
-			if (!op.getConnection().isControlConnected(i)) {
-				indices.add(i + 1);
+
+		Connection connection = getBendConnectionOperation().getConnection();
+		IConnectionRouter router = connection.getRouter();
+		ObservableList<IAnchor> anchorsUnmodifiable = connection
+				.getAnchorsUnmodifiable();
+		for (int i = 0; i < anchorsUnmodifiable.size(); i++) {
+			IAnchor a = anchorsUnmodifiable.get(i);
+			if (!connection.isConnected(i) && !router.wasInserted(a)) {
+				indices.add(i);
 			}
 		}
-		if (!op.getConnection().isEndConnected()) {
-			indices.add(op.getNewAnchors().size() - 1);
-		}
+
 		return indices;
 	}
 
@@ -111,6 +117,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	public void init() {
 		// super#init() so that the policy is properly initialized
 		super.init();
+
 		// compute inverse transformation
 		AffineTransform inverse = null;
 		try {
@@ -118,13 +125,26 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
-		// compute initial anchor positions (inverse transformed)
-		initialPositions = getBendConnectionOperation().getConnection()
-				.getPointsUnmodifiable().toArray(new Point[] {});
-		for (int i : getIndicesOfUnconnectedAnchors()) {
-			initialPositions[i] = inverse.getTransformed(initialPositions[i]);
+
+		// determine indices of movable anchors
+		movableConnectionIndices = getIndicesOfUnconnectedAnchors();
+		movableOperationIndices = new ArrayList<>();
+		Connection connection = getBendConnectionOperation().getConnection();
+		List<IAnchor> newAnchors = getBendConnectionOperation().getNewAnchors();
+		for (int i = 0; i < newAnchors.size(); i++) {
+			IAnchor anchor = newAnchors.get(i);
+			// exclude connected
+			if (anchor == null || anchor.getAnchorage() == null
+					|| anchor.getAnchorage() == connection) {
+				movableOperationIndices.add(i);
+			}
 		}
 
+		// compute initial anchor positions (inverse transformed)
+		initialConnectionPositions = new ArrayList<>();
+		for (Point p : connection.getPointsUnmodifiable()) {
+			initialConnectionPositions.add(inverse.getTransformed(p));
+		}
 		initialBendPoints = FXBendConnectionPolicy
 				.getCurrentBendPoints(getHost());
 	}
@@ -137,11 +157,15 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	@Override
 	protected void updateTransformOperation(AffineTransform newTransform) {
 		// transform all anchor points
-		for (int i : getIndicesOfUnconnectedAnchors()) {
-			Point pTx = newTransform.getTransformed(initialPositions[i]);
-			getBendConnectionOperation().getNewAnchors().set(i,
+		for (int i = 0; i < movableConnectionIndices.size(); i++) {
+			int connectionIndex = movableConnectionIndices.get(i);
+			int operationIndex = movableOperationIndices.get(i);
+			Point pTx = newTransform.getTransformed(
+					initialConnectionPositions.get(connectionIndex));
+			getBendConnectionOperation().getNewAnchors().set(operationIndex,
 					new StaticAnchor(getHost().getVisual(),
 							new Point(pTx.x, pTx.y)));
 		}
 	}
+
 }
