@@ -18,6 +18,11 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
+ * The {@link IBehavior} interface extends
+ * {@link org.eclipse.gef4.common.adapt.IAdaptable.Bound} and
+ * {@link IActivatable}. Usually, implementations observe some model and perform
+ * actions in reaction to model changes, e.g. displaying feedback and handles
+ * when its {@link IAdaptable} is selected.
  *
  * @author anyssen
  *

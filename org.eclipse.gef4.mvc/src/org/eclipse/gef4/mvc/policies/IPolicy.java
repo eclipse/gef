@@ -17,7 +17,9 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- *
+ * The {@link IPolicy} interface extends
+ * {@link org.eclipse.gef4.common.adapt.IAdaptable.Bound}, i.e. it is bound to
+ * an {@link IAdaptable}, its so called {@link #getHost()}.
  *
  * @author anyssen
  *

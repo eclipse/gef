@@ -38,6 +38,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableMap;
 
 /**
+ * The {@link AbstractViewer} can be used as a base class for {@link IViewer}
+ * implementations.
  *
  * @author anyssen
  *

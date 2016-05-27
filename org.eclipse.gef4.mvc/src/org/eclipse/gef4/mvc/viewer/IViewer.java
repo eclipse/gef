@@ -28,6 +28,11 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 
 /**
+ * The {@link IViewer} interface specifies all services that a viewer needs to
+ * provide. One application (within one {@link IDomain}) can be consisting of
+ * multiple viewers. Each viewer maintains its own {@link #getContentPartMap()}
+ * and {@link #getVisualPartMap()} that can be used to navigate from/to content,
+ * controller, and visual objects.
  *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Instead, {@link AbstractViewer} should be subclassed.

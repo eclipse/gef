@@ -20,6 +20,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**
+ * The {@link HoverModel} is used to store the current viewer's mouse hover
+ * target, i.e. the {@link IVisualPart} that is currently under the mouse
+ * cursor.
  *
  * @author mwienand
  *

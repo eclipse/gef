@@ -45,6 +45,8 @@ import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.collections.ObservableMap;
 
 /**
+ * The {@link AbstractDomain} can be used as a base class for {@link IDomain}
+ * implementations.
  *
  * @author anyssen
  * @author mwienand

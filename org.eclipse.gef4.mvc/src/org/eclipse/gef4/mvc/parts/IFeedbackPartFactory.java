@@ -17,6 +17,9 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 
 /**
+ * The {@link IFeedbackPartFactory} interface specifies a factory method for the
+ * creation of {@link IFeedbackPart}s for a given list of target
+ * {@link IVisualPart}s, a context {@link IBehavior}, and a context {@link Map}.
  *
  * @author anyssen
  *

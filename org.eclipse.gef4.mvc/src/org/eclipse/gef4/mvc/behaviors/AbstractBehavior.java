@@ -33,6 +33,11 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
+ * The {@link AbstractBehavior} can be used as a base class for
+ * {@link IBehavior} implementations. It implements activation and deactivation
+ * of its adapters, and provides methods for the addition and removal of
+ * feedback and handles, as well as a method that can be used to update the
+ * handles for a given target part.
  *
  * @author anyssen
  *
@@ -67,7 +72,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
-	 *
+	 * Adds the given {@link IFeedbackPart}s to the root part of the
+	 * {@link #getHost()}. Moreover, the {@link IFeedbackPart}s are anchored to
+	 * the given target {@link IVisualPart}s.
 	 *
 	 * @param targets
 	 *            A list of {@link IVisualPart}s for which feedback is added to
@@ -86,6 +93,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
+	 * Adds the given {@link IHandlePart}s to the root part of the
+	 * {@link #getHost()}. Moreover, the {@link IHandlePart}s are anchored to
+	 * the given target {@link IVisualPart}s.
 	 *
 	 * @param targets
 	 *            A list of {@link IVisualPart}s for which handle parts are

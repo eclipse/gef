@@ -28,6 +28,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
+ * The {@link AbstractTool} can be used as a base class for {@link ITool}
+ * implementations.
  *
  * @author anyssen
  * @author mwienand
