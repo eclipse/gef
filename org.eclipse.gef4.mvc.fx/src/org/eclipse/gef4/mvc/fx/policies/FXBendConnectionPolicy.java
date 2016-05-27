@@ -546,12 +546,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		selectedExplicitAnchorIndices.clear();
 		selectedInitialPositions.clear();
 		preMoveExplicitAnchors.clear();
-		preMoveStartHint = null;
-		preMoveEndHint = null;
 		usePreMoveHints = true;
 		isNormalizationNeeded = false;
 		super.init();
 		// showAnchors("init:");
+		preMoveStartHint = getHost().getVisual().getStartPointHint();
+		preMoveEndHint = getHost().getVisual().getEndPointHint();
 	}
 
 	/**
