@@ -54,8 +54,10 @@ public class DotLayoutExample extends AbstractZestExample {
 
 		@Override
 		public void applyLayout(boolean clean) {
-			// convert LayoutAttributes to DotAttributes; keep track of
-			// converted nodes (as a side-effect)
+			// convert a Graph with LayoutAttributes (input model to
+			// ILayoutAlgorithm) to a Graph with DotAttributes, which can be
+			// exported to a DOT string; keep track of converted nodes (as a
+			// side-effect)
 			final Map<Node, String> nodesToNameMap = new HashMap<>();
 			IAttributeCopier layout2DotAttributesConverter = new IAttributeCopier() {
 
@@ -82,7 +84,6 @@ public class DotLayoutExample extends AbstractZestExample {
 					}
 				}
 			};
-			DotExport dotExport = new DotExport();
 			Graph dotGraph = new GraphCopier(layout2DotAttributesConverter)
 					.copy(context.getGraph());
 
@@ -92,8 +93,9 @@ public class DotLayoutExample extends AbstractZestExample {
 			// specify layout algorithm
 			DotAttributes.setLayout(dotGraph, Layout.CIRCO.toString());
 
-			// export dot string and call the dot executable to add layout info
-			// to it
+			// export the Graph with DotAttributs to a DOT string and call the
+			// dot executable to add layout info to it
+			DotExport dotExport = new DotExport();
 			String dot = dotExport.exportDot(dotGraph);
 			File tmpFile = DotFileUtils.write(dot);
 			String[] dotResult = DotExecutableUtils.executeDot(
@@ -104,7 +106,8 @@ public class DotLayoutExample extends AbstractZestExample {
 			tmpFile.delete();
 			Graph layoutedDotGraph = new DotImport().importDot(dotResult[0]);
 
-			// transfer position information back
+			// transfer the DOT provided position information back to the input
+			// Graph
 			for (Node target : context.getGraph().getNodes()) {
 				String nodeName = nodesToNameMap.get(target);
 				for (Node source : layoutedDotGraph.getNodes()) {
