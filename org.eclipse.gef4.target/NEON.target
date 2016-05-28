@@ -17,13 +17,14 @@
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="com.google.guava" version="15.0.0.v201403281430"/>
+<unit id="com.google.guava.source" version="15.0.0.v201403281430"/>
+<unit id="com.google.inject" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
 <unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
 <unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
-<unit id="com.google.guava" version="15.0.0.v201403281430"/>
-<unit id="com.google.inject" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
 </location>
 </locations>
