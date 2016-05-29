@@ -218,13 +218,10 @@ public class FXTypeTool extends AbstractTool<Node> {
 					}
 
 					// determine viewer that contains the given target part
-					IViewer<Node> viewer = null;
-					Node targetNode = null;
 					EventTarget target = event.getTarget();
+					Node targetNode = null;
 					if (target instanceof Node) {
 						targetNode = (Node) target;
-						viewer = FXPartUtils.retrieveViewer(getDomain(),
-								targetNode);
 					} else if (target instanceof Scene) {
 						// first focused viewer in that scene
 						for (IViewer<Node> v : getDomain().getViewers()
@@ -232,12 +229,11 @@ public class FXTypeTool extends AbstractTool<Node> {
 							if (v.getRootPart().getVisual()
 									.getScene() == target) {
 								if (v.isViewerFocused()) {
-									viewer = v;
+									targetNode = v.getRootPart().getVisual();
 									break;
 								}
 							}
 						}
-						targetNode = viewer.getRootPart().getVisual();
 					} else {
 						throw new IllegalStateException(
 								"Unsupported event target: " + target);
