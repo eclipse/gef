@@ -54,6 +54,14 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	private NavigationModel navigationModel;
 
 	@Override
+	public ITransactionalOperation commit() {
+		contentModel = null;
+		navigationModel = null;
+
+		return super.commit();
+	}
+
+	@Override
 	protected ITransactionalOperation createOperation() {
 		return new NavigateOperation((FXViewer) getHost().getRoot().getViewer());
 	}
@@ -74,7 +82,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		// NodeContentParts
 		List<IVisualPart<Node, ? extends Node>> graphChildren = rootChildren.size() > 0
 				? rootChildren.get(0).getChildrenUnmodifiable()
-				: Collections.<IVisualPart<Node, ? extends Node>> emptyList();
+				: Collections.<IVisualPart<Node, ? extends Node>>emptyList();
 
 		// filter for NodePart
 		List<NodePart> nestingNodeContentParts = PartUtils.filterParts(graphChildren, NodePart.class);
@@ -186,6 +194,10 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		}
 
 		// synchronize content children of nesting node parts
+		// TODO: we need to extract the synchronization into a navigation
+		// behavior, so it also works when undoing a navigate operation, or when
+		// navigating graphs via OpenNestedGraphOnDoubleClickPolicy and
+		// OpenParentGraphOnDoubleClickPolicy.
 		for (NodePart nestingNodePart : findNestingNodes()) {
 			nestingNodePart.refreshContentChildren();
 			nestingNodePart.getAdapter(new TypeToken<ContentBehavior<Node>>() {

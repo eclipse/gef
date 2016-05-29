@@ -33,6 +33,7 @@ import javafx.scene.transform.Affine;
  * @author mwienand
  *
  */
+// TODO: we should speak of 'final' instead of 'new'
 public class FXChangeViewportOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
@@ -80,7 +81,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 	/**
 	 * The horizontal translation that is applied when executing this operation.
 	 */
-	private double horizontalScrollOffset;
+	private double newHorizontalScrollOffset;
 
 	/**
 	 * The vertical translation that is applied when undoing this operation.
@@ -90,7 +91,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 	/**
 	 * The vertical translation that is applied when executing this operation.
 	 */
-	private double verticalScrollOffset;
+	private double newVerticalScrollOffset;
 
 	/**
 	 * Creates a new {@link FXChangeViewportOperation} to manipulate the given
@@ -143,8 +144,8 @@ public class FXChangeViewportOperation extends AbstractOperation
 	public FXChangeViewportOperation(InfiniteCanvas canvas,
 			double newHorizontalScrollOffset, double newVerticalScrollOffset) {
 		this(canvas);
-		this.horizontalScrollOffset = newHorizontalScrollOffset;
-		this.verticalScrollOffset = newVerticalScrollOffset;
+		this.newHorizontalScrollOffset = newHorizontalScrollOffset;
+		this.newVerticalScrollOffset = newVerticalScrollOffset;
 	}
 
 	/**
@@ -170,8 +171,8 @@ public class FXChangeViewportOperation extends AbstractOperation
 			AffineTransform newContentTransform) {
 		this(canvas);
 		this.newContentTransform = newContentTransform;
-		this.horizontalScrollOffset = newHorizontalScrollOffset;
-		this.verticalScrollOffset = newVerticalScrollOffset;
+		this.newHorizontalScrollOffset = newHorizontalScrollOffset;
+		this.newVerticalScrollOffset = newVerticalScrollOffset;
 	}
 
 	/**
@@ -207,8 +208,8 @@ public class FXChangeViewportOperation extends AbstractOperation
 		this.newWidth = newWidth;
 		this.newHeight = newHeight;
 		this.newContentTransform = newContentTransform;
-		this.horizontalScrollOffset = newHorizontalScrollOffset;
-		this.verticalScrollOffset = newVerticalScrollOffset;
+		this.newHorizontalScrollOffset = newHorizontalScrollOffset;
+		this.newVerticalScrollOffset = newVerticalScrollOffset;
 	}
 
 	/**
@@ -234,16 +235,15 @@ public class FXChangeViewportOperation extends AbstractOperation
 		if (canvas.getPrefHeight() != newHeight) {
 			canvas.setPrefHeight(newHeight);
 		}
-		Affine newContentAffine = Geometry2FX
-				.toFXAffine(newContentTransform);
+		Affine newContentAffine = Geometry2FX.toFXAffine(newContentTransform);
 		if (!canvas.getContentTransform().equals(newContentAffine)) {
 			canvas.setContentTransform(newContentAffine);
 		}
-		if (canvas.getHorizontalScrollOffset() != horizontalScrollOffset) {
-			canvas.setHorizontalScrollOffset(horizontalScrollOffset);
+		if (canvas.getHorizontalScrollOffset() != newHorizontalScrollOffset) {
+			canvas.setHorizontalScrollOffset(newHorizontalScrollOffset);
 		}
-		if (canvas.getVerticalScrollOffset() != verticalScrollOffset) {
-			canvas.setVerticalScrollOffset(verticalScrollOffset);
+		if (canvas.getVerticalScrollOffset() != newVerticalScrollOffset) {
+			canvas.setVerticalScrollOffset(newVerticalScrollOffset);
 		}
 		return Status.OK_STATUS;
 	}
@@ -331,7 +331,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *         this operation.
 	 */
 	public double getNewHorizontalScrollOffset() {
-		return horizontalScrollOffset;
+		return newHorizontalScrollOffset;
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *         operation.
 	 */
 	public double getNewVerticalScrollOffset() {
-		return verticalScrollOffset;
+		return newVerticalScrollOffset;
 	}
 
 	/**
@@ -403,14 +403,67 @@ public class FXChangeViewportOperation extends AbstractOperation
 		newWidth = initialWidth;
 		newHeight = initialHeight;
 		newContentTransform = initialContentTransform.getCopy();
-		horizontalScrollOffset = initialHorizontalScrollOffset;
-		verticalScrollOffset = initialVerticalScrollOffset;
+		newHorizontalScrollOffset = initialHorizontalScrollOffset;
+		newVerticalScrollOffset = initialVerticalScrollOffset;
 	}
 
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	/**
+	 * Sets the initial content transform before applying the new value.
+	 * 
+	 * @param initialContentTransform
+	 *            The initialContentTransform to set.
+	 */
+	public void setInitialContentTransform(
+			AffineTransform initialContentTransform) {
+		this.initialContentTransform = initialContentTransform;
+	}
+
+	/**
+	 * Sets the initial height before applying the new value.
+	 * 
+	 * @param initialHeight
+	 *            The initialHeight to set.
+	 */
+	public void setInitialHeight(double initialHeight) {
+		this.initialHeight = initialHeight;
+	}
+
+	/**
+	 * Sets the initial horizontal scroll offset before applying the new value.
+	 * 
+	 * @param initialHorizontalScrollOffset
+	 *            The initialHorizontalScrollOffset to set.
+	 */
+	public void setInitialHorizontalScrollOffset(
+			double initialHorizontalScrollOffset) {
+		this.initialHorizontalScrollOffset = initialHorizontalScrollOffset;
+	}
+
+	/**
+	 * Sets the initial vertical scroll offset before applying the new value.
+	 * 
+	 * @param initialVerticalScrollOffset
+	 *            The initialVerticalScrollOffset to set.
+	 */
+	public void setInitialVerticalScrollOffset(
+			double initialVerticalScrollOffset) {
+		this.initialVerticalScrollOffset = initialVerticalScrollOffset;
+	}
+
+	/**
+	 * Sets the initial width before applying the new value.
+	 *
+	 * @param initialWidth
+	 *            The initialWidth to set.
+	 */
+	public void setInitialWidth(double initialWidth) {
+		this.initialWidth = initialWidth;
 	}
 
 	/**
@@ -440,24 +493,24 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 * Sets the horizontal translation that will be applied when executing this
 	 * operation to the given value.
 	 *
-	 * @param horizontalScrollOffset
+	 * @param newHorizontalScrollOffset
 	 *            The horizontal translation to apply when executing this
 	 *            operation.
 	 */
-	public void setNewHorizontalScrollOffset(double horizontalScrollOffset) {
-		this.horizontalScrollOffset = horizontalScrollOffset;
+	public void setNewHorizontalScrollOffset(double newHorizontalScrollOffset) {
+		this.newHorizontalScrollOffset = newHorizontalScrollOffset;
 	}
 
 	/**
 	 * Sets the vertical translation that will be applied when executing this
 	 * operation to the given value.
 	 *
-	 * @param verticalScrollOffset
+	 * @param newVerticalScrollOffset
 	 *            The vertical translation to apply when executing this
 	 *            operation.
 	 */
-	public void setNewVerticalScrollOffset(double verticalScrollOffset) {
-		this.verticalScrollOffset = verticalScrollOffset;
+	public void setNewVerticalScrollOffset(double newVerticalScrollOffset) {
+		this.newVerticalScrollOffset = newVerticalScrollOffset;
 	}
 
 	/**

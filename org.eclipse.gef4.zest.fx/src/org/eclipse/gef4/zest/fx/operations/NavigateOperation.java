@@ -14,6 +14,12 @@ package org.eclipse.gef4.zest.fx.operations;
 
 import java.util.Collections;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -22,6 +28,8 @@ import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.operations.ChangeContentsOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
@@ -35,13 +43,67 @@ import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
  * @author mwienand
  *
  */
-public class NavigateOperation extends ReverseUndoCompositeOperation {
+public class NavigateOperation extends ForwardUndoCompositeOperation {
+
+	private final class UpdateViewportStateOperation extends AbstractOperation implements ITransactionalOperation {
+
+		private ViewportState initialViewportState;
+		private ViewportState finalViewportState;
+
+		public UpdateViewportStateOperation(ViewportState initialViewportState) {
+			super("Update Viewport State");
+			this.initialViewportState = initialViewportState == null ? null : initialViewportState.getCopy();
+			this.finalViewportState = initialViewportState;
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+			if (finalViewportState != null) {
+				navigationModel.setViewportState(sourceGraph, finalViewportState);
+			} else {
+				navigationModel.removeViewportState(sourceGraph);
+			}
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean isContentRelevant() {
+			return false;
+		}
+
+		@Override
+		public boolean isNoOp() {
+			return initialViewportState == null ? finalViewportState == null
+					: initialViewportState.equals(finalViewportState);
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+			return execute(monitor, info);
+		}
+
+		public void setFinalViewportState(ViewportState finalViewportState) {
+			this.finalViewportState = finalViewportState;
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+			if (initialViewportState != null) {
+				navigationModel.setViewportState(sourceGraph, initialViewportState);
+			} else {
+				navigationModel.removeViewportState(sourceGraph);
+			}
+			return Status.OK_STATUS;
+		}
+
+	}
 
 	private ChangeContentsOperation changeContentsOperation;
 	private FXChangeViewportOperation changeViewportOperation;
 	private NavigationModel navigationModel;
-	private Graph initialGraph;
-	private ViewportState initialViewportState;
+	private FXViewer viewer;
+	private Graph sourceGraph;
+	private UpdateViewportStateOperation updateViewportStateOperation;
 
 	/**
 	 * Creates a new {@link NavigateOperation} that saves the layout and
@@ -54,23 +116,22 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 	 *            manipulated.
 	 */
 	public NavigateOperation(FXViewer viewer) {
-		super("NavigateGraph");
-		initialGraph = (Graph) viewer.getAdapter(ContentModel.class).getContents().get(0);
+		super("Navigate Graph");
+
+		this.viewer = viewer;
+		sourceGraph = (Graph) viewer.getAdapter(ContentModel.class).getContents().get(0);
+		// retrieve initial viewport state of source graph
 		navigationModel = viewer.getAdapter(NavigationModel.class);
 
 		// create sub-operations
+		changeContentsOperation = new ChangeContentsOperation(viewer, Collections.singletonList(sourceGraph));
 		changeViewportOperation = new FXChangeViewportOperation(viewer.getCanvas());
-		changeContentsOperation = new ChangeContentsOperation(viewer, Collections.singletonList(initialGraph));
+		updateViewportStateOperation = new UpdateViewportStateOperation(navigationModel.getViewportState(sourceGraph));
 
 		// arrange sub-operations
 		add(changeViewportOperation);
 		add(changeContentsOperation);
-
-		// persist the state of the initial graph
-		InfiniteCanvas canvas = viewer.getCanvas();
-		initialViewportState = new ViewportState(canvas.getHorizontalScrollOffset(), canvas.getVerticalScrollOffset(),
-				canvas.getWidth(), canvas.getHeight(), FX2Geometry.toAffineTransform(canvas.getContentTransform()));
-		navigationModel.setViewportState(initialGraph, initialViewportState);
+		add(updateViewportStateOperation);
 	}
 
 	/**
@@ -84,16 +145,16 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 	 * @param viewer
 	 *            The {@link FXViewer} of which the contents and viewport are
 	 *            manipulated.
-	 * @param finalGraph
+	 * @param targetGraph
 	 *            The final {@link Graph} to be displayed within the given
 	 *            {@link FXViewer}.
 	 * @param isNestedGraph
 	 *            Specifies whether or not the given <i>finalGraph</i> is a
 	 *            nested {@link Graph}.
 	 */
-	public NavigateOperation(FXViewer viewer, Graph finalGraph, boolean isNestedGraph) {
+	public NavigateOperation(FXViewer viewer, Graph targetGraph, boolean isNestedGraph) {
 		this(viewer);
-		setFinalState(finalGraph, isNestedGraph);
+		setFinalState(targetGraph, isNestedGraph);
 	}
 
 	/**
@@ -113,21 +174,35 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 	 * <code>true</code>, then the viewport that was saved for <i>finalGraph</i>
 	 * will not be restored, but instead it will be reset.
 	 *
-	 * @param finalGraph
+	 * @param targetGraph
 	 *            The {@link Graph} that is to be displayed.
 	 * @param isNestedGraph
 	 *            Specifies whether or not the given <i>finalGraph</i> is a
 	 *            nested {@link Graph}.
 	 */
-	public void setFinalState(Graph finalGraph, boolean isNestedGraph) {
-		// obtain the stored state (or an initial one) for the final graph
-		ViewportState newViewportState = navigationModel.getViewportState(finalGraph);
-		if (newViewportState == null || isNestedGraph) {
-			newViewportState = new ViewportState(0, 0, initialViewportState.getWidth(),
-					initialViewportState.getHeight(), new AffineTransform());
+	public void setFinalState(Graph targetGraph, boolean isNestedGraph) {
+		// persist the state of the current graph (before zooming in)
+		InfiniteCanvas canvas = viewer.getCanvas();
+		if (isNestedGraph) {
+			// is we are navigating to a nested graph, store our viewport
+			ViewportState sourceGraphFinalViewportState = new ViewportState(canvas.getHorizontalScrollOffset(),
+					canvas.getVerticalScrollOffset(), canvas.getWidth(), canvas.getHeight(),
+					FX2Geometry.toAffineTransform(canvas.getContentTransform()));
+			updateViewportStateOperation.setFinalViewportState(sourceGraphFinalViewportState);
+			changeViewportOperation.setInitialWidth(sourceGraphFinalViewportState.getWidth());
+			changeViewportOperation.setInitialHeight(sourceGraphFinalViewportState.getHeight());
+			changeViewportOperation.setInitialHorizontalScrollOffset(sourceGraphFinalViewportState.getTranslateX());
+			changeViewportOperation.setInitialVerticalScrollOffset(sourceGraphFinalViewportState.getTranslateY());
+			changeViewportOperation.setInitialContentTransform(sourceGraphFinalViewportState.getContentsTransform());
+		} else {
+			updateViewportStateOperation.setFinalViewportState(null);
 		}
 
 		// update the change viewport operation
+		ViewportState newViewportState = navigationModel.getViewportState(targetGraph);
+		if (newViewportState == null || isNestedGraph) {
+			newViewportState = new ViewportState(0, 0, canvas.getWidth(), canvas.getHeight(), new AffineTransform());
+		}
 		changeViewportOperation.setNewWidth(newViewportState.getWidth());
 		changeViewportOperation.setNewHeight(newViewportState.getHeight());
 		changeViewportOperation.setNewHorizontalScrollOffset(newViewportState.getTranslateX());
@@ -135,7 +210,7 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 		changeViewportOperation.setNewContentTransform(newViewportState.getContentsTransform());
 
 		// update the change contents operation
-		changeContentsOperation.setNewContents(Collections.singletonList(finalGraph));
+		changeContentsOperation.setNewContents(Collections.singletonList(targetGraph));
 	}
 
 }

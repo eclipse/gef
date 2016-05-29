@@ -13,7 +13,6 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -179,6 +178,9 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		boolean isNested = getNestingPart() != null;
 		boolean isViewportChanged = savedViewport != null
 				&& (savedViewport.getWidth() != canvas.getWidth() || savedViewport.getHeight() != canvas.getHeight());
+		// TODO: we should store one viewport state for the viewport of the
+		// nesting part and one for the viewport of the graph part, so that
+		// nested graphs are not unnecessarily layouted
 		if (savedViewport == null || isNested || isViewportChanged) {
 			LayoutProperties.setBounds(getHost().getContent(), computeLayoutBounds());
 			applyLayout(true);
@@ -190,15 +192,6 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		LayoutContext layoutContext = getLayoutContext();
 		layoutContext.unschedulePreLayoutPass(preLayout);
 		layoutContext.unschedulePostLayoutPass(postLayout);
-
-		// store the viewport state (in case navigation is supported)
-		Rectangle bounds = LayoutProperties.getBounds(getHost().getContent());
-		NavigationModel navigationModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
-		if (navigationModel != null) {
-			navigationModel.setViewportState(getHost().getContent(), new ViewportState(0, 0, bounds.getWidth(),
-					bounds.getHeight(), FX2Geometry.toAffineTransform(getInfiniteCanvas().getContentTransform())));
-		}
-
 		if (nestingVisual != null) {
 			// remove layout change listener from nesting visual
 			nestingVisual.layoutBoundsProperty().removeListener(nestingVisualLayoutBoundsChangeListener);
