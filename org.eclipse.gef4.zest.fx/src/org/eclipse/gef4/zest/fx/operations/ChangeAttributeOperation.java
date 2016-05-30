@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
+ *     Alexander Nyßen (itemis AG)  - initial API & implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.operations;
@@ -19,15 +20,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.attributes.IAttributeStore;
-import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
- * The {@link ChangeAttributeOperation} can be used to manipulate the position
- * of a {@link Node}.
+ * The {@link ChangeAttributeOperation} can be used to manipulate the value of
+ * an attribute of an {@link IAttributeStore}.
  *
  * @author mwienand
+ * @author anyssen
  *
  */
 public class ChangeAttributeOperation extends AbstractOperation implements ITransactionalOperation {
@@ -38,22 +38,22 @@ public class ChangeAttributeOperation extends AbstractOperation implements ITran
 	private Object oldAttributeValue;
 
 	/**
-	 * Constructs a new {@link ChangeAttributeOperation} that can be used to
-	 * manipulate the position of the given {@link Node}.
+	 * Constructs a new {@link ChangeAttributeOperation} to manipulate the value
+	 * of an attribute for the given {@link IAttributeStore}.
 	 *
-	 * @param element
-	 *            The {@link Node} or {@link Edge} that is manipulated by this
+	 * @param attributeStore
+	 *            The {@link IAttributeStore} that is manipulated by this
 	 *            operation.
 	 * @param attributeKey
-	 *            The key of the attribute to set for the given Node.
+	 *            The key that identifies the attribute to change.
 	 * @param attributeValue
-	 *            The value of the attribute to set for the given Node.
+	 *            The new value of the attribute.
 	 */
-	public ChangeAttributeOperation(IAttributeStore element, String attributeKey, Object attributeValue) {
+	public ChangeAttributeOperation(IAttributeStore attributeStore, String attributeKey, Object attributeValue) {
 		super("Change attribute value");
-		this.element = element;
+		this.element = attributeStore;
 		this.attributeKey = attributeKey;
-		this.oldAttributeValue = element.attributesProperty().get(attributeKey);
+		this.oldAttributeValue = attributeStore.attributesProperty().get(attributeKey);
 		this.newAttributeValue = attributeValue;
 	}
 
