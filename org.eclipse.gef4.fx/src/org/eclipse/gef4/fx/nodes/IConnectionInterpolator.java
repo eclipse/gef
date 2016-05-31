@@ -7,17 +7,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen  (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
 /**
  * An {@link IConnectionInterpolator} is responsible for updating the
- * {@link Connection}'s {@link Connection#getCurve() curve node} (which
- * includes to properly clip it at the start and end decorations), as well as
- * for arranging the decorations.
+ * {@link Connection}'s {@link Connection#getCurve() curve node} (which includes
+ * to properly clip it at the start and end decorations), as well as for
+ * arranging the decorations.
+ *
+ * @author anyssen
+ * @author mwienand
  */
 public interface IConnectionInterpolator {
 

@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen  (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -21,8 +21,8 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
  * adjustment} of a {@link Connection}'s points. This may also include providing
  * reference points for {@link DynamicAnchor}s the connection is attached to.
  *
- * @author mwienand
  * @author anyssen
+ * @author mwienand
  */
 public interface IConnectionRouter {
 

@@ -7,6 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -21,6 +22,7 @@ import org.eclipse.gef4.geometry.planar.Polyline;
  * {@link javafx.scene.shape.Polyline} through the given {@link Connection}'s
  * points.
  *
+ * @author anyssen
  * @author mwienand
  *
  */
@@ -28,7 +30,8 @@ public class PolylineInterpolator extends AbstractInterpolator {
 
 	@Override
 	protected ICurve computeCurve(Connection connection) {
-		return new Polyline(connection.getPointsUnmodifiable().toArray(new Point[] {}));
+		return new Polyline(
+				connection.getPointsUnmodifiable().toArray(new Point[] {}));
 	}
 
 }

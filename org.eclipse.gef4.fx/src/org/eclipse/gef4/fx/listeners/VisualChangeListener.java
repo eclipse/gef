@@ -6,6 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -36,6 +37,7 @@ import javafx.scene.transform.Transform;
  * transformation change. Transformation listeners are registered for all nodes
  * in the hierarchy up to a specific parent.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

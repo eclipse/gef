@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen (itemis AG) - cleanup of API
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -31,8 +31,8 @@ import javafx.util.Duration;
  * A {@link Group} that combines two {@link ImageView}s, realizing an overlay
  * effect (by adjusting the respective opacities) upon mouse hover.
  *
- * @author mwienand
  * @author anyssen
+ * @author mwienand
  *
  */
 // TODO: extract magic numbers to properties

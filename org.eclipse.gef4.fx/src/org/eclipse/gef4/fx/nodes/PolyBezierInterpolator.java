@@ -7,6 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -23,6 +24,7 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
  * The {@link PolyBezierInterpolator} interpolates a cubic Bezier spline through
  * the supplied {@link Point way points}.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

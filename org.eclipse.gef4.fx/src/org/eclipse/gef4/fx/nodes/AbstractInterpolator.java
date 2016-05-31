@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen  (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -40,6 +41,7 @@ import javafx.scene.transform.Translate;
  * well as arranging and clipping the decorations.
  *
  * @author anyssen
+ * @autor mwienand
  *
  */
 public abstract class AbstractInterpolator implements IConnectionInterpolator {

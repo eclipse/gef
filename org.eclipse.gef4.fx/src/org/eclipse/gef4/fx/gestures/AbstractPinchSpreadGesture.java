@@ -6,6 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -20,6 +21,7 @@ import javafx.scene.input.ZoomEvent;
  * {@link #zoomStarted(ZoomEvent)}, {@link #zoom(ZoomEvent)}, and
  * {@link #zoomFinished(ZoomEvent)} methods.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

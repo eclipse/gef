@@ -7,6 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -39,6 +40,7 @@ import javafx.scene.shape.Shape;
  * The utility class {@link Geometry2Shape} provides methods for the conversion
  * of {@link IGeometry} implementations to JavaFX {@link Shape} implementations.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

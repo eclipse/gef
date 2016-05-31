@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen  (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -30,6 +30,7 @@ import javafx.scene.Node;
  * {@link Connection}'s control points untouched and only provides reference
  * points for the {@link Connection}'s anchors.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

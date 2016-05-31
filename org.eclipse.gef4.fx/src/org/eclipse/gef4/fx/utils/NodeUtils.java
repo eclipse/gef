@@ -7,6 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -62,8 +63,8 @@ import javafx.scene.transform.Affine;
  * scene graph ({@link #getNodesAt(Node, double, double)})</li>
  * </ul>
  *
- * @author mwienand
  * @author anyssen
+ * @author mwienand
  *
  */
 public class NodeUtils {

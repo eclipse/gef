@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen (itemis AG)  - refactorings and cleanups
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -160,6 +160,9 @@ import javafx.util.Duration;
  * <li>The {@link #getScrolledOverlayGroup()} is rendered above the
  * {@link #getContentGroup()}.
  * </ul>
+ *
+ * @author anyssen
+ * @author mwienand
  */
 public class InfiniteCanvas extends Region {
 

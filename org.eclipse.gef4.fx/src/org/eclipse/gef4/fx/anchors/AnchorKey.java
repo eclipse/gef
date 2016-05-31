@@ -6,6 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -14,9 +15,10 @@ package org.eclipse.gef4.fx.anchors;
 import javafx.scene.Node;
 
 /**
- * AnchorKey represents a set of anchored {@link Node} and additional
- * {@link String} ID to identify one anchor target.
+ * AnchorKey combines an anchored {@link Node} with a {@link String} qualifier
+ * to identify an anchor target.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

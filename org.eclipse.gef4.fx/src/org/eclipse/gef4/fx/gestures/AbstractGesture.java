@@ -6,6 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -14,10 +15,11 @@ package org.eclipse.gef4.fx.gestures;
 import javafx.scene.Scene;
 
 /**
- * The {@link AbstractGesture} is the base class for all gestures defined
- * within GEF4 FX. It manages the (un-)registration of event listeners based on
- * the availability of a JavaFX {@link Scene}.
+ * The {@link AbstractGesture} is the base class for all gestures defined within
+ * GEF4 FX. It manages the (un-)registration of event listeners based on the
+ * availability of a JavaFX {@link Scene}.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

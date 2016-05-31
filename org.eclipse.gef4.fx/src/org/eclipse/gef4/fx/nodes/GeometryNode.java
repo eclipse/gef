@@ -7,6 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -66,8 +67,8 @@ import javafx.scene.shape.StrokeType;
  * recognized by the {@link GeometryNode} unless the {@link #geometryProperty()
  * geometry property} is changed.
  *
- * @author mwienand
  * @author anyssen
+ * @author mwienand
  *
  * @param <T>
  *            An {@link IGeometry} used to define the geometric shape of this

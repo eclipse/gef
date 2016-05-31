@@ -6,6 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -27,6 +28,7 @@ import javafx.scene.input.MouseEvent;
  * {@link #drag(Node, MouseEvent, double, double)}, and
  * {@link #release(Node, MouseEvent, double, double)} methods.
  *
+ * @author anyssen
  * @author mwienand
  *
  */

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
@@ -30,6 +31,9 @@ import javafx.scene.Node;
 /**
  * A specific projection strategy that is based on a center-projection of the
  * given reference point.
+ *
+ * @author anyssen
+ * @author mwienand
  */
 public class ChopBoxStrategy extends ProjectionStrategy {
 	/**

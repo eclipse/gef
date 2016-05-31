@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen  (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -74,8 +74,8 @@ import javafx.scene.transform.Transform;
  * be rendered 'on-top' of the curveProperty shape and the curveProperty shape
  * will be properly clipped at the decorations (so it does not paint through).
  *
- * @author mwienand
  * @author anyssen
+ * @author mwienand
  *
  */
 public class Connection extends Group {

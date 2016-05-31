@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.gestures;
@@ -21,6 +22,7 @@ import javafx.scene.input.RotateEvent;
  * {@link #rotationFinished(RotateEvent)} methods.
  *
  * @author anyssen
+ * @author mwienand
  *
  */
 public abstract class AbstractRotateGesture extends AbstractGesture {

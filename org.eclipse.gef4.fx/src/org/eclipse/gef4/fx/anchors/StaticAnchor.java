@@ -6,6 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
@@ -26,8 +27,8 @@ import javafx.scene.Node;
  * {@link StaticAnchor} is bound, or based on a (global) static reference
  * position in case the {@link StaticAnchor} is unbound.
  *
- * @author mwienand
  * @author anyssen
+ * @author mwienand
  */
 public class StaticAnchor extends AbstractAnchor {
 

@@ -16,6 +16,8 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The {@link BundleActivator} for the FX bundle.
+ *
+ * @author anyssen
  */
 public class FxBundle implements BundleActivator {
 

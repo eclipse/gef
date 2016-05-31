@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
@@ -25,7 +26,10 @@ import javafx.scene.Node;
 /**
  * The {@link IComputationStrategy} is responsible for computing anchor
  * positions based on the anchorage {@link Node}, the anchored {@link Node}, and
- * respective (strategy-specific) {@link Parameter parameters}. ).
+ * respective (strategy-specific) {@link Parameter parameters}.
+ *
+ * @author anyssen
+ * @author mwienand
  */
 public interface IComputationStrategy {
 

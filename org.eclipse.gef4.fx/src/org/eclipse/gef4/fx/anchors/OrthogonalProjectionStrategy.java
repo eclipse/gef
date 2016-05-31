@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
@@ -29,6 +30,9 @@ import javafx.geometry.Orientation;
  * anchorage reference geometry so that the respective point has minimal
  * distance to the anchored reference point and resembles the same x- (vertical
  * projection) or y-coordinate (horizontal projection).
+ *
+ * @author anyssen
+ * @author mwienand
  */
 public class OrthogonalProjectionStrategy extends ProjectionStrategy {
 
