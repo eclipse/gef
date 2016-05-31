@@ -41,7 +41,7 @@ import javafx.scene.transform.Translate;
  * well as arranging and clipping the decorations.
  *
  * @author anyssen
- * @autor mwienand
+ * @author mwienand
  *
  */
 public abstract class AbstractInterpolator implements IConnectionInterpolator {
