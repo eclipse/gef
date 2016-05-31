@@ -37,10 +37,10 @@ import javafx.collections.ObservableList;
 
 /**
  * An {@link IVisualPart} plays the controller role in the model-view-controller
- * architecture. While it does not have to bound to a model (actually only
+ * architecture. While it does not have to be bound to a model (actually only
  * {@link IContentPart}s are bound to model elements, {@link IFeedbackPart}s and
  * {@link IHandlePart}s do not refer to model elements), an {@link IVisualPart}
- * controls a visual and is responsible of handling user interaction.
+ * always controls a visual.
  * <p>
  * Within an {@link IViewer}, {@link IVisualPart} are organized in a hierarchy
  * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
@@ -56,13 +56,13 @@ import javafx.collections.ObservableList;
  * required in case the {@link IVisualPart} is directly involved in user
  * interaction (e.g. the user clicks on its controlled visual). They may be
  * accessed type-safe by {@link ITool}s or other {@link IPolicy}s (
- * {@link IPolicy}s may delegate to other {@link IPolicy}s) via their class key
- * (see {@link IAdaptable}). {@link IBehavior}s are used to react to changes of
- * the attached model (in case of an {@link IContentPart}s), the viewer models,
- * or others sources (e.g. adapters of the {@link IViewer} or {@link IDomain}),
- * thereby reacting to changes of the interactive state.
+ * {@link IPolicy}s may delegate to other {@link IPolicy}s)). {@link IBehavior}s
+ * are used to react to changes of the attached model (in case of an
+ * {@link IContentPart}s), the viewer models, or others sources (e.g. adapters
+ * of the {@link IViewer} or {@link IDomain}), thereby reacting to changes of
+ * the interactive state.
  * <p>
- * {@link IVisualPart}s are activatable ({@link IActivatable}), and an
+ * {@link IVisualPart}s are {@link IActivatable} activatable, and an
  * activation/deactivation of an {@link IVisualPart} will result in the
  * activation/deactivation of all registered adapters (i.e. {@link IPolicy}s and
  * {@link IBehavior}s).
