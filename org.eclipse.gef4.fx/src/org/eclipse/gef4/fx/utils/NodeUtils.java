@@ -24,6 +24,7 @@ import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.ITranslatable;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -368,7 +369,8 @@ public class NodeUtils {
 	public static IGeometry getShapeOutline(Node node) {
 		try {
 			IGeometry geometry = NodeUtils.getGeometricOutline(node);
-			if (geometry != null) {
+			if (geometry instanceof IShape
+					|| geometry instanceof org.eclipse.gef4.geometry.planar.Path) {
 				// resize to layout-bounds to include stroke if not a curve
 				return NodeUtils.getResizedToShapeBounds(node, geometry);
 			}
