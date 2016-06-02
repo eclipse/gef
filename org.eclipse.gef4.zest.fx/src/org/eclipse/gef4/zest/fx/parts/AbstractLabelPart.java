@@ -39,7 +39,10 @@ import javafx.scene.transform.Transform;
 import javafx.util.Pair;
 
 /**
- * Abstract base class for external labels.
+ * Abstract base class for external labels, i.e. labels that are not part of the
+ * visualization of another controller. The standard node label is part of the
+ * node part's visualization. However, edge labels are implemented as external
+ * labels, for example.
  *
  * @author anyssen
  *

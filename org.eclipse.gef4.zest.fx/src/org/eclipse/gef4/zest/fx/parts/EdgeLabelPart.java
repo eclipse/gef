@@ -19,7 +19,6 @@ import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
@@ -32,7 +31,7 @@ import javafx.scene.text.Text;
 import javafx.util.Pair;
 
 /**
- * The {@link EdgeLabelPart} is an {@link AbstractVisualPart} that is used to
+ * The {@link EdgeLabelPart} is an {@link AbstractLabelPart} that is used to
  * display the label of an edge.
  *
  * @author mwienand

@@ -24,6 +24,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import javafx.scene.Node;
 
 /**
+ * The {@link ZestFxSelectionHandlePartFactory} is a specialization of the
+ * {@link FXDefaultSelectionHandlePartFactory} that suppresses the generation of
+ * multi selection handles.
  *
  * @author mwienand
  *

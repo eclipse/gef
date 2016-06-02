@@ -30,6 +30,10 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
+ * The {@link ZestFxHoverHandlePartFactory} is a specialization of the
+ * {@link FXDefaultHoverHandlePartFactory} that performs the generation of
+ * "hide" and "show" hover handles.
+ *
  * @author mwienand
  *
  */
