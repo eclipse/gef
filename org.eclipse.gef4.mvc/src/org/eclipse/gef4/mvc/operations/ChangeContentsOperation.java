@@ -120,6 +120,24 @@ public class ChangeContentsOperation extends AbstractOperation
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Returns the list containing the initial contents by reference.
+	 *
+	 * @return the list containing the initial contents by reference.
+	 */
+	protected List<? extends Object> getInitialContents() {
+		return initialContents;
+	}
+
+	/**
+	 * Returns the list containing the new contents by reference.
+	 *
+	 * @return the list containing the new contents by reference.
+	 */
+	protected List<? extends Object> getNewContents() {
+		return newContents;
+	}
+
 	@Override
 	public boolean isContentRelevant() {
 		return true;
