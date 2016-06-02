@@ -1,20 +1,24 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -63,6 +67,97 @@ public class PathTests {
 		assertFalse(differencePath.contains(new Point(75, 125)));
 		assertFalse(differencePath.contains(new Point(125, 75)));
 		assertFalse(differencePath.contains(new Point(125, 125)));
+	}
+
+	@Test
+	public void test_getBounds_cubic() {
+		// create path using all segment types
+		Path path = new Path(
+				new Path.Segment(Path.Segment.MOVE_TO, new Point(10, 10)),
+				new Path.Segment(Path.Segment.LINE_TO, new Point(80, 10)),
+				new Path.Segment(Path.Segment.QUAD_TO, new Point(50, 50),
+						new Point(80, 80)),
+				new Path.Segment(Path.Segment.CUBIC_TO, new Point(50, 50),
+						new Point(30, 100), new Point(10, 80)),
+				new Path.Segment(Path.Segment.CLOSE));
+
+		// determine bounds
+		Rectangle bounds = path.getBounds();
+
+		// verify bounds start at 10, 10
+		assertEquals(10, bounds.getX(), 0.01);
+		assertEquals(10, bounds.getY(), 0.01);
+
+		// compute and union the individual segment bounds
+		List<ICurve> outlines = path.getOutlines();
+		Rectangle outlineBounds = outlines.get(0).getBounds();
+		for (int i = 1; i < outlines.size(); i++) {
+			outlineBounds.union(outlines.get(i).getBounds());
+		}
+
+		// verify the computed bounds are equal to the bounds as returned by the
+		// path
+		assertEquals(outlineBounds, bounds);
+	}
+
+	@Test
+	public void test_getBounds_linear() {
+		// create path using all segment types
+		Path path = new Path(
+				new Path.Segment(Path.Segment.MOVE_TO, new Point(10, 10)),
+				new Path.Segment(Path.Segment.LINE_TO, new Point(80, 10)),
+				new Path.Segment(Path.Segment.LINE_TO, new Point(80, 80)),
+				new Path.Segment(Path.Segment.LINE_TO, new Point(10, 80)),
+				new Path.Segment(Path.Segment.CLOSE));
+
+		// determine bounds
+		Rectangle bounds = path.getBounds();
+
+		// verify bounds start at 10, 10
+		assertEquals(10, bounds.getX(), 0.01);
+		assertEquals(10, bounds.getY(), 0.01);
+
+		// compute and union the individual segment bounds
+		List<ICurve> outlines = path.getOutlines();
+		Rectangle outlineBounds = outlines.get(0).getBounds();
+		for (int i = 1; i < outlines.size(); i++) {
+			outlineBounds.union(outlines.get(i).getBounds());
+		}
+
+		// verify the computed bounds are equal to the bounds as returned by the
+		// path
+		assertEquals(outlineBounds, bounds);
+	}
+
+	@Test
+	public void test_getBounds_quadratic() {
+		// create path using all segment types
+		Path path = new Path(
+				new Path.Segment(Path.Segment.MOVE_TO, new Point(10, 10)),
+				new Path.Segment(Path.Segment.LINE_TO, new Point(80, 10)),
+				new Path.Segment(Path.Segment.QUAD_TO, new Point(50, 50),
+						new Point(80, 80)),
+				new Path.Segment(Path.Segment.QUAD_TO, new Point(50, 50),
+						new Point(10, 80)),
+				new Path.Segment(Path.Segment.CLOSE));
+
+		// determine bounds
+		Rectangle bounds = path.getBounds();
+
+		// verify bounds start at 10, 10
+		assertEquals(10, bounds.getX(), 0.01);
+		assertEquals(10, bounds.getY(), 0.01);
+
+		// compute and union the individual segment bounds
+		List<ICurve> outlines = path.getOutlines();
+		Rectangle outlineBounds = outlines.get(0).getBounds();
+		for (int i = 1; i < outlines.size(); i++) {
+			outlineBounds.union(outlines.get(i).getBounds());
+		}
+
+		// verify the computed bounds are equal to the bounds as returned by the
+		// path
+		assertEquals(outlineBounds, bounds);
 	}
 
 }
