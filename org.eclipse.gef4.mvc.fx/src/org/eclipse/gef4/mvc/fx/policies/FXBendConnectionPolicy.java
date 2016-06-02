@@ -804,6 +804,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			return;
 		}
 
+		// enable hint computation
+		usePreMoveHints = false;
+
 		// execute operation so that changes are applied
 		locallyExecuteOperation();
 
