@@ -371,7 +371,7 @@ public class NodeUtils {
 			IGeometry geometry = NodeUtils.getGeometricOutline(node);
 			if (geometry instanceof ICurve) {
 				// XXX: Return as is because fat curves cannot be constructed
-				// yet (see bug # for details).
+				// yet (see bug #495290 for details).
 				return geometry;
 			}
 			if (geometry != null) {
