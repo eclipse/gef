@@ -163,6 +163,15 @@ public class BezierCurveTests {
 		// XXX: The difference is larger than 0.1, because it seems that Path2D
 		// returns not really tight bounds
 		assertEquals(c1Path2DBounds.getWidth(), c1Bounds.getWidth(), 0.15);
+
+		// test another curve
+		BezierCurve c2 = new BezierCurve(new Point(80, 80), new Point(50, 50),
+				new Point(30, 100), new Point(10, 80));
+		Rectangle c2bounds = c2.getBounds();
+		Rectangle c2pathBounds = AWT2Geometry
+				.toRectangle(Geometry2AWT.toAWTPath(c2.toPath()).getBounds2D());
+		assertEquals(c2pathBounds.getHeight(), c2bounds.getHeight(), 0.1);
+		assertEquals(c2pathBounds.getWidth(), c2bounds.getWidth(), 0.1);
 	}
 
 	@Test
