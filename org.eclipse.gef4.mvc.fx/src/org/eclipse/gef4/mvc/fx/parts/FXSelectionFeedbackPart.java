@@ -97,7 +97,8 @@ public class FXSelectionFeedbackPart
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelectionUnmodifiable();
-		if (selected.get(0) == anchorage) {
+		if (selected != null && selected.size() > 0
+				&& selected.get(0) == anchorage) {
 			// primary selection
 			visual.setStroke(getPrimarySelectionColor());
 			// XXX: place before focus feedback
