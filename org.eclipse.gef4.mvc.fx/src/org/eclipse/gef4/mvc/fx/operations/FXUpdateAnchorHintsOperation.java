@@ -22,7 +22,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
- *
+ * The {@link FXUpdateAnchorHintsOperation} can be used to update the
+ * start-point-hint and end-point-hint of a {@link Connection}.
  */
 public class FXUpdateAnchorHintsOperation extends AbstractOperation
 		implements ITransactionalOperation {
@@ -34,6 +35,10 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 	private Point newEndHint;
 
 	/**
+	 * Constructs a new {@link FXUpdateAnchorHintsOperation} that can be used to
+	 * update the start-point-hint and end-point-hint of the given
+	 * {@link Connection}.
+	 *
 	 * @param connection
 	 *            The {@link Connection}.
 	 */
@@ -97,7 +102,6 @@ public class FXUpdateAnchorHintsOperation extends AbstractOperation
 	 *            The new start hint.
 	 * @param newEndHint
 	 *            The new end hint.
-	 *
 	 */
 	public void setNewHints(Point newStartHint, Point newEndHint) {
 		this.newStartHint = newStartHint == null ? null
