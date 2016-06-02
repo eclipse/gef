@@ -458,8 +458,15 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	@Override
 	public Rectangle getBounds() {
-		return AWT2Geometry
-				.toRectangle(Geometry2AWT.toAWTPath(this).getBounds2D());
+		List<ICurve> outlines = getOutlines();
+		if (outlines == null || outlines.size() > 0) {
+			Rectangle outlineBounds = outlines.get(0).getBounds();
+			for (int i = 1; i < outlines.size(); i++) {
+				outlineBounds.union(outlines.get(i).getBounds());
+			}
+			return outlineBounds;
+		}
+		return new Rectangle();
 	}
 
 	@Override
