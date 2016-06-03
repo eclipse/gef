@@ -57,23 +57,23 @@
             visible="true"
             id="file.actions">
            <action
-               label="Export Image"
+               label="Export Tag Cloud to Image"
                class="org.eclipse.gef4.cloudio.internal.ui.actions.ExportImageAction"
-               tooltip="Export image"
+               tooltip="Export tag cloud to image"
                menubarPath="file/additions"
                id="org.eclipse.gef4.cloudio.internal.ui.actions.ExportImage">
            </action>
 		   <action
-               label="Load Stopwords"
+               label="Load Stopwords from File"
                class="org.eclipse.gef4.cloudio.internal.ui.actions.LoadStopWordsAction"
-               tooltip="Load stop word list"
+               tooltip="Load stopwords from file"
                menubarPath="file/additions"
                id="org.eclipse.gef4.cloudio.internal.ui.actions.LoadStopWords">
                </action>
          <action
-               label="Load File"
+               label="Load Words from File"
                class="org.eclipse.gef4.cloudio.internal.ui.actions.LoadFileAction"
-               tooltip="Load a new File"
+               tooltip="Load words from file"
                menubarPath="file/additions"
                id="org.eclipse.gef4.cloudio.internal.ui.actions.LoadFile">
          </action>
