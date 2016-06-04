@@ -11,6 +11,6 @@
  -->
 <toc label="GEF4 DOT Developer Documentation">
    <link toc="reference/wiki/GEF-GEF4-DOT-toc.xml"/>
-   <topic href="reference/api/org/eclipse/gef4/dot/package-summary.html" label="API Reference">
+   <topic href="reference/api/overview-summary.html" label="API Reference">
 	</topic>
 </toc>
