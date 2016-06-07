@@ -94,6 +94,7 @@ public class ChangeContentsOperation extends AbstractOperation
 	 * @param contents
 	 *            The new content objects to store in the {@link ContentModel}.
 	 */
+	// TODO: pass in content model instead of viewer
 	public ChangeContentsOperation(String label, IViewer<?> viewer,
 			List<? extends Object> contents) {
 		super(label);
