@@ -10,6 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     Alexander Nyßen  (itemis AG) - initial API & implementation
  *     Tamas Miklossy   (itemis AG) - Add support for arrowType edge decorations (bug #477980)
+ *                                  - Add support for polygon-based node shapes (bug #441352)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
@@ -416,6 +417,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					.getShape()).getShape();
 			// handle different polygon shapes
 			if (PolygonBasedNodeShape.CIRCLE.equals(polygonShape)
+					|| PolygonBasedNodeShape.ELLIPSE.equals(polygonShape)
 					|| PolygonBasedNodeShape.OVAL.equals(polygonShape)) {
 				ZestProperties.setShape(zest,
 						new GeometryNode<>(new Ellipse(new Rectangle())));
@@ -428,6 +430,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			} else if (PolygonBasedNodeShape.DIAMOND.equals(polygonShape)) {
 				ZestProperties.setShape(zest, new GeometryNode<>(
 						new Polygon(0, 50, 50, 0, 100, 50, 50, 100, 0, 50)));
+			} else if (PolygonBasedNodeShape.INVTRIANGLE.equals(polygonShape)) {
+				ZestProperties.setShape(zest, new GeometryNode<>(
+						new Polygon(0, 10, 100, 10, 50, 100, 0, 10)));
+			} else if (PolygonBasedNodeShape.TRIANGLE.equals(polygonShape)) {
+				ZestProperties.setShape(zest, new GeometryNode<>(
+						new Polygon(0, 50, 50, 0, 100, 50, 0, 50)));
 			} else {
 				// TODO: handle other polygon shapes
 			}
