@@ -31,13 +31,16 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.graph" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.layout" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc.fx" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc.fx.ui" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.zest.fx" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.zest.fx.ui" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.dot" version="1.0.0" match="equivalent"/>
+   	  <import feature="org.eclipse.gef4.common" version="1.0.0" match="compatible"/>
+   	  <import feature="org.eclipse.gef4.geometry" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.graph" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.layout" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.fx" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.mvc.fx" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.mvc.fx.ui" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.zest.fx" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.zest.fx.ui" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.dot" version="1.0.0" match="compatible"/>
       <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 

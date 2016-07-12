@@ -31,12 +31,12 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.common.doc" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.geometry.doc" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.fx.doc" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc.doc" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.graph.doc" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.layout.doc" version="1.0.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.common.doc" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.geometry.doc" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.fx.doc" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.mvc.doc" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.graph.doc" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.layout.doc" version="1.0.0" match="compatible"/>
    </requires>
 
    <plugin

@@ -47,10 +47,13 @@
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.gef4.graph.sdk" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.layout.sdk" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc.sdk" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.zest.sdk" version="1.0.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.common.sdk" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.geometry.sdk" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.fx.sdk" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.graph.sdk" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.layout.sdk" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.mvc.sdk" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.zest.sdk" version="1.0.0" match="compatible"/>
    </requires>
 
 </feature>
