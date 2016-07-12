@@ -22,6 +22,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
@@ -224,9 +225,24 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		ads.dispose();
 	}
 
+	/**
+	 * @deprecated Use
+	 *             {@link #execute(ITransactionalOperation, IProgressMonitor)}
+	 *             instead. This method will be removed in GEF 5.0.0.
+	 */
+	@Deprecated
 	@Override
 	public void execute(ITransactionalOperation operation)
 			throws ExecutionException {
+		execute(operation, new NullProgressMonitor());
+	}
+
+	/**
+	 * @since 1.1
+	 */
+	@Override
+	public void execute(ITransactionalOperation operation,
+			IProgressMonitor monitor) throws ExecutionException {
 		// reduce composite operations
 		if (operation instanceof AbstractCompositeOperation) {
 			operation = ((AbstractCompositeOperation) operation).unwrap(true);
@@ -241,13 +257,12 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		}
 		if (transaction != null) {
 			// execute operation locally and add it to the current transaction
-			operation.execute(new NullProgressMonitor(), null);
+			operation.execute(monitor, null);
 			transaction.add(operation);
 		} else {
 			// execute operation directly on operation history
 			applyUndoContext(operation);
-			getOperationHistory().execute(operation, new NullProgressMonitor(),
-					null);
+			getOperationHistory().execute(operation, monitor, null);
 		}
 	}
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 MVC.FX
 Bundle-SymbolicName: org.eclipse.gef4.mvc.fx
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.gef4.fx;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.gef4.geometry;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.gef4.geometry.convert.fx;bundle-version="[1.0.0,2.0.0)",
- org.eclipse.gef4.mvc;bundle-version="[1.0.0,2.0.0)"
+ org.eclipse.gef4.mvc;bundle-version="[1.1.0,2.0.0)"
 Export-Package: org.eclipse.gef4.mvc.fx;uses:="com.google.inject.multibindings",
  org.eclipse.gef4.mvc.fx.behaviors,
  org.eclipse.gef4.mvc.fx.domain,

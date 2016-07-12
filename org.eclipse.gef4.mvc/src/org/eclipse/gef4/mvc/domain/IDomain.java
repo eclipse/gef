@@ -20,6 +20,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.UndoContext;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
@@ -62,7 +63,27 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	public void closeExecutionTransaction(ITool<VR> tool);
 
 	/**
-	 * Will execute the given {@link IUndoableOperation} on the
+	 * Executes the given {@link IUndoableOperation} on the
+	 * {@link IOperationHistory} used by this {@link IDomain} (see
+	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
+	 * {@link IDomain}.
+	 *
+	 * @param operation
+	 *            The {@link IUndoableOperation} to be executed on the
+	 *            {@link IOperationHistory} of this {@link IDomain}.
+	 * @throws ExecutionException
+	 *             In case an exception occurred during the execution of the
+	 *             operation.
+	 *
+	 * @deprecated Use #execute(ITransactionalOperation, IProgressMonitor)
+	 *             instead. This method will be removed in GEF 5.0.0.
+	 */
+	@Deprecated
+	public void execute(ITransactionalOperation operation)
+			throws ExecutionException;
+
+	/**
+	 * Executes the given {@link IUndoableOperation} on the
 	 * {@link IOperationHistory} used by this {@link IDomain} (see
 	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
 	 * {@link IDomain}.
@@ -79,12 +100,16 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	 * @param operation
 	 *            The {@link IUndoableOperation} to be executed on the
 	 *            {@link IOperationHistory} of this {@link IDomain}.
+	 * @param monitor
+	 *            An {@link IProgressMonitor} used to indicate progress. May be
+	 *            <code>null</code>.
 	 * @throws ExecutionException
 	 *             In case an exception occurred during the execution of the
 	 *             operation.
+	 * @since 1.1
 	 */
-	public void execute(ITransactionalOperation operation)
-			throws ExecutionException;
+	public void execute(ITransactionalOperation operation,
+			IProgressMonitor monitor) throws ExecutionException;
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.

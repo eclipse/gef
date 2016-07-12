@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -148,7 +149,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 
 		// execute on stack
 		try {
-			getHost().getRoot().getViewer().getDomain().execute(deselectOperation);
+			getHost().getRoot().getViewer().getDomain().execute(deselectOperation, new NullProgressMonitor());
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}

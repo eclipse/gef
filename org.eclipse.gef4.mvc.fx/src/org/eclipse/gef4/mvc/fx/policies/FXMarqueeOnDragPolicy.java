@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
@@ -314,8 +315,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 
 		// select the selectable parts contained within the marquee area
 		try {
-			root.getViewer().getDomain()
-					.execute(new SelectOperation<>(root.getViewer(), parts));
+			root.getViewer().getDomain().execute(
+					new SelectOperation<>(root.getViewer(), parts),
+					new NullProgressMonitor());
 		} catch (ExecutionException e1) {
 			throw new IllegalStateException(e1);
 		}

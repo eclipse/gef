@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 MVC Logo Example (Web)
 Bundle-SymbolicName: org.eclipse.gef4.mvc.examples.logo.web
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.reflect;version="[12.0.0,16.0.0)",

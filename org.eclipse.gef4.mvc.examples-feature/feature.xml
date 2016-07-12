@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef4.mvc.examples"
       label="GEF4 MVC Examples"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.mvc.examples"
       license-feature="org.eclipse.license"
@@ -37,7 +37,7 @@
       <import feature="org.eclipse.gef4.geometry.convert.fx" version="1.0.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.fx" version="1.0.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.fx.swt" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc" version="1.0.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc" version="1.1.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.mvc.fx" version="1.0.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.mvc.fx.ui" version="1.0.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.mvc.ui" version="1.0.0" match="equivalent"/>

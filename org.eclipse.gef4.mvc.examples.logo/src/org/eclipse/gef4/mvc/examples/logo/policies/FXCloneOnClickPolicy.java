@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -34,8 +35,7 @@ import com.google.common.reflect.TypeToken;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
-		implements IFXOnClickPolicy {
+public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node> implements IFXOnClickPolicy {
 
 	@SuppressWarnings("serial")
 	@Override
@@ -45,21 +45,16 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 		}
 
 		// clone content
-		Object cloneContent = getHost()
-				.getAdapter(AbstractCloneContentPolicy.class).cloneContent();
+		Object cloneContent = getHost().getAdapter(AbstractCloneContentPolicy.class).cloneContent();
 
 		// create the clone content part
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
-		CreationPolicy<Node> creationPolicy = root
-				.getAdapter(new TypeToken<CreationPolicy<Node>>() {
-				});
+		CreationPolicy<Node> creationPolicy = root.getAdapter(new TypeToken<CreationPolicy<Node>>() {
+		});
 		init(creationPolicy);
-		IContentPart<Node, ? extends Node> clonedContentPart = creationPolicy
-				.create(cloneContent,
-						(IContentPart<Node, ? extends Node>) getHost()
-								.getParent(),
-						HashMultimap
-								.<IContentPart<Node, ? extends Node>, String> create());
+		IContentPart<Node, ? extends Node> clonedContentPart = creationPolicy.create(cloneContent,
+				(IContentPart<Node, ? extends Node>) getHost().getParent(),
+				HashMultimap.<IContentPart<Node, ? extends Node>, String> create());
 		commit(creationPolicy);
 
 		// XXX: Ensure start and end anchor are set for connections, so that
@@ -67,12 +62,10 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 		if (clonedContentPart.getVisual() instanceof Connection) {
 			Connection connection = (Connection) clonedContentPart.getVisual();
 			if (connection.getStartAnchor() == null) {
-				connection.setStartPoint(
-						((Connection) getHost().getVisual()).getStartPoint());
+				connection.setStartPoint(((Connection) getHost().getVisual()).getStartPoint());
 			}
 			if (connection.getEndAnchor() == null) {
-				connection.setEndPoint(
-						((Connection) getHost().getVisual()).getEndPoint());
+				connection.setEndPoint(((Connection) getHost().getVisual()).getEndPoint());
 			}
 		}
 
@@ -83,18 +76,16 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 				}).getSelectionUnmodifiable());
 		toBeDeselected.remove(clonedContentPart);
 		try {
-			viewer.getDomain().execute(new DeselectOperation<>(
-					getHost().getRoot().getViewer(), toBeDeselected));
+			viewer.getDomain().execute(new DeselectOperation<>(getHost().getRoot().getViewer(), toBeDeselected),
+					new NullProgressMonitor());
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}
 
 		// copy the transformation
-		AffineTransform originalTransform = FX2Geometry.toAffineTransform(
-				getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY)
-						.get());
-		FXTransformPolicy transformPolicy = clonedContentPart
-				.getAdapter(FXTransformPolicy.class);
+		AffineTransform originalTransform = FX2Geometry
+				.toAffineTransform(getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get());
+		FXTransformPolicy transformPolicy = clonedContentPart.getAdapter(FXTransformPolicy.class);
 		init(transformPolicy);
 		transformPolicy.setTransform(originalTransform);
 		commit(transformPolicy);

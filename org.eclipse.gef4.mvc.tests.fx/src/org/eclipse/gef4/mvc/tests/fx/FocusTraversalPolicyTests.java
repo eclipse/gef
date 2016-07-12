@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusTraversalPolicy;
@@ -67,7 +68,7 @@ public class FocusTraversalPolicyTests {
 				// bind FocusModel
 				AdapterMaps.getAdapterMapBinder(binder(), IViewer.class).addBinding(AdapterKey.defaultRole())
 						.to(new TypeLiteral<FocusModel<Node>>() {
-				});
+						});
 				// bind FocusTraversalPolicy
 				AdapterMaps.getAdapterMapBinder(binder(), AbstractRootPart.class).addBinding(AdapterKey.defaultRole())
 						.to(FXFocusTraversalPolicy.class);
@@ -133,7 +134,7 @@ public class FocusTraversalPolicyTests {
 					throw new IllegalArgumentException("focus traversal action (NEXT or PREV) expected");
 				}
 				try {
-					domain.execute(traversePolicy.commit());
+					domain.execute(traversePolicy.commit(), new NullProgressMonitor());
 				} catch (ExecutionException e) {
 					fail();
 				}

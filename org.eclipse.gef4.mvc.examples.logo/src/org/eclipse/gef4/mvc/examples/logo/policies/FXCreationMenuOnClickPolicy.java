@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -328,7 +329,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 		rev.add(txPolicy.commit());
 
 		try {
-			getViewer().getDomain().execute(rev);
+			getViewer().getDomain().execute(rev, new NullProgressMonitor());
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}

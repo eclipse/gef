@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 import java.util.Collections;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
@@ -101,7 +102,7 @@ public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
 		// execute on stack
 		if (op != null) {
 			try {
-				viewer.getDomain().execute(op);
+				viewer.getDomain().execute(op, new NullProgressMonitor());
 			} catch (ExecutionException e) {
 				throw new IllegalStateException(e);
 			}

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
@@ -101,7 +102,8 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 			// execute selection changes
 			if (selectionChangeOperation != null) {
 				try {
-					viewer.getDomain().execute(selectionChangeOperation);
+					viewer.getDomain().execute(selectionChangeOperation,
+							new NullProgressMonitor());
 				} catch (ExecutionException e1) {
 					throw new IllegalStateException(e1);
 				}
@@ -134,7 +136,8 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 			// execute focus change
 			if (changeFocusOperation != null) {
 				try {
-					viewer.getDomain().execute(changeFocusOperation);
+					viewer.getDomain().execute(changeFocusOperation,
+							new NullProgressMonitor());
 				} catch (ExecutionException e1) {
 					throw new IllegalStateException(e1);
 				}
@@ -155,10 +158,15 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 					} else {
 						// change focus, will update feedback via behavior
 						viewer.getDomain().execute(
-								new ChangeFocusOperation<>(viewer, null));
+								new ChangeFocusOperation<>(viewer, null),
+								new NullProgressMonitor());
 					}
-					viewer.getDomain().execute(new DeselectOperation<>(viewer,
-							selectionModel.getSelectionUnmodifiable()));
+					viewer.getDomain()
+							.execute(
+									new DeselectOperation<>(viewer,
+											selectionModel
+													.getSelectionUnmodifiable()),
+									new NullProgressMonitor());
 				} catch (ExecutionException e1) {
 					throw new IllegalStateException(e1);
 				}
