@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 DOT.UI
 Bundle-SymbolicName: org.eclipse.gef4.dot.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator
 Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.9.0,4.0.0)",
