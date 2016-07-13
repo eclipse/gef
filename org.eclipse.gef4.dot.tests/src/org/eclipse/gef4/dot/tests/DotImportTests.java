@@ -9,16 +9,21 @@
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
  *     Tamas Miklossy  (itemis AG) - implement additional test cases (bug #493136)
+ *                                 - merge DotInterpreter into DotImport (bug #491261)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
 import static org.eclipse.gef4.dot.tests.DotTestUtils.RESOURCES_TESTS;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotImport;
+import org.eclipse.gef4.dot.internal.parser.layout.Layout;
+import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -30,15 +35,15 @@ import org.junit.Test;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-// TODO: this could be combined with the DotInterpreterTests, similar
-// as DotExportTests and DotTemplateTests
 public final class DotImportTests {
+
+	private final DotImport dotImport = new DotImport();
 
 	private Graph testFileImport(final File dotFile) {
 		Assert.assertTrue("DOT input file must exist: " + dotFile, //$NON-NLS-1$
 				dotFile.exists());
-		Graph graph = new DotImport().importDot(dotFile);
-		Assert.assertNotNull("Resulting graph must not be null", graph); //$NON-NLS-1$
+		Graph graph = dotImport.importDot(dotFile);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		return graph;
 	}
 
@@ -85,7 +90,282 @@ public final class DotImportTests {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidGraphFileImport() {
-		new DotImport().importDot("graph Sample{");
+		dotImport.importDot("graph Sample{");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void faultyLayout() {
+		dotImport.importDot("graph Sample{graph[layout=cool];1;}"); //$NON-NLS-1$
+	}
+
+	@Test
+	public void digraphType() {
+		Graph graph = dotImport
+				.importDot(DotTestGraphs.TWO_NODES_ONE_DIRECTED_EDGE);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(DotAttributes._TYPE__G__DIGRAPH,
+				DotAttributes._getType(graph));
+	}
+
+	@Test
+	public void graphType() {
+		Graph graph = dotImport.importDot(DotTestGraphs.TWO_NODES_ONE_EDGE);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(DotAttributes._TYPE__G__GRAPH,
+				DotAttributes._getType(graph));
+	}
+
+	@Test
+	public void nodeDefaultLabel() {
+		Graph graph = dotImport.importDot(DotTestGraphs.ONE_NODE);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("1", //$NON-NLS-1$
+				DotAttributes._getName(graph.getNodes().get(0)));
+	}
+
+	@Test
+	public void nodeCount() {
+		Graph graph = dotImport.importDot(DotTestGraphs.TWO_NODES);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(2, graph.getNodes().size());
+	}
+
+	@Test
+	public void edgeCount() {
+		Graph graph = dotImport
+				.importDot(DotTestGraphs.TWO_NODES_AND_THREE_EDGES);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(3, graph.getEdges().size());
+	}
+
+	@Test
+	public void layoutSpring() {
+		Graph graph = dotImport.importDot(DotTestGraphs.GRAPH_LAYOUT_FDP);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(Layout.FDP.toString(),
+				DotAttributes.getLayout(graph));
+	}
+
+	@Test
+	public void layoutGrid() {
+		Graph graph = dotImport.importDot(DotTestGraphs.GRAPH_LAYOUT_OSAGE);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(Layout.OSAGE.toString(),
+				DotAttributes.getLayout(graph));
+	}
+
+	@Test
+	public void layoutRadial() {
+		Graph graph = dotImport.importDot(DotTestGraphs.GRAPH_LAYOUT_TWOPI);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(Layout.TWOPI.toString(),
+				DotAttributes.getLayout(graph));
+	}
+
+	@Test
+	public void layoutTree() {
+		Graph graph = dotImport.importDot(DotTestGraphs.GRAPH_LAYOUT_DOT);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(Layout.DOT.toString(),
+				DotAttributes.getLayout(graph));
+	}
+
+	@Test
+	public void layoutHorizontalTreeViaLayout() {
+		Graph graph = dotImport
+				.importDot(DotTestGraphs.GRAPH_LAYOUT_DOT_HORIZONTAL);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(Layout.DOT.toString(),
+				DotAttributes.getLayout(graph));
+		Assert.assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(graph));
+	}
+
+	@Test
+	public void layoutHorizontalTreeViaAttribute() {
+		Graph graph = dotImport.importDot(DotTestGraphs.GRAPH_RANKDIR_LR);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(graph));
+	}
+
+	@Test
+	public void globalNodeAttributeAdHocNodes() {
+		Graph graph = dotImport
+				.importDot(DotTestGraphs.GLOBAL_NODE_LABEL_AD_HOC_NODES);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("TEXT", //$NON-NLS-1$
+				DotAttributes.getLabel(graph.getNodes().get(0)));
+	}
+
+	@Test
+	public void globalEdgeAttributeAdHocNodes() {
+		Graph graph = dotImport
+				.importDot(DotTestGraphs.GLOBAL_EDGE_LABEL_AD_HOC_NODES);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("TEXT", DotAttributes.getLabel(graph.getEdges() //$NON-NLS-1$
+				.get(0)));
+	}
+
+	@Test
+	public void headerCommentGraph() {
+		Graph graph = dotImport.importDot(DotTestGraphs.HEADER_COMMENT);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(2, graph.getNodes().size());
+		Assert.assertEquals(1, graph.getEdges().size());
+	}
+
+	@Test
+	public void nodesBeforeEdges() {
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2])
+				.attr(DotAttributes._NAME__GNE, "2--3") //$NON-NLS-1$
+				.buildEdge();
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "2--4") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected, DotTestGraphs.NODES_BEFORE_EDGES);
+	}
+
+	@Test
+	public void nodesAfterEdges() {
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		DotAttributes.setLabel(nodes[0], "node");
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2])
+				.attr(DotAttributes._NAME__GNE, "2--3") //$NON-NLS-1$
+				.buildEdge();
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "2--4") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected, DotTestGraphs.NODES_AFTER_EDGES);
+	}
+
+	@Test
+	public void useDotImporterTwice() {
+		String dot = DotTestGraphs.NODES_AFTER_EDGES;
+		Graph graph = dotImport.importDot(dot);
+		graph = dotImport.importDot(dot);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(4, graph.getNodes().size());
+		Assert.assertEquals(3, graph.getEdges().size());
+	}
+
+	@Test
+	public void idsWithQuotes() {
+		Graph graph = dotImport.importDot(DotTestGraphs.IDS_WITH_QUOTES);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		List<Node> list = graph.getNodes();
+		Assert.assertEquals("node 1", //$NON-NLS-1$
+				DotAttributes._getName(list.get(0)));
+		Assert.assertEquals("node 2", //$NON-NLS-1$
+				DotAttributes._getName(list.get(1)));
+	}
+
+	@Test
+	public void escapedQuotes() {
+		Graph graph = dotImport.importDot(DotTestGraphs.ESCAPED_QUOTES_LABEL);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("node \"1\"", //$NON-NLS-1$
+				DotAttributes.getLabel(graph.getNodes().get(0)));
+	}
+
+	@Test
+	public void fullyQuoted() {
+		Graph graph = dotImport.importDot(DotTestGraphs.FULLY_QUOTED_IDS);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(2, graph.getNodes().size());
+		Assert.assertEquals(1, graph.getEdges().size());
+		List<Node> list = graph.getNodes();
+		Assert.assertEquals("n1", //$NON-NLS-1$
+				DotAttributes._getName(list.get(0)));
+		Assert.assertEquals("n2", //$NON-NLS-1$
+				DotAttributes._getName(list.get(1)));
+	}
+
+	@Test
+	public void labelsWithQuotes() {
+		Graph graph = dotImport.importDot(DotTestGraphs.QUOTED_LABELS);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		List<Node> list = graph.getNodes();
+		Assert.assertEquals("node 1", //$NON-NLS-1$
+				DotAttributes.getLabel(list.get(0)));
+		Assert.assertEquals("node 2", //$NON-NLS-1$
+				DotAttributes.getLabel(list.get(1)));
+		Assert.assertEquals("edge 1",
+				DotAttributes.getLabel(graph.getEdges().get(0)));
+	}
+
+	@Test
+	public void newLinesInLabels() {
+		Graph graph = dotImport.importDot(DotTestGraphs.NEW_LINES_IN_LABELS);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("node" + System.lineSeparator() + "1", //$NON-NLS-1$
+				DotAttributes.getLabel(graph.getNodes().get(0)));
+	}
+
+	@Test
+	public void multiEdgeStatements() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__DIGRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1->2") //$NON-NLS-1$
+				.attr(DotAttributes.ARROWHEAD__E, "ornormal") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2])
+				.attr(DotAttributes._NAME__GNE, "2->3") //$NON-NLS-1$
+				.attr(DotAttributes.ARROWHEAD__E, "ornormal") //$NON-NLS-1$
+				.buildEdge();
+		Edge e3 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3->4") //$NON-NLS-1$
+				.attr(DotAttributes.ARROWHEAD__E, "ornormal") //$NON-NLS-1$
+				.buildEdge();
+		Edge e4 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1->2") //$NON-NLS-1$
+				.attr(DotAttributes.ARROWHEAD__E, "ornormal") //$NON-NLS-1$
+				.buildEdge();
+		Edge e5 = new Edge.Builder(nodes[1], nodes[2])
+				.attr(DotAttributes._NAME__GNE, "2->3") //$NON-NLS-1$
+				.attr(DotAttributes.ARROWHEAD__E, "ornormal") //$NON-NLS-1$
+				.buildEdge();
+		Edge e6 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3->4") //$NON-NLS-1$
+				.attr(DotAttributes.ARROWHEAD__E, "ornormal") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3, e4, e5, e6)
+				.build();
+		testStringImport(expected, DotTestGraphs.MULTI_EDGE_STATEMENTS_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__DIGRAPH);
+		DotAttributes.setArrowHead(e4, "olnormal");
+		DotAttributes.setArrowHead(e5, "olnormal");
+		DotAttributes.setArrowHead(e6, "olnormal");
+		expected = graph.nodes(nodes).edges(e1, e2, e3, e4, e5, e6).build();
+		testStringImport(expected, DotTestGraphs.MULTI_EDGE_STATEMENTS_LOCAL);
+
+		// test override attribute
+		testStringImport(expected,
+				DotTestGraphs.MULTI_EDGE_STATEMENTS_OVERRIDE);
+	}
+
+	@Test
+	public void edgeStyleInvis() {
+		Graph graph = dotImport.importDot(DotTestGraphs.EDGE_STYLE_INVIS);
+		assertEquals(2, graph.getNodes().size());
+		assertEquals(1, graph.getEdges().size());
 	}
 
 	@Test
@@ -855,7 +1135,7 @@ public final class DotImportTests {
 	}
 
 	private void testStringImport(Graph expected, String dot) {
-		Graph graph = new DotImport().importDot(dot);
+		Graph graph = dotImport.importDot(dot);
 		Assert.assertNotNull("Resulting graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(expected.toString(), graph.toString());
 	}
