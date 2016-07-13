@@ -26,7 +26,6 @@ import org.osgi.framework.BundleContext;
  * @author sschwieb
  *
  */
-// TODO: rename to CloudioUiBundle
 public class CloudioUiBundle extends AbstractUIPlugin {
 
 	// The plug-in ID

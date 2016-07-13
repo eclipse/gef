@@ -113,7 +113,7 @@ public class TagCloud extends Canvas {
 	private Image textLayerImage;
 
 	/**
-	 * Second level image: All Elements plus selected elements in highlight
+	 * Second level image: All elements plus selected elements in highlight
 	 * color.
 	 */
 
@@ -214,7 +214,7 @@ public class TagCloud extends Canvas {
 	 * drawable area is analyzed most detailed, but this will also be very slow.
 	 * <br>
 	 * Parameter <code>maxSize</code> defines the maximum size of the drawable
-	 * area and <strong>must</strong> be a power-of of <code>accuracy</code>,
+	 * area and <strong>must</strong> be a power of <code>accuracy</code>,
 	 * such that <code>accuracy^n=maxSize</code> holds. <br>
 	 * To add scroll bars to the cloud, use {@link SWT#HORIZONTAL} and
 	 * {@link SWT#VERTICAL}.
@@ -232,7 +232,7 @@ public class TagCloud extends Canvas {
 		while (tmp > accuracy) {
 			tmp /= 2;
 		}
-		Assert.isLegal(tmp == accuracy, "Paramter maxSize must be a ");
+		Assert.isLegal(tmp == accuracy, "Parameter maxSize must be a power of accuracy");
 		this.accuracy = accuracy;
 		this.maxSize = maxSize;
 		cloudArea = new Rectangle(0, 0, maxSize, maxSize);
@@ -327,7 +327,7 @@ public class TagCloud extends Canvas {
 	}
 
 	/**
-	 * Resets the zoom such that the generated cloud will fit extactly into the
+	 * Resets the zoom such that the generated cloud will fit exactly into the
 	 * available space (unless the zoom factor is too small or too large).
 	 */
 	public void zoomFit() {
@@ -530,7 +530,7 @@ public class TagCloud extends Canvas {
 		t.rotate(word.angle);
 		g.setTransform(t);
 		g.setFont(font);
-		// Why is drawString sooo slow? between 30 and 90 percent of the whole
+		// Why is drawString so slow? between 30 and 90 percent of the whole
 		// draw time...
 		g.drawString(word.string, 0, 0, false);
 		int max = Math.max(x, y);

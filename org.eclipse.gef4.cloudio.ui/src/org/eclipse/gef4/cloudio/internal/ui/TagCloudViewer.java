@@ -221,7 +221,7 @@ public class TagCloudViewer extends ContentViewer {
 
 	/**
 	 * Resets the {@link TagCloud}. If <code>recalc</code> is <code>true</code>,
-	 * the displayed elements will be updated with the values provided by used
+	 * the displayed elements will be updated with the values provided by the used
 	 * {@link ICloudLabelProvider}. Otherwise, the cloud will only be
 	 * re-layouted, keeping fonts, colors and angles untouched.
 	 * 
@@ -356,7 +356,7 @@ public class TagCloudViewer extends ContentViewer {
 	 * cloud. Note that there is no guarantee that this amount of elements will
 	 * actually be displayed, as this depends on additional factors.
 	 * 
-	 * @return the maxmimum number of words that can be placed
+	 * @return the maximum number of words that can be placed
 	 */
 	public int getMaxWords() {
 		return maxWords;

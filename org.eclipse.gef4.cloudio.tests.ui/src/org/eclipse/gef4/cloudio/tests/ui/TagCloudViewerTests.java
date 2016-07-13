@@ -155,7 +155,7 @@ public class TagCloudViewerTests {
 	}
 
 	@Test
-	public void testValidLabelAsignment() {
+	public void testValidLabelAssignment() {
 		TagCloudViewer viewer = new TagCloudViewer(cloud);
 		ListContentProvider provider = new ListContentProvider();
 		viewer.setContentProvider(provider);

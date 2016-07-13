@@ -34,7 +34,7 @@ public class DefaultLayouter implements ILayouter {
 	private Random random = new Random();
 
 	/**
-	 * Percentage of x axis variation. By default, searching for free space is
+	 * Percentage of the x axis variation. By default, searching for free space is
 	 * started in the center of the available area. By increasing this value,
 	 * the start point is moved on the x axis.
 	 * 
@@ -42,7 +42,7 @@ public class DefaultLayouter implements ILayouter {
 	private int xAxisVariation;
 
 	/**
-	 * Percentage of x axis variation. By default, searching for free space is
+	 * Percentage of the y axis variation. By default, searching for free space is
 	 * started in the center of the available area. By increasing this value,
 	 * the start point is moved on the y axis.
 	 * 
