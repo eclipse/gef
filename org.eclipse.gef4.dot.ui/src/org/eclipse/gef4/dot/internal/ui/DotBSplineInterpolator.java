@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - Add support for arrowType edge decorations (bug #477980)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
@@ -15,18 +16,26 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.dot.internal.ui.DotArrowShapeDecorations.PrimitiveShape;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.nodes.AbstractInterpolator;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.euclidean.Angle;
+import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
+
+import javafx.scene.Group;
+import javafx.scene.Node;
 
 /**
  * A {@link DotBSplineInterpolator} is a {@link IConnectionRouter router} that
@@ -111,6 +120,37 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 		return anchor.getComputationParameter(anchorKey,
 				AnchoredReferencePoint.class).get();
 
+	}
+
+	@Override
+	protected void arrangeDecoration(Node decoration, Point offset,
+			Vector direction) {
+		// arrange on start of curve
+		AffineTransform transform = new AffineTransform().translate(offset.x,
+				offset.y);
+		// arrange on curve direction
+		if (!direction.isNull()) {
+			Angle angleCW = new Vector(1, 0).getAngleCW(direction);
+			transform.rotate(angleCW.rad(), 0, 0);
+		}
+		// compensate stroke (ensure decoration 'ends' at curve end).
+		transform.translate(getOffsetForNode(decoration), 0);
+		// apply transform
+		decoration.getTransforms().setAll(Geometry2FX.toFXAffine(transform));
+	}
+
+	private double getOffsetForNode(Node decoration) {
+		if (decoration instanceof Group) {
+			List<Node> children = ((Group) decoration).getChildren();
+			if (!children.isEmpty()) {
+				Node firstChild = children.get(0);
+				if (firstChild instanceof PrimitiveShape) {
+					double offset = ((PrimitiveShape) firstChild).getOffset();
+					return offset;
+				}
+			}
+		}
+		return 0.0;
 	}
 
 }

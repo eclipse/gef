@@ -16,9 +16,12 @@ import org.eclipse.gef4.dot.internal.parser.arrowtype.AbstractArrowShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.DeprecatedArrowShape;
-import org.eclipse.gef4.dot.internal.parser.arrowtype.PrimitiveShape;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -39,10 +42,10 @@ public class DotArrowShapeDecorations {
 	 *
 	 * @return The default dot arrow shape decoration
 	 */
-	public static Shape getDefault(double arrowSize, boolean isGraphDirected) {
+	public static Node getDefault(double arrowSize, boolean isGraphDirected) {
 
 		Shape shape = isGraphDirected ? new Normal(arrowSize) : null;
-		useRoundStrokeLineJoin(shape);
+		setStroke(shape);
 		return shape;
 	}
 
@@ -59,14 +62,42 @@ public class DotArrowShapeDecorations {
 	 * 
 	 * @return The dot arrow shape decoration.
 	 */
-	public static Shape get(ArrowType arrowType, double arrowSize) {
+	public static Node get(ArrowType arrowType, double arrowSize) {
+		// The first arrow shape specified should occur closest to the node.
+		double offset = 0.0;
+		Group group = new Group();
+		for (AbstractArrowShape arrowShape : arrowType.getArrowShapes()) {
+			Shape currentShape = get(arrowShape, arrowSize);
+			if (currentShape == null) {
+				// represent the "none" arrow shape with a transparent box with
+				// the corresponding size
+				currentShape = new Box(arrowSize);
+				currentShape.setFill(Color.TRANSPARENT);
+				currentShape.setTranslateX(offset);
+			} else {
+				if (currentShape instanceof Circle) {
+					// translate a circle-based shape specially because of its
+					// middle-point-based translation
+					currentShape.setTranslateX(offset
+							+ currentShape.getLayoutBounds().getWidth() / 2);
+				} else {
+					currentShape.setTranslateX(offset);
+				}
+			}
+			offset += NodeUtils.getShapeBounds(currentShape).getWidth()
+					- currentShape.getStrokeWidth();
+			group.getChildren().add(currentShape);
+		}
+
+		return group;
+	}
+
+	private static Shape get(AbstractArrowShape abstractArrowShape,
+			double arrowSize) {
 		Shape shape = null;
 
-		// TODO: handle multiple-shapes
-		AbstractArrowShape firstShape = arrowType.getArrowShapes().get(0);
-
-		if (firstShape instanceof DeprecatedArrowShape) {
-			switch (((DeprecatedArrowShape) firstShape).getShape()) {
+		if (abstractArrowShape instanceof DeprecatedArrowShape) {
+			switch (((DeprecatedArrowShape) abstractArrowShape).getShape()) {
 			case EDIAMOND:
 				// "ediamond" is deprecated, use "odiamond"
 				shape = new Diamond(arrowSize);
@@ -75,11 +106,13 @@ public class DotArrowShapeDecorations {
 			case OPEN:
 				// "open" is deprecated, use "vee"
 				shape = new Vee(arrowSize);
+				setStroke(shape);
 				break;
 			case HALFOPEN:
 				// "halfopen" is deprecated, use "lvee"
 				shape = new Vee(arrowSize);
 				setSide(shape, "l"); //$NON-NLS-1$
+				setStroke(shape);
 				break;
 			case EMPTY:
 				// "empty" is deprecated, use "onormal"
@@ -95,10 +128,12 @@ public class DotArrowShapeDecorations {
 				break;
 			}
 		} else {
-			ArrowShape arrowShape = (ArrowShape) firstShape;
+			ArrowShape arrowShape = (ArrowShape) abstractArrowShape;
 			shape = getPrimitiveShape(arrowShape.getShape(), arrowSize);
 			if (arrowShape.isOpen()) {
 				setOpen(shape);
+			} else {
+				setStroke(shape);
 			}
 
 			if (arrowShape.getSide() != null) {
@@ -106,13 +141,22 @@ public class DotArrowShapeDecorations {
 			}
 		}
 
-		useRoundStrokeLineJoin(shape);
-
 		return shape;
 	}
 
+	private static void setStroke(Shape shape) {
+		if (shape != null) {
+			shape.setStroke(Color.BLACK);
+			shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
+		}
+	}
+
 	private static void setOpen(Shape shape) {
-		shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
+		if (shape != null) {
+			shape.setStroke(Color.BLACK);
+			shape.setFill(Color.WHITE);
+			shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
+		}
 	}
 
 	private static void setSide(Shape shape, String side) {
@@ -155,13 +199,8 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static void useRoundStrokeLineJoin(Shape shape) {
-		if (shape != null) {
-			shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
-		}
-	}
-
-	private static Shape getPrimitiveShape(PrimitiveShape primitiveShape,
+	private static Shape getPrimitiveShape(
+			org.eclipse.gef4.dot.internal.parser.arrowtype.PrimitiveShape primitiveShape,
 			double arrowSize) {
 		switch (primitiveShape) {
 		case BOX:
@@ -191,23 +230,37 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Box extends Polygon {
+	public static interface PrimitiveShape {
+		double getOffset();
+	}
+
+	private static class Box extends Polygon implements PrimitiveShape {
 		private Box(double arrowSize) {
 			super(0, arrowSize * size / 2, 0, -arrowSize * size / 2,
 					arrowSize * size, -arrowSize * size / 2, arrowSize * size,
 					arrowSize * size / 2);
+		}
 
+		@Override
+		public double getOffset() {
+			return -NodeUtils.getShapeBounds(this).getX()
+					- getStrokeWidth() / 2;
 		}
 	}
 
-	private static class Crow extends Polygon {
+	private static class Crow extends Polygon implements PrimitiveShape {
 		private Crow(double arrowSize) {
 			super(arrowSize * size / 2, 0, 0, -arrowSize * size / 2,
 					arrowSize * size, 0, 0, arrowSize * size / 2);
 		}
+
+		@Override
+		public double getOffset() {
+			return NodeUtils.getShapeBounds(this).getX();
+		}
 	}
 
-	private static class Curve extends Arc {
+	private static class Curve extends Arc implements PrimitiveShape {
 		private Curve(double arrowSize) {
 			super(arrowSize * size / 2, // centerX
 					0, // centerY
@@ -216,25 +269,40 @@ public class DotArrowShapeDecorations {
 					90, // startAngle
 					180// length
 			);
-			setStyle("-fx-fill: white"); //$NON-NLS-1$
+			setStyle("-fx-stroke: black;-fx-fill: transparent;"); //$NON-NLS-1$
+		}
+
+		@Override
+		public double getOffset() {
+			return 0;
 		}
 	}
 
-	private static class Diamond extends Polygon {
+	private static class Diamond extends Polygon implements PrimitiveShape {
 		private Diamond(double arrowSize) {
 			super(0, 0, arrowSize * size / 2, -arrowSize * size / 3,
 					arrowSize * size, 0, arrowSize * size / 2,
 					arrowSize * size / 3);
 		}
-	}
 
-	private static class Dot extends Circle {
-		private Dot(double arrowSize) {
-			super(0, 0, arrowSize * size / 2);
+		@Override
+		public double getOffset() {
+			return NodeUtils.getShapeBounds(this).getX();
 		}
 	}
 
-	private static class ICurve extends Arc {
+	private static class Dot extends Circle implements PrimitiveShape {
+		private Dot(double arrowSize) {
+			super(0, 0, arrowSize * size / 2);
+		}
+
+		@Override
+		public double getOffset() {
+			return -getStrokeWidth() / 2;
+		}
+	}
+
+	private static class ICurve extends Arc implements PrimitiveShape {
 		private ICurve(double arrowSize) {
 			super(0, // centerX
 					0, // centerY
@@ -243,37 +311,62 @@ public class DotArrowShapeDecorations {
 					90, // startAngle
 					-180// length
 			);
-			setStyle("-fx-fill: white"); //$NON-NLS-1$
+			setStyle("-fx-stroke: black;-fx-fill: transparent;"); //$NON-NLS-1$
+		}
+
+		@Override
+		public double getOffset() {
+			return NodeUtils.getShapeBounds(this).getWidth();
 		}
 	}
 
-	private static class Inv extends Polygon {
+	private static class Inv extends Polygon implements PrimitiveShape {
 		private Inv(double arrowSize) {
 			super(0, arrowSize * size / 3, arrowSize * size, 0, 0,
 					-arrowSize * size / 3);
 		}
+
+		@Override
+		public double getOffset() {
+			return 0;
+		}
 	}
 
-	private static class Normal extends Polygon {
+	private static class Normal extends Polygon implements PrimitiveShape {
 		private Normal(double arrowSize) {
 			super(0, 0, arrowSize * size, -arrowSize * size / 3,
 					arrowSize * size, arrowSize * size / 3);
 		}
+
+		@Override
+		public double getOffset() {
+			return 0;
+		}
 	}
 
-	private static class Tee extends Polygon {
+	private static class Tee extends Polygon implements PrimitiveShape {
 		private Tee(double arrowSize) {
 			super(0, -arrowSize * size / 2, arrowSize * size / 4,
 					-arrowSize * size / 2, arrowSize * size / 4,
 					arrowSize * size / 2, 0, arrowSize * size / 2);
 		}
+
+		@Override
+		public double getOffset() {
+			return -NodeUtils.getShapeBounds(this).getX();
+		}
 	}
 
-	private static class Vee extends Polygon {
+	private static class Vee extends Polygon implements PrimitiveShape {
 		private Vee(double arrowSize) {
 			super(0, 0, arrowSize * size, -arrowSize * size / 2,
 					2 * arrowSize * size / 3, 0, arrowSize * size,
 					arrowSize * size / 2);
+		}
+
+		@Override
+		public double getOffset() {
+			return 0;
 		}
 	}
 

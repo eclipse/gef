@@ -52,7 +52,6 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 /**
@@ -154,6 +153,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// TODO: handle tapered edges
 		if (connectionCssStyle != null) {
 			ZestProperties.setCurveCssStyle(zest, connectionCssStyle);
+		} else {
+			ZestProperties.setCurveCssStyle(zest, "-fx-stroke-line-cap: butt;"); //$NON-NLS-1$
 		}
 		// direction
 		DirType dotDir = DotAttributes.getDirParsed(dot);
@@ -171,7 +172,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		// arrow head
 		String dotArrowHead = DotAttributes.getArrowHead(dot);
-		Shape zestEdgeTargetDecoration = null;
+		javafx.scene.Node zestEdgeTargetDecoration = null;
 		if (dotArrowHead == null) {
 			// use the default arrow head decoration in case the graph is
 			// directed
@@ -193,7 +194,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		// arrow tail
 		String dotArrowTail = DotAttributes.getArrowTail(dot);
-		Shape zestEdgeSourceDecoration = null;
+		javafx.scene.Node zestEdgeSourceDecoration = null;
 		if (dotArrowTail == null) {
 			// use the default arrow tail decoration in case the graph is
 			// directed
@@ -358,7 +359,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		return subList2;
 	}
 
-	private Shape computeZestDecoration(ArrowType arrowType, double arrowSize) {
+	private javafx.scene.Node computeZestDecoration(ArrowType arrowType,
+			double arrowSize) {
 		return DotArrowShapeDecorations.get(arrowType, arrowSize);
 	}
 
