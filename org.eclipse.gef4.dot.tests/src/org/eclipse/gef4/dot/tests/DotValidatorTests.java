@@ -284,6 +284,34 @@ public class DotValidatorTests {
 		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
 	}
 
+	@Test
+	public void testDirectedGraphWithNonDirectedEdge() throws Exception {
+		String text = "digraph {1--2}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getEdgeRhsNode(), null,
+				"EdgeOp '--' may only be used in undirected graphs.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testNonDirectedGraphWithDirectedEdge() throws Exception {
+		String text = "graph {1->2}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getEdgeRhsNode(), null,
+				"EdgeOp '->' may only be used in directed graphs.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
 	private DotAst parse(String fileName) {
 		DotAst dotAst = null;
 		String fileContents = DotFileUtils
