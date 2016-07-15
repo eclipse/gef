@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
@@ -36,9 +35,10 @@ public class FXTransformOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final Affine nodeTransform;
+
 	private Affine initialTransform;
+
 	private Affine newTransform;
-	private ObjectProperty<Affine> affineProperty;
 
 	/**
 	 * Constructs a new {@link FXTransformOperation} to change the given
@@ -46,9 +46,7 @@ public class FXTransformOperation extends AbstractOperation
 	 *
 	 * @param nodeTransform
 	 *            The {@link Affine} that will be changed by this operation.
-	 * @deprecated Use {@link #FXTransformOperation(ObjectProperty)} instead.
 	 */
-	@Deprecated
 	public FXTransformOperation(Affine nodeTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
@@ -67,9 +65,7 @@ public class FXTransformOperation extends AbstractOperation
 	 * @param newTransform
 	 *            The {@link Affine} that will be applied to the
 	 *            <i>nodeTransform</i> upon execution of this operation.
-	 * @deprecated Use {@link #FXTransformOperation(ObjectProperty)} instead.
 	 */
-	@Deprecated
 	public FXTransformOperation(Affine nodeTransform, Affine newTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
@@ -78,47 +74,13 @@ public class FXTransformOperation extends AbstractOperation
 		this.newTransform = newTransform;
 	}
 
-	/**
-	 * Constructs a new {@link FXTransformOperation} to change the given
-	 * <i>affineProperty</i>.
-	 *
-	 * @param affineProperty
-	 *            The {@link ObjectProperty} that will be changed by this
-	 *            operation.
-	 * @since 1.1
-	 */
-	public FXTransformOperation(ObjectProperty<Affine> affineProperty) {
-		super("Transform");
-		this.nodeTransform = null;
-		this.affineProperty = affineProperty;
-		this.initialTransform = NodeUtils.setAffine(new Affine(),
-				affineProperty.get());
-		this.newTransform = NodeUtils.setAffine(new Affine(), initialTransform);
-	}
-
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		if (nodeTransform != null) {
-			if (!NodeUtils.equals(nodeTransform, newTransform)) {
-				NodeUtils.setAffine(nodeTransform, newTransform);
-			}
-		} else {
-			if (!NodeUtils.equals(affineProperty.get(), newTransform)) {
-				affineProperty.set(newTransform);
-			}
+		if (!NodeUtils.equals(nodeTransform, newTransform)) {
+			NodeUtils.setAffine(nodeTransform, newTransform);
 		}
 		return Status.OK_STATUS;
-	}
-
-	/**
-	 * Returns the {@link ObjectProperty} that is changed by this operation.
-	 *
-	 * @return the {@link ObjectProperty} that is changed by this operation.
-	 * @since 1.1
-	 */
-	public ObjectProperty<Affine> getAffineProperty() {
-		return affineProperty;
 	}
 
 	/**
@@ -174,14 +136,8 @@ public class FXTransformOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		if (nodeTransform != null) {
-			if (!NodeUtils.equals(nodeTransform, initialTransform)) {
-				NodeUtils.setAffine(nodeTransform, initialTransform);
-			}
-		} else {
-			if (!NodeUtils.equals(affineProperty.get(), initialTransform)) {
-				affineProperty.set(initialTransform);
-			}
+		if (!NodeUtils.equals(nodeTransform, initialTransform)) {
+			NodeUtils.setAffine(nodeTransform, initialTransform);
 		}
 		return Status.OK_STATUS;
 	}
