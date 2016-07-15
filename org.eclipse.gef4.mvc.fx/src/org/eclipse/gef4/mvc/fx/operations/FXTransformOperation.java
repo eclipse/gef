@@ -46,7 +46,9 @@ public class FXTransformOperation extends AbstractOperation
 	 *
 	 * @param nodeTransform
 	 *            The {@link Affine} that will be changed by this operation.
+	 * @deprecated Use {@link #FXTransformOperation(ObjectProperty)} instead.
 	 */
+	@Deprecated
 	public FXTransformOperation(Affine nodeTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
@@ -65,7 +67,9 @@ public class FXTransformOperation extends AbstractOperation
 	 * @param newTransform
 	 *            The {@link Affine} that will be applied to the
 	 *            <i>nodeTransform</i> upon execution of this operation.
+	 * @deprecated Use {@link #FXTransformOperation(ObjectProperty)} instead.
 	 */
+	@Deprecated
 	public FXTransformOperation(Affine nodeTransform, Affine newTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
@@ -81,6 +85,7 @@ public class FXTransformOperation extends AbstractOperation
 	 * @param affineProperty
 	 *            The {@link ObjectProperty} that will be changed by this
 	 *            operation.
+	 * @since 1.1
 	 */
 	public FXTransformOperation(ObjectProperty<Affine> affineProperty) {
 		super("Transform");
@@ -110,6 +115,7 @@ public class FXTransformOperation extends AbstractOperation
 	 * Returns the {@link ObjectProperty} that is changed by this operation.
 	 *
 	 * @return the {@link ObjectProperty} that is changed by this operation.
+	 * @since 1.1
 	 */
 	public ObjectProperty<Affine> getAffineProperty() {
 		return affineProperty;

@@ -46,7 +46,10 @@ public class FXTransformProvider
 		}
 	};
 
-	{
+	/**
+	 * Default constructor.
+	 */
+	public FXTransformProvider() {
 		affineProperty.addListener(affineChangeListener);
 	}
 
@@ -58,9 +61,17 @@ public class FXTransformProvider
 	 * @return {@link ObjectProperty} that stores the {@link Affine}
 	 *         transformation that is applied to the {@link #getAdaptable()} of
 	 *         this {@link FXTransformProvider}.
+	 * @since 1.1
 	 */
 	public ObjectProperty<Affine> affineProperty() {
 		return affineProperty;
+	}
+
+	/**
+	 * @deprecated Do not use.
+	 */
+	@Deprecated
+	public void FXTransformaionProvider() {
 	}
 
 	@Override
@@ -80,6 +91,7 @@ public class FXTransformProvider
 	 *            The old {@link Affine} transformation.
 	 * @param newAffine
 	 *            The new {@link Affine} transformation.
+	 * @since 1.1
 	 */
 	protected void onAffineChanged(Affine oldAffine, Affine newAffine) {
 		int index = getAdaptable().getVisual().getTransforms()

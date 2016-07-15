@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef4.zest.sdk"
       label="GEF4 Zest SDK"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -38,7 +38,7 @@
          id="org.eclipse.gef4.zest.fx.source"
          version="0.0.0"/>
 
- <includes
+   <includes
          id="org.eclipse.gef4.zest.fx.jface.source"
          version="0.0.0"/>
 

@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef4.fx"
       label="GEF4 FX"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.fx"
       license-feature="org.eclipse.license"
