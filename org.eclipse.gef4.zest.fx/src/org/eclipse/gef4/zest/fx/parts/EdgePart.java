@@ -113,10 +113,14 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 
 	@Override
 	public void bendContent(List<org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint> bendPoints) {
+		// disable refreshing of visuals
+		boolean wasRefreshVisual = isRefreshVisual();
+		setRefreshVisual(false);
+
+		// collect positions and de-/attach source & target
 		List<Point> positions = new ArrayList<>();
 		boolean attachedSource = false;
 		boolean attachedTarget = false;
-		// collect positions and de-/attach source & target
 		for (int i = 0; i < bendPoints.size(); i++) {
 			BendPoint bp = bendPoints.get(i);
 			if (i == 0) {
@@ -181,6 +185,10 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			ZestProperties.setEndPoint(getContent(), getVisual().getEndPointHint());
 		}
 		ZestProperties.setControlPoints(getContent(), positions);
+
+		// restore refreshing of visuals
+		setRefreshVisual(wasRefreshVisual);
+		refreshVisual();
 	}
 
 	@Override
