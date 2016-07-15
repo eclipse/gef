@@ -32,8 +32,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 
 /**
  * Abstract base class for {@link IConnectionInterpolator} implementations,
@@ -59,20 +57,18 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 	 */
 	protected void arrangeDecoration(Node decoration, Point offset,
 			Vector direction) {
-		decoration.getTransforms().clear();
-
-		// arrange on start of curve.
-		decoration.getTransforms().add(new Translate(offset.x, offset.y));
-
+		// arrange on start of curve
+		AffineTransform transform = new AffineTransform().translate(offset.x,
+				offset.y);
 		// arrange on curve direction
 		if (!direction.isNull()) {
 			Angle angleCW = new Vector(1, 0).getAngleCW(direction);
-			decoration.getTransforms().add(new Rotate(angleCW.deg(), 0, 0));
+			transform.rotate(angleCW.rad(), 0, 0);
 		}
-
 		// compensate stroke (ensure decoration 'ends' at curve end).
-		decoration.getTransforms().add(
-				new Translate(-NodeUtils.getShapeBounds(decoration).getX(), 0));
+		transform.translate(-NodeUtils.getShapeBounds(decoration).getX(), 0);
+		// apply transform
+		decoration.getTransforms().setAll(Geometry2FX.toFXAffine(transform));
 	}
 
 	private void arrangeEndDecoration(Node endDecoration, ICurve curve,
