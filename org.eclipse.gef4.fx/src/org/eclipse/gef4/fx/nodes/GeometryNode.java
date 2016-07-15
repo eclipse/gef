@@ -796,8 +796,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 						&& clickableAreaShape == null
 						&& geometryProperty.getValue() != null) {
 					// create and configure clickable area shape
-					clickableAreaShape = new Path(Geometry2Shape.toPathElements(
-							geometryProperty.getValue().toPath()));
+					clickableAreaShape = new Path(getPathElements());
 					clickableAreaShape
 							.setId("clickable area of GeometryNode " + this);
 					clickableAreaShape.setStroke(Color.TRANSPARENT);
