@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +62,18 @@ public class ContentPartPool<VR> {
 	 */
 	public void clear() {
 		pool.clear();
+	}
+
+	/**
+	 * Returns the {@link IContentPart}'s that are contained in this pool.
+	 *
+	 * @return The {@link IContentPart}s that are currently contained in this
+	 *         pool.
+	 * 
+	 * @since 1.1
+	 */
+	public Collection<IContentPart<VR, ? extends VR>> getPooled() {
+		return Collections.unmodifiableCollection(pool.values());
 	}
 
 	/**

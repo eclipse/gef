@@ -145,6 +145,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 
 	@Override
 	public void dispose() {
+		for (IContentPart<VR, ? extends VR> cp : contentPartPool.getPooled()) {
+			cp.dispose();
+		}
 		contentPartPool.clear();
 	}
 

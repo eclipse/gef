@@ -187,6 +187,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			if (targets != null && !targets.isEmpty()) {
 				BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), targets,
 						feedbackParts);
+				for (IFeedbackPart<VR, ? extends VR> fp : feedbackParts) {
+					fp.dispose();
+				}
 				feedbackParts.clear();
 			}
 		}
@@ -205,6 +208,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			if (targets != null && !targets.isEmpty()) {
 				BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), targets,
 						handleParts);
+				for (IHandlePart<VR, ? extends VR> hp : handleParts) {
+					hp.dispose();
+				}
 				handleParts.clear();
 			}
 		}
@@ -336,6 +342,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 				// remove handles that no longer exist
 				BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
 						Collections.singletonList(target), toRemove);
+				for (IHandlePart<VR, ? extends VR> hp : toRemove) {
+					hp.dispose();
+				}
 				handleParts.removeAll(toRemove);
 			} else {
 				oldHandles = new ArrayList<>();
@@ -372,6 +381,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			// remove already existing handles
 			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
 					Collections.singletonList(target), alreadyExists);
+			for (IHandlePart<VR, ? extends VR> hp : alreadyExists) {
+				hp.dispose();
+			}
 			// add new handles that did not exist yet
 			if (handleParts == null) {
 				handleParts = new ArrayList<>(newHandles);
