@@ -102,7 +102,7 @@
    <feature url="features/org.eclipse.gef4.mvc_1.1.0.qualifier.jar" id="org.eclipse.gef4.mvc" version="1.1.0.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.mvc.fx_1.0.1.qualifier.jar" id="org.eclipse.gef4.mvc.fx" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.gef4.mvc.fx_1.0.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx" version="1.0.0.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
    <feature url="features/org.eclipse.gef4.mvc.ui_1.0.0.qualifier.jar" id="org.eclipse.gef4.mvc.ui" version="1.0.0.qualifier">
