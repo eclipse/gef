@@ -315,12 +315,14 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			if (!sourceDecoration.getStyleClass().contains(CSS_CLASS_DECORATION)) {
 				sourceDecoration.getStyleClass().add(CSS_CLASS_DECORATION);
 			}
-			// apply CSS style
-			String sourceDecorationCssStyle = ZestProperties.getSourceDecorationCssStyle(edge);
-			if (sourceDecorationCssStyle != null) {
-				sourceDecoration.setStyle(sourceDecorationCssStyle);
-			}
 		}
+		// apply source decoration CSS style (even if decoration is not set via
+		// property)
+		String sourceDecorationCssStyle = ZestProperties.getSourceDecorationCssStyle(edge);
+		if (sourceDecorationCssStyle != null && visual.getStartDecoration() != null) {
+			visual.getStartDecoration().setStyle(sourceDecorationCssStyle);
+		}
+
 		Node targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
@@ -328,11 +330,12 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			if (!targetDecoration.getStyleClass().contains(CSS_CLASS_DECORATION)) {
 				targetDecoration.getStyleClass().add(CSS_CLASS_DECORATION);
 			}
-			// apply CSS style
-			String targetDecorationCssStyle = ZestProperties.getTargetDecorationCssStyle(edge);
-			if (targetDecorationCssStyle != null) {
-				targetDecoration.setStyle(targetDecorationCssStyle);
-			}
+		}
+		// apply target decoration CSS style (even if decoration is not set via
+		// property)
+		String targetDecorationCssStyle = ZestProperties.getTargetDecorationCssStyle(edge);
+		if (targetDecorationCssStyle != null && visual.getEndDecoration() != null) {
+			visual.getEndDecoration().setStyle(targetDecorationCssStyle);
 		}
 
 		// connection router
@@ -349,7 +352,9 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 
 		// start point or hint
 		Point startPoint = ZestProperties.getStartPoint(edge);
-		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
+		if (!
+
+		getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
 			if (startPoint != null) {
 				visual.setStartPoint(startPoint);
 			}
