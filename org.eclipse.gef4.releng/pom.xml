@@ -29,7 +29,7 @@
 		<!-- Use Xtext generator 2.7.3, which corresponds to Luna SR2 release -->
 		<xtext.version>2.7.3</xtext.version>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/gef/org.eclipse.gef4.git</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://github.com/eclipse/gef.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
