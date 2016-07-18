@@ -15,8 +15,6 @@
 package org.eclipse.gef4.fx.swt.canvas;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.swt.gestures.SWT2FXEventConverter;
@@ -26,7 +24,6 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -57,42 +54,24 @@ public class FXCanvasEx extends FXCanvas {
 
 	private SWT2FXEventConverter gestureConverter;
 	private EventDispatcher initialEventDispatcher;
-	private boolean wasUpdated = true;
-	private List<Event> deferredEvents = new ArrayList<>();
 
 	private EventDispatcher deferringEventDispatcher = new EventDispatcher() {
+		private static final int REDRAW_INTERVAL_MILLIS = 40; // i.e. 25 fps
+		private long lastRedrawMillis = System.currentTimeMillis();
+
 		@Override
 		public Event dispatchEvent(final Event event,
 				final EventDispatchChain tail) {
-			// defer event if display was not updated since the last
-			// event was processed
-			if (!wasUpdated) {
-				deferredEvents.add(event);
-				return event;
-			}
-			// schedule runnable
-			wasUpdated = false;
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					wasUpdated = true;
-					if (!deferredEvents.isEmpty()) {
-						// dispatch deferred events
-						for (Event e : deferredEvents) {
-							initialEventDispatcher.dispatchEvent(e, tail);
-						}
-						// clear deferred events
-						deferredEvents.clear();
-					}
-					// update UI
-					while (Display.getDefault().readAndDispatch()) {
-						;
-					}
-				}
-			});
 			// dispatch the most recent event
 			Event returnedEvent = initialEventDispatcher.dispatchEvent(event,
 					tail);
+			// update UI
+			long millisNow = System.currentTimeMillis();
+			if (millisNow - lastRedrawMillis > REDRAW_INTERVAL_MILLIS) {
+				redraw();
+				update();
+				lastRedrawMillis = millisNow;
+			}
 			// return dispatched event
 			return returnedEvent;
 		}
