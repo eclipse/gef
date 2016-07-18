@@ -52,6 +52,9 @@ public class HoverModel<VR> implements IDisposable {
 		setHover(null);
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	@Override
 	public void dispose() {
 		hoverProperty.set(null);

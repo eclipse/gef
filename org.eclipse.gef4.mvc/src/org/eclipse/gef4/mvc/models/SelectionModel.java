@@ -125,6 +125,9 @@ public class SelectionModel<VR> implements IDisposable {
 		}
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	@Override
 	public void dispose() {
 		selection.clear();

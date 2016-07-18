@@ -50,6 +50,9 @@ public class ContentModel implements IDisposable {
 		return contentsProperty.getReadOnlyProperty();
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	@Override
 	public void dispose() {
 		contents.clear();

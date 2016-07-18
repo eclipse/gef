@@ -53,6 +53,9 @@ public class FocusModel<VR> implements IDisposable {
 	public FocusModel() {
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	@Override
 	public void dispose() {
 		focusedProperty.set(null);
