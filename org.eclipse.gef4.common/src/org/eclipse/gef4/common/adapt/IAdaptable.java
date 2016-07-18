@@ -113,8 +113,10 @@ public interface IAdaptable {
 
 		/**
 		 * Called by the {@link IAdaptable} this {@link IAdaptable.Bound} is
-		 * registered at or unregistered from, in order to establish or remove a
-		 * back-reference to itself.
+		 * registered at or unregistered from. When registering an
+		 * {@link IAdaptable.Bound}, the {@link IAdaptable} will pass in a
+		 * reference to itself, when unregistering an {@link IAdaptable.Bound}
+		 * it will pass in <code>null</code>.
 		 *
 		 * @param adaptable
 		 *            The {@link IAdaptable} this {@link IAdaptable.Bound} is

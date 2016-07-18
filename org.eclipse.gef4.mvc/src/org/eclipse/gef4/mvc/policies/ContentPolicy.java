@@ -151,7 +151,7 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 	@Override
 	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
-		if (!(adaptable instanceof IContentPart)) {
+		if (adaptable != null && !(adaptable instanceof IContentPart)) {
 			throw new IllegalStateException(
 					"A ContentPolicy may only be attached to an IContentPart.");
 		}

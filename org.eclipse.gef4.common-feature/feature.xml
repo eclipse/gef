@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef4.common"
       label="GEF4 Common"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.common"
       license-feature="org.eclipse.license"
