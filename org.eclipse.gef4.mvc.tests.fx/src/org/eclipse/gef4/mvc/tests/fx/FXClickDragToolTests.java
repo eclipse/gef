@@ -14,10 +14,7 @@ package org.eclipse.gef4.mvc.tests.fx;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.AWTException;
-import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -83,10 +80,11 @@ public class FXClickDragToolTests {
 	 * otherwise the transactional results of the gesture could not be undone in
 	 * a single step, as it would result in more than one operation within the
 	 * domain's {@link IOperationHistory}.
+	 *
+	 * @throws Throwable
 	 */
 	@Test
-	public void singleExecutionTransactionUsedForInteraction()
-			throws InterruptedException, InvocationTargetException, AWTException {
+	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
 
@@ -125,8 +123,7 @@ public class FXClickDragToolTests {
 		domain.activate();
 
 		// move mouse to viewer center
-		Robot robot = new Robot();
-		ctx.moveTo(robot, scene.getRoot(), 50, 50);
+		ctx.moveTo(scene.getRoot(), 50, 50);
 
 		// initialize
 		domain.openedExecutionTransactions = 0;
@@ -135,16 +132,29 @@ public class FXClickDragToolTests {
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 
 		// simulate click gesture
-		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
+		ctx.mousePress(InputEvent.BUTTON1_MASK);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertEquals("A single execution transaction should have been opened", 1,
+						domain.openedExecutionTransactions);
+				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+			}
+		});
+		ctx.mouseRelease(InputEvent.BUTTON1_MASK);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertEquals("A single execution transaction should have been opened", 1,
+						domain.openedExecutionTransactions);
+				assertEquals("A single execution transaction should have been closed", 1,
+						domain.closedExecutionTransactions);
+			}
+		});
 
 		// wait one second so that the next press does not count as a double
 		// click
-		robot.delay(1000);
+		ctx.delay(1000);
 
 		// re-initialize
 		domain.openedExecutionTransactions = 0;
@@ -153,15 +163,34 @@ public class FXClickDragToolTests {
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 
 		// simulate click/drag
-		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		ctx.mouseDrag(robot, 20, 20);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
+		ctx.mousePress(InputEvent.BUTTON1_MASK);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertEquals("A single execution transaction should have been opened", 1,
+						domain.openedExecutionTransactions);
+				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+			}
+		});
+		ctx.mouseDrag(20, 20);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertEquals("A single execution transaction should have been opened", 1,
+						domain.openedExecutionTransactions);
+				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+			}
+		});
+		ctx.mouseRelease(InputEvent.BUTTON1_MASK);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertEquals("A single execution transaction should have been opened", 1,
+						domain.openedExecutionTransactions);
+				assertEquals("A single execution transaction should have been closed", 1,
+						domain.closedExecutionTransactions);
+			}
+		});
 	}
 
 }

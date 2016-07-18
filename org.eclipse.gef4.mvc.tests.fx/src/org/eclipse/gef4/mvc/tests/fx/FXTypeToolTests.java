@@ -14,8 +14,6 @@ package org.eclipse.gef4.mvc.tests.fx;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.AWTException;
-import java.awt.Robot;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -78,12 +76,11 @@ public class FXTypeToolTests {
 	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef4.mvc.tools.ITool)}
 	 * ) is used for a complete press/drag interaction gesture, because
 	 * otherwise the transactional results of the gesture could not be undone.
-	 *
-	 * @throws AWTException
-	 * @throws InterruptedException
+	 * 
+	 * @throws Throwable
 	 */
 	@Test
-	public void singleExecutionTransactionUsedForInteraction() throws InterruptedException, AWTException {
+	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
 			protected void bindDomain() {
@@ -125,19 +122,29 @@ public class FXTypeToolTests {
 		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 
-		// create robot to simulate events
-		Robot robot = new Robot();
-
 		// move robot to scene
-		ctx.moveTo(robot, infiniteCanvas, 50, 50);
+		ctx.moveTo(infiniteCanvas, 50, 50);
 
 		// simulate press/release gesture
-		ctx.keyPress(robot, KeyEvent.VK_K);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		ctx.keyRelease(robot, KeyEvent.VK_K);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
+		ctx.keyPress(KeyEvent.VK_K);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertEquals("A single execution transaction should have been opened", 1,
+						domain.openedExecutionTransactions);
+				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+			}
+		});
+		ctx.keyRelease(KeyEvent.VK_K);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertEquals("A single execution transaction should have been opened", 1,
+						domain.openedExecutionTransactions);
+				assertEquals("A single execution transaction should have been closed", 1,
+						domain.closedExecutionTransactions);
+			}
+		});
 	}
 
 }

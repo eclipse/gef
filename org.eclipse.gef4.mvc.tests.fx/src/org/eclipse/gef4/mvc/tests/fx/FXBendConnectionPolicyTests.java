@@ -17,13 +17,13 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.AWTException;
-import java.awt.Robot;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
@@ -417,14 +417,7 @@ public class FXBendConnectionPolicyTests {
 		return numExplicit;
 	}
 
-	private void equalsUnprecise(Point p, Point q) {
-		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in x: ", p.x, q.x, 0.5);
-		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in y: ", p.y, q.y, 0.5);
-	}
-
-	@Test
-	public void test_create_orthogonal_segment_from_implicit_connected()
-			throws InterruptedException, InvocationTargetException, AWTException {
+	private FXViewer createViewer(final List<Object> contents) throws Throwable {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new TestModule());
 
@@ -442,7 +435,6 @@ public class FXBendConnectionPolicyTests {
 			}
 		});
 
-		final List<Object> contents = TestModels.getAB_offset2_simple();
 		// set contents on JavaFX application thread (visuals are created)
 		ctx.runAndWait(new Runnable() {
 			@Override
@@ -455,6 +447,18 @@ public class FXBendConnectionPolicyTests {
 		for (Object content : contents) {
 			assertTrue(viewer.getContentPartMap().containsKey(content));
 		}
+		return viewer;
+	}
+
+	private void equalsUnprecise(Point p, Point q) {
+		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in x: ", p.x, q.x, 0.5);
+		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in y: ", p.y, q.y, 0.5);
+	}
+
+	@Test
+	public void test_create_orthogonal_segment_from_implicit_connected() throws Throwable {
+		final List<Object> contents = TestModels.getAB_offset2_simple();
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
@@ -580,37 +584,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_end_overlays_way_restore() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_end_overlays_way_restore() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -651,38 +627,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_connected_orthogonal_segment_down()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_connected_orthogonal_segment_down() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -723,38 +670,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_connected_orthogonal_segment_down_translated()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_connected_orthogonal_segment_down_translated() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
@@ -816,38 +734,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_connected_orthogonal_segment_restore()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_connected_orthogonal_segment_restore() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -908,38 +797,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_connected_orthogonal_segment_up()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_connected_orthogonal_segment_up() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -980,38 +840,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_explicit_orthogonal_segment_overlay()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_explicit_orthogonal_segment_overlay() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1080,38 +911,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_explicit_orthogonal_segment_overlay_side()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_explicit_orthogonal_segment_overlay_side() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1198,38 +1000,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_explicit_orthogonal_segment_simple()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_explicit_orthogonal_segment_simple() throws Throwable {
 		final List<Object> contents = TestModels.getAB_offset_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1295,38 +1068,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_segment_connected_overlay()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_segment_connected_overlay() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1370,38 +1114,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_move_single_explicit_anchor()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_move_single_explicit_anchor() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1433,37 +1148,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_overlay_segment_left_first() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_overlay_segment_left_first() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1514,38 +1201,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_overlay_segment_right_first()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_overlay_segment_right_first() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1596,37 +1254,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_overlay_segment_simple() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_overlay_segment_simple() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1658,37 +1288,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_overlay_single() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_overlay_single() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1727,37 +1329,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_regression_makeExplicit() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_regression_makeExplicit() throws Throwable {
 		final List<Object> contents = TestModels.get_regression_makeExplicit();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
@@ -1855,90 +1429,95 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_relocateAnchor() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_relocateAnchor() throws Throwable {
 		final List<Object> contents = TestModels.getABC_AB_BC();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
+		final FXViewer viewer = createViewer(contents);
 
 		// save initial start point of second connection
-		ConnectionPart secondConnectionPart = (ConnectionPart) viewer.getContentPartMap()
+		final ConnectionPart secondConnectionPart = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		Point secondConnectionStart = secondConnectionPart.getVisual().getStartPoint();
+
+		final AtomicReference<Point> secondConnectionStartRef = new AtomicReference<>(null);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				secondConnectionStartRef.set(secondConnectionPart.getVisual().getStartPoint());
+			}
+		});
+		Point secondConnectionStart = secondConnectionStartRef.get();
 		((GeometryNode<?>) secondConnectionPart.getVisual().getCurve()).setStrokeWidth(5);
 
 		// move mouse to first connection
-		ConnectionPart firstConnectionPart = (ConnectionPart) viewer.getContentPartMap()
+		final ConnectionPart firstConnectionPart = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 2));
-		((GeometryNode<?>) firstConnectionPart.getVisual().getCurve()).setStrokeWidth(5);
-		Robot robot = new Robot();
-		Point firstConnectionMid = firstConnectionPart.getVisual().getStartPoint().getTranslated(firstConnectionPart
-				.getVisual().getStartPoint().getDifference(firstConnectionPart.getVisual().getPoint(1)).getScaled(0.5));
 
-		ctx.moveTo(robot, firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
+		final AtomicReference<Point> firstConnectionMidRef = new AtomicReference<>(null);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				((GeometryNode<?>) firstConnectionPart.getVisual().getCurve()).setStrokeWidth(5);
+				firstConnectionMidRef.set(firstConnectionPart.getVisual().getStartPoint()
+						.getTranslated(firstConnectionPart.getVisual().getStartPoint()
+								.getDifference(firstConnectionPart.getVisual().getPoint(1)).getScaled(0.5)));
+			}
+		});
+		Point firstConnectionMid = firstConnectionMidRef.get();
+		ctx.moveTo(firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
 
 		// drag connection down by 10px
-		ctx.mousePress(robot, java.awt.event.InputEvent.BUTTON1_MASK);
+		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
 
-		final Point[] pointerLocation = new Point[1];
+		final AtomicReference<Point> cursorLocationRef = new AtomicReference<>(null);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
-				pointerLocation[0] = CursorUtils.getPointerLocation();
+				cursorLocationRef.set(CursorUtils.getPointerLocation());
 			}
 		});
-		ctx.mouseDrag(robot, (int) pointerLocation[0].x, (int) pointerLocation[0].y + 10);
-		ctx.mouseRelease(robot, java.awt.event.InputEvent.BUTTON1_MASK);
-		robot.delay(1000);
+		Point cursorLocation = cursorLocationRef.get();
+		ctx.mouseDrag((int) cursorLocation.x, (int) cursorLocation.y + 10);
+		ctx.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
 
 		// check the connection is selected
-		assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable().contains(firstConnectionPart));
-
-		// move mouse to second anchorage
-		AnchoragePart secondPart = (AnchoragePart) viewer.getContentPartMap().get(contents.get(1));
-		Point center = ((org.eclipse.gef4.geometry.planar.Rectangle) secondPart.getContent()).getCenter();
-		ctx.moveTo(robot, secondPart.getVisual(), center.x, center.y);
-
-		// drag anchorage down by 10px
-		ctx.mousePress(robot, java.awt.event.InputEvent.BUTTON1_MASK);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
-				pointerLocation[0] = CursorUtils.getPointerLocation();
+				assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable()
+						.contains(firstConnectionPart));
 			}
 		});
-		ctx.mouseDrag(robot, (int) pointerLocation[0].x, (int) pointerLocation[0].y + 10);
-		ctx.mouseRelease(robot, java.awt.event.InputEvent.BUTTON1_MASK);
-		robot.delay(1000);
+
+		// move mouse to second anchorage
+		final AnchoragePart secondPart = (AnchoragePart) viewer.getContentPartMap().get(contents.get(1));
+		final AtomicReference<Point> centerRef = new AtomicReference<>(null);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				centerRef.set(((org.eclipse.gef4.geometry.planar.Rectangle) secondPart.getContent()).getCenter());
+			}
+		});
+		Point center = centerRef.get();
+		ctx.moveTo(secondPart.getVisual(), center.x, center.y);
+
+		// drag anchorage down by 10px
+		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				cursorLocationRef.set(CursorUtils.getPointerLocation());
+			}
+		});
+		cursorLocation = cursorLocationRef.get();
+		ctx.mouseDrag((int) cursorLocation.x, (int) cursorLocation.y + 10);
+		ctx.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
 
 		// check the anchorage is selected
-		assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable().contains(secondPart));
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable().contains(secondPart));
+			}
+		});
 
 		// check the second connection was moved too
 		assertNotEquals(secondConnectionStart, secondConnectionPart.getVisual().getStartPoint());
@@ -1991,39 +1570,9 @@ public class FXBendConnectionPolicyTests {
 	 * @throws AWTException
 	 */
 	@Test
-	public void test_segment_select_error_split_segment()
-			throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_segment_select_error_split_segment() throws Throwable {
 		final List<Object> contents = TestModels.getDA_click_error();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
-
+		final FXViewer viewer = createViewer(contents);
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
@@ -2064,38 +1613,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_start_overlays_way_restore() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_start_overlays_way_restore() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
-
+		final FXViewer viewer = createViewer(contents);
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 
@@ -2136,38 +1656,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_way_overlays_end_remove() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_way_overlays_end_remove() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
-
+		final FXViewer viewer = createViewer(contents);
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 
@@ -2206,38 +1697,9 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
-	public void test_way_overlays_end_restore() throws InterruptedException, InvocationTargetException, AWTException {
-		// create injector (adjust module bindings for test)
-		Injector injector = Guice.createInjector(new TestModule());
-
-		// inject domain
-		injector.injectMembers(this);
-
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		ctx.createScene(viewer.getCanvas(), 400, 200);
-
-		// activate domain, so tool gets activated and can register listeners
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.activate();
-			}
-		});
-
+	public void test_way_overlays_end_restore() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
-		// set contents on JavaFX application thread (visuals are created)
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-			}
-		});
-
-		// check that the parts have been created
-		for (Object content : contents) {
-			assertTrue(viewer.getContentPartMap().containsKey(content));
-		}
-
+		final FXViewer viewer = createViewer(contents);
 		// query bend policy for first connection
 		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
 

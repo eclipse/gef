@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -146,6 +147,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	private Scene scene;
 	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
 	private JFXPanel panel;
+	private Robot robot;
 
 	@Override
 	public Statement apply(final Statement base, Description description) {
@@ -206,6 +208,10 @@ public class FXNonApplicationThreadRule implements TestRule {
 		return scene;
 	}
 
+	public void delay(int millis) {
+		getRobot().delay(millis);
+	}
+
 	/**
 	 * Returns an {@link EventSynchronizer} for the specified {@link EventType}.
 	 * The {@link EventSynchronizer} is automatically registered on the
@@ -248,6 +254,17 @@ public class FXNonApplicationThreadRule implements TestRule {
 		return eventSynchronizer;
 	}
 
+	public Robot getRobot() {
+		if (robot == null) {
+			try {
+				robot = new Robot();
+			} catch (AWTException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return robot;
+	}
+
 	/**
 	 * Fires a KEY_PRESSED event and waits for its processing to finish.
 	 *
@@ -255,9 +272,9 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void keyPress(Robot robot, int keycode) throws InterruptedException {
+	public void keyPress(int keycode) throws InterruptedException {
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_PRESSED);
-		robot.keyPress(keycode);
+		getRobot().keyPress(keycode);
 		eventSynchronizer.await();
 	}
 
@@ -268,9 +285,9 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void keyRelease(Robot robot, int keycode) throws InterruptedException {
+	public void keyRelease(int keycode) throws InterruptedException {
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_RELEASED);
-		robot.keyRelease(keycode);
+		getRobot().keyRelease(keycode);
 		eventSynchronizer.await();
 	}
 
@@ -281,9 +298,9 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mouseDrag(Robot robot, int x, int y) throws InterruptedException {
+	public void mouseDrag(int x, int y) throws InterruptedException {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_DRAGGED);
-		robot.mouseMove(x, y);
+		getRobot().mouseMove(x, y);
 		eventSynchronizer.await();
 	}
 
@@ -294,9 +311,9 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mousePress(Robot robot, int buttons) throws InterruptedException {
+	public void mousePress(int buttons) throws InterruptedException {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_PRESSED);
-		robot.mousePress(buttons);
+		getRobot().mousePress(buttons);
 		eventSynchronizer.await();
 	}
 
@@ -307,20 +324,19 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mouseRelease(Robot robot, int buttons) throws InterruptedException {
+	public void mouseRelease(int buttons) throws InterruptedException {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_RELEASED);
-		robot.mouseRelease(buttons);
+		getRobot().mouseRelease(buttons);
 		eventSynchronizer.await();
 	}
 
-	public void moveTo(Robot robot, Node visual, double localX, double localY) throws InterruptedException {
+	public void moveTo(Node visual, double localX, double localY) throws InterruptedException {
 		Point2D localToScene = visual.localToScene(localX, localY);
 		double x = scene.getWindow().getX() + localToScene.getX();
 		double y = scene.getWindow().getY() + localToScene.getY();
-		EventSynchronizer<MouseEvent> synchronizer = new EventSynchronizer<>(visual,
-				MouseEvent.MOUSE_ENTERED);
+		EventSynchronizer<MouseEvent> synchronizer = new EventSynchronizer<>(visual, MouseEvent.MOUSE_ENTERED);
 		synchronizer.register();
-		robot.mouseMove((int) x, (int) y);
+		getRobot().mouseMove((int) x, (int) y);
 		synchronizer.await();
 	}
 
@@ -329,17 +345,27 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * waits for its execution to finish.
 	 *
 	 * @param runnable
-	 * @throws InterruptedException
+	 * @throws Throwable
 	 */
-	public void runAndWait(final Runnable runnable) throws InterruptedException {
+	public void runAndWait(final Runnable runnable) throws Throwable {
+		final AtomicReference<Throwable> throwableRef = new AtomicReference<>(null);
 		final CountDownLatch latch = new CountDownLatch(1);
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				runnable.run();
-				latch.countDown();
+				try {
+					runnable.run();
+				} catch (Throwable t) {
+					throwableRef.set(t);
+				} finally {
+					latch.countDown();
+				}
 			}
 		});
 		latch.await();
+		Throwable throwable = throwableRef.get();
+		if (throwable != null) {
+			throw throwable;
+		}
 	}
 }
