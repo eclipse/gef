@@ -24,12 +24,14 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScope;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.common.adapt.inject.InjectAdapters;
+import org.eclipse.gef4.mvc.behaviors.ContentPartPool;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
@@ -48,6 +50,10 @@ import javafx.collections.ObservableMap;
  *            javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractViewer<VR> implements IViewer<VR> {
+
+	@Inject
+	// scoped to single instance within viewer
+	private ContentPartPool<VR> contentPartPool;
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
 	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<IViewer<VR>>(
@@ -113,6 +119,32 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
 		// dispose adapters (including root part and models)
 		ads.dispose();
+		ads = null;
+
+		// dispose the content part pool (we share a single instance by all
+		// content behaviors of a viewer, so need to dispose this here)
+		for (IContentPart<VR, ? extends VR> cp : contentPartPool.getPooled()) {
+			cp.dispose();
+		}
+		contentPartPool.clear();
+		contentPartPool = null;
+
+		// clear content part map
+		if (!contentsToContentPartMap.isEmpty()) {
+			throw new IllegalStateException(
+					"Content part map was not properly cleared!");
+		}
+		contentsToContentPartMap = null;
+
+		// clear visual part map
+		if (!visualsToVisualPartMap.isEmpty()) {
+			throw new IllegalStateException(
+					"Visual part map was not properly cleared!");
+		}
+		visualsToVisualPartMap = null;
+
+		// unset activatable support
+		acs = null;
 	}
 
 	@Override

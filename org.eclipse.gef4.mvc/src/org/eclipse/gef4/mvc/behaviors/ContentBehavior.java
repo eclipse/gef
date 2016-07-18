@@ -145,10 +145,13 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 
 	@Override
 	public void dispose() {
-		for (IContentPart<VR, ? extends VR> cp : contentPartPool.getPooled()) {
-			cp.dispose();
-		}
-		contentPartPool.clear();
+		// the content part pool is shared by all content behaviors of a viewer,
+		// so the viewer disposes it.
+		contentPartPool = null;
+		contentObserver = null;
+		contentModelObserver = null;
+		contentChildrenObserver = null;
+		contentAnchoragesObserver = null;
 	}
 
 	/**

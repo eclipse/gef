@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
 
+import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -30,7 +31,7 @@ import javafx.beans.property.SimpleObjectProperty;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class HoverModel<VR> {
+public class HoverModel<VR> implements IDisposable {
 
 	/**
 	 * The {@link HoverModel} fires {@link PropertyChangeEvent}s when the
@@ -49,6 +50,11 @@ public class HoverModel<VR> {
 	 */
 	public void clearHover() {
 		setHover(null);
+	}
+
+	@Override
+	public void dispose() {
+		hoverProperty.set(null);
 	}
 
 	/**

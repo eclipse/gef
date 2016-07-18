@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
+import java.util.Set;
+
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -23,11 +25,25 @@ public abstract class AbstractLogoHoverHandlePart<T extends Node> extends Abstra
 	private boolean registered = false;
 	private final SetMultimapChangeListener<IVisualPart<Node, ? extends Node>, String> parentAnchoragesChangeListener = new SetMultimapChangeListener<IVisualPart<Node, ? extends Node>, String>() {
 
+		private IViewer<Node> getViewer(Set<? extends IVisualPart<Node, ? extends Node>> anchorages) {
+			for (IVisualPart<Node, ? extends Node> anchorage : anchorages) {
+				if (anchorage.getRoot() != null && anchorage.getRoot().getViewer() != null) {
+					return anchorage.getRoot().getViewer();
+				}
+			}
+			return null;
+		}
+
 		@Override
 		public void onChanged(
 				org.eclipse.gef4.common.collections.SetMultimapChangeListener.Change<? extends IVisualPart<Node, ? extends Node>, ? extends String> change) {
-			if (!registered && getViewer() != null) {
-				register(getViewer());
+			IViewer<Node> oldViewer = getViewer(change.getPreviousContents().keySet());
+			IViewer<Node> newViewer = getViewer(change.getSetMultimap().keySet());
+			if (registered && oldViewer != null && oldViewer != newViewer) {
+				unregister(oldViewer);
+			}
+			if (!registered && newViewer != null && oldViewer != newViewer) {
+				register(newViewer);
 			}
 		}
 	};

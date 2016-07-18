@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.models;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
+import org.eclipse.gef4.common.dispose.IDisposable;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
@@ -27,7 +28,7 @@ import javafx.collections.ObservableList;
  * @author mwienand
  *
  */
-public class ContentModel {
+public class ContentModel implements IDisposable {
 
 	/**
 	 * Name of the {@link #contentsProperty()}.
@@ -47,6 +48,11 @@ public class ContentModel {
 	 */
 	public ReadOnlyListProperty<Object> contentsProperty() {
 		return contentsProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public void dispose() {
+		contents.clear();
 	}
 
 	/**

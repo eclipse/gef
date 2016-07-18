@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
 
+import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 import javafx.beans.property.ObjectProperty;
@@ -31,7 +32,7 @@ import javafx.beans.property.SimpleObjectProperty;
  *            javafx.scene.Node in case of JavaFX.
  *
  */
-public class FocusModel<VR> {
+public class FocusModel<VR> implements IDisposable {
 
 	/**
 	 * The {@link FocusModel} fires {@link PropertyChangeEvent}s when the
@@ -50,6 +51,11 @@ public class FocusModel<VR> {
 	 * {@link IContentPart} is set to <code>null</code>.
 	 */
 	public FocusModel() {
+	}
+
+	@Override
+	public void dispose() {
+		focusedProperty.set(null);
 	}
 
 	/**

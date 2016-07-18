@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
+import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 import javafx.beans.property.ReadOnlyListProperty;
@@ -45,7 +46,7 @@ import javafx.collections.ObservableList;
 // TODO: We could expose the selection as modifiable collection and modifiable
 // read-only property if we could use an ordered set. As we use a list, we have
 // to ensure it does not contain duplicates.
-public class SelectionModel<VR> {
+public class SelectionModel<VR> implements IDisposable {
 
 	/**
 	 * Name of the {@link #selectionUnmodifiableProperty()}.
@@ -122,6 +123,11 @@ public class SelectionModel<VR> {
 		if (!selection.isEmpty()) {
 			selection.clear();
 		}
+	}
+
+	@Override
+	public void dispose() {
+		selection.clear();
 	}
 
 	/**
