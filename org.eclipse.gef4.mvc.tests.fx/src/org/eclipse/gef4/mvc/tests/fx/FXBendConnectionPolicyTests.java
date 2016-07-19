@@ -73,9 +73,11 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 public class FXBendConnectionPolicyTests {
@@ -1462,7 +1464,15 @@ public class FXBendConnectionPolicyTests {
 			}
 		});
 		Point firstConnectionMid = firstConnectionMidRef.get();
+		EventHandler<MouseEvent> mouseEventFilter = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				System.out.println(event);
+			}
+		};
+		viewer.getCanvas().getScene().addEventFilter(MouseEvent.ANY, mouseEventFilter);
 		ctx.moveTo(firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
+		viewer.getCanvas().getScene().removeEventFilter(MouseEvent.ANY, mouseEventFilter);
 
 		// drag connection down by 10px
 		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
