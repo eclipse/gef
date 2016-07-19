@@ -133,6 +133,37 @@ public class BezierCurveTests {
 		assertFalse(c2.equals(c));
 	}
 
+	@Test(timeout = 1000)
+	public void test_findSinglePreciseIntersection_discard_non_intersection_early() {
+		// tests if the findSinglePreciseIntersection method discards
+		// non-intersections early, i.e. without having to discretize the curves
+		// to points.
+		ICurve curve1 = new PolyBezier(
+				new CubicCurve(455.1127703395095, 902.6165880470161,
+						455.1127703395095, 888.0274426450839, 436.2048125161328,
+						876.0223900588129, 413.2269085080896,
+						876.0223900588129),
+				new CubicCurve(413.2269085080896, 876.0223900588129,
+						390.24900450004634, 876.0223900588129,
+						371.34104667666963, 888.0274426450839,
+						371.34104667666963, 902.6165880470161),
+				new CubicCurve(371.34104667666963, 902.6165880470161,
+						371.34104667666963, 917.2057334489482,
+						390.24900450004634, 929.2107860352191,
+						413.22690850808954, 929.2107860352191),
+				new CubicCurve(413.22690850808954, 929.2107860352191,
+						436.2048125161328, 929.2107860352191, 455.1127703395095,
+						917.2057334489482, 455.1127703395095,
+						902.6165880470161));
+
+		ICurve curve2 = new Line(413.2269085080896, 902.6165880470161,
+				339.9731645844828, 902.6165880470161);
+
+		// one end point intersection should be found
+		Point[] intersections = curve1.getIntersections(curve2);
+		assertEquals(1, intersections.length);
+	}
+
 	@Test
 	public void test_get() {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
@@ -566,33 +597,6 @@ public class BezierCurveTests {
 		line.getIntersections(curve);
 		endMillis = System.currentTimeMillis();
 		assertTrue(endMillis - startMillis < 200);
-	}
-
-	@Test(timeout = 1000)
-	public void test_intersection_performance2() {
-		ICurve curve1 = new PolyBezier(
-				new CubicCurve(455.1127703395095, 902.6165880470161,
-						455.1127703395095, 888.0274426450839, 436.2048125161328,
-						876.0223900588129, 413.2269085080896,
-						876.0223900588129),
-				new CubicCurve(413.2269085080896, 876.0223900588129,
-						390.24900450004634, 876.0223900588129,
-						371.34104667666963, 888.0274426450839,
-						371.34104667666963, 902.6165880470161),
-				new CubicCurve(371.34104667666963, 902.6165880470161,
-						371.34104667666963, 917.2057334489482,
-						390.24900450004634, 929.2107860352191,
-						413.22690850808954, 929.2107860352191),
-				new CubicCurve(413.22690850808954, 929.2107860352191,
-						436.2048125161328, 929.2107860352191, 455.1127703395095,
-						917.2057334489482, 455.1127703395095,
-						902.6165880470161));
-
-		ICurve curve2 = new Line(413.2269085080896, 902.6165880470161,
-				339.9731645844828, 902.6165880470161);
-
-		Point[] intersections = curve1.getIntersections(curve2);
-		assertEquals(1, intersections.length);
 	}
 
 	@Test

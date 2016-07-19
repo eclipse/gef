@@ -1493,6 +1493,14 @@ public class BezierCurve extends AbstractGeometry
 		while (!partStack.isEmpty()) {
 			IntervalPair ip = partStack.pop();
 
+			// quick check if intersections can be found
+			BezierCurve pClipped = ip.getPClipped();
+			BezierCurve qClipped = ip.getQClipped();
+			if (!pClipped.getControlBounds()
+					.touches(qClipped.getControlBounds())) {
+				continue;
+			}
+
 			if (ip.convergesP()) {
 				Point p = ip.p.getHC(ip.pi.a).toPoint();
 				if (ip.q.contains(p)) {
@@ -1520,9 +1528,6 @@ public class BezierCurve extends AbstractGeometry
 				}
 				continue;
 			}
-
-			BezierCurve pClipped = ip.getPClipped();
-			BezierCurve qClipped = ip.getQClipped();
 
 			// construct "parallel" and "orthogonal" fat lines
 			FatLine L1 = FatLine.from(qClipped, PARALLEL);
