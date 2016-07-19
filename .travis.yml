@@ -1,0 +1,30 @@
+###############################################################################
+# Copyright (c) 2016 itemis AG and others.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#     Alexander Nyßen (itemis AG) - initial API and implementation
+###############################################################################
+
+sudo: false
+
+language: java
+
+jdk: 
+ - oraclejdk8
+
+cache:
+  directories:
+  - $HOME/.m2
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 
+
+script:
+- cd org.eclipse.gef4.releng
+- mvn clean verify -Dmaven.test.failure.ignore=false -PNEON.target

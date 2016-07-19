@@ -279,7 +279,7 @@
 						<useUIHarness>false</useUIHarness>
 						<useUIThread>false</useUIThread>
 						<useSystemClassLoader>true</useSystemClassLoader>
-						<testFailureIgnore>true</testFailureIgnore>
+						<testFailureIgnore>${maven.test.failure.ignore}</testFailureIgnore>
 						<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
 						<frameworkExtensions>
 							<frameworkExtension>
