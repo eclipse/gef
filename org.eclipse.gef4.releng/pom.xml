@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Copyright (c) 2016 itemis AG and others.
-    All rights reserved. This program and the accompanying materials
-    are made available under the terms of the Eclipse Public License v1.0
-    which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
-   
-    Contributors:
-        Alexander Nyßen (itemis AG) - initial API and implementation
- -->
+<!-- Copyright (c) 2016 itemis AG and others. All rights reserved. This program 
+	and the accompanying materials are made available under the terms of the 
+	Eclipse Public License v1.0 which accompanies this distribution, and is available 
+	at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Nyßen 
+	(itemis AG) - initial API and implementation -->
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -28,6 +23,8 @@
 		<exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
 		<!-- Use Xtext generator 2.7.3, which corresponds to Luna SR2 release -->
 		<xtext.version>2.7.3</xtext.version>
+		<wikidoc.skip>false</wikidoc.skip>
+		<maven.javadoc.skip>false</maven.javadoc.skip>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<tycho.scmUrl>scm:git:https://github.com/eclipse/gef.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -132,7 +129,12 @@
 									</then>
 								</if>
 								<if>
-									<available file="javadocOptions.txt" />
+									<and>
+										<not>
+											<equals arg1="${maven.javadoc.skip}" arg2="true" />
+										</not>
+										<available file="javadocOptions.txt" />
+									</and>
 									<then>
 										<copy file="javadocOptions.txt" tofile="javadocOptions.txt.backup"
 											overwrite="true" />
@@ -157,7 +159,12 @@
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
-									<available file="wikitextOptions.txt" />
+									<and>
+										<not>
+											<equals arg1="${wikidoc.skip}" arg2="true" />
+										</not>
+										<available file="wikitextOptions.txt" />
+									</and>
 									<then>
 										<ant
 											antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateWikitext.xml"
@@ -165,7 +172,12 @@
 									</then>
 								</if>
 								<if>
-									<available file="javadocOptions.txt" />
+									<and>
+										<not>
+											<equals arg1="${maven.javadoc.skip}" arg2="true" />
+										</not>
+										<available file="javadocOptions.txt" />
+									</and>
 									<then>
 										<ant
 											antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateJavadoc.xml"
@@ -195,7 +207,12 @@
 									</then>
 								</if>
 								<if>
-									<available file="javadocOptions.txt.backup" />
+									<and>
+										<not>
+											<equals arg1="${maven.javadoc.skip}" arg2="true" />
+										</not>
+										<available file="javadocOptions.txt.backup" />
+									</and>
 									<then>
 										<echo
 											message="Replacing back modified javadocOptions.txt with backup." />
@@ -280,7 +297,8 @@
 						<useUIThread>false</useUIThread>
 						<useSystemClassLoader>true</useSystemClassLoader>
 						<testFailureIgnore>${maven.test.failure.ignore}</testFailureIgnore>
-						<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+						<argLine>-Xmx512m -XX:MaxPermSize=256m
+							-Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
 						<frameworkExtensions>
 							<frameworkExtension>
 								<groupId>org.eclipse.fx.shared</groupId>
