@@ -142,11 +142,19 @@ public class FXNonApplicationThreadRule implements TestRule {
 		}
 	}
 
-	private static boolean initializedJavaFxToolkit = false;
+	public interface RunnableWithResult<T> {
+		public T run();
+	}
 
+	public interface RunnableWithResultAndParam<T, P1> {
+		public T run(P1 param1);
+	}
+
+	private static boolean initializedJavaFxToolkit = false;
 	private Scene scene;
 	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
 	private JFXPanel panel;
+
 	private Robot robot;
 
 	@Override
@@ -368,4 +376,68 @@ public class FXNonApplicationThreadRule implements TestRule {
 			throw throwable;
 		}
 	}
+
+	/**
+	 * Schedules the given {@link RunnableWithResult} on the JavaFX application
+	 * thread and waits for its execution to finish.
+	 *
+	 * @param runnableWithResult
+	 * @throws Throwable
+	 */
+	public <T> T runAndWait(final RunnableWithResult<T> runnableWithResult) throws Throwable {
+		final AtomicReference<Throwable> throwableRef = new AtomicReference<>(null);
+		final AtomicReference<T> resultRef = new AtomicReference<>(null);
+		final CountDownLatch latch = new CountDownLatch(1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					resultRef.set(runnableWithResult.run());
+				} catch (Throwable t) {
+					throwableRef.set(t);
+				} finally {
+					latch.countDown();
+				}
+			}
+		});
+		latch.await();
+		Throwable throwable = throwableRef.get();
+		if (throwable != null) {
+			throw throwable;
+		}
+		return resultRef.get();
+	}
+
+	/**
+	 * Schedules the given {@link RunnableWithResult} on the JavaFX application
+	 * thread and waits for its execution to finish.
+	 *
+	 * @param runnableWithResult
+	 * @throws Throwable
+	 */
+	public <T, P1> T runAndWait(final RunnableWithResultAndParam<T, P1> runnableWithResult, final P1 param1)
+			throws Throwable {
+		final AtomicReference<Throwable> throwableRef = new AtomicReference<>(null);
+		final AtomicReference<T> resultRef = new AtomicReference<>(null);
+		final CountDownLatch latch = new CountDownLatch(1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					resultRef.set(runnableWithResult.run(param1));
+				} catch (Throwable t) {
+					throwableRef.set(t);
+				} finally {
+					latch.countDown();
+				}
+			}
+		});
+		latch.await();
+		Throwable throwable = throwableRef.get();
+		if (throwable != null) {
+			throw throwable;
+		}
+		return resultRef.get();
+	}
+
 }

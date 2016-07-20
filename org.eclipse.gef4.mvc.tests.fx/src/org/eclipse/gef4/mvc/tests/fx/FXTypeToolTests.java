@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
+import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +38,9 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.sun.glass.events.KeyEvent;
 
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
 public class FXTypeToolTests {
 
@@ -76,7 +79,7 @@ public class FXTypeToolTests {
 	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef4.mvc.tools.ITool)}
 	 * ) is used for a complete press/drag interaction gesture, because
 	 * otherwise the transactional results of the gesture could not be undone.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	@Test
@@ -109,12 +112,24 @@ public class FXTypeToolTests {
 		});
 		injector.injectMembers(this);
 
-		InfiniteCanvas infiniteCanvas = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE))
-				.getCanvas();
+		final InfiniteCanvas infiniteCanvas = domain
+				.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE)).getCanvas();
 		ctx.createScene(infiniteCanvas, 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
-		domain.activate();
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+			}
+		});
+
+		double validPosition = ctx.runAndWait(new RunnableWithResult<Double>() {
+			@Override
+			public Double run() {
+				return Math.min(infiniteCanvas.getWidth(), infiniteCanvas.getHeight()) / 2;
+			}
+		});
 
 		// initialize
 		domain.openedExecutionTransactions = 0;
@@ -123,7 +138,25 @@ public class FXTypeToolTests {
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 
 		// move robot to scene
-		ctx.moveTo(infiniteCanvas, 50, 50);
+		final EventHandler<MouseEvent> mouseEventFilter = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				System.err.println("FILTER: " + event);
+			}
+		};
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				infiniteCanvas.getScene().addEventFilter(MouseEvent.ANY, mouseEventFilter);
+			}
+		});
+		ctx.moveTo(infiniteCanvas, validPosition, validPosition);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				infiniteCanvas.getScene().removeEventFilter(MouseEvent.ANY, mouseEventFilter);
+			}
+		});
 
 		// simulate press/release gesture
 		ctx.keyPress(KeyEvent.VK_K);
