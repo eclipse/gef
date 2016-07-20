@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Geometry SWT Conversions
 Bundle-SymbolicName: org.eclipse.gef4.geometry.convert.swt
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)",

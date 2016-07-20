@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef4.graph.sdk"
       label="GEF4 Graph SDK"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">

@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef4.graph.doc"
       label="GEF4 Graph Developer Documentation"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.graph.doc"
       license-feature="org.eclipse.license"
