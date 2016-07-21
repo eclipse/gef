@@ -59,15 +59,28 @@ import javafx.collections.ObservableMap;
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	private static final int DEFAULT_UNDO_LIMIT = 128;
+	private static final UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER = new UncaughtExceptionHandler() {
+		@Override
+		public void uncaughtException(Thread t, Throwable e) {
+			e.printStackTrace();
+			if (e instanceof RuntimeException) {
+				throw (RuntimeException) e;
+			} else {
+				throw new RuntimeException(e);
+			}
+		}
+	};
+
 	private ActivatableSupport acs = new ActivatableSupport(this);
 	private AdaptableSupport<IDomain<VR>> ads = new AdaptableSupport<IDomain<VR>>(
 			this);
 
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
+
 	private AbstractCompositeOperation transaction;
 	private Set<ITool<VR>> transactionContext = new HashSet<>();
-	private IOperationHistoryListener operationHistoryListener = new IOperationHistoryListener() {
+	private IOperationHistoryListener transactionListener = new IOperationHistoryListener() {
 		@Override
 		public void historyNotification(OperationHistoryEvent event) {
 			if (event.getEventType() == OperationHistoryEvent.ABOUT_TO_UNDO) {
@@ -95,24 +108,9 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	public AbstractDomain() {
 		AdaptableScopes.enter(this);
 
-		// XXX: Observable collections wrap notification of listeners into a
-		// try/catch block and report all exceptions to the registered
-		// UncaughtExceptionHandler. We do not want to have exceptions silently
-		// captured anywhere in the framework, thus register a handler here
-		// (that may of course be overwritten by clients) that
-		// re-throws all silently captured exceptions.
+		// ensure uncaught exception handler is used
 		Thread.currentThread()
-				.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-					@Override
-					public void uncaughtException(Thread t, Throwable e) {
-						e.printStackTrace();
-						if (e instanceof RuntimeException) {
-							throw (RuntimeException) e;
-						} else {
-							throw new RuntimeException(e);
-						}
-					}
-				});
+				.setUncaughtExceptionHandler(UNCAUGHT_EXCEPTION_HANDLER);
 	}
 
 	@Override
@@ -215,14 +213,25 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Override
 	public void dispose() {
-		// dispose operation history
+		// dispose transaction related objects
+		operationHistory.removeOperationHistoryListener(transactionListener);
+		transactionListener = null;
+		transactionContext.clear();
+		transactionContext = null;
+		transaction = null;
+
+		// dispose operation history and undo context
 		operationHistory.dispose(undoContext, true, true, true);
+		operationHistory = null;
+		undoContext = null;
 
 		// clear adaptable scope
 		AdaptableScopes.leave(this);
 
-		// dispose adapter store
+		// dispose adaptable and activatable support
 		ads.dispose();
+		ads = null;
+		acs = null;
 	}
 
 	/**
@@ -401,13 +410,13 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		if (this.operationHistory != null
 				&& this.operationHistory != operationHistory) {
 			this.operationHistory
-					.removeOperationHistoryListener(operationHistoryListener);
+					.removeOperationHistoryListener(transactionListener);
 		}
 		if (this.operationHistory != operationHistory) {
 			this.operationHistory = operationHistory;
 			if (this.operationHistory != null) {
 				this.operationHistory
-						.addOperationHistoryListener(operationHistoryListener);
+						.addOperationHistoryListener(transactionListener);
 				if (undoContext != null) {
 					this.operationHistory.setLimit(undoContext,
 							DEFAULT_UNDO_LIMIT);
