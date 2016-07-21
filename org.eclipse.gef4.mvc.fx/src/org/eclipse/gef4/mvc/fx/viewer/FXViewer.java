@@ -50,7 +50,11 @@ public class FXViewer extends AbstractViewer<Node> {
 
 	/**
 	 * The {@link InfiniteCanvas} that displays the viewer's contents.
+	 *
+	 * @deprecated This field will be made private. Use {@link #getCanvas()}
+	 *             instead.
 	 */
+	@Deprecated
 	protected InfiniteCanvas infiniteCanvas;
 
 	private boolean isInitialized = false;
