@@ -301,16 +301,16 @@ public class DotAttributes {
 
 	/**
 	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Node} to the
-	 * given <i>id</i> value.
+	 * given <i>name</i> value.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
 	 *            {@link #_NAME__GNE} attribute.
-	 * @param id
+	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
-	public static void _setName(Node node, String id) {
-		node.attributesProperty().put(_NAME__GNE, id);
+	public static void _setName(Node node, String name) {
+		node.attributesProperty().put(_NAME__GNE, name);
 	}
 
 	/**
