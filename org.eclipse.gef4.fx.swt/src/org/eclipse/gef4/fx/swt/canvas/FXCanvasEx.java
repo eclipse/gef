@@ -19,6 +19,8 @@ import java.lang.reflect.Method;
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.swt.gestures.SWT2FXEventConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.ImageData;
@@ -52,19 +54,23 @@ import javafx.stage.Window;
  */
 public class FXCanvasEx extends FXCanvas {
 
-	private SWT2FXEventConverter gestureConverter;
-	private EventDispatcher initialEventDispatcher;
+	private final class RedrawingEventDispatcher implements EventDispatcher {
 
-	private EventDispatcher deferringEventDispatcher = new EventDispatcher() {
 		private static final int REDRAW_INTERVAL_MILLIS = 40; // i.e. 25 fps
+
+		private EventDispatcher delegate;
+
 		private long lastRedrawMillis = System.currentTimeMillis();
+
+		protected RedrawingEventDispatcher(EventDispatcher delegate) {
+			this.delegate = delegate;
+		}
 
 		@Override
 		public Event dispatchEvent(final Event event,
 				final EventDispatchChain tail) {
 			// dispatch the most recent event
-			Event returnedEvent = initialEventDispatcher.dispatchEvent(event,
-					tail);
+			Event returnedEvent = delegate.dispatchEvent(event, tail);
 			// update UI
 			long millisNow = System.currentTimeMillis();
 			if (millisNow - lastRedrawMillis > REDRAW_INTERVAL_MILLIS) {
@@ -75,7 +81,13 @@ public class FXCanvasEx extends FXCanvas {
 			// return dispatched event
 			return returnedEvent;
 		}
-	};
+
+		protected EventDispatcher dispose() {
+			EventDispatcher d = delegate;
+			delegate = null;
+			return d;
+		}
+	}
 
 	private ChangeListener<Cursor> cursorChangeListener = new ChangeListener<Cursor>() {
 		@Override
@@ -121,16 +133,9 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	};
 
-	private TraverseListener eclipseUiTraversalListener = new TraverseListener() {
-		@Override
-		public void keyTraversed(TraverseEvent e) {
-			if ((e.detail == SWT.TRAVERSE_TAB_NEXT
-					|| e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
-					&& (e.stateMask & SWT.CTRL) != 0) {
-				e.doit = true;
-			}
-		}
-	};
+	private SWT2FXEventConverter gestureConverter = null;
+	private TraverseListener traverseListener = null;
+	private DisposeListener disposeListener;
 
 	/**
 	 * Creates a new {@link FXCanvasEx} for the given parent and with the given
@@ -146,13 +151,54 @@ public class FXCanvasEx extends FXCanvas {
 	 */
 	public FXCanvasEx(Composite parent, int style) {
 		super(parent, style);
-		addTraverseListener(eclipseUiTraversalListener);
+
+		// XXX: As FXCanvas uses a dispose listener, we have to use the same
+		// mechanism here
+		disposeListener = new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent de) {
+				// XXX: unset the scene, so event dispatcher and cursor listener
+				// are properly removed;
+				// XXX: The super class will also unset the stage as a result of
+				// unsetting the scene. The stagePeer will be unset through
+				// the host container when the stage is set invisible (which
+				// already happens through the dispose listener of the super
+				// class). The embedded scene (scenePeer) will be unset through
+				// the host container when unsetting the scene above;
+				setScene(null);
+				cursorChangeListener = null;
+
+				removeDisposeListener(disposeListener);
+				disposeListener = null;
+
+				removeTraverseListener(traverseListener);
+				traverseListener = null;
+
+				gestureConverter.dispose();
+				gestureConverter = null;
+			}
+		};
+		addDisposeListener(disposeListener);
+
+		// create traverse
+		traverseListener = new TraverseListener() {
+			@Override
+			public void keyTraversed(TraverseEvent e) {
+				if ((e.detail == SWT.TRAVERSE_TAB_NEXT
+						|| e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+						&& (e.stateMask & SWT.CTRL) != 0) {
+					e.doit = true;
+				}
+			}
+		};
+		addTraverseListener(traverseListener);
+
 		gestureConverter = new SWT2FXEventConverter(this);
 	}
 
 	@Override
 	public void dispose() {
-		gestureConverter.dispose();
+		// TODO: remove (logic has been put into dispose listener)
 		super.dispose();
 	}
 
@@ -169,13 +215,17 @@ public class FXCanvasEx extends FXCanvas {
 	public void setScene(Scene newScene) {
 		Scene oldScene = getScene();
 		if (oldScene != null) {
-			oldScene.setEventDispatcher(initialEventDispatcher);
+			// restore original event dispatcher
+			oldScene.setEventDispatcher(
+					((RedrawingEventDispatcher) oldScene.getEventDispatcher())
+							.dispose());
 			oldScene.cursorProperty().removeListener(cursorChangeListener);
 		}
 		super.setScene(newScene);
 		if (newScene != null) {
-			initialEventDispatcher = newScene.getEventDispatcher();
-			newScene.setEventDispatcher(deferringEventDispatcher);
+			// wrap event dispatcher
+			newScene.setEventDispatcher(new RedrawingEventDispatcher(
+					newScene.getEventDispatcher()));
 			newScene.cursorProperty().addListener(cursorChangeListener);
 		}
 	}

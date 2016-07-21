@@ -329,17 +329,23 @@ public class SWT2FXEventConverter {
 	 * {@link SWT2FXEventConverter} was created.
 	 */
 	public void dispose() {
-		Display display = canvas.getDisplay();
 		if (emulatedPanGestureEventFilter != null) {
 			display.removeFilter(SWT.Gesture, emulatedPanGestureEventFilter);
+			emulatedPanGestureEventFilter = null;
 		}
 		if (emulatedMouseWheelEventFilter != null) {
 			display.removeFilter(SWT.MouseVerticalWheel,
 					emulatedMouseWheelEventFilter);
 			display.removeFilter(SWT.MouseHorizontalWheel,
 					emulatedMouseWheelEventFilter);
+			emulatedMouseWheelEventFilter = null;
 		}
 		canvas.removeGestureListener(gestureListener);
+		gestureListener = null;
+
+		currentGestureState = null;
+		lastPanGestureEvent = null;
+		display = null;
 		canvas = null;
 	}
 
