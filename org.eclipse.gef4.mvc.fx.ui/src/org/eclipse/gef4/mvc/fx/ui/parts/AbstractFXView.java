@@ -146,20 +146,37 @@ public abstract class AbstractFXView extends ViewPart {
 		unhookViewers();
 
 		// unregister selection provider
+		selectionProviderFactory = null;
 		if (selectionProvider != null) {
 			getSite().setSelectionProvider(null);
 			if (selectionProvider instanceof IDisposable) {
 				((IDisposable) selectionProvider).dispose();
 			}
+			selectionProvider = null;
+		}
+
+		if (propertySheetPage != null) {
+			propertySheetPage.dispose();
+			propertySheetPage = null;
 		}
 
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.dispose();
+			undoRedoActionGroup = null;
 		}
 
 		deleteActionHandler.init(null);
+		deleteActionHandler = null;
 
 		domain.dispose();
+		domain = null;
+
+		canvasFactory = null;
+		if (!canvas.isDisposed()) {
+			canvas.dispose();
+		}
+		canvas = null;
+
 		super.dispose();
 	}
 

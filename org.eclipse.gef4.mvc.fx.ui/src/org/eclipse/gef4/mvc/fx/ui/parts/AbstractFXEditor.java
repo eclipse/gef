@@ -154,10 +154,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 		// unregister operation history listener
 		domain.getOperationHistory()
 				.removeOperationHistoryListener(operationHistoryListener);
-
-		if (undoRedoActionGroup != null) {
-			undoRedoActionGroup.dispose();
-		}
+		operationHistoryListener = null;
 
 		// unregister selection provider
 		if (selectionProvider != null) {
@@ -167,7 +164,25 @@ public abstract class AbstractFXEditor extends EditorPart {
 			}
 		}
 
+		if (propertySheetPage != null) {
+			propertySheetPage.dispose();
+			propertySheetPage = null;
+		}
+
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.dispose();
+			undoRedoActionGroup = null;
+		}
+
 		domain.dispose();
+		domain = null;
+
+		canvasFactory = null;
+		if (!canvas.isDisposed()) {
+			canvas.dispose();
+		}
+		canvas = null;
+
 		super.dispose();
 	}
 
