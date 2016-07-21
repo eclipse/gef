@@ -164,10 +164,10 @@ public abstract class AbstractFXEditor extends EditorPart {
 			}
 		}
 
-		if (propertySheetPage != null) {
-			propertySheetPage.dispose();
-			propertySheetPage = null;
-		}
+		// XXX: The propertySheetPage does not need to be disposed, as this is
+		// already done by the PropertySheet (view) when this view is closed.
+		propertySheetPage = null;
+		propertySheetPageFactory = null;
 
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.dispose();
