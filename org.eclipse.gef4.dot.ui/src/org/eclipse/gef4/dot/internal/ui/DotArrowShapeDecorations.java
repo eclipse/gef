@@ -230,11 +230,11 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	public static interface PrimitiveShape {
+	public static interface IPrimitiveShape {
 		double getOffset();
 	}
 
-	private static class Box extends Polygon implements PrimitiveShape {
+	private static class Box extends Polygon implements IPrimitiveShape {
 		private Box(double arrowSize) {
 			super(0, arrowSize * size / 2, 0, -arrowSize * size / 2,
 					arrowSize * size, -arrowSize * size / 2, arrowSize * size,
@@ -248,7 +248,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Crow extends Polygon implements PrimitiveShape {
+	private static class Crow extends Polygon implements IPrimitiveShape {
 		private Crow(double arrowSize) {
 			super(arrowSize * size / 2, 0, 0, -arrowSize * size / 2,
 					arrowSize * size, 0, 0, arrowSize * size / 2);
@@ -260,7 +260,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Curve extends Arc implements PrimitiveShape {
+	private static class Curve extends Arc implements IPrimitiveShape {
 		private Curve(double arrowSize) {
 			super(arrowSize * size / 2, // centerX
 					0, // centerY
@@ -278,7 +278,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Diamond extends Polygon implements PrimitiveShape {
+	private static class Diamond extends Polygon implements IPrimitiveShape {
 		private Diamond(double arrowSize) {
 			super(0, 0, arrowSize * size / 2, -arrowSize * size / 3,
 					arrowSize * size, 0, arrowSize * size / 2,
@@ -291,7 +291,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Dot extends Circle implements PrimitiveShape {
+	private static class Dot extends Circle implements IPrimitiveShape {
 		private Dot(double arrowSize) {
 			super(0, 0, arrowSize * size / 2);
 		}
@@ -302,7 +302,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class ICurve extends Arc implements PrimitiveShape {
+	private static class ICurve extends Arc implements IPrimitiveShape {
 		private ICurve(double arrowSize) {
 			super(0, // centerX
 					0, // centerY
@@ -320,7 +320,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Inv extends Polygon implements PrimitiveShape {
+	private static class Inv extends Polygon implements IPrimitiveShape {
 		private Inv(double arrowSize) {
 			super(0, arrowSize * size / 3, arrowSize * size, 0, 0,
 					-arrowSize * size / 3);
@@ -332,7 +332,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Normal extends Polygon implements PrimitiveShape {
+	private static class Normal extends Polygon implements IPrimitiveShape {
 		private Normal(double arrowSize) {
 			super(0, 0, arrowSize * size, -arrowSize * size / 3,
 					arrowSize * size, arrowSize * size / 3);
@@ -344,7 +344,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Tee extends Polygon implements PrimitiveShape {
+	private static class Tee extends Polygon implements IPrimitiveShape {
 		private Tee(double arrowSize) {
 			super(0, -arrowSize * size / 2, arrowSize * size / 4,
 					-arrowSize * size / 2, arrowSize * size / 4,
@@ -357,7 +357,7 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static class Vee extends Polygon implements PrimitiveShape {
+	private static class Vee extends Polygon implements IPrimitiveShape {
 		private Vee(double arrowSize) {
 			super(0, 0, arrowSize * size, -arrowSize * size / 2,
 					2 * arrowSize * size / 3, 0, arrowSize * size,

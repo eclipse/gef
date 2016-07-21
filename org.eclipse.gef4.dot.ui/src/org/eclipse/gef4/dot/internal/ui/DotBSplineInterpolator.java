@@ -16,7 +16,7 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.dot.internal.ui.DotArrowShapeDecorations.PrimitiveShape;
+import org.eclipse.gef4.dot.internal.ui.DotArrowShapeDecorations.IPrimitiveShape;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
@@ -144,8 +144,8 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 			List<Node> children = ((Group) decoration).getChildren();
 			if (!children.isEmpty()) {
 				Node firstChild = children.get(0);
-				if (firstChild instanceof PrimitiveShape) {
-					double offset = ((PrimitiveShape) firstChild).getOffset();
+				if (firstChild instanceof IPrimitiveShape) {
+					double offset = ((IPrimitiveShape) firstChild).getOffset();
 					return offset;
 				}
 			}
