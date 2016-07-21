@@ -117,6 +117,14 @@ public class FXViewer extends AbstractViewer<Node> {
 		}
 	};
 
+	private ChangeListener<Scene> sceneListener = new ChangeListener<Scene>() {
+		@Override
+		public void changed(ObservableValue<? extends Scene> observable,
+				Scene oldValue, Scene newValue) {
+			onSceneChanged(oldValue, newValue);
+		}
+	};
+
 	/**
 	 * Creates a new {@link FXViewer}.
 	 */
@@ -128,6 +136,24 @@ public class FXViewer extends AbstractViewer<Node> {
 		// - focusOwner
 		// - focusOwner focused
 		viewerFocusedProperty.bind(viewerFocusedPropertyBinding);
+	}
+
+	@Override
+	public void dispose() {
+		// ensure all listeners are properly unregistered
+		if (infiniteCanvas != null) {
+			if (infiniteCanvas.getScene() != null) {
+				onSceneChanged(infiniteCanvas.getScene(), null);
+			}
+			infiniteCanvas.sceneProperty().removeListener(sceneListener);
+			infiniteCanvas = null;
+		}
+
+		// unbind viewer focused property
+		viewerFocusedProperty.unbind();
+		viewerFocusedProperty = null;
+
+		super.dispose();
 	}
 
 	/**
@@ -147,17 +173,7 @@ public class FXViewer extends AbstractViewer<Node> {
 				// register root visual
 				infiniteCanvas.getContentGroup().getChildren()
 						.addAll((Parent) rootPart.getVisual());
-
-				// ensure we can properly react to scene and focus owner changes
-				infiniteCanvas.sceneProperty()
-						.addListener(new ChangeListener<Scene>() {
-							@Override
-							public void changed(
-									ObservableValue<? extends Scene> observable,
-									Scene oldValue, Scene newValue) {
-								onSceneChanged(oldValue, newValue);
-							}
-						});
+				infiniteCanvas.sceneProperty().addListener(sceneListener);
 				if (infiniteCanvas.getScene() != null) {
 					onSceneChanged(null, infiniteCanvas.getScene());
 				}
