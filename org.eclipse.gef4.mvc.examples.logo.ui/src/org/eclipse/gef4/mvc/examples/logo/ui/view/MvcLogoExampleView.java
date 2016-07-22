@@ -106,17 +106,24 @@ public class MvcLogoExampleView extends AbstractFXView {
 	public MvcLogoExampleView() {
 		super(Guice.createInjector(Modules.override(new MvcLogoExampleModule())
 				.with(new MvcLogoExampleUiModule())));
-		// set default contents (GEF logo)
-		FXViewer viewer = getContentViewer();
-		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
-		contentModel.getContents()
+
+		// set initial contents
+		getContentViewer()
+				.getAdapter(ContentModel.class).getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
-		// set palette contents
-		FXViewer paletteViewer = getPaletteViewer();
-		ContentModel paletteContentModel = paletteViewer
-				.getAdapter(ContentModel.class);
-		paletteContentModel.getContents()
+		getPaletteViewer()
+				.getAdapter(ContentModel.class).getContents()
 				.setAll(MvcLogoExample.createPaletteContents());
+	}
+
+	@Override
+	public void dispose() {
+		
+		// clear viewer contents
+		getContentViewer().getAdapter(ContentModel.class).contentsProperty().clear();
+		getPaletteViewer().getAdapter(ContentModel.class).contentsProperty().clear();
+
+		super.dispose();
 	}
 
 	@SuppressWarnings("rawtypes")
