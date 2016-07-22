@@ -63,9 +63,8 @@ public class BehaviorUtils {
 	}
 
 	/**
-	 * Removes the given list of anchoreds as children from the given
-	 * {@link IRootPart}. Additionally detaches the given anchoreds from the
-	 * given anchorages.
+	 * Detaches the given anchoreds from the given anchorages and removes them
+	 * as children from the given {@link IRootPart}.
 	 *
 	 * @param root
 	 *            The {@link IRootPart} from which the anchoreds are to be
@@ -84,12 +83,12 @@ public class BehaviorUtils {
 			List<? extends IVisualPart<VR, ? extends VR>> anchorages,
 			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
-			root.removeChildren(anchoreds);
 			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
 				for (IVisualPart<VR, ? extends VR> anchorage : anchorages) {
 					anchored.detachFromAnchorage(anchorage);
 				}
 			}
+			root.removeChildren(anchoreds);
 		}
 	}
 
