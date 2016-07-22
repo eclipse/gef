@@ -13,6 +13,7 @@
 package org.eclipse.gef4.mvc.tests.fx.rules;
 
 import java.awt.AWTException;
+import java.awt.EventQueue;
 import java.awt.Robot;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,16 +70,10 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 	public final static class EventSynchronizer<T extends Event> {
 		private Scene scene;
-		private Node node;
 		private EventType<T> type;
 		private EventHandler<T> handler;
 		private CountDownLatch latch;
 		private boolean isRegistered;
-
-		public EventSynchronizer(Node node, EventType<T> type) {
-			this.node = node;
-			this.type = type;
-		}
 
 		public EventSynchronizer(Scene scene, EventType<T> type) {
 			this.scene = scene;
@@ -109,11 +104,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			if (!latch.await(timeout, timeUnit)) {
 				throw new IllegalStateException("event synchronizer timeout: event was not processed.");
 			}
-			if (scene == null) {
-				node.removeEventHandler(type, handler);
-			} else {
-				scene.removeEventHandler(type, handler);
-			}
+			unregisterHandler(type, handler);
 			isRegistered = false;
 		}
 
@@ -133,12 +124,42 @@ public class FXNonApplicationThreadRule implements TestRule {
 					latch.countDown();
 				}
 			};
-			if (scene == null) {
-				node.addEventHandler(type, handler);
-			} else {
-				scene.addEventHandler(type, handler);
-			}
+			registerHandler(type, handler);
 			isRegistered = true;
+		}
+
+		private void registerHandler(final EventType<T> type, final EventHandler<T> handler) {
+			final CountDownLatch regitrationLatch = new CountDownLatch(1);
+			EventQueue.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					scene.addEventHandler(type, handler);
+					regitrationLatch.countDown();
+				}
+			});
+			try {
+				regitrationLatch.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void unregisterHandler(final EventType<T> type, final EventHandler<T> handler) {
+			final CountDownLatch regitrationLatch = new CountDownLatch(1);
+			EventQueue.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					scene.removeEventHandler(type, handler);
+					regitrationLatch.countDown();
+				}
+			});
+			try {
+				regitrationLatch.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -193,14 +214,12 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @throws InterruptedException
 	 * @throws AWTException
 	 */
-	public Scene createScene(final Parent root, final double width, final double height)
-			throws InterruptedException, AWTException {
-		final CountDownLatch latch = new CountDownLatch(1);
-		Platform.runLater(new Runnable() {
+	public Scene createScene(final Parent root, final double width, final double height) throws Throwable {
+		scene = runAndWait(new RunnableWithResult<Scene>() {
 			@Override
-			public void run() {
+			public Scene run() {
 				// hook viewer to scene
-				scene = new Scene(root, width, height);
+				Scene scene = new Scene(root, width, height);
 				panel = new JFXPanel();
 				panel.setScene(scene);
 				// create frame to draw the panel
@@ -208,16 +227,20 @@ public class FXNonApplicationThreadRule implements TestRule {
 				jFrame.setBounds(0, 0, (int) width, (int) height);
 				jFrame.setContentPane(panel);
 				jFrame.setVisible(true);
-				latch.countDown();
+				return scene;
 			}
 		});
-		// wait for the scene set up
-		latch.await();
 		return scene;
 	}
 
-	public void delay(int millis) {
-		getRobot().delay(millis);
+	public void delay(final int millis) {
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				getRobot().delay(millis);
+			}
+		});
 	}
 
 	/**
@@ -280,9 +303,15 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void keyPress(int keycode) throws InterruptedException {
+	public void keyPress(final int keycode) throws InterruptedException {
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_PRESSED);
-		getRobot().keyPress(keycode);
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				getRobot().keyPress(keycode);
+			}
+		});
 		eventSynchronizer.await();
 	}
 
@@ -293,9 +322,15 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void keyRelease(int keycode) throws InterruptedException {
+	public void keyRelease(final int keycode) throws InterruptedException {
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_RELEASED);
-		getRobot().keyRelease(keycode);
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				getRobot().keyRelease(keycode);
+			}
+		});
 		eventSynchronizer.await();
 	}
 
@@ -306,9 +341,14 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mouseDrag(int x, int y) throws InterruptedException {
+	public void mouseDrag(final int x, final int y) throws InterruptedException {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_DRAGGED);
-		getRobot().mouseMove(x, y);
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getRobot().mouseMove(x, y);
+			}
+		});
 		eventSynchronizer.await();
 	}
 
@@ -319,9 +359,15 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mousePress(int buttons) throws InterruptedException {
+	public void mousePress(final int buttons) throws InterruptedException {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_PRESSED);
-		getRobot().mousePress(buttons);
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				getRobot().mousePress(buttons);
+			}
+		});
 		eventSynchronizer.await();
 	}
 
@@ -332,19 +378,31 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mouseRelease(int buttons) throws InterruptedException {
+	public void mouseRelease(final int buttons) throws InterruptedException {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_RELEASED);
-		getRobot().mouseRelease(buttons);
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				getRobot().mouseRelease(buttons);
+			}
+		});
 		eventSynchronizer.await();
 	}
 
-	public void moveTo(Node visual, double localX, double localY) throws InterruptedException {
+	public void moveTo(Node visual, final double localX, final double localY) throws InterruptedException {
 		Point2D localToScene = visual.localToScene(localX, localY);
-		double x = scene.getWindow().getX() + localToScene.getX();
-		double y = scene.getWindow().getY() + localToScene.getY();
-		EventSynchronizer<MouseEvent> synchronizer = new EventSynchronizer<>(visual, MouseEvent.MOUSE_ENTERED);
-		synchronizer.register();
-		getRobot().mouseMove((int) x, (int) y);
+		final double x = scene.getWindow().getX() + localToScene.getX();
+		final double y = scene.getWindow().getY() + localToScene.getY();
+		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				getRobot().mouseMove((int) x, (int) y);
+			}
+
+		});
 		synchronizer.await();
 	}
 

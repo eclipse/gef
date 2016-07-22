@@ -33,7 +33,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
@@ -69,9 +68,6 @@ public class FXClickDragToolTests {
 	 */
 	@Rule
 	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
-
-	@Inject
-	private FXDomainDriver domain;
 
 	/**
 	 * It is important that a single execution transaction (see
@@ -114,22 +110,24 @@ public class FXClickDragToolTests {
 		});
 
 		// inject domain
-		injector.injectMembers(this);
+		final FXDomainDriver domain = injector.getInstance(FXDomainDriver.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 
-		final Scene scene = ctx.createScene(
-				domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE)).getCanvas(), 100, 100);
+		// create scene
+		final Scene scene = ctx.createScene(viewer.getCanvas(), 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
-		domain.activate();
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+				assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
+				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+			}
+		});
 
 		// move mouse to viewer center
 		ctx.moveTo(scene.getRoot(), 50, 50);
-
-		// initialize
-		domain.openedExecutionTransactions = 0;
-		domain.closedExecutionTransactions = 0;
-		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 
 		// simulate click gesture
 		ctx.mousePress(InputEvent.BUTTON1_MASK);
@@ -154,13 +152,18 @@ public class FXClickDragToolTests {
 
 		// wait one second so that the next press does not count as a double
 		// click
-		ctx.delay(1000);
+		ctx.delay(500);
 
 		// re-initialize
-		domain.openedExecutionTransactions = 0;
-		domain.closedExecutionTransactions = 0;
-		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.openedExecutionTransactions = 0;
+				domain.closedExecutionTransactions = 0;
+				assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
+				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+			}
+		});
 
 		// simulate click/drag
 		ctx.mousePress(InputEvent.BUTTON1_MASK);
@@ -192,5 +195,4 @@ public class FXClickDragToolTests {
 			}
 		});
 	}
-
 }

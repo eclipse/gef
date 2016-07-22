@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -27,20 +26,17 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
-import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.sun.glass.events.KeyEvent;
 
-import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.Scene;
 
 public class FXTypeToolTests {
 
@@ -70,9 +66,6 @@ public class FXTypeToolTests {
 	 */
 	@Rule
 	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
-
-	@Inject
-	private FXDomainDriver domain;
 
 	/**
 	 * It is important that a (single) execution transaction (see
@@ -110,51 +103,27 @@ public class FXTypeToolTests {
 				bindIContentPartFactory();
 			}
 		});
-		injector.injectMembers(this);
 
-		final InfiniteCanvas infiniteCanvas = domain
-				.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE)).getCanvas();
-		ctx.createScene(infiniteCanvas, 100, 100);
+		// inject domain
+		final FXDomainDriver domain = injector.getInstance(FXDomainDriver.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+
+		final Scene scene = ctx.createScene(viewer.getCanvas(), 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
 				domain.activate();
+				assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
+				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 			}
 		});
 
-		double validPosition = ctx.runAndWait(new RunnableWithResult<Double>() {
-			@Override
-			public Double run() {
-				return Math.min(infiniteCanvas.getWidth(), infiniteCanvas.getHeight()) / 2;
-			}
-		});
-
-		// initialize
-		domain.openedExecutionTransactions = 0;
-		domain.closedExecutionTransactions = 0;
-		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-
-		// move robot to scene
-		final EventHandler<MouseEvent> mouseEventFilter = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				System.err.println("FILTER: " + event);
-			}
-		};
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
-				infiniteCanvas.getScene().addEventFilter(MouseEvent.ANY, mouseEventFilter);
-			}
-		});
-		ctx.moveTo(infiniteCanvas, validPosition, validPosition);
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				infiniteCanvas.getScene().removeEventFilter(MouseEvent.ANY, mouseEventFilter);
+				scene.getRoot().requestFocus();
 			}
 		});
 
@@ -179,5 +148,4 @@ public class FXTypeToolTests {
 			}
 		});
 	}
-
 }
