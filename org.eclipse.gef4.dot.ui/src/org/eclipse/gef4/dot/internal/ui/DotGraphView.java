@@ -43,7 +43,6 @@ import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.GraphCopier;
-import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
@@ -200,8 +199,8 @@ public class DotGraphView extends ZestFxUiView {
 	};
 
 	public DotGraphView() {
-		super(Guice.createInjector(Modules.override(new ZestFxModule())
-				.with(new ZestFxUiModule())));
+		super(Guice.createInjector(
+				Modules.override(new DotGraphViewModule()).with(new ZestFxUiModule())));
 	}
 
 	@Override
