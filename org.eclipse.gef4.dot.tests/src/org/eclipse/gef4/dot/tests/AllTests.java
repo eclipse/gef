@@ -8,7 +8,6 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - merge DotInterpreter into DotImport (bug #491261)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
@@ -19,8 +18,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ DotImportTests.class, DotExportTests.class,
-		DotExecutableUtilsTests.class, DotExtractorTests.class,
-		DotAttributesTests.class, DotParserTests.class,
+		DotExecutableUtilsTests.class, DotInterpreterTests.class,
+		DotExtractorTests.class, DotAttributesTests.class, DotParserTests.class,
 		DotValidatorTests.class })
 public class AllTests {
 
