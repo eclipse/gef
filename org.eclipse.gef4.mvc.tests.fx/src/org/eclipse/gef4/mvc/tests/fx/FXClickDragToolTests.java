@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.tests.fx;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
+import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.junit.Rule;
 import org.junit.Test;
@@ -113,7 +115,6 @@ public class FXClickDragToolTests {
 		final FXDomainDriver domain = injector.getInstance(FXDomainDriver.class);
 		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 
-		// create scene
 		final Scene scene = ctx.createScene(viewer.getCanvas(), 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -127,7 +128,17 @@ public class FXClickDragToolTests {
 		});
 
 		// move mouse to viewer center
-		ctx.moveTo(scene.getRoot(), 50, 50);
+		Point sceneCenter = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				// XXX: It seems to be important to compute the position from
+				// within the JavaFX application thread.
+				return new Point((int) (scene.getX() + scene.getWidth() / 2),
+						(int) (scene.getY() + scene.getHeight() / 2));
+			}
+
+		});
+		ctx.moveTo(sceneCenter.x, sceneCenter.y);
 
 		// simulate click gesture
 		ctx.mousePress(InputEvent.BUTTON1_MASK);
