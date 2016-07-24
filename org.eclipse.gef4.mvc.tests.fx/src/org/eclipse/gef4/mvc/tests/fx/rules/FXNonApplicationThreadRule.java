@@ -130,7 +130,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 		private void registerHandler(final EventType<T> type, final EventHandler<T> handler) {
 			final CountDownLatch regitrationLatch = new CountDownLatch(1);
-			EventQueue.invokeLater(new Runnable() {
+			Platform.runLater(new Runnable() {
 
 				@Override
 				public void run() {
@@ -147,7 +147,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 		private void unregisterHandler(final EventType<T> type, final EventHandler<T> handler) {
 			final CountDownLatch regitrationLatch = new CountDownLatch(1);
-			EventQueue.invokeLater(new Runnable() {
+			Platform.runLater(new Runnable() {
 
 				@Override
 				public void run() {
@@ -289,6 +289,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		if (robot == null) {
 			try {
 				robot = new Robot();
+				robot.setAutoWaitForIdle(true);
 			} catch (AWTException e) {
 				throw new IllegalStateException(e);
 			}
