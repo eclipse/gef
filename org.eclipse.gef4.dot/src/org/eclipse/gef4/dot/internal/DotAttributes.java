@@ -272,7 +272,7 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Graph} to the
+	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Edge} to the
 	 * given <i>name</i> value.
 	 * 
 	 * @param edge
@@ -322,6 +322,8 @@ public class DotAttributes {
 	 *            {@link #_TYPE__G} attribute.
 	 * @param type
 	 *            The new value for the {@link #_TYPE__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>type</i> value is not supported.
 	 */
 	public static void _setType(Graph graph, String type) {
 		if (!_TYPE__G__GRAPH.equals(type) && !_TYPE__G__DIGRAPH.equals(type)) {
