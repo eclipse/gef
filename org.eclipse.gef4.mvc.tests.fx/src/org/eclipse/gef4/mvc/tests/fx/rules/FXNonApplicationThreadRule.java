@@ -69,7 +69,7 @@ import javafx.scene.input.MouseEvent;
  */
 public class FXNonApplicationThreadRule implements TestRule {
 
-	public final static class EventSynchronizer<T extends Event> {
+	public final class EventSynchronizer<T extends Event> {
 		private Scene scene;
 		private EventType<T> type;
 		private EventHandler<T> handler;
@@ -88,7 +88,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		 * @see #await(long, TimeUnit)
 		 * @throws InterruptedException
 		 */
-		public void await() throws InterruptedException {
+		public void await() throws Throwable {
 			await(5, TimeUnit.SECONDS);
 		}
 
@@ -98,10 +98,11 @@ public class FXNonApplicationThreadRule implements TestRule {
 		 *
 		 * @throws InterruptedException
 		 */
-		public void await(long timeout, TimeUnit timeUnit) throws InterruptedException {
+		public void await(long timeout, TimeUnit timeUnit) throws Throwable {
 			if (!isRegistered) {
 				throw new IllegalStateException("not registered");
 			}
+			waitForIdle();
 			if (!latch.await(timeout, timeUnit)) {
 				throw new IllegalStateException("event synchronizer timeout: event was not processed.");
 			}
@@ -173,8 +174,26 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	private static boolean initializedJavaFxToolkit = false;
+
+	private static void initFX() throws InterruptedException {
+		if (!initializedJavaFxToolkit) {
+			final CountDownLatch latch = new CountDownLatch(1);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					new JFXPanel(); // initializes JavaFX
+									// environment
+					initializedJavaFxToolkit = true;
+					latch.countDown();
+				}
+			});
+			latch.await();
+		}
+	}
+
 	private Scene scene;
 	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
+
 	private JFXPanel panel;
 
 	private Robot robot;
@@ -188,18 +207,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				if (!initializedJavaFxToolkit) {
-					final CountDownLatch latch = new CountDownLatch(1);
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							new JFXPanel(); // initializes JavaFX environment
-							initializedJavaFxToolkit = true;
-							latch.countDown();
-						}
-					});
-					latch.await();
-				}
+				initFX();
 				base.evaluate();
 			}
 		};
@@ -304,7 +312,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void keyPress(final int keycode) throws AWTException, InterruptedException {
+	public synchronized void keyPress(final int keycode) throws Throwable {
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_PRESSED);
 		getRobot().keyPress(keycode);
 		eventSynchronizer.await();
@@ -317,7 +325,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void keyRelease(final int keycode) throws AWTException, InterruptedException {
+	public synchronized void keyRelease(final int keycode) throws Throwable {
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_RELEASED);
 		getRobot().keyRelease(keycode);
 		eventSynchronizer.await();
@@ -330,7 +338,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mouseDrag(final int x, final int y) throws AWTException, InterruptedException {
+	public synchronized void mouseDrag(final int x, final int y) throws Throwable {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_DRAGGED);
 		getRobot().mouseMove(x, y);
 		eventSynchronizer.await();
@@ -343,7 +351,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mousePress(final int buttons) throws AWTException, InterruptedException {
+	public synchronized void mousePress(final int buttons) throws Throwable {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_PRESSED);
 		getRobot().mousePress(buttons);
 		eventSynchronizer.await();
@@ -356,13 +364,13 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param keycode
 	 * @throws InterruptedException
 	 */
-	public void mouseRelease(final int buttons) throws AWTException, InterruptedException {
+	public synchronized void mouseRelease(final int buttons) throws Throwable {
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_RELEASED);
 		getRobot().mouseRelease(buttons);
 		eventSynchronizer.await();
 	}
 
-	public void moveTo(final double sceneX, final double sceneY) throws Throwable {
+	public synchronized void moveTo(final double sceneX, final double sceneY) throws Throwable {
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
@@ -376,7 +384,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		synchronizer.await();
 	}
 
-	public void moveTo(final Node visual, final double localX, final double localY) throws Throwable {
+	public synchronized void moveTo(final Node visual, final double localX, final double localY) throws Throwable {
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
@@ -398,7 +406,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param runnable
 	 * @throws Throwable
 	 */
-	public void runAndWait(final Runnable runnable) throws Throwable {
+	public synchronized void runAndWait(final Runnable runnable) throws Throwable {
 		final AtomicReference<Throwable> throwableRef = new AtomicReference<>(null);
 		final CountDownLatch latch = new CountDownLatch(1);
 		Platform.runLater(new Runnable() {
@@ -427,7 +435,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param runnableWithResult
 	 * @throws Throwable
 	 */
-	public <T> T runAndWait(final RunnableWithResult<T> runnableWithResult) throws Throwable {
+	public synchronized <T> T runAndWait(final RunnableWithResult<T> runnableWithResult) throws Throwable {
 		final AtomicReference<Throwable> throwableRef = new AtomicReference<>(null);
 		final AtomicReference<T> resultRef = new AtomicReference<>(null);
 		final CountDownLatch latch = new CountDownLatch(1);
@@ -458,8 +466,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param runnableWithResult
 	 * @throws Throwable
 	 */
-	public <T, P1> T runAndWait(final RunnableWithResultAndParam<T, P1> runnableWithResult, final P1 param1)
-			throws Throwable {
+	public synchronized <T, P1> T runAndWait(final RunnableWithResultAndParam<T, P1> runnableWithResult,
+			final P1 param1) throws Throwable {
 		final AtomicReference<Throwable> throwableRef = new AtomicReference<>(null);
 		final AtomicReference<T> resultRef = new AtomicReference<>(null);
 		final CountDownLatch latch = new CountDownLatch(1);
@@ -483,4 +491,12 @@ public class FXNonApplicationThreadRule implements TestRule {
 		return resultRef.get();
 	}
 
+	public synchronized void waitForIdle() throws Throwable {
+		runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				// dummy runnable
+			}
+		});
+	}
 }
