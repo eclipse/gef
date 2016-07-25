@@ -12,11 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
