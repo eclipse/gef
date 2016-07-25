@@ -26,6 +26,6 @@ before_script:
   - sleep 3 
 
 script:
-- cd org.eclipse.gef4.releng
+- cd org.eclipse.gef.releng
 # skip wikidoc generation, which does not affect build result, but generate javadoc and ensure test failures are respected.
 - mvn clean verify -Dmaven.test.failure.ignore=false -Dwikidoc.skip=true -PNEON.target
