@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2016 itemis AG and others.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+        Alexander Nyßen (itemis AG) - initial API and implementation
+ -->
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eclipse.gef</groupId>
+		<artifactId>org.eclipse.gef.releng</artifactId>
+		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.gef.releng/pom.xml</relativePath>
+	</parent>
+	<groupId>org.eclipse.gef.examples</groupId>
+	<artifactId>org.eclipse.gef.mvc.examples.logo.web.repository</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>eclipse-repository</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependent-jars</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<outputDirectory>${project.build.directory}/web-files</outputDirectory>
+							<stripVersion>true</stripVersion>
+						</configuration>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>deploy-jnlp-and-html</id>
+						<phase>process-resources</phase>
+						<configuration>
+							<target>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.plugin.classpath" />
+								<echo
+									message="Deploying org.eclipse.gef.mvc.examples.logo.web.jnlp." />
+								<copy file="org.eclipse.gef.mvc.examples.logo.web.jnlp"
+									tofile="${project.build.directory}/web-files/org.eclipse.gef.mvc.examples.logo.web.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying javax.jnlp." />
+								<copy file="javax.jnlp"
+									tofile="${project.build.directory}/web-files/javax.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying org.eclipse.equinox.jnlp." />
+								<copy file="org.eclipse.equinox.jnlp"
+									tofile="${project.build.directory}/web-files/org.eclipse.equinox.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying org.eclipse.osgi.jnlp." />
+								<copy file="org.eclipse.osgi.jnlp"
+									tofile="${project.build.directory}/web-files/org.eclipse.osgi.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying com.google.jnlp." />
+								<copy file="com.google.jnlp"
+									tofile="${project.build.directory}/web-files/com.google.jnlp"
+									overwrite="true" />
+
+								<echo message="Deploying index.html." />
+								<copy file="index.html"
+									tofile="${project.build.directory}/web-files/index.html"
+									overwrite="true" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>20020829</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 Cloudio User Guide
-Bundle-SymbolicName: org.eclipse.gef4.cloudio.doc.user;singleton:=true
-Bundle-Version: 1.0.1.qualifier
-Bundle-Vendor: Eclipse GEF

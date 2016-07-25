@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF DOT Developer Documentation
+Bundle-SymbolicName: org.eclipse.gef.dot.doc;singleton:=true
+Bundle-Version: 5.0.0.qualifier
+Bundle-Vendor: Eclipse GEF
+Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
+ org.eclipse.core.runtime;bundle-version="[3.9.0,4.0.0)";resolution:=optional,
+ org.eclipse.core.filesystem;bundle-version="[1.4.0,2.0.0)";resolution:=optional,
+ org.eclipse.emf.ecore;bundle-version="[2.9.0,3.0.0)";resolution:=optional,
+ org.eclipse.ui;bundle-version="[3.105.0,4.0.0)";resolution:=optional,
+ org.eclipse.ui.ide;bundle-version="[3.9.0,4.0.0)";resolution:=optional,
+ org.eclipse.ui.editors;bundle-version="[3.8.0,4.0.0)";resolution:=optional,
+ org.eclipse.xtext;bundle-version="[2.7.3,3.0.0)";resolution:=optional,
+ org.eclipse.xtext.ui;bundle-version="[2.7.3,3.0.0)";resolution:=optional,
+ org.eclipse.xtext.ui.shared;bundle-version="[2.7.3,3.0.0)";resolution:=optional,
+ org.eclipse.xtext.builder;bundle-version="[2.7.3,3.0.0)";resolution:=optional,
+ org.eclipse.gef.graph;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.layout;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.mvc.fx;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.mvc.fx.ui;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.zest.fx;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.zest.fx.ui;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.platform.doc.isv;bundle-version="[3.0.0,5.0.0)",
+ org.eclipse.gef.graph.doc;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.layout.doc;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.mvc.doc;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.fx.doc;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.zest.doc;bundle-version="[5.0.0,6.0.0)"

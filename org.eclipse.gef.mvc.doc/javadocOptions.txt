@@ -1,0 +1,44 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef.mvc/src@path.separator@../org.eclipse.gef.mvc.ui/src@path.separator@../org.eclipse.gef.mvc.fx/src@path.separator@../org.eclipse.gef.mvc.fx.ui/src"
+-d reference/api
+-classpath "@classpath@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF MVC API Reference"
+-doctitle "GEF MVC API Reference"
+-header "<b>GEF MVC</b><br>@build@"
+-bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
+-link http://docs.oracle.com/javase/7/docs/api/
+-link http://docs.oracle.com/javafx/2/api/
+-link http://docs.guava-libraries.googlecode.com/git-history/v15.0/javadoc/
+-link http://google.github.io/guice/api-docs/3.0/javadoc/
+-linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef.common.doc/reference/api/ ../org.eclipse.gef.common.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef.geometry.doc/reference/api/ ../org.eclipse.gef.geometry.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef.fx.doc/reference/api/ ../org.eclipse.gef.fx.doc/reference/api/
+
+org.eclipse.gef.mvc
+org.eclipse.gef.mvc.behaviors
+org.eclipse.gef.mvc.domain
+org.eclipse.gef.mvc.models
+org.eclipse.gef.mvc.operations
+org.eclipse.gef.mvc.parts
+org.eclipse.gef.mvc.policies
+org.eclipse.gef.mvc.tools
+org.eclipse.gef.mvc.viewer
+org.eclipse.gef.mvc.ui
+org.eclipse.gef.mvc.ui.properties
+org.eclipse.gef.mvc.fx
+org.eclipse.gef.mvc.fx.behaviors
+org.eclipse.gef.mvc.fx.domain
+org.eclipse.gef.mvc.fx.operations
+org.eclipse.gef.mvc.fx.parts
+org.eclipse.gef.mvc.fx.policies
+org.eclipse.gef.mvc.fx.tools
+org.eclipse.gef.mvc.fx.viewer
+org.eclipse.gef.mvc.fx.ui
+org.eclipse.gef.mvc.fx.ui.parts
+org.eclipse.gef.mvc.fx.ui.properties

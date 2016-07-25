@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 Geometry Developer Documentation
-Bundle-SymbolicName: org.eclipse.gef4.geometry.doc;singleton:=true
-Bundle-Version: 1.0.1.qualifier
-Bundle-Vendor: Eclipse GEF
-Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)";resolution:=optional,
- org.eclipse.platform.doc.isv;bundle-version="[3.0.0,5.0.0)"

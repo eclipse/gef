@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF Geometry JavaFX Conversions
+Bundle-SymbolicName: org.eclipse.gef.geometry.convert.fx
+Bundle-Version: 5.0.0.qualifier
+Require-Bundle: org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Eclipse GEF
+Export-Package: org.eclipse.gef.geometry.convert.fx

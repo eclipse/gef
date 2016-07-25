@@ -1,2 +1,0 @@
-wiki.title=GEF4 Geometry Developer Documentation
-wiki.path=GEF/GEF4/Geometry

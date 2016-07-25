@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF Layout
+Bundle-SymbolicName: org.eclipse.gef.layout
+Bundle-Version: 5.0.0.qualifier
+Bundle-Vendor: Eclipse GEF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.gef.layout,
+ org.eclipse.gef.layout.algorithms
+Require-Bundle: org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.graph;bundle-version="[5.0.0,6.0.0)"

@@ -1,0 +1,2 @@
+wiki.title=GEF Common Developer Documentation
+wiki.path=GEF/GEF4/Common

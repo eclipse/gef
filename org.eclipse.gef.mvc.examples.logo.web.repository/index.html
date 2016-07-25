@@ -1,0 +1,23 @@
+<head>
+    <script type="text/javascript" src="http://java.com/js/dtjava.js"></script>
+    <script>
+    	function deployIt() {
+            dtjava.embed(
+                    {         url: "org.eclipse.gef.mvc.examples.logo.web.jnlp",
+                           width: 640,
+                          height: 480,
+                     placeholder: "place"
+                    },
+                    { 	jvm: "1.7.0+",
+                    	javafx: "2.0+"
+                    },
+                    {
+                	}
+            );
+        }
+        dtjava.addOnloadCallback(deployIt);
+    </script>
+</head>
+<body>
+    <div id="place"></div>           
+</body>

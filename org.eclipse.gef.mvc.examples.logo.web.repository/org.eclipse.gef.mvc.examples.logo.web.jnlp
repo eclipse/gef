@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="org.eclipse.gef.mvc.examples.logo.web.jnlp">
+	<information>
+		<title>GEF MVC Logo Example</title>
+		<vendor>Eclipse.org</vendor>
+		<description>GEF MVC Logo Example (Web)</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+		<j2se version="1.7+" />
+		<property name="jnlp.packEnabled" value="true"/>
+        <property name="jnlp.versionEnabled" value="true"/>
+		<jar href="org.eclipse.core.commands.jar"/>
+		<jar href="org.eclipse.core.runtime.jar"/>
+		<jar href="org.eclipse.core.contenttype.jar"/>
+		<jar href="org.eclipse.core.jobs.jar"/>
+		<jar href="org.eclipse.gef.common.jar"/>
+		<jar href="org.eclipse.gef.geometry.jar"/>
+		<jar href="org.eclipse.gef.geometry.convert.fx.jar"/>
+		<jar href="org.eclipse.gef.fx.jar"/>
+		<jar href="org.eclipse.gef.mvc.jar"/>
+		<jar href="org.eclipse.gef.mvc.fx.jar"/>
+		<jar href="org.eclipse.gef.mvc.examples.jar"/>
+        <jar href="org.eclipse.gef.mvc.examples.logo.jar"/>
+        <jar href="org.eclipse.gef.mvc.examples.logo.web.jar"/>
+        <extension name="javax" href="javax.jnlp" />
+        <extension name="com.google" href="com.google.jnlp" />
+        <extension name="org.eclipse.osgi" href="org.eclipse.osgi.jnlp" />
+        <extension name="org.eclipse.equinox" href="org.eclipse.equinox.jnlp" />
+	</resources>
+	<update check="prompt-update"/>
+	<jfx:javafx-desc width="640" height="480" main-class="org.eclipse.gef.mvc.examples.logo.web.MvcLogoWebExample" name="MvcLogoWebExample" />	
+	<!--<application-desc main-class="org.eclipse.gef.mvc.examples.logo.web.MvcLogoWebExample" />-->
+</jnlp>

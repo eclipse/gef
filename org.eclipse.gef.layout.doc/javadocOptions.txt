@@ -1,0 +1,19 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef.layout/src"
+-d reference/api
+-classpath "@classpath@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF Layout API Reference"
+-doctitle "GEF Layout API Reference"
+-header "<b>GEF Layout</b><br>@build@"
+-bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
+-link http://docs.oracle.com/javase/7/docs/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef.geometry.doc/reference/api/ ../org.eclipse.gef.geometry.doc/reference/api/
+
+org.eclipse.gef.layout
+org.eclipse.gef.layout.algorithms
+org.eclipse.gef.layout.listeners

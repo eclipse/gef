@@ -1,0 +1,30 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef.fx/src@path.separator@../org.eclipse.gef.fx.swt/src@path.separator@../org.eclipse.gef.fx.jface/src@path.separator@../org.eclipse.gef.fx.ui/src"
+-d reference/api
+-classpath "@classpath@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF FX API Reference"
+-doctitle "GEF FX API Reference"
+-header "<b>GEF FX</b><br>@build@"
+-bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
+-link http://docs.oracle.com/javase/7/docs/api/
+-link http://docs.oracle.com/javafx/2/api/
+-link http://docs.guava-libraries.googlecode.com/git-history/v15.0/javadoc/
+-linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef.common.doc/reference/api/ ../org.eclipse.gef.common.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef.geometry.doc/reference/api/ ../org.eclipse.gef.geometry.doc/reference/api/
+
+org.eclipse.gef.fx
+org.eclipse.gef.fx.anchors
+org.eclipse.gef.fx.gestures
+org.eclipse.gef.fx.listeners
+org.eclipse.gef.fx.nodes
+org.eclipse.gef.fx.utils
+org.eclipse.gef.fx.swt.canvas
+org.eclipse.gef.fx.swt.controls
+org.eclipse.gef.fx.swt.gestures
+org.eclipse.gef.fx.jface

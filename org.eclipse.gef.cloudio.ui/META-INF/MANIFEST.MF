@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF Cloudio.UI
+Bundle-SymbolicName: org.eclipse.gef.cloudio.ui;singleton:=true
+Bundle-Version: 5.0.0.qualifier
+Bundle-Activator: org.eclipse.gef.cloudio.internal.ui.CloudioUiBundle
+Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.9.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.9.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.105.0,4.0.0)"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.gef.cloudio.internal.ui;x-friends:="org.eclipse.gef.cloudio.tests.ui",
+ org.eclipse.gef.cloudio.internal.ui.actions;x-friends:="org.eclipse.gef.cloudio.tests.ui",
+ org.eclipse.gef.cloudio.internal.ui.data;x-friends:="org.eclipse.gef.cloudio.tests.ui",
+ org.eclipse.gef.cloudio.internal.ui.layout;x-friends:="org.eclipse.gef.cloudio.tests.ui",
+ org.eclipse.gef.cloudio.internal.ui.util;x-friends:="org.eclipse.gef.cloudio.tests.ui",
+ org.eclipse.gef.cloudio.internal.ui.view;x-friends:="org.eclipse.gef.cloudio.tests.ui"
+Bundle-Vendor: Eclipse GEF

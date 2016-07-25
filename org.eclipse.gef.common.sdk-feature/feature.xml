@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2016 itemis AG and others.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+        Alexander Nyßen (itemis AG) - initial API and implementation
+ -->
+<feature
+      id="org.eclipse.gef.common.sdk"
+      label="GEF Common SDK"
+      version="5.0.0.qualifier"
+      provider-name="Eclipse GEF"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/updates/releases/"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/updates/releases/"/>
+   </url>
+
+   <includes
+         id="org.eclipse.gef.common.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef.common.doc"
+         version="0.0.0"/>
+
+</feature>

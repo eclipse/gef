@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+    Copyright (c) 2016 itemis AG and others.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+        Alexander Nyßen (itemis AG) - initial API and implementation
+ -->
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.gef.zest.examples.graph.ui.view.ZestGraphExampleView"
+            id="org.eclipse.gef.zest.fx.ui.example.view.ZestFxExampleView"
+            name="GEF Zest Graph Example"
+            restorable="true">
+      </view>
+   </extension>
+   <extension point="org.eclipse.core.runtime.adapters">
+		<factory
+				class="org.eclipse.gef.zest.examples.graph.ui.properties.PropertySourceAdapterFactory"
+				adaptableType="org.eclipse.gef.graph.Node">
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+		</factory>
+	</extension>
+</plugin>

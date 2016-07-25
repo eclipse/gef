@@ -1,0 +1,24 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef.geometry/src"
+-d reference/api
+-classpath "@classpath@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF Geometry API Reference"
+-doctitle "GEF Geometry API Reference"
+-header "<b>GEF Geometry</b><br>@build@"
+-bottom "Copyright (c) 2014 itemis AG, and others. All rights reserved."
+-link http://docs.oracle.com/javase/7/docs/api/
+-link http://docs.oracle.com/javafx/2/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+
+org.eclipse.gef.geometry.convert.awt
+org.eclipse.gef.geometry.convert.fx
+org.eclipse.gef.geometry.convert.swt
+org.eclipse.gef.geometry.euclidean
+org.eclipse.gef.geometry.internal.utils
+org.eclipse.gef.geometry.planar
+org.eclipse.gef.geometry.projective

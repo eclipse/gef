@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF FX Developer Documentation
+Bundle-SymbolicName: org.eclipse.gef.fx.doc;singleton:=true
+Bundle-Version: 5.0.0.qualifier
+Bundle-Vendor: Eclipse GEF
+Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)";resolution:=optional,
+ org.eclipse.jface;bundle-version="[3.10.0,4.0.0)";resolution:=optional,
+ org.eclipse.ui.views;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
+ org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.geometry.convert.fx;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.platform.doc.isv;bundle-version="[3.0.0,5.0.0)",
+ org.eclipse.gef.common.doc;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.geometry.doc;bundle-version="[5.0.0,6.0.0)"
+Import-Package: com.google.common.reflect;version="[12.0.0,16.0.0)";resolution:=optional

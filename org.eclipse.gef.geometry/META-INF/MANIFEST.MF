@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF Geometry
+Bundle-SymbolicName: org.eclipse.gef.geometry
+Bundle-Version: 5.0.0.qualifier
+Bundle-Vendor: Eclipse GEF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.gef.geometry.convert.awt,
+ org.eclipse.gef.geometry.euclidean,
+ org.eclipse.gef.geometry.internal.utils;x-friends:="org.eclipse.gef.geometry.convert.swt,org.eclipse.gef.geometry.tests,org.eclipse.gef.geometry.tests.convert.swt",
+ org.eclipse.gef.geometry.planar,
+ org.eclipse.gef.geometry.projective

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF Layout Developer Documentation
+Bundle-SymbolicName: org.eclipse.gef.layout.doc;singleton:=true
+Bundle-Version: 5.0.0.qualifier
+Bundle-Vendor: Eclipse GEF
+Require-Bundle: org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.graph;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.common.doc;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.geometry.doc;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.gef.graph.doc;bundle-version="[5.0.0,6.0.0)"

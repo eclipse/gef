@@ -1,0 +1,2 @@
+wiki.title=GEF DOT User Guide
+wiki.path=GEF/GEF4/DOT/User Guide
