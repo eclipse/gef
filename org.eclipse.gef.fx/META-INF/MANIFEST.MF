@@ -4,7 +4,7 @@ Bundle-Name: GEF FX
 Bundle-SymbolicName: org.eclipse.gef.fx
 Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse GEF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.fx,
  org.eclipse.gef.fx.anchors;uses:="com.google.common.collect",
  org.eclipse.gef.fx.gestures,

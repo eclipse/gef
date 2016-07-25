@@ -3,9 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF Zest Examples
 Bundle-SymbolicName: org.eclipse.gef.zest.examples;singleton:=true
 Bundle-Version: 5.0.0.qualifier
-Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse GEF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.zest.examples;x-friends:="org.eclipse.gef.zest.examples.graph,org.eclipse.gef.zest.examples.graph.ui"
 Require-Bundle: org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)",

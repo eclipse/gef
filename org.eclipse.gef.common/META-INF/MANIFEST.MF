@@ -4,7 +4,7 @@ Bundle-Name: GEF Common
 Bundle-SymbolicName: org.eclipse.gef.common
 Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse GEF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.common.activate,
  org.eclipse.gef.common.adapt;uses:="com.google.common.reflect",
  org.eclipse.gef.common.adapt.inject;uses:="com.google.inject,com.google.inject.spi,com.google.inject.multibindings",
