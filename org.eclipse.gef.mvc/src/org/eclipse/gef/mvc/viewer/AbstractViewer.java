@@ -56,8 +56,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	private ContentPartPool<VR> contentPartPool;
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
-	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<IViewer<VR>>(
-			this);
+	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<>(this);
 
 	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new IdentityHashMap<>();
 	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<>();

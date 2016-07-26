@@ -18,7 +18,6 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -48,9 +47,8 @@ public class HidingModel {
 			HIDDEN_PROPERTY, FXCollections.observableSet(new HashSet<org.eclipse.gef.graph.Node>()));
 
 	/**
-	 * Returns a {@link Set} containing all {@link NodePart}s
-	 * corresponding to the hidden neighbors of the content of the given
-	 * {@link NodePart}.
+	 * Returns a {@link Set} containing all {@link NodePart}s corresponding to
+	 * the hidden neighbors of the content of the given {@link NodePart}.
 	 *
 	 * @param nodePart
 	 *            The {@link NodePart} of which the hidden neighbors are
@@ -60,8 +58,7 @@ public class HidingModel {
 	 */
 	public Set<NodePart> getHiddenNeighborParts(NodePart nodePart) {
 		Set<Node> hiddenNeighbors = getHiddenNeighbors(nodePart.getContent());
-		Set<NodePart> hiddenNeighborParts = Collections
-				.newSetFromMap(new IdentityHashMap<NodePart, Boolean>());
+		Set<NodePart> hiddenNeighborParts = Collections.newSetFromMap(new IdentityHashMap<NodePart, Boolean>());
 		Map<Object, IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> contentPartMap = nodePart.getRoot()
 				.getViewer().getContentPartMap();
 		for (org.eclipse.gef.graph.Node neighbor : hiddenNeighbors) {
@@ -100,7 +97,7 @@ public class HidingModel {
 	 *         {@link org.eclipse.gef.graph.Node}s.
 	 */
 	public Set<org.eclipse.gef.graph.Node> getHiddenNodesUnmodifiable() {
-		return CollectionUtils.unmodifiableObservableSet(hiddenProperty.get());
+		return FXCollections.unmodifiableObservableSet(hiddenProperty.get());
 	}
 
 	/**
@@ -109,8 +106,7 @@ public class HidingModel {
 	 * <code>false</code>.
 	 *
 	 * @param nodePart
-	 *            The {@link NodePart} that is tested for hidden
-	 *            neighbors.
+	 *            The {@link NodePart} that is tested for hidden neighbors.
 	 * @return <code>true</code> if at least one neighbor of the given
 	 *         {@link NodePart} is currently hidden, otherwise
 	 *         <code>false</code>.
@@ -121,15 +117,15 @@ public class HidingModel {
 
 	/**
 	 * Returns <code>true</code> if at least one neighbor of the given
-	 * {@link org.eclipse.gef.graph.Node} is currently hidden. Otherwise
-	 * returns <code>false</code>.
+	 * {@link org.eclipse.gef.graph.Node} is currently hidden. Otherwise returns
+	 * <code>false</code>.
 	 *
 	 * @param node
 	 *            The {@link org.eclipse.gef.graph.Node} that is tested for
 	 *            hidden neighbors.
 	 * @return <code>true</code> if at least one neighbor of the given
-	 *         {@link org.eclipse.gef.graph.Node} is currently hidden,
-	 *         otherwise <code>false</code>.
+	 *         {@link org.eclipse.gef.graph.Node} is currently hidden, otherwise
+	 *         <code>false</code>.
 	 */
 	public boolean hasHiddenNeighbors(org.eclipse.gef.graph.Node node) {
 		return getHiddenNeighbors(node).size() > 0;
@@ -145,13 +141,13 @@ public class HidingModel {
 	}
 
 	/**
-	 * Adds the content of the given {@link NodePart} to the {@link Set}
-	 * of hidden {@link org.eclipse.gef.graph.Node}s. Notifies all property
-	 * change listeners about this change.
+	 * Adds the content of the given {@link NodePart} to the {@link Set} of
+	 * hidden {@link org.eclipse.gef.graph.Node}s. Notifies all property change
+	 * listeners about this change.
 	 *
 	 * @param nodePart
-	 *            The {@link NodePart} that is added to the {@link Set}
-	 *            of hidden {@link org.eclipse.gef.graph.Node}s.
+	 *            The {@link NodePart} that is added to the {@link Set} of
+	 *            hidden {@link org.eclipse.gef.graph.Node}s.
 	 */
 	public void hide(NodePart nodePart) {
 		hide(nodePart.getContent());
@@ -171,48 +167,47 @@ public class HidingModel {
 	}
 
 	/**
-	 * Returns <code>true</code> if the given {@link NodePart} is
-	 * currently contained within the {@link Set} of hidden
+	 * Returns <code>true</code> if the given {@link NodePart} is currently
+	 * contained within the {@link Set} of hidden
 	 * {@link org.eclipse.gef.graph.Node}s. Otherwise, returns
 	 * <code>false</code>.
 	 *
 	 * @param nodePart
 	 *            The {@link NodePart} in question.
-	 * @return <code>true</code> if the given
-	 *         {@link org.eclipse.gef.graph.Node} is currently contained within
-	 *         the {@link Set} of hidden {@link org.eclipse.gef.graph.Node}s,
-	 *         otherwise <code>false</code>.
+	 * @return <code>true</code> if the given {@link org.eclipse.gef.graph.Node}
+	 *         is currently contained within the {@link Set} of hidden
+	 *         {@link org.eclipse.gef.graph.Node}s, otherwise
+	 *         <code>false</code>.
 	 */
 	public boolean isHidden(NodePart nodePart) {
 		return isHidden(nodePart.getContent());
 	}
 
 	/**
-	 * Returns <code>true</code> if the given
-	 * {@link org.eclipse.gef.graph.Node} is currently contained within the
-	 * {@link Set} of hidden {@link org.eclipse.gef.graph.Node}s. Otherwise,
-	 * returns <code>false</code>.
+	 * Returns <code>true</code> if the given {@link org.eclipse.gef.graph.Node}
+	 * is currently contained within the {@link Set} of hidden
+	 * {@link org.eclipse.gef.graph.Node}s. Otherwise, returns
+	 * <code>false</code>.
 	 *
 	 * @param node
 	 *            The {@link org.eclipse.gef.graph.Node} in question.
-	 * @return <code>true</code> if the content of the given
-	 *         {@link NodePart} is currently contained within the
-	 *         {@link Set} of hidden {@link org.eclipse.gef.graph.Node}s,
-	 *         otherwise <code>false</code>.
+	 * @return <code>true</code> if the content of the given {@link NodePart} is
+	 *         currently contained within the {@link Set} of hidden
+	 *         {@link org.eclipse.gef.graph.Node}s, otherwise
+	 *         <code>false</code>.
 	 */
 	public boolean isHidden(org.eclipse.gef.graph.Node node) {
 		return hiddenProperty.contains(node);
 	}
 
 	/**
-	 * Remove the content of the given {@link NodePart} from the
-	 * {@link Set} of hidden {@link org.eclipse.gef.graph.Node} s. Notifies all
-	 * property change listeners about this change.
+	 * Remove the content of the given {@link NodePart} from the {@link Set} of
+	 * hidden {@link org.eclipse.gef.graph.Node} s. Notifies all property change
+	 * listeners about this change.
 	 *
 	 * @param nodePart
-	 *            The {@link NodePart} of which the content is removed
-	 *            from the {@link Set} of hidden
-	 *            {@link org.eclipse.gef.graph.Node} s.
+	 *            The {@link NodePart} of which the content is removed from the
+	 *            {@link Set} of hidden {@link org.eclipse.gef.graph.Node} s.
 	 */
 	public void show(NodePart nodePart) {
 		show(nodePart.getContent());

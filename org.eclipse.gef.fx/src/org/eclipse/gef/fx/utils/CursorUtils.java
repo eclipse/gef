@@ -15,19 +15,13 @@ package org.eclipse.gef.fx.utils;
 
 import java.awt.MouseInfo;
 import java.awt.PointerInfo;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import org.eclipse.gef.fx.FxBundle;
 import org.eclipse.gef.geometry.planar.Point;
 
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
-
 /**
  * The {@link CursorUtils} class contains utility methods for determining the
- * current pointer location ({@link #getPointerLocation()}) and for forcing a
- * mouse cursor update ({@link #forceCursorUpdate(Scene)}).
+ * current pointer location ({@link #getPointerLocation()}).
  *
  * @author anyssen
  * @author mwienand
@@ -36,34 +30,6 @@ import javafx.scene.Scene;
 public class CursorUtils {
 
 	private static final String JAVA_AWT_HEADLESS_PROPERTY = "java.awt.headless";
-
-	/**
-	 * Forces the JavaFX runtime to update the mouse cursor. This is useful when
-	 * you want to change the mouse cursor independently of mouse movement.
-	 *
-	 * @param scene
-	 *            The {@link Scene} to update the cursor for.
-	 */
-	public static void forceCursorUpdate(Scene scene) {
-		try {
-			Field mouseHandlerField = scene.getClass()
-					.getDeclaredField("mouseHandler");
-			mouseHandlerField.setAccessible(true);
-			Object mouseHandler = mouseHandlerField.get(scene);
-			Class<?> mouseHandlerClass = Class
-					.forName("javafx.scene.Scene$MouseHandler");
-			Method updateCursorMethod = mouseHandlerClass
-					.getDeclaredMethod("updateCursor", Cursor.class);
-			updateCursorMethod.setAccessible(true);
-			updateCursorMethod.invoke(mouseHandler, scene.getCursor());
-			Method updateCursorFrameMethod = mouseHandlerClass
-					.getDeclaredMethod("updateCursorFrame");
-			updateCursorFrameMethod.setAccessible(true);
-			updateCursorFrameMethod.invoke(mouseHandler);
-		} catch (Exception x) {
-			throw new IllegalStateException(x);
-		}
-	}
 
 	/**
 	 * Returns the current pointer location.

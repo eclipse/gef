@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.fx.utils.CursorUtils;
 import org.eclipse.gef.mvc.policies.IPolicy;
 
 import javafx.scene.Cursor;
@@ -103,7 +102,6 @@ public class CursorSupport {
 		Scene scene = hostPolicy.getHost().getVisual().getScene();
 		if (cursor != scene.getCursor()) {
 			scene.setCursor(cursor);
-			CursorUtils.forceCursorUpdate(scene);
 		}
 	}
 

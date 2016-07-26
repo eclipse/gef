@@ -48,14 +48,7 @@ public class FXViewer extends AbstractViewer<Node> {
 	 */
 	public static final String FOCUSED_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(0,0,0,0); -fx-border-color: #8ec0fc; -fx-border-width: 2;";
 
-	/**
-	 * The {@link InfiniteCanvas} that displays the viewer's contents.
-	 *
-	 * @deprecated This field will be made private. Use {@link #getCanvas()}
-	 *             instead.
-	 */
-	@Deprecated
-	protected InfiniteCanvas infiniteCanvas;
+	private InfiniteCanvas infiniteCanvas;
 
 	private boolean isInitialized = false;
 	private boolean isWindowFocused = false;

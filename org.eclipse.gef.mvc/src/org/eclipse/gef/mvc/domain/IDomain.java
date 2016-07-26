@@ -68,26 +68,6 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
 	 * {@link IDomain}.
 	 *
-	 * @param operation
-	 *            The {@link IUndoableOperation} to be executed on the
-	 *            {@link IOperationHistory} of this {@link IDomain}.
-	 * @throws ExecutionException
-	 *             In case an exception occurred during the execution of the
-	 *             operation.
-	 *
-	 * @deprecated Use #execute(ITransactionalOperation, IProgressMonitor)
-	 *             instead. This method will be removed in GEF 5.0.0.
-	 */
-	@Deprecated
-	public void execute(ITransactionalOperation operation)
-			throws ExecutionException;
-
-	/**
-	 * Executes the given {@link IUndoableOperation} on the
-	 * {@link IOperationHistory} used by this {@link IDomain} (see
-	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
-	 * {@link IDomain}.
-	 *
 	 * In case an execution transaction is currently open (see
 	 * {@link #openExecutionTransaction(ITool)},
 	 * {@link #closeExecutionTransaction(ITool)}) the enclosing transaction will
@@ -165,7 +145,7 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	/**
 	 * Opens a new transaction or adds the given {@link ITool} to the currently
 	 * opened transaction for executing operations (via
-	 * {@link #execute(ITransactionalOperation)}) on the
+	 * {@link #execute(ITransactionalOperation, IProgressMonitor)}) on the
 	 * {@link IOperationHistory} used by this {@link IDomain} (see
 	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
 	 * {@link IDomain}.

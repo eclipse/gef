@@ -36,6 +36,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -225,16 +226,14 @@ public class GeometryNode<T extends IGeometry> extends Region {
 			}
 		});
 
-		// // TODO: enable for JavaFX-8 (using reflection until we drop support
-		// for java-1.7)
-		// insetsProperty().addListener(new ChangeListener<Insets>() {
-		//
-		// @Override
-		// public void changed(ObservableValue<? extends Insets> observable,
-		// Insets oldValue, Insets newValue) {
-		// resize(prefWidth(-1), prefHeight(-1));
-		// }
-		// });
+		insetsProperty().addListener(new ChangeListener<Insets>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Insets> observable,
+					Insets oldValue, Insets newValue) {
+				resize(prefWidth(-1), prefHeight(-1));
+			}
+		});
 
 		// resize geometry in case width and height change
 		widthProperty().addListener(widthListener);

@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -486,14 +485,6 @@ public class ObservableListTests {
 		check(observable, backupList);
 		checkListeners();
 
-		assumeTrue(
-				"Skip for all except ObservableListWrapperEx, SimpleListPropertyEx, or ReadOnlyListWrapperEx on JavaSE-1.7",
-				System.getProperty("java.version").startsWith("1.7.0")
-						&& observable.getClass().getSimpleName()
-								.equals("ObservableListWrapperEx")
-						|| observable instanceof SimpleListPropertyEx
-						|| observable instanceof ReadOnlyListWrapperEx);
-
 		// clear again (while already empty)
 		observable.clear();
 		check(observable, backupList);
@@ -507,14 +498,6 @@ public class ObservableListTests {
 	 */
 	@Test
 	public void exceptionHandling() throws InterruptedException {
-		assumeTrue(
-				"Skip for all except ObservableListWrapperEx, SimpleListPropertyEx, or ReadOnlyListWrapperEx on JavaSE-1.7",
-				System.getProperty("java.version").startsWith("1.7.0")
-						&& observable.getClass().getSimpleName()
-								.equals("ObservableListWrapperEx")
-						|| observable instanceof SimpleListPropertyEx
-						|| observable instanceof ReadOnlyListWrapperEx);
-
 		// invalidation listeners
 		final boolean[] caughtException = new boolean[] { false };
 		final boolean[] uncaughtException = new boolean[] { false };
@@ -534,13 +517,15 @@ public class ObservableListTests {
 				observable.addListener(listener);
 				Thread.currentThread().setUncaughtExceptionHandler(
 						new UncaughtExceptionHandler() {
-					@Override
-					public void uncaughtException(Thread t, Throwable e) {
-						if (e.getMessage().equals("expected invalidation")) {
-							caughtException[0] = true;
-						}
-					}
-				});
+							@Override
+							public void uncaughtException(Thread t,
+									Throwable e) {
+								if (e.getMessage()
+										.equals("expected invalidation")) {
+									caughtException[0] = true;
+								}
+							}
+						});
 				try {
 					observable.add(1);
 				} catch (IllegalArgumentException e) {
@@ -575,13 +560,15 @@ public class ObservableListTests {
 				observable.addListener(listener);
 				Thread.currentThread().setUncaughtExceptionHandler(
 						new UncaughtExceptionHandler() {
-					@Override
-					public void uncaughtException(Thread t, Throwable e) {
-						if (e.getMessage().equals("expected list change")) {
-							caughtException[0] = true;
-						}
-					}
-				});
+							@Override
+							public void uncaughtException(Thread t,
+									Throwable e) {
+								if (e.getMessage()
+										.equals("expected list change")) {
+									caughtException[0] = true;
+								}
+							}
+						});
 				try {
 					observable.add(1);
 				} catch (IllegalArgumentException e) {
@@ -1453,12 +1440,6 @@ public class ObservableListTests {
 
 	@Test
 	public void sort() {
-		// XXX: Using Collections.sort() will only lead to proper notifications
-		// on JavaSE-1.8, as List.sort(Comparator) was added and proper
-		// delegation of Collection.sort(List) was implemented.
-		assumeFalse("Skip on JavaSE-1.7",
-				System.getProperty("java.version").startsWith("1.7.0"));
-
 		assumeTrue("Skip for all except ObservableListWrapperEx", observable
 				.getClass().getSimpleName().equals("ObservableListWrapperEx"));
 

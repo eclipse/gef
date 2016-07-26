@@ -14,6 +14,7 @@ package org.eclipse.gef.mvc.fx.ui.parts;
 import java.util.ArrayList;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.mvc.fx.domain.FXDomain;
 import org.eclipse.gef.mvc.fx.tools.FXTypeTool;
@@ -133,7 +134,8 @@ public class DeleteActionHandler extends Action {
 		ITransactionalOperation deleteOperation = deletionPolicy.commit();
 		if (deleteOperation != null) {
 			try {
-				viewer.getDomain().execute(deleteOperation);
+				viewer.getDomain().execute(deleteOperation,
+						new NullProgressMonitor());
 			} catch (ExecutionException e) {
 				throw new RuntimeException(e);
 			}

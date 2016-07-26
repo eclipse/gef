@@ -75,7 +75,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	private static final String DEFAULT_ANCHORAGE_ROLE = "default";
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
-	private AdaptableSupport<IVisualPart<VR, V>> ads = new AdaptableSupport<IVisualPart<VR, V>>(
+	private AdaptableSupport<IVisualPart<VR, V>> ads = new AdaptableSupport<>(
 			this);
 
 	private ReadOnlyObjectWrapper<IVisualPart<VR, ? extends VR>> parentProperty = new ReadOnlyObjectWrapper<>();

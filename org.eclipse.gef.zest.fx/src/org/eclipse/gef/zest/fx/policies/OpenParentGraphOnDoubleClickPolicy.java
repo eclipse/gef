@@ -13,6 +13,7 @@
 package org.eclipse.gef.zest.fx.policies;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.policies.AbstractFXInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
@@ -55,7 +56,8 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXInteractionPol
 			if (nestingGraph != null) {
 				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
 				try {
-					viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false));
+					viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false),
+							new NullProgressMonitor());
 				} catch (ExecutionException e) {
 					throw new RuntimeException(e);
 				}

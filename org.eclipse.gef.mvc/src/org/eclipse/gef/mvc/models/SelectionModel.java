@@ -116,13 +116,7 @@ public class SelectionModel<VR> implements IDisposable {
 	 * Clears the current selection.
 	 */
 	public void clearSelection() {
-		// XXX With JavaFX 2.2, a change would be fired when the selection is
-		// cleared,even if it was already empty. With JavaFX 8 this is not the
-		// case. We ensure same behavior for listeners by ensuring clear is only
-		// called if needed.
-		if (!selection.isEmpty()) {
-			selection.clear();
-		}
+		selection.clear();
 	}
 
 	/**

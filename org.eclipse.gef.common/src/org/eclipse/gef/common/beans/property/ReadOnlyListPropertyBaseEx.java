@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef.common.beans.property;
 
-import java.util.List;
-
 import org.eclipse.gef.common.beans.binding.ListExpressionHelperEx;
 
 import javafx.beans.InvalidationListener;
@@ -30,9 +28,6 @@ import javafx.collections.ObservableList;
  * <ul>
  * <li>Change notifications are fired even when the observed value did not
  * change.(https://bugs.openjdk.java.net/browse/JDK-8089169)</li>
- * <li>No proper implementation of equals() for Java 7, but object equality
- * considered (https://bugs.openjdk.java.net/browse/JDK-8120138): fixed by
- * overwriting equals() and hashCode().</li>
  * </ul>
  *
  * @author anyssen
@@ -68,25 +63,6 @@ public abstract class ReadOnlyListPropertyBaseEx<E>
 			helper = new ListExpressionHelperEx<>(this);
 		}
 		helper.addListener(listener);
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		// Overwritten here to compensate an inappropriate equals()
-		// implementation in JavaSE-1.7
-		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
-		// TODO: Remove when dropping support for JavaSE-1.7
-		if (this == other) {
-			return true;
-		}
-		if (other == null || !(other instanceof List)) {
-			return false;
-		}
-
-		if (get() == null) {
-			return false;
-		}
-		return get().equals(other);
 	}
 
 	@Override

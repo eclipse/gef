@@ -13,6 +13,7 @@
 package org.eclipse.gef.zest.fx.policies;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
@@ -25,9 +26,9 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * The {@link OpenNestedGraphOnDoubleClickPolicy} is an {@link IFXOnClickPolicy}
- * that can be installed on {@link NodePart}s (see {@link #getHost()}).
- * It opens the {@link Graph} that is nested inside of its
- * {@link NodePart} when the {@link NodePart} is double clicked.
+ * that can be installed on {@link NodePart}s (see {@link #getHost()}). It opens
+ * the {@link Graph} that is nested inside of its {@link NodePart} when the
+ * {@link NodePart} is double clicked.
  *
  * @author mwienand
  *
@@ -42,7 +43,8 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 			if (nestedGraph != null) {
 				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
 				try {
-					viewer.getDomain().execute(new NavigateOperation(viewer, nestedGraph, true));
+					viewer.getDomain().execute(new NavigateOperation(viewer, nestedGraph, true),
+							new NullProgressMonitor());
 				} catch (ExecutionException e) {
 					throw new RuntimeException(e);
 				}

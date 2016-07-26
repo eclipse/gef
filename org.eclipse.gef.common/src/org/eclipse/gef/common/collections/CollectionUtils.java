@@ -16,7 +16,6 @@ package org.eclipse.gef.common.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.gef.common.collections.ListListenerHelperEx.AtomicChange;
@@ -31,7 +30,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 
 /**
  * The {@link CollectionUtils} contains a method to compute the old value of an
@@ -56,21 +54,6 @@ public class CollectionUtils {
 		// TODO: use singleton field
 		return new UnmodifiableObservableMultisetWrapper<>(
 				new ObservableMultisetWrapper<>(HashMultiset.<E> create()));
-	}
-
-	/**
-	 * Returns an empty, unmodifiable {@link ObservableSet}.
-	 *
-	 * @param <E>
-	 *            The element type of the {@link ObservableSet}.
-	 * @return An empty, unmodifiable {@link ObservableSet}.
-	 */
-	// TODO: Remove when dropping support for JavaSE-1.7 (where FXCollections
-	// already provides this).
-	public static <E> ObservableSet<E> emptySet() {
-		// TODO: use singleton field
-		return unmodifiableObservableSet(
-				FXCollections.observableSet(new HashSet<E>()));
 	}
 
 	/**
@@ -381,26 +364,6 @@ public class CollectionUtils {
 			throw new NullPointerException();
 		}
 		return new UnmodifiableObservableMultisetWrapper<>(multiset);
-	}
-
-	/**
-	 * Returns an unmodifiable {@link ObservableSet} wrapping the given
-	 * {@link ObservableSet}.
-	 *
-	 * @param <E>
-	 *            The element type of the {@link ObservableSet}.
-	 * @param set
-	 *            The {@link ObservableSet} to wrap.
-	 * @return An unmodifiable wrapper around the given {@link ObservableSet}.
-	 */
-	// TODO: Remove when dropping support for JavaSE-1.7 (where FXCollections
-	// already provides this).
-	public static <E> ObservableSet<E> unmodifiableObservableSet(
-			ObservableSet<E> set) {
-		if (set == null) {
-			throw new NullPointerException();
-		}
-		return new UnmodifiableObservableSetWrapper<>(set);
 	}
 
 	/**

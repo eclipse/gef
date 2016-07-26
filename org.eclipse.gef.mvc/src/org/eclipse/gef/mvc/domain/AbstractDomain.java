@@ -23,7 +23,6 @@ import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.common.activate.ActivatableSupport;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -72,8 +71,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	};
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
-	private AdaptableSupport<IDomain<VR>> ads = new AdaptableSupport<IDomain<VR>>(
-			this);
+	private AdaptableSupport<IDomain<VR>> ads = new AdaptableSupport<>(this);
 
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
@@ -232,18 +230,6 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		ads.dispose();
 		ads = null;
 		acs = null;
-	}
-
-	/**
-	 * @deprecated Use
-	 *             {@link #execute(ITransactionalOperation, IProgressMonitor)}
-	 *             instead. This method will be removed in GEF 5.0.0.
-	 */
-	@Deprecated
-	@Override
-	public void execute(ITransactionalOperation operation)
-			throws ExecutionException {
-		execute(operation, new NullProgressMonitor());
 	}
 
 	/**

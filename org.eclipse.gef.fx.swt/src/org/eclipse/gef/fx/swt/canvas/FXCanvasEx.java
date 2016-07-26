@@ -196,12 +196,6 @@ public class FXCanvasEx extends FXCanvas {
 		gestureConverter = new SWT2FXEventConverter(this);
 	}
 
-	@Override
-	public void dispose() {
-		// TODO: remove (logic has been put into dispose listener)
-		super.dispose();
-	}
-
 	/**
 	 * Returns the stage {@link Window} hold by this {@link FXCanvas}.
 	 *

@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef.common.beans.value.WritableMultisetValue;
-import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.collections.ObservableMultiset;
 
 import com.google.common.collect.Multiset;
@@ -44,34 +43,7 @@ public abstract class MultisetProperty<E> extends ReadOnlyMultisetProperty<E>
 
 	@Override
 	public void bindBidirectional(Property<ObservableMultiset<E>> other) {
-		try {
-			Bindings.bindBidirectional(this, other);
-		} catch (IllegalArgumentException e) {
-			if ("Cannot bind property to itself".equals(e.getMessage())
-					&& this != other) {
-				// XXX: With JavaFX 2.2, the super implementation relies on
-				// equals() not on object identity to infer whether a binding is
-				// valid. It thus throw an IllegalArgumentException if two equal
-				// properties are passed in, even if they are not identical. We
-				// have to ensure they are thus unequal to create the binding;
-				// the value will be overwritten anyway.
-				if (other.getValue() == null) {
-					if (getValue() == null) {
-						// set to value != null
-						setValue(CollectionUtils.<E> observableHashMultiset());
-					}
-				} else {
-					if (getValue().equals(other)) {
-						// set to null value
-						setValue(null);
-					}
-				}
-				// try again
-				Bindings.bindBidirectional(this, other);
-			} else {
-				throw (e);
-			}
-		}
+		Bindings.bindBidirectional(this, other);
 	}
 
 	@Override
@@ -81,31 +53,6 @@ public abstract class MultisetProperty<E> extends ReadOnlyMultisetProperty<E>
 
 	@Override
 	public void unbindBidirectional(Property<ObservableMultiset<E>> other) {
-		try {
-			Bindings.unbindBidirectional(this, other);
-		} catch (IllegalArgumentException e) {
-			if ("Cannot bind property to itself".equals(e.getMessage())
-					&& this != other) {
-				// XXX: With JavaFX 2.2, the super implementation relies on
-				// equals() not on object identity to infer whether a binding is
-				// valid. It thus throw an IllegalArgumentException if two equal
-				// properties are passed in, even if they are not identical. We
-				// have to ensure they are thus unequal to remove the binding
-				// and restore the original value afterwards.
-				ObservableMultiset<E> oldValue = getValue();
-				if (other.getValue() == null) {
-					// set to value != null
-					setValue(CollectionUtils.<E> observableHashMultiset());
-				} else {
-					// set to null value
-					setValue(null);
-				}
-				// try again
-				Bindings.unbindBidirectional(this, other);
-				setValue(oldValue);
-			} else {
-				throw (e);
-			}
-		}
+		Bindings.unbindBidirectional(this, other);
 	}
 }

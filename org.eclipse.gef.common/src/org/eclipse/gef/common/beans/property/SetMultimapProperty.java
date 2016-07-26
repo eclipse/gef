@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef.common.beans.value.WritableSetMultimapValue;
-import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.collections.ObservableSetMultimap;
 
 import com.google.common.collect.SetMultimap;
@@ -47,35 +46,7 @@ public abstract class SetMultimapProperty<K, V>
 
 	@Override
 	public void bindBidirectional(Property<ObservableSetMultimap<K, V>> other) {
-		try {
-			Bindings.bindBidirectional(this, other);
-		} catch (IllegalArgumentException e) {
-			if ("Cannot bind property to itself".equals(e.getMessage())
-					&& this != other) {
-				// XXX: With JavaFX 2.2, the super implementation relies on
-				// equals() not on object identity to infer whether a binding is
-				// valid. It thus throw an IllegalArgumentException if two equal
-				// properties are passed in, even if they are not identical. We
-				// have to ensure they are thus unequal to create the binding;
-				// the value will be overwritten anyway.
-				if (other.getValue() == null) {
-					if (getValue() == null) {
-						// set to value != null
-						setValue(CollectionUtils
-								.<K, V> observableHashMultimap());
-					}
-				} else {
-					if (getValue().equals(other)) {
-						// set to null value
-						setValue(null);
-					}
-				}
-				// try again
-				Bindings.bindBidirectional(this, other);
-			} else {
-				throw (e);
-			}
-		}
+		Bindings.bindBidirectional(this, other);
 	}
 
 	@Override
@@ -86,31 +57,6 @@ public abstract class SetMultimapProperty<K, V>
 	@Override
 	public void unbindBidirectional(
 			Property<ObservableSetMultimap<K, V>> other) {
-		try {
-			Bindings.unbindBidirectional(this, other);
-		} catch (IllegalArgumentException e) {
-			if ("Cannot bind property to itself".equals(e.getMessage())
-					&& this != other) {
-				// XXX: With JavaFX 2.2, the super implementation relies on
-				// equals() not on object identity to infer whether a binding is
-				// valid. It thus throw an IllegalArgumentException if two equal
-				// properties are passed in, even if they are not identical. We
-				// have to ensure they are thus unequal to remove the binding
-				// and restore the original value afterwards.
-				ObservableSetMultimap<K, V> oldValue = getValue();
-				if (other.getValue() == null) {
-					// set to value != null
-					setValue(CollectionUtils.<K, V> observableHashMultimap());
-				} else {
-					// set to null value
-					setValue(null);
-				}
-				// try again
-				Bindings.unbindBidirectional(this, other);
-				setValue(oldValue);
-			} else {
-				throw (e);
-			}
-		}
+		Bindings.unbindBidirectional(this, other);
 	}
 }

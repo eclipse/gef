@@ -12,19 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef.common.beans.property;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.gef.common.beans.binding.ListExpressionHelperEx;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
@@ -39,12 +34,6 @@ import javafx.collections.ObservableList;
  * (https://bugs.openjdk.java.net/browse/JDK-8089557): fixed by not forwarding
  * listeners to the nested read-only property but rather keeping the lists of
  * listeners distinct.</li>
- * <li>No proper implementation of equals() for Java 7, but object equality
- * considered (https://bugs.openjdk.java.net/browse/JDK-8120138): fixed by
- * overwriting equals() and hashCode() and by overwriting
- * {@link #bindBidirectional(Property)} and
- * {@link #unbindBidirectional(Property)}, which relied on the wrong
- * implementation.</li>
  * </ul>
  *
  * @author anyssen
@@ -226,61 +215,6 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 	}
 
 	@Override
-	public void bindBidirectional(Property<ObservableList<E>> other) {
-		try {
-			super.bindBidirectional(other);
-		} catch (IllegalArgumentException e) {
-			if ("Cannot bind property to itself".equals(e.getMessage())
-					&& this != other) {
-				// XXX: In JavaSE-1.7 super implementation relies on equals()
-				// not on object identity (as in JavaSE-1.8) to infer whether a
-				// binding is valid. It thus throws an IllegalArgumentException
-				// if two equal properties are passed in, even if they are not
-				// identical. We have to ensure they are thus unequal to
-				// establish the binding; as our value will be initially
-				// overwritten anyway, we may adjust the local value; to reduce
-				// noise, we only adjust the local value if necessary.
-				// TODO: Remove when dropping support for JavaSE-1.7
-				if (other.getValue() == null) {
-					if (getValue() == null) {
-						// set to value != null
-						setValue(FXCollections
-								.observableList(new ArrayList<E>()));
-					}
-				} else {
-					if (getValue().equals(other)) {
-						// set to null value
-						setValue(null);
-					}
-				}
-				// try again
-				super.bindBidirectional(other);
-			} else {
-				throw (e);
-			}
-		}
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		// Overwritten here to compensate an inappropriate equals()
-		// implementation in JavaSE-1.7
-		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
-		// TODO: Remove when dropping support for JavaSE-1.7
-		if (this == other) {
-			return true;
-		}
-		if (other == null || !(other instanceof List)) {
-			return false;
-		}
-
-		if (get() == null) {
-			return false;
-		}
-		return get().equals(other);
-	}
-
-	@Override
 	protected void fireValueChangedEvent() {
 		if (helper != null) {
 			helper.fireValueChangedEvent();
@@ -338,39 +272,7 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 			helper.removeListener(listener);
 		}
 	}
-
-	@Override
-	public void unbindBidirectional(Property<ObservableList<E>> other) {
-		try {
-			super.unbindBidirectional(other);
-		} catch (IllegalArgumentException e) {
-			if ("Cannot bind property to itself".equals(e.getMessage())
-					&& this != other) {
-				// XXX: In JavaSE-1.7, the super implementation relies on
-				// equals() not on object identity (as in JavaSE-1.8) to infer
-				// whether a binding is valid. It thus throws an
-				// IllegalArgumentException if two equal properties are
-				// passed in, even if they are not identical. We have to
-				// ensure they are thus unequal to remove the binding; we
-				// have to restore the current value afterwards.
-				// TODO: Remove when dropping support for JavaSE-1.7
-				ObservableList<E> oldValue = getValue();
-				if (other.getValue() == null) {
-					// set to value != null
-					setValue(FXCollections.observableList(new ArrayList<E>()));
-				} else {
-					// set to null value
-					setValue(null);
-				}
-				// try again
-				super.unbindBidirectional(other);
-				setValue(oldValue);
-			} else {
-				throw (e);
-			}
-		}
-	}
-
+	
 	// TODO: overwrite sort(Comparator) and replaceAll(UnaryOperator) as well,
 	// as soon as we drop JavaSE-1.7 support.
 }

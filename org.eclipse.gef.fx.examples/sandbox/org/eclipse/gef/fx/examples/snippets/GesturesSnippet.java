@@ -43,7 +43,6 @@ public class GesturesSnippet extends AbstractFxExample {
 			@Override
 			public void handle(ScrollEvent event) {
 				System.out.println("SCROLL " + event);
-				// FIXME: inertia is not properly set on JavaFX 2.2 (bug)
 				System.out.println(event.isInertia());
 				display.setText(event.getEventType().toString());
 			}
