@@ -1,2 +1,3 @@
 wiki.title=GEF DOT User Guide
-wiki.path=GEF/GEF4/DOT/User Guide
+wiki.path=DOT-User-Guide
+wiki.image.path=images/dot-user-guide

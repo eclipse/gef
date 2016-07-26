@@ -10,7 +10,7 @@
         Alexander Nyßen (itemis AG) - initial API and implementation
  -->
 <toc label="GEF Geometry Developer Documentation">
-   <link toc="reference/wiki/GEF-GEF-Geometry-toc.xml"/>
+   <link toc="reference/wiki/Geometry-toc.xml"/>
    <topic href="reference/api/overview-summary.html" label="API Reference">
 	</topic>
 </toc>

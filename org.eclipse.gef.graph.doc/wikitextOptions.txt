@@ -1,2 +1,3 @@
 wiki.title=GEF Graph Developer Documentation
-wiki.path=GEF/GEF4/Graph
+wiki.path=Graph
+wiki.image.path=images/graph

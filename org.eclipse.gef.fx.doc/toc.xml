@@ -10,7 +10,7 @@
         Alexander Nyßen (itemis AG) - initial API and implementation
  -->
 <toc label="GEF FX Developer Documentation">
-   <link toc="reference/wiki/GEF-GEF-FX-toc.xml"/>
+   <link toc="reference/wiki/FX-toc.xml"/>
    <topic href="reference/api/overview-summary.html" label="API Reference">
 	</topic>
 </toc>

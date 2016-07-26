@@ -1,2 +1,3 @@
 wiki.title=GEF Common Developer Documentation
-wiki.path=GEF/GEF4/Common
+wiki.path=Common
+wiki.image.path=images/common

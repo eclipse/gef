@@ -10,7 +10,7 @@
         Alexander Nyßen (itemis AG) - initial API and implementation
  -->
 
-<project name="GEF Geometry Documentation Build" default="generate.wikitext" basedir=".">
+<project name="GEF Documentation Build" default="generate.wikitext" basedir=".">
 
 	<!-- path to wikitext standalone package -->
 	<path id="wikitext.classpath">
@@ -18,30 +18,41 @@
 			<include name="com.google.guava_*.jar" />
 			<include name="org.eclipse.mylyn.wikitext.core_*.jar" />
 			<include name="org.eclipse.mylyn.wikitext.core.ant_*.jar" />
-			<include name="org.eclipse.mylyn.wikitext.mediawiki.core_*.jar" />
-			<include name="org.eclipse.mylyn.wikitext.mediawiki.core.ant_*.jar" />
+			<include name="org.eclipse.mylyn.wikitext.markdown.core_*.jar" />
 		</fileset>
 	</path>
-	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/mediawiki/core/ant/tasks.properties" />
-
+	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/ant/tasks.properties" />
 	<property file="wikitextOptions.txt" />
 
 	<target name="generate.wikitext">
 		<echo message="Generating reference documentation for ${wiki.title} by extracting it from ${wiki.path} wiki page." />
 
-		<!-- Set up the base wiki location to pull content from: -->
-		<mediawiki-to-eclipse-help markuplanguage="MediaWiki" wikiBaseUrl="http://wiki.eclipse.org" navigationImages="true" validate="true" failonvalidationerror="true" prependImagePrefix="images" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" dest="${basedir}/reference/wiki" helpPrefix="reference/wiki" title="${wiki.title}" generateUnifiedToc="false">
-			<!-- Set up which wiki pages to pull from: -->
-			<path name="${wiki.path}" title="${wiki.title}" generateToc="true" />
+		<!-- copy over .md and image files -->
+		<copy todir="${basedir}/reference/wiki">
+			<fileset dir="${wikidoc.base.path}">
+				<include name="${wiki.path}.md" />
+				<include name="${wiki.image.path}/*" />
+			</fileset>
+		</copy>
+
+		<!-- generate html and toc -->
+		<wikitext-to-eclipse-help markuplanguage="Markdown" navigationImages="true" validate="true" failonvalidationerror="true" prependImagePrefix="" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" helpPrefix="reference/wiki" title="${wiki.title}">
+			<!-- Set up which wiki pages to pull from: TODO: pass this in via maven option-->
+			<fileset dir="${basedir}/reference/wiki" includes="${wiki.path}.md" />
 			<stylesheet url="../../book.css" />
-		</mediawiki-to-eclipse-help>
+		</wikitext-to-eclipse-help>
+
+		<!-- Cleanup up .md file -->
+		<delete>
+			<fileset dir="${basedir}/reference/wiki" includes="${wiki.path}.md" />
+		</delete>
 
 		<!-- perform (global) URL rewriting for http-based platform javadoc references (of any release) to local org.eclipse.platform.doc.isv bundle -->
 		<replaceregexp flags="g">
 			<fileset dir="${basedir}/reference/wiki/">
 				<include name="**/*.html" />
 			</fileset>
-			<regexp pattern="http://help.eclipse.org/(.+?/)?topic/org.eclipse.platform.doc.isv/reference/api/"/>
+			<regexp pattern="http://help.eclipse.org/(.+?/)?topic/org.eclipse.platform.doc.isv/reference/api/" />
 			<substitution expression="PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/" />
 		</replaceregexp>
 	</target>

@@ -10,7 +10,7 @@
         Alexander Nyßen (itemis AG) - initial API and implementation
  -->
 <toc label="GEF Cloudio Developer Documentation">
-   <link toc="reference/wiki/GEF-GEF-Cloudio-toc.xml"/>
+   <link toc="reference/wiki/Cloudio-toc.xml"/>
    <topic href="reference/api/overview-summary.html" label="API Reference">
 	</topic>
 </toc>

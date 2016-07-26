@@ -10,7 +10,7 @@
         Alexander Nyßen (itemis AG) - initial API and implementation
  -->
 <toc label="GEF Zest Developer Documentation">
-   <link toc="reference/wiki/GEF-GEF-Zest-toc.xml"/>
+   <link toc="reference/wiki/Zest-toc.xml"/>
    <topic href="reference/api/overview-summary.html" label="API Reference">
 	</topic>
 </toc>

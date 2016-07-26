@@ -1,2 +1,3 @@
 wiki.title=GEF Cloudio User Guide
-wiki.path=GEF/GEF4/Cloudio/User Guide
+wiki.path=Cloudio-User-Guide
+wiki.image.path=images/cloudio-user-guide
