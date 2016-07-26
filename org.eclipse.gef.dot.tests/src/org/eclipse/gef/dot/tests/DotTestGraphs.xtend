@@ -171,11 +171,29 @@ class DotTestGraphs {
 		}
 	'''
 	
-	public static val MULTI_EDGE_STATEMENTS = '''
+	public static val MULTI_EDGE_STATEMENTS_GLOBAL = '''
 		digraph {
+			edge[arrowhead=ornormal]
+			1->2->3->4
 			1->2->3->4
 		}
 	'''
+	
+	public static val MULTI_EDGE_STATEMENTS_LOCAL = '''
+		digraph {
+			1->2->3->4[arrowhead=ornormal]
+			1->2->3->4[arrowhead=olnormal]
+		}
+	'''
+	
+	public static val MULTI_EDGE_STATEMENTS_OVERRIDE = '''
+		digraph {
+			edge[arrowhead=olnormal]
+			1->2->3->4[arrowhead=ornormal]
+			1->2->3->4
+		}
+	'''	
+
 	
 	public static val NEW_LINES_IN_LABELS = '''
 		graph {
