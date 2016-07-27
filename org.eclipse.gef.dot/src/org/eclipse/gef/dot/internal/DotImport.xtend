@@ -161,6 +161,8 @@ class DotImport {
 	}
 	
 	private def Node transformNodeId(NodeId it, List<AttrList> attrLists) {
+		val isExistingNode = _createCache_createNode.containsKey(CollectionLiterals.newArrayList(name.escaped))
+		
 		val node = name.escaped.createNode
 	
 		val setter = [
@@ -168,7 +170,8 @@ class DotImport {
 			val attributeValue = attrLists.getAttributeValue(attributeName)
 			if (attributeValue != null) {
 				f.apply(node, attributeValue)
-			} else if (globalNodeAttributes.containsKey(attributeName)) {
+			} else if (!isExistingNode && globalNodeAttributes.containsKey(attributeName)) {
+				// consider the global nodes attributes only if the node has just been created
 				f.apply(node, globalNodeAttributes.get(attributeName))
 			}
 		]
@@ -178,14 +181,14 @@ class DotImport {
 		setter.apply(HEIGHT__N,     [n, value | n.setHeight(value)    ])
 		setter.apply(ID__GNE,       [n, value | n.setId(value)        ])
 		setter.apply(LABEL__GNE,    [n, value | n.setLabel(value)     ])
-		setter.apply(POS__NE,   	[n, value | n.setPos(value)       ])
-		setter.apply(SHAPE__N,   	[n, value | n.setShape(value)     ])
-		setter.apply(SIDES__N,   	[n, value | n.setSides(value)     ])
-		setter.apply(SKEW__N,   	[n, value | n.setSkew(value)      ])
-		setter.apply(STYLE__GNE,   	[n, value | n.setStyle(value)     ])
-		setter.apply(WIDTH__N,   	[n, value | n.setWidth(value)     ])
-		setter.apply(XLABEL__NE,   	[n, value | n.setXLabel(value)    ])
-		setter.apply(XLP__NE,   	[n, value | n.setXlp(value)       ])
+		setter.apply(POS__NE,       [n, value | n.setPos(value)       ])
+		setter.apply(SHAPE__N,      [n, value | n.setShape(value)     ])
+		setter.apply(SIDES__N,      [n, value | n.setSides(value)     ])
+		setter.apply(SKEW__N,       [n, value | n.setSkew(value)      ])
+		setter.apply(STYLE__GNE,    [n, value | n.setStyle(value)     ])
+		setter.apply(WIDTH__N,      [n, value | n.setWidth(value)     ])
+		setter.apply(XLABEL__NE,    [n, value | n.setXLabel(value)    ])
+		setter.apply(XLP__NE,       [n, value | n.setXlp(value)       ])
 		
 		node
 	}
@@ -277,17 +280,17 @@ class DotImport {
 		setter.apply(ARROWSIZE__E, [e, value | e.setArrowSize(value)])
 		setter.apply(ARROWTAIL__E, [e, value | e.setArrowTail(value)])
 		setter.apply(DIR__E,       [e, value | e.setDir(value)      ])
-        setter.apply(HEAD_LP__E,   [e, value | e.setHeadLp(value)   ])
-        setter.apply(HEADLABEL__E, [e, value | e.setHeadLabel(value)])
-        setter.apply(ID__GNE,      [e, value | e.setId(value)       ])
-        setter.apply(LABEL__GNE,   [e, value | e.setLabel(value)    ])
-        setter.apply(LP__GE,       [e, value | e.setLp(value)       ])
-        setter.apply(POS__NE,      [e, value | e.setPos(value)      ])
-        setter.apply(STYLE__GNE,   [e, value | e.setStyle(value)    ])
-        setter.apply(TAILLABEL__E, [e, value | e.setTailLabel(value)])
-        setter.apply(TAIL_LP__E,   [e, value | e.setTailLp(value)   ])
-        setter.apply(XLABEL__NE,   [e, value | e.setXLabel(value)   ])
-        setter.apply(XLP__NE,      [e, value | e.setXlp(value)      ])
+		setter.apply(HEAD_LP__E,   [e, value | e.setHeadLp(value)   ])
+		setter.apply(HEADLABEL__E, [e, value | e.setHeadLabel(value)])
+		setter.apply(ID__GNE,      [e, value | e.setId(value)       ])
+		setter.apply(LABEL__GNE,   [e, value | e.setLabel(value)    ])
+		setter.apply(LP__GE,       [e, value | e.setLp(value)       ])
+		setter.apply(POS__NE,      [e, value | e.setPos(value)      ])
+		setter.apply(STYLE__GNE,   [e, value | e.setStyle(value)    ])
+		setter.apply(TAILLABEL__E, [e, value | e.setTailLabel(value)])
+		setter.apply(TAIL_LP__E,   [e, value | e.setTailLp(value)   ])
+		setter.apply(XLABEL__NE,   [e, value | e.setXLabel(value)   ])
+		setter.apply(XLP__NE,      [e, value | e.setXlp(value)      ])
 
 		graphBuilder.edges(edge)
 	}
@@ -345,6 +348,4 @@ class DotImport {
 	private def escaped(String it) {
 		DotTerminalConverters.unquote(it)
 	}
-	
-	
 }

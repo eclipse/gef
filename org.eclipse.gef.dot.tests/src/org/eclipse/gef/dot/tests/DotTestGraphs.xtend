@@ -632,6 +632,26 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val NODE_LABEL_OVERRIDE2 = '''
+		graph {
+			node[label=Node3]
+			1[label=Node4]
+			1--2
+		}
+	'''
+	
+	public static val NODE_LABEL_OVERRIDE3 = '''
+		graph {
+			1--2
+			node[label=Node2]
+			1
+			2[label=Node1]
+			3
+			node[label=Node3]
+			3--4
+		}
+	'''
+	
 	public static val NODE_POS_LOCAL = '''
 		graph {
 			1[pos=".1,.2!"]

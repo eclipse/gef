@@ -916,6 +916,30 @@ public final class DotImportTests {
 		DotAttributes.setLabel(n2, "Node3");
 		expected = graph.nodes(n1, n2).build();
 		testStringImport(expected, DotTestGraphs.NODE_LABEL_OVERRIDE);
+
+		// test override attribute2
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Edge e = new Edge.Builder(n1, n2).attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.buildEdge();
+		expected = graph.nodes(n1, n2).edges(e).build();
+		testStringImport(expected, DotTestGraphs.NODE_LABEL_OVERRIDE2);
+
+		// test override attribute3
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		DotAttributes.setLabel(nodes[1], "Node1");
+		DotAttributes.setLabel(nodes[2], "Node2");
+		DotAttributes.setLabel(nodes[3], "Node3");
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3--4") //$NON-NLS-1$
+				.buildEdge();
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.NODE_LABEL_OVERRIDE3);
 	}
 
 	@Test
