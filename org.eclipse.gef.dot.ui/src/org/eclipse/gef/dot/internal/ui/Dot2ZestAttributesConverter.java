@@ -113,7 +113,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		String dotLabel = DotAttributes.getLabel(dot);
 		if (dotLabel != null && dotLabel.equals("\\E")) { //$NON-NLS-1$
-			// The node default label '\N' is used to indicate that a node's
+			// The edge default label '\E' is used to indicate that an edge's
 			// name or id becomes its label.
 			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
 		}
