@@ -60,7 +60,6 @@ import org.eclipse.gef.dot.internal.parser.style.NodeStyle;
 import org.eclipse.gef.dot.internal.parser.style.Style;
 import org.eclipse.gef.dot.internal.parser.style.StyleItem;
 import org.eclipse.gef.dot.internal.parser.style.StylePackage;
-import org.eclipse.gef.dot.internal.parser.validation.AbstractDotJavaValidator;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
