@@ -60,6 +60,7 @@ import org.eclipse.gef.dot.internal.parser.style.NodeStyle;
 import org.eclipse.gef.dot.internal.parser.style.Style;
 import org.eclipse.gef.dot.internal.parser.style.StyleItem;
 import org.eclipse.gef.dot.internal.parser.style.StylePackage;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
@@ -296,11 +297,12 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	// TODO: move to DotAttributes
 	public static boolean isNodeAttribute(Attribute attribute) {
 		// attribute nested below NodeStmt
-		if (getAncestorOfType(attribute, NodeStmt.class) != null) {
+		if (EcoreUtil2.getContainerOfType(attribute, NodeStmt.class) != null) {
 			return true;
 		}
 		// global AttrStmt with AttributeType 'node'
-		AttrStmt attrStmt = getAncestorOfType(attribute, AttrStmt.class);
+		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
+				AttrStmt.class);
 		return attrStmt != null
 				&& AttributeType.NODE.equals(attrStmt.getType());
 	}
@@ -320,7 +322,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return false;
 		}
 		// attribute nested below Subgraph
-		return getAncestorOfType(attribute, Subgraph.class) != null;
+		return EcoreUtil2.getContainerOfType(attribute, Subgraph.class) != null;
 	}
 
 	/**
@@ -356,13 +358,14 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	// TODO: retrieve attribute context instead
 	public static boolean isEdgeAttribute(Attribute attribute) {
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
-		if (getAncestorOfType(attribute, EdgeStmtNode.class) != null
-				|| getAncestorOfType(attribute,
+		if (EcoreUtil2.getContainerOfType(attribute, EdgeStmtNode.class) != null
+				|| EcoreUtil2.getContainerOfType(attribute,
 						EdgeStmtSubgraph.class) != null) {
 			return true;
 		}
 		// global AttrStmt with AttributeType 'edge'
-		AttrStmt attrStmt = getAncestorOfType(attribute, AttrStmt.class);
+		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
+				AttrStmt.class);
 		return attrStmt != null
 				&& AttributeType.EDGE.equals(attrStmt.getType());
 	}
@@ -376,8 +379,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 */
 	@Check
 	public void checkEdgeOpCorrespondsToGraphType(EdgeRhsNode edgeRhsNode) {
-		checkEdgeOpCorrespondsToGraphType(edgeRhsNode.getOp(),
-				getAncestorOfType(edgeRhsNode, DotGraph.class).getType());
+		checkEdgeOpCorrespondsToGraphType(edgeRhsNode.getOp(), EcoreUtil2
+				.getContainerOfType(edgeRhsNode, DotGraph.class).getType());
 	}
 
 	/**
@@ -390,8 +393,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkEdgeOpCorrespondsToGraphType(
 			EdgeRhsSubgraph edgeRhsSubgraph) {
-		checkEdgeOpCorrespondsToGraphType(edgeRhsSubgraph.getOp(),
-				getAncestorOfType(edgeRhsSubgraph, DotGraph.class).getType());
+		checkEdgeOpCorrespondsToGraphType(edgeRhsSubgraph.getOp(), EcoreUtil2
+				.getContainerOfType(edgeRhsSubgraph, DotGraph.class).getType());
 	}
 
 	private void checkEdgeOpCorrespondsToGraphType(EdgeOp edgeOp,
@@ -406,17 +409,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			error("EdgeOp '->' may only be used in directed graphs.",
 					DotPackage.eINSTANCE.getEdgeRhs_Op());
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T extends EObject> T getAncestorOfType(EObject eObject,
-			Class<T> type) {
-		EObject container = eObject.eContainer();
-		while (container != null
-				&& !type.isAssignableFrom(container.getClass())) {
-			container = container.eContainer();
-		}
-		return (T) container;
 	}
 
 	private List<Diagnostic> validateBooleanAttributeValue(
