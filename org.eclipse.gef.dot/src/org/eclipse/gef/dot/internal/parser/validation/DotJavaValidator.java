@@ -32,24 +32,19 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.gef.dot.internal.DotAttributes;
+import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
 import org.eclipse.gef.dot.internal.DotLanguageSupport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParseResult;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParser;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowtypePackage;
 import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
-import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.parser.dot.Attribute;
-import org.eclipse.gef.dot.internal.parser.dot.AttributeType;
 import org.eclipse.gef.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef.dot.internal.parser.dot.DotPackage;
 import org.eclipse.gef.dot.internal.parser.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.parser.dot.EdgeRhsNode;
 import org.eclipse.gef.dot.internal.parser.dot.EdgeRhsSubgraph;
-import org.eclipse.gef.dot.internal.parser.dot.EdgeStmtNode;
-import org.eclipse.gef.dot.internal.parser.dot.EdgeStmtSubgraph;
 import org.eclipse.gef.dot.internal.parser.dot.GraphType;
-import org.eclipse.gef.dot.internal.parser.dot.NodeStmt;
-import org.eclipse.gef.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
 import org.eclipse.gef.dot.internal.parser.point.PointPackage;
 import org.eclipse.gef.dot.internal.parser.shape.ShapePackage;
@@ -80,31 +75,6 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 public class DotJavaValidator extends AbstractDotJavaValidator {
 
 	/**
-	 * Indication of the context in which an attribute is used.
-	 */
-	public static enum AttributeContext {
-		/**
-		 * Graph
-		 */
-		GRAPH,
-
-		/**
-		 * Subgraph/Cluster
-		 */
-		SUBGRAPH,
-
-		/**
-		 * Node
-		 */
-		NODE,
-
-		/**
-		 * Edge
-		 */
-		EDGE
-	}
-
-	/**
 	 * Checks that within an {@link Attribute} only valid attribute values are
 	 * used (dependent on context, in which the attribute is specified).
 	 * 
@@ -114,7 +84,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkValidAttributeValue(final Attribute attribute) {
 		List<Diagnostic> diagnostics = validateAttributeValue(
-				getContext(attribute), attribute.getName(),
+				DotAttributes.getContext(attribute), attribute.getName(),
 				attribute.getValue());
 		for (Diagnostic d : diagnostics) {
 			if (d.getSeverity() == Diagnostic.ERROR) {
@@ -133,21 +103,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 						INSIGNIFICANT_INDEX, attribute.getName(),
 						attribute.getValue());
 			}
-		}
-	}
-
-	private AttributeContext getContext(Attribute attribute) {
-		if (isEdgeAttribute(attribute)) {
-			return AttributeContext.EDGE;
-		} else if (isNodeAttribute(attribute)) {
-			return AttributeContext.NODE;
-		} else if (isGraphAttribute(attribute)) {
-			return AttributeContext.GRAPH;
-		} else if (isSubgraphAttribute(attribute)) {
-			return AttributeContext.SUBGRAPH;
-		} else {
-			throw new IllegalArgumentException(
-					"Context of attribute could not be determined.");
 		}
 	}
 
@@ -282,92 +237,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 		return Collections.emptyList();
 
-	}
-
-	/**
-	 * Checks whether the given {@link Attribute} is used in the context of a
-	 * node. That is, it is either nested below an {@link NodeStmt} or used
-	 * within an {@link AttrStmt} of type {@link AttributeType#NODE}.
-	 * 
-	 * @param attribute
-	 *            The {@link Attribute} to test.
-	 * @return <code>true</code> if the {@link Attribute} is used in the context
-	 *         of an node, <code>false</code> otherwise.
-	 */
-	// TODO: move to DotAttributes
-	public static boolean isNodeAttribute(Attribute attribute) {
-		// attribute nested below NodeStmt
-		if (EcoreUtil2.getContainerOfType(attribute, NodeStmt.class) != null) {
-			return true;
-		}
-		// global AttrStmt with AttributeType 'node'
-		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
-				AttrStmt.class);
-		return attrStmt != null
-				&& AttributeType.NODE.equals(attrStmt.getType());
-	}
-
-	/**
-	 * Checks whether the given {@link Attribute} is used in the context of a
-	 * subgraph.
-	 * 
-	 * @param attribute
-	 *            The {@link Attribute} to test.
-	 * @return <code>true</code> if the {@link Attribute} is used in the context
-	 *         of subgraph, <code>false</code> otherwise.
-	 */
-	// TODO: retrieve AttributeContext instead
-	public static boolean isSubgraphAttribute(Attribute attribute) {
-		if (isEdgeAttribute(attribute) || isNodeAttribute(attribute)) {
-			return false;
-		}
-		// attribute nested below Subgraph
-		return EcoreUtil2.getContainerOfType(attribute, Subgraph.class) != null;
-	}
-
-	/**
-	 * Checks whether the given {@link Attribute} is used in the context of a
-	 * top-level graph.
-	 * 
-	 * @param attribute
-	 *            The {@link Attribute} to test.
-	 * @return <code>true</code> if the {@link Attribute} is used in the context
-	 *         of a top-level graph, <code>false</code> otherwise.
-	 */
-	// TODO: move to DotAttributes
-	public static boolean isGraphAttribute(Attribute attribute) {
-		// attribute is neither edge nor node nor subgraph attribute
-		if (isEdgeAttribute(attribute) || isNodeAttribute(attribute)
-				|| isSubgraphAttribute(attribute)) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Checks whether the given {@link Attribute} is used in the context of an
-	 * edge. That is, it is either nested below an {@link EdgeStmtNode} or an
-	 * {@link EdgeStmtSubgraph}, or used within an {@link AttrStmt} of type
-	 * {@link AttributeType#EDGE}.
-	 * 
-	 * @param attribute
-	 *            The {@link Attribute} to test.
-	 * @return <code>true</code> if the {@link Attribute} is used in the context
-	 *         of an edge, <code>false</code> otherwise.
-	 */
-	// TODO: retrieve attribute context instead
-	public static boolean isEdgeAttribute(Attribute attribute) {
-		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
-		if (EcoreUtil2.getContainerOfType(attribute, EdgeStmtNode.class) != null
-				|| EcoreUtil2.getContainerOfType(attribute,
-						EdgeStmtSubgraph.class) != null) {
-			return true;
-		}
-		// global AttrStmt with AttributeType 'edge'
-		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
-				AttrStmt.class);
-		return attrStmt != null
-				&& AttributeType.EDGE.equals(attrStmt.getType());
 	}
 
 	/**

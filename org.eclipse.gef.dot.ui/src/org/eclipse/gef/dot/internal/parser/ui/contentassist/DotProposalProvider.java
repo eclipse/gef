@@ -20,8 +20,6 @@ import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef.dot.internal.parser.services.DotGrammarAccess;
 import org.eclipse.gef.dot.internal.parser.style.EdgeStyle;
-import org.eclipse.gef.dot.internal.parser.ui.contentassist.AbstractDotProposalProvider;
-import org.eclipse.gef.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.Keyword;
@@ -58,7 +56,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
-			if (DotJavaValidator.isEdgeAttribute(attribute)
+			if (DotAttributes.isEdgeAttribute(attribute)
 					&& DotAttributes.STYLE__GNE.equals(attribute.getName())) {
 				for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {
 					// quote attribute value only if needed

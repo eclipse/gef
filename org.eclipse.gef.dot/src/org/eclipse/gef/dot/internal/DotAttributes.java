@@ -23,7 +23,14 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
+import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
+import org.eclipse.gef.dot.internal.parser.dot.Attribute;
+import org.eclipse.gef.dot.internal.parser.dot.AttributeType;
+import org.eclipse.gef.dot.internal.parser.dot.EdgeStmtNode;
+import org.eclipse.gef.dot.internal.parser.dot.EdgeStmtSubgraph;
 import org.eclipse.gef.dot.internal.parser.dot.GraphType;
+import org.eclipse.gef.dot.internal.parser.dot.NodeStmt;
+import org.eclipse.gef.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
 import org.eclipse.gef.dot.internal.parser.point.Point;
 import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
@@ -32,10 +39,10 @@ import org.eclipse.gef.dot.internal.parser.splines.Splines;
 import org.eclipse.gef.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef.dot.internal.parser.style.Style;
 import org.eclipse.gef.dot.internal.parser.validation.DotJavaValidator;
-import org.eclipse.gef.dot.internal.parser.validation.DotJavaValidator.AttributeContext;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.serializer.ISerializer;
 
 import com.google.inject.Injector;
@@ -2224,5 +2231,124 @@ public class DotAttributes {
 					+ attributeName + "' to '" + attributeValue + "'. "
 					+ getFormattedDiagnosticMessage(diagnostics));
 		}
+	}
+
+	/**
+	 * Indication of the context in which an attribute is used.
+	 */
+	public static enum AttributeContext {
+		/**
+		 * Edge
+		 */
+		EDGE,
+
+		/**
+		 * Graph
+		 */
+		GRAPH,
+
+		/**
+		 * Node
+		 */
+		NODE,
+
+		/**
+		 * Subgraph/Cluster
+		 */
+		SUBGRAPH
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of an
+	 * edge. That is, it is either nested below an {@link EdgeStmtNode} or an
+	 * {@link EdgeStmtSubgraph}, or used within an {@link AttrStmt} of type
+	 * {@link AttributeType#EDGE}.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of an edge, <code>false</code> otherwise.
+	 */
+	public static boolean isEdgeAttribute(Attribute attribute) {
+		return getContext(attribute) == AttributeContext.EDGE;
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of a
+	 * top-level graph.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of a top-level graph, <code>false</code> otherwise.
+	 */
+	public static boolean isGraphAttribute(Attribute attribute) {
+		return getContext(attribute) == AttributeContext.GRAPH;
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of a
+	 * node. That is, it is either nested below a {@link NodeStmt} or used
+	 * within an {@link AttrStmt} of type {@link AttributeType#NODE}.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of a node, <code>false</code> otherwise.
+	 */
+	public static boolean isNodeAttribute(Attribute attribute) {
+		return getContext(attribute) == AttributeContext.NODE;
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of a
+	 * subgraph.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of a subgraph, <code>false</code> otherwise.
+	 */
+	public static boolean isSubgraphAttribute(Attribute attribute) {
+		return getContext(attribute) == AttributeContext.SUBGRAPH;
+	}
+
+	/**
+	 * Determine the context in which the given {@link EObject} is used.
+	 * 
+	 * @param eObject
+	 *            The {@link EObject} for which the context is to be determined.
+	 * @return the context in which the given {@link EObject} is used.
+	 */
+	public static AttributeContext getContext(EObject eObject) {
+		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
+		if (EcoreUtil2.getContainerOfType(eObject, EdgeStmtNode.class) != null
+				|| EcoreUtil2.getContainerOfType(eObject,
+						EdgeStmtSubgraph.class) != null) {
+			return AttributeContext.EDGE;
+		}
+		// global AttrStmt with AttributeType 'edge'
+		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(eObject,
+				AttrStmt.class);
+		if (attrStmt != null && AttributeType.EDGE.equals(attrStmt.getType())) {
+			return AttributeContext.EDGE;
+		}
+
+		// attribute nested below NodeStmt
+		if (EcoreUtil2.getContainerOfType(eObject, NodeStmt.class) != null) {
+			return AttributeContext.NODE;
+		}
+		// global AttrStmt with AttributeType 'node'
+		if (attrStmt != null && AttributeType.NODE.equals(attrStmt.getType())) {
+			return AttributeContext.NODE;
+		}
+
+		// attribute nested below Subgraph
+		if (EcoreUtil2.getContainerOfType(eObject, Subgraph.class) != null) {
+			return AttributeContext.SUBGRAPH;
+		}
+
+		// attribute is neither edge nor node nor subgraph attribute
+		return AttributeContext.GRAPH;
 	}
 }
