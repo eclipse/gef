@@ -11,6 +11,7 @@
  *                        integration of attribute grammars
  *      Tamas Miklossy  - support for junit test plugin generation
  *                      - support for formatter API generation
+ *                      - support for content assistant API generation
  *                      - integration of shape/style attribute grammar 
  *******************************************************************************/
 module org.eclipse.gef.dot.internal.parser.Dot
@@ -135,6 +136,16 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
+			
+			// Java-based content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
+
+			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				options = {
+					ignoreCase = true
+				}
+			}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
@@ -168,6 +179,16 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
+			
+			// Java-based content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
+
+			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				options = {
+					ignoreCase = true
+				}
+			}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
@@ -199,6 +220,16 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
+			
+			// Java-based content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
+			
+			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				options = {
+					ignoreCase = true
+				}
+			}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
@@ -230,6 +261,16 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
+			
+			// Java-based content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
+
+			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				options = {
+					ignoreCase = true
+				}
+			}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
@@ -261,6 +302,16 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
+			
+			// Java-based content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
+
+			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				options = {
+					ignoreCase = true
+				}
+			}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
