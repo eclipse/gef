@@ -297,15 +297,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	/**
-	 * Called when the pressed visual is released and we are unhovered.
-	 */
-	protected void onRelease() {
-		removeFeedback(Collections.singletonList(getHost()));
-		isHandles = false;
-		removeHandles(Collections.singletonList(getHost()));
-	}
-
-	/**
 	 * Called when the removal delay finishes.
 	 */
 	protected void onRemovalDelay() {
