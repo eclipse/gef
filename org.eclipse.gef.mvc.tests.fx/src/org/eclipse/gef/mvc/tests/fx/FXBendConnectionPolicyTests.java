@@ -28,11 +28,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
-import org.eclipse.gef.fx.anchors.IAnchor;
-import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.PreferredOrientation;
+import org.eclipse.gef.fx.anchors.IAnchor;
+import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
@@ -75,11 +75,9 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 public class FXBendConnectionPolicyTests {
@@ -228,8 +226,8 @@ public class FXBendConnectionPolicyTests {
 			final List<Object> contents = new ArrayList<>();
 			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(310, 0,
 					50, 50);
-			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(0, 85,
-					50, 50);
+			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(0, 85, 50,
+					50);
 			contents.add(A);
 			contents.add(B);
 			final ConnectionContent connectionContent = new ConnectionContent(A, B);
@@ -240,8 +238,8 @@ public class FXBendConnectionPolicyTests {
 
 		public static List<Object> getAB_AB() {
 			final List<Object> contents = new ArrayList<>();
-			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0,
-					50, 50);
+			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0, 50,
+					50);
 			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(500, 0,
 					50, 50);
 			contents.add(A);
@@ -252,8 +250,8 @@ public class FXBendConnectionPolicyTests {
 
 		public static List<Object> getAB_AB_simple() {
 			final List<Object> contents = new ArrayList<>();
-			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0,
-					50, 50);
+			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0, 50,
+					50);
 			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(500, 0,
 					50, 50);
 			contents.add(A);
@@ -266,10 +264,10 @@ public class FXBendConnectionPolicyTests {
 
 		public static List<Object> getAB_offset_simple() {
 			final List<Object> contents = new ArrayList<>();
-			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0,
+			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0, 50,
+					50);
+			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(500, 500,
 					50, 50);
-			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(500,
-					500, 50, 50);
 			contents.add(A);
 			contents.add(B);
 			final ConnectionContent connectionContent = new ConnectionContent(A, B);
@@ -280,10 +278,10 @@ public class FXBendConnectionPolicyTests {
 
 		public static List<Object> getAB_offset2_simple() {
 			final List<Object> contents = new ArrayList<>();
-			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0,
+			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0, 50,
+					50);
+			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(300, 500,
 					50, 50);
-			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(300,
-					500, 50, 50);
 			contents.add(A);
 			contents.add(B);
 			final ConnectionContent connectionContent = new ConnectionContent(A, B);
@@ -294,8 +292,8 @@ public class FXBendConnectionPolicyTests {
 
 		public static List<Object> getABC_AB_BC() {
 			final List<Object> contents = new ArrayList<>();
-			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0,
-					50, 50);
+			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(0, 0, 50,
+					50);
 			final org.eclipse.gef.geometry.planar.Rectangle B = new org.eclipse.gef.geometry.planar.Rectangle(100, 0,
 					50, 50);
 			final org.eclipse.gef.geometry.planar.Rectangle C = new org.eclipse.gef.geometry.planar.Rectangle(200, 0,
@@ -442,13 +440,6 @@ public class FXBendConnectionPolicyTests {
 			@Override
 			public void run() {
 				domain.activate();
-			}
-		});
-
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				System.err.println("CANVAS: " + viewer.getCanvas().getWidth() + " x " + viewer.getCanvas().getHeight());
 			}
 		});
 
@@ -2720,25 +2711,7 @@ public class FXBendConnectionPolicyTests {
 						.getStartPoint().getDifference(firstConnectionPart.getVisual().getPoint(1)).getScaled(0.5));
 			}
 		});
-		final EventHandler<MouseEvent> mouseEventFilter = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(final MouseEvent event) {
-				System.err.println("FILTER: " + event);
-			}
-		};
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getCanvas().getScene().addEventFilter(MouseEvent.ANY, mouseEventFilter);
-			}
-		});
 		ctx.moveTo(firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getCanvas().getScene().removeEventFilter(MouseEvent.ANY, mouseEventFilter);
-			}
-		});
 
 		// drag connection down by 10px
 		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);

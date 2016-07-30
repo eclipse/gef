@@ -175,23 +175,29 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 	private static boolean initializedJavaFxToolkit = false;
 
-	private static void initFX() throws InterruptedException {
+	private synchronized static void initFX() throws InterruptedException {
+		System.out.println(thread() + "initFX()");
 		if (!initializedJavaFxToolkit) {
 			final CountDownLatch latch = new CountDownLatch(1);
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					new JFXPanel(); // initializes JavaFX
-									// environment
-					initializedJavaFxToolkit = true;
 					latch.countDown();
 				}
 			});
 			latch.await();
+			initializedJavaFxToolkit = true;
 		}
 	}
 
+	private static String thread() {
+		return Thread.currentThread() + " [AWT event dispatching: " + SwingUtilities.isEventDispatchThread()
+				+ ", FX application: " + Platform.isFxApplicationThread() + "]: ";
+	}
+
 	private Scene scene;
+
 	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
 
 	private JFXPanel panel;
@@ -207,6 +213,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
+				System.out.println(thread() + "apply " + description.getMethodName());
 				initFX();
 				base.evaluate();
 			}
@@ -244,6 +251,18 @@ public class FXNonApplicationThreadRule implements TestRule {
 				jFrame.setLocationRelativeTo(null);
 				jFrame.setVisible(true);
 				return scene;
+			}
+		});
+
+		runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				scene.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(final MouseEvent event) {
+						System.out.println("FILTER: " + event);
+					}
+				});
 			}
 		});
 		return scene;
@@ -371,6 +390,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	public synchronized void moveTo(final double sceneX, final double sceneY) throws Throwable {
+		System.out.println(thread() + "moveTo: (" + sceneX + ", " + sceneY + ")");
+
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
@@ -385,6 +406,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	public synchronized void moveTo(final Node visual, final double localX, final double localY) throws Throwable {
+		System.out.println(thread() + "moveTo: " + visual + " (" + localX + ", " + localY + ")");
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
