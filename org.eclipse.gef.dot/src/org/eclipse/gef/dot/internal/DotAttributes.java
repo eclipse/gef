@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
@@ -45,7 +44,7 @@ import org.eclipse.gef.graph.Node;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.serializer.ISerializer;
 
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -57,11 +56,8 @@ import com.google.inject.Injector;
  */
 public class DotAttributes {
 
-	private static final Injector dotInjector = new DotStandaloneSetup()
-			.createInjectorAndDoEMFRegistration();
-
-	private static final DotJavaValidator DOT_VALIDATOR = dotInjector
-			.getInstance(DotJavaValidator.class);
+	@Inject
+	private static DotJavaValidator DOT_VALIDATOR;
 
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as

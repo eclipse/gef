@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.parser;
 
+import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverterService;
+
+import com.google.inject.Binder;
 
 /**
  * Use this class to register components to be used at runtime / without the
@@ -24,5 +27,11 @@ public class DotRuntimeModule
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
 		return DotTerminalConverters.class;
+	}
+
+	@Override
+	public void configure(Binder binder) {
+		super.configure(binder);
+		binder.requestStaticInjection(DotAttributes.class);
 	}
 }
