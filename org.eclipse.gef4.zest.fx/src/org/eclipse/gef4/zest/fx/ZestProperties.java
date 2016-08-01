@@ -1094,6 +1094,7 @@ public class ZestProperties {
 	 * @param controlPointsProvider
 	 *            The new {@link List} of control {@link Point}s for the given
 	 *            {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setControlPoints(Edge edge, Provider<List<Point>> controlPointsProvider) {
 		if (controlPointsProvider == null) {
@@ -1111,6 +1112,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the CSS class is changed.
 	 * @param cssClassProvider
 	 *            The new CSS class for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setCssClass(Edge edge, Provider<String> cssClassProvider) {
 		if (cssClassProvider == null) {
@@ -1145,6 +1147,7 @@ public class ZestProperties {
 	 *            The {@link Node} of which the CSS class is changed.
 	 * @param cssClassProvider
 	 *            The new CSS class for the given {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setCssClass(Node node, Provider<String> cssClassProvider) {
 		if (cssClassProvider == null) {
@@ -1268,6 +1271,7 @@ public class ZestProperties {
 	 * @param curveProvider
 	 *            The {@link javafx.scene.Node} that is used to visualize the
 	 *            connection.
+	 * @since 1.1
 	 */
 	public static void setCurve(Edge edge, Provider<javafx.scene.Node> curveProvider) {
 		if (curveProvider == null) {
@@ -1285,6 +1289,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the curve CSS style is changed.
 	 * @param curveCssStyleProvider
 	 *            The new curve CSS style for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setCurveCssStyle(Edge edge, Provider<String> curveCssStyleProvider) {
 		if (curveCssStyleProvider == null) {
@@ -1338,6 +1343,7 @@ public class ZestProperties {
 	 *            {@link #END_POINT__E} attribute.
 	 * @param endPointProvider
 	 *            The end {@link Point} for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setEndPoint(Edge edge, Provider<Point> endPointProvider) {
 		if (endPointProvider == null) {
@@ -1425,6 +1431,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the label CSS style is changed.
 	 * @param textCssStyleProvider
 	 *            The new label CSS style for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setExternalLabelCssStyle(Edge edge, Provider<String> textCssStyleProvider) {
 		if (textCssStyleProvider == null) {
@@ -1459,6 +1466,7 @@ public class ZestProperties {
 	 *            The {@link Node} of which the node label CSS style is changed.
 	 * @param textCssStyleProvider
 	 *            The new node label CSS style for the given {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setExternalLabelCssStyle(Node node, Provider<String> textCssStyleProvider) {
 		if (textCssStyleProvider == null) {
@@ -1512,6 +1520,7 @@ public class ZestProperties {
 	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
 	 * @param externalLabelPositionProvider
 	 *            The new external label position.
+	 * @since 1.1
 	 */
 	public static void setExternalLabelPosition(Edge edge, Provider<Point> externalLabelPositionProvider) {
 		if (externalLabelPositionProvider == null) {
@@ -1548,6 +1557,7 @@ public class ZestProperties {
 	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
 	 * @param externalLabelPositionProvider
 	 *            The new external label position.
+	 * @since 1.1
 	 */
 	public static void setExternalLabelPosition(Node node, Provider<Point> externalLabelPositionProvider) {
 		if (externalLabelPositionProvider == null) {
@@ -1582,6 +1592,7 @@ public class ZestProperties {
 	 *            The {@link Node} of which the icon is changed.
 	 * @param iconProvider
 	 *            The new {@link Image} for the given {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setIcon(Node node, Provider<Image> iconProvider) {
 		if (iconProvider == null) {
@@ -1618,6 +1629,7 @@ public class ZestProperties {
 	 * @param interpolatorProvider
 	 *            The new {@link IConnectionInterpolator} for the given
 	 *            {@link Edge} .
+	 * @since 1.1
 	 */
 	public static void setInterpolator(Edge edge, Provider<IConnectionInterpolator> interpolatorProvider) {
 		if (interpolatorProvider == null) {
@@ -1656,6 +1668,7 @@ public class ZestProperties {
 	 * @param invisibleProvider
 	 *            The new value for the {@link #INVISIBLE__NE} attribute of the
 	 *            given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setInvisible(Edge edge, Provider<Boolean> invisibleProvider) {
 		if (invisibleProvider == null) {
@@ -1694,6 +1707,7 @@ public class ZestProperties {
 	 * @param invisibleProvider
 	 *            The new value for the {@link #INVISIBLE__NE} attribute of the
 	 *            given {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setInvisible(Node node, Provider<Boolean> invisibleProvider) {
 		if (invisibleProvider == null) {
@@ -1781,6 +1795,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the label CSS style is changed.
 	 * @param textCssStyleProvider
 	 *            The new label CSS style for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setLabelCssStyle(Edge edge, Provider<String> textCssStyleProvider) {
 		if (textCssStyleProvider == null) {
@@ -1815,6 +1830,7 @@ public class ZestProperties {
 	 *            The {@link Node} of which the node label CSS style is changed.
 	 * @param textCssStyleProvider
 	 *            The new node label CSS style for the given {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setLabelCssStyle(Node node, Provider<String> textCssStyleProvider) {
 		if (textCssStyleProvider == null) {
@@ -1866,6 +1882,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the label is changed.
 	 * @param labelPositionProvider
 	 *            The new position for the label of the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
 		if (labelPositionProvider == null) {
@@ -1900,6 +1917,7 @@ public class ZestProperties {
 	 *            The {@link Graph} of which the layout algorithm is changed.
 	 * @param algorithmProvider
 	 *            The new {@link ILayoutAlgorithm} for the given {@link Graph}.
+	 * @since 1.1
 	 */
 	public static void setLayoutAlgorithm(Graph graph, Provider<ILayoutAlgorithm> algorithmProvider) {
 		if (algorithmProvider == null) {
@@ -1936,6 +1954,7 @@ public class ZestProperties {
 	 *            changed.
 	 * @param layoutIrrelevantProvider
 	 *            The new layout irrelevant flag for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setLayoutIrrelevant(Edge edge, Provider<Boolean> layoutIrrelevantProvider) {
 		if (layoutIrrelevantProvider == null) {
@@ -1972,6 +1991,7 @@ public class ZestProperties {
 	 *            changed.
 	 * @param layoutIrrelevantProvider
 	 *            The new layout irrelevant flag for the given {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setLayoutIrrelevant(Node node, Provider<Boolean> layoutIrrelevantProvider) {
 		if (layoutIrrelevantProvider == null) {
@@ -2008,6 +2028,7 @@ public class ZestProperties {
 	 *            is changed.
 	 * @param positionProvider
 	 *            The new node position.
+	 * @since 1.1
 	 */
 	public static void setPosition(Node node, Provider<Point> positionProvider) {
 		if (positionProvider == null) {
@@ -2042,6 +2063,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the router is changed.
 	 * @param routerProvider
 	 *            The new {@link IConnectionRouter} for the given {@link Edge} .
+	 * @since 1.1
 	 */
 	public static void setRouter(Edge edge, Provider<IConnectionRouter> routerProvider) {
 		if (routerProvider == null) {
@@ -2080,6 +2102,7 @@ public class ZestProperties {
 	 * @param shapeProvider
 	 *            The shape that is be used for rendering the node outline and
 	 *            background.
+	 * @since 1.1
 	 */
 	public static void setShape(Node node, Provider<javafx.scene.Node> shapeProvider) {
 		if (shapeProvider == null) {
@@ -2098,6 +2121,7 @@ public class ZestProperties {
 	 *            changed.
 	 * @param rectCssStyleProvider
 	 *            The new node rectangle CSS style for the given {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setShapeCssStyle(Node node, Provider<String> rectCssStyleProvider) {
 		if (rectCssStyleProvider == null) {
@@ -2152,6 +2176,7 @@ public class ZestProperties {
 	 * @param sizeProvider
 	 *            The {@link Dimension} describing the new size for the given
 	 *            {@link Node}.
+	 * @since 1.1
 	 */
 	public static void setSize(Node node, Provider<Dimension> sizeProvider) {
 		if (sizeProvider == null) {
@@ -2186,6 +2211,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the source decoration is changed.
 	 * @param sourceDecorationProvider
 	 *            The new source decoration for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setSourceDecoration(Edge edge, Provider<javafx.scene.Node> sourceDecorationProvider) {
 		if (sourceDecorationProvider == null) {
@@ -2205,6 +2231,7 @@ public class ZestProperties {
 	 * @param sourceDecorationCssStyleProvider
 	 *            The new source decoration CSS style for the given {@link Edge}
 	 *            .
+	 * @since 1.1
 	 */
 	public static void setSourceDecorationCssStyle(Edge edge, Provider<String> sourceDecorationCssStyleProvider) {
 		edge.attributesProperty().put(SOURCE_DECORATION_CSS_STYLE__E, sourceDecorationCssStyleProvider);
@@ -2273,6 +2300,7 @@ public class ZestProperties {
 	 *            changed.
 	 * @param sourceLabelCssStyleProvider
 	 *            The new source label CSS style for the given {@link Edge} .
+	 * @since 1.1
 	 */
 	public static void setSourceLabelCssStyle(Edge edge, Provider<String> sourceLabelCssStyleProvider) {
 		if (sourceLabelCssStyleProvider == null) {
@@ -2327,6 +2355,7 @@ public class ZestProperties {
 	 * @param labelPositionProvider
 	 *            The new position for the source label of the given
 	 *            {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setSourceLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
 		if (labelPositionProvider == null) {
@@ -2363,6 +2392,7 @@ public class ZestProperties {
 	 *            {@link #START_POINT__E} attribute.
 	 * @param startPointProvider
 	 *            The start Point for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setStartPoint(Edge edge, Provider<Point> startPointProvider) {
 		if (startPointProvider == null) {
@@ -2397,6 +2427,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the target decoration is changed.
 	 * @param targetDecorationProvider
 	 *            The new target decoration for the given {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setTargetDecoration(Edge edge, Provider<javafx.scene.Node> targetDecorationProvider) {
 		if (targetDecorationProvider == null) {
@@ -2416,6 +2447,7 @@ public class ZestProperties {
 	 * @param targetDecorationCssStyleProvider
 	 *            The new target decoration CSS style for the given {@link Edge}
 	 *            .
+	 * @since 1.1
 	 */
 	public static void setTargetDecorationCssStyle(Edge edge, Provider<String> targetDecorationCssStyleProvider) {
 		if (targetDecorationCssStyleProvider == null) {
@@ -2488,6 +2520,7 @@ public class ZestProperties {
 	 *            changed.
 	 * @param targetLabelCssStyleProvider
 	 *            The new target label CSS style for the given {@link Edge} .
+	 * @since 1.1
 	 */
 	public static void setTargetLabelCssStyle(Edge edge, Provider<String> targetLabelCssStyleProvider) {
 		if (targetLabelCssStyleProvider == null) {
@@ -2542,6 +2575,7 @@ public class ZestProperties {
 	 * @param labelPositionProvider
 	 *            The new position for the target label of the given
 	 *            {@link Edge}.
+	 * @since 1.1
 	 */
 	public static void setTargetLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
 		if (labelPositionProvider == null) {

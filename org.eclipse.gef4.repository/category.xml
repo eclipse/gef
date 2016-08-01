@@ -90,13 +90,13 @@
    <feature url="features/org.eclipse.gef4.zest.fx.ui_1.0.1.qualifier.jar" id="org.eclipse.gef4.zest.fx.ui" version="1.0.1.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.doc_1.0.1.qualifier.jar" id="org.eclipse.gef4.zest.doc" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.gef4.zest.doc_1.1.0.qualifier.jar" id="org.eclipse.gef4.zest.doc" version="1.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.sdk_1.0.1.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.gef4.zest.sdk_1.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="1.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.examples.source_1.0.1.qualifier.jar" id="org.eclipse.gef4.zest.examples.source" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.gef4.zest.examples.source_1.1.0.qualifier.jar" id="org.eclipse.gef4.zest.examples.source" version="1.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
    <feature url="features/org.eclipse.gef4.mvc_1.1.0.qualifier.jar" id="org.eclipse.gef4.mvc" version="1.1.0.qualifier">
@@ -120,7 +120,7 @@
    <feature url="features/org.eclipse.gef4.mvc.examples.source_1.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.examples.source" version="1.1.0.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.fx_1.0.1.qualifier.jar" id="org.eclipse.gef4.zest.fx" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.gef4.zest.fx_1.1.0.qualifier.jar" id="org.eclipse.gef4.zest.fx" version="1.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
    <feature url="features/org.eclipse.gef4.fx.compatibility.equinox_1.0.1.qualifier.jar" id="org.eclipse.gef4.fx.compatibility.equinox" version="1.0.1.qualifier">
