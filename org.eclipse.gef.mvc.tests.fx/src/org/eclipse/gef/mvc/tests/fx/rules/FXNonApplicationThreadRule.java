@@ -376,6 +376,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void mouseDrag(final int sceneX, final int sceneY) throws Throwable {
 		System.out.println(thread() + "mouseDrag: (" + sceneX + ", " + sceneY + ") ...");
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_DRAGGED);
+		System.out.println("move the mouse now!");
 		getRobot().mouseMove(sceneX, sceneY);
 		eventSynchronizer.await();
 		System.out.println(thread() + "... done.");
