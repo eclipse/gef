@@ -259,7 +259,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 				scene.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(final MouseEvent event) {
-						System.out.println(" -> " + event);
+						System.out.println(this + " -> " + event);
 					}
 				});
 			}
