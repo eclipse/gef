@@ -70,6 +70,7 @@ import javafx.scene.input.MouseEvent;
 public class FXNonApplicationThreadRule implements TestRule {
 
 	public final class EventSynchronizer<T extends Event> {
+
 		private Scene scene;
 		private EventType<T> type;
 		private EventHandler<T> handler;
@@ -196,11 +197,9 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	private Scene scene;
-
-	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
-
 	private JFXPanel panel;
-
+	private JFrame jFrame;
+	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
 	private Robot robot;
 
 	@Override
@@ -215,6 +214,15 @@ public class FXNonApplicationThreadRule implements TestRule {
 				System.out.println(thread() + "apply " + description.getMethodName());
 				initFX();
 				base.evaluate();
+				runAndWait(new Runnable() {
+					@Override
+					public void run() {
+						panel.setScene(null);
+						jFrame.setVisible(false);
+						scene = null;
+						panel = null;
+					}
+				});
 			}
 		};
 	}
@@ -241,8 +249,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 				Scene scene = new Scene(root, width, height);
 				panel = new JFXPanel();
 				panel.setScene(scene);
-				// create frame to draw the panel
-				JFrame jFrame = new JFrame();
+				jFrame = new JFrame();
 				jFrame.setBounds(0, 0, (int) width, (int) height);
 				jFrame.setContentPane(panel);
 				jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

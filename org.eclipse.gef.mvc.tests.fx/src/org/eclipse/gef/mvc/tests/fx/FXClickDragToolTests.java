@@ -83,6 +83,9 @@ public class FXClickDragToolTests {
 	 */
 	@Test
 	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
+		System.out.println("###===>>> FXClickDragToolTests");
+		System.out.println("# Thread: " + Thread.currentThread().getName());
+
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
 
@@ -205,5 +208,8 @@ public class FXClickDragToolTests {
 						domain.closedExecutionTransactions);
 			}
 		});
+
+		System.out.println("###===>>> FXClickDragToolTests EXIT");
+		System.out.println("# Thread: " + Thread.currentThread().getName());
 	}
 }
