@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef.fx.anchors.IAnchor;
@@ -347,7 +348,7 @@ public class ZestProperties {
 		if (value instanceof Provider) {
 			return (List<Point>) ((Provider<?>) value).get();
 		}
-		return (List<Point>) value;
+		return value == null ? Collections.<Point>emptyList() : (List<Point>) value;
 	}
 
 	/**
