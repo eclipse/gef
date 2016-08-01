@@ -136,16 +136,17 @@ public class FXNonApplicationThreadRule implements TestRule {
 		}
 
 		private void registerHandler(final EventType<T> type, final EventHandler<T> handler) {
-			final CountDownLatch regitrationLatch = new CountDownLatch(1);
+			final CountDownLatch registrationLatch = new CountDownLatch(1);
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
 					scene.addEventHandler(type, handler);
-					regitrationLatch.countDown();
+					registrationLatch.countDown();
 				}
 			});
 			try {
-				regitrationLatch.await();
+				registrationLatch.await();
+				System.out.println(thread() + "Handler for " + type + " was registered.");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -422,10 +423,12 @@ public class FXNonApplicationThreadRule implements TestRule {
 			}
 		});
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
+		System.out.println(thread() + "GOT the Synchronizer!");
 		runAndWait(new Runnable() {
 			@Override
 			public void run() {
 				try {
+					System.out.println(thread() + "move now!");
 					getRobot().mouseMove(position.x, position.y);
 				} catch (AWTException e) {
 					e.printStackTrace();
