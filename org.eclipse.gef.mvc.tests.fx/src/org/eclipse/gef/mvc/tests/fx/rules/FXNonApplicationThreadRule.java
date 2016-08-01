@@ -422,7 +422,16 @@ public class FXNonApplicationThreadRule implements TestRule {
 			}
 		});
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
-		getRobot().mouseMove(position.x, position.y);
+		runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					getRobot().mouseMove(position.x, position.y);
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		synchronizer.await();
 		System.out.println(thread() + "... done.");
 	}
@@ -439,7 +448,16 @@ public class FXNonApplicationThreadRule implements TestRule {
 			}
 		});
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
-		getRobot().mouseMove(position.x, position.y);
+		runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					getRobot().mouseMove(position.x, position.y);
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		synchronizer.await();
 		System.out.println(thread() + "... done.");
 	}
