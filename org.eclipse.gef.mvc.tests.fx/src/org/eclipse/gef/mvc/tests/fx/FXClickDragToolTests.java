@@ -141,8 +141,7 @@ public class FXClickDragToolTests {
 			}
 
 		});
-		System.out.println("@@@ moveTo (" + sceneCenter.x + ", " + sceneCenter.y + ")");
-		ctx.moveTo(sceneCenter.x, sceneCenter.y);
+		ctx.moveTo(sceneCenter.x + 1, sceneCenter.y + 1);
 
 		// simulate click gesture
 		ctx.mousePress(InputEvent.BUTTON1_MASK);
