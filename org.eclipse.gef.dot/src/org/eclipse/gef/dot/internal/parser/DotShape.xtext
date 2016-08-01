@@ -10,10 +10,9 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #441352)
  *     
  *******************************************************************************/
-grammar org.eclipse.gef.dot.internal.parser.DotShape
+grammar org.eclipse.gef.dot.internal.parser.DotShape with org.eclipse.xtext.common.Terminals
 
 generate shape "http://www.eclipse.org/gef/dot/internal/parser/DotShape"
-import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 Shape: 
 	shape = (PolygonBasedShape | RecordBasedShape);

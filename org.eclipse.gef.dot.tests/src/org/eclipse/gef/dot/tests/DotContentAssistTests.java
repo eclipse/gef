@@ -654,20 +654,18 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.expectContent("graph {1[ shape=\"Mrecord\" ]}");
 
 		// test local attribute values with prefix
-		// TODO: activate
-		// newBuilder().append("graph {1[ shape=pr ]}")
-		// .assertTextAtCursorPosition(18, "primersite", "promoter",
-		// "proteasesite", "proteinstab", ",", ";", "]")
-		// .applyProposal(18, "primersite")
-		// .expectContent("graph {1[ shape=primersite ]}");
+		newBuilder().append("graph {1[ shape=pr ]}")
+				.assertTextAtCursorPosition(18, "primersite", "promoter",
+						"proteasesite", "proteinstab", ",", ";", "]")
+				.applyProposal(18, "primersite")
+				.expectContent("graph {1[ shape=primersite ]}");
 
 		// test local attribute values with quotes and prefix
-		// TODO: activate
-		// newBuilder().append("graph {1[ shape=\"pro\" ]}")
-		// .assertTextAtCursorPosition(20, "promoter", "proteasesite",
-		// "proteinstab")
-		// .applyProposal(20, "proteinstab")
-		// .expectContent("graph {1[ shape=\"proteinstab\" ]}");
+		newBuilder().append("graph {1[ shape=\"pro\" ]}")
+				.assertTextAtCursorPosition(20, "promoter", "proteasesite",
+						"proteinstab")
+				.applyProposal(20, "proteinstab")
+				.expectContent("graph {1[ shape=\"proteinstab\" ]}");
 	}
 
 	@Test

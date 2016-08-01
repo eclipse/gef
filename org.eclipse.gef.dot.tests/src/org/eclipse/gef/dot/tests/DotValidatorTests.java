@@ -242,7 +242,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SHAPE__N,
-				"The value 'foo' is not a syntactically correct shape: Mismatched character 'o' expecting 'l'.");
+				"The value 'foo' is not a syntactically correct shape: No viable alternative at input 'foo'.");
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
