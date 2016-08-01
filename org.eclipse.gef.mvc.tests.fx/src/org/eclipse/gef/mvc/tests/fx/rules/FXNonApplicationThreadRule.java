@@ -104,11 +104,15 @@ public class FXNonApplicationThreadRule implements TestRule {
 				throw new IllegalStateException("not registered");
 			}
 			waitForIdle();
-			if (!latch.await(timeout, timeUnit)) {
-				throw new IllegalStateException("event synchronizer timeout: event was not processed.");
-			}
+			System.out.println(System.identityHashCode(this) + " AWAIT");
+			boolean successful = latch.await(timeout, timeUnit);
 			unregisterHandler(type, handler);
 			isRegistered = false;
+			if (!successful) {
+				System.out.println(System.identityHashCode(this) + " TIMEOUT");
+				throw new IllegalStateException("event synchronizer timeout: event was not processed.");
+			}
+			System.out.println(System.identityHashCode(this) + " PROCESSED");
 		}
 
 		/**
@@ -134,7 +138,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 		private void registerHandler(final EventType<T> type, final EventHandler<T> handler) {
 			final CountDownLatch regitrationLatch = new CountDownLatch(1);
 			Platform.runLater(new Runnable() {
-
 				@Override
 				public void run() {
 					scene.addEventHandler(type, handler);
@@ -151,7 +154,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 		private void unregisterHandler(final EventType<T> type, final EventHandler<T> handler) {
 			final CountDownLatch regitrationLatch = new CountDownLatch(1);
 			Platform.runLater(new Runnable() {
-
 				@Override
 				public void run() {
 					scene.removeEventHandler(type, handler);
@@ -213,16 +215,19 @@ public class FXNonApplicationThreadRule implements TestRule {
 			public void evaluate() throws Throwable {
 				System.out.println(thread() + "apply " + description.getMethodName());
 				initFX();
-				base.evaluate();
-				runAndWait(new Runnable() {
-					@Override
-					public void run() {
-						panel.setScene(null);
-						jFrame.setVisible(false);
-						scene = null;
-						panel = null;
-					}
-				});
+				try {
+					base.evaluate();
+				} finally {
+					runAndWait(new Runnable() {
+						@Override
+						public void run() {
+							panel.setScene(null);
+							jFrame.setVisible(false);
+							scene = null;
+							panel = null;
+						}
+					});
+				}
 			}
 		};
 	}
