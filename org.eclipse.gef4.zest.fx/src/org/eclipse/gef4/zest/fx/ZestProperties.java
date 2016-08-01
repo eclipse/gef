@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.fx.anchors.IAnchor;
@@ -344,11 +343,11 @@ public class ZestProperties {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Point> getControlPoints(Edge edge) {
-		Object controlPoints = edge.getAttributes().get(CONTROL_POINTS__E);
-		if (controlPoints instanceof List) {
-			return (List<Point>) controlPoints;
+		Object value = edge.getAttributes().get(CONTROL_POINTS__E);
+		if (value instanceof Provider) {
+			return (List<Point>) ((Provider<?>) value).get();
 		}
-		return Collections.emptyList();
+		return (List<Point>) value;
 	}
 
 	/**
@@ -360,7 +359,11 @@ public class ZestProperties {
 	 * @return The CSS class of the given {@link Edge}.
 	 */
 	public static String getCssClass(Edge edge) {
-		return (String) edge.attributesProperty().get(CSS_CLASS__NE);
+		Object value = edge.attributesProperty().get(CSS_CLASS__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -372,7 +375,11 @@ public class ZestProperties {
 	 * @return The CSS class of the given {@link Node}.
 	 */
 	public static String getCssClass(Node node) {
-		return (String) node.attributesProperty().get(CSS_CLASS__NE);
+		Object value = node.attributesProperty().get(CSS_CLASS__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -418,7 +425,11 @@ public class ZestProperties {
 	 *         the edge.
 	 */
 	public static javafx.scene.Node getCurve(Edge edge) {
-		return (javafx.scene.Node) edge.attributesProperty().get(CURVE__E);
+		Object value = edge.attributesProperty().get(CURVE__E);
+		if (value instanceof Provider) {
+			return (javafx.scene.Node) ((Provider<?>) value).get();
+		}
+		return (javafx.scene.Node) value;
 	}
 
 	/**
@@ -430,7 +441,11 @@ public class ZestProperties {
 	 * @return The curve CSS style of the given {@link Edge}.
 	 */
 	public static String getCurveCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(CURVE_CSS_STYLE__E);
+		Object value = edge.attributesProperty().get(CURVE_CSS_STYLE__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -442,7 +457,11 @@ public class ZestProperties {
 	 * @return The end {@link Point} of the given {@link Edge}.
 	 */
 	public static Point getEndPoint(Edge edge) {
-		return (Point) edge.attributesProperty().get(END_POINT__E);
+		Object value = edge.attributesProperty().get(END_POINT__E);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
+		}
+		return (Point) value;
 	}
 
 	/**
@@ -486,7 +505,11 @@ public class ZestProperties {
 	 * @return The label CSS style of the given {@link Edge}.
 	 */
 	public static String getExternalLabelCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(EXTERNAL_LABEL_CSS_STYLE__NE);
+		Object value = edge.attributesProperty().get(EXTERNAL_LABEL_CSS_STYLE__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -498,7 +521,11 @@ public class ZestProperties {
 	 * @return The label CSS style of the given {@link Edge}.
 	 */
 	public static String getExternalLabelCssStyle(Node node) {
-		return (String) node.attributesProperty().get(EXTERNAL_LABEL_CSS_STYLE__NE);
+		Object value = node.attributesProperty().get(EXTERNAL_LABEL_CSS_STYLE__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -511,11 +538,11 @@ public class ZestProperties {
 	 *         of the given {@link Edge}.
 	 */
 	public static Point getExternalLabelPosition(Edge edge) {
-		Object object = edge.getAttributes().get(EXTERNAL_LABEL_POSITION__NE);
-		if (object instanceof Point) {
-			return (Point) object;
+		Object value = edge.getAttributes().get(EXTERNAL_LABEL_POSITION__NE);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
 		}
-		return null;
+		return (Point) value;
 	}
 
 	/**
@@ -528,11 +555,11 @@ public class ZestProperties {
 	 *         of the given {@link Node}.
 	 */
 	public static Point getExternalLabelPosition(Node node) {
-		Object object = node.getAttributes().get(EXTERNAL_LABEL_POSITION__NE);
-		if (object instanceof Point) {
-			return (Point) object;
+		Object value = node.getAttributes().get(EXTERNAL_LABEL_POSITION__NE);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
 		}
-		return null;
+		return (Point) value;
 	}
 
 	/**
@@ -544,7 +571,11 @@ public class ZestProperties {
 	 * @return The icon of the given {@link Node}.
 	 */
 	public static Image getIcon(Node node) {
-		return (Image) node.attributesProperty().get(ICON__N);
+		Object value = node.getAttributes().get(ICON__N);
+		if (value instanceof Provider) {
+			return (Image) ((Provider<?>) value).get();
+		}
+		return (Image) value;
 	}
 
 	/**
@@ -556,7 +587,11 @@ public class ZestProperties {
 	 * @return The router of the given {@link Edge}.
 	 */
 	public static IConnectionInterpolator getInterpolator(Edge edge) {
-		return (IConnectionInterpolator) edge.attributesProperty().get(INTERPOLATOR__E);
+		Object value = edge.getAttributes().get(INTERPOLATOR__E);
+		if (value instanceof Provider) {
+			return (IConnectionInterpolator) ((Provider<?>) value).get();
+		}
+		return (IConnectionInterpolator) value;
 	}
 
 	/**
@@ -572,7 +607,11 @@ public class ZestProperties {
 	 *         {@link Edge}.
 	 */
 	public static Boolean getInvisible(Edge edge) {
-		return (Boolean) edge.getAttributes().get(INVISIBLE__NE);
+		Object value = edge.getAttributes().get(INVISIBLE__NE);
+		if (value instanceof Provider) {
+			return (Boolean) ((Provider<?>) value).get();
+		}
+		return (Boolean) value;
 	}
 
 	/**
@@ -588,7 +627,11 @@ public class ZestProperties {
 	 *         {@link Node}.
 	 */
 	public static Boolean getInvisible(Node node) {
-		return (Boolean) node.getAttributes().get(INVISIBLE__NE);
+		Object value = node.getAttributes().get(INVISIBLE__NE);
+		if (value instanceof Provider) {
+			return (Boolean) ((Provider<?>) value).get();
+		}
+		return (Boolean) value;
 	}
 
 	/**
@@ -636,7 +679,11 @@ public class ZestProperties {
 	 * @return The label CSS style of the given {@link Edge}.
 	 */
 	public static String getLabelCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(LABEL_CSS_STYLE__NE);
+		Object value = edge.attributesProperty().get(LABEL_CSS_STYLE__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -648,7 +695,11 @@ public class ZestProperties {
 	 * @return The label CSS style of the given {@link Node}.
 	 */
 	public static String getLabelCssStyle(Node node) {
-		return (String) node.attributesProperty().get(LABEL_CSS_STYLE__NE);
+		Object value = node.attributesProperty().get(LABEL_CSS_STYLE__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -661,11 +712,11 @@ public class ZestProperties {
 	 *         given {@link Edge}.
 	 */
 	public static Point getLabelPosition(Edge edge) {
-		Object object = edge.getAttributes().get(LABEL_POSITION__E);
-		if (object instanceof Point) {
-			return (Point) object;
+		Object value = edge.attributesProperty().get(LABEL_POSITION__E);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
 		}
-		return null;
+		return (Point) value;
 	}
 
 	/**
@@ -677,11 +728,11 @@ public class ZestProperties {
 	 * @return The layout algorithm of the given {@link Graph}.
 	 */
 	public static ILayoutAlgorithm getLayoutAlgorithm(Graph graph) {
-		Object layout = graph.attributesProperty().get(LAYOUT_ALGORITHM__G);
-		if (layout instanceof ILayoutAlgorithm) {
-			return (ILayoutAlgorithm) layout;
+		Object value = graph.attributesProperty().get(LAYOUT_ALGORITHM__G);
+		if (value instanceof Provider) {
+			return (ILayoutAlgorithm) ((Provider<?>) value).get();
 		}
-		return null;
+		return (ILayoutAlgorithm) value;
 	}
 
 	/**
@@ -696,7 +747,11 @@ public class ZestProperties {
 	 * @return The layout irrelevant flag of the given {@link Edge}.
 	 */
 	public static Boolean getLayoutIrrelevant(Edge edge) {
-		return (Boolean) edge.attributesProperty().get(LAYOUT_IRRELEVANT__NE);
+		Object value = edge.attributesProperty().get(LAYOUT_IRRELEVANT__NE);
+		if (value instanceof Provider) {
+			return (Boolean) ((Provider<?>) value).get();
+		}
+		return (Boolean) value;
 	}
 
 	/**
@@ -711,7 +766,11 @@ public class ZestProperties {
 	 * @return The layout irrelevant flag of the given {@link Node}.
 	 */
 	public static Boolean getLayoutIrrelevant(Node node) {
-		return (Boolean) node.attributesProperty().get(LAYOUT_IRRELEVANT__NE);
+		Object value = node.attributesProperty().get(LAYOUT_IRRELEVANT__NE);
+		if (value instanceof Provider) {
+			return (Boolean) ((Provider<?>) value).get();
+		}
+		return (Boolean) value;
 	}
 
 	/**
@@ -724,11 +783,11 @@ public class ZestProperties {
 	 *         {@link Node}.
 	 */
 	public static Point getPosition(Node node) {
-		Object object = node.getAttributes().get(POSITION__N);
-		if (object instanceof Point) {
-			return (Point) object;
+		Object value = node.attributesProperty().get(POSITION__N);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
 		}
-		return null;
+		return (Point) value;
 	}
 
 	/**
@@ -740,7 +799,11 @@ public class ZestProperties {
 	 * @return The router of the given {@link Edge}.
 	 */
 	public static IConnectionRouter getRouter(Edge edge) {
-		return (IConnectionRouter) edge.attributesProperty().get(ROUTER__E);
+		Object value = edge.attributesProperty().get(ROUTER__E);
+		if (value instanceof Provider) {
+			return (IConnectionRouter) ((Provider<?>) value).get();
+		}
+		return (IConnectionRouter) value;
 	}
 
 	/**
@@ -754,7 +817,11 @@ public class ZestProperties {
 	 *         used for rendering background and outline of the node.
 	 */
 	public static javafx.scene.Node getShape(Node node) {
-		return (javafx.scene.Node) node.attributesProperty().get(SHAPE__N);
+		Object value = node.attributesProperty().get(SHAPE__N);
+		if (value instanceof Provider) {
+			return (javafx.scene.Node) ((Provider<?>) value).get();
+		}
+		return (javafx.scene.Node) value;
 	}
 
 	/**
@@ -767,7 +834,11 @@ public class ZestProperties {
 	 * @return The node rectangle CSS style of the given {@link Node}.
 	 */
 	public static String getShapeCssStyle(Node node) {
-		return (String) node.attributesProperty().get(SHAPE_CSS_STYLE__N);
+		Object value = node.attributesProperty().get(SHAPE_CSS_STYLE__N);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -780,11 +851,11 @@ public class ZestProperties {
 	 *         {@link Node}.
 	 */
 	public static Dimension getSize(Node node) {
-		Object bounds = node.getAttributes().get(SIZE__N);
-		if (bounds instanceof Dimension) {
-			return (Dimension) bounds;
+		Object value = node.attributesProperty().get(SIZE__N);
+		if (value instanceof Provider) {
+			return (Dimension) ((Provider<?>) value).get();
 		}
-		return null;
+		return (Dimension) value;
 	}
 
 	/**
@@ -796,7 +867,11 @@ public class ZestProperties {
 	 * @return The source decoration of the given {@link Edge}.
 	 */
 	public static javafx.scene.Node getSourceDecoration(Edge edge) {
-		return (javafx.scene.Node) edge.attributesProperty().get(SOURCE_DECORATION__E);
+		Object value = edge.attributesProperty().get(SOURCE_DECORATION__E);
+		if (value instanceof Provider) {
+			return (javafx.scene.Node) ((Provider<?>) value).get();
+		}
+		return (javafx.scene.Node) value;
 	}
 
 	/**
@@ -809,7 +884,11 @@ public class ZestProperties {
 	 * @return The source decoration CSS style of the given {@link Edge}.
 	 */
 	public static String getSourceDecorationCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(SOURCE_DECORATION_CSS_STYLE__E);
+		Object value = edge.attributesProperty().get(SOURCE_DECORATION_CSS_STYLE__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -840,7 +919,11 @@ public class ZestProperties {
 	 * @return The source label CSS style of the given {@link Edge}.
 	 */
 	public static String getSourceLabelCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(SOURCE_LABEL_CSS_STYLE__E);
+		Object value = edge.attributesProperty().get(SOURCE_LABEL_CSS_STYLE__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -854,11 +937,11 @@ public class ZestProperties {
 	 *         the given {@link Edge}.
 	 */
 	public static Point getSourceLabelPosition(Edge edge) {
-		Object object = edge.getAttributes().get(SOURCE_LABEL_POSITION__E);
-		if (object instanceof Point) {
-			return (Point) object;
+		Object value = edge.attributesProperty().get(SOURCE_LABEL_POSITION__E);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
 		}
-		return null;
+		return (Point) value;
 	}
 
 	/**
@@ -871,7 +954,11 @@ public class ZestProperties {
 	 * @return The start {@link Point} of the given {@link Edge}.
 	 */
 	public static Point getStartPoint(Edge edge) {
-		return (Point) edge.attributesProperty().get(START_POINT__E);
+		Object value = edge.attributesProperty().get(START_POINT__E);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
+		}
+		return (Point) value;
 	}
 
 	/**
@@ -883,7 +970,11 @@ public class ZestProperties {
 	 * @return The target decoration of the given {@link Edge}.
 	 */
 	public static javafx.scene.Node getTargetDecoration(Edge edge) {
-		return (javafx.scene.Node) edge.attributesProperty().get(TARGET_DECORATION__E);
+		Object value = edge.attributesProperty().get(TARGET_DECORATION__E);
+		if (value instanceof Provider) {
+			return (javafx.scene.Node) ((Provider<?>) value).get();
+		}
+		return (javafx.scene.Node) value;
 	}
 
 	/**
@@ -896,7 +987,11 @@ public class ZestProperties {
 	 * @return The target decoration CSS style of the given {@link Edge}.
 	 */
 	public static String getTargetDecorationCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(TARGET_DECORATION_CSS_STYLE__E);
+		Object value = edge.attributesProperty().get(TARGET_DECORATION_CSS_STYLE__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -927,7 +1022,11 @@ public class ZestProperties {
 	 * @return The target label CSS style of the given {@link Edge}.
 	 */
 	public static String getTargetLabelCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(TARGET_LABEL_CSS_STYLE__E);
+		Object value = edge.attributesProperty().get(TARGET_LABEL_CSS_STYLE__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -941,11 +1040,11 @@ public class ZestProperties {
 	 *         the given {@link Edge}.
 	 */
 	public static Point getTargetLabelPosition(Edge edge) {
-		Object object = edge.getAttributes().get(TARGET_LABEL_POSITION__E);
-		if (object instanceof Point) {
-			return (Point) object;
+		Object value = edge.attributesProperty().get(TARGET_LABEL_POSITION__E);
+		if (value instanceof Provider) {
+			return (Point) ((Provider<?>) value).get();
 		}
-		return null;
+		return (Point) value;
 	}
 
 	/**
@@ -959,7 +1058,7 @@ public class ZestProperties {
 	 *         using {@link Provider#get()}.
 	 */
 	public static String getTooltip(Node node) {
-		Object value = node.attributesProperty().get(TOOLTIP__N);
+		Object value = node.attributesProperty().get(TARGET_LABEL_POSITION__E);
 		if (value instanceof Provider) {
 			return (String) ((Provider<?>) value).get();
 		}
@@ -978,7 +1077,47 @@ public class ZestProperties {
 	 *            {@link Edge}.
 	 */
 	public static void setControlPoints(Edge edge, List<Point> controlPoints) {
-		edge.getAttributes().put(CONTROL_POINTS__E, controlPoints);
+		if (controlPoints == null) {
+			edge.getAttributes().remove(CONTROL_POINTS__E);
+		} else {
+			edge.getAttributes().put(CONTROL_POINTS__E, controlPoints);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #CONTROL_POINTS__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the {@link #CONTROL_POINTS__E}
+	 *            attribute is changed.
+	 * @param controlPointsProvider
+	 *            The new {@link List} of control {@link Point}s for the given
+	 *            {@link Edge}.
+	 */
+	public static void setControlPoints(Edge edge, Provider<List<Point>> controlPointsProvider) {
+		if (controlPointsProvider == null) {
+			edge.getAttributes().remove(CONTROL_POINTS__E);
+		} else {
+			edge.getAttributes().put(CONTROL_POINTS__E, controlPointsProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #CSS_CLASS__NE} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the CSS class is changed.
+	 * @param cssClassProvider
+	 *            The new CSS class for the given {@link Edge}.
+	 */
+	public static void setCssClass(Edge edge, Provider<String> cssClassProvider) {
+		if (cssClassProvider == null) {
+			edge.getAttributes().remove(CSS_CLASS__NE);
+		} else {
+			edge.attributesProperty().put(CSS_CLASS__NE, cssClassProvider);
+		}
 	}
 
 	/**
@@ -991,7 +1130,28 @@ public class ZestProperties {
 	 *            The new CSS class for the given {@link Edge}.
 	 */
 	public static void setCssClass(Edge edge, String cssClass) {
-		edge.attributesProperty().put(CSS_CLASS__NE, cssClass);
+		if (cssClass == null) {
+			edge.getAttributes().remove(CSS_CLASS__NE);
+		} else {
+			edge.attributesProperty().put(CSS_CLASS__NE, cssClass);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #CSS_CLASS__NE} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the CSS class is changed.
+	 * @param cssClassProvider
+	 *            The new CSS class for the given {@link Node}.
+	 */
+	public static void setCssClass(Node node, Provider<String> cssClassProvider) {
+		if (cssClassProvider == null) {
+			node.getAttributes().remove(CSS_CLASS__NE);
+		} else {
+			node.attributesProperty().put(CSS_CLASS__NE, cssClassProvider);
+		}
 	}
 
 	/**
@@ -1004,7 +1164,11 @@ public class ZestProperties {
 	 *            The new CSS class for the given {@link Node}.
 	 */
 	public static void setCssClass(Node node, String cssClass) {
-		node.attributesProperty().put(CSS_CLASS__NE, cssClass);
+		if (cssClass == null) {
+			node.getAttributes().remove(CSS_CLASS__NE);
+		} else {
+			node.attributesProperty().put(CSS_CLASS__NE, cssClass);
+		}
 	}
 
 	/**
@@ -1017,7 +1181,11 @@ public class ZestProperties {
 	 *            The new CSS id for the given {@link Edge}.
 	 */
 	public static void setCssId(Edge edge, Provider<String> cssIdProvider) {
-		edge.attributesProperty().put(CSS_ID__NE, cssIdProvider);
+		if (cssIdProvider == null) {
+			edge.getAttributes().remove(CSS_ID__NE);
+		} else {
+			edge.attributesProperty().put(CSS_ID__NE, cssIdProvider);
+		}
 	}
 
 	/**
@@ -1030,7 +1198,11 @@ public class ZestProperties {
 	 *            The new CSS id for the given {@link Edge}.
 	 */
 	public static void setCssId(Edge edge, String cssId) {
-		edge.attributesProperty().put(CSS_ID__NE, cssId);
+		if (cssId == null) {
+			edge.getAttributes().remove(CSS_ID__NE);
+		} else {
+			edge.attributesProperty().put(CSS_ID__NE, cssId);
+		}
 	}
 
 	/**
@@ -1043,7 +1215,11 @@ public class ZestProperties {
 	 *            The new CSS id for the given {@link Node}.
 	 */
 	public static void setCssId(Node node, Provider<String> cssIdProvider) {
-		node.attributesProperty().put(CSS_ID__NE, cssIdProvider);
+		if (cssIdProvider == null) {
+			node.getAttributes().remove(CSS_ID__NE);
+		} else {
+			node.attributesProperty().put(CSS_ID__NE, cssIdProvider);
+		}
 	}
 
 	/**
@@ -1056,7 +1232,11 @@ public class ZestProperties {
 	 *            The new CSS id for the given {@link Node}.
 	 */
 	public static void setCssId(Node node, String cssId) {
-		node.attributesProperty().put(CSS_ID__NE, cssId);
+		if (cssId == null) {
+			node.getAttributes().remove(CSS_ID__NE);
+		} else {
+			node.attributesProperty().put(CSS_ID__NE, cssId);
+		}
 	}
 
 	/**
@@ -1071,7 +1251,47 @@ public class ZestProperties {
 	 *            connection.
 	 */
 	public static void setCurve(Edge edge, javafx.scene.Node curve) {
-		edge.attributesProperty().put(CURVE__E, curve);
+		if (curve == null) {
+			edge.getAttributes().remove(CURVE__E);
+		} else {
+			edge.attributesProperty().put(CURVE__E, curve);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SHAPE__N} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge}, for which to set the value of the
+	 *            {@link #CURVE__E} attribute.
+	 * @param curveProvider
+	 *            The {@link javafx.scene.Node} that is used to visualize the
+	 *            connection.
+	 */
+	public static void setCurve(Edge edge, Provider<javafx.scene.Node> curveProvider) {
+		if (curveProvider == null) {
+			edge.getAttributes().remove(CURVE__E);
+		} else {
+			edge.attributesProperty().put(CURVE__E, curveProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #CURVE_CSS_STYLE__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the curve CSS style is changed.
+	 * @param curveCssStyleProvider
+	 *            The new curve CSS style for the given {@link Edge}.
+	 */
+	public static void setCurveCssStyle(Edge edge, Provider<String> curveCssStyleProvider) {
+		if (curveCssStyleProvider == null) {
+			edge.getAttributes().remove(CURVE_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(CURVE_CSS_STYLE__E, curveCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1084,7 +1304,11 @@ public class ZestProperties {
 	 *            The new curve CSS style for the given {@link Edge}.
 	 */
 	public static void setCurveCssStyle(Edge edge, String curveCssStyle) {
-		edge.attributesProperty().put(CURVE_CSS_STYLE__E, curveCssStyle);
+		if (curveCssStyle == null) {
+			edge.getAttributes().remove(CURVE_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(CURVE_CSS_STYLE__E, curveCssStyle);
+		}
 	}
 
 	/**
@@ -1098,7 +1322,29 @@ public class ZestProperties {
 	 *            The end {@link Point} for the given {@link Edge}.
 	 */
 	public static void setEndPoint(Edge edge, Point endPoint) {
-		edge.attributesProperty().put(END_POINT__E, endPoint);
+		if (endPoint == null) {
+			edge.getAttributes().remove(END_POINT__E);
+		} else {
+			edge.attributesProperty().put(END_POINT__E, endPoint);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #END_POINT__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge}, for which to set the value of the
+	 *            {@link #END_POINT__E} attribute.
+	 * @param endPointProvider
+	 *            The end {@link Point} for the given {@link Edge}.
+	 */
+	public static void setEndPoint(Edge edge, Provider<Point> endPointProvider) {
+		if (endPointProvider == null) {
+			edge.getAttributes().remove(END_POINT__E);
+		} else {
+			edge.attributesProperty().put(END_POINT__E, endPointProvider);
+		}
 	}
 
 	/**
@@ -1112,7 +1358,11 @@ public class ZestProperties {
 	 *            {@link #EXTERNAL_LABEL__NE} attribute.
 	 */
 	public static void setExternalLabel(Edge edge, Provider<String> labelProvider) {
-		edge.attributesProperty().put(EXTERNAL_LABEL__NE, labelProvider);
+		if (labelProvider == null) {
+			edge.getAttributes().remove(EXTERNAL_LABEL__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL__NE, labelProvider);
+		}
 	}
 
 	/**
@@ -1125,7 +1375,11 @@ public class ZestProperties {
 	 *            The new label for the given {@link Edge}.
 	 */
 	public static void setExternalLabel(Edge edge, String label) {
-		edge.attributesProperty().put(EXTERNAL_LABEL__NE, label);
+		if (label == null) {
+			edge.getAttributes().remove(EXTERNAL_LABEL__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL__NE, label);
+		}
 	}
 
 	/**
@@ -1139,7 +1393,11 @@ public class ZestProperties {
 	 *            {@link #EXTERNAL_LABEL__NE} attribute.
 	 */
 	public static void setExternalLabel(Node node, Provider<String> labelProvider) {
-		node.attributesProperty().put(EXTERNAL_LABEL__NE, labelProvider);
+		if (labelProvider == null) {
+			node.getAttributes().remove(EXTERNAL_LABEL__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL__NE, labelProvider);
+		}
 	}
 
 	/**
@@ -1152,7 +1410,28 @@ public class ZestProperties {
 	 *            The new label for the given {@link Node}.
 	 */
 	public static void setExternalLabel(Node node, String label) {
-		node.attributesProperty().put(EXTERNAL_LABEL__NE, label);
+		if (label == null) {
+			node.getAttributes().remove(EXTERNAL_LABEL__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL__NE, label);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
+	 * the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label CSS style is changed.
+	 * @param textCssStyleProvider
+	 *            The new label CSS style for the given {@link Edge}.
+	 */
+	public static void setExternalLabelCssStyle(Edge edge, Provider<String> textCssStyleProvider) {
+		if (textCssStyleProvider == null) {
+			edge.getAttributes().remove(EXTERNAL_LABEL_CSS_STYLE__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL_CSS_STYLE__NE, textCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1165,7 +1444,28 @@ public class ZestProperties {
 	 *            The new label CSS style for the given {@link Edge}.
 	 */
 	public static void setExternalLabelCssStyle(Edge edge, String textCssStyle) {
-		edge.attributesProperty().put(EXTERNAL_LABEL_CSS_STYLE__NE, textCssStyle);
+		if (textCssStyle == null) {
+			edge.getAttributes().remove(EXTERNAL_LABEL_CSS_STYLE__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL_CSS_STYLE__NE, textCssStyle);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
+	 * the given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the node label CSS style is changed.
+	 * @param textCssStyleProvider
+	 *            The new node label CSS style for the given {@link Node}.
+	 */
+	public static void setExternalLabelCssStyle(Node node, Provider<String> textCssStyleProvider) {
+		if (textCssStyleProvider == null) {
+			node.getAttributes().remove(EXTERNAL_LABEL_CSS_STYLE__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL_CSS_STYLE__NE, textCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1178,7 +1478,11 @@ public class ZestProperties {
 	 *            The new node label CSS style for the given {@link Node}.
 	 */
 	public static void setExternalLabelCssStyle(Node node, String textCssStyle) {
-		node.attributesProperty().put(EXTERNAL_LABEL_CSS_STYLE__NE, textCssStyle);
+		if (textCssStyle == null) {
+			node.getAttributes().remove(EXTERNAL_LABEL_CSS_STYLE__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL_CSS_STYLE__NE, textCssStyle);
+		}
 	}
 
 	/**
@@ -1192,7 +1496,29 @@ public class ZestProperties {
 	 *            The new external label position.
 	 */
 	public static void setExternalLabelPosition(Edge edge, Point externalLabelPosition) {
-		edge.getAttributes().put(EXTERNAL_LABEL_POSITION__NE, externalLabelPosition);
+		if (externalLabelPosition == null) {
+			edge.getAttributes().remove(EXTERNAL_LABEL_POSITION__NE);
+		} else {
+			edge.getAttributes().put(EXTERNAL_LABEL_POSITION__NE, externalLabelPosition);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
+	 * the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the
+	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
+	 * @param externalLabelPositionProvider
+	 *            The new external label position.
+	 */
+	public static void setExternalLabelPosition(Edge edge, Provider<Point> externalLabelPositionProvider) {
+		if (externalLabelPositionProvider == null) {
+			edge.getAttributes().remove(EXTERNAL_LABEL_POSITION__NE);
+		} else {
+			edge.getAttributes().put(EXTERNAL_LABEL_POSITION__NE, externalLabelPositionProvider);
+		}
 	}
 
 	/**
@@ -1206,7 +1532,29 @@ public class ZestProperties {
 	 *            The new external label position.
 	 */
 	public static void setExternalLabelPosition(Node node, Point externalLabelPosition) {
-		node.getAttributes().put(EXTERNAL_LABEL_POSITION__NE, externalLabelPosition);
+		if (externalLabelPosition == null) {
+			node.getAttributes().remove(EXTERNAL_LABEL_POSITION__NE);
+		} else {
+			node.getAttributes().put(EXTERNAL_LABEL_POSITION__NE, externalLabelPosition);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
+	 * the given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the
+	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
+	 * @param externalLabelPositionProvider
+	 *            The new external label position.
+	 */
+	public static void setExternalLabelPosition(Node node, Provider<Point> externalLabelPositionProvider) {
+		if (externalLabelPositionProvider == null) {
+			node.getAttributes().remove(EXTERNAL_LABEL_POSITION__NE);
+		} else {
+			node.getAttributes().put(EXTERNAL_LABEL_POSITION__NE, externalLabelPositionProvider);
+		}
 	}
 
 	/**
@@ -1219,7 +1567,28 @@ public class ZestProperties {
 	 *            The new {@link Image} for the given {@link Node}.
 	 */
 	public static void setIcon(Node node, Image icon) {
-		node.attributesProperty().put(ICON__N, icon);
+		if (icon == null) {
+			node.getAttributes().remove(ICON__N);
+		} else {
+			node.attributesProperty().put(ICON__N, icon);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #ICON__N} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the icon is changed.
+	 * @param iconProvider
+	 *            The new {@link Image} for the given {@link Node}.
+	 */
+	public static void setIcon(Node node, Provider<Image> iconProvider) {
+		if (iconProvider == null) {
+			node.getAttributes().remove(ICON__N);
+		} else {
+			node.attributesProperty().put(ICON__N, iconProvider);
+		}
 	}
 
 	/**
@@ -1233,7 +1602,29 @@ public class ZestProperties {
 	 *            {@link Edge} .
 	 */
 	public static void setInterpolator(Edge edge, IConnectionInterpolator interpolator) {
-		edge.attributesProperty().put(INTERPOLATOR__E, interpolator);
+		if (interpolator == null) {
+			edge.getAttributes().remove(INTERPOLATOR__E);
+		} else {
+			edge.attributesProperty().put(INTERPOLATOR__E, interpolator);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #INTERPOLATOR__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the interpolator is changed.
+	 * @param interpolatorProvider
+	 *            The new {@link IConnectionInterpolator} for the given
+	 *            {@link Edge} .
+	 */
+	public static void setInterpolator(Edge edge, Provider<IConnectionInterpolator> interpolatorProvider) {
+		if (interpolatorProvider == null) {
+			edge.getAttributes().remove(INTERPOLATOR__E);
+		} else {
+			edge.attributesProperty().put(INTERPOLATOR__E, interpolatorProvider);
+		}
 	}
 
 	/**
@@ -1248,7 +1639,30 @@ public class ZestProperties {
 	 *            given {@link Edge}.
 	 */
 	public static void setInvisible(Edge edge, Boolean invisible) {
-		edge.getAttributes().put(INVISIBLE__NE, invisible);
+		if (invisible == null) {
+			edge.getAttributes().remove(INVISIBLE__NE);
+		} else {
+			edge.getAttributes().put(INVISIBLE__NE, invisible);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #INVISIBLE__NE} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} for which to set the {@link #INVISIBLE__NE}
+	 *            attribute.
+	 * @param invisibleProvider
+	 *            The new value for the {@link #INVISIBLE__NE} attribute of the
+	 *            given {@link Edge}.
+	 */
+	public static void setInvisible(Edge edge, Provider<Boolean> invisibleProvider) {
+		if (invisibleProvider == null) {
+			edge.getAttributes().remove(INVISIBLE__NE);
+		} else {
+			edge.getAttributes().put(INVISIBLE__NE, invisibleProvider);
+		}
 	}
 
 	/**
@@ -1263,7 +1677,30 @@ public class ZestProperties {
 	 *            given {@link Node}.
 	 */
 	public static void setInvisible(Node node, Boolean invisible) {
-		node.getAttributes().put(INVISIBLE__NE, invisible);
+		if (invisible == null) {
+			node.getAttributes().remove(INVISIBLE__NE);
+		} else {
+			node.getAttributes().put(INVISIBLE__NE, invisible);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #INVISIBLE__NE} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} for which to set the {@link #INVISIBLE__NE}
+	 *            attribute.
+	 * @param invisibleProvider
+	 *            The new value for the {@link #INVISIBLE__NE} attribute of the
+	 *            given {@link Node}.
+	 */
+	public static void setInvisible(Node node, Provider<Boolean> invisibleProvider) {
+		if (invisibleProvider == null) {
+			node.getAttributes().remove(INVISIBLE__NE);
+		} else {
+			node.getAttributes().put(INVISIBLE__NE, invisibleProvider);
+		}
 	}
 
 	/**
@@ -1277,7 +1714,11 @@ public class ZestProperties {
 	 *            {@link #LABEL__NE} attribute.
 	 */
 	public static void setLabel(Edge edge, Provider<String> labelProvider) {
-		edge.attributesProperty().put(LABEL__NE, labelProvider);
+		if (labelProvider == null) {
+			edge.getAttributes().remove(LABEL__NE);
+		} else {
+			edge.attributesProperty().put(LABEL__NE, labelProvider);
+		}
 	}
 
 	/**
@@ -1290,7 +1731,11 @@ public class ZestProperties {
 	 *            The new value for the {@link #LABEL__NE} attribute.
 	 */
 	public static void setLabel(Edge edge, String label) {
-		edge.attributesProperty().put(LABEL__NE, label);
+		if (label == null) {
+			edge.getAttributes().remove(LABEL__NE);
+		} else {
+			edge.attributesProperty().put(LABEL__NE, label);
+		}
 	}
 
 	/**
@@ -1304,7 +1749,11 @@ public class ZestProperties {
 	 *            {@link #LABEL__NE} attribute.
 	 */
 	public static void setLabel(Node node, Provider<String> labelProvider) {
-		node.attributesProperty().put(LABEL__NE, labelProvider);
+		if (labelProvider == null) {
+			node.getAttributes().remove(LABEL__NE);
+		} else {
+			node.attributesProperty().put(LABEL__NE, labelProvider);
+		}
 	}
 
 	/**
@@ -1317,7 +1766,28 @@ public class ZestProperties {
 	 *            The new value for the {@link #LABEL__NE} attribute.
 	 */
 	public static void setLabel(Node node, String label) {
-		node.attributesProperty().put(LABEL__NE, label);
+		if (label == null) {
+			node.getAttributes().remove(LABEL__NE);
+		} else {
+			node.attributesProperty().put(LABEL__NE, label);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label CSS style is changed.
+	 * @param textCssStyleProvider
+	 *            The new label CSS style for the given {@link Edge}.
+	 */
+	public static void setLabelCssStyle(Edge edge, Provider<String> textCssStyleProvider) {
+		if (textCssStyleProvider == null) {
+			edge.getAttributes().remove(LABEL_CSS_STYLE__NE);
+		} else {
+			edge.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1330,7 +1800,28 @@ public class ZestProperties {
 	 *            The new label CSS style for the given {@link Edge}.
 	 */
 	public static void setLabelCssStyle(Edge edge, String textCssStyle) {
-		edge.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyle);
+		if (textCssStyle == null) {
+			edge.getAttributes().remove(LABEL_CSS_STYLE__NE);
+		} else {
+			edge.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyle);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the node label CSS style is changed.
+	 * @param textCssStyleProvider
+	 *            The new node label CSS style for the given {@link Node}.
+	 */
+	public static void setLabelCssStyle(Node node, Provider<String> textCssStyleProvider) {
+		if (textCssStyleProvider == null) {
+			node.getAttributes().remove(LABEL_CSS_STYLE__NE);
+		} else {
+			node.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1343,7 +1834,11 @@ public class ZestProperties {
 	 *            The new node label CSS style for the given {@link Node}.
 	 */
 	public static void setLabelCssStyle(Node node, String textCssStyle) {
-		node.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyle);
+		if (textCssStyle == null) {
+			node.getAttributes().remove(LABEL_CSS_STYLE__NE);
+		} else {
+			node.attributesProperty().put(LABEL_CSS_STYLE__NE, textCssStyle);
+		}
 	}
 
 	/**
@@ -1356,7 +1851,28 @@ public class ZestProperties {
 	 *            The new position for the label of the given {@link Edge}.
 	 */
 	public static void setLabelPosition(Edge edge, Point labelPosition) {
-		edge.attributesProperty().put(LABEL_POSITION__E, labelPosition);
+		if (labelPosition == null) {
+			edge.getAttributes().remove(LABEL_POSITION__E);
+		} else {
+			edge.attributesProperty().put(LABEL_POSITION__E, labelPosition);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LABEL_POSITION__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label is changed.
+	 * @param labelPositionProvider
+	 *            The new position for the label of the given {@link Edge}.
+	 */
+	public static void setLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
+		if (labelPositionProvider == null) {
+			edge.getAttributes().remove(LABEL_POSITION__E);
+		} else {
+			edge.attributesProperty().put(LABEL_POSITION__E, labelPositionProvider);
+		}
 	}
 
 	/**
@@ -1369,7 +1885,28 @@ public class ZestProperties {
 	 *            The new {@link ILayoutAlgorithm} for the given {@link Graph}.
 	 */
 	public static void setLayoutAlgorithm(Graph graph, ILayoutAlgorithm algorithm) {
-		graph.attributesProperty().put(LAYOUT_ALGORITHM__G, algorithm);
+		if (algorithm == null) {
+			graph.getAttributes().remove(LAYOUT_ALGORITHM__G);
+		} else {
+			graph.attributesProperty().put(LAYOUT_ALGORITHM__G, algorithm);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LAYOUT_ALGORITHM__G} attribute of the given
+	 * {@link Graph} to the given value.
+	 *
+	 * @param graph
+	 *            The {@link Graph} of which the layout algorithm is changed.
+	 * @param algorithmProvider
+	 *            The new {@link ILayoutAlgorithm} for the given {@link Graph}.
+	 */
+	public static void setLayoutAlgorithm(Graph graph, Provider<ILayoutAlgorithm> algorithmProvider) {
+		if (algorithmProvider == null) {
+			graph.getAttributes().remove(LAYOUT_ALGORITHM__G);
+		} else {
+			graph.attributesProperty().put(LAYOUT_ALGORITHM__G, algorithmProvider);
+		}
 	}
 
 	/**
@@ -1383,7 +1920,29 @@ public class ZestProperties {
 	 *            The new layout irrelevant flag for the given {@link Edge}.
 	 */
 	public static void setLayoutIrrelevant(Edge edge, Boolean layoutIrrelevant) {
-		edge.attributesProperty().put(LAYOUT_IRRELEVANT__NE, layoutIrrelevant);
+		if (layoutIrrelevant == null) {
+			edge.getAttributes().remove(LAYOUT_IRRELEVANT__NE);
+		} else {
+			edge.attributesProperty().put(LAYOUT_IRRELEVANT__NE, layoutIrrelevant);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the layout irrelevant flag is
+	 *            changed.
+	 * @param layoutIrrelevantProvider
+	 *            The new layout irrelevant flag for the given {@link Edge}.
+	 */
+	public static void setLayoutIrrelevant(Edge edge, Provider<Boolean> layoutIrrelevantProvider) {
+		if (layoutIrrelevantProvider == null) {
+			edge.getAttributes().remove(LAYOUT_IRRELEVANT__NE);
+		} else {
+			edge.attributesProperty().put(LAYOUT_IRRELEVANT__NE, layoutIrrelevantProvider);
+		}
 	}
 
 	/**
@@ -1397,7 +1956,29 @@ public class ZestProperties {
 	 *            The new layout irrelevant flag for the given {@link Node}.
 	 */
 	public static void setLayoutIrrelevant(Node node, Boolean layoutIrrelevant) {
-		node.attributesProperty().put(LAYOUT_IRRELEVANT__NE, layoutIrrelevant);
+		if (layoutIrrelevant == null) {
+			node.getAttributes().remove(LAYOUT_IRRELEVANT__NE);
+		} else {
+			node.attributesProperty().put(LAYOUT_IRRELEVANT__NE, layoutIrrelevant);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
+	 * given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the layout irrelevant flag is
+	 *            changed.
+	 * @param layoutIrrelevantProvider
+	 *            The new layout irrelevant flag for the given {@link Node}.
+	 */
+	public static void setLayoutIrrelevant(Node node, Provider<Boolean> layoutIrrelevantProvider) {
+		if (layoutIrrelevantProvider == null) {
+			node.getAttributes().remove(LAYOUT_IRRELEVANT__NE);
+		} else {
+			node.attributesProperty().put(LAYOUT_IRRELEVANT__NE, layoutIrrelevantProvider);
+		}
 	}
 
 	/**
@@ -1413,8 +1994,27 @@ public class ZestProperties {
 	public static void setPosition(Node node, Point position) {
 		if (position == null) {
 			node.getAttributes().remove(POSITION__N);
+		} else {
+			node.getAttributes().put(POSITION__N, position);
 		}
-		node.getAttributes().put(POSITION__N, position);
+	}
+
+	/**
+	 * Sets the value of the {@link #POSITION__N} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the {@link #POSITION__N} attribute
+	 *            is changed.
+	 * @param positionProvider
+	 *            The new node position.
+	 */
+	public static void setPosition(Node node, Provider<Point> positionProvider) {
+		if (positionProvider == null) {
+			node.getAttributes().remove(POSITION__N);
+		} else {
+			node.getAttributes().put(POSITION__N, positionProvider);
+		}
 	}
 
 	/**
@@ -1427,7 +2027,28 @@ public class ZestProperties {
 	 *            The new {@link IConnectionRouter} for the given {@link Edge} .
 	 */
 	public static void setRouter(Edge edge, IConnectionRouter router) {
-		edge.attributesProperty().put(ROUTER__E, router);
+		if (router == null) {
+			edge.getAttributes().remove(ROUTER__E);
+		} else {
+			edge.attributesProperty().put(ROUTER__E, router);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #ROUTER__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the router is changed.
+	 * @param routerProvider
+	 *            The new {@link IConnectionRouter} for the given {@link Edge} .
+	 */
+	public static void setRouter(Edge edge, Provider<IConnectionRouter> routerProvider) {
+		if (routerProvider == null) {
+			edge.getAttributes().remove(ROUTER__E);
+		} else {
+			edge.attributesProperty().put(ROUTER__E, routerProvider);
+		}
 	}
 
 	/**
@@ -1442,7 +2063,48 @@ public class ZestProperties {
 	 *            background.
 	 */
 	public static void setShape(Node node, javafx.scene.Node shape) {
-		node.attributesProperty().put(SHAPE__N, shape);
+		if (shape == null) {
+			node.getAttributes().remove(SHAPE__N);
+		} else {
+			node.attributesProperty().put(SHAPE__N, shape);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SHAPE__N} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node}, for which to set the value of the
+	 *            {@link #SHAPE__N} attribute.
+	 * @param shapeProvider
+	 *            The shape that is be used for rendering the node outline and
+	 *            background.
+	 */
+	public static void setShape(Node node, Provider<javafx.scene.Node> shapeProvider) {
+		if (shapeProvider == null) {
+			node.getAttributes().remove(SHAPE__N);
+		} else {
+			node.attributesProperty().put(SHAPE__N, shapeProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SHAPE_CSS_STYLE__N} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the node rectangle CSS style is
+	 *            changed.
+	 * @param rectCssStyleProvider
+	 *            The new node rectangle CSS style for the given {@link Node}.
+	 */
+	public static void setShapeCssStyle(Node node, Provider<String> rectCssStyleProvider) {
+		if (rectCssStyleProvider == null) {
+			node.getAttributes().remove(SHAPE_CSS_STYLE__N);
+		} else {
+			node.attributesProperty().put(SHAPE_CSS_STYLE__N, rectCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1456,7 +2118,11 @@ public class ZestProperties {
 	 *            The new node rectangle CSS style for the given {@link Node}.
 	 */
 	public static void setShapeCssStyle(Node node, String rectCssStyle) {
-		node.attributesProperty().put(SHAPE_CSS_STYLE__N, rectCssStyle);
+		if (rectCssStyle == null) {
+			node.getAttributes().remove(SHAPE_CSS_STYLE__N);
+		} else {
+			node.attributesProperty().put(SHAPE_CSS_STYLE__N, rectCssStyle);
+		}
 	}
 
 	/**
@@ -1472,8 +2138,27 @@ public class ZestProperties {
 	public static void setSize(Node node, Dimension size) {
 		if (size == null) {
 			node.getAttributes().remove(SIZE__N);
+		} else {
+			node.getAttributes().put(SIZE__N, size);
 		}
-		node.getAttributes().put(SIZE__N, size);
+	}
+
+	/**
+	 * Sets the value of the {@link #SIZE__N} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} for which to return the {@link #SIZE__N}.
+	 * @param sizeProvider
+	 *            The {@link Dimension} describing the new size for the given
+	 *            {@link Node}.
+	 */
+	public static void setSize(Node node, Provider<Dimension> sizeProvider) {
+		if (sizeProvider == null) {
+			node.getAttributes().remove(SIZE__N);
+		} else {
+			node.getAttributes().put(SIZE__N, sizeProvider);
+		}
 	}
 
 	/**
@@ -1486,7 +2171,43 @@ public class ZestProperties {
 	 *            The new source decoration for the given {@link Edge}.
 	 */
 	public static void setSourceDecoration(Edge edge, javafx.scene.Node sourceDecoration) {
-		edge.attributesProperty().put(SOURCE_DECORATION__E, sourceDecoration);
+		if (sourceDecoration == null) {
+			edge.attributesProperty().remove(SOURCE_DECORATION__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_DECORATION__E, sourceDecoration);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SOURCE_DECORATION__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source decoration is changed.
+	 * @param sourceDecorationProvider
+	 *            The new source decoration for the given {@link Edge}.
+	 */
+	public static void setSourceDecoration(Edge edge, Provider<javafx.scene.Node> sourceDecorationProvider) {
+		if (sourceDecorationProvider == null) {
+			edge.attributesProperty().remove(SOURCE_DECORATION__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_DECORATION__E, sourceDecorationProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E} attribute
+	 * of the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source decoration CSS style is
+	 *            changed.
+	 * @param sourceDecorationCssStyleProvider
+	 *            The new source decoration CSS style for the given {@link Edge}
+	 *            .
+	 */
+	public static void setSourceDecorationCssStyle(Edge edge, Provider<String> sourceDecorationCssStyleProvider) {
+		edge.attributesProperty().put(SOURCE_DECORATION_CSS_STYLE__E, sourceDecorationCssStyleProvider);
 	}
 
 	/**
@@ -1501,7 +2222,11 @@ public class ZestProperties {
 	 *            .
 	 */
 	public static void setSourceDecorationCssStyle(Edge edge, String sourceDecorationCssStyle) {
-		edge.attributesProperty().put(SOURCE_DECORATION_CSS_STYLE__E, sourceDecorationCssStyle);
+		if (sourceDecorationCssStyle == null) {
+			edge.attributesProperty().remove(SOURCE_DECORATION_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_DECORATION_CSS_STYLE__E, sourceDecorationCssStyle);
+		}
 	}
 
 	/**
@@ -1515,7 +2240,11 @@ public class ZestProperties {
 	 *            {@link #SOURCE_LABEL__E} attribute.
 	 */
 	public static void setSourceLabel(Edge edge, Provider<String> sourceLabelProvider) {
-		edge.attributesProperty().put(SOURCE_LABEL__E, sourceLabelProvider);
+		if (sourceLabelProvider == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL__E, sourceLabelProvider);
+		}
 	}
 
 	/**
@@ -1528,7 +2257,29 @@ public class ZestProperties {
 	 *            The new source label for the given {@link Edge}.
 	 */
 	public static void setSourceLabel(Edge edge, String sourceLabel) {
-		edge.attributesProperty().put(SOURCE_LABEL__E, sourceLabel);
+		if (sourceLabel == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL__E, sourceLabel);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SOURCE_LABEL_CSS_STYLE__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label CSS style is
+	 *            changed.
+	 * @param sourceLabelCssStyleProvider
+	 *            The new source label CSS style for the given {@link Edge} .
+	 */
+	public static void setSourceLabelCssStyle(Edge edge, Provider<String> sourceLabelCssStyleProvider) {
+		if (sourceLabelCssStyleProvider == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_CSS_STYLE__E, sourceLabelCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1542,7 +2293,11 @@ public class ZestProperties {
 	 *            The new source label CSS style for the given {@link Edge} .
 	 */
 	public static void setSourceLabelCssStyle(Edge edge, String sourceLabelCssStyle) {
-		edge.attributesProperty().put(SOURCE_LABEL_CSS_STYLE__E, sourceLabelCssStyle);
+		if (sourceLabelCssStyle == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_CSS_STYLE__E, sourceLabelCssStyle);
+		}
 	}
 
 	/**
@@ -1556,7 +2311,29 @@ public class ZestProperties {
 	 *            {@link Edge}.
 	 */
 	public static void setSourceLabelPosition(Edge edge, Point labelPosition) {
-		edge.attributesProperty().put(SOURCE_LABEL_POSITION__E, labelPosition);
+		if (labelPosition == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_POSITION__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_POSITION__E, labelPosition);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SOURCE_LABEL_POSITION__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label is changed.
+	 * @param labelPositionProvider
+	 *            The new position for the source label of the given
+	 *            {@link Edge}.
+	 */
+	public static void setSourceLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
+		if (labelPositionProvider == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_POSITION__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_POSITION__E, labelPositionProvider);
+		}
 	}
 
 	/**
@@ -1570,7 +2347,29 @@ public class ZestProperties {
 	 *            The start Point for the given {@link Edge}.
 	 */
 	public static void setStartPoint(Edge edge, Point startPoint) {
-		edge.attributesProperty().put(START_POINT__E, startPoint);
+		if (startPoint == null) {
+			edge.attributesProperty().remove(START_POINT__E);
+		} else {
+			edge.attributesProperty().put(START_POINT__E, startPoint);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #START_POINT__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge}, for which to set the value of the
+	 *            {@link #START_POINT__E} attribute.
+	 * @param startPointProvider
+	 *            The start Point for the given {@link Edge}.
+	 */
+	public static void setStartPoint(Edge edge, Provider<Point> startPointProvider) {
+		if (startPointProvider == null) {
+			edge.attributesProperty().remove(START_POINT__E);
+		} else {
+			edge.attributesProperty().put(START_POINT__E, startPointProvider);
+		}
 	}
 
 	/**
@@ -1583,7 +2382,47 @@ public class ZestProperties {
 	 *            The new target decoration for the given {@link Edge}.
 	 */
 	public static void setTargetDecoration(Edge edge, javafx.scene.Node targetDecoration) {
-		edge.attributesProperty().put(TARGET_DECORATION__E, targetDecoration);
+		if (targetDecoration == null) {
+			edge.attributesProperty().remove(TARGET_DECORATION__E);
+		} else {
+			edge.attributesProperty().put(TARGET_DECORATION__E, targetDecoration);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_DECORATION__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration is changed.
+	 * @param targetDecorationProvider
+	 *            The new target decoration for the given {@link Edge}.
+	 */
+	public static void setTargetDecoration(Edge edge, Provider<javafx.scene.Node> targetDecorationProvider) {
+		if (targetDecorationProvider == null) {
+			edge.attributesProperty().remove(TARGET_DECORATION__E);
+		} else {
+			edge.attributesProperty().put(TARGET_DECORATION__E, targetDecorationProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_DECORATION_CSS_STYLE__E} attribute
+	 * of the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration CSS style is
+	 *            changed.
+	 * @param targetDecorationCssStyleProvider
+	 *            The new target decoration CSS style for the given {@link Edge}
+	 *            .
+	 */
+	public static void setTargetDecorationCssStyle(Edge edge, Provider<String> targetDecorationCssStyleProvider) {
+		if (targetDecorationCssStyleProvider == null) {
+			edge.attributesProperty().remove(TARGET_DECORATION_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(TARGET_DECORATION_CSS_STYLE__E, targetDecorationCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1598,7 +2437,11 @@ public class ZestProperties {
 	 *            .
 	 */
 	public static void setTargetDecorationCssStyle(Edge edge, String targetDecorationCssStyle) {
-		edge.attributesProperty().put(TARGET_DECORATION_CSS_STYLE__E, targetDecorationCssStyle);
+		if (targetDecorationCssStyle == null) {
+			edge.attributesProperty().remove(TARGET_DECORATION_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(TARGET_DECORATION_CSS_STYLE__E, targetDecorationCssStyle);
+		}
 	}
 
 	/**
@@ -1612,7 +2455,11 @@ public class ZestProperties {
 	 *            {@link #TARGET_LABEL__E} attribute.
 	 */
 	public static void setTargetLabel(Edge edge, Provider<String> targetLabelProvider) {
-		edge.attributesProperty().put(TARGET_LABEL__E, targetLabelProvider);
+		if (targetLabelProvider == null) {
+			edge.attributesProperty().remove(TARGET_LABEL__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL__E, targetLabelProvider);
+		}
 	}
 
 	/**
@@ -1625,7 +2472,29 @@ public class ZestProperties {
 	 *            The new target label for the given {@link Edge}.
 	 */
 	public static void setTargetLabel(Edge edge, String targetLabel) {
-		edge.attributesProperty().put(TARGET_LABEL__E, targetLabel);
+		if (targetLabel == null) {
+			edge.attributesProperty().remove(TARGET_LABEL__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL__E, targetLabel);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_LABEL_CSS_STYLE__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label CSS style is
+	 *            changed.
+	 * @param targetLabelCssStyleProvider
+	 *            The new target label CSS style for the given {@link Edge} .
+	 */
+	public static void setTargetLabelCssStyle(Edge edge, Provider<String> targetLabelCssStyleProvider) {
+		if (targetLabelCssStyleProvider == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_CSS_STYLE__E, targetLabelCssStyleProvider);
+		}
 	}
 
 	/**
@@ -1639,7 +2508,11 @@ public class ZestProperties {
 	 *            The new target label CSS style for the given {@link Edge} .
 	 */
 	public static void setTargetLabelCssStyle(Edge edge, String targetLabelCssStyle) {
-		edge.attributesProperty().put(TARGET_LABEL_CSS_STYLE__E, targetLabelCssStyle);
+		if (targetLabelCssStyle == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_CSS_STYLE__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_CSS_STYLE__E, targetLabelCssStyle);
+		}
 	}
 
 	/**
@@ -1653,7 +2526,29 @@ public class ZestProperties {
 	 *            {@link Edge}.
 	 */
 	public static void setTargetLabelPosition(Edge edge, Point labelPosition) {
-		edge.attributesProperty().put(TARGET_LABEL_POSITION__E, labelPosition);
+		if (labelPosition == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_POSITION__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_POSITION__E, labelPosition);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_LABEL_POSITION__E} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label is changed.
+	 * @param labelPositionProvider
+	 *            The new position for the target label of the given
+	 *            {@link Edge}.
+	 */
+	public static void setTargetLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
+		if (labelPositionProvider == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_POSITION__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_POSITION__E, labelPositionProvider);
+		}
 	}
 
 	/**
@@ -1667,7 +2562,11 @@ public class ZestProperties {
 	 *            {@link #TOOLTIP__N} value.
 	 */
 	public static void setTooltip(Node node, Provider<String> tooltipProvider) {
-		node.attributesProperty().put(TOOLTIP__N, tooltipProvider);
+		if (tooltipProvider == null) {
+			node.attributesProperty().remove(TOOLTIP__N);
+		} else {
+			node.attributesProperty().put(TOOLTIP__N, tooltipProvider);
+		}
 	}
 
 	/**
@@ -1680,6 +2579,10 @@ public class ZestProperties {
 	 *            The new tooltip for the given {@link Node}.
 	 */
 	public static void setTooltip(Node node, String tooltip) {
-		node.attributesProperty().put(TOOLTIP__N, tooltip);
+		if (tooltip == null) {
+			node.attributesProperty().remove(TOOLTIP__N);
+		} else {
+			node.attributesProperty().put(TOOLTIP__N, tooltip);
+		}
 	}
 }
