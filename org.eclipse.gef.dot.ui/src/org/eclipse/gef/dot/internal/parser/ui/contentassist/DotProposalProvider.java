@@ -346,22 +346,22 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				String dotClassifier = fieldName
 						.substring(fieldName.lastIndexOf("_") + 1); //$NON-NLS-1$
 				if (!fieldName.startsWith("_")) { //$NON-NLS-1$
-					String proposedValue = null;
+					String dotAttributeName = null;
 					try {
-						proposedValue = (String) field.get(null);
+						dotAttributeName = (String) field.get(null);
 					} catch (IllegalArgumentException
 							| IllegalAccessException e) {
 						e.printStackTrace();
 					}
-					if (proposedValue != null) {
+					if (dotAttributeName != null) {
 						if (dotClassifier.contains("E")) { //$NON-NLS-1$
-							edgeAttributeNames.add(proposedValue);
+							edgeAttributeNames.add(dotAttributeName);
 						}
 						if (dotClassifier.contains("G")) { //$NON-NLS-1$
-							graphAttributeNames.add(proposedValue);
+							graphAttributeNames.add(dotAttributeName);
 						}
 						if (dotClassifier.contains("N")) { //$NON-NLS-1$
-							nodeAttributeNames.add(proposedValue);
+							nodeAttributeNames.add(dotAttributeName);
 						}
 					}
 				}
