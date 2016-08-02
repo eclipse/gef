@@ -99,7 +99,13 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 		if (context.getPrefix().equals("=") && proposal.equals("=")) { //$NON-NLS-1$//$NON-NLS-2$
 			// do not propose the "=" symbol if it is already included in the
-			// text
+			// text as prefix
+			return null;
+		}
+
+		if (context.getPrefix().equals("[") && proposal.equals("[")) { //$NON-NLS-1$ //$NON-NLS-2$
+			// do not propose the "[" symbol if it is already included in the
+			// text as prefix
 			return null;
 		}
 

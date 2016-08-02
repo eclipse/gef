@@ -71,13 +71,13 @@ public class DotContentAssistTest extends AbstractContentAssistTest {
 	@Test
 	public void edge_attributes() throws Exception {
 		// test global attribute names
-		newBuilder().append("graph {edge[  ]}")
-				.assertTextAtCursorPosition(13, "]", "arrowhead", "arrowsize",
+		newBuilder().append("graph {edge[]}")
+				.assertTextAtCursorPosition(12, "]", "arrowhead", "arrowsize",
 						"arrowtail", "dir", "headlabel", "head_lp", "id",
 						"label", "lp", "pos", "style", "taillabel", "tail_lp",
 						"xlabel", "xlp")
-				.applyProposal(13, "arrowhead")
-				.expectContent("graph {edge[ arrowhead ]}");
+				.applyProposal(12, "arrowhead")
+				.expectContent("graph {edge[arrowhead]}");
 
 		// test local attribute names
 		newBuilder().append("graph {1--2[  ]}")
@@ -325,11 +325,11 @@ public class DotContentAssistTest extends AbstractContentAssistTest {
 	@Test
 	public void graph_attributes() throws Exception {
 		// test global attribute names
-		newBuilder().append("graph {graph[  ]}")
-				.assertTextAtCursorPosition(14, "]", "forcelabels", "id",
+		newBuilder().append("graph {graph[]}")
+				.assertTextAtCursorPosition(13, "]", "forcelabels", "id",
 						"label", "layout", "lp", "rankdir", "splines", "style")
-				.applyProposal(14, "forcelabels")
-				.expectContent("graph {graph[ forcelabels ]}");
+				.applyProposal(13, "forcelabels")
+				.expectContent("graph {graph[forcelabels]}");
 
 		// test local attribute names
 		newBuilder().append("graph {  }")
@@ -503,12 +503,12 @@ public class DotContentAssistTest extends AbstractContentAssistTest {
 	@Test
 	public void node_attributes() throws Exception {
 		// test global attribute names
-		newBuilder().append("graph {node[  ]}")
-				.assertTextAtCursorPosition(13, "]", "distortion", "fixedsize",
+		newBuilder().append("graph {node[]}")
+				.assertTextAtCursorPosition(12, "]", "distortion", "fixedsize",
 						"height", "id", "label", "pos", "shape", "sides",
 						"skew", "style", "width", "xlabel", "xlp")
-				.applyProposal(13, "distortion")
-				.expectContent("graph {node[ distortion ]}");
+				.applyProposal(12, "distortion")
+				.expectContent("graph {node[distortion]}");
 
 		// test local attribute names
 		newBuilder().append("graph {1[  ]}")
