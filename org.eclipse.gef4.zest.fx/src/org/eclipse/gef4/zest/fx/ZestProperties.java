@@ -1059,7 +1059,7 @@ public class ZestProperties {
 	 *         using {@link Provider#get()}.
 	 */
 	public static String getTooltip(Node node) {
-		Object value = node.attributesProperty().get(TARGET_LABEL_POSITION__E);
+		Object value = node.attributesProperty().get(TOOLTIP__N);
 		if (value instanceof Provider) {
 			return (String) ((Provider<?>) value).get();
 		}
