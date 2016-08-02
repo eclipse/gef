@@ -12,6 +12,8 @@
 package org.eclipse.gef.dot.internal.parser.ui.contentassist;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -52,7 +54,42 @@ public class DotProposalProviderDelegator {
 		injector = DotActivator.getInstance().getInjector(language);
 	}
 
-	public ICompletionProposal[] computeCompletionProposals(
+	/**
+	 * Computes the proposals considering the given text and the given
+	 * cursorPosition.
+	 * 
+	 * @param text
+	 *            The current text to parse.
+	 * @param cursorPosition
+	 *            The cursor position within the given text.
+	 * @return The list of proposals valid on the given cursor position within
+	 *         the given text. Returns an empty list if the proposals cannot be
+	 *         determined.
+	 */
+	public List<String> computeProposals(final String text,
+			int cursorPosition) {
+
+		List<String> proposalStrings = new ArrayList<String>();
+
+		ICompletionProposal[] completionProposals = {};
+		try {
+			completionProposals = computeCompletionProposals(text,
+					cursorPosition);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// extract the display string from the completion proposal, forcing
+		// the caller to create a new ICompletionProposal with the right
+		// context
+		for (ICompletionProposal completionProposal : completionProposals) {
+			proposalStrings.add(completionProposal.getDisplayString());
+		}
+
+		return proposalStrings;
+	}
+
+	private ICompletionProposal[] computeCompletionProposals(
 			final String currentModelToParse, int cursorPosition)
 			throws Exception {
 

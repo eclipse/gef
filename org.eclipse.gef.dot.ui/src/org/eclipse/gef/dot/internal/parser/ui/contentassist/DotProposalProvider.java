@@ -280,6 +280,23 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		}
 	}
 
+	private void proposeAttributeValues(String subgrammarName,
+			ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+
+		String text = context.getPrefix();
+
+		if (text.startsWith("\"")) { //$NON-NLS-1$
+			text = DotTerminalConverters.unquote(text);
+			context = context.copy().setPrefix(text).toContext();
+		}
+
+		List<String> proposals = new DotProposalProviderDelegator(
+				subgrammarName).computeProposals(text, text.length());
+
+		proposeAttributeValues(proposals, context, acceptor);
+	}
+
 	private void proposeAttributeValues(Object[] values,
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
@@ -296,36 +313,6 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							? DotTerminalConverters.quote(value.toString())
 							: value.toString();
 			acceptor.accept(createCompletionProposal(proposedValue, context));
-		}
-	}
-
-	private void proposeAttributeValues(String subgrammarName,
-			ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
-
-		String currentModelToParse = context.getPrefix();
-
-		if (currentModelToParse.startsWith("\"")) { //$NON-NLS-1$
-			currentModelToParse = DotTerminalConverters
-					.unquote(currentModelToParse);
-			context = context.copy().setPrefix(currentModelToParse).toContext();
-		}
-
-		int cursorPosition = currentModelToParse.length();
-
-		try {
-			ICompletionProposal[] proposals = new DotProposalProviderDelegator(
-					subgrammarName).computeCompletionProposals(
-							currentModelToParse, cursorPosition);
-
-			for (ICompletionProposal proposal : proposals) {
-				// create an other completion proposal with the right context
-				acceptor.accept(createCompletionProposal(
-						proposal.getDisplayString(), context));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
