@@ -216,10 +216,12 @@ public class FXCanvasEx extends FXCanvas {
 		Scene oldScene = getScene();
 		if (oldScene != null) {
 			// restore original event dispatcher
-			oldScene.setEventDispatcher(
-					((RedrawingEventDispatcher) oldScene.getEventDispatcher())
-							.dispose());
-			oldScene.cursorProperty().removeListener(cursorChangeListener);
+			EventDispatcher eventDispatcher = oldScene.getEventDispatcher();
+			if (eventDispatcher instanceof RedrawingEventDispatcher) {
+				oldScene.setEventDispatcher(
+						((RedrawingEventDispatcher) eventDispatcher).dispose());
+				oldScene.cursorProperty().removeListener(cursorChangeListener);
+			}
 		}
 		super.setScene(newScene);
 		if (newScene != null) {
