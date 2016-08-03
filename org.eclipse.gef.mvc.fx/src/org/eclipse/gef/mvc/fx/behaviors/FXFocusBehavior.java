@@ -12,15 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.behaviors;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef.mvc.behaviors.FeedbackAndHandlesDelegate;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.FocusModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IFeedbackPart;
 import org.eclipse.gef.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.viewer.IViewer;
@@ -48,6 +45,9 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	 * The adapter role for the "focus" {@link IFeedbackPartFactory}.
 	 */
 	public static final String FOCUS_FEEDBACK_PART_FACTORY = "FOCUS_FEEDBACK_PART_FACTORY";
+
+	private FeedbackAndHandlesDelegate<Node> feedbackAndHandlesDelegate = new FeedbackAndHandlesDelegate<>(
+			this);
 
 	private IContentPart<Node, ? extends Node> focusPart;
 	private boolean isViewerFocused;
@@ -159,27 +159,23 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	 * Refreshes focus feedback, i.e. adds or removes feedback.
 	 */
 	protected void refreshFocusFeedback() {
-		if (getHost() == viewer.getRootPart()) {
-			boolean showFeedback = isViewerFocused && focusPart == null;
-			if (hasViewerFocusedFeedback && !showFeedback) {
-				removeViewerFocusedFeedback();
-			} else if (!hasViewerFocusedFeedback && showFeedback) {
-				addViewerFocusedFeedback();
-			}
-		} else {
-			List<IVisualPart<Node, ? extends Node>> targets = Collections
-					.<IVisualPart<Node, ? extends Node>> singletonList(
-							getHost());
-			boolean hasFeedback = getFeedbackParts() != null
-					&& !getFeedbackParts().isEmpty();
-			boolean isFocused = isViewerFocused && getHost() == focusPart;
-			if (hasFeedback && !isFocused) {
-				removeFeedback(targets);
-			} else if (!hasFeedback && isFocused) {
-				List<IFeedbackPart<Node, ? extends Node>> feedbackParts = getFeedbackPartFactory()
-						.createFeedbackParts(targets, FXFocusBehavior.this,
-								Collections.emptyMap());
-				addFeedback(targets, feedbackParts);
+		// refresh viewer focus feedback
+		boolean showViewerFocusFeedback = isViewerFocused && focusPart == null;
+		if (hasViewerFocusedFeedback && !showViewerFocusFeedback) {
+			removeViewerFocusedFeedback();
+		} else if (!hasViewerFocusedFeedback && showViewerFocusFeedback) {
+			addViewerFocusedFeedback();
+		}
+
+		// refresh focused part focus feedback
+		if (focusPart != null) {
+			boolean hasFeedback = !feedbackAndHandlesDelegate
+					.getFeedbackParts(focusPart).isEmpty();
+			if (hasFeedback && !isViewerFocused) {
+				feedbackAndHandlesDelegate.removeFeedback(focusPart);
+			} else if (!hasFeedback && isViewerFocused) {
+				feedbackAndHandlesDelegate.addFeedback(focusPart,
+						getFeedbackPartFactory());
 			}
 		}
 	}

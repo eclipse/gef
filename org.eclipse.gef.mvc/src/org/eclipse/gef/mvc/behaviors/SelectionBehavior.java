@@ -22,10 +22,10 @@ import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.parts.IFeedbackPart;
 import org.eclipse.gef.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef.mvc.parts.IRootPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
@@ -39,6 +39,7 @@ import javafx.collections.ListChangeListener;
  * selection feedback and handles.
  *
  * @author anyssen
+ * @author mwienand
  *
  * @param <VR>
  *            The visual root node of the UI toolkit used, e.g.
@@ -73,40 +74,44 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 		}
 	};
 
+	private FeedbackAndHandlesDelegate<VR> feedbackAndHandlesDelegate = new FeedbackAndHandlesDelegate<>(
+			this);
+
+	@Override
+	protected void addFeedback(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
+			List<? extends IFeedbackPart<VR, ? extends VR>> feedback) {
+		throw new UnsupportedOperationException();
+	}
+
 	/**
-	 * Creates feedback parts and handle parts for the given list of (selected)
-	 * {@link IContentPart}s.
-	 *
 	 * @param selected
-	 *            The list of {@link IContentPart}s for which feedback and
-	 *            handles are created.
+	 *            List of {@link IContentPart}s for which to add feedback and
+	 *            handles.
 	 */
 	protected void addFeedbackAndHandles(
 			List<? extends IContentPart<VR, ? extends VR>> selected) {
-		// root is responsible for multi selection
-		if (getHost() instanceof IRootPart && selected.size() > 1) {
-			// add feedback and handles
-			switchAdaptableScopes();
-			addFeedback(selected, getFeedbackPartFactory().createFeedbackParts(
-					selected, this, Collections.emptyMap()));
-			addHandles(selected, getHandlePartFactory()
-					.createHandleParts(selected, this, Collections.emptyMap()));
-		} else if (selected.contains(getHost())) {
-			// reveal the clicked part
-			// TODO: this should be encapsulated in an operation by the
-			// interaction policy
-			getHost().getRoot().getViewer().reveal(getHost());
-			// add feedback and handles
-			List<IVisualPart<VR, ? extends VR>> targets = Collections
-					.<IVisualPart<VR, ? extends VR>> singletonList(getHost());
-			switchAdaptableScopes();
-			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(
-					targets, this, Collections.emptyMap()));
-			if (selected.get(0) == getHost() && selected.size() <= 1) {
-				addHandles(targets, getHandlePartFactory().createHandleParts(
-						targets, this, Collections.emptyMap()));
+		if (!selected.isEmpty()) {
+			// reveal primary selection
+			getHost().getRoot().getViewer().reveal(selected.get(0));
+			// add feedback individually for the selected parts
+			for (IContentPart<VR, ? extends VR> sel : selected) {
+				feedbackAndHandlesDelegate.addHandles(sel,
+						getHandlePartFactory());
+			}
+			// add feedback individually for the selected parts
+			for (IContentPart<VR, ? extends VR> sel : selected) {
+				feedbackAndHandlesDelegate.addFeedback(sel,
+						getFeedbackPartFactory());
 			}
 		}
+	}
+
+	@Override
+	protected void addHandles(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
+			List<? extends IHandlePart<VR, ? extends VR>> handles) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -147,6 +152,11 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 						SELECTION_FEEDBACK_PART_FACTORY));
 	}
 
+	@Override
+	protected List<IFeedbackPart<VR, ? extends VR>> getFeedbackParts() {
+		throw new UnsupportedOperationException();
+	}
+
 	/**
 	 * Returns the {@link IHandlePartFactory} for selection feedback.
 	 *
@@ -160,6 +170,11 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(viewer.getClass())),
 						SELECTION_HANDLE_PART_FACTORY));
+	}
+
+	@Override
+	protected List<IHandlePart<VR, ? extends VR>> getHandleParts() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -179,29 +194,45 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 		return selectionModel;
 	}
 
-	/**
-	 * Removes feedback parts and handle parts for the given list of (selected)
-	 * {@link IContentPart}s.
-	 *
-	 * @param selected
-	 *            The list of {@link IContentPart}s for which feedback and
-	 *            handles are removed.
-	 */
-	protected void removeFeedbackAndHandles(
-			List<? extends IContentPart<VR, ? extends VR>> selected) {
-		// root is responsible for multi selection
-		if (getHost() instanceof IRootPart && selected.size() > 1) {
-			removeHandles(selected);
-			removeFeedback(selected);
-		} else if (selected.contains(getHost())) {
-			removeHandles(Collections.singletonList(getHost()));
-			removeFeedback(Collections.singletonList(getHost()));
-		}
+	@Override
+	protected void removeFeedback(
+			List<? extends IVisualPart<VR, ? extends VR>> targets) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
-	 * Updates the handles of this host.
+	 * @param selected
+	 *            List of {@link IContentPart}s for which to remove feedback and
+	 *            handles.
+	 */
+	protected void removeFeedbackAndHandles(
+			List<? extends IContentPart<VR, ? extends VR>> selected) {
+		if (!selected.isEmpty()) {
+			for (IContentPart<VR, ? extends VR> sel : selected) {
+				feedbackAndHandlesDelegate.removeHandles(sel);
+			}
+			for (IContentPart<VR, ? extends VR> sel : selected) {
+				feedbackAndHandlesDelegate.removeFeedback(sel);
+			}
+		}
+	}
+
+	@Override
+	protected void removeHandles(
+			List<? extends IVisualPart<VR, ? extends VR>> targets) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void switchAdaptableScopes() {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Updates the handles of the given host part.
 	 *
+	 * @param host
+	 *            The host part of the handles.
 	 * @param interactedWithComparator
 	 *            A {@link Comparator} that can be used to identify a new handle
 	 *            at the same position as the handle that is currently
@@ -215,16 +246,12 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 	 *         the preserved handle part.
 	 */
 	public IHandlePart<VR, ? extends VR> updateHandles(
+			IContentPart<VR, ? extends VR> host,
 			Comparator<IHandlePart<VR, ? extends VR>> interactedWithComparator,
 			IHandlePart<VR, ? extends VR> interactedWith) {
-		// determine new handles
-		switchAdaptableScopes();
-		List<IHandlePart<VR, ? extends VR>> newHandles = getHandlePartFactory()
-				.createHandleParts(Collections.singletonList(getHost()), this,
-						Collections.emptyMap());
-		// compare to current handles => remove/add as needed
-		return updateHandles(getHost(), newHandles, interactedWithComparator,
-				interactedWith);
+		return feedbackAndHandlesDelegate.updateHandles(host,
+				Collections.singletonList(host), getHandlePartFactory(),
+				interactedWithComparator, interactedWith);
 	}
 
 }

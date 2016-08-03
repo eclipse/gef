@@ -12,13 +12,16 @@
 package org.eclipse.gef.mvc.fx.behaviors;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.utils.CursorUtils;
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.mvc.behaviors.FeedbackAndHandlesDelegate;
 import org.eclipse.gef.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXHandlePart;
@@ -70,47 +73,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	public static final double MOUSE_MOVE_THRESHOLD = 4;
 
-	/**
-	 * Searches for the specified part in the given list of root parts. Returns
-	 * <code>true</code> if the part can be found. Otherwise returns
-	 * <code>false</code>.
-	 *
-	 * @param rootParts
-	 *            List of root parts to search through.
-	 * @param part
-	 *            The part that is checked for containment.
-	 * @return <code>true</code> when the part is contained in the hierarchy
-	 *         given by <i>rootParts</i>, otherwise <code>false</code>.
-	 */
-	public static boolean isContained(
-			List<? extends IVisualPart<Node, ? extends Node>> rootParts,
-			IVisualPart<Node, ? extends Node> part) {
-		// validate arguments
-		if (part == null) {
-			return false;
-		}
-		// check root parts
-		if (rootParts == null || rootParts.isEmpty()) {
-			return false;
-		}
-		// recurse over root parts
-		for (IVisualPart<Node, ? extends Node> root : rootParts) {
-			if (root == part) {
-				return true;
-			}
-			if (isContained(root.getChildrenUnmodifiable(), part)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
+	private FeedbackAndHandlesDelegate<Node> feedbackAndHandlesDelegate = new FeedbackAndHandlesDelegate<>(
+			this);
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();
-
-	private boolean isFeedback;
-	private boolean isHandles;
-	private PauseTransition creationDelayTransition;
-	private PauseTransition removalDelayTransition;
+	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleCreationDelayTransitions = new IdentityHashMap<>();
+	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleRemovalDelayTransitions = new IdentityHashMap<>();
 	private Point initialPointerLocation;
 	private final EventHandler<MouseEvent> mouseMoveHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -123,33 +90,27 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	protected void addFeedback(
 			java.util.List<? extends org.eclipse.gef.mvc.parts.IVisualPart<Node, ? extends Node>> targets,
 			java.util.List<? extends org.eclipse.gef.mvc.parts.IFeedbackPart<Node, ? extends Node>> feedback) {
-		isFeedback = true;
-		if (getHost() instanceof IHandlePart) {
-			// add effect to handle parts as feedback, because feedback parts
-			// would be drawn behind the handles
-			for (IVisualPart<Node, ? extends Node> part : targets) {
-				Node visual = part.getVisual();
-				effects.put(part, visual.getEffect());
-				visual.setEffect(
-						getHandleHoverFeedbackEffect(Collections.emptyMap()));
-			}
-		} else {
-			super.addFeedback(targets, feedback);
-		}
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void addHandles(
+			List<? extends IVisualPart<Node, ? extends Node>> targets,
+			List<? extends IHandlePart<Node, ? extends Node>> handles) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected void doDeactivate() {
-		super.doDeactivate();
-		if (isInCreationDelay()) {
-			stopCreationDelay();
-		}
-		if (isInRemovalDelay()) {
-			stopRemovalDelay();
-		}
+		stopAllDelays();
 		// remove any pending feedback and handles
-		removeFeedback(Collections.singletonList(getHost()));
-		removeHandles(Collections.singletonList(getHost()));
+		feedbackAndHandlesDelegate.clearFeedback();
+		feedbackAndHandlesDelegate.clearHandles();
+	}
+
+	@Override
+	protected List<IFeedbackPart<Node, ? extends Node>> getFeedbackParts() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -183,91 +144,106 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				}, HOVER_HANDLE_PART_FACTORY));
 	}
 
-	/**
-	 * Returns <code>true</code> if the given {@link IVisualPart} is either the
-	 * host or a handle part controlled by this behavior (
-	 * {@link #getHandleParts()}).
-	 *
-	 * @param part
-	 *            The {@link IVisualPart} to test.
-	 * @return <code>true</code> if the given {@link IVisualPart} is either the
-	 *         host ({@link #getHost()}) or a handle part controlled by this
-	 *         behavior ({@link #getHandleParts()}), <code>false</code>
-	 *         otherwise.
-	 */
-	protected boolean isHostOrHoverHandlePart(
-			IVisualPart<Node, ? extends Node> part) {
-		return getHost() == part || isContained(getHandleParts(), part);
+	@Override
+	protected List<IHandlePart<Node, ? extends Node>> getHandleParts() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Returns <code>true</code> when the creation delay is currently running.
 	 * Otherwise returns <code>false</code>.
 	 *
+	 * @param part
+	 *            The {@link IVisualPart} for which to determine if the creation
+	 *            delay is running.
 	 * @return <code>true</code> when the creation delay is currently running,
 	 *         otherwise <code>false</code>.
 	 */
-	protected boolean isInCreationDelay() {
-		return creationDelayTransition != null && Animation.Status.RUNNING
-				.equals(creationDelayTransition.getStatus());
+	protected boolean isInCreationDelay(
+			IVisualPart<Node, ? extends Node> part) {
+		return handleCreationDelayTransitions.containsKey(part)
+				&& Animation.Status.RUNNING.equals(
+						handleCreationDelayTransitions.get(part).getStatus());
 	}
 
 	/**
 	 * Returns <code>true</code> when the removal delay is currently running.
 	 * Otherwise returns <code>false</code>.
 	 *
+	 * @param part
+	 *            The {@link IVisualPart} for which to determine if a removal
+	 *            delay is currently running.
 	 * @return <code>true</code> when the removal delay is currently running,
 	 *         otherwise <code>false</code>.
 	 */
-	protected boolean isInRemovalDelay() {
-		return removalDelayTransition != null && Animation.Status.RUNNING
-				.equals(removalDelayTransition.getStatus());
+	protected boolean isInRemovalDelay(IVisualPart<Node, ? extends Node> part) {
+		return handleRemovalDelayTransitions.containsKey(part)
+				&& Animation.Status.RUNNING.equals(
+						handleRemovalDelayTransitions.get(part).getStatus());
 	}
 
 	/**
-	 * Called as soon as the creation delay finishes.
+	 * Called when the creation delay for the given part runs out, i.e. when
+	 * hover handles need to be created for the given part.
+	 *
+	 * @param hoveredPart
+	 *            The part for which to create hover handles.
 	 */
-	protected void onCreationDelay() {
+	protected void onCreationDelay(
+			IVisualPart<Node, ? extends Node> hoveredPart) {
 		unregisterMouseHandler();
 		initialPointerLocation = null;
-		// add handles
-		switchAdaptableScopes();
-		List<? extends IVisualPart<Node, ? extends Node>> targets = Collections
-				.singletonList(getHost());
-		addHandles(targets, getHandlePartFactory().createHandleParts(targets,
-				this, Collections.emptyMap()));
-		isHandles = getHandleParts() != null && !getHandleParts().isEmpty();
+		feedbackAndHandlesDelegate.addHandles(hoveredPart,
+				getHandlePartFactory());
 	}
 
 	/**
-	 * Called when the host, or any of its hover handles, is hovered after none
-	 * of them was hovered.
+	 * Called when the given part, or any of its hover handles, is hovered after
+	 * none of them was hovered.
+	 *
+	 * @param hoveredPart
+	 *            The part that was just hovered.
 	 */
-	protected void onHover() {
-		if (isInRemovalDelay()) {
-			stopRemovalDelay();
-		}
-		if (!isFeedback) {
-			switchAdaptableScopes();
-			List<? extends IVisualPart<Node, ? extends Node>> targets = Collections
-					.singletonList(getHost());
-			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(
-					targets, this, Collections.emptyMap()));
-		}
-		if (!isHandles) {
-			startHandleCreationDelay();
+	protected void onHover(IVisualPart<Node, ? extends Node> hoveredPart) {
+		if (isInRemovalDelay(hoveredPart)) {
+			stopRemovalDelay(hoveredPart);
+		} else {
+			feedbackAndHandlesDelegate.addFeedback(hoveredPart,
+					getFeedbackPartFactory());
+			startHandleCreationDelay(hoveredPart);
 		}
 	}
 
 	@Override
 	protected void onHoverChange(IVisualPart<Node, ? extends Node> oldHovered,
 			IVisualPart<Node, ? extends Node> newHovered) {
-		boolean wasHovered = isHostOrHoverHandlePart(oldHovered);
-		boolean isHovered = isHostOrHoverHandlePart(newHovered);
-		if (!wasHovered && isHovered) {
-			onHover();
-		} else if (wasHovered && !isHovered) {
-			onUnhover();
+		// TODO: check if is handle part
+		if (oldHovered != null) {
+			if (oldHovered instanceof IHandlePart) {
+				// unhovering a handle part
+				// remove feedback effect
+				if (effects.containsKey(oldHovered)) {
+					oldHovered.getVisual()
+							.setEffect(effects.remove(oldHovered));
+				} else {
+					throw new IllegalStateException(
+							"Cannot unhover/restore effect <" + oldHovered
+									+ ">.");
+				}
+			} else {
+				onUnhover(oldHovered);
+			}
+		}
+		if (newHovered != null) {
+			if (newHovered instanceof IHandlePart) {
+				// hovering a handle part
+				// add feedback effect
+				effects.put(newHovered, newHovered.getVisual().getEffect());
+				newHovered.getVisual().setEffect(
+						getHandleHoverFeedbackEffect(Collections.emptyMap()));
+			} else {
+				onHover(newHovered);
+			}
 		}
 	}
 
@@ -280,10 +256,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *            The {@link MouseEvent} for the mouse move.
 	 */
 	protected void onMouseMove(MouseEvent event) {
-		if (!isInCreationDelay()) {
-			throw new IllegalStateException(
-					"Mouse handler is active, although the creation timer is not running.");
-		}
 		double dx = event.getScreenX() - initialPointerLocation.x;
 		double dy = event.getScreenY() - initialPointerLocation.y;
 		if (Math.abs(dx) > MOUSE_MOVE_THRESHOLD
@@ -292,31 +264,41 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			initialPointerLocation = CursorUtils.getPointerLocation();
 			// restart creation timer when the mouse is moved beyond
 			// the threshold
-			creationDelayTransition.playFromStart();
+			for (PauseTransition transition : handleCreationDelayTransitions
+					.values()) {
+				transition.playFromStart();
+			}
 		}
 	}
 
 	/**
-	 * Called when the removal delay finishes.
+	 * Called when the finish callback of the removal delay for the given part
+	 * is executed.
+	 *
+	 * @param hoveredPart
+	 *            The part for which to remove feedback and handles.
 	 */
-	protected void onRemovalDelay() {
-		removeFeedback(Collections.singletonList(getHost()));
-		isHandles = false;
-		removeHandles(Collections.singletonList(getHost()));
+	protected void onRemovalDelay(
+			IVisualPart<Node, ? extends Node> hoveredPart) {
+		feedbackAndHandlesDelegate.removeFeedback(hoveredPart);
+		feedbackAndHandlesDelegate.removeHandles(hoveredPart);
 	}
 
 	/**
-	 * Called when the host, and all of its hover handles, are unhovered after
-	 * any one of them was previously hovered.
+	 * Called when the given part, and all of its hover handles, are unhovered
+	 * after any one of them was previously hovered.
+	 *
+	 * @param hoveredPart
+	 *            The part that was previously hovered.
 	 */
-	protected void onUnhover() {
-		if (!isHandles && isFeedback) {
-			if (isInCreationDelay()) {
-				stopCreationDelay();
+	protected void onUnhover(IVisualPart<Node, ? extends Node> hoveredPart) {
+		if (feedbackAndHandlesDelegate.getHandleParts(hoveredPart).isEmpty()) {
+			if (isInCreationDelay(hoveredPart)) {
+				stopCreationDelay(hoveredPart);
 			}
-			removeFeedback(Collections.singletonList(getHost()));
-		} else if (isHandles) {
-			startHandleRemovalDelay();
+			feedbackAndHandlesDelegate.removeFeedback(hoveredPart);
+		} else {
+			startHandleRemovalDelay(hoveredPart);
 		}
 	}
 
@@ -335,70 +317,104 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	@Override
 	protected void removeFeedback(
 			List<? extends IVisualPart<Node, ? extends Node>> targets) {
-		isFeedback = false;
-		if (getHost() instanceof IHandlePart) {
-			// replace feedback effect with the original effect
-			for (IVisualPart<Node, ? extends Node> part : targets) {
-				Node visual = part.getVisual();
-				visual.setEffect(effects.remove(part));
-			}
-		} else {
-			super.removeFeedback(targets);
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected void removeHandles(
 			List<? extends IVisualPart<Node, ? extends Node>> targets) {
-		super.removeHandles(targets);
-		isHandles = getHandleParts() != null && !getHandleParts().isEmpty();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
-	 * Starts the handle creation delay.
+	 * Starts the handle creation delay for the given visual part.
+	 *
+	 * @param hoveredPart
+	 *            The part that was recently hovered.
 	 */
-	protected void startHandleCreationDelay() {
+	protected void startHandleCreationDelay(
+			final IVisualPart<Node, ? extends Node> hoveredPart) {
 		registerMouseHandler();
 		// start creation delay transition
-		creationDelayTransition = new PauseTransition(
+		PauseTransition transition = new PauseTransition(
 				Duration.millis(CREATION_DELAY_MILLIS));
-		creationDelayTransition.setOnFinished(new EventHandler<ActionEvent>() {
+		handleCreationDelayTransitions.put(hoveredPart, transition);
+		transition.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				onCreationDelay();
+				onCreationDelay(hoveredPart);
 			}
 		});
-		creationDelayTransition.play();
+		transition.play();
 	}
 
 	/**
-	 * Starts the handle removal delay.
+	 * Start the handle removal delay for the given visual part.
+	 *
+	 * @param hoveredPart
+	 *            The part that was recently unhovered.
 	 */
-	protected void startHandleRemovalDelay() {
-		removalDelayTransition = new PauseTransition(
+	protected void startHandleRemovalDelay(
+			final IVisualPart<Node, ? extends Node> hoveredPart) {
+		PauseTransition transition = new PauseTransition(
 				Duration.millis(REMOVAL_DELAY_MILLIS));
-		removalDelayTransition.setOnFinished(new EventHandler<ActionEvent>() {
+		handleRemovalDelayTransitions.put(hoveredPart, transition);
+		transition.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				onRemovalDelay();
+				onRemovalDelay(hoveredPart);
 			}
 		});
-		removalDelayTransition.play();
+		transition.play();
+	}
+
+	/**
+	 * Stops all creation and delay transitions.
+	 */
+	protected void stopAllDelays() {
+		for (PauseTransition transition : handleCreationDelayTransitions
+				.values()) {
+			transition.stop();
+		}
+		handleCreationDelayTransitions.clear();
+		for (PauseTransition transition : handleRemovalDelayTransitions
+				.values()) {
+			transition.stop();
+		}
+		handleCreationDelayTransitions.clear();
 	}
 
 	/**
 	 * Stops the handle creation delay.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} for which to stop the creation delay.
 	 */
-	protected void stopCreationDelay() {
-		creationDelayTransition.stop();
+	protected void stopCreationDelay(IVisualPart<Node, ? extends Node> part) {
+		PauseTransition transition = handleCreationDelayTransitions
+				.remove(part);
+		if (transition != null) {
+			transition.stop();
+		}
 		unregisterMouseHandler();
 	}
 
 	/**
 	 * Stops the handle removal delay.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} for which to stop the removal delay.
 	 */
-	protected void stopRemovalDelay() {
-		removalDelayTransition.stop();
+	protected void stopRemovalDelay(IVisualPart<Node, ? extends Node> part) {
+		PauseTransition transition = handleRemovalDelayTransitions.remove(part);
+		if (transition != null) {
+			transition.stop();
+		}
+	}
+
+	@Override
+	protected void switchAdaptableScopes() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -409,6 +425,15 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		scene.removeEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 		scene.removeEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
 		initialPointerLocation = null;
+	}
+
+	@Override
+	protected IHandlePart<Node, ? extends Node> updateHandles(
+			IVisualPart<Node, ? extends Node> target,
+			List<? extends IHandlePart<Node, ? extends Node>> handles,
+			Comparator<IHandlePart<Node, ? extends Node>> interactedWithComparator,
+			IHandlePart<Node, ? extends Node> interactedWith) {
+		throw new UnsupportedOperationException();
 	}
 
 }

@@ -27,6 +27,7 @@ import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.HoverModel;
+import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
@@ -305,10 +306,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 								: secondAnchorHandle);
 				// determine position in scene for point to copy
 				Point positionInScene = FX2Geometry
-						.toPoint(targetPart.getVisual()
-								.localToScene(Geometry2FX
-										.toFXPoint(bendPolicy.getConnection()
-												.getPoint(connectionIndex))));
+						.toPoint(targetPart.getVisual().localToScene(
+								Geometry2FX.toFXPoint(bendPolicy.getConnection()
+										.getPoint(connectionIndex))));
 				// copy the anchor
 				if (selectFirstHalve) {
 					firstAnchorHandle = bendPolicy
@@ -400,9 +400,14 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	 */
 	@SuppressWarnings({ "serial", "unchecked" })
 	protected void updateHandles() {
+		if (!(targetPart instanceof IContentPart)) {
+			return;
+		}
+		IContentPart<Node, ? extends Node> targetContentPart = (IContentPart<Node, ? extends Node>) targetPart;
 		IHandlePart<Node, ? extends Node> replacementHandle = targetPart
-				.getAdapter(new TypeToken<SelectionBehavior<Node>>() {
-				}).updateHandles(handleDistanceComparator, getHost());
+				.getRoot().getAdapter(new TypeToken<SelectionBehavior<Node>>() {
+				}).updateHandles(targetContentPart, handleDistanceComparator,
+						getHost());
 		if (replacementHandle instanceof AbstractFXSegmentHandlePart) {
 			AbstractFXSegmentHandlePart<Node> segmentData = (AbstractFXSegmentHandlePart<Node>) replacementHandle;
 			getHost().setSegmentIndex(segmentData.getSegmentIndex());
