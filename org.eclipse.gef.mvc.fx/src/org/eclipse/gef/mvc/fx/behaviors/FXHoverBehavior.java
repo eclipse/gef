@@ -412,11 +412,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		}
 	}
 
-	@Override
-	protected void switchAdaptableScopes() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Unregisters the mouse handler.
 	 */

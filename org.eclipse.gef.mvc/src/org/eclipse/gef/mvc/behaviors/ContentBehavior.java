@@ -245,9 +245,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 
 			// If the part could not be revived, a new one is created
 			if (contentPart == null) {
-				// create part using the factory, adjusting the relevant scopes
-				// before
-				switchAdaptableScopes();
+				// create part using the factory
 				// System.out.println("CREATE " + content);
 				IContentPartFactory<VR> contentPartFactory = getContentPartFactory();
 				contentPart = contentPartFactory.createContentPart(content,

@@ -23,7 +23,6 @@ import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.common.adapt.inject.AdaptableScope;
-import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.beans.property.ReadOnlyMultisetProperty;
@@ -107,8 +106,6 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractVisualPart() {
-		// enter adaptables scope
-		AdaptableScopes.enter(this);
 	}
 
 	/**
@@ -446,9 +443,6 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public void dispose() {
-		// leave adaptables scope
-		AdaptableScopes.leave(this);
-
 		// dispose adapters
 		ads.dispose();
 	}

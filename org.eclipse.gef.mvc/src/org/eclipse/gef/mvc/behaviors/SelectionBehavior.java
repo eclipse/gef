@@ -223,11 +223,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	protected void switchAdaptableScopes() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Updates the handles of the given host part.
 	 *

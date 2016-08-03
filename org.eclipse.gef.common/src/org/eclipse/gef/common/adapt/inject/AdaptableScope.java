@@ -12,6 +12,7 @@
 package org.eclipse.gef.common.adapt.inject;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.IAdaptable;
@@ -52,7 +53,7 @@ import com.google.inject.Scope;
 public class AdaptableScope<A extends IAdaptable> implements Scope {
 
 	// hold a set of scoped instances per adaptable instance
-	private Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new HashMap<>();
+	private Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new IdentityHashMap<>();
 
 	private A adaptable = null;
 	private Class<? extends A> type;
@@ -121,7 +122,6 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 					// obtain the map of scoped instances for the given
 					// adaptable
 					Map<Key<?>, Object> scope = scopedInstances.get(adaptable);
-
 					// retrieve a cached instance from the scope (if it exists)
 					Object instance = scope.get(key);
 					if (instance == null) {
@@ -131,11 +131,6 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 						if (instance != null) {
 							scope.put(key, instance);
 						}
-						// System.out.println("Created (scoped) instance for "
-						// + key + "in " + type + " scope for " + adaptable);
-					} else {
-						// System.out.println("Recycling (scoped) instance for "
-						// + key + "in " + type + " scope for " + adaptable);
 					}
 					return (T) instance;
 				}
@@ -166,8 +161,6 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 	 *            {@link AdaptableScope} to.
 	 */
 	public void switchTo(A instance) {
-		// System.out.println("Switching scope for type " + type + " from " +
-		// this.adaptable + " to " + instance);
 		this.adaptable = instance;
 	}
 }

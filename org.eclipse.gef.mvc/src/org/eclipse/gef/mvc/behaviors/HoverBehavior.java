@@ -133,7 +133,6 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	protected void onHoverChange(IVisualPart<VR, ? extends VR> oldHovered,
 			IVisualPart<VR, ? extends VR> newHovered) {
 		if (getHost() != oldHovered && getHost() == newHovered) {
-			switchAdaptableScopes();
 			List<IVisualPart<VR, ? extends VR>> targets = Collections
 					.<IVisualPart<VR, ? extends VR>> singletonList(getHost());
 			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(

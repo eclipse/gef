@@ -22,7 +22,6 @@ import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.common.adapt.inject.AdaptableScope;
-import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef.mvc.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.domain.IDomain;
@@ -71,7 +70,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractViewer() {
-		AdaptableScopes.enter(this);
 	}
 
 	@Override
@@ -113,9 +111,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
 	@Override
 	public void dispose() {
-		// leave adaptable scope
-		AdaptableScopes.leave(this);
-
 		// dispose adapters (including root part and models)
 		ads.dispose();
 		ads = null;

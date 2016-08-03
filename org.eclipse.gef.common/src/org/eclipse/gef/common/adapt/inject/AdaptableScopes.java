@@ -32,6 +32,8 @@ public class AdaptableScopes {
 	}
 
 	// one adaptable scope for each type of adaptable
+	// FIXME: Only scopes for raw runtime types should be maintained, i.e.
+	// scopes for interfaces and abstract base types should not be maintained.
 	private static final Map<Class<? extends IAdaptable>, AdaptableScope<? extends IAdaptable>> scopes = new HashMap<>();
 
 	/**
@@ -47,6 +49,11 @@ public class AdaptableScopes {
 	 * @see AdaptableScope#enter(IAdaptable)
 	 */
 	public static void enter(final IAdaptable adaptable) {
+		if (adaptable == null) {
+			throw new IllegalArgumentException(
+					"The given IAdaptable may not be null.");
+		}
+
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
 			public void process(Class<? extends IAdaptable> adaptableType,
@@ -70,6 +77,11 @@ public class AdaptableScopes {
 	 * @see AdaptableScope#leave(IAdaptable)
 	 */
 	public static void leave(final IAdaptable adaptable) {
+		if (adaptable == null) {
+			throw new IllegalArgumentException(
+					"The given IAdaptable may not be null.");
+		}
+
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
 			public void process(Class<? extends IAdaptable> adaptableType,
@@ -113,6 +125,20 @@ public class AdaptableScopes {
 	 * @see AdaptableScope#switchTo(IAdaptable)
 	 */
 	public static void switchTo(final IAdaptable adaptable) {
+		if (adaptable == null) {
+			throw new IllegalArgumentException(
+					"The given IAdaptable may not be null.");
+		}
+
+		// XXX: If the given adaptable is an adapter itself, recursively
+		// switch to the adaptable it is bound to.
+		if (adaptable instanceof IAdaptable.Bound) {
+			IAdaptable boundTo = ((IAdaptable.Bound<?>) adaptable)
+					.getAdaptable();
+			if (boundTo != null) {
+				switchTo(boundTo);
+			}
+		}
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
 			public void process(Class<? extends IAdaptable> adaptableType,
