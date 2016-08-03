@@ -27,6 +27,7 @@ import org.eclipse.gef.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.parts.IFeedbackPart;
+import org.eclipse.gef.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.parts.IVisualPart;
@@ -78,6 +79,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();
 	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleCreationDelayTransitions = new IdentityHashMap<>();
 	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleRemovalDelayTransitions = new IdentityHashMap<>();
+	private Map<IVisualPart<Node, ? extends Node>, Boolean> creationDelayFinished = new IdentityHashMap<>();
 	private Point initialPointerLocation;
 	private final EventHandler<MouseEvent> mouseMoveHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -106,6 +108,29 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		// remove any pending feedback and handles
 		feedbackAndHandlesDelegate.clearFeedback();
 		feedbackAndHandlesDelegate.clearHandles();
+	}
+
+	@Override
+	protected IFeedbackPartFactory<Node> getFeedbackPartFactory() {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Returns the {@link IFeedbackPartFactory} for hover feedback.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} for which to determine the
+	 *            {@link IFeedbackPartFactory}.
+	 *
+	 * @return The {@link IFeedbackPartFactory} for hover feedback.
+	 */
+	@SuppressWarnings("serial")
+	protected IFeedbackPartFactory<Node> getFeedbackPartFactory(
+			IVisualPart<Node, ? extends Node> part) {
+		IViewer<Node> viewer = part.getRoot().getViewer();
+		return viewer.getAdapter(
+				AdapterKey.get(new TypeToken<IFeedbackPartFactory<Node>>() {
+				}, HOVER_FEEDBACK_PART_FACTORY));
 	}
 
 	@Override
@@ -191,10 +216,13 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void onCreationDelay(
 			IVisualPart<Node, ? extends Node> hoveredPart) {
+		System.out.println("ON CREATION " + hoveredPart);
 		unregisterMouseHandler();
 		initialPointerLocation = null;
 		feedbackAndHandlesDelegate.addHandles(hoveredPart,
 				getHandlePartFactory());
+		handleCreationDelayTransitions.remove(hoveredPart);
+		creationDelayFinished.put(hoveredPart, true);
 	}
 
 	/**
@@ -209,7 +237,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			stopRemovalDelay(hoveredPart);
 		} else {
 			feedbackAndHandlesDelegate.addFeedback(hoveredPart,
-					getFeedbackPartFactory());
+					getFeedbackPartFactory(hoveredPart));
 			startHandleCreationDelay(hoveredPart);
 		}
 	}
@@ -217,7 +245,14 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	@Override
 	protected void onHoverChange(IVisualPart<Node, ? extends Node> oldHovered,
 			IVisualPart<Node, ? extends Node> newHovered) {
-		// TODO: check if is handle part
+		System.out.println(
+				"hover changed from " + oldHovered + " to " + newHovered);
+
+		// TODO: When a hover handle part of a previously hovered part is
+		// hovered, the previously hovered part (which is an anchorage of the
+		// handle part) is regarded as being hovered again. Therefore, feedback
+		// and handles should not be removed for such parts.
+
 		if (oldHovered != null) {
 			if (oldHovered instanceof IHandlePart) {
 				// unhovering a handle part
@@ -231,6 +266,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 									+ ">.");
 				}
 			} else {
+				System.out.println("########################");
+				System.out.println("unhover " + oldHovered);
+				System.out.println("########################");
 				onUnhover(oldHovered);
 			}
 		}
@@ -242,6 +280,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				newHovered.getVisual().setEffect(
 						getHandleHoverFeedbackEffect(Collections.emptyMap()));
 			} else {
+				System.out.println("########################");
+				System.out.println("hover " + newHovered);
+				System.out.println("########################");
 				onHover(newHovered);
 			}
 		}
@@ -280,8 +321,10 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void onRemovalDelay(
 			IVisualPart<Node, ? extends Node> hoveredPart) {
+		System.out.println("ON REMOVAL " + hoveredPart);
 		feedbackAndHandlesDelegate.removeFeedback(hoveredPart);
 		feedbackAndHandlesDelegate.removeHandles(hoveredPart);
+		creationDelayFinished.remove(hoveredPart);
 	}
 
 	/**
@@ -297,6 +340,12 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				stopCreationDelay(hoveredPart);
 			}
 			feedbackAndHandlesDelegate.removeFeedback(hoveredPart);
+			if (creationDelayFinished.containsKey(hoveredPart)
+					&& creationDelayFinished.get(hoveredPart)) {
+				// clean up handles state
+				feedbackAndHandlesDelegate.removeHandles(hoveredPart);
+				creationDelayFinished.remove(hoveredPart);
+			}
 		} else {
 			startHandleRemovalDelay(hoveredPart);
 		}
@@ -305,11 +354,16 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	/**
 	 * Registers the mouse handler that restarts the creation delay upon mouse
 	 * moves.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} that determines the {@link Scene} to
+	 *            which a mouse handler is added.
 	 */
-	protected void registerMouseHandler() {
+	protected void registerMouseHandler(
+			IVisualPart<Node, ? extends Node> part) {
 		// store current pointer location to measure mouse movement
 		initialPointerLocation = CursorUtils.getPointerLocation();
-		final Scene scene = getHost().getVisual().getScene();
+		final Scene scene = part.getVisual().getScene();
 		scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 		scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
 	}
@@ -334,7 +388,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void startHandleCreationDelay(
 			final IVisualPart<Node, ? extends Node> hoveredPart) {
-		registerMouseHandler();
+		System.out.println("START creation FOR " + hoveredPart);
+		registerMouseHandler(hoveredPart);
 		// start creation delay transition
 		PauseTransition transition = new PauseTransition(
 				Duration.millis(CREATION_DELAY_MILLIS));
@@ -356,6 +411,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void startHandleRemovalDelay(
 			final IVisualPart<Node, ? extends Node> hoveredPart) {
+		System.out.println("START removal FOR " + hoveredPart);
 		PauseTransition transition = new PauseTransition(
 				Duration.millis(REMOVAL_DELAY_MILLIS));
 		handleRemovalDelayTransitions.put(hoveredPart, transition);
@@ -372,6 +428,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * Stops all creation and delay transitions.
 	 */
 	protected void stopAllDelays() {
+		System.out.println("STOP ALL");
 		for (PauseTransition transition : handleCreationDelayTransitions
 				.values()) {
 			transition.stop();
@@ -391,6 +448,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *            The {@link IVisualPart} for which to stop the creation delay.
 	 */
 	protected void stopCreationDelay(IVisualPart<Node, ? extends Node> part) {
+		System.out.println("STOP creation FOR " + part);
 		PauseTransition transition = handleCreationDelayTransitions
 				.remove(part);
 		if (transition != null) {
@@ -406,6 +464,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *            The {@link IVisualPart} for which to stop the removal delay.
 	 */
 	protected void stopRemovalDelay(IVisualPart<Node, ? extends Node> part) {
+		System.out.println("STOP removal FOR " + part);
 		PauseTransition transition = handleRemovalDelayTransitions.remove(part);
 		if (transition != null) {
 			transition.stop();

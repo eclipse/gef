@@ -123,9 +123,6 @@ public class MvcFxModule extends MvcModule<Node> {
 
 		// register default behaviors
 		bindContentBehaviorAsAbstractFXContentPartAdapter(adapterMapBinder);
-		bindHoverBehaviorAsAbstractFXContentPartAdapter(adapterMapBinder);
-		bindSelectionBehaviorAsAbstractFXContentPartAdapter(adapterMapBinder);
-		bindFXFocusBehaviorAsAbstractFXContentPartAdapter(adapterMapBinder);
 
 		// register default policies
 		bindContentPolicyAsAbstractFXContentPartAdapter(adapterMapBinder);
@@ -165,7 +162,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindAbstractFXHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		bindFXHoverOnHoverPolicyAsAbstractFXHandlePartAdapter(adapterMapBinder);
-		bindHoverBehaviorAsAbstractFXHandlePartAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -512,24 +508,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFXPinchSpreadToolAsFXDomainAdapter(adapterMapBinder);
 		bindFXScrollToolAsFXDomainAdapter(adapterMapBinder);
 		bindFXViewerAsFXDomainAdapter(adapterMapBinder);
-	}
-
-	/**
-	 * Adds a binding for {@link FXFocusBehavior} to the {@link AdapterMap}
-	 * binder for {@link AbstractFXContentPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractFXContentPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindFXFocusBehaviorAsAbstractFXContentPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXFocusBehavior.class);
 	}
 
 	/**
@@ -888,44 +866,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Adds a binding for {@link HoverBehavior}, parameterized by {@link Node} ,
-	 * to the {@link AdapterMap} binder for {@link AbstractFXContentPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractFXContentPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindHoverBehaviorAsAbstractFXContentPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<HoverBehavior<Node>>() {
-				});
-	}
-
-	/**
-	 * Adds a binding for {@link HoverBehavior}, parameterized by {@link Node} ,
-	 * to the {@link AdapterMap} binder for {@link AbstractFXHandlePart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractFXHandlePart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindHoverBehaviorAsAbstractFXHandlePartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<HoverBehavior<Node>>() {
-				});
-	}
-
-	/**
 	 * Binds the {@link IFeedbackPartFactory} that is used to generate hover
 	 * feedback.
 	 *
@@ -1008,28 +948,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		binder().bind(ITargetPolicyResolver.class)
 				.to(DefaultTargetPolicyResolver.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
-	}
-
-	/**
-	 * Adds a binding for {@link SelectionBehavior}, parameterized by
-	 * {@link Node}, to the {@link AdapterMap} binder for
-	 * {@link AbstractFXContentPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	@SuppressWarnings("serial")
-	protected void bindSelectionBehaviorAsAbstractFXContentPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<SelectionBehavior<Node>>() {
-				})).to(new TypeLiteral<SelectionBehavior<Node>>() {
-				});
 	}
 
 	/**

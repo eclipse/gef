@@ -141,11 +141,10 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 
 		// build operation to deselect all but the new part
 		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
-				getHost().getRoot().getViewer().getAdapter(new TypeToken<SelectionModel<Node>>() {
+				getContentViewer().getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelectionUnmodifiable());
 		toBeDeselected.remove(createdShapePart);
-		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(getHost().getRoot().getViewer(),
-				toBeDeselected);
+		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(getContentViewer(), toBeDeselected);
 
 		// execute on stack
 		try {

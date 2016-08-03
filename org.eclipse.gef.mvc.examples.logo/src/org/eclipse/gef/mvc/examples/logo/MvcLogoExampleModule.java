@@ -42,6 +42,7 @@ import org.eclipse.gef.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.FXFocusBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef.mvc.fx.domain.FXDomain;
 import org.eclipse.gef.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
@@ -140,6 +141,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTraverseFocusOnTypePolicy.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
+		// hover behavior
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverBehavior.class);
 	}
 
 	protected void bindFocusFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -420,6 +423,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindPaletteFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// bind focus traversal policy
 		bindFocusTraversalPolicyAsFXRootPartAdapter(adapterMapBinder);
+		// hover behavior
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverBehavior.class);
 	}
 
 	protected void bindSelectionFeedbackFactoryAsPaletteViewerAdapter(

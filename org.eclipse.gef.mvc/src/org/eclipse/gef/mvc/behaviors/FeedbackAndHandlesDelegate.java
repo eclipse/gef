@@ -63,11 +63,15 @@ import org.eclipse.gef.mvc.viewer.IViewer;
  *            javafx.scene.Node in case of JavaFX.
  *
  */
+// TODO: Merge into AbstractBehavior
 public class FeedbackAndHandlesDelegate<VR> {
 
 	private Map<IVisualPart<VR, ? extends VR>, List<IFeedbackPart<VR, ? extends VR>>> feedbackPerPart = new HashMap<>();
 	private Map<IVisualPart<VR, ? extends VR>, List<IHandlePart<VR, ? extends VR>>> handlesPerPart = new HashMap<>();
 	private IBehavior<VR> behavior;
+
+	// TODO: methods to query if feedback/handle generation was triggered
+	// (independent from actually created parts)
 
 	/**
 	 * Constructs a new {@link FeedbackAndHandlesDelegate} that can be used to
@@ -144,7 +148,8 @@ public class FeedbackAndHandlesDelegate<VR> {
 	public void addFeedback(IVisualPart<VR, ? extends VR> hostPart,
 			List<? extends IVisualPart<VR, ? extends VR>> targetParts,
 			List<IFeedbackPart<VR, ? extends VR>> feedbackParts) {
-		System.out.println("ADD feedback BY " + getCaller());
+		System.out.println("ADD feedback BY " + getCaller() + " FOR owner="
+				+ hostPart + ", targets=" + targetParts);
 		if (hostPart == null) {
 			throw new IllegalArgumentException(
 					"The given host part may not be null.");
@@ -240,7 +245,8 @@ public class FeedbackAndHandlesDelegate<VR> {
 	public void addHandles(IVisualPart<VR, ? extends VR> hostPart,
 			List<? extends IVisualPart<VR, ? extends VR>> targetParts,
 			List<IHandlePart<VR, ? extends VR>> handleParts) {
-		System.out.println("ADD handles BY " + getCaller());
+		System.out.println("ADD handles BY " + getCaller() + " FOR owner="
+				+ hostPart + ", targets=" + targetParts);
 		if (hostPart == null) {
 			throw new IllegalArgumentException(
 					"The given host part may not be null.");

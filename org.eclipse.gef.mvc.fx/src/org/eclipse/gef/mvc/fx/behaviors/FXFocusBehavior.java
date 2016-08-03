@@ -58,6 +58,10 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 				ObservableValue<? extends IContentPart<Node, ? extends Node>> observable,
 				IContentPart<Node, ? extends Node> oldValue,
 				IContentPart<Node, ? extends Node> newValue) {
+			if (oldValue != null && !feedbackAndHandlesDelegate
+					.getFeedbackParts(oldValue).isEmpty()) {
+				feedbackAndHandlesDelegate.removeFeedback(oldValue);
+			}
 			focusPart = newValue;
 			applyFocusToVisual();
 			refreshFocusFeedback();
