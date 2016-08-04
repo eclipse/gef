@@ -22,11 +22,9 @@ import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IFeedbackPart;
 import org.eclipse.gef.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeParameter;
@@ -77,13 +75,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 	private FeedbackAndHandlesDelegate<VR> feedbackAndHandlesDelegate = new FeedbackAndHandlesDelegate<>(
 			this);
 
-	@Override
-	protected void addFeedback(
-			List<? extends IVisualPart<VR, ? extends VR>> targets,
-			List<? extends IFeedbackPart<VR, ? extends VR>> feedback) {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * @param selected
 	 *            List of {@link IContentPart}s for which to add feedback and
@@ -112,13 +103,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 						getHandlePartFactory(selected.get(0)));
 			}
 		}
-	}
-
-	@Override
-	protected void addHandles(
-			List<? extends IVisualPart<VR, ? extends VR>> targets,
-			List<? extends IHandlePart<VR, ? extends VR>> handles) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -159,11 +143,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 						SELECTION_FEEDBACK_PART_FACTORY));
 	}
 
-	@Override
-	protected List<IFeedbackPart<VR, ? extends VR>> getFeedbackParts() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Returns the {@link IHandlePartFactory} that is to be used for generating
 	 * selection handles for the given target part.
@@ -186,11 +165,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 						SELECTION_HANDLE_PART_FACTORY));
 	}
 
-	@Override
-	protected List<IHandlePart<VR, ? extends VR>> getHandleParts() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Returns the {@link SelectionModel} in the context of the
 	 * {@link #getHost() host}.
@@ -206,12 +180,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(viewer.getClass())));
 		return selectionModel;
-	}
-
-	@Override
-	protected void removeFeedback(
-			List<? extends IVisualPart<VR, ? extends VR>> targets) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -238,12 +206,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 						selected);
 			}
 		}
-	}
-
-	@Override
-	protected void removeHandles(
-			List<? extends IVisualPart<VR, ? extends VR>> targets) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**

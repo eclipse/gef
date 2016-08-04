@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.behaviors;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.HoverModel;
@@ -51,6 +48,9 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	 * generate hover handle parts.
 	 */
 	public static final String HOVER_HANDLE_PART_FACTORY = "HOVER_HANDLE_PART_FACTORY";
+
+	private FeedbackAndHandlesDelegate<VR> feedbackAndHandles = new FeedbackAndHandlesDelegate<>(
+			this);
 
 	private ChangeListener<IVisualPart<VR, ? extends VR>> hoverObserver = new ChangeListener<IVisualPart<VR, ? extends VR>>() {
 		@Override
@@ -92,10 +92,14 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	/**
 	 * Returns the {@link IFeedbackPartFactory} for hover feedback.
 	 *
-	 * @return The {@link IFeedbackPartFactory} for hover feedback.
+	 * @param targetPart
+	 *            The {@link IVisualPart} for which to determine the
+	 *            {@link IFeedbackPartFactory}.
+	 * @return The {@link IFeedbackPartFactory} for the given target part.
 	 */
 	@SuppressWarnings("serial")
-	protected IFeedbackPartFactory<VR> getFeedbackPartFactory() {
+	protected IFeedbackPartFactory<VR> getFeedbackPartFactory(
+			IVisualPart<VR, ? extends VR> targetPart) {
 		IViewer<VR> viewer = getHost().getRoot().getViewer();
 		return viewer.getAdapter(
 				AdapterKey.get(new TypeToken<IFeedbackPartFactory<VR>>() {
@@ -132,13 +136,12 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	 */
 	protected void onHoverChange(IVisualPart<VR, ? extends VR> oldHovered,
 			IVisualPart<VR, ? extends VR> newHovered) {
-		if (getHost() != oldHovered && getHost() == newHovered) {
-			List<IVisualPart<VR, ? extends VR>> targets = Collections
-					.<IVisualPart<VR, ? extends VR>> singletonList(getHost());
-			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(
-					targets, this, Collections.emptyMap()));
-		} else if (getHost() == oldHovered && getHost() != newHovered) {
-			removeFeedback(Collections.singletonList(getHost()));
+		if (getHost() == oldHovered && getHost() != newHovered) {
+			feedbackAndHandles.removeFeedback(oldHovered);
+		}
+		if (getHost() == newHovered && getHost() != oldHovered) {
+			feedbackAndHandles.addFeedback(newHovered,
+					getFeedbackPartFactory(newHovered));
 		}
 	}
 

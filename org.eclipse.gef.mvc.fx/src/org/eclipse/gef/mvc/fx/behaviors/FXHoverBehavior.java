@@ -12,10 +12,8 @@
 package org.eclipse.gef.mvc.fx.behaviors;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -90,30 +88,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	};
 
 	@Override
-	protected void addFeedback(
-			java.util.List<? extends org.eclipse.gef.mvc.parts.IVisualPart<Node, ? extends Node>> targets,
-			java.util.List<? extends org.eclipse.gef.mvc.parts.IFeedbackPart<Node, ? extends Node>> feedback) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void addHandles(
-			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			List<? extends IHandlePart<Node, ? extends Node>> handles) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	protected void doDeactivate() {
 		stopAllDelays();
 		// remove any pending feedback and handles
 		feedbackAndHandlesDelegate.clearFeedback();
 		feedbackAndHandlesDelegate.clearHandles();
-	}
-
-	@Override
-	protected IFeedbackPartFactory<Node> getFeedbackPartFactory() {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -125,6 +104,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *
 	 * @return The {@link IFeedbackPartFactory} for hover feedback.
 	 */
+	@Override
 	@SuppressWarnings("serial")
 	protected IFeedbackPartFactory<Node> getFeedbackPartFactory(
 			IVisualPart<Node, ? extends Node> part) {
@@ -132,11 +112,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		return viewer.getAdapter(
 				AdapterKey.get(new TypeToken<IFeedbackPartFactory<Node>>() {
 				}, HOVER_FEEDBACK_PART_FACTORY));
-	}
-
-	@Override
-	protected List<IFeedbackPart<Node, ? extends Node>> getFeedbackParts() {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -168,11 +143,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		return viewer.getAdapter(
 				AdapterKey.get(new TypeToken<IHandlePartFactory<Node>>() {
 				}, HOVER_HANDLE_PART_FACTORY));
-	}
-
-	@Override
-	protected List<IHandlePart<Node, ? extends Node>> getHandleParts() {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -383,18 +353,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
 	}
 
-	@Override
-	protected void removeFeedback(
-			List<? extends IVisualPart<Node, ? extends Node>> targets) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void removeHandles(
-			List<? extends IVisualPart<Node, ? extends Node>> targets) {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Starts the handle creation delay for the given visual part.
 	 *
@@ -489,15 +447,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		scene.removeEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 		scene.removeEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
 		initialPointerLocation = null;
-	}
-
-	@Override
-	protected IHandlePart<Node, ? extends Node> updateHandles(
-			IVisualPart<Node, ? extends Node> target,
-			List<? extends IHandlePart<Node, ? extends Node>> handles,
-			Comparator<IHandlePart<Node, ? extends Node>> interactedWithComparator,
-			IHandlePart<Node, ? extends Node> interactedWith) {
-		throw new UnsupportedOperationException();
 	}
 
 }

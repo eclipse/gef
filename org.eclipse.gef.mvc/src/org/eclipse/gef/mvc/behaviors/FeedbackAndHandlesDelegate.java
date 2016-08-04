@@ -148,8 +148,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 	public void addFeedback(IVisualPart<VR, ? extends VR> hostPart,
 			List<? extends IVisualPart<VR, ? extends VR>> targetParts,
 			List<IFeedbackPart<VR, ? extends VR>> feedbackParts) {
-		System.out.println("ADD feedback BY " + getCaller() + " FOR owner="
-				+ hostPart + ", targets=" + targetParts);
 		if (hostPart == null) {
 			throw new IllegalArgumentException(
 					"The given host part may not be null.");
@@ -163,9 +161,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 			feedbackPerPart.put(hostPart, feedbackParts);
 			BehaviorUtils.<VR> addAnchoreds(hostPart.getRoot(), targetParts,
 					feedbackParts);
-			System.out.println(" -> Added " + feedbackParts.size() + " parts.");
-		} else {
-			System.out.println(" -> Nothing to do.");
 		}
 	}
 
@@ -245,8 +240,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 	public void addHandles(IVisualPart<VR, ? extends VR> hostPart,
 			List<? extends IVisualPart<VR, ? extends VR>> targetParts,
 			List<IHandlePart<VR, ? extends VR>> handleParts) {
-		System.out.println("ADD handles BY " + getCaller() + " FOR owner="
-				+ hostPart + ", targets=" + targetParts);
 		if (hostPart == null) {
 			throw new IllegalArgumentException(
 					"The given host part may not be null.");
@@ -260,9 +253,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 			handlesPerPart.put(hostPart, handleParts);
 			BehaviorUtils.<VR> addAnchoreds(hostPart.getRoot(), targetParts,
 					handleParts);
-			System.out.println(" -> Added " + handleParts.size() + " parts.");
-		} else {
-			System.out.println(" -> Nothing to do.");
 		}
 	}
 
@@ -387,7 +377,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 	 */
 	public void removeFeedback(IVisualPart<VR, ? extends VR> hostPart,
 			List<? extends IVisualPart<VR, ? extends VR>> targetParts) {
-		System.out.println("REM feedback BY " + getCaller());
 		if (hostPart == null) {
 			throw new IllegalArgumentException(
 					"The given host part may not be null.");
@@ -401,10 +390,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 			for (IFeedbackPart<VR, ? extends VR> fp : feedbackParts) {
 				fp.dispose();
 			}
-			System.out
-					.println(" -> Removed " + feedbackParts.size() + " parts.");
-		} else {
-			System.out.println(" -> Nothing to do.");
 		}
 	}
 
@@ -430,7 +415,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 	 */
 	public void removeHandles(IVisualPart<VR, ? extends VR> hostPart,
 			List<? extends IVisualPart<VR, ? extends VR>> targetParts) {
-		System.out.println("REM handles BY " + getCaller());
 		if (hostPart == null) {
 			throw new IllegalArgumentException(
 					"The given host part may not be null.");
@@ -444,9 +428,6 @@ public class FeedbackAndHandlesDelegate<VR> {
 			for (IHandlePart<VR, ? extends VR> hp : handleParts) {
 				hp.dispose();
 			}
-			System.out.println(" -> Removed " + handleParts.size() + " parts.");
-		} else {
-			System.out.println(" -> Nothing to do.");
 		}
 	}
 
