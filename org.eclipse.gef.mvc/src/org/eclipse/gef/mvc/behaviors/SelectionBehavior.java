@@ -96,13 +96,20 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			getHost().getRoot().getViewer().reveal(selected.get(0));
 			// add feedback individually for the selected parts
 			for (IContentPart<VR, ? extends VR> sel : selected) {
-				feedbackAndHandlesDelegate.addHandles(sel,
-						getHandlePartFactory());
-			}
-			// add feedback individually for the selected parts
-			for (IContentPart<VR, ? extends VR> sel : selected) {
 				feedbackAndHandlesDelegate.addFeedback(sel,
 						getFeedbackPartFactory());
+			}
+			// XXX: For a multi selection, handles are generated for the whole
+			// selection and not for each part individually. For a single
+			// selection, handles are generated for the only selected part.
+			if (selected.size() == 1) {
+				// add handles for the single selection
+				feedbackAndHandlesDelegate.addHandles(selected.get(0),
+						getHandlePartFactory(selected.get(0)));
+			} else {
+				// add handles for the whole multi selection
+				feedbackAndHandlesDelegate.addHandles(selected.get(0), selected,
+						getHandlePartFactory(selected.get(0)));
 			}
 		}
 	}
@@ -158,13 +165,20 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 	}
 
 	/**
-	 * Returns the {@link IHandlePartFactory} for selection feedback.
+	 * Returns the {@link IHandlePartFactory} that is to be used for generating
+	 * selection handles for the given target part.
 	 *
-	 * @return The {@link IHandlePartFactory} for selection feedback.
+	 * @param targetPart
+	 *            The {@link IContentPart} for which to determine the
+	 *            {@link IHandlePartFactory} that is to be used for generating
+	 *            selection handles.
+	 * @return The {@link IHandlePartFactory} for generating selection handles
+	 *         for the given target part.
 	 */
 	@SuppressWarnings("serial")
-	protected IHandlePartFactory<VR> getHandlePartFactory() {
-		IViewer<VR> viewer = getHost().getRoot().getViewer();
+	protected IHandlePartFactory<VR> getHandlePartFactory(
+			IContentPart<VR, ? extends VR> targetPart) {
+		IViewer<VR> viewer = targetPart.getRoot().getViewer();
 		return viewer.getAdapter(
 				AdapterKey.get(new TypeToken<IHandlePartFactory<VR>>() {
 				}.where(new TypeParameter<VR>() {
@@ -208,11 +222,20 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 	protected void removeFeedbackAndHandles(
 			List<? extends IContentPart<VR, ? extends VR>> selected) {
 		if (!selected.isEmpty()) {
-			for (IContentPart<VR, ? extends VR> sel : selected) {
-				feedbackAndHandlesDelegate.removeHandles(sel);
-			}
+			// remove feedback individually for all parts
 			for (IContentPart<VR, ? extends VR> sel : selected) {
 				feedbackAndHandlesDelegate.removeFeedback(sel);
+			}
+			// XXX: For a multi selection, handles are generated for the whole
+			// selection and not for each part individually. For a single
+			// selection, handles are generated for the only selected part.
+			if (selected.size() == 1) {
+				// remove handles for the single selection
+				feedbackAndHandlesDelegate.removeHandles(selected.get(0));
+			} else {
+				// remove handles for the multi selection
+				feedbackAndHandlesDelegate.removeHandles(selected.get(0),
+						selected);
 			}
 		}
 	}
@@ -245,7 +268,7 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			Comparator<IHandlePart<VR, ? extends VR>> interactedWithComparator,
 			IHandlePart<VR, ? extends VR> interactedWith) {
 		return feedbackAndHandlesDelegate.updateHandles(host,
-				Collections.singletonList(host), getHandlePartFactory(),
+				Collections.singletonList(host), getHandlePartFactory(host),
 				interactedWithComparator, interactedWith);
 	}
 
