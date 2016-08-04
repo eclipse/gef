@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
+import org.eclipse.gef.common.collections.ObservableSetMultimap;
 import org.eclipse.gef.fx.utils.CursorUtils;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.behaviors.FeedbackAndHandlesDelegate;
@@ -216,7 +217,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void onCreationDelay(
 			IVisualPart<Node, ? extends Node> hoveredPart) {
-		System.out.println("ON CREATION " + hoveredPart);
 		unregisterMouseHandler();
 		initialPointerLocation = null;
 		feedbackAndHandlesDelegate.addHandles(hoveredPart,
@@ -238,21 +238,13 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		} else {
 			feedbackAndHandlesDelegate.addFeedback(hoveredPart,
 					getFeedbackPartFactory(hoveredPart));
-			startHandleCreationDelay(hoveredPart);
+			startCreationDelay(hoveredPart);
 		}
 	}
 
 	@Override
 	protected void onHoverChange(IVisualPart<Node, ? extends Node> oldHovered,
 			IVisualPart<Node, ? extends Node> newHovered) {
-		System.out.println(
-				"hover changed from " + oldHovered + " to " + newHovered);
-
-		// TODO: When a hover handle part of a previously hovered part is
-		// hovered, the previously hovered part (which is an anchorage of the
-		// handle part) is regarded as being hovered again. Therefore, feedback
-		// and handles should not be removed for such parts.
-
 		if (oldHovered != null) {
 			if (oldHovered instanceof IHandlePart) {
 				// unhovering a handle part
@@ -265,10 +257,22 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 							"Cannot unhover/restore effect <" + oldHovered
 									+ ">.");
 				}
+				// start removal delay for the host part
+				ObservableSetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = oldHovered
+						.getAnchoragesUnmodifiable();
+				for (IVisualPart<Node, ? extends Node> anchorage : anchorages
+						.keySet()) {
+					if (!feedbackAndHandlesDelegate.getHandleParts(anchorage)
+							.isEmpty()) {
+						if (anchorage.getRoot() != null) {
+							startRemovalDelay(anchorage);
+						} else {
+							onRemovalDelay(anchorage);
+						}
+						break;
+					}
+				}
 			} else {
-				System.out.println("########################");
-				System.out.println("unhover " + oldHovered);
-				System.out.println("########################");
 				onUnhover(oldHovered);
 			}
 		}
@@ -279,10 +283,18 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				effects.put(newHovered, newHovered.getVisual().getEffect());
 				newHovered.getVisual().setEffect(
 						getHandleHoverFeedbackEffect(Collections.emptyMap()));
+				// stop removal delay for the host part
+				ObservableSetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = newHovered
+						.getAnchoragesUnmodifiable();
+				for (IVisualPart<Node, ? extends Node> anchorage : anchorages
+						.keySet()) {
+					if (!feedbackAndHandlesDelegate.getHandleParts(anchorage)
+							.isEmpty()) {
+						stopRemovalDelay(anchorage);
+						break;
+					}
+				}
 			} else {
-				System.out.println("########################");
-				System.out.println("hover " + newHovered);
-				System.out.println("########################");
 				onHover(newHovered);
 			}
 		}
@@ -321,7 +333,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void onRemovalDelay(
 			IVisualPart<Node, ? extends Node> hoveredPart) {
-		System.out.println("ON REMOVAL " + hoveredPart);
 		feedbackAndHandlesDelegate.removeFeedback(hoveredPart);
 		feedbackAndHandlesDelegate.removeHandles(hoveredPart);
 		creationDelayFinished.remove(hoveredPart);
@@ -347,7 +358,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				creationDelayFinished.remove(hoveredPart);
 			}
 		} else {
-			startHandleRemovalDelay(hoveredPart);
+			if (hoveredPart.getRoot() == null) {
+				onRemovalDelay(hoveredPart);
+			} else {
+				startRemovalDelay(hoveredPart);
+			}
 		}
 	}
 
@@ -386,9 +401,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * @param hoveredPart
 	 *            The part that was recently hovered.
 	 */
-	protected void startHandleCreationDelay(
+	protected void startCreationDelay(
 			final IVisualPart<Node, ? extends Node> hoveredPart) {
-		System.out.println("START creation FOR " + hoveredPart);
 		registerMouseHandler(hoveredPart);
 		// start creation delay transition
 		PauseTransition transition = new PauseTransition(
@@ -409,9 +423,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * @param hoveredPart
 	 *            The part that was recently unhovered.
 	 */
-	protected void startHandleRemovalDelay(
+	protected void startRemovalDelay(
 			final IVisualPart<Node, ? extends Node> hoveredPart) {
-		System.out.println("START removal FOR " + hoveredPart);
 		PauseTransition transition = new PauseTransition(
 				Duration.millis(REMOVAL_DELAY_MILLIS));
 		handleRemovalDelayTransitions.put(hoveredPart, transition);
@@ -428,7 +441,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * Stops all creation and delay transitions.
 	 */
 	protected void stopAllDelays() {
-		System.out.println("STOP ALL");
 		for (PauseTransition transition : handleCreationDelayTransitions
 				.values()) {
 			transition.stop();
@@ -448,7 +460,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *            The {@link IVisualPart} for which to stop the creation delay.
 	 */
 	protected void stopCreationDelay(IVisualPart<Node, ? extends Node> part) {
-		System.out.println("STOP creation FOR " + part);
 		PauseTransition transition = handleCreationDelayTransitions
 				.remove(part);
 		if (transition != null) {
@@ -464,7 +475,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *            The {@link IVisualPart} for which to stop the removal delay.
 	 */
 	protected void stopRemovalDelay(IVisualPart<Node, ? extends Node> part) {
-		System.out.println("STOP removal FOR " + part);
 		PauseTransition transition = handleRemovalDelayTransitions.remove(part);
 		if (transition != null) {
 			transition.stop();
