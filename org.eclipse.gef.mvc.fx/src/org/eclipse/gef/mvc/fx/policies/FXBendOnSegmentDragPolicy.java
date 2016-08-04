@@ -264,7 +264,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	@SuppressWarnings("unchecked")
 	protected void updateHandles() {
 		getHost().getRoot().getAdapter(SelectionBehavior.class)
-				.updateHandles(null, null, null);
+				.updateHandles(getHost(), null, null);
 	}
 
 }

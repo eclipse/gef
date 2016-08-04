@@ -98,7 +98,6 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 		getDeselectOperation().getToBeDeselected().add(contentPartToDelete);
 
-		// TODO: use unfocus for this
 		FocusModel<VR> focusModel = getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<FocusModel<VR>>() {
 				}.where(new TypeParameter<VR>() {

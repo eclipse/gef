@@ -49,9 +49,6 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	 */
 	public static final String HOVER_HANDLE_PART_FACTORY = "HOVER_HANDLE_PART_FACTORY";
 
-	private FeedbackAndHandlesDelegate<VR> feedbackAndHandles = new FeedbackAndHandlesDelegate<>(
-			this);
-
 	private ChangeListener<IVisualPart<VR, ? extends VR>> hoverObserver = new ChangeListener<IVisualPart<VR, ? extends VR>>() {
 		@Override
 		public void changed(
@@ -108,6 +105,16 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 						HOVER_FEEDBACK_PART_FACTORY));
 	}
 
+	@Override
+	protected String getFeedbackPartFactoryRole() {
+		return HOVER_FEEDBACK_PART_FACTORY;
+	}
+
+	@Override
+	protected String getHandlePartFactoryRole() {
+		return HOVER_HANDLE_PART_FACTORY;
+	}
+
 	/**
 	 * Returns the {@link HoverModel} in the context of the {@link #getHost()
 	 * host}.
@@ -137,11 +144,10 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	protected void onHoverChange(IVisualPart<VR, ? extends VR> oldHovered,
 			IVisualPart<VR, ? extends VR> newHovered) {
 		if (getHost() == oldHovered && getHost() != newHovered) {
-			feedbackAndHandles.removeFeedback(oldHovered);
+			removeFeedback(oldHovered);
 		}
 		if (getHost() == newHovered && getHost() != oldHovered) {
-			feedbackAndHandles.addFeedback(newHovered,
-					getFeedbackPartFactory(newHovered));
+			addFeedback(newHovered);
 		}
 	}
 

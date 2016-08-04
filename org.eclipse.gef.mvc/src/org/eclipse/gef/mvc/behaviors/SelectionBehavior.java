@@ -13,8 +13,6 @@
 package org.eclipse.gef.mvc.behaviors;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -23,7 +21,6 @@ import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IFeedbackPartFactory;
-import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
@@ -72,9 +69,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 		}
 	};
 
-	private FeedbackAndHandlesDelegate<VR> feedbackAndHandlesDelegate = new FeedbackAndHandlesDelegate<>(
-			this);
-
 	/**
 	 * @param selected
 	 *            List of {@link IContentPart}s for which to add feedback and
@@ -87,20 +81,17 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			getHost().getRoot().getViewer().reveal(selected.get(0));
 			// add feedback individually for the selected parts
 			for (IContentPart<VR, ? extends VR> sel : selected) {
-				feedbackAndHandlesDelegate.addFeedback(sel,
-						getFeedbackPartFactory());
+				addFeedback(sel);
 			}
 			// XXX: For a multi selection, handles are generated for the whole
 			// selection and not for each part individually. For a single
 			// selection, handles are generated for the only selected part.
 			if (selected.size() == 1) {
 				// add handles for the single selection
-				feedbackAndHandlesDelegate.addHandles(selected.get(0),
-						getHandlePartFactory(selected.get(0)));
+				addHandles(selected.get(0));
 			} else {
 				// add handles for the whole multi selection
-				feedbackAndHandlesDelegate.addHandles(selected.get(0), selected,
-						getHandlePartFactory(selected.get(0)));
+				addHandles(selected);
 			}
 		}
 	}
@@ -143,6 +134,11 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 						SELECTION_FEEDBACK_PART_FACTORY));
 	}
 
+	@Override
+	protected String getFeedbackPartFactoryRole() {
+		return SELECTION_FEEDBACK_PART_FACTORY;
+	}
+
 	/**
 	 * Returns the {@link IHandlePartFactory} that is to be used for generating
 	 * selection handles for the given target part.
@@ -163,6 +159,11 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(viewer.getClass())),
 						SELECTION_HANDLE_PART_FACTORY));
+	}
+
+	@Override
+	protected String getHandlePartFactoryRole() {
+		return SELECTION_HANDLE_PART_FACTORY;
 	}
 
 	/**
@@ -192,46 +193,19 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 		if (!selected.isEmpty()) {
 			// remove feedback individually for all parts
 			for (IContentPart<VR, ? extends VR> sel : selected) {
-				feedbackAndHandlesDelegate.removeFeedback(sel);
+				removeFeedback(sel);
 			}
 			// XXX: For a multi selection, handles are generated for the whole
 			// selection and not for each part individually. For a single
 			// selection, handles are generated for the only selected part.
 			if (selected.size() == 1) {
 				// remove handles for the single selection
-				feedbackAndHandlesDelegate.removeHandles(selected.get(0));
+				removeHandles(selected.get(0));
 			} else {
 				// remove handles for the multi selection
-				feedbackAndHandlesDelegate.removeHandles(selected.get(0),
-						selected);
+				removeHandles(selected);
 			}
 		}
-	}
-
-	/**
-	 * Updates the handles of the given host part.
-	 *
-	 * @param host
-	 *            The host part of the handles.
-	 * @param interactedWithComparator
-	 *            A {@link Comparator} that can be used to identify a new handle
-	 *            at the same position as the handle that is currently
-	 *            interacted with. Can be <code>null</code> if no handle should
-	 *            be preserved.
-	 * @param interactedWith
-	 *            The {@link IHandlePart} that is interacted with, or
-	 *            <code>null</code>.
-	 * @return The new {@link IHandlePart} for the position of the handle part
-	 *         that is interacted with so that its information can be applied to
-	 *         the preserved handle part.
-	 */
-	public IHandlePart<VR, ? extends VR> updateHandles(
-			IContentPart<VR, ? extends VR> host,
-			Comparator<IHandlePart<VR, ? extends VR>> interactedWithComparator,
-			IHandlePart<VR, ? extends VR> interactedWith) {
-		return feedbackAndHandlesDelegate.updateHandles(host,
-				Collections.singletonList(host), getHandlePartFactory(host),
-				interactedWithComparator, interactedWith);
 	}
 
 }

@@ -14,7 +14,6 @@ package org.eclipse.gef.mvc.fx.behaviors;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef.mvc.behaviors.FeedbackAndHandlesDelegate;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.FocusModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
@@ -46,9 +45,6 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	 */
 	public static final String FOCUS_FEEDBACK_PART_FACTORY = "FOCUS_FEEDBACK_PART_FACTORY";
 
-	private FeedbackAndHandlesDelegate<Node> feedbackAndHandlesDelegate = new FeedbackAndHandlesDelegate<>(
-			this);
-
 	private IContentPart<Node, ? extends Node> focusPart;
 	private boolean isViewerFocused;
 
@@ -58,9 +54,8 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 				ObservableValue<? extends IContentPart<Node, ? extends Node>> observable,
 				IContentPart<Node, ? extends Node> oldValue,
 				IContentPart<Node, ? extends Node> newValue) {
-			if (oldValue != null && !feedbackAndHandlesDelegate
-					.getFeedbackParts(oldValue).isEmpty()) {
-				feedbackAndHandlesDelegate.removeFeedback(oldValue);
+			if (oldValue != null && hasFeedback(oldValue)) {
+				removeFeedback(oldValue);
 			}
 			focusPart = newValue;
 			applyFocusToVisual();
@@ -148,6 +143,11 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 				}, FOCUS_FEEDBACK_PART_FACTORY));
 	}
 
+	@Override
+	protected String getFeedbackPartFactoryRole() {
+		return FOCUS_FEEDBACK_PART_FACTORY;
+	}
+
 	/**
 	 * Returns the {@link FocusModel} at which this {@link FXFocusBehavior} is
 	 * registered for changes.
@@ -157,6 +157,11 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	 */
 	protected FocusModel<Node> getFocusModel() {
 		return focusModel;
+	}
+
+	@Override
+	protected String getHandlePartFactoryRole() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -173,13 +178,11 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 
 		// refresh focused part focus feedback
 		if (focusPart != null) {
-			boolean hasFeedback = !feedbackAndHandlesDelegate
-					.getFeedbackParts(focusPart).isEmpty();
+			boolean hasFeedback = hasFeedback(focusPart);
 			if (hasFeedback && !isViewerFocused) {
-				feedbackAndHandlesDelegate.removeFeedback(focusPart);
+				removeFeedback(focusPart);
 			} else if (!hasFeedback && isViewerFocused) {
-				feedbackAndHandlesDelegate.addFeedback(focusPart,
-						getFeedbackPartFactory());
+				addFeedback(focusPart);
 			}
 		}
 	}

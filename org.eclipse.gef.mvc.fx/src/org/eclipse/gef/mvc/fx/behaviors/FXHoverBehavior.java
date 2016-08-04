@@ -20,7 +20,6 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.collections.ObservableSetMultimap;
 import org.eclipse.gef.fx.utils.CursorUtils;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.behaviors.FeedbackAndHandlesDelegate;
 import org.eclipse.gef.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXHandlePart;
@@ -36,6 +35,8 @@ import com.google.common.reflect.TypeToken;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -73,8 +74,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	public static final double MOUSE_MOVE_THRESHOLD = 4;
 
-	private FeedbackAndHandlesDelegate<Node> feedbackAndHandlesDelegate = new FeedbackAndHandlesDelegate<>(
-			this);
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();
 	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleCreationDelayTransitions = new IdentityHashMap<>();
 	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleRemovalDelayTransitions = new IdentityHashMap<>();
@@ -87,12 +86,14 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		}
 	};
 
+	private Map<IVisualPart<Node, ? extends Node>, ChangeListener<IVisualPart<Node, ? extends Node>>> hoveredParentChangeListeners = new IdentityHashMap<>();
+
 	@Override
 	protected void doDeactivate() {
 		stopAllDelays();
 		// remove any pending feedback and handles
-		feedbackAndHandlesDelegate.clearFeedback();
-		feedbackAndHandlesDelegate.clearHandles();
+		clearFeedback();
+		clearHandles();
 	}
 
 	/**
@@ -189,8 +190,25 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			IVisualPart<Node, ? extends Node> hoveredPart) {
 		unregisterMouseHandler();
 		initialPointerLocation = null;
-		feedbackAndHandlesDelegate.addHandles(hoveredPart,
-				getHandlePartFactory());
+		addHandles(hoveredPart);
+		ChangeListener<IVisualPart<Node, ? extends Node>> parentChangeListener = new ChangeListener<IVisualPart<Node, ? extends Node>>() {
+			@Override
+			public void changed(
+					ObservableValue<? extends IVisualPart<Node, ? extends Node>> observable,
+					IVisualPart<Node, ? extends Node> oldValue,
+					IVisualPart<Node, ? extends Node> newValue) {
+				hoveredParentChangeListeners.remove(hoveredPart);
+				observable.removeListener(this);
+				if (hasHandles(hoveredPart)) {
+					removeHandles(hoveredPart);
+				}
+				if (hasFeedback(hoveredPart)) {
+					removeFeedback(hoveredPart);
+				}
+			}
+		};
+		hoveredParentChangeListeners.put(hoveredPart, parentChangeListener);
+		hoveredPart.parentProperty().addListener(parentChangeListener);
 		handleCreationDelayTransitions.remove(hoveredPart);
 		creationDelayFinished.put(hoveredPart, true);
 	}
@@ -206,8 +224,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		if (isInRemovalDelay(hoveredPart)) {
 			stopRemovalDelay(hoveredPart);
 		} else {
-			feedbackAndHandlesDelegate.addFeedback(hoveredPart,
-					getFeedbackPartFactory(hoveredPart));
+			addFeedback(hoveredPart);
 			startCreationDelay(hoveredPart);
 		}
 	}
@@ -232,12 +249,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 						.getAnchoragesUnmodifiable();
 				for (IVisualPart<Node, ? extends Node> anchorage : anchorages
 						.keySet()) {
-					if (!feedbackAndHandlesDelegate.getHandleParts(anchorage)
-							.isEmpty()) {
+					if (hasHandles(anchorage)) {
 						if (anchorage.getRoot() != null) {
 							startRemovalDelay(anchorage);
-						} else {
-							onRemovalDelay(anchorage);
 						}
 						break;
 					}
@@ -258,8 +272,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 						.getAnchoragesUnmodifiable();
 				for (IVisualPart<Node, ? extends Node> anchorage : anchorages
 						.keySet()) {
-					if (!feedbackAndHandlesDelegate.getHandleParts(anchorage)
-							.isEmpty()) {
+					if (hasHandles(anchorage)) {
 						stopRemovalDelay(anchorage);
 						break;
 					}
@@ -303,8 +316,12 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void onRemovalDelay(
 			IVisualPart<Node, ? extends Node> hoveredPart) {
-		feedbackAndHandlesDelegate.removeFeedback(hoveredPart);
-		feedbackAndHandlesDelegate.removeHandles(hoveredPart);
+		removeFeedback(hoveredPart);
+		removeHandles(hoveredPart);
+		if (hoveredParentChangeListeners.containsKey(hoveredPart)) {
+			hoveredPart.parentProperty().removeListener(
+					hoveredParentChangeListeners.remove(hoveredPart));
+		}
 		creationDelayFinished.remove(hoveredPart);
 	}
 
@@ -316,15 +333,15 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *            The part that was previously hovered.
 	 */
 	protected void onUnhover(IVisualPart<Node, ? extends Node> hoveredPart) {
-		if (feedbackAndHandlesDelegate.getHandleParts(hoveredPart).isEmpty()) {
+		if (!hasHandles(hoveredPart)) {
 			if (isInCreationDelay(hoveredPart)) {
 				stopCreationDelay(hoveredPart);
 			}
-			feedbackAndHandlesDelegate.removeFeedback(hoveredPart);
+			removeFeedback(hoveredPart);
 			if (creationDelayFinished.containsKey(hoveredPart)
 					&& creationDelayFinished.get(hoveredPart)) {
 				// clean up handles state
-				feedbackAndHandlesDelegate.removeHandles(hoveredPart);
+				removeHandles(hoveredPart);
 				creationDelayFinished.remove(hoveredPart);
 			}
 		} else {

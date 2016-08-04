@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.behaviors;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.gef.mvc.parts.IFeedbackPart;
@@ -47,10 +48,10 @@ public class BehaviorUtils {
 	 *            The visual root node of the UI toolkit this
 	 *            {@link IVisualPart} is used in, e.g. javafx.scene.Node in case
 	 *            of JavaFX.
-	 * @see #removeAnchoreds(IRootPart, List, List)
+	 * @see #removeAnchoreds(IRootPart, Collection, List)
 	 */
 	public static <VR> void addAnchoreds(IRootPart<VR, ? extends VR> root,
-			List<? extends IVisualPart<VR, ? extends VR>> anchorages,
+			Collection<? extends IVisualPart<VR, ? extends VR>> anchorages,
 			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
 			root.addChildren(anchoreds);
@@ -77,10 +78,10 @@ public class BehaviorUtils {
 	 *            The visual root node of the UI toolkit this
 	 *            {@link IVisualPart} is used in, e.g. javafx.scene.Node in case
 	 *            of JavaFX.
-	 * @see #addAnchoreds(IRootPart, List, List)
+	 * @see #addAnchoreds(IRootPart, Collection, List)
 	 */
 	public static <VR> void removeAnchoreds(IRootPart<VR, ? extends VR> root,
-			List<? extends IVisualPart<VR, ? extends VR>> anchorages,
+			Collection<? extends IVisualPart<VR, ? extends VR>> anchorages,
 			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
 			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
