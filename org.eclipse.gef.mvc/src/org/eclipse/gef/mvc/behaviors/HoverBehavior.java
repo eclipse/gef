@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.behaviors;
 
-import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.parts.IFeedbackPartFactory;
@@ -84,25 +83,6 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 
 		// unregister
 		hoverModel.hoverProperty().removeListener(hoverObserver);
-	}
-
-	/**
-	 * Returns the {@link IFeedbackPartFactory} for hover feedback.
-	 *
-	 * @param targetPart
-	 *            The {@link IVisualPart} for which to determine the
-	 *            {@link IFeedbackPartFactory}.
-	 * @return The {@link IFeedbackPartFactory} for the given target part.
-	 */
-	@SuppressWarnings("serial")
-	protected IFeedbackPartFactory<VR> getFeedbackPartFactory(
-			IVisualPart<VR, ? extends VR> targetPart) {
-		IViewer<VR> viewer = getHost().getRoot().getViewer();
-		return viewer.getAdapter(
-				AdapterKey.get(new TypeToken<IFeedbackPartFactory<VR>>() {
-				}.where(new TypeParameter<VR>() {
-				}, Types.<VR> argumentOf(viewer.getClass())),
-						HOVER_FEEDBACK_PART_FACTORY));
 	}
 
 	@Override

@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.behaviors;
 
-import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.FocusModel;
@@ -128,19 +127,6 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 		isViewerFocused = false;
 		refreshFocusFeedback();
 		super.doDeactivate();
-	}
-
-	/**
-	 * Returns the {@link IFeedbackPartFactory} for selection feedback.
-	 *
-	 * @return The {@link IFeedbackPartFactory} for selection feedback.
-	 */
-	@SuppressWarnings("serial")
-	protected IFeedbackPartFactory<Node> getFeedbackPartFactory() {
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		return viewer.getAdapter(
-				AdapterKey.get(new TypeToken<IFeedbackPartFactory<Node>>() {
-				}, FOCUS_FEEDBACK_PART_FACTORY));
 	}
 
 	@Override

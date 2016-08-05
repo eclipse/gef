@@ -15,7 +15,6 @@ package org.eclipse.gef.mvc.behaviors;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.SelectionModel;
@@ -119,46 +118,9 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 				.removeListener(selectionObserver);
 	}
 
-	/**
-	 * Returns the {@link IFeedbackPartFactory} for selection feedback.
-	 *
-	 * @return The {@link IFeedbackPartFactory} for selection feedback.
-	 */
-	@SuppressWarnings("serial")
-	protected IFeedbackPartFactory<VR> getFeedbackPartFactory() {
-		IViewer<VR> viewer = getHost().getRoot().getViewer();
-		return viewer.getAdapter(
-				AdapterKey.get(new TypeToken<IFeedbackPartFactory<VR>>() {
-				}.where(new TypeParameter<VR>() {
-				}, Types.<VR> argumentOf(viewer.getClass())),
-						SELECTION_FEEDBACK_PART_FACTORY));
-	}
-
 	@Override
 	protected String getFeedbackPartFactoryRole() {
 		return SELECTION_FEEDBACK_PART_FACTORY;
-	}
-
-	/**
-	 * Returns the {@link IHandlePartFactory} that is to be used for generating
-	 * selection handles for the given target part.
-	 *
-	 * @param targetPart
-	 *            The {@link IContentPart} for which to determine the
-	 *            {@link IHandlePartFactory} that is to be used for generating
-	 *            selection handles.
-	 * @return The {@link IHandlePartFactory} for generating selection handles
-	 *         for the given target part.
-	 */
-	@SuppressWarnings("serial")
-	protected IHandlePartFactory<VR> getHandlePartFactory(
-			IContentPart<VR, ? extends VR> targetPart) {
-		IViewer<VR> viewer = targetPart.getRoot().getViewer();
-		return viewer.getAdapter(
-				AdapterKey.get(new TypeToken<IHandlePartFactory<VR>>() {
-				}.where(new TypeParameter<VR>() {
-				}, Types.<VR> argumentOf(viewer.getClass())),
-						SELECTION_HANDLE_PART_FACTORY));
 	}
 
 	@Override
