@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.FocusModel;
+import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.operations.ChangeFocusOperation;
 import org.eclipse.gef.mvc.operations.DeselectOperation;
@@ -62,14 +63,13 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				"Delete Content");
 		IViewer<VR> viewer = getHost().getRoot().getViewer();
 		// unfocus
-		// TODO: this should be different-> use unfocus and initialize with null
-		// or empty list
-		commit.add(new ChangeFocusOperation<>(viewer,
-				viewer.getAdapter(new TypeToken<FocusModel<VR>>() {
+		IContentPart<VR, ? extends VR> currentlyFocusedPart = viewer
+				.getAdapter(new TypeToken<FocusModel<VR>>() {
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(
 						getHost().getRoot().getViewer().getClass())))
-						.getFocus()));
+				.getFocus();
+		commit.add(new ChangeFocusOperation<>(viewer, currentlyFocusedPart));
 		// deselect
 		commit.add(new DeselectOperation<>(viewer,
 				Collections.<IContentPart<VR, ? extends VR>> emptyList()));
@@ -91,10 +91,20 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	// TODO: offer a bulk operation to improve deselect (can remove all in one
 	// operation pass)
-	// this will break if being called one after anothe without commit
+	// this will break if being called one after another without commit
 	@SuppressWarnings("serial")
 	public void delete(IContentPart<VR, ? extends VR> contentPartToDelete) {
 		checkInitialized();
+
+		// clear viewer models so that anchoreds are removed
+		IViewer<VR> viewer = contentPartToDelete.getRoot().getViewer();
+		HoverModel<VR> hoverModel = viewer
+				.getAdapter(new TypeToken<HoverModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		if (hoverModel.getHover() == contentPartToDelete) {
+			hoverModel.setHover(null);
+		}
 
 		getDeselectOperation().getToBeDeselected().add(contentPartToDelete);
 
@@ -108,6 +118,12 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				getUnfocusOperation().setNewFocused(null);
 			}
 		}
+
+		// XXX: Execute operations for changing the viewer models prior to
+		// detaching anchoreds and removing children, so that no link to the
+		// viewer is available for the removed part via selection, focus, or
+		// hover feedback or handles.
+		locallyExecuteOperation();
 
 		// detach all content anchoreds
 		for (IVisualPart<VR, ? extends VR> anchored : HashMultiset
@@ -153,7 +169,15 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				getRemoveChildrenOperation().add(removeFromParentOperation);
 			}
 		}
+
 		locallyExecuteOperation();
+
+		// verify that all anchoreds were removed
+		if (!contentPartToDelete.getAnchoredsUnmodifiable().isEmpty()) {
+			throw new IllegalStateException(
+					"After deletion of <" + contentPartToDelete
+							+ "> there are still anchoreds remaining.");
+		}
 	}
 
 	/**
@@ -217,4 +241,5 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		return (ChangeFocusOperation<VR>) getCompositeOperation()
 				.getOperations().get(0);
 	}
+
 }
