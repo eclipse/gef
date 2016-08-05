@@ -86,13 +86,14 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 	}
 
 	@Override
-	protected String getFeedbackPartFactoryRole() {
-		return HOVER_FEEDBACK_PART_FACTORY;
+	protected IFeedbackPartFactory<VR> getFeedbackPartFactory(
+			IViewer<VR> viewer) {
+		return getFeedbackPartFactory(viewer, HOVER_FEEDBACK_PART_FACTORY);
 	}
 
 	@Override
-	protected String getHandlePartFactoryRole() {
-		return HOVER_HANDLE_PART_FACTORY;
+	protected IHandlePartFactory<VR> getHandlePartFactory(IViewer<VR> viewer) {
+		return getHandlePartFactory(viewer, HOVER_HANDLE_PART_FACTORY);
 	}
 
 	/**

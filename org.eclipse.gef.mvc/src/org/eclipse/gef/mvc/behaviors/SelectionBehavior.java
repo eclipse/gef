@@ -119,13 +119,14 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 	}
 
 	@Override
-	protected String getFeedbackPartFactoryRole() {
-		return SELECTION_FEEDBACK_PART_FACTORY;
+	protected IFeedbackPartFactory<VR> getFeedbackPartFactory(
+			IViewer<VR> viewer) {
+		return getFeedbackPartFactory(viewer, SELECTION_FEEDBACK_PART_FACTORY);
 	}
 
 	@Override
-	protected String getHandlePartFactoryRole() {
-		return SELECTION_HANDLE_PART_FACTORY;
+	protected IHandlePartFactory<VR> getHandlePartFactory(IViewer<VR> viewer) {
+		return getHandlePartFactory(viewer, SELECTION_HANDLE_PART_FACTORY);
 	}
 
 	/**

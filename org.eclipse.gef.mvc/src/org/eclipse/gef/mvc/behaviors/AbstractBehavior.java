@@ -60,8 +60,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	private ReadOnlyObjectWrapper<IVisualPart<VR, ? extends VR>> hostProperty = new ReadOnlyObjectWrapper<>();
 	private ActivatableSupport acs = new ActivatableSupport(this);
 
-	private Map<Set<IVisualPart<VR, ? extends VR>>, List<IFeedbackPart<VR, ? extends VR>>> feedbackPerTargetSetMap = new HashMap<>();
-	private Map<Set<IVisualPart<VR, ? extends VR>>, List<IHandlePart<VR, ? extends VR>>> handlesPerTargetSetMap = new HashMap<>();
+	private Map<Set<IVisualPart<VR, ? extends VR>>, List<IFeedbackPart<VR, ? extends VR>>> feedbackPerTargetSet = new HashMap<>();
+	private Map<Set<IVisualPart<VR, ? extends VR>>, List<IHandlePart<VR, ? extends VR>>> handlesPerTargetSet = new HashMap<>();
 
 	@Override
 	public final void activate() {
@@ -97,6 +97,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @param targets
 	 *            The target parts for which to add feedback.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected void addFeedback(
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (targets == null) {
@@ -119,8 +120,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// determine feedback part factory for the target set
 		IFeedbackPartFactory<VR> factory = getFeedbackPartFactory(
-				targets.get(0).getRoot().getViewer(),
-				getFeedbackPartFactoryRole());
+				targets.get(0).getRoot().getViewer());
 
 		// generate feedback parts
 		List<IFeedbackPart<VR, ? extends VR>> feedbackParts = null;
@@ -135,7 +135,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 
 		// store feedback parts for the target set
-		getFeedbackPerTargetSetMap().put(targetSet, feedbackParts);
+		getFeedbackPerTargetSet().put(targetSet, feedbackParts);
 
 		// add feedback to the viewer
 		if (!feedbackParts.isEmpty()) {
@@ -160,6 +160,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @param targets
 	 *            The target parts for which to add handles.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected void addHandles(
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (targets == null) {
@@ -182,8 +183,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// determine handle part factory for the target set
 		IHandlePartFactory<VR> factory = getHandlePartFactory(
-				targets.get(0).getRoot().getViewer(),
-				getHandlePartFactoryRole());
+				targets.get(0).getRoot().getViewer());
 
 		// generate handle parts
 		List<IHandlePart<VR, ? extends VR>> handleParts = null;
@@ -198,7 +198,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 
 		// store handle parts for the target set
-		getHandlesPerTargetSetMap().put(targetSet, handleParts);
+		getHandlesPerTargetSet().put(targetSet, handleParts);
 
 		// add handles to the viewer
 		if (!handleParts.isEmpty()) {
@@ -211,7 +211,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * Removes all feedback.
 	 */
 	protected void clearFeedback() {
-		Set<Set<IVisualPart<VR, ? extends VR>>> keys = getFeedbackPerTargetSetMap()
+		Set<Set<IVisualPart<VR, ? extends VR>>> keys = getFeedbackPerTargetSet()
 				.keySet();
 		for (Set<IVisualPart<VR, ? extends VR>> key : keys) {
 			removeFeedback(key);
@@ -222,7 +222,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * Removes all handles.
 	 */
 	protected void clearHandles() {
-		Set<Set<IVisualPart<VR, ? extends VR>>> keys = getHandlesPerTargetSetMap()
+		Set<Set<IVisualPart<VR, ? extends VR>>> keys = getHandlesPerTargetSet()
 				.keySet();
 		for (Set<IVisualPart<VR, ? extends VR>> key : keys) {
 			removeHandles(key);
@@ -277,9 +277,10 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @return A list that contains all handle parts that were generated for the
 	 *         given target parts.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected List<IFeedbackPart<VR, ? extends VR>> getFeedback(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
-		List<IFeedbackPart<VR, ? extends VR>> list = getFeedbackPerTargetSetMap()
+		List<IFeedbackPart<VR, ? extends VR>> list = getFeedbackPerTargetSet()
 				.get(targets instanceof Set
 						? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
 						: createTargetSet(targets));
@@ -299,6 +300,23 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	protected List<IFeedbackPart<VR, ? extends VR>> getFeedback(
 			IVisualPart<VR, ? extends VR> target) {
 		return getFeedback(Collections.singletonList(target));
+	}
+
+	/**
+	 * Returns the {@link IFeedbackPartFactory} that should be used for feedback
+	 * creation.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which to determine the
+	 *            {@link IFeedbackPartFactory} for this {@link IBehavior}.
+	 * @return The {@link IFeedbackPartFactory} that should be used for feedback
+	 *         creation.
+	 */
+	protected IFeedbackPartFactory<VR> getFeedbackPartFactory(
+			IViewer<VR> viewer) {
+		throw new UnsupportedOperationException(
+				"Need to implement getFeedbackPartFactory() for "
+						+ this.getClass());
 	}
 
 	/**
@@ -324,25 +342,28 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
-	 * Returns the role under which the {@link IFeedbackPartFactory} for this
-	 * {@link IBehavior} is registered.
-	 *
-	 * @return The role under which the {@link IFeedbackPartFactory} for this
-	 *         {@link IBehavior} is registered.
-	 */
-	protected String getFeedbackPartFactoryRole() {
-		throw new UnsupportedOperationException(
-				"Need to implement getFeedbackPartFactoryRole() for "
-						+ this.getClass());
-	}
-
-	/**
 	 * Returns the map that stores the feedback parts per target part set.
 	 *
 	 * @return The map that stores the feedback parts per target part set.
 	 */
-	protected Map<Set<IVisualPart<VR, ? extends VR>>, List<IFeedbackPart<VR, ? extends VR>>> getFeedbackPerTargetSetMap() {
-		return feedbackPerTargetSetMap;
+	protected Map<Set<IVisualPart<VR, ? extends VR>>, List<IFeedbackPart<VR, ? extends VR>>> getFeedbackPerTargetSet() {
+		return feedbackPerTargetSet;
+	}
+
+	/**
+	 * Returns the {@link IHandlePartFactory} that should be used for handle
+	 * creation.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which to determine the
+	 *            {@link IHandlePartFactory} for this {@link IBehavior}.
+	 * @return The {@link IHandlePartFactory} that should be used for feedback
+	 *         creation.
+	 */
+	protected IHandlePartFactory<VR> getHandlePartFactory(IViewer<VR> viewer) {
+		throw new UnsupportedOperationException(
+				"Need to implement getHandlePartFactory() for "
+						+ this.getClass());
 	}
 
 	/**
@@ -368,19 +389,6 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
-	 * Returns the role under which the {@link IHandlePartFactory} for this
-	 * {@link IBehavior} is registered.
-	 *
-	 * @return The role under which the {@link IHandlePartFactory} for this
-	 *         {@link IBehavior} is registered.
-	 */
-	protected String getHandlePartFactoryRole() {
-		throw new UnsupportedOperationException(
-				"Need to implement getHandlePartFactoryRole() for "
-						+ this.getClass());
-	}
-
-	/**
 	 * Returns a list that contains all {@link IHandlePart}s that were generated
 	 * for the given target parts by this {@link IBehavior}. If no handle parts
 	 * were generated for the given target parts, an empty list is returned.
@@ -390,9 +398,10 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @return A list that contains all handle parts that were generated for the
 	 *         given target parts.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected List<IHandlePart<VR, ? extends VR>> getHandles(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
-		List<IHandlePart<VR, ? extends VR>> list = getHandlesPerTargetSetMap()
+		List<IHandlePart<VR, ? extends VR>> list = getHandlesPerTargetSet()
 				.get(targets instanceof Set
 						? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
 						: createTargetSet(targets));
@@ -419,8 +428,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 *
 	 * @return The map that stores the handle parts per target part set.
 	 */
-	protected Map<Set<IVisualPart<VR, ? extends VR>>, List<IHandlePart<VR, ? extends VR>>> getHandlesPerTargetSetMap() {
-		return handlesPerTargetSetMap;
+	protected Map<Set<IVisualPart<VR, ? extends VR>>, List<IHandlePart<VR, ? extends VR>>> getHandlesPerTargetSet() {
+		return handlesPerTargetSet;
 	}
 
 	@Override
@@ -439,9 +448,10 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 *         target parts, even if no feedback parts were generated, otherwise
 	 *         <code>false</code>.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected boolean hasFeedback(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
-		return getFeedbackPerTargetSetMap().containsKey(targets instanceof Set
+		return getFeedbackPerTargetSet().containsKey(targets instanceof Set
 				? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
 				: createTargetSet(targets));
 	}
@@ -472,9 +482,10 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 *         target parts, even if no handle parts were generated, otherwise
 	 *         <code>false</code>.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected boolean hasHandles(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
-		return getHandlesPerTargetSetMap().containsKey(targets instanceof Set
+		return getHandlesPerTargetSet().containsKey(targets instanceof Set
 				? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
 				: createTargetSet(targets));
 	}
@@ -505,6 +516,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @param targets
 	 *            The list of target parts.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected void removeFeedback(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (targets == null) {
@@ -540,6 +552,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @param targetSet
 	 *            The target parts.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected void removeFeedback(
 			Set<? extends IVisualPart<VR, ? extends VR>> targetSet) {
 		if (targetSet == null) {
@@ -558,7 +571,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 
 		// remove feedback parts from the feedback per target set map
-		List<IFeedbackPart<VR, ? extends VR>> feedbackParts = getFeedbackPerTargetSetMap()
+		List<IFeedbackPart<VR, ? extends VR>> feedbackParts = getFeedbackPerTargetSet()
 				.remove(targetSet);
 
 		// remove feedback from the viewer
@@ -577,6 +590,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @param targets
 	 *            The target parts.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected void removeHandles(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (targets == null) {
@@ -608,6 +622,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @param targetSet
 	 *            The target parts.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	protected void removeHandles(
 			Set<? extends IVisualPart<VR, ? extends VR>> targetSet) {
 		if (targetSet == null) {
@@ -626,7 +641,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 
 		// remove handle parts from the handles per target set map
-		List<IHandlePart<VR, ? extends VR>> handleParts = getHandlesPerTargetSetMap()
+		List<IHandlePart<VR, ? extends VR>> handleParts = getHandlesPerTargetSet()
 				.remove(targetSet);
 
 		// remove handles from the viewer
@@ -694,6 +709,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 *         that is interacted with so that its information can be applied to
 	 *         the preserved handle part.
 	 */
+	// TODO: Unify parameter types (List vs Set vs Collection)
 	public IHandlePart<VR, ? extends VR> updateHandles(
 			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Comparator<IHandlePart<VR, ? extends VR>> interactedWithComparator,
@@ -713,8 +729,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		// determine handle part factory for the target set
 		IRootPart<VR, ? extends VR> root = targets.get(0).getRoot();
 		IViewer<VR> viewer = root.getViewer();
-		IHandlePartFactory<VR> handlePartFactory = getHandlePartFactory(viewer,
-				getHandlePartFactoryRole());
+		IHandlePartFactory<VR> handlePartFactory = getHandlePartFactory(viewer);
 
 		// determine new handles
 		List<IHandlePart<VR, ? extends VR>> newHandles = handlePartFactory
@@ -751,7 +766,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 			// determine old handles for target
 			List<IHandlePart<VR, ? extends VR>> oldHandles;
-			List<IHandlePart<VR, ? extends VR>> currentHandleParts = getHandlesPerTargetSetMap()
+			List<IHandlePart<VR, ? extends VR>> currentHandleParts = getHandlesPerTargetSet()
 					.get(targetSet);
 
 			if (!currentHandleParts.isEmpty()) {
@@ -789,8 +804,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 				// remove handles that no longer exist
 				BehaviorUtils.removeAnchoreds(root, targets, toBeRemoved);
-				getHandlesPerTargetSetMap().get(targetSet)
-						.removeAll(toBeRemoved);
+				getHandlesPerTargetSet().get(targetSet).removeAll(toBeRemoved);
 				for (IHandlePart<VR, ? extends VR> hp : toBeRemoved) {
 					hp.dispose();
 				}
@@ -834,15 +848,15 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			}
 
 			// add new handles that did not exist yet
-			if (!getHandlesPerTargetSetMap().containsKey(targetSet)) {
-				getHandlesPerTargetSetMap().put(targetSet,
+			if (!getHandlesPerTargetSet().containsKey(targetSet)) {
+				getHandlesPerTargetSet().put(targetSet,
 						new ArrayList<IHandlePart<VR, ? extends VR>>());
 			} else {
-				getHandlesPerTargetSetMap().put(targetSet,
+				getHandlesPerTargetSet().put(targetSet,
 						new ArrayList<IHandlePart<VR, ? extends VR>>(
-								getHandlesPerTargetSetMap().get(targetSet)));
+								getHandlesPerTargetSet().get(targetSet)));
 			}
-			getHandlesPerTargetSetMap().get(targetSet).addAll(toBeAdded);
+			getHandlesPerTargetSet().get(targetSet).addAll(toBeAdded);
 		}
 
 		return replacementHandle;

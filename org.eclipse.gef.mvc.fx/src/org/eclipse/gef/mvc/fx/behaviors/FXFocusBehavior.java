@@ -130,8 +130,9 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	}
 
 	@Override
-	protected String getFeedbackPartFactoryRole() {
-		return FOCUS_FEEDBACK_PART_FACTORY;
+	protected IFeedbackPartFactory<Node> getFeedbackPartFactory(
+			IViewer<Node> viewer) {
+		return getFeedbackPartFactory(viewer, FOCUS_FEEDBACK_PART_FACTORY);
 	}
 
 	/**
