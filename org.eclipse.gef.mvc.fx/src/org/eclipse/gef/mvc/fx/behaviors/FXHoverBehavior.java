@@ -298,10 +298,16 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			}
 			if (hasFeedback(hoveredPart)) {
 				removeFeedback(hoveredPart);
-			}
-			if (hasHandles(hoveredPart)) {
-				// clean up handles state
-				removeHandles(hoveredPart);
+			} else {
+				// FIXME: onUnhover() should only be called if the part was
+				// previously hovered, i.e. if feedback was generated for the
+				// part. However, the removeFeedback() call once threw an
+				// exception because no feedback was present, therefore, an
+				// exception is thrown here, so that we can find and resolve the
+				// underlying issue if it occurs again.
+				throw new IllegalStateException(
+						"No feedback present for part that was previously hovered: "
+								+ hoveredPart);
 			}
 		} else {
 			if (hoveredPart.getRoot() == null
