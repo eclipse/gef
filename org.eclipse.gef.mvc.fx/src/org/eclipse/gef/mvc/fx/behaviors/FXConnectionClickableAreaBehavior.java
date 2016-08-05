@@ -72,16 +72,6 @@ public class FXConnectionClickableAreaBehavior extends AbstractBehavior<Node> {
 				.removeListener(scaleXListener);
 	}
 
-	@Override
-	protected String getFeedbackPartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected String getHandlePartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public IVisualPart<Node, Connection> getHost() {

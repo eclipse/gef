@@ -33,16 +33,6 @@ import javafx.scene.Node;
  */
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
-	@Override
-	protected String getFeedbackPartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected String getHandlePartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Returns the {@link LayoutContext} for which {@link #preLayout()} and
 	 * {@link #postLayout()} shall be called before or after a layout pass,

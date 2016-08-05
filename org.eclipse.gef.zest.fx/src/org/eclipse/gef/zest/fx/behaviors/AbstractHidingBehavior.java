@@ -68,16 +68,6 @@ public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 		hidingModel.hiddenProperty().removeListener(hidingModelObserver);
 	}
 
-	@Override
-	protected String getFeedbackPartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected String getHandlePartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Returns the {@link HidingModel} that is installed on the {@link IViewer}
 	 * of the {@link #getHost() host}.

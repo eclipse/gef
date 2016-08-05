@@ -295,16 +295,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		return cpFactory;
 	}
 
-	@Override
-	protected String getFeedbackPartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected String getHandlePartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
 	 * (see {@link IVisualPart#getAnchoragesUnmodifiable()}) so that it is in

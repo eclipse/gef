@@ -118,16 +118,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 				.removeListener(selectionObserver);
 	}
 
-	@Override
-	protected String getFeedbackPartFactoryRole() {
-		return SELECTION_FEEDBACK_PART_FACTORY;
-	}
-
-	@Override
-	protected String getHandlePartFactoryRole() {
-		return SELECTION_HANDLE_PART_FACTORY;
-	}
-
 	/**
 	 * Returns the {@link SelectionModel} in the context of the
 	 * {@link #getHost() host}.

@@ -145,11 +145,6 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 		return focusModel;
 	}
 
-	@Override
-	protected String getHandlePartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Refreshes focus feedback, i.e. adds or removes feedback.
 	 */

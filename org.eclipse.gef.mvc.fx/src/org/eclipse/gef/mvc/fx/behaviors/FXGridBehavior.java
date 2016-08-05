@@ -68,14 +68,4 @@ public class FXGridBehavior extends AbstractBehavior<Node> {
 		return ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 	}
 
-	@Override
-	protected String getFeedbackPartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected String getHandlePartFactoryRole() {
-		throw new UnsupportedOperationException();
-	}
-
 }

@@ -280,7 +280,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	protected List<IFeedbackPart<VR, ? extends VR>> getFeedback(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
 		List<IFeedbackPart<VR, ? extends VR>> list = getFeedbackPerTargetSetMap()
-				.get(createTargetSet(targets));
+				.get(targets instanceof Set
+						? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
+						: createTargetSet(targets));
 		return list == null ? Collections.emptyList() : list;
 	}
 
@@ -328,7 +330,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @return The role under which the {@link IFeedbackPartFactory} for this
 	 *         {@link IBehavior} is registered.
 	 */
-	protected abstract String getFeedbackPartFactoryRole();
+	protected String getFeedbackPartFactoryRole() {
+		throw new UnsupportedOperationException(
+				"Need to implement getFeedbackPartFactoryRole() for "
+						+ this.getClass());
+	}
 
 	/**
 	 * Returns the map that stores the feedback parts per target part set.
@@ -368,7 +374,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * @return The role under which the {@link IHandlePartFactory} for this
 	 *         {@link IBehavior} is registered.
 	 */
-	protected abstract String getHandlePartFactoryRole();
+	protected String getHandlePartFactoryRole() {
+		throw new UnsupportedOperationException(
+				"Need to implement getHandlePartFactoryRole() for "
+						+ this.getClass());
+	}
 
 	/**
 	 * Returns a list that contains all {@link IHandlePart}s that were generated
@@ -383,7 +393,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	protected List<IHandlePart<VR, ? extends VR>> getHandles(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
 		List<IHandlePart<VR, ? extends VR>> list = getHandlesPerTargetSetMap()
-				.get(createTargetSet(targets));
+				.get(targets instanceof Set
+						? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
+						: createTargetSet(targets));
 		return list == null ? Collections.emptyList() : list;
 	}
 
@@ -429,8 +441,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 */
 	protected boolean hasFeedback(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
-		return getFeedbackPerTargetSetMap()
-				.containsKey(createTargetSet(targets));
+		return getFeedbackPerTargetSetMap().containsKey(targets instanceof Set
+				? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
+				: createTargetSet(targets));
 	}
 
 	/**
@@ -461,8 +474,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 */
 	protected boolean hasHandles(
 			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
-		return getHandlesPerTargetSetMap()
-				.containsKey(createTargetSet(targets));
+		return getHandlesPerTargetSetMap().containsKey(targets instanceof Set
+				? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
+				: createTargetSet(targets));
 	}
 
 	/**
@@ -486,6 +500,27 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
+	 * Removes feedback for the given targets.
+	 *
+	 * @param targets
+	 *            The list of target parts.
+	 */
+	protected void removeFeedback(
+			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
+		if (targets == null) {
+			throw new IllegalArgumentException(
+					"The given list of target parts may not be null.");
+		}
+		if (targets.isEmpty()) {
+			throw new IllegalArgumentException(
+					"The given list of target parts may not be empty.");
+		}
+		removeFeedback(targets instanceof Set
+				? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
+				: createTargetSet(targets));
+	}
+
+	/**
 	 * Removes feedback for the given target.
 	 *
 	 * @param target
@@ -497,25 +532,6 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 					"The given target part may not be null.");
 		}
 		removeFeedback(Collections.singletonList(target));
-	}
-
-	/**
-	 * Removes feedback for the given targets.
-	 *
-	 * @param targets
-	 *            The list of target parts.
-	 */
-	protected void removeFeedback(
-			List<? extends IVisualPart<VR, ? extends VR>> targets) {
-		if (targets == null) {
-			throw new IllegalArgumentException(
-					"The given list of target parts may not be null.");
-		}
-		if (targets.isEmpty()) {
-			throw new IllegalArgumentException(
-					"The given list of target parts may not be empty.");
-		}
-		removeFeedback(createTargetSet(targets));
 	}
 
 	/**
@@ -556,23 +572,13 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
-	 * Removes handles for the given target.
-	 *
-	 * @param target
-	 *            The target for which to remove handles.
-	 */
-	protected void removeHandles(IVisualPart<VR, ? extends VR> target) {
-		removeHandles(Collections.singletonList(target));
-	}
-
-	/**
 	 * Removes handles for the given target parts.
 	 *
 	 * @param targets
 	 *            The target parts.
 	 */
 	protected void removeHandles(
-			List<? extends IVisualPart<VR, ? extends VR>> targets) {
+			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (targets == null) {
 			throw new IllegalArgumentException(
 					"The given list of target parts may not be null.");
@@ -581,7 +587,19 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			throw new IllegalArgumentException(
 					"The given list of target parts may not be empty.");
 		}
-		removeHandles(createTargetSet(targets));
+		removeHandles(targets instanceof Set
+				? ((Set<? extends IVisualPart<VR, ? extends VR>>) targets)
+				: createTargetSet(targets));
+	}
+
+	/**
+	 * Removes handles for the given target.
+	 *
+	 * @param target
+	 *            The target for which to remove handles.
+	 */
+	protected void removeHandles(IVisualPart<VR, ? extends VR> target) {
+		removeHandles(Collections.singletonList(target));
 	}
 
 	/**
