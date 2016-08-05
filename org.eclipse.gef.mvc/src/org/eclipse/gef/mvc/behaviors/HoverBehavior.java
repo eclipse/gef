@@ -85,6 +85,16 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 		hoverModel.hoverProperty().removeListener(hoverObserver);
 	}
 
+	@Override
+	protected String getFeedbackPartFactoryRole() {
+		return HOVER_FEEDBACK_PART_FACTORY;
+	}
+
+	@Override
+	protected String getHandlePartFactoryRole() {
+		return HOVER_HANDLE_PART_FACTORY;
+	}
+
 	/**
 	 * Returns the {@link HoverModel} in the context of the {@link #getHost()
 	 * host}.
