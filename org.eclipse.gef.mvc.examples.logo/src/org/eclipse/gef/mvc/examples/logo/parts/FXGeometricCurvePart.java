@@ -112,13 +112,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
 		if (role.equals(START_ROLE)) {
-			// System.out.println(
-			// "Setting start anchor of curve " + this + " to " + anchor);
 			getVisual().setStartAnchor(anchor);
+			getContent().setWayPoint(0, getVisual().getStartPoint());
 		} else if (role.equals(END_ROLE)) {
-			// System.out.println(
-			// "Setting end anchor of curve " + this + " to " + anchor);
 			getVisual().setEndAnchor(anchor);
+			getContent().setWayPoint(getContent().getWayPoints().size() - 1, getVisual().getEndPoint());
 		} else {
 			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 		}
@@ -168,11 +166,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		if (role.equals(START_ROLE)) {
-			// System.out.println("Unsetting start anchor of curve.");
 			getVisual().setStartPoint(getVisual().getStartPoint());
+			getContent().setWayPoint(0, getVisual().getStartPoint());
 		} else if (role.equals(END_ROLE)) {
-			// System.out.println("Unsetting end anchor of curve.");
 			getVisual().setEndPoint(getVisual().getEndPoint());
+			getContent().setWayPoint(getContent().getWayPoints().size() - 1, getVisual().getEndPoint());
 		} else {
 			throw new IllegalStateException("Cannot detach from anchor with role <" + role + ">.");
 		}
