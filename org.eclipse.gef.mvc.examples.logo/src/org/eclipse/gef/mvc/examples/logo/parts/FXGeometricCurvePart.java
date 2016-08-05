@@ -187,6 +187,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		} else if (END_ROLE.equals(role)) {
 			getContent().getTargetAnchorages().add(geom);
 		}
+		// XXX: As the selection handles show the connected state, their visuals
+		// need to be refreshed.
+		// TODO: Rather register an anchorages-observer within
+		// FXCircleSegmentHandlePart when attaching to an anchorage.
+		for (IVisualPart<Node, ? extends Node> anchored : getAnchoredsUnmodifiable()) {
+			anchored.refreshVisual();
+		}
 	}
 
 	@Override
@@ -195,6 +202,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 			getContent().getSourceAnchorages().remove(contentAnchorage);
 		} else if (END_ROLE.equals(role)) {
 			getContent().getTargetAnchorages().remove(contentAnchorage);
+		}
+		// XXX: As the selection handles show the connected state, their visuals
+		// need to be refreshed.
+		// TODO: Rather register an anchorages-observer within
+		// FXCircleSegmentHandlePart when attaching to an anchorage.
+		for (IVisualPart<Node, ? extends Node> anchored : getAnchoredsUnmodifiable()) {
+			anchored.refreshVisual();
 		}
 	}
 

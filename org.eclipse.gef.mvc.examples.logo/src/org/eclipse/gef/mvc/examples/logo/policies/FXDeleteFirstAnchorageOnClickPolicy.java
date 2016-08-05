@@ -12,11 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo.policies;
 
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
-import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IRootPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
@@ -24,7 +21,6 @@ import org.eclipse.gef.mvc.policies.DeletionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -43,19 +39,6 @@ public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPoli
 				init(policy);
 				policy.delete((IContentPart<Node, ? extends Node>) targetPart);
 				commit(policy);
-			}
-			// refresh handles of all selected curves
-			ObservableList<IContentPart<Node, ? extends Node>> selection = root.getViewer()
-					.getAdapter(new TypeToken<SelectionModel<Node>>() {
-					}).getSelectionUnmodifiable();
-			for (IContentPart<Node, ? extends Node> selected : selection) {
-				if (selected instanceof FXGeometricCurvePart) {
-					for (IVisualPart<Node, ? extends Node> anchored : selected.getAnchoredsUnmodifiable()) {
-						if (anchored instanceof IHandlePart) {
-							anchored.refreshVisual();
-						}
-					}
-				}
 			}
 		}
 	}
