@@ -169,7 +169,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			// System.out.println("DISPOSE " + contentPart.getContent());
 			contentPartPool.add(contentPart);
 			contentPart.setContent(null);
-		}
+		} // else {
+			// System.out.println("CANNOT DISPOSE " + contentPart.getContent());
+			// }
 	}
 
 	@Override
