@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.collections.ObservableSetMultimap;
 import org.eclipse.gef.fx.utils.CursorUtils;
 import org.eclipse.gef.geometry.planar.Point;
@@ -25,13 +24,8 @@ import org.eclipse.gef.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.parts.IFeedbackPart;
-import org.eclipse.gef.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.parts.IHandlePart;
-import org.eclipse.gef.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.viewer.IViewer;
-
-import com.google.common.reflect.TypeToken;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
@@ -77,7 +71,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();
 	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleCreationDelayTransitions = new IdentityHashMap<>();
 	private Map<IVisualPart<Node, ? extends Node>, PauseTransition> handleRemovalDelayTransitions = new IdentityHashMap<>();
-	private Map<IVisualPart<Node, ? extends Node>, Boolean> creationDelayFinished = new IdentityHashMap<>();
 	private Point initialPointerLocation;
 	private final EventHandler<MouseEvent> mouseMoveHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -97,25 +90,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	/**
-	 * Returns the {@link IFeedbackPartFactory} for hover feedback.
-	 *
-	 * @param part
-	 *            The {@link IVisualPart} for which to determine the
-	 *            {@link IFeedbackPartFactory}.
-	 *
-	 * @return The {@link IFeedbackPartFactory} for hover feedback.
-	 */
-	@Override
-	@SuppressWarnings("serial")
-	protected IFeedbackPartFactory<Node> getFeedbackPartFactory(
-			IVisualPart<Node, ? extends Node> part) {
-		IViewer<Node> viewer = part.getRoot().getViewer();
-		return viewer.getAdapter(
-				AdapterKey.get(new TypeToken<IFeedbackPartFactory<Node>>() {
-				}, HOVER_FEEDBACK_PART_FACTORY));
-	}
-
-	/**
 	 * Returns the {@link Effect} that is applied to {@link IHandlePart}s as a
 	 * replacement for {@link IFeedbackPart}s which are created for normal
 	 * parts.
@@ -131,19 +105,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		DropShadow effect = new DropShadow();
 		effect.setRadius(5);
 		return effect;
-	}
-
-	/**
-	 * Returns the {@link IHandlePartFactory} for hover handles.
-	 *
-	 * @return the {@link IHandlePartFactory} for hover handles.
-	 */
-	@SuppressWarnings("serial")
-	protected IHandlePartFactory<Node> getHandlePartFactory() {
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		return viewer.getAdapter(
-				AdapterKey.get(new TypeToken<IHandlePartFactory<Node>>() {
-				}, HOVER_HANDLE_PART_FACTORY));
 	}
 
 	/**
@@ -210,7 +171,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		hoveredParentChangeListeners.put(hoveredPart, parentChangeListener);
 		hoveredPart.parentProperty().addListener(parentChangeListener);
 		handleCreationDelayTransitions.remove(hoveredPart);
-		creationDelayFinished.put(hoveredPart, true);
 	}
 
 	/**
@@ -322,7 +282,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			hoveredPart.parentProperty().removeListener(
 					hoveredParentChangeListeners.remove(hoveredPart));
 		}
-		creationDelayFinished.remove(hoveredPart);
 	}
 
 	/**
@@ -337,15 +296,16 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			if (isInCreationDelay(hoveredPart)) {
 				stopCreationDelay(hoveredPart);
 			}
-			removeFeedback(hoveredPart);
-			if (creationDelayFinished.containsKey(hoveredPart)
-					&& creationDelayFinished.get(hoveredPart)) {
+			if (hasFeedback(hoveredPart)) {
+				removeFeedback(hoveredPart);
+			}
+			if (hasHandles(hoveredPart)) {
 				// clean up handles state
 				removeHandles(hoveredPart);
-				creationDelayFinished.remove(hoveredPart);
 			}
 		} else {
-			if (hoveredPart.getRoot() == null) {
+			if (hoveredPart.getRoot() == null
+					|| getHandles(hoveredPart).isEmpty()) {
 				onRemovalDelay(hoveredPart);
 			} else {
 				startRemovalDelay(hoveredPart);

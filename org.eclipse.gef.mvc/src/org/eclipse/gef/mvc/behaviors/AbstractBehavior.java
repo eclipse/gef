@@ -268,6 +268,38 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
+	 * Returns a list that contains all {@link IHandlePart}s that were generated
+	 * for the given target parts by this {@link IBehavior}. If no handle parts
+	 * were generated for the given target parts, an empty list is returned.
+	 *
+	 * @param targets
+	 *            A collection of target parts.
+	 * @return A list that contains all handle parts that were generated for the
+	 *         given target parts.
+	 */
+	protected List<IFeedbackPart<VR, ? extends VR>> getFeedback(
+			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
+		List<IFeedbackPart<VR, ? extends VR>> list = getFeedbackPerTargetSetMap()
+				.get(createTargetSet(targets));
+		return list == null ? Collections.emptyList() : list;
+	}
+
+	/**
+	 * Returns a list that contains all {@link IHandlePart}s that were generated
+	 * for the given target part by this {@link IBehavior}. If no handle parts
+	 * were generated for the given target part, an empty list is returned.
+	 *
+	 * @param target
+	 *            The target part.
+	 * @return A list that contains all handle parts that were generated for the
+	 *         given target part.
+	 */
+	protected List<IFeedbackPart<VR, ? extends VR>> getFeedback(
+			IVisualPart<VR, ? extends VR> target) {
+		return getFeedback(Collections.singletonList(target));
+	}
+
+	/**
 	 * Returns the {@link IFeedbackPartFactory} that is registered as an adapter
 	 * at the given {@link IViewer} under the given role.
 	 *
@@ -337,6 +369,38 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 *         {@link IBehavior} is registered.
 	 */
 	protected abstract String getHandlePartFactoryRole();
+
+	/**
+	 * Returns a list that contains all {@link IHandlePart}s that were generated
+	 * for the given target parts by this {@link IBehavior}. If no handle parts
+	 * were generated for the given target parts, an empty list is returned.
+	 *
+	 * @param targets
+	 *            A collection of target parts.
+	 * @return A list that contains all handle parts that were generated for the
+	 *         given target parts.
+	 */
+	protected List<IHandlePart<VR, ? extends VR>> getHandles(
+			Collection<? extends IVisualPart<VR, ? extends VR>> targets) {
+		List<IHandlePart<VR, ? extends VR>> list = getHandlesPerTargetSetMap()
+				.get(createTargetSet(targets));
+		return list == null ? Collections.emptyList() : list;
+	}
+
+	/**
+	 * Returns a list that contains all {@link IHandlePart}s that were generated
+	 * for the given target part by this {@link IBehavior}. If no handle parts
+	 * were generated for the given target part, an empty list is returned.
+	 *
+	 * @param target
+	 *            The target part.
+	 * @return A list that contains all handle parts that were generated for the
+	 *         given target part.
+	 */
+	protected List<IHandlePart<VR, ? extends VR>> getHandles(
+			IVisualPart<VR, ? extends VR> target) {
+		return getHandles(Collections.singletonList(target));
+	}
 
 	/**
 	 * Returns the map that stores the handle parts per target part set.
