@@ -30,6 +30,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.model.DocumentPartitioner;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.XtextDocument;
@@ -55,22 +56,21 @@ public class DotProposalProviderDelegator {
 	}
 
 	/**
-	 * Computes the proposals considering the given text and the given
-	 * cursorPosition.
+	 * Computes the configurable completion proposals considering the given text
+	 * and the given cursorPosition.
 	 * 
 	 * @param text
 	 *            The current text to parse.
 	 * @param cursorPosition
 	 *            The cursor position within the given text.
-	 * @return The list of proposals valid on the given cursor position within
-	 *         the given text. Returns an empty list if the proposals cannot be
-	 *         determined.
+	 * @return The configurable completion proposals valid on the given cursor
+	 *         position within the given text. Returns an empty list if the
+	 *         proposals cannot be determined.
 	 */
-	public List<String> computeProposals(final String text,
-			int cursorPosition) {
+	public List<ConfigurableCompletionProposal> computeConfigurableCompletionProposals(
+			final String text, int cursorPosition) {
 
-		List<String> proposalStrings = new ArrayList<String>();
-
+		List<ConfigurableCompletionProposal> configurableCompletionProposal = new ArrayList<>();
 		ICompletionProposal[] completionProposals = {};
 		try {
 			completionProposals = computeCompletionProposals(text,
@@ -79,14 +79,15 @@ public class DotProposalProviderDelegator {
 			e.printStackTrace();
 		}
 
-		// extract the display string from the completion proposal, forcing
-		// the caller to create a new ICompletionProposal with the right
-		// context
+		// convert the completionProposals into configurableCompletionProposals
 		for (ICompletionProposal completionProposal : completionProposals) {
-			proposalStrings.add(completionProposal.getDisplayString());
+			if (completionProposal instanceof ConfigurableCompletionProposal) {
+				configurableCompletionProposal.add(
+						(ConfigurableCompletionProposal) completionProposal);
+			}
 		}
 
-		return proposalStrings;
+		return configurableCompletionProposal;
 	}
 
 	private ICompletionProposal[] computeCompletionProposals(

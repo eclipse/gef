@@ -291,10 +291,20 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			context = context.copy().setPrefix(text).toContext();
 		}
 
-		List<String> proposals = new DotProposalProviderDelegator(
-				subgrammarName).computeProposals(text, text.length());
+		List<ConfigurableCompletionProposal> configurableCompletionProposals = new DotProposalProviderDelegator(
+				subgrammarName).computeConfigurableCompletionProposals(text,
+						text.length());
 
-		proposeAttributeValues(proposals, context, acceptor);
+		for (ConfigurableCompletionProposal configurableCompletionProposal : configurableCompletionProposals) {
+			// adapt the replacement offset determined within the
+			// sub-grammar context to be valid within the context of the
+			// original text
+			configurableCompletionProposal.setReplacementOffset(
+					context.getOffset() - configurableCompletionProposal
+							.getReplaceContextLength());
+
+			acceptor.accept(configurableCompletionProposal);
+		}
 	}
 
 	private void proposeAttributeValues(Object[] values,

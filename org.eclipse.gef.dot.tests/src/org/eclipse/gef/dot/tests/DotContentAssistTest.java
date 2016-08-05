@@ -128,6 +128,30 @@ public class DotContentAssistTest extends AbstractContentAssistTest {
 				.applyProposal(26, "crow")
 				.expectContent("digraph {1->2[ arrowhead=crow ]}");
 
+		newBuilder().append("digraph {1->2[ arrowhead=o ]}")
+				.assertTextAtCursorPosition(26, "o", "l", "r", "box", "diamond",
+						"dot", "inv", "normal", ",", ";", "]")
+				.applyProposal(26, "box")
+				.expectContent("digraph {1->2[ arrowhead=obox ]}");
+
+		newBuilder().append("digraph {1->2[ arrowhead=l ]}")
+				.assertTextAtCursorPosition(26, "l", "box", "crow", "curve",
+						"icurve", "diamond", "inv", "normal", "tee", "vee", ",",
+						";", "]")
+				.applyProposal(26, "diamond")
+				.expectContent("digraph {1->2[ arrowhead=ldiamond ]}");
+
+		newBuilder().append("digraph {1->2[ arrowhead=ol ]}")
+				.assertTextAtCursorPosition(27, "l", "box", "diamond", "inv",
+						"normal", ",", ";", "]")
+				.applyProposal(27, "diamond")
+				.expectContent("digraph {1->2[ arrowhead=oldiamond ]}");
+
+		newBuilder().append("digraph {1->2[ arrowhead=ordia ]}")
+				.assertTextAtCursorPosition(30, "diamond", ",", ";", "]")
+				.applyProposal(30, "diamond")
+				.expectContent("digraph {1->2[ arrowhead=ordiamond ]}");
+
 		// test local attribute values with quotes and prefix
 		newBuilder().append("digraph {1->2[ arrowhead=\"c ]}")
 				.assertTextAtCursorPosition(27, "crow", "curve")
@@ -256,7 +280,7 @@ public class DotContentAssistTest extends AbstractContentAssistTest {
 
 		// test local attribute values with quotes and prefix
 		newBuilder().append("graph {1--2[ pos=\"e\" ]}")
-				.assertTextAtCursorPosition(19, "e");
+				.assertTextAtCursorPosition(19, "e", ",");
 	}
 
 	@Test

@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.parser.ui.contentassist;
 
+import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowShape;
 import org.eclipse.gef.dot.internal.parser.arrowtype.DeprecatedShape;
+import org.eclipse.gef.dot.internal.parser.arrowtype.PrimitiveShape;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
@@ -34,6 +36,38 @@ public class DotArrowTypeProposalProvider extends
 			if (deprecatedShape.toString().equals(proposal)) {
 				// don't propose the deprecated shapes
 				return null;
+			}
+		}
+
+		// don't propose primitive shapes invalid for the already parsed
+		// modifier(s)
+		if (context.getCurrentModel() instanceof ArrowShape
+				&& PrimitiveShape.get(proposal) != null) {
+			ArrowShape arrowShape = (ArrowShape) context.getCurrentModel();
+			// The open modifier is not allowed for the primitive shapes
+			// 'crow', 'curve', 'icurve', 'none', 'tee' and 'vee', so do not
+			// propose them if the open modifier already has been parsed.
+			if (arrowShape.isOpen()) {
+				switch (PrimitiveShape.get(proposal)) {
+				case CROW:
+				case CURVE:
+				case ICURVE:
+				case NONE:
+				case TEE:
+				case VEE:
+					return null;
+				}
+			}
+
+			// The side modifier is not allowed for the primitive shapes
+			// 'dot' and 'none', so do not propose them if the side modifier
+			// already has been parsed.
+			if (arrowShape.getSide() != null) {
+				switch (PrimitiveShape.get(proposal)) {
+				case DOT:
+				case NONE:
+					return null;
+				}
 			}
 		}
 
