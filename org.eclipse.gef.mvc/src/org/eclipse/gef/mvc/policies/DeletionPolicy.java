@@ -16,7 +16,6 @@ import java.util.Collections;
 
 import org.eclipse.gef.common.reflect.Types;
 import org.eclipse.gef.mvc.models.FocusModel;
-import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.operations.ChangeFocusOperation;
 import org.eclipse.gef.mvc.operations.DeselectOperation;
@@ -97,17 +96,7 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		checkInitialized();
 
 		// clear viewer models so that anchoreds are removed
-		IViewer<VR> viewer = contentPartToDelete.getRoot().getViewer();
-		HoverModel<VR> hoverModel = viewer
-				.getAdapter(new TypeToken<HoverModel<VR>>() {
-				}.where(new TypeParameter<VR>() {
-				}, Types.<VR> argumentOf(viewer.getClass())));
-		if (hoverModel.getHover() == contentPartToDelete) {
-			hoverModel.setHover(null);
-		}
-
 		getDeselectOperation().getToBeDeselected().add(contentPartToDelete);
-
 		FocusModel<VR> focusModel = getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<FocusModel<VR>>() {
 				}.where(new TypeParameter<VR>() {

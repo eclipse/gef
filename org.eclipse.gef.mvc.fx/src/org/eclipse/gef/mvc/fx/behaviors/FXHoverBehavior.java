@@ -160,6 +160,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 					IVisualPart<Node, ? extends Node> newValue) {
 				hoveredParentChangeListeners.remove(hoveredPart);
 				observable.removeListener(this);
+				stopRemovalDelay(hoveredPart);
 				if (hasHandles(hoveredPart)) {
 					removeHandles(hoveredPart);
 				}
@@ -296,18 +297,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			if (isInCreationDelay(hoveredPart)) {
 				stopCreationDelay(hoveredPart);
 			}
+			// XXX: Feedback could have been removed by the
+			// hoveredParentChangeListener, therefore, we need to check if
+			// feedback needs to be removed here.
 			if (hasFeedback(hoveredPart)) {
 				removeFeedback(hoveredPart);
-			} else {
-				// FIXME: onUnhover() should only be called if the part was
-				// previously hovered, i.e. if feedback was generated for the
-				// part. However, the removeFeedback() call once threw an
-				// exception because no feedback was present, therefore, an
-				// exception is thrown here, so that we can find and resolve the
-				// underlying issue if it occurs again.
-				throw new IllegalStateException(
-						"No feedback present for part that was previously hovered: "
-								+ hoveredPart);
 			}
 		} else {
 			if (hoveredPart.getRoot() == null
