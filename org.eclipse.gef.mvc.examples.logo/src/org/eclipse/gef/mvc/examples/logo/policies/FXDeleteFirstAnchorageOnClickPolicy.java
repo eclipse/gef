@@ -12,33 +12,50 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo.policies;
 
+import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
+import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.parts.IHandlePart;
+import org.eclipse.gef.mvc.parts.IRootPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.policies.DeletionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXDeleteFirstAnchorageOnClickPolicy
-		extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
+public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy<Node> implements IFXOnClickPolicy {
 
 	@SuppressWarnings("serial")
 	@Override
 	public void click(MouseEvent e) {
 		IVisualPart<Node, ? extends Node> targetPart = getTargetPart();
 		if (targetPart instanceof IContentPart) {
-			DeletionPolicy<Node> policy = getHost().getRoot()
-					.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
-					});
+			// delete the part
+			IRootPart<Node, ? extends Node> root = targetPart.getRoot();
+			DeletionPolicy<Node> policy = root.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
+			});
 			if (policy != null) {
 				init(policy);
-				// unestablish anchor relations
 				policy.delete((IContentPart<Node, ? extends Node>) targetPart);
 				commit(policy);
+			}
+			// refresh handles of all selected curves
+			ObservableList<IContentPart<Node, ? extends Node>> selection = root.getViewer()
+					.getAdapter(new TypeToken<SelectionModel<Node>>() {
+					}).getSelectionUnmodifiable();
+			for (IContentPart<Node, ? extends Node> selected : selection) {
+				if (selected instanceof FXGeometricCurvePart) {
+					for (IVisualPart<Node, ? extends Node> anchored : selected.getAnchoredsUnmodifiable()) {
+						if (anchored instanceof IHandlePart) {
+							anchored.refreshVisual();
+						}
+					}
+				}
 			}
 		}
 	}
