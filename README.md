@@ -1,4 +1,3 @@
-
 #Eclipse Graphical Editing Framework (GEF)
 
 <div>
@@ -13,4 +12,4 @@
 ### General Information for [Adopters](https://www.eclipse.org/projects/dev_process/#2_3_3_Adopters) and [Contributors/Committers](https://www.eclipse.org/projects/dev_process/#2_3_1_Committers)
 * [New and Noteworthy](https://wiki.eclipse.org/GEF/New_and_Noteworthy)
 * [Project Dashboard ](https://projects.eclipse.org/projects/tools.gef)
-* [Adopter Guide](https://wiki.eclipse.org/GEF/Adopter_Guide) & [Contributor Guide](https://wiki.eclipse.org/GEF/Contributor_Guide)
+* [Adopter Guide](https://wiki.eclipse.org/GEF/Adopter_Guide) & [Contributor Guide](https://github.com/eclipse/gef/blob/master/CONTRIBUTING.md)
