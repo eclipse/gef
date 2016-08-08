@@ -17,7 +17,7 @@
             primary="true">
       </toc>
       <toc
-            file="reference/wiki/GEF-GEF-Zest-toc.xml"
+            file="reference/wiki/Zest-toc.xml"
             primary="false">
       </toc>
    </extension>

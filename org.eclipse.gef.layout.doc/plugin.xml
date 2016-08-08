@@ -17,7 +17,7 @@
             primary="true">
       </toc>
       <toc
-            file="reference/wiki/GEF-GEF-Layout-toc.xml"
+            file="reference/wiki/Layout-toc.xml"
             primary="false">
       </toc>
    </extension>

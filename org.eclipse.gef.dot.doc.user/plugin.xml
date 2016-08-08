@@ -17,7 +17,7 @@
             primary="true">
       </toc>
       <toc
-            file="reference/wiki/GEF-GEF-DOT-User-Guide-toc.xml"
+            file="reference/wiki/DOT-User-Guide-toc.xml"
             primary="false">
       </toc>
    </extension>

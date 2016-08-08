@@ -18,7 +18,7 @@
             primary="true">
       </toc>
       <toc
-            file="reference/wiki/GEF-GEF-Cloudio-toc.xml"
+            file="reference/wiki/Cloudio-toc.xml"
             primary="false">
       </toc>
    </extension>
