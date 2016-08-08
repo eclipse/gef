@@ -347,7 +347,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void keyPress(final int keycode) throws Throwable {
 		System.out.println(thread() + "keyPress: (" + keycode + ") ...");
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_PRESSED);
-		System.out.println(thread() + "GOT the Synchronizer!");
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -373,7 +372,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void keyRelease(final int keycode) throws Throwable {
 		System.out.println(thread() + "keyRelease: (" + keycode + ") ...");
 		EventSynchronizer<KeyEvent> eventSynchronizer = getEventSynchronizer(KeyEvent.KEY_RELEASED);
-		System.out.println(thread() + "GOT the Synchronizer!");
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -397,21 +395,29 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @throws InterruptedException
 	 */
 	public synchronized void mouseDrag(final int sceneX, final int sceneY) throws Throwable {
-		System.out.println(thread() + "mouseDrag: (" + sceneX + ", " + sceneY + ") ...");
-		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_DRAGGED);
-		System.out.println(thread() + "GOT the Synchronizer!");
+		System.out.println(thread() + "dragTo: (" + sceneX + ", " + sceneY + ") ...");
+		Point position = runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				final double x = scene.getWindow().getX() + sceneX;
+				final double y = scene.getWindow().getY() + sceneY;
+				return new Point((int) x, (int) y);
+			}
+		});
+		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_DRAGGED);
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					System.out.println(thread() + "drag now!");
-					getRobot().mouseMove(sceneX, sceneY);
+					System.out.println(thread() + "getRobot().mouseMove() ...");
+					getRobot().mouseMove(position.x, position.y);
+					System.out.println(thread() + " ...");
 				} catch (AWTException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		eventSynchronizer.await();
+		synchronizer.await();
 		System.out.println(thread() + "... done.");
 	}
 
@@ -425,7 +431,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void mousePress(final int buttons) throws Throwable {
 		System.out.println(thread() + "mousePress: (" + buttons + ") ...");
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_PRESSED);
-		System.out.println(thread() + "GOT the Synchronizer!");
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -451,7 +456,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void mouseRelease(final int buttons) throws Throwable {
 		System.out.println(thread() + "mouseRelease: (" + buttons + ") ...");
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_RELEASED);
-		System.out.println(thread() + "GOT the Synchronizer!");
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -469,7 +473,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 	public synchronized void moveTo(final double sceneX, final double sceneY) throws Throwable {
 		System.out.println(thread() + "moveTo: (" + sceneX + ", " + sceneY + ") ...");
-
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
@@ -479,7 +482,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 			}
 		});
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
-		System.out.println(thread() + "GOT the Synchronizer!");
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
