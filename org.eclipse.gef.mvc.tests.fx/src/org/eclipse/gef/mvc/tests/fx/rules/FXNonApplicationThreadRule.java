@@ -170,6 +170,19 @@ public class FXNonApplicationThreadRule implements TestRule {
 		}
 	}
 
+	private static class IdleEvent extends Event {
+		/**
+		 *
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public static EventType<IdleEvent> IDLE = new EventType<>(EventType.ROOT);
+
+		public IdleEvent(EventType<? extends Event> eventType) {
+			super(eventType);
+		}
+	}
+
 	public interface RunnableWithResult<T> {
 		public T run();
 	}
@@ -204,6 +217,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	private JFXPanel panel;
 	private JFrame jFrame;
 	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
+
 	private Robot robot;
 
 	@Override
@@ -405,6 +419,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			}
 		});
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_DRAGGED);
+		waitForIdleEvent();
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -456,6 +471,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void mouseRelease(final int buttons) throws Throwable {
 		System.out.println(thread() + "mouseRelease: (" + buttons + ") ...");
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_RELEASED);
+		waitForIdleEvent();
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -482,6 +498,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			}
 		});
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
+		waitForIdleEvent();
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -510,6 +527,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			}
 		});
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
+		waitForIdleEvent();
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -623,5 +641,16 @@ public class FXNonApplicationThreadRule implements TestRule {
 				// dummy runnable
 			}
 		});
+	}
+
+	private void waitForIdleEvent() throws Throwable {
+		EventSynchronizer<IdleEvent> idleSynchronizer = getEventSynchronizer(IdleEvent.IDLE);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Event.fireEvent(scene, new Event(IdleEvent.IDLE));
+			}
+		});
+		idleSynchronizer.await();
 	}
 }
