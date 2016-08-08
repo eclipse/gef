@@ -170,19 +170,6 @@ public class FXNonApplicationThreadRule implements TestRule {
 		}
 	}
 
-	private static class IdleEvent extends Event {
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = 1L;
-
-		public static EventType<IdleEvent> IDLE = new EventType<>(EventType.ROOT);
-
-		public IdleEvent(EventType<? extends Event> eventType) {
-			super(eventType);
-		}
-	}
-
 	public interface RunnableWithResult<T> {
 		public T run();
 	}
@@ -267,29 +254,25 @@ public class FXNonApplicationThreadRule implements TestRule {
 			@Override
 			public Scene run() {
 				// hook viewer to scene
-				Scene scene = new Scene(root, width, height);
 				panel = new JFXPanel();
+				Scene scene = new Scene(root, width, height);
 				panel.setScene(scene);
 				jFrame = new JFrame();
 				jFrame.setBounds(0, 0, (int) width, (int) height);
-				jFrame.setContentPane(panel);
 				jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				jFrame.setLayout(new BorderLayout());
 				jFrame.setLocationRelativeTo(null);
 				jFrame.setVisible(true);
-				return scene;
-			}
-		});
+				jFrame.setContentPane(panel);
 
-		runAndWait(new Runnable() {
-			@Override
-			public void run() {
 				scene.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(final MouseEvent event) {
 						System.out.println(thread() + " -> " + event + this);
 					}
 				});
+
+				return scene;
 			}
 		});
 		return scene;
