@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.DotAttributes;
+import org.eclipse.gef.dot.internal.parser.DotUiInjectorProvider;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowShape;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowtypeFactory;
@@ -48,8 +49,13 @@ import org.eclipse.gef.dot.internal.parser.style.StyleItem;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
+import org.eclipse.xtext.junit4.InjectWith;
+import org.eclipse.xtext.junit4.XtextRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(XtextRunner.class)
+@InjectWith(DotUiInjectorProvider.class)
 public class DotAttributesTests {
 
 	@Test

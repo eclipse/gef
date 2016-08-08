@@ -22,19 +22,25 @@ import java.util.List;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.parser.DotUiInjectorProvider;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
 import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
+import org.eclipse.xtext.junit4.InjectWith;
+import org.eclipse.xtext.junit4.XtextRunner;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * Tests for the {@link DotImport} class.
  * 
  * @author Fabian Steeg (fsteeg)
  */
+@RunWith(XtextRunner.class)
+@InjectWith(DotUiInjectorProvider.class)
 public final class DotImportTests {
 
 	private final DotImport dotImport = new DotImport();

@@ -27,15 +27,6 @@
 	<properties>
 		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
 	</properties>
-		<dependencies>
-		<!-- It is important to have JUnit >= 4.7 as dependency to select the right 
-			JUnit Provider see http://maven.apache.org/plugins/maven-surefire-plugin/examples/junit.html -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -76,29 +67,10 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
-                    <test>DotContentAssistTest</test>				
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
-                <configuration>
-                    <testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
-                    <test>AllTests</test>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 		</plugins>
 	</build>
 </project>

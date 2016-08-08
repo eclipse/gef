@@ -24,6 +24,7 @@
 		<!-- Use Xtext generator 2.7.3, which corresponds to Luna SR2 release -->
 		<xtext.version>2.7.3</xtext.version>
 		<wikidoc.skip>true</wikidoc.skip>
+		<os-jvm-flags></os-jvm-flags>
 		<wikidoc.base.path>../../gef.wiki</wikidoc.base.path>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
@@ -290,7 +291,7 @@
 						<useUIThread>false</useUIThread>
 						<useSystemClassLoader>true</useSystemClassLoader>
 						<testFailureIgnore>${maven.test.failure.ignore}</testFailureIgnore>
-						<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+						<argLine>-Xmx512m -XX:MaxPermSize=256m ${os-jvm-flags} -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
 						<frameworkExtensions>
 							<frameworkExtension>
 								<groupId>org.eclipse.fx.shared</groupId>
@@ -313,6 +314,17 @@
 		</pluginManagement>
 	</build>
 	<profiles>
+		<profile>
+			<id>macosx-jvm-flags</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<os-jvm-flags>-XstartOnFirstThread</os-jvm-flags>
+			</properties>
+		</profile>
 		<profile>
 			<id>NEON.target</id>
 			<activation>

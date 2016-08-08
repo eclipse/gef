@@ -29,6 +29,10 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
+				<configuration>
+					<!-- FIXME: These tests currently block if started with the -XstartOnFirstThread argument -->
+					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
@@ -57,7 +58,7 @@ import com.google.inject.Inject;
 public class DotAttributes {
 
 	@Inject
-	private static DotJavaValidator DOT_VALIDATOR;
+	private static DotJavaValidator dotValidator;
 
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as
@@ -2218,7 +2219,14 @@ public class DotAttributes {
 
 	private static void validate(AttributeContext context, String attributeName,
 			String attributeValue) {
-		List<Diagnostic> diagnostics = filter(DOT_VALIDATOR
+		if (dotValidator == null) {
+			// if we are not injected (standalone), create validator instance
+			dotValidator = new DotStandaloneSetup()
+					.createInjectorAndDoEMFRegistration()
+					.getInstance(DotJavaValidator.class);
+		}
+
+		List<Diagnostic> diagnostics = filter(dotValidator
 				.validateAttributeValue(context, attributeName, attributeValue),
 				Diagnostic.ERROR);
 		if (!diagnostics.isEmpty()) {
