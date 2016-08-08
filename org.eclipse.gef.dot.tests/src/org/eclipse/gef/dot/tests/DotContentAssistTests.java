@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
 @InjectWith(DotUiInjectorProvider.class)
-public class DotContentAssistTest extends AbstractContentAssistTest {
+public class DotContentAssistTests extends AbstractContentAssistTest {
 
 	@BeforeClass
 	public static void initializeStatusHandlerRegistry() throws Exception {
