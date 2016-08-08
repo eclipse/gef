@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+@SuppressWarnings("restriction")
 @RunWith(XtextRunner.class)
 @InjectWith(DotUiInjectorProvider.class)
 public class DotContentAssistTests extends AbstractContentAssistTest {
