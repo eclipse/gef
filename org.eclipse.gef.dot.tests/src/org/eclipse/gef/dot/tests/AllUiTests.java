@@ -22,6 +22,6 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotExecutableUtilsTests.class, DotExtractorTests.class,
 		DotAttributesTests.class, DotParserTests.class, DotValidatorTests.class,
 		DotContentAssistTests.class })
-public class AllTests {
+public class AllUiTests {
 
 }
