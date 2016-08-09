@@ -47,7 +47,7 @@
             default="true"
             extensions="dot"
             id="org.eclipse.gef.dot.internal.parser.Dot"
-            name="Dot Editor">
+            name="DOT Editor">
         </editor>
     </extension>
     <extension
