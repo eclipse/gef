@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.examples.logo.policies;
 
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
@@ -23,17 +24,17 @@ import com.google.common.reflect.TypeToken;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXDeleteFirstAnchorageOnClickPolicy
-		extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
+public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy<Node> implements IFXOnClickPolicy {
 
 	@SuppressWarnings("serial")
 	@Override
 	public void click(MouseEvent e) {
 		IVisualPart<Node, ? extends Node> targetPart = getTargetPart();
 		if (targetPart instanceof IContentPart) {
-			DeletionPolicy<Node> policy = getHost().getRoot()
-					.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
-					});
+			// delete the part
+			IRootPart<Node, ? extends Node> root = targetPart.getRoot();
+			DeletionPolicy<Node> policy = root.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
+			});
 			if (policy != null) {
 				init(policy);
 				// unestablish anchor relations

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
@@ -77,9 +78,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 	private final CircleHead END_CIRCLE_HEAD = new CircleHead();
 
 	private final ArrowHead START_ARROW_HEAD = new ArrowHead();
+
 	private final ArrowHead END_ARROW_HEAD = new ArrowHead();
 	private FXGeometricCurve previousContent;
-
 	// refresh visual upon model property changes
 	private final ListChangeListener<Point> wayPointsChangeListener = new ListChangeListener<Point>() {
 		@Override
@@ -87,6 +88,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 			refreshVisual();
 		}
 	};
+
 	private final ListChangeListener<Double> dashesChangeListener = new ListChangeListener<Double>() {
 		@Override
 		public void onChanged(javafx.collections.ListChangeListener.Change<? extends Double> c) {
@@ -107,6 +109,24 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 			refreshVisual();
 		}
 	};
+
+	public FXGeometricCurvePart() {
+		anchoragesUnmodifiableProperty()
+				.addListener(new SetMultimapChangeListener<IVisualPart<Node, ? extends Node>, String>() {
+					@Override
+					public void onChanged(
+							Change<? extends IVisualPart<Node, ? extends Node>, ? extends String> change) {
+						// XXX: As the selection handles show the connected
+						// state, their visuals need to be refreshed.
+						// TODO: Rather register an anchorages-observer within
+						// FXCircleSegmentHandlePart when attaching to an
+						// anchorage.
+						for (IVisualPart<Node, ? extends Node> anchored : getAnchoredsUnmodifiable()) {
+							anchored.refreshVisual();
+						}
+					}
+				});
+	}
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
