@@ -38,37 +38,18 @@ import javafx.scene.input.MouseEvent;
  */
 public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateSelectedOnDragPolicy {
 
-	@Override
-	public void drag(MouseEvent e, Dimension delta) {
-		super.drag(e, delta);
-		for (AbstractLabelPart lp : getLabelParts()) {
-			lp.getAdapter(TransformLabelPolicy.class).preserveLabelOffset();
-		}
-	}
+	private List<AbstractLabelPart> labelParts;
 
-	@Override
-	public void dragAborted() {
-		for (AbstractLabelPart lp : getLabelParts()) {
-			rollback(lp.getAdapter(TransformLabelPolicy.class));
-			restoreRefreshVisuals(lp);
-		}
-		super.dragAborted();
-	}
-
-	private List<AbstractLabelPart> getEdgeLabelParts(EdgePart edgePart) {
-		List<AbstractLabelPart> linked = new ArrayList<>();
-		linked.addAll(new ArrayList<>(PartUtils
-				.filterParts(PartUtils.getAnchoreds(edgePart, ZestProperties.LABEL__NE), AbstractLabelPart.class)));
-		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.EXTERNAL_LABEL__NE), AbstractLabelPart.class)));
-		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.SOURCE_LABEL__E), AbstractLabelPart.class)));
-		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.TARGET_LABEL__E), AbstractLabelPart.class)));
-		return linked;
-	}
-
-	private List<AbstractLabelPart> getLabelParts() {
+	/**
+	 * Computes the {@link AbstractLabelPart}s that are anchored to the
+	 * {@link #getHost()} of this policy and need to be relocated together with
+	 * the host.
+	 *
+	 * @return The {@link AbstractLabelPart}s that need to be relocated together
+	 *         with the host.
+	 * @since 1.1
+	 */
+	protected List<AbstractLabelPart> computeLabelParts() {
 		Set<AbstractLabelPart> labelParts = Collections
 				.newSetFromMap(new IdentityHashMap<AbstractLabelPart, Boolean>());
 		// ensure that linked parts are moved with us during dragging
@@ -89,6 +70,52 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 		}
 		labelParts.removeAll(targetParts);
 		return new ArrayList<>(labelParts);
+	}
+
+	@Override
+	public void drag(MouseEvent e, Dimension delta) {
+		super.drag(e, delta);
+		for (AbstractLabelPart lp : getLabelParts()) {
+			lp.getAdapter(TransformLabelPolicy.class).preserveLabelOffset();
+		}
+	}
+
+	@Override
+	public void dragAborted() {
+		for (AbstractLabelPart lp : getLabelParts()) {
+			rollback(lp.getAdapter(TransformLabelPolicy.class));
+			restoreRefreshVisuals(lp);
+		}
+		super.dragAborted();
+	}
+
+	private List<AbstractLabelPart> getEdgeLabelParts(EdgePart edgePart) {
+		List<AbstractLabelPart> linked = new ArrayList<>();
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(PartUtils.getAnchoreds(edgePart, ZestProperties.LABEL__NE),
+				AbstractLabelPart.class)));
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(
+				PartUtils.getAnchoreds(edgePart, ZestProperties.EXTERNAL_LABEL__NE), AbstractLabelPart.class)));
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(
+				PartUtils.getAnchoreds(edgePart, ZestProperties.SOURCE_LABEL__E), AbstractLabelPart.class)));
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(
+				PartUtils.getAnchoreds(edgePart, ZestProperties.TARGET_LABEL__E), AbstractLabelPart.class)));
+		return linked;
+	}
+
+	/**
+	 * Returns the {@link AbstractLabelPart}s that were previously determined if
+	 * available, otherwise the label parts are {@link #computeLabelParts()
+	 * computed} and saved.
+	 *
+	 * @return The {@link AbstractLabelPart}s that were previously determined by
+	 *         {@link #computeLabelParts()}.
+	 * @since 1.1
+	 */
+	protected List<AbstractLabelPart> getLabelParts() {
+		if (labelParts == null) {
+			labelParts = computeLabelParts();
+		}
+		return labelParts;
 	}
 
 	private List<AbstractLabelPart> getNodeLabelParts(NodePart nodePart) {
