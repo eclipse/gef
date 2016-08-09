@@ -20,13 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
-import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -224,17 +221,14 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	/**
 	 * Adjusts the relevant adaptable scopes to refer to the host of this
 	 * behavior, it's viewer, and it's domain, respectively.
+	 *
+	 * @deprecated The adaptable scopes are switched when the adapters are
+	 *             injected, therefore, the scopes do not need to be switched
+	 *             manually.
 	 */
+	// TODO: This method should be removed.
+	@Deprecated
 	protected void switchAdaptableScopes() {
-		// adjust relevant adaptable scopes before creating new part
-		// TODO: move this into AdaptableScopes, making it more generic (i.e.
-		// traverse adaptables)
-		IVisualPart<VR, ? extends VR> host = getHost();
-		IViewer<VR> viewer = host.getRoot().getViewer();
-		IDomain<VR> domain = viewer.getDomain();
-		AdaptableScopes.switchTo(domain);
-		AdaptableScopes.switchTo(viewer);
-		AdaptableScopes.switchTo(host);
 	}
 
 	/**

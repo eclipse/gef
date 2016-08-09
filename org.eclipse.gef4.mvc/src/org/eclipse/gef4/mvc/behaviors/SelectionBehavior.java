@@ -86,7 +86,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 		// root is responsible for multi selection
 		if (getHost() instanceof IRootPart && selected.size() > 1) {
 			// add feedback and handles
-			switchAdaptableScopes();
 			addFeedback(selected, getFeedbackPartFactory().createFeedbackParts(
 					selected, this, Collections.emptyMap()));
 			addHandles(selected, getHandlePartFactory()
@@ -99,7 +98,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			// add feedback and handles
 			List<IVisualPart<VR, ? extends VR>> targets = Collections
 					.<IVisualPart<VR, ? extends VR>> singletonList(getHost());
-			switchAdaptableScopes();
 			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(
 					targets, this, Collections.emptyMap()));
 			if (selected.get(0) == getHost() && selected.size() <= 1) {
@@ -218,7 +216,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			Comparator<IHandlePart<VR, ? extends VR>> interactedWithComparator,
 			IHandlePart<VR, ? extends VR> interactedWith) {
 		// determine new handles
-		switchAdaptableScopes();
 		List<IHandlePart<VR, ? extends VR>> newHandles = getHandlePartFactory()
 				.createHandleParts(Collections.singletonList(getHost()), this,
 						Collections.emptyMap());

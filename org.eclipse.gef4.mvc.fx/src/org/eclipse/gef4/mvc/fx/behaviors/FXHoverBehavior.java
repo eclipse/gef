@@ -231,7 +231,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		unregisterMouseHandler();
 		initialPointerLocation = null;
 		// add handles
-		switchAdaptableScopes();
 		List<? extends IVisualPart<Node, ? extends Node>> targets = Collections
 				.singletonList(getHost());
 		addHandles(targets, getHandlePartFactory().createHandleParts(targets,
@@ -248,7 +247,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			stopRemovalDelay();
 		}
 		if (!isFeedback) {
-			switchAdaptableScopes();
 			List<? extends IVisualPart<Node, ? extends Node>> targets = Collections
 					.singletonList(getHost());
 			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(

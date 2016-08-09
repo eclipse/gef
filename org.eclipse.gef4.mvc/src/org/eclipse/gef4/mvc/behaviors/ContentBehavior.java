@@ -247,7 +247,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			if (contentPart == null) {
 				// create part using the factory, adjusting the relevant scopes
 				// before
-				switchAdaptableScopes();
 				// System.out.println("CREATE " + content);
 				IContentPartFactory<VR> contentPartFactory = getContentPartFactory();
 				contentPart = contentPartFactory.createContentPart(content,

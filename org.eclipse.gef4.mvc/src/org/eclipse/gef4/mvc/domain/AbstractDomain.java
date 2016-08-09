@@ -29,7 +29,6 @@ import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScope;
-import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -106,8 +105,6 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractDomain() {
-		AdaptableScopes.enter(this);
-
 		// ensure uncaught exception handler is used
 		Thread.currentThread()
 				.setUncaughtExceptionHandler(UNCAUGHT_EXCEPTION_HANDLER);
@@ -224,9 +221,6 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		operationHistory.dispose(undoContext, true, true, true);
 		operationHistory = null;
 		undoContext = null;
-
-		// clear adaptable scope
-		AdaptableScopes.leave(this);
 
 		// dispose adaptable and activatable support
 		ads.dispose();
