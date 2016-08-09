@@ -148,7 +148,7 @@ public class DeselectOperation<VR> extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		selectionModel.removeFromSelection(deselected);
+		selectionModel.setSelection(initialSelection);
 		return Status.OK_STATUS;
 	}
 
