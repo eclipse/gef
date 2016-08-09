@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
@@ -108,6 +109,24 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		}
 	};
 
+	public FXGeometricCurvePart() {
+		anchoragesUnmodifiableProperty()
+				.addListener(new SetMultimapChangeListener<IVisualPart<Node, ? extends Node>, String>() {
+					@Override
+					public void onChanged(
+							Change<? extends IVisualPart<Node, ? extends Node>, ? extends String> change) {
+						// XXX: As the selection handles show the connected
+						// state, their visuals need to be refreshed.
+						// TODO: Rather register an anchorages-observer within
+						// FXCircleSegmentHandlePart when attaching to an
+						// anchorage.
+						for (IVisualPart<Node, ? extends Node> anchored : getAnchoredsUnmodifiable()) {
+							anchored.refreshVisual();
+						}
+					}
+				});
+	}
+
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
@@ -187,13 +206,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		} else if (END_ROLE.equals(role)) {
 			getContent().getTargetAnchorages().add(geom);
 		}
-		// XXX: As the selection handles show the connected state, their visuals
-		// need to be refreshed.
-		// TODO: Rather register an anchorages-observer within
-		// FXCircleSegmentHandlePart when attaching to an anchorage.
-		for (IVisualPart<Node, ? extends Node> anchored : getAnchoredsUnmodifiable()) {
-			anchored.refreshVisual();
-		}
 	}
 
 	@Override
@@ -202,13 +214,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 			getContent().getSourceAnchorages().remove(contentAnchorage);
 		} else if (END_ROLE.equals(role)) {
 			getContent().getTargetAnchorages().remove(contentAnchorage);
-		}
-		// XXX: As the selection handles show the connected state, their visuals
-		// need to be refreshed.
-		// TODO: Rather register an anchorages-observer within
-		// FXCircleSegmentHandlePart when attaching to an anchorage.
-		for (IVisualPart<Node, ? extends Node> anchored : getAnchoredsUnmodifiable()) {
-			anchored.refreshVisual();
 		}
 	}
 
