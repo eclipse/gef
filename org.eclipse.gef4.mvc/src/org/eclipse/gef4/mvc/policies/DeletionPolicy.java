@@ -96,9 +96,8 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	public void delete(IContentPart<VR, ? extends VR> contentPartToDelete) {
 		checkInitialized();
 
+		// clean viewer models so that anchoreds are removed
 		getDeselectOperation().getToBeDeselected().add(contentPartToDelete);
-
-		// TODO: use unfocus for this
 		FocusModel<VR> focusModel = getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<FocusModel<VR>>() {
 				}.where(new TypeParameter<VR>() {
@@ -109,6 +108,12 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				getUnfocusOperation().setNewFocused(null);
 			}
 		}
+
+		// XXX: Execute operations for changing the viewer models prior to
+		// detaching anchoreds and removing children, so that no link to the
+		// viewer is available for the removed part via selection, focus, or
+		// hover feedback or handles.
+		locallyExecuteOperation();
 
 		// detach all content anchoreds
 		for (IVisualPart<VR, ? extends VR> anchored : HashMultiset
@@ -155,6 +160,13 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 			}
 		}
 		locallyExecuteOperation();
+
+		// verify that all anchoreds were removed
+		if (!contentPartToDelete.getAnchoredsUnmodifiable().isEmpty()) {
+			throw new IllegalStateException(
+					"After deletion of <" + contentPartToDelete
+							+ "> there are still anchoreds remaining.");
+		}
 	}
 
 	/**
