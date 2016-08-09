@@ -215,6 +215,20 @@ public class DotValidatorTests {
 	}
 
 	@Test
+	public void testWrongNodeColor() throws Exception {
+		String text = "graph { 1[color=\"#fffff\"]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.COLOR__NE,
+				"The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
 	public void testWrongNodeDistortion() throws Exception {
 		String text = "graph { 1[distortion=foo] 2[distortion=\"-100.0001\"]}";
 

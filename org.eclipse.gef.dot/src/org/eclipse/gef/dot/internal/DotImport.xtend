@@ -8,6 +8,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Tamas Miklossy  (itemis AG) - merge DotInterpreter into DotImport (bug #491261)
+ *                                 - Add support for all dot attributes (bug #461506)
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -184,8 +185,12 @@ class DotImport {
 			}
 		]
 
+		setter.apply(COLOR__NE, [n, value|n.setColor(value)])
+		setter.apply(COLORSCHEME__GNE, [n, value|n.setColorScheme(value)])
 		setter.apply(DISTORTION__N, [n, value|n.setDistortion(value)])
+		setter.apply(FILLCOLOR__NE, [n, value|n.setFillColor(value)])
 		setter.apply(FIXEDSIZE__N, [n, value|n.setFixedSize(value)])
+		setter.apply(FONTCOLOR__GNE, [n, value|n.setFontColor(value)])
 		setter.apply(HEIGHT__N, [n, value|n.setHeight(value)])
 		setter.apply(ID__GNE, [n, value|n.setId(value)])
 		setter.apply(LABEL__GNE, [n, value|n.setLabel(value)])
@@ -289,11 +294,16 @@ class DotImport {
 		setter.apply(ARROWHEAD__E, [e, value|e.setArrowHead(value)])
 		setter.apply(ARROWSIZE__E, [e, value|e.setArrowSize(value)])
 		setter.apply(ARROWTAIL__E, [e, value|e.setArrowTail(value)])
+		setter.apply(COLOR__NE, [e, value|e.setColor(value)])
+		setter.apply(COLORSCHEME__GNE, [e, value|e.setColorScheme(value)])
 		setter.apply(DIR__E, [e, value|e.setDir(value)])
+		setter.apply(FILLCOLOR__NE, [e, value|e.setFillColor(value)])
+		setter.apply(FONTCOLOR__GNE, [e, value|e.setFontColor(value)])
 		setter.apply(HEAD_LP__E, [e, value|e.setHeadLp(value)])
 		setter.apply(HEADLABEL__E, [e, value|e.setHeadLabel(value)])
 		setter.apply(ID__GNE, [e, value|e.setId(value)])
 		setter.apply(LABEL__GNE, [e, value|e.setLabel(value)])
+		setter.apply(LABELFONTCOLOR__E, [e, value|e.setLabelFontColor(value)])
 		setter.apply(LP__GE, [e, value|e.setLp(value)])
 		setter.apply(POS__NE, [e, value|e.setPos(value)])
 		setter.apply(STYLE__GNE, [e, value|e.setStyle(value)])
@@ -305,7 +315,7 @@ class DotImport {
 		graphBuilder.edges(edge)
 	}
 
-	def private String getAttributeValue(DotGraph graph, String name) {
+	def static String getAttributeValue(DotGraph graph, String name) {
 		for (stmt : graph.stmts) {
 			var String value = switch stmt {
 				AttrStmt: stmt.getAttributeValue(name)
@@ -339,7 +349,7 @@ class DotImport {
 		null
 	}
 
-	def private String getAttributeValue(AttrStmt attrStmt, String name) {
+	def private static String getAttributeValue(AttrStmt attrStmt, String name) {
 		attrStmt.attrLists.getAttributeValue(name)
 	}
 
@@ -347,7 +357,7 @@ class DotImport {
 		attrList.attributes.findFirst[it.name == name]?.value.escaped
 	}
 
-	def private String getAttributeValue(Attribute attribute, String name) {
+	def private static String getAttributeValue(Attribute attribute, String name) {
 		if (attribute.name.equals(name)) {
 			return attribute.value.escaped
 		}

@@ -9,6 +9,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Tamas Miklossy  (itemis AG) - Add support for polygon-based node shapes (bug #441352)
+ *                                 - Add support for all dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal;
@@ -20,18 +21,21 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.gef.dot.internal.parser.DotArrowTypeStandaloneSetup;
+import org.eclipse.gef.dot.internal.parser.DotColorStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.DotPointStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.DotShapeStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.DotSplineTypeStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.DotStyleStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotArrowTypeParser;
+import org.eclipse.gef.dot.internal.parser.parser.antlr.DotColorParser;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotPointParser;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotShapeParser;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotSplineTypeParser;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotStyleParser;
 import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.parser.validation.DotArrowTypeJavaValidator;
+import org.eclipse.gef.dot.internal.parser.validation.DotColorJavaValidator;
 import org.eclipse.gef.dot.internal.parser.validation.DotPointJavaValidator;
 import org.eclipse.gef.dot.internal.parser.validation.DotShapeJavaValidator;
 import org.eclipse.gef.dot.internal.parser.validation.DotSplineTypeJavaValidator;
@@ -304,6 +308,28 @@ public class DotLanguageSupport {
 	 * The serializer for arrowtype attribute values.
 	 */
 	public static final ISerializer ARROWTYPE_SERIALIZER = arrowTypeInjector
+			.getInstance(ISerializer.class);
+
+	private static final Injector colorInjector = new DotColorStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	/**
+	 * The validator for color attribute values.
+	 */
+	// TODO: move to DotJavaValidator
+	public static final DotColorJavaValidator COLOR_VALIDATOR = colorInjector
+			.getInstance(DotColorJavaValidator.class);
+
+	/**
+	 * The parser for color attribute values.
+	 */
+	public static final DotColorParser COLOR_PARSER = colorInjector
+			.getInstance(DotColorParser.class);
+
+	/**
+	 * The serializer for color attribute values.
+	 */
+	public static final ISerializer COLOR_SERIALIZER = colorInjector
 			.getInstance(ISerializer.class);
 
 	private static final Injector pointInjector = new DotPointStandaloneSetup()

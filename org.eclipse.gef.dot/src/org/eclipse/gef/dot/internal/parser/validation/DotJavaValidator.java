@@ -11,6 +11,7 @@
  *     Alexander Nyßen - initial implementation
  *     Tamas Miklossy  - Add support for arrowType edge decorations (bug #477980)
  *                     - Add support for polygon-based node shapes (bug #441352)
+ *                     - Add support for all dot attributes (bug #461506)
  *
  *******************************************************************************/
 
@@ -40,6 +41,8 @@ import org.eclipse.gef.dot.internal.DotLanguageSupport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParseResult;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParser;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowtypePackage;
+import org.eclipse.gef.dot.internal.parser.color.ColorPackage;
+import org.eclipse.gef.dot.internal.parser.color.DotColors;
 import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
@@ -241,6 +244,18 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateObjectAttributeValue(DotLanguageSupport.POINT_PARSER,
 					DotLanguageSupport.POINT_VALIDATOR, name, unquotedValue,
 					PointPackage.Literals.POINT, "point");
+		} else if (DotAttributes.BGCOLOR__G.equals(name)
+				|| DotAttributes.COLOR__NE.equals(name)
+				|| DotAttributes.FILLCOLOR__NE.equals(name)
+				|| DotAttributes.FONTCOLOR__GNE.equals(name)
+				|| DotAttributes.LABELFONTCOLOR__E.equals(name)) {
+			return validateObjectAttributeValue(DotLanguageSupport.COLOR_PARSER,
+					DotLanguageSupport.COLOR_VALIDATOR, name, unquotedValue,
+					ColorPackage.Literals.COLOR, "color");
+		} else if (DotAttributes.COLORSCHEME__GNE.equals(name)) {
+			return validateStringAttributeValue(name, unquotedValue,
+					DotAttributes.COLORSCHEME__GNE,
+					DotColors.getColorSchemes().toArray());
 		}
 		return Collections.emptyList();
 

@@ -26,12 +26,16 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
+import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.parser.color.DotColors;
 import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.dot.AttrList;
+import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef.dot.internal.parser.dot.EdgeOp;
+import org.eclipse.gef.dot.internal.parser.dot.EdgeStmtNode;
 import org.eclipse.gef.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
@@ -188,6 +192,16 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_PARSER_DOTARROWTYPE,
 							context, acceptor);
 					break;
+				case DotAttributes.COLOR__NE:
+				case DotAttributes.FILLCOLOR__NE:
+				case DotAttributes.FONTCOLOR__GNE:
+				case DotAttributes.LABELFONTCOLOR__E:
+					proposeColorAttributeValues(attribute, context, acceptor);
+					break;
+				case DotAttributes.COLORSCHEME__GNE:
+					proposeAttributeValues(DotColors.getColorSchemes(), context,
+							acceptor);
+					break;
 				case DotAttributes.DIR__E:
 					proposeAttributeValues(DirType.values(), context, acceptor);
 					break;
@@ -214,6 +228,14 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				}
 			} else if (DotAttributes.isGraphAttribute(attribute)) {
 				switch (attribute.getName()) {
+				case DotAttributes.BGCOLOR__G:
+				case DotAttributes.FONTCOLOR__GNE:
+					proposeColorAttributeValues(attribute, context, acceptor);
+					break;
+				case DotAttributes.COLORSCHEME__GNE:
+					proposeAttributeValues(DotColors.getColorSchemes(), context,
+							acceptor);
+					break;
 				case DotAttributes.FORCELABELS__G:
 					proposeAttributeValues(booleanAttributeValuesProposals,
 							context, acceptor);
@@ -239,6 +261,15 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				}
 			} else if (DotAttributes.isNodeAttribute(attribute)) {
 				switch (attribute.getName()) {
+				case DotAttributes.COLOR__NE:
+				case DotAttributes.FILLCOLOR__NE:
+				case DotAttributes.FONTCOLOR__GNE:
+					proposeColorAttributeValues(attribute, context, acceptor);
+					break;
+				case DotAttributes.COLORSCHEME__GNE:
+					proposeAttributeValues(DotColors.getColorSchemes(), context,
+							acceptor);
+					break;
 				case DotAttributes.FIXEDSIZE__N:
 					proposeAttributeValues(booleanAttributeValuesProposals,
 							context, acceptor);
@@ -326,6 +357,18 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		}
 	}
 
+	private void proposeColorAttributeValues(Attribute attribute,
+			ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		// propose color values based on the DotColor sub-grammar
+		proposeAttributeValues(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_PARSER_DOTCOLOR,
+				context, acceptor);
+		// propose color values based on the current color scheme
+		List<String> validColorNames = getColorNames(attribute);
+		proposeAttributeValues(validColorNames, context, acceptor);
+	}
+
 	/**
 	 * Calculates the valid dot attribute names within a given
 	 * {@link AttributeContext}.
@@ -376,5 +419,54 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		dotAttributeNames.put(AttributeContext.GRAPH, graphAttributeNames);
 		dotAttributeNames.put(AttributeContext.NODE, nodeAttributeNames);
 		return dotAttributeNames;
+	}
+
+	private List<String> getColorNames(Attribute attribute) {
+		// attribute nested below EdgeStmtNode
+		EObject container = EcoreUtil2.getContainerOfType(attribute,
+				EdgeStmtNode.class);
+		if (container != null) {
+			String colorScheme = DotImport.getAttributeValue(
+					((EdgeStmtNode) container).getAttrLists(),
+					DotAttributes.COLORSCHEME__GNE);
+			if (colorScheme != null) {
+				return DotColors.getColorNames(colorScheme);
+			}
+		}
+
+		// attribute nested below NodeStmt
+		container = EcoreUtil2.getContainerOfType(attribute, NodeStmt.class);
+		if (container != null) {
+			String colorScheme = DotImport.getAttributeValue(
+					((NodeStmt) container).getAttrLists(),
+					DotAttributes.COLORSCHEME__GNE);
+			if (colorScheme != null) {
+				return DotColors.getColorNames(colorScheme);
+			}
+		}
+
+		// attribute nested below Graph
+		container = EcoreUtil2.getContainerOfType(attribute, DotGraph.class);
+		if (container != null) {
+			String colorScheme = DotImport.getAttributeValue(
+					(DotGraph) container, DotAttributes.COLORSCHEME__GNE);
+			if (colorScheme != null) {
+				return DotColors.getColorNames(colorScheme);
+			}
+		}
+
+		// global AttrStmt
+		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
+				AttrStmt.class);
+		if (attrStmt != null) {
+			String colorScheme = DotImport.getAttributeValue(
+					attrStmt.getAttrLists(), DotAttributes.COLORSCHEME__GNE);
+			if (colorScheme != null) {
+				return DotColors.getColorNames(colorScheme);
+			}
+		}
+
+		// return the default color scheme
+		return DotColors.getColorNames("x11"); //$NON-NLS-1$
 	}
 }

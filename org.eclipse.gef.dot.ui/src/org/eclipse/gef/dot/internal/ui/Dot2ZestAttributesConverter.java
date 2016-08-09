@@ -11,6 +11,7 @@
  *     Alexander Nyßen  (itemis AG) - initial API & implementation
  *     Tamas Miklossy   (itemis AG) - Add support for arrowType edge decorations (bug #477980)
  *                                  - Add support for polygon-based node shapes (bug #441352)
+ *                                  - Add support for all dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -22,6 +23,11 @@ import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
+import org.eclipse.gef.dot.internal.parser.color.Color;
+import org.eclipse.gef.dot.internal.parser.color.DotColors;
+import org.eclipse.gef.dot.internal.parser.color.HSVColor;
+import org.eclipse.gef.dot.internal.parser.color.RGBColor;
+import org.eclipse.gef.dot.internal.parser.color.StringColor;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
 import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
@@ -31,6 +37,9 @@ import org.eclipse.gef.dot.internal.parser.splines.Splines;
 import org.eclipse.gef.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef.dot.internal.parser.style.EdgeStyle;
+import org.eclipse.gef.dot.internal.parser.style.NodeStyle;
+import org.eclipse.gef.dot.internal.parser.style.Style;
+import org.eclipse.gef.dot.internal.parser.style.StyleItem;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.nodes.PolylineInterpolator;
@@ -151,10 +160,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setInvisible(zest, true);
 		}
 		// TODO: handle tapered edges
-		if (connectionCssStyle != null) {
-			ZestProperties.setCurveCssStyle(zest, connectionCssStyle);
-		} else {
-			ZestProperties.setCurveCssStyle(zest, "-fx-stroke-line-cap: butt;"); //$NON-NLS-1$
+		if (connectionCssStyle == null) {
+			connectionCssStyle = "-fx-stroke-line-cap: butt;"; //$NON-NLS-1$
 		}
 		// direction
 		DirType dotDir = DotAttributes.getDirParsed(dot);
@@ -164,6 +171,45 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			dotDir = DotAttributes._TYPE__G__DIGRAPH.equals(
 					dot.getGraph().getAttributes().get(DotAttributes._TYPE__G))
 							? DirType.FORWARD : DirType.NONE;
+		}
+
+		// color
+		Color dotColor = DotAttributes.getColorParsed(dot);
+		String javaFxColor = computeZestColor(dotColor);
+		if (javaFxColor != null) {
+			String zestStroke = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+			connectionCssStyle += zestStroke;
+			if (DirType.BACK.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
+				String zestFill = "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+				String zestSourceDecorationCssStyle = zestStroke + zestFill;
+				ZestProperties.setSourceDecorationCssStyle(zest,
+						zestSourceDecorationCssStyle);
+			}
+			if (DirType.FORWARD.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
+				String zestFill = "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+				String zestTargetDecorationCssStyle = zestStroke + zestFill;
+				ZestProperties.setTargetDecorationCssStyle(zest,
+						zestTargetDecorationCssStyle);
+			}
+		}
+
+		ZestProperties.setCurveCssStyle(zest, connectionCssStyle);
+
+		// fillcolor
+		Color dotFillColor = DotAttributes.getFillColorParsed(dot);
+		String javaFxFillColor = computeZestColor(dotFillColor);
+		if (javaFxFillColor != null) {
+			String zestSourceDecorationCssStyle = ZestProperties
+					.getSourceDecorationCssStyle(zest);
+			ZestProperties.setSourceDecorationCssStyle(zest,
+					zestSourceDecorationCssStyle + "-fx-fill: " //$NON-NLS-1$
+							+ javaFxFillColor + ";"); //$NON-NLS-1$
+
+			String zestTargetDecorationCssStyle = ZestProperties
+					.getTargetDecorationCssStyle(zest);
+			ZestProperties.setTargetDecorationCssStyle(zest,
+					zestTargetDecorationCssStyle + "-fx-fill: " //$NON-NLS-1$
+							+ javaFxFillColor + ";"); //$NON-NLS-1$
 		}
 
 		// arrow size
@@ -408,12 +454,14 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setCssId(zest, dotId);
 		}
 
+		// style and color
+		String zestShapeStyle = computeZestStyle(dot);
 		org.eclipse.gef.dot.internal.parser.shape.Shape dotShape = DotAttributes
 				.getShapeParsed(dot);
+		javafx.scene.Node zestShape = null;
 		if (dotShape == null) {
 			// ellipse is default shape
-			ZestProperties.setShape(zest,
-					new GeometryNode<>(new Ellipse(new Rectangle())));
+			zestShape = new GeometryNode<>(new Ellipse(new Rectangle()));
 		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
 			PolygonBasedNodeShape polygonShape = ((PolygonBasedShape) dotShape
 					.getShape()).getShape();
@@ -421,28 +469,33 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			if (PolygonBasedNodeShape.CIRCLE.equals(polygonShape)
 					|| PolygonBasedNodeShape.ELLIPSE.equals(polygonShape)
 					|| PolygonBasedNodeShape.OVAL.equals(polygonShape)) {
-				ZestProperties.setShape(zest,
-						new GeometryNode<>(new Ellipse(new Rectangle())));
+				zestShape = new GeometryNode<>(new Ellipse(new Rectangle()));
 			} else if (PolygonBasedNodeShape.BOX.equals(polygonShape)
 					|| PolygonBasedNodeShape.RECT.equals(polygonShape)
 					|| PolygonBasedNodeShape.RECTANGLE.equals(polygonShape)
 					|| PolygonBasedNodeShape.SQUARE.equals(polygonShape)) {
-				ZestProperties.setShape(zest,
-						new GeometryNode<>(new Rectangle()));
+				zestShape = new GeometryNode<>(new Rectangle());
 			} else if (PolygonBasedNodeShape.DIAMOND.equals(polygonShape)) {
-				ZestProperties.setShape(zest, new GeometryNode<>(
-						new Polygon(0, 50, 50, 0, 100, 50, 50, 100, 0, 50)));
+				zestShape = new GeometryNode<>(
+						new Polygon(0, 50, 50, 0, 100, 50, 50, 100, 0, 50));
 			} else if (PolygonBasedNodeShape.INVTRIANGLE.equals(polygonShape)) {
-				ZestProperties.setShape(zest, new GeometryNode<>(
-						new Polygon(0, 10, 100, 10, 50, 100, 0, 10)));
+				zestShape = new GeometryNode<>(
+						new Polygon(0, 10, 100, 10, 50, 100, 0, 10));
 			} else if (PolygonBasedNodeShape.TRIANGLE.equals(polygonShape)) {
-				ZestProperties.setShape(zest, new GeometryNode<>(
-						new Polygon(0, 50, 50, 0, 100, 50, 0, 50)));
+				zestShape = new GeometryNode<>(
+						new Polygon(0, 50, 50, 0, 100, 50, 0, 50));
 			} else {
 				// TODO: handle other polygon shapes
 			}
 		} else {
 			// handle record and custom shapes
+		}
+
+		if (zestShape != null) {
+			if (zestShapeStyle != null) {
+				zestShape.setStyle(zestShapeStyle);
+			}
+			ZestProperties.setShape(zest, zestShape);
 		}
 
 		// label
@@ -509,6 +562,42 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 	}
 
+	private String computeZestStyle(Node dot) {
+		String zestStyle = null;
+		// color
+		Color dotColor = DotAttributes.getColorParsed(dot);
+		String javaFxColor = computeZestColor(dotColor);
+		if (javaFxColor != null) {
+			zestStyle = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		// fillcolor: evaluate only if the node style is set to 'filled'.
+		boolean isFilledStyle = false;
+		Style nodeStyle = DotAttributes.getStyleParsed(dot);
+		if (nodeStyle != null) {
+			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
+				if (styleItem.getName().equals(NodeStyle.FILLED.toString())) {
+					isFilledStyle = true;
+					break;
+				}
+			}
+		}
+
+		if (isFilledStyle) {
+			Color dotFillColor = DotAttributes.getFillColorParsed(dot);
+			String javaFxFillColor = computeZestColor(dotFillColor);
+			if (javaFxFillColor != null) {
+				if (zestStyle == null) {
+					zestStyle = "-fx-fill: " + javaFxFillColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					zestStyle += "-fx-fill: " + javaFxFillColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+
+		}
+		return zestStyle;
+	}
+
 	private Point computeZestPosition(
 			org.eclipse.gef.dot.internal.parser.point.Point dotPosition,
 			double widthInPixel, double heightInPixel) {
@@ -531,6 +620,45 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// TODO: respect font settings (font name and size)
 		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
 		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
+	}
+
+	/**
+	 * Returns the javafx representation of a dot color.
+	 * 
+	 * @param dotColor
+	 *            The color in dot representation.
+	 * @return The color in javafx representation, or null if the javafx color
+	 *         representation cannot be determined.
+	 */
+	private String computeZestColor(Color dotColor) {
+		String javaFxColor = null;
+		if (dotColor instanceof RGBColor) {
+			RGBColor rgbColor = (RGBColor) dotColor;
+			StringBuffer sb = new StringBuffer();
+			sb.append("#"); //$NON-NLS-1$
+			sb.append(rgbColor.getR());
+			sb.append(rgbColor.getG());
+			sb.append(rgbColor.getB());
+			if (rgbColor.getA() != null) {
+				sb.append(rgbColor.getA());
+			}
+			javaFxColor = sb.toString();
+		} else if (dotColor instanceof HSVColor) {
+			HSVColor hsvColor = (HSVColor) dotColor;
+			javaFxColor = String.format("hsb(%s, %s%%, %s%%)", //$NON-NLS-1$
+					Double.parseDouble(hsvColor.getH()) * 360,
+					Double.parseDouble(hsvColor.getS()) * 100,
+					Double.parseDouble(hsvColor.getV()) * 100);
+		} else if (dotColor instanceof StringColor) {
+			StringColor stringColor = (StringColor) dotColor;
+			String colorSchema = stringColor.getScheme();
+			String colorName = stringColor.getName();
+			if (colorSchema == null || colorSchema.isEmpty()) {
+				colorSchema = "x11"; //$NON-NLS-1$
+			}
+			javaFxColor = DotColors.get(colorSchema, colorName);
+		}
+		return javaFxColor;
 	}
 
 	protected void convertAttributes(Graph dot, Graph zest) {

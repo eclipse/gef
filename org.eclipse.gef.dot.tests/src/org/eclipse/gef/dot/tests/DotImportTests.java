@@ -477,6 +477,74 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void edge_color() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.attr(DotAttributes.COLOR__NE, "0.000 0.000 1.000") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3--4") //$NON-NLS-1$
+				.attr(DotAttributes.COLOR__NE, "0.000 0.000 1.000") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_COLOR_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColor(e1, "0.000 0.000 1.000");
+		DotAttributes.setColor(e2, "white");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_COLOR_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColor(e1, "white");
+		DotAttributes.setColor(e2, "0.000 0.000 1.000");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_COLOR_OVERRIDE);
+	}
+
+	@Test
+	public void edge_colorscheme() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.attr(DotAttributes.COLORSCHEME__GNE, "accent3") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3--4") //$NON-NLS-1$
+				.attr(DotAttributes.COLORSCHEME__GNE, "accent3") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_COLORSCHEME_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColorScheme(e1, "accent3");
+		DotAttributes.setColorScheme(e2, "accent4");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_COLORSCHEME_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColorScheme(e1, "accent4");
+		DotAttributes.setColorScheme(e2, "accent3");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_COLORSCHEME_OVERRIDE);
+	}
+
+	@Test
 	public void edge_dir() {
 		// test global attribute
 		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
@@ -508,6 +576,74 @@ public final class DotImportTests {
 		DotAttributes.setDir(e2, "back");
 		expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.EDGE_DIR_OVERRIDE);
+	}
+
+	@Test
+	public void edge_fillcolor() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.attr(DotAttributes.FILLCOLOR__NE, "0.000 0.000 0.000") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3--4") //$NON-NLS-1$
+				.attr(DotAttributes.FILLCOLOR__NE, "0.000 0.000 0.000") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FILLCOLOR_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFillColor(e1, "0.000 0.000 0.000");
+		DotAttributes.setFillColor(e2, "black");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FILLCOLOR_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFillColor(e1, "black");
+		DotAttributes.setFillColor(e2, "0.000 0.000 0.000");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FILLCOLOR_OVERRIDE);
+	}
+
+	@Test
+	public void edge_fontcolor() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.attr(DotAttributes.FONTCOLOR__GNE, "0.000 1.000 1.000") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3--4") //$NON-NLS-1$
+				.attr(DotAttributes.FONTCOLOR__GNE, "0.000 1.000 1.000") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTCOLOR_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFontColor(e1, "0.000 1.000 1.000");
+		DotAttributes.setFontColor(e2, "red");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTCOLOR_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFontColor(e1, "red");
+		DotAttributes.setFontColor(e2, "0.000 1.000 1.000");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTCOLOR_OVERRIDE);
 	}
 
 	@Test
@@ -614,6 +750,40 @@ public final class DotImportTests {
 		DotAttributes.setLabel(e2, "Edge3");
 		expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.EDGE_LABEL_OVERRIDE);
+	}
+
+	@Test
+	public void edge_labelfontcolor() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes._NAME__GNE, "1--2") //$NON-NLS-1$
+				.attr(DotAttributes.LABELFONTCOLOR__E, "0.482 0.714 0.878") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes._NAME__GNE, "3--4") //$NON-NLS-1$
+				.attr(DotAttributes.LABELFONTCOLOR__E, "0.482 0.714 0.878") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTCOLOR_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setLabelFontColor(e1, "0.482 0.714 0.878");
+		DotAttributes.setLabelFontColor(e2, "turquoise");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTCOLOR_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setLabelFontColor(e1, "turquoise");
+		DotAttributes.setLabelFontColor(e2, "0.482 0.714 0.878");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTCOLOR_OVERRIDE);
 	}
 
 	@Test
@@ -795,6 +965,68 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void node_color() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1")
+				// $NON-NLS-1$
+				.attr(DotAttributes.COLOR__NE, "#ffffff").buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2")
+				// $NON-NLS-1$
+				.attr(DotAttributes.COLOR__NE, "#ffffff").buildNode();
+		Graph expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_COLOR_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColor(n1, "#ff0000");
+		DotAttributes.setColor(n2, "#00ffff");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_COLOR_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColor(n1, "#00ff00");
+		DotAttributes.setColor(n2, "#ff0000");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_COLOR_OVERRIDE);
+	}
+
+	@Test
+	public void node_colorscheme() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1")
+				// $NON-NLS-1$
+				.attr(DotAttributes.COLORSCHEME__GNE, "accent5").buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2")
+				// $NON-NLS-1$
+				.attr(DotAttributes.COLORSCHEME__GNE, "accent5").buildNode();
+		Graph expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_COLORSCHEME_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColorScheme(n1, "accent5");
+		DotAttributes.setColorScheme(n2, "accent6");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_COLORSCHEME_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setColorScheme(n1, "accent6");
+		DotAttributes.setColorScheme(n2, "accent5");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_COLORSCHEME_OVERRIDE);
+	}
+
+	@Test
 	public void node_distortion() {
 		// test global attribute
 		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
@@ -824,6 +1056,37 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void node_fillcolor() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1")
+				// $NON-NLS-1$
+				.attr(DotAttributes.FILLCOLOR__NE, "0.3 .8 .7").buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2")
+				// $NON-NLS-1$
+				.attr(DotAttributes.FILLCOLOR__NE, "0.3 .8 .7").buildNode();
+		Graph expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FILLCOLOR_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFillColor(n1, "0.3 .8 .7");
+		DotAttributes.setFillColor(n2, "/bugn9/7");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FILLCOLOR_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFillColor(n1, "/bugn9/7");
+		DotAttributes.setFillColor(n2, "0.3 .8 .7");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FILLCOLOR_OVERRIDE);
+	}
+
+	@Test
 	public void node_fixedsize() {
 		// test global attribute
 		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
@@ -850,6 +1113,37 @@ public final class DotImportTests {
 		DotAttributes.setFixedSizeParsed(n2, true);
 		expected = graph.nodes(n1, n2).build();
 		testStringImport(expected, DotTestGraphs.NODE_FIXEDSIZE_OVERRIDE);
+	}
+
+	@Test
+	public void node_fontcolor() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1")
+				// $NON-NLS-1$
+				.attr(DotAttributes.FONTCOLOR__GNE, "0.3, .8, .7").buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2")
+				// $NON-NLS-1$
+				.attr(DotAttributes.FONTCOLOR__GNE, "0.3, .8, .7").buildNode();
+		Graph expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTCOLOR_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFontColor(n1, "0.3, .8, .7");
+		DotAttributes.setFontColor(n2, "/brbg11/10");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTCOLOR_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		DotAttributes.setFontColor(n1, "/brbg11/10");
+		DotAttributes.setFontColor(n2, "0.3, .8, .7");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTCOLOR_OVERRIDE);
 	}
 
 	@Test

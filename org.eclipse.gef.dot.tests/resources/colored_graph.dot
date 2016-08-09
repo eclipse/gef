@@ -1,0 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *       Tamas Miklossy  (itemis AG) - Initial text 
+ *******************************************************************************/
+ 
+/* 
+ * The Colored directed graph represents the dot color attributes (bgcolor, color, fillcolor, 
+ * fontcolor, labelfontcolor) given in different color formats (RBG, RGBA, HSV, String).
+ */
+digraph Colored{
+    label = coloredGraph
+    layout=neato
+
+    bgcolor = "gray"                              // gray_RGB
+    fontcolor = ".051 .718 .627"                  // sienna_HSV
+                                                  
+    1[color="#ffffff"]                            // white_RGB
+    2[color="#ffffffff"]                          // white_RGBA
+    3[color="0.000, 0.000, 1.000"]                // white_HSV
+    4[color="/svg/white"]                         // white_String with color scheme
+                                                  
+    5[style=filled fillcolor="#00ff00"  ]         // green_RGB
+    6[style=filled fillcolor="#00ff00ff"]         // green_RGBA
+    7[style=filled fillcolor="0.3 .8 .7"]         // green_HSV
+    8[style=filled fillcolor="/bugn9/7" ]         // green_String with color scheme
+                                                  
+    9[fontcolor="#00ff00"     ]                   // green_RGB
+    10[fontcolor="#00ff00ff"  ]                   // green_RGBA
+    11[fontcolor="0.3, .8, .7"]                   // green_HSV
+    12[fontcolor="/brbg11/10" ]                   // green_String with color scheme
+                                                  
+                                                  
+    1->2[color="#ffffff"          ]               // white_RGB
+    2->3[color="#ffffff42"        ]               // white_RGBA
+    3->4[color="0.000 0.000 1.000"]               // white_HSV
+    4->5[color=white              ]               // white_String
+
+    5->6[fillcolor="#000000"          ]           // black_RGB
+    6->7[fillcolor="#00000042"        ]           // black_RGBA
+    7->8[fillcolor="0.000 0.000 0.000"]           // black_HSV
+    8->9[fillcolor=black              ]           // black_String
+
+     9->10[label=a fontcolor="#ff0000"          ] // red_RGB
+    10->11[label=b fontcolor="#ff0000bb"        ] // red_RGBA
+    11->12[label=c fontcolor="0.000 1.000 1.000"] // red_HSV
+    12->13[label=d fontcolor="red"              ] // red_String
+
+    13->14[headlabel=h1 taillabel=t1 labelfontcolor="#40e0d0"          ] // turquoise_RGB
+    14->15[headlabel=h2 taillabel=t2 labelfontcolor="#40e0d0cc"        ] // turquoise_RGBA
+    15->16[headlabel=h3 taillabel=t3 labelfontcolor="0.482 0.714 0.878"] // turquoise_HSV
+    16-> 1[headlabel=h4 taillabel=t4 labelfontcolor="turquoise"        ] // turquoise_String
+}

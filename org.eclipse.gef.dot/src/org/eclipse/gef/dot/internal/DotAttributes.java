@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
+import org.eclipse.gef.dot.internal.parser.color.Color;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.parser.dot.Attribute;
@@ -102,6 +103,21 @@ public class DotAttributes {
 	public static final String ARROWTAIL__E = "arrowtail";
 
 	/**
+	 * Specifies the 'bgcolor' attribute of a graph.
+	 */
+	public static final String BGCOLOR__G = "bgcolor";
+
+	/**
+	 * Specifies the 'color' attribute of a node or edge.
+	 */
+	public static final String COLOR__NE = "color";
+
+	/**
+	 * Specifies the 'colorscheme' attribute of a graph, node or edge.
+	 */
+	public static final String COLORSCHEME__GNE = "colorscheme";
+
+	/**
 	 * Specifies the 'dir' attribute of an edge.
 	 */
 	public static final String DIR__E = "dir";
@@ -112,9 +128,19 @@ public class DotAttributes {
 	public static final String DISTORTION__N = "distortion";
 
 	/**
+	 * Specifies the 'fillcolor' attribute of a node or edge.
+	 */
+	public static final String FILLCOLOR__NE = "fillcolor";
+
+	/**
 	 * Specifies the 'fixedsize' attribute of a node.
 	 */
 	public static final String FIXEDSIZE__N = "fixedsize";
+
+	/**
+	 * Specifies the 'fontcolor' attribute of a graph, node or edge.
+	 */
+	public static final String FONTCOLOR__GNE = "fontcolor";
 
 	/**
 	 * Specifies the 'forcelabels' attribute of a graph.
@@ -145,6 +171,11 @@ public class DotAttributes {
 	 * Specifies the 'label' attribute of a graph, node or edge.
 	 */
 	public static final String LABEL__GNE = "label";
+
+	/**
+	 * Specifies the 'labelfontcolor' attribute of an edge.
+	 */
+	public static final String LABELFONTCOLOR__E = "labelfontcolor";
 
 	/**
 	 * Specifies the 'layout' attribute of a graph.
@@ -440,6 +471,135 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #BGCOLOR__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #BGCOLOR__G} attribute.
+	 * @return The value of the {@link #BGCOLOR__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getBgColor(Graph graph) {
+		return (String) graph.attributesProperty().get(BGCOLOR__G);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #BGCOLOR__G} attribute of the
+	 * given {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #BGCOLOR__G} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #BGCOLOR__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static Color getBgColorParsed(Graph graph) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getBgColor(graph));
+	}
+
+	/**
+	 * Returns the value of the {@link #COLOR__NE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @return The value of the {@link #COLOR__NE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getColor(Edge edge) {
+		return (String) edge.attributesProperty().get(COLOR__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #COLOR__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @return The value of the {@link #COLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getColor(Node node) {
+		return (String) node.attributesProperty().get(COLOR__NE);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #COLOR__NE} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #COLOR__NE} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #COLOR__NE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static Color getColorParsed(Edge edge) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getColor(edge));
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #COLOR__NE} attribute of the
+	 * given {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #COLOR__NE} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #COLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static Color getColorParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getColor(node));
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getColorScheme(Edge edge) {
+		return (String) edge.attributesProperty().get(COLORSCHEME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getColorScheme(Graph graph) {
+		return (String) graph.attributesProperty().get(COLORSCHEME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getColorScheme(Node node) {
+		return (String) node.attributesProperty().get(COLORSCHEME__GNE);
+	}
+
+	/**
 	 * Returns the value of the {@link #DIR__E} attribute of the given
 	 * {@link Edge}.
 	 * 
@@ -498,6 +658,64 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #FILLCOLOR__NE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getFillColor(Edge edge) {
+		return (String) edge.attributesProperty().get(FILLCOLOR__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #FILLCOLOR__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getFillColor(Node node) {
+		return (String) node.attributesProperty().get(FILLCOLOR__NE);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #FILLCOLOR__NE} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #FILLCOLOR__NE} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static Color getFillColorParsed(Edge edge) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getFillColor(edge));
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #FILLCOLOR__NE} attribute of the
+	 * given {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FILLCOLOR__NE} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static Color getFillColorParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getFillColor(node));
+	}
+
+	/**
 	 * Returns the value of the {@link #FIXEDSIZE__N} attribute of the given
 	 * {@link Node}.
 	 * 
@@ -524,6 +742,93 @@ public class DotAttributes {
 	public static Boolean getFixedSizeParsed(Node node) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.BOOL_PARSER, getFixedSize(node));
+	}
+
+	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getFontColor(Edge edge) {
+		return (String) edge.attributesProperty().get(FONTCOLOR__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getFontColor(Graph graph) {
+		return (String) graph.attributesProperty().get(FONTCOLOR__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getFontColor(Node node) {
+		return (String) node.attributesProperty().get(FONTCOLOR__GNE);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #FONTCOLOR__GNE} attribute of
+	 * the given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static Color getFontColorParsed(Edge edge) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getFontColor(edge));
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #FONTCOLOR__GNE} attribute of
+	 * the given {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static Color getFontColorParsed(Graph graph) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getFontColor(graph));
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #FONTCOLOR__GNE} attribute of
+	 * the given {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute, parsed as a {@link Color}.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static Color getFontColorParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getFontColor(node));
 	}
 
 	/**
@@ -725,6 +1030,36 @@ public class DotAttributes {
 	 */
 	public static String getLabel(Node node) {
 		return (String) node.attributesProperty().get(LABEL__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #LABELFONTCOLOR__E} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LABELFONTCOLOR__E} attribute.
+	 * @return The value of the {@link #LABELFONTCOLOR__E} attribute of the
+	 *         given {@link Edge}.
+	 */
+	public static String getLabelFontColor(Edge edge) {
+		return (String) edge.attributesProperty().get(LABELFONTCOLOR__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #LABELFONTCOLOR__E} attribute of
+	 * the given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LABELFONTCOLOR__E} attribute, parsed as a
+	 *            {@link Color}.
+	 * @return The value of the {@link #LABELFONTCOLOR__E} attribute of the
+	 *         given {@link Edge}.
+	 */
+	public static Color getLabelFontColorParsed(Edge edge) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.COLOR_PARSER, getLabelFontColor(edge));
 	}
 
 	/**
@@ -1343,6 +1678,159 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #BGCOLOR__G} attribute of the given {@link Graph} to the
+	 * given <i>bgColor</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #BGCOLOR__G} attribute.
+	 * @param bgColor
+	 *            The new value for the {@link #BGCOLOR__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>bgColor</i> value is not supported.
+	 */
+	public static void setBgColor(Graph graph, String bgColor) {
+		validate(AttributeContext.GRAPH, BGCOLOR__G, bgColor);
+		graph.attributesProperty().put(BGCOLOR__G, bgColor);
+	}
+
+	/**
+	 * Sets the {@link #BGCOLOR__G} attribute of the given {@link Graph} to the
+	 * given <i>bgColorParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #BGCOLOR__G} attribute.
+	 * @param bgColorParsed
+	 *            The new value for the {@link #BGCOLOR__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>bgColorParsed</i> value is not supported.
+	 */
+	public static void setBgColorParsed(Graph graph, Color bgColorParsed) {
+		setBgColor(graph,
+				serialize(DotLanguageSupport.COLOR_SERIALIZER, bgColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #COLOR__NE} attribute of the given {@link Edge} to the
+	 * given <i>color</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @param color
+	 *            The new value for the {@link #COLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>color</i> value is not supported.
+	 */
+	public static void setColor(Edge edge, String color) {
+		validate(AttributeContext.EDGE, COLOR__NE, color);
+		edge.attributesProperty().put(COLOR__NE, color);
+	}
+
+	/**
+	 * Sets the {@link #COLOR__NE} attribute of the given {@link Node} to the
+	 * given <i>color</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @param color
+	 *            The new value for the {@link #COLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>color</i> value is not supported.
+	 */
+	public static void setColor(Node node, String color) {
+		validate(AttributeContext.NODE, COLOR__NE, color);
+		node.attributesProperty().put(COLOR__NE, color);
+	}
+
+	/**
+	 * Sets the {@link #COLOR__NE} attribute of the given {@link Edge} to the
+	 * given <i>colorParsed</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @param colorParsed
+	 *            The new value for the {@link #COLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorParsed</i> value is not supported.
+	 */
+	public static void setColorParsed(Edge edge, Color colorParsed) {
+		setColor(edge,
+				serialize(DotLanguageSupport.COLOR_SERIALIZER, colorParsed));
+	}
+
+	/**
+	 * Sets the {@link #COLOR__NE} attribute of the given {@link Node} to the
+	 * given <i>colorParsed</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @param colorParsed
+	 *            The new value for the {@link #COLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorParsed</i> value is not supported.
+	 */
+	public static void setColorParsed(Node node, Color colorParsed) {
+		setColor(node,
+				serialize(DotLanguageSupport.COLOR_SERIALIZER, colorParsed));
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Edge} to
+	 * the given <i>colorScheme</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorScheme
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorScheme(Edge edge, String colorScheme) {
+		validate(AttributeContext.EDGE, COLORSCHEME__GNE, colorScheme);
+		edge.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Graph}
+	 * to the given <i>colorScheme</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorScheme
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorScheme(Graph graph, String colorScheme) {
+		validate(AttributeContext.GRAPH, COLORSCHEME__GNE, colorScheme);
+		graph.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Node} to
+	 * the given <i>colorScheme</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorScheme
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorScheme(Node node, String colorScheme) {
+		validate(AttributeContext.NODE, COLORSCHEME__GNE, colorScheme);
+		node.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
+	}
+
+	/**
 	 * Sets the {@link #DIR__E} attribute of the given {@link Edge} to the given
 	 * <i>dir</i> value.
 	 * 
@@ -1410,6 +1898,74 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Edge} to
+	 * the given <i>fillColor</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @param fillColor
+	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fillColor</i> value is not supported.
+	 */
+	public static void setFillColor(Edge edge, String fillColor) {
+		validate(AttributeContext.EDGE, FILLCOLOR__NE, fillColor);
+		edge.attributesProperty().put(FILLCOLOR__NE, fillColor);
+	}
+
+	/**
+	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Node} to
+	 * the given <i>fillColor</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @param fillColor
+	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fillColor</i> value is not supported.
+	 */
+	public static void setFillColor(Node node, String fillColor) {
+		validate(AttributeContext.NODE, FILLCOLOR__NE, fillColor);
+		node.attributesProperty().put(FILLCOLOR__NE, fillColor);
+	}
+
+	/**
+	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Edge} to
+	 * the given <i>fillColorParsed</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @param fillColorParsed
+	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fillColorParsed</i> value is not supported.
+	 */
+	public static void setFillColorParsed(Edge edge, Color fillColorParsed) {
+		setFillColor(edge, serialize(DotLanguageSupport.COLOR_SERIALIZER,
+				fillColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Node} to
+	 * the given <i>fillColorParsed</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @param fillColorParsed
+	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fillColorParsed</i> value is not supported.
+	 */
+	public static void setFillColorParsed(Node node, Color fillColorParsed) {
+		setFillColor(node, serialize(DotLanguageSupport.COLOR_SERIALIZER,
+				fillColorParsed));
+	}
+
+	/**
 	 * Sets the {@link #FIXEDSIZE__N} attribute of the given {@link Node} to the
 	 * given <i>fixedSize</i> value.
 	 * 
@@ -1440,6 +1996,108 @@ public class DotAttributes {
 	 */
 	public static void setFixedSizeParsed(Node node, Boolean fixedSizeParsed) {
 		setFixedSize(node, fixedSizeParsed.toString());
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Edge} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColor(Edge edge, String fontColor) {
+		validate(AttributeContext.EDGE, FONTCOLOR__GNE, fontColor);
+		edge.attributesProperty().put(FONTCOLOR__GNE, fontColor);
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Graph} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColor(Graph graph, String fontColor) {
+		validate(AttributeContext.GRAPH, FONTCOLOR__GNE, fontColor);
+		graph.attributesProperty().put(FONTCOLOR__GNE, fontColor);
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Node} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColor(Node node, String fontColor) {
+		validate(AttributeContext.NODE, FONTCOLOR__GNE, fontColor);
+		node.attributesProperty().put(FONTCOLOR__GNE, fontColor);
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Edge} to
+	 * the given <i>fontColorParsed</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColorParsed
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColorParsed</i> value is not supported.
+	 */
+	public static void setFontColorParsed(Edge edge, Color fontColorParsed) {
+		setFontColor(edge, serialize(DotLanguageSupport.COLOR_SERIALIZER,
+				fontColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Graph} to
+	 * the given <i>fontColorParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColorParsed
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColorParsed</i> value is not supported.
+	 */
+	public static void setFontColorParsed(Graph graph, Color fontColorParsed) {
+		setFontColor(graph, serialize(DotLanguageSupport.COLOR_SERIALIZER,
+				fontColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Node} to
+	 * the given <i>fontColorParsed</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColorParsed
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColorParsed</i> value is not supported.
+	 */
+	public static void setFontColorParsed(Node node, Color fontColorParsed) {
+		setFontColor(node, serialize(DotLanguageSupport.COLOR_SERIALIZER,
+				fontColorParsed));
 	}
 
 	/**
@@ -1640,6 +2298,42 @@ public class DotAttributes {
 	 */
 	public static void setLabel(Node node, String label) {
 		node.attributesProperty().put(LABEL__GNE, label);
+	}
+
+	/**
+	 * Sets the {@link #LABELFONTCOLOR__E} attribute of the given {@link Edge}
+	 * to the given <i>labelFontColor</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LABELFONTCOLOR__E} attribute.
+	 * @param labelFontColor
+	 *            The new value for the {@link #LABELFONTCOLOR__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>labelFontColor</i> value is not supported.
+	 */
+	public static void setLabelFontColor(Edge edge, String labelFontColor) {
+		validate(AttributeContext.EDGE, LABELFONTCOLOR__E, labelFontColor);
+		edge.attributesProperty().put(LABELFONTCOLOR__E, labelFontColor);
+	}
+
+	/**
+	 * Sets the {@link #LABELFONTCOLOR__E} attribute of the given {@link Edge}
+	 * to the given <i>labelFontColorParsed</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LABELFONTCOLOR__E} attribute.
+	 * @param labelFontColorParsed
+	 *            The new value for the {@link #LABELFONTCOLOR__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>labelFontColorParsed</i> value is not
+	 *             supported.
+	 */
+	public static void setLabelFontColorParsed(Edge edge,
+			Color labelFontColorParsed) {
+		setLabelFontColor(edge, serialize(DotLanguageSupport.COLOR_SERIALIZER,
+				labelFontColorParsed));
 	}
 
 	/**

@@ -353,6 +353,52 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val EDGE_COLOR_GLOBAL = '''
+		graph {
+			edge[color="0.000 0.000 1.000"]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_COLOR_LOCAL = '''
+		graph {
+			1--2[color="0.000 0.000 1.000"]
+			3--4[color="white"]
+		}
+	'''
+	
+	public static val EDGE_COLOR_OVERRIDE = '''
+		graph {
+			edge[color="0.000 0.000 1.000"]
+			1--2[color="white"]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_COLORSCHEME_GLOBAL = '''
+		graph {
+			edge[colorscheme="accent3"]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_COLORSCHEME_LOCAL = '''
+		graph {
+			1--2[colorscheme="accent3"]
+			3--4[colorscheme="accent4"]
+		}
+	'''
+	
+	public static val EDGE_COLORSCHEME_OVERRIDE = '''
+		graph {
+			edge[colorscheme="accent3"]
+			1--2[colorscheme="accent4"]
+			3--4
+		}
+	'''
+	
 	public static val EDGE_DIR_GLOBAL = '''
 		digraph {
 			edge[dir=forward]
@@ -375,6 +421,53 @@ class DotTestGraphs {
 			3->4
 		}
 	'''
+	
+	public static val EDGE_FILLCOLOR_GLOBAL = '''
+		graph {
+			edge[fillcolor="0.000 0.000 0.000"]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_FILLCOLOR_LOCAL = '''
+		graph {
+			1--2[fillcolor="0.000 0.000 0.000"]
+			3--4[fillcolor="black"]
+		}
+	'''
+	
+	public static val EDGE_FILLCOLOR_OVERRIDE = '''
+		graph {
+			edge[fillcolor="0.000 0.000 0.000"]
+			1--2[fillcolor="black"]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_FONTCOLOR_GLOBAL = '''
+		graph {
+			edge[fontcolor="0.000 1.000 1.000"]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_FONTCOLOR_LOCAL = '''
+		graph {
+			1--2[fontcolor="0.000 1.000 1.000"]
+			3--4[fontcolor="red"]
+		}
+	'''
+	
+	public static val EDGE_FONTCOLOR_OVERRIDE = '''
+		graph {
+			edge[fontcolor="0.000 1.000 1.000"]
+			1--2[fontcolor="red"]
+			3--4
+		}
+	'''
+	
 	
 	public static val EDGE_HEADLABEL_GLOBAL = '''
 		graph {
@@ -432,6 +525,29 @@ class DotTestGraphs {
 		graph {
 			edge[label=Edge3]
 			1--2[label=Edge4]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELFONTCOLOR_GLOBAL = '''
+		graph {
+			edge[labelfontcolor="0.482 0.714 0.878"]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELFONTCOLOR_LOCAL = '''
+		graph {
+			1--2[labelfontcolor="0.482 0.714 0.878"]
+			3--4[labelfontcolor="turquoise"]
+		}
+	'''
+	
+	public static val EDGE_LABELFONTCOLOR_OVERRIDE = '''
+		graph {
+			edge[labelfontcolor="0.482 0.714 0.878"]
+			1--2[labelfontcolor="turquoise"]
 			3--4
 		}
 	'''
@@ -533,6 +649,52 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val NODE_COLOR_GLOBAL = '''
+		graph {
+			node[color="#ffffff"]
+			1
+			2
+		}
+	'''
+	
+	public static val NODE_COLOR_LOCAL = '''
+		graph {
+			1[color="#ff0000"]
+			2[color="#00ffff"]
+		}
+	'''
+	
+	public static val NODE_COLOR_OVERRIDE = '''
+		graph {
+			node[color="#ff0000"]
+			1[color="#00ff00"]
+			2
+		}
+	'''
+	
+	public static val NODE_COLORSCHEME_GLOBAL = '''
+		graph {
+			node[colorscheme="accent5"]
+			1
+			2
+		}
+	'''
+	
+	public static val NODE_COLORSCHEME_LOCAL = '''
+		graph {
+			1[colorscheme="accent5"]
+			2[colorscheme="accent6"]
+		}
+	'''
+	
+	public static val NODE_COLORSCHEME_OVERRIDE = '''
+		graph {
+			node[colorscheme="accent5"]
+			1[colorscheme="accent6"]
+			2
+		}
+	'''
+	
 	public static val NODE_DISTORTION_GLOBAL = '''
 		graph {
 			node[distortion=1.1]
@@ -556,6 +718,29 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val NODE_FILLCOLOR_GLOBAL = '''
+		graph {
+			node[fillcolor="0.3 .8 .7"]
+			1
+			2
+		}
+	'''
+	
+	public static val NODE_FILLCOLOR_LOCAL = '''
+		graph {
+			1[fillcolor="0.3 .8 .7"]
+			2[fillcolor="/bugn9/7"]
+		}
+	'''
+	
+	public static val NODE_FILLCOLOR_OVERRIDE = '''
+		graph {
+			node[fillcolor="0.3 .8 .7"]
+			1[fillcolor="/bugn9/7"]
+			2
+		}
+	'''
+	
 	public static val NODE_FIXEDSIZE_GLOBAL = '''
 		graph {
 			node[fixedsize=true]
@@ -575,6 +760,29 @@ class DotTestGraphs {
 		graph {
 			node[fixedsize=true]
 			1[fixedsize=false]
+			2
+		}
+	'''
+	
+	public static val NODE_FONTCOLOR_GLOBAL = '''
+		graph {
+			node[fontcolor="0.3, .8, .7"]
+			1
+			2
+		}
+	'''
+	
+	public static val NODE_FONTCOLOR_LOCAL = '''
+		graph {
+			1[fontcolor="0.3, .8, .7"]
+			2[fontcolor="/brbg11/10"]
+		}
+	'''
+	
+	public static val NODE_FONTCOLOR_OVERRIDE = '''
+		graph {
+			node[fontcolor="0.3, .8, .7"]
+			1[fontcolor="/brbg11/10"]
 			2
 		}
 	'''

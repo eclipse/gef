@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import org.eclipse.gef.dot.internal.parser.DotUiInjectorProvider;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.xtext.junit4.InjectWith;
@@ -39,6 +42,211 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		 */
 		StatusHandlerRegistry.getDefault();
 	}
+
+	private String[] expectedDotColorSchemes = { "x11", "svg", "accent3",
+			"accent4", "accent5", "accent6", "accent7", "accent8", "blues3",
+			"blues4", "blues5", "blues6", "blues7", "blues8", "blues9",
+			"brbg10", "brbg11", "brbg3", "brbg4", "brbg5", "brbg6", "brbg7",
+			"brbg8", "brbg9", "bugn3", "bugn4", "bugn5", "bugn6", "bugn7",
+			"bugn8", "bugn9", "bupu3", "bupu4", "bupu5", "bupu6", "bupu7",
+			"bupu8", "bupu9", "dark23", "dark24", "dark25", "dark26", "dark27",
+			"dark28", "gnbu3", "gnbu4", "gnbu5", "gnbu6", "gnbu7", "gnbu8",
+			"gnbu9", "greens3", "greens4", "greens5", "greens6", "greens7",
+			"greens8", "greens9", "greys3", "greys4", "greys5", "greys6",
+			"greys7", "greys8", "greys9", "oranges3", "oranges4", "oranges5",
+			"oranges6", "oranges7", "oranges8", "oranges9", "orrd3", "orrd4",
+			"orrd5", "orrd6", "orrd7", "orrd8", "orrd9", "paired10", "paired11",
+			"paired12", "paired3", "paired4", "paired5", "paired6", "paired7",
+			"paired8", "paired9", "pastel13", "pastel14", "pastel15",
+			"pastel16", "pastel17", "pastel18", "pastel19", "pastel23",
+			"pastel24", "pastel25", "pastel26", "pastel27", "pastel28",
+			"piyg10", "piyg11", "piyg3", "piyg4", "piyg5", "piyg6", "piyg7",
+			"piyg8", "piyg9", "prgn10", "prgn11", "prgn3", "prgn4", "prgn5",
+			"prgn6", "prgn7", "prgn8", "prgn9", "pubu3", "pubu4", "pubu5",
+			"pubu6", "pubu7", "pubu8", "pubu9", "pubugn3", "pubugn4", "pubugn5",
+			"pubugn6", "pubugn7", "pubugn8", "pubugn9", "puor10", "puor11",
+			"puor3", "puor4", "puor5", "puor6", "puor7", "puor8", "puor9",
+			"purd3", "purd4", "purd5", "purd6", "purd7", "purd8", "purd9",
+			"purples3", "purples4", "purples5", "purples6", "purples7",
+			"purples8", "purples9", "rdbu10", "rdbu11", "rdbu3", "rdbu4",
+			"rdbu5", "rdbu6", "rdbu7", "rdbu8", "rdbu9", "rdgy10", "rdgy11",
+			"rdgy3", "rdgy4", "rdgy5", "rdgy6", "rdgy7", "rdgy8", "rdgy9",
+			"rdpu3", "rdpu4", "rdpu5", "rdpu6", "rdpu7", "rdpu8", "rdpu9",
+			"rdylbu10", "rdylbu11", "rdylbu3", "rdylbu4", "rdylbu5", "rdylbu6",
+			"rdylbu7", "rdylbu8", "rdylbu9", "rdylgn10", "rdylgn11", "rdylgn3",
+			"rdylgn4", "rdylgn5", "rdylgn6", "rdylgn7", "rdylgn8", "rdylgn9",
+			"reds3", "reds4", "reds5", "reds6", "reds7", "reds8", "reds9",
+			"set13", "set14", "set15", "set16", "set17", "set18", "set19",
+			"set23", "set24", "set25", "set26", "set27", "set28", "set310",
+			"set311", "set312", "set33", "set34", "set35", "set36", "set37",
+			"set38", "set39", "spectral10", "spectral11", "spectral3",
+			"spectral4", "spectral5", "spectral6", "spectral7", "spectral8",
+			"spectral9", "ylgn3", "ylgn4", "ylgn5", "ylgn6", "ylgn7", "ylgn8",
+			"ylgn9", "ylgnbu3", "ylgnbu4", "ylgnbu5", "ylgnbu6", "ylgnbu7",
+			"ylgnbu8", "ylgnbu9", "ylorbr3", "ylorbr4", "ylorbr5", "ylorbr6",
+			"ylorbr7", "ylorbr8", "ylorbr9", "ylorrd3", "ylorrd4", "ylorrd5",
+			"ylorrd6", "ylorrd7", "ylorrd8", "ylorrd9" };
+
+	private String[] expectedX11ColorNames = { "aliceblue", "antiquewhite",
+			"antiquewhite1", "antiquewhite2", "antiquewhite3", "antiquewhite4",
+			"aquamarine", "aquamarine1", "aquamarine2", "aquamarine3",
+			"aquamarine4", "azure", "azure1", "azure2", "azure3", "azure4",
+			"beige", "bisque", "bisque1", "bisque2", "bisque3", "bisque4",
+			"black", "blanchedalmond", "blue", "blue1", "blue2", "blue3",
+			"blue4", "blueviolet", "brown", "brown1", "brown2", "brown3",
+			"brown4", "burlywood", "burlywood1", "burlywood2", "burlywood3",
+			"burlywood4", "cadetblue", "cadetblue1", "cadetblue2", "cadetblue3",
+			"cadetblue4", "chartreuse", "chartreuse1", "chartreuse2",
+			"chartreuse3", "chartreuse4", "chocolate", "chocolate1",
+			"chocolate2", "chocolate3", "chocolate4", "coral", "coral1",
+			"coral2", "coral3", "coral4", "cornflowerblue", "cornsilk",
+			"cornsilk1", "cornsilk2", "cornsilk3", "cornsilk4", "crimson",
+			"cyan", "cyan1", "cyan2", "cyan3", "cyan4", "darkgoldenrod",
+			"darkgoldenrod1", "darkgoldenrod2", "darkgoldenrod3",
+			"darkgoldenrod4", "darkgreen", "darkkhaki", "darkolivegreen",
+			"darkolivegreen1", "darkolivegreen2", "darkolivegreen3",
+			"darkolivegreen4", "darkorange", "darkorange1", "darkorange2",
+			"darkorange3", "darkorange4", "darkorchid", "darkorchid1",
+			"darkorchid2", "darkorchid3", "darkorchid4", "darksalmon",
+			"darkseagreen", "darkseagreen1", "darkseagreen2", "darkseagreen3",
+			"darkseagreen4", "darkslateblue", "darkslategray", "darkslategray1",
+			"darkslategray2", "darkslategray3", "darkslategray4",
+			"darkslategrey", "darkturquoise", "darkviolet", "deeppink",
+			"deeppink1", "deeppink2", "deeppink3", "deeppink4", "deepskyblue",
+			"deepskyblue1", "deepskyblue2", "deepskyblue3", "deepskyblue4",
+			"dimgray", "dimgrey", "dodgerblue", "dodgerblue1", "dodgerblue2",
+			"dodgerblue3", "dodgerblue4", "firebrick", "firebrick1",
+			"firebrick2", "firebrick3", "firebrick4", "floralwhite",
+			"forestgreen", "gainsboro", "ghostwhite", "gold", "gold1", "gold2",
+			"gold3", "gold4", "goldenrod", "goldenrod1", "goldenrod2",
+			"goldenrod3", "goldenrod4", "gray", "gray0", "gray1", "gray10",
+			"gray100", "gray11", "gray12", "gray13", "gray14", "gray15",
+			"gray16", "gray17", "gray18", "gray19", "gray2", "gray20", "gray21",
+			"gray22", "gray23", "gray24", "gray25", "gray26", "gray27",
+			"gray28", "gray29", "gray3", "gray30", "gray31", "gray32", "gray33",
+			"gray34", "gray35", "gray36", "gray37", "gray38", "gray39", "gray4",
+			"gray40", "gray41", "gray42", "gray43", "gray44", "gray45",
+			"gray46", "gray47", "gray48", "gray49", "gray5", "gray50", "gray51",
+			"gray52", "gray53", "gray54", "gray55", "gray56", "gray57",
+			"gray58", "gray59", "gray6", "gray60", "gray61", "gray62", "gray63",
+			"gray64", "gray65", "gray66", "gray67", "gray68", "gray69", "gray7",
+			"gray70", "gray71", "gray72", "gray73", "gray74", "gray75",
+			"gray76", "gray77", "gray78", "gray79", "gray8", "gray80", "gray81",
+			"gray82", "gray83", "gray84", "gray85", "gray86", "gray87",
+			"gray88", "gray89", "gray9", "gray90", "gray91", "gray92", "gray93",
+			"gray94", "gray95", "gray96", "gray97", "gray98", "gray99", "green",
+			"green1", "green2", "green3", "green4", "greenyellow", "grey",
+			"grey0", "grey1", "grey10", "grey100", "grey11", "grey12", "grey13",
+			"grey14", "grey15", "grey16", "grey17", "grey18", "grey19", "grey2",
+			"grey20", "grey21", "grey22", "grey23", "grey24", "grey25",
+			"grey26", "grey27", "grey28", "grey29", "grey3", "grey30", "grey31",
+			"grey32", "grey33", "grey34", "grey35", "grey36", "grey37",
+			"grey38", "grey39", "grey4", "grey40", "grey41", "grey42", "grey43",
+			"grey44", "grey45", "grey46", "grey47", "grey48", "grey49", "grey5",
+			"grey50", "grey51", "grey52", "grey53", "grey54", "grey55",
+			"grey56", "grey57", "grey58", "grey59", "grey6", "grey60", "grey61",
+			"grey62", "grey63", "grey64", "grey65", "grey66", "grey67",
+			"grey68", "grey69", "grey7", "grey70", "grey71", "grey72", "grey73",
+			"grey74", "grey75", "grey76", "grey77", "grey78", "grey79", "grey8",
+			"grey80", "grey81", "grey82", "grey83", "grey84", "grey85",
+			"grey86", "grey87", "grey88", "grey89", "grey9", "grey90", "grey91",
+			"grey92", "grey93", "grey94", "grey95", "grey96", "grey97",
+			"grey98", "grey99", "honeydew", "honeydew1", "honeydew2",
+			"honeydew3", "honeydew4", "hotpink", "hotpink1", "hotpink2",
+			"hotpink3", "hotpink4", "indianred", "indianred1", "indianred2",
+			"indianred3", "indianred4", "indigo", "invis", "ivory", "ivory1",
+			"ivory2", "ivory3", "ivory4", "khaki", "khaki1", "khaki2", "khaki3",
+			"khaki4", "lavender", "lavenderblush", "lavenderblush1",
+			"lavenderblush2", "lavenderblush3", "lavenderblush4", "lawngreen",
+			"lemonchiffon", "lemonchiffon1", "lemonchiffon2", "lemonchiffon3",
+			"lemonchiffon4", "lightblue", "lightblue1", "lightblue2",
+			"lightblue3", "lightblue4", "lightcoral", "lightcyan", "lightcyan1",
+			"lightcyan2", "lightcyan3", "lightcyan4", "lightgoldenrod",
+			"lightgoldenrod1", "lightgoldenrod2", "lightgoldenrod3",
+			"lightgoldenrod4", "lightgoldenrodyellow", "lightgray", "lightgrey",
+			"lightpink", "lightpink1", "lightpink2", "lightpink3", "lightpink4",
+			"lightsalmon", "lightsalmon1", "lightsalmon2", "lightsalmon3",
+			"lightsalmon4", "lightseagreen", "lightskyblue", "lightskyblue1",
+			"lightskyblue2", "lightskyblue3", "lightskyblue4", "lightslateblue",
+			"lightslategray", "lightslategrey", "lightsteelblue",
+			"lightsteelblue1", "lightsteelblue2", "lightsteelblue3",
+			"lightsteelblue4", "lightyellow", "lightyellow1", "lightyellow2",
+			"lightyellow3", "lightyellow4", "limegreen", "linen", "magenta",
+			"magenta1", "magenta2", "magenta3", "magenta4", "maroon", "maroon1",
+			"maroon2", "maroon3", "maroon4", "mediumaquamarine", "mediumblue",
+			"mediumorchid", "mediumorchid1", "mediumorchid2", "mediumorchid3",
+			"mediumorchid4", "mediumpurple", "mediumpurple1", "mediumpurple2",
+			"mediumpurple3", "mediumpurple4", "mediumseagreen",
+			"mediumslateblue", "mediumspringgreen", "mediumturquoise",
+			"mediumvioletred", "midnightblue", "mintcream", "mistyrose",
+			"mistyrose1", "mistyrose2", "mistyrose3", "mistyrose4", "moccasin",
+			"navajowhite", "navajowhite1", "navajowhite2", "navajowhite3",
+			"navajowhite4", "navy", "navyblue", "none", "oldlace", "olivedrab",
+			"olivedrab1", "olivedrab2", "olivedrab3", "olivedrab4", "orange",
+			"orange1", "orange2", "orange3", "orange4", "orangered",
+			"orangered1", "orangered2", "orangered3", "orangered4", "orchid",
+			"orchid1", "orchid2", "orchid3", "orchid4", "palegoldenrod",
+			"palegreen", "palegreen1", "palegreen2", "palegreen3", "palegreen4",
+			"paleturquoise", "paleturquoise1", "paleturquoise2",
+			"paleturquoise3", "paleturquoise4", "palevioletred",
+			"palevioletred1", "palevioletred2", "palevioletred3",
+			"palevioletred4", "papayawhip", "peachpuff", "peachpuff1",
+			"peachpuff2", "peachpuff3", "peachpuff4", "peru", "pink", "pink1",
+			"pink2", "pink3", "pink4", "plum", "plum1", "plum2", "plum3",
+			"plum4", "powderblue", "purple", "purple1", "purple2", "purple3",
+			"purple4", "red", "red1", "red2", "red3", "red4", "rosybrown",
+			"rosybrown1", "rosybrown2", "rosybrown3", "rosybrown4", "royalblue",
+			"royalblue1", "royalblue2", "royalblue3", "royalblue4",
+			"saddlebrown", "salmon", "salmon1", "salmon2", "salmon3", "salmon4",
+			"sandybrown", "seagreen", "seagreen1", "seagreen2", "seagreen3",
+			"seagreen4", "seashell", "seashell1", "seashell2", "seashell3",
+			"seashell4", "sienna", "sienna1", "sienna2", "sienna3", "sienna4",
+			"skyblue", "skyblue1", "skyblue2", "skyblue3", "skyblue4",
+			"slateblue", "slateblue1", "slateblue2", "slateblue3", "slateblue4",
+			"slategray", "slategray1", "slategray2", "slategray3", "slategray4",
+			"slategrey", "snow", "snow1", "snow2", "snow3", "snow4",
+			"springgreen", "springgreen1", "springgreen2", "springgreen3",
+			"springgreen4", "steelblue", "steelblue1", "steelblue2",
+			"steelblue3", "steelblue4", "tan", "tan1", "tan2", "tan3", "tan4",
+			"thistle", "thistle1", "thistle2", "thistle3", "thistle4", "tomato",
+			"tomato1", "tomato2", "tomato3", "tomato4", "transparent",
+			"turquoise", "turquoise1", "turquoise2", "turquoise3", "turquoise4",
+			"violet", "violetred", "violetred1", "violetred2", "violetred3",
+			"violetred4", "wheat", "wheat1", "wheat2", "wheat3", "wheat4",
+			"white", "whitesmoke", "yellow", "yellow1", "yellow2", "yellow3",
+			"yellow4", "yellowgreen" };
+
+	private String[] expectedSvgColorNames = { "aliceblue", "antiquewhite",
+			"aqua", "aquamarine", "azure", "beige", "bisque", "black",
+			"blanchedalmond", "blue", "blueviolet", "brown", "burlywood",
+			"cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue",
+			"cornsilk", "crimson", "cyan", "darkblue", "darkcyan",
+			"darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki",
+			"darkmagenta", "darkolivegreen", "darkorange", "darkorchid",
+			"darkred", "darksalmon", "darkseagreen", "darkslateblue",
+			"darkslategray", "darkslategrey", "darkturquoise", "darkviolet",
+			"deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue",
+			"firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro",
+			"ghostwhite", "gold", "goldenrod", "gray", "grey", "green",
+			"greenyellow", "honeydew", "hotpink", "indianred", "indigo",
+			"ivory", "khaki", "lavender", "lavenderblush", "lawngreen",
+			"lemonchiffon", "lightblue", "lightcoral", "lightcyan",
+			"lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey",
+			"lightpink", "lightsalmon", "lightseagreen", "lightskyblue",
+			"lightslategray", "lightslategrey", "lightsteelblue", "lightyellow",
+			"lime", "limegreen", "linen", "magenta", "maroon",
+			"mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple",
+			"mediumseagreen", "mediumslateblue", "mediumspringgreen",
+			"mediumturquoise", "mediumvioletred", "midnightblue", "mintcream",
+			"mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive",
+			"olivedrab", "orange", "orangered", "orchid", "palegoldenrod",
+			"palegreen", "paleturquoise", "palevioletred", "papayawhip",
+			"peachpuff", "peru", "pink", "plum", "powderblue", "purple", "red",
+			"rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown",
+			"seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue",
+			"slategray", "slategrey", "snow", "springgreen", "steelblue", "tan",
+			"teal", "thistle", "tomato", "turquoise", "violet", "wheat",
+			"white", "whitesmoke", "yellow", "yellowgreen" };
 
 	@Test
 	public void empty() throws Exception {
@@ -73,18 +281,20 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test global attribute names
 		newBuilder().append("graph {edge[]}")
 				.assertTextAtCursorPosition(12, "]", "arrowhead", "arrowsize",
-						"arrowtail", "dir", "headlabel", "head_lp", "id",
-						"label", "lp", "pos", "style", "taillabel", "tail_lp",
-						"xlabel", "xlp")
+						"arrowtail", "color", "colorscheme", "dir", "fillcolor",
+						"fontcolor", "headlabel", "head_lp", "id", "label",
+						"labelfontcolor", "lp", "pos", "style", "taillabel",
+						"tail_lp", "xlabel", "xlp")
 				.applyProposal(12, "arrowhead")
 				.expectContent("graph {edge[arrowhead]}");
 
 		// test local attribute names
 		newBuilder().append("graph {1--2[  ]}")
 				.assertTextAtCursorPosition(13, "]", "arrowhead", "arrowsize",
-						"arrowtail", "dir", "headlabel", "head_lp", "id",
-						"label", "lp", "pos", "style", "taillabel", "tail_lp",
-						"xlabel", "xlp")
+						"arrowtail", "color", "colorscheme", "dir", "fillcolor",
+						"fontcolor", "headlabel", "head_lp", "id", "label",
+						"labelfontcolor", "lp", "pos", "style", "taillabel",
+						"tail_lp", "xlabel", "xlp")
 				.applyProposal(13, "arrowtail")
 				.expectContent("graph {1--2[ arrowtail ]}");
 
@@ -199,6 +409,79 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void edge_color() throws Exception {
+		// test global attribute values
+		newBuilder().append("digraph {edge[ color= ]}")
+				.assertTextAtCursorPosition(21,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(21, "#")
+				.expectContent("digraph {edge[ color=# ]}");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ color= ]}")
+				.assertTextAtCursorPosition(21,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(21, "/")
+				.expectContent("digraph {1->2[ color=/ ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("digraph {1->2[ color=\"\" ]}")
+				.assertTextAtCursorPosition(22,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(22, "#")
+				.expectContent("digraph {1->2[ color=\"#\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("digraph {1->2[ color=azure ]}")
+				.assertTextAtCursorPosition(26, "azure", "azure1", "azure2",
+						"azure3", "azure4", ",", ";", "]")
+				.applyProposal(26, "azure1")
+				.expectContent("digraph {1->2[ color=azure1 ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("digraph {1->2[ color=\"azure\" ]}")
+				.assertTextAtCursorPosition(27, "azure", "azure1", "azure2",
+						"azure3", "azure4")
+				.applyProposal(27, "azure2")
+				.expectContent("digraph {1->2[ color=\"azure2\" ]}");
+	}
+
+	@Test
+	public void edge_colorscheme() throws Exception {
+		// test global attribute values
+		newBuilder().append("digraph {edge[ colorscheme= ]}")
+				.assertTextAtCursorPosition(27, expectedDotColorSchemes)
+				.applyProposal(27, "x11")
+				.expectContent("digraph {edge[ colorscheme=x11 ]}");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ colorscheme= ]}")
+				.assertTextAtCursorPosition(27, expectedDotColorSchemes)
+				.applyProposal(27, "svg")
+				.expectContent("digraph {1->2[ colorscheme=svg ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("digraph {1->2[ colorscheme=\"\" ]}")
+				.assertTextAtCursorPosition(28, expectedDotColorSchemes)
+				.applyProposal(28, "accent3")
+				.expectContent("digraph {1->2[ colorscheme=\"accent3\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("digraph {1->2[ colorscheme=a ]}")
+				.assertTextAtCursorPosition(28, "accent3", "accent4", "accent5",
+						"accent6", "accent7", "accent8", ",", ";", "]")
+				.applyProposal(28, "accent4")
+				.expectContent("digraph {1->2[ colorscheme=accent4 ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("digraph {1->2[ colorscheme=\"acc\" ]}")
+				.assertTextAtCursorPosition(31, "accent3", "accent4", "accent5",
+						"accent6", "accent7", "accent8")
+				.applyProposal(31, "accent4")
+				.expectContent("digraph {1->2[ colorscheme=\"accent4\" ]}");
+	}
+
+	@Test
 	public void edge_dir() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {edge[ dir= ]}")
@@ -235,6 +518,82 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void edge_fillcolor() throws Exception {
+		// test global attribute values
+		newBuilder().append("digraph {edge[ fillcolor= ]}")
+				.assertTextAtCursorPosition(25,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(25, "#")
+				.expectContent("digraph {edge[ fillcolor=# ]}");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ fillcolor= ]}")
+				.assertTextAtCursorPosition(25,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(25, "/")
+				.expectContent("digraph {1->2[ fillcolor=/ ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("digraph {1->2[ fillcolor=\"\" ]}")
+				.assertTextAtCursorPosition(26,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(26, "#")
+				.expectContent("digraph {1->2[ fillcolor=\"#\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("digraph {1->2[ fillcolor=bisque ]}")
+				.assertTextAtCursorPosition(31, "bisque", "bisque1", "bisque2",
+						"bisque3", "bisque4", ",", ";", "]")
+				.applyProposal(31, "bisque1")
+				.expectContent("digraph {1->2[ fillcolor=bisque1 ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("digraph {1->2[ fillcolor=\"bisque\" ]}")
+				.assertTextAtCursorPosition(32, "bisque", "bisque1", "bisque2",
+						"bisque3", "bisque4")
+				.applyProposal(32, "bisque2")
+				.expectContent("digraph {1->2[ fillcolor=\"bisque2\" ]}");
+	}
+
+	@Test
+	public void edge_fontcolor() throws Exception {
+		// test global attribute values
+		newBuilder().append("digraph {edge[ fontcolor= ]}")
+				.assertTextAtCursorPosition(25,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(25, "#")
+				.expectContent("digraph {edge[ fontcolor=# ]}");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ fontcolor= ]}")
+				.assertTextAtCursorPosition(25,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(25, "/")
+				.expectContent("digraph {1->2[ fontcolor=/ ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("digraph {1->2[ fontcolor=\"\" ]}")
+				.assertTextAtCursorPosition(26,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(26, "#")
+				.expectContent("digraph {1->2[ fontcolor=\"#\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("digraph {1->2[ fontcolor=blue ]}")
+				.assertTextAtCursorPosition(29, "blue", "blue1", "blue2",
+						"blue3", "blue4", "blueviolet", ",", ";", "]")
+				.applyProposal(29, "blue")
+				.expectContent("digraph {1->2[ fontcolor=blue ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("digraph {1->2[ fontcolor=\"blue\" ]}")
+				.assertTextAtCursorPosition(30, "blue", "blue1", "blue2",
+						"blue3", "blue4", "blueviolet")
+				.applyProposal(30, "blueviolet")
+				.expectContent("digraph {1->2[ fontcolor=\"blueviolet\" ]}");
+	}
+
+	@Test
 	public void edge_headlp() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {edge[ head_lp= ]}")
@@ -245,6 +604,83 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(21);
 
 		// no use to test local attribute values with prefix
+	}
+
+	@Test
+	public void edge_labelfontcolor() throws Exception {
+		// test global attribute values
+		newBuilder().append("digraph {edge[ colorscheme=svg labelfontcolor= ]}")
+				.assertTextAtCursorPosition(46,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(46, "#").expectContent(
+						"digraph {edge[ colorscheme=svg labelfontcolor=# ]}");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ colorscheme=svg labelfontcolor= ]}")
+				.assertTextAtCursorPosition(46,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(46, "/").expectContent(
+						"digraph {1->2[ colorscheme=svg labelfontcolor=/ ]}");
+
+		// test local attribute values with quotes
+		newBuilder()
+				.append("digraph {1->2[ colorscheme=svg labelfontcolor=\"\" ]}")
+				.assertTextAtCursorPosition(47,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(47, "#").expectContent(
+						"digraph {1->2[ colorscheme=svg labelfontcolor=\"#\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("digraph {1->2[ labelfontcolor=gray ]}")
+				.assertTextAtCursorPosition(34, "gray", "gray0", "gray1",
+						"gray10", "gray100", "gray11", "gray12", "gray13",
+						"gray14", "gray15", "gray16", "gray17", "gray18",
+						"gray19", "gray2", "gray20", "gray21", "gray22",
+						"gray23", "gray24", "gray25", "gray26", "gray27",
+						"gray28", "gray29", "gray3", "gray30", "gray31",
+						"gray32", "gray33", "gray34", "gray35", "gray36",
+						"gray37", "gray38", "gray39", "gray4", "gray40",
+						"gray41", "gray42", "gray43", "gray44", "gray45",
+						"gray46", "gray47", "gray48", "gray49", "gray5",
+						"gray50", "gray51", "gray52", "gray53", "gray54",
+						"gray55", "gray56", "gray57", "gray58", "gray59",
+						"gray6", "gray60", "gray61", "gray62", "gray63",
+						"gray64", "gray65", "gray66", "gray67", "gray68",
+						"gray69", "gray7", "gray70", "gray71", "gray72",
+						"gray73", "gray74", "gray75", "gray76", "gray77",
+						"gray78", "gray79", "gray8", "gray80", "gray81",
+						"gray82", "gray83", "gray84", "gray85", "gray86",
+						"gray87", "gray88", "gray89", "gray9", "gray90",
+						"gray91", "gray92", "gray93", "gray94", "gray95",
+						"gray96", "gray97", "gray98", "gray99", ",", ";", "]")
+				.applyProposal(34, "gray")
+				.expectContent("digraph {1->2[ labelfontcolor=gray ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("digraph {1->2[ labelfontcolor=\"gray\" ]}")
+				.assertTextAtCursorPosition(35, "gray", "gray0", "gray1",
+						"gray10", "gray100", "gray11", "gray12", "gray13",
+						"gray14", "gray15", "gray16", "gray17", "gray18",
+						"gray19", "gray2", "gray20", "gray21", "gray22",
+						"gray23", "gray24", "gray25", "gray26", "gray27",
+						"gray28", "gray29", "gray3", "gray30", "gray31",
+						"gray32", "gray33", "gray34", "gray35", "gray36",
+						"gray37", "gray38", "gray39", "gray4", "gray40",
+						"gray41", "gray42", "gray43", "gray44", "gray45",
+						"gray46", "gray47", "gray48", "gray49", "gray5",
+						"gray50", "gray51", "gray52", "gray53", "gray54",
+						"gray55", "gray56", "gray57", "gray58", "gray59",
+						"gray6", "gray60", "gray61", "gray62", "gray63",
+						"gray64", "gray65", "gray66", "gray67", "gray68",
+						"gray69", "gray7", "gray70", "gray71", "gray72",
+						"gray73", "gray74", "gray75", "gray76", "gray77",
+						"gray78", "gray79", "gray8", "gray80", "gray81",
+						"gray82", "gray83", "gray84", "gray85", "gray86",
+						"gray87", "gray88", "gray89", "gray9", "gray90",
+						"gray91", "gray92", "gray93", "gray94", "gray95",
+						"gray96", "gray97", "gray98", "gray99")
+				.applyProposal(35, "gray99")
+				.expectContent("digraph {1->2[ labelfontcolor=\"gray99\" ]}");
 	}
 
 	@Test
@@ -350,16 +786,18 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	public void graph_attributes() throws Exception {
 		// test global attribute names
 		newBuilder().append("graph {graph[]}")
-				.assertTextAtCursorPosition(13, "]", "forcelabels", "id",
-						"label", "layout", "lp", "rankdir", "splines", "style")
+				.assertTextAtCursorPosition(13, "]", "bgcolor", "colorscheme",
+						"fontcolor", "forcelabels", "id", "label", "layout",
+						"lp", "rankdir", "splines", "style")
 				.applyProposal(13, "forcelabels")
 				.expectContent("graph {graph[forcelabels]}");
 
 		// test local attribute names
 		newBuilder().append("graph {  }")
-				.assertTextAtCursorPosition(8, "edge", "graph", "node",
-						"subgraph", "{", "}", "forcelabels", "id", "label",
-						"layout", "lp", "rankdir", "splines", "style")
+				.assertTextAtCursorPosition(8, "bgcolor", "colorscheme",
+						"fontcolor", "edge", "graph", "node", "subgraph", "{",
+						"}", "forcelabels", "id", "label", "layout", "lp",
+						"rankdir", "splines", "style")
 				.applyProposal(8, "rankdir").expectContent("graph { rankdir }");
 
 		// test local attribute names with prefix
@@ -372,6 +810,122 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(12, "label", "layout", "->", ":",
 						";", "=", "[", "{", "}")
 				.applyProposal(12, "label").expectContent("digraph { label }");
+	}
+
+	@Test
+	public void graph_bgcolor() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {graph[ colorscheme=svg bgcolor= ]}")
+				.assertTextAtCursorPosition(38,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(38, "aliceblue").expectContent(
+						"graph {graph[ colorscheme=svg bgcolor=aliceblue ]}");
+
+		// test local attribute values
+		newBuilder().append("graph { colorscheme=svg bgcolor= }")
+				.assertTextAtCursorPosition(32,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(32, "aqua")
+				.expectContent("graph { colorscheme=svg bgcolor=aqua }");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph { colorscheme=svg bgcolor=\"\" }")
+				.assertTextAtCursorPosition(33,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(33, "aquamarine").expectContent(
+						"graph { colorscheme=svg bgcolor=\"aquamarine\" }");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph { colorscheme=svg bgcolor=aqua }")
+				.assertTextAtCursorPosition(36, "aqua", "aquamarine", ";", "{",
+						"}")
+				.applyProposal(36, "aqua")
+				.expectContent("graph { colorscheme=svg bgcolor=aqua }");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph { colorscheme=svg bgcolor=\"dark\" }")
+				.assertTextAtCursorPosition(37, "darkblue", "darkcyan",
+						"darkgoldenrod", "darkgray", "darkgreen", "darkgrey",
+						"darkkhaki", "darkmagenta", "darkolivegreen",
+						"darkorange", "darkorchid", "darkred", "darksalmon",
+						"darkseagreen", "darkslateblue", "darkslategray",
+						"darkslategrey", "darkturquoise", "darkviolet")
+				.applyProposal(37, "darkturquoise").expectContent(
+						"graph { colorscheme=svg bgcolor=\"darkturquoise\" }");
+	}
+
+	@Test
+	public void graph_colorscheme() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {graph[ colorscheme= ]}")
+				.assertTextAtCursorPosition(26, expectedDotColorSchemes)
+				.applyProposal(26, "svg")
+				.expectContent("graph {graph[ colorscheme=svg ]}");
+
+		// test local attribute values
+		newBuilder().append("graph { colorscheme= }")
+				.assertTextAtCursorPosition(20, expectedDotColorSchemes)
+				.applyProposal(20, "svg")
+				.expectContent("graph { colorscheme=svg }");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph { colorscheme=\"\" }")
+				.assertTextAtCursorPosition(21, expectedDotColorSchemes)
+				.applyProposal(21, "blues3")
+				.expectContent("graph { colorscheme=\"blues3\" }");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph { colorscheme=blues }")
+				.assertTextAtCursorPosition(25, "blues3", "blues4", "blues5",
+						"blues6", "blues7", "blues8", "blues9", ";", "{", "}")
+				.applyProposal(25, "blues5")
+				.expectContent("graph { colorscheme=blues5 }");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph { colorscheme=\"blues\" }")
+				.assertTextAtCursorPosition(26, "blues3", "blues4", "blues5",
+						"blues6", "blues7", "blues8", "blues9")
+				.applyProposal(26, "blues9")
+				.expectContent("graph { colorscheme=\"blues9\" }");
+	}
+
+	@Test
+	public void graph_fontcolor() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {graph[ colorscheme=brbg11 fontcolor= ]}")
+				.assertTextAtCursorPosition(43, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10", "11")
+				.applyProposal(43, "1").expectContent(
+						"graph {graph[ colorscheme=brbg11 fontcolor=1 ]}");
+
+		// test local attribute values
+		newBuilder().append("graph { colorscheme=brbg11 fontcolor= }")
+				.assertTextAtCursorPosition(37, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10", "11")
+				.applyProposal(37, "11")
+				.expectContent("graph { colorscheme=brbg11 fontcolor=11 }");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph { colorscheme=brbg11 fontcolor=\"\" }")
+				.assertTextAtCursorPosition(38, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10", "11")
+				.applyProposal(38, "10")
+				.expectContent("graph { colorscheme=brbg11 fontcolor=\"10\" }");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph { colorscheme=brbg11 fontcolor=1 }")
+				.assertTextAtCursorPosition(38, "1", "10", "11", ",", ";", "{",
+						"}", "bgcolor", "colorscheme", "edge", "fontcolor",
+						"forcelabels", "graph", "id", "label", "layout", "lp",
+						"node", "rankdir", "splines", "style", "subgraph")
+				.applyProposal(38, "10")
+				.expectContent("graph { colorscheme=brbg11 fontcolor=10 }");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph { colorscheme=brbg11 fontcolor=\"1\" }")
+				.assertTextAtCursorPosition(39, "1", "10", "11", ",")
+				.applyProposal(39, "11")
+				.expectContent("graph { colorscheme=brbg11 fontcolor=\"11\" }");
 	}
 
 	@Test
@@ -528,7 +1082,8 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	public void node_attributes() throws Exception {
 		// test global attribute names
 		newBuilder().append("graph {node[]}")
-				.assertTextAtCursorPosition(12, "]", "distortion", "fixedsize",
+				.assertTextAtCursorPosition(12, "]", "color", "colorscheme",
+						"distortion", "fillcolor", "fixedsize", "fontcolor",
 						"height", "id", "label", "pos", "shape", "sides",
 						"skew", "style", "width", "xlabel", "xlp")
 				.applyProposal(12, "distortion")
@@ -536,7 +1091,8 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 		// test local attribute names
 		newBuilder().append("graph {1[  ]}")
-				.assertTextAtCursorPosition(10, "]", "distortion", "fixedsize",
+				.assertTextAtCursorPosition(10, "]", "color", "colorscheme",
+						"distortion", "fillcolor", "fixedsize", "fontcolor",
 						"height", "id", "label", "pos", "shape", "sides",
 						"skew", "style", "width", "xlabel", "xlp")
 				.applyProposal(10, "fixedsize")
@@ -547,6 +1103,136 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(11, "=", "shape", "sides", "skew",
 						"style")
 				.applyProposal(11, "shape").expectContent("graph {1[ shape ]}");
+	}
+
+	@Test
+	public void node_color() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {node[ color= ]}")
+				.assertTextAtCursorPosition(19,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(19, "#")
+				.expectContent("graph {node[ color=# ]}");
+
+		// test local attribute values
+		newBuilder().append("graph {1[ color= ]}")
+				.assertTextAtCursorPosition(16,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(16, "#").expectContent("graph {1[ color=# ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1[ color=\"\" ]}")
+				.assertTextAtCursorPosition(17,
+						combine(expectedX11ColorNames, "#", "/"))
+				.applyProposal(17, "#")
+				.expectContent("graph {1[ color=\"#\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph {1[ color=light ]}")
+				.assertTextAtCursorPosition(21, "lightblue", "lightblue1",
+						"lightblue2", "lightblue3", "lightblue4", "lightcoral",
+						"lightcyan", "lightcyan1", "lightcyan2", "lightcyan3",
+						"lightcyan4", "lightgoldenrod", "lightgoldenrod1",
+						"lightgoldenrod2", "lightgoldenrod3", "lightgoldenrod4",
+						"lightgoldenrodyellow", "lightgray", "lightgrey",
+						"lightpink", "lightpink1", "lightpink2", "lightpink3",
+						"lightpink4", "lightsalmon", "lightsalmon1",
+						"lightsalmon2", "lightsalmon3", "lightsalmon4",
+						"lightseagreen", "lightskyblue", "lightskyblue1",
+						"lightskyblue2", "lightskyblue3", "lightskyblue4",
+						"lightslateblue", "lightslategray", "lightslategrey",
+						"lightsteelblue", "lightsteelblue1", "lightsteelblue2",
+						"lightsteelblue3", "lightsteelblue4", "lightyellow",
+						"lightyellow1", "lightyellow2", "lightyellow3",
+						"lightyellow4", ",", ";", "]")
+				.applyProposal(21, "lightblue")
+				.expectContent("graph {1[ color=lightblue ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1[ color=\"lights\" ]}")
+				.assertTextAtCursorPosition(23, "lightsalmon", "lightsalmon1",
+						"lightsalmon2", "lightsalmon3", "lightsalmon4",
+						"lightseagreen", "lightskyblue", "lightskyblue1",
+						"lightskyblue2", "lightskyblue3", "lightskyblue4",
+						"lightslateblue", "lightslategray", "lightslategrey",
+						"lightsteelblue", "lightsteelblue1", "lightsteelblue2",
+						"lightsteelblue3", "lightsteelblue4")
+				.applyProposal(23, "lightskyblue")
+				.expectContent("graph {1[ color=\"lightskyblue\" ]}");
+	}
+
+	@Test
+	public void node_colorscheme() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {node[ colorscheme= ]}")
+				.assertTextAtCursorPosition(25, expectedDotColorSchemes)
+				.applyProposal(25, "brbg10")
+				.expectContent("graph {node[ colorscheme=brbg10 ]}");
+
+		// test local attribute values
+		newBuilder().append("graph {1[ colorscheme= ]}")
+				.assertTextAtCursorPosition(22, expectedDotColorSchemes)
+				.applyProposal(22, "brbg11")
+				.expectContent("graph {1[ colorscheme=brbg11 ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1[ colorscheme=\"\" ]}")
+				.assertTextAtCursorPosition(23, expectedDotColorSchemes)
+				.applyProposal(23, "brbg3")
+				.expectContent("graph {1[ colorscheme=\"brbg3\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph {1[ colorscheme=br ]}")
+				.assertTextAtCursorPosition(24, "brbg3", "brbg4", "brbg5",
+						"brbg6", "brbg7", "brbg8", "brbg9", "brbg10", "brbg11",
+						",", ";", "]")
+				.applyProposal(24, "brbg4")
+				.expectContent("graph {1[ colorscheme=brbg4 ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1[ colorscheme=\"brbg\" ]}")
+				.assertTextAtCursorPosition(27, "brbg3", "brbg4", "brbg5",
+						"brbg6", "brbg7", "brbg8", "brbg9", "brbg10", "brbg11")
+				.applyProposal(27, "brbg5")
+				.expectContent("graph {1[ colorscheme=\"brbg5\" ]}");
+	}
+
+	@Test
+	public void node_fillcolor() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {node[ colorscheme=svg fillcolor= ]}")
+				.assertTextAtCursorPosition(39,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(39, "#")
+				.expectContent("graph {node[ colorscheme=svg fillcolor=# ]}");
+
+		// test local attribute values
+		newBuilder().append("graph {1[ colorscheme=svg fillcolor= ]}")
+				.assertTextAtCursorPosition(36,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(36, "#")
+				.expectContent("graph {1[ colorscheme=svg fillcolor=# ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1[ colorscheme=svg fillcolor=\"\" ]}")
+				.assertTextAtCursorPosition(37,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(37, "#")
+				.expectContent("graph {1[ colorscheme=svg fillcolor=\"#\" ]}");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph {1[ colorscheme=svg fillcolor=sa ]}")
+				.assertTextAtCursorPosition(38, "saddlebrown", "salmon",
+						"sandybrown", ",", ";", "]")
+				.applyProposal(38, "salmon")
+				.expectContent("graph {1[ colorscheme=svg fillcolor=salmon ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1[ colorscheme=svg fillcolor=\"sa\"]}")
+				.assertTextAtCursorPosition(39, "saddlebrown", "salmon",
+						"sandybrown")
+				.applyProposal(39, "sandybrown").expectContent(
+						"graph {1[ colorscheme=svg fillcolor=\"sandybrown\"]}");
 	}
 
 	@Test
@@ -580,6 +1266,43 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(22, "true")
 				.applyProposal(22, "true")
 				.expectContent("graph {1[ fixedsize=\"true\" ]}");
+	}
+
+	@Test
+	public void node_fontcolor() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {node[ fontcolor=/ ]}")
+				.assertTextAtCursorPosition(24,
+						combine(expectedDotColorSchemes, "/"))
+				.applyProposal(24, "accent3")
+				.expectContent("graph {node[ fontcolor=/accent3 ]}");
+
+		// test local attribute values
+		newBuilder().append("graph {1[ fontcolor=/ ]}")
+				.assertTextAtCursorPosition(21,
+						combine(expectedDotColorSchemes, "/"))
+				.applyProposal(21, "accent3")
+				.expectContent("graph {1[ fontcolor=/accent3 ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1[ fontcolor=\"/accent3/\" ]}")
+				.assertTextAtCursorPosition(30, "/", "1", "2", "3")
+				.applyProposal(30, "1")
+				.expectContent("graph {1[ fontcolor=\"/accent3/1\" ]}"); //
+
+		// test local attribute values with prefix
+		newBuilder().append("graph {1[ colorscheme=svg fontcolor=w ]}")
+				.assertTextAtCursorPosition(37, "wheat", "white", "whitesmoke",
+						",", ";", "]")
+				.applyProposal(37, "white")
+				.expectContent("graph {1[ colorscheme=svg fontcolor=white ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1[ fontcolor=\"/accent ]}")
+				.assertTextAtCursorPosition(28, "accent3", "accent4", "accent5",
+						"accent6", "accent7", "accent8", "/")
+				.applyProposal(28, "accent3")
+				.expectContent("graph {1[ fontcolor=\"/accent3 ]}");
 	}
 
 	@Test
@@ -718,5 +1441,12 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {1[ xlp= ]}").assertTextAtCursorPosition(14);
 
 		// no use to test local attribute values with prefix
+	}
+
+	private String[] combine(String[] array1, String... array2) {
+		String[] both = Stream
+				.concat(Arrays.stream(array1), Arrays.stream(array2))
+				.toArray(String[]::new);
+		return both;
 	}
 }
