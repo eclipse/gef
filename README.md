@@ -12,7 +12,7 @@
 ## Installing the end-user tools ([users](https://www.eclipse.org/projects/dev_process/#2_3_2_Users))
 You can install the DOT and Cloudio end-user tools (including the user guides) into your Eclipse installation via "Help -> Install New Software...", then pointing to one of the [GEF update-sites](https://projects.eclipse.org/projects/tools.gef/downloads)<sup>1)</sup> and selecting the *GEF DOT End-User Tools* and *GEF Cloudio End-User Tools* features. Having completed the installation, the user guides can be accessed via *Help -> Help Contents*. You can also read them [online](https://github.com/eclipse/gef/wiki#user-documentation) (in their latest versions).
 
-<small><sup>1</sup>) Please note that the end-user features are not yet contained on the releases update-site yet. It will be added in the upcoming [5.0.0 (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) release.</small>
+<small><sup>1)</sup> Please note that the end-user features are not yet contained on the releases update-site yet. It will be added in the upcoming [5.0.0 (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) release.</small>
 
 ## Getting started with the framework components ([adopters](https://www.eclipse.org/projects/dev_process/#2_3_3_Adopters))
 In order to develop graphical applications with GEF, you should first set up a proper development environment. The following sections shortly lay out how to set up an Eclipse IDE for this purpose. They conclude with running our deployed and undeployed examples to confirm everything is set up properly. 
