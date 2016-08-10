@@ -33,6 +33,7 @@ Having accomplished that, you might want to browse our [developer documentation]
 1. Go to *File -> New -> Project...* and select to create a *General/Project*. Name it `gef-integration.target or as you like, the project is to contain only a target definition.
 2. Go to *File -> New -> Other...* then choose *Plug-in Development/Target Definition* and create a new empty (*Nothing: Start with an empty target definition*) target definition file named `gef-integration.target` within the newly created project.
 3. Close the *Target Editor* that has automatically opened, open the target file with the *Text Editor* using the *Open With* context menu, then paste the following contents:
+	
 	```
 	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 	<?pde version="3.8"?><target name="gef-integration" sequenceNumber="1">
