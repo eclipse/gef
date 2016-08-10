@@ -3,13 +3,96 @@
 <div>
  <img align="left" src="/gef_eclipse_logo_360.png" width="180px">
  <p>
- The Eclipse <a href="http://www.eclipse.org/gef">Graphical Editing Framework (GEF)</a> provides framework components (<a href="https://github.com/eclipse/gef/wiki/Common">Common</a>, <a href="https://github.com/eclipse/gef/wiki/Geometry">Geometry</a>, <a href="https://github.com/eclipse/gef/wiki/FX">FX</a>, <a href="https://github.com/eclipse/gef/wiki/MVC">MVC</a>, <a href="https://github.com/eclipse/gef/wiki/Graph">Graph</a>, <a href="https://github.com/eclipse/gef/wiki/Layout">Layout</a>, and <a href="https://github.com/eclipse/gef/wiki/Zest">Zest</a>) to create rich graphical Java client applications, integrated with the Eclipse Workbench UI or standalone, as well as Eclipse-integrated end-user tools in terms of a <a href="http://www.graphviz.org">Graphviz</a> DOT authoring component (<a href="https://github.com/eclipse/gef/wiki/DOT-User-Guide">DOT</a>) and a tag cloud renderer component (<a href="https://github.com/eclipse/gef/wiki/Cloudio-User-Guide">Cloudio</a>).
+ The Eclipse <a href="http://www.eclipse.org/gef">Graphical Editing Framework (GEF)</a> provides Eclipse-integrated end-user tools in terms of a <a href="http://www.graphviz.org">Graphviz</a> authoring (<a href="https://github.com/eclipse/gef/wiki/DOT-User-Guide">DOT editor, DOT Graph view</a>) and a word cloud rendering environment (<a href="https://github.com/eclipse/gef/wiki/Cloudio-User-Guide">Tag Cloud view</a>), as well as framework components (<a href="https://github.com/eclipse/gef/wiki/Common">Common</a>, <a href="https://github.com/eclipse/gef/wiki/Geometry">Geometry</a>, <a href="https://github.com/eclipse/gef/wiki/FX">FX</a>, <a href="https://github.com/eclipse/gef/wiki/MVC">MVC</a>, <a href="https://github.com/eclipse/gef/wiki/Graph">Graph</a>, <a href="https://github.com/eclipse/gef/wiki/Layout">Layout</a>, <a href="https://github.com/eclipse/gef/wiki/Zest">Zest</a>, <a href="https://github.com/eclipse/gef/wiki/DOT">DOT</a>, and <a href="https://github.com/eclipse/gef/wiki/Cloudio">Cloudio</a>) to create rich graphical Java client applications, Eclipse-integrated or standalone.
  </p>
 </div>
 
 <sub>The legacy components [Draw2d 3.x](https://www.eclipse.org/gef/draw2d/index.php), [GEF (MVC) 3.x](https://www.eclipse.org/gef/gef_mvc/index.php), and [Zest 1.x](https://www.eclipse.org/gef/zest/index.php) are still maintained but will not be developed further. Their code base is located in the [eclipse/gef-legacy](https://github.com/eclipse/gef-legacy) repository.</sub>
 
-### General Information for [Adopters](https://www.eclipse.org/projects/dev_process/#2_3_3_Adopters) and [Contributors/Committers](https://www.eclipse.org/projects/dev_process/#2_3_1_Committers)
-* [New and Noteworthy](https://wiki.eclipse.org/GEF/New_and_Noteworthy)
-* [Project Dashboard ](https://projects.eclipse.org/projects/tools.gef)
-* [Adopter Guide](https://wiki.eclipse.org/GEF/Adopter_Guide) & [Contributor Guide](https://github.com/eclipse/gef/blob/master/CONTRIBUTING.md)
+## Installing the end-user tools ([users](https://www.eclipse.org/projects/dev_process/#2_3_2_Users))
+You can install the DOT and Cloudio end-user tools (including the user guides) into your Eclipse installation via "Help -> Install New Software...", then pointing to one of the [GEF update-sites](https://projects.eclipse.org/projects/tools.gef/downloads)<sup>1)</sup> and selecting the *GEF DOT End-User Tools* and *GEF Cloudio End-User Tools* features. Having completed the installation, the user guides can be accessed via *Help -> Help Contents*. You can also read them [online](https://github.com/eclipse/gef/wiki#user-documentation) (in their latest versions).
+
+<small><sup>1</sup>) Please note that the end-user features are not yet contained on the releases update-site yet. It will be added in the upcoming [5.0.0 (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) release.</small>
+
+## Getting started with the framework components ([adopters](https://www.eclipse.org/projects/dev_process/#2_3_3_Adopters))
+In order to develop graphical applications with GEF, you should first set up a proper development environment. The following sections shortly lay out how to set up an Eclipse IDE for this purpose. They conclude with running our deployed and undeployed examples to confirm everything is set up properly. 
+
+Having accomplished that, you might want to browse our [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation) to learn about the framework components in detail. At any time, if you get stuck, feel free to [contact us](#Where-to-ask-Questions?).
+
+### Set up an Eclipse IDE
+1. Install a recent [Java SE Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) as a prerequisite.
+
+2. Download an '[Eclipse IDE for Eclipse Committers (Neon)](http://www.eclipse.org/downloads/packages)' package and start it, pointing to an empty workspace folder. 
+
+3. Select "Help -> Install New Software...". Choose to *Work with* [http://download.eclipse.org/releases/neon](http://download.eclipse.org/releases/neon), uncheck the *Group items per category* checkbox (the feature is uncategorized), and install *e(fx)clipse - IDE - PDE*.
+
+4. Go to *Windows -> Preferences -> Java/Installed JREs* and ensure the installed Java SE Development Kit 8 is listed (otherwise add it manually). 
+5. Go to *Windows -> Preferences -> Java/Installed JREs/Execution Environments* and make sure JavaSE-1.8 is mapped to the installed Java SE Development Kit 8 (the checkbox needs to be checked, otherwise e(fx)clipse will not be able to resolve the JavaFX dependencies).
+
+### Set up a Target Definition containing GEF (development snapshot)
+1. Go to *File -> New -> Project...* and select to create a *General/Project*. Name it `gef-integration.target or as you like, the project is to contain only a target definition.
+2. Go to *File -> New -> Other...* then choose *Plug-in Development/Target Definition* and create a new empty (*Nothing: Start with an empty target definition*) target definition file named `gef-integration.target` within the newly created project.
+3. Close the *Target Editor* that has automatically opened, open the target file with the *Text Editor* using the *Open With* context menu, then paste the following contents:
+	```
+	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+	<?pde version="3.8"?><target name="gef-integration" sequenceNumber="1">
+	<locations>
+	  <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+	    <unit id="org.eclipse.xtext.sdk.feature.group" version="2.10.0.v201605250459"/>
+	    <unit id="org.eclipse.emf.sdk.feature.group" version="2.12.0.v20160526-0356"/>
+	    <unit id="org.eclipse.sdk.ide" version="4.6.0.I20160606-1100"/>
+	    <repository location="http://download.eclipse.org/releases/neon"/>
+	  </location>
+	  <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+	    <unit id="org.eclipse.gef.common.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.geometry.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.fx.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.mvc.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.mvc.examples.source.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.layout.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.graph.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.zest.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.zest.examples.source.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.dot.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.gef.cloudio.sdk.feature.group" version="0.0.0"/>
+	    <repository location="http://download.eclipse.org/tools/gef/updates/integration"/>
+	  </location>
+	</locations>
+	</target>
+	```
+4. Now open the `gef-integration.target` file with the *Target Editor* again, using the *Open With* context menu, let if fully resolve, then click *Set as Target Platform* (link in the upper right corner of the editor).
+
+### Run the examples
+As the deployed [MVC Logo](https://github.com/eclipse/gef/wiki/MVC-Logo-Example) and [Zest Graph](https://github.com/eclipse/gef/wiki/Zest-Graph-Example) examples are contained in the target definition, we only need to start a new Eclipse Runtime to run them: 
+
+1. Go to *Run -> Run Configurations..." then create a new *Eclipse Application* launch configuration.
+2. On the *Main* tab, make sure the *Execution environment* points to JavaSE-1.8.
+3. On the *Arguments* tab, add `-Dosgi.framework.extensions=org.eclipse.fx.osgi* to *VM arguments:*, so that all JavaFX dependencies can be resolved wihtin the OSGi environment.
+4. Click *Run*.
+5. Open the example views via *Window -> Show View -> Other...", then selecting *Other/GEF MVC Logo Example* or *Other/GEF Zest Graph Example*.
+
+The undeployed [Geometry](https://github.com/eclipse/gef/wiki/Geometry-Examples), [FX](https://github.com/eclipse/gef/wiki/FX-Examples), [FX.SWT](https://github.com/eclipse/gef/wiki/FX-Examples#examplesswt-undeployed), [Graph](https://github.com/eclipse/gef/wiki/Graph-Examples), [Layout](https://github.com/eclipse/gef/wiki/Layout-Examples), [Zest.FX](https://github.com/eclipse/gef/wiki/Zest-Examples), [Zest.FX.JFace](https://github.com/eclipse/gef/wiki/Zest-JFace-Examples), [DOT](https://github.com/eclipse/gef/wiki/DOT-Examples), and [Cloudio.UI](https://github.com/eclipse/gef/wiki/Cloudio-Examples) examples have to be checked out in source before. Using EGit this can easily be achieved as follows:
+
+1. Go to *File -> Import...*, then select *Git/Projects from Git*, press *Next >*.
+2. Select *Clone URI*, press *Next >*.
+3. Paste `https://github.com/eclipse/gef.git` to the *URI* field , press *Next >*.
+3. Select *master* branch, press *Next >*.
+4. Confirm the local directory or change it as needed, press *Next >*.
+5. Ensure *Import existing Eclipse projects* is checked, then select *Working Tree* and press *Next >*.
+5. Select `org.eclipse.gef.cloudio.examples.ui`, `org.eclipse.gef.dot.examples`, `org.eclipse.gef.fx.examples`, `org.eclipse.gef.fx.examples.swt`, `org.eclipse.gef.geometry.examples`, `org.eclipse.gef.graph.examples`, `org.eclipse.gef.layout.examples`, `org.eclipse.gef.zest.examples`, and `org.eclipse.gef.zest.examples.jface`, press *Finish*.
+6. Select an arbitrary example class, e.g. `org.eclipse.gef.fx.examples.ConnectionSnippet`, in the *Package Explorer* view and select *Run As -> Java Application* from the context menu.<sup>2)</sup>
+
+<small><sup>2)</sup> On MacOS, you will have to ensure that the *Use the -XstartOnFirstThread argument when launching with SWT* option is unchecked on the *Arguments* tab of the launch configuration, which was implicitly created, as pure JavaFX examples will otherwise not startup correctly. When starting examples that are based on the JavaFX-SWT-integration on the other hand (like `org.eclipse.gef.fx.examples.swt.ButtonFXControlAdapterSnippet`), the *Use the -XstartOnFirstThread argument when launching with SWT* option has to be enabled.</small>
+
+## How to proceed from here?
+The first thing you will probably want to consult is the [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation). It explains the different framework components in detail. Other relevant information is provide in the following sections. In addition, the [project dashboard](https://projects.eclipse.org/projects/tools.gef) as Eclipse is where all the project *meta-data* is maintained.
+
+### Where to ask Questions?
+While the [GEF forum](https://www.eclipse.org/forums/index.php?t=thread&frm_id=81) is the primary place to ask questions, announcements and team discussions take place over the project's ['dev' mailing list](https://dev.eclipse.org/mailman/listinfo/gef-dev). 
+Subscription is open to everybody, and as it is the primary communication channel between the project team and the community, it is highly recommended to subscribe.
+
+### How to report Issues?
+This project uses the [Eclipse Bugzilla](https://bugs.eclipse.org/bugs) to track all its issues. Be sure to [search for existing issues](https://bugs.eclipse.org/bugs/buglist.cgi?product=GEF) before you [create a new issue](https://bugs.eclipse.org/bugs/enter_bug.cgi?product=GEF).
+
+### How to Contribute?
+If you want to contribute to our project, the [contributor guide](https://github.com/eclipse/gef/blob/master/CONTRIBUTING.md) provides all necessary information.
