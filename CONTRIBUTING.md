@@ -2,14 +2,6 @@
 
 This guide provides all necessary information to enable [contributors and committers](https://www.eclipse.org/projects/dev_process/#2_3_Three_Communities) to contribute to the Eclipse Graphical Editing Framework (GEF) project. [Adopters](https://www.eclipse.org/projects/dev_process/#2_3_Three_Communities), who want to develop applications against GEF, should rather consult our [README](https://github.com/eclipse/gef#eclipse-graphical-editing-framework-gef).
 
-## Get in contact
-
-While the [GEF forum](https://www.eclipse.org/forums/index.php?t=thread&frm_id=81) is the primary place to ask questions, announcements and team discussions take place over the project's ['dev' mailing list](https://dev.eclipse.org/mailman/listinfo/gef-dev). 
-Subscription is open to everybody, and as it is the primary communication channel between the project team and the community, it is highly recommended to subscribe.
-
-## Create an issue
-This project uses the [Eclipse Bugzilla](https://bugs.eclipse.org/bugs) to track all its issues. Be sure to [search for existing issues](https://bugs.eclipse.org/bugs/buglist.cgi?product=GEF) before you [create a new issue](https://bugs.eclipse.org/bugs/enter_bug.cgi?product=GEF).
-
 ## Set up a development environment
 
 If you want to contribute fixes to our code base, you will need to set up a proper development environment first, as outlined in the following sub-sections. Having forked the repository, this will enable you to work on an acceptable pull request, which has to respect certain formal contrainsts.
