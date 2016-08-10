@@ -644,9 +644,10 @@
 		<module>../org.eclipse.gef.cloudio.tests.ui</module>
 		<module>../org.eclipse.gef.cloudio.doc</module>
 		<module>../org.eclipse.gef.cloudio.doc-feature</module>
+		<module>../org.eclipse.gef.cloudio.sdk-feature</module>
 		<module>../org.eclipse.gef.cloudio.doc.user</module>
 		<module>../org.eclipse.gef.cloudio.doc.user-feature</module>
-		<module>../org.eclipse.gef.cloudio.sdk-feature</module>
+		<module>../org.eclipse.gef.cloudio.user-feature</module>
 		<module>../org.eclipse.gef.graph</module>
 		<module>../org.eclipse.gef.graph-feature</module>
 		<module>../org.eclipse.gef.graph.tests</module>
@@ -660,9 +661,10 @@
 		<module>../org.eclipse.gef.dot.tests</module>
 		<module>../org.eclipse.gef.dot.doc</module>
 		<module>../org.eclipse.gef.dot.doc-feature</module>
+		<module>../org.eclipse.gef.dot.sdk-feature</module>
 		<module>../org.eclipse.gef.dot.doc.user</module>
 		<module>../org.eclipse.gef.dot.doc.user-feature</module>
-		<module>../org.eclipse.gef.dot.sdk-feature</module>
+		<module>../org.eclipse.gef.dot.user-feature</module>
 		<module>../org.eclipse.gef.layout</module>
 		<module>../org.eclipse.gef.layout-feature</module>
 		<module>../org.eclipse.gef.layout.tests</module>
