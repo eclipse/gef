@@ -12,7 +12,7 @@
 ## Installing the end-user tools ([users](https://www.eclipse.org/projects/dev_process/#2_3_2_Users))
 You can install the DOT and Cloudio end-user tools (including the user guides) into your Eclipse installation via "Help -> Install New Software...", then pointing to one of the [GEF update-sites](https://projects.eclipse.org/projects/tools.gef/downloads)<sup>1)</sup> and selecting the *GEF DOT End-User Tools* and *GEF Cloudio End-User Tools* features. Having completed the installation, the user guides can be accessed via *Help -> Help Contents*, as well as online in the [user documentation](https://github.com/eclipse/gef/wiki#user-documentation).
 
-<sub><sup>1)</sup> Please note that explicit end-user features (including the user guides) have only been created in the current [5.x (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) development stream and are for now only available via the [GEF (5.x) Master CI](https://hudson.eclipse.org/gef/job/gef-master/lastSuccessfulBuild/artifact/update-site), [GEF (5.x) Integration](http://download.eclipse.org/tools/gef/updates/integration), and [GEF (5.x) Milestones](http://download.eclipse.org/tools/gef/updates/milestones) update-sites. If you want to install a released [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) version from the [GEF4 Releases](http://download.eclipse.org/tools/gef/gef4/updates/releases) update-site, you will have to select the *GEF4 DOT*, *GEF4 DOT.UI*, and *GEF4 DOT User Guide*, as well as the *GEF4 Cloudio.UI* and *GEF4 Cloudio User Guide* features instead. To access the related user documentation online, please refer to the [GEF4 wiki](https://wiki.eclipse.org/GEF/GEF4#User_Documentation).</sub>
+<sub><sup>1)</sup> Please note that explicit end-user features (including the user guides) have only been created in the current [5.x (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) development stream and are for now only available via the [GEF (5.x) Master CI](https://hudson.eclipse.org/gef/job/gef-master/lastSuccessfulBuild/artifact/update-site), [GEF (5.x) Integration](http://download.eclipse.org/tools/gef/updates/integration), and [GEF (5.x) Milestones](http://download.eclipse.org/tools/gef/updates/milestones) update-sites. If you want to install the end-user tools from the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) maintenance stream, using the [GEF4 Maintenance CI](https://hudson.eclipse.org/gef/job/gef4-maintenance/lastSuccessfulBuild/artifact/update-site/), [GEF4 Integration](http://download.eclipse.org/tools/gef/gef4/updates/integration), [GEF4 Milestones](http://download.eclipse.org/tools/gef/gef4/updates/milestones), or [GEF4 Releases](http://download.eclipse.org/tools/gef/gef4/updates/releases) update-site, you will have to select the *GEF4 DOT*, *GEF4 DOT.UI*, and *GEF4 DOT User Guide*, as well as the *GEF4 Cloudio.UI* and *GEF4 Cloudio User Guide* features instead. To access the related user documentation online, please refer to the [GEF4 wiki](https://wiki.eclipse.org/GEF/GEF4#User_Documentation) in this case.</sub>
 
 ## Getting started with the framework components ([adopters](https://www.eclipse.org/projects/dev_process/#2_3_3_Adopters))
 In order to develop graphical applications with GEF, you should first set up a proper development environment. The following sections shortly lay out how to set up an Eclipse IDE for this purpose. They conclude with running our deployed and undeployed examples to confirm everything is set up properly. 
@@ -27,12 +27,15 @@ Having accomplished that, you might want to browse our [developer documentation]
 3. Select "Help -> Install New Software...". Choose to *Work with* [http://download.eclipse.org/releases/neon](http://download.eclipse.org/releases/neon), uncheck the *Group items per category* checkbox (the feature is uncategorized), and install *e(fx)clipse - IDE - PDE*.
 
 4. Go to *Windows -> Preferences -> Java/Installed JREs* and ensure the installed Java SE Development Kit 8 is listed (otherwise add it manually). 
-5. Go to *Windows -> Preferences -> Java/Installed JREs/Execution Environments* and make sure JavaSE-1.8 is mapped to the installed Java SE Development Kit 8 (the checkbox needs to be checked, otherwise e(fx)clipse will not be able to resolve the JavaFX dependencies).
+
+5. Go to *Windows -> Preferences -> Java/Installed JREs/Execution Environments* and make sure JavaSE-1.8 is mapped to the installed Java SE Development Kit 8 (the checkbox needs to be checked, otherwise e(fx)clipse will not be able to resolve the JavaFX dependencies).<sup>2)</sup>
+
+<sub><sup>2)</sup> If your code should still be compatible to J2SE-1.7, you will have to install a Java SE Development Kit 7 instead, performing analogeous steps for this SDK and the J2SE-1.7 execution environment. Be aware that this is only feasible when developing against the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) maintenance stream, as support for J2SE-1.7 has been dropped in the current [5.x (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) development stream.</sub>
 
 ### Set up a Target Definition containing GEF (development snapshot)
 1. Go to *File -> New -> Project...* and select to create a *General/Project*. Name it `gef-integration.target` or as you like, the project is to contain only a target definition.
 2. Go to *File -> New -> Other...* then choose *Plug-in Development/Target Definition* and create a new empty (*Nothing: Start with an empty target definition*) target definition file named `gef-integration.target` within the newly created project.
-3. Close the *Target Editor* that has automatically opened, open the target file with the *Text Editor* using the *Open With* context menu, then paste the following contents:
+3. Close the *Target Editor* that has automatically opened, open the target file with the *Text Editor* using the *Open With* context menu, then paste the following contents:<sup>3)</sup>
 	
 	```
 	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -63,6 +66,8 @@ Having accomplished that, you might want to browse our [developer documentation]
 	```
 4. Now open the `gef-integration.target` file with the *Target Editor* again, using the *Open With* context menu, let if fully resolve, then click *Set as Target Platform* (link in the upper right corner of the editor).
 
+<sub><sup>3)</sup> If you want to develop against the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) maintenance stream, you will have to use the [GEF4 Integration](http://download.eclipse.org/tools/gef/gef4/updates/integration) update-site instead, and the unit ids have to be prefixed with `org.eclipse.gef4` instead of `org.eclipse.gef`.</sub>
+
 ### Run the examples
 As the deployed [MVC Logo](https://github.com/eclipse/gef/wiki/MVC-Logo-Example) and [Zest Graph](https://github.com/eclipse/gef/wiki/Zest-Graph-Example) examples are contained in the target definition, we only need to start a new Eclipse Runtime to run them: 
 
@@ -77,19 +82,22 @@ The undeployed [Geometry](https://github.com/eclipse/gef/wiki/Geometry-Examples)
 1. Go to *File -> Import...*, then select *Git/Projects from Git*, press *Next >*.
 2. Select *Clone URI*, press *Next >*.
 3. Paste `https://github.com/eclipse/gef.git` to the *URI* field , press *Next >*.
-3. Select *master* branch, press *Next >*.
+3. Select *master* branch, press *Next >*.<sup>4)</sup>
 4. Confirm the local directory or change it as needed, press *Next >*.
 5. Ensure *Import existing Eclipse projects* is checked, then select *Working Tree* and press *Next >*.
 5. Select `org.eclipse.gef.cloudio.examples.ui`, `org.eclipse.gef.dot.examples`, `org.eclipse.gef.fx.examples`, `org.eclipse.gef.fx.examples.swt`, `org.eclipse.gef.geometry.examples`, `org.eclipse.gef.graph.examples`, `org.eclipse.gef.layout.examples`, `org.eclipse.gef.zest.examples`, and `org.eclipse.gef.zest.examples.jface`, press *Finish*.
-6. Select an arbitrary example class, e.g. `org.eclipse.gef.fx.examples.ConnectionSnippet`, in the *Package Explorer* view and select *Run As -> Java Application* from the context menu.<sup>2)</sup>
+6. Select an arbitrary example class, e.g. `org.eclipse.gef.fx.examples.ConnectionSnippet`, in the *Package Explorer* view and select *Run As -> Java Application* from the context menu.<sup>5)</sup>
 
-<sub><sup>2)</sup> On MacOS, you will have to ensure that the *Use the -XstartOnFirstThread argument when launching with SWT* option is unchecked on the *Arguments* tab of the launch configuration, which was implicitly created, as pure JavaFX examples will otherwise not startup correctly. When starting examples that are based on the JavaFX-SWT-integration on the other hand (like `org.eclipse.gef.fx.examples.swt.ButtonFXControlAdapterSnippet`), the *Use the -XstartOnFirstThread argument when launching with SWT* option has to be enabled.</sub>
+<sub><sup>4)</sup> If you want to develop against the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) maintenance stream, you will have to select the *R4_0_maintenance* branch instead, and all project names are still prefixed with `org.eclipse.gef4` instead of `org.eclipse.gef`.</sub>
+
+<sub><sup>5)</sup> On MacOS, you will have to ensure that the *Use the -XstartOnFirstThread argument when launching with SWT* option is unchecked on the *Arguments* tab of the launch configuration, which was implicitly created, as pure JavaFX examples will otherwise not startup correctly. When starting examples that are based on the JavaFX-SWT-integration on the other hand (like e.g.  `org.eclipse.gef.fx.examples.swt.ButtonFXControlAdapterSnippet`), the *Use the -XstartOnFirstThread argument when launching with SWT* option has to be enabled.</sub>
 
 ## How to proceed from here?
-The first thing you will probably want to consult is the [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation). It explains the different framework components in detail.
+The first thing you will probably want to consult is the [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation). It explains the different framework components in detail.<sup>6)</sup>
 
 All further project information (forum, mailing list, issue tracker, update-site locations, release plans) can be retrieved from the project meta-data at [projects.eclipse.org](https://projects.eclipse.org/projects/tools.gef).
 
 If you want to contribute, please consult the [contributor guide](https://github.com/eclipse/gef/blob/master/CONTRIBUTING.md).
 
+<sub><sup>6)</sup> For the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) maintenance stream, the developer documentation can still be accessed online in the [GEF4 wiki](https://wiki.eclipse.org/GEF/GEF4#Developer_Documentation).</sub>
 
