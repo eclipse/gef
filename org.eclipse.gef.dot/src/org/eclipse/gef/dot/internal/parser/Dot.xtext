@@ -10,7 +10,7 @@
  *    Fabian Steeg    - updates for current Xtext and minor tweaks
  *    Alexander Nyßen - fixed generation problems w.r.t. terminals (bug #429512)
  *                    - fixed problems resulting from non-optional subgraph names 
- *                      and shadowing of IDs by CommentPt literals (bug #430132)
+ *                      and shadowing of IDs by CompassPt literals (bug #430132)
  *                    - completely refactored grammar to be more consistent to 
  *                      Dot language definition (bug #451097)
  *                    - transferred CompassPt into terminal rule to realize case
