@@ -411,22 +411,22 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	public void graph_layout() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {graph[ layout= ]}")
-				.assertTextAtCursorPosition(21, "circo", "dot", "fdp", "grid",
-						"neato", "osage", "sfdp", "twopi")
+				.assertTextAtCursorPosition(21, "circo", "dot", "fdp", "neato",
+						"osage", "sfdp", "twopi")
 				.applyProposal(21, "circo")
 				.expectContent("graph {graph[ layout=circo ]}");
 
 		// test local attribute values
 		newBuilder().append("graph { layout= }")
-				.assertTextAtCursorPosition(15, "circo", "dot", "fdp", "grid",
-						"neato", "osage", "sfdp", "twopi")
+				.assertTextAtCursorPosition(15, "circo", "dot", "fdp", "neato",
+						"osage", "sfdp", "twopi")
 				.applyProposal(15, "osage")
 				.expectContent("graph { layout=osage }");
 
 		// test local attribute values with quotes
 		newBuilder().append("graph { layout=\"\" }")
-				.assertTextAtCursorPosition(16, "circo", "dot", "fdp", "grid",
-						"neato", "osage", "sfdp", "twopi")
+				.assertTextAtCursorPosition(16, "circo", "dot", "fdp", "neato",
+						"osage", "sfdp", "twopi")
 				.applyProposal(16, "neato")
 				.expectContent("graph { layout=\"neato\" }");
 

@@ -762,11 +762,6 @@ public class DotAttributesTests {
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
 		assertEquals(Layout.FDP, DotAttributes.getLayoutParsed(g));
 
-		validGraphLayout = "grid";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.GRID, DotAttributes.getLayoutParsed(g));
-
 		validGraphLayout = "neato";
 		DotAttributes.setLayout(g, validGraphLayout);
 		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
@@ -812,12 +807,6 @@ public class DotAttributesTests {
 				DotAttributes.getLayout(g));
 		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
 
-		validGraphLayoutParsed = Layout.GRID;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
-		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
-
 		validGraphLayoutParsed = Layout.NEATO;
 		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
@@ -848,7 +837,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'circo', 'dot', 'fdp', 'grid', 'neato', 'osage', 'sfdp', 'twopi'.",
+					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'circo', 'dot', 'fdp', 'neato', 'osage', 'sfdp', 'twopi'.",
 					e.getMessage());
 		}
 	}

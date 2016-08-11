@@ -36,12 +36,6 @@ public enum Layout {
 	FDP("fdp"),
 
 	/**
-	 * This value specifies that the "grid" layout algorithm is to be used for
-	 * laying out the graph.
-	 */
-	GRID("grid"),
-
-	/**
 	 * This value specifies that the "neato" layout algorithm is to be used for
 	 * laying out the graph.
 	 */

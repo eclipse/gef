@@ -546,8 +546,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			} else if (Layout.FDP.toString().equals(dotLayout)
 					|| Layout.SFDP.toString().equals(dotLayout)) {
 				algo = new SpringLayoutAlgorithm();
-			} else if (Layout.GRID.toString().equals(dotLayout)
-					|| Layout.OSAGE.toString().equals(dotLayout)) {
+			} else if (Layout.OSAGE.toString().equals(dotLayout)) {
 				algo = new GridLayoutAlgorithm();
 			} else {
 				Rankdir dotRankdir = DotAttributes.getRankdirParsed(dot);
