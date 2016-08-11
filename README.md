@@ -66,11 +66,11 @@ Having accomplished that, you might want to browse our [developer documentation]
 ### Run the examples
 As the deployed [MVC Logo](https://github.com/eclipse/gef/wiki/MVC-Logo-Example) and [Zest Graph](https://github.com/eclipse/gef/wiki/Zest-Graph-Example) examples are contained in the target definition, we only need to start a new Eclipse Runtime to run them: 
 
-1. Go to *Run -> Run Configurations..." then create a new *Eclipse Application* launch configuration.
+1. Go to *Run -> Run Configurations...* then create a new *Eclipse Application* launch configuration.
 2. On the *Main* tab, make sure the *Execution environment* points to JavaSE-1.8.
 3. On the *Arguments* tab, add `-Dosgi.framework.extensions=org.eclipse.fx.osgi* to *VM arguments:*, so that all JavaFX dependencies can be resolved wihtin the OSGi environment.
 4. Click *Run*.
-5. Open the example views via *Window -> Show View -> Other...", then selecting *Other/GEF MVC Logo Example* or *Other/GEF Zest Graph Example*.
+5. Open the example views via *Window -> Show View -> Other...*, then selecting *Other/GEF MVC Logo Example* or *Other/GEF Zest Graph Example*.
 
 The undeployed [Geometry](https://github.com/eclipse/gef/wiki/Geometry-Examples), [FX](https://github.com/eclipse/gef/wiki/FX-Examples), [FX.SWT](https://github.com/eclipse/gef/wiki/FX-Examples#examplesswt-undeployed), [Graph](https://github.com/eclipse/gef/wiki/Graph-Examples), [Layout](https://github.com/eclipse/gef/wiki/Layout-Examples), [Zest.FX](https://github.com/eclipse/gef/wiki/Zest-Examples), [Zest.FX.JFace](https://github.com/eclipse/gef/wiki/Zest-JFace-Examples), [DOT](https://github.com/eclipse/gef/wiki/DOT-Examples), and [Cloudio.UI](https://github.com/eclipse/gef/wiki/Cloudio-Examples) examples have to be checked out in source before. Using EGit this can easily be achieved as follows:
 
