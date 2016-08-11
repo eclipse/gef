@@ -86,14 +86,10 @@ The undeployed [Geometry](https://github.com/eclipse/gef/wiki/Geometry-Examples)
 <small><sup>2)</sup> On MacOS, you will have to ensure that the *Use the -XstartOnFirstThread argument when launching with SWT* option is unchecked on the *Arguments* tab of the launch configuration, which was implicitly created, as pure JavaFX examples will otherwise not startup correctly. When starting examples that are based on the JavaFX-SWT-integration on the other hand (like `org.eclipse.gef.fx.examples.swt.ButtonFXControlAdapterSnippet`), the *Use the -XstartOnFirstThread argument when launching with SWT* option has to be enabled.</small>
 
 ## How to proceed from here?
-The first thing you will probably want to consult is the [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation). It explains the different framework components in detail. Other relevant information is provide in the following sections. In addition, the [project dashboard](https://projects.eclipse.org/projects/tools.gef) at Eclipse is where all the project *meta-data* is maintained.
+The first thing you will probably want to consult is the [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation). It explains the different framework components in detail.
 
-### Where to ask Questions?
-While the [GEF forum](https://www.eclipse.org/forums/index.php?t=thread&frm_id=81) is the primary place to ask questions, announcements and team discussions take place over the project's ['dev' mailing list](https://dev.eclipse.org/mailman/listinfo/gef-dev). 
-Subscription is open to everybody, and as it is the primary communication channel between the project team and the community, it is highly recommended to subscribe.
+All further project information (forum, mailing list, issue tracker, update-site locations, release plans) can be retrieved from the project meta-data at [projects.eclipse.org](https://projects.eclipse.org/projects/tools.gef).
 
-### How to report Issues?
-This project uses the [Eclipse Bugzilla](https://bugs.eclipse.org/bugs) to track all its issues. Be sure to [search for existing issues](https://bugs.eclipse.org/bugs/buglist.cgi?product=GEF) before you [create a new issue](https://bugs.eclipse.org/bugs/enter_bug.cgi?product=GEF).
+If you want to contribute, please consult the [contributor guide](https://github.com/eclipse/gef/blob/master/CONTRIBUTING.md).
 
-### How to Contribute?
-If you want to contribute to our project, the [contributor guide](https://github.com/eclipse/gef/blob/master/CONTRIBUTING.md) provides all necessary information.
+
