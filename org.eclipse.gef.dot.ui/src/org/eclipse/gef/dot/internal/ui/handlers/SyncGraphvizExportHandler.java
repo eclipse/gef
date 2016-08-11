@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolItem;
@@ -227,9 +228,25 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 		if (dotExportFormat.isEmpty()) {
 			return;
 		}
+		String[] outputs = new String[2];
+
 		File outputFile = DotExecutableUtils.renderImage(
 				new File(GraphvizPreferencePage.getDotExecutablePath()),
-				resolvedInputFile, dotExportFormat, null);
+				resolvedInputFile, dotExportFormat, null, outputs);
+
+		// whenever the dot executable call produced any error message, show it
+		// to the user within an error message box
+		if (!outputs[1].isEmpty()) {
+			Display.getDefault().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					MessageDialog.openError(
+							Display.getDefault().getActiveShell(),
+							"Errors from dot call:", outputs[1]); //$NON-NLS-1$
+				}
+			});
+		}
 
 		// refresh the parent folder and open the output file if the export
 		// was successful
