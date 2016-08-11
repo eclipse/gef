@@ -30,7 +30,7 @@ Having accomplished that, you might want to browse our [developer documentation]
 5. Go to *Windows -> Preferences -> Java/Installed JREs/Execution Environments* and make sure JavaSE-1.8 is mapped to the installed Java SE Development Kit 8 (the checkbox needs to be checked, otherwise e(fx)clipse will not be able to resolve the JavaFX dependencies).
 
 ### Set up a Target Definition containing GEF (development snapshot)
-1. Go to *File -> New -> Project...* and select to create a *General/Project*. Name it `gef-integration.target or as you like, the project is to contain only a target definition.
+1. Go to *File -> New -> Project...* and select to create a *General/Project*. Name it `gef-integration.target` or as you like, the project is to contain only a target definition.
 2. Go to *File -> New -> Other...* then choose *Plug-in Development/Target Definition* and create a new empty (*Nothing: Start with an empty target definition*) target definition file named `gef-integration.target` within the newly created project.
 3. Close the *Target Editor* that has automatically opened, open the target file with the *Text Editor* using the *Open With* context menu, then paste the following contents:
 	
