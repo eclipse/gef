@@ -7,7 +7,7 @@ This guide provides all necessary information to enable [contributors and commit
 If you want to contribute fixes to our code base, you will need to set up a proper development environment first, as outlined in the following sub-sections. Having forked the repository, this will enable you to work on an acceptable pull request, which has to respect certain formal contrainsts.
 
 ### Install Java SE Development Kit 8
-The current [5.x (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) development stream uses a minimal BREE (bundle required execution enviroment) of JavaSE-1.8 for all bundles. If you want to contribute, you will thus have to install a current Java SE Development Kit 8 that includes JavaFX 8 ([Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)).<sup>1)</sup>.
+The current [5.x (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) development stream uses a minimal BREE (bundle required execution enviroment) of JavaSE-1.8 for all bundles. If you want to contribute, you will thus have to install a current [Java SE Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).<sup>1)</sup>.
 
 <sub><sup>1)</sup> If you want to contribute to the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) maintenance stream, you will need to install a Java SE Development Kit 7 in addition.
 
