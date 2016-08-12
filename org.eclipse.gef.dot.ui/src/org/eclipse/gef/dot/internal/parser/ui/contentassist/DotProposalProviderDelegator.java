@@ -42,7 +42,7 @@ import com.google.inject.Injector;
 
 /**
  * The implementation of this class is mainly taken from the
- * ContentAssistProcessorTestBuilder java class.
+ * org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder java class.
  * 
  * @author miklossy
  *
