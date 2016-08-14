@@ -18,7 +18,7 @@ You can install the DOT and Cloudio end-user tools (including the user guides) i
 ## Getting started with the framework components ([adopters](https://www.eclipse.org/projects/dev_process/#2_3_3_Adopters))
 In order to develop graphical applications with GEF, you should first set up a proper development environment. The following sections shortly lay out how to set up an Eclipse IDE for this purpose. They conclude with running our deployed and undeployed examples to confirm everything is set up properly. 
 
-Having accomplished that, you might want to browse our [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation) to learn about the framework components in detail. At any time, if you get stuck, feel free to [contact us](#where-to-ask-questions).
+Having accomplished that, you might want to browse our [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation) to learn about the framework components in detail. At any time, if you get stuck, feel free to [contact us](https://projects.eclipse.org/projects/tools.gef/contact).
 
 ### Set up an Eclipse IDE
 1. Install a recent [Java SE Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) as a prerequisite.
