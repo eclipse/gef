@@ -13,6 +13,7 @@ package org.eclipse.gef.mvc.examples.logo;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.mvc.behaviors.HoverBehavior;
@@ -485,6 +486,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindPaletteElementPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), PaletteElementPart.class));
 		AdapterMaps.getAdapterMapBinder(binder(), PaletteModelPart.class).addBinding(AdapterKey.defaultRole())
 				.to(FXHoverOnHoverPolicy.class);
+	}
+
+	@Override
+	protected void enableAdapterMapInjection() {
+		install(new AdapterInjectionSupport(true));
 	}
 
 }
