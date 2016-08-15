@@ -13,11 +13,17 @@
 package org.eclipse.gef.zest.examples.graph.ui.view;
 
 import org.eclipse.gef.zest.examples.graph.ZestGraphExample;
+import org.eclipse.gef.zest.examples.graph.ZestGraphExampleModule;
+import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
+
+import com.google.inject.Guice;
+import com.google.inject.util.Modules;
 
 public class ZestGraphExampleView extends ZestFxUiView {
 
 	public ZestGraphExampleView() {
+		super(Guice.createInjector(Modules.override(new ZestGraphExampleModule()).with(new ZestFxUiModule())));
 		setGraph(ZestGraphExample.createDefaultGraph());
 	}
 

@@ -23,6 +23,8 @@ import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef.zest.examples.AbstractZestExample;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
+import com.google.inject.Module;
+
 import javafx.application.Application;
 
 public class ZestGraphExample extends AbstractZestExample {
@@ -121,6 +123,11 @@ public class ZestGraphExample extends AbstractZestExample {
 	@Override
 	protected Graph createGraph() {
 		return createDefaultGraph();
+	}
+
+	@Override
+	protected Module createModule() {
+		return new ZestGraphExampleModule();
 	}
 
 }
