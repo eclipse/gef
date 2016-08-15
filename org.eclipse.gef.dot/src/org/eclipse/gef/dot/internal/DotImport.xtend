@@ -329,7 +329,7 @@ class DotImport {
 	 * @return The attribute value or <code>null</code> in case the attribute
 	 *         could not be found.
 	 */
-	def private String getAttributeValue(List<AttrList> attrLists, String name) {
+	def static String getAttributeValue(List<AttrList> attrLists, String name) {
 		for (AttrList attrList : attrLists) {
 			val value = attrList.getAttributeValue(name)
 			if (value != null) {
@@ -343,7 +343,7 @@ class DotImport {
 		attrStmt.attrLists.getAttributeValue(name)
 	}
 
-	def private String getAttributeValue(AttrList attrList, String name) {
+	def private static String getAttributeValue(AttrList attrList, String name) {
 		attrList.attributes.findFirst[it.name == name]?.value.escaped
 	}
 
@@ -354,7 +354,7 @@ class DotImport {
 		null
 	}
 
-	private def escaped(String it) {
+	def private static escaped(String it) {
 		DotTerminalConverters.unquote(it)
 	}
 }

@@ -10,6 +10,7 @@
  *     Fabian Steeg    - intial Xtext generation (see bug #277380)
  *     Alexander Nyßen - initial implementation
  *     Tamas Miklossy  - Add support for arrowType edge decorations (bug #477980)
+ *                     - Add support for polygon-based node shapes (bug #441352)
  *
  *******************************************************************************/
 
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -33,11 +35,14 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
+import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParseResult;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParser;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowtypePackage;
 import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
+import org.eclipse.gef.dot.internal.parser.dot.AttrList;
+import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef.dot.internal.parser.dot.DotPackage;
@@ -45,8 +50,10 @@ import org.eclipse.gef.dot.internal.parser.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.parser.dot.EdgeRhsNode;
 import org.eclipse.gef.dot.internal.parser.dot.EdgeRhsSubgraph;
 import org.eclipse.gef.dot.internal.parser.dot.GraphType;
+import org.eclipse.gef.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
 import org.eclipse.gef.dot.internal.parser.point.PointPackage;
+import org.eclipse.gef.dot.internal.parser.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.parser.shape.ShapePackage;
 import org.eclipse.gef.dot.internal.parser.splines.Splines;
 import org.eclipse.gef.dot.internal.parser.splinetype.SplinetypePackage;
@@ -237,6 +244,50 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 		return Collections.emptyList();
 
+	}
+
+	/**
+	 * Ensures that the 'striped' node style is used only for
+	 * rectangularly-shaped nodes ('box', 'rect', 'rectangle' and 'square').
+	 * 
+	 * @param attribute
+	 *            The node style attribute to validate.
+	 */
+	@Check
+	public void checkValidCombinationOfNodeShapeAndStyle(Attribute attribute) {
+		if (DotAttributes.isNodeAttribute(attribute)
+				&& attribute.getName().equals(DotAttributes.STYLE__GNE)
+				&& attribute.getValue().equals(NodeStyle.STRIPED.toString())) {
+			EList<AttrList> attributeList = null;
+			NodeStmt node = EcoreUtil2.getContainerOfType(attribute,
+					NodeStmt.class);
+			if (node != null) {
+				attributeList = node.getAttrLists();
+			} else {
+				AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
+						AttrStmt.class);
+				if (attrStmt != null) {
+					attributeList = attrStmt.getAttrLists();
+				}
+			}
+
+			if (attributeList != null) {
+				String shapeValue = DotImport.getAttributeValue(attributeList,
+						DotAttributes.SHAPE__N);
+				if (shapeValue != null) {
+					switch (PolygonBasedNodeShape.get(shapeValue)) {
+					case BOX:
+					case RECT:
+					case RECTANGLE:
+					case SQUARE:
+						break;
+					default:
+						error("The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.",
+								DotPackage.eINSTANCE.getAttribute_Value());
+					}
+				}
+			}
+		}
 	}
 
 	/**

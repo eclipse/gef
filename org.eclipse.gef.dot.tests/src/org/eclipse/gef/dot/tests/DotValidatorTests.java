@@ -312,6 +312,53 @@ public class DotValidatorTests {
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
 
+	@Test
+	public void testInvalidCombinationOfNodeShapeAndStyle() throws Exception {
+		/*
+		 * The 'striped' node style is only supported with clusters and
+		 * rectangularly-shaped nodes('box', 'rect', 'rectangle' and 'square').
+		 */
+
+		String text = "graph {1[shape=ellipse style=striped]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), null,
+				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+
+		text = "graph {1[style=striped shape=ellipse]}";
+
+		dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), null,
+				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+
+		text = "graph {node[style=striped shape=ellipse]}";
+
+		dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), null,
+				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+
+		// TODO: implement test case
+		// text = "graph {1[style=striped]}";
+
+		// TODO: implement test case
+		// text = "graph {node[shape=ellipse] 1[style=striped]}";
+	}
+
 	private DotAst parse(String fileName) {
 		DotAst dotAst = null;
 		String fileContents = DotFileUtils
