@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzilla #496777
  *
  *******************************************************************************/
 package org.eclipse.gef.common.adapt.inject;
@@ -28,6 +29,7 @@ import java.util.TreeMap;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
@@ -457,41 +459,25 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	private final Method method;
 
-	private boolean isProduction = false;
+	private LoggingMode loggingMode;
 
 	/**
 	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
 	 * annotated with the given {@link AdapterMap} method annotation.
-	 *
-	 * The new {@link AdapterInjector} is constructed in "debug" mode, i.e.
-	 * binding-related info, warning, and error messages will be printed.
-	 *
-	 * @param method
-	 *            The {@link Method} to be injected.
-	 */
-	public AdapterInjector(final Method method) {
-		this.method = method;
-	}
-
-	/**
-	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
-	 * annotated with the given {@link AdapterMap} method annotation.
-	 *
-	 * If the {@link AdapterInjector} is constructed in "debug" mode
-	 * (<i>isProduction</i> is <code>false</code>), then binding-related info,
-	 * warning, and error messages will be printed. If the
-	 * {@link AdapterInjector} is constructed in "production" mode, only error
-	 * messages will be printed.
+	 * <p>
+	 * If in {@link LoggingMode#DEVELOPMENT} mode, binding-related information,
+	 * warning, and error messages will be printed. If in
+	 * {@link LoggingMode#PRODUCTION} mode, only error messages will be printed,
+	 * and information and warning messages will be suppressed.
 	 *
 	 * @param method
 	 *            The {@link Method} to be injected.
-	 * @param isProduction
-	 *            <code>true</code> to suppress info and warnings messages,
-	 *            otherwise <code>false</code>.
+	 * @param loggingMode
+	 *            The {@link LoggingMode} to use.
 	 */
-	public AdapterInjector(final Method method, boolean isProduction) {
+	public AdapterInjector(final Method method, LoggingMode loggingMode) {
 		this.method = method;
-		this.isProduction = isProduction;
+		this.loggingMode = loggingMode;
 	}
 
 	/**
@@ -504,7 +490,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		List<String> issues = new ArrayList<>();
 		injectAdapters(adaptable, issues);
 		for (String issue : issues) {
-			if (!isProduction || issue.startsWith("*** ERROR")) {
+			if (LoggingMode.DEVELOPMENT.equals(loggingMode)
+					|| issue.startsWith("*** ERROR")) {
 				System.err.println(issue);
 			}
 		}
@@ -621,7 +608,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 								// if we defer the injection, we have to
 								// print issues ourselves
 								for (String issue : issues) {
-									if (!isProduction
+									if (LoggingMode.DEVELOPMENT
+											.equals(loggingMode)
 											|| issue.startsWith("*** ERROR")) {
 										System.err.println(issue);
 									}

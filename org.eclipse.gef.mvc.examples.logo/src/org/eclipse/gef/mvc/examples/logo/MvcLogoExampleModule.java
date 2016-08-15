@@ -14,6 +14,7 @@ package org.eclipse.gef.mvc.examples.logo;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
+import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.mvc.behaviors.HoverBehavior;
@@ -490,7 +491,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	@Override
 	protected void enableAdapterMapInjection() {
-		install(new AdapterInjectionSupport(true));
+		install(new AdapterInjectionSupport(LoggingMode.PRODUCTION));
 	}
 
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzilla #496777
  *
  *******************************************************************************/
 package org.eclipse.gef.common.adapt.inject;
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -60,30 +62,24 @@ public class AdaptableTypeListener implements TypeListener {
 	// the injector used to obtain adapter map bindings
 	private Injector injector;
 
-	private boolean isProduction = false;
+	private LoggingMode loggingMode;
 
 	// used to keep track of members that are to be injected before we have
 	// obtained the injector (bug #439949)
 	private Set<AdapterInjector> nonInjectedMemberInjectors = new HashSet<>();
 
 	/**
-	 * Constructs a new {@link AdaptableTypeListener} in "debug" mode, i.e.
-	 * info, warning, and error messages will be printed.
-	 */
-	public AdaptableTypeListener() {
-	}
-
-	/**
-	 * Constructs a new {@link AdaptableTypeListener} in "debug" or "production"
-	 * mode. In debug mode, info, warning, and error messages will be printed.
-	 * In production mdoe, only error messages will be printed.
+	 * Constructs a new {@link AdaptableTypeListener} and specifies the
+	 * {@link LoggingMode} to use. If in {@link LoggingMode#DEVELOPMENT} mode,
+	 * binding-related information, warning, and error messages will be printed.
+	 * If in {@link LoggingMode#PRODUCTION} mode, only error messages will be
+	 * printed, and information and warning messages will be suppressed.
 	 *
-	 * @param isProduction
-	 *            <code>true</code> to suppress info and warning messages,
-	 *            otherwise <code>false</code>.
+	 * @param loggingMode
+	 *            The {@link LoggingMode} to use.
 	 */
-	public AdaptableTypeListener(boolean isProduction) {
-		this.isProduction = isProduction;
+	public AdaptableTypeListener(LoggingMode loggingMode) {
+		this.loggingMode = loggingMode;
 	}
 
 	/**
@@ -156,7 +152,7 @@ public class AdaptableTypeListener implements TypeListener {
 					// the method to it, so it does not have to look it up
 					// again).
 					AdapterInjector membersInjector = new AdapterInjector(
-							method, isProduction);
+							method, loggingMode);
 					if (injector != null) {
 						injector.injectMembers(membersInjector);
 					} else {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzilla #496777
  *
  *******************************************************************************/
 package org.eclipse.gef.common.adapt.inject;
@@ -34,27 +35,46 @@ import com.google.inject.spi.TypeListener;
  */
 public class AdapterInjectionSupport extends AbstractModule {
 
-	private boolean isProduction = false;
+	/**
+	 * The {@link LoggingMode} specifies if binding-related information and
+	 * warning messages should be printed.
+	 */
+	public static enum LoggingMode {
+		/**
+		 * In {@link #DEVELOPMENT} mode, all information, warning, and error
+		 * messages are printed.
+		 */
+		DEVELOPMENT,
+
+		/**
+		 * In {@link #PRODUCTION} mode, only error messages are printed, and
+		 * information or warning messages are suppressed.
+		 */
+		PRODUCTION,
+	}
+
+	private LoggingMode loggingMode = LoggingMode.DEVELOPMENT;
 
 	/**
-	 * Constructs a new {@link AdapterInjectionSupport} in "debug" mode, i.e.
-	 * binding-related infos, warnings, and errors will be printed.
+	 * Constructs a new {@link AdapterInjectionSupport} in
+	 * {@link LoggingMode#DEVELOPMENT} mode, i.e. binding-related information,
+	 * warning, and error messages will be printed.
 	 */
 	public AdapterInjectionSupport() {
 	}
 
 	/**
-	 * Constructs a new {@link AdapterInjectionSupport} in "debug" or
-	 * "production" mode. In debug mode, binding-related infos, warnings, and
-	 * errors will be printed. In production mode, only binding-related errors
-	 * will be printed.
+	 * Constructs a new {@link AdapterInjectionSupport} and specifies the
+	 * {@link LoggingMode} to use. If in {@link LoggingMode#DEVELOPMENT} mode,
+	 * binding-related information, warning, and error messages will be printed.
+	 * If in {@link LoggingMode#PRODUCTION} mode, only error messages will be
+	 * printed, and information and warning messages will be suppressed.
 	 *
-	 * @param isProduction
-	 *            <code>true</code> to suppress info and warning messages,
-	 *            otherwise <code>false</code>.
+	 * @param loggingMode
+	 *            The {@link LoggingMode} to use.
 	 */
-	public AdapterInjectionSupport(boolean isProduction) {
-		this.isProduction = isProduction;
+	public AdapterInjectionSupport(LoggingMode loggingMode) {
+		this.loggingMode = loggingMode;
 	}
 
 	/**
@@ -65,7 +85,7 @@ public class AdapterInjectionSupport extends AbstractModule {
 	@Override
 	protected void configure() {
 		AdaptableTypeListener adaptableTypeListener = new AdaptableTypeListener(
-				isProduction);
+				loggingMode);
 		requestInjection(adaptableTypeListener);
 		bindListener(new AbstractMatcher<TypeLiteral<?>>() {
 			@Override

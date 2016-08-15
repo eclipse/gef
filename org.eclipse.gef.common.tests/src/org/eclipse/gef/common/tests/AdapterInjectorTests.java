@@ -27,6 +27,7 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.AdapterStore;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
+import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 import org.eclipse.gef.common.adapt.inject.AdapterInjector;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
@@ -240,7 +241,7 @@ public class AdapterInjectorTests {
 				// use raw type as key and target
 				adapterMapBinder.addBinding(AdapterKey
 						.get(new TypeToken<ParameterizedSubType<Integer>>() {
-				})).toInstance(new ParameterizedSubType<Integer>());
+						})).toInstance(new ParameterizedSubType<Integer>());
 			}
 		};
 
@@ -276,7 +277,7 @@ public class AdapterInjectorTests {
 				// use raw type as key and target
 				adapterMapBinder.addBinding(AdapterKey.get(RawType.class))
 						.to(new TypeLiteral<ParameterizedSubType<Object>>() {
-				});
+						});
 			}
 		};
 
@@ -359,36 +360,37 @@ public class AdapterInjectorTests {
 				// constructor binding
 				adapterMapBinder.addBinding(AdapterKey
 						.get(new TypeToken<ParameterizedSubType<Integer>>() {
-				}, "a1")).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
-				});
+						}, "a1"))
+						.to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+						});
 
 				// instance binding
 				adapterMapBinder.addBinding(
 						AdapterKey.get(new TypeToken<Provider<Integer>>() {
-				}, "a2")).toInstance(new Provider<Integer>() {
-
-					@Override
-					public Integer get() {
-						return 5;
-					}
-				});
-
-				// provider binding
-				adapterMapBinder.addBinding(
-						AdapterKey.get(new TypeToken<Provider<Integer>>() {
-				}, "a3")).toProvider(new Provider<Provider<Integer>>() {
-
-					@Override
-					public Provider<Integer> get() {
-						return new Provider<Integer>() {
+						}, "a2")).toInstance(new Provider<Integer>() {
 
 							@Override
 							public Integer get() {
 								return 5;
 							}
-						};
-					}
-				});
+						});
+
+				// provider binding
+				adapterMapBinder.addBinding(
+						AdapterKey.get(new TypeToken<Provider<Integer>>() {
+						}, "a3")).toProvider(new Provider<Provider<Integer>>() {
+
+							@Override
+							public Provider<Integer> get() {
+								return new Provider<Integer>() {
+
+									@Override
+									public Integer get() {
+										return 5;
+									}
+								};
+							}
+						});
 			}
 
 		};
@@ -445,18 +447,19 @@ public class AdapterInjectorTests {
 						.to(RawType.class);
 				firstRoleBinder.addBinding(AdapterKey
 						.get(new TypeToken<ParameterizedSubType<Integer>>() {
-				}, role2)).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
-				});
+						}, role2))
+						.to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+						});
 
 				firstRoleBinder.addBinding(
 						AdapterKey.get(new TypeToken<Provider<Integer>>() {
-				}, role3)).toInstance(new Provider<Integer>() {
+						}, role3)).toInstance(new Provider<Integer>() {
 
-					@Override
-					public Integer get() {
-						return 5;
-					}
-				});
+							@Override
+							public Integer get() {
+								return 5;
+							}
+						});
 
 				// register adapter for the second role
 				adapterMapBinder.addBinding(AdapterKey.role(secondRole))
@@ -471,18 +474,19 @@ public class AdapterInjectorTests {
 						.to(RawType.class);
 				secondRoleBinder.addBinding(AdapterKey
 						.get(new TypeToken<ParameterizedSubType<Integer>>() {
-				}, role2)).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
-				});
+						}, role2))
+						.to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+						});
 
 				secondRoleBinder.addBinding(
 						AdapterKey.get(new TypeToken<Provider<Integer>>() {
-				}, role3)).toInstance(new Provider<Integer>() {
+						}, role3)).toInstance(new Provider<Integer>() {
 
-					@Override
-					public Integer get() {
-						return 5;
-					}
-				});
+							@Override
+							public Integer get() {
+								return 5;
+							}
+						});
 			}
 
 		};
@@ -533,11 +537,12 @@ public class AdapterInjectorTests {
 
 	protected List<String> performInjection(AdapterStore adaptable,
 			Module module) throws NoSuchMethodException, IllegalAccessException,
-					InvocationTargetException {
+			InvocationTargetException {
 		Injector injector = Guice.createInjector(module);
 		AdapterInjector adapterInjector = new AdapterInjector(
 				AdapterStore.class.getMethod("setAdapter", TypeToken.class,
-						Object.class, String.class));
+						Object.class, String.class),
+				LoggingMode.DEVELOPMENT);
 		adapterInjector.setInjector(injector);
 
 		List<String> issues = new ArrayList<>();
