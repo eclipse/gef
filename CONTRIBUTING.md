@@ -45,7 +45,7 @@ Please install *m2e - Maven Integration for Eclipse (includes Incubating compone
 #### Install Eclipse RelEng Tools
 To ensure that bundle versions and Maven pom.xml versions are in sync, the Eclipse RelEng Tools are very helpful.
 
-It is recommended that you install the 'Eclipse RelEng Tools' into your IDE. Please make sure that you install it in a version matching the your IDE. For Neon, it can be installed in version 3.9.0 from [http://download.eclipse.org/eclipse/updates/4.6](http://download.eclipse.org/eclipse/updates/4.6).
+It is recommended that you install the 'Eclipse RelEng Tools' into your IDE. Please make sure that you install it in a version matching to your IDE. For Neon, it can be installed in version 3.9.0 from [http://download.eclipse.org/eclipse/updates/4.6](http://download.eclipse.org/eclipse/updates/4.6).
 
 #### Check out the code using EGit
 Having set up the Eclipse IDE, next is to [fork the repository](https://help.github.com/articles/fork-a-repo/) and to check out the sources into the local workspace. Using EGit, this can be performed as follows:
@@ -112,4 +112,4 @@ Example:
 	Signed-off-by: Tamas Miklossy <miklossy@itemis.de>
 	Bug: https://bugs.eclipse.org/bugs/show_bug.cgi?id=493136
 
-If your contribution does not exceed the contribution limit (currently 1000 LOC) this will allow us to directly accept a pull request. If your contribution was not developed from scratch or contains content from other authors, please indicate this on the related Bugzilla entry. As in cases where the contribution exceeds the limit, we will have to open a contribution questionnaire (and may have to ask for additional information via the related Bugzilla) to handle such cases in compliance to the [Eclipse Legal Process](http://eclipse.org/legal/EclipseLegalProcessPoster.pdf).
+If your contribution does not exceed the contribution limit (currently 1000 LOC) this will allow us to directly accept your pull request. If your contribution was not developed from scratch or contains content from other authors, please indicate this on the related Bugzilla entry. As in cases where the contribution exceeds the limit, we will have to open a contribution questionnaire (and may have to ask for additional information via the related Bugzilla) to handle such cases in compliance to the [Eclipse Legal Process](http://eclipse.org/legal/EclipseLegalProcessPoster.pdf).
