@@ -209,7 +209,6 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 																	.getRole()
 															+ ")")
 									+ ".");
-
 				} else {
 					// check that at least key raw type and the type inferred
 					// from the adapter instance match
@@ -458,15 +457,41 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	private final Method method;
 
+	private boolean isProduction = false;
+
 	/**
 	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
 	 * annotated with the given {@link AdapterMap} method annotation.
+	 *
+	 * The new {@link AdapterInjector} is constructed in "debug" mode, i.e.
+	 * binding-related info, warning, and error messages will be printed.
 	 *
 	 * @param method
 	 *            The {@link Method} to be injected.
 	 */
 	public AdapterInjector(final Method method) {
 		this.method = method;
+	}
+
+	/**
+	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
+	 * annotated with the given {@link AdapterMap} method annotation.
+	 *
+	 * If the {@link AdapterInjector} is constructed in "debug" mode
+	 * (<i>isProduction</i> is <code>false</code>), then binding-related info,
+	 * warning, and error messages will be printed. If the
+	 * {@link AdapterInjector} is constructed in "production" mode, only error
+	 * messages will be printed.
+	 *
+	 * @param method
+	 *            The {@link Method} to be injected.
+	 * @param isProduction
+	 *            <code>true</code> to suppress info and warnings messages,
+	 *            otherwise <code>false</code>.
+	 */
+	public AdapterInjector(final Method method, boolean isProduction) {
+		this.method = method;
+		this.isProduction = isProduction;
 	}
 
 	/**
@@ -479,7 +504,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		List<String> issues = new ArrayList<>();
 		injectAdapters(adaptable, issues);
 		for (String issue : issues) {
-			System.err.println(issue);
+			if (!isProduction || issue.startsWith("*** ERROR")) {
+				System.err.println(issue);
+			}
 		}
 	}
 
@@ -591,10 +618,13 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 								}
 								injectAdapters(adaptable, issues,
 										deferredApplicableBindings);
-								// if we defer the injection, we have to print
-								// issues ourselves
+								// if we defer the injection, we have to
+								// print issues ourselves
 								for (String issue : issues) {
-									System.err.println(issue);
+									if (!isProduction
+											|| issue.startsWith("*** ERROR")) {
+										System.err.println(issue);
+									}
 								}
 								observable.removeListener(this);
 							}
