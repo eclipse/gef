@@ -176,12 +176,10 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	@SuppressWarnings("serial")
 	protected void bindContentBehaviorAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<ContentBehavior<Node>>() {
-				})).to(new TypeLiteral<ContentBehavior<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(new TypeLiteral<ContentBehavior<Node>>() {
 				});
 	}
 
@@ -200,9 +198,8 @@ public class MvcFxModule extends MvcModule<Node> {
 	@SuppressWarnings("serial")
 	protected void bindContentBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<ContentBehavior<Node>>() {
-				})).to(new TypeLiteral<ContentBehavior<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(new TypeLiteral<ContentBehavior<Node>>() {
 				});
 	}
 
