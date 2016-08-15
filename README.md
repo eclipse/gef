@@ -65,16 +65,16 @@ Having accomplished that, you might want to browse our [developer documentation]
 	</locations>
 	</target>
 	```
-4. Now open the `gef-integration.target` file with the *Target Editor* again, using the *Open With* context menu, let if fully resolve, then click *Set as Target Platform* (link in the upper right corner of the editor).
+4. Now open the `gef-integration.target` file with the *Target Editor* again, using the *Open With* context menu, let it fully resolve, then click *Set as Target Platform* (link in the upper right corner of the editor).
 
 <sub><sup>3)</sup> If you want to develop against the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1) maintenance stream, you will have to use the [GEF4 Integration](http://download.eclipse.org/tools/gef/gef4/updates/integration) update-site instead, and the unit ids have to be prefixed with `org.eclipse.gef4` instead of `org.eclipse.gef`.</sub>
 
 ### Run the examples
-As the deployed [MVC Logo](https://github.com/eclipse/gef/wiki/MVC-Logo-Example) and [Zest Graph](https://github.com/eclipse/gef/wiki/Zest-Graph-Example) examples are contained in the target definition, we only need to start a new Eclipse Runtime to run them: 
+As the deployed [MVC Logo](https://github.com/eclipse/gef/wiki/MVC-Logo-Example) and [Zest Graph](https://github.com/eclipse/gef/wiki/Zest-Graph-Example) examples are contained in the target definition, you only need to start a new Eclipse Runtime to run them: 
 
 1. Go to *Run -> Run Configurations...* then create a new *Eclipse Application* launch configuration.
 2. On the *Main* tab, make sure the *Execution environment* points to JavaSE-1.8.
-3. On the *Arguments* tab, add `-Dosgi.framework.extensions=org.eclipse.fx.osgi* to *VM arguments:*, so that all JavaFX dependencies can be resolved wihtin the OSGi environment.
+3. On the *Arguments* tab, add *-Dosgi.framework.extensions=org.eclipse.fx.osgi* to *VM arguments:*, so that all JavaFX dependencies can be resolved wihtin the OSGi environment.
 4. Click *Run*.
 5. Open the example views via *Window -> Show View -> Other...*, then selecting *Other/GEF MVC Logo Example* or *Other/GEF Zest Graph Example*.
 
