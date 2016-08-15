@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt.inject;
 
@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -35,13 +36,13 @@ import com.google.inject.spi.TypeListener;
  * <p>
  * In order to function properly, an {@link AdaptableTypeListener} has to be
  * bound in a Guice {@link Module} as follows:
- * 
+ *
  * <pre>
  * AdaptableTypeListener adaptableTypeListener = new AdaptableTypeListener();
  * requestInjection(adaptableTypeListener);
  * bindListener(Matchers.any(), adaptableTypeListener);
  * </pre>
- * 
+ *
  * The call to <code>requestInjection()</code> is important to ensure that
  * {@link AdaptableTypeListener#setInjector(Injector)} will get injected.
  * Without it, the {@link AdaptableTypeListener} will not function properly.
@@ -51,36 +52,75 @@ import com.google.inject.spi.TypeListener;
  * that are used by the {@link Injector}.
  *
  * @see AdapterInjectionSupport
- * 
+ *
  * @author anyssen
- * 
+ *
  */
 public class AdaptableTypeListener implements TypeListener {
 
 	// the injector used to obtain adapter map bindings
 	private Injector injector;
 
+	private LoggingMode loggingMode;
+
 	// used to keep track of members that are to be injected before we have
 	// obtained the injector (bug #439949)
 	private Set<AdapterInjector> nonInjectedMemberInjectors = new HashSet<>();
 
 	/**
-	 * In order to work, the {@link AdaptableTypeListener} needs to obtain a
-	 * reference to an {@link Injector}, which is forwarded to the
-	 * {@link AdapterInjector}, which it registers for any {@link IAdaptable}
-	 * encounters, to obtain the {@link AdapterMap} bindings to be injected.
-	 * 
-	 * @param injector
-	 *            The injector that is forwarded (used to inject) the
-	 *            {@link AdapterInjector}.
+	 * Constructs a new {@link AdaptableTypeListener} in
+	 * {@link LoggingMode#DEVELOPMENT}.
 	 */
-	@Inject
-	public void setInjector(Injector injector) {
-		this.injector = injector;
-		for (AdapterInjector memberInjector : nonInjectedMemberInjectors) {
-			injector.injectMembers(memberInjector);
+	public AdaptableTypeListener() {
+	}
+
+	/**
+	 * Constructs a new {@link AdaptableTypeListener} and specifies the
+	 * {@link LoggingMode} to use. If in {@link LoggingMode#DEVELOPMENT} mode,
+	 * binding-related information, warning, and error messages will be printed.
+	 * If in {@link LoggingMode#PRODUCTION} mode, only error messages will be
+	 * printed, and information and warning messages will be suppressed.
+	 *
+	 * @param loggingMode
+	 *            The {@link LoggingMode} to use.
+	 * @since 1.1
+	 */
+	public AdaptableTypeListener(LoggingMode loggingMode) {
+		this.loggingMode = loggingMode;
+	}
+
+	/**
+	 * Checks that the given method complies to the signature of
+	 * {@link IAdaptable#setAdapter(TypeToken, Object, String)}.
+	 *
+	 * @param method
+	 *            The {@link Method} to test.
+	 * @return <code>true</code> if the method has a compatible signature,
+	 *         <code>false</code> otherwise.
+	 */
+	protected boolean eligibleForAdapterInjection(final Method method) {
+		// method has to be annotated with @InjectAdapters
+		if (method.getAnnotation(InjectAdapters.class) != null) {
+			// signature has to comply with IAdaptable#setAdapter(TypeToken,
+			// Object, String).
+			return method.getName().equals("setAdapter")
+					&& method.getParameterTypes().length == 3
+					&& method.getParameterTypes()[0].equals(TypeToken.class)
+					&& method.getParameterTypes()[1].equals(Object.class)
+					&& method.getParameterTypes()[2].equals(String.class);
 		}
-		nonInjectedMemberInjectors.clear();
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends Annotation> T getAnnotation(Annotation[] annotations,
+			Class<T> annotationType) {
+		for (Annotation a : annotations) {
+			if (annotationType.isAssignableFrom(a.annotationType())) {
+				return (T) a;
+			}
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -119,7 +159,7 @@ public class AdaptableTypeListener implements TypeListener {
 					// the method to it, so it does not have to look it up
 					// again).
 					AdapterInjector membersInjector = new AdapterInjector(
-							method);
+							method, loggingMode);
 					if (injector != null) {
 						injector.injectMembers(membersInjector);
 					} else {
@@ -134,37 +174,22 @@ public class AdaptableTypeListener implements TypeListener {
 	}
 
 	/**
-	 * Checks that the given method complies to the signature of
-	 * {@link IAdaptable#setAdapter(TypeToken, Object, String)}.
-	 * 
-	 * @param method
-	 *            The {@link Method} to test.
-	 * @return <code>true</code> if the method has a compatible signature,
-	 *         <code>false</code> otherwise.
+	 * In order to work, the {@link AdaptableTypeListener} needs to obtain a
+	 * reference to an {@link Injector}, which is forwarded to the
+	 * {@link AdapterInjector}, which it registers for any {@link IAdaptable}
+	 * encounters, to obtain the {@link AdapterMap} bindings to be injected.
+	 *
+	 * @param injector
+	 *            The injector that is forwarded (used to inject) the
+	 *            {@link AdapterInjector}.
 	 */
-	protected boolean eligibleForAdapterInjection(final Method method) {
-		// method has to be annotated with @InjectAdapters
-		if (method.getAnnotation(InjectAdapters.class) != null) {
-			// signature has to comply with IAdaptable#setAdapter(TypeToken,
-			// Object, String).
-			return method.getName().equals("setAdapter")
-					&& method.getParameterTypes().length == 3
-					&& method.getParameterTypes()[0].equals(TypeToken.class)
-					&& method.getParameterTypes()[1].equals(Object.class)
-					&& method.getParameterTypes()[2].equals(String.class);
+	@Inject
+	public void setInjector(Injector injector) {
+		this.injector = injector;
+		for (AdapterInjector memberInjector : nonInjectedMemberInjectors) {
+			injector.injectMembers(memberInjector);
 		}
-		return false;
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T extends Annotation> T getAnnotation(Annotation[] annotations,
-			Class<T> annotationType) {
-		for (Annotation a : annotations) {
-			if (annotationType.isAssignableFrom(a.annotationType())) {
-				return (T) a;
-			}
-		}
-		return null;
+		nonInjectedMemberInjectors.clear();
 	}
 
 }

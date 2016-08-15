@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
@@ -458,6 +459,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	private final Method method;
 
+	private LoggingMode loggingMode;
+
 	/**
 	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
 	 * annotated with the given {@link AdapterMap} method annotation.
@@ -470,6 +473,26 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	}
 
 	/**
+	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
+	 * annotated with the given {@link AdapterMap} method annotation.
+	 * <p>
+	 * If in {@link LoggingMode#DEVELOPMENT} mode, binding-related information,
+	 * warning, and error messages will be printed. If in
+	 * {@link LoggingMode#PRODUCTION} mode, only error messages will be printed,
+	 * and information and warning messages will be suppressed.
+	 *
+	 * @param method
+	 *            The {@link Method} to be injected.
+	 * @param loggingMode
+	 *            The {@link LoggingMode} to use.
+	 * @since 1.1
+	 */
+	public AdapterInjector(final Method method, LoggingMode loggingMode) {
+		this.method = method;
+		this.loggingMode = loggingMode;
+	}
+
+	/**
 	 * Performs the adapter map injection for the given adaptable instance.
 	 *
 	 * @param adaptable
@@ -479,7 +502,10 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		List<String> issues = new ArrayList<>();
 		injectAdapters(adaptable, issues);
 		for (String issue : issues) {
-			System.err.println(issue);
+			if (LoggingMode.DEVELOPMENT.equals(loggingMode)
+					|| issue.startsWith("*** ERROR")) {
+				System.err.println(issue);
+			}
 		}
 	}
 
@@ -594,7 +620,11 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 								// if we defer the injection, we have to print
 								// issues ourselves
 								for (String issue : issues) {
-									System.err.println(issue);
+									if (LoggingMode.DEVELOPMENT
+											.equals(loggingMode)
+											|| issue.startsWith("*** ERROR")) {
+										System.err.println(issue);
+									}
 								}
 								observable.removeListener(this);
 							}
