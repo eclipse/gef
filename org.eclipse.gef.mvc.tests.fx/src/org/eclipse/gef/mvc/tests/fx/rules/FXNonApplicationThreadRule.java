@@ -41,6 +41,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotResult;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
@@ -271,7 +272,13 @@ public class FXNonApplicationThreadRule implements TestRule {
 				scene.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(final MouseEvent event) {
-						System.out.println(thread() + " -> " + event + this);
+						MouseButton b = event.getButton();
+						System.out.format("%20s :: %20s :: %4d (%4d scr), %4d (%4d scr) :: %1s\n", event.getEventType(),
+								event.getTarget().getClass().getSimpleName(), (int) event.getSceneX(),
+								(int) event.getScreenX(), (int) event.getSceneY(), (int) event.getScreenY(),
+								b == MouseButton.PRIMARY ? "L"
+										: b == MouseButton.SECONDARY ? "R"
+												: b == MouseButton.MIDDLE ? "M" : b == MouseButton.NONE ? "" : "X");
 					}
 				});
 
@@ -439,7 +446,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void mousePress(final int buttons) throws Throwable {
 		System.out.println(thread() + "mousePress: (" + buttons + ") ...");
 		EventSynchronizer<MouseEvent> eventSynchronizer = getEventSynchronizer(MouseEvent.MOUSE_PRESSED);
-		System.out.println(thread() + "release now!");
+		System.out.println(thread() + "press now!");
 		getRobot().mousePress(buttons);
 		eventSynchronizer.await();
 		System.out.println(thread() + "... done.");
@@ -462,7 +469,9 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	public synchronized void moveTo(final double sceneX, final double sceneY) throws Throwable {
+		System.out.println("CALL " + Thread.currentThread().getStackTrace()[2].getMethodName());
 		System.out.println(thread() + "moveTo: (" + sceneX + ", " + sceneY + ") ...");
+		repaint();
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
@@ -475,13 +484,34 @@ public class FXNonApplicationThreadRule implements TestRule {
 		getRobot().mouseMove(position.x, position.y);
 		synchronizer.await();
 		System.out.println(thread() + "... done.");
+		waitForIdle();
 	}
 
 	public synchronized void moveTo(final Node visual, final double localX, final double localY) throws Throwable {
 		System.out.println("CALL " + Thread.currentThread().getStackTrace()[2].getMethodName());
 		System.out.println(thread() + "moveTo: " + visual + " (" + localX + ", " + localY + ") ...");
-		getRobot().mouseMove(0, 0);
+
+		// wait for idle
+		getRobot().waitForIdle();
 		waitForIdle();
+		final CountDownLatch latch = new CountDownLatch(1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				scene.getRoot().snapshot(new Callback<SnapshotResult, Void>() {
+					@Override
+					public Void call(SnapshotResult param) {
+						latch.countDown();
+						return null;
+					}
+				}, null, null);
+			}
+		});
+		latch.await();
+
+		repaint();
+
+		// compute position
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
@@ -491,10 +521,27 @@ public class FXNonApplicationThreadRule implements TestRule {
 				return new Point((int) x, (int) y);
 			}
 		});
+
+		// move mouse
 		EventSynchronizer<MouseEvent> synchronizer = getEventSynchronizer(MouseEvent.MOUSE_ENTERED_TARGET);
+		getRobot().waitForIdle();
 		getRobot().mouseMove(position.x, position.y);
+		getRobot().waitForIdle();
+
+		// wait for event processing
 		synchronizer.await();
 		System.out.println(thread() + "... done.");
+		waitForIdle();
+	}
+
+	public void repaint() {
+		getPanel().setScene(null);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				getPanel().setScene(scene);
+			}
+		});
 	}
 
 	/**

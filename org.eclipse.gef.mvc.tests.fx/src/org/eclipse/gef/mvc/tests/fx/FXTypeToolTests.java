@@ -18,6 +18,7 @@ import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.behaviors.IBehavior;
@@ -38,8 +39,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotResult;
+import javafx.util.Callback;
 
 public class FXTypeToolTests {
 
@@ -124,6 +128,29 @@ public class FXTypeToolTests {
 				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 			}
 		});
+
+		// repaint
+		ctx.getPanel().repaint();
+		ctx.waitForIdle();
+		ctx.getRobot().waitForIdle();
+		final CountDownLatch latch = new CountDownLatch(1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				scene.getRoot().snapshot(new Callback<SnapshotResult, Void>() {
+					@Override
+					public Void call(SnapshotResult param) {
+						System.out.println("SNAPSHOT");
+						latch.countDown();
+						return null;
+					}
+				}, null, null);
+			}
+		});
+		latch.await();
+		ctx.getPanel().repaint();
+		ctx.waitForIdle();
+		ctx.getRobot().waitForIdle();
 
 		// move mouse to viewer center
 		Point sceneCenter = ctx.runAndWait(new RunnableWithResult<Point>() {

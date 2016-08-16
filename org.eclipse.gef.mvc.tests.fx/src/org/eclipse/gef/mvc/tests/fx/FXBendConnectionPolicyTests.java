@@ -492,8 +492,11 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Before
-	public void setUp_moveMouseToOrigin() throws AWTException {
+	public void setUp_moveMouseToOrigin() throws Throwable {
+		ctx.getRobot().mouseMove(10, 10);
 		ctx.getRobot().mouseMove(1000, 1000);
+		ctx.getRobot().mouseMove(10, 10);
+		ctx.waitForIdle();
 	}
 
 	@Test
