@@ -62,7 +62,7 @@ Having set up the Eclipse IDE, next is to [fork the repository](https://help.git
 	* Choose to import all projects and press *Finish* to conclude.
 
 ### Set Target Platform
-A target definition file is provided by the `org.eclipse.gef.target` project. To specify the target platform, simply open the respective target definition (e.g. *NEON.target*) within the *Target Editor*, let it fully resolve (i.e. wait until the *Resolving Target Definition* background task has finished and the installable units are listed under the respective *Locations*), then choose to *Set as Target Platform*).
+Multiple target definition files are provided by the `org.eclipse.gef.target` project. To specify the target platform, simply open the respective target definition (e.g. *NEON.target*) within the *Target Editor*, let it fully resolve (i.e. wait until the *Resolving Target Definition* background task has finished and the installable units are listed under the respective *Locations*), then choose to *Set as Target Platform*).
 
 In case the target editor does not properly resolve the target definition, an invalid target cache may be the cause. In such cases, opening the target definition file with a text editor and incrementing the sequence number manually, will invalidate the cache when reopening it with the target editor again. After the cache has been invalidated, the sequence number can be restored.
 
