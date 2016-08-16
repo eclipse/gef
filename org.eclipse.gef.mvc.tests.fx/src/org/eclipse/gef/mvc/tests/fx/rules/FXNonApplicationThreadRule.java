@@ -16,6 +16,7 @@ import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Point;
 import java.awt.Robot;
+import java.awt.event.InputEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -38,8 +39,10 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotResult;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 /**
  * A {@link TestRule} to ensure that the JavaFX toolkit is properly initialized
@@ -275,6 +278,30 @@ public class FXNonApplicationThreadRule implements TestRule {
 				return scene;
 			}
 		});
+
+		// repaint
+		getPanel().repaint();
+		waitForIdle();
+		getRobot().waitForIdle();
+		final CountDownLatch latch = new CountDownLatch(1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				scene.getRoot().snapshot(new Callback<SnapshotResult, Void>() {
+					@Override
+					public Void call(SnapshotResult param) {
+						System.out.println("SNAPSHOT");
+						latch.countDown();
+						return null;
+					}
+				}, null, null);
+			}
+		});
+		latch.await();
+		getPanel().repaint();
+		waitForIdle();
+		getRobot().waitForIdle();
+
 		return scene;
 	}
 
@@ -324,18 +351,24 @@ public class FXNonApplicationThreadRule implements TestRule {
 		return eventSynchronizer;
 	}
 
+	public JFXPanel getPanel() {
+		return panel;
+	}
+
 	public Robot getRobot() throws AWTException {
 		if (robot == null) {
 			robot = new Robot();
 			// XXX: Ensure robot waits for event being processed on AWT event
 			// queue
+			robot.waitForIdle();
 			robot.setAutoWaitForIdle(true);
 		}
 		return robot;
 	}
 
 	/**
-	 * Fires a KEY_PRESSED event and waits for its processing to finish.
+	 * Fires a KEY_PRESSED event and waits for its processing to finish. See
+	 * {@link Robot#keyPress(int)} for more information.
 	 *
 	 * @param robot
 	 * @param keycode
@@ -390,7 +423,14 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * Fires a MOUSE_PRESSED event and waits for its processing to finish.
+	 * Fires a MOUSE_PRESSED event and waits for its processing to finish. The
+	 * given buttons mask can be composed by adding the following constants:
+	 * <ul>
+	 * <li>{@link InputEvent#BUTTON1_DOWN_MASK}
+	 * <li>{@link InputEvent#BUTTON2_DOWN_MASK}
+	 * <li>{@link InputEvent#BUTTON3_DOWN_MASK}
+	 * </ul>
+	 * See {@link Robot#mousePress(int)} for more information.
 	 *
 	 * @param robot
 	 * @param keycode
@@ -438,6 +478,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	public synchronized void moveTo(final Node visual, final double localX, final double localY) throws Throwable {
+		System.out.println("CALL " + Thread.currentThread().getStackTrace()[2].getMethodName());
 		System.out.println(thread() + "moveTo: " + visual + " (" + localX + ", " + localY + ") ...");
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override

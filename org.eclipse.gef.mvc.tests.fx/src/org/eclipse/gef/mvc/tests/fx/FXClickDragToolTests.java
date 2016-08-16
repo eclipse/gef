@@ -83,6 +83,8 @@ public class FXClickDragToolTests {
 	 */
 	@Test
 	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
+		ctx.getRobot().mouseMove(1000, 1000);
+
 		System.out.println("###===>>> FXClickDragToolTests");
 		System.out.println("# Thread: " + Thread.currentThread().getName());
 

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -36,7 +37,6 @@ import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
-import org.eclipse.gef.fx.utils.CursorUtils;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
@@ -64,6 +64,7 @@ import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResultAndParam;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -75,14 +76,17 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.SnapshotResult;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Callback;
 
 public class FXBendConnectionPolicyTests {
 
-	private static class AnchoragePart extends AbstractFXContentPart<Rectangle> {
+	public static class AnchoragePart extends AbstractFXContentPart<Rectangle> {
 		@Override
 		protected Rectangle createVisual() {
 			return new Rectangle(100, 100);
@@ -109,7 +113,7 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
-	private static class ConnectionContent {
+	public static class ConnectionContent {
 		public org.eclipse.gef.geometry.planar.IShape anchorageStart;
 		public org.eclipse.gef.geometry.planar.IShape anchorageEnd;
 		public boolean isSimple;
@@ -133,7 +137,7 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
-	private static class ConnectionPart extends AbstractFXContentPart<Connection> {
+	public static class ConnectionPart extends AbstractFXContentPart<Connection> {
 		public static final String START_ROLE = "start";
 		public static final String END_ROLE = "end";
 
@@ -204,7 +208,7 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
-	private static class TestContentPartFactory implements IContentPartFactory<Node> {
+	public static class TestContentPartFactory implements IContentPartFactory<Node> {
 		@Inject
 		private Injector injector;
 
@@ -221,7 +225,7 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
-	private static class TestModels {
+	public static class TestModels {
 		public static List<Object> get_regression_makeExplicit() {
 			final List<Object> contents = new ArrayList<>();
 			final org.eclipse.gef.geometry.planar.Rectangle A = new org.eclipse.gef.geometry.planar.Rectangle(310, 0,
@@ -325,7 +329,7 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
-	private static class TestModule extends MvcFxModule {
+	public static class TestModule extends MvcFxModule {
 
 		@Override
 		protected void bindAbstractContentPartAdapters(final MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -401,7 +405,7 @@ public class FXBendConnectionPolicyTests {
 				"Cannot determine connection index for operation index " + explicitAnchorIndex + ".");
 	}
 
-	private static Point getPosition(final FXBendConnectionPolicy bendPolicy, final int explicitIndex) {
+	public static Point getPosition(final FXBendConnectionPolicy bendPolicy, final int explicitIndex) {
 		return bendPolicy.getHost().getVisual()
 				.getPoint(getConnectionIndex(bendPolicy.getHost().getVisual(), explicitIndex));
 	}
@@ -455,12 +459,41 @@ public class FXBendConnectionPolicyTests {
 		for (final Object content : contents) {
 			assertTrue(viewer.getContentPartMap().containsKey(content));
 		}
+
+		// repaint
+		ctx.getPanel().repaint();
+		ctx.waitForIdle();
+		ctx.getRobot().waitForIdle();
+		final CountDownLatch latch = new CountDownLatch(1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getRootPart().getVisual().snapshot(new Callback<SnapshotResult, Void>() {
+					@Override
+					public Void call(SnapshotResult param) {
+						System.out.println("SNAPSHOT");
+						latch.countDown();
+						return null;
+					}
+				}, null, null);
+			}
+		});
+		latch.await();
+		ctx.getPanel().repaint();
+		ctx.waitForIdle();
+		ctx.getRobot().waitForIdle();
+
 		return viewer;
 	}
 
 	private void equalsUnprecise(final Point p, final Point q) {
 		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in x: ", p.x, q.x, 0.5);
 		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in y: ", p.y, q.y, 0.5);
+	}
+
+	@Before
+	public void setUp_moveMouseToOrigin() throws AWTException {
+		ctx.getRobot().mouseMove(1000, 1000);
 	}
 
 	@Test
@@ -2715,14 +2748,7 @@ public class FXBendConnectionPolicyTests {
 
 		// drag connection down by 10px
 		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
-
-		Point cursorLocation = ctx.runAndWait(new RunnableWithResult<Point>() {
-			@Override
-			public Point run() {
-				return CursorUtils.getPointerLocation();
-			}
-		});
-		ctx.mouseDrag((int) cursorLocation.x, (int) cursorLocation.y + 10);
+		ctx.mouseDrag((int) firstConnectionMid.x, (int) firstConnectionMid.y + 10);
 		ctx.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
 
 		// check the connection is selected
@@ -2748,13 +2774,7 @@ public class FXBendConnectionPolicyTests {
 
 		// drag anchorage down by 10px
 		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
-		cursorLocation = ctx.runAndWait(new RunnableWithResult<Point>() {
-			@Override
-			public Point run() {
-				return CursorUtils.getPointerLocation();
-			}
-		});
-		ctx.mouseDrag((int) cursorLocation.x, (int) cursorLocation.y + 10);
+		ctx.mouseDrag((int) center.x, (int) center.y + 10);
 		ctx.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
 
 		// check the anchorage is selected

@@ -14,6 +14,9 @@ package org.eclipse.gef.mvc.tests.fx;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.Point;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -26,6 +29,7 @@ import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
+import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.eclipse.gef.mvc.tools.ITool;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +37,6 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
-import com.sun.glass.events.KeyEvent;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -77,6 +80,8 @@ public class FXTypeToolTests {
 	 */
 	@Test
 	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
+		ctx.getRobot().mouseMove(1000, 1000);
+
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
 			protected void bindDomain() {
@@ -120,12 +125,22 @@ public class FXTypeToolTests {
 			}
 		});
 
-		ctx.runAndWait(new Runnable() {
+		// move mouse to viewer center
+		Point sceneCenter = ctx.runAndWait(new RunnableWithResult<Point>() {
 			@Override
-			public void run() {
-				scene.getRoot().requestFocus();
+			public Point run() {
+				// XXX: It seems to be important to compute the position from
+				// within the JavaFX application thread.
+				return new Point((int) (scene.getX() + scene.getWidth() / 2),
+						(int) (scene.getY() + scene.getHeight() / 2));
 			}
+
 		});
+		ctx.moveTo(sceneCenter.x, sceneCenter.y);
+
+		// click into the viewer to gain keyboard focus
+		ctx.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+		ctx.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 
 		// simulate press/release gesture
 		ctx.keyPress(KeyEvent.VK_K);
