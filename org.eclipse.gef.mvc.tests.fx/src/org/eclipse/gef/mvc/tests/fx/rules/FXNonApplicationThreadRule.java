@@ -480,6 +480,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public synchronized void moveTo(final Node visual, final double localX, final double localY) throws Throwable {
 		System.out.println("CALL " + Thread.currentThread().getStackTrace()[2].getMethodName());
 		System.out.println(thread() + "moveTo: " + visual + " (" + localX + ", " + localY + ") ...");
+		getRobot().mouseMove(0, 0);
+		waitForIdle();
 		Point position = runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
