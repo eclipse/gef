@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -64,7 +63,6 @@ import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResultAndParam;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -76,13 +74,10 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.SnapshotResult;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Callback;
 
 public class FXBendConnectionPolicyTests {
 
@@ -460,43 +455,12 @@ public class FXBendConnectionPolicyTests {
 			assertTrue(viewer.getContentPartMap().containsKey(content));
 		}
 
-		// repaint
-		ctx.getPanel().repaint();
-		ctx.waitForIdle();
-		ctx.getRobot().waitForIdle();
-		final CountDownLatch latch = new CountDownLatch(1);
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				viewer.getRootPart().getVisual().snapshot(new Callback<SnapshotResult, Void>() {
-					@Override
-					public Void call(SnapshotResult param) {
-						System.out.println("SNAPSHOT");
-						latch.countDown();
-						return null;
-					}
-				}, null, null);
-			}
-		});
-		latch.await();
-		ctx.getPanel().repaint();
-		ctx.waitForIdle();
-		ctx.getRobot().waitForIdle();
-
 		return viewer;
 	}
 
 	private void equalsUnprecise(final Point p, final Point q) {
 		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in x: ", p.x, q.x, 0.5);
 		assertEquals(p + " and " + q + " are not (unprecisely) equal but differ in y: ", p.y, q.y, 0.5);
-	}
-
-	@Before
-	public void setUp_moveMouseToOrigin() throws Throwable {
-		ctx.getRobot().mouseMove(10, 10);
-		ctx.getRobot().mouseMove(1000, 1000);
-		ctx.getRobot().mouseMove(10, 10);
-		ctx.waitForIdle();
 	}
 
 	@Test
@@ -2747,12 +2711,12 @@ public class FXBendConnectionPolicyTests {
 						.getStartPoint().getDifference(firstConnectionPart.getVisual().getPoint(1)).getScaled(0.5));
 			}
 		});
-		ctx.moveTo(firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
+		ctx.mouseMove(firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
 
 		// drag connection down by 10px
-		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
-		ctx.mouseDrag((int) firstConnectionMid.x, (int) firstConnectionMid.y + 10);
-		ctx.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
+		ctx.mousePress();
+		ctx.mouseDrag(firstConnectionMid.x, firstConnectionMid.y + 10);
+		ctx.mouseRelease();
 
 		// check the connection is selected
 		ctx.runAndWait(new Runnable() {
@@ -2773,12 +2737,12 @@ public class FXBendConnectionPolicyTests {
 			}
 		});
 		final Point center = centerRef.get();
-		ctx.moveTo(secondPart.getVisual(), center.x, center.y);
+		ctx.mouseMove(secondPart.getVisual(), center.x, center.y);
 
 		// drag anchorage down by 10px
-		ctx.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
-		ctx.mouseDrag((int) center.x, (int) center.y + 10);
-		ctx.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
+		ctx.mousePress();
+		ctx.mouseDrag(center.x, center.y + 10);
+		ctx.mouseRelease();
 
 		// check the anchorage is selected
 		ctx.runAndWait(new Runnable() {

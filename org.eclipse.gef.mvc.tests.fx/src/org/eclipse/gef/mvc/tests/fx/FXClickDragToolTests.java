@@ -15,7 +15,6 @@ package org.eclipse.gef.mvc.tests.fx;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
-import java.awt.event.InputEvent;
 import java.util.Map;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -83,10 +82,6 @@ public class FXClickDragToolTests {
 	 */
 	@Test
 	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
-		ctx.getRobot().mouseMove(10, 10);
-		ctx.getRobot().mouseMove(1000, 1000);
-		ctx.getRobot().mouseMove(10, 10);
-
 		System.out.println("###===>>> FXClickDragToolTests");
 		System.out.println("# Thread: " + Thread.currentThread().getName());
 
@@ -143,12 +138,11 @@ public class FXClickDragToolTests {
 				return new Point((int) (scene.getX() + scene.getWidth() / 2),
 						(int) (scene.getY() + scene.getHeight() / 2));
 			}
-
 		});
-		ctx.moveTo(sceneCenter.x, sceneCenter.y);
+		ctx.mouseMove(scene.getRoot(), sceneCenter.x, sceneCenter.y);
 
 		// simulate click gesture
-		ctx.mousePress(InputEvent.BUTTON1_MASK);
+		ctx.mousePress();
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -157,7 +151,7 @@ public class FXClickDragToolTests {
 				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 			}
 		});
-		ctx.mouseRelease(InputEvent.BUTTON1_MASK);
+		ctx.mouseRelease();
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -167,10 +161,6 @@ public class FXClickDragToolTests {
 						domain.closedExecutionTransactions);
 			}
 		});
-
-		// wait one second so that the next press does not count as a double
-		// click
-		ctx.delay(500);
 
 		// re-initialize
 		ctx.runAndWait(new Runnable() {
@@ -184,7 +174,7 @@ public class FXClickDragToolTests {
 		});
 
 		// simulate click/drag
-		ctx.mousePress(InputEvent.BUTTON1_MASK);
+		ctx.mousePress();
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -202,7 +192,7 @@ public class FXClickDragToolTests {
 				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 			}
 		});
-		ctx.mouseRelease(InputEvent.BUTTON1_MASK);
+		ctx.mouseRelease();
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {

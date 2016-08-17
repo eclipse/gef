@@ -75,4 +75,5 @@ public class FXApplicationThreadRule implements TestRule {
 			}
 		};
 	}
+
 }

@@ -15,8 +15,6 @@ package org.eclipse.gef.mvc.tests.fx;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -43,6 +41,7 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotResult;
+import javafx.scene.input.KeyCode;
 import javafx.util.Callback;
 
 public class FXTypeToolTests {
@@ -84,8 +83,6 @@ public class FXTypeToolTests {
 	 */
 	@Test
 	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
-		ctx.getRobot().mouseMove(1000, 1000);
-
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
 			protected void bindDomain() {
@@ -132,7 +129,6 @@ public class FXTypeToolTests {
 		// repaint
 		ctx.getPanel().repaint();
 		ctx.waitForIdle();
-		ctx.getRobot().waitForIdle();
 		final CountDownLatch latch = new CountDownLatch(1);
 		Platform.runLater(new Runnable() {
 			@Override
@@ -150,7 +146,6 @@ public class FXTypeToolTests {
 		latch.await();
 		ctx.getPanel().repaint();
 		ctx.waitForIdle();
-		ctx.getRobot().waitForIdle();
 
 		// move mouse to viewer center
 		Point sceneCenter = ctx.runAndWait(new RunnableWithResult<Point>() {
@@ -163,14 +158,14 @@ public class FXTypeToolTests {
 			}
 
 		});
-		ctx.moveTo(sceneCenter.x, sceneCenter.y);
+		ctx.mouseMove(scene.getRoot(), sceneCenter.x, sceneCenter.y);
 
 		// click into the viewer to gain keyboard focus
-		ctx.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-		ctx.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+		ctx.mousePress();
+		ctx.mouseRelease();
 
 		// simulate press/release gesture
-		ctx.keyPress(KeyEvent.VK_K);
+		ctx.keyPress(scene.getRoot(), KeyCode.K);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -179,7 +174,7 @@ public class FXTypeToolTests {
 				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 			}
 		});
-		ctx.keyRelease(KeyEvent.VK_K);
+		ctx.keyRelease();
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {

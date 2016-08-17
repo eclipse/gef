@@ -71,7 +71,8 @@ public class FXViewerTests {
 
 		// selection model is a directly instantiated generic type (so no type
 		// information can be inferred from the instance)
-		SelectionModel<Node> selectionModel = viewer.getAdapter(SelectionModel.class);
+		SelectionModel<Node> selectionModel = viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
+		});
 		assertNotNull(selectionModel);
 		selectionModel = viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
 		});
@@ -85,7 +86,8 @@ public class FXViewerTests {
 		SelectionBehavior<Node> selectionBehavior = rootPart.getAdapter(new TypeToken<SelectionBehavior<Node>>() {
 		});
 		assertNotNull(selectionBehavior);
-		selectionBehavior = rootPart.getAdapter(SelectionBehavior.class);
+		selectionBehavior = rootPart.getAdapter(new TypeToken<SelectionBehavior<Node>>() {
+		});
 		assertNotNull(selectionBehavior);
 		selectionBehavior.activate();
 	}
