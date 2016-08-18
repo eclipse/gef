@@ -159,6 +159,7 @@ public class Edge implements IAttributeStore {
 		 */
 		public Node.Builder node() {
 			Node.Builder nb = new Node.Builder(context);
+			context.nodeKeys.add(nb.getKey());
 			return nb;
 		}
 
@@ -173,12 +174,13 @@ public class Edge implements IAttributeStore {
 		 */
 		public Node.Builder node(Object key) {
 			Node.Builder nb = new Node.Builder(context, key);
+			context.nodeKeys.add(key);
 			return nb;
 		}
 	}
 
 	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
-			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object>observableHashMap());
 	private Node source;
 	private Node target;
 	private Graph graph; // associated graph

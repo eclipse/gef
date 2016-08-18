@@ -44,8 +44,8 @@ public class Node implements IAttributeStore {
 	 * little.
 	 */
 	public static class Builder {
-		private Map<String, Object> attrs = new HashMap<>();
 
+		private Map<String, Object> attrs = new HashMap<>();
 		private Graph.Builder.Context context;
 		private Object key;
 
@@ -157,6 +157,7 @@ public class Node implements IAttributeStore {
 		 */
 		public Node.Builder node() {
 			Node.Builder nb = new Node.Builder(context);
+			context.nodeKeys.add(nb.getKey());
 			return nb;
 		}
 
@@ -171,13 +172,14 @@ public class Node implements IAttributeStore {
 		 */
 		public Node.Builder node(Object key) {
 			Node.Builder nb = new Node.Builder(context, key);
+			context.nodeKeys.add(key);
 			return nb;
 		}
 
 	}
 
 	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
-			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object>observableHashMap());
 
 	/**
 	 * The {@link Graph} which this {@link Node} belongs to.
