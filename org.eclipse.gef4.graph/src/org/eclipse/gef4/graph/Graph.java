@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -72,13 +71,17 @@ public final class Graph implements IAttributeStore {
 			 * {@link Edge.Builder}s, which are part of the builder chain.
 			 */
 			protected List<Edge.Builder> edgeBuilders = new ArrayList<>();
+			/**
+			 * Stores incoming node keys in order.
+			 *
+			 * @since 1.0
+			 */
+			protected List<Object> nodeKeys = new ArrayList<>();
 		}
 
-		// use linked hash map to preserve ordering
-		private LinkedHashMap<Object, Node> nodes = new LinkedHashMap<>();
+		private HashMap<Object, Node> nodes = new HashMap<>();
 		private List<Edge> edges = new ArrayList<>();
 		private Context context;
-
 		private Map<String, Object> attrs = new HashMap<>();
 
 		/**
@@ -121,7 +124,11 @@ public final class Graph implements IAttributeStore {
 				edges.add(eb.buildEdge());
 			}
 
-			return new Graph(attrs, nodes.values(), edges);
+			List<Node> nodeList = new ArrayList<>();
+			for (Object key : context.nodeKeys) {
+				nodeList.add(nodes.get(key));
+			}
+			return new Graph(attrs, nodeList, edges);
 		}
 
 		/**
@@ -189,6 +196,7 @@ public final class Graph implements IAttributeStore {
 				if (nodeBuilder == null) {
 					return null;
 				}
+				context.nodeKeys.add(key);
 				nodes.put(key, nodeBuilder.buildNode());
 			}
 			return nodes.get(key);
@@ -201,6 +209,7 @@ public final class Graph implements IAttributeStore {
 		 */
 		public Node.Builder node() {
 			Node.Builder nb = new Node.Builder(context);
+			context.nodeKeys.add(nb.getKey());
 			return nb;
 		}
 
@@ -215,6 +224,7 @@ public final class Graph implements IAttributeStore {
 		 */
 		public Node.Builder node(Object key) {
 			Node.Builder nb = new Node.Builder(context, key);
+			context.nodeKeys.add(key);
 			return nb;
 		}
 
@@ -245,7 +255,9 @@ public final class Graph implements IAttributeStore {
 				// use a unique id for each given node (they are not
 				// identifiable from outside, so we just have to ensure the key
 				// is not already used)
-				this.nodes.put(UUID.randomUUID(), n);
+				UUID key = UUID.randomUUID();
+				context.nodeKeys.add(key);
+				this.nodes.put(key, n);
 			}
 			return this;
 		}
@@ -265,20 +277,20 @@ public final class Graph implements IAttributeStore {
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
 	private final ReadOnlyListWrapper<Node> nodesProperty = new ReadOnlyListWrapperEx<>(this, NODES_PROPERTY,
-			CollectionUtils.<Node> observableArrayList());
+			CollectionUtils.<Node>observableArrayList());
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
 	private final ReadOnlyListWrapper<Edge> edgesProperty = new ReadOnlyListWrapperEx<>(this, EDGES_PROPERTY,
-			CollectionUtils.<Edge> observableArrayList());
+			CollectionUtils.<Edge>observableArrayList());
 
 	/**
 	 * Attributes of this {@link Graph}.
 	 */
 	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
-			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object>observableHashMap());
 
 	/**
 	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>

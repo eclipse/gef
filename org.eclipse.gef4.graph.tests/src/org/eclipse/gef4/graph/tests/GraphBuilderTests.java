@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #495628
  *
  *******************************************************************************/
 package org.eclipse.gef4.graph.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -24,6 +27,23 @@ import org.junit.Test;
 import javafx.collections.ObservableList;
 
 public class GraphBuilderTests {
+
+	private void addNodeBuilders(Graph.Builder graphBuilder, int count,
+			int startNumber) {
+		for (int i = 0; i < count; i++) {
+			graphBuilder.node().attr("label", "" + (startNumber + i));
+		}
+	}
+
+	private void addNodes(Graph.Builder graphBuilder, int count,
+			int startNumber) {
+		List<Node> nodes = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			nodes.add(new Node.Builder().attr("label", "" + (startNumber + i))
+					.buildNode());
+		}
+		graphBuilder.nodes(nodes);
+	}
 
 	@Test
 	public void buildGraph() {
@@ -150,4 +170,70 @@ public class GraphBuilderTests {
 		assertEquals(graph.getEdges().get(1).getTarget().getAttributes()
 				.get("label"), "n3");
 	}
+
+	@Test
+	public void preserveNodeOrder() {
+		// first nodes, then builders
+		Graph.Builder gb = new Graph.Builder();
+		addNodes(gb, 5, 1);
+		addNodeBuilders(gb, 5, 6);
+		Graph g = gb.build();
+		assertEquals(10, g.getNodes().size());
+		for (int i = 0; i < g.getNodes().size(); i++) {
+			assertEquals(new Integer(i + 1).toString(),
+					g.getNodes().get(i).getAttributes().get("label"));
+		}
+
+		// first builders, then nodes
+		gb = new Graph.Builder();
+		addNodeBuilders(gb, 5, 1);
+		addNodes(gb, 5, 6);
+		g = gb.build();
+		assertEquals(10, g.getNodes().size());
+		for (int i = 0; i < g.getNodes().size(); i++) {
+			assertEquals(new Integer(i + 1).toString(),
+					g.getNodes().get(i).getAttributes().get("label"));
+		}
+
+		// a few nodes, all builders, rest nodes
+		gb = new Graph.Builder();
+		addNodes(gb, 2, 1);
+		addNodeBuilders(gb, 5, 3);
+		addNodes(gb, 3, 8);
+		g = gb.build();
+		assertEquals(10, g.getNodes().size());
+		for (int i = 0; i < g.getNodes().size(); i++) {
+			assertEquals(new Integer(i + 1).toString(),
+					g.getNodes().get(i).getAttributes().get("label"));
+		}
+
+		// a few builders, all nodes, rest builders
+		gb = new Graph.Builder();
+		addNodeBuilders(gb, 2, 1);
+		addNodes(gb, 5, 3);
+		addNodeBuilders(gb, 3, 8);
+		g = gb.build();
+		assertEquals(10, g.getNodes().size());
+		for (int i = 0; i < g.getNodes().size(); i++) {
+			assertEquals(new Integer(i + 1).toString(),
+					g.getNodes().get(i).getAttributes().get("label"));
+		}
+
+		// alternating nodes and builders
+		gb = new Graph.Builder();
+		for (int i = 0; i < 10; i++) {
+			if (i % 2 == 0) {
+				addNodes(gb, 1, i + 1);
+			} else {
+				addNodeBuilders(gb, 1, i + 1);
+			}
+		}
+		g = gb.build();
+		assertEquals(10, g.getNodes().size());
+		for (int i = 0; i < g.getNodes().size(); i++) {
+			assertEquals(new Integer(i + 1).toString(),
+					g.getNodes().get(i).getAttributes().get("label"));
+		}
+	}
+
 }

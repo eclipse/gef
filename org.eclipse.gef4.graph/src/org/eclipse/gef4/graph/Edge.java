@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg                - initial API and implementation (bug #372365)
- *     Alexander Nyßen (itemis AG) - refactoring of builder API (bug #480293)
+ *     Fabian Steeg                 - initial API and implementation (bug #372365)
+ *     Alexander Nyßen (itemis AG)  - refactoring of builder API (bug #480293)
+ *     Matthias Wienand (itemis AG) - preserving node order (bug #495628)
  *
  *******************************************************************************/
 package org.eclipse.gef4.graph;
@@ -159,6 +160,7 @@ public class Edge implements IAttributeStore {
 		 */
 		public Node.Builder node() {
 			Node.Builder nb = new Node.Builder(context);
+			context.nodeKeys.add(nb.getKey());
 			return nb;
 		}
 
@@ -173,12 +175,13 @@ public class Edge implements IAttributeStore {
 		 */
 		public Node.Builder node(Object key) {
 			Node.Builder nb = new Node.Builder(context, key);
+			context.nodeKeys.add(key);
 			return nb;
 		}
 	}
 
 	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
-			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object>observableHashMap());
 	private Node source;
 	private Node target;
 	private Graph graph; // associated graph
