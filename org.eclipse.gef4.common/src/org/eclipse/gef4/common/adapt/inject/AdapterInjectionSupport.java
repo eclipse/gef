@@ -37,6 +37,8 @@ public class AdapterInjectionSupport extends AbstractModule {
 	/**
 	 * The {@link LoggingMode} specifies if binding-related information and
 	 * warning messages should be printed.
+	 *
+	 * @since 1.1
 	 */
 	public static enum LoggingMode {
 		/**
@@ -71,6 +73,7 @@ public class AdapterInjectionSupport extends AbstractModule {
 	 *
 	 * @param loggingMode
 	 *            The {@link LoggingMode} to use.
+	 * @since 1.1
 	 */
 	public AdapterInjectionSupport(LoggingMode loggingMode) {
 		this.loggingMode = loggingMode;
