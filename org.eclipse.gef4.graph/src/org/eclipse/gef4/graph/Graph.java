@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg    - initial API and implementation (bug #372365)
- *     Alexander Nyßen - refactoring of builder API (bug #480293)
+ *     Fabian Steeg     - initial API and implementation (bug #372365)
+ *     Alexander Nyßen  - refactoring of builder API (bug #480293)
+ *     Matthias Wienand - preserving node order (bug #495628)
  *
  *******************************************************************************/
 package org.eclipse.gef4.graph;
