@@ -786,18 +786,20 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	public void graph_attributes() throws Exception {
 		// test global attribute names
 		newBuilder().append("graph {graph[]}")
-				.assertTextAtCursorPosition(13, "]", "bgcolor", "colorscheme",
-						"fontcolor", "forcelabels", "id", "label", "layout",
-						"lp", "rankdir", "splines", "style")
+				.assertTextAtCursorPosition(13, "]", "bgcolor", "clusterrank",
+						"colorscheme", "fontcolor", "forcelabels", "id",
+						"label", "layout", "lp", "outputorder", "pagedir",
+						"rankdir", "splines", "style")
 				.applyProposal(13, "forcelabels")
 				.expectContent("graph {graph[forcelabels]}");
 
 		// test local attribute names
 		newBuilder().append("graph {  }")
-				.assertTextAtCursorPosition(8, "bgcolor", "colorscheme",
-						"fontcolor", "edge", "graph", "node", "subgraph", "{",
-						"}", "forcelabels", "id", "label", "layout", "lp",
-						"rankdir", "splines", "style")
+				.assertTextAtCursorPosition(8, "bgcolor", "clusterrank",
+						"colorscheme", "fontcolor", "edge", "graph", "node",
+						"subgraph", "{", "}", "forcelabels", "id", "label",
+						"layout", "lp", "outputorder", "pagedir", "rankdir",
+						"splines", "style")
 				.applyProposal(8, "rankdir").expectContent("graph { rankdir }");
 
 		// test local attribute names with prefix
@@ -852,6 +854,39 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"darkslategrey", "darkturquoise", "darkviolet")
 				.applyProposal(37, "darkturquoise").expectContent(
 						"graph { colorscheme=svg bgcolor=\"darkturquoise\" }");
+	}
+
+	@Test
+	public void graph_clusterrank() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {graph[ clusterrank= ]}")
+				.assertTextAtCursorPosition(26, "local", "global", "none")
+				.applyProposal(26, "local")
+				.expectContent("graph {graph[ clusterrank=local ]}");
+
+		// test local attribute values
+		newBuilder().append("graph { clusterrank= }")
+				.assertTextAtCursorPosition(20, "local", "global", "none")
+				.applyProposal(20, "global")
+				.expectContent("graph { clusterrank=global }");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph { clusterrank=\"\" }")
+				.assertTextAtCursorPosition(21, "local", "global", "none")
+				.applyProposal(21, "none")
+				.expectContent("graph { clusterrank=\"none\" }");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph { clusterrank=l }")
+				.assertTextAtCursorPosition(21, "local", ";", "{", "}")
+				.applyProposal(21, "local")
+				.expectContent("graph { clusterrank=local }");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph { clusterrank=\"g\" }")
+				.assertTextAtCursorPosition(22, "global")
+				.applyProposal(22, "global")
+				.expectContent("graph { clusterrank=\"global\" }");
 	}
 
 	@Test
@@ -915,9 +950,10 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values with prefix
 		newBuilder().append("graph { colorscheme=brbg11 fontcolor=1 }")
 				.assertTextAtCursorPosition(38, "1", "10", "11", ",", ";", "{",
-						"}", "bgcolor", "colorscheme", "edge", "fontcolor",
-						"forcelabels", "graph", "id", "label", "layout", "lp",
-						"node", "rankdir", "splines", "style", "subgraph")
+						"}", "bgcolor", "colorscheme", "clusterrank", "edge",
+						"fontcolor", "forcelabels", "graph", "id", "label",
+						"layout", "lp", "node", "outputorder", "pagedir",
+						"rankdir", "splines", "style", "subgraph")
 				.applyProposal(38, "10")
 				.expectContent("graph { colorscheme=brbg11 fontcolor=10 }");
 
@@ -1006,6 +1042,76 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph { lp= }").assertTextAtCursorPosition(11);
 
 		// no use to test local attribute values with prefix
+	}
+
+	@Test
+	public void graph_outputorder() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {graph[ outputorder= ]}")
+				.assertTextAtCursorPosition(26, "breadthfirst", "nodesfirst",
+						"edgesfirst")
+				.applyProposal(26, "breadthfirst")
+				.expectContent("graph {graph[ outputorder=breadthfirst ]}");
+
+		// test local attribute values
+		newBuilder().append("graph { outputorder= }")
+				.assertTextAtCursorPosition(20, "breadthfirst", "nodesfirst",
+						"edgesfirst")
+				.applyProposal(20, "nodesfirst")
+				.expectContent("graph { outputorder=nodesfirst }");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph { outputorder=\"\" }")
+				.assertTextAtCursorPosition(21, "breadthfirst", "nodesfirst",
+						"edgesfirst")
+				.applyProposal(21, "edgesfirst")
+				.expectContent("graph { outputorder=\"edgesfirst\" }");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph { outputorder=b }")
+				.assertTextAtCursorPosition(21, "breadthfirst", ";", "{", "}")
+				.applyProposal(21, "breadthfirst")
+				.expectContent("graph { outputorder=breadthfirst }");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph { outputorder=\"n\" }")
+				.assertTextAtCursorPosition(22, "nodesfirst")
+				.applyProposal(22, "nodesfirst")
+				.expectContent("graph { outputorder=\"nodesfirst\" }");
+	}
+
+	@Test
+	public void graph_pagedir() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {graph[ pagedir= ]}")
+				.assertTextAtCursorPosition(22, "BL", "BR", "TL", "TR", "RB",
+						"RT", "LB", "LT")
+				.applyProposal(22, "BL")
+				.expectContent("graph {graph[ pagedir=BL ]}");
+
+		// test local attribute values
+		newBuilder().append("graph { pagedir= }")
+				.assertTextAtCursorPosition(16, "BL", "BR", "TL", "TR", "RB",
+						"RT", "LB", "LT")
+				.applyProposal(16, "BR").expectContent("graph { pagedir=BR }");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph { pagedir=\"\" }")
+				.assertTextAtCursorPosition(17, "BL", "BR", "TL", "TR", "RB",
+						"RT", "LB", "LT")
+				.applyProposal(17, "TL")
+				.expectContent("graph { pagedir=\"TL\" }");
+
+		// test local attribute values with prefix
+		newBuilder().append("graph { pagedir=B }")
+				.assertTextAtCursorPosition(17, "BL", "BR", ";", "{", "}")
+				.applyProposal(17, "BL").expectContent("graph { pagedir=BL }");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph { pagedir=\"T\" }")
+				.assertTextAtCursorPosition(18, "TL", "TR")
+				.applyProposal(18, "TL")
+				.expectContent("graph { pagedir=\"TL\" }");
 	}
 
 	@Test

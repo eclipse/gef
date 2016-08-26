@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
+import org.eclipse.gef.dot.internal.parser.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.parser.color.Color;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
@@ -33,6 +34,8 @@ import org.eclipse.gef.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
+import org.eclipse.gef.dot.internal.parser.outputmode.OutputMode;
+import org.eclipse.gef.dot.internal.parser.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.parser.point.Point;
 import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.parser.shape.Shape;
@@ -106,6 +109,11 @@ public class DotAttributes {
 	 * Specifies the 'bgcolor' attribute of a graph.
 	 */
 	public static final String BGCOLOR__G = "bgcolor";
+
+	/**
+	 * Specifies the 'clusterrank' attribute of a graph.
+	 */
+	public static final String CLUSTERRANK__G = "clusterrank";
 
 	/**
 	 * Specifies the 'color' attribute of a node or edge.
@@ -186,6 +194,16 @@ public class DotAttributes {
 	 * Specifies the 'lp' attribute (label position) of a graph or edge.
 	 */
 	public static final String LP__GE = "lp";
+
+	/**
+	 * Specifies the 'outputorder' attribute of a graph.
+	 */
+	public static final String OUTPUTORDER__G = "outputorder";
+
+	/**
+	 * Specifies the 'pagedir' attribute of a graph.
+	 */
+	public static final String PAGEDIR__G = "pagedir";
 
 	/**
 	 * Specifies the 'pos' attribute of a node or edge.
@@ -497,6 +515,36 @@ public class DotAttributes {
 	public static Color getBgColorParsed(Graph graph) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.COLOR_PARSER, getBgColor(graph));
+	}
+
+	/**
+	 * Returns the value of the {@link #CLUSTERRANK__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #CLUSTERRANK__G} attribute.
+	 * @return The value of the {@link #CLUSTERRANK__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getClusterRank(Graph graph) {
+		return (String) graph.attributesProperty().get(CLUSTERRANK__G);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #CLUSTERRANK__G} attribute of
+	 * the given {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #CLUSTERRANK__G} attribute, parsed as a
+	 *            {@link ClusterMode}.
+	 * @return The value of the {@link #CLUSTERRANK__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static ClusterMode getClusterRankParsed(Graph graph) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.CLUSTERMODE_PARSER, getClusterRank(graph));
 	}
 
 	/**
@@ -1149,6 +1197,65 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #OUTPUTORDER__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #OUTPUTORDER__G} attribute.
+	 * @return The value of the {@link #OUTPUTORDER__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getOutputOrder(Graph graph) {
+		return (String) graph.attributesProperty().get(OUTPUTORDER__G);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #OUTPUTORDER__G} attribute of
+	 * the given {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #OUTPUTORDER__G} attribute, parsed as an
+	 *            {@link OutputMode}.
+	 * @return The value of the {@link #OUTPUTORDER__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static OutputMode getOutputOrderParsed(Graph graph) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.OUTPUTMODE_PARSER, getOutputOrder(graph));
+	}
+
+	/**
+	 * Returns the value of the {@link #PAGEDIR__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #PAGEDIR__G} attribute.
+	 * @return The value of the {@link #PAGEDIR__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getPagedir(Graph graph) {
+		return (String) graph.attributesProperty().get(PAGEDIR__G);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #PAGEDIR__G} attribute of the
+	 * given {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #PAGEDIR__G} attribute, parsed as a {@link Pagedir}.
+	 * @return The value of the {@link #PAGEDIR__G} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static Pagedir getPagedirParsed(Graph graph) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.PAGEDIR_PARSER, getPagedir(graph));
+	}
+
+	/**
 	 * Returns the value of the {@link #POS__NE} attribute of the given
 	 * {@link Edge}.
 	 * 
@@ -1709,6 +1816,41 @@ public class DotAttributes {
 	public static void setBgColorParsed(Graph graph, Color bgColorParsed) {
 		setBgColor(graph,
 				serialize(DotLanguageSupport.COLOR_SERIALIZER, bgColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #CLUSTERRANK__G} attribute of the given {@link Graph} to
+	 * the given <i>clusterRank</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #CLUSTERRANK__G} attribute.
+	 * @param clusterRank
+	 *            The new value for the {@link #CLUSTERRANK__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>clusterRank</i> value is not supported.
+	 */
+	public static void setClusterRank(Graph graph, String clusterRank) {
+		validate(AttributeContext.GRAPH, CLUSTERRANK__G, clusterRank);
+		graph.attributesProperty().put(CLUSTERRANK__G, clusterRank);
+	}
+
+	/**
+	 * Sets the {@link #CLUSTERRANK__G} attribute of the given {@link Graph} to
+	 * the given <i>clusterRankParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #CLUSTERRANK__G} attribute.
+	 * @param clusterRankParsed
+	 *            The new value for the {@link #CLUSTERRANK__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>clusterRankParsed</i> value is not
+	 *             supported.
+	 */
+	public static void setClusterRankParsed(Graph graph,
+			ClusterMode clusterRankParsed) {
+		setClusterRank(graph, clusterRankParsed.toString());
 	}
 
 	/**
@@ -2433,6 +2575,74 @@ public class DotAttributes {
 	 */
 	public static void setLpParsed(Graph graph, Point lpParsed) {
 		setLp(graph, serialize(DotLanguageSupport.POINT_SERIALIZER, lpParsed));
+	}
+
+	/**
+	 * Sets the {@link #OUTPUTORDER__G} attribute of the given {@link Graph} to
+	 * the given <i>outputOrder</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #OUTPUTORDER__G} attribute.
+	 * @param outputOrder
+	 *            The new value for the {@link #OUTPUTORDER__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>outputOrder</i> value is not supported.
+	 */
+	public static void setOutputOrder(Graph graph, String outputOrder) {
+		validate(AttributeContext.GRAPH, OUTPUTORDER__G, outputOrder);
+		graph.attributesProperty().put(OUTPUTORDER__G, outputOrder);
+	}
+
+	/**
+	 * Sets the {@link #OUTPUTORDER__G} attribute of the given {@link Graph} to
+	 * the given <i>outputOrderParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #OUTPUTORDER__G} attribute.
+	 * @param outputOrderParsed
+	 *            The new value for the {@link #OUTPUTORDER__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>outputOrderParsed</i> value is not
+	 *             supported.
+	 */
+	public static void setOutputOrderParsed(Graph graph,
+			OutputMode outputOrderParsed) {
+		setOutputOrder(graph, outputOrderParsed.toString());
+	}
+
+	/**
+	 * Sets the {@link #PAGEDIR__G} attribute of the given {@link Graph} to the
+	 * given <i>pageDir</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #PAGEDIR__G} attribute.
+	 * @param pagedir
+	 *            The new value for the {@link #PAGEDIR__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pageDir</i> value is not supported.
+	 */
+	public static void setPagedir(Graph graph, String pagedir) {
+		validate(AttributeContext.GRAPH, PAGEDIR__G, pagedir);
+		graph.attributesProperty().put(PAGEDIR__G, pagedir);
+	}
+
+	/**
+	 * Sets the {@link #PAGEDIR__G} attribute of the given {@link Graph} to the
+	 * given <i>pageDirParsed</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #PAGEDIR__G} attribute.
+	 * @param pagedirParsed
+	 *            The new value for the {@link #PAGEDIR__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pageDirParsed</i> value is not supported.
+	 */
+	public static void setPagedirParsed(Graph graph, Pagedir pagedirParsed) {
+		setPagedir(graph, pagedirParsed.toString());
 	}
 
 	/**

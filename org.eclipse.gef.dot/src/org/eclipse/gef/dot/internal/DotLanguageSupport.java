@@ -26,7 +26,10 @@ import org.eclipse.gef.dot.internal.parser.DotPointStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.DotShapeStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.DotSplineTypeStandaloneSetup;
 import org.eclipse.gef.dot.internal.parser.DotStyleStandaloneSetup;
+import org.eclipse.gef.dot.internal.parser.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
+import org.eclipse.gef.dot.internal.parser.outputmode.OutputMode;
+import org.eclipse.gef.dot.internal.parser.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotArrowTypeParser;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotColorParser;
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotPointParser;
@@ -165,6 +168,75 @@ public class DotLanguageSupport {
 							Diagnostic.ERROR, rawValue, -1,
 							"Value has to be one of "
 									+ getFormattedValues(DirType.values()),
+							new Object[] {})));
+		}
+	};
+
+	/**
+	 * Parses the given value as a DOT clusterMode.
+	 */
+	public static IPrimitiveValueParser<ClusterMode> CLUSTERMODE_PARSER = new IPrimitiveValueParser<ClusterMode>() {
+		@Override
+		public IPrimitiveValueParseResult<ClusterMode> parse(String rawValue) {
+			if (rawValue == null) {
+				return null;
+			}
+			for (ClusterMode value : ClusterMode.values()) {
+				if (value.toString().equals(rawValue)) {
+					return new PrimitiveValueParseResultImpl<>(value);
+				}
+			}
+			return new PrimitiveValueParseResultImpl<>(
+					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
+							Diagnostic.ERROR, rawValue, -1,
+							"Value has to be one of "
+									+ getFormattedValues(ClusterMode.values()),
+							new Object[] {})));
+		}
+	};
+
+	/**
+	 * Parses the given value as a DOT outputMode.
+	 */
+	public static IPrimitiveValueParser<OutputMode> OUTPUTMODE_PARSER = new IPrimitiveValueParser<OutputMode>() {
+		@Override
+		public IPrimitiveValueParseResult<OutputMode> parse(String rawValue) {
+			if (rawValue == null) {
+				return null;
+			}
+			for (OutputMode value : OutputMode.values()) {
+				if (value.toString().equals(rawValue)) {
+					return new PrimitiveValueParseResultImpl<>(value);
+				}
+			}
+			return new PrimitiveValueParseResultImpl<>(
+					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
+							Diagnostic.ERROR, rawValue, -1,
+							"Value has to be one of "
+									+ getFormattedValues(OutputMode.values()),
+							new Object[] {})));
+		}
+	};
+
+	/**
+	 * Parses the given value as a DOT pagedir.
+	 */
+	public static IPrimitiveValueParser<Pagedir> PAGEDIR_PARSER = new IPrimitiveValueParser<Pagedir>() {
+		@Override
+		public IPrimitiveValueParseResult<Pagedir> parse(String rawValue) {
+			if (rawValue == null) {
+				return null;
+			}
+			for (Pagedir value : Pagedir.values()) {
+				if (value.toString().equals(rawValue)) {
+					return new PrimitiveValueParseResultImpl<>(value);
+				}
+			}
+			return new PrimitiveValueParseResultImpl<>(
+					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
+							Diagnostic.ERROR, rawValue, -1,
+							"Value has to be one of "
+									+ getFormattedValues(Pagedir.values()),
 							new Object[] {})));
 		}
 	};

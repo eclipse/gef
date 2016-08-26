@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.parser.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.parser.color.DotColors;
 import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
@@ -39,6 +40,8 @@ import org.eclipse.gef.dot.internal.parser.dot.EdgeStmtNode;
 import org.eclipse.gef.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
+import org.eclipse.gef.dot.internal.parser.outputmode.OutputMode;
+import org.eclipse.gef.dot.internal.parser.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.parser.services.DotGrammarAccess;
 import org.eclipse.gef.dot.internal.parser.splines.Splines;
@@ -232,6 +235,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				case DotAttributes.FONTCOLOR__GNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
+				case DotAttributes.CLUSTERRANK__G:
+					proposeAttributeValues(ClusterMode.values(), context,
+							acceptor);
+					break;
 				case DotAttributes.COLORSCHEME__GNE:
 					proposeAttributeValues(DotColors.getColorSchemes(), context,
 							acceptor);
@@ -247,6 +254,13 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeAttributeValues(
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_PARSER_DOTPOINT,
 							context, acceptor);
+					break;
+				case DotAttributes.OUTPUTORDER__G:
+					proposeAttributeValues(OutputMode.values(), context,
+							acceptor);
+					break;
+				case DotAttributes.PAGEDIR__G:
+					proposeAttributeValues(Pagedir.values(), context, acceptor);
 					break;
 				case DotAttributes.RANKDIR__G:
 					proposeAttributeValues(Rankdir.values(), context, acceptor);

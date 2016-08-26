@@ -134,7 +134,10 @@ class DotImport {
 			}
 		]
 
+        setter.apply(CLUSTERRANK__G, [g, value|g.setClusterRank(value)])
 		setter.apply(LAYOUT__G, [g, value|g.setLayout(value)])
+		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputOrder(value)])
+		setter.apply(PAGEDIR__G, [g, value|g.setPagedir(value)])
 		setter.apply(RANKDIR__G, [g, value|g.setRankdir(value)])
 
 		// splines

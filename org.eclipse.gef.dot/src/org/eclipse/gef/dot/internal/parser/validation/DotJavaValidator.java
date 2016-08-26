@@ -142,6 +142,17 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		} else if (DotAttributes.FIXEDSIZE__N.equals(name)) {
 			return validateBooleanAttributeValue(DotAttributes.FIXEDSIZE__N,
 					unquotedValue);
+		} else if (DotAttributes.CLUSTERRANK__G.equals(name)) {
+			return validateEnumAttributeValue(
+					DotLanguageSupport.CLUSTERMODE_PARSER, name, unquotedValue,
+					"clusterMode");
+		} else if (DotAttributes.OUTPUTORDER__G.equals(name)) {
+			return validateEnumAttributeValue(
+					DotLanguageSupport.OUTPUTMODE_PARSER, name, unquotedValue,
+					"outputMode");
+		} else if (DotAttributes.PAGEDIR__G.equals(name)) {
+			return validateEnumAttributeValue(DotLanguageSupport.PAGEDIR_PARSER,
+					name, unquotedValue, "pagedir");
 		} else if (DotAttributes.RANKDIR__G.equals(name)) {
 			return validateEnumAttributeValue(DotLanguageSupport.RANKDIR_PARSER,
 					name, unquotedValue, "rankdir");

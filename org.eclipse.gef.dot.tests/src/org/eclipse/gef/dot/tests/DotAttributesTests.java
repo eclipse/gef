@@ -28,12 +28,15 @@ import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowtypeFactory;
 import org.eclipse.gef.dot.internal.parser.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef.dot.internal.parser.arrowtype.DeprecatedShape;
 import org.eclipse.gef.dot.internal.parser.arrowtype.PrimitiveShape;
+import org.eclipse.gef.dot.internal.parser.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.parser.color.ColorFactory;
 import org.eclipse.gef.dot.internal.parser.color.HSVColor;
 import org.eclipse.gef.dot.internal.parser.color.RGBColor;
 import org.eclipse.gef.dot.internal.parser.color.StringColor;
 import org.eclipse.gef.dot.internal.parser.dir.DirType;
 import org.eclipse.gef.dot.internal.parser.layout.Layout;
+import org.eclipse.gef.dot.internal.parser.outputmode.OutputMode;
+import org.eclipse.gef.dot.internal.parser.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.parser.point.Point;
 import org.eclipse.gef.dot.internal.parser.point.PointFactory;
 import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
@@ -1117,6 +1120,59 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void graph_clusterrank() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphClusterMode = "local";
+		DotAttributes.setClusterRank(g, validGraphClusterMode);
+		assertEquals(validGraphClusterMode, DotAttributes.getClusterRank(g));
+		assertEquals(ClusterMode.LOCAL, DotAttributes.getClusterRankParsed(g));
+
+		validGraphClusterMode = "global";
+		DotAttributes.setClusterRank(g, validGraphClusterMode);
+		assertEquals(validGraphClusterMode, DotAttributes.getClusterRank(g));
+		assertEquals(ClusterMode.GLOBAL, DotAttributes.getClusterRankParsed(g));
+
+		validGraphClusterMode = "none";
+		DotAttributes.setClusterRank(g, validGraphClusterMode);
+		assertEquals(validGraphClusterMode, DotAttributes.getClusterRank(g));
+		assertEquals(ClusterMode.NONE, DotAttributes.getClusterRankParsed(g));
+
+		// set valid parsed values
+		ClusterMode validGraphClusterModeParsed = ClusterMode.LOCAL;
+		DotAttributes.setClusterRankParsed(g, validGraphClusterModeParsed);
+		assertEquals(validGraphClusterModeParsed.toString(),
+				DotAttributes.getClusterRank(g));
+		assertEquals(validGraphClusterModeParsed,
+				DotAttributes.getClusterRankParsed(g));
+
+		validGraphClusterModeParsed = ClusterMode.GLOBAL;
+		DotAttributes.setClusterRankParsed(g, validGraphClusterModeParsed);
+		assertEquals(validGraphClusterModeParsed.toString(),
+				DotAttributes.getClusterRank(g));
+		assertEquals(validGraphClusterModeParsed,
+				DotAttributes.getClusterRankParsed(g));
+
+		validGraphClusterModeParsed = ClusterMode.NONE;
+		DotAttributes.setClusterRankParsed(g, validGraphClusterModeParsed);
+		assertEquals(validGraphClusterModeParsed.toString(),
+				DotAttributes.getClusterRank(g));
+		assertEquals(validGraphClusterModeParsed,
+				DotAttributes.getClusterRankParsed(g));
+
+		// set invalid string values
+		try {
+			DotAttributes.setClusterRank(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'clusterrank' to 'foo'. The value 'foo' is not a syntactically correct clusterMode: Value has to be one of 'local', 'global', 'none'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
 	public void graph_colorscheme() {
 		Graph g = new Graph.Builder().build();
 
@@ -1411,6 +1467,175 @@ public class DotAttributesTests {
 		assertEquals(validGraphName, DotAttributes._getName(g));
 
 		// TODO: add test cases for setting invalid graph name (e.g. a keyword)
+	}
+
+	@Test
+	public void graph_outputorder() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphOutputMode = "breadthfirst";
+		DotAttributes.setOutputOrder(g, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputOrder(g));
+		assertEquals(OutputMode.BREADTHFIRST,
+				DotAttributes.getOutputOrderParsed(g));
+
+		validGraphOutputMode = "nodesfirst";
+		DotAttributes.setOutputOrder(g, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputOrder(g));
+		assertEquals(OutputMode.NODESFIRST,
+				DotAttributes.getOutputOrderParsed(g));
+
+		validGraphOutputMode = "edgesfirst";
+		DotAttributes.setOutputOrder(g, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputOrder(g));
+		assertEquals(OutputMode.EDGEFIRST,
+				DotAttributes.getOutputOrderParsed(g));
+
+		// set valid parsed values
+		OutputMode validGraphOutputModeParsed = OutputMode.BREADTHFIRST;
+		DotAttributes.setOutputOrderParsed(g, validGraphOutputModeParsed);
+		assertEquals(validGraphOutputModeParsed.toString(),
+				DotAttributes.getOutputOrder(g));
+		assertEquals(validGraphOutputModeParsed,
+				DotAttributes.getOutputOrderParsed(g));
+
+		validGraphOutputModeParsed = OutputMode.NODESFIRST;
+		DotAttributes.setOutputOrderParsed(g, validGraphOutputModeParsed);
+		assertEquals(validGraphOutputModeParsed.toString(),
+				DotAttributes.getOutputOrder(g));
+		assertEquals(validGraphOutputModeParsed,
+				DotAttributes.getOutputOrderParsed(g));
+
+		validGraphOutputModeParsed = OutputMode.EDGEFIRST;
+		DotAttributes.setOutputOrderParsed(g, validGraphOutputModeParsed);
+		assertEquals(validGraphOutputModeParsed.toString(),
+				DotAttributes.getOutputOrder(g));
+		assertEquals(validGraphOutputModeParsed,
+				DotAttributes.getOutputOrderParsed(g));
+
+		// set invalid string values
+		try {
+			DotAttributes.setOutputOrder(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'outputorder' to 'foo'. The value 'foo' is not a syntactically correct outputMode: Value has to be one of 'breadthfirst', 'nodesfirst', 'edgesfirst'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void graph_pagedir() {
+		Graph g = new Graph.Builder().build();
+
+		// set valid string values
+		String validGraphPagedir = "BL";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.BL, DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedir = "BR";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.BR, DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedir = "TL";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.TL, DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedir = "TR";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.TR, DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedir = "RB";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.RB, DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedir = "RT";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.RT, DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedir = "LB";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.LB, DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedir = "LT";
+		DotAttributes.setPagedir(g, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
+		assertEquals(Pagedir.LT, DotAttributes.getPagedirParsed(g));
+
+		// set valid parsed values
+		Pagedir validGraphPagedirParsed = Pagedir.BL;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedirParsed = Pagedir.BR;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedirParsed = Pagedir.TL;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedirParsed = Pagedir.TR;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedirParsed = Pagedir.RB;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedirParsed = Pagedir.RT;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedirParsed = Pagedir.LB;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		validGraphPagedirParsed = Pagedir.LT;
+		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		assertEquals(validGraphPagedirParsed.toString(),
+				DotAttributes.getPagedir(g));
+		assertEquals(validGraphPagedirParsed,
+				DotAttributes.getPagedirParsed(g));
+
+		// set invalid string values
+		try {
+			DotAttributes.setPagedir(g, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'pagedir' to 'foo'. The value 'foo' is not a syntactically correct pagedir: Value has to be one of 'BL', 'BR', 'TL', 'TR', 'RB', 'RT', 'LB', 'LT'.",
+					e.getMessage());
+		}
 	}
 
 	@Test
