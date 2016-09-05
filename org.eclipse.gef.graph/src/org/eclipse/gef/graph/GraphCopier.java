@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - provide input to output maps (bug #497662)
+ *
  *******************************************************************************/
 package org.eclipse.gef.graph;
 
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -25,6 +28,7 @@ import org.eclipse.gef.common.attributes.IAttributeStore;
 public class GraphCopier {
 
 	private Map<Node, Node> inputToOutputNodes = new IdentityHashMap<>();
+	private Map<Edge, Edge> inputToOutputEdges = new IdentityHashMap<>();
 	private IAttributeCopier attributeCopier;
 
 	/**
@@ -47,6 +51,10 @@ public class GraphCopier {
 	 * @return A new graph that is the result of the copy operation.
 	 */
 	public Graph copy(Graph graph) {
+		// clear input to output maps
+		inputToOutputNodes.clear();
+		inputToOutputEdges.clear();
+		// create new graph to hold the copy
 		Graph outputGraph = new Graph();
 		copyAttributes(graph, outputGraph);
 		// copy nodes, keeping track of copied nodes (so we can relocate them to
@@ -59,15 +67,15 @@ public class GraphCopier {
 				outputGraph.getNodes().add(outputNode);
 			}
 		}
-		// convert edges
+		// copy edges
 		for (Edge inputEdge : graph.getEdges()) {
 			Edge outputEdge = copyEdge(inputEdge);
 			if (outputEdge != null) {
+				inputToOutputEdges.put(inputEdge, outputEdge);
 				outputEdge.setGraph(outputGraph);
 				outputGraph.getEdges().add(outputEdge);
 			}
 		}
-		inputToOutputNodes.clear();
 		return outputGraph;
 	}
 
@@ -125,6 +133,28 @@ public class GraphCopier {
 			outputNode.setNestedGraph(nested);
 		}
 		return outputNode;
+	}
+
+	/**
+	 * Returns an (unmodifiable) {@link Map} from input {@link Edge}s to output
+	 * {@link Edge}s.
+	 *
+	 * @return An (unmodifiable) {@link Map} from input {@link Edge}s to output
+	 *         {@link Edge}s.
+	 */
+	public Map<Edge, Edge> getInputToOutputEdgeMap() {
+		return Collections.unmodifiableMap(inputToOutputEdges);
+	}
+
+	/**
+	 * Returns an (unmodifiable) {@link Map} from input {@link Node}s to output
+	 * {@link Node}s.
+	 *
+	 * @return An (unmodifiable) {@link Map} from input {@link Node}s to output
+	 *         {@link Node}s.
+	 */
+	public Map<Node, Node> getInputToOutputNodeMap() {
+		return Collections.unmodifiableMap(inputToOutputNodes);
 	}
 
 }
