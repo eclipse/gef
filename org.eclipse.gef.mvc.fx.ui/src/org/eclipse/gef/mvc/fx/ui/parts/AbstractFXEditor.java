@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.parts;
 
+import java.util.Arrays;
+
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -282,15 +284,15 @@ public abstract class AbstractFXEditor extends EditorPart {
 			@Override
 			public void historyNotification(final OperationHistoryEvent event) {
 				IUndoableOperation operation = event.getOperation();
-				if (event
-						.getEventType() == OperationHistoryEvent.OPERATION_ADDED
+				IUndoContext undoContext = getDomain().getUndoContext();
+				if (Arrays.asList(operation.getContexts()).contains(undoContext)
+						&& event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
 						&& event.getHistory().getUndoHistory(
-								operation.getContexts()[0]).length > 0) {
-					if (!(operation instanceof ITransactionalOperation)
-							|| ((ITransactionalOperation) operation)
-									.isContentRelevant()) {
-						setDirty(true);
-					}
+								operation.getContexts()[0]).length > 0
+						&& (!(operation instanceof ITransactionalOperation)
+								|| ((ITransactionalOperation) operation)
+										.isContentRelevant())) {
+					setDirty(true);
 				}
 			}
 		};
