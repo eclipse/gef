@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - skip feedback and handles when determining viewer (bug #498298)
  *
  * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
  *
@@ -428,9 +429,15 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 			newViewer = parent.getRoot().getViewer();
 		} else {
 			// the new viewer will be determined via the current
-			// anchorages
+			// anchoreds
 			for (IVisualPart<VR, ? extends VR> anchored : anchoreds
 					.elementSet()) {
+				// skip feedback and handles (bug #498298)
+				if (anchored instanceof IFeedbackPart
+						|| anchored instanceof IHandlePart) {
+					continue;
+				}
+				// determine root via anchored
 				IRootPart<VR, ? extends VR> root = anchored.getRoot();
 				if (root != null) {
 					newViewer = root.getViewer();
@@ -558,6 +565,11 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		}
 		for (IVisualPart<VR, ? extends VR> anchored : getAnchoredsUnmodifiable()
 				.elementSet()) {
+			// skip feedback and handles (bug #498298)
+			if (anchored instanceof IFeedbackPart
+					|| anchored instanceof IHandlePart) {
+				continue;
+			}
 			IRootPart<VR, ? extends VR> root = anchored.getRoot();
 			if (root != null) {
 				return root;
