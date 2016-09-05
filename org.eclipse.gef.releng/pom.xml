@@ -626,6 +626,7 @@
 		<module>../org.eclipse.gef.mvc.fx.ui-feature</module>
 		<module>../org.eclipse.gef.mvc.tests</module>
 		<module>../org.eclipse.gef.mvc.tests.fx</module>
+		<module>../org.eclipse.gef.mvc.tests.fx.ui</module>
 		<module>../org.eclipse.gef.mvc.doc</module>
 		<module>../org.eclipse.gef.mvc.doc-feature</module>
 		<module>../org.eclipse.gef.mvc.sdk-feature</module>
