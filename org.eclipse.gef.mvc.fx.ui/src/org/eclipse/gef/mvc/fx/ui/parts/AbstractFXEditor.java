@@ -106,6 +106,32 @@ public abstract class AbstractFXEditor extends EditorPart {
 		return canvasFactory.createCanvas(parent, SWT.NONE);
 	}
 
+	/**
+	 * Returns the {@link IOperationHistoryListener} that is to be used to
+	 * update the dirty state of this editor.
+	 *
+	 * @return The {@link IOperationHistoryListener} that is to be used to
+	 *         update the dirty state of this editor.
+	 */
+	protected IOperationHistoryListener createOperationHistoryListener() {
+		return new IOperationHistoryListener() {
+			@Override
+			public void historyNotification(final OperationHistoryEvent event) {
+				IUndoableOperation operation = event.getOperation();
+				IUndoContext undoContext = getDomain().getUndoContext();
+				if (Arrays.asList(operation.getContexts()).contains(undoContext)
+						&& event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
+						&& event.getHistory().getUndoHistory(
+								operation.getContexts()[0]).length > 0
+						&& (!(operation instanceof ITransactionalOperation)
+								|| ((ITransactionalOperation) operation)
+										.isContentRelevant())) {
+					setDirty(true);
+				}
+			}
+		};
+	}
+
 	@Override
 	public void createPartControl(final Composite parent) {
 		// create viewer and canvas only after toolkit has been initialized
@@ -136,6 +162,18 @@ public abstract class AbstractFXEditor extends EditorPart {
 			return propertySheetPageFactory.create(this);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the {@link UndoRedoActionGroup} that is to be used to add undo
+	 * and redo actions.
+	 *
+	 * @return The {@link UndoRedoActionGroup} that is to be used to add undo
+	 *         and redo actions.
+	 */
+	protected UndoRedoActionGroup createUndoRedoActionGroup() {
+		return new UndoRedoActionGroup(getSite(),
+				(IUndoContext) getAdapter(IUndoContext.class), true);
 	}
 
 	/**
@@ -280,29 +318,16 @@ public abstract class AbstractFXEditor extends EditorPart {
 			site.setSelectionProvider(selectionProvider);
 		}
 
-		operationHistoryListener = new IOperationHistoryListener() {
-			@Override
-			public void historyNotification(final OperationHistoryEvent event) {
-				IUndoableOperation operation = event.getOperation();
-				IUndoContext undoContext = getDomain().getUndoContext();
-				if (Arrays.asList(operation.getContexts()).contains(undoContext)
-						&& event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
-						&& event.getHistory().getUndoHistory(
-								operation.getContexts()[0]).length > 0
-						&& (!(operation instanceof ITransactionalOperation)
-								|| ((ITransactionalOperation) operation)
-										.isContentRelevant())) {
-					setDirty(true);
-				}
-			}
-		};
+		undoRedoActionGroup = createUndoRedoActionGroup();
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.fillActionBars(site.getActionBars());
+		}
 
-		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
-				(IUndoContext) getAdapter(IUndoContext.class), true);
-		undoRedoActionGroup.fillActionBars(site.getActionBars());
-
-		getDomain().getOperationHistory()
-				.addOperationHistoryListener(operationHistoryListener);
+		operationHistoryListener = createOperationHistoryListener();
+		if (operationHistoryListener != null) {
+			getDomain().getOperationHistory()
+					.addOperationHistoryListener(operationHistoryListener);
+		}
 	}
 
 	@Override
