@@ -17,6 +17,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ GraphBuilderTests.class })
+@SuiteClasses({ GraphBuilderTests.class, GraphCopierTests.class })
 public class AllTests {
 }
