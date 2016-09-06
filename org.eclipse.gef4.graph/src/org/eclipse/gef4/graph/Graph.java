@@ -75,7 +75,7 @@ public final class Graph implements IAttributeStore {
 			/**
 			 * Stores incoming node keys in order.
 			 *
-			 * @since 1.0
+			 * @since 1.1
 			 */
 			protected List<Object> nodeKeys = new ArrayList<>();
 		}
