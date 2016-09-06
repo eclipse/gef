@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -27,6 +30,7 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleViewersComposite;
@@ -47,6 +51,7 @@ import org.eclipse.gef.mvc.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
@@ -108,22 +113,73 @@ public class MvcLogoExampleView extends AbstractFXView {
 				.with(new MvcLogoExampleUiModule())));
 
 		// set initial contents
-		getContentViewer()
-				.getAdapter(ContentModel.class).getContents()
+		getContentViewer().getAdapter(ContentModel.class).getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
-		getPaletteViewer()
-				.getAdapter(ContentModel.class).getContents()
+		getPaletteViewer().getAdapter(ContentModel.class).getContents()
 				.setAll(MvcLogoExample.createPaletteContents());
 	}
 
 	@Override
 	public void dispose() {
-		
+
 		// clear viewer contents
-		getContentViewer().getAdapter(ContentModel.class).contentsProperty().clear();
-		getPaletteViewer().getAdapter(ContentModel.class).contentsProperty().clear();
+		getContentViewer().getAdapter(ContentModel.class).contentsProperty()
+				.clear();
+		getPaletteViewer().getAdapter(ContentModel.class).contentsProperty()
+				.clear();
 
 		super.dispose();
+	}
+
+	/**
+	 * The {@link UpdateSelectionHandlesOperation} can be used to update the
+	 * selection handles for a given {@link IContentPart}. Re-selecting (i.e.
+	 * deselect & select) is not possible in the context of a
+	 * UndoablePropertySheetEntry#valueChanged(), because #valueChanged() is
+	 * also called when the selection changes, and mutations from within a
+	 * collection listener are forbidden.
+	 */
+	private static class UpdateSelectionHandlesOperation
+			extends AbstractOperation implements ITransactionalOperation {
+
+		private IContentPart<Node, ? extends Node> part;
+
+		public UpdateSelectionHandlesOperation(
+				IContentPart<Node, ? extends Node> part) {
+			super("UpdateHandles");
+			this.part = part;
+		}
+
+		@Override
+		public boolean isContentRelevant() {
+			return false;
+		}
+
+		@Override
+		public boolean isNoOp() {
+			return false;
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			part.getRoot().getAdapter(new TypeToken<SelectionBehavior<Node>>() {
+			}).updateHandles(part, null, null);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
+		}
+
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -221,15 +277,9 @@ public class MvcLogoExampleView extends AbstractFXView {
 										"Change routing style");
 								c.add(changeRoutingStyleOperation);
 								c.add(clearWaypointsOperation);
-								// reselect
-								IUndoableOperation deselectOperation = new DeselectOperation<>(
-										getContentViewer(),
-										Collections.singletonList(contentPart));
-								IUndoableOperation selectOperation = new SelectOperation<>(
-										getContentViewer(),
-										Collections.singletonList(contentPart));
-								c.add(deselectOperation);
-								c.add(selectOperation);
+								// update selection handles
+								c.add(new UpdateSelectionHandlesOperation(
+										contentPart));
 								super.valueChanged(child, c);
 							} else {
 								super.valueChanged(child, operation);
