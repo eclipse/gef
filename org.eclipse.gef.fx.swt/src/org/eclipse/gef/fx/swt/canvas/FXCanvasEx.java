@@ -89,13 +89,16 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	}
 
+	// XXX: SWTCursors does not support image cursors up to JavaSE-1.9
+	// (https://bugs.openjdk.java.net/browse/JDK-8088147); this listener
+	// provides a workaround for J2SE-1.8. It relies on JDK internals and may
+	// access these only via pure reflection to not introduce any compile-time
+	// dependencies (that would not work in a JIGSAW context).
+	// TODO: Remove when dropping support for J2SE-1.8.
 	private ChangeListener<Cursor> cursorChangeListener = new ChangeListener<Cursor>() {
 		@Override
 		public void changed(ObservableValue<? extends Cursor> observable,
 				Cursor oldCursor, Cursor newCursor) {
-			// XXX: SWTCursors does support image cursors yet
-			// (https://bugs.openjdk.java.net/browse/JDK-8088147); we compensate
-			// this here (using JDK-internal API)
 			if (newCursor instanceof ImageCursor) {
 				// custom cursor, convert image
 				ImageData imageData = SWTFXUtils.fromFXImage(
@@ -105,10 +108,6 @@ public class FXCanvasEx extends FXCanvas {
 				org.eclipse.swt.graphics.Cursor swtCursor = new org.eclipse.swt.graphics.Cursor(
 						getDisplay(), imageData, (int) hotspotX,
 						(int) hotspotY);
-				// FIXME [JDK-internal]: Set platform cursor on CursorFrame so
-				// that it can be retrieved by FXCanvas' HostContainer (which
-				// ultimately sets the cursor on the FXCanvas); unfortunately,
-				// this is not possible using public API.
 				try {
 					Method currentCursorFrameAccessor = Cursor.class
 							.getDeclaredMethod("getCurrentFrame",
@@ -205,6 +204,12 @@ public class FXCanvasEx extends FXCanvas {
 		return ReflectionUtils.getPrivateFieldValue(this, "stage");
 	}
 
+	private void hookScene(Scene newScene) {
+		if (System.getProperty("java.version").startsWith("1.8.0")) {
+			newScene.cursorProperty().addListener(cursorChangeListener);
+		}
+	}
+
 	@Override
 	public void setScene(Scene newScene) {
 		Scene oldScene = getScene();
@@ -214,15 +219,21 @@ public class FXCanvasEx extends FXCanvas {
 			if (eventDispatcher instanceof RedrawingEventDispatcher) {
 				oldScene.setEventDispatcher(
 						((RedrawingEventDispatcher) eventDispatcher).dispose());
-				oldScene.cursorProperty().removeListener(cursorChangeListener);
 			}
+			unhookScene(oldScene);
 		}
 		super.setScene(newScene);
 		if (newScene != null) {
 			// wrap event dispatcher
 			newScene.setEventDispatcher(new RedrawingEventDispatcher(
 					newScene.getEventDispatcher()));
-			newScene.cursorProperty().addListener(cursorChangeListener);
+			hookScene(newScene);
+		}
+	}
+
+	private void unhookScene(Scene oldScene) {
+		if (System.getProperty("java.version").startsWith("1.8.0")) {
+			oldScene.cursorProperty().removeListener(cursorChangeListener);
 		}
 	}
 }
