@@ -576,7 +576,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// remove feedback from the viewer
 		if (!feedbackParts.isEmpty()) {
-			BehaviorUtils.removeAnchoreds(targetSet.iterator().next().getRoot(),
+			BehaviorUtils.removeAnchoreds(feedbackParts.get(0).getRoot(),
 					targetSet, feedbackParts);
 		}
 		for (IFeedbackPart<VR, ? extends VR> fp : feedbackParts) {
@@ -646,7 +646,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// remove handles from the viewer
 		if (!handleParts.isEmpty()) {
-			BehaviorUtils.removeAnchoreds(targetSet.iterator().next().getRoot(),
+			BehaviorUtils.removeAnchoreds(handleParts.get(0).getRoot(),
 					targetSet, handleParts);
 		}
 		for (IHandlePart<VR, ? extends VR> hp : handleParts) {
