@@ -58,7 +58,6 @@ public class DeleteActionHandler extends Action {
 
 	private FXViewer viewer = null;
 	private ListChangeListener<IContentPart<?, ?>> selectionListener = new ListChangeListener<IContentPart<?, ?>>() {
-
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends IContentPart<?, ?>> c) {
@@ -140,6 +139,8 @@ public class DeleteActionHandler extends Action {
 				throw new RuntimeException(e);
 			}
 		}
+		// mark as been handled
+		event.doit = false;
 	}
 
 	/**

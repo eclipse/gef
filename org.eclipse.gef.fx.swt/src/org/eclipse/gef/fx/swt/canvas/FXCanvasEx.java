@@ -16,7 +16,9 @@ package org.eclipse.gef.fx.swt.canvas;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.gef.fx.swt.gestures.SWT2FXEventConverter;
@@ -80,8 +82,24 @@ public class FXCanvasEx extends FXCanvas {
 				// (https://bugs.openjdk.java.net/browse/JDK-8159227)
 				// TODO: Remove when dropping support for JavaSE-1.8.
 				if (event instanceof javafx.scene.input.KeyEvent) {
-					if (!lastKeyEvent.doit) {
+					org.eclipse.swt.widgets.Event lastDownEvent = unprocessedKeyDownEvents
+							.peek();
+					if (event.getEventType()
+							.equals(javafx.scene.input.KeyEvent.KEY_PRESSED)
+							&& !lastDownEvent.doit) {
 						event.consume();
+					} else if (event.getEventType()
+							.equals(javafx.scene.input.KeyEvent.KEY_TYPED)
+							&& !lastDownEvent.doit) {
+						event.consume();
+					} else if (event.getEventType()
+							.equals(javafx.scene.input.KeyEvent.KEY_RELEASED)) {
+						unprocessedKeyDownEvents.poll();
+						org.eclipse.swt.widgets.Event lastUpEvent = unprocessedKeyUpEvents
+								.poll();
+						if (!lastUpEvent.doit) {
+							event.consume();
+						}
 					}
 				}
 			}
@@ -169,13 +187,14 @@ public class FXCanvasEx extends FXCanvas {
 	private Listener keyListener = new Listener() {
 		@Override
 		public void handleEvent(org.eclipse.swt.widgets.Event e) {
-			lastKeyEvent = e;
 			if (e.type == SWT.KeyDown) {
+				unprocessedKeyDownEvents.add(e);
 				for (Listener l : new ArrayList<>(keyDownListeners)) {
 					l.handleEvent(e);
 				}
 				superKeyListener.keyPressed(new KeyEvent(e));
 			} else {
+				unprocessedKeyUpEvents.add(e);
 				for (Listener l : new ArrayList<>(keyUpListeners)) {
 					l.handleEvent(e);
 				}
@@ -187,7 +206,8 @@ public class FXCanvasEx extends FXCanvas {
 	private List<Listener> keyUpListeners = new ArrayList<>();
 	private List<Listener> keyDownListeners = new ArrayList<>();
 	// keeps track of key events that need to be marked as consumed
-	private org.eclipse.swt.widgets.Event lastKeyEvent;
+	private Queue<org.eclipse.swt.widgets.Event> unprocessedKeyDownEvents = new LinkedList<>();
+	private Queue<org.eclipse.swt.widgets.Event> unprocessedKeyUpEvents = new LinkedList<>();
 
 	/**
 	 * Creates a new {@link FXCanvasEx} for the given parent and with the given
