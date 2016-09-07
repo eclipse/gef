@@ -15,17 +15,22 @@
 package org.eclipse.gef.fx.swt.canvas;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.gef.fx.swt.gestures.SWT2FXEventConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Listener;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -54,7 +59,7 @@ import javafx.stage.Window;
  */
 public class FXCanvasEx extends FXCanvas {
 
-	private final class RedrawingEventDispatcher implements EventDispatcher {
+	private final class EventDispatcherEx implements EventDispatcher {
 
 		private static final int REDRAW_INTERVAL_MILLIS = 40; // i.e. 25 fps
 
@@ -62,13 +67,25 @@ public class FXCanvasEx extends FXCanvas {
 
 		private long lastRedrawMillis = System.currentTimeMillis();
 
-		protected RedrawingEventDispatcher(EventDispatcher delegate) {
+		protected EventDispatcherEx(EventDispatcher delegate) {
 			this.delegate = delegate;
 		}
 
 		@Override
 		public Event dispatchEvent(final Event event,
 				final EventDispatchChain tail) {
+			if (JAVA_8) {
+				// XXX: Ensure key events that result from to be ingored SWT key
+				// events (doit == false) are forwarded as consumed
+				// (https://bugs.openjdk.java.net/browse/JDK-8159227)
+				// TODO: Remove when dropping support for JavaSE-1.8.
+				if (event instanceof javafx.scene.input.KeyEvent) {
+					if (!lastKeyEvent.doit) {
+						event.consume();
+					}
+				}
+			}
+
 			// dispatch the most recent event
 			Event returnedEvent = delegate.dispatchEvent(event, tail);
 			// update UI
@@ -89,12 +106,15 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	}
 
+	private static final boolean JAVA_8 = System.getProperty("java.version")
+			.startsWith("1.8.0");
+
 	// XXX: SWTCursors does not support image cursors up to JavaSE-1.9
 	// (https://bugs.openjdk.java.net/browse/JDK-8088147); this listener
 	// provides a workaround for J2SE-1.8. It relies on JDK internals and may
 	// access these only via pure reflection to not introduce any compile-time
 	// dependencies (that would not work in a JIGSAW context).
-	// TODO: Remove when dropping support for J2SE-1.8.
+	// TODO: Remove when dropping support for JavaSE-1.8.
 	private ChangeListener<Cursor> cursorChangeListener = new ChangeListener<Cursor>() {
 		@Override
 		public void changed(ObservableValue<? extends Cursor> observable,
@@ -136,6 +156,39 @@ public class FXCanvasEx extends FXCanvas {
 	private TraverseListener traverseListener = null;
 	private DisposeListener disposeListener;
 
+	// XXX: JavaFX does not forward the consumption state of key events to the
+	// embedded scene (see https://bugs.openjdk.java.net/browse/JDK-8159227).
+	// We use an SWT listener to capture all key events, so our JavaFX event
+	// dispatcher replacement can identify the resulting JavaFX key events that
+	// result from them and can mark them as consumed.
+	// We have to ensure that the (typed) super key listener, which forwards
+	// events to the embedded scene, is the last listener (in the list of all
+	// key listeners, including untyped ones) that is notified. The manipulation
+	// of the doit flag by listeners that got notified later, would otherwise
+	// not be recognized.
+	private Listener keyListener = new Listener() {
+		@Override
+		public void handleEvent(org.eclipse.swt.widgets.Event e) {
+			lastKeyEvent = e;
+			if (e.type == SWT.KeyDown) {
+				for (Listener l : new ArrayList<>(keyDownListeners)) {
+					l.handleEvent(e);
+				}
+				superKeyListener.keyPressed(new KeyEvent(e));
+			} else {
+				for (Listener l : new ArrayList<>(keyUpListeners)) {
+					l.handleEvent(e);
+				}
+				superKeyListener.keyReleased(new KeyEvent(e));
+			}
+		};
+	};
+	private KeyListener superKeyListener;
+	private List<Listener> keyUpListeners = new ArrayList<>();
+	private List<Listener> keyDownListeners = new ArrayList<>();
+	// keeps track of key events that need to be marked as consumed
+	private org.eclipse.swt.widgets.Event lastKeyEvent;
+
 	/**
 	 * Creates a new {@link FXCanvasEx} for the given parent and with the given
 	 * style.
@@ -173,6 +226,11 @@ public class FXCanvasEx extends FXCanvas {
 				removeTraverseListener(traverseListener);
 				traverseListener = null;
 
+				removeListener(SWT.KeyDown, keyListener);
+				removeListener(SWT.KeyUp, keyListener);
+				keyListener = null;
+				superKeyListener = null;
+
 				gestureConverter.dispose();
 				gestureConverter = null;
 			}
@@ -192,7 +250,54 @@ public class FXCanvasEx extends FXCanvas {
 		};
 		addTraverseListener(traverseListener);
 
+		// XXX: Use a delegate to ensure the super key listener is the last one
+		// that gets notified, which is required to properly forward the
+		// consumption state to the embedded scene (see
+		// https://bugs.openjdk.java.net/browse/JDK-8159227).
+		addListener(SWT.KeyUp, keyListener);
+		addListener(SWT.KeyDown, keyListener);
+
 		gestureConverter = new SWT2FXEventConverter(this);
+	}
+
+	@Override
+	public void addKeyListener(KeyListener listener) {
+		// XXX: Overwritten to ensure proper ordering of key listeners,
+		// which is required to properly forward the consumption state to
+		// the embedded scene (see
+		// https://bugs.openjdk.java.net/browse/JDK-8159227).
+		if (listener.getClass().getName()
+				.startsWith(FXCanvas.class.getName() + "$")) {
+			// XXX: Identifying the super key listener from the ordering is
+			// not safe, as a subclass might tamper that ordering; we thus
+			// use the class name to identify it
+			superKeyListener = listener;
+		} else {
+			super.addKeyListener(listener);
+		}
+	}
+
+	@Override
+	public void addListener(int eventType, Listener listener) {
+		// XXX: Overwritten to ensure proper ordering of key listeners,
+		// which is required to properly forward the consumption state to
+		// the embedded scene (see
+		// https://bugs.openjdk.java.net/browse/JDK-8159227).
+		if (eventType == SWT.KeyUp) {
+			if (listener == keyListener) {
+				super.addListener(eventType, listener);
+			} else {
+				keyUpListeners.add(listener);
+			}
+		} else if (eventType == SWT.KeyDown) {
+			if (listener == keyListener) {
+				super.addListener(eventType, listener);
+			} else {
+				keyDownListeners.add(listener);
+			}
+		} else {
+			super.addListener(eventType, listener);
+		}
 	}
 
 	/**
@@ -205,8 +310,45 @@ public class FXCanvasEx extends FXCanvas {
 	}
 
 	private void hookScene(Scene newScene) {
-		if (System.getProperty("java.version").startsWith("1.8.0")) {
+		if (JAVA_8) {
 			newScene.cursorProperty().addListener(cursorChangeListener);
+		}
+	}
+
+	@Override
+	public void removeKeyListener(KeyListener listener) {
+		// XXX: Overwritten to ensure proper ordering of key listeners,
+		// which is required to properly forward the consumption state to
+		// the embedded scene (see
+		// https://bugs.openjdk.java.net/browse/JDK-8159227).
+		if (listener.getClass().getName()
+				.startsWith(FXCanvas.class.getName() + "$")) {
+			superKeyListener = null;
+		} else {
+			super.removeKeyListener(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(int eventType, Listener listener) {
+		// XXX: Overwritten to ensure proper ordering of key listeners,
+		// which is required to properly forward the consumption state to
+		// the embedded scene (see
+		// https://bugs.openjdk.java.net/browse/JDK-8159227).
+		if (eventType == SWT.KeyUp) {
+			if (listener == keyListener) {
+				super.removeListener(eventType, listener);
+			} else {
+				keyUpListeners.remove(listener);
+			}
+		} else if (eventType == SWT.KeyDown) {
+			if (listener == keyListener) {
+				super.removeListener(eventType, listener);
+			} else {
+				keyDownListeners.remove(listener);
+			}
+		} else {
+			super.removeListener(eventType, listener);
 		}
 	}
 
@@ -216,23 +358,26 @@ public class FXCanvasEx extends FXCanvas {
 		if (oldScene != null) {
 			// restore original event dispatcher
 			EventDispatcher eventDispatcher = oldScene.getEventDispatcher();
-			if (eventDispatcher instanceof RedrawingEventDispatcher) {
+			if (eventDispatcher instanceof EventDispatcherEx) {
 				oldScene.setEventDispatcher(
-						((RedrawingEventDispatcher) eventDispatcher).dispose());
+						((EventDispatcherEx) eventDispatcher).dispose());
+				// TODO: add listener to property to keep track of changes to
+				// event dispatcher that removes our delegate?? (throw an
+				// exception?)
 			}
 			unhookScene(oldScene);
 		}
 		super.setScene(newScene);
 		if (newScene != null) {
 			// wrap event dispatcher
-			newScene.setEventDispatcher(new RedrawingEventDispatcher(
-					newScene.getEventDispatcher()));
+			newScene.setEventDispatcher(
+					new EventDispatcherEx(newScene.getEventDispatcher()));
 			hookScene(newScene);
 		}
 	}
 
 	private void unhookScene(Scene oldScene) {
-		if (System.getProperty("java.version").startsWith("1.8.0")) {
+		if (JAVA_8) {
 			oldScene.cursorProperty().removeListener(cursorChangeListener);
 		}
 	}
