@@ -228,7 +228,7 @@ public class Node implements IAttributeStore {
 			return Collections.emptySet();
 		}
 		Set<Edge> incoming = Collections.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
-		incoming.addAll(getLocalIncomingEdges());
+		incoming.addAll(getIncomingEdges());
 		if (graph.getNestingNode() != null) {
 			incoming.addAll(graph.getNestingNode().getAllIncomingEdges());
 		}
@@ -261,7 +261,7 @@ public class Node implements IAttributeStore {
 			return Collections.emptySet();
 		}
 		Set<Edge> outgoing = Collections.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
-		outgoing.addAll(getLocalOutgoingEdges());
+		outgoing.addAll(getOutgoingEdges());
 		if (graph.getNestingNode() != null) {
 			outgoing.addAll(graph.getNestingNode().getAllOutgoingEdges());
 		}
@@ -280,7 +280,7 @@ public class Node implements IAttributeStore {
 			return Collections.emptySet();
 		}
 		Set<Node> predecessors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
-		predecessors.addAll(getLocalPredecessorNodes());
+		predecessors.addAll(getPredecessorNodes());
 		if (graph.getNestingNode() != null) {
 			predecessors.addAll(graph.getNestingNode().getAllPredecessorNodes());
 		}
@@ -299,7 +299,7 @@ public class Node implements IAttributeStore {
 			return Collections.emptySet();
 		}
 		Set<Node> successors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
-		successors.addAll(getLocalSuccessorNodes());
+		successors.addAll(getSuccessorNodes());
 		if (graph.getNestingNode() != null) {
 			successors.addAll(graph.getNestingNode().getAllSuccessorNodes());
 		}
@@ -327,7 +327,7 @@ public class Node implements IAttributeStore {
 	 *
 	 * @return The local incoming {@link Edge}s.
 	 */
-	public Set<Edge> getLocalIncomingEdges() {
+	public Set<Edge> getIncomingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -342,15 +342,15 @@ public class Node implements IAttributeStore {
 
 	/**
 	 * Returns all (local) neighbors of this {@link Node}, i.e. the union of the
-	 * {@link #getLocalPredecessorNodes()} and {@link #getLocalSuccessorNodes()}
+	 * {@link #getPredecessorNodes()} and {@link #getSuccessorNodes()}
 	 * .
 	 *
 	 * @return All (local) neighbors of this {@link Node}.
 	 */
-	public Set<Node> getLocalNeighbors() {
+	public Set<Node> getNeighbors() {
 		Set<Node> neighbors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
-		neighbors.addAll(getLocalPredecessorNodes());
-		neighbors.addAll(getLocalSuccessorNodes());
+		neighbors.addAll(getPredecessorNodes());
+		neighbors.addAll(getSuccessorNodes());
 		return neighbors;
 	}
 
@@ -361,7 +361,7 @@ public class Node implements IAttributeStore {
 	 *
 	 * @return The local outgoing {@link Edge}s.
 	 */
-	public Set<Edge> getLocalOutgoingEdges() {
+	public Set<Edge> getOutgoingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -381,9 +381,9 @@ public class Node implements IAttributeStore {
 	 *
 	 * @return The local predecessor {@link Node}s.
 	 */
-	public Set<Node> getLocalPredecessorNodes() {
+	public Set<Node> getPredecessorNodes() {
 		Set<Node> predecessors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
-		for (Edge incoming : getLocalIncomingEdges()) {
+		for (Edge incoming : getIncomingEdges()) {
 			predecessors.add(incoming.getSource());
 		}
 		return predecessors;
@@ -396,9 +396,9 @@ public class Node implements IAttributeStore {
 	 *
 	 * @return The local successor {@link Node}s.
 	 */
-	public Set<Node> getLocalSuccessorNodes() {
+	public Set<Node> getSuccessorNodes() {
 		Set<Node> successors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
-		for (Edge outgoing : getLocalOutgoingEdges()) {
+		for (Edge outgoing : getOutgoingEdges()) {
 			successors.add(outgoing.getTarget());
 		}
 		return successors;

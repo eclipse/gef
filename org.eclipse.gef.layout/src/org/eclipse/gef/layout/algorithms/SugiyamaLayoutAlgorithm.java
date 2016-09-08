@@ -307,11 +307,11 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
 			// Filter nodes connected with bidirectional edges
 			ArrayList<Node> adjacentNodesOfA = unionOfNodes(
-					nodeA.node.getLocalPredecessorNodes(),
-					nodeA.node.getLocalSuccessorNodes());
+					nodeA.node.getPredecessorNodes(),
+					nodeA.node.getSuccessorNodes());
 			ArrayList<Node> adjacentNodesOfB = unionOfNodes(
-					nodeB.node.getLocalPredecessorNodes(),
-					nodeB.node.getLocalSuccessorNodes());
+					nodeB.node.getPredecessorNodes(),
+					nodeB.node.getSuccessorNodes());
 
 			for (Node aNode : adjacentNodesOfA) {
 				ArrayList<Integer> alreadyCrossed = new ArrayList<>();
@@ -493,11 +493,11 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
 			// Filter nodes connected with bidirectional edges
 			ArrayList<Node> adjacentNodesOfA = unionOfNodes(
-					nodeA.node.getLocalPredecessorNodes(),
-					nodeA.node.getLocalSuccessorNodes());
+					nodeA.node.getPredecessorNodes(),
+					nodeA.node.getSuccessorNodes());
 			ArrayList<Node> adjacentNodesOfB = unionOfNodes(
-					nodeB.node.getLocalPredecessorNodes(),
-					nodeB.node.getLocalSuccessorNodes());
+					nodeB.node.getPredecessorNodes(),
+					nodeB.node.getSuccessorNodes());
 
 			for (Node aNode : adjacentNodesOfA) {
 				ArrayList<Integer> alreadyCrossed = new ArrayList<>();
@@ -896,18 +896,18 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
 			for (Node node : nodes) {
 				// directed edges
-				if (node.getLocalIncomingEdges().size() == 0)
+				if (node.getIncomingEdges().size() == 0)
 					res.add(node);
 				else {
 					int sizeOfIntersect = intersectOfConnections(
-							node.getLocalIncomingEdges(),
-							node.getLocalOutgoingEdges()).size();
+							node.getIncomingEdges(),
+							node.getOutgoingEdges()).size();
 					// there are more outgoing edges, besides the bidirectionals
-					if (node.getLocalOutgoingEdges().size() > sizeOfIntersect)
+					if (node.getOutgoingEdges().size() > sizeOfIntersect)
 						res.add(node);
 					// only bidirectional edges, no incoming directed edges
-					if (node.getLocalIncomingEdges().size() == sizeOfIntersect
-							&& node.getLocalOutgoingEdges()
+					if (node.getIncomingEdges().size() == sizeOfIntersect
+							&& node.getOutgoingEdges()
 									.size() == sizeOfIntersect)
 						res.add(node);
 				}
@@ -985,7 +985,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				Set<Node> closedList) {
 			ArrayList<Node> res = new ArrayList<>();
 
-			for (Edge e : toUnfold.getLocalOutgoingEdges()) {
+			for (Edge e : toUnfold.getOutgoingEdges()) {
 				Node endPoint = e.getTarget();
 				if (endPoint.equals(toUnfold))
 					endPoint = e.getSource();
@@ -994,7 +994,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 						&& !res.contains(endPoint))
 					res.add(endPoint);
 			}
-			for (Edge e : toUnfold.getLocalIncomingEdges()) {
+			for (Edge e : toUnfold.getIncomingEdges()) {
 				Node endPoint = e.getTarget();
 				if (endPoint.equals(toUnfold))
 					endPoint = e.getSource();
@@ -1131,7 +1131,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			for (Node iter : list) { // no predecessors means: this is a
 										// root,
 										// add it to list
-				if (iter.getLocalPredecessorNodes().size() == 0)
+				if (iter.getPredecessorNodes().size() == 0)
 					roots.add(iter);
 			}
 			return (roots);
@@ -1160,7 +1160,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				layer.add(nw);
 				// insert dummy nodes if the adjacent layer does not contain the
 				// predecessor
-				for (Node node_predecessor : node.getLocalPredecessorNodes()) { // for
+				for (Node node_predecessor : node.getPredecessorNodes()) { // for
 																				// all
 																				// predecessors
 					NodeWrapper nw_predecessor = map.get(node_predecessor);
@@ -1209,7 +1209,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				List<Node> layer = new ArrayList<>();
 				for (Node item : nodes) {
 					if (predecessors
-							.containsAll(item.getLocalPredecessorNodes()))
+							.containsAll(item.getPredecessorNodes()))
 						layer.add(item);
 				}
 				if (layer.size() == 0)

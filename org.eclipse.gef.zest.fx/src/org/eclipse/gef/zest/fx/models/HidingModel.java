@@ -78,7 +78,7 @@ public class HidingModel {
 	 *         {@link org.eclipse.gef.graph.Node}.
 	 */
 	public Set<org.eclipse.gef.graph.Node> getHiddenNeighbors(org.eclipse.gef.graph.Node node) {
-		Set<org.eclipse.gef.graph.Node> neighbors = node.getLocalNeighbors();
+		Set<org.eclipse.gef.graph.Node> neighbors = node.getNeighbors();
 		Set<org.eclipse.gef.graph.Node> hiddenNeighbors = Collections
 				.newSetFromMap(new IdentityHashMap<org.eclipse.gef.graph.Node, Boolean>());
 		for (org.eclipse.gef.graph.Node neighbor : neighbors) {

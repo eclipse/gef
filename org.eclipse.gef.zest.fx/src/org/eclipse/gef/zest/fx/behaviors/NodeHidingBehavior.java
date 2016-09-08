@@ -121,7 +121,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 
 		// check if we have to show/hide/update the pruned neighbors part
 		org.eclipse.gef.graph.Node content = getHost().getContent();
-		Set<org.eclipse.gef.graph.Node> neighbors = content.getLocalNeighbors();
+		Set<org.eclipse.gef.graph.Node> neighbors = content.getNeighbors();
 
 		if (!containsAny(oldHidden, neighbors) && containsAny(newHidden, neighbors)) {
 			createHiddenNeighborsFeedbackPart();
