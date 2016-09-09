@@ -122,8 +122,6 @@ public class FXFocusFeedbackPart
 			if (selected.contains(anchorage)) {
 				visual.setStrokeWidth(
 						FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH * 2);
-				// XXX: place behind selection feedback
-				visual.toBack();
 			} else {
 				visual.setStrokeWidth(DEFAULT_STROKE_WIDTH);
 			}
@@ -146,7 +144,6 @@ public class FXFocusFeedbackPart
 								- FXSelectionFeedbackPart.DEFAULT_STROKE_WIDTH);
 			}
 		}
-		visual.toBack();
 	}
 
 	/**

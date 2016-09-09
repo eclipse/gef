@@ -101,8 +101,6 @@ public class FXSelectionFeedbackPart
 				&& selected.get(0) == anchorage) {
 			// primary selection
 			visual.setStroke(getPrimarySelectionColor());
-			// XXX: place before focus feedback
-			visual.toFront();
 		} else {
 			// secondary selection
 			visual.setStroke(getSecondarySelectionColor());
