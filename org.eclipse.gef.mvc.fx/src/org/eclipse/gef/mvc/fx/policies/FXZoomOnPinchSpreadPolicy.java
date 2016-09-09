@@ -70,13 +70,12 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
 		if (invalidGesture) {
 			return;
 		}
-		getViewportPolicy().zoomRelative(e.getZoomFactor(), e.getSceneX(),
-				e.getSceneY());
+		getViewportPolicy().roundAndZoomRelative(e.getZoomFactor(),
+				e.getSceneX(), e.getSceneY());
 	}
 
 	@Override
 	public void zoomAborted() {
-
 	}
 
 	@Override

@@ -150,7 +150,8 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 			// change viewport via operation
 			getViewportPolicy().scrollRelative(delta.width, delta.height);
 		} else if (isZoom(event)) {
-			getViewportPolicy().zoomRelative(
+			// zoom into/out-of the event location
+			getViewportPolicy().roundAndZoomRelative(
 					event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
 					event.getSceneY());
 		}

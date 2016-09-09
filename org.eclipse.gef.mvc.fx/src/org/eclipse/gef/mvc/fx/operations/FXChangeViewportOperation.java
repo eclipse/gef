@@ -313,6 +313,17 @@ public class FXChangeViewportOperation extends AbstractOperation
 	}
 
 	/**
+	 * Returns the contents transformation that will be applied when executing
+	 * this operation.
+	 *
+	 * @return The contents transformation that will be applied when executing
+	 *         this operation.
+	 */
+	public AffineTransform getNewContentTransform() {
+		return newContentTransform;
+	}
+
+	/**
 	 * Returns the viewport height that will be applied when executing this
 	 * operation.
 	 *
@@ -332,17 +343,6 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 */
 	public double getNewHorizontalScrollOffset() {
 		return newHorizontalScrollOffset;
-	}
-
-	/**
-	 * Returns the contents transformation that will be applied when executing
-	 * this operation.
-	 *
-	 * @return The contents transformation that will be applied when executing
-	 *         this operation.
-	 */
-	public AffineTransform getNewTransform() {
-		return newContentTransform;
 	}
 
 	/**
@@ -376,9 +376,9 @@ public class FXChangeViewportOperation extends AbstractOperation
 	public boolean isNoOp() {
 		return getNewWidth() == getInitialWidth()
 				&& getNewHeight() == getInitialHeight()
-				&& (getNewTransform() == null
+				&& (getNewContentTransform() == null
 						? getInitialContentTransform() == null
-						: getNewTransform()
+						: getNewContentTransform()
 								.equals(getInitialContentTransform()))
 				&& getNewHorizontalScrollOffset() == getInitialHorizontalScrollOffset()
 				&& getNewVerticalScrollOffset() == getInitialVerticalScrollOffset();
@@ -415,7 +415,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 
 	/**
 	 * Sets the initial content transform before applying the new value.
-	 * 
+	 *
 	 * @param initialContentTransform
 	 *            The initialContentTransform to set.
 	 */
@@ -426,7 +426,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 
 	/**
 	 * Sets the initial height before applying the new value.
-	 * 
+	 *
 	 * @param initialHeight
 	 *            The initialHeight to set.
 	 */
@@ -436,7 +436,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 
 	/**
 	 * Sets the initial horizontal scroll offset before applying the new value.
-	 * 
+	 *
 	 * @param initialHorizontalScrollOffset
 	 *            The initialHorizontalScrollOffset to set.
 	 */
@@ -447,7 +447,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 
 	/**
 	 * Sets the initial vertical scroll offset before applying the new value.
-	 * 
+	 *
 	 * @param initialVerticalScrollOffset
 	 *            The initialVerticalScrollOffset to set.
 	 */

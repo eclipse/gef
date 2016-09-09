@@ -135,7 +135,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		checkInitialized();
 
 		// determine initial and final zoom level
-		double initialZoomLevel = getChangeViewportOperation().getNewTransform().getScaleX();
+		double initialZoomLevel = getChangeViewportOperation().getNewContentTransform().getScaleX();
 		double finalZoomLevel = initialZoomLevel * relativeZoom;
 
 		// open nested/nesting graph depending on zoom level
