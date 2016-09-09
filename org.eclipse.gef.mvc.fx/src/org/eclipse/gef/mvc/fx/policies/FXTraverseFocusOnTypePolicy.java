@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
+import org.eclipse.gef.mvc.parts.IContentPart;
+
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -40,6 +43,7 @@ public class FXTraverseFocusOnTypePolicy extends AbstractFXInteractionPolicy
 
 	@Override
 	public void pressed(KeyEvent event) {
+		// discard keystrokes other than TAB
 		if (!isTraverse(event)) {
 			return;
 		}
@@ -51,15 +55,15 @@ public class FXTraverseFocusOnTypePolicy extends AbstractFXInteractionPolicy
 					"Cannot find <FXFocusTraversalPolicy> for host <"
 							+ getHost() + ">.");
 		}
-
 		// perform focus traversal
 		init(focusTraversalPolicy);
-		if (event.isShiftDown()) {
-			focusTraversalPolicy.focusPrevious();
-		} else {
-			focusTraversalPolicy.focusNext();
+		IContentPart<Node, ? extends Node> focused = event.isShiftDown()
+				? focusTraversalPolicy.focusPrevious()
+				: focusTraversalPolicy.focusNext();
+		// reveal the newly focused part
+		if (focused != null) {
+			focused.getRoot().getViewer().reveal(focused);
 		}
-
 		// execute on stack
 		commit(focusTraversalPolicy);
 	}

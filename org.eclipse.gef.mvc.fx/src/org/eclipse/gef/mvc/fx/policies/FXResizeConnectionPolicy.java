@@ -18,14 +18,11 @@ import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.FXBendConnectionOperation;
-import org.eclipse.gef.mvc.fx.operations.FXRevealOperation;
-import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.operations.BendContentOperation;
-import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.parts.IBendableContentPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint;
+import org.eclipse.gef.mvc.parts.IVisualPart;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -60,12 +57,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		ForwardUndoCompositeOperation resizeAndRevealOperation = new ForwardUndoCompositeOperation(
-				"Bend and Reveal");
-		resizeAndRevealOperation
-				.add(new FXBendConnectionOperation(getHost().getVisual()));
-		resizeAndRevealOperation.add(new FXRevealOperation(getHost()));
-		return resizeAndRevealOperation;
+		return new FXBendConnectionOperation(getHost().getVisual());
 	}
 
 	@Override
@@ -82,8 +74,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	 * @return The {@link FXBendConnectionOperation} used to resize the visual.
 	 */
 	protected FXBendConnectionOperation getBendConnectionOperation() {
-		return (FXBendConnectionOperation) ((AbstractCompositeOperation) getOperation())
-				.getOperations().get(0);
+		return (FXBendConnectionOperation) getOperation();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -121,7 +112,8 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 		super.init();
 		// save initial anchor positions
 		Connection connection = getHost().getVisual();
-		initialPositions = connection.getPointsUnmodifiable().toArray(new Point[] {});
+		initialPositions = connection.getPointsUnmodifiable()
+				.toArray(new Point[] {});
 		// compute relative positions
 		Bounds layoutBounds = connection.getLayoutBounds();
 		relX = new Double[initialPositions.length];

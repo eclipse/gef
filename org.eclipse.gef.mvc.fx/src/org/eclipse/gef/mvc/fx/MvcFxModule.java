@@ -19,6 +19,7 @@ import org.eclipse.gef.mvc.MvcModule;
 import org.eclipse.gef.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef.mvc.behaviors.RevealPrimarySelectionBehavior;
 import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.FXGridBehavior;
@@ -306,6 +307,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		// register default behaviors
 		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		bindRevealPrimarySelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindGridBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindFXFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// creation and deletion policy
@@ -944,6 +946,27 @@ public class MvcFxModule extends MvcModule<Node> {
 		binder().bind(ITargetPolicyResolver.class)
 				.to(DefaultTargetPolicyResolver.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
+	}
+
+	/**
+	 * Adds a binding for {@link RevealPrimarySelectionBehavior}, parameterized
+	 * by {@link Node}, to the {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	@SuppressWarnings("serial")
+	protected void bindRevealPrimarySelectionBehaviorAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey
+				.get(new TypeToken<RevealPrimarySelectionBehavior<Node>>() {
+				})).to(new TypeLiteral<RevealPrimarySelectionBehavior<Node>>() {
+				});
 	}
 
 	/**

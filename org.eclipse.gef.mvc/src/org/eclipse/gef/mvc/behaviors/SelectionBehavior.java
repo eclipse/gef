@@ -76,8 +76,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 	protected void addFeedbackAndHandles(
 			List<? extends IContentPart<VR, ? extends VR>> selected) {
 		if (!selected.isEmpty()) {
-			// reveal primary selection
-			getHost().getRoot().getViewer().reveal(selected.get(0));
 			// add feedback individually for the selected parts
 			for (IContentPart<VR, ? extends VR> sel : selected) {
 				addFeedback(sel);

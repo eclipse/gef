@@ -13,11 +13,8 @@ package org.eclipse.gef.mvc.fx.policies;
 
 import java.util.List;
 
-import org.eclipse.gef.mvc.fx.operations.FXRevealOperation;
 import org.eclipse.gef.mvc.models.FocusModel;
-import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.operations.ChangeFocusOperation;
-import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IRootPart;
@@ -44,11 +41,7 @@ public class FXFocusTraversalPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		ForwardUndoCompositeOperation focusAndRevealOperation = new ForwardUndoCompositeOperation(
-				"Resize and Reveal");
-		focusAndRevealOperation.add(new ChangeFocusOperation<>(viewer, null));
-		focusAndRevealOperation.add(new FXRevealOperation(getHost()));
-		return focusAndRevealOperation;
+		return new ChangeFocusOperation<>(viewer, null);
 	}
 
 	/**
@@ -188,17 +181,29 @@ public class FXFocusTraversalPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	/**
-	 * Assigns focus to the next part in the traversal cycle.
+	 * Assigns focus to the next part in the traversal cycle. Returns the
+	 * {@link IContentPart} to which focus is assigned by the operation of this
+	 * policy, or <code>null</code> if focus is assigned to the viewer.
+	 *
+	 * @return The {@link IContentPart} to which focus is assigned by the
+	 *         operation of this policy, or <code>null</code> if focus is
+	 *         assigned to the viewer.
 	 */
-	public void focusNext() {
-		traverse(false);
+	public IContentPart<Node, ? extends Node> focusNext() {
+		return traverse(false);
 	}
 
 	/**
-	 * Assigns focus to the previous part in the traversal cycle.
+	 * Assigns focus to the previous part in the traversal cycle. Returns the
+	 * {@link IContentPart} to which focus is assigned by the operation of this
+	 * policy, or <code>null</code> if focus is assigned to the viewer.
+	 *
+	 * @return The {@link IContentPart} to which focus is assigned by the
+	 *         operation of this policy, or <code>null</code> if focus is
+	 *         assigned to the viewer.
 	 */
-	public void focusPrevious() {
-		traverse(true);
+	public IContentPart<Node, ? extends Node> focusPrevious() {
+		return traverse(true);
 	}
 
 	/**
@@ -210,20 +215,7 @@ public class FXFocusTraversalPolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	@SuppressWarnings("unchecked")
 	protected ChangeFocusOperation<Node> getChangeFocusOperation() {
-		return (ChangeFocusOperation<Node>) ((AbstractCompositeOperation) getOperation())
-				.getOperations().get(0);
-	}
-
-	/**
-	 * Returns the {@link FXRevealOperation} that is used to reveal the focus
-	 * part.
-	 *
-	 * @return The {@link FXRevealOperation} that is used to reveal the focus
-	 *         part.
-	 */
-	private FXRevealOperation getRevealOperation() {
-		return (FXRevealOperation) ((AbstractCompositeOperation) getOperation())
-				.getOperations().get(1);
+		return (ChangeFocusOperation<Node>) getOperation();
 	}
 
 	@SuppressWarnings("serial")
@@ -237,12 +229,18 @@ public class FXFocusTraversalPolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
 	 * Traverses the focus forwards or backwards depending on the given flag.
+	 * Returns the {@link IContentPart} to which focus is assigned by the
+	 * operation of this policy, or <code>null</code> if focus is assigned to
+	 * the viewer.
 	 *
 	 * @param backwards
 	 *            <code>true</code> if the focus should be traversed backwards,
 	 *            otherwise <code>false</code>.
+	 * @return The {@link IContentPart} to which focus is assigned by the
+	 *         operation of this policy, or <code>null</code> if focus is
+	 *         assigned to the viewer.
 	 */
-	protected void traverse(boolean backwards) {
+	protected IContentPart<Node, ? extends Node> traverse(boolean backwards) {
 		// get current focus part
 		IContentPart<Node, ? extends Node> current = focusModel.getFocus();
 		IContentPart<Node, ? extends Node> next = null;
@@ -285,8 +283,8 @@ public class FXFocusTraversalPolicy extends AbstractTransactionPolicy<Node> {
 		// give focus to the next part or to the viewer (if next is null)
 		if (next == null || next.isFocusable()) {
 			getChangeFocusOperation().setNewFocused(next);
-			getRevealOperation().setPart(next);
 		}
+		return next;
 	}
 
 }

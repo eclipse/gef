@@ -133,4 +133,5 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 		resizeOperation.setDw(layoutDw);
 		resizeOperation.setDh(layoutDh);
 	}
+
 }
