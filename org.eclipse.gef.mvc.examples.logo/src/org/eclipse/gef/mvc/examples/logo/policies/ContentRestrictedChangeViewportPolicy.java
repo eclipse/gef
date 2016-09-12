@@ -20,7 +20,7 @@ import javafx.geometry.Bounds;
 public class ContentRestrictedChangeViewportPolicy extends FXChangeViewportPolicy {
 
 	@Override
-	protected void locallyExecuteOperation() {
+	protected void doLocallyExecuteOperation() {
 		// determine current translation
 		double tx = getChangeViewportOperation().getNewHorizontalScrollOffset();
 		double ty = getChangeViewportOperation().getNewVerticalScrollOffset();

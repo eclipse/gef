@@ -27,6 +27,7 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 
 	private ITransactionalOperation operation;
 	private boolean initialized;
+	private boolean isLocallyExecuteOperation = false;
 
 	/**
 	 * Checks whether this {@link AbstractTransactionPolicy} is initialized and
@@ -55,16 +56,13 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	 */
 	public ITransactionalOperation commit() {
 		checkInitialized();
-
 		// XXX: We need to locally execute the operation first to ensure
 		// the visuals and content reflect the target state of the operation.
 		// After this, we may safely omit the operation as commit operation in
 		// case its a no-op.
 		locallyExecuteOperation();
-
 		// after commit, we need to be re-initialized
 		initialized = false;
-
 		// clear operation and return current one (and formerly pushed
 		// operations)
 		ITransactionalOperation commit = getOperation();
@@ -89,6 +87,25 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	protected abstract ITransactionalOperation createOperation();
 
 	/**
+	 * Locally executes the {@link ITransactionalOperation} that is updated by
+	 * this policy, i.e. not on the operation history. Maybe used in the "work"
+	 * operations of subclasses.
+	 */
+	protected void doLocallyExecuteOperation() {
+		try {
+			// XXX: We may not skip the local execution of the operation
+			// if it is a no-op, because the visual or content
+			// might already be in a state that is diverse from the initial
+			// state of the operation (so execute might have an actual affect).
+			if (operation != null) {
+				operation.execute(null, null);
+			}
+		} catch (ExecutionException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
 	 * Returns the {@link ITransactionalOperation} that is used to encapsulate
 	 * the changes that are applied by this {@link AbstractTransactionPolicy}
 	 * through its "work" methods.
@@ -109,6 +126,7 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	public void init() {
 		checkUninitialized();
 		initialized = true;
+		setLocallyExecuteOperation(true);
 		operation = createOperation();
 	}
 
@@ -124,22 +142,27 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	}
 
 	/**
+	 * Returns <code>true</code> if the local execution of operations is enabled
+	 * for this {@link AbstractTransactionPolicy}. Otherwise returns
+	 * <code>false</code>.
+	 *
+	 * @return <code>true</code> if the local execution of operations is enabled
+	 *         for this {@link AbstractTransactionPolicy}, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean isLocallyExecuteOperation() {
+		return isLocallyExecuteOperation;
+	}
+
+	/**
 	 * Locally executes the {@link ITransactionalOperation} that is updated by
 	 * this policy, i.e. not on the operation history. Maybe used in the "work"
 	 * operations of subclasses.
 	 *
 	 */
-	protected void locallyExecuteOperation() {
-		try {
-			// XXX: We may not skip the local execution of the operation
-			// if it is a no-op, because the visual or content
-			// might already be in a state that is diverse from the initial
-			// state of the operation (so execute might have an actual affect).
-			if (operation != null) {
-				operation.execute(null, null);
-			}
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
+	protected final void locallyExecuteOperation() {
+		if (isLocallyExecuteOperation()) {
+			doLocallyExecuteOperation();
 		}
 	}
 
@@ -148,6 +171,9 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	 * this policy, i.e. not on the operation history.
 	 */
 	private void locallyUndoOperation() {
+		if (!isLocallyExecuteOperation()) {
+			return;
+		}
 		try {
 			// XXX: We may not skip undo in case the operation is a
 			// no-op when executing it locally, because the visual or content
@@ -169,10 +195,23 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	public void rollback() {
 		// after rollback, we need to be re-initialized
 		initialized = false;
-
 		// clear operation and return current one (and formerly pushed
 		// operations)
 		locallyUndoOperation();
 		operation = null;
 	}
+
+	/**
+	 * Enables or disables the local execution of operations for this
+	 * {@link AbstractTransactionPolicy} depending on the given flag.
+	 *
+	 * @param isLocallyExecuteOperation
+	 *            <code>true</code> in order to enable the local execution of
+	 *            operations, <code>false</code> in order to disable the local
+	 *            execution of operations.
+	 */
+	public void setLocallyExecuteOperation(boolean isLocallyExecuteOperation) {
+		this.isLocallyExecuteOperation = isLocallyExecuteOperation;
+	}
+
 }

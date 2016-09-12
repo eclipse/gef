@@ -34,9 +34,9 @@ import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.policies.AbstractBendPolicy;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
@@ -292,6 +292,31 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				selectedPointCurrentPositionInLocal);
 	}
 
+	@Override
+	protected void doLocallyExecuteOperation() {
+		// locally execute bend operation
+		try {
+			getBendOperation().execute(null, null);
+		} catch (Exception x) {
+			throw new IllegalStateException(x);
+		}
+		// apply hints
+		if (usePreMoveHints) {
+			getUpdateHintsOperation().setNewHints(preMoveStartHint,
+					preMoveEndHint);
+		} else {
+			Point newStartHint = computeStartHint();
+			Point newEndHint = computeEndHint();
+			getUpdateHintsOperation().setNewHints(newStartHint, newEndHint);
+		}
+		// locally execute hints operation
+		try {
+			getUpdateHintsOperation().execute(null, null);
+		} catch (Exception x) {
+			throw new IllegalStateException(x);
+		}
+	}
+
 	/**
 	 * Determines the {@link IAnchor} that should replace the anchor of the
 	 * currently selected point. If the point can connect, the
@@ -476,11 +501,10 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// compensate the movement of the local coordinate system w.r.t. the
 		// scene coordinate system (the scene coordinate system stays consistent
 		// w.r.t. mouse movement)
-		Point deltaInLocal = mouseInLocal
-				.getTranslated(FX2Geometry
-						.toPoint(getConnection().sceneToLocal(Geometry2FX
-								.toFXPoint(initialMousePositionInScene)))
-						.getNegated());
+		Point deltaInLocal = mouseInLocal.getTranslated(FX2Geometry
+				.toPoint(getConnection().sceneToLocal(
+						Geometry2FX.toFXPoint(initialMousePositionInScene)))
+				.getNegated());
 		return deltaInLocal;
 	}
 
@@ -614,31 +638,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	private boolean isUnpreciseEquals(double y0, double y1) {
 		return Math.abs(y0 - y1) < 1;
-	}
-
-	@Override
-	protected void locallyExecuteOperation() {
-		// locally execute bend operation
-		try {
-			getBendOperation().execute(null, null);
-		} catch (Exception x) {
-			throw new IllegalStateException(x);
-		}
-		// apply hints
-		if (usePreMoveHints) {
-			getUpdateHintsOperation().setNewHints(preMoveStartHint,
-					preMoveEndHint);
-		} else {
-			Point newStartHint = computeStartHint();
-			Point newEndHint = computeEndHint();
-			getUpdateHintsOperation().setNewHints(newStartHint, newEndHint);
-		}
-		// locally execute hints operation
-		try {
-			getUpdateHintsOperation().execute(null, null);
-		} catch (Exception x) {
-			throw new IllegalStateException(x);
-		}
 	}
 
 	/**
