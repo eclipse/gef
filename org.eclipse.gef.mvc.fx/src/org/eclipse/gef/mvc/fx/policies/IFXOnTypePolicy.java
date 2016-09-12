@@ -30,8 +30,9 @@ import javafx.scene.input.KeyEvent;
 public interface IFXOnTypePolicy extends IPolicy<Node> {
 
 	/**
-	 * This callback method is called whenever the user presses a key. The most
-	 * recent {@link KeyEvent} and a {@link Set} of currently pressed
+	 * This callback method is called whenever the user presses keyboard keys so
+	 * that a character is generated. The most recent {@link KeyEvent} of type
+	 * {@link KeyEvent#KEY_TYPED} and a {@link Set} of currently pressed
 	 * {@link KeyCode}s is passed to the method for processing.
 	 *
 	 * @param keyEvent

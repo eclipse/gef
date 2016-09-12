@@ -52,6 +52,11 @@ public class FXTypeTool extends AbstractTool<Node> {
 	 */
 	public static final Class<IFXOnTypePolicy> ON_TYPE_POLICY_KEY = IFXOnTypePolicy.class;
 
+	/**
+	 * The type of the policy that has to be supported by target parts.
+	 */
+	public static final Class<IFXOnStrokePolicy> ON_STROKE_POLICY_KEY = IFXOnStrokePolicy.class;
+
 	private Map<Scene, EventHandler<? super KeyEvent>> pressedFilterMap = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<? super KeyEvent>> releasedFilterMap = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
@@ -130,6 +135,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
+					boolean isInitialPress = false;
 					if (pressedKeys.isEmpty()) {
 						// determine viewer that contains the given target part
 						Node targetNode = null;
@@ -167,12 +173,13 @@ public class FXTypeTool extends AbstractTool<Node> {
 
 						// open execution transaction
 						getDomain().openExecutionTransaction(FXTypeTool.this);
+						isInitialPress = true;
 
 						// determine target policies on first key press
 						setActivePolicies(activeViewer,
 								targetPolicyResolver.getTargetPolicies(
 										FXTypeTool.this, targetNode,
-										ON_TYPE_POLICY_KEY));
+										ON_STROKE_POLICY_KEY));
 					}
 
 					// store initially pressed key
@@ -181,7 +188,11 @@ public class FXTypeTool extends AbstractTool<Node> {
 					// notify target policies
 					for (IFXOnStrokePolicy policy : getActivePolicies(
 							activeViewer)) {
-						policy.initialPress(event);
+						if (isInitialPress) {
+							policy.initialPress(event);
+						} else {
+							policy.press(event);
+						}
 					}
 				}
 			};
@@ -190,15 +201,21 @@ public class FXTypeTool extends AbstractTool<Node> {
 			EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
+					boolean isFinalRelease = pressedKeys.size() == 1
+							&& pressedKeys.contains(event.getCode());
+
 					// notify target policies
 					for (IFXOnStrokePolicy policy : getActivePolicies(
 							activeViewer)) {
-						policy.finalRelease(event);
+						if (isFinalRelease) {
+							policy.finalRelease(event);
+						} else {
+							policy.release(event);
+						}
 					}
 
 					// check if the last pressed key is released now
-					if (pressedKeys.size() == 1
-							&& pressedKeys.contains(event.getCode())) {
+					if (isFinalRelease) {
 						// clear active policies and close execution transaction
 						// only when the initially pressed key is released
 						clearActivePolicies(activeViewer);
@@ -246,7 +263,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
 					for (IFXOnTypePolicy policy : policies) {
-						// policy.typed(event);
+						policy.type(event, pressedKeys);
 					}
 					if (pressedKeys.isEmpty()) {
 						getDomain().closeExecutionTransaction(FXTypeTool.this);
