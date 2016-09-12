@@ -234,24 +234,15 @@ public class FXControlAdapter<T extends Control> extends Region {
 	 */
 	protected FXCanvas getFXCanvas(Scene scene) {
 		if (scene != null) {
+			// TODO: When dropping support for JavaSE-1.8, we may switch to use
+			// FXCanvas.getFXCanvas(Scene), which was added in JavaSE-1.9 to
+			// retrieve the enclosing canvas for an embedded scene.
 			return getFXCanvas(scene.getWindow());
 		}
 		return null;
 	}
 
-	/**
-	 * Returns the {@link FXCanvas} which serves as the host container for the
-	 * given {@link Window}. Therefore, it is only valid to call this method for
-	 * the {@link Window} of a JavaFX scene graph which is embedded into an SWT
-	 * application via {@link FXCanvas}.
-	 *
-	 * @param window
-	 *            The {@link Window} for which to determine the surrounding
-	 *            {@link FXCanvas}.
-	 * @return The {@link FXCanvas} which serves as the host container for the
-	 *         given {@link Window}.
-	 */
-	protected FXCanvas getFXCanvas(Window window) {
+	private FXCanvas getFXCanvas(Window window) {
 		if (window != null) {
 			// Obtain FXCanvas by accessing outer class
 			// of FXCanvas$HostContainer
