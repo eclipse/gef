@@ -33,6 +33,10 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
 
 	private FXChangeViewportPolicy viewportPolicy;
 
+	@Override
+	public void abortZoom() {
+	}
+
 	/**
 	 * Determines the {@link FXChangeViewportPolicy} that is used by this
 	 * policy.
@@ -41,6 +45,22 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
 	 */
 	protected FXChangeViewportPolicy determineViewportPolicy() {
 		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
+	}
+
+	@Override
+	public void endZoom(ZoomEvent event) {
+		if (invalidGesture) {
+			return;
+		}
+		ITransactionalOperation commit = getViewportPolicy().commit();
+		if (commit != null && !commit.isNoOp()) {
+			try {
+				getHost().getRoot().getViewer().getDomain().execute(commit,
+						new NullProgressMonitor());
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	/**
@@ -66,42 +86,22 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
 	}
 
 	@Override
-	public void zoom(ZoomEvent e) {
-		if (invalidGesture) {
-			return;
-		}
-		getViewportPolicy().roundAndZoomRelative(e.getZoomFactor(),
-				e.getSceneX(), e.getSceneY());
-	}
-
-	@Override
-	public void zoomAborted() {
-	}
-
-	@Override
-	public void zoomFinished(ZoomEvent event) {
-		if (invalidGesture) {
-			return;
-		}
-		ITransactionalOperation commit = getViewportPolicy().commit();
-		if (commit != null && !commit.isNoOp()) {
-			try {
-				getHost().getRoot().getViewer().getDomain().execute(commit,
-						new NullProgressMonitor());
-			} catch (ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	@Override
-	public void zoomStarted(ZoomEvent e) {
+	public void startZoom(ZoomEvent e) {
 		invalidGesture = !isZoom(e);
 		if (invalidGesture) {
 			return;
 		}
 		viewportPolicy = determineViewportPolicy();
 		viewportPolicy.init();
+	}
+
+	@Override
+	public void zoom(ZoomEvent e) {
+		if (invalidGesture) {
+			return;
+		}
+		getViewportPolicy().roundAndZoomRelative(e.getZoomFactor(),
+				e.getSceneX(), e.getSceneY());
 	}
 
 }

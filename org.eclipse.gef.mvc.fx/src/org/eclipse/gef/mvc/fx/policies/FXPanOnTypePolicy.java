@@ -59,6 +59,50 @@ public class FXPanOnTypePolicy extends AbstractFXInteractionPolicy
 
 	private boolean invalidGesture = false;
 
+	@Override
+	public void abortPress() {
+	}
+
+	@Override
+	public void finalRelease(KeyEvent event) {
+		if (invalidGesture) {
+			return;
+		}
+
+		long now = System.currentTimeMillis();
+
+		if (event.getCode().equals(KeyCode.DOWN)) {
+			isDown = false;
+			totalMillisDown += now - startMillisDown;
+			currentMillisDown = 0;
+		} else if (event.getCode().equals(KeyCode.UP)) {
+			isUp = false;
+			totalMillisUp += now - startMillisUp;
+			currentMillisUp = 0;
+		} else if (event.getCode().equals(KeyCode.LEFT)) {
+			isLeft = false;
+			totalMillisLeft += now - startMillisLeft;
+			currentMillisLeft = 0;
+		} else if (event.getCode().equals(KeyCode.RIGHT)) {
+			isRight = false;
+			totalMillisRight += now - startMillisRight;
+			currentMillisRight = 0;
+		}
+
+		if (isRunning && !isDown && !isUp && !isLeft && !isRight) {
+			isRunning = false;
+			timer.stop();
+			updateScrollPosition();
+			FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
+					.getAdapter(FXChangeViewportPolicy.class);
+			commit(viewportPolicy);
+			totalMillisDown = 0;
+			totalMillisUp = 0;
+			totalMillisLeft = 0;
+			totalMillisRight = 0;
+		}
+	}
+
 	/**
 	 * Returns the amount of units scrolled per second when a direction key is
 	 * pressed.
@@ -70,26 +114,8 @@ public class FXPanOnTypePolicy extends AbstractFXInteractionPolicy
 		return DEFAULT_SCROLL_AMOUNT_PER_SECOND;
 	}
 
-	/**
-	 * Returns <code>true</code> if the given {@link KeyEvent} should trigger
-	 * panning. Otherwise returns <code>false</code>. Per default, will return
-	 * <code>true</code> if <code>&lt;Up&gt;</code>, <code>&lt;Down&gt;</code>,
-	 * <code>&lt;Left&gt;</code>, <code>&lt;Right&gt;</code>
-	 *
-	 * @param event
-	 *            The {@link KeyEvent} in question.
-	 * @return <code>true</code> to indicate that the given {@link KeyEvent}
-	 *         should trigger panning, otherwise <code>false</code>.
-	 */
-	protected boolean isPan(KeyEvent event) {
-		return event.getCode().equals(KeyCode.DOWN)
-				|| event.getCode().equals(KeyCode.UP)
-				|| event.getCode().equals(KeyCode.LEFT)
-				|| event.getCode().equals(KeyCode.RIGHT);
-	}
-
 	@Override
-	public void pressed(KeyEvent event) {
+	public void initialPress(KeyEvent event) {
 		invalidGesture = !isPan(event);
 		if (invalidGesture) {
 			return;
@@ -149,52 +175,30 @@ public class FXPanOnTypePolicy extends AbstractFXInteractionPolicy
 		}
 	}
 
-	@Override
-	public void released(KeyEvent event) {
-		if (invalidGesture) {
-			return;
-		}
-
-		long now = System.currentTimeMillis();
-
-		if (event.getCode().equals(KeyCode.DOWN)) {
-			isDown = false;
-			totalMillisDown += now - startMillisDown;
-			currentMillisDown = 0;
-		} else if (event.getCode().equals(KeyCode.UP)) {
-			isUp = false;
-			totalMillisUp += now - startMillisUp;
-			currentMillisUp = 0;
-		} else if (event.getCode().equals(KeyCode.LEFT)) {
-			isLeft = false;
-			totalMillisLeft += now - startMillisLeft;
-			currentMillisLeft = 0;
-		} else if (event.getCode().equals(KeyCode.RIGHT)) {
-			isRight = false;
-			totalMillisRight += now - startMillisRight;
-			currentMillisRight = 0;
-		}
-
-		if (isRunning && !isDown && !isUp && !isLeft && !isRight) {
-			isRunning = false;
-			timer.stop();
-			updateScrollPosition();
-			FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
-					.getAdapter(FXChangeViewportPolicy.class);
-			commit(viewportPolicy);
-			totalMillisDown = 0;
-			totalMillisUp = 0;
-			totalMillisLeft = 0;
-			totalMillisRight = 0;
-		}
+	/**
+	 * Returns <code>true</code> if the given {@link KeyEvent} should trigger
+	 * panning. Otherwise returns <code>false</code>. Per default, will return
+	 * <code>true</code> if <code>&lt;Up&gt;</code>, <code>&lt;Down&gt;</code>,
+	 * <code>&lt;Left&gt;</code>, <code>&lt;Right&gt;</code>
+	 *
+	 * @param event
+	 *            The {@link KeyEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link KeyEvent}
+	 *         should trigger panning, otherwise <code>false</code>.
+	 */
+	protected boolean isPan(KeyEvent event) {
+		return event.getCode().equals(KeyCode.DOWN)
+				|| event.getCode().equals(KeyCode.UP)
+				|| event.getCode().equals(KeyCode.LEFT)
+				|| event.getCode().equals(KeyCode.RIGHT);
 	}
 
 	@Override
-	public void typed(KeyEvent event) {
+	public void press(KeyEvent event) {
 	}
 
 	@Override
-	public void unfocus() {
+	public void release(KeyEvent event) {
 	}
 
 	/**

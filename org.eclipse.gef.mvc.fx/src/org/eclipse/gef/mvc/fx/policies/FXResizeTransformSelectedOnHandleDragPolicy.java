@@ -174,7 +174,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	@Override
-	public void dragAborted() {
+	public void abortDrag() {
 		if (invalidGesture) {
 			return;
 		}
@@ -359,7 +359,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	@Override
-	public void press(MouseEvent e) {
+	public void startDrag(MouseEvent e) {
 		targetParts = getTargetParts();
 		invalidGesture = !isResizeTransform(e);
 		if (invalidGesture) {
@@ -409,7 +409,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta) {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (invalidGesture) {
 			invalidGesture = false;
 			return;

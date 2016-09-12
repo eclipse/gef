@@ -196,7 +196,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void dragAborted() {
+	public void abortDrag() {
 		if (!invalidGesture && feedback != null) {
 			removeFeedback();
 		}
@@ -271,7 +271,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void press(MouseEvent e) {
+	public void startDrag(MouseEvent e) {
 		invalidGesture = !isMarquee(e);
 		if (invalidGesture) {
 			return;
@@ -285,7 +285,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta) {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (invalidGesture) {
 			return;
 		}

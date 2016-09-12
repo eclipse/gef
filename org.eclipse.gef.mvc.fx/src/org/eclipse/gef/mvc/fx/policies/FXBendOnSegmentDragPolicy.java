@@ -78,7 +78,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void dragAborted() {
+	public void abortDrag() {
 		if (isInvalid) {
 			return;
 		}
@@ -213,7 +213,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void press(MouseEvent e) {
+	public void startDrag(MouseEvent e) {
 		isInvalid = !isBend(e);
 		if (isInvalid) {
 			return;
@@ -234,7 +234,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta) {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
 		}

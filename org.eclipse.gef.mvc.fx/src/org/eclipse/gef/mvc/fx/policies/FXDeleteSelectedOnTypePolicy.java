@@ -36,6 +36,43 @@ import javafx.scene.input.KeyEvent;
 public class FXDeleteSelectedOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
+	@Override
+	public void abortPress() {
+	}
+
+	@Override
+	public void finalRelease(KeyEvent event) {
+	}
+
+	@SuppressWarnings("serial")
+	@Override
+	public void initialPress(KeyEvent event) {
+		if (!isDelete(event)) {
+			return;
+		}
+
+		// get current selection
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		List<IContentPart<Node, ? extends Node>> selected = new ArrayList<>(
+				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelectionUnmodifiable());
+
+		// if no parts are selected, we do not delete anything
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		// delete selected parts
+		DeletionPolicy<Node> deletionPolicy = getHost().getRoot()
+				.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
+				});
+		init(deletionPolicy);
+		for (IContentPart<Node, ? extends Node> s : selected) {
+			deletionPolicy.delete(s);
+		}
+		commit(deletionPolicy);
+	}
+
 	/**
 	 * Returns <code>true</code> if the given {@link KeyEvent} is a "delete"
 	 * event, i.e. the {@link KeyEvent#getCode()} is {@link KeyCode#DELETE} and
@@ -64,45 +101,12 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXInteractionPolicy
 		return true;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
-	public void pressed(KeyEvent event) {
-		if (!isDelete(event)) {
-			return;
-		}
-
-		// get current selection
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<IContentPart<Node, ? extends Node>> selected = new ArrayList<>(
-				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelectionUnmodifiable());
-
-		// if no parts are selected, we do not delete anything
-		if (selected.isEmpty()) {
-			return;
-		}
-
-		// delete selected parts
-		DeletionPolicy<Node> deletionPolicy = getHost().getRoot()
-				.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
-				});
-		init(deletionPolicy);
-		for (IContentPart<Node, ? extends Node> s : selected) {
-			deletionPolicy.delete(s);
-		}
-		commit(deletionPolicy);
+	public void press(KeyEvent event) {
 	}
 
 	@Override
-	public void released(KeyEvent event) {
-	}
-
-	@Override
-	public void typed(KeyEvent event) {
-	}
-
-	@Override
-	public void unfocus() {
+	public void release(KeyEvent event) {
 	}
 
 }

@@ -28,6 +28,27 @@ import javafx.scene.input.ZoomEvent;
 public interface IFXOnPinchSpreadPolicy extends IPolicy<Node> {
 
 	/**
+	 * Reaction to the unexpected finish of a pinch gesture.
+	 */
+	void abortZoom();
+
+	/**
+	 * Reaction to the finish of pinch (close fingers) gestures.
+	 *
+	 * @param e
+	 *            The original {@link ZoomEvent}.
+	 */
+	void endZoom(ZoomEvent e);
+
+	/**
+	 * Reaction to the detection of pinch (close fingers) gestures.
+	 *
+	 * @param e
+	 *            The original {@link ZoomEvent}.
+	 */
+	void startZoom(ZoomEvent e);
+
+	/**
 	 * Continuous reaction to pinch (close fingers) gestures. Called
 	 * continuously on finger movement, after the gesture has been detected, and
 	 * before it has been finished.
@@ -36,26 +57,5 @@ public interface IFXOnPinchSpreadPolicy extends IPolicy<Node> {
 	 *            The original {@link ZoomEvent}.
 	 */
 	void zoom(ZoomEvent e);
-
-	/**
-	 * Reaction to the unexpected finish of a pinch gesture.
-	 */
-	void zoomAborted();
-
-	/**
-	 * Reaction to the finish of pinch (close fingers) gestures.
-	 *
-	 * @param e
-	 *            The original {@link ZoomEvent}.
-	 */
-	void zoomFinished(ZoomEvent e);
-
-	/**
-	 * Reaction to the detection of pinch (close fingers) gestures.
-	 *
-	 * @param e
-	 *            The original {@link ZoomEvent}.
-	 */
-	void zoomStarted(ZoomEvent e);
 
 }

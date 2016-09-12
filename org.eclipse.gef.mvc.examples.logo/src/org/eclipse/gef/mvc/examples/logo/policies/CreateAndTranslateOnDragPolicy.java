@@ -66,7 +66,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 	}
 
 	@Override
-	public void dragAborted() {
+	public void abortDrag() {
 		if (createdShapePart == null) {
 			return;
 		}
@@ -74,7 +74,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 		// forward event to bend target part
 		if (dragPolicies != null) {
 			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-				dragPolicy.dragAborted();
+				dragPolicy.abortDrag();
 			}
 		}
 
@@ -110,7 +110,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 
 	@SuppressWarnings("serial")
 	@Override
-	public void press(MouseEvent event) {
+	public void startDrag(MouseEvent event) {
 		// find model part
 		IRootPart<Node, ? extends Node> contentRoot = getContentViewer().getRootPart();
 		IVisualPart<Node, ? extends Node> modelPart = contentRoot.getChildrenUnmodifiable().get(0);
@@ -157,13 +157,13 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 		dragPolicies = createdShapePart.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
 		if (dragPolicies != null) {
 			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-				dragPolicy.press(event);
+				dragPolicy.startDrag(event);
 			}
 		}
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta) {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (createdShapePart == null) {
 			return;
 		}
@@ -171,7 +171,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 		// forward event to bend target part
 		if (dragPolicies != null) {
 			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-				dragPolicy.release(e, delta);
+				dragPolicy.endDrag(e, delta);
 			}
 		}
 

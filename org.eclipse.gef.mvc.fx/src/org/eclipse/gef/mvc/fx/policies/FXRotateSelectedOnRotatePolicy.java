@@ -112,7 +112,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void rotationAborted() {
+	public void abortRotate() {
 		if (invalidGesture) {
 			return;
 		}
@@ -128,7 +128,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void rotationFinished(RotateEvent e) {
+	public void endRotate(RotateEvent e) {
 		if (invalidGesture) {
 			return;
 		}
@@ -145,7 +145,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void rotationStarted(RotateEvent e) {
+	public void startRotate(RotateEvent e) {
 		targetParts = determineTargetParts();
 
 		invalidGesture = !isRotate(e);

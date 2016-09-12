@@ -82,7 +82,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void dragAborted() {
+	public void abortDrag() {
 		if (invalidGesture) {
 			return;
 		}
@@ -212,7 +212,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void press(MouseEvent e) {
+	public void startDrag(MouseEvent e) {
 		// determine target parts
 		targetParts = getTargetParts();
 
@@ -238,7 +238,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta) {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		// abort this policy if no target parts could be found
 		if (invalidGesture) {
 			return;

@@ -122,7 +122,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					for (IPolicy<Node> policy : getActivePolicies(
 							activeViewer)) {
 						if (policy instanceof IFXOnDragPolicy) {
-							((IFXOnDragPolicy) policy).dragAborted();
+							((IFXOnDragPolicy) policy).abortDrag();
 						}
 					}
 					// clear active policies
@@ -327,7 +327,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					// send press() to all drag policies
 					for (IFXOnDragPolicy policy : policies) {
-						policy.press(e);
+						policy.startDrag(e);
 					}
 				}
 
@@ -352,7 +352,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					// send release() to all drag policies
 					for (IFXOnDragPolicy policy : getActivePolicies(
 							activeViewer)) {
-						policy.release(e, new Dimension(dx, dy));
+						policy.endDrag(e, new Dimension(dx, dy));
 					}
 
 					// clear active policies before processing release

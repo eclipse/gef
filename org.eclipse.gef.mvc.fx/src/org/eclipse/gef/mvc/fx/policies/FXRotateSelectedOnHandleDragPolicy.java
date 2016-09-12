@@ -118,7 +118,7 @@ public class FXRotateSelectedOnHandleDragPolicy
 	}
 
 	@Override
-	public void dragAborted() {
+	public void abortDrag() {
 		if (invalidGesture) {
 			return;
 		}
@@ -199,7 +199,7 @@ public class FXRotateSelectedOnHandleDragPolicy
 	}
 
 	@Override
-	public void press(MouseEvent e) {
+	public void startDrag(MouseEvent e) {
 		// do nothing when the user does not press control
 		invalidGesture = !isRotate(e);
 		if (invalidGesture) {
@@ -248,7 +248,7 @@ public class FXRotateSelectedOnHandleDragPolicy
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta) {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		// do nothing when the user does not press control
 		if (invalidGesture) {
 			invalidGesture = false;

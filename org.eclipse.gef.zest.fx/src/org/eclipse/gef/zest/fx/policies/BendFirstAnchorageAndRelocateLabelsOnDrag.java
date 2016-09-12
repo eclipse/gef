@@ -45,12 +45,12 @@ public class BendFirstAnchorageAndRelocateLabelsOnDrag extends FXBendFirstAnchor
 	}
 
 	@Override
-	public void dragAborted() {
+	public void abortDrag() {
 		for (AbstractLabelPart lp : getLabelParts()) {
 			rollback(lp.getAdapter(TransformLabelPolicy.class));
 			restoreRefreshVisuals(lp);
 		}
-		super.dragAborted();
+		super.abortDrag();
 	}
 
 	private List<AbstractLabelPart> getEdgeLabelParts(EdgePart edgePart) {
@@ -82,8 +82,8 @@ public class BendFirstAnchorageAndRelocateLabelsOnDrag extends FXBendFirstAnchor
 	}
 
 	@Override
-	public void press(MouseEvent e) {
-		super.press(e);
+	public void startDrag(MouseEvent e) {
+		super.startDrag(e);
 		// init label transform policies
 		for (AbstractLabelPart lp : getLabelParts()) {
 			storeAndDisableRefreshVisuals(lp);
@@ -92,12 +92,12 @@ public class BendFirstAnchorageAndRelocateLabelsOnDrag extends FXBendFirstAnchor
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta) {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		for (AbstractLabelPart lp : getLabelParts()) {
 			commit(lp.getAdapter(TransformLabelPolicy.class));
 			restoreRefreshVisuals(lp);
 		}
-		super.release(e, delta);
+		super.endDrag(e, delta);
 	}
 
 }

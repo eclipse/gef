@@ -27,13 +27,10 @@ import javafx.scene.input.KeyEvent;
 public interface IFXOnTypePolicy extends IPolicy<Node> {
 
 	/**
-	 * This callback method is invoked when the user presses a key while the
-	 * host has keyboard focus.
-	 *
-	 * @param event
-	 *            The original {@link KeyEvent}.
+	 * This callback method is invoked when the viewer loses its focus while a
+	 * key press/release gesture is running.
 	 */
-	void pressed(KeyEvent event);
+	void abortPress();
 
 	/**
 	 * This callback method is invoked when the user releases a key while the
@@ -42,21 +39,37 @@ public interface IFXOnTypePolicy extends IPolicy<Node> {
 	 * @param event
 	 *            The original {@link KeyEvent}.
 	 */
-	void released(KeyEvent event);
+	void finalRelease(KeyEvent event);
 
 	/**
-	 * This callback method is invoked when the user types a unicode key while
-	 * the host has keyboard focus.
+	 * This callback method is invoked when the user presses a key while the
+	 * host has keyboard focus.
 	 *
 	 * @param event
 	 *            The original {@link KeyEvent}.
 	 */
-	void typed(KeyEvent event);
+	void initialPress(KeyEvent event);
 
 	/**
-	 * This callback method is invoked when the viewer loses its focus while a
-	 * key press/release gesture is running.
+	 * This callback method is invoked when the user presses a key while a
+	 * keyboard gesture is active, i.e. after the initial press (
+	 * {@link #initialPress(KeyEvent)}) and before the final release
+	 * ({@link #finalRelease(KeyEvent)}).
+	 *
+	 * @param event
+	 *            The original {@link KeyEvent}.
 	 */
-	void unfocus();
+	void press(KeyEvent event);
+
+	/**
+	 * This callback method is invoked when the user releases a key while a
+	 * keyboard gesture is active, i.e. after the initial press (
+	 * {@link #initialPress(KeyEvent)}) and before the final release
+	 * ({@link #finalRelease(KeyEvent)}).
+	 *
+	 * @param event
+	 *            The original {@link KeyEvent}.
+	 */
+	void release(KeyEvent event);
 
 }

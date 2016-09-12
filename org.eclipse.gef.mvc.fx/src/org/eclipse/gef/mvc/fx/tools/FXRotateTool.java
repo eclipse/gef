@@ -76,7 +76,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 						// cancel target policies
 						for (IFXOnRotatePolicy policy : getActivePolicies(
 								viewer)) {
-							policy.rotationAborted();
+							policy.abortRotate();
 						}
 						// clear active policies and close execution
 						// transaction
@@ -107,7 +107,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 				@Override
 				protected void rotationFinished(RotateEvent event) {
 					for (IFXOnRotatePolicy policy : getActivePolicies(viewer)) {
-						policy.rotationFinished(event);
+						policy.endRotate(event);
 					}
 					clearActivePolicies(viewer);
 					getDomain().closeExecutionTransaction(FXRotateTool.this);
@@ -124,7 +124,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 									ON_ROTATE_POLICY_KEY));
 					getDomain().openExecutionTransaction(FXRotateTool.this);
 					for (IFXOnRotatePolicy policy : getActivePolicies(viewer)) {
-						policy.rotationStarted(event);
+						policy.startRotate(event);
 					}
 				}
 			};

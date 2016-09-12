@@ -30,12 +30,20 @@ import javafx.scene.input.KeyEvent;
 public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnTypePolicy {
 
 	@Override
+	public void abortPress() {
+	}
+
+	@Override
+	public void finalRelease(KeyEvent event) {
+	}
+
+	@Override
 	public NodePart getHost() {
 		return (NodePart) super.getHost();
 	}
 
 	@Override
-	public void pressed(KeyEvent event) {
+	public void initialPress(KeyEvent event) {
 		KeyCode keyCode = event.getCode();
 		if (KeyCode.E.equals(keyCode)) {
 			ShowHiddenNeighborsPolicy hiddenNeighborsPolicy = getHost().getAdapter(ShowHiddenNeighborsPolicy.class);
@@ -46,15 +54,11 @@ public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<N
 	}
 
 	@Override
-	public void released(KeyEvent event) {
+	public void press(KeyEvent event) {
 	}
 
 	@Override
-	public void typed(KeyEvent event) {
-	}
-
-	@Override
-	public void unfocus() {
+	public void release(KeyEvent event) {
 	}
 
 }

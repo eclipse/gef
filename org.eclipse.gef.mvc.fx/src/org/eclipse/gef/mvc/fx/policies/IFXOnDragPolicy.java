@@ -36,7 +36,7 @@ public interface IFXOnDragPolicy extends IPolicy<Node> {
 	 * @param e
 	 *            The original {@link MouseEvent}.
 	 * @param delta
-	 *            The mouse offset since {@link #press(MouseEvent)} (in pixel).
+	 *            The mouse offset since {@link #startDrag(MouseEvent)} (in pixel).
 	 */
 	void drag(MouseEvent e, Dimension delta);
 
@@ -47,7 +47,7 @@ public interface IFXOnDragPolicy extends IPolicy<Node> {
 	 * execution transaction to which operations are added during a mouse drag
 	 * gesture is closed after execution of this method.
 	 */
-	void dragAborted();
+	void abortDrag();
 
 	/**
 	 * Restores the original mouse cursor when it was previously changed by a
@@ -65,7 +65,7 @@ public interface IFXOnDragPolicy extends IPolicy<Node> {
 	 * @param e
 	 *            The original {@link MouseEvent}
 	 */
-	void press(MouseEvent e);
+	void startDrag(MouseEvent e);
 
 	/**
 	 * This callback method is invoked when the initially pressed mouse button
@@ -76,9 +76,9 @@ public interface IFXOnDragPolicy extends IPolicy<Node> {
 	 * @param e
 	 *            The original {@link MouseEvent}.
 	 * @param delta
-	 *            The mouse offset since {@link #press(MouseEvent)} (in pixel).
+	 *            The mouse offset since {@link #startDrag(MouseEvent)} (in pixel).
 	 */
-	void release(MouseEvent e, Dimension delta);
+	void endDrag(MouseEvent e, Dimension delta);
 
 	/**
 	 * Changes the mouse cursor depending on the given {@link KeyEvent} to

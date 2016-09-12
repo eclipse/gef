@@ -27,22 +27,16 @@ import javafx.scene.input.KeyEvent;
 public class FXTraverseFocusOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
-	/**
-	 * Returns <code>true</code> if the given {@link KeyEvent} should trigger
-	 * focus traversal. Otherwise returns <code>false</code>. Per default
-	 * returns <code>true</code> if <code>&lt;Tab&gt;</code> is pressed..
-	 *
-	 * @param event
-	 *            The {@link KeyEvent} in question.
-	 * @return <code>true</code> if the given {@link KeyEvent} should trigger
-	 *         focus traversal, otherwise <code>false</code>.
-	 */
-	protected boolean isTraverse(KeyEvent event) {
-		return KeyCode.TAB.equals(event.getCode());
+	@Override
+	public void abortPress() {
 	}
 
 	@Override
-	public void pressed(KeyEvent event) {
+	public void finalRelease(KeyEvent event) {
+	}
+
+	@Override
+	public void initialPress(KeyEvent event) {
 		// discard keystrokes other than TAB
 		if (!isTraverse(event)) {
 			return;
@@ -68,16 +62,26 @@ public class FXTraverseFocusOnTypePolicy extends AbstractFXInteractionPolicy
 		commit(focusTraversalPolicy);
 	}
 
-	@Override
-	public void released(KeyEvent event) {
+	/**
+	 * Returns <code>true</code> if the given {@link KeyEvent} should trigger
+	 * focus traversal. Otherwise returns <code>false</code>. Per default
+	 * returns <code>true</code> if <code>&lt;Tab&gt;</code> is pressed..
+	 *
+	 * @param event
+	 *            The {@link KeyEvent} in question.
+	 * @return <code>true</code> if the given {@link KeyEvent} should trigger
+	 *         focus traversal, otherwise <code>false</code>.
+	 */
+	protected boolean isTraverse(KeyEvent event) {
+		return KeyCode.TAB.equals(event.getCode());
 	}
 
 	@Override
-	public void typed(KeyEvent event) {
+	public void press(KeyEvent event) {
 	}
 
 	@Override
-	public void unfocus() {
+	public void release(KeyEvent event) {
 	}
 
 }

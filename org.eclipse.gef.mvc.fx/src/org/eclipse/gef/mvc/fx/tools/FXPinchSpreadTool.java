@@ -78,7 +78,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 						// cancel target policies
 						for (IFXOnPinchSpreadPolicy policy : getActivePolicies(
 								viewer)) {
-							policy.zoomAborted();
+							policy.abortZoom();
 						}
 						// clear active policies and close execution
 						// transaction
@@ -113,7 +113,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 				protected void zoomFinished(ZoomEvent e) {
 					for (IFXOnPinchSpreadPolicy policy : getActivePolicies(
 							viewer)) {
-						policy.zoomFinished(e);
+						policy.endZoom(e);
 					}
 					clearActivePolicies(viewer);
 					getDomain()
@@ -146,7 +146,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 					// send event to the policies
 					for (IFXOnPinchSpreadPolicy policy : getActivePolicies(
 							viewer)) {
-						policy.zoomStarted(e);
+						policy.startZoom(e);
 					}
 				}
 			};

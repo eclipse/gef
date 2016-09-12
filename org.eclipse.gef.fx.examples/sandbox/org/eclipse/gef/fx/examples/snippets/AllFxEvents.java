@@ -18,6 +18,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.InputEvent;
+import javafx.scene.shape.Rectangle;
 
 public class AllFxEvents extends AbstractFxExample {
 
@@ -31,7 +32,7 @@ public class AllFxEvents extends AbstractFxExample {
 
 	@Override
 	public Scene createScene() {
-		Scene scene = new Scene(new Group(), 400, 400);
+		Scene scene = new Scene(new Group(new Rectangle(50, 50)), 400, 400);
 		scene.addEventFilter(InputEvent.ANY, new EventHandler<InputEvent>() {
 			@Override
 			public void handle(InputEvent event) {

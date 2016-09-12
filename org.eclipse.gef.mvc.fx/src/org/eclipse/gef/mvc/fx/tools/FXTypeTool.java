@@ -105,7 +105,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					// cancel target policies
 					for (IFXOnTypePolicy policy : getActivePolicies(
 							activeViewer)) {
-						policy.unfocus();
+						policy.abortPress();
 					}
 					// clear active policies
 					clearActivePolicies(activeViewer);
@@ -180,7 +180,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					// notify target policies
 					for (IFXOnTypePolicy policy : getActivePolicies(
 							activeViewer)) {
-						policy.pressed(event);
+						policy.initialPress(event);
 					}
 				}
 			};
@@ -192,7 +192,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					// notify target policies
 					for (IFXOnTypePolicy policy : getActivePolicies(
 							activeViewer)) {
-						policy.released(event);
+						policy.finalRelease(event);
 					}
 
 					// check if the last pressed key is released now
@@ -245,7 +245,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
 					for (IFXOnTypePolicy policy : policies) {
-						policy.typed(event);
+						// policy.typed(event);
 					}
 					if (pressedKeys.isEmpty()) {
 						getDomain().closeExecutionTransaction(FXTypeTool.this);

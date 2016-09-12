@@ -39,13 +39,13 @@ public interface IFXOnScrollPolicy extends IPolicy<Node> {
 	/**
 	 * This callback method is invoked when a scroll gesture ends unexpectedly.
 	 */
-	void scrollAborted();
+	void abortScroll();
 
 	/**
 	 * This callback method is invoked when the user stopped to perform mouse
 	 * scrolling over the host.
 	 */
-	void scrollFinished();
+	void endScroll();
 
 	/**
 	 * This callback method is invoked when the user starts to perform mouse
@@ -54,6 +54,6 @@ public interface IFXOnScrollPolicy extends IPolicy<Node> {
 	 * @param event
 	 *            The original {@link ScrollEvent}.
 	 */
-	void scrollStarted(ScrollEvent event);
+	void startScroll(ScrollEvent event);
 
 }

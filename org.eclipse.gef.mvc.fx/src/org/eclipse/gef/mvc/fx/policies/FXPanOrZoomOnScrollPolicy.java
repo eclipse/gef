@@ -57,7 +57,7 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 	/**
 	 * Returns the {@link FXChangeViewportPolicy} that is to be used for
 	 * changing the viewport. This method is called within
-	 * {@link #scrollStarted(ScrollEvent)} where the resulting policy is cached
+	 * {@link #startScroll(ScrollEvent)} where the resulting policy is cached
 	 * ({@link #setViewportPolicy(FXChangeViewportPolicy)}) for the scroll
 	 * gesture.
 	 *
@@ -71,7 +71,7 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 	/**
 	 * Returns the {@link FXChangeViewportPolicy} that is used for changing the
 	 * viewport within the current scroll gesture. This policy is set within
-	 * {@link #scrollStarted(ScrollEvent)} to the value determined by
+	 * {@link #startScroll(ScrollEvent)} to the value determined by
 	 * {@link #determineViewportPolicy()}.
 	 *
 	 * @return The {@link FXChangeViewportPolicy} that is used for changing the
@@ -158,21 +158,21 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
-	public void scrollAborted() {
+	public void abortScroll() {
 		rollback(getViewportPolicy());
 		setViewportPolicy(null);
 		setStopped(false);
 	}
 
 	@Override
-	public void scrollFinished() {
+	public void endScroll() {
 		commit(getViewportPolicy());
 		setViewportPolicy(null);
 		setStopped(false);
 	}
 
 	@Override
-	public void scrollStarted(ScrollEvent event) {
+	public void startScroll(ScrollEvent event) {
 		setViewportPolicy(determineViewportPolicy());
 		init(getViewportPolicy());
 		// delegate to scroll() to perform panning/zooming

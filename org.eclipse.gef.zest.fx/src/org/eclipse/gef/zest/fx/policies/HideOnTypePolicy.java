@@ -31,12 +31,20 @@ import javafx.scene.input.KeyEvent;
 public class HideOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnTypePolicy {
 
 	@Override
+	public void abortPress() {
+	}
+
+	@Override
+	public void finalRelease(KeyEvent event) {
+	}
+
+	@Override
 	public NodePart getHost() {
 		return (NodePart) super.getHost();
 	}
 
 	@Override
-	public void pressed(KeyEvent event) {
+	public void initialPress(KeyEvent event) {
 		KeyCode keyCode = event.getCode();
 		if (KeyCode.P.equals(keyCode)) {
 			HidePolicy hidePolicy = getHost().<HidePolicy>getAdapter(HidePolicy.class);
@@ -47,15 +55,11 @@ public class HideOnTypePolicy extends AbstractInteractionPolicy<Node> implements
 	}
 
 	@Override
-	public void released(KeyEvent event) {
+	public void press(KeyEvent event) {
 	}
 
 	@Override
-	public void typed(KeyEvent event) {
-	}
-
-	@Override
-	public void unfocus() {
+	public void release(KeyEvent event) {
 	}
 
 }

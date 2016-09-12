@@ -70,7 +70,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 						// cancel target policies
 						for (IFXOnScrollPolicy policy : getActivePolicies(
 								viewer)) {
-							policy.scrollAborted();
+							policy.abortScroll();
 						}
 						// clear active policies and close execution
 						// transaction
@@ -102,7 +102,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 				@Override
 				protected void scrollFinished() {
 					for (IFXOnScrollPolicy policy : getActivePolicies(viewer)) {
-						policy.scrollFinished();
+						policy.endScroll();
 					}
 					clearActivePolicies(viewer);
 					getDomain().closeExecutionTransaction(FXScrollTool.this);
@@ -119,7 +119,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 											? (Node) eventTarget : null,
 									ON_SCROLL_POLICY_KEY));
 					for (IFXOnScrollPolicy policy : getActivePolicies(viewer)) {
-						policy.scrollStarted(event);
+						policy.startScroll(event);
 					}
 				}
 			};
