@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.policies;
 
+import org.eclipse.gef.mvc.fx.policies.IFXOnPressPolicy;
 import org.eclipse.gef.mvc.fx.policies.IFXOnTypePolicy;
 import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -27,7 +28,7 @@ import javafx.scene.input.KeyEvent;
  * @author mwienand
  *
  */
-public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnTypePolicy {
+public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnPressPolicy {
 
 	@Override
 	public void abortPress() {

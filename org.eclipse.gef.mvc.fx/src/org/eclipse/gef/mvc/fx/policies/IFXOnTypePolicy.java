@@ -11,10 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
+import java.util.Set;
+
 import org.eclipse.gef.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef.mvc.policies.IPolicy;
 
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
@@ -27,49 +30,15 @@ import javafx.scene.input.KeyEvent;
 public interface IFXOnTypePolicy extends IPolicy<Node> {
 
 	/**
-	 * This callback method is invoked when the viewer loses its focus while a
-	 * key press/release gesture is running.
-	 */
-	void abortPress();
-
-	/**
-	 * This callback method is invoked when the user releases a key while the
-	 * host has keyboard focus.
+	 * This callback method is called whenever the user presses a key. The most
+	 * recent {@link KeyEvent} and a {@link Set} of currently pressed
+	 * {@link KeyCode}s is passed to the method for processing.
 	 *
-	 * @param event
+	 * @param keyEvent
 	 *            The original {@link KeyEvent}.
+	 * @param pressedKeys
+	 *            The {@link Set} of pressed keys.
 	 */
-	void finalRelease(KeyEvent event);
-
-	/**
-	 * This callback method is invoked when the user presses a key while the
-	 * host has keyboard focus.
-	 *
-	 * @param event
-	 *            The original {@link KeyEvent}.
-	 */
-	void initialPress(KeyEvent event);
-
-	/**
-	 * This callback method is invoked when the user presses a key while a
-	 * keyboard gesture is active, i.e. after the initial press (
-	 * {@link #initialPress(KeyEvent)}) and before the final release
-	 * ({@link #finalRelease(KeyEvent)}).
-	 *
-	 * @param event
-	 *            The original {@link KeyEvent}.
-	 */
-	void press(KeyEvent event);
-
-	/**
-	 * This callback method is invoked when the user releases a key while a
-	 * keyboard gesture is active, i.e. after the initial press (
-	 * {@link #initialPress(KeyEvent)}) and before the final release
-	 * ({@link #finalRelease(KeyEvent)}).
-	 *
-	 * @param event
-	 *            The original {@link KeyEvent}.
-	 */
-	void release(KeyEvent event);
+	public void type(KeyEvent keyEvent, Set<KeyCode> pressedKeys);
 
 }
