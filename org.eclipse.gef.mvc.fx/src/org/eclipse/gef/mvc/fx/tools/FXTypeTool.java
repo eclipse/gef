@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef.mvc.fx.policies.IFXOnPressPolicy;
+import org.eclipse.gef.mvc.fx.policies.IFXOnStrokePolicy;
 import org.eclipse.gef.mvc.fx.policies.IFXOnTypePolicy;
 import org.eclipse.gef.mvc.models.FocusModel;
 import org.eclipse.gef.mvc.tools.AbstractTool;
@@ -64,9 +64,9 @@ public class FXTypeTool extends AbstractTool<Node> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends IFXOnPressPolicy> getActivePolicies(
+	public List<? extends IFXOnStrokePolicy> getActivePolicies(
 			IViewer<Node> viewer) {
-		return (List<IFXOnPressPolicy>) super.getActivePolicies(viewer);
+		return (List<IFXOnStrokePolicy>) super.getActivePolicies(viewer);
 	}
 
 	@SuppressWarnings("serial")
@@ -104,7 +104,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 						}
 					}
 					// cancel target policies
-					for (IFXOnPressPolicy policy : getActivePolicies(
+					for (IFXOnStrokePolicy policy : getActivePolicies(
 							activeViewer)) {
 						policy.abortPress();
 					}
@@ -179,7 +179,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					pressedKeys.add(event.getCode());
 
 					// notify target policies
-					for (IFXOnPressPolicy policy : getActivePolicies(
+					for (IFXOnStrokePolicy policy : getActivePolicies(
 							activeViewer)) {
 						policy.initialPress(event);
 					}
@@ -191,7 +191,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 				@Override
 				public void handle(KeyEvent event) {
 					// notify target policies
-					for (IFXOnPressPolicy policy : getActivePolicies(
+					for (IFXOnStrokePolicy policy : getActivePolicies(
 							activeViewer)) {
 						policy.finalRelease(event);
 					}

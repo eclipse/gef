@@ -25,7 +25,7 @@ import javafx.scene.input.KeyEvent;
  *
  */
 public class FXTraverseFocusOnTypePolicy extends AbstractFXInteractionPolicy
-		implements IFXOnPressPolicy {
+		implements IFXOnStrokePolicy {
 
 	@Override
 	public void abortPress() {

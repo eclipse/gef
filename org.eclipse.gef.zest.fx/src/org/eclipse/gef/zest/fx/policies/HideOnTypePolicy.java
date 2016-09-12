@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.policies;
 
-import org.eclipse.gef.mvc.fx.policies.IFXOnPressPolicy;
+import org.eclipse.gef.mvc.fx.policies.IFXOnStrokePolicy;
 import org.eclipse.gef.mvc.fx.policies.IFXOnTypePolicy;
 import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -29,7 +29,7 @@ import javafx.scene.input.KeyEvent;
  * @author mwienand
  *
  */
-public class HideOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnPressPolicy {
+public class HideOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnStrokePolicy {
 
 	@Override
 	public void abortPress() {

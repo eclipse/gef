@@ -39,7 +39,7 @@ import javafx.scene.input.KeyEvent;
  *
  */
 public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
-		implements IFXOnPressPolicy {
+		implements IFXOnStrokePolicy {
 
 	@Override
 	public void abortPress() {

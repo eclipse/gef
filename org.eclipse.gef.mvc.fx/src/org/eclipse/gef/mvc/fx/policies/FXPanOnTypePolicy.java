@@ -25,7 +25,7 @@ import javafx.scene.input.KeyEvent;
  *
  */
 public class FXPanOnTypePolicy extends AbstractFXInteractionPolicy
-		implements IFXOnPressPolicy {
+		implements IFXOnStrokePolicy {
 
 	/**
 	 * The default scroll amount per second, i.e. how many pixels the viewport
