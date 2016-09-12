@@ -343,9 +343,10 @@ public class NodeUtils {
 	 */
 	public static Rectangle getShapeBounds(Node node) {
 		Bounds layoutBounds = node.getLayoutBounds();
-		// Polygons don't paint exactly to their layout bounds but remain 0.5
-		// pixels short in case they have a stroke and stroke type is CENTERED
-		// or OUTSIDE. We compensate this there.
+		// XXX: Polygons don't paint exactly to their layout bounds but remain
+		// 0.5 pixels short in case they have a stroke and stroke type is
+		// CENTERED or OUTSIDE (see
+		// https://bugs.openjdk.java.net/browse/JDK-8145499).
 		double offset = 0;
 		if (node instanceof Polygon && ((Polygon) node).getStroke() != null
 				&& ((Polygon) node).getStrokeType() != StrokeType.INSIDE) {

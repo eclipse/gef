@@ -40,24 +40,28 @@ public class SWT2FXGestureConversionDemo {
 			@Override
 			public void handle(ScrollEvent event) {
 				display.setText(event.getEventType().toString());
+				System.out.println(event);
 			}
 		});
 		root.addEventHandler(ZoomEvent.ANY, new EventHandler<ZoomEvent>() {
 			@Override
 			public void handle(ZoomEvent event) {
 				display.setText(event.getEventType().toString());
+				System.out.println(event);
 			}
 		});
 		root.addEventHandler(RotateEvent.ANY, new EventHandler<RotateEvent>() {
 			@Override
 			public void handle(RotateEvent event) {
 				display.setText(event.getEventType().toString());
+				System.out.println(event);
 			}
 		});
 		root.addEventHandler(SwipeEvent.ANY, new EventHandler<SwipeEvent>() {
 			@Override
 			public void handle(SwipeEvent event) {
 				display.setText(event.getEventType().toString());
+				System.out.println(event);
 			}
 		});
 		return new Scene(root, 400, 300);

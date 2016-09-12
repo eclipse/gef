@@ -9,31 +9,40 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Alexander Nyßen (itemis AG) - Support for focus listener notification
- *     Jan Köhnlein (itemis AG) - Support for multi-touch gestures (#427106)
  *
  *******************************************************************************/
 package org.eclipse.gef.fx.swt.canvas;
 
 import java.lang.reflect.Method;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 
 import org.eclipse.gef.common.reflect.ReflectionUtils;
-import org.eclipse.gef.fx.swt.gestures.SWT2FXEventConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.GestureEvent;
+import org.eclipse.swt.events.GestureListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
+import com.sun.javafx.tk.TKSceneListener;
+
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
@@ -41,19 +50,31 @@ import javafx.embed.swt.SWTFXUtils;
 import javafx.event.Event;
 import javafx.event.EventDispatchChain;
 import javafx.event.EventDispatcher;
+import javafx.event.EventType;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.SwipeEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.stage.Window;
 
 /**
  * A replacement of {@link FXCanvas} that fixes the following issues:
  * <ul>
- * <li>https://bugs.openjdk.java.net/browse/JDK-8143596 (gesture events not
- * forwarded) and horizontal mouse events not forwarded: fixed by forwarding of
- * missing SWT events to JavaFX through an {@link SWT2FXEventConverter}.</li>
- * <li>https://bugs.openjdk.java.net/browse/JDK-8088147 (image cursors not
- * supported): fixed by adding support for image cursors.</li>
+ * <li>JDK-8088147 - [SWT] FXCanvas: implement custom cursors [workaround for
+ * JavaSE-1.8 only, as fixed by SWTCursors in JavaSE-1.9]</li>
+ * <li>JDK-8161282 - FXCanvas does not forward horizontal mouse scroll events to
+ * the embedded scene. [workaround for JavaSE-1.8 only, as fixed by FXCanvas in
+ * JavaSE-1.9]</li>
+ * <li>JDK-8143596 - FXCanvas does not forward touch gestures to embedded scene.
+ * [workaround for JavaSE-1.8 only, as fixed by FXCanvas in JavaSE-1.9]</li>
+ * <li>JDK-8159227 - FXCanvas should properly forward consumption state of key
+ * events from SWT to embedded scene.</li>
+ * <li>JDK-8161587 - FXCanvas does not consistently render the scene graph when
+ * long running event handlers are used.</li>
+ * <li>JDK-8088862 - Provide possibility to traverse focus out of FX scene.</li>
  * </ul>
  *
  * @author anyssen
@@ -77,7 +98,7 @@ public class FXCanvasEx extends FXCanvas {
 		public Event dispatchEvent(final Event event,
 				final EventDispatchChain tail) {
 			if (JAVA_8) {
-				// XXX: Ensure key events that result from to be ingored SWT key
+				// XXX: Ensure key events that result from to be ignored SWT key
 				// events (doit == false) are forwarded as consumed
 				// (https://bugs.openjdk.java.net/browse/JDK-8159227)
 				// TODO: Remove when dropping support for JavaSE-1.8.
@@ -106,7 +127,9 @@ public class FXCanvasEx extends FXCanvas {
 
 			// dispatch the most recent event
 			Event returnedEvent = delegate.dispatchEvent(event, tail);
-			// update UI
+
+			// update UI (added to fix
+			// https://bugs.openjdk.java.net/browse/JDK-8161587)
 			long millisNow = System.currentTimeMillis();
 			if (millisNow - lastRedrawMillis > REDRAW_INTERVAL_MILLIS) {
 				redraw();
@@ -122,6 +145,29 @@ public class FXCanvasEx extends FXCanvas {
 			delegate = null;
 			return d;
 		}
+	}
+
+	/**
+	 * The {@link ISceneRunnable} interface provides a callback method that is
+	 * invoked in a privileged runnable on the JavaFX application thread. The
+	 * callback is provided with a {@link TKSceneListener} that can be used to
+	 * send events to JavaFX.
+	 *
+	 * @author mwienand
+	 *
+	 */
+	private interface ISceneRunnable {
+
+		/**
+		 * Callback method that is called in a privileged runnable on the JavaFX
+		 * application thread.
+		 *
+		 * @param sceneListener
+		 *            {@link TKSceneListener} that can be used to send events to
+		 *            JavaFX.
+		 */
+		public void run(TKSceneListener sceneListener);
+
 	}
 
 	private static final boolean JAVA_8 = System.getProperty("java.version")
@@ -170,10 +216,335 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	};
 
-	private SWT2FXEventConverter gestureConverter = null;
+	private Listener mouseWheelListener = new Listener() {
+
+		private int getWheelRotation(org.eclipse.swt.widgets.Event e) {
+			return e.count > 0 ? 1 : -1;
+		}
+
+		@Override
+		public void handleEvent(org.eclipse.swt.widgets.Event e) {
+			if (!gestureActive
+					&& (!panGestureInertiaActive || lastGestureEvent == null
+							|| e.time != lastGestureEvent.time)) {
+				if (e.type == SWT.MouseVerticalWheel) {
+					sendScrollEventToFX(ScrollEvent.SCROLL, 0,
+							getWheelRotation(e), e.x, e.y, e.stateMask);
+				} else {
+					sendScrollEventToFX(ScrollEvent.SCROLL, getWheelRotation(e),
+							0, e.x, e.y, e.stateMask);
+				}
+			}
+		}
+
+		private void sendScrollEventToFX(final EventType<ScrollEvent> eventType,
+				double scrollX, double scrollY, int x, int y, int stateMask) {
+			// granularity for mouse wheel scroll events is more
+			// coarse-grained than for pan gesture events
+			final double multiplier = 40.0;
+			final Point los = toDisplay(x, y);
+			scheduleSceneRunnable(new ISceneRunnable() {
+				@Override
+				public void run(TKSceneListener sceneListener) {
+					sceneListener.scrollEvent(eventType, scrollX, scrollY,
+							scrollX, scrollY, multiplier, multiplier, 0, 0, 0,
+							0, 0, x, y, los.x, los.y,
+							(stateMask & SWT.SHIFT) != 0,
+							(stateMask & SWT.CONTROL) != 0,
+							(stateMask & SWT.ALT) != 0,
+							(stateMask & SWT.COMMAND) != 0, false, false);
+				}
+			});
+		}
+	};
+
+	// true in between begin and end events of a (compound) gesture (not
+	// including inertia events)
+	private boolean gestureActive = false;
+	// true while inertia events of a pan gesture might be processed
+	private boolean panGestureInertiaActive = false;
+	// the last gesture event that was received (may also be an inertia event)
+	private GestureEvent lastGestureEvent;
+	private GestureListener gestureListener = new GestureListener() {
+		// used to keep track of which (atomic) gestures are enclosed
+		private Stack<Integer> nestedGestures = new Stack<>();
+		// data used to compute inertia values for pan gesture events (as SWT
+		// does not provide these)
+		private long inertiaTime = 0;
+		private double inertiaXScroll = 0.0;
+		private double inertiaYScroll = 0.0;
+
+		// used to compute zoom deltas, which are not provided by SWT
+		private double lastTotalZoom = 0.0;
+		private double lastTotalAngle = 0.0;
+
+		double totalScrollX = 0;
+		double totalScrollY = 0;
+
+		@Override
+		public void gesture(GestureEvent gestureEvent) {
+			// An SWT gesture may be compound, comprising several MAGNIFY, PAN,
+			// and ROTATE events, which are enclosed by a
+			// generic BEGIN and END event (while SWIPE events occur without
+			// being enclosed).
+			// In JavaFX, such a compound gesture is represented through
+			// (possibly nested) atomic gestures, which all
+			// (again excluding swipe) have their specific START and FINISH
+			// events.
+			// While a complex SWT gesture is active, we therefore have to
+			// generate START events for atomic gestures as
+			// needed, finishing them all when the compound SWT gesture ends (in
+			// the reverse order they were started),
+			// after which we still process inertia events (that only seem to
+			// occur for PAN). SWIPE events may simply be
+			// forwarded.
+			switch (gestureEvent.detail) {
+			case SWT.GESTURE_BEGIN:
+				// a (complex) gesture has started
+				gestureActive = true;
+				// we are within an active gesture, so no inertia processing now
+				panGestureInertiaActive = false;
+				break;
+			case SWT.GESTURE_MAGNIFY:
+				// emulate the start of an atomic gesture
+				if (gestureActive
+						&& !nestedGestures.contains(SWT.GESTURE_MAGNIFY)) {
+					sendZoomEventToFX(ZoomEvent.ZOOM_STARTED, gestureEvent);
+					nestedGestures.push(SWT.GESTURE_MAGNIFY);
+				}
+				sendZoomEventToFX(ZoomEvent.ZOOM, gestureEvent);
+				break;
+			case SWT.GESTURE_PAN:
+				// emulate the start of an atomic gesture
+				if (gestureActive
+						&& !nestedGestures.contains(SWT.GESTURE_PAN)) {
+					sendScrollEventToFX(ScrollEvent.SCROLL_STARTED,
+							gestureEvent.xDirection, gestureEvent.yDirection,
+							gestureEvent.x, gestureEvent.y,
+							gestureEvent.stateMask, false);
+					nestedGestures.push(SWT.GESTURE_PAN);
+				}
+
+				// SWT does not flag inertia events and does not allow to
+				// distinguish emulated PAN gesture events
+				// (resulting from mouse wheel interaction) from native ones
+				// (resulting from touch device interaction);
+				// as it will always send both, mouse wheel as well as PAN
+				// gesture events when using the touch device or
+				// the mouse wheel, we can identify native PAN gesture inertia
+				// events only based on their temporal relationship
+				// to the preceding gesture event.
+				if (panGestureInertiaActive
+						&& gestureEvent.time > lastGestureEvent.time + 250) {
+					panGestureInertiaActive = false;
+				}
+
+				if (gestureActive || panGestureInertiaActive) {
+					double xDirection = gestureEvent.xDirection;
+					double yDirection = gestureEvent.yDirection;
+
+					if (panGestureInertiaActive) {
+						// calculate inertia values for scrollX and scrollY, as
+						// SWT (at least on MacOSX) provides zero values
+						if (xDirection == 0 && yDirection == 0) {
+							double delta = Math.max(0.0,
+									Math.min(1.0,
+											(gestureEvent.time - inertiaTime)
+													/ 1500.0));
+							xDirection = (1.0 - delta) * inertiaXScroll;
+							yDirection = (1.0 - delta) * inertiaYScroll;
+						}
+					}
+
+					sendScrollEventToFX(ScrollEvent.SCROLL, xDirection,
+							yDirection, gestureEvent.x, gestureEvent.y,
+							gestureEvent.stateMask, panGestureInertiaActive);
+				}
+				break;
+			case SWT.GESTURE_ROTATE:
+				// emulate the start of an atomic gesture
+				if (gestureActive
+						&& !nestedGestures.contains(SWT.GESTURE_ROTATE)) {
+					sendRotateEventToFX(RotateEvent.ROTATION_STARTED,
+							gestureEvent);
+					nestedGestures.push(SWT.GESTURE_ROTATE);
+				}
+				sendRotateEventToFX(RotateEvent.ROTATE, gestureEvent);
+				break;
+			case SWT.GESTURE_SWIPE:
+				EventType<SwipeEvent> type = null;
+				if (gestureEvent.yDirection > 0) {
+					type = SwipeEvent.SWIPE_DOWN;
+				} else if (gestureEvent.yDirection < 0) {
+					type = SwipeEvent.SWIPE_UP;
+				} else if (gestureEvent.xDirection > 0) {
+					type = SwipeEvent.SWIPE_RIGHT;
+				} else if (gestureEvent.xDirection < 0) {
+					type = SwipeEvent.SWIPE_LEFT;
+				}
+				sendSwipeEventToFX(type, gestureEvent);
+				break;
+			case SWT.GESTURE_END:
+				// finish atomic gesture(s) in reverse order of their start;
+				// SWIPE may be ignored,
+				// as JavaFX (like SWT) does not recognize it as a gesture
+				while (!nestedGestures.isEmpty()) {
+					switch (nestedGestures.pop()) {
+					case SWT.GESTURE_MAGNIFY:
+						sendZoomEventToFX(ZoomEvent.ZOOM_FINISHED,
+								gestureEvent);
+						break;
+					case SWT.GESTURE_PAN:
+						sendScrollEventToFX(ScrollEvent.SCROLL_FINISHED,
+								gestureEvent.xDirection,
+								gestureEvent.yDirection, gestureEvent.x,
+								gestureEvent.y, gestureEvent.stateMask, false);
+						// use the scroll values of the preceding scroll event
+						// to compute values for inertia events
+						inertiaXScroll = lastGestureEvent.xDirection;
+						inertiaYScroll = lastGestureEvent.yDirection;
+						inertiaTime = gestureEvent.time;
+						// from now on, inertia events may occur
+						panGestureInertiaActive = true;
+						break;
+					case SWT.GESTURE_ROTATE:
+						sendRotateEventToFX(RotateEvent.ROTATION_FINISHED,
+								gestureEvent);
+						break;
+					}
+				}
+				// compound SWT gesture has ended
+				gestureActive = false;
+				break;
+			default:
+				throw new IllegalStateException(
+						"Unsupported gesture event type: " + gestureEvent);
+			}
+			// keep track of currently received gesture event; this is needed to
+			// identify inertia events
+			lastGestureEvent = gestureEvent;
+
+		}
+
+		private void sendRotateEventToFX(EventType<RotateEvent> eventType,
+				GestureEvent gestureEvent) {
+			Point los = toDisplay(gestureEvent.x, gestureEvent.y);
+
+			double[] totalAngle = { gestureEvent.rotation };
+			if (eventType == RotateEvent.ROTATION_STARTED) {
+				totalAngle[0] = lastTotalAngle = 0.0;
+			} else if (eventType == RotateEvent.ROTATION_FINISHED) {
+				// SWT uses 0.0 for final event, while JavaFX still provides a
+				// (total) rotation value
+				totalAngle[0] = lastTotalAngle;
+			}
+			final double angle = eventType == RotateEvent.ROTATION_FINISHED
+					? 0.0 : totalAngle[0] - lastTotalAngle;
+			lastTotalAngle = totalAngle[0];
+
+			scheduleSceneRunnable(new ISceneRunnable() {
+				@Override
+				public void run(TKSceneListener sceneListener) {
+					sceneListener.rotateEvent(eventType, angle, totalAngle[0],
+							gestureEvent.x, gestureEvent.y, los.x, los.y,
+							(gestureEvent.stateMask & SWT.SHIFT) != 0,
+							(gestureEvent.stateMask & SWT.CONTROL) != 0,
+							(gestureEvent.stateMask & SWT.ALT) != 0,
+							(gestureEvent.stateMask & SWT.COMMAND) != 0, false,
+							!gestureActive);
+				}
+			});
+		}
+
+		private void sendScrollEventToFX(EventType<ScrollEvent> eventType,
+				double scrollX, double scrollY, int x, int y, int stateMask,
+				boolean inertia) {
+			// up to and including SWT 4.5, direction was inverted for pan
+			// gestures on the Mac
+			// (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481331)
+			final double multiplier = ("cocoa".equals(SWT.getPlatform())
+					&& SWT.getVersion() < 4600) ? -5.0 : 5.0;
+
+			if (eventType == ScrollEvent.SCROLL_STARTED) {
+				totalScrollX = 0;
+				totalScrollY = 0;
+			} else if (inertia) {
+				// inertia events do not belong to the gesture,
+				// thus total scroll is not accumulated
+				totalScrollX = scrollX;
+				totalScrollY = scrollY;
+			} else {
+				// accumulate total scroll as long as the gesture occurs
+				totalScrollX += scrollX;
+				totalScrollY += scrollY;
+			}
+
+			final Point los = toDisplay(x, y);
+			scheduleSceneRunnable(new ISceneRunnable() {
+				@Override
+				public void run(TKSceneListener sceneListener) {
+					sceneListener.scrollEvent(eventType, scrollX, scrollY,
+							totalScrollX, totalScrollY, multiplier, multiplier,
+							0, 0, 0, 0, 0, x, y, los.x, los.y,
+							(stateMask & SWT.SHIFT) != 0,
+							(stateMask & SWT.CONTROL) != 0,
+							(stateMask & SWT.ALT) != 0,
+							(stateMask & SWT.COMMAND) != 0, false, inertia);
+				}
+			});
+		}
+
+		private void sendSwipeEventToFX(EventType<SwipeEvent> eventType,
+				GestureEvent gestureEvent) {
+			final Point los = toDisplay(gestureEvent.x, gestureEvent.y);
+
+			scheduleSceneRunnable(new ISceneRunnable() {
+				@Override
+				public void run(TKSceneListener sceneListener) {
+					sceneListener.swipeEvent(eventType, 0, gestureEvent.x,
+							gestureEvent.y, los.x, los.y,
+							(gestureEvent.stateMask & SWT.SHIFT) != 0,
+							(gestureEvent.stateMask & SWT.CONTROL) != 0,
+							(gestureEvent.stateMask & SWT.ALT) != 0,
+							(gestureEvent.stateMask & SWT.COMMAND) != 0, false);
+				}
+			});
+		}
+
+		private void sendZoomEventToFX(EventType<ZoomEvent> eventType,
+				GestureEvent gestureEvent) {
+			Point los = toDisplay(gestureEvent.x, gestureEvent.y);
+
+			double[] totalZoom = new double[] { gestureEvent.magnification };
+			if (eventType == ZoomEvent.ZOOM_STARTED) {
+				// ensure first event does not provide any zoom yet
+				totalZoom[0] = lastTotalZoom = 1.0;
+			} else if (eventType == ZoomEvent.ZOOM_FINISHED) {
+				// SWT uses 0.0 for final event, while JavaFX still provides a
+				// (total) zoom value
+				totalZoom[0] = lastTotalZoom;
+			}
+			final double zoom = eventType == ZoomEvent.ZOOM_FINISHED ? 1.0
+					: totalZoom[0] / lastTotalZoom;
+			lastTotalZoom = totalZoom[0];
+
+			scheduleSceneRunnable(new ISceneRunnable() {
+				@Override
+				public void run(TKSceneListener sceneListener) {
+					sceneListener.zoomEvent(eventType, zoom, totalZoom[0],
+							gestureEvent.x, gestureEvent.y, los.x, los.y,
+							(gestureEvent.stateMask & SWT.SHIFT) != 0,
+							(gestureEvent.stateMask & SWT.CONTROL) != 0,
+							(gestureEvent.stateMask & SWT.ALT) != 0,
+							(gestureEvent.stateMask & SWT.COMMAND) != 0, false,
+							!gestureActive);
+				}
+			});
+		}
+	};
+
 	private TraverseListener traverseListener = null;
 	private DisposeListener disposeListener;
-
 	// XXX: JavaFX does not forward the consumption state of key events to the
 	// embedded scene (see https://bugs.openjdk.java.net/browse/JDK-8159227).
 	// We use an SWT listener to capture all key events, so our JavaFX event
@@ -238,6 +609,7 @@ public class FXCanvasEx extends FXCanvas {
 				// class). The embedded scene (scenePeer) will be unset through
 				// the host container when unsetting the scene above;
 				setScene(null);
+
 				cursorChangeListener = null;
 
 				removeDisposeListener(disposeListener);
@@ -251,8 +623,14 @@ public class FXCanvasEx extends FXCanvas {
 				keyListener = null;
 				superKeyListener = null;
 
-				gestureConverter.dispose();
-				gestureConverter = null;
+				if (JAVA_8) {
+					removeListener(SWT.MouseHorizontalWheel,
+							mouseWheelListener);
+					removeListener(SWT.MouseVerticalWheel, mouseWheelListener);
+					removeGestureListener(gestureListener);
+				}
+				mouseWheelListener = null;
+				gestureListener = null;
 			}
 		};
 		addDisposeListener(disposeListener);
@@ -277,20 +655,20 @@ public class FXCanvasEx extends FXCanvas {
 		addListener(SWT.KeyUp, keyListener);
 		addListener(SWT.KeyDown, keyListener);
 
-		gestureConverter = new SWT2FXEventConverter(this);
+		if (JAVA_8) {
+			addListener(SWT.MouseHorizontalWheel, mouseWheelListener);
+			addListener(SWT.MouseVerticalWheel, mouseWheelListener);
+
+			addGestureListener(gestureListener);
+		}
 	}
 
 	@Override
 	public void addKeyListener(KeyListener listener) {
-		// XXX: Overwritten to ensure proper ordering of key listeners,
-		// which is required to properly forward the consumption state to
-		// the embedded scene (see
-		// https://bugs.openjdk.java.net/browse/JDK-8159227).
+		// XXX: The workaround for JDK-8159227 requires that the typed key
+		// listener, registered by the superclass, is ignored.
 		if (listener.getClass().getName()
 				.startsWith(FXCanvas.class.getName() + "$")) {
-			// XXX: Identifying the super key listener from the ordering is
-			// not safe, as a subclass might tamper that ordering; we thus
-			// use the class name to identify it
 			superKeyListener = listener;
 		} else {
 			super.addKeyListener(listener);
@@ -320,6 +698,22 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	}
 
+	@Override
+	public void addMouseWheelListener(MouseWheelListener listener) {
+		// XXX: The workaround for JDK-8161282 requires, that the typed mouse
+		// wheel listener, registered by the JavaSE-1.8 superclass, is ignored;
+		// the JavaSE-1.8 workaround and the fix within the JavaSE-1.9
+		// superclass both use an untyped listener.
+		if (JAVA_8) {
+			if (!listener.getClass().getName()
+					.startsWith(FXCanvas.class.getName() + "$")) {
+				super.addMouseWheelListener(listener);
+			}
+		} else {
+			super.addMouseWheelListener(listener);
+		}
+	}
+
 	/**
 	 * Returns the stage {@link Window} hold by this {@link FXCanvas}.
 	 *
@@ -329,18 +723,10 @@ public class FXCanvasEx extends FXCanvas {
 		return ReflectionUtils.getPrivateFieldValue(this, "stage");
 	}
 
-	private void hookScene(Scene newScene) {
-		if (JAVA_8) {
-			newScene.cursorProperty().addListener(cursorChangeListener);
-		}
-	}
-
 	@Override
 	public void removeKeyListener(KeyListener listener) {
-		// XXX: Overwritten to ensure proper ordering of key listeners,
-		// which is required to properly forward the consumption state to
-		// the embedded scene (see
-		// https://bugs.openjdk.java.net/browse/JDK-8159227).
+		// XXX: The workaround for JDK-8159227 requires that the typed key
+		// listener, registered by the superclass, is ignored.
 		if (listener.getClass().getName()
 				.startsWith(FXCanvas.class.getName() + "$")) {
 			superKeyListener = null;
@@ -373,6 +759,54 @@ public class FXCanvasEx extends FXCanvas {
 	}
 
 	@Override
+	public void removeMouseWheelListener(MouseWheelListener listener) {
+		// XXX: The workaround for JDK-8161282 requires, that the typed mouse
+		// wheel listener, registered by the JavaSE-1.8 superclass, is ignored;
+		// the JavaSE-1.8 workaround and the fix within the JavaSE-1.9
+		// superclass both use an untyped listener.
+		if (JAVA_8) {
+			if (!listener.getClass().getName()
+					.startsWith(FXCanvas.class.getName() + "$")) {
+				super.removeMouseWheelListener(listener);
+			}
+		} else {
+			super.removeMouseWheelListener(listener);
+		}
+	}
+
+	/**
+	 * Schedules the given {@link ISceneRunnable} for execution in a privileged
+	 * runnable on the JavaFX application thread.
+	 *
+	 * @param sr
+	 *            The {@link ISceneRunnable} that will be executed in a
+	 *            privileged runnable on the JavaFX application thread.
+	 */
+	private void scheduleSceneRunnable(final ISceneRunnable sr) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				final Object scenePeer = ReflectionUtils
+						.getPrivateFieldValue(FXCanvasEx.this, "scenePeer");
+				AccessController.doPrivileged(new PrivilegedAction<Void>() {
+					@Override
+					public Void run() {
+						TKSceneListener sceneListener = ReflectionUtils
+								.getPrivateFieldValue(scenePeer,
+										"sceneListener");
+						if (sceneListener == null) {
+							return null;
+						}
+						sr.run(sceneListener);
+						return null;
+					}
+				}, (AccessControlContext) ReflectionUtils
+						.getPrivateFieldValue(scenePeer, "accessCtrlCtx"));
+			}
+		});
+	}
+
+	@Override
 	public void setScene(Scene newScene) {
 		Scene oldScene = getScene();
 		if (oldScene != null) {
@@ -385,20 +819,18 @@ public class FXCanvasEx extends FXCanvas {
 				// event dispatcher that removes our delegate?? (throw an
 				// exception?)
 			}
-			unhookScene(oldScene);
+			if (JAVA_8) {
+				oldScene.cursorProperty().removeListener(cursorChangeListener);
+			}
 		}
 		super.setScene(newScene);
 		if (newScene != null) {
 			// wrap event dispatcher
 			newScene.setEventDispatcher(
 					new EventDispatcherEx(newScene.getEventDispatcher()));
-			hookScene(newScene);
-		}
-	}
-
-	private void unhookScene(Scene oldScene) {
-		if (JAVA_8) {
-			oldScene.cursorProperty().removeListener(cursorChangeListener);
+			if (JAVA_8) {
+				newScene.cursorProperty().addListener(cursorChangeListener);
+			}
 		}
 	}
 }
