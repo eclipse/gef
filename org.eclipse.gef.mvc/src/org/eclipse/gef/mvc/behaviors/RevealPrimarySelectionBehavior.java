@@ -103,8 +103,10 @@ public class RevealPrimarySelectionBehavior<VR> extends AbstractBehavior<VR> {
 	protected void onPrimarySelectionChanged(
 			IContentPart<VR, ? extends VR> previousPrimarySelection,
 			IContentPart<VR, ? extends VR> currentPrimarySelection) {
-		// reveal current primary selection
-		getHost().getRoot().getViewer().reveal(currentPrimarySelection);
+		if (currentPrimarySelection != null) {
+			// reveal current primary selection
+			getHost().getRoot().getViewer().reveal(currentPrimarySelection);
+		}
 	}
 
 }
