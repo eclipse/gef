@@ -46,6 +46,16 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 	private CursorSupport cursorSupport = new CursorSupport(this);
 	private IVisualPart<Node, ? extends Node> targetPart;
 
+	@Override
+	public void abortDrag() {
+		if (invalidGesture) {
+			return;
+		}
+		restoreRefreshVisuals(getTargetPart());
+		commit(getResizePolicy());
+		commit(getTransformPolicy());
+	}
+
 	/**
 	 * Returns the target {@link IVisualPart} for this policy. Per default the
 	 * first anchorage is returned.
@@ -66,19 +76,13 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		Node visual = getTargetPart().getVisual();
 		Point2D startLocal = visual.sceneToLocal(initialPointerLocation.x,
 				initialPointerLocation.y);
-		Point2D endLocal = visual.sceneToLocal(e.getSceneX(), e.getSceneY());
 		// snap to grid
-		Point2D endParent = visual.localToParent(endLocal);
-		Dimension snapToGridOffset = AbstractTransformPolicy
-				.getSnapToGridOffset(
-						getHost().getRoot().getViewer().<GridModel> getAdapter(
-								GridModel.class),
-						endParent.getX(), endParent.getY(),
-						getSnapToGridGranularityX(),
-						getSnapToGridGranularityY());
-		endLocal = visual.parentToLocal(
-				endParent.getX() - snapToGridOffset.width,
-				endParent.getY() - snapToGridOffset.height);
+		Point newEndScene = AbstractTransformPolicy.snapToGrid(visual,
+				e.getSceneX(), e.getSceneY(),
+				getHost().getRoot().getViewer()
+						.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY());
+		Point2D endLocal = visual.sceneToLocal(newEndScene.x, newEndScene.y);
 		// compute delta in local coordinates
 		double deltaX = endLocal.getX() - startLocal.getX();
 		double deltaY = endLocal.getY() - startLocal.getY();
@@ -124,8 +128,9 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 	}
 
 	@Override
-	public void abortDrag() {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (invalidGesture) {
+			invalidGesture = false;
 			return;
 		}
 		restoreRefreshVisuals(getTargetPart());
@@ -229,34 +234,6 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		return !event.isControlDown() && !isMultiSelection();
 	}
 
-	@Override
-	public void startDrag(MouseEvent e) {
-		setTargetPart(determineTargetPart());
-		invalidGesture = !isResizeTranslate(e);
-		if (invalidGesture) {
-			return;
-		}
-		storeAndDisableRefreshVisuals(getTargetPart());
-		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
-		Affine targetTransform = getTargetTransform();
-		initialTx = targetTransform.getTx();
-		initialTy = targetTransform.getTy();
-		init(getResizePolicy());
-		init(getTransformPolicy());
-		translationIndex = getTransformPolicy().createPostTransform();
-	}
-
-	@Override
-	public void endDrag(MouseEvent e, Dimension delta) {
-		if (invalidGesture) {
-			invalidGesture = false;
-			return;
-		}
-		restoreRefreshVisuals(getTargetPart());
-		commit(getResizePolicy());
-		commit(getTransformPolicy());
-	}
-
 	/**
 	 * Sets the target part (i.e. the part that is resized and translated) of
 	 * this policy to the given value.
@@ -277,6 +254,23 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 	@Override
 	public boolean showIndicationCursor(MouseEvent event) {
 		return false;
+	}
+
+	@Override
+	public void startDrag(MouseEvent e) {
+		setTargetPart(determineTargetPart());
+		invalidGesture = !isResizeTranslate(e);
+		if (invalidGesture) {
+			return;
+		}
+		storeAndDisableRefreshVisuals(getTargetPart());
+		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
+		Affine targetTransform = getTargetTransform();
+		initialTx = targetTransform.getTx();
+		initialTy = targetTransform.getTy();
+		init(getResizePolicy());
+		init(getTransformPolicy());
+		translationIndex = getTransformPolicy().createPostTransform();
 	}
 
 }

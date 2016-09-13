@@ -16,13 +16,15 @@ import java.util.List;
 
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.planar.AffineTransform;
-import org.eclipse.gef.geometry.planar.Dimension;
+import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.operations.TransformContentOperation;
 import org.eclipse.gef.mvc.parts.ITransformableContentPart;
-import org.eclipse.gef.mvc.viewer.IViewer;
+
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 
 /**
  * The {@link AbstractTransformPolicy} is a {@link AbstractTransactionPolicy}
@@ -99,50 +101,79 @@ public abstract class AbstractTransformPolicy<VR>
 		extends AbstractTransactionPolicy<VR> {
 
 	/**
-	 * Computes the offset which needs to be added to the given local
-	 * coordinates in order to stay on the grid/snap to the grid.
+	 * Snaps the given position (in scene coordinates) to a grid position. The
+	 * grid positions are specified by the given {@link GridModel} and the given
+	 * cell size fractions.
 	 *
+	 * @param visual
+	 *            The {@link Node} that is snapped.
+	 * @param sceneX
+	 *            The x-coordinate of the current position (in scene
+	 *            coordinates).
+	 * @param sceneY
+	 *            The y-coordinate of the current position (in scene
+	 *            coordinates).
 	 * @param gridModel
-	 *            The {@link GridModel} of the host's {@link IViewer}.
-	 * @param localX
-	 *            The x-coordinate in host coordinates.
-	 * @param localY
-	 *            The y-coordinate in host coordinates.
+	 *            The {@link GridModel} that specifies the grid positions.
 	 * @param gridCellWidthFraction
-	 *            The granularity of the horizontal grid steps.
+	 *            The cell width fraction that determines if the x-coordinate is
+	 *            snapped to full (1.0), halve (0.5), etc. grid positions.
 	 * @param gridCellHeightFraction
-	 *            The granularity of the vertical grid steps.
-	 * @return A {@link Dimension} representing the offset that needs to be
-	 *         added to the local coordinates so that they snap to the grid.
+	 *            The cell height fraction that determines if the y-coordinate
+	 *            is snapped to full (1.0), halve (0.5), etc. grid positions.
+	 * @return The resulting snapped position in scene coordinates.
 	 */
-	// TODO: move to utils
-	public static Dimension getSnapToGridOffset(GridModel gridModel,
-			final double localX, final double localY,
+	public static Point snapToGrid(Node visual, final double sceneX,
+			final double sceneY, GridModel gridModel,
 			final double gridCellWidthFraction,
 			final double gridCellHeightFraction) {
-		// TODO: pass in scene coordinates so that the snap can be computed
-		// correctly even though transformations are used
-		double snapOffsetX = 0, snapOffsetY = 0;
-		if ((gridModel != null) && gridModel.isSnapToGrid()) {
-			// determine snap width
-			final double snapWidth = gridModel.getGridCellWidth()
-					* gridCellWidthFraction;
-			final double snapHeight = gridModel.getGridCellHeight()
-					* gridCellHeightFraction;
+		return snapToGrid(visual, sceneX, sceneY, gridModel,
+				gridCellWidthFraction, gridCellHeightFraction,
+				visual.getParent());
+	}
 
-			snapOffsetX = localX % snapWidth;
-			if (snapOffsetX > (snapWidth / 2)) {
-				snapOffsetX = snapWidth - snapOffsetX;
-				snapOffsetX *= -1;
-			}
-
-			snapOffsetY = localY % snapHeight;
-			if (snapOffsetY > (snapHeight / 2)) {
-				snapOffsetY = snapHeight - snapOffsetY;
-				snapOffsetY *= -1;
-			}
-		}
-		return new Dimension(snapOffsetX, snapOffsetY);
+	/**
+	 * Snaps the given position (in scene coordinates) to a grid position. The
+	 * grid positions are specified by the given {@link GridModel} and the given
+	 * cell size fractions.
+	 *
+	 * @param visual
+	 *            The {@link Node} that is snapped.
+	 * @param sceneX
+	 *            The x-coordinate of the current position (in scene
+	 *            coordinates).
+	 * @param sceneY
+	 *            The y-coordinate of the current position (in scene
+	 *            coordinates).
+	 * @param gridModel
+	 *            The {@link GridModel} that specifies the grid positions.
+	 * @param gridCellWidthFraction
+	 *            The cell width fraction that determines if the x-coordinate is
+	 *            snapped to full (1.0), halve (0.5), etc. grid positions.
+	 * @param gridCellHeightFraction
+	 *            The cell height fraction that determines if the y-coordinate
+	 *            is snapped to full (1.0), halve (0.5), etc. grid positions.
+	 * @param gridLocalVisual
+	 *            The visual in which grid positions are specified.
+	 * @return The resulting snapped position in scene coordinates.
+	 */
+	public static Point snapToGrid(Node visual, final double sceneX,
+			final double sceneY, GridModel gridModel,
+			final double gridCellWidthFraction,
+			final double gridCellHeightFraction, Node gridLocalVisual) {
+		// transform to grid local coordinates
+		Point2D gridLocalPosition = gridLocalVisual.sceneToLocal(sceneX,
+				sceneY);
+		// snap to grid
+		double gcw = gridCellWidthFraction * gridModel.getGridCellWidth();
+		int xs = (int) (gridLocalPosition.getX() / gcw);
+		double gch = gridCellHeightFraction * gridModel.getGridCellHeight();
+		int ys = (int) (gridLocalPosition.getY() / gch);
+		double nx = xs * gcw;
+		double ny = ys * gch;
+		// transform to scene coordinates
+		Point2D newPositionInScene = gridLocalVisual.localToScene(nx, ny);
+		return new Point(newPositionInScene.getX(), newPositionInScene.getY());
 	}
 
 	/**

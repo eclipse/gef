@@ -14,7 +14,6 @@ package org.eclipse.gef.mvc.fx.policies;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.utils.NodeUtils;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
@@ -29,7 +28,6 @@ import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
 import com.google.common.reflect.TypeToken;
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -47,6 +45,18 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	private boolean isPrepared;
 
 	@Override
+	public void abortDrag() {
+		if (isInvalid) {
+			return;
+		}
+
+		rollback(getBendPolicy());
+		restoreRefreshVisuals(getHost());
+
+		updateHandles();
+	}
+
+	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
@@ -58,32 +68,22 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 			prepareBend(getBendPolicy());
 		}
 
-		Point2D endPointInParent = getHost().getVisual().getParent()
-				.sceneToLocal(e.getSceneX(), e.getSceneY());
-		Dimension snapToGridOffset = AbstractTransformPolicy
-				.getSnapToGridOffset(
-						getHost().getRoot().getViewer().<GridModel> getAdapter(
-								GridModel.class),
-						endPointInParent.getX(), endPointInParent.getY(),
-						getSnapToGridGranularityX(),
-						getSnapToGridGranularityY());
-		endPointInParent = new Point2D(
-				endPointInParent.getX() - snapToGridOffset.width,
-				endPointInParent.getY() - snapToGridOffset.height);
-		Point2D endPointInScene = getHost().getVisual().getParent()
-				.localToScene(endPointInParent);
-		getBendPolicy().move(initialMouseInScene,
-				FX2Geometry.toPoint(endPointInScene));
+		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
+				getHost().getVisual(), e.getSceneX(), e.getSceneY(),
+				getHost().getRoot().getViewer()
+						.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY());
+		getBendPolicy().move(initialMouseInScene, newEndPointInScene);
 		updateHandles();
 	}
 
 	@Override
-	public void abortDrag() {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
 		}
 
-		rollback(getBendPolicy());
+		commit(getBendPolicy());
 		restoreRefreshVisuals(getHost());
 
 		updateHandles();
@@ -213,6 +213,19 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		// TODO: Show <|> or ^-v indication cursor for segment movement.
+		// cursorSupport.storeAndReplaceCursor(verticalSegment ?
+		// LEFT_RIGHT_CURSRO : TOP_DOWN_CURSOR);
+		return false;
+	}
+
+	@Override
 	public void startDrag(MouseEvent e) {
 		isInvalid = !isBend(e);
 		if (isInvalid) {
@@ -231,31 +244,6 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		FXBendConnectionPolicy bendPolicy = getBendPolicy();
 		init(bendPolicy);
 		updateHandles();
-	}
-
-	@Override
-	public void endDrag(MouseEvent e, Dimension delta) {
-		if (isInvalid) {
-			return;
-		}
-
-		commit(getBendPolicy());
-		restoreRefreshVisuals(getHost());
-
-		updateHandles();
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		// TODO: Show <|> or ^-v indication cursor for segment movement.
-		// cursorSupport.storeAndReplaceCursor(verticalSegment ?
-		// LEFT_RIGHT_CURSRO : TOP_DOWN_CURSOR);
-		return false;
 	}
 
 	/**

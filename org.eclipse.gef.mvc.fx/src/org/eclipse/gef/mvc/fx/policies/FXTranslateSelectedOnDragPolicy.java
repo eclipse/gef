@@ -12,13 +12,16 @@
 package org.eclipse.gef.mvc.fx.policies;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
+import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
@@ -42,6 +45,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
+
 	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<>();
 	private List<IContentPart<Node, ? extends Node>> targetParts;
 	private CursorSupport cursorSupport = new CursorSupport(this);
@@ -49,49 +53,75 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	// gesture validity
 	private boolean invalidGesture = false;
 
-	@Override
-	public void drag(MouseEvent e, Dimension delta) {
-		// abort this policy if no target parts could be found
-		if (invalidGesture) {
-			return;
-		}
-
-		// apply changes to the target parts
-		for (IContentPart<Node, ? extends Node> part : targetParts) {
-			FXTransformPolicy policy = getTransformPolicy(part);
-			if (policy != null) {
-				Point2D startInParent = getHost().getVisual().getParent()
-						.sceneToLocal(0, 0);
-				Point2D endInParent = getHost().getVisual().getParent()
-						.sceneToLocal(delta.width, delta.height);
-				Dimension snapToGridOffset = AbstractTransformPolicy
-						.getSnapToGridOffset(getHost().getRoot().getViewer()
-								.<GridModel> getAdapter(GridModel.class),
-								endInParent.getX(), endInParent.getY(),
-								getSnapToGridGranularityX(),
-								getSnapToGridGranularityY());
-				Point2D deltaInParent = new Point2D(
-						endInParent.getX() - snapToGridOffset.width
-								- startInParent.getX(),
-						endInParent.getY() - snapToGridOffset.height
-								- startInParent.getY());
-				policy.setPostTranslate(translationIndices.get(part),
-						deltaInParent.getX(), deltaInParent.getY());
-			}
-		}
-	}
+	private Map<IContentPart<Node, ? extends Node>, Rectangle> boundsInScene = new IdentityHashMap<>();
 
 	@Override
 	public void abortDrag() {
 		if (invalidGesture) {
 			return;
 		}
-
 		// roll back changes for all target parts
 		for (IContentPart<Node, ? extends Node> part : targetParts) {
 			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
 				rollback(policy);
+				restoreRefreshVisuals(part);
+			}
+		}
+		// reset target parts
+		targetParts = null;
+		// reset initial pointer location
+		setInitialMouseLocationInScene(null);
+		// reset translation indices
+		translationIndices.clear();
+	}
+
+	@Override
+	public void drag(MouseEvent e, Dimension delta) {
+		// abort this policy if no target parts could be found
+		if (invalidGesture) {
+			return;
+		}
+		// apply changes to the target parts
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
+			FXTransformPolicy policy = getTransformPolicy(part);
+			if (policy != null) {
+				// determine start and end position in scene coordinates
+				Point startInScene = boundsInScene.get(part).getTopLeft();
+				Point endInScene = startInScene.getTranslated(delta);
+				// determine snap to grid offset in scene coordinates
+				Point newEndInScene = AbstractTransformPolicy.snapToGrid(
+						part.getVisual(), endInScene.x, endInScene.y,
+						getHost().getRoot().getViewer().<GridModel> getAdapter(
+								GridModel.class),
+						getSnapToGridGranularityX(),
+						getSnapToGridGranularityY());
+				// compute delta in parent coordinates
+				Point newEndInParent = NodeUtils.sceneToLocal(
+						part.getVisual().getParent(), newEndInScene);
+				Point startInParent = NodeUtils.sceneToLocal(
+						part.getVisual().getParent(), startInScene);
+				Point deltaInParent = newEndInParent
+						.getTranslated(startInParent.getNegated());
+				// update transformation
+				policy.setPostTranslate(translationIndices.get(part),
+						deltaInParent.x, deltaInParent.y);
+			}
+		}
+	}
+
+	@Override
+	public void endDrag(MouseEvent e, Dimension delta) {
+		// abort this policy if no target parts could be found
+		if (invalidGesture) {
+			return;
+		}
+
+		// commit changes for all target parts
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
+			FXTransformPolicy policy = getTransformPolicy(part);
+			if (policy != null) {
+				commit(policy);
 				restoreRefreshVisuals(part);
 			}
 		}
@@ -140,6 +170,21 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	 */
 	protected double getSnapToGridGranularityY() {
 		return 1;
+	}
+
+	private Dimension getSnapToGridOffset(GridModel gridModel, Node visual,
+			final double sceneX, final double sceneY,
+			final double gridCellWidthFraction,
+			final double gridCellHeightFraction) {
+		Point2D parent = visual.getParent().sceneToLocal(sceneX, sceneY);
+		double gcw = gridCellWidthFraction * gridModel.getGridCellWidth();
+		int xs = (int) (parent.getX() / gcw);
+		double gch = gridCellHeightFraction * gridModel.getGridCellHeight();
+		int ys = (int) (parent.getY() / gch);
+		double nx = xs * gcw;
+		double ny = ys * gch;
+		Point2D nScene = visual.getParent().localToScene(nx, ny);
+		return new Dimension(nScene.getX(), nScene.getY());
 	}
 
 	/**
@@ -211,6 +256,26 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		return true;
 	}
 
+	/**
+	 * Sets the initial mouse location to the given value.
+	 *
+	 * @param point
+	 *            The initial mouse location.
+	 */
+	protected void setInitialMouseLocationInScene(Point point) {
+		initialMouseLocationInScene = point;
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
+	}
+
 	@Override
 	public void startDrag(MouseEvent e) {
 		// determine target parts
@@ -233,52 +298,15 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 				storeAndDisableRefreshVisuals(part);
 				init(policy);
 				translationIndices.put(part, policy.createPostTransform());
+				// determine shape bounds
+				Rectangle shapeBounds = NodeUtils
+						.getShapeBounds(getHost().getVisual());
+				Rectangle shapeBoundsInScene = NodeUtils
+						.localToScene(getHost().getVisual(), shapeBounds)
+						.getBounds();
+				boundsInScene.put(part, shapeBoundsInScene);
 			}
 		}
-	}
-
-	@Override
-	public void endDrag(MouseEvent e, Dimension delta) {
-		// abort this policy if no target parts could be found
-		if (invalidGesture) {
-			return;
-		}
-
-		// commit changes for all target parts
-		for (IContentPart<Node, ? extends Node> part : targetParts) {
-			FXTransformPolicy policy = getTransformPolicy(part);
-			if (policy != null) {
-				commit(policy);
-				restoreRefreshVisuals(part);
-			}
-		}
-
-		// reset target parts
-		targetParts = null;
-		// reset initial pointer location
-		setInitialMouseLocationInScene(null);
-		// reset translation indices
-		translationIndices.clear();
-	}
-
-	/**
-	 * Sets the initial mouse location to the given value.
-	 *
-	 * @param point
-	 *            The initial mouse location.
-	 */
-	protected void setInitialMouseLocationInScene(Point point) {
-		initialMouseLocationInScene = point;
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		return false;
 	}
 
 }

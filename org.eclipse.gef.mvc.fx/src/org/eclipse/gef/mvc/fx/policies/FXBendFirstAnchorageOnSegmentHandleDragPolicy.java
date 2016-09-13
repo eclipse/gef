@@ -88,6 +88,16 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	private boolean isPrepared;
 
 	@Override
+	public void abortDrag() {
+		if (isInvalid) {
+			return;
+		}
+		restoreRefreshVisuals(targetPart);
+		rollback(getBendPolicy(targetPart));
+		updateHandles();
+	}
+
+	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
@@ -106,46 +116,37 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		boolean isHorizontal = isOrthogonal
 				&& getBendPolicy(targetPart).isSelectionHorizontal();
 
-		Point2D endPointInParent = targetPart.getVisual().getParent()
-				.sceneToLocal(e.getSceneX(), e.getSceneY());
-		Dimension snapToGridOffset = AbstractTransformPolicy
-				.getSnapToGridOffset(
-						getHost().getRoot().getViewer().<GridModel> getAdapter(
-								GridModel.class),
-						endPointInParent.getX(), endPointInParent.getY(),
-						getSnapToGridGranularityX(),
-						getSnapToGridGranularityY());
-		endPointInParent = new Point2D(
-				endPointInParent.getX() - snapToGridOffset.width,
-				endPointInParent.getY() - snapToGridOffset.height);
-		Point2D endPointInScene = targetPart.getVisual().getParent()
-				.localToScene(endPointInParent);
-		getBendPolicy(targetPart).move(initialMouseInScene,
-				FX2Geometry.toPoint(endPointInScene));
+		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
+				targetPart.getVisual(), e.getSceneX(), e.getSceneY(),
+				getHost().getRoot().getViewer()
+						.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY());
+		getBendPolicy(targetPart).move(initialMouseInScene, newEndPointInScene);
 
 		if (isOrthogonal) {
 			if (isHorizontal) {
 				// can only move vertically
-				handlePositionInScene.setY(endPointInScene.getY());
+				handlePositionInScene.setY(newEndPointInScene.y);
 			} else {
 				// can only move horizontally
-				handlePositionInScene.setX(endPointInScene.getX());
+				handlePositionInScene.setX(newEndPointInScene.x);
 			}
 		} else {
-			handlePositionInScene.setX(endPointInScene.getX());
-			handlePositionInScene.setY(endPointInScene.getY());
+			handlePositionInScene.setX(newEndPointInScene.x);
+			handlePositionInScene.setY(newEndPointInScene.y);
 		}
 
 		updateHandles();
 	}
 
 	@Override
-	public void abortDrag() {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
 		}
+		commit(getBendPolicy(targetPart));
 		restoreRefreshVisuals(targetPart);
-		rollback(getBendPolicy(targetPart));
+
 		updateHandles();
 	}
 
@@ -351,6 +352,16 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	}
 
 	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
+	}
+
+	@Override
 	public void startDrag(MouseEvent e) {
 		isInvalid = !isBend(e);
 		if (isInvalid) {
@@ -371,27 +382,6 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		init(bendPolicy);
 
 		updateHandles();
-	}
-
-	@Override
-	public void endDrag(MouseEvent e, Dimension delta) {
-		if (isInvalid) {
-			return;
-		}
-		commit(getBendPolicy(targetPart));
-		restoreRefreshVisuals(targetPart);
-
-		updateHandles();
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		return false;
 	}
 
 	/**

@@ -69,6 +69,34 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	public FXResizeTransformSelectedOnHandleDragPolicy() {
 	}
 
+	@Override
+	public void abortDrag() {
+		if (invalidGesture) {
+			return;
+		}
+
+		// rollback transactional policies
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				restoreRefreshVisuals(part);
+				rollback(transformPolicy);
+				FXResizePolicy resizePolicy = getResizePolicy(part);
+				if (resizePolicy != null) {
+					rollback(resizePolicy);
+				}
+			}
+		}
+
+		// clear transformation indices lists
+		scaleIndices.clear();
+		translateIndices.clear();
+		// null resize context vars
+		selectionBounds = null;
+		initialMouseLocation = null;
+		relX1 = relY1 = relX2 = relY2 = null;
+	}
+
 	/**
 	 * Computes the relative x and y coordinates for the given target part and
 	 * stores them in the {@link #relX1}, {@link #relY1}, {@link #relX2}, and
@@ -109,23 +137,13 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		// snap to grid
 		IContentPart<Node, ? extends Node> firstTargetPart = targetParts.get(0);
 		Node firstVisual = firstTargetPart.getVisual();
-		Point2D endPointInParent = firstVisual.localToParent(
-				firstVisual.sceneToLocal(e.getSceneX(), e.getSceneY()));
-		Dimension snapToGridOffset = AbstractTransformPolicy
-				.getSnapToGridOffset(
-						getHost().getRoot().getViewer().<GridModel> getAdapter(
-								GridModel.class),
-						endPointInParent.getX(), endPointInParent.getY(),
-						getSnapToGridGranularityX(),
-						getSnapToGridGranularityY());
-		endPointInParent = new Point2D(
-				endPointInParent.getX() - snapToGridOffset.width,
-				endPointInParent.getY() - snapToGridOffset.height);
-		Point2D endPointInScene = firstVisual.getParent()
-				.localToScene(endPointInParent);
+		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
+				firstVisual, e.getSceneX(), e.getSceneY(),
+				getHost().getRoot().getViewer()
+						.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY());
 		// update selection bounds
-		Rectangle sel = updateSelectionBounds(
-				FX2Geometry.toPoint(endPointInScene));
+		Rectangle sel = updateSelectionBounds(newEndPointInScene);
 
 		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
 			// compute initial and new bounds for this target
@@ -174,24 +192,23 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	@Override
-	public void abortDrag() {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		if (invalidGesture) {
+			invalidGesture = false;
 			return;
 		}
 
-		// rollback transactional policies
 		for (IContentPart<Node, ? extends Node> part : targetParts) {
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
 				restoreRefreshVisuals(part);
-				rollback(transformPolicy);
+				commit(transformPolicy);
 				FXResizePolicy resizePolicy = getResizePolicy(part);
 				if (resizePolicy != null) {
-					rollback(resizePolicy);
+					commit(resizePolicy);
 				}
 			}
 		}
-
 		// clear transformation indices lists
 		scaleIndices.clear();
 		translateIndices.clear();
@@ -359,6 +376,16 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
+	}
+
+	@Override
 	public void startDrag(MouseEvent e) {
 		targetParts = getTargetParts();
 		invalidGesture = !isResizeTransform(e);
@@ -406,43 +433,6 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 				}
 			}
 		}
-	}
-
-	@Override
-	public void endDrag(MouseEvent e, Dimension delta) {
-		if (invalidGesture) {
-			invalidGesture = false;
-			return;
-		}
-
-		for (IContentPart<Node, ? extends Node> part : targetParts) {
-			FXTransformPolicy transformPolicy = getTransformPolicy(part);
-			if (transformPolicy != null) {
-				restoreRefreshVisuals(part);
-				commit(transformPolicy);
-				FXResizePolicy resizePolicy = getResizePolicy(part);
-				if (resizePolicy != null) {
-					commit(resizePolicy);
-				}
-			}
-		}
-		// clear transformation indices lists
-		scaleIndices.clear();
-		translateIndices.clear();
-		// null resize context vars
-		selectionBounds = null;
-		initialMouseLocation = null;
-		relX1 = relY1 = relX2 = relY2 = null;
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		return false;
 	}
 
 	/**
