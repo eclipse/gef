@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.gef.mvc.behaviors.BehaviorUtils;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.parts.HiddenNeighborsFeedbackPart;
@@ -26,14 +25,14 @@ import javafx.collections.SetChangeListener;
 import javafx.scene.Node;
 
 /**
- * The {@link NodeHidingBehavior} is specific to {@link NodePart}. It
- * registers listeners on the {@link HidingModel} upon activation. When the
- * {@link HidingModel} changes, the hidden status of the {@link NodePart}
- * is determined. If the hidden status of the part changed, either
- * {@link #hide()} or {@link #show()} will be called, respectively, to hide/show
- * the part. Additionally, a {@link HiddenNeighborsFeedbackPart} is managed by
- * this {@link NodeHidingBehavior}. The {@link HiddenNeighborsFeedbackPart}
- * shows the number of hidden neighbors of the {@link NodePart}.
+ * The {@link NodeHidingBehavior} is specific to {@link NodePart}. It registers
+ * listeners on the {@link HidingModel} upon activation. When the
+ * {@link HidingModel} changes, the hidden status of the {@link NodePart} is
+ * determined. If the hidden status of the part changed, either {@link #hide()}
+ * or {@link #show()} will be called, respectively, to hide/show the part.
+ * Additionally, a {@link HiddenNeighborsFeedbackPart} is managed by this
+ * {@link NodeHidingBehavior}. The {@link HiddenNeighborsFeedbackPart} shows the
+ * number of hidden neighbors of the {@link NodePart}.
  *
  * @author mwienand
  *
@@ -65,8 +64,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 			// before
 			hiddenNeighborsFeedbackPart = new HiddenNeighborsFeedbackPart();
 		}
-		BehaviorUtils.<Node> addAnchoreds(getHost().getRoot(), Collections.singletonList(getHost()),
-				Collections.singletonList(hiddenNeighborsFeedbackPart));
+		addAnchoreds(Collections.singletonList(getHost()), Collections.singletonList(hiddenNeighborsFeedbackPart));
 	}
 
 	@Override
@@ -140,8 +138,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 	 * {@link NodeHidingBehavior}.
 	 */
 	protected void removeHiddenNeighborsFeedbackPart() {
-		BehaviorUtils.<Node> removeAnchoreds(getHost().getRoot(), Collections.singletonList(getHost()),
-				Collections.singletonList(hiddenNeighborsFeedbackPart));
+		removeAnchoreds(Collections.singletonList(getHost()), Collections.singletonList(hiddenNeighborsFeedbackPart));
 	}
 
 	/**

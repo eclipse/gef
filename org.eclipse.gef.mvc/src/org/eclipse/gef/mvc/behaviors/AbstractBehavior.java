@@ -58,6 +58,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	private ReadOnlyObjectWrapper<IVisualPart<VR, ? extends VR>> hostProperty = new ReadOnlyObjectWrapper<>();
+
 	private ActivatableSupport acs = new ActivatableSupport(this);
 
 	private Map<Set<IVisualPart<VR, ? extends VR>>, List<IFeedbackPart<VR, ? extends VR>>> feedbackPerTargetSet = new HashMap<>();
@@ -79,6 +80,56 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	@Override
 	public ReadOnlyObjectProperty<IVisualPart<VR, ? extends VR>> adaptableProperty() {
 		return hostProperty.getReadOnlyProperty();
+	}
+
+	/**
+	 * Adds the given anchoreds as children to the root part and anchors them to
+	 * the given target parts.
+	 *
+	 * @param targets
+	 *            The anchorages for the anchoreds.
+	 * @param anchoreds
+	 *            The anchored (feedback or handle) parts.
+	 */
+	protected void addAnchoreds(
+			Collection<? extends IVisualPart<VR, ? extends VR>> targets,
+			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
+		if (anchoreds != null && !anchoreds.isEmpty()) {
+			targets.iterator().next().getRoot().addChildren(anchoreds);
+			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
+				for (IVisualPart<VR, ? extends VR> anchorage : targets) {
+					anchored.attachToAnchorage(anchorage);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the given anchoreds as children to the root part and anchors them to
+	 * the given target parts. The given index determines the position where the
+	 * anchroeds are inserted into the children list of the root part. The index
+	 * can be used to control the z-order.
+	 *
+	 * @param targets
+	 *            The target parts.
+	 * @param anchoreds
+	 *            The anchored (feedback or handle) parts.
+	 * @param insertionIndex
+	 *            The insertion index (controlling the z-order).
+	 */
+	protected void addAnchoreds(
+			Collection<? extends IVisualPart<VR, ? extends VR>> targets,
+			List<? extends IVisualPart<VR, ? extends VR>> anchoreds,
+			int insertionIndex) {
+		if (anchoreds != null && !anchoreds.isEmpty()) {
+			targets.iterator().next().getRoot().addChildren(anchoreds,
+					insertionIndex);
+			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
+				for (IVisualPart<VR, ? extends VR> anchorage : targets) {
+					anchored.attachToAnchorage(anchorage);
+				}
+			}
+		}
 	}
 
 	/**
@@ -139,8 +190,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// add feedback to the viewer
 		if (!feedbackParts.isEmpty()) {
-			BehaviorUtils.<VR> addAnchoreds(targets.get(0).getRoot(), targets,
-					feedbackParts);
+			addAnchoreds(targets, feedbackParts);
 		}
 	}
 
@@ -202,8 +252,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// add handles to the viewer
 		if (!handleParts.isEmpty()) {
-			BehaviorUtils.<VR> addAnchoreds(targets.get(0).getRoot(), targets,
-					handleParts);
+			addAnchoreds(targets, handleParts);
 		}
 	}
 
@@ -511,6 +560,28 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	/**
+	 * Removes the given anchoreds as children from the root part and as
+	 * anchoreds from the given target parts.
+	 *
+	 * @param targets
+	 *            The anchorages of the anchoreds.
+	 * @param anchoreds
+	 *            The anchoreds (feedback or handles) that are to be removed.
+	 */
+	protected void removeAnchoreds(
+			Collection<? extends IVisualPart<VR, ? extends VR>> targets,
+			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
+		if (anchoreds != null && !anchoreds.isEmpty()) {
+			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
+				for (IVisualPart<VR, ? extends VR> anchorage : targets) {
+					anchored.detachFromAnchorage(anchorage);
+				}
+			}
+			targets.iterator().next().getRoot().removeChildren(anchoreds);
+		}
+	}
+
+	/**
 	 * Removes feedback for the given targets.
 	 *
 	 * @param targets
@@ -576,8 +647,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// remove feedback from the viewer
 		if (!feedbackParts.isEmpty()) {
-			BehaviorUtils.removeAnchoreds(feedbackParts.get(0).getRoot(),
-					targetSet, feedbackParts);
+			removeAnchoreds(targetSet, feedbackParts);
 		}
 		for (IFeedbackPart<VR, ? extends VR> fp : feedbackParts) {
 			fp.dispose();
@@ -646,8 +716,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 		// remove handles from the viewer
 		if (!handleParts.isEmpty()) {
-			BehaviorUtils.removeAnchoreds(handleParts.get(0).getRoot(),
-					targetSet, handleParts);
+			removeAnchoreds(targetSet, handleParts);
 		}
 		for (IHandlePart<VR, ? extends VR> hp : handleParts) {
 			hp.dispose();
@@ -741,7 +810,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			// set new handles as anchoreds so that they can be compared
 			List<IHandlePart<VR, ? extends VR>> toBeAdded = new ArrayList<>(
 					newHandles);
-			BehaviorUtils.<VR> addAnchoreds(root, targets, toBeAdded);
+			addAnchoreds(targets, toBeAdded);
 
 			if (interactedWithComparator != null) {
 				// find new handle at interaction position and remove it from
@@ -803,7 +872,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 				}
 
 				// remove handles that no longer exist
-				BehaviorUtils.removeAnchoreds(root, targets, toBeRemoved);
+				removeAnchoreds(targets, toBeRemoved);
 				getHandlesPerTargetSet().get(targetSet).removeAll(toBeRemoved);
 				for (IHandlePart<VR, ? extends VR> hp : toBeRemoved) {
 					hp.dispose();
@@ -842,7 +911,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			}
 
 			// remove already existing handles
-			BehaviorUtils.removeAnchoreds(root, targets, toBeDisposed);
+			removeAnchoreds(targets, toBeDisposed);
 			for (IHandlePart<VR, ? extends VR> hp : toBeDisposed) {
 				hp.dispose();
 			}
