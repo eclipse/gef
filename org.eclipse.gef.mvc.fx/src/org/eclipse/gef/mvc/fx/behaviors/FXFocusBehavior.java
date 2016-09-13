@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.behaviors;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.gef.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.FocusModel;
@@ -75,6 +78,13 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 
 	private IViewer<Node> viewer;
 	private boolean hasViewerFocusedFeedback;
+
+	@Override
+	protected void addAnchoreds(
+			Collection<? extends IVisualPart<Node, ? extends Node>> targets,
+			List<? extends IVisualPart<Node, ? extends Node>> anchoreds) {
+		super.addAnchoreds(targets, anchoreds, 0);
+	}
 
 	/**
 	 * Adds viewer focused feedback.
