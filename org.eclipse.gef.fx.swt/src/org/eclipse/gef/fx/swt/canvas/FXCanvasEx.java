@@ -40,8 +40,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
-import com.sun.javafx.tk.TKSceneListener;
-
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -150,8 +148,8 @@ public class FXCanvasEx extends FXCanvas {
 	/**
 	 * The {@link ISceneRunnable} interface provides a callback method that is
 	 * invoked in a privileged runnable on the JavaFX application thread. The
-	 * callback is provided with a {@link TKSceneListener} that can be used to
-	 * send events to JavaFX.
+	 * callback is provided with a {@link TKSceneListenerWrapper} that can be
+	 * used to send events to JavaFX.
 	 *
 	 * @author mwienand
 	 *
@@ -163,11 +161,113 @@ public class FXCanvasEx extends FXCanvas {
 		 * application thread.
 		 *
 		 * @param sceneListener
-		 *            {@link TKSceneListener} that can be used to send events to
-		 *            JavaFX.
+		 *            The TKSceneListenerWrapper that can be used to send events
+		 *            to JavaFX.
 		 */
-		public void run(TKSceneListener sceneListener);
+		public void run(TKSceneListenerWrapper sceneListener);
+	}
 
+	// XXX: This class is used to wrap a com.sun.javafx.tk.TKSceneListener
+	// object, so respective methods can be called on it via reflection without
+	// introducing compile-time dependencies.
+	// TODO: Remove when dropping support for JavaSE-1.8
+	private class TKSceneListenerWrapper {
+
+		private Object tkSceneListener;
+
+		private TKSceneListenerWrapper(Object tkSceneListener) {
+			this.tkSceneListener = tkSceneListener;
+		}
+
+		public void rotateEvent(EventType<RotateEvent> eventType, double angle,
+				double totalAngle, double x, double y, double screenX,
+				double screenY, boolean _shiftDown, boolean _controlDown,
+				boolean _altDown, boolean _metaDown, boolean _direct,
+				boolean _inertia) {
+			try {
+				Method m = tkSceneListener.getClass().getDeclaredMethod(
+						"rotateEvent", EventType.class, double.class,
+						double.class, double.class, double.class, double.class,
+						double.class, boolean.class, boolean.class,
+						boolean.class, boolean.class, boolean.class,
+						boolean.class);
+				m.setAccessible(true);
+				m.invoke(tkSceneListener, eventType, angle, totalAngle, x, y,
+						screenX, screenY, _shiftDown, _controlDown, _altDown,
+						_metaDown, _direct, _inertia);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		public void scrollEvent(EventType<ScrollEvent> eventType,
+				double scrollX, double scrollY, double totalScrollX,
+				double totalScrollY, double xMultiplier, double yMultiplier,
+				int touchCount, int scrollTextX, int scrollTextY,
+				int defaultTextX, int defaultTextY, double x, double y,
+				double screenX, double screenY, boolean _shiftDown,
+				boolean _controlDown, boolean _altDown, boolean _metaDown,
+				boolean _direct, boolean _inertia) {
+			try {
+				Method m = tkSceneListener.getClass().getDeclaredMethod(
+						"scrollEvent", EventType.class, double.class,
+						double.class, double.class, double.class, double.class,
+						double.class, int.class, int.class, int.class,
+						int.class, int.class, double.class, double.class,
+						double.class, double.class, boolean.class,
+						boolean.class, boolean.class, boolean.class,
+						boolean.class, boolean.class);
+				m.setAccessible(true);
+				m.invoke(tkSceneListener, eventType, scrollX, scrollY,
+						totalScrollX, totalScrollY, xMultiplier, yMultiplier,
+						touchCount, scrollTextX, scrollTextY, defaultTextX,
+						defaultTextY, x, y, screenX, screenY, _shiftDown,
+						_controlDown, _altDown, _metaDown, _direct, _inertia);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public void swipeEvent(EventType<SwipeEvent> eventType, int touchCount,
+				double x, double y, double screenX, double screenY,
+				boolean _shiftDown, boolean _controlDown, boolean _altDown,
+				boolean _metaDown, boolean _direct) {
+			try {
+				Method m = tkSceneListener.getClass().getDeclaredMethod(
+						"swipeEvent", EventType.class, int.class, double.class,
+						double.class, double.class, double.class, boolean.class,
+						boolean.class, boolean.class, boolean.class,
+						boolean.class);
+				m.setAccessible(true);
+				m.invoke(tkSceneListener, eventType, touchCount, x, y, screenX,
+						screenY, _shiftDown, _controlDown, _altDown, _metaDown,
+						_direct);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public void zoomEvent(EventType<ZoomEvent> eventType, double zoomFactor,
+				double totalZoomFactor, double x, double y, double screenX,
+				double screenY, boolean _shiftDown, boolean _controlDown,
+				boolean _altDown, boolean _metaDown, boolean _direct,
+				boolean _inertia) {
+			try {
+				Method m = tkSceneListener.getClass().getDeclaredMethod(
+						"zoomEvent", EventType.class, double.class,
+						double.class, double.class, double.class, double.class,
+						double.class, boolean.class, boolean.class,
+						boolean.class, boolean.class, boolean.class,
+						boolean.class);
+				m.setAccessible(true);
+				m.invoke(tkSceneListener, eventType, zoomFactor,
+						totalZoomFactor, x, y, screenX, screenY, _shiftDown,
+						_controlDown, _altDown, _metaDown, _direct, _inertia);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private static final boolean JAVA_8 = System.getProperty("java.version")
@@ -218,10 +318,6 @@ public class FXCanvasEx extends FXCanvas {
 
 	private Listener mouseWheelListener = new Listener() {
 
-		private int getWheelRotation(org.eclipse.swt.widgets.Event e) {
-			return e.count > 0 ? 1 : -1;
-		}
-
 		@Override
 		public void handleEvent(org.eclipse.swt.widgets.Event e) {
 			if (!gestureActive
@@ -229,10 +325,10 @@ public class FXCanvasEx extends FXCanvas {
 							|| e.time != lastGestureEvent.time)) {
 				if (e.type == SWT.MouseVerticalWheel) {
 					sendScrollEventToFX(ScrollEvent.SCROLL, 0,
-							getWheelRotation(e), e.x, e.y, e.stateMask);
+							e.count > 0 ? 1 : -1, e.x, e.y, e.stateMask);
 				} else {
-					sendScrollEventToFX(ScrollEvent.SCROLL, getWheelRotation(e),
-							0, e.x, e.y, e.stateMask);
+					sendScrollEventToFX(ScrollEvent.SCROLL,
+							e.count > 0 ? 1 : -1, 0, e.x, e.y, e.stateMask);
 				}
 			}
 		}
@@ -245,7 +341,7 @@ public class FXCanvasEx extends FXCanvas {
 			final Point los = toDisplay(x, y);
 			scheduleSceneRunnable(new ISceneRunnable() {
 				@Override
-				public void run(TKSceneListener sceneListener) {
+				public void run(TKSceneListenerWrapper sceneListener) {
 					sceneListener.scrollEvent(eventType, scrollX, scrollY,
 							scrollX, scrollY, multiplier, multiplier, 0, 0, 0,
 							0, 0, x, y, los.x, los.y,
@@ -258,7 +354,6 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	};
 
-	// true in between begin and end events of a (compound) gesture (not
 	// including inertia events)
 	private boolean gestureActive = false;
 	// true while inertia events of a pan gesture might be processed
@@ -423,7 +518,6 @@ public class FXCanvasEx extends FXCanvas {
 			// keep track of currently received gesture event; this is needed to
 			// identify inertia events
 			lastGestureEvent = gestureEvent;
-
 		}
 
 		private void sendRotateEventToFX(EventType<RotateEvent> eventType,
@@ -444,7 +538,7 @@ public class FXCanvasEx extends FXCanvas {
 
 			scheduleSceneRunnable(new ISceneRunnable() {
 				@Override
-				public void run(TKSceneListener sceneListener) {
+				public void run(TKSceneListenerWrapper sceneListener) {
 					sceneListener.rotateEvent(eventType, angle, totalAngle[0],
 							gestureEvent.x, gestureEvent.y, los.x, los.y,
 							(gestureEvent.stateMask & SWT.SHIFT) != 0,
@@ -482,7 +576,7 @@ public class FXCanvasEx extends FXCanvas {
 			final Point los = toDisplay(x, y);
 			scheduleSceneRunnable(new ISceneRunnable() {
 				@Override
-				public void run(TKSceneListener sceneListener) {
+				public void run(TKSceneListenerWrapper sceneListener) {
 					sceneListener.scrollEvent(eventType, scrollX, scrollY,
 							totalScrollX, totalScrollY, multiplier, multiplier,
 							0, 0, 0, 0, 0, x, y, los.x, los.y,
@@ -500,7 +594,7 @@ public class FXCanvasEx extends FXCanvas {
 
 			scheduleSceneRunnable(new ISceneRunnable() {
 				@Override
-				public void run(TKSceneListener sceneListener) {
+				public void run(TKSceneListenerWrapper sceneListener) {
 					sceneListener.swipeEvent(eventType, 0, gestureEvent.x,
 							gestureEvent.y, los.x, los.y,
 							(gestureEvent.stateMask & SWT.SHIFT) != 0,
@@ -530,7 +624,7 @@ public class FXCanvasEx extends FXCanvas {
 
 			scheduleSceneRunnable(new ISceneRunnable() {
 				@Override
-				public void run(TKSceneListener sceneListener) {
+				public void run(TKSceneListenerWrapper sceneListener) {
 					sceneListener.zoomEvent(eventType, zoom, totalZoom[0],
 							gestureEvent.x, gestureEvent.y, los.x, los.y,
 							(gestureEvent.stateMask & SWT.SHIFT) != 0,
@@ -791,13 +885,13 @@ public class FXCanvasEx extends FXCanvas {
 				AccessController.doPrivileged(new PrivilegedAction<Void>() {
 					@Override
 					public Void run() {
-						TKSceneListener sceneListener = ReflectionUtils
+						Object sceneListener = ReflectionUtils
 								.getPrivateFieldValue(scenePeer,
 										"sceneListener");
 						if (sceneListener == null) {
 							return null;
 						}
-						sr.run(sceneListener);
+						sr.run(new TKSceneListenerWrapper(sceneListener));
 						return null;
 					}
 				}, (AccessControlContext) ReflectionUtils
