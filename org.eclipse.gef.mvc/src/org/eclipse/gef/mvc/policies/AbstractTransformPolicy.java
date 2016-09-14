@@ -16,15 +16,10 @@ import java.util.List;
 
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.planar.AffineTransform;
-import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.operations.TransformContentOperation;
 import org.eclipse.gef.mvc.parts.ITransformableContentPart;
-
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
 
 /**
  * The {@link AbstractTransformPolicy} is a {@link AbstractTransactionPolicy}
@@ -99,55 +94,6 @@ import javafx.scene.Node;
  */
 public abstract class AbstractTransformPolicy<VR>
 		extends AbstractTransactionPolicy<VR> {
-
-	/**
-	 * Snaps the given position (in scene coordinates) to a grid position. The
-	 * grid positions are specified by the given {@link GridModel} and the given
-	 * cell size fractions.
-	 *
-	 * @param visual
-	 *            The {@link Node} that is snapped.
-	 * @param sceneX
-	 *            The x-coordinate of the current position (in scene
-	 *            coordinates).
-	 * @param sceneY
-	 *            The y-coordinate of the current position (in scene
-	 *            coordinates).
-	 * @param gridModel
-	 *            The {@link GridModel} that specifies the grid positions.
-	 * @param gridCellWidthFraction
-	 *            The cell width fraction that determines if the x-coordinate is
-	 *            snapped to full (1.0), halve (0.5), etc. grid positions.
-	 * @param gridCellHeightFraction
-	 *            The cell height fraction that determines if the y-coordinate
-	 *            is snapped to full (1.0), halve (0.5), etc. grid positions.
-	 * @param gridLocalVisual
-	 *            A visual within the coordinate system where grid positions are
-	 *            at <code>(n * grid-cell-width, m * grid-cell-height)</code>.
-	 * @return The resulting snapped position in scene coordinates.
-	 */
-	public static Point snapToGrid(Node visual, final double sceneX,
-			final double sceneY, GridModel gridModel,
-			final double gridCellWidthFraction,
-			final double gridCellHeightFraction, Node gridLocalVisual) {
-		// do nothing if snap to grid is disabled
-		if (!gridModel.isSnapToGrid()) {
-			return new Point(sceneX, sceneY);
-		}
-		// transform to grid local coordinates
-		Point2D gridLocalPosition = gridLocalVisual.sceneToLocal(sceneX,
-				sceneY);
-		// snap to grid
-		double gcw = gridCellWidthFraction * gridModel.getGridCellWidth();
-		int xs = (int) (gridLocalPosition.getX() / gcw);
-		double gch = gridCellHeightFraction * gridModel.getGridCellHeight();
-		int ys = (int) (gridLocalPosition.getY() / gch);
-		double nx = xs * gcw;
-		double ny = ys * gch;
-		// transform to scene coordinates
-		Point2D newPositionInScene = gridLocalVisual.localToScene(nx, ny);
-		return new Point(newPositionInScene.getX(), newPositionInScene.getY());
-	}
 
 	/**
 	 * The initial node transformation of the manipulated part.
