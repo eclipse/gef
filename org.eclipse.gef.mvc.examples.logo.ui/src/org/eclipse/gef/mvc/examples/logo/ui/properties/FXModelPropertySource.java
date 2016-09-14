@@ -12,14 +12,15 @@
 package org.eclipse.gef.mvc.examples.logo.ui.properties;
 
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricModel;
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class FXModelPropertySource implements IPropertySource {
-
-	private static final IPropertyDescriptor SNAP_TO_GRID_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(
-			FXGeometricModel.SNAP_TO_GRID_PROPERTY, "Snap To Grid");
+	
+	private static final IPropertyDescriptor SNAP_TO_GRID_PROPERTY_DESCRIPTOR = new ComboBoxPropertyDescriptor(
+			FXGeometricModel.SNAP_TO_GRID_PROPERTY, "Snap To Grid",
+			new String[] { Boolean.FALSE.toString(), Boolean.TRUE.toString() });
 
 	private FXGeometricModel model;
 
@@ -40,7 +41,7 @@ public class FXModelPropertySource implements IPropertySource {
 	@Override
 	public Object getPropertyValue(Object id) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return Boolean.toString(model.isSnapToGrid());
+			return model.isSnapToGrid() ? 1 : 0;
 		} else {
 			return null;
 		}
@@ -49,7 +50,7 @@ public class FXModelPropertySource implements IPropertySource {
 	@Override
 	public boolean isPropertySet(Object id) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return model.isSnapToGrid();
+			return true;
 		} else {
 			return false;
 		}
@@ -65,7 +66,7 @@ public class FXModelPropertySource implements IPropertySource {
 	@Override
 	public void setPropertyValue(Object id, Object value) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.setSnapToGrid(Boolean.parseBoolean((String) value));
+			model.setSnapToGrid(value instanceof Integer && ((Integer) value) == 1);
 		}
 	}
 
