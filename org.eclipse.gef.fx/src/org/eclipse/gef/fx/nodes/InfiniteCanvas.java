@@ -195,8 +195,6 @@ public class InfiniteCanvas extends Region {
 			gridCellWidthProperty.addListener(repaintListener);
 			gridCellHeightProperty.addListener(repaintListener);
 
-			layoutXProperty().addListener(repaintListener);
-			layoutYProperty().addListener(repaintListener);
 			widthProperty().addListener(repaintListener);
 			heightProperty().addListener(repaintListener);
 		}
@@ -241,12 +239,11 @@ public class InfiniteCanvas extends Region {
 					* xScale;
 			final double scaledGridCellHeight = gridCellHeightProperty.get()
 					* yScale;
+
 			gc.setFill(Color.GREY);
-			for (double x = -(getLayoutX()
-					- gridTransformProperty.get().getTx())
+			for (double x = gridTransformProperty.get().getTx()
 					% scaledGridCellWidth; x < width; x += scaledGridCellWidth) {
-				for (double y = -(getLayoutY()
-						- gridTransformProperty.get().getTy())
+				for (double y = gridTransformProperty.get().getTy()
 						% scaledGridCellHeight; y < height; y += scaledGridCellHeight) {
 					gc.fillRect(Math.floor(x) - 0.5 * xScale,
 							Math.floor(y) - 0.5 * yScale, xScale, yScale);
@@ -1433,7 +1430,11 @@ public class InfiniteCanvas extends Region {
 
 			@Override
 			protected double computeValue() {
-				return Math.min(0, scrollableBoundsProperty.get().getMinX());
+				double gridCellWidth = getGridCellWidth()
+						* Math.abs(gridTransformProperty.get().getMxx());
+				return Math.min(0,
+						(((int) (scrollableBoundsProperty.get().getMinX()
+								/ gridCellWidth) - 1)) * gridCellWidth);
 			}
 		});
 		gridCanvas.layoutYProperty().bind(new DoubleBinding() {
@@ -1443,7 +1444,11 @@ public class InfiniteCanvas extends Region {
 
 			@Override
 			protected double computeValue() {
-				return Math.min(0, scrollableBoundsProperty.get().getMinY());
+				double gridCellHeight = getGridCellHeight()
+						* Math.abs(gridTransformProperty.get().getMyy());
+				return Math.min(0,
+						(((int) (scrollableBoundsProperty.get().getMinY()
+								/ gridCellHeight) - 1)) * gridCellHeight);
 			}
 		});
 		gridCanvas.widthProperty().bind(new DoubleBinding() {

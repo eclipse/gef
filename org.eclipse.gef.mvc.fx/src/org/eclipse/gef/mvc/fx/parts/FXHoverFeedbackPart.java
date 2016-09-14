@@ -55,6 +55,7 @@ public class FXHoverFeedbackPart
 		// hover specific
 		visual.setEffect(getHoverFeedbackEffect());
 		visual.setStroke(getHoverStroke());
+
 		return visual;
 	}
 
