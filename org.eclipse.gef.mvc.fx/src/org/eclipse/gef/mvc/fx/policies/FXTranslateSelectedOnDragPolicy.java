@@ -29,7 +29,6 @@ import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
 
 import com.google.common.reflect.TypeToken;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -170,21 +169,6 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	 */
 	protected double getSnapToGridGranularityY() {
 		return 1;
-	}
-
-	private Dimension getSnapToGridOffset(GridModel gridModel, Node visual,
-			final double sceneX, final double sceneY,
-			final double gridCellWidthFraction,
-			final double gridCellHeightFraction) {
-		Point2D parent = visual.getParent().sceneToLocal(sceneX, sceneY);
-		double gcw = gridCellWidthFraction * gridModel.getGridCellWidth();
-		int xs = (int) (parent.getX() / gcw);
-		double gch = gridCellHeightFraction * gridModel.getGridCellHeight();
-		int ys = (int) (parent.getY() / gch);
-		double nx = xs * gcw;
-		double ny = ys * gch;
-		Point2D nScene = visual.getParent().localToScene(nx, ny);
-		return new Dimension(nScene.getX(), nScene.getY());
 	}
 
 	/**

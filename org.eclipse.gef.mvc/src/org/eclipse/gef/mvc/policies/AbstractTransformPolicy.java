@@ -161,6 +161,10 @@ public abstract class AbstractTransformPolicy<VR>
 			final double sceneY, GridModel gridModel,
 			final double gridCellWidthFraction,
 			final double gridCellHeightFraction, Node gridLocalVisual) {
+		// do nothing if snap to grid is disabled
+		if (!gridModel.isSnapToGrid()) {
+			return new Point(sceneX, sceneY);
+		}
 		// transform to grid local coordinates
 		Point2D gridLocalPosition = gridLocalVisual.sceneToLocal(sceneX,
 				sceneY);
