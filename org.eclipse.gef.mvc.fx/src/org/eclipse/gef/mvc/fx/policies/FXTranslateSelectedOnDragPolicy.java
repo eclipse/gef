@@ -88,7 +88,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		GridModel gridModel = null;
 		double granularityX = 0d;
 		double granularityY = 0d;
-		if (isPrecise(e)) {
+		if (!isPrecise(e)) {
 			granularityX = getSnapToGridGranularityX();
 			granularityY = getSnapToGridGranularityY();
 			gridModel = viewer.getAdapter(GridModel.class);
@@ -210,11 +210,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	 *         <code>false</code> otherwise.
 	 */
 	protected boolean isPrecise(MouseEvent e) {
-		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
-			// MacOS
-			return e.isMetaDown();
-		}
-		return e.isAltDown();
+		return e.isShortcutDown();
 	}
 
 	/**

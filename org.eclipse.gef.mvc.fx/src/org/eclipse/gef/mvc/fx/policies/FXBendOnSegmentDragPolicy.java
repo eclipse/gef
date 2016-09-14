@@ -165,11 +165,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	 *         <code>false</code> otherwise.
 	 */
 	protected boolean isPrecise(MouseEvent e) {
-		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
-			// MacOS
-			return e.isMetaDown();
-		}
-		return e.isAltDown();
+		return e.isShortcutDown();
 	}
 
 	/**
