@@ -14,10 +14,12 @@ package org.eclipse.gef.mvc.fx.policies;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
+import org.eclipse.gef.mvc.viewer.IViewer;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -77,11 +79,15 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		Point2D startLocal = visual.sceneToLocal(initialPointerLocation.x,
 				initialPointerLocation.y);
 		// snap to grid
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		Node gridLocalVisual = viewer instanceof FXViewer
+				? ((FXViewer) viewer).getCanvas().getContentGroup()
+				: visual.getParent();
 		Point newEndScene = AbstractTransformPolicy.snapToGrid(visual,
 				e.getSceneX(), e.getSceneY(),
-				getHost().getRoot().getViewer()
-						.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY());
+				viewer.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
+				gridLocalVisual);
 		Point2D endLocal = visual.sceneToLocal(newEndScene.x, newEndScene.y);
 		// compute delta in local coordinates
 		double deltaX = endLocal.getX() - startLocal.getX();

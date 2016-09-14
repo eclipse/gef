@@ -121,40 +121,9 @@ public abstract class AbstractTransformPolicy<VR>
 	 * @param gridCellHeightFraction
 	 *            The cell height fraction that determines if the y-coordinate
 	 *            is snapped to full (1.0), halve (0.5), etc. grid positions.
-	 * @return The resulting snapped position in scene coordinates.
-	 */
-	public static Point snapToGrid(Node visual, final double sceneX,
-			final double sceneY, GridModel gridModel,
-			final double gridCellWidthFraction,
-			final double gridCellHeightFraction) {
-		return snapToGrid(visual, sceneX, sceneY, gridModel,
-				gridCellWidthFraction, gridCellHeightFraction,
-				visual.getParent());
-	}
-
-	/**
-	 * Snaps the given position (in scene coordinates) to a grid position. The
-	 * grid positions are specified by the given {@link GridModel} and the given
-	 * cell size fractions.
-	 *
-	 * @param visual
-	 *            The {@link Node} that is snapped.
-	 * @param sceneX
-	 *            The x-coordinate of the current position (in scene
-	 *            coordinates).
-	 * @param sceneY
-	 *            The y-coordinate of the current position (in scene
-	 *            coordinates).
-	 * @param gridModel
-	 *            The {@link GridModel} that specifies the grid positions.
-	 * @param gridCellWidthFraction
-	 *            The cell width fraction that determines if the x-coordinate is
-	 *            snapped to full (1.0), halve (0.5), etc. grid positions.
-	 * @param gridCellHeightFraction
-	 *            The cell height fraction that determines if the y-coordinate
-	 *            is snapped to full (1.0), halve (0.5), etc. grid positions.
 	 * @param gridLocalVisual
-	 *            The visual in which grid positions are specified.
+	 *            A visual within the coordinate system where grid positions are
+	 *            at <code>(n * grid-cell-width, m * grid-cell-height)</code>.
 	 * @return The resulting snapped position in scene coordinates.
 	 */
 	public static Point snapToGrid(Node visual, final double sceneX,

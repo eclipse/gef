@@ -23,10 +23,12 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
+import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -126,7 +128,6 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		if (invalidGesture) {
 			return;
 		}
-
 		if (selectionBounds == null) {
 			return;
 		}
@@ -134,17 +135,25 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 			return;
 		}
 
-		// snap to grid
+		// determine target part and its visual
 		IContentPart<Node, ? extends Node> firstTargetPart = targetParts.get(0);
 		Node firstVisual = firstTargetPart.getVisual();
+
+		// snap to grid
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		Node gridLocalVisual = viewer instanceof FXViewer
+				? ((FXViewer) viewer).getCanvas().getContentGroup()
+				: firstVisual.getParent();
 		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
 				firstVisual, e.getSceneX(), e.getSceneY(),
-				getHost().getRoot().getViewer()
-						.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY());
+				viewer.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
+				gridLocalVisual);
+
 		// update selection bounds
 		Rectangle sel = updateSelectionBounds(newEndPointInScene);
 
+		// update target parts
 		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
 			// compute initial and new bounds for this target
 			Bounds initialBounds = getBounds(selectionBounds, targetPart);

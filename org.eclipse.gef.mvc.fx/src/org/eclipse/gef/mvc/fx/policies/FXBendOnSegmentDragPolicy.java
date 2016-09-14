@@ -19,11 +19,13 @@ import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polyline;
 import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
+import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
+import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -68,11 +70,15 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 			prepareBend(getBendPolicy());
 		}
 
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		Node gridLocalVisual = viewer instanceof FXViewer
+				? ((FXViewer) viewer).getCanvas().getContentGroup()
+				: getHost().getVisual().getParent();
 		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
 				getHost().getVisual(), e.getSceneX(), e.getSceneY(),
-				getHost().getRoot().getViewer()
-						.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY());
+				viewer.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
+				gridLocalVisual);
 		getBendPolicy().move(initialMouseInScene, newEndPointInScene);
 		updateHandles();
 	}

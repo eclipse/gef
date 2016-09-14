@@ -25,12 +25,14 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
+import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -116,11 +118,15 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		boolean isHorizontal = isOrthogonal
 				&& getBendPolicy(targetPart).isSelectionHorizontal();
 
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		Node gridLocalVisual = viewer instanceof FXViewer
+				? ((FXViewer) viewer).getCanvas().getContentGroup()
+				: targetPart.getVisual().getParent();
 		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
 				targetPart.getVisual(), e.getSceneX(), e.getSceneY(),
-				getHost().getRoot().getViewer()
-						.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY());
+				viewer.<GridModel> getAdapter(GridModel.class),
+				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
+				gridLocalVisual);
 		getBendPolicy(targetPart).move(initialMouseInScene, newEndPointInScene);
 
 		if (isOrthogonal) {

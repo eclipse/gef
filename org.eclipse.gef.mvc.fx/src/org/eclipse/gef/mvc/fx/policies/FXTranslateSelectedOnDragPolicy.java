@@ -22,10 +22,12 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
+import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
+import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -89,12 +91,15 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 				Point startInScene = boundsInScene.get(part).getTopLeft();
 				Point endInScene = startInScene.getTranslated(delta);
 				// determine snap to grid offset in scene coordinates
+				IViewer<Node> viewer = getHost().getRoot().getViewer();
+				Node gridLocalVisual = viewer instanceof FXViewer
+						? ((FXViewer) viewer).getCanvas().getContentGroup()
+						: part.getVisual().getParent();
 				Point newEndInScene = AbstractTransformPolicy.snapToGrid(
 						part.getVisual(), endInScene.x, endInScene.y,
-						getHost().getRoot().getViewer().<GridModel> getAdapter(
-								GridModel.class),
+						viewer.<GridModel> getAdapter(GridModel.class),
 						getSnapToGridGranularityX(),
-						getSnapToGridGranularityY());
+						getSnapToGridGranularityY(), gridLocalVisual);
 				// compute delta in parent coordinates
 				Point newEndInParent = NodeUtils.sceneToLocal(
 						part.getVisual().getParent(), newEndInScene);
