@@ -19,12 +19,9 @@ import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polyline;
 import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -70,15 +67,13 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 			prepareBend(getBendPolicy());
 		}
 
+		// snap to grid
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		Node gridLocalVisual = viewer instanceof FXViewer
-				? ((FXViewer) viewer).getCanvas().getContentGroup()
-				: getHost().getVisual().getParent();
-		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
-				getHost().getVisual(), e.getSceneX(), e.getSceneY(),
-				viewer.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
-				gridLocalVisual);
+		Point newEndPointInScene = isPrecise(e)
+				? new Point(e.getSceneX(), e.getSceneY())
+				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
+
+		// perform changes
 		getBendPolicy().move(initialMouseInScene, newEndPointInScene);
 		updateHandles();
 	}
@@ -119,26 +114,6 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		return (IVisualPart<Node, Connection>) super.getHost();
 	}
 
-	/**
-	 * Returns the horizontal granularity for "snap-to-grid" where
-	 * <code>1</code> means it will snap to integer grid positions.
-	 *
-	 * @return The horizontal granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityX() {
-		return 1;
-	}
-
-	/**
-	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
-	 * means it will snap to integer grid positions.
-	 *
-	 * @return The vertical granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityY() {
-		return 1;
-	}
-
 	@Override
 	public void hideIndicationCursor() {
 		cursorSupport.restoreCursor();
@@ -176,6 +151,25 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 			}
 		}
 		return !isInvalid;
+	}
+
+	/**
+	 * Returns <code>true</code> if precise manipulations should be performed
+	 * for the given {@link MouseEvent}. Otherwise returns <code>false</code>.
+	 *
+	 * @param e
+	 *            The {@link MouseEvent} that is used to determine if precise
+	 *            manipulations should be performed (i.e. if the corresponding
+	 *            modifier key is pressed).
+	 * @return <code>true</code> if precise manipulations should be performed,
+	 *         <code>false</code> otherwise.
+	 */
+	protected boolean isPrecise(MouseEvent e) {
+		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+			// MacOS
+			return e.isMetaDown();
+		}
+		return e.isAltDown();
 	}
 
 	/**

@@ -14,11 +14,8 @@ package org.eclipse.gef.mvc.fx.policies;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
 import javafx.geometry.Point2D;
@@ -80,14 +77,9 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 				initialPointerLocation.y);
 		// snap to grid
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		Node gridLocalVisual = viewer instanceof FXViewer
-				? ((FXViewer) viewer).getCanvas().getContentGroup()
-				: visual.getParent();
-		Point newEndScene = AbstractTransformPolicy.snapToGrid(visual,
-				e.getSceneX(), e.getSceneY(),
-				viewer.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
-				gridLocalVisual);
+		Point newEndScene = isPrecise(e)
+				? new Point(e.getSceneX(), e.getSceneY())
+				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
 		Point2D endLocal = visual.sceneToLocal(newEndScene.x, newEndScene.y);
 		// compute delta in local coordinates
 		double deltaX = endLocal.getX() - startLocal.getX();
@@ -170,26 +162,6 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 	}
 
 	/**
-	 * Returns the horizontal granularity for "snap-to-grid" where
-	 * <code>1</code> means it will snap to integer grid positions.
-	 *
-	 * @return The horizontal granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityX() {
-		return 1;
-	}
-
-	/**
-	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
-	 * means it will snap to integer grid positions.
-	 *
-	 * @return The vertical granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityY() {
-		return 1;
-	}
-
-	/**
 	 * Returns the target part of this policy.
 	 *
 	 * @return The target part of this policy.
@@ -223,6 +195,25 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		return getTargetPart().getRoot().getViewer()
 				.getAdapter(SelectionModel.class).getSelectionUnmodifiable()
 				.size() > 1;
+	}
+
+	/**
+	 * Returns <code>true</code> if precise manipulations should be performed
+	 * for the given {@link MouseEvent}. Otherwise returns <code>false</code>.
+	 *
+	 * @param e
+	 *            The {@link MouseEvent} that is used to determine if precise
+	 *            manipulations should be performed (i.e. if the corresponding
+	 *            modifier key is pressed).
+	 * @return <code>true</code> if precise manipulations should be performed,
+	 *         <code>false</code> otherwise.
+	 */
+	protected boolean isPrecise(MouseEvent e) {
+		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+			// MacOS
+			return e.isMetaDown();
+		}
+		return e.isAltDown();
 	}
 
 	/**

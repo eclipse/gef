@@ -25,13 +25,10 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.FXCircleSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -118,17 +115,16 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		boolean isHorizontal = isOrthogonal
 				&& getBendPolicy(targetPart).isSelectionHorizontal();
 
+		// snap to grid
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		Node gridLocalVisual = viewer instanceof FXViewer
-				? ((FXViewer) viewer).getCanvas().getContentGroup()
-				: targetPart.getVisual().getParent();
-		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
-				targetPart.getVisual(), e.getSceneX(), e.getSceneY(),
-				viewer.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
-				gridLocalVisual);
+		Point newEndPointInScene = isPrecise(e)
+				? new Point(e.getSceneX(), e.getSceneY())
+				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
+
+		// perform changes
 		getBendPolicy(targetPart).move(initialMouseInScene, newEndPointInScene);
 
+		// update handles
 		if (isOrthogonal) {
 			if (isHorizontal) {
 				// can only move vertically
@@ -141,7 +137,6 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			handlePositionInScene.setX(newEndPointInScene.x);
 			handlePositionInScene.setY(newEndPointInScene.y);
 		}
-
 		updateHandles();
 	}
 
@@ -187,26 +182,6 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	}
 
 	/**
-	 * Returns the horizontal granularity for "snap-to-grid" where
-	 * <code>1</code> means it will snap to integer grid positions.
-	 *
-	 * @return The horizontal granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityX() {
-		return 1;
-	}
-
-	/**
-	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
-	 * means it will snap to integer grid positions.
-	 *
-	 * @return The vertical granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityY() {
-		return 1;
-	}
-
-	/**
 	 * Returns the target {@link IVisualPart} for this policy. Per default the
 	 * first anchorage is returned, which has to be an {@link IVisualPart} with
 	 * an {@link Connection} visual.
@@ -236,6 +211,25 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	 */
 	protected boolean isBend(MouseEvent event) {
 		return true;
+	}
+
+	/**
+	 * Returns <code>true</code> if precise manipulations should be performed
+	 * for the given {@link MouseEvent}. Otherwise returns <code>false</code>.
+	 *
+	 * @param e
+	 *            The {@link MouseEvent} that is used to determine if precise
+	 *            manipulations should be performed (i.e. if the corresponding
+	 *            modifier key is pressed).
+	 * @return <code>true</code> if precise manipulations should be performed,
+	 *         <code>false</code> otherwise.
+	 */
+	protected boolean isPrecise(MouseEvent e) {
+		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+			// MacOS
+			return e.isMetaDown();
+		}
+		return e.isAltDown();
 	}
 
 	/**

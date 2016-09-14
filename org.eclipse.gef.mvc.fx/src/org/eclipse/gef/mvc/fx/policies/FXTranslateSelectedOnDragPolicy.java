@@ -22,11 +22,9 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -83,6 +81,19 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		if (invalidGesture) {
 			return;
 		}
+		// determine viewer
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		// prepare data for snap-to-grid
+		Node gridLocalVisual = null;
+		GridModel gridModel = null;
+		double granularityX = 0d;
+		double granularityY = 0d;
+		if (isPrecise(e)) {
+			granularityX = getSnapToGridGranularityX();
+			granularityY = getSnapToGridGranularityY();
+			gridModel = viewer.getAdapter(GridModel.class);
+			gridLocalVisual = getGridLocalVisual(viewer);
+		}
 		// apply changes to the target parts
 		for (IContentPart<Node, ? extends Node> part : targetParts) {
 			FXTransformPolicy policy = getTransformPolicy(part);
@@ -90,16 +101,13 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 				// determine start and end position in scene coordinates
 				Point startInScene = boundsInScene.get(part).getTopLeft();
 				Point endInScene = startInScene.getTranslated(delta);
-				// determine snap to grid offset in scene coordinates
-				IViewer<Node> viewer = getHost().getRoot().getViewer();
-				Node gridLocalVisual = viewer instanceof FXViewer
-						? ((FXViewer) viewer).getCanvas().getContentGroup()
-						: part.getVisual().getParent();
-				Point newEndInScene = AbstractTransformPolicy.snapToGrid(
-						part.getVisual(), endInScene.x, endInScene.y,
-						viewer.<GridModel> getAdapter(GridModel.class),
-						getSnapToGridGranularityX(),
-						getSnapToGridGranularityY(), gridLocalVisual);
+				// snap to grid
+				Point newEndInScene = endInScene.getCopy();
+				if (gridLocalVisual != null) {
+					newEndInScene = snapToGrid(endInScene.x, endInScene.y,
+							gridModel, granularityX, granularityY,
+							gridLocalVisual);
+				}
 				// compute delta in parent coordinates
 				Point newEndInParent = NodeUtils.sceneToLocal(
 						part.getVisual().getParent(), newEndInScene);
@@ -157,26 +165,6 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	/**
-	 * Returns the horizontal granularity for "snap-to-grid" where
-	 * <code>1</code> means it will snap to integer grid positions.
-	 *
-	 * @return The horizontal granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityX() {
-		return 1;
-	}
-
-	/**
-	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
-	 * means it will snap to integer grid positions.
-	 *
-	 * @return The vertical granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityY() {
-		return 1;
-	}
-
-	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that should
 	 * be relocated by this policy.
 	 *
@@ -208,6 +196,25 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 	@Override
 	public void hideIndicationCursor() {
 		getCursorSupport().restoreCursor();
+	}
+
+	/**
+	 * Returns <code>true</code> if precise manipulations should be performed
+	 * for the given {@link MouseEvent}. Otherwise returns <code>false</code>.
+	 *
+	 * @param e
+	 *            The {@link MouseEvent} that is used to determine if precise
+	 *            manipulations should be performed (i.e. if the corresponding
+	 *            modifier key is pressed).
+	 * @return <code>true</code> if precise manipulations should be performed,
+	 *         <code>false</code> otherwise.
+	 */
+	protected boolean isPrecise(MouseEvent e) {
+		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+			// MacOS
+			return e.isMetaDown();
+		}
+		return e.isAltDown();
 	}
 
 	/**

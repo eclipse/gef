@@ -23,11 +23,8 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -135,20 +132,11 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 			return;
 		}
 
-		// determine target part and its visual
-		IContentPart<Node, ? extends Node> firstTargetPart = targetParts.get(0);
-		Node firstVisual = firstTargetPart.getVisual();
-
 		// snap to grid
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		Node gridLocalVisual = viewer instanceof FXViewer
-				? ((FXViewer) viewer).getCanvas().getContentGroup()
-				: firstVisual.getParent();
-		Point newEndPointInScene = AbstractTransformPolicy.snapToGrid(
-				firstVisual, e.getSceneX(), e.getSceneY(),
-				viewer.<GridModel> getAdapter(GridModel.class),
-				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
-				gridLocalVisual);
+		Point newEndPointInScene = isPrecise(e)
+				? new Point(e.getSceneX(), e.getSceneY())
+				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
 
 		// update selection bounds
 		Rectangle sel = updateSelectionBounds(newEndPointInScene);
@@ -294,26 +282,6 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	/**
-	 * Returns the horizontal granularity for "snap-to-grid" where
-	 * <code>1</code> means it will snap to integer grid positions.
-	 *
-	 * @return The horizontal granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityX() {
-		return 1;
-	}
-
-	/**
-	 * Returns the vertical granularity for "snap-to-grid" where <code>1</code>
-	 * means it will snap to integer grid positions.
-	 *
-	 * @return The vertical granularity for "snap-to-grid".
-	 */
-	protected double getSnapToGridGranularityY() {
-		return 1;
-	}
-
-	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that should
 	 * be scaled/relocated by this policy. Per default, the whole
 	 * {@link SelectionModel selection} is returned.
@@ -366,6 +334,25 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	@Override
 	public void hideIndicationCursor() {
 		getCursorSupport().restoreCursor();
+	}
+
+	/**
+	 * Returns <code>true</code> if precise manipulations should be performed
+	 * for the given {@link MouseEvent}. Otherwise returns <code>false</code>.
+	 *
+	 * @param e
+	 *            The {@link MouseEvent} that is used to determine if precise
+	 *            manipulations should be performed (i.e. if the corresponding
+	 *            modifier key is pressed).
+	 * @return <code>true</code> if precise manipulations should be performed,
+	 *         <code>false</code> otherwise.
+	 */
+	protected boolean isPrecise(MouseEvent e) {
+		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+			// MacOS
+			return e.isMetaDown();
+		}
+		return e.isAltDown();
 	}
 
 	/**
