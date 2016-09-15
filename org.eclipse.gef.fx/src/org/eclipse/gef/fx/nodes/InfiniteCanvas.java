@@ -173,6 +173,7 @@ public class InfiniteCanvas extends Region {
 	 */
 	public class GridCanvas extends Canvas {
 		private static final int GRID_THRESHOLD = 5000000;
+		private Affine transform = new Affine();
 
 		/**
 		 * Constructs a new {@link GridCanvas}.
@@ -186,11 +187,14 @@ public class InfiniteCanvas extends Region {
 					repaintGrid();
 				}
 			};
-			Affine gridTransform = gridTransformProperty.get();
-			gridTransform.txProperty().addListener(repaintListener);
-			gridTransform.tyProperty().addListener(repaintListener);
-			gridTransform.mxxProperty().addListener(repaintListener);
-			gridTransform.myyProperty().addListener(repaintListener);
+			Affine affine = gridTransformProperty.get();
+			transform.mxxProperty().bind(affine.mxxProperty());
+			transform.mxyProperty().bind(affine.mxyProperty());
+			transform.myyProperty().bind(affine.myyProperty());
+			transform.myxProperty().bind(affine.myxProperty());
+			transform.txProperty().bind(affine.txProperty());
+			transform.tyProperty().bind(affine.tyProperty());
+			getTransforms().add(transform);
 
 			gridCellWidthProperty.addListener(repaintListener);
 			gridCellHeightProperty.addListener(repaintListener);
@@ -222,31 +226,22 @@ public class InfiniteCanvas extends Region {
 		protected void repaintGrid() {
 			final double width = getWidth();
 			final double height = getHeight();
-
+			// XXX: Clear canvas before determining if rendering if possible so
+			// that the grid is either completely rendered or completely
+			// invisible.
 			final GraphicsContext gc = getGraphicsContext2D();
 			gc.clearRect(0, 0, width, height);
-
-			final double xScale = Math
-					.abs(gridTransformProperty.get().getMxx());
-			final double yScale = Math
-					.abs(gridTransformProperty.get().getMyy());
 			// don't paint grid points if size is to large
-			if (((width / xScale) * (height / yScale) > GRID_THRESHOLD)) {
+			if (width * height > GRID_THRESHOLD) {
 				return;
 			}
-
-			final double scaledGridCellWidth = gridCellWidthProperty.get()
-					* xScale;
-			final double scaledGridCellHeight = gridCellHeightProperty.get()
-					* yScale;
-
+			// loop over grid positions to draw the points
+			final double gridCellWidth = gridCellWidthProperty.get();
+			final double gridCellHeight = gridCellHeightProperty.get();
 			gc.setFill(Color.GREY);
-			for (double x = gridTransformProperty.get().getTx()
-					% scaledGridCellWidth; x < width; x += scaledGridCellWidth) {
-				for (double y = gridTransformProperty.get().getTy()
-						% scaledGridCellHeight; y < height; y += scaledGridCellHeight) {
-					gc.fillRect(Math.floor(x) - 0.5 * xScale,
-							Math.floor(y) - 0.5 * yScale, xScale, yScale);
+			for (double x = 0; x < width; x += gridCellWidth) {
+				for (double y = 0; y < height; y += gridCellHeight) {
+					gc.fillRect(Math.floor(x) - 0.5, Math.floor(y) - 0.5, 1, 1);
 				}
 			}
 		}
@@ -1425,34 +1420,46 @@ public class InfiniteCanvas extends Region {
 		gridCanvas.setVisible(true);
 		gridCanvas.layoutXProperty().bind(new DoubleBinding() {
 			{
+				super.bind(gridTransformProperty.get().txProperty());
+				super.bind(gridTransformProperty.get().mxxProperty());
 				super.bind(scrollableBoundsProperty);
 			}
 
 			@Override
 			protected double computeValue() {
+				double minXInInfCanvas = scrollableBoundsProperty.get()
+						.getMinX();
 				double gridCellWidth = getGridCellWidth()
-						* Math.abs(gridTransformProperty.get().getMxx());
-				return Math.min(0,
-						(((int) (scrollableBoundsProperty.get().getMinX()
-								/ gridCellWidth) - 1)) * gridCellWidth);
+						* gridTransformProperty.get().getMxx();
+				double correctedMinX = minXInInfCanvas
+						- gridTransformProperty.get().getTx();
+				int gridCellOffsetCount = (int) (correctedMinX / gridCellWidth);
+				return (gridCellOffsetCount - 1) * gridCellWidth;
 			}
 		});
 		gridCanvas.layoutYProperty().bind(new DoubleBinding() {
 			{
+				super.bind(gridTransformProperty.get().tyProperty());
+				super.bind(gridTransformProperty.get().myyProperty());
 				super.bind(scrollableBoundsProperty);
 			}
 
 			@Override
 			protected double computeValue() {
+				double minYInInfCanvas = scrollableBoundsProperty.get()
+						.getMinY();
 				double gridCellHeight = getGridCellHeight()
-						* Math.abs(gridTransformProperty.get().getMyy());
-				return Math.min(0,
-						(((int) (scrollableBoundsProperty.get().getMinY()
-								/ gridCellHeight) - 1)) * gridCellHeight);
+						* gridTransformProperty.get().getMyy();
+				double correctedMinY = minYInInfCanvas
+						- gridTransformProperty.get().getTy();
+				int gridCellOffsetCount = (int) (correctedMinY
+						/ gridCellHeight);
+				return (gridCellOffsetCount - 1) * gridCellHeight;
 			}
 		});
 		gridCanvas.widthProperty().bind(new DoubleBinding() {
 			{
+				super.bind(gridTransformProperty.get().mxxProperty());
 				super.bind(scrollableBoundsProperty);
 			}
 
@@ -1461,11 +1468,14 @@ public class InfiniteCanvas extends Region {
 				if (scrollableBoundsProperty.get() == null) {
 					return 0;
 				}
-				return scrollableBoundsProperty.get().getWidth();
+				return (scrollableBoundsProperty.get().getWidth())
+						/ gridTransformProperty.get().getMxx()
+						+ getGridCellWidth() * 2;
 			}
 		});
 		gridCanvas.heightProperty().bind(new DoubleBinding() {
 			{
+				super.bind(gridTransformProperty.get().myyProperty());
 				super.bind(scrollableBoundsProperty);
 			}
 
@@ -1474,7 +1484,9 @@ public class InfiniteCanvas extends Region {
 				if (scrollableBoundsProperty.get() == null) {
 					return 0;
 				}
-				return scrollableBoundsProperty.get().getHeight();
+				return (scrollableBoundsProperty.get().getHeight())
+						/ gridTransformProperty.get().getMyy()
+						+ getGridCellHeight() * 2;
 			}
 		});
 	}
