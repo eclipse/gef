@@ -37,10 +37,21 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 			applySnapToGrid(newValue);
 		}
 	};
+	private final ChangeListener<? super Number> gridCellSizeObserver = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+			applyGridCellSize(getContent().gridCellWidthProperty().get(), getContent().gridCellHeightProperty().get());
+		}
+	};
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().add(index, child.getVisual());
+	}
+
+	protected void applyGridCellSize(int gridCellWidth, int gridCellHeight) {
+		getViewer().getAdapter(GridModel.class).setGridCellWidth(gridCellWidth);
+		getViewer().getAdapter(GridModel.class).setGridCellHeight(gridCellHeight);
 	}
 
 	protected void applySnapToGrid(boolean snapToGrid) {
@@ -59,6 +70,10 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 		super.doActivate();
 		// register snap-to-grid property listener
 		getContent().snapToGridProperty().addListener(snapToGridObserver);
+		applySnapToGrid(getContent().snapToGridProperty().get());
+		getContent().gridCellWidthProperty().addListener(gridCellSizeObserver);
+		getContent().gridCellHeightProperty().addListener(gridCellSizeObserver);
+		applyGridCellSize(getContent().gridCellWidthProperty().get(), getContent().gridCellHeightProperty().get());
 	}
 
 	@Override
@@ -91,7 +106,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void doRefreshVisual(Group visual) {
 		// apply snap-to-grid from model
-		applySnapToGrid(getContent().isSnapToGrid());
+		applySnapToGrid(getContent().snapToGridProperty().get());
 	}
 
 	@Override
