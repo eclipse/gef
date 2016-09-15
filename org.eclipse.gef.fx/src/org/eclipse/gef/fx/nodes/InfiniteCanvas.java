@@ -44,6 +44,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -174,19 +175,29 @@ public class InfiniteCanvas extends Region {
 	public class GridCanvas extends Canvas {
 		private static final int GRID_THRESHOLD = 5000000;
 		private Affine transform = new Affine();
+		private final ChangeListener<Number> repaintGridListener = new ChangeListener<Number>() {
+			@Override
+			public void changed(
+					final ObservableValue<? extends Number> observable,
+					final Number oldValue, final Number newValue) {
+				repaintGrid();
+			}
+		};
+		private final ChangeListener<Number> repaintTileListener = new ChangeListener<Number>() {
+			@Override
+			public void changed(
+					final ObservableValue<? extends Number> observable,
+					final Number oldValue, final Number newValue) {
+				repaintTile();
+				repaintGrid();
+			}
+		};
+		private WritableImage tile;
 
 		/**
 		 * Constructs a new {@link GridCanvas}.
 		 */
 		public GridCanvas() {
-			final ChangeListener<Number> repaintListener = new ChangeListener<Number>() {
-				@Override
-				public void changed(
-						final ObservableValue<? extends Number> observable,
-						final Number oldValue, final Number newValue) {
-					repaintGrid();
-				}
-			};
 			Affine affine = gridTransformProperty.get();
 			transform.mxxProperty().bind(affine.mxxProperty());
 			transform.mxyProperty().bind(affine.mxyProperty());
@@ -196,11 +207,13 @@ public class InfiniteCanvas extends Region {
 			transform.tyProperty().bind(affine.tyProperty());
 			getTransforms().add(transform);
 
-			gridCellWidthProperty.addListener(repaintListener);
-			gridCellHeightProperty.addListener(repaintListener);
+			gridCellWidthProperty.addListener(repaintTileListener);
+			gridCellHeightProperty.addListener(repaintTileListener);
+			repaintTile();
 
-			widthProperty().addListener(repaintListener);
-			heightProperty().addListener(repaintListener);
+			widthProperty().addListener(repaintGridListener);
+			heightProperty().addListener(repaintGridListener);
+			repaintGrid();
 		}
 
 		@Override
@@ -230,20 +243,31 @@ public class InfiniteCanvas extends Region {
 			// that the grid is either completely rendered or completely
 			// invisible.
 			final GraphicsContext gc = getGraphicsContext2D();
-			gc.clearRect(0, 0, width, height);
-			// don't paint grid points if size is to large
 			if (width * height > GRID_THRESHOLD) {
+				// do not paint grid if size is too large
+				gc.clearRect(0, 0, width, height);
 				return;
 			}
+
 			// loop over grid positions to draw the points
-			final double gridCellWidth = gridCellWidthProperty.get();
-			final double gridCellHeight = gridCellHeightProperty.get();
-			gc.setFill(Color.GREY);
-			for (double x = 0; x < width; x += gridCellWidth) {
-				for (double y = 0; y < height; y += gridCellHeight) {
-					gc.fillRect(Math.floor(x) - 0.5, Math.floor(y) - 0.5, 1, 1);
+			final int gridCellWidth = (int) gridCellWidthProperty.get();
+			final int gridCellHeight = (int) gridCellHeightProperty.get();
+			for (int x = 0; x < width; x += gridCellWidth) {
+				for (int y = 0; y < height; y += gridCellHeight) {
+					gc.drawImage(tile, x, y);
 				}
 			}
+		}
+
+		/**
+		 * Repaints the tile image that depends on the grid cell size only. The
+		 * tile image is repeated when repainting the grid.
+		 */
+		protected void repaintTile() {
+			final int gridCellWidth = (int) gridCellWidthProperty.get();
+			final int gridCellHeight = (int) gridCellHeightProperty.get();
+			tile = new WritableImage(gridCellWidth, gridCellHeight);
+			tile.getPixelWriter().setColor(0, 0, Color.BLACK);
 		}
 	}
 
