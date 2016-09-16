@@ -92,12 +92,13 @@ public class AbstractFXInteractionPolicy
 		// transform to grid local coordinates
 		Point2D gridLocalPosition = gridLocalVisual.sceneToLocal(sceneX,
 				sceneY);
-		// snap to grid
-		// FIXME: snap to next grid point instead of the next smaller one
+		// snap to (nearest) grid point
 		double gcw = gridCellWidthFraction * gridModel.getGridCellWidth();
-		int xs = (int) (gridLocalPosition.getX() / gcw);
+		// add 0.5 so that the nearest grid position is computed
+		int xs = (int) (gridLocalPosition.getX() / gcw + 0.5);
 		double gch = gridCellHeightFraction * gridModel.getGridCellHeight();
-		int ys = (int) (gridLocalPosition.getY() / gch);
+		// add 0.5 so that the nearest grid position is computed
+		int ys = (int) (gridLocalPosition.getY() / gch + 0.5);
 		double nx = xs * gcw;
 		double ny = ys * gch;
 		// transform to scene coordinates
