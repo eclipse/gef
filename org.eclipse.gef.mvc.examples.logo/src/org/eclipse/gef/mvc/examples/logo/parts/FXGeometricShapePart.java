@@ -37,22 +37,18 @@ import javafx.scene.Node;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Affine;
 
-public class FXGeometricShapePart
-		extends AbstractFXGeometricElementPart<GeometryNode<IShape>>
-		implements ITransformableContentPart<Node, GeometryNode<IShape>>,
-		IResizableContentPart<Node, GeometryNode<IShape>> {
+public class FXGeometricShapePart extends AbstractFXGeometricElementPart<GeometryNode<IShape>> implements
+		ITransformableContentPart<Node, GeometryNode<IShape>>, IResizableContentPart<Node, GeometryNode<IShape>> {
 
 	private final ChangeListener<? super Paint> fillObserver = new ChangeListener<Paint>() {
 		@Override
-		public void changed(ObservableValue<? extends Paint> observable,
-				Paint oldValue, Paint newValue) {
+		public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
 			refreshVisual();
 		}
 	};
 
 	@Override
-	protected void attachToAnchorageVisual(
-			org.eclipse.gef.mvc.parts.IVisualPart<Node, ? extends Node> anchorage,
+	protected void attachToAnchorageVisual(org.eclipse.gef.mvc.parts.IVisualPart<Node, ? extends Node> anchorage,
 			String role) {
 		// nothing to do
 	}
@@ -63,8 +59,7 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// nothing to do
 	}
 
@@ -80,14 +75,11 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage,
-			String role) {
+	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
 		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
-			throw new IllegalArgumentException(
-					"Cannot attach to content anchorage: wrong type!");
+			throw new IllegalArgumentException("Cannot attach to content anchorage: wrong type!");
 		}
-		getContent().getAnchorages()
-				.add((AbstractFXGeometricElement<?>) contentAnchorage);
+		getContent().getAnchorages().add((AbstractFXGeometricElement<?>) contentAnchorage);
 	}
 
 	@Override
@@ -97,16 +89,14 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	protected void doDetachFromContentAnchorage(Object contentAnchorage,
-			String role) {
+	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
 		getContent().getAnchorages().remove(contentAnchorage);
 	}
 
 	@Override
 	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 		SetMultimap<Object, String> anchorages = HashMultimap.create();
-		for (AbstractFXGeometricElement<? extends IGeometry> anchorage : getContent()
-				.getAnchorages()) {
+		for (AbstractFXGeometricElement<? extends IGeometry> anchorage : getContent().getAnchorages()) {
 			anchorages.put(anchorage, "link");
 		}
 		return anchorages;
@@ -122,14 +112,16 @@ public class FXGeometricShapePart
 		FXGeometricShape content = getContent();
 
 		if (visual.getGeometry() != content.getGeometry()) {
+			System.out.println("SET GEOM");
+			System.out.println("visual = " + (visual.getGeometry() == null ? "" : visual.getGeometry().getBounds()));
+			System.out.println("content = " + (content.getGeometry() == null ? "" : content.getGeometry().getBounds()));
 			visual.setGeometry(content.getGeometry());
 		}
 
 		AffineTransform transform = content.getTransform();
 		if (transform != null) {
 			// transfer transformation to JavaFX
-			Affine affine = getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY)
-					.get();
+			Affine affine = getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
 			affine.setMxx(transform.getM00());
 			affine.setMxy(transform.getM01());
 			affine.setMyx(transform.getM10());
@@ -172,26 +164,37 @@ public class FXGeometricShapePart
 
 	@Override
 	public void resizeContent(Dimension size) {
+		double visualWidth = getVisual().getWidth();
+		double visualHeight = getVisual().getHeight();
+		System.out.println("visual = " + getVisual().getGeometry());
+		System.out.println("visual size = " + visualWidth + " x " + visualHeight);
+
+		if (true) {
+			getContent().setGeometry(getVisual().getGeometry());
+			return;
+		}
+
 		IShape geometry = getContent().getGeometry();
 		Rectangle geometricBounds = geometry.getBounds();
 		double sx = size.width / geometricBounds.getWidth();
 		double sy = size.height / geometricBounds.getHeight();
-		((IScalable<?>) geometry).scale(sx, sy, geometricBounds.getX(),
-				geometricBounds.getY());
+		((IScalable<?>) geometry).scale(sx, sy, geometricBounds.getX(), geometricBounds.getY());
+
+		Rectangle bounds = geometry.getBounds();
+		System.out.println("content = " + getContent().getGeometry());
+		System.out.println("content size = " + bounds.getWidth() + " x " + bounds.getHeight());
 	}
 
 	@Override
 	public void setContent(Object model) {
 		if (model != null && !(model instanceof FXGeometricShape)) {
-			throw new IllegalArgumentException(
-					"Only IShape models are supported.");
+			throw new IllegalArgumentException("Only IShape models are supported.");
 		}
 		super.setContent(model);
 	}
 
 	@Override
 	public void transformContent(AffineTransform transform) {
-		getContent().setTransform(
-				getContent().getTransform().preConcatenate(transform));
+		getContent().setTransform(getContent().getTransform().preConcatenate(transform));
 	}
 }

@@ -133,6 +133,8 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		}
 
 		// snap to grid
+		// FIXME: apply resize-transform first, then snap the moved vertex to
+		// the next grid position and update the values
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		Point newEndPointInScene = isPrecise(e)
 				? new Point(e.getSceneX(), e.getSceneY())

@@ -16,8 +16,8 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.viewer.IViewer;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -44,6 +44,7 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 	private int translationIndex;
 	private CursorSupport cursorSupport = new CursorSupport(this);
 	private IVisualPart<Node, ? extends Node> targetPart;
+	private Point initialVertex;
 
 	@Override
 	public void abortDrag() {
@@ -73,14 +74,23 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		}
 		// compute end point
 		Node visual = getTargetPart().getVisual();
-		Point2D startLocal = visual.sceneToLocal(initialPointerLocation.x,
-				initialPointerLocation.y);
-		// snap to grid
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		Point newEndScene = isPrecise(e)
-				? new Point(e.getSceneX(), e.getSceneY())
-				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
-		Point2D endLocal = visual.sceneToLocal(newEndScene.x, newEndScene.y);
+		Point newEndScene = new Point(e.getSceneX(), e.getSceneY());
+		// compute delta in scene
+		Point deltaInScene = new Point(newEndScene.x - initialPointerLocation.x,
+				newEndScene.y - initialPointerLocation.y);
+		// apply delta to the moved vertex
+		Point newVertex = initialVertex.getTranslated(deltaInScene);
+		// snap the moved vertex (unless isPrecise(e))
+		Point snappedVertex = newVertex;
+		if (!isPrecise(e)) {
+			snappedVertex = snapToGrid(getHost().getRoot().getViewer(),
+					newVertex.x, newVertex.y);
+		}
+		// compute delta between initial and snapped vertex
+		Point2D startLocal = visual.sceneToLocal(initialVertex.x,
+				initialVertex.y);
+		Point2D endLocal = visual.sceneToLocal(snappedVertex.x,
+				snappedVertex.y);
 		// compute delta in local coordinates
 		double deltaX = endLocal.getX() - startLocal.getX();
 		double deltaY = endLocal.getY() - startLocal.getY();
@@ -264,6 +274,25 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		init(getResizePolicy());
 		init(getTransformPolicy());
 		translationIndex = getTransformPolicy().createPostTransform();
+		// determine initial bounds in scene
+		Bounds layoutBounds = getTargetPart().getVisual().getLayoutBounds();
+		Bounds initialBoundsInScene = getTargetPart().getVisual()
+				.localToScene(layoutBounds);
+		// save moved vertex
+		int segment = getHost().getSegmentIndex();
+		if (segment == 0) {
+			initialVertex = new Point(initialBoundsInScene.getMinX(),
+					initialBoundsInScene.getMinY());
+		} else if (segment == 1) {
+			initialVertex = new Point(initialBoundsInScene.getMaxX(),
+					initialBoundsInScene.getMinY());
+		} else if (segment == 2) {
+			initialVertex = new Point(initialBoundsInScene.getMaxX(),
+					initialBoundsInScene.getMaxY());
+		} else if (segment == 3) {
+			initialVertex = new Point(initialBoundsInScene.getMinX(),
+					initialBoundsInScene.getMaxY());
+		}
 	}
 
 }

@@ -68,6 +68,8 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		}
 
 		// snap to grid
+		// FIXME: apply bending first, then snap the moved coordinate to
+		// the next grid line and update the values
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		Point newEndPointInScene = isPrecise(e)
 				? new Point(e.getSceneX(), e.getSceneY())
