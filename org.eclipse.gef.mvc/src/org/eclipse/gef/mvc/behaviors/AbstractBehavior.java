@@ -577,7 +577,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 					anchored.detachFromAnchorage(anchorage);
 				}
 			}
-			targets.iterator().next().getRoot().removeChildren(anchoreds);
+			anchoreds.iterator().next().getRoot().removeChildren(anchoreds);
 		}
 	}
 
