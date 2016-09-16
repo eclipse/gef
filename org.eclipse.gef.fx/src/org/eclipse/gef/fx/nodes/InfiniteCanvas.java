@@ -39,6 +39,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
+import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -215,9 +216,13 @@ public class InfiniteCanvas extends Region {
 			tile = new WritableImage(gridCellWidthProperty.get(),
 					gridCellHeightProperty.get());
 			tile.getPixelWriter().setColor(0, 0, Color.BLACK);
-			setBackground(new Background(new BackgroundImage(tile,
+			BackgroundPosition backgroundPosition = new BackgroundPosition(
+					Side.LEFT, 0, false, Side.TOP, 0, false);
+			BackgroundImage backgroundImage = new BackgroundImage(tile,
 					BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-					BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
+					backgroundPosition, BackgroundSize.DEFAULT);
+			Background background = new Background(backgroundImage);
+			setBackground(background);
 		}
 	}
 
@@ -1408,7 +1413,10 @@ public class InfiniteCanvas extends Region {
 				double correctedMinX = minXInInfCanvas
 						- gridTransformProperty.get().getTx();
 				int gridCellOffsetCount = (int) (correctedMinX / gridCellWidth);
-				return (gridCellOffsetCount - 1) * gridCellWidth;
+				// XXX: Subtract -0.5 * scaleX so that the center of the first
+				// grid point is exactly at 0, 0 within the content layer
+				return (gridCellOffsetCount - 1) * gridCellWidth
+						- 0.5 * gridTransformProperty.get().getMxx();
 			}
 		});
 		gridCanvas.layoutYProperty().bind(new DoubleBinding() {
@@ -1428,7 +1436,10 @@ public class InfiniteCanvas extends Region {
 						- gridTransformProperty.get().getTy();
 				int gridCellOffsetCount = (int) (correctedMinY
 						/ gridCellHeight);
-				return (gridCellOffsetCount - 1) * gridCellHeight;
+				// XXX: Subtract -0.5 * scaleX so that the center of the first
+				// grid point is exactly at 0, 0 within the content layer
+				return (gridCellOffsetCount - 1) * gridCellHeight
+						- 0.5 * gridTransformProperty.get().getMyy();
 			}
 		});
 		gridCanvas.prefWidthProperty().bind(new DoubleBinding() {
