@@ -92,7 +92,7 @@ public class ZestProperties {
 	 * @see #setLabel(Edge, String)
 	 * @see #setLabel(Node, String)
 	 */
-	public static final String LABEL__NE = "label";
+	public static final String LABEL__NE = "element-label";
 
 	/**
 	 * This attribute determines the curve being used for visualization of the
@@ -242,7 +242,7 @@ public class ZestProperties {
 	 * @see #getIcon(Node)
 	 * @see #setIcon(Node, Image)
 	 */
-	public static final String ICON__N = "icon";
+	public static final String ICON__N = "node-icon";
 
 	/**
 	 * This attribute determines the size for a {@link Node}.
@@ -250,7 +250,7 @@ public class ZestProperties {
 	 * @see #getSize(Node)
 	 * @see #setSize(Node, Dimension)
 	 */
-	public static final String SIZE__N = "size";
+	public static final String SIZE__N = "node-size";
 
 	/**
 	 * This attribute determines the position for a {@link Node}.
@@ -258,7 +258,7 @@ public class ZestProperties {
 	 * @see #getPosition(Node)
 	 * @see #setPosition(Node, Point)
 	 */
-	public static final String POSITION__N = "position";
+	public static final String POSITION__N = "node-position";
 
 	/**
 	 * This attribute determines the tooltip for a node. This attribute does not
@@ -267,7 +267,7 @@ public class ZestProperties {
 	 * @see #getTooltip(Node)
 	 * @see #setTooltip(Node, String)
 	 */
-	public static final String TOOLTIP__N = "tooltip";
+	public static final String TOOLTIP__N = "node-tooltip";
 
 	/**
 	 * This attribute determines the target decoration for an edge. This
@@ -276,7 +276,7 @@ public class ZestProperties {
 	 * @see #getTargetDecoration(Edge)
 	 * @see #setTargetDecoration(Edge, javafx.scene.Node)
 	 */
-	public static final String TARGET_DECORATION__E = "target-decoration";
+	public static final String TARGET_DECORATION__E = "edge-target-decoration";
 
 	/**
 	 * This attribute determines the source decoration for an edge. This
@@ -285,7 +285,7 @@ public class ZestProperties {
 	 * @see #getSourceDecoration(Edge)
 	 * @see #setSourceDecoration(Edge, javafx.scene.Node)
 	 */
-	public static final String SOURCE_DECORATION__E = "source-decoration";
+	public static final String SOURCE_DECORATION__E = "edge-source-decoration";
 
 	/**
 	 * This attribute determines the target label for an edge. This attribute
@@ -331,7 +331,7 @@ public class ZestProperties {
 	 * @see #getLayoutAlgorithm(Graph)
 	 * @see #setLayoutAlgorithm(Graph, ILayoutAlgorithm)
 	 */
-	public static final String LAYOUT_ALGORITHM__G = "layout";
+	public static final String LAYOUT_ALGORITHM__G = "graph-layout-algorithm";
 
 	/**
 	 * Returns the value of the {@link #CONTROL_POINTS__E} attribute of the
