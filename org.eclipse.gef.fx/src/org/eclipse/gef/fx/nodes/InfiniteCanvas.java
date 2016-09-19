@@ -174,6 +174,11 @@ import javafx.util.Duration;
 public class InfiniteCanvas extends Region {
 
 	/**
+	 * The default {@link Color} that is used to draw grid points.
+	 */
+	public static final Color DEFAULT_GRID_POINT_COLOR = Color.DARKGREY;
+
+	/**
 	 * The default grid cell width.
 	 */
 	public static final int DEFAULT_GRID_CELL_WIDTH = 10;
@@ -559,7 +564,7 @@ public class InfiniteCanvas extends Region {
 		WritableImage gridTile = new WritableImage(gridCellWidthProperty.get(),
 				gridCellHeightProperty.get());
 		// draw the top left pixel in black (rest is transparent)
-		gridTile.getPixelWriter().setColor(0, 0, Color.BLACK);
+		gridTile.getPixelWriter().setColor(0, 0, DEFAULT_GRID_POINT_COLOR);
 		return gridTile;
 	}
 
@@ -1215,7 +1220,7 @@ public class InfiniteCanvas extends Region {
 	/**
 	 * Ensures that the specified child {@link Node} is visible to the user by
 	 * scrolling to its position. The effect and style of the node are taken
-	 * into consideration. After revealing a node, it will be fully visible, if
+	 * into consideration. After revealing a node, it will be fully visible if
 	 * it fits within the current viewport bounds.
 	 * <p>
 	 * When the child node's left side is left to the viewport, it will touch
@@ -1225,13 +1230,16 @@ public class InfiniteCanvas extends Region {
 	 * viewport, it will touch the top border of the viewport after revealing.
 	 * When the child node's bottom side is below the viewport, it will touch
 	 * the bottom border of the viewport after revealing.
+	 * <p>
+	 * The top and left sides have preference over the bottom and right sides,
+	 * i.e. when the top side is aligned with the viewport, the bottom side will
+	 * not be aligned, and when the left side is aligned with the viewport, the
+	 * right side will not be aligned.
 	 *
 	 * @param child
 	 *            The child {@link Node} to reveal.
 	 */
 	public void reveal(Node child) {
-		// TODO: When the child node does not fit within the viewport bounds, it
-		// is not revealed.
 		Bounds bounds = sceneToLocal(
 				child.localToScene(child.getBoundsInLocal()));
 		if (bounds.getHeight() <= getHeight()) {
