@@ -1406,12 +1406,17 @@ public class InfiniteCanvas extends Region {
 
 			@Override
 			protected double computeValue() {
+				// get horizontal scroll offset
 				double minXInInfCanvas = scrollableBoundsProperty.get()
 						.getMinX();
+				// compute scaled grid cell width
 				double gridCellWidth = getGridCellWidth()
 						* gridTransformProperty.get().getMxx();
+				// subtract content translation to compute horizontal offset
 				double correctedMinX = minXInInfCanvas
 						- gridTransformProperty.get().getTx();
+				// compute number of grid cell widths that fit into the
+				// horizontal offset
 				int gridCellOffsetCount = (int) (correctedMinX / gridCellWidth);
 				// XXX: Subtract -0.5 * scaleX so that the center of the first
 				// grid point is exactly at 0, 0 within the content layer
@@ -1428,15 +1433,20 @@ public class InfiniteCanvas extends Region {
 
 			@Override
 			protected double computeValue() {
+				// get vertical scroll offset
 				double minYInInfCanvas = scrollableBoundsProperty.get()
 						.getMinY();
+				// compute scaled grid cell height
 				double gridCellHeight = getGridCellHeight()
 						* gridTransformProperty.get().getMyy();
+				// subtract content translation to compute vertical offset
 				double correctedMinY = minYInInfCanvas
 						- gridTransformProperty.get().getTy();
+				// compute number of grid cell heights that fit into the
+				// vertical offset
 				int gridCellOffsetCount = (int) (correctedMinY
 						/ gridCellHeight);
-				// XXX: Subtract -0.5 * scaleX so that the center of the first
+				// XXX: Subtract -0.5 * scaleY so that the center of the first
 				// grid point is exactly at 0, 0 within the content layer
 				return (gridCellOffsetCount - 1) * gridCellHeight
 						- 0.5 * gridTransformProperty.get().getMyy();
