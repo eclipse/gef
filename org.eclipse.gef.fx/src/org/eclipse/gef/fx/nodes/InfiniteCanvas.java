@@ -1415,18 +1415,17 @@ public class InfiniteCanvas extends Region {
 				double minXInInfCanvas = scrollableBoundsProperty.get()
 						.getMinX();
 				// compute scaled grid cell width
-				double gridCellWidth = getGridCellWidth()
-						* gridTransformProperty.get().getMxx();
+				Affine gridTransform = gridTransformProperty.get();
+				double mxx = gridTransform.getMxx();
+				double gridCellWidth = getGridCellWidth() * mxx;
 				// subtract content translation to compute horizontal offset
-				double correctedMinX = minXInInfCanvas
-						- gridTransformProperty.get().getTx();
+				double correctedMinX = minXInInfCanvas - gridTransform.getTx();
 				// compute number of grid cell widths that fit into the
 				// horizontal offset
 				int gridCellOffsetCount = (int) (correctedMinX / gridCellWidth);
 				// XXX: Subtract -0.5 * scaleX so that the center of the first
 				// grid point is exactly at 0, 0 within the content layer
-				return (gridCellOffsetCount - 1) * gridCellWidth
-						- 0.5 * gridTransformProperty.get().getMxx();
+				return (gridCellOffsetCount - 1) * gridCellWidth - 0.5 * mxx;
 			}
 		});
 		grid.layoutYProperty().bind(new DoubleBinding() {
@@ -1442,19 +1441,18 @@ public class InfiniteCanvas extends Region {
 				double minYInInfCanvas = scrollableBoundsProperty.get()
 						.getMinY();
 				// compute scaled grid cell height
-				double gridCellHeight = getGridCellHeight()
-						* gridTransformProperty.get().getMyy();
+				Affine gridTransform = gridTransformProperty.get();
+				double myy = gridTransform.getMyy();
+				double gridCellHeight = getGridCellHeight() * myy;
 				// subtract content translation to compute vertical offset
-				double correctedMinY = minYInInfCanvas
-						- gridTransformProperty.get().getTy();
+				double correctedMinY = minYInInfCanvas - gridTransform.getTy();
 				// compute number of grid cell heights that fit into the
 				// vertical offset
 				int gridCellOffsetCount = (int) (correctedMinY
 						/ gridCellHeight);
 				// XXX: Subtract -0.5 * scaleY so that the center of the first
 				// grid point is exactly at 0, 0 within the content layer
-				return (gridCellOffsetCount - 1) * gridCellHeight
-						- 0.5 * gridTransformProperty.get().getMyy();
+				return (gridCellOffsetCount - 1) * gridCellHeight - 0.5 * myy;
 			}
 		});
 		grid.prefWidthProperty().bind(new DoubleBinding() {
