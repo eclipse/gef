@@ -42,9 +42,9 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -174,59 +174,6 @@ import javafx.util.Duration;
 public class InfiniteCanvas extends Region {
 
 	/**
-	 * The {@link GridCanvas} is a {@link Canvas} that draws grid points at
-	 * configurable steps. The grid points are scaled according to a
-	 * configurable transformation.
-	 */
-	public class GridCanvas extends Region {
-		private Affine transform = new Affine();
-		private final ChangeListener<Number> repaintTileListener = new ChangeListener<Number>() {
-			@Override
-			public void changed(
-					final ObservableValue<? extends Number> observable,
-					final Number oldValue, final Number newValue) {
-				repaintTile();
-			}
-		};
-		private WritableImage tile;
-
-		/**
-		 * Constructs a new {@link GridCanvas}.
-		 */
-		public GridCanvas() {
-			Affine affine = gridTransformProperty.get();
-			transform.mxxProperty().bind(affine.mxxProperty());
-			transform.mxyProperty().bind(affine.mxyProperty());
-			transform.myyProperty().bind(affine.myyProperty());
-			transform.myxProperty().bind(affine.myxProperty());
-			transform.txProperty().bind(affine.txProperty());
-			transform.tyProperty().bind(affine.tyProperty());
-			getTransforms().add(transform);
-
-			gridCellWidthProperty.addListener(repaintTileListener);
-			gridCellHeightProperty.addListener(repaintTileListener);
-			repaintTile();
-		}
-
-		/**
-		 * Repaints the tile image that depends on the grid cell size only. The
-		 * tile image is repeated when repainting the grid.
-		 */
-		protected void repaintTile() {
-			tile = new WritableImage(gridCellWidthProperty.get(),
-					gridCellHeightProperty.get());
-			tile.getPixelWriter().setColor(0, 0, Color.BLACK);
-			BackgroundPosition backgroundPosition = new BackgroundPosition(
-					Side.LEFT, 0, false, Side.TOP, 0, false);
-			BackgroundImage backgroundImage = new BackgroundImage(tile,
-					BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-					backgroundPosition, BackgroundSize.DEFAULT);
-			Background background = new Background(backgroundImage);
-			setBackground(background);
-		}
-	}
-
-	/**
 	 * The default grid cell width.
 	 */
 	public static final int DEFAULT_GRID_CELL_WIDTH = 10;
@@ -237,7 +184,8 @@ public class InfiniteCanvas extends Region {
 	public static final int DEFAULT_GRID_CELL_HEIGHT = 10;
 
 	// background grid
-	private GridCanvas gridCanvas;
+	private Region grid;
+	private Affine gridTransform = new Affine();
 	private final IntegerProperty gridCellHeightProperty = new SimpleIntegerProperty(
 			DEFAULT_GRID_CELL_WIDTH);
 	private final IntegerProperty gridCellWidthProperty = new SimpleIntegerProperty(
@@ -248,6 +196,20 @@ public class InfiniteCanvas extends Region {
 			true);
 	private final BooleanProperty zoomGridProperty = new SimpleBooleanProperty(
 			true);
+	private final ChangeListener<Number> repaintGridTileListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(final ObservableValue<? extends Number> observable,
+				final Number oldValue, final Number newValue) {
+			repaintGrid();
+		}
+	};
+	private ChangeListener<Affine> updateGridTransformListener = new ChangeListener<Affine>() {
+		@Override
+		public void changed(ObservableValue<? extends Affine> observable,
+				Affine oldValue, Affine newValue) {
+			updateGridTransform(newValue);
+		}
+	};
 
 	// clipping
 	private Rectangle clippingRectangle = new Rectangle();
@@ -306,7 +268,6 @@ public class InfiniteCanvas extends Region {
 			updateScrollBars();
 		}
 	};
-
 	// Listener to update the scrollbars in response to Bounds changes (e.g.
 	// scrolled pane bounds and content group bounds).
 	private ChangeListener<Bounds> updateScrollBarsOnBoundsChangeListener = new ChangeListener<Bounds>() {
@@ -316,7 +277,6 @@ public class InfiniteCanvas extends Region {
 			updateScrollBars();
 		}
 	};
-
 	// Listener to update the scrollbars in response to ScrollBarPolicy
 	// changes.
 	private ChangeListener<ScrollBarPolicy> updateScrollBarsOnPolicyChangeListener = new ChangeListener<ScrollBarPolicy>() {
@@ -336,9 +296,16 @@ public class InfiniteCanvas extends Region {
 		contentBoundsProperty.bind(contentBoundsBinding);
 		scrollableBoundsProperty.bind(scrollableBoundsBinding);
 
-		// create scrollbars and grid canvas
+		// create scrollbars
 		scrollBarGroup = createScrollBarGroup();
-		gridCanvas = createGridCanvas();
+
+		// create grid
+		grid = createGrid();
+		// initially set grid transform
+		updateGridTransform(gridTransformProperty.get());
+		// initially paint the tile image and use it for filling the
+		// background of this node
+		repaintGrid();
 
 		// create visualization
 		getChildren().addAll(createLayers());
@@ -565,13 +532,35 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
-	 * Creates the {@link GridCanvas} that is used to paint the background grid.
+	 * Creates the {@link Region} that renders the grid (when it is enabled).
 	 *
-	 * @return The newly created {@link GridCanvas} that is used to paint the
-	 *         background grid.
+	 * @return The newly created {@link Region} that renders the grid.
 	 */
-	protected GridCanvas createGridCanvas() {
-		return new GridCanvas();
+	protected Region createGrid() {
+		Region grid = new Region();
+		grid.getTransforms().add(gridTransform);
+		// ensure the transformation matrix is up-to-date
+		gridTransformProperty.addListener(updateGridTransformListener);
+		// repaint the tile image in case the cell size changes
+		gridCellWidthProperty.addListener(repaintGridTileListener);
+		gridCellHeightProperty.addListener(repaintGridTileListener);
+		return grid;
+	}
+
+	/**
+	 * Locate or create an {@link Image} that represents a single grid
+	 * cell/tile. The {@link Image}'s dimensions is expected to match the grid
+	 * cell size (width and height).
+	 *
+	 * @return An {@link Image} that represents a single grid cell/tile.
+	 */
+	protected Image createGridTile() {
+		// create a writable image for drawing a single grid cell
+		WritableImage gridTile = new WritableImage(gridCellWidthProperty.get(),
+				gridCellHeightProperty.get());
+		// draw the top left pixel in black (rest is transparent)
+		gridTile.getPixelWriter().setColor(0, 0, Color.BLACK);
+		return gridTile;
 	}
 
 	/**
@@ -845,12 +834,12 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
-	 * Returns the {@link GridCanvas} that is used to paint the background grid.
+	 * Returns the {@link Region} that is used to paint the background grid.
 	 *
-	 * @return The {@link GridCanvas} that is used to paint the background grid.
+	 * @return The {@link Region} that is used to paint the background grid.
 	 */
-	protected GridCanvas getGridCanvas() {
-		return gridCanvas;
+	protected Region getGridCanvas() {
+		return grid;
 	}
 
 	/**
@@ -1020,11 +1009,11 @@ public class InfiniteCanvas extends Region {
 	 * Disables the background grid.
 	 */
 	protected void hideGrid() {
-		gridCanvas.setVisible(false);
-		gridCanvas.layoutXProperty().unbind();
-		gridCanvas.layoutYProperty().unbind();
-		gridCanvas.prefWidthProperty().unbind();
-		gridCanvas.prefHeightProperty().unbind();
+		grid.setVisible(false);
+		grid.layoutXProperty().unbind();
+		grid.layoutYProperty().unbind();
+		grid.prefWidthProperty().unbind();
+		grid.prefHeightProperty().unbind();
 	}
 
 	/**
@@ -1207,6 +1196,23 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Repaints the tile image that depends on the grid cell size only. The tile
+	 * image is repeated when repainting the grid.
+	 */
+	protected void repaintGrid() {
+		Image tile = createGridTile();
+		// create a background fill for this node from the tile image
+		BackgroundPosition backgroundPosition = new BackgroundPosition(
+				Side.LEFT, 0, false, Side.TOP, 0, false);
+		BackgroundImage backgroundImage = new BackgroundImage(tile,
+				BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+				backgroundPosition, BackgroundSize.DEFAULT);
+		Background background = new Background(backgroundImage);
+		// apply that background fill
+		grid.setBackground(background);
+	}
+
+	/**
 	 * Ensures that the specified child {@link Node} is visible to the user by
 	 * scrolling to its position. The effect and style of the node are taken
 	 * into consideration. After revealing a node, it will be fully visible, if
@@ -1237,7 +1243,6 @@ public class InfiniteCanvas extends Region {
 						- bounds.getMaxY());
 			}
 		}
-
 		if (bounds.getWidth() <= getWidth()) {
 			if (bounds.getMinX() < 0) {
 				setHorizontalScrollOffset(
@@ -1396,8 +1401,8 @@ public class InfiniteCanvas extends Region {
 	 * Enables the background grid.
 	 */
 	protected void showGrid() {
-		gridCanvas.setVisible(true);
-		gridCanvas.layoutXProperty().bind(new DoubleBinding() {
+		grid.setVisible(true);
+		grid.layoutXProperty().bind(new DoubleBinding() {
 			{
 				super.bind(gridTransformProperty.get().txProperty());
 				super.bind(gridTransformProperty.get().mxxProperty());
@@ -1424,7 +1429,7 @@ public class InfiniteCanvas extends Region {
 						- 0.5 * gridTransformProperty.get().getMxx();
 			}
 		});
-		gridCanvas.layoutYProperty().bind(new DoubleBinding() {
+		grid.layoutYProperty().bind(new DoubleBinding() {
 			{
 				super.bind(gridTransformProperty.get().tyProperty());
 				super.bind(gridTransformProperty.get().myyProperty());
@@ -1452,7 +1457,7 @@ public class InfiniteCanvas extends Region {
 						- 0.5 * gridTransformProperty.get().getMyy();
 			}
 		});
-		gridCanvas.prefWidthProperty().bind(new DoubleBinding() {
+		grid.prefWidthProperty().bind(new DoubleBinding() {
 			{
 				super.bind(gridTransformProperty.get().mxxProperty());
 				super.bind(scrollableBoundsProperty);
@@ -1468,7 +1473,7 @@ public class InfiniteCanvas extends Region {
 						+ getGridCellWidth() * 2;
 			}
 		});
-		gridCanvas.prefHeightProperty().bind(new DoubleBinding() {
+		grid.prefHeightProperty().bind(new DoubleBinding() {
 			{
 				super.bind(gridTransformProperty.get().myyProperty());
 				super.bind(scrollableBoundsProperty);
@@ -1520,6 +1525,22 @@ public class InfiniteCanvas extends Region {
 		gridTransform.myyProperty().unbind();
 		gridTransform.txProperty().unbind();
 		gridTransform.tyProperty().unbind();
+	}
+
+	/**
+	 * This method is called when the grid transformation should be updated to
+	 * match the given {@link Affine}. The grid transformation is
+	 *
+	 * @param transform
+	 *            The new transformation matrix for the grid canvas.
+	 */
+	protected void updateGridTransform(Affine transform) {
+		gridTransform.mxxProperty().bind(transform.mxxProperty());
+		gridTransform.mxyProperty().bind(transform.mxyProperty());
+		gridTransform.myyProperty().bind(transform.myyProperty());
+		gridTransform.myxProperty().bind(transform.myxProperty());
+		gridTransform.txProperty().bind(transform.txProperty());
+		gridTransform.tyProperty().bind(transform.tyProperty());
 	}
 
 	/**
