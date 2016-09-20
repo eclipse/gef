@@ -215,6 +215,20 @@ public class DotValidatorTests {
 	}
 
 	@Test
+	public void testWrongGraphBackgroundColor() throws Exception {
+		String text = "graph { bgcolor=grsy }";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__G,
+				"The color value 'grsy' is not semantically correct: The 'grsy' color is not valid within the 'x11' color scheme.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
 	public void testWrongNodeColor() throws Exception {
 		String text = "graph { 1[color=\"#fffff\"]}";
 

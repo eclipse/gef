@@ -42,6 +42,10 @@ public class DotColorJavaValidator extends
 			error("'" + colorScheme + "' is not a valid color scheme.",
 					ColorPackage.Literals.STRING_COLOR__SCHEME);
 		} else {
+			// consider the default color scheme if no color scheme is
+			// explicitly set
+			colorScheme = colorScheme != null ? colorScheme : "x11";
+
 			String colorName = color.getName();
 			if (colorName != null && !colorName.isEmpty() && !DotColors
 					.getColorNames(colorScheme).contains(colorName)) {

@@ -134,7 +134,9 @@ class DotImport {
 			}
 		]
 
-        setter.apply(CLUSTERRANK__G, [g, value|g.setClusterRank(value)])
+		setter.apply(BGCOLOR__G, [g, value|g.setBgColor(value)])
+		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterRank(value)])
+		setter.apply(FONTCOLOR__GNE, [g, value|g.setFontColor(value)])
 		setter.apply(LAYOUT__G, [g, value|g.setLayout(value)])
 		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputOrder(value)])
 		setter.apply(PAGEDIR__G, [g, value|g.setPagedir(value)])
@@ -321,7 +323,7 @@ class DotImport {
 	def static String getAttributeValue(DotGraph graph, String name) {
 		for (stmt : graph.stmts) {
 			var String value = switch stmt {
-				AttrStmt: stmt.getAttributeValue(name)
+				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
 				Attribute: stmt.getAttributeValue(name)
 			}
 			if (value != null) {
@@ -350,10 +352,6 @@ class DotImport {
 			}
 		}
 		null
-	}
-
-	def private static String getAttributeValue(AttrStmt attrStmt, String name) {
-		attrStmt.attrLists.getAttributeValue(name)
 	}
 
 	def private static String getAttributeValue(AttrList attrList, String name) {

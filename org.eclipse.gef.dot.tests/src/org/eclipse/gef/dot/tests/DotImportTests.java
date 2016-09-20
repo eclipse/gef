@@ -965,6 +965,34 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void graph_bgcolor() {
+		// test local attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		graph.attr(DotAttributes.BGCOLOR__G, "gray");
+		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1")
+				.buildNode();
+		Graph expected = graph.nodes(n1).build();
+		testStringImport(expected, DotTestGraphs.GRAPH_BGCOLOR_LOCAL);
+	}
+
+	@Test
+	public void graph_fontcolor() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,
+				DotAttributes._TYPE__G__GRAPH);
+		graph.attr(DotAttributes.FONTCOLOR__GNE, "aquamarine");
+		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1")
+				.buildNode();
+		Graph expected = graph.nodes(n1).build();
+		testStringImport(expected, DotTestGraphs.GRAPH_FONTCOLOR_GLOBAL);
+
+		// test local attribute
+		DotAttributes.setFontColor(expected, "red");
+		testStringImport(expected, DotTestGraphs.GRAPH_FONTCOLOR_LOCAL);
+	}
+
+	@Test
 	public void node_color() {
 		// test global attribute
 		Graph.Builder graph = new Graph.Builder().attr(DotAttributes._TYPE__G,

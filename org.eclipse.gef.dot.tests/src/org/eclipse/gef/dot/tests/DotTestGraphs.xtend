@@ -649,6 +649,27 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val GRAPH_BGCOLOR_LOCAL = '''
+		graph {
+			bgcolor=gray
+			1
+		}
+	'''
+	
+	public static val GRAPH_FONTCOLOR_GLOBAL = '''
+		graph {
+			graph[fontcolor=aquamarine]
+			1
+		}
+	'''
+	
+	public static val GRAPH_FONTCOLOR_LOCAL = '''
+		graph {
+			fontcolor=red
+			1
+		}
+	'''
+	
 	public static val NODE_COLOR_GLOBAL = '''
 		graph {
 			node[color="#ffffff"]
