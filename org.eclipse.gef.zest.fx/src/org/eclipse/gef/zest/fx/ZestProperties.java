@@ -59,7 +59,7 @@ public class ZestProperties {
 	 * @see #setInvisible(Edge, Boolean)
 	 * @see #setInvisible(Node, Boolean)
 	 */
-	public static final String INVISIBLE__NE = "invisible";
+	public static final String INVISIBLE__NE = "element-invisible";
 
 	/**
 	 * This attribute determines the CSS class for an element (node/edge). This
@@ -70,7 +70,7 @@ public class ZestProperties {
 	 * @see #setCssClass(Edge, String)
 	 * @see #setCssClass(Node, String)
 	 */
-	public static final String CSS_CLASS__NE = "css-class";
+	public static final String CSS_CLASS__NE = "element-css-class";
 
 	/**
 	 * This attribute determines the CSS id for an element (node/edge). This
@@ -81,7 +81,7 @@ public class ZestProperties {
 	 * @see #setCssId(Edge, String)
 	 * @see #setCssId(Node, String)
 	 */
-	public static final String CSS_ID__NE = "css-id";
+	public static final String CSS_ID__NE = "element-css-id";
 
 	/**
 	 * This attribute determines the label for an element (node/edge). This
