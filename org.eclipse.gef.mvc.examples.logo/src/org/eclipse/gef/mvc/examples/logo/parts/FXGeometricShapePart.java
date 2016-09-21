@@ -194,8 +194,12 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 	public void resizeContent(Dimension size) {
 		IShape geometry = getContent().getGeometry();
 		Rectangle geometricBounds = geometry.getBounds();
-		double sx = size.width / geometricBounds.getWidth();
-		double sy = size.height / geometricBounds.getHeight();
+		// XXX: The given <i>size</i> contains the stroke of the underlying
+		// geometry, therefore, we need to subtract the stroke width from both
+		// width and height (actually this depends on the stroke type (which is
+		// centered, per default).
+		double sx = (size.width - getContent().getStrokeWidth()) / geometricBounds.getWidth();
+		double sy = (size.height - getContent().getStrokeWidth()) / geometricBounds.getHeight();
 		((IScalable<?>) geometry).scale(sx, sy, geometricBounds.getX(), geometricBounds.getY());
 	}
 
@@ -221,4 +225,5 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 		layoutBoundsRect.setWidth(boundsInParent.getWidth());
 		layoutBoundsRect.setHeight(boundsInParent.getHeight());
 	}
+
 }
