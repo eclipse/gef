@@ -57,18 +57,16 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-
 	private IVisualPart<Node, ? extends Connection> targetPart;
-
 	private boolean isSegmentDragged;
-
 	private Point initialMouseInScene;
 	private Point handlePositionInScene;
-
 	private int initialSegmentIndex;
 	private double initialSegmentParameter;
-
 	private boolean isInvalid = false;
+	private boolean isPrepared;
+	private FXBendConnectionPolicy bendPolicy;
+	private Point startPositionInScene;
 
 	private Comparator<IHandlePart<Node, ? extends Node>> handleDistanceComparator = new Comparator<IHandlePart<Node, ? extends Node>>() {
 		@Override
@@ -84,16 +82,40 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		}
 	};
 
-	private boolean isPrepared;
-
 	@Override
 	public void abortDrag() {
 		if (isInvalid) {
 			return;
 		}
 		restoreRefreshVisuals(targetPart);
-		rollback(getBendPolicy(targetPart));
+		rollback(bendPolicy);
 		updateHandles();
+		bendPolicy = null;
+		targetPart = null;
+	}
+
+	/**
+	 * Returns the {@link FXBendConnectionPolicy} that is installed on the
+	 * {@link #getTargetPart()}.
+	 *
+	 * @return The {@link FXBendConnectionPolicy} that is installed on the
+	 *         {@link #getTargetPart()}.
+	 */
+	protected FXBendConnectionPolicy determineBendPolicy() {
+		// retrieve the default bend policy from the target part
+		return targetPart.getAdapter(FXBendConnectionPolicy.class);
+	}
+
+	/**
+	 * Determines the target {@link IVisualPart} for this interaction policy.
+	 * Per default, the first anchorage of the {@link #getHost()} is returned.
+	 *
+	 * @return The target {@link IVisualPart} for this interaction policy.
+	 */
+	@SuppressWarnings("unchecked")
+	protected IVisualPart<Node, ? extends Connection> determineTargetPart() {
+		return (IVisualPart<Node, ? extends Connection>) getHost()
+				.getAnchoragesUnmodifiable().keySet().iterator().next();
 	}
 
 	@Override
@@ -105,37 +127,50 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		// prepare upon first drag
 		if (!isPrepared) {
 			isPrepared = true;
-			prepareBend(e.isShiftDown(), getBendPolicy(targetPart));
+			prepareBend(e.isShiftDown(), bendPolicy);
+			// move initially so that the initial positions for the selected
+			// points are computed
+			bendPolicy.move(initialMouseInScene, initialMouseInScene);
+			// query selected position
+			List<Point> initialPositions = bendPolicy
+					.getSelectedInitialPositions();
+			Point startPositionInConnectionLocal = initialPositions.get(0);
+			startPositionInScene = FX2Geometry.toPoint(targetPart.getVisual()
+					.localToScene(startPositionInConnectionLocal.x,
+							startPositionInConnectionLocal.y));
 		}
 
+		// determine constraints
 		Connection connection = targetPart.getVisual();
-
 		boolean isOrthogonal = isSegmentDragged
 				&& connection.getRouter() instanceof OrthogonalRouter;
 		boolean isHorizontal = isOrthogonal
-				&& getBendPolicy(targetPart).isSelectionHorizontal();
+				&& bendPolicy.isSelectionHorizontal();
+
+		// apply mouse-delta to selected-position-in-scene
+		Point endPositionInScene = startPositionInScene.getTranslated(delta);
 
 		// snap to grid
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		Point newEndPointInScene = isPrecise(e)
-				? new Point(e.getSceneX(), e.getSceneY())
-				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
+		endPositionInScene = isPrecise(e) ? endPositionInScene
+				: snapToGrid(viewer, endPositionInScene.x,
+						endPositionInScene.y);
 
 		// perform changes
-		getBendPolicy(targetPart).move(initialMouseInScene, newEndPointInScene);
+		bendPolicy.move(startPositionInScene, endPositionInScene);
 
 		// update handles
 		if (isOrthogonal) {
 			if (isHorizontal) {
 				// can only move vertically
-				handlePositionInScene.setY(newEndPointInScene.y);
+				handlePositionInScene.setY(endPositionInScene.y);
 			} else {
 				// can only move horizontally
-				handlePositionInScene.setX(newEndPointInScene.x);
+				handlePositionInScene.setX(endPositionInScene.x);
 			}
 		} else {
-			handlePositionInScene.setX(newEndPointInScene.x);
-			handlePositionInScene.setY(newEndPointInScene.y);
+			handlePositionInScene.setX(endPositionInScene.x);
+			handlePositionInScene.setY(endPositionInScene.y);
 		}
 		updateHandles();
 	}
@@ -145,26 +180,22 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		if (isInvalid) {
 			return;
 		}
-		commit(getBendPolicy(targetPart));
+		commit(bendPolicy);
 		restoreRefreshVisuals(targetPart);
-
 		updateHandles();
+		bendPolicy = null;
+		targetPart = null;
 	}
 
 	/**
-	 * Returns the {@link FXBendConnectionPolicy} that is installed on the given
-	 * {@link IVisualPart}.
+	 * Returns the {@link FXBendConnectionPolicy} to use for manipulating the
+	 * {@link #getTargetPart()}.
 	 *
-	 * @param targetPart
-	 *            The {@link IVisualPart} of which the installed
-	 *            {@link FXBendConnectionPolicy} is returned.
-	 * @return The {@link FXBendConnectionPolicy} that is installed on the given
-	 *         {@link IVisualPart}.
+	 * @return The {@link FXBendConnectionPolicy} to use for manipulating the
+	 *         {@link #getTargetPart()}.
 	 */
-	protected FXBendConnectionPolicy getBendPolicy(
-			IVisualPart<Node, ? extends Node> targetPart) {
-		// retrieve the default bend policy
-		return targetPart.getAdapter(FXBendConnectionPolicy.class);
+	protected FXBendConnectionPolicy getBendPolicy() {
+		return bendPolicy;
 	}
 
 	/**
@@ -182,16 +213,13 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	}
 
 	/**
-	 * Returns the target {@link IVisualPart} for this policy. Per default the
-	 * first anchorage is returned, which has to be an {@link IVisualPart} with
-	 * an {@link Connection} visual.
+	 * Returns the target {@link IVisualPart} for this policy that is determined
+	 * using {@link #determineTargetPart()} if it is not set, yet.
 	 *
 	 * @return The target {@link IVisualPart} for this policy.
 	 */
-	@SuppressWarnings("unchecked")
 	protected IVisualPart<Node, ? extends Connection> getTargetPart() {
-		return (IVisualPart<Node, ? extends Connection>) getHost()
-				.getAnchoragesUnmodifiable().keySet().iterator().next();
+		return targetPart;
 	}
 
 	@Override
@@ -366,15 +394,18 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 		isPrepared = false;
 		isSegmentDragged = false;
+
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
 		handlePositionInScene = initialMouseInScene.getCopy();
+
 		AbstractFXSegmentHandlePart<? extends Node> hostPart = getHost();
 		initialSegmentIndex = hostPart.getSegmentIndex();
 		initialSegmentParameter = hostPart.getSegmentParameter();
-		targetPart = getTargetPart();
 
+		targetPart = determineTargetPart();
 		storeAndDisableRefreshVisuals(targetPart);
-		FXBendConnectionPolicy bendPolicy = getBendPolicy(targetPart);
+
+		bendPolicy = determineBendPolicy();
 		init(bendPolicy);
 
 		updateHandles();

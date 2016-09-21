@@ -42,17 +42,26 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
 	private boolean isPrepared;
+	private FXBendConnectionPolicy bendPolicy;
 
 	@Override
 	public void abortDrag() {
 		if (isInvalid) {
 			return;
 		}
-
-		rollback(getBendPolicy());
+		rollback(bendPolicy);
 		restoreRefreshVisuals(getHost());
-
 		updateHandles();
+		bendPolicy = null;
+	}
+
+	/**
+	 * Returns the {@link FXBendConnectionPolicy} of the host.
+	 *
+	 * @return The {@link FXBendConnectionPolicy} of the host.
+	 */
+	protected FXBendConnectionPolicy determineBendPolicy() {
+		return getHost().getAdapter(FXBendConnectionPolicy.class);
 	}
 
 	@Override
@@ -64,19 +73,27 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		// prepare for manipulation upon first drag
 		if (!isPrepared) {
 			isPrepared = true;
-			prepareBend(getBendPolicy());
+			prepareBend(bendPolicy);
+			// move initially so that the initial positions for the selected
+			// points are computed
+			bendPolicy.move(initialMouseInScene, initialMouseInScene);
+			// TODO: investigate why the following seems unnecessary:
+			// 1. query selected position
+			// 2. transform selected position to scene
 		}
+		// TODO: investigate why the following seems unnecessary:
+		// 3. apply mouse-delta to selected-position-in-scene
+		// 4. snap selected-position-in-scene unless precise
+		// 5. call move(initial-position-in-scene, snapped-position-in-scene)
 
 		// snap to grid
-		// FIXME: apply bending first, then snap the moved coordinate to
-		// the next grid line and update the values
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		Point newEndPointInScene = isPrecise(e)
 				? new Point(e.getSceneX(), e.getSceneY())
 				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
 
 		// perform changes
-		getBendPolicy().move(initialMouseInScene, newEndPointInScene);
+		bendPolicy.move(initialMouseInScene, newEndPointInScene);
 		updateHandles();
 	}
 
@@ -85,11 +102,10 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		if (isInvalid) {
 			return;
 		}
-
-		commit(getBendPolicy());
+		commit(bendPolicy);
 		restoreRefreshVisuals(getHost());
-
 		updateHandles();
+		bendPolicy = null;
 	}
 
 	/**
@@ -98,7 +114,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	 * @return The {@link FXBendConnectionPolicy} of the host.
 	 */
 	protected FXBendConnectionPolicy getBendPolicy() {
-		return getHost().getAdapter(FXBendConnectionPolicy.class);
+		return bendPolicy;
 	}
 
 	/**
@@ -219,7 +235,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 	public boolean showIndicationCursor(MouseEvent event) {
 		// TODO: Show <|> or ^-v indication cursor for segment movement.
 		// cursorSupport.storeAndReplaceCursor(verticalSegment ?
-		// LEFT_RIGHT_CURSRO : TOP_DOWN_CURSOR);
+		// LEFT_RIGHT_CURSOR : TOP_DOWN_CURSOR);
 		return false;
 	}
 
@@ -238,8 +254,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		// disable refresh visuals for the host
 		storeAndDisableRefreshVisuals(getHost());
 
-		// initialize bend policy
-		FXBendConnectionPolicy bendPolicy = getBendPolicy();
+		bendPolicy = determineBendPolicy();
 		init(bendPolicy);
 		updateHandles();
 	}

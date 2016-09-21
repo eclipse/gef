@@ -560,6 +560,18 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				getBendOperation().getConnectionIndex(explicitAnchorIndex));
 	}
 
+	/**
+	 * Returns the initial positions of the selected points in the local
+	 * coordinate system of the {@link #getConnection()}. May be
+	 * <code>null</code> prior to the first {@link #move(Point, Point)} call.
+	 *
+	 * @return The initial positions of the selected points in the local
+	 *         coordinate system of the {@link #getConnection()}.
+	 */
+	public List<Point> getSelectedInitialPositions() {
+		return selectedInitialPositions;
+	}
+
 	private FXUpdateAnchorHintsOperation getUpdateHintsOperation() {
 		return (FXUpdateAnchorHintsOperation) ((AbstractCompositeOperation) super.getOperation())
 				.getOperations().get(1);
