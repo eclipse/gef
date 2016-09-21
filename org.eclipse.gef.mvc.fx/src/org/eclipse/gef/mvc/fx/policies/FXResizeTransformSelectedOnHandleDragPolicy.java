@@ -25,7 +25,6 @@ import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -50,6 +49,8 @@ import javafx.scene.input.ScrollEvent;
 public class FXResizeTransformSelectedOnHandleDragPolicy
 		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
+	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapSupport snapSupport = new SnapSupport(this);
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
 	private Map<IContentPart<Node, ? extends Node>, Double> relX1 = null;
@@ -59,7 +60,6 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	private boolean invalidGesture = false;
 	private Map<IContentPart<Node, ? extends Node>, Integer> scaleIndices = new HashMap<>();
 	private Map<IContentPart<Node, ? extends Node>, Integer> translateIndices = new HashMap<>();
-	private CursorSupport cursorSupport = new CursorSupport(this);
 	private List<IContentPart<Node, ? extends Node>> targetParts;
 
 	/**
@@ -135,10 +135,9 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		// snap to grid
 		// FIXME: apply resize-transform first, then snap the moved vertex to
 		// the next grid position and update the values
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		Point newEndPointInScene = isPrecise(e)
 				? new Point(e.getSceneX(), e.getSceneY())
-				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
+				: snapSupport.snapToGrid(e.getSceneX(), e.getSceneY());
 
 		// update selection bounds
 		Rectangle sel = updateSelectionBounds(newEndPointInScene);

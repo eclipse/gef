@@ -37,12 +37,13 @@ import javafx.scene.transform.Affine;
 public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
+	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapSupport snapSupport = new SnapSupport(this);
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
 	private double initialTx;
 	private double initialTy;
 	private int translationIndex;
-	private CursorSupport cursorSupport = new CursorSupport(this);
 	private IVisualPart<Node, ? extends Node> targetPart;
 	private Point initialVertex;
 
@@ -83,8 +84,7 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		// snap the moved vertex (unless isPrecise(e))
 		Point snappedVertex = newVertex;
 		if (!isPrecise(e)) {
-			snappedVertex = snapToGrid(getHost().getRoot().getViewer(),
-					newVertex.x, newVertex.y);
+			snappedVertex = snapSupport.snapToGrid(newVertex.x, newVertex.y);
 		}
 		// compute delta between initial and snapped vertex
 		Point2D startLocal = visual.sceneToLocal(initialVertex.x,

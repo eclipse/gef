@@ -22,7 +22,6 @@ import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -39,6 +38,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapSupport snapSupport = new SnapSupport(this);
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
 	private boolean isPrepared;
@@ -87,10 +87,9 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		// 5. call move(initial-position-in-scene, snapped-position-in-scene)
 
 		// snap to grid
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		Point newEndPointInScene = isPrecise(e)
 				? new Point(e.getSceneX(), e.getSceneY())
-				: snapToGrid(viewer, e.getSceneX(), e.getSceneY());
+				: snapSupport.snapToGrid(e.getSceneX(), e.getSceneY());
 
 		// perform changes
 		bendPolicy.move(initialMouseInScene, newEndPointInScene);

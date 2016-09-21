@@ -24,6 +24,7 @@ import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
@@ -33,9 +34,13 @@ import com.google.common.collect.SetMultimap;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart<GeometryNode<IShape>> implements
 		ITransformableContentPart<Node, GeometryNode<IShape>>, IResizableContentPart<Node, GeometryNode<IShape>> {
@@ -46,6 +51,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 			refreshVisual();
 		}
 	};
+	private javafx.scene.shape.Rectangle layoutBoundsRect;
 
 	@Override
 	protected void attachToAnchorageVisual(org.eclipse.gef.mvc.parts.IVisualPart<Node, ? extends Node> anchorage,
@@ -55,7 +61,29 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 
 	@Override
 	protected GeometryNode<IShape> createVisual() {
-		return new GeometryNode<>();
+		layoutBoundsRect = new javafx.scene.shape.Rectangle();
+		layoutBoundsRect.setStrokeType(StrokeType.CENTERED);
+		layoutBoundsRect.setFill(null);
+		layoutBoundsRect.setStroke(Color.RED);
+		layoutBoundsRect.setStrokeWidth(0.5);
+		((FXViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup().getChildren().add(layoutBoundsRect);
+
+		GeometryNode<IShape> geometryNode = new GeometryNode<>();
+		geometryNode.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+			@Override
+			public void changed(javafx.beans.value.ObservableValue<? extends Bounds> observable, Bounds oldValue,
+					Bounds newValue) {
+				updateLayoutBoundsRect(geometryNode);
+			}
+		});
+		geometryNode.localToSceneTransformProperty().addListener(new ChangeListener<Transform>() {
+			@Override
+			public void changed(javafx.beans.value.ObservableValue<? extends Transform> observable, Transform oldValue,
+					Transform newValue) {
+				updateLayoutBoundsRect(geometryNode);
+			}
+		});
+		return geometryNode;
 	}
 
 	@Override
@@ -196,5 +224,15 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 	@Override
 	public void transformContent(AffineTransform transform) {
 		getContent().setTransform(getContent().getTransform().preConcatenate(transform));
+	}
+
+	private void updateLayoutBoundsRect(GeometryNode<IShape> geometryNode) {
+		Bounds boundsInScene = geometryNode.localToScene(geometryNode.getLayoutBounds());
+		Bounds boundsInParent = ((FXViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup()
+				.sceneToLocal(boundsInScene);
+		layoutBoundsRect.setX(boundsInParent.getMinX());
+		layoutBoundsRect.setY(boundsInParent.getMinY());
+		layoutBoundsRect.setWidth(boundsInParent.getWidth());
+		layoutBoundsRect.setHeight(boundsInParent.getHeight());
 	}
 }

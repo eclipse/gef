@@ -29,7 +29,6 @@ import org.eclipse.gef.mvc.models.HoverModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IHandlePart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -57,6 +56,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapSupport snapSupport = new SnapSupport(this);
 	private IVisualPart<Node, ? extends Connection> targetPart;
 	private boolean isSegmentDragged;
 	private Point initialMouseInScene;
@@ -151,9 +151,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		Point endPositionInScene = startPositionInScene.getTranslated(delta);
 
 		// snap to grid
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		endPositionInScene = isPrecise(e) ? endPositionInScene
-				: snapToGrid(viewer, endPositionInScene.x,
+				: snapSupport.snapToGrid(endPositionInScene.x,
 						endPositionInScene.y);
 
 		// perform changes

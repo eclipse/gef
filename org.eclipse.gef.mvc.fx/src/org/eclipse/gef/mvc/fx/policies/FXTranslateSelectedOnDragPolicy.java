@@ -43,11 +43,11 @@ import javafx.scene.input.MouseEvent;
 public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
+	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapSupport snapSupport = new SnapSupport(this);
 	private Point initialMouseLocationInScene = null;
-
 	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<>();
 	private List<IContentPart<Node, ? extends Node>> targetParts;
-	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	// gesture validity
 	private boolean invalidGesture = false;
@@ -89,10 +89,10 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		double granularityX = 0d;
 		double granularityY = 0d;
 		if (!isPrecise(e)) {
-			granularityX = getSnapToGridGranularityX();
-			granularityY = getSnapToGridGranularityY();
+			granularityX = snapSupport.getSnapToGridGranularityX();
+			granularityY = snapSupport.getSnapToGridGranularityY();
 			gridModel = viewer.getAdapter(GridModel.class);
-			gridLocalVisual = getGridLocalVisual(viewer);
+			gridLocalVisual = snapSupport.getGridLocalVisual(viewer);
 		}
 		// apply changes to the target parts
 		for (IContentPart<Node, ? extends Node> part : targetParts) {
@@ -104,8 +104,8 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 				// snap to grid
 				Point newEndInScene = endInScene.getCopy();
 				if (gridLocalVisual != null) {
-					newEndInScene = snapToGrid(endInScene.x, endInScene.y,
-							gridModel, granularityX, granularityY,
+					newEndInScene = snapSupport.snapToGrid(endInScene.x,
+							endInScene.y, gridModel, granularityX, granularityY,
 							gridLocalVisual);
 				}
 				// compute delta in parent coordinates
