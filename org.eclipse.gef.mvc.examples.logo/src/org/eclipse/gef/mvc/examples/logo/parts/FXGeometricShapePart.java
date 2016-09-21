@@ -51,6 +51,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 			refreshVisual();
 		}
 	};
+	private final boolean debugging = false;
 	private javafx.scene.shape.Rectangle layoutBoundsRect;
 
 	@Override
@@ -61,28 +62,30 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 
 	@Override
 	protected GeometryNode<IShape> createVisual() {
-		layoutBoundsRect = new javafx.scene.shape.Rectangle();
-		layoutBoundsRect.setStrokeType(StrokeType.CENTERED);
-		layoutBoundsRect.setFill(null);
-		layoutBoundsRect.setStroke(Color.RED);
-		layoutBoundsRect.setStrokeWidth(0.5);
-		((FXViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup().getChildren().add(layoutBoundsRect);
-
 		GeometryNode<IShape> geometryNode = new GeometryNode<>();
-		geometryNode.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-			@Override
-			public void changed(javafx.beans.value.ObservableValue<? extends Bounds> observable, Bounds oldValue,
-					Bounds newValue) {
-				updateLayoutBoundsRect(geometryNode);
-			}
-		});
-		geometryNode.localToSceneTransformProperty().addListener(new ChangeListener<Transform>() {
-			@Override
-			public void changed(javafx.beans.value.ObservableValue<? extends Transform> observable, Transform oldValue,
-					Transform newValue) {
-				updateLayoutBoundsRect(geometryNode);
-			}
-		});
+		if (debugging) {
+			layoutBoundsRect = new javafx.scene.shape.Rectangle();
+			layoutBoundsRect.setStrokeType(StrokeType.CENTERED);
+			layoutBoundsRect.setFill(null);
+			layoutBoundsRect.setStroke(Color.RED);
+			layoutBoundsRect.setStrokeWidth(0.5);
+			((FXViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup().getChildren()
+					.add(layoutBoundsRect);
+			geometryNode.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+				@Override
+				public void changed(javafx.beans.value.ObservableValue<? extends Bounds> observable, Bounds oldValue,
+						Bounds newValue) {
+					updateLayoutBoundsRect(geometryNode);
+				}
+			});
+			geometryNode.localToSceneTransformProperty().addListener(new ChangeListener<Transform>() {
+				@Override
+				public void changed(javafx.beans.value.ObservableValue<? extends Transform> observable,
+						Transform oldValue, Transform newValue) {
+					updateLayoutBoundsRect(geometryNode);
+				}
+			});
+		}
 		return geometryNode;
 	}
 
@@ -140,9 +143,6 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 		FXGeometricShape content = getContent();
 
 		if (visual.getGeometry() != content.getGeometry()) {
-			System.out.println("SET GEOM");
-			System.out.println("visual = " + (visual.getGeometry() == null ? "" : visual.getGeometry().getBounds()));
-			System.out.println("content = " + (content.getGeometry() == null ? "" : content.getGeometry().getBounds()));
 			visual.setGeometry(content.getGeometry());
 		}
 
@@ -192,25 +192,11 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 
 	@Override
 	public void resizeContent(Dimension size) {
-		double visualWidth = getVisual().getWidth();
-		double visualHeight = getVisual().getHeight();
-		System.out.println("visual = " + getVisual().getGeometry());
-		System.out.println("visual size = " + visualWidth + " x " + visualHeight);
-
-		if (true) {
-			getContent().setGeometry(getVisual().getGeometry());
-			return;
-		}
-
 		IShape geometry = getContent().getGeometry();
 		Rectangle geometricBounds = geometry.getBounds();
 		double sx = size.width / geometricBounds.getWidth();
 		double sy = size.height / geometricBounds.getHeight();
 		((IScalable<?>) geometry).scale(sx, sy, geometricBounds.getX(), geometricBounds.getY());
-
-		Rectangle bounds = geometry.getBounds();
-		System.out.println("content = " + getContent().getGeometry());
-		System.out.println("content size = " + bounds.getWidth() + " x " + bounds.getHeight());
 	}
 
 	@Override

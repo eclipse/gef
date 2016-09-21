@@ -210,7 +210,7 @@ public class FXGeometricModel {
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(17, 1, 16, 8, 17, 16).toBezier()));
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(17, 16, 7, 15, 1, 16).toBezier()));
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(1, 16, 0, 8, 1, 1).toBezier()));
-		return new CurvedPolygon(segments).getBounds();
+		return new CurvedPolygon(segments);
 	}
 
 	private static Effect createShadowEffect() {
