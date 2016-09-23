@@ -118,7 +118,7 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 		});
 		if (focusModel == null) {
 			throw new IllegalStateException(
-					"Cannot obtain FocusModel<Node> from the IViewer of the host of this FXFocusBehavior.");
+					"Unable to retrieve FocusModel<Node> viewer adapter. Please check your adapter bindings.");
 		}
 
 		viewer.viewerFocusedProperty().addListener(viewerFocusedListener);
