@@ -16,9 +16,9 @@ import java.util.Collections;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.graph.Edge;
+import org.eclipse.gef.graph.Edge.Builder;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
-import org.eclipse.gef.graph.Edge.Builder;
 import org.eclipse.gef.mvc.fx.domain.FXDomain;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.ContentModel;
@@ -76,8 +76,7 @@ public abstract class AbstractZestExample extends Application {
 		return builder.buildNode();
 	}
 
-	protected static org.eclipse.gef.graph.Node n(Graph graph,
-			Object... attr) {
+	protected static org.eclipse.gef.graph.Node n(Graph graph, Object... attr) {
 		Node node = n(attr);
 		node.setGraph(graph);
 		graph.getNodes().add(node);
@@ -97,11 +96,14 @@ public abstract class AbstractZestExample extends Application {
 
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
+		// create graph
+		graph = createGraph();
+
 		// configure application
 		Injector injector = Guice.createInjector(createModule());
 		domain = injector.getInstance(FXDomain.class);
-		viewer = domain.getAdapter(AdapterKey.get(FXViewer.class,
-				FXDomain.CONTENT_VIEWER_ROLE));
+		viewer = domain.getAdapter(
+				AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		primaryStage.setScene(createScene(viewer));
 
 		primaryStage.setResizable(true);
@@ -118,7 +120,6 @@ public abstract class AbstractZestExample extends Application {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				graph = createGraph();
 				viewer.getAdapter(ContentModel.class).getContents()
 						.setAll(Collections.singletonList(graph));
 			}

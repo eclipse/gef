@@ -30,29 +30,20 @@ import org.eclipse.gef.zest.examples.AbstractZestExample;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleButton;
+import javafx.stage.Stage;
 
 public class SpringLayoutProgressExample extends AbstractZestExample {
-
-	/**
-	 * The ManualSpringLayoutAlgorithm does not perform full layout passes, so
-	 * that we can use the {@link #performNIteration(int)} method to gradually
-	 * apply the layout.
-	 */
-	public static class ManualSpringLayoutAlgorithm
-			extends SpringLayoutAlgorithm {
-		@Override
-		public void applyLayout(boolean clean) {
-		}
-	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
+
+	private ToggleButton toggleLayoutButton;
+	private SpringLayoutAlgorithm layoutAlgorithm;
 
 	public SpringLayoutProgressExample() {
 		super("GEF Layouts - Spring Layout Progress Example");
@@ -121,43 +112,44 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 	protected Scene createScene(final FXViewer viewer) {
 		Scene scene = super.createScene(viewer);
 		Group overlay = viewer.getCanvas().getOverlayGroup();
-		final ToggleButton button = new ToggleButton("step");
-		final ManualSpringLayoutAlgorithm[] layoutAlgorithm = new ManualSpringLayoutAlgorithm[1];
-		button.setOnAction(new EventHandler<ActionEvent>() {
+		toggleLayoutButton = new ToggleButton("step");
+		layoutAlgorithm = new SpringLayoutAlgorithm();
+		layoutAlgorithm.setRandom(true);
+		ZestProperties.setLayoutAlgorithm(graph, layoutAlgorithm);
+		overlay.getChildren().add(toggleLayoutButton);
+		return scene;
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		super.start(primaryStage);
+		Platform.runLater(new Runnable() {
 			@Override
-			public void handle(ActionEvent event) {
-				if (layoutAlgorithm[0] == null) {
-					layoutAlgorithm[0] = new ManualSpringLayoutAlgorithm();
-					layoutAlgorithm[0].setRandom(false);
-					ZestProperties.setLayoutAlgorithm(graph,
-							layoutAlgorithm[0]);
-				} else {
-					viewer.getContentPartMap().get(graph)
-							.getAdapter(LayoutContext.class).applyLayout(true);
-				}
+			public void run() {
+				viewer.getContentPartMap().get(graph)
+						.getAdapter(LayoutContext.class).applyLayout(true);
+				new AnimationTimer() {
+					private long last = 0;
+					private final long NANOS_PER_MILLI = 1000000;
+					private final long NANOS_PER_ITERATION = 10
+							* NANOS_PER_MILLI;
+
+					@Override
+					public void handle(long now) {
+						if (toggleLayoutButton.isSelected()) {
+							long elapsed = now - last;
+							if (elapsed > NANOS_PER_ITERATION) {
+								int n = (int) (elapsed / NANOS_PER_ITERATION);
+								layoutAlgorithm.performNIteration(n);
+								last = now;
+							}
+						} else {
+							last = now;
+						}
+					}
+				}.start();
 			}
 		});
-		overlay.getChildren().add(button);
-		new AnimationTimer() {
-			private long last = 0;
-			private final long NANOS_PER_MILLI = 1000000;
-			private final long NANOS_PER_ITERATION = 10 * NANOS_PER_MILLI;
-
-			@Override
-			public void handle(long now) {
-				if (button.isSelected()) {
-					long elapsed = now - last;
-					if (elapsed > NANOS_PER_ITERATION) {
-						int n = (int) (elapsed / NANOS_PER_ITERATION);
-						layoutAlgorithm[0].performNIteration(n);
-						last = now;
-					}
-				} else {
-					last = now;
-				}
-			}
-		}.start();
-		return scene;
 	}
 
 }
