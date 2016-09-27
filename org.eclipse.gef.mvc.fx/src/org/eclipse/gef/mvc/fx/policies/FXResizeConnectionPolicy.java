@@ -19,14 +19,13 @@ import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXResizableVisualPart;
 import org.eclipse.gef.mvc.operations.BendContentOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint;
-import org.eclipse.gef.mvc.parts.IVisualPart;
 
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 
 /**
  * The {@link FXResizeConnectionPolicy} is a specialization of the
@@ -79,8 +78,8 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IVisualPart<Node, Connection> getHost() {
-		return (IVisualPart<Node, Connection>) super.getHost();
+	public IFXResizableVisualPart<Connection> getHost() {
+		return (IFXResizableVisualPart<Connection>) super.getHost();
 	}
 
 	/**

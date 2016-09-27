@@ -26,8 +26,8 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXResizableContentPart;
 import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef.mvc.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
@@ -73,7 +73,7 @@ import javafx.scene.transform.Transform;
  *
  */
 public class NodePart extends AbstractFXContentPart<Group>
-		implements ITransformableContentPart<Node, Group>, IResizableContentPart<Node, Group> {
+		implements ITransformableContentPart<Node, Group>, IFXResizableContentPart<Group> {
 
 	/**
 	 * JavaFX Node displaying a small icon representing a nested graph.

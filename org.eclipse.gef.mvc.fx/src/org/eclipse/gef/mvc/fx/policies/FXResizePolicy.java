@@ -14,12 +14,12 @@ package org.eclipse.gef.mvc.fx.policies;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.mvc.fx.operations.FXResizeOperation;
 import org.eclipse.gef.mvc.fx.parts.FXSquareSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.parts.IFXResizableVisualPart;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.policies.AbstractResizePolicy;
 import org.eclipse.gef.mvc.policies.AbstractTransactionPolicy;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
@@ -35,14 +35,18 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new FXResizeOperation("Resize", getVisualToResize(),
-				getCurrentSize(), 0, 0);
+		return new FXResizeOperation("Resize", getHost(), getCurrentSize(), 0,
+				0);
 	}
 
 	@Override
 	protected Dimension getCurrentSize() {
-		Bounds layoutBounds = getVisualToResize().getLayoutBounds();
-		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
+		return getHost().getVisualSize();
+	}
+
+	@Override
+	public IFXResizableVisualPart<? extends Node> getHost() {
+		return (IFXResizableVisualPart<? extends Node>) super.getHost();
 	}
 
 	/**
@@ -99,14 +103,14 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 	 * @return The {@link Node} that should be resized.
 	 */
 	protected Node getVisualToResize() {
-		return getHost().getVisual();
+		return getHost().getResizableVisual();
 	}
 
 	@Override
 	protected void updateResizeOperation(double dw, double dh) {
 		FXResizeOperation resizeOperation = getResizeOperation();
 
-		Node visual = resizeOperation.getVisual();
+		Node visual = resizeOperation.getResizablePart().getResizableVisual();
 		boolean resizable = visual.isResizable();
 
 		// convert resize into relocate in case node is not resizable

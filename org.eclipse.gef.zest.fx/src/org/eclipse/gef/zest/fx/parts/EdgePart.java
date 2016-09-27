@@ -29,7 +29,6 @@ import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
-import org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;

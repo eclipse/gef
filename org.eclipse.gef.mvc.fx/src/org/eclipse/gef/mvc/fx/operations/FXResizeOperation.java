@@ -19,13 +19,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.geometry.planar.Dimension;
+import org.eclipse.gef.mvc.fx.parts.IFXResizableVisualPart;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 
 import javafx.scene.Node;
 
 /**
- * The {@link FXResizeOperation} can be used to alter the size of a
- * {@link Node visual}.
+ * The {@link FXResizeOperation} can be used to alter the size of a {@link Node
+ * visual}.
  *
  * @author anyssen
  * @author mwienand
@@ -34,28 +35,29 @@ import javafx.scene.Node;
 public class FXResizeOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
-	private final Node visual;
+	private final IFXResizableVisualPart<? extends Node> resizablePart;
 	private final Dimension initialSize;
 	private double dw;
 	private double dh;
 
 	/**
-	 * Constructs a new {@link FXResizeOperation} for the manipulation of
-	 * the given {@link Node}.
+	 * Constructs a new {@link FXResizeOperation} for the manipulation of the
+	 * given {@link Node}.
 	 *
-	 * @param visual
+	 * @param resizablePart
 	 *            The {@link Node} that is manipulated by this operation.
 	 */
-	public FXResizeOperation(Node visual) {
-		this(visual, 0, 0);
+	public FXResizeOperation(
+			IFXResizableVisualPart<? extends Node> resizablePart) {
+		this(resizablePart, 0, 0);
 	}
 
 	/**
-	 * Constructs a new {@link FXResizeOperation} for the manipulation of
-	 * the given {@link Node}. The given delta width and height will be applied
-	 * when executing this operation.
+	 * Constructs a new {@link FXResizeOperation} for the manipulation of the
+	 * given {@link Node}. The given delta width and height will be applied when
+	 * executing this operation.
 	 *
-	 * @param visual
+	 * @param resizablePart
 	 *            The {@link Node} that is manipulated by this operation.
 	 * @param dw
 	 *            The delta width that is applied when executing this operation.
@@ -63,20 +65,19 @@ public class FXResizeOperation extends AbstractOperation
 	 *            The delta height that is applied when executing this
 	 *            operation.
 	 */
-	public FXResizeOperation(Node visual, double dw, double dh) {
-		this("Resize", visual,
-				new Dimension(visual.getLayoutBounds().getWidth(),
-						visual.getLayoutBounds().getHeight()),
-				dw, dh);
+	public FXResizeOperation(
+			IFXResizableVisualPart<? extends Node> resizablePart, double dw,
+			double dh) {
+		this("Resize", resizablePart, resizablePart.getVisualSize(), dw, dh);
 	}
 
 	/**
-	 * Constructs a new {@link FXResizeOperation} from the given values.
-	 * Note that the <i>oldLocation</i> does include the layout-bounds minimum.
+	 * Constructs a new {@link FXResizeOperation} from the given values. Note
+	 * that the <i>oldLocation</i> does include the layout-bounds minimum.
 	 *
 	 * @param label
 	 *            Descriptive title for the operation.
-	 * @param visual
+	 * @param resizablePart
 	 *            The visual that is resized/relocated.
 	 * @param initialSize
 	 *            The old size of the visual.
@@ -85,10 +86,11 @@ public class FXResizeOperation extends AbstractOperation
 	 * @param dh
 	 *            The vertical size difference.
 	 */
-	public FXResizeOperation(String label, Node visual,
+	public FXResizeOperation(String label,
+			IFXResizableVisualPart<? extends Node> resizablePart,
 			Dimension initialSize, double dw, double dh) {
 		super(label);
-		this.visual = visual;
+		this.resizablePart = resizablePart;
 
 		if (initialSize.width + dw < 0) {
 			throw new IllegalArgumentException("Cannot resize below zero.");
@@ -105,8 +107,9 @@ public class FXResizeOperation extends AbstractOperation
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		visual.resize(initialSize.getWidth() + dw,
+		Dimension newSize = new Dimension(initialSize.getWidth() + dw,
 				initialSize.getHeight() + dh);
+		resizablePart.resizeVisual(newSize);
 		return Status.OK_STATUS;
 	}
 
@@ -138,12 +141,14 @@ public class FXResizeOperation extends AbstractOperation
 	}
 
 	/**
-	 * Returns the {@link Node} that is manipulated by this operation.
+	 * Returns the {@link IFXResizableVisualPart} that is resized by this
+	 * operation.
 	 *
-	 * @return The {@link Node} that is manipulated by this operation.
+	 * @return The {@link IFXResizableVisualPart} that is resized by this
+	 *         operation.
 	 */
-	public Node getVisual() {
-		return visual;
+	public IFXResizableVisualPart<? extends Node> getResizablePart() {
+		return resizablePart;
 	}
 
 	@Override
@@ -189,7 +194,7 @@ public class FXResizeOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		visual.resize(initialSize.getWidth(), initialSize.getHeight());
+		resizablePart.resizeVisual(initialSize);
 		return Status.OK_STATUS;
 	}
 

@@ -23,9 +23,9 @@ import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
+import org.eclipse.gef.mvc.fx.parts.IFXResizableContentPart;
 import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 
@@ -43,7 +43,7 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart<GeometryNode<IShape>> implements
-		ITransformableContentPart<Node, GeometryNode<IShape>>, IResizableContentPart<Node, GeometryNode<IShape>> {
+		ITransformableContentPart<Node, GeometryNode<IShape>>, IFXResizableContentPart<GeometryNode<IShape>> {
 
 	private final ChangeListener<? super Paint> fillObserver = new ChangeListener<Paint>() {
 		@Override

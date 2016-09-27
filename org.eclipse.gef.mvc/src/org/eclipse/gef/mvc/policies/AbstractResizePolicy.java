@@ -16,6 +16,7 @@ import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.operations.ResizeContentOperation;
 import org.eclipse.gef.mvc.parts.IResizableContentPart;
+import org.eclipse.gef.mvc.parts.IResizableVisualPart;
 
 /**
  * Abstract base class for resize transaction policies.
@@ -42,7 +43,7 @@ public abstract class AbstractResizePolicy<VR>
 	protected void applySize(double dw, double dh) {
 		updateResizeOperation(dw, dh);
 		locallyExecuteOperation();
-	};
+	}
 
 	@Override
 	public ITransactionalOperation commit() {
@@ -61,7 +62,7 @@ public abstract class AbstractResizePolicy<VR>
 		initialSize = null;
 
 		return commitOperation;
-	}
+	};
 
 	/**
 	 * Create an operation to resize the content.
@@ -81,6 +82,11 @@ public abstract class AbstractResizePolicy<VR>
 	 * @return The current size.
 	 */
 	protected abstract Dimension getCurrentSize();
+
+	@Override
+	public IResizableVisualPart<VR, ? extends VR> getHost() {
+		return (IResizableVisualPart<VR, ? extends VR>) super.getHost();
+	}
 
 	/**
 	 * Returns the initial size of the {@link IResizableContentPart}.

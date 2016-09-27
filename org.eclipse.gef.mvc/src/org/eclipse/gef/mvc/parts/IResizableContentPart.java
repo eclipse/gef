@@ -27,7 +27,10 @@ import org.eclipse.gef.geometry.planar.Dimension;
  *
  */
 public interface IResizableContentPart<VR, V extends VR>
-		extends IContentPart<VR, V> {
+		extends IResizableVisualPart<VR, V> {
+
+	// Returns the current size according to this part's content.
+	// public Dimension getContentSize();
 
 	/**
 	 * Resizes the content element as specified by the given {@link Dimension}.
