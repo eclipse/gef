@@ -22,11 +22,12 @@ import org.eclipse.gef.fx.nodes.IConnectionRouter;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.FXBendConnectionOperation;
+import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
 import org.eclipse.gef.mvc.operations.BendContentOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.parts.IBendableContentPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint;
+import org.eclipse.gef.mvc.parts.IVisualPart;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -67,10 +68,9 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 
 	@Override
 	protected ITransactionalOperation createTransformContentOperation() {
-		return new BendContentOperation<>(
-				(IBendableContentPart<Node, ? extends Node>) getHost(),
-				initialBendPoints,
-				FXBendConnectionPolicy.getCurrentBendPoints(getHost()));
+		IFXBendableContentPart bendablePart = (IFXBendableContentPart) getHost();
+		return new BendContentOperation<>(bendablePart, initialBendPoints,
+				bendablePart.getVisualBendPoints());
 	}
 
 	/**
@@ -145,8 +145,8 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		for (Point p : connection.getPointsUnmodifiable()) {
 			initialConnectionPositions.add(inverse.getTransformed(p));
 		}
-		initialBendPoints = FXBendConnectionPolicy
-				.getCurrentBendPoints(getHost());
+		initialBendPoints = ((IFXBendableContentPart) getHost())
+				.getVisualBendPoints();
 	}
 
 	@Override

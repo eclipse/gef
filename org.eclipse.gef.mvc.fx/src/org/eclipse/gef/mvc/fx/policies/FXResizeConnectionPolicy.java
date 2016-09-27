@@ -18,6 +18,7 @@ import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.FXBendConnectionOperation;
+import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
 import org.eclipse.gef.mvc.operations.BendContentOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.parts.IBendableContentPart;
@@ -62,10 +63,9 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 
 	@Override
 	protected ITransactionalOperation createResizeContentOperation() {
-		return new BendContentOperation<>(
-				(IBendableContentPart<Node, ? extends Node>) getHost(),
-				initialBendPoints,
-				FXBendConnectionPolicy.getCurrentBendPoints(getHost()));
+		IFXBendableContentPart bendablePart = (IFXBendableContentPart) getHost();
+		return new BendContentOperation<>(bendablePart, initialBendPoints,
+				bendablePart.getVisualBendPoints());
 	}
 
 	/**

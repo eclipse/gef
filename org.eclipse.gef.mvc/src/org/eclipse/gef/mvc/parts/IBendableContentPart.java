@@ -153,10 +153,8 @@ public interface IBendableContentPart<VR, V extends VR>
 		 */
 		@Override
 		public String toString() {
-			return "BendPoint ["
-					+ (contentAnchorage != null
-							? "contentAnchorage=" + contentAnchorage + ", "
-							: "")
+			return "BendPoint [" + (contentAnchorage != null
+					? "contentAnchorage=" + contentAnchorage + ", " : "")
 					+ (position != null ? "position=" + position : "") + "]";
 		}
 	}
@@ -168,5 +166,23 @@ public interface IBendableContentPart<VR, V extends VR>
 	 *            The bend points.
 	 */
 	public void bendContent(List<BendPoint> bendPoints);
+
+	// /**
+	// * Returns the current {@link BendPoint}s of this
+	// * {@link IBendableContentPart}'s content.
+	// *
+	// * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
+	// * content.
+	// */
+	// public List<BendPoint> getContentBendPoints();
+
+	/**
+	 * Returns the current {@link BendPoint}s of this
+	 * {@link IBendableContentPart}'s visual.
+	 *
+	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
+	 *         visual.
+	 */
+	public List<BendPoint> getVisualBendPoints();
 
 }

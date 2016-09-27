@@ -29,6 +29,7 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef.mvc.fx.operations.FXUpdateAnchorHintsOperation;
 import org.eclipse.gef.mvc.fx.parts.FXPartUtils;
+import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef.mvc.models.GridModel;
 import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
@@ -93,65 +94,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 * are regarded as overlying.
 	 */
 	protected static final double DEFAULT_SEGMENT_OVERLAY_THRESHOLD = 6;
-
-	/**
-	 * Retrieves the content element represented by the anchor's anchorage.
-	 *
-	 * @param viewer
-	 *            The viewer to find the content part in.
-	 * @param anchor
-	 *            The anchor whose anchorage is to be evaluated.
-	 * @return The content element, or <code>null</code> if none could be
-	 *         retrieved.
-	 */
-	static Object getAnchorageContent(IViewer<Node> viewer, IAnchor anchor) {
-		Node anchorageNode = anchor.getAnchorage();
-		IVisualPart<Node, ? extends Node> part = FXPartUtils
-				.retrieveVisualPart(viewer, anchorageNode);
-		if (part instanceof IContentPart) {
-			return ((IContentPart<Node, ? extends Node>) part).getContent();
-		}
-		return null;
-	}
-
-	/**
-	 * Retrieves the current bend points of the connection, which include the
-	 * start and end points, as well as the control points.
-	 *
-	 * @param connectionPart
-	 *            The connection part whose bend points to infer.
-	 * @return The list of bend points.
-	 */
-	// TODO (bug #493515): Migrate into an operation of IBendableContentPart
-	static List<BendPoint> getCurrentBendPoints(
-			IVisualPart<Node, ? extends Connection> connectionPart) {
-		List<BendPoint> bendPoints = new ArrayList<>();
-		Connection connection = connectionPart.getVisual();
-		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
-		for (int i = 0; i < anchors.size(); i++) {
-			IAnchor a = anchors.get(i);
-			if (!connection.getRouter().wasInserted(a)) {
-				if (connection.isConnected(i)) {
-					// provide a position hint for a connected bend point
-					Point positionHint = connection.getPoint(i);
-					if (i == 0 && connection.getStartPointHint() != null) {
-						positionHint = connection.getStartPointHint();
-					}
-					if (i == anchors.size() - 1
-							&& connection.getEndPointHint() != null) {
-						positionHint = connection.getEndPointHint();
-					}
-					bendPoints.add(new BendPoint(
-							FXBendConnectionPolicy.getAnchorageContent(
-									connectionPart.getRoot().getViewer(), a),
-							positionHint));
-				} else {
-					bendPoints.add(new BendPoint(connection.getPoint(i)));
-				}
-			}
-		}
-		return bendPoints;
-	}
 
 	private List<Integer> selectedExplicitAnchorIndices = new ArrayList<>();
 	private List<Point> selectedInitialPositions = new ArrayList<>();
@@ -396,7 +338,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	@Override
 	protected List<BendPoint> getCurrentBendPoints() {
-		return getCurrentBendPoints(getHost());
+		return getHost().getVisualBendPoints();
 	}
 
 	/**
@@ -474,10 +416,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		return getExplicitIndex(connectionIndex, -1);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public IVisualPart<Node, Connection> getHost() {
-		return (IVisualPart<Node, Connection>) super.getHost();
+	public IFXBendableContentPart getHost() {
+		return (IFXBendableContentPart) super.getHost();
 	}
 
 	/**
