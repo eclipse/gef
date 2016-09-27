@@ -530,7 +530,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 */
 	protected void refreshIcon() {
 		Image icon = ZestProperties.getIcon(getContent());
-		if (getIconImageView() != null && getIconImageView().getImage() != icon && icon instanceof Image) {
+		if (getIconImageView() != null && getIconImageView().getImage() != icon) {
 			getIconImageView().setImage(icon);
 		}
 	}
