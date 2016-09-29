@@ -73,6 +73,7 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		if (invalidGesture) {
 			return;
 		}
+
 		// compute end point
 		Node visual = getTargetPart().getVisual();
 		Point newEndScene = new Point(e.getSceneX(), e.getSceneY());
@@ -86,6 +87,7 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		if (!isPrecise(e)) {
 			snappedVertex = snapSupport.snapToGrid(newVertex.x, newVertex.y);
 		}
+
 		// compute delta between initial and snapped vertex
 		Point2D startLocal = visual.sceneToLocal(initialVertex.x,
 				initialVertex.y);
@@ -94,26 +96,37 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		// compute delta in local coordinates
 		double deltaX = endLocal.getX() - startLocal.getX();
 		double deltaY = endLocal.getY() - startLocal.getY();
-		// determine current layout position in local coordinates
-		Point2D layout = visual.parentToLocal(initialTx, initialTy);
-		double lx = layout.getX();
-		double ly = layout.getY();
 		// segment index determines logical position (0 = top left, 1 = top
 		// right, 2 = bottom right, 3 = bottom left)
 		int segment = getHost().getSegmentIndex();
-		if (segment == 0 || segment == 3) {
-			// left side => change layout x by local delta x
-			lx += deltaX;
+
+		// compute translation, i.e. layout delta
+		double pdx = 0;
+		double pdy = 0;
+		if (segment == 0 || segment == 1 || segment == 3) {
+			// determine current layout position in local coordinates
+			Point2D layout = visual.parentToLocal(initialTx, initialTy);
+			double lx = layout.getX();
+			double ly = layout.getY();
+			if (segment == 0 || segment == 3) {
+				// left side => change layout x by local delta x
+				lx += deltaX;
+			}
+			if (segment == 0 || segment == 1) {
+				// top side => change layout y by local delta y
+				ly += deltaY;
+			}
+			// transform new layout position to parent coordinates
+			Point2D layoutParent = visual.localToParent(lx, ly);
+			// compute layout delta in parent coordinates
+			if (segment == 0 || segment == 3) {
+				pdx = layoutParent.getX() - initialTx;
+			}
+			if (segment == 0 || segment == 1) {
+				pdy = layoutParent.getY() - initialTy;
+			}
 		}
-		if (segment == 0 || segment == 1) {
-			// top side => change layout y by local delta y
-			ly += deltaY;
-		}
-		// transform new layout position to parent coordinates
-		Point2D layoutParent = visual.localToParent(lx, ly);
-		// compute layout delta in parent coordinates
-		double pdx = layoutParent.getX() - initialTx;
-		double pdy = layoutParent.getY() - initialTy;
+
 		// determine resize in local coordinates
 		double ldw, ldh;
 		if (segment == 1 || segment == 2) {
@@ -130,6 +143,7 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 			// top side
 			ldh = -deltaY;
 		}
+
 		// apply translation and resize using underlying policies
 		getResizePolicy().resize(ldw, ldh);
 		getTransformPolicy().setPostTranslate(translationIndex, pdx, pdy);
