@@ -43,6 +43,7 @@ import org.eclipse.gef.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
+import org.eclipse.gef.mvc.models.ContentModel;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
@@ -226,6 +227,10 @@ public class DotGraphView extends ZestFxUiView {
 				.removePropertyChangeListener(preferenceChangeListener);
 		currentDot = null;
 		currentFile = null;
+
+		getContentViewer().getAdapter(ContentModel.class).contentsProperty()
+				.clear();
+
 		super.dispose();
 	}
 
