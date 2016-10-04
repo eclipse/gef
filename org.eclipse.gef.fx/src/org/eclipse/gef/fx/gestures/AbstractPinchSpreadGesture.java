@@ -32,19 +32,18 @@ public abstract class AbstractPinchSpreadGesture extends AbstractGesture {
 	private EventHandler<? super ZoomEvent> zoomFilter = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			if (!event.isInertia()) {
-				if (event.getEventType() == ZoomEvent.ZOOM_STARTED) {
-					// prevent that multiple start events occur.
-					if (!inZoom) {
-						inZoom = true;
-						zoomStarted(event);
-					}
-				} else if (event.getEventType() == ZoomEvent.ZOOM) {
-					zoom(event);
-				} else if (event.getEventType() == ZoomEvent.ZOOM_FINISHED) {
-					zoomFinished(event);
-					inZoom = false;
+			if (event.getEventType() == ZoomEvent.ZOOM_STARTED) {
+				// prevent that multiple start events occur.
+				if (!inZoom) {
+					inZoom = true;
+					zoomStarted(event);
 				}
+			} else if (event.getEventType() == ZoomEvent.ZOOM
+					&& !event.isInertia()) {
+				zoom(event);
+			} else if (event.getEventType() == ZoomEvent.ZOOM_FINISHED) {
+				zoomFinished(event);
+				inZoom = false;
 			}
 		}
 	};
