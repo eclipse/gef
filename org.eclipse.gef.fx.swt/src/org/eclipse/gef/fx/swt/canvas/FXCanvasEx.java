@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef.fx.swt.canvas;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
 import java.security.AccessController;
@@ -195,10 +196,17 @@ public class FXCanvasEx extends FXCanvas {
 				m.invoke(tkSceneListener, eventType, angle, totalAngle, x, y,
 						screenX, screenY, _shiftDown, _controlDown, _altDown,
 						_metaDown, _direct, _inertia);
-			} catch (Exception e) {
+			} catch (InvocationTargetException e) {
+				Throwable targetException = e.getCause();
+				if (targetException instanceof RuntimeException) {
+					throw ((RuntimeException) targetException);
+				} else {
+					targetException.printStackTrace();
+				}
+			} catch (NoSuchMethodException | SecurityException
+					| IllegalAccessException | IllegalArgumentException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 		public void scrollEvent(EventType<ScrollEvent> eventType,
@@ -224,7 +232,15 @@ public class FXCanvasEx extends FXCanvas {
 						touchCount, scrollTextX, scrollTextY, defaultTextX,
 						defaultTextY, x, y, screenX, screenY, _shiftDown,
 						_controlDown, _altDown, _metaDown, _direct, _inertia);
-			} catch (Exception e) {
+			} catch (InvocationTargetException e) {
+				Throwable targetException = e.getCause();
+				if (targetException instanceof RuntimeException) {
+					throw ((RuntimeException) targetException);
+				} else {
+					targetException.printStackTrace();
+				}
+			} catch (NoSuchMethodException | SecurityException
+					| IllegalAccessException | IllegalArgumentException e) {
 				e.printStackTrace();
 			}
 		}
@@ -243,7 +259,15 @@ public class FXCanvasEx extends FXCanvas {
 				m.invoke(tkSceneListener, eventType, touchCount, x, y, screenX,
 						screenY, _shiftDown, _controlDown, _altDown, _metaDown,
 						_direct);
-			} catch (Exception e) {
+			} catch (InvocationTargetException e) {
+				Throwable targetException = e.getCause();
+				if (targetException instanceof RuntimeException) {
+					throw ((RuntimeException) targetException);
+				} else {
+					targetException.printStackTrace();
+				}
+			} catch (NoSuchMethodException | SecurityException
+					| IllegalAccessException | IllegalArgumentException e) {
 				e.printStackTrace();
 			}
 		}
@@ -264,7 +288,15 @@ public class FXCanvasEx extends FXCanvas {
 				m.invoke(tkSceneListener, eventType, zoomFactor,
 						totalZoomFactor, x, y, screenX, screenY, _shiftDown,
 						_controlDown, _altDown, _metaDown, _direct, _inertia);
-			} catch (Exception e) {
+			} catch (InvocationTargetException e) {
+				Throwable targetException = e.getCause();
+				if (targetException instanceof RuntimeException) {
+					throw ((RuntimeException) targetException);
+				} else {
+					targetException.printStackTrace();
+				}
+			} catch (NoSuchMethodException | SecurityException
+					| IllegalAccessException | IllegalArgumentException e) {
 				e.printStackTrace();
 			}
 		}
@@ -622,6 +654,7 @@ public class FXCanvasEx extends FXCanvas {
 					: totalZoom[0] / lastTotalZoom;
 			lastTotalZoom = totalZoom[0];
 
+			final boolean inertia = !gestureActive;
 			scheduleSceneRunnable(new ISceneRunnable() {
 				@Override
 				public void run(TKSceneListenerWrapper sceneListener) {
@@ -631,7 +664,7 @@ public class FXCanvasEx extends FXCanvas {
 							(gestureEvent.stateMask & SWT.CONTROL) != 0,
 							(gestureEvent.stateMask & SWT.ALT) != 0,
 							(gestureEvent.stateMask & SWT.COMMAND) != 0, false,
-							!gestureActive);
+							inertia);
 				}
 			});
 		}
