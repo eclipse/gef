@@ -94,8 +94,8 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 		zoomRelative(nextZoomLevel / oldZoomLevel, sceneX, sceneY);
 		double newZoomLevel = getChangeViewportOperation()
 				.getNewContentTransform().getScaleX();
-		if (newZoomLevel != nextZoomLevel) {
-			// counter-act floating point errors
+		if (Math.abs(newZoomLevel - nextZoomLevel) < 0.01) {
+			// // counter-act floating point errors
 			setZoomLevel(nextZoomLevel);
 		}
 	}
