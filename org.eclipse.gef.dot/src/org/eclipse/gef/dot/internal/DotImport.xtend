@@ -28,7 +28,6 @@ import org.eclipse.gef.dot.internal.parser.dot.DotFactory
 import org.eclipse.gef.dot.internal.parser.dot.DotGraph
 import org.eclipse.gef.dot.internal.parser.dot.EdgeRhs
 import org.eclipse.gef.dot.internal.parser.dot.EdgeRhsNode
-import org.eclipse.gef.dot.internal.parser.dot.EdgeRhsSubgraph
 import org.eclipse.gef.dot.internal.parser.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.parser.dot.GraphType
 import org.eclipse.gef.dot.internal.parser.dot.NodeId
@@ -217,13 +216,12 @@ class DotImport {
 	********************************************************************************************************************************
 	*/
 	private def dispatch void transformStmt(Stmt it) {
-		throw new IllegalArgumentException("DotImport cannot transform statement: " + class)
+		System.err.println("DotImport cannot transform Stmt: " + it);
 	}
 
 	private def dispatch void transformStmt(AttrStmt it) {
 		switch type {
 			case GRAPH: {
-
 				// global graph attributes
 				attrLists.forEach [
 					attributes.forEach [
@@ -232,7 +230,6 @@ class DotImport {
 				]
 			}
 			case NODE: {
-
 				// global node attributes
 				attrLists.forEach [
 					attributes.forEach [
@@ -241,7 +238,6 @@ class DotImport {
 				]
 			}
 			case EDGE: {
-
 				// global edge attributes
 				attrLists.forEach [
 					attributes.forEach [
@@ -267,12 +263,8 @@ class DotImport {
 					// current target node may be source for next EdgeRHS
 					sourceNode = targetNode
 				}
-				EdgeRhsSubgraph: {
-					// TODO: add support for transforming edges with
-					// subgraphs on their right hand side
-				}
 				default: {
-					throw new IllegalArgumentException("DotImport cannot transform EdgeRhs: " + class)
+					System.err.println("DotImport cannot transform EdgeStmtNode: " + it);
 				}
 			}
 		}
