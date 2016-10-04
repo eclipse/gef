@@ -22,6 +22,7 @@ import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.parts.IRootPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.mvc.viewer.IViewer;
 
@@ -98,6 +99,13 @@ public class FXFocusFeedbackPart
 		if (anchorages.isEmpty()) {
 			return;
 		}
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.iterator()
+				.next();
+		IRootPart<Node, ? extends Node> root = anchorage.getRoot();
+		if (root == null) {
+			return;
+		}
+
 		IGeometry feedbackGeometry = getFeedbackGeometry();
 		if (feedbackGeometry == null) {
 			return;
@@ -107,9 +115,7 @@ public class FXFocusFeedbackPart
 		visual.setGeometry(feedbackGeometry);
 
 		// determine selection
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.iterator()
-				.next();
-		IViewer<Node> viewer = anchorage.getRoot().getViewer();
+		IViewer<Node> viewer = root.getViewer();
 		@SuppressWarnings("serial")
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
