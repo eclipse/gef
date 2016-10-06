@@ -14,24 +14,23 @@ package org.eclipse.gef.mvc.examples.logo.policies;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
-
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef.mvc.fx.policies.IFXCreationMenuItem;
+import org.eclipse.gef.mvc.fx.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IRootPart;
 
 import com.google.inject.Provider;
 
-public class FXCreationMenuItemProvider
-		implements Provider<List<IFXCreationMenuItem>> {
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
-	static class GeometricShapeItem implements IFXCreationMenuItem {
+public class FXCreationMenuItemProvider implements Provider<List<FXCreationMenuOnClickPolicy.ICreationMenuItem>> {
+
+	static class GeometricShapeItem implements FXCreationMenuOnClickPolicy.ICreationMenuItem {
 		private final FXGeometricShape template;
 
 		public GeometricShapeItem(FXGeometricShape content) {
@@ -40,8 +39,7 @@ public class FXCreationMenuItemProvider
 
 		@Override
 		public Object createContent() {
-			FXGeometricShape content = new FXGeometricShape(
-					template.getGeometry(), template.getTransform(),
+			FXGeometricShape content = new FXGeometricShape(template.getGeometry(), template.getTransform(),
 					template.getFill(), template.getEffect());
 			content.setStroke(template.getStroke());
 			content.setStrokeWidth(template.getStrokeWidth());
@@ -50,8 +48,7 @@ public class FXCreationMenuItemProvider
 
 		@Override
 		public Node createVisual() {
-			GeometryNode<IShape> visual = new GeometryNode<>(
-					template.getGeometry());
+			GeometryNode<IShape> visual = new GeometryNode<>(template.getGeometry());
 			visual.setStroke(template.getStroke());
 			visual.setStrokeWidth(template.getStrokeWidth());
 			visual.setFill(template.getFill());
@@ -60,31 +57,25 @@ public class FXCreationMenuItemProvider
 		}
 
 		@Override
-		public IContentPart<Node, ? extends Node> findContentParent(
-				IRootPart<Node, ? extends Node> rootPart) {
+		public IContentPart<Node, ? extends Node> findContentParent(IRootPart<Node, ? extends Node> rootPart) {
 			return rootPart.getContentPartChildren().get(0);
 		}
 	}
 
 	@Override
-	public List<IFXCreationMenuItem> get() {
-		List<IFXCreationMenuItem> items = new ArrayList<>();
+	public List<FXCreationMenuOnClickPolicy.ICreationMenuItem> get() {
+		List<FXCreationMenuOnClickPolicy.ICreationMenuItem> items = new ArrayList<>();
 		// handle shape
-		items.add(new GeometricShapeItem(new FXGeometricShape(
-				FXGeometricModel.createHandleShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE,
-				FXGeometricModel.GEF_SHADOW_EFFECT)));
+		items.add(new GeometricShapeItem(new FXGeometricShape(FXGeometricModel.createHandleShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE, FXGeometricModel.GEF_SHADOW_EFFECT)));
 		// E shape
 		items.add(new GeometricShapeItem(
-				new FXGeometricShape(FXGeometricModel.createEShapeGeometry(),
-						new AffineTransform(1, 0, 0, 1, 100, 22),
-						FXGeometricModel.GEF_COLOR_BLUE,
-						FXGeometricModel.GEF_SHADOW_EFFECT)));
+				new FXGeometricShape(FXGeometricModel.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 100, 22),
+						FXGeometricModel.GEF_COLOR_BLUE, FXGeometricModel.GEF_SHADOW_EFFECT)));
 		// cursor shape
-		items.add(new GeometricShapeItem(new FXGeometricShape(
-				FXGeometricModel.createCursorShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 227, 45), Color.WHITE, 2,
-				Color.BLACK, FXGeometricModel.GEF_SHADOW_EFFECT)));
+		items.add(new GeometricShapeItem(new FXGeometricShape(FXGeometricModel.createCursorShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 227, 45), Color.WHITE, 2, Color.BLACK,
+				FXGeometricModel.GEF_SHADOW_EFFECT)));
 		return items;
 	}
 

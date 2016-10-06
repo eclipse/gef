@@ -67,6 +67,46 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 		implements IFXOnClickPolicy {
 
 	/**
+	 * An {@link ICreationMenuItem} can be displayed by an
+	 * {@link FXCreationMenuOnClickPolicy}.
+	 *
+	 * @author wienand
+	 *
+	 */
+	public static interface ICreationMenuItem {
+
+		/**
+		 * Returns a newly created content element that is added to the viewer
+		 * when this menu item is selected.
+		 *
+		 * @return The content element that is created when this menu item is
+		 *         selected.
+		 */
+		public Object createContent();
+
+		/**
+		 * Returns the visual for this menu item.
+		 *
+		 * @return The visual for this menu item.
+		 */
+		public Node createVisual();
+
+		/**
+		 * Returns the {@link IContentPart} that will serve as the parent for
+		 * the newly created content.
+		 *
+		 * @param rootPart
+		 *            The {@link IRootPart} in which to find a suitable content
+		 *            parent.
+		 * @return The {@link IContentPart} that will serve as the parent for
+		 *         the newly created content.
+		 */
+		public IContentPart<Node, ? extends Node> findContentParent(
+				IRootPart<Node, ? extends Node> rootPart);
+
+	}
+
+	/**
 	 * The adapter role for the
 	 * <code>Provider&lt;List&lt;IFXCreationMenuItem&gt;&gt;</code>.
 	 */
@@ -120,9 +160,9 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	}
 
 	/**
-	 * List of {@link IFXCreationMenuItem}s which can be constructed.
+	 * List of {@link ICreationMenuItem}s which can be constructed.
 	 */
-	private final List<IFXCreationMenuItem> items = new ArrayList<>();
+	private final List<ICreationMenuItem> items = new ArrayList<>();
 
 	/**
 	 * Stores the maximum element width.
@@ -288,13 +328,13 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	}
 
 	/**
-	 * Returns the list containing the {@link IFXCreationMenuItem}s that are
+	 * Returns the list containing the {@link ICreationMenuItem}s that are
 	 * displayed by this policy.
 	 *
-	 * @return the list containing the {@link IFXCreationMenuItem}s that are
+	 * @return the list containing the {@link ICreationMenuItem}s that are
 	 *         displayed by this policy.
 	 */
-	protected List<IFXCreationMenuItem> getItems() {
+	protected List<ICreationMenuItem> getItems() {
 		return items;
 	}
 
@@ -344,7 +384,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 		closeMenu();
 
 		// create the new semantic element
-		IFXCreationMenuItem item = items.get(currentItemIndex);
+		ICreationMenuItem item = items.get(currentItemIndex);
 		Object toCreate = item.createContent();
 
 		// build create operation
@@ -437,18 +477,18 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	 */
 	protected void refreshMenuItems() {
 		@SuppressWarnings("serial")
-		List<IFXCreationMenuItem> menuItems = getHost()
-				.<Provider<List<IFXCreationMenuItem>>> getAdapter(AdapterKey
-						.get(new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
+		List<ICreationMenuItem> menuItems = getHost()
+				.<Provider<List<ICreationMenuItem>>> getAdapter(AdapterKey
+						.get(new TypeToken<Provider<List<ICreationMenuItem>>>() {
 						}, MENU_ITEM_PROVIDER_ROLE))
 				.get();
-		List<IFXCreationMenuItem> items = getItems();
+		List<ICreationMenuItem> items = getItems();
 		items.clear();
 		items.addAll(menuItems);
 		// compute max width and height
 		maxWidth = 0;
 		maxHeight = 0;
-		for (IFXCreationMenuItem item : items) {
+		for (ICreationMenuItem item : items) {
 			Bounds bounds = item.createVisual().getLayoutBounds();
 			if (bounds.getWidth() > maxWidth) {
 				maxWidth = bounds.getWidth();
