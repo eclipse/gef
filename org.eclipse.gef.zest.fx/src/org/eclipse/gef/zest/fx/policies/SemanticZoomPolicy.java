@@ -130,7 +130,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 
 	@SuppressWarnings("serial")
 	@Override
-	public void zoomRelative(double relativeZoom, double sceneX, double sceneY) {
+	public void zoom(boolean relative, boolean discretize, double relativeZoom, double sceneX, double sceneY) {
 		// long startTimeNanos = System.nanoTime();
 		checkInitialized();
 
@@ -151,8 +151,8 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 			NodePart pivotPart = null;
 
 			InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
-			org.eclipse.gef.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef.geometry.planar.Rectangle(
-					0, 0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
+			org.eclipse.gef.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef.geometry.planar.Rectangle(0,
+					0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
 			Point pivotPoint = FX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
 
 			for (NodePart nodePart : new ArrayList<>(nestingNodeContentParts)) {
@@ -190,7 +190,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		} else {
 			// when no graph is opened, the viewport is regularly updated (the
 			// super call executes the operation)
-			super.zoomRelative(relativeZoom, sceneX, sceneY);
+			super.zoom(true, true, relativeZoom, sceneX, sceneY);
 		}
 
 		// synchronize content children of nesting node parts

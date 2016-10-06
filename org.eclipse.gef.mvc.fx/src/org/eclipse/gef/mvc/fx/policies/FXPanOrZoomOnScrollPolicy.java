@@ -33,6 +33,13 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 	private boolean stopped = false;
 	private FXChangeViewportPolicy viewportPolicy;
 
+	@Override
+	public void abortScroll() {
+		rollback(getViewportPolicy());
+		setViewportPolicy(null);
+		setStopped(false);
+	}
+
 	/**
 	 * Computes the translation for the given {@link ScrollEvent}. The
 	 * horizontal and vertical translation is inverted when
@@ -66,6 +73,13 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 	 */
 	protected FXChangeViewportPolicy determineViewportPolicy() {
 		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
+	}
+
+	@Override
+	public void endScroll() {
+		commit(getViewportPolicy());
+		setViewportPolicy(null);
+		setStopped(false);
 	}
 
 	/**
@@ -148,35 +162,13 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 			// Stop scrolling at the content-bounds.
 			setStopped(stopAtContentBounds(delta));
 			// change viewport via operation
-			getViewportPolicy().scrollRelative(delta.width, delta.height);
+			getViewportPolicy().scroll(true, delta.width, delta.height);
 		} else if (isZoom(event)) {
 			// zoom into/out-of the event location
-			getViewportPolicy().roundAndZoomRelative(
+			getViewportPolicy().zoom(true, true,
 					event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
 					event.getSceneY());
 		}
-	}
-
-	@Override
-	public void abortScroll() {
-		rollback(getViewportPolicy());
-		setViewportPolicy(null);
-		setStopped(false);
-	}
-
-	@Override
-	public void endScroll() {
-		commit(getViewportPolicy());
-		setViewportPolicy(null);
-		setStopped(false);
-	}
-
-	@Override
-	public void startScroll(ScrollEvent event) {
-		setViewportPolicy(determineViewportPolicy());
-		init(getViewportPolicy());
-		// delegate to scroll() to perform panning/zooming
-		scroll(event);
 	}
 
 	/**
@@ -200,6 +192,14 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractFXInteractionPolicy
 	 */
 	protected void setViewportPolicy(FXChangeViewportPolicy viewportPolicy) {
 		this.viewportPolicy = viewportPolicy;
+	}
+
+	@Override
+	public void startScroll(ScrollEvent event) {
+		setViewportPolicy(determineViewportPolicy());
+		init(getViewportPolicy());
+		// delegate to scroll() to perform panning/zooming
+		scroll(event);
 	}
 
 	/**

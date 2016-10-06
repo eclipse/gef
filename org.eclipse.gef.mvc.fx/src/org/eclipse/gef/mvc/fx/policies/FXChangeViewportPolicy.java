@@ -59,108 +59,84 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	/**
-	 * Ensures that the final zoom level is rounded to 6 decimal places.
-	 * Moreover, if the integer part of the zoom level changes, the integer in
-	 * between the old and new zoom levels will be used as the zoom level, i.e.
-	 * integer zoom levels are never skipped.
-	 *
-	 * @param relativeZoom
-	 *            The zoom factor.
-	 * @param sceneX
-	 *            The x-coordinate for the pivot point in scene coordinates.
-	 * @param sceneY
-	 *            The y-coordinate for the pivot point in scene coordinates.
-	 */
-	public void roundAndZoomRelative(double relativeZoom, double sceneX,
-			double sceneY) {
-		// query current zoom level
-		double oldZoomLevel = getChangeViewportOperation()
-				.getNewContentTransform().getScaleX();
-		// compute next zoom level
-		double nextZoomLevel = oldZoomLevel * relativeZoom;
-		// round to 6 decimal places
-		DecimalFormat df = new DecimalFormat("#.######");
-		df.setDecimalFormatSymbols(
-				DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-		df.setRoundingMode(RoundingMode.HALF_EVEN);
-		nextZoomLevel = Double.parseDouble(df.format(nextZoomLevel));
-		// ensure integer zoom levels are not skipped
-		int ozli = (int) oldZoomLevel;
-		int nzli = (int) nextZoomLevel;
-		if (ozli != nzli && nzli != nextZoomLevel && ozli != oldZoomLevel) {
-			nextZoomLevel = ozli < nzli ? nzli : ozli;
-		}
-		// apply zoom level
-		zoomRelative(nextZoomLevel / oldZoomLevel, sceneX, sceneY);
-		double newZoomLevel = getChangeViewportOperation()
-				.getNewContentTransform().getScaleX();
-		if (Math.abs(newZoomLevel - nextZoomLevel) < 0.01) {
-			// // counter-act floating point errors
-			setZoomLevel(nextZoomLevel);
-		}
-	}
-
-	/**
-	 * Advances the viewport's original horizontal and vertical scroll offsets
-	 * by the given values.
-	 *
-	 * @param translateX
-	 *            The horizontal translation delta.
-	 * @param translateY
-	 *            The vertical translation delta.
-	 */
-	public void scrollAbsolute(double translateX, double translateY) {
-		checkInitialized();
-		FXChangeViewportOperation operation = getChangeViewportOperation();
-		operation.setNewHorizontalScrollOffset(
-				operation.getInitialHorizontalScrollOffset() + translateX);
-		operation.setNewVerticalScrollOffset(
-				operation.getInitialVerticalScrollOffset() + translateY);
-		locallyExecuteOperation();
-	}
-
-	/**
 	 * Advances the viewport transformation by the given translation values.
 	 *
+	 * @param concatenate
+	 *            <code>true</code> to concatenate the specified zoom to the
+	 *            current transformation, <code>false</code> to concatenate the
+	 *            specified zoom to the initial transformation.
 	 * @param deltaTranslateX
 	 *            The horizontal translation delta.
 	 * @param deltaTranslateY
 	 *            The vertical translation delta.
 	 */
-	public void scrollRelative(double deltaTranslateX, double deltaTranslateY) {
+	public void scroll(boolean concatenate, double deltaTranslateX,
+			double deltaTranslateY) {
 		checkInitialized();
 		FXChangeViewportOperation operation = getChangeViewportOperation();
 		operation.setNewHorizontalScrollOffset(
-				operation.getNewHorizontalScrollOffset() + deltaTranslateX);
-		operation.setNewVerticalScrollOffset(
-				operation.getNewVerticalScrollOffset() + deltaTranslateY);
+				concatenate ? operation.getNewHorizontalScrollOffset()
+						: operation.getInitialHorizontalScrollOffset()
+								+ deltaTranslateX);
+		operation.setNewVerticalScrollOffset(concatenate
+				? operation.getNewVerticalScrollOffset()
+				: operation.getInitialVerticalScrollOffset() + deltaTranslateY);
 		locallyExecuteOperation();
 	}
 
 	/**
-	 * Applies the given zoom level to the viewport. Does not alter
-	 * translation/scroll-offset.
+	 * Sets the x and y translation of the viewport to the given values. Does
+	 * not alter scaling.
 	 *
-	 * @param zoomLevel
-	 *            The new zoom level for the viewport.
+	 * @param tx
+	 *            The new x translation.
+	 * @param ty
+	 *            The new y translation.
 	 */
-	public void setZoomLevel(double zoomLevel) {
+	public void setScroll(double tx, double ty) {
 		checkInitialized();
 		// query current transformation
 		AffineTransform newTransform = getChangeViewportOperation()
 				.getNewContentTransform();
 		// set zoom level
 		getChangeViewportOperation().setNewContentTransform(new AffineTransform(
-				zoomLevel, newTransform.getM10(), newTransform.getM01(),
-				zoomLevel, newTransform.getTranslateX(),
-				newTransform.getTranslateY()));
+				newTransform.getM00(), newTransform.getM10(),
+				newTransform.getM01(), newTransform.getM11(), tx, ty));
 		locallyExecuteOperation();
 	}
 
 	/**
-	 * Concatenates a scaling transformation to the original viewport
+	 * Sets the x and y scaling of the viewport to the given zoom factor. Does
+	 * not alter translation/scroll-offset.
+	 *
+	 * @param zoom
+	 *            The new x and y scaling for the viewport.
+	 */
+	public void setZoom(double zoom) {
+		checkInitialized();
+		// query current transformation
+		AffineTransform newTransform = getChangeViewportOperation()
+				.getNewContentTransform();
+		// set zoom level
+		getChangeViewportOperation().setNewContentTransform(new AffineTransform(
+				zoom, newTransform.getM10(), newTransform.getM01(), zoom,
+				newTransform.getTranslateX(), newTransform.getTranslateY()));
+		locallyExecuteOperation();
+	}
+
+	/**
+	 * Concatenates a scaling transformation to the current viewport
 	 * transformation.
 	 *
+	 * @param concatenate
+	 *            <code>true</code> to concatenate the specified zoom to the
+	 *            current transformation, <code>false</code> to concatenate the
+	 *            specified zoom to the initial transformation.
+	 * @param discretize
+	 *            <code>true</code> to discretize the resulting zoom level, i.e.
+	 *            round it to 6 decimal places and do not skip integer zoom
+	 *            levels, <code>false</code> to not change the resulting zoom
+	 *            level.
 	 * @param relativeZoom
 	 *            The scale factor.
 	 * @param sceneX
@@ -168,9 +144,31 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 	 * @param sceneY
 	 *            The pivot y-coordinate.
 	 */
-	public void zoomAbsolute(double relativeZoom, double sceneX,
-			double sceneY) {
+	public void zoom(boolean concatenate, boolean discretize,
+			double relativeZoom, double sceneX, double sceneY) {
 		checkInitialized();
+
+		double nextZoomLevel = 0d;
+		if (discretize) {
+			// query current zoom level
+			double oldZoomLevel = getChangeViewportOperation()
+					.getNewContentTransform().getScaleX();
+			// compute next zoom level
+			nextZoomLevel = oldZoomLevel * relativeZoom;
+			// round to 6 decimal places
+			DecimalFormat df = new DecimalFormat("#.######");
+			df.setDecimalFormatSymbols(
+					DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+			df.setRoundingMode(RoundingMode.HALF_EVEN);
+			nextZoomLevel = Double.parseDouble(df.format(nextZoomLevel));
+			// ensure integer zoom levels are not skipped
+			int ozli = (int) oldZoomLevel;
+			int nzli = (int) nextZoomLevel;
+			if (ozli != nzli && nzli != nextZoomLevel && ozli != oldZoomLevel) {
+				nextZoomLevel = ozli < nzli ? nzli : ozli;
+			}
+		}
+
 		// transform pivot to local coordinates
 		Point2D contentGroupPivot = ((FXViewer) getHost().getRoot().getViewer())
 				.getCanvas().getContentGroup().sceneToLocal(sceneX, sceneY);
@@ -179,38 +177,26 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 				.translate(contentGroupPivot.getX(), contentGroupPivot.getY())
 				.scale(relativeZoom, relativeZoom).translate(
 						-contentGroupPivot.getX(), -contentGroupPivot.getY());
-		// concatenate to original transformation
-		AffineTransform newTx = getChangeViewportOperation()
-				.getInitialContentTransform().getCopy().concatenate(zoomTx);
-		getChangeViewportOperation().setNewContentTransform(newTx);
-		locallyExecuteOperation();
-	}
+		if (concatenate) {
+			// apply relative zooming
+			getChangeViewportOperation()
+					.concatenateToNewContentTransform(zoomTx);
+		} else {
+			// concatenate to original transformation
+			AffineTransform newTx = getChangeViewportOperation()
+					.getInitialContentTransform().getCopy().concatenate(zoomTx);
+			getChangeViewportOperation().setNewContentTransform(newTx);
+		}
 
-	/**
-	 * Concatenates a scaling transformation to the current viewport
-	 * transformation.
-	 *
-	 * @param relativeZoom
-	 *            The scale factor.
-	 * @param sceneX
-	 *            The pivot x-coordinate.
-	 * @param sceneY
-	 *            The pivot y-coordinate.
-	 */
-	public void zoomRelative(double relativeZoom, double sceneX,
-			double sceneY) {
-		checkInitialized();
-		// transform pivot to local coordinates
-		Point2D contentGroupPivot = ((FXViewer) getHost().getRoot().getViewer())
-				.getCanvas().getContentGroup().sceneToLocal(sceneX, sceneY);
-		// apply relative zooming
-		getChangeViewportOperation()
-				.concatenateToNewContentTransform(new AffineTransform()
-						.translate(contentGroupPivot.getX(),
-								contentGroupPivot.getY())
-						.scale(relativeZoom, relativeZoom)
-						.translate(-contentGroupPivot.getX(),
-								-contentGroupPivot.getY()));
+		if (discretize) {
+			double newZoomLevel = getChangeViewportOperation()
+					.getNewContentTransform().getScaleX();
+			if (Math.abs(newZoomLevel - nextZoomLevel) < 0.01) {
+				// // counter-act floating point errors
+				setZoom(nextZoomLevel);
+			}
+		}
+
 		locallyExecuteOperation();
 	}
 
