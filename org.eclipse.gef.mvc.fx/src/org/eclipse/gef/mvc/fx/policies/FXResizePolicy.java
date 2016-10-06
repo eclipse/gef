@@ -33,6 +33,47 @@ import javafx.scene.layout.Region;
 // TODO: respect max width and height
 public class FXResizePolicy extends AbstractResizePolicy<Node> {
 
+	/**
+	 * Computes the applicable delta from the given delta width and delta height
+	 * values, i.e. respecting the part's minimum size.
+	 *
+	 * @param dw
+	 *            The width delta.
+	 * @param dh
+	 *            The height delta.
+	 * @return A {@link Dimension} containing the applicable delta based on the
+	 *         given values.
+	 */
+	protected Dimension computeApplicableDelta(double dw, double dh) {
+		FXResizeOperation resizeOperation = getResizeOperation();
+
+		Node visual = resizeOperation.getResizablePart().getResizableVisual();
+		boolean resizable = visual.isResizable();
+
+		// convert resize into relocate in case node is not resizable
+		double layoutDw = resizable ? dw : 0;
+		double layoutDh = resizable ? dh : 0;
+
+		if (resizable && (layoutDw != 0 || layoutDh != 0)) {
+			// ensure visual is not resized below threshold
+			double minimumWidth = getMinimumWidth();
+			double minimumHeight = getMinimumHeight();
+			if (resizeOperation.getInitialSize().width
+					+ layoutDw < minimumWidth) {
+				layoutDw = minimumWidth
+						- resizeOperation.getInitialSize().width;
+			}
+			if (resizeOperation.getInitialSize().height
+					+ layoutDh < minimumHeight) {
+				layoutDh = minimumHeight
+						- resizeOperation.getInitialSize().height;
+			}
+		}
+
+		Dimension applicable = new Dimension(layoutDw, layoutDh);
+		return applicable;
+	}
+
 	@Override
 	protected ITransactionalOperation createOperation() {
 		return new FXResizeOperation("Resize", getHost(), getCurrentSize(), 0,
@@ -42,6 +83,28 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 	@Override
 	protected Dimension getCurrentSize() {
 		return getHost().getVisualSize();
+	}
+
+	/**
+	 * Returns the (applied) delta height after applying a
+	 * {@link #resize(double, double)} operation.
+	 *
+	 * @return the (applied) delta height after applying a
+	 *         {@link #resize(double, double)} operation.
+	 */
+	public double getDeltaHeight() {
+		return getResizeOperation().getDw();
+	}
+
+	/**
+	 * Returns the (applied) delta width after applying a
+	 * {@link #resize(double, double)} operation.
+	 *
+	 * @return the (applied) delta width after applying a
+	 *         {@link #resize(double, double)} operation.
+	 */
+	public double getDeltaWidth() {
+		return getResizeOperation().getDw();
 	}
 
 	@Override
@@ -108,34 +171,13 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 
 	@Override
 	protected void updateResizeOperation(double dw, double dh) {
-		FXResizeOperation resizeOperation = getResizeOperation();
-
-		Node visual = resizeOperation.getResizablePart().getResizableVisual();
-		boolean resizable = visual.isResizable();
-
-		// convert resize into relocate in case node is not resizable
-		double layoutDw = resizable ? dw : 0;
-		double layoutDh = resizable ? dh : 0;
-
-		if (resizable && (layoutDw != 0 || layoutDh != 0)) {
-			// ensure visual is not resized below threshold
-			double minimumWidth = getMinimumWidth();
-			double minimumHeight = getMinimumHeight();
-			if (resizeOperation.getInitialSize().width
-					+ layoutDw < minimumWidth) {
-				layoutDw = minimumWidth
-						- resizeOperation.getInitialSize().width;
-			}
-			if (resizeOperation.getInitialSize().height
-					+ layoutDh < minimumHeight) {
-				layoutDh = minimumHeight
-						- resizeOperation.getInitialSize().height;
-			}
-		}
-
+		Dimension adjusted = computeApplicableDelta(dw, dh);
+		double layoutDw = adjusted.width;
+		double layoutDh = adjusted.height;
 		// update and locally execute operation
-		resizeOperation.setDw(layoutDw);
-		resizeOperation.setDh(layoutDh);
+		FXResizeOperation op = getResizeOperation();
+		op.setDw(layoutDw);
+		op.setDh(layoutDh);
 	}
 
 }

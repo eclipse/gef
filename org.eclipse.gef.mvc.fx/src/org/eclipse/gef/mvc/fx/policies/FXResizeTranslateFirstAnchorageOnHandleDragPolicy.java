@@ -100,6 +100,45 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		// right, 2 = bottom right, 3 = bottom left)
 		int segment = getHost().getSegmentIndex();
 
+		// determine resize in local coordinates
+		double ldw, ldh;
+		if (segment == 1 || segment == 2) {
+			// right side
+			ldw = deltaX;
+		} else {
+			// left side
+			ldw = -deltaX;
+		}
+		if (segment == 2 || segment == 3) {
+			// bottom side
+			ldh = deltaY;
+		} else {
+			// top side
+			ldh = -deltaY;
+		}
+
+		// XXX: Resize before querying the applicable delta, so that the minimum
+		// size is respected.
+		getResizePolicy().resize(ldw, ldh);
+		Dimension applicableDelta = new Dimension(
+				getResizePolicy().getDeltaWidth(),
+				getResizePolicy().getDeltaHeight());
+		// Only apply translation if possible, i.e. if the resize cannot be
+		// applied in total, the translation can probably not be applied in
+		// total as well.
+		if (applicableDelta.width != ldw) {
+			deltaX = applicableDelta.width;
+			if (segment == 0 || segment == 3) {
+				deltaX = -deltaX;
+			}
+		}
+		if (applicableDelta.height != ldh) {
+			deltaY = applicableDelta.height;
+			if (segment == 0 || segment == 1) {
+				deltaY = -deltaY;
+			}
+		}
+
 		// compute translation, i.e. layout delta
 		double pdx = 0;
 		double pdy = 0;
@@ -127,25 +166,8 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 			}
 		}
 
-		// determine resize in local coordinates
-		double ldw, ldh;
-		if (segment == 1 || segment == 2) {
-			// right side
-			ldw = deltaX;
-		} else {
-			// left side
-			ldw = -deltaX;
-		}
-		if (segment == 2 || segment == 3) {
-			// bottom side
-			ldh = deltaY;
-		} else {
-			// top side
-			ldh = -deltaY;
-		}
-
 		// apply translation and resize using underlying policies
-		getResizePolicy().resize(ldw, ldh);
+
 		getTransformPolicy().setPostTranslate(translationIndex, pdx, pdy);
 	}
 
