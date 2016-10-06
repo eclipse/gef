@@ -110,7 +110,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	 * The adapter role for the
 	 * <code>Provider&lt;List&lt;IFXCreationMenuItem&gt;&gt;</code>.
 	 */
-	public static final String MENU_ITEM_PROVIDER_ROLE = "Provider<List<IFXCreationMenuItem>>";
+	public static final String MENU_ITEM_PROVIDER_ROLE = "Provider<List<ICreationMenuItem>>";
 
 	/**
 	 * Default {@link Paint} used for to fill the interior of the arrows.
@@ -165,16 +165,6 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	private final List<ICreationMenuItem> items = new ArrayList<>();
 
 	/**
-	 * Stores the maximum element width.
-	 */
-	private double maxWidth = 0;
-
-	/**
-	 * Stores the maximum element height.
-	 */
-	private double maxHeight = 0;
-
-	/**
 	 * The index of the current item in the list of {@link #geometries}.
 	 */
 	private int currentItemIndex = 1;
@@ -214,6 +204,9 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 			if (target instanceof Node) {
 				initialMousePositionInScene = new Point(e.getSceneX(),
 						e.getSceneY());
+				// query menu items and reset index
+				refreshMenuItems();
+				setCurrentItemIndex(0);
 				openMenu(e);
 			}
 		} else if (MouseButton.PRIMARY.equals(e.getButton())) {
@@ -260,7 +253,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	private Node createMenuItem() {
 		// create visual
 		templateGroup = new Group();
-		refreshMenuItem();
+		updateTemplateVisual();
 
 		// highlighting
 		templateGroup.setEffect(createDropShadowReflectionEffect(
@@ -423,8 +416,18 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	 *            The {@link MouseEvent} that activated the creation menu.
 	 */
 	protected void openMenu(final MouseEvent e) {
-		// refresh menu items based on the provider
-		refreshMenuItems();
+		// compute max width and height
+		double maxWidth = 0;
+		double maxHeight = 0;
+		for (ICreationMenuItem item : items) {
+			Bounds bounds = item.createVisual().getLayoutBounds();
+			if (bounds.getWidth() > maxWidth) {
+				maxWidth = bounds.getWidth();
+			}
+			if (bounds.getHeight() > maxHeight) {
+				maxHeight = bounds.getHeight();
+			}
+		}
 
 		// construct content pane and group
 		Node leftArrow = createArrow(true);
@@ -461,46 +464,19 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 	}
 
 	/**
-	 * Refreshes the visualization of the item at index
-	 * {@link #getCurrentItemIndex()}.
-	 */
-	protected void refreshMenuItem() {
-		// exchange template visual
-		templateGroup.getChildren().clear();
-		templateGroup.getChildren()
-				.add(getItems().get(getCurrentItemIndex()).createVisual());
-	}
-
-	/**
-	 * Refreshes the menu. Queries the menu items using the Provider that is
+	 * Refreshes the menu. Queries the menu items using the provider that is
 	 * registered under the {@link #MENU_ITEM_PROVIDER_ROLE}.
 	 */
 	protected void refreshMenuItems() {
 		@SuppressWarnings("serial")
 		List<ICreationMenuItem> menuItems = getHost()
-				.<Provider<List<ICreationMenuItem>>> getAdapter(AdapterKey
-						.get(new TypeToken<Provider<List<ICreationMenuItem>>>() {
+				.<Provider<List<ICreationMenuItem>>> getAdapter(AdapterKey.get(
+						new TypeToken<Provider<List<ICreationMenuItem>>>() {
 						}, MENU_ITEM_PROVIDER_ROLE))
 				.get();
 		List<ICreationMenuItem> items = getItems();
 		items.clear();
 		items.addAll(menuItems);
-		// compute max width and height
-		maxWidth = 0;
-		maxHeight = 0;
-		for (ICreationMenuItem item : items) {
-			Bounds bounds = item.createVisual().getLayoutBounds();
-			if (bounds.getWidth() > maxWidth) {
-				maxWidth = bounds.getWidth();
-			}
-			if (bounds.getHeight() > maxHeight) {
-				maxHeight = bounds.getHeight();
-			}
-		}
-		// ensure currentItemIndex is in bounds
-		if (getCurrentItemIndex() >= items.size()) {
-			setCurrentItemIndex(0);
-		}
 	}
 
 	/**
@@ -534,7 +510,18 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 				setCurrentItemIndex(0);
 			}
 		}
-		refreshMenuItem();
+		updateTemplateVisual();
+	}
+
+	/**
+	 * Refreshes the visualization of the item at index
+	 * {@link #getCurrentItemIndex()}.
+	 */
+	protected void updateTemplateVisual() {
+		// exchange template visual
+		templateGroup.getChildren().clear();
+		templateGroup.getChildren()
+				.add(getItems().get(getCurrentItemIndex()).createVisual());
 	}
 
 	private StackPane wrapWithPadding(Node node, double padding) {
