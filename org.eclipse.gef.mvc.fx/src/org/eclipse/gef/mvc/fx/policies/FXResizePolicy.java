@@ -86,22 +86,22 @@ public class FXResizePolicy extends AbstractResizePolicy<Node> {
 	}
 
 	/**
-	 * Returns the (applied) delta height after applying a
-	 * {@link #resize(double, double)} operation.
+	 * Returns the delta height of the {@link #getResizeOperation() resize
+	 * operation} that is used by this policy.
 	 *
-	 * @return the (applied) delta height after applying a
-	 *         {@link #resize(double, double)} operation.
+	 * @return The delta height of the {@link #getResizeOperation() resize
+	 *         operation} that is used by this policy.
 	 */
 	public double getDeltaHeight() {
 		return getResizeOperation().getDw();
 	}
 
 	/**
-	 * Returns the (applied) delta width after applying a
-	 * {@link #resize(double, double)} operation.
+	 * Returns the delta width of the {@link #getResizeOperation() resize
+	 * operation} that is used by this policy.
 	 *
-	 * @return the (applied) delta width after applying a
-	 *         {@link #resize(double, double)} operation.
+	 * @return The delta width of the {@link #getResizeOperation() resize
+	 *         operation} that is used by this policy.
 	 */
 	public double getDeltaWidth() {
 		return getResizeOperation().getDw();
