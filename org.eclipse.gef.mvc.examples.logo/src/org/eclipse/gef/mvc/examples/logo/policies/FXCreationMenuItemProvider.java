@@ -22,6 +22,7 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
+import org.eclipse.gef.mvc.fx.policies.IFXCreationMenuItem;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.mvc.parts.IRootPart;
 

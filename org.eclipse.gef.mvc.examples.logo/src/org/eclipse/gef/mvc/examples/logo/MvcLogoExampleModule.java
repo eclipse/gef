@@ -38,7 +38,6 @@ import org.eclipse.gef.mvc.examples.logo.policies.CreateAndTranslateOnDragPolicy
 import org.eclipse.gef.mvc.examples.logo.policies.FXCloneOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.FXCreationMenuItemProvider;
-import org.eclipse.gef.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
@@ -58,6 +57,7 @@ import org.eclipse.gef.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.FXBendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXBendOnSegmentDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXHoverOnHoverPolicy;

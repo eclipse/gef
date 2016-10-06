@@ -167,6 +167,7 @@ public interface IBendableContentPart<VR, V extends VR>
 	 */
 	public void bendContent(List<BendPoint> bendPoints);
 
+	// TODO: Refresh
 	// /**
 	// * Returns the current {@link BendPoint}s of this
 	// * {@link IBendableContentPart}'s content.
