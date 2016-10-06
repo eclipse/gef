@@ -63,13 +63,15 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 	 *
 	 * @param concatenate
 	 *            <code>true</code> to concatenate the specified zoom to the
-	 *            current transformation, <code>false</code> to concatenate the
-	 *            specified zoom to the initial transformation.
+	 *            current transformation, <code>false</code> to not concatenate
+	 *            the specified scroll to the current but to the initial
+	 *            transformation.
 	 * @param deltaTranslateX
 	 *            The horizontal translation delta.
 	 * @param deltaTranslateY
 	 *            The vertical translation delta.
 	 */
+	// TODO: add discretize option
 	public void scroll(boolean concatenate, double deltaTranslateX,
 			double deltaTranslateY) {
 		checkInitialized();
@@ -130,8 +132,9 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 	 *
 	 * @param concatenate
 	 *            <code>true</code> to concatenate the specified zoom to the
-	 *            current transformation, <code>false</code> to concatenate the
-	 *            specified zoom to the initial transformation.
+	 *            current transformation, <code>false</code> to not concatenate
+	 *            the specified zoom to the current but to the initial
+	 *            transformation.
 	 * @param discretize
 	 *            <code>true</code> to discretize the resulting zoom level, i.e.
 	 *            round it to 6 decimal places and do not skip integer zoom
@@ -148,24 +151,28 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 			double relativeZoom, double sceneX, double sceneY) {
 		checkInitialized();
 
-		double nextZoomLevel = 0d;
+		double discreteZoomLevel = 0d;
 		if (discretize) {
+			// TODO: Improve discretization algorithm and/or make it
+			// configurable.
 			// query current zoom level
 			double oldZoomLevel = getChangeViewportOperation()
 					.getNewContentTransform().getScaleX();
 			// compute next zoom level
-			nextZoomLevel = oldZoomLevel * relativeZoom;
+			discreteZoomLevel = oldZoomLevel * relativeZoom;
 			// round to 6 decimal places
 			DecimalFormat df = new DecimalFormat("#.######");
 			df.setDecimalFormatSymbols(
 					DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 			df.setRoundingMode(RoundingMode.HALF_EVEN);
-			nextZoomLevel = Double.parseDouble(df.format(nextZoomLevel));
+			discreteZoomLevel = Double
+					.parseDouble(df.format(discreteZoomLevel));
 			// ensure integer zoom levels are not skipped
 			int ozli = (int) oldZoomLevel;
-			int nzli = (int) nextZoomLevel;
-			if (ozli != nzli && nzli != nextZoomLevel && ozli != oldZoomLevel) {
-				nextZoomLevel = ozli < nzli ? nzli : ozli;
+			int nzli = (int) discreteZoomLevel;
+			if (ozli != nzli && nzli != discreteZoomLevel
+					&& ozli != oldZoomLevel) {
+				discreteZoomLevel = ozli < nzli ? nzli : ozli;
 			}
 		}
 
@@ -191,9 +198,9 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 		if (discretize) {
 			double newZoomLevel = getChangeViewportOperation()
 					.getNewContentTransform().getScaleX();
-			if (Math.abs(newZoomLevel - nextZoomLevel) < 0.01) {
+			if (Math.abs(newZoomLevel - discreteZoomLevel) < 0.01) {
 				// // counter-act floating point errors
-				setZoom(nextZoomLevel);
+				setZoom(discreteZoomLevel);
 			}
 		}
 
