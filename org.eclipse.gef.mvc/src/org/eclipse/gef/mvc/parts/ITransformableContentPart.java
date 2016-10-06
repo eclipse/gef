@@ -27,7 +27,7 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
  *
  */
 public interface ITransformableContentPart<VR, V extends VR>
-		extends IContentPart<VR, V> {
+		extends ITransformableVisualPart<VR, V> {
 
 	/**
 	 * Transform the content element as specified by the given

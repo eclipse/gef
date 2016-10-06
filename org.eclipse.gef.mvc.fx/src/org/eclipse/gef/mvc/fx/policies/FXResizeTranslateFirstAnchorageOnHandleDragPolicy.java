@@ -14,6 +14,7 @@ package org.eclipse.gef.mvc.fx.policies;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.models.SelectionModel;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 
@@ -218,7 +219,7 @@ public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 
 	private Affine getTargetTransform() {
 		return getTargetPart()
-				.getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
+				.getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
 	}
 
 	/**

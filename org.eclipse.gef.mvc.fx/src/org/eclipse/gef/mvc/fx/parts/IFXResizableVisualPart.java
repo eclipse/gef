@@ -23,6 +23,7 @@ import javafx.scene.Node;
  * @param <V>
  *            visual type
  */
+// FIXME: no-implement
 public interface IFXResizableVisualPart<V extends Node>
 		extends IResizableVisualPart<Node, V> {
 

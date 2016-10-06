@@ -24,9 +24,9 @@ import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef.mvc.fx.parts.IFXResizableContentPart;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
@@ -42,8 +42,8 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
-public class FXGeometricShapePart extends AbstractFXGeometricElementPart<GeometryNode<IShape>> implements
-		ITransformableContentPart<Node, GeometryNode<IShape>>, IFXResizableContentPart<GeometryNode<IShape>> {
+public class FXGeometricShapePart extends AbstractFXGeometricElementPart<GeometryNode<IShape>>
+		implements IFXTransformableContentPart<GeometryNode<IShape>>, IFXResizableContentPart<GeometryNode<IShape>> {
 
 	private final ChangeListener<? super Paint> fillObserver = new ChangeListener<Paint>() {
 		@Override
@@ -149,7 +149,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 		AffineTransform transform = content.getTransform();
 		if (transform != null) {
 			// transfer transformation to JavaFX
-			Affine affine = getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
+			Affine affine = getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
 			affine.setMxx(transform.getM00());
 			affine.setMxy(transform.getM01());
 			affine.setMyx(transform.getM10());

@@ -17,7 +17,7 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.parts.IContentPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -86,7 +86,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		double miny = hostBounds.getMinY();
 		double maxx = hostBounds.getMaxX();
 		double maxy = hostBounds.getMaxY();
-		Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
+		Affine transform = getHost().getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
 
 		// initialize size
 		if (ZestProperties.getSize(content) != null) {

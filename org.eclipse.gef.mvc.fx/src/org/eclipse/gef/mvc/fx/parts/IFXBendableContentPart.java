@@ -30,6 +30,7 @@ import javafx.scene.Node;
  * @author wienand
  *
  */
+// FIXME: no-implement
 public interface IFXBendableContentPart
 		extends IBendableContentPart<Node, Connection> {
 

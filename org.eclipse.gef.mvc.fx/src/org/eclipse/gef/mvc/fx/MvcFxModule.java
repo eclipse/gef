@@ -34,6 +34,7 @@ import org.eclipse.gef.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXFocusTraversalPolicy;
@@ -41,7 +42,6 @@ import org.eclipse.gef.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXMarqueeOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXPanOnTypePolicy;
 import org.eclipse.gef.mvc.fx.policies.FXPanOrZoomOnScrollPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.providers.FXTransformProvider;
 import org.eclipse.gef.mvc.fx.tools.DefaultTargetPolicyResolver;
@@ -737,7 +737,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	/**
 	 * Adds a binding for {@link FXTransformProvider} to the {@link AdapterMap}
 	 * binder for {@link AbstractFXContentPart}, using the
-	 * {@link FXTransformPolicy#TRANSFORM_PROVIDER_KEY}.
+	 * {@link IFXTransformableVisualPart#TRANSFORM_PROVIDER_KEY}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -751,7 +751,7 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(
-						FXTransformPolicy.TRANSFORM_PROVIDER_KEY.getRole()))
+						IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY.getRole()))
 				.to(FXTransformProvider.class);
 	}
 

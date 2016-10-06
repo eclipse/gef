@@ -28,8 +28,8 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
-import org.eclipse.gef.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -47,7 +47,7 @@ import javafx.scene.Node;
  *
  */
 public class EdgePart extends AbstractFXContentPart<Connection>
-		implements ITransformableContentPart<Node, Connection>, IFXBendableContentPart {
+		implements IFXTransformableContentPart<Connection>, IFXBendableContentPart {
 
 	/**
 	 * The role used for attaching to the source node.

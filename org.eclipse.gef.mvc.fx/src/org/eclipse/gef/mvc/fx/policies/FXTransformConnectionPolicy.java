@@ -23,14 +23,13 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.operations.BendContentOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint;
-import org.eclipse.gef.mvc.parts.IVisualPart;
 
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 
 /**
  * The {@link FXTransformConnectionPolicy} is an {@link FXTransformPolicy} that
@@ -85,8 +84,8 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IVisualPart<Node, Connection> getHost() {
-		return (IVisualPart<Node, Connection>) super.getHost();
+	public IFXTransformableVisualPart<Connection> getHost() {
+		return (IFXTransformableVisualPart<Connection>) super.getHost();
 	}
 
 	/**

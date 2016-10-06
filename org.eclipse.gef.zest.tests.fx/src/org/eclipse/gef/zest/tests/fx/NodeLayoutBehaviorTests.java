@@ -24,6 +24,7 @@ import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
 import org.eclipse.gef.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef.mvc.fx.providers.FXTransformProvider;
@@ -66,7 +67,7 @@ public class NodeLayoutBehaviorTests {
 						{
 							setAdapter(new FXResizePolicy());
 							FXTransformProvider transformProvider = new FXTransformProvider();
-							setAdapter(transformProvider, FXTransformPolicy.TRANSFORM_PROVIDER_KEY.getRole());
+							setAdapter(transformProvider, IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY.getRole());
 							setAdapter(new FXTransformPolicy());
 							Affine affine = transformProvider.get();
 							affine.setTx(location.x);

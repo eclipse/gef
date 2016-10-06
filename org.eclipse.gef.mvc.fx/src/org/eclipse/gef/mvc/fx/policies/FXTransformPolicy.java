@@ -11,17 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.operations.FXTransformOperation;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.policies.AbstractTransformPolicy;
-
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -85,27 +81,21 @@ import javafx.scene.transform.Affine;
  */
 public class FXTransformPolicy extends AbstractTransformPolicy<Node> {
 
-	private static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
-
-	/**
-	 * The adapter key for the <code>Provider&lt;Affine&gt;</code> that will be
-	 * used to obtain the host's {@link Affine} transformation.
-	 */
-	@SuppressWarnings("serial")
-	public static final AdapterKey<Provider<? extends Affine>> TRANSFORM_PROVIDER_KEY = AdapterKey
-			.get(new TypeToken<Provider<? extends Affine>>() {
-			}, TRANSFORMATION_PROVIDER_ROLE);
-
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new FXTransformOperation(
-				getHost().getAdapter(TRANSFORM_PROVIDER_KEY).get());
-	};
+		return new FXTransformOperation(getHost()
+				.getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY)
+				.get());
+	}
 
 	@Override
 	public AffineTransform getCurrentTransform() {
-		return FX2Geometry.toAffineTransform(
-				getHost().getAdapter(TRANSFORM_PROVIDER_KEY).get());
+		return getHost().getVisualTransform();
+	}
+
+	@Override
+	public IFXTransformableVisualPart<? extends Node> getHost() {
+		return (IFXTransformableVisualPart<? extends Node>) super.getHost();
 	}
 
 	@Override

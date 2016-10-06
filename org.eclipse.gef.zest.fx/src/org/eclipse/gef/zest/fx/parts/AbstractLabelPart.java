@@ -23,8 +23,8 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef.mvc.parts.ITransformableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -48,7 +48,7 @@ import javafx.util.Pair;
  *
  */
 public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
-		implements ITransformableContentPart<Node, Group> {
+		implements IFXTransformableContentPart<Group> {
 
 	/**
 	 * The CSS class that is assigned to the visualization of the
@@ -192,7 +192,7 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 		if (position != null) {
 			// translate using a transform operation
 			FXTransformOperation refreshPositionOp = new FXTransformOperation(
-					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get(),
+					getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get(),
 					Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
 			try {
 				refreshPositionOp.execute(null, null);

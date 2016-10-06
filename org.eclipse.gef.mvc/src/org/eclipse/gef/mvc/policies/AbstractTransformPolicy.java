@@ -20,6 +20,7 @@ import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.operations.TransformContentOperation;
 import org.eclipse.gef.mvc.parts.ITransformableContentPart;
+import org.eclipse.gef.mvc.parts.ITransformableVisualPart;
 
 /**
  * The {@link AbstractTransformPolicy} is a {@link AbstractTransactionPolicy}
@@ -223,6 +224,11 @@ public abstract class AbstractTransformPolicy<VR>
 	 * @return The host's {@link AffineTransform}.
 	 */
 	public abstract AffineTransform getCurrentTransform();
+
+	@Override
+	public ITransformableVisualPart<VR, ? extends VR> getHost() {
+		return (ITransformableVisualPart<VR, ? extends VR>) super.getHost();
+	}
 
 	/**
 	 * Returns a copy of the initial node transformation of the host (obtained

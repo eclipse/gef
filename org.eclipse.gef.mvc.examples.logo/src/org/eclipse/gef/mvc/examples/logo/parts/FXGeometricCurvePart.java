@@ -36,8 +36,8 @@ import org.eclipse.gef.mvc.examples.logo.model.FXGeometricCurve.Decoration;
 import org.eclipse.gef.mvc.examples.logo.model.FXGeometricCurve.RoutingStyle;
 import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IFXResizableVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
-import org.eclipse.gef.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
@@ -53,8 +53,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 
-public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connection> implements
-		ITransformableContentPart<Node, Connection>, IFXBendableContentPart, IFXResizableVisualPart<Connection> {
+public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connection>
+		implements IFXTransformableContentPart<Connection>, IFXBendableContentPart, IFXResizableVisualPart<Connection> {
 
 	public static class ArrowHead extends Polygon {
 		public ArrowHead() {
