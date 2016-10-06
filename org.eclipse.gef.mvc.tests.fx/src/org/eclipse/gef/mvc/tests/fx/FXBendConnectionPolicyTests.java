@@ -40,6 +40,7 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Vector;
+import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
@@ -47,6 +48,8 @@ import org.eclipse.gef.mvc.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.domain.FXDomain;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
 import org.eclipse.gef.mvc.fx.policies.FXBendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.FXTransformConnectionPolicy;
@@ -68,12 +71,14 @@ import org.junit.Test;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -81,7 +86,8 @@ import javafx.scene.shape.Rectangle;
 
 public class FXBendConnectionPolicyTests {
 
-	public static class AnchoragePart extends AbstractFXContentPart<Rectangle> {
+	public static class AnchoragePart extends AbstractFXContentPart<Rectangle>
+			implements IFXTransformableContentPart<Rectangle> {
 		@Override
 		protected Rectangle createVisual() {
 			return new Rectangle(100, 100);
@@ -105,6 +111,10 @@ public class FXBendConnectionPolicyTests {
 			visual.setY(rect.getY());
 			visual.setWidth(rect.getWidth());
 			visual.setHeight(rect.getHeight());
+		}
+
+		@Override
+		public void transformContent(AffineTransform transform) {
 		}
 	}
 
@@ -132,7 +142,8 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
-	public static class ConnectionPart extends AbstractFXContentPart<Connection> {
+	public static class ConnectionPart extends AbstractFXContentPart<Connection>
+			implements IFXBendableContentPart, IFXTransformableContentPart<Connection> {
 		public static final String START_ROLE = "start";
 		public static final String END_ROLE = "end";
 
@@ -146,6 +157,10 @@ public class FXBendConnectionPolicyTests {
 			} else {
 				throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 			}
+		}
+
+		@Override
+		public void bendContent(List<org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint> bendPoints) {
 		}
 
 		@Override
@@ -188,6 +203,11 @@ public class FXBendConnectionPolicyTests {
 		public ConnectionContent getContent() {
 			return (ConnectionContent) super.getContent();
 		}
+
+		@Override
+		public void transformContent(AffineTransform transform) {
+		}
+
 	}
 
 	public static class TestAnchorProvider extends DefaultAnchorProvider {
@@ -2713,6 +2733,18 @@ public class FXBendConnectionPolicyTests {
 		});
 		ctx.mouseMove(firstConnectionPart.getVisual(), firstConnectionMid.x, firstConnectionMid.y);
 
+		// check selection is empty
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				ObservableList<IContentPart<Node, ? extends Node>> selectionUnmodifiable = viewer
+						.getAdapter(new TypeToken<SelectionModel<Node>>() {
+						}).getSelectionUnmodifiable();
+				System.out.println("selection initial: " + selectionUnmodifiable);
+				assertTrue(selectionUnmodifiable.isEmpty());
+			}
+		});
+
 		// drag connection down by 10px
 		ctx.mousePress();
 		ctx.mouseDrag(firstConnectionMid.x, firstConnectionMid.y + 10);
@@ -2722,8 +2754,11 @@ public class FXBendConnectionPolicyTests {
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
-				assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable()
-						.contains(firstConnectionPart));
+				ObservableList<IContentPart<Node, ? extends Node>> selectionUnmodifiable = viewer
+						.getAdapter(new TypeToken<SelectionModel<Node>>() {
+						}).getSelectionUnmodifiable();
+				System.out.println("selection after first drag: " + selectionUnmodifiable);
+				assertTrue(selectionUnmodifiable.contains(firstConnectionPart));
 			}
 		});
 
@@ -2748,7 +2783,11 @@ public class FXBendConnectionPolicyTests {
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
-				assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable().contains(secondPart));
+				ObservableList<IContentPart<Node, ? extends Node>> selectionUnmodifiable = viewer
+						.getAdapter(new TypeToken<SelectionModel<Node>>() {
+						}).getSelectionUnmodifiable();
+				System.out.println("selection after second drag: " + selectionUnmodifiable);
+				assertTrue(selectionUnmodifiable.contains(secondPart));
 			}
 		});
 

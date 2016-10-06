@@ -25,6 +25,7 @@ import org.eclipse.gef.mvc.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.domain.FXDomain;
 import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
 import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef.mvc.models.ContentModel;
@@ -50,7 +51,7 @@ import javafx.scene.shape.Rectangle;
 
 public class FXTransformPolicyTests {
 
-	static class PointPart extends AbstractFXContentPart<Rectangle> {
+	static class PointPart extends AbstractFXContentPart<Rectangle> implements IFXTransformableContentPart<Rectangle> {
 		@Override
 		protected Rectangle createVisual() {
 			return new Rectangle(10, 10);
@@ -75,6 +76,10 @@ public class FXTransformPolicyTests {
 		@Override
 		public Point getContent() {
 			return (Point) super.getContent();
+		}
+
+		@Override
+		public void transformContent(AffineTransform transform) {
 		}
 	}
 
