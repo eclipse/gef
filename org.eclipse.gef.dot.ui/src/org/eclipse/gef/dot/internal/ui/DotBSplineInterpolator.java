@@ -22,7 +22,7 @@ import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef.fx.nodes.AbstractInterpolator;
 import org.eclipse.gef.fx.nodes.Connection;
-import org.eclipse.gef.fx.nodes.IConnectionRouter;
+import org.eclipse.gef.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.euclidean.Vector;
@@ -38,21 +38,21 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 
 /**
- * A {@link DotBSplineInterpolator} is a {@link IConnectionRouter router} that
- * creates a {@link PolyBezier} geometry corresponding to a single B-spline. It
- * expects that the start, end, and control points of the {@link Connection} it
- * routes correspond to what can be specified through the 'pos' attribute of
- * edges within Graphviz DOT as follows (if multiple splines are specified
- * through the 'pos' attribute, they have to be represented through multiple
- * connections).
+ * A {@link DotBSplineInterpolator} is an {@link IConnectionInterpolator
+ * interpolator} that creates a {@link PolyBezier} geometry corresponding to a
+ * single B-spline. It expects that the start, end, and control points of the
+ * {@link Connection} it routes correspond to what can be specified through the
+ * 'pos' attribute of the edges within Graphviz DOT as follows (if multiple
+ * splines are specified through the 'pos' attribute, they have to be
+ * represented through multiple connections).
  * <p>
  * The {@link DotBSplineInterpolator} expects that the connection's
  * {@link Connection#getControlPoints() control points} represent control points
  * of connected cubic Bézier segments in the form 'p, (p, p, p)+'. In case the
- * start point equals the first control point, or the end points equals the last
+ * start point equals the first control point, or the end point equals the last
  * control point, they are ignored when constructing the B-spline. In case this
  * is not the case, linear segments are added from the start point to the first
- * control point and the last control point to the end point respectively.
+ * control point and from the last control point to the end point, respectively.
  *
  * @author anyssen
  *
