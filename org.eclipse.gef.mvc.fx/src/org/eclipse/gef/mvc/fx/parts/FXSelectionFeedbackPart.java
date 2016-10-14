@@ -55,7 +55,7 @@ public class FXSelectionFeedbackPart
 	}
 
 	@Override
-	protected GeometryNode<IGeometry> createVisual() {
+	protected GeometryNode<IGeometry> doCreateVisual() {
 		GeometryNode<IGeometry> feedbackVisual = new GeometryNode<>();
 		feedbackVisual.setFill(Color.TRANSPARENT);
 		feedbackVisual.setMouseTransparent(true);

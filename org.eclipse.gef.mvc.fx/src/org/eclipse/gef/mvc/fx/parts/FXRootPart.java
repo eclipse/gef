@@ -62,7 +62,7 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	}
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		if (child instanceof IContentPart) {
 			int contentLayerIndex = 0;
@@ -147,7 +147,7 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	}
 
 	@Override
-	protected Group createVisual() {
+	protected Group doCreateVisual() {
 		contentLayer = createContentLayer();
 		/*
 		 * XXX: The following is a workaround to ensure that visuals do not
@@ -202,7 +202,7 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	 */
 	protected Group getContentLayer() {
 		if (contentLayer == null) {
-			createVisual();
+			doCreateVisual();
 		}
 		return contentLayer;
 	}
@@ -217,7 +217,7 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	 */
 	protected Group getFeedbackLayer() {
 		if (feedbackLayer == null) {
-			createVisual();
+			doCreateVisual();
 		}
 		return feedbackLayer;
 	}
@@ -232,13 +232,13 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	 */
 	protected Group getHandleLayer() {
 		if (handleLayer == null) {
-			createVisual();
+			doCreateVisual();
 		}
 		return handleLayer;
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		if (child instanceof IContentPart) {
 			getContentLayer().getChildren().remove(child.getVisual());

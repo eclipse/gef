@@ -168,7 +168,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		child.setParent(this);
 
 		refreshVisual();
-		addChildVisual(child, index);
+		doAddChildVisual(child, index);
 		child.refreshVisual();
 
 		if (isActive()) {
@@ -209,7 +209,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 *            The child's position
 	 * @see #addChild(IVisualPart, int)
 	 */
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child,
+	protected void doAddChildVisual(IVisualPart<VR, ? extends VR> child,
 			int index) {
 		throw new UnsupportedOperationException(
 				"Need to properly implement addChildVisual(IVisualPart, int) for "
@@ -281,7 +281,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 		// attach visuals
 		anchorage.refreshVisual();
-		attachToAnchorageVisual(anchorage, role);
+		doAttachToAnchorageVisual(anchorage, role);
 		refreshVisual();
 	}
 
@@ -293,7 +293,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 * @param role
 	 *            The anchorage role.
 	 */
-	protected void attachToAnchorageVisual(
+	protected void doAttachToAnchorageVisual(
 			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		throw new UnsupportedOperationException(
 				"Need to implement attachToAnchorageVisual(IVisualPart, String) for "
@@ -314,7 +314,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 *
 	 * @return This part's visual.
 	 */
-	protected abstract V createVisual();
+	protected abstract V doCreateVisual();
 
 	/**
 	 * Deactivates this {@link IVisualPart} (if it is active) by delegating to
@@ -387,7 +387,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		// + " with role " + role);
 
 		// detach visuals
-		detachFromAnchorageVisual(anchorage, role);
+		doDetachFromAnchorageVisual(anchorage, role);
 
 		// detach
 		anchorage.detachAnchored(this);
@@ -402,7 +402,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 * @param role
 	 *            The anchorage role.
 	 */
-	protected void detachFromAnchorageVisual(
+	protected void doDetachFromAnchorageVisual(
 			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		throw new UnsupportedOperationException(
 				"Need to implement detachFromAnchorageVisual(IVisualPart, String) for "
@@ -594,7 +594,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	@Override
 	public V getVisual() {
 		if (visual == null) {
-			visual = createVisual();
+			visual = doCreateVisual();
 			IViewer<VR> viewer = getViewer();
 			if (viewer != null) {
 				registerAtVisualPartMap(viewer, visual);
@@ -689,7 +689,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 			child.deactivate();
 		}
 
-		removeChildVisual(child, children.indexOf(child));
+		doRemoveChildVisual(child, children.indexOf(child));
 
 		child.setParent(null);
 		children.remove(child);
@@ -721,7 +721,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 * @param index
 	 *            The index of the child whose visual is to be removed.
 	 */
-	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child,
+	protected void doRemoveChildVisual(IVisualPart<VR, ? extends VR> child,
 			int index) {
 		throw new UnsupportedOperationException(
 				"Need to implement removeChildVisual(IVisualPart, int) for "

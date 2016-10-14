@@ -83,8 +83,8 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				// a different anchor)
 				for (Entry<IVisualPart<Node, ? extends Node>, String> anchoragesByRole : getAnchoragesUnmodifiable()
 						.entries()) {
-					detachFromAnchorageVisual(anchoragesByRole.getKey(), anchoragesByRole.getValue());
-					attachToAnchorageVisual(anchoragesByRole.getKey(), anchoragesByRole.getValue());
+					doDetachFromAnchorageVisual(anchoragesByRole.getKey(), anchoragesByRole.getValue());
+					doAttachToAnchorageVisual(anchoragesByRole.getKey(), anchoragesByRole.getValue());
 				}
 			}
 			refreshVisual();
@@ -93,14 +93,14 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	};
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		if (!getVisual().getChildren().contains(child.getVisual())) {
 			getVisual().getChildren().add(child.getVisual());
 		}
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doAttachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
 		if (role.equals(SOURCE_ROLE)) {
 			getVisual().setStartAnchor(anchor);
@@ -192,7 +192,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	}
 
 	@Override
-	protected Connection createVisual() {
+	protected Connection doCreateVisual() {
 		Connection visual = new Connection();
 		visual.getStyleClass().add(CSS_CLASS);
 
@@ -214,7 +214,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		Connection connection = getVisual();
 		if (role.equals(SOURCE_ROLE)) {
 			Point startPoint = connection.getStartPoint();
@@ -404,7 +404,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
 	}
 

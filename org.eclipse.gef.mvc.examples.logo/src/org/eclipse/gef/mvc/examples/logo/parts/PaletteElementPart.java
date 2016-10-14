@@ -25,7 +25,7 @@ import com.google.common.collect.SetMultimap;
 public class PaletteElementPart extends AbstractFXContentPart<GeometryNode<IShape>> {
 
 	@Override
-	protected GeometryNode<IShape> createVisual() {
+	protected GeometryNode<IShape> doCreateVisual() {
 		return new GeometryNode<>();
 	}
 

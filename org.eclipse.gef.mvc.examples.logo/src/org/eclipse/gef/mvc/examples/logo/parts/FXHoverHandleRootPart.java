@@ -39,7 +39,7 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	}
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getVisual().getChildren().add(index, child.getVisual());
 		for (Entry<IVisualPart<Node, ? extends Node>, String> anchorage : getAnchoragesUnmodifiable()
@@ -49,25 +49,25 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(
+	protected void doAttachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		super.attachToAnchorageVisual(anchorage, role);
+		super.doAttachToAnchorageVisual(anchorage, role);
 		for (IVisualPart<Node, ? extends Node> child : getChildrenUnmodifiable()) {
 			child.attachToAnchorage(anchorage, role);
 		}
 	}
 
 	@Override
-	protected VBox createVisual() {
+	protected VBox doCreateVisual() {
 		VBox vBox = new VBox();
 		vBox.setPickOnBounds(true);
 		return vBox;
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(
+	protected void doDetachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		super.detachFromAnchorageVisual(anchorage, role);
+		super.doDetachFromAnchorageVisual(anchorage, role);
 		for (IVisualPart<Node, ? extends Node> child : getChildrenUnmodifiable()) {
 			child.detachFromAnchorage(anchorage, role);
 		}
@@ -105,7 +105,7 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getVisual().getChildren().remove(index);
 	}

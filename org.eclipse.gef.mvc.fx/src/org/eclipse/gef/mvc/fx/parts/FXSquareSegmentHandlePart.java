@@ -29,7 +29,7 @@ public class FXSquareSegmentHandlePart
 	public static final double DEFAULT_SIZE = 4;
 
 	@Override
-	protected javafx.scene.shape.Rectangle createVisual() {
+	protected javafx.scene.shape.Rectangle doCreateVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
 		visual.setTranslateX(-DEFAULT_SIZE / 2);
 		visual.setTranslateY(-DEFAULT_SIZE / 2);

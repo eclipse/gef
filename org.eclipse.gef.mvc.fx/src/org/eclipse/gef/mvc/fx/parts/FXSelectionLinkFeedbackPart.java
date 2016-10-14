@@ -36,8 +36,8 @@ public class FXSelectionLinkFeedbackPart extends FXSelectionFeedbackPart {
 	}
 
 	@Override
-	protected GeometryNode<IGeometry> createVisual() {
-		GeometryNode<IGeometry> visual = super.createVisual();
+	protected GeometryNode<IGeometry> doCreateVisual() {
+		GeometryNode<IGeometry> visual = super.doCreateVisual();
 		visual.setStroke(Color.GREY);
 		visual.getStrokeDashArray().add(5.0);
 		visual.setStrokeLineJoin(StrokeLineJoin.BEVEL);

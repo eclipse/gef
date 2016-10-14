@@ -128,20 +128,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 				});
 	}
 
-	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
-		if (role.equals(START_ROLE)) {
-			getVisual().setStartAnchor(anchor);
-			getContent().setWayPoint(0, getVisual().getStartPoint());
-		} else if (role.equals(END_ROLE)) {
-			getVisual().setEndAnchor(anchor);
-			getContent().setWayPoint(getContent().getWayPoints().size() - 1, getVisual().getEndPoint());
-		} else {
-			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public void bendContent(List<BendPoint> bendPoints) {
@@ -176,23 +162,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 	}
 
 	@Override
-	protected Connection createVisual() {
-		Connection visual = new Connection();
-		visual.setInterpolator(new PolyBezierInterpolator());
-		((GeometryNode<?>) visual.getCurve()).setStrokeLineCap(StrokeLineCap.BUTT);
-		return visual;
-	}
-
-	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doAttachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
 		if (role.equals(START_ROLE)) {
-			getVisual().setStartPoint(getVisual().getStartPoint());
+			getVisual().setStartAnchor(anchor);
 			getContent().setWayPoint(0, getVisual().getStartPoint());
 		} else if (role.equals(END_ROLE)) {
-			getVisual().setEndPoint(getVisual().getEndPoint());
+			getVisual().setEndAnchor(anchor);
 			getContent().setWayPoint(getContent().getWayPoints().size() - 1, getVisual().getEndPoint());
 		} else {
-			throw new IllegalStateException("Cannot detach from anchor with role <" + role + ">.");
+			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 		}
 	}
 
@@ -206,6 +185,27 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 			getContent().getSourceAnchorages().add(geom);
 		} else if (END_ROLE.equals(role)) {
 			getContent().getTargetAnchorages().add(geom);
+		}
+	}
+
+	@Override
+	protected Connection doCreateVisual() {
+		Connection visual = new Connection();
+		visual.setInterpolator(new PolyBezierInterpolator());
+		((GeometryNode<?>) visual.getCurve()).setStrokeLineCap(StrokeLineCap.BUTT);
+		return visual;
+	}
+
+	@Override
+	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+		if (role.equals(START_ROLE)) {
+			getVisual().setStartPoint(getVisual().getStartPoint());
+			getContent().setWayPoint(0, getVisual().getStartPoint());
+		} else if (role.equals(END_ROLE)) {
+			getVisual().setEndPoint(getVisual().getEndPoint());
+			getContent().setWayPoint(getContent().getWayPoints().size() - 1, getVisual().getEndPoint());
+		} else {
+			throw new IllegalStateException("Cannot detach from anchor with role <" + role + ">.");
 		}
 	}
 
@@ -349,10 +349,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
-				detachFromAnchorageVisual(anchorage, START_ROLE);
+				doDetachFromAnchorageVisual(anchorage, START_ROLE);
 				if (anchorage != this) {
 					// connected to anchorage
-					attachToAnchorageVisual(anchorage, START_ROLE);
+					doAttachToAnchorageVisual(anchorage, START_ROLE);
 				}
 			}
 			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
@@ -360,10 +360,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getEndAnchor().getAnchorage());
-				detachFromAnchorageVisual(anchorage, END_ROLE);
+				doDetachFromAnchorageVisual(anchorage, END_ROLE);
 				if (anchorage != this) {
 					// connected to anchorage
-					attachToAnchorageVisual(anchorage, END_ROLE);
+					doAttachToAnchorageVisual(anchorage, END_ROLE);
 				}
 			}
 			if (!(visual.getInterpolator() instanceof PolylineInterpolator)) {
@@ -380,16 +380,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
-				detachFromAnchorageVisual(anchorage, START_ROLE);
-				attachToAnchorageVisual(anchorage, START_ROLE);
+				doDetachFromAnchorageVisual(anchorage, START_ROLE);
+				doAttachToAnchorageVisual(anchorage, START_ROLE);
 			}
 			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
 					&& ((DynamicAnchor) getVisual().getEndAnchor())
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getEndAnchor().getAnchorage());
-				detachFromAnchorageVisual(anchorage, END_ROLE);
-				attachToAnchorageVisual(anchorage, END_ROLE);
+				doDetachFromAnchorageVisual(anchorage, END_ROLE);
+				doAttachToAnchorageVisual(anchorage, END_ROLE);
 			}
 			if (!(visual.getInterpolator() instanceof PolyBezierInterpolator)) {
 				visual.setInterpolator(new PolyBezierInterpolator());

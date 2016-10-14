@@ -29,13 +29,13 @@ import javafx.scene.layout.VBox;
 public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		// wrap child.visual in group so that it is not resizable
 		getVisual().getChildren().add(index, new Group(child.getVisual()));
 	}
 
 	@Override
-	protected VBox createVisual() {
+	protected VBox doCreateVisual() {
 		VBox vbox = new VBox();
 		vbox.setPickOnBounds(true);
 		// define padding and spacing
@@ -66,7 +66,7 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		Node removed = getVisual().getChildren().remove(index);
 		if (!(removed instanceof Group) || ((Group) removed).getChildren().get(0) != child.getVisual()) {
 			throw new IllegalStateException("Child visual was not removed!");

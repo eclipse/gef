@@ -23,7 +23,7 @@ public class FXDeleteHoverHandlePart extends AbstractLogoHoverHandlePart<HoverOv
 	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
 
 	@Override
-	protected HoverOverlayImageView createVisual() {
+	protected HoverOverlayImageView doCreateVisual() {
 		URL overlayImageResource = FXDeleteHoverHandlePart.class.getResource(IMG_DELETE);
 		if (overlayImageResource == null) {
 			throw new IllegalStateException("Cannot find resource <" + IMG_DELETE + ">.");

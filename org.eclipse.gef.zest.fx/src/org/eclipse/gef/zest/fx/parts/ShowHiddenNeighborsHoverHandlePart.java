@@ -42,7 +42,7 @@ public class ShowHiddenNeighborsHoverHandlePart extends AbstractFXSegmentHandleP
 	private static final String IMG_SHOW_HIDDEN_NEIGHBORS_DISABLED = "/expandall_disabled.gif";
 
 	@Override
-	protected HoverOverlayImageView createVisual() {
+	protected HoverOverlayImageView doCreateVisual() {
 		// create blending image view for both
 		HoverOverlayImageView blendImageView = new HoverOverlayImageView();
 		blendImageView.baseImageProperty().set(new Image(IMG_SHOW_HIDDEN_NEIGHBORS_DISABLED));

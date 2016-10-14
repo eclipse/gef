@@ -30,11 +30,11 @@ public class AbstractVisualPartTests {
 	public class AbstractVisualPartStub extends AbstractVisualPart<Object, Object> {
 
 		@Override
-		protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
+		protected void doAddChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 
 		@Override
-		protected Object createVisual() {
+		protected Object doCreateVisual() {
 			return null;
 		}
 
@@ -43,7 +43,7 @@ public class AbstractVisualPartTests {
 		}
 
 		@Override
-		protected void removeChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
+		protected void doRemoveChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 	}
 

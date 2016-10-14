@@ -17,11 +17,11 @@ import org.eclipse.gef.mvc.parts.IVisualPart;
 public class CellRootPart<VR, V extends VR> extends AbstractRootPart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	protected void doAddChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 	}
 
 	@Override
-	protected V createVisual() {
+	protected V doCreateVisual() {
 		return null;
 	}
 
@@ -30,6 +30,6 @@ public class CellRootPart<VR, V extends VR> extends AbstractRootPart<VR, V> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	protected void doRemoveChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 	}
 }

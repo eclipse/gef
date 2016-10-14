@@ -51,7 +51,7 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 	};
 
 	@Override
-	protected void attachToAnchorageVisual(
+	protected void doAttachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// we only add one visual change listener per anchorage, so we need to
 		// keep track of the number of links to an anchorage (roles)
@@ -87,7 +87,7 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(
+	protected void doDetachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// infer current number of links
 		int count = anchorageLinkCount.get(anchorage);

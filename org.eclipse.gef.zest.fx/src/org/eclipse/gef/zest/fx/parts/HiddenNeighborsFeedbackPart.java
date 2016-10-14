@@ -41,14 +41,14 @@ public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 	private Text text;
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		super.attachToAnchorageVisual(anchorage, role);
+	protected void doAttachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+		super.doAttachToAnchorageVisual(anchorage, role);
 		getVisual().visibleProperty().bind(anchorage.getVisual().visibleProperty());
 	}
 
 	// TODO: extract visual to its own type
 	@Override
-	protected Group createVisual() {
+	protected Group doCreateVisual() {
 		Group visual = new Group();
 		visual.setAutoSizeChildren(false);
 
@@ -64,8 +64,8 @@ public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		super.detachFromAnchorageVisual(anchorage, role);
+	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+		super.doDetachFromAnchorageVisual(anchorage, role);
 		getVisual().visibleProperty().unbind();
 	}
 

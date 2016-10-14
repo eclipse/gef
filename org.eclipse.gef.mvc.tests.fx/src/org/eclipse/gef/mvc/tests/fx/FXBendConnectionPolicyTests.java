@@ -89,7 +89,7 @@ public class FXBendConnectionPolicyTests {
 	public static class AnchoragePart extends AbstractFXContentPart<Rectangle>
 			implements IFXTransformableContentPart<Rectangle> {
 		@Override
-		protected Rectangle createVisual() {
+		protected Rectangle doCreateVisual() {
 			return new Rectangle(100, 100);
 		}
 
@@ -148,7 +148,7 @@ public class FXBendConnectionPolicyTests {
 		public static final String END_ROLE = "end";
 
 		@Override
-		protected void attachToAnchorageVisual(final IVisualPart<Node, ? extends Node> anchorage, final String role) {
+		protected void doAttachToAnchorageVisual(final IVisualPart<Node, ? extends Node> anchorage, final String role) {
 			final IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
 			if (role.equals(START_ROLE)) {
 				getVisual().setStartAnchor(anchor);
@@ -164,12 +164,12 @@ public class FXBendConnectionPolicyTests {
 		}
 
 		@Override
-		protected Connection createVisual() {
+		protected Connection doCreateVisual() {
 			return new Connection();
 		}
 
 		@Override
-		protected void detachFromAnchorageVisual(final IVisualPart<Node, ? extends Node> anchorage, final String role) {
+		protected void doDetachFromAnchorageVisual(final IVisualPart<Node, ? extends Node> anchorage, final String role) {
 			if (role.equals(START_ROLE)) {
 				getVisual().setStartPoint(getVisual().getStartPoint());
 			} else if (role.equals(END_ROLE)) {

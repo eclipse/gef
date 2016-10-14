@@ -153,7 +153,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 		feedback = new AbstractFXFeedbackPart<Rectangle>() {
 
 			@Override
-			protected Rectangle createVisual() {
+			protected Rectangle doCreateVisual() {
 				Rectangle visual = new Rectangle();
 				visual.setFill(Color.TRANSPARENT);
 				visual.setStroke(getPrimarySelectionColor());

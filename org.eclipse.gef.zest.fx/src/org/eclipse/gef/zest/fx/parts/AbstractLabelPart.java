@@ -78,7 +78,7 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 	private Text text;
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doAttachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.register(anchorage.getVisual(), getVisual());
 	}
 
@@ -106,7 +106,7 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.unregister();
 	}
 

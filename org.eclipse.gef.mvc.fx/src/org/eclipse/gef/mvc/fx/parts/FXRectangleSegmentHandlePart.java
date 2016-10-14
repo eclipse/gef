@@ -45,7 +45,7 @@ public class FXRectangleSegmentHandlePart
 	protected static final double DEFAULT_LENGTH = 8;
 
 	@Override
-	protected javafx.scene.shape.Rectangle createVisual() {
+	protected javafx.scene.shape.Rectangle doCreateVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
 		visual.setTranslateX(-DEFAULT_LENGTH / 2);
 		visual.setTranslateY(-DEFAULT_WIDTH / 2);

@@ -43,7 +43,7 @@ public class SelectionModelTests {
 	private class ContentPartStub extends AbstractContentPart<Object, Object> {
 
 		@Override
-		protected Object createVisual() {
+		protected Object doCreateVisual() {
 			return null;
 		}
 

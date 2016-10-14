@@ -29,14 +29,14 @@ public abstract class AbstractFeedbackPart<VR, V extends VR>
 		extends AbstractVisualPart<VR, V>implements IFeedbackPart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child,
+	protected void doAddChildVisual(IVisualPart<VR, ? extends VR> child,
 			int index) {
 		throw new UnsupportedOperationException(
 				"IFeedbackParts do not support children");
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child,
+	protected void doRemoveChildVisual(IVisualPart<VR, ? extends VR> child,
 			int index) {
 		throw new UnsupportedOperationException(
 				"IFeedbackParts do not support this");

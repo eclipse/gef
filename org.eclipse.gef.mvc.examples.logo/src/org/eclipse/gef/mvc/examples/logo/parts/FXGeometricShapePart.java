@@ -55,13 +55,32 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 	private javafx.scene.shape.Rectangle layoutBoundsRect;
 
 	@Override
-	protected void attachToAnchorageVisual(org.eclipse.gef.mvc.parts.IVisualPart<Node, ? extends Node> anchorage,
+	protected void doActivate() {
+		super.doActivate();
+		getContent().fillProperty().addListener(fillObserver);
+	}
+
+	@Override
+	protected void doAddContentChild(Object contentChild, int index) {
+		// nothing to do
+	}
+
+	@Override
+	protected void doAttachToAnchorageVisual(org.eclipse.gef.mvc.parts.IVisualPart<Node, ? extends Node> anchorage,
 			String role) {
 		// nothing to do
 	}
 
 	@Override
-	protected GeometryNode<IShape> createVisual() {
+	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
+			throw new IllegalArgumentException("Cannot attach to content anchorage: wrong type!");
+		}
+		getContent().getAnchorages().add((AbstractFXGeometricElement<?>) contentAnchorage);
+	}
+
+	@Override
+	protected GeometryNode<IShape> doCreateVisual() {
 		GeometryNode<IShape> geometryNode = new GeometryNode<>();
 		if (debugging) {
 			layoutBoundsRect = new javafx.scene.shape.Rectangle();
@@ -90,33 +109,14 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart<Geometr
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		// nothing to do
-	}
-
-	@Override
-	protected void doActivate() {
-		super.doActivate();
-		getContent().fillProperty().addListener(fillObserver);
-	}
-
-	@Override
-	protected void doAddContentChild(Object contentChild, int index) {
-		// nothing to do
-	}
-
-	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
-			throw new IllegalArgumentException("Cannot attach to content anchorage: wrong type!");
-		}
-		getContent().getAnchorages().add((AbstractFXGeometricElement<?>) contentAnchorage);
-	}
-
-	@Override
 	protected void doDeactivate() {
 		getContent().fillProperty().removeListener(fillObserver);
 		super.doDeactivate();
+	}
+
+	@Override
+	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+		// nothing to do
 	}
 
 	@Override

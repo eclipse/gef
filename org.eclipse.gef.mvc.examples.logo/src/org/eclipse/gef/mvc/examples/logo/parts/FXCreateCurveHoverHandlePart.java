@@ -23,7 +23,7 @@ public class FXCreateCurveHoverHandlePart extends AbstractLogoHoverHandlePart<Ho
 	public static final String IMG_ADD_DISABLED = "/add_obj_disabled.gif";
 
 	@Override
-	protected HoverOverlayImageView createVisual() {
+	protected HoverOverlayImageView doCreateVisual() {
 		URL overlayImageResource = FXDeleteHoverHandlePart.class.getResource(IMG_ADD);
 		if (overlayImageResource == null) {
 			throw new IllegalStateException("Cannot find resource <" + IMG_ADD + ">.");

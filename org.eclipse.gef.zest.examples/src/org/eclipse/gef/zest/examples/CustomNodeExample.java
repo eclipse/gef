@@ -87,7 +87,7 @@ public class CustomNodeExample extends AbstractZestExample {
 		private Text labelText;
 
 		@Override
-		protected Group createVisual() {
+		protected Group doCreateVisual() {
 			ImageView ian = new ImageView(new javafx.scene.image.Image(
 					getClass().getResource("ibull.jpg").toExternalForm()));
 			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90, 0,

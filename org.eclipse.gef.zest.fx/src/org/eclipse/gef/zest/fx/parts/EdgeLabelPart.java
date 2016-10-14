@@ -56,7 +56,7 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	@Override
-	protected Group createVisual() {
+	protected Group doCreateVisual() {
 		Text text = createText();
 		Group g = new Group();
 		g.getStyleClass().add(EdgePart.CSS_CLASS);

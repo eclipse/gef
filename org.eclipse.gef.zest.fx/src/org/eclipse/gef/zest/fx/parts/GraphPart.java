@@ -62,12 +62,12 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	};
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().add(index, child.getVisual());
 	}
 
 	@Override
-	protected Group createVisual() {
+	protected Group doCreateVisual() {
 		Group visual = new Group();
 		visual.setAutoSizeChildren(false);
 		return visual;
@@ -153,7 +153,7 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
 	}
 }

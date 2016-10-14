@@ -41,7 +41,7 @@ public class HideHoverHandlePart extends AbstractFXSegmentHandlePart<HoverOverla
 	private static final String IMG_HIDE_DISABLED = "/collapseall_disabled.png";
 
 	@Override
-	protected HoverOverlayImageView createVisual() {
+	protected HoverOverlayImageView doCreateVisual() {
 		// create blending image view for both
 		HoverOverlayImageView blendImageView = new HoverOverlayImageView();
 		blendImageView.baseImageProperty().set(new Image(IMG_HIDE_DISABLED));

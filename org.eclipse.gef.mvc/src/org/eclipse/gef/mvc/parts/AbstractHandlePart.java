@@ -28,14 +28,14 @@ public abstract class AbstractHandlePart<VR, V extends VR>
 		extends AbstractVisualPart<VR, V>implements IHandlePart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child,
+	protected void doAddChildVisual(IVisualPart<VR, ? extends VR> child,
 			int index) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support children");
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child,
+	protected void doRemoveChildVisual(IVisualPart<VR, ? extends VR> child,
 			int index) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support this");

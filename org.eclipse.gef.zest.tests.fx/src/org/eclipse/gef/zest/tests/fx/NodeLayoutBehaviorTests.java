@@ -75,8 +75,8 @@ public class NodeLayoutBehaviorTests {
 						}
 
 						@Override
-						protected Group createVisual() {
-							Group visual = super.createVisual();
+						protected Group doCreateVisual() {
+							Group visual = super.doCreateVisual();
 							if (size != null) {
 								// ensure we are resizable
 								// getNestedChildrenPane().setPrefWidth(10);

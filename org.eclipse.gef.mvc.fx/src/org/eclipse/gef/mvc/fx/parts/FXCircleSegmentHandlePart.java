@@ -44,7 +44,7 @@ public class FXCircleSegmentHandlePart
 	 * @return {@link Node} representing the handle visually
 	 */
 	@Override
-	protected Circle createVisual() {
+	protected Circle doCreateVisual() {
 		Circle circle = new Circle(DEFAULT_SIZE / 2d);
 		// initialize invariant visual properties
 		circle.setStroke(getStroke());

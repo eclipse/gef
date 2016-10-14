@@ -377,7 +377,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 * @param newContent
 	 *            The new/current content.
 	 */
-	protected void onContentChanged(Object oldContent, Object newContent) {
+	private void onContentChanged(Object oldContent, Object newContent) {
 		if (oldContent != null && oldContent != newContent) {
 			// unregister from content part map if we did not loose the
 			// viewer reference (otherwise we should already have

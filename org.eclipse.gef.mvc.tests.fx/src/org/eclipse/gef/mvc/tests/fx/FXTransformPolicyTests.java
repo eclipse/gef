@@ -53,7 +53,7 @@ public class FXTransformPolicyTests {
 
 	static class PointPart extends AbstractFXContentPart<Rectangle> implements IFXTransformableContentPart<Rectangle> {
 		@Override
-		protected Rectangle createVisual() {
+		protected Rectangle doCreateVisual() {
 			return new Rectangle(10, 10);
 		}
 

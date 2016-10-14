@@ -60,12 +60,12 @@ public class AbstractFXHandlePartTests {
 	private AbstractFXRootPart<Group> rp = new AbstractFXRootPart<Group>() {
 
 		@Override
-		protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+		protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 			getVisual().getChildren().add(index, child.getVisual());
 		}
 
 		@Override
-		protected Group createVisual() {
+		protected Group doCreateVisual() {
 			return new Group();
 		}
 
@@ -75,14 +75,14 @@ public class AbstractFXHandlePartTests {
 		};
 
 		@Override
-		protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+		protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 			getVisual().getChildren().remove(index);
 		};
 	};
 
 	private AbstractFXContentPart<Node> cp = new AbstractFXContentPart<Node>() {
 		@Override
-		protected Node createVisual() {
+		protected Node doCreateVisual() {
 			return new Group();
 		}
 
@@ -105,7 +105,7 @@ public class AbstractFXHandlePartTests {
 	private AbstractFXHandlePart<Node> hp = new AbstractFXHandlePart<Node>() {
 
 		@Override
-		protected Node createVisual() {
+		protected Node doCreateVisual() {
 			return new Group();
 		}
 

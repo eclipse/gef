@@ -188,7 +188,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	private AnchorPane nestedContentAnchorPane;
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getNestedContentPane().getChildren().add(index, child.getVisual());
 	}
 
@@ -226,7 +226,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	@Override
-	protected Group createVisual() {
+	protected Group doCreateVisual() {
 		// container set-up
 		final Group group = new Group() {
 
@@ -586,7 +586,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getNestedContentPane().getChildren().remove(index);
 	}
 

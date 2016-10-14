@@ -22,11 +22,11 @@ import com.google.common.collect.SetMultimap;
 public class CellContentPart<VR, V extends VR> extends AbstractContentPart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	protected void doAddChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 	}
 
 	@Override
-	protected V createVisual() {
+	protected V doCreateVisual() {
 		return null;
 	}
 
@@ -50,6 +50,6 @@ public class CellContentPart<VR, V extends VR> extends AbstractContentPart<VR, V
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	protected void doRemoveChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 	}
 }
