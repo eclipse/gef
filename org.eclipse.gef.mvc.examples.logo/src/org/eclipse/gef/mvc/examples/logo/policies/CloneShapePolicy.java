@@ -12,19 +12,19 @@
 package org.eclipse.gef.mvc.examples.logo.policies;
 
 import org.eclipse.gef.geometry.planar.IShape;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricShapePart;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Paint;
 
-// only applicable for FXGeometricShapePart
+// only applicable for GeometricShapePart
 public class CloneShapePolicy extends AbstractCloneContentPolicy {
 
 	@Override
 	public Object cloneContent() {
-		FXGeometricShape originalShape = getHost().getContent();
-		FXGeometricShape shape = new FXGeometricShape((IShape) originalShape.getGeometry().getCopy(),
+		GeometricShape originalShape = getHost().getContent();
+		GeometricShape shape = new GeometricShape((IShape) originalShape.getGeometry().getCopy(),
 				originalShape.getTransform().getCopy(), copyPaint(originalShape.getFill()),
 				copyEffect(originalShape.getEffect()));
 		shape.setStroke(copyPaint(originalShape.getStroke()));
@@ -43,8 +43,8 @@ public class CloneShapePolicy extends AbstractCloneContentPolicy {
 	}
 
 	@Override
-	public FXGeometricShapePart getHost() {
-		return (FXGeometricShapePart) super.getHost();
+	public GeometricShapePart getHost() {
+		return (GeometricShapePart) super.getHost();
 	}
 
 }

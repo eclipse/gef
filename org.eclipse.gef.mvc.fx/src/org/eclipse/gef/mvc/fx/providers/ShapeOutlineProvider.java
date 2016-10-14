@@ -14,24 +14,24 @@ package org.eclipse.gef.mvc.fx.providers;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.IGeometry;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
 
 /**
- * The {@link ShapeOutlineProvider} is a {@link Provider Provider<IGeometry>}
- * that returns an {@link IGeometry} that corresponds to the shape outline of
- * its host visual, i.e. it includes the geometric outline and the stroke of the
- * visual. The {@link IGeometry} is specified within the local coordinate system
- * of the host visual.
+ * The {@link ShapeOutlineProvider} is a {@link Provider
+ * Provider&lt;IGeometry&gt;} that returns an {@link IGeometry} that corresponds
+ * to the shape outline of its host visual, i.e. it includes the geometric
+ * outline and the stroke of the visual. The {@link IGeometry} is specified
+ * within the local coordinate system of the host visual.
  *
  * @author mwienand
  *
  */
 public class ShapeOutlineProvider
-		extends IAdaptable.Bound.Impl<IVisualPart<Node, ? extends Node>>
+		extends IAdaptable.Bound.Impl<IVisualPart<? extends Node>>
 		implements Provider<IGeometry> {
 
 	@Override

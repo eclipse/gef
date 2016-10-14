@@ -11,6 +11,6 @@
  *******************************************************************************/
 /**
  * This package contains JavaFX/MVC.FX-specific
- * {@link org.eclipse.gef.mvc.behaviors.IBehavior} implementations.
+ * {@link org.eclipse.gef.mvc.fx.behaviors.IBehavior} implementations.
  */
 package org.eclipse.gef.mvc.fx.behaviors;

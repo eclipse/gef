@@ -616,15 +616,10 @@
 		<module>../org.eclipse.gef.fx.sdk-feature</module>
 		<module>../org.eclipse.gef.fx.compatibility.equinox</module>
 		<module>../org.eclipse.gef.fx.compatibility.equinox-feature</module>
-		<module>../org.eclipse.gef.mvc</module>
-		<module>../org.eclipse.gef.mvc-feature</module>
-		<module>../org.eclipse.gef.mvc.ui</module>
-		<module>../org.eclipse.gef.mvc.ui-feature</module>
 		<module>../org.eclipse.gef.mvc.fx</module>
 		<module>../org.eclipse.gef.mvc.fx-feature</module>
 		<module>../org.eclipse.gef.mvc.fx.ui</module>
 		<module>../org.eclipse.gef.mvc.fx.ui-feature</module>
-		<module>../org.eclipse.gef.mvc.tests</module>
 		<module>../org.eclipse.gef.mvc.tests.fx</module>
 		<module>../org.eclipse.gef.mvc.tests.fx.ui</module>
 		<module>../org.eclipse.gef.mvc.doc</module>
@@ -636,8 +631,6 @@
 		<module>../org.eclipse.gef.mvc.examples-feature</module>
 		<module>../org.eclipse.gef.mvc.examples.logo.web</module>
 		<module>../org.eclipse.gef.mvc.examples.logo.web.repository</module>
-		<module>../org.eclipse.gef.mvc.compatibility.equinox</module>
-		<module>../org.eclipse.gef.mvc.compatibility.equinox-feature</module>
 		<module>../org.eclipse.gef.mvc.fx.compatibility.equinox</module>
 		<module>../org.eclipse.gef.mvc.fx.compatibility.equinox-feature</module>
 		<module>../org.eclipse.gef.cloudio.ui</module>

@@ -13,16 +13,16 @@ package org.eclipse.gef.mvc.examples.logo.policies;
 
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.examples.logo.model.AbstractFXGeometricElement;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricCurve;
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricCurvePart;
+import org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
 
 public class CloneCurvePolicy extends AbstractCloneContentPolicy {
 
 	@Override
 	public Object cloneContent() {
-		FXGeometricCurve original = getHost().getContent();
-		FXGeometricCurve clone = new FXGeometricCurve(
+		GeometricCurve original = getHost().getContent();
+		GeometricCurve clone = new GeometricCurve(
 				original.getWayPointsCopy().toArray(new Point[] {}),
 				original.getStroke(), original.getStrokeWidth(),
 				original.getDashes(), original.getEffect());
@@ -32,11 +32,11 @@ public class CloneCurvePolicy extends AbstractCloneContentPolicy {
 		clone.setTransform(original.getTransform());
 
 		// anchorages
-		for (AbstractFXGeometricElement<?> srcAnchorage : original
+		for (AbstractGeometricElement<?> srcAnchorage : original
 				.getSourceAnchorages()) {
 			clone.addSourceAnchorage(srcAnchorage);
 		}
-		for (AbstractFXGeometricElement<?> dstAnchorage : original
+		for (AbstractGeometricElement<?> dstAnchorage : original
 				.getTargetAnchorages()) {
 			clone.addTargetAnchorage(dstAnchorage);
 		}
@@ -45,8 +45,8 @@ public class CloneCurvePolicy extends AbstractCloneContentPolicy {
 	}
 
 	@Override
-	public FXGeometricCurvePart getHost() {
-		return (FXGeometricCurvePart) super.getHost();
+	public GeometricCurvePart getHost() {
+		return (GeometricCurvePart) super.getHost();
 	}
 
 }

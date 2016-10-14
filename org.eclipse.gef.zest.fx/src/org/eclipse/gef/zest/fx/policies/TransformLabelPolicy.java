@@ -19,16 +19,16 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Node;
-import org.eclipse.gef.mvc.fx.operations.FXTransformOperation;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.operations.TransformOperation;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.operations.ChangeAttributeOperation;
 import org.eclipse.gef.zest.fx.parts.AbstractLabelPart;
 
 /**
  * The {@link TransformLabelPolicy} is a specialization of the
- * {@link FXTransformPolicy} that chains a {@link ChangeAttributeOperation} to
+ * {@link TransformPolicy} that chains a {@link ChangeAttributeOperation} to
  * affect the underlying model when transforming nodes. It is applicable to
  * {@link IContentPart} with {@link javafx.scene.Node} visual and {@link Node}
  * content.
@@ -36,13 +36,13 @@ import org.eclipse.gef.zest.fx.parts.AbstractLabelPart;
  * @author anyssen
  *
  */
-public class TransformLabelPolicy extends FXTransformPolicy {
+public class TransformLabelPolicy extends TransformPolicy {
 
 	private Point initialOffset;
 
-	private IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> getFirstAnchorage() {
-		return (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>) getHost().getAnchoragesUnmodifiable()
-				.keySet().iterator().next();
+	private IContentPart<? extends javafx.scene.Node> getFirstAnchorage() {
+		return (IContentPart<? extends javafx.scene.Node>) getHost().getAnchoragesUnmodifiable().keySet().iterator()
+				.next();
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class TransformLabelPolicy extends FXTransformPolicy {
 		}
 		Point currentLabelOffset = getLabelOffsetInParent();
 		Point delta = currentLabelOffset.getTranslated(initialOffset.getNegated());
-		FXTransformOperation op = ((FXTransformOperation) getOperation());
+		TransformOperation op = ((TransformOperation) getOperation());
 		op.getNewTransform().setTx(op.getInitialTransform().getTx() - delta.x);
 		op.getNewTransform().setTy(op.getInitialTransform().getTy() - delta.y);
 		locallyExecuteOperation();

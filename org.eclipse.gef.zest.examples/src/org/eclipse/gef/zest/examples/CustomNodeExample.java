@@ -18,9 +18,9 @@ import java.util.Map;
 
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.eclipse.gef.mvc.behaviors.IBehavior;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.zest.fx.ZestFxModule;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -29,7 +29,6 @@ import org.eclipse.gef.zest.fx.parts.ZestFxContentPartFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -47,9 +46,8 @@ public class CustomNodeExample extends AbstractZestExample {
 		private Injector injector;
 
 		@Override
-		public IContentPart<Node, ? extends Node> createContentPart(
-				Object content, IBehavior<Node> contextBehavior,
-				Map<Object, Object> contextMap) {
+		public IContentPart<? extends Node> createContentPart(Object content,
+				IBehavior contextBehavior, Map<Object, Object> contextMap) {
 			if (content instanceof org.eclipse.gef.graph.Node) {
 				// create custom node if we find the custom attribute
 				org.eclipse.gef.graph.Node n = (org.eclipse.gef.graph.Node) content;
@@ -76,8 +74,8 @@ public class CustomNodeExample extends AbstractZestExample {
 		}
 
 		protected void bindIContentPartFactory() {
-			binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-			}).toInstance(new CustomContentPartFactory());
+			binder().bind(IContentPartFactory.class)
+					.toInstance(new CustomContentPartFactory());
 		}
 
 	}

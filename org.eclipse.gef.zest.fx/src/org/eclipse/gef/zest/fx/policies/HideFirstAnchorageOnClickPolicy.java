@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.policies;
 
-import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
-import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
 
 import com.google.common.collect.SetMultimap;
 
@@ -22,21 +22,21 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link HideFirstAnchorageOnClickPolicy} is an {@link IFXOnClickPolicy}
+ * The {@link HideFirstAnchorageOnClickPolicy} is an {@link IOnClickPolicy}
  * that hides the first anchorage of its host.
  *
  * @author mwienand
  *
  */
-public class HideFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
+public class HideFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost().getAnchoragesUnmodifiable();
+		SetMultimap<IVisualPart<? extends Node>, String> anchorages = getHost().getAnchoragesUnmodifiable();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
+		IVisualPart<? extends Node> anchorage = anchorages.keySet().iterator().next();
 		HidePolicy hideNodePolicy = anchorage.getAdapter(HidePolicy.class);
 		init(hideNodePolicy);
 		hideNodePolicy.hide();

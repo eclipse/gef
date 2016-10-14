@@ -11,10 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.mvc.policies.IPolicy;
-
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 
 /**
@@ -30,7 +27,7 @@ public class CursorSupport {
 	/**
 	 * The interaction policy that is supported.
 	 */
-	private IPolicy<Node> hostPolicy;
+	private IPolicy hostPolicy;
 
 	/**
 	 * The original mouse {@link Cursor}.
@@ -50,7 +47,7 @@ public class CursorSupport {
 	 * @param hostPolicy
 	 *            The policy that is supported.
 	 */
-	public CursorSupport(IPolicy<Node> hostPolicy) {
+	public CursorSupport(IPolicy hostPolicy) {
 		this.hostPolicy = hostPolicy;
 	}
 

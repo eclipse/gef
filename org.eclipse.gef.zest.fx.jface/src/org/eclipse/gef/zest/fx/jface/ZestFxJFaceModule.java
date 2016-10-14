@@ -13,7 +13,7 @@ package org.eclipse.gef.zest.fx.jface;
 
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.ZestFxModule;
 import org.eclipse.swt.widgets.Composite;
 
@@ -30,7 +30,7 @@ public class ZestFxJFaceModule extends ZestFxModule {
 
 	/**
 	 * Binds an {@link IFXCanvasFactory} that creates an {@link FXCanvasEx} as
-	 * the container for the {@link FXViewer}.
+	 * the container for the {@link Viewer}.
 	 */
 	protected void bindFXCanvasFactory() {
 		binder().bind(IFXCanvasFactory.class).toInstance(new IFXCanvasFactory() {

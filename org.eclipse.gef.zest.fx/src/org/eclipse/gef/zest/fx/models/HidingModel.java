@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef.graph.Node;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
 import javafx.beans.property.ReadOnlySetProperty;
@@ -59,8 +59,8 @@ public class HidingModel {
 	public Set<NodePart> getHiddenNeighborParts(NodePart nodePart) {
 		Set<Node> hiddenNeighbors = getHiddenNeighbors(nodePart.getContent());
 		Set<NodePart> hiddenNeighborParts = Collections.newSetFromMap(new IdentityHashMap<NodePart, Boolean>());
-		Map<Object, IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> contentPartMap = nodePart.getRoot()
-				.getViewer().getContentPartMap();
+		Map<Object, IContentPart<? extends javafx.scene.Node>> contentPartMap = nodePart.getRoot().getViewer()
+				.getContentPartMap();
 		for (org.eclipse.gef.graph.Node neighbor : hiddenNeighbors) {
 			hiddenNeighborParts.add((NodePart) contentPartMap.get(neighbor));
 		}

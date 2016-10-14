@@ -36,9 +36,7 @@
       <import feature="org.eclipse.gef.common" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.fx" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.fx.jface" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.mvc" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.mvc.fx" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.mvc.ui" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 

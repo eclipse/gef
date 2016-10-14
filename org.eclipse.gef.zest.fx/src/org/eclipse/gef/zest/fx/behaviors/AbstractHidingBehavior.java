@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.behaviors;
 
-import org.eclipse.gef.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.behaviors.AbstractBehavior;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 
 import javafx.collections.SetChangeListener;
 import javafx.collections.SetChangeListener.Change;
-import javafx.scene.Node;
 
 /**
  * The {@link AbstractHidingBehavior} registers listeners on the
@@ -33,7 +32,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
+public abstract class AbstractHidingBehavior extends AbstractBehavior {
 
 	private SetChangeListener<org.eclipse.gef.graph.Node> hidingModelObserver = new SetChangeListener<org.eclipse.gef.graph.Node>() {
 

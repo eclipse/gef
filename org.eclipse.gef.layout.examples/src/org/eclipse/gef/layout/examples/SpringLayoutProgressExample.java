@@ -25,7 +25,8 @@ import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
 import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.examples.AbstractZestExample;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -109,9 +110,9 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected Scene createScene(final FXViewer viewer) {
+	protected Scene createScene(IViewer viewer) {
 		Scene scene = super.createScene(viewer);
-		Group overlay = viewer.getCanvas().getOverlayGroup();
+		Group overlay = ((Viewer) viewer).getCanvas().getOverlayGroup();
 		toggleLayoutButton = new ToggleButton("step");
 		layoutAlgorithm = new SpringLayoutAlgorithm();
 		layoutAlgorithm.setRandom(true);

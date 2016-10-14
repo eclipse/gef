@@ -21,11 +21,11 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.ui.parts.ISelectionProviderFactory;
-import org.eclipse.gef.mvc.ui.properties.IPropertySheetPageFactory;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -44,7 +44,7 @@ import javafx.embed.swt.FXCanvas;
 import javafx.scene.Scene;
 
 /**
- * Abstract base class for editors. The {@link FXDomain},
+ * Abstract base class for editors. The {@link Domain},
  * {@link IFXCanvasFactory}, and {@link ISelectionProvider} are injected into
  * the editor on construction.
  *
@@ -54,7 +54,7 @@ import javafx.scene.Scene;
 public abstract class AbstractFXEditor extends EditorPart {
 
 	@Inject
-	private FXDomain domain;
+	private IDomain domain;
 
 	@Inject
 	private IFXCanvasFactory canvasFactory;
@@ -87,7 +87,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Activates the editor by activating its {@link FXDomain}.
+	 * Activates the editor by activating its {@link Domain}.
 	 */
 	protected void activate() {
 		domain.activate();
@@ -177,7 +177,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Deactivates the editor by deactivating its {@link FXDomain}.
+	 * Deactivates the editor by deactivating its {@link Domain}.
 	 */
 	protected void deactivate() {
 		domain.deactivate();
@@ -264,25 +264,23 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Returns the {@link FXViewer} of the {@link FXDomain} which was previously
+	 * Returns the {@link IViewer} of the {@link Domain} which was previously
 	 * injected into this editor.
 	 *
-	 * @return The {@link FXViewer} of the {@link FXDomain} which was previously
+	 * @return The {@link IViewer} of the {@link Domain} which was previously
 	 *         injected into this editor.
 	 */
-	protected FXViewer getContentViewer() {
+	protected IViewer getContentViewer() {
 		return domain.getAdapter(
-				AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+				AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 	}
 
 	/**
-	 * Returns the {@link FXDomain} that was previously injected into this
-	 * editor.
+	 * Returns the {@link Domain} that was previously injected into this editor.
 	 *
-	 * @return The {@link FXDomain} that was previously injected into this
-	 *         editor.
+	 * @return The {@link Domain} that was previously injected into this editor.
 	 */
-	public FXDomain getDomain() {
+	public IDomain getDomain() {
 		return domain;
 	}
 
@@ -303,8 +301,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 	protected void hookViewers() {
 		// by default we only have a single (content) viewer, so hook its
 		// visuals as root visuals into the scene
-		final FXViewer contentViewer = getContentViewer();
-		canvas.setScene(new Scene(contentViewer.getCanvas()));
+		canvas.setScene(new Scene(getContentViewer().getCanvas()));
 	}
 
 	@Override

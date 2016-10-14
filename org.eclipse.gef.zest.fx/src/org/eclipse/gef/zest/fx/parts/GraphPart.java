@@ -17,15 +17,14 @@ import java.util.List;
 
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
+import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.behaviors.GraphLayoutBehavior;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.reflect.TypeToken;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -42,16 +41,14 @@ import javafx.util.Pair;
  *
  */
 // TODO: most of the listeners should probably be moved to GraphLayoutBehavior
-public class GraphPart extends AbstractFXContentPart<Group> {
+public class GraphPart extends AbstractContentPart<Group> {
 
 	private ListChangeListener<Object> graphChildrenObserver = new ListChangeListener<Object>() {
 
-		@SuppressWarnings("serial")
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends Object> c) {
 			// synchronize children
-			getAdapter(new TypeToken<ContentBehavior<Node>>() {
-			}).synchronizeContentChildren(doGetContentChildren());
+			getAdapter(ContentBehavior.class).synchronizeContentChildren(doGetContentChildren());
 
 			// apply layout
 			GraphLayoutBehavior layoutBehavior = getAdapter(GraphLayoutBehavior.class);
@@ -62,7 +59,15 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	};
 
 	@Override
-	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doActivate() {
+		super.doActivate();
+
+		getContent().getNodes().addListener(graphChildrenObserver);
+		getContent().getEdges().addListener(graphChildrenObserver);
+	}
+
+	@Override
+	protected void doAddChildVisual(IVisualPart<? extends Node> child, int index) {
 		getVisual().getChildren().add(index, child.getVisual());
 	}
 
@@ -71,14 +76,6 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 		Group visual = new Group();
 		visual.setAutoSizeChildren(false);
 		return visual;
-	}
-
-	@Override
-	protected void doActivate() {
-		super.doActivate();
-
-		getContent().getNodes().addListener(graphChildrenObserver);
-		getContent().getEdges().addListener(graphChildrenObserver);
 	}
 
 	@Override
@@ -148,12 +145,12 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public Graph getContent() {
-		return (Graph) super.getContent();
+	protected void doRemoveChildVisual(IVisualPart<? extends Node> child, int index) {
+		getVisual().getChildren().remove(child.getVisual());
 	}
 
 	@Override
-	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		getVisual().getChildren().remove(child.getVisual());
+	public Graph getContent() {
+		return (Graph) super.getContent();
 	}
 }

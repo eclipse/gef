@@ -12,32 +12,28 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo.policies;
 
-import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IRootPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
-import org.eclipse.gef.mvc.policies.DeletionPolicy;
-
-import com.google.common.reflect.TypeToken;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy<Node> implements IFXOnClickPolicy {
+public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
 
-	@SuppressWarnings("serial")
 	@Override
 	public void click(MouseEvent e) {
-		IVisualPart<Node, ? extends Node> targetPart = getTargetPart();
+		IVisualPart<? extends Node> targetPart = getTargetPart();
 		if (targetPart instanceof IContentPart) {
 			// delete the part
-			IRootPart<Node, ? extends Node> root = targetPart.getRoot();
-			DeletionPolicy<Node> policy = root.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
-			});
+			IRootPart<? extends Node> root = targetPart.getRoot();
+			DeletionPolicy policy = root.getAdapter(DeletionPolicy.class);
 			if (policy != null) {
 				init(policy);
-				policy.delete((IContentPart<Node, ? extends Node>) targetPart);
+				policy.delete((IContentPart<? extends Node>) targetPart);
 				commit(policy);
 			}
 		}
@@ -49,7 +45,7 @@ public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPoli
 	 *
 	 * @return The target {@link IVisualPart} for this policy.
 	 */
-	protected IVisualPart<Node, ? extends Node> getTargetPart() {
+	protected IVisualPart<? extends Node> getTargetPart() {
 		return getHost().getAnchoragesUnmodifiable().keySet().iterator().next();
 	}
 

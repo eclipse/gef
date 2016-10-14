@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
-import org.eclipse.gef.mvc.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.policies.BendFirstAnchorageOnSegmentHandleDragPolicy;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.AbstractLabelPart;
 import org.eclipse.gef.zest.fx.parts.EdgeLabelPart;
@@ -28,13 +28,13 @@ import org.eclipse.gef.zest.fx.parts.EdgePart;
 import javafx.scene.input.MouseEvent;
 
 /**
- * An {@link FXBendFirstAnchorageOnSegmentHandleDragPolicy} that also takes care
+ * An {@link BendFirstAnchorageOnSegmentHandleDragPolicy} that also takes care
  * of relocating related {@link EdgeLabelPart}s.
  *
  * @author anyssen
  *
  */
-public class BendFirstAnchorageAndRelocateLabelsOnDrag extends FXBendFirstAnchorageOnSegmentHandleDragPolicy {
+public class BendFirstAnchorageAndRelocateLabelsOnDrag extends BendFirstAnchorageOnSegmentHandleDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {

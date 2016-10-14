@@ -19,26 +19,24 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.operations.DeselectOperation;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IRootPart;
-import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
-import org.eclipse.gef.mvc.policies.CreationPolicy;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.reflect.TypeToken;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node> implements IFXOnClickPolicy {
+public class FXCloneOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
 
-	@SuppressWarnings("serial")
 	@Override
 	public void click(MouseEvent event) {
 		if (!isCloneModifierDown(event)) {
@@ -49,13 +47,12 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node> implem
 		Object cloneContent = getHost().getAdapter(AbstractCloneContentPolicy.class).cloneContent();
 
 		// create the clone content part
-		IRootPart<Node, ? extends Node> root = getHost().getRoot();
-		CreationPolicy<Node> creationPolicy = root.getAdapter(new TypeToken<CreationPolicy<Node>>() {
-		});
+		IRootPart<? extends Node> root = getHost().getRoot();
+		CreationPolicy creationPolicy = root.getAdapter(CreationPolicy.class);
 		init(creationPolicy);
-		IContentPart<Node, ? extends Node> clonedContentPart = creationPolicy.create(cloneContent,
-				(IContentPart<Node, ? extends Node>) getHost().getParent(),
-				HashMultimap.<IContentPart<Node, ? extends Node>, String> create());
+		IContentPart<? extends Node> clonedContentPart = creationPolicy.create(cloneContent,
+				(IContentPart<? extends Node>) getHost().getParent(),
+				HashMultimap.<IContentPart<? extends Node>, String> create());
 		commit(creationPolicy);
 
 		// XXX: Ensure start and end anchor are set for connections, so that
@@ -71,13 +68,12 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node> implem
 		}
 
 		// deselect all but the clone
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
-				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelectionUnmodifiable());
+		IViewer viewer = getHost().getRoot().getViewer();
+		List<? extends IContentPart<? extends Node>> toBeDeselected = new ArrayList<>(
+				viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable());
 		toBeDeselected.remove(clonedContentPart);
 		try {
-			viewer.getDomain().execute(new DeselectOperation<>(getHost().getRoot().getViewer(), toBeDeselected),
+			viewer.getDomain().execute(new DeselectOperation(getHost().getRoot().getViewer(), toBeDeselected),
 					new NullProgressMonitor());
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
@@ -85,8 +81,8 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node> implem
 
 		// copy the transformation
 		AffineTransform originalTransform = FX2Geometry
-				.toAffineTransform(getHost().getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get());
-		FXTransformPolicy transformPolicy = clonedContentPart.getAdapter(FXTransformPolicy.class);
+				.toAffineTransform(getHost().getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get());
+		TransformPolicy transformPolicy = clonedContentPart.getAdapter(TransformPolicy.class);
 		init(transformPolicy);
 		transformPolicy.setTransform(originalTransform);
 		commit(transformPolicy);

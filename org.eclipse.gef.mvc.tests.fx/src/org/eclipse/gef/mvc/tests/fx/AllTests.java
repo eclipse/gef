@@ -17,8 +17,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AbstractFXHandlePartTests.class, FXBendConnectionPolicyTests.class, FXClickDragToolTests.class,
-		FXTypeToolTests.class, FXTransformPolicyTests.class, FXViewerTests.class, FocusTraversalPolicyTests.class })
+@SuiteClasses({ AbstractVisualPartTests.class, ContentSynchronizationTests.class, FocusTraversalPolicyTests.class,
+		SelectionModelTests.class, AbstractHandlePartTests.class, BendConnectionPolicyTests.class,
+		ClickDragToolTests.class, TypeToolTests.class, TransformPolicyTests.class, ViewerTests.class,
+		FocusTraversalPolicyTests.class })
 public class AllTests {
 
 }

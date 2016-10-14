@@ -11,10 +11,10 @@
  *******************************************************************************/
 /**
  * This package contains all JavaFX-specific
- * {@link org.eclipse.gef.mvc.parts.IContentPart},
- * {@link org.eclipse.gef.mvc.parts.IVisualPart},
- * {@link org.eclipse.gef.mvc.parts.IFeedbackPart}, and
- * {@link org.eclipse.gef.mvc.parts.IHandlePart} implementations and related
+ * {@link org.eclipse.gef.mvc.fx.parts.IContentPart},
+ * {@link org.eclipse.gef.mvc.fx.parts.IVisualPart},
+ * {@link org.eclipse.gef.mvc.fx.parts.IFeedbackPart}, and
+ * {@link org.eclipse.gef.mvc.fx.parts.IHandlePart} implementations and related
  * classes.
  */
 package org.eclipse.gef.mvc.fx.parts;

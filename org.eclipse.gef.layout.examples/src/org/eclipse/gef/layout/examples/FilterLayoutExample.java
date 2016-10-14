@@ -17,7 +17,7 @@ package org.eclipse.gef.layout.examples;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.examples.AbstractZestExample;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -77,7 +77,7 @@ public class FilterLayoutExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected Scene createScene(FXViewer viewer) {
+	protected Scene createScene(IViewer viewer) {
 		Scene scene = super.createScene(viewer);
 		scene.getStylesheets().add(getClass()
 				.getResource("FilterGraphExample.css").toExternalForm());

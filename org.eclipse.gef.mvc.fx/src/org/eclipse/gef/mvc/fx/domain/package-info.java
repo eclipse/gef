@@ -11,7 +11,7 @@
  *******************************************************************************/
 /**
  * This package contains a JavaFX-specific
- * {@link org.eclipse.gef.mvc.domain.IDomain} implementation:
- * {@link org.eclipse.gef.mvc.fx.domain.FXDomain}.
+ * {@link org.eclipse.gef.mvc.fx.domain.IDomain} implementation:
+ * {@link org.eclipse.gef.mvc.fx.domain.Domain}.
  */
 package org.eclipse.gef.mvc.fx.domain;

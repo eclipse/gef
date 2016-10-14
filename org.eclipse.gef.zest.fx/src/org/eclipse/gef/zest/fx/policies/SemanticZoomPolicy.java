@@ -20,27 +20,26 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef.mvc.fx.operations.FXChangeViewportOperation;
-import org.eclipse.gef.mvc.fx.policies.FXChangeViewportPolicy;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
 /**
- * The {@link SemanticZoomPolicy} extends the {@link FXChangeViewportPolicy} for
+ * The {@link SemanticZoomPolicy} extends the {@link ChangeViewportPolicy} for
  * associating semantic changes with viewport changes, i.e. opening of
  * nested/nesting graphs when the zoom level is changed below/above a certain
  * threshold.
@@ -48,7 +47,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class SemanticZoomPolicy extends FXChangeViewportPolicy {
+public class SemanticZoomPolicy extends ChangeViewportPolicy {
 
 	private ContentModel contentModel;
 	private NavigationModel navigationModel;
@@ -63,7 +62,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new NavigateOperation((FXViewer) getHost().getRoot().getViewer());
+		return new NavigateOperation((Viewer) getHost().getRoot().getViewer());
 	}
 
 	/**
@@ -76,13 +75,12 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	 */
 	protected List<NodePart> findNestingNodes() {
 		// find the first level visual parts (not considering nested graphs)
-		List<IVisualPart<Node, ? extends Node>> rootChildren = getHost().getRoot().getChildrenUnmodifiable();
+		List<IVisualPart<? extends Node>> rootChildren = getHost().getRoot().getChildrenUnmodifiable();
 
 		// rootChildren.get(0) should be the GraphPart containing the
 		// NodeContentParts
-		List<IVisualPart<Node, ? extends Node>> graphChildren = rootChildren.size() > 0
-				? rootChildren.get(0).getChildrenUnmodifiable()
-				: Collections.<IVisualPart<Node, ? extends Node>>emptyList();
+		List<IVisualPart<? extends Node>> graphChildren = rootChildren.size() > 0
+				? rootChildren.get(0).getChildrenUnmodifiable() : Collections.<IVisualPart<? extends Node>>emptyList();
 
 		// filter for NodePart
 		List<NodePart> nestingNodeContentParts = PartUtils.filterParts(graphChildren, NodePart.class);
@@ -98,7 +96,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	}
 
 	@Override
-	protected FXChangeViewportOperation getChangeViewportOperation() {
+	protected ChangeViewportOperation getChangeViewportOperation() {
 		return getNavigateOperation().getChangeViewportOperation();
 	}
 
@@ -128,7 +126,6 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		super.init();
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void zoom(boolean relative, boolean discretize, double relativeZoom, double sceneX, double sceneY) {
 		// long startTimeNanos = System.nanoTime();
@@ -150,7 +147,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 			double pivotDistance = Double.MAX_VALUE;
 			NodePart pivotPart = null;
 
-			InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
+			InfiniteCanvas infiniteCanvas = ((Viewer) getHost().getRoot().getViewer()).getCanvas();
 			org.eclipse.gef.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef.geometry.planar.Rectangle(0,
 					0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
 			Point pivotPoint = FX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
@@ -200,8 +197,8 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		// OpenParentGraphOnDoubleClickPolicy.
 		for (NodePart nestingNodePart : findNestingNodes()) {
 			nestingNodePart.refreshContentChildren();
-			nestingNodePart.getAdapter(new TypeToken<ContentBehavior<Node>>() {
-			}).synchronizeContentChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));
+			nestingNodePart.getAdapter(ContentBehavior.class)
+					.synchronizeContentChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));
 			nestingNodePart.refreshVisual();
 		}
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /

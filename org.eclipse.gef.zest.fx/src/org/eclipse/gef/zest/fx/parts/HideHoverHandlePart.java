@@ -13,13 +13,13 @@
 package org.eclipse.gef.zest.fx.parts;
 
 import org.eclipse.gef.fx.nodes.HoverOverlayImageView;
-import org.eclipse.gef.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.parts.AbstractSegmentHandlePart;
 import org.eclipse.gef.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 
 import javafx.scene.image.Image;
 
 /**
- * The {@link HideHoverHandlePart} is an {@link AbstractFXSegmentHandlePart}
+ * The {@link HideHoverHandlePart} is an {@link AbstractSegmentHandlePart}
  * that displays a "collapse" image. By default, the
  * {@link HideFirstAnchorageOnClickPolicy} is installed for
  * {@link HideHoverHandlePart}, so that the corresponding
@@ -28,7 +28,7 @@ import javafx.scene.image.Image;
  * @author mwienand
  *
  */
-public class HideHoverHandlePart extends AbstractFXSegmentHandlePart<HoverOverlayImageView> {
+public class HideHoverHandlePart extends AbstractSegmentHandlePart<HoverOverlayImageView> {
 
 	/**
 	 * The url to the image that is displayed when hovered this part.

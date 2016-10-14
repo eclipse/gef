@@ -16,6 +16,7 @@ import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -273,8 +274,13 @@ public class FXNonApplicationThreadRule implements TestRule {
 					base.evaluate();
 				} finally {
 					runAndWait(() -> {
-						panel.setScene(null);
-						jFrame.setVisible(false);
+						if (panel != null) {
+							panel.setScene(null);
+						}
+						if (jFrame != null) {
+							jFrame.setVisible(false);
+							jFrame = null;
+						}
 						scene = null;
 						panel = null;
 					});
@@ -294,6 +300,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * @param height
 	 *            The height of the frame/scene.
 	 * @return The created {@link Scene}.
+	 * @throws Throwable
 	 * @throws InterruptedException
 	 * @throws AWTException
 	 */
@@ -312,6 +319,17 @@ public class FXNonApplicationThreadRule implements TestRule {
 				jFrame.setLocationRelativeTo(null);
 				jFrame.setVisible(true);
 				jFrame.setContentPane(panel);
+
+				Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						if (e instanceof RuntimeException) {
+							throw ((RuntimeException) e);
+						}
+						throw new RuntimeException(e);
+					}
+				});
+
 				return scene;
 			}
 		});

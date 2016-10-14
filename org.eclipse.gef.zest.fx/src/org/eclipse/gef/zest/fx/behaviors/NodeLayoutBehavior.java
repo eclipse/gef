@@ -17,8 +17,8 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
@@ -46,7 +46,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected LayoutContext getLayoutContext() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
+		IContentPart<? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
 		return graphPart.getAdapter(GraphLayoutBehavior.class).getLayoutContext();
 	}
@@ -86,7 +86,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		double miny = hostBounds.getMinY();
 		double maxx = hostBounds.getMaxX();
 		double maxy = hostBounds.getMaxY();
-		Affine transform = getHost().getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
+		Affine transform = getHost().getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
 
 		// initialize size
 		if (ZestProperties.getSize(content) != null) {

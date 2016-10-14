@@ -19,8 +19,8 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.graph.Node;
-import org.eclipse.gef.mvc.parts.AbstractVisualPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.AbstractVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import com.google.common.collect.HashMultimap;
@@ -42,7 +42,7 @@ public class NodeLabelPart extends AbstractLabelPart {
 
 	@Override
 	public Point computeLabelPosition() {
-		IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> firstAnchorage = getFirstAnchorage();
+		IVisualPart<? extends javafx.scene.Node> firstAnchorage = getFirstAnchorage();
 		// determine bounds of anchorage visual
 		Rectangle anchorageBounds = NodeUtils
 				.sceneToLocal(getVisual().getParent(), NodeUtils.localToScene(firstAnchorage.getVisual(),
@@ -86,7 +86,7 @@ public class NodeLabelPart extends AbstractLabelPart {
 			getText().setText(label);
 		}
 
-		IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> firstAnchorage = getFirstAnchorage();
+		IVisualPart<? extends javafx.scene.Node> firstAnchorage = getFirstAnchorage();
 		if (firstAnchorage == null) {
 			return;
 		}
@@ -107,10 +107,9 @@ public class NodeLabelPart extends AbstractLabelPart {
 	 * @return The {@link NodePart} for which this {@link NodeLabelPart}
 	 *         displays the label.
 	 */
-	public IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> getFirstAnchorage() {
+	public IVisualPart<? extends javafx.scene.Node> getFirstAnchorage() {
 		return getAnchoragesUnmodifiable().isEmpty() ? null
-				: (IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node>) getAnchoragesUnmodifiable().keys()
-						.iterator().next();
+				: (IVisualPart<? extends javafx.scene.Node>) getAnchoragesUnmodifiable().keys().iterator().next();
 	}
 
 }

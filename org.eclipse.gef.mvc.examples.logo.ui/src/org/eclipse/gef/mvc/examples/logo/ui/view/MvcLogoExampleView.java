@@ -12,16 +12,12 @@
 package org.eclipse.gef.mvc.examples.logo.ui.view;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import javax.swing.undo.AbstractUndoableEdit;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,25 +26,23 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleViewersComposite;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricCurve;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.ui.MvcLogoExampleUiModule;
-import org.eclipse.gef.mvc.examples.logo.ui.properties.FXCurvePropertySource;
+import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricCurvePropertySource;
+import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
+import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
-import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef.mvc.operations.DeselectOperation;
-import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.operations.SelectOperation;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.ui.properties.SetPropertyValueOperation;
-import org.eclipse.gef.mvc.ui.properties.UndoablePropertySheetEntry;
-import org.eclipse.gef.mvc.ui.properties.UndoablePropertySheetPage;
+import org.eclipse.gef.mvc.fx.ui.properties.SetPropertyValueOperation;
+import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetEntry;
+import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.common.reflect.TypeToken;
@@ -63,11 +57,11 @@ public class MvcLogoExampleView extends AbstractFXView {
 	public static final class ChangeWayPointsOperation extends AbstractOperation
 			implements ITransactionalOperation {
 
-		private final FXGeometricCurve curve;
+		private final GeometricCurve curve;
 		private final List<Point> newWayPoints;
 		private final List<Point> oldWayPoints;
 
-		public ChangeWayPointsOperation(String label, FXGeometricCurve curve,
+		public ChangeWayPointsOperation(String label, GeometricCurve curve,
 				List<Point> oldWayPoints, List<Point> newWayPoints) {
 			super(label);
 			this.curve = curve;
@@ -142,10 +136,10 @@ public class MvcLogoExampleView extends AbstractFXView {
 	private static class UpdateSelectionHandlesOperation
 			extends AbstractOperation implements ITransactionalOperation {
 
-		private IContentPart<Node, ? extends Node> part;
+		private IContentPart<? extends Node> part;
 
 		public UpdateSelectionHandlesOperation(
-				IContentPart<Node, ? extends Node> part) {
+				IContentPart<? extends Node> part) {
 			super("UpdateHandles");
 			this.part = part;
 		}
@@ -163,8 +157,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
-			part.getRoot().getAdapter(new TypeToken<SelectionBehavior<Node>>() {
-			}).updateHandles(part, null, null);
+			part.getRoot().getAdapter(SelectionBehavior.class).updateHandles(part, null, null);
 			return Status.OK_STATUS;
 		}
 
@@ -194,7 +187,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 				rootEntry = new UndoablePropertySheetEntry(
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class)) {
-					// FIXME: Code copied from FXBendConnectionPolicy (see
+					// FIXME: Code copied from BendConnectionPolicy (see
 					// #494752)
 					private Point computeEndHint(Connection connection) {
 						if (connection.getEndAnchor() instanceof DynamicAnchor
@@ -211,7 +204,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 						return null;
 					}
 
-					// FIXME: Code copied from FXBendConnectionPolicy (see
+					// FIXME: Code copied from BendConnectionPolicy (see
 					// #494752)
 					private Point computeStartHint(Connection connection) {
 						if (connection.getStartAnchor() instanceof DynamicAnchor
@@ -247,15 +240,15 @@ public class MvcLogoExampleView extends AbstractFXView {
 						if (operation instanceof SetPropertyValueOperation) {
 							SetPropertyValueOperation changeRoutingStyleOperation = (SetPropertyValueOperation) operation;
 							if (changeRoutingStyleOperation
-									.getPropertySource() instanceof FXCurvePropertySource
-									&& FXCurvePropertySource.ROUTING_STYLE_PROPERTY
+									.getPropertySource() instanceof GeometricCurvePropertySource
+									&& GeometricCurvePropertySource.ROUTING_STYLE_PROPERTY
 											.getId()
 											.equals(changeRoutingStyleOperation
 													.getPropertyId())) {
 								// clear way anchors using bend policy
-								FXCurvePropertySource ps = (FXCurvePropertySource) changeRoutingStyleOperation
+								GeometricCurvePropertySource ps = (GeometricCurvePropertySource) changeRoutingStyleOperation
 										.getPropertySource();
-								IContentPart<Node, ? extends Node> contentPart = getContentViewer()
+								IContentPart<? extends Node> contentPart = getContentViewer()
 										.getContentPartMap().get(ps.getCurve());
 
 								// preserve first and last waypoint, but clear
@@ -264,7 +257,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 								List<Point> currentWaypoints = ps.getCurve()
 										.getWayPointsCopy();
 								// FIXME: Code copied from
-								// FXBendConnectionPolicy (see #494752)
+								// BendConnectionPolicy (see #494752)
 								newWaypoints.add(computeStartHint(
 										(Connection) contentPart.getVisual()));
 								newWaypoints.add(computeEndHint(
@@ -296,8 +289,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 		return super.getAdapter(key);
 	}
 
-	protected FXViewer getPaletteViewer() {
-		return getDomain().getAdapter(AdapterKey.get(FXViewer.class,
+	protected Viewer getPaletteViewer() {
+		return getDomain().getAdapter(AdapterKey.get(Viewer.class,
 				MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
 	}
 

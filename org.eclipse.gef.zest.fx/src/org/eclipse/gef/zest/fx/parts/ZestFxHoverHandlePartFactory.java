@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.planar.BezierCurve;
-import org.eclipse.gef.mvc.behaviors.IBehavior;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
-import org.eclipse.gef.mvc.parts.IHandlePart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.IHandlePart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 
 import com.google.inject.Inject;
@@ -31,22 +31,22 @@ import javafx.scene.Node;
 
 /**
  * The {@link ZestFxHoverHandlePartFactory} is a specialization of the
- * {@link FXDefaultHoverHandlePartFactory} that performs the generation of
+ * {@link DefaultHoverHandlePartFactory} that performs the generation of
  * "hide" and "show" hover handles.
  *
  * @author mwienand
  *
  */
-public class ZestFxHoverHandlePartFactory extends FXDefaultHoverHandlePartFactory {
+public class ZestFxHoverHandlePartFactory extends DefaultHoverHandlePartFactory {
 
 	@Inject
 	private Injector injector;
 
 	@Override
-	protected List<IHandlePart<Node, ? extends Node>> createHoverHandlePartsForPolygonalOutline(
-			IVisualPart<Node, ? extends Node> target, IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForPolygonalOutline(
+			IVisualPart<? extends Node> target, IBehavior contextBehavior, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
-		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<>();
+		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
 		if (target instanceof NodePart) {
 			// create prune handle at first vertex
 			HideHoverHandlePart hidePart = injector.getInstance(HideHoverHandlePart.class);
@@ -71,8 +71,8 @@ public class ZestFxHoverHandlePartFactory extends FXDefaultHoverHandlePartFactor
 	}
 
 	@Override
-	protected List<IHandlePart<Node, ? extends Node>> createHoverHandlePartsForRectangularOutline(
-			IVisualPart<Node, ? extends Node> target, IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForRectangularOutline(
+			IVisualPart<? extends Node> target, IBehavior contextBehavior, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		return createHoverHandlePartsForPolygonalOutline(target, contextBehavior, contextMap, segmentsProvider);
 	}

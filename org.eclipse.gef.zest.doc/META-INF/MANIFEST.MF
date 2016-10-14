@@ -10,8 +10,6 @@ Require-Bundle: org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)";resolut
  org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.fx;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.fx.swt;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
- org.eclipse.gef.mvc;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
- org.eclipse.gef.mvc.ui;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.mvc.fx;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.mvc.fx.ui;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.graph;bundle-version="[5.0.0,6.0.0)";resolution:=optional,

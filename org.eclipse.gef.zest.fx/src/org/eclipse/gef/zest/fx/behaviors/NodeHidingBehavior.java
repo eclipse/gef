@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.parts.HiddenNeighborsFeedbackPart;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -40,7 +40,7 @@ import javafx.scene.Node;
 // Only applicable for NodePart (see #getHost())
 public class NodeHidingBehavior extends AbstractHidingBehavior {
 
-	private IVisualPart<Node, ? extends Node> hiddenNeighborsFeedbackPart;
+	private IVisualPart<? extends Node> hiddenNeighborsFeedbackPart;
 
 	private boolean containsAny(Set<org.eclipse.gef.graph.Node> hidden, Set<org.eclipse.gef.graph.Node> neighbors) {
 		boolean containsAny = false;
@@ -99,7 +99,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 	 * @return The {@link HiddenNeighborsFeedbackPart} that is managed by this
 	 *         {@link NodeHidingBehavior}.
 	 */
-	protected IVisualPart<Node, ? extends Node> getHiddenNeighborsFeedbackPart() {
+	protected IVisualPart<? extends Node> getHiddenNeighborsFeedbackPart() {
 		return hiddenNeighborsFeedbackPart;
 	}
 

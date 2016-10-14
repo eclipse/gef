@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.AbstractLabelPart;
 import org.eclipse.gef.zest.fx.parts.EdgePart;
@@ -30,15 +30,25 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * A specific {@link FXTranslateSelectedOnDragPolicy} that includes dragging of
+ * A specific {@link TranslateSelectedOnDragPolicy} that includes dragging of
  * unselected label parts.
  *
  * @author anyssen
  *
  */
-public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateSelectedOnDragPolicy {
+public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends TranslateSelectedOnDragPolicy {
 
 	private List<AbstractLabelPart> labelParts;
+
+	@Override
+	public void abortDrag() {
+		for (AbstractLabelPart lp : getLabelParts()) {
+			rollback(lp.getAdapter(TransformLabelPolicy.class));
+			restoreRefreshVisuals(lp);
+		}
+		super.abortDrag();
+		labelParts = null;
+	}
 
 	/**
 	 * Computes the {@link AbstractLabelPart}s that are anchored to the
@@ -52,12 +62,11 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 		Set<AbstractLabelPart> labelParts = Collections
 				.newSetFromMap(new IdentityHashMap<AbstractLabelPart, Boolean>());
 		// ensure that linked parts are moved with us during dragging
-		List<IContentPart<Node, ? extends Node>> targetParts = getTargetParts();
-		for (IVisualPart<Node, ? extends Node> tp : targetParts) {
+		List<IContentPart<? extends Node>> targetParts = getTargetParts();
+		for (IVisualPart<? extends Node> tp : targetParts) {
 			if (tp instanceof NodePart) {
 				labelParts.addAll(getNodeLabelParts((NodePart) tp));
-				for (IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> anchored : getHost()
-						.getAnchoredsUnmodifiable()) {
+				for (IVisualPart<? extends javafx.scene.Node> anchored : getHost().getAnchoredsUnmodifiable()) {
 					// add labels of edges if edge is not target part
 					if (anchored instanceof EdgePart && !targetParts.contains(anchored)) {
 						labelParts.addAll(getEdgeLabelParts((EdgePart) anchored));
@@ -80,12 +89,12 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 	}
 
 	@Override
-	public void abortDrag() {
+	public void endDrag(MouseEvent e, Dimension delta) {
 		for (AbstractLabelPart lp : getLabelParts()) {
-			rollback(lp.getAdapter(TransformLabelPolicy.class));
+			commit(lp.getAdapter(TransformLabelPolicy.class));
 			restoreRefreshVisuals(lp);
 		}
-		super.abortDrag();
+		super.endDrag(e, delta);
 		labelParts = null;
 	}
 
@@ -130,16 +139,6 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 			storeAndDisableRefreshVisuals(lp);
 			init(lp.getAdapter(TransformLabelPolicy.class));
 		}
-	}
-
-	@Override
-	public void endDrag(MouseEvent e, Dimension delta) {
-		for (AbstractLabelPart lp : getLabelParts()) {
-			commit(lp.getAdapter(TransformLabelPolicy.class));
-			restoreRefreshVisuals(lp);
-		}
-		super.endDrag(e, delta);
-		labelParts = null;
 	}
 
 }

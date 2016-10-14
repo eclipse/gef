@@ -23,12 +23,12 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
-import org.eclipse.gef.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
-import org.eclipse.gef.mvc.fx.policies.FXResizePolicy;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef.mvc.fx.providers.FXTransformProvider;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef.mvc.fx.parts.RootPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
+import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
+import org.eclipse.gef.mvc.fx.providers.TransformProvider;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXApplicationThreadRule;
 import org.eclipse.gef.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -65,10 +65,10 @@ public class NodeLayoutBehaviorTests {
 				if (host == null) {
 					host = new NodePart() {
 						{
-							setAdapter(new FXResizePolicy());
-							FXTransformProvider transformProvider = new FXTransformProvider();
-							setAdapter(transformProvider, IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY.getRole());
-							setAdapter(new FXTransformPolicy());
+							setAdapter(new ResizePolicy());
+							TransformProvider transformProvider = new TransformProvider();
+							setAdapter(transformProvider, ITransformableVisualPart.TRANSFORM_PROVIDER_KEY.getRole());
+							setAdapter(new TransformPolicy());
 							Affine affine = transformProvider.get();
 							affine.setTx(location.x);
 							affine.setTy(location.y);
@@ -90,8 +90,8 @@ public class NodeLayoutBehaviorTests {
 							return node;
 						}
 					};
-					FXRootPart rootPart = new FXRootPart();
-					FXViewer viewer = new FXViewer();
+					RootPart rootPart = new RootPart();
+					Viewer viewer = new Viewer();
 					viewer.setAdapter(rootPart);
 					host.setParent(rootPart);
 				}
@@ -119,9 +119,8 @@ public class NodeLayoutBehaviorTests {
 
 		// zest position is top-left, while layout location is center
 		Affine affine = Geometry2FX
-				.toFXAffine(behavior.getHost().getAdapter(FXTransformPolicy.class).getCurrentTransform());
-		assertEquals(location.getTranslated(size.getScaled(-0.5)),
-				new Point(affine.getTx(), affine.getTy()));
+				.toFXAffine(behavior.getHost().getAdapter(TransformPolicy.class).getCurrentTransform());
+		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(affine.getTx(), affine.getTy()));
 	}
 
 	@Test

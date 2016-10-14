@@ -21,49 +21,34 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricModelPart;
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricShapePart;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricModelPart;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteElementPart;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.policies.AbstractFXInteractionPolicy;
-import org.eclipse.gef.mvc.fx.policies.IFXOnDragPolicy;
-import org.eclipse.gef.mvc.fx.tools.FXClickDragTool;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.operations.DeselectOperation;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IRootPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.CreationPolicy;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
+import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.reflect.TypeToken;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
+public class CreateAndTranslateOnDragPolicy extends AbstractInteractionPolicy implements IOnDragPolicy {
 
-	private FXGeometricShapePart createdShapePart;
-	private Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies;
-
-	@Override
-	public void drag(MouseEvent event, Dimension delta) {
-		if (createdShapePart == null) {
-			return;
-		}
-
-		// forward drag events to bend target part
-		if (dragPolicies != null) {
-			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-				dragPolicy.drag(event, delta);
-			}
-		}
-	}
+	private GeometricShapePart createdShapePart;
+	private Map<AdapterKey<? extends IOnDragPolicy>, IOnDragPolicy> dragPolicies;
 
 	@Override
 	public void abortDrag() {
@@ -73,7 +58,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 
 		// forward event to bend target part
 		if (dragPolicies != null) {
-			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+			for (IOnDragPolicy dragPolicy : dragPolicies.values()) {
 				dragPolicy.abortDrag();
 			}
 		}
@@ -82,82 +67,16 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 		dragPolicies = null;
 	}
 
-	protected FXViewer getContentViewer() {
-		Map<AdapterKey<? extends IViewer<Node>>, IViewer<Node>> viewers = getHost().getRoot().getViewer().getDomain()
-				.getViewers();
-		for (Entry<AdapterKey<? extends IViewer<Node>>, IViewer<Node>> e : viewers.entrySet()) {
-			if (FXDomain.CONTENT_VIEWER_ROLE.equals(e.getKey().getRole())) {
-				return (FXViewer) e.getValue();
-			}
-		}
-		throw new IllegalStateException("Cannot find content viewer!");
-	}
-
 	@Override
-	public PaletteElementPart getHost() {
-		return (PaletteElementPart) super.getHost();
-	}
-
-	protected Point getLocation(MouseEvent e) {
-		Point2D location = ((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
-				.sceneToLocal(e.getSceneX(), e.getSceneY());
-		return new Point(location.getX(), location.getY());
-	}
-
-	@Override
-	public void hideIndicationCursor() {
-	}
-
-	@SuppressWarnings("serial")
-	@Override
-	public void startDrag(MouseEvent event) {
-		// find model part
-		IRootPart<Node, ? extends Node> contentRoot = getContentViewer().getRootPart();
-		IVisualPart<Node, ? extends Node> modelPart = contentRoot.getChildrenUnmodifiable().get(0);
-		if (!(modelPart instanceof FXGeometricModelPart)) {
-			throw new IllegalStateException("Cannot find FXGeometricModelPart.");
+	public void drag(MouseEvent event, Dimension delta) {
+		if (createdShapePart == null) {
+			return;
 		}
 
-		// copy the prototype
-		FXGeometricShape copy = getHost().getContent().getCopy();
-		// determine coordinates of prototype's origin in model coordinates
-		Point2D localToScene = getHost().getVisual().localToScene(0, 0);
-		Point2D originInModel = modelPart.getVisual().sceneToLocal(localToScene.getX(), localToScene.getY());
-		// initially move to the originInModel
-		double[] matrix = copy.getTransform().getMatrix();
-		copy.getTransform().setTransform(matrix[0], matrix[1], matrix[2], matrix[3], originInModel.getX(),
-				originInModel.getY());
-
-		// create copy of host's geometry using CreationPolicy from root part
-		CreationPolicy<Node> creationPolicy = contentRoot.getAdapter(new TypeToken<CreationPolicy<Node>>() {
-		});
-		init(creationPolicy);
-		createdShapePart = (FXGeometricShapePart) creationPolicy.create(copy, (FXGeometricModelPart) modelPart,
-				HashMultimap.<IContentPart<Node, ? extends Node>, String> create());
-		commit(creationPolicy);
-
-		// disable refresh visuals for the created shape part
-		storeAndDisableRefreshVisuals(createdShapePart);
-
-		// build operation to deselect all but the new part
-		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
-				getContentViewer().getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelectionUnmodifiable());
-		toBeDeselected.remove(createdShapePart);
-		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(getContentViewer(), toBeDeselected);
-
-		// execute on stack
-		try {
-			getHost().getRoot().getViewer().getDomain().execute(deselectOperation, new NullProgressMonitor());
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		}
-
-		// find drag target part
-		dragPolicies = createdShapePart.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
+		// forward drag events to bend target part
 		if (dragPolicies != null) {
-			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-				dragPolicy.startDrag(event);
+			for (IOnDragPolicy dragPolicy : dragPolicies.values()) {
+				dragPolicy.drag(event, delta);
 			}
 		}
 	}
@@ -170,7 +89,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 
 		// forward event to bend target part
 		if (dragPolicies != null) {
-			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+			for (IOnDragPolicy dragPolicy : dragPolicies.values()) {
 				dragPolicy.endDrag(e, delta);
 			}
 		}
@@ -178,6 +97,31 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 		restoreRefreshVisuals(createdShapePart);
 		createdShapePart = null;
 		dragPolicies = null;
+	}
+
+	protected Viewer getContentViewer() {
+		Map<AdapterKey<? extends IViewer>, IViewer> viewers = getHost().getRoot().getViewer().getDomain().getViewers();
+		for (Entry<AdapterKey<? extends IViewer>, IViewer> e : viewers.entrySet()) {
+			if (IDomain.CONTENT_VIEWER_ROLE.equals(e.getKey().getRole())) {
+				return (Viewer) e.getValue();
+			}
+		}
+		throw new IllegalStateException("Cannot find content viewer!");
+	}
+
+	@Override
+	public PaletteElementPart getHost() {
+		return (PaletteElementPart) super.getHost();
+	}
+
+	protected Point getLocation(MouseEvent e) {
+		Point2D location = ((Viewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
+				.sceneToLocal(e.getSceneX(), e.getSceneY());
+		return new Point(location.getX(), location.getY());
+	}
+
+	@Override
+	public void hideIndicationCursor() {
 	}
 
 	@Override
@@ -188,6 +132,57 @@ public class CreateAndTranslateOnDragPolicy extends AbstractFXInteractionPolicy 
 	@Override
 	public boolean showIndicationCursor(MouseEvent event) {
 		return false;
+	}
+
+	@Override
+	public void startDrag(MouseEvent event) {
+		// find model part
+		IRootPart<? extends Node> contentRoot = getContentViewer().getRootPart();
+		IVisualPart<? extends Node> modelPart = contentRoot.getChildrenUnmodifiable().get(0);
+		if (!(modelPart instanceof GeometricModelPart)) {
+			throw new IllegalStateException("Cannot find GeometricModelPart.");
+		}
+
+		// copy the prototype
+		GeometricShape copy = getHost().getContent().getCopy();
+		// determine coordinates of prototype's origin in model coordinates
+		Point2D localToScene = getHost().getVisual().localToScene(0, 0);
+		Point2D originInModel = modelPart.getVisual().sceneToLocal(localToScene.getX(), localToScene.getY());
+		// initially move to the originInModel
+		double[] matrix = copy.getTransform().getMatrix();
+		copy.getTransform().setTransform(matrix[0], matrix[1], matrix[2], matrix[3], originInModel.getX(),
+				originInModel.getY());
+
+		// create copy of host's geometry using CreationPolicy from root part
+		CreationPolicy creationPolicy = contentRoot.getAdapter(CreationPolicy.class);
+		init(creationPolicy);
+		createdShapePart = (GeometricShapePart) creationPolicy.create(copy, (GeometricModelPart) modelPart,
+				HashMultimap.<IContentPart<? extends Node>, String> create());
+		commit(creationPolicy);
+
+		// disable refresh visuals for the created shape part
+		storeAndDisableRefreshVisuals(createdShapePart);
+
+		// build operation to deselect all but the new part
+		List<IContentPart<? extends Node>> toBeDeselected = new ArrayList<>(
+				getContentViewer().getAdapter(SelectionModel.class).getSelectionUnmodifiable());
+		toBeDeselected.remove(createdShapePart);
+		DeselectOperation deselectOperation = new DeselectOperation(getContentViewer(), toBeDeselected);
+
+		// execute on stack
+		try {
+			getHost().getRoot().getViewer().getDomain().execute(deselectOperation, new NullProgressMonitor());
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+
+		// find drag target part
+		dragPolicies = createdShapePart.getAdapters(ClickDragTool.ON_DRAG_POLICY_KEY);
+		if (dragPolicies != null) {
+			for (IOnDragPolicy dragPolicy : dragPolicies.values()) {
+				dragPolicy.startDrag(event);
+			}
+		}
 	}
 
 }

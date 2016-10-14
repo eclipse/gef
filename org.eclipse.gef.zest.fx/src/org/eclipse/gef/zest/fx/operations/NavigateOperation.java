@@ -24,20 +24,20 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.operations.FXChangeViewportOperation;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
-import org.eclipse.gef.mvc.operations.ChangeContentsOperation;
-import org.eclipse.gef.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.operations.ChangeContentsOperation;
+import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
+import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.models.NavigationModel.ViewportState;
 
 /**
  * The {@link NavigateOperation} is a {@link ReverseUndoCompositeOperation} that
  * combines a {@link ChangeContentsOperation} and an
- * {@link FXChangeViewportOperation} to navigate between nested and parent
+ * {@link ChangeViewportOperation} to navigate between nested and parent
  * {@link Graph}s.
  *
  * @author mwienand
@@ -99,9 +99,9 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	}
 
 	private ChangeContentsOperation changeContentsOperation;
-	private FXChangeViewportOperation changeViewportOperation;
+	private ChangeViewportOperation changeViewportOperation;
 	private NavigationModel navigationModel;
-	private FXViewer viewer;
+	private Viewer viewer;
 	private Graph sourceGraph;
 	private UpdateViewportStateOperation updateViewportStateOperation;
 
@@ -112,10 +112,10 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	 * {@link #setFinalState(Graph, boolean)}.
 	 *
 	 * @param viewer
-	 *            The {@link FXViewer} of which the contents and viewport are
+	 *            The {@link Viewer} of which the contents and viewport are
 	 *            manipulated.
 	 */
-	public NavigateOperation(FXViewer viewer) {
+	public NavigateOperation(Viewer viewer) {
 		super("Navigate Graph");
 
 		this.viewer = viewer;
@@ -125,7 +125,7 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 
 		// create sub-operations
 		changeContentsOperation = new ChangeContentsOperation(viewer, Collections.singletonList(sourceGraph));
-		changeViewportOperation = new FXChangeViewportOperation(viewer.getCanvas());
+		changeViewportOperation = new ChangeViewportOperation(viewer.getCanvas());
 		updateViewportStateOperation = new UpdateViewportStateOperation(navigationModel.getViewportState(sourceGraph));
 
 		// arrange sub-operations
@@ -143,28 +143,28 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	 * instead it will be reset.
 	 *
 	 * @param viewer
-	 *            The {@link FXViewer} of which the contents and viewport are
+	 *            The {@link Viewer} of which the contents and viewport are
 	 *            manipulated.
 	 * @param targetGraph
 	 *            The final {@link Graph} to be displayed within the given
-	 *            {@link FXViewer}.
+	 *            {@link Viewer}.
 	 * @param isNestedGraph
 	 *            Specifies whether or not the given <i>finalGraph</i> is a
 	 *            nested {@link Graph}.
 	 */
-	public NavigateOperation(FXViewer viewer, Graph targetGraph, boolean isNestedGraph) {
+	public NavigateOperation(Viewer viewer, Graph targetGraph, boolean isNestedGraph) {
 		this(viewer);
 		setFinalState(targetGraph, isNestedGraph);
 	}
 
 	/**
-	 * Returns the {@link FXChangeViewportOperation} that is used by this
+	 * Returns the {@link ChangeViewportOperation} that is used by this
 	 * {@link NavigateOperation} to update the viewport.
 	 *
-	 * @return The {@link FXChangeViewportOperation} that is used by this
+	 * @return The {@link ChangeViewportOperation} that is used by this
 	 *         {@link NavigateOperation} to update the viewport.
 	 */
-	public FXChangeViewportOperation getChangeViewportOperation() {
+	public ChangeViewportOperation getChangeViewportOperation() {
 		return changeViewportOperation;
 	}
 

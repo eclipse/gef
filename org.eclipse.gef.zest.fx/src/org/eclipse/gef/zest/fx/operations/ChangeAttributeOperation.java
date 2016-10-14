@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.common.attributes.IAttributeStore;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 
 /**
  * The {@link ChangeAttributeOperation} can be used to manipulate the value of

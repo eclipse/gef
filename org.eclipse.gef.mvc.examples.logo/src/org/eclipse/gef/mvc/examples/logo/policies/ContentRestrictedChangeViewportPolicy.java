@@ -12,12 +12,12 @@
 package org.eclipse.gef.mvc.examples.logo.policies;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.mvc.fx.policies.FXChangeViewportPolicy;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import javafx.geometry.Bounds;
 
-public class ContentRestrictedChangeViewportPolicy extends FXChangeViewportPolicy {
+public class ContentRestrictedChangeViewportPolicy extends ChangeViewportPolicy {
 
 	@Override
 	protected void doLocallyExecuteOperation() {
@@ -30,7 +30,7 @@ public class ContentRestrictedChangeViewportPolicy extends FXChangeViewportPolic
 		double dy = ty - getChangeViewportOperation().getInitialVerticalScrollOffset();
 
 		// determine scrollable bounds
-		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
+		Viewer viewer = (Viewer) getHost().getRoot().getViewer();
 		InfiniteCanvas canvas = viewer.getCanvas();
 		Bounds scrollableBounds = canvas.getScrollableBounds();
 

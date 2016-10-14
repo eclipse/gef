@@ -15,24 +15,24 @@ import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Rectangle;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
 
 /**
- * The {@link ShapeBoundsProvider} is a {@link Provider Provider<IGeometry>}
- * that returns a {@link Rectangle} that corresponds to the layout-bounds of its
- * host visual, i.e. it includes the geometric bounds and the stroke of the
- * visual. The {@link Rectangle} is specified within the local coordinate system
- * of the host visual.
+ * The {@link ShapeBoundsProvider} is a {@link Provider
+ * Provider&lt;IGeometry&gt;} that returns a {@link Rectangle} that corresponds
+ * to the layout-bounds of its host visual, i.e. it includes the geometric
+ * bounds and the stroke of the visual. The {@link Rectangle} is specified
+ * within the local coordinate system of the host visual.
  *
  * @author mwienand
  *
  */
 public class ShapeBoundsProvider
-		extends IAdaptable.Bound.Impl<IVisualPart<Node, ? extends Node>>
+		extends IAdaptable.Bound.Impl<IVisualPart<? extends Node>>
 		implements Provider<IGeometry> {
 
 	private double leftPadding;

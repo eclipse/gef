@@ -16,7 +16,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,26 +24,27 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef.mvc.fx.policies.FXFocusTraversalPolicy;
-import org.eclipse.gef.mvc.models.ContentModel;
-import org.eclipse.gef.mvc.models.FocusModel;
-import org.eclipse.gef.mvc.parts.AbstractRootPart;
-import org.eclipse.gef.mvc.parts.IRootPart;
-import org.eclipse.gef.mvc.tests.fx.stubs.MvcFxTestsDomain;
-import org.eclipse.gef.mvc.tests.fx.stubs.MvcFxTestsModule;
-import org.eclipse.gef.mvc.tests.fx.stubs.MvcFxTestsViewer;
-import org.eclipse.gef.mvc.tests.stubs.cell.Cell;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.MvcFxModule;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.models.FocusModel;
+import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.policies.FocusTraversalPolicy;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
+import org.eclipse.gef.mvc.tests.fx.stubs.Cell;
+import org.eclipse.gef.mvc.tests.fx.stubs.CellContentPartFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.MapBinder;
 
 import javafx.scene.Node;
 
@@ -53,55 +53,58 @@ public class FocusTraversalPolicyTests {
 	public static String NEXT = "NEXT";
 	public static String PREV = "PREV";
 
-	private static Injector injector;
+	@Rule
+	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
 
-	private static MvcFxTestsDomain domain;
-	private static MvcFxTestsViewer viewer;
+	private IDomain domain;
+	private IViewer viewer;
+	private ContentModel contentModel;
+	private FocusModel focusModel;
+	private FocusTraversalPolicy traversePolicy;
 
-	@BeforeClass
-	public static void setUpMVC() {
-		injector = Guice.createInjector(new MvcFxTestsModule() {
-			@Override
-			protected void configure() {
-				super.configure();
-
-				// bind FocusModel
-				AdapterMaps.getAdapterMapBinder(binder(), IViewer.class).addBinding(AdapterKey.defaultRole())
-						.to(new TypeLiteral<FocusModel<Node>>() {
-						});
-				// bind FocusTraversalPolicy
-				AdapterMaps.getAdapterMapBinder(binder(), AbstractRootPart.class).addBinding(AdapterKey.defaultRole())
-						.to(FXFocusTraversalPolicy.class);
-			}
-		});
-		domain = new MvcFxTestsDomain();
-		injector.injectMembers(domain);
-		viewer = domain.getAdapter(MvcFxTestsViewer.class);
-
-		// ensure exceptions are not caught
-		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(Thread t, Throwable e) {
-				if (e instanceof RuntimeException) {
-					throw ((RuntimeException) e);
-				}
-				throw new RuntimeException(e);
-			}
-		});
-	}
-
-	private FocusModel<Node> focusModel;
-
-	private FXFocusTraversalPolicy traversePolicy;
-
-	@SuppressWarnings("serial")
 	@Before
-	public void activate() {
-		domain.activate();
-		focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
+	public void activate() throws Throwable {
+		if (domain == null) {
+			Injector injector = Guice.createInjector(new MvcFxModule() {
+				@Override
+				protected void bindIDomainAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+					bindContentIViewerAsIDomainAdapter(adapterMapBinder);
+				}
+
+				@Override
+				protected void configure() {
+					super.configure();
+
+					binder().bind(IContentPartFactory.class).to(CellContentPartFactory.class);
+
+					// bind FocusModel
+					// AdapterMaps.getAdapterMapBinder(binder(), Viewer.class,
+					// Domain.CONTENT_VIEWER_ROLE)
+					// .addBinding(AdapterKey.defaultRole()).to(FocusModel.class);
+
+					// // bind FocusTraversalPolicy
+					// AdapterMaps.getAdapterMapBinder(binder(),
+					// AbstractFXRootPart.class)
+					// .addBinding(AdapterKey.defaultRole()).to(FocusTraversalPolicy.class);
+				}
+			});
+			domain = injector.getInstance(Domain.class);
+			viewer = domain.getAdapter(AdapterKey.get(Viewer.class, IDomain.CONTENT_VIEWER_ROLE));
+			ctx.createScene(((IViewer) viewer).getCanvas(), 100, 100);
+
+			ctx.runAndWait(() -> {
+				focusModel = viewer.getAdapter(FocusModel.class);
+				IRootPart<? extends Node> rootPart = viewer.getRootPart();
+				traversePolicy = rootPart.getAdapter(FocusTraversalPolicy.class);
+				contentModel = viewer.getAdapter(ContentModel.class);
+			});
+		}
+		assertNotNull(focusModel);
+		assertNotNull(traversePolicy);
+		assertNotNull(contentModel);
+		ctx.runAndWait(() -> {
+			domain.activate();
 		});
-		IRootPart<Node, ? extends Node> rootPart = viewer.getRootPart();
-		traversePolicy = rootPart.getAdapter(FXFocusTraversalPolicy.class);
 	}
 
 	/**
@@ -115,7 +118,7 @@ public class FocusTraversalPolicyTests {
 	 *            Alternating: Focus traversal actions ({@link #NEXT} or
 	 *            {@link #PREV}) and cell names ({@link Cell#name}).
 	 */
-	protected void checkFocusTraversal(Map<String, Cell> cells, String... objects) {
+	protected void checkFocusTraversal(Map<String, Cell> cells, String... objects) throws Throwable {
 		if (objects == null) {
 			throw new IllegalArgumentException("objects may not be null");
 		}
@@ -125,19 +128,22 @@ public class FocusTraversalPolicyTests {
 		for (int i = 0; i < objects.length; i++) {
 			if (i % 2 == 0) {
 				String fta = objects[i];
-				traversePolicy.init();
-				if (NEXT.equals(fta)) {
-					traversePolicy.focusNext();
-				} else if (PREV.equals(fta)) {
-					traversePolicy.focusPrevious();
-				} else {
-					throw new IllegalArgumentException("focus traversal action (NEXT or PREV) expected");
-				}
-				try {
-					domain.execute(traversePolicy.commit(), new NullProgressMonitor());
-				} catch (ExecutionException e) {
-					fail();
-				}
+				ctx.runAndWait(() -> {
+					traversePolicy.init();
+					if (NEXT.equals(fta)) {
+						traversePolicy.focusNext();
+					} else if (PREV.equals(fta)) {
+						traversePolicy.focusPrevious();
+					} else {
+						throw new IllegalArgumentException("focus traversal action (NEXT or PREV) expected");
+					}
+					try {
+						domain.execute(traversePolicy.commit(), new NullProgressMonitor());
+					} catch (ExecutionException e) {
+						e.printStackTrace();
+						fail(e.getMessage());
+					}
+				});
 			} else {
 				if (objects[i] == null) {
 					assertNull("performed " + Arrays.asList(objects).subList(0, i).toString()
@@ -154,9 +160,11 @@ public class FocusTraversalPolicyTests {
 	}
 
 	@After
-	public void deactivate() {
-		viewer.getAdapter(ContentModel.class).getContents().setAll(Collections.emptyList());
-		domain.deactivate();
+	public void deactivate() throws Throwable {
+		ctx.runAndWait(() -> {
+			contentModel.getContents().setAll(Collections.emptyList());
+			domain.deactivate();
+		});
 	}
 
 	/**
@@ -194,10 +202,13 @@ public class FocusTraversalPolicyTests {
 	 * </ol>
 	 */
 	@Test
-	public void test_RC0_RC1() {
+	public void test_RC0_RC1() throws Throwable {
 		Map<String, Cell> cells = new HashMap<>();
 		Cell root = Cell.createCellTree(String.join("\n", "R-C0", "R-C1"), cells);
-		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
+
+		ctx.runAndWait(() -> {
+			contentModel.getContents().setAll(root.children);
+		});
 
 		// check initial state
 		assertNull(focusModel.getFocus());
@@ -257,10 +268,13 @@ public class FocusTraversalPolicyTests {
 	 * </ol>
 	 */
 	@Test
-	public void test_RCC0C00_RCC1C10_RCC2C20() {
+	public void test_RCC0C00_RCC1C10_RCC2C20() throws Throwable {
 		Map<String, Cell> cells = new HashMap<>();
 		Cell root = Cell.createCellTree(String.join("\n", "R-C-C0-C00", "R-C-C1-C10", "R-C-C2-C20"), cells);
-		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
+
+		ctx.runAndWait(() -> {
+			contentModel.getContents().setAll(root.children);
+		});
 
 		// check initial state
 		assertNull(focusModel.getFocus());
@@ -311,10 +325,13 @@ public class FocusTraversalPolicyTests {
 	 * </ol>
 	 */
 	@Test
-	public void test_RV0_RC1_RV2() {
+	public void test_RV0_RC1_RV2() throws Throwable {
 		Map<String, Cell> cells = new HashMap<>();
 		Cell root = Cell.createCellTree(String.join("\n", "R-V0", "R-C1", "R-V2"), cells);
-		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
+
+		ctx.runAndWait(() -> {
+			contentModel.getContents().setAll(root.children);
+		});
 
 		// check initial state
 		assertNull(focusModel.getFocus());
@@ -363,10 +380,13 @@ public class FocusTraversalPolicyTests {
 	 * </ol>
 	 */
 	@Test
-	public void test_RV0C0_RV1C1() {
+	public void test_RV0C0_RV1C1() throws Throwable {
 		Map<String, Cell> cells = new HashMap<>();
 		Cell root = Cell.createCellTree(String.join("\n", "R-V0-C0", "R-V1-C1"), cells);
-		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
+
+		ctx.runAndWait(() -> {
+			contentModel.getContents().setAll(root.children);
+		});
 
 		// check initial state
 		assertNull(focusModel.getFocus());

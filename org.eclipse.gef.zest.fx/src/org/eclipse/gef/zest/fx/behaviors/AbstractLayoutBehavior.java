@@ -14,8 +14,8 @@ package org.eclipse.gef.zest.fx.behaviors;
 
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.layout.LayoutContext;
-import org.eclipse.gef.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.behaviors.AbstractBehavior;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.parts.AbstractLabelPart;
 
 import javafx.scene.Node;
@@ -31,7 +31,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
+public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 
 	/**
 	 * Returns the {@link LayoutContext} for which {@link #preLayout()} and
@@ -62,7 +62,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	 */
 	protected void updateLabels() {
 		// iterate anchoreds
-		for (IVisualPart<Node, ? extends Node> anchored : getHost().getAnchoredsUnmodifiable().elementSet()) {
+		for (IVisualPart<? extends Node> anchored : getHost().getAnchoredsUnmodifiable().elementSet()) {
 			// filter for label parts
 			if (anchored instanceof AbstractLabelPart) {
 				AbstractLabelPart labelPart = (AbstractLabelPart) anchored;

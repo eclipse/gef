@@ -19,14 +19,13 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.euclidean.Vector;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Edge;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
@@ -147,9 +146,9 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	 *         displays the label.
 	 */
 	@SuppressWarnings("unchecked")
-	protected IContentPart<Node, ? extends Connection> getFirstAnchorage() {
+	protected IContentPart<? extends Connection> getFirstAnchorage() {
 		return getAnchoragesUnmodifiable().isEmpty() ? null
-				: (IContentPart<Node, ? extends Connection>) getAnchoragesUnmodifiable().keys().iterator().next();
+				: (IContentPart<? extends Connection>) getAnchoragesUnmodifiable().keys().iterator().next();
 	}
 
 	private Point getMidPoint() {

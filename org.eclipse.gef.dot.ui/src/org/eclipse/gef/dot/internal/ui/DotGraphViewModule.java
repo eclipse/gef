@@ -12,14 +12,14 @@
 package org.eclipse.gef.dot.internal.ui;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
-import org.eclipse.gef.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXNormalizeConnectedOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXResizePolicy;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
+import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
+import org.eclipse.gef.mvc.fx.policies.NormalizeConnectedOnDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.zest.fx.ZestFxModule;
 import org.eclipse.gef.zest.fx.behaviors.NodeHidingBehavior;
@@ -67,11 +67,11 @@ public class DotGraphViewModule extends ZestFxModule {
 
 		// transform policy for relocation
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXTransformPolicy.class);
+				.to(TransformPolicy.class);
 
 		// resize policy to resize nesting nodes
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXResizePolicy.class);
+				.to(ResizePolicy.class);
 
 		// anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -80,7 +80,7 @@ public class DotGraphViewModule extends ZestFxModule {
 		// feedback and handles
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(FXDefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+						.role(DefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -91,7 +91,7 @@ public class DotGraphViewModule extends ZestFxModule {
 		// selection feedback provider
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+						.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -102,7 +102,7 @@ public class DotGraphViewModule extends ZestFxModule {
 		// selection link feedback provider
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -113,13 +113,13 @@ public class DotGraphViewModule extends ZestFxModule {
 		// hover feedback provider
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+						.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// focus feedback provider
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+						.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -129,11 +129,11 @@ public class DotGraphViewModule extends ZestFxModule {
 
 		// hover on-hover
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXHoverOnHoverPolicy.class);
+				.to(HoverOnHoverPolicy.class);
 
 		// normalize on drag
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXNormalizeConnectedOnDragPolicy.class);
+				.to(NormalizeConnectedOnDragPolicy.class);
 	}
 
 }

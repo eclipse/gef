@@ -14,37 +14,35 @@ package org.eclipse.gef.zest.fx.policies;
 
 import java.util.Collections;
 
-import org.eclipse.gef.mvc.models.FocusModel;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef.mvc.operations.ChangeFocusOperation;
-import org.eclipse.gef.mvc.operations.DeselectOperation;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef.mvc.policies.AbstractTransactionPolicy;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.models.FocusModel;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
+import org.eclipse.gef.mvc.fx.operations.ChangeFocusOperation;
+import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef.mvc.fx.policies.AbstractTransactionPolicy;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.operations.HideOperation;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
 import com.google.common.reflect.TypeToken;
 
-import javafx.scene.Node;
-
 /**
- * The {@link HidePolicy} can be installed on {@link NodePart} to hide
- * the contents.
+ * The {@link HidePolicy} can be installed on {@link NodePart} to hide the
+ * contents.
  *
  * @author mwienand
  *
  */
 // TODO: only applicable for NodePart (override #getHost)
-public class HidePolicy extends AbstractTransactionPolicy<Node> {
+public class HidePolicy extends AbstractTransactionPolicy {
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that removes the given
-	 * {@link NodePart} from the {@link SelectionModel} of the
-	 * corresponding {@link IViewer}.
+	 * {@link NodePart} from the {@link SelectionModel} of the corresponding
+	 * {@link IViewer}.
 	 *
 	 * @param part
 	 *            The {@link NodePart} that is to be removed from the
@@ -53,13 +51,12 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 	 *         {@link NodePart} from the {@link SelectionModel}.
 	 */
 	protected ITransactionalOperation createDeselectOperation(NodePart part) {
-		return new DeselectOperation<>(part.getRoot().getViewer(), Collections.singletonList(part));
+		return new DeselectOperation(part.getRoot().getViewer(), Collections.singletonList(part));
 	}
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that adds the given
-	 * {@link NodePart} to the {@link HidingModel} of its {@link IViewer}
-	 * .
+	 * {@link NodePart} to the {@link HidingModel} of its {@link IViewer} .
 	 *
 	 * @param part
 	 *            The {@link NodePart} that is to be hidden.
@@ -88,13 +85,13 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	@SuppressWarnings("serial")
 	protected ITransactionalOperation createUnfocusOperation(NodePart part) {
-		IViewer<Node> viewer = part.getRoot().getViewer();
+		IViewer viewer = part.getRoot().getViewer();
 
-		FocusModel<Node> focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
+		FocusModel focusModel = viewer.getAdapter(new TypeToken<FocusModel>() {
 		});
 		if (focusModel != null) {
 			if (focusModel.getFocus() == part) {
-				return new ChangeFocusOperation<>(viewer, null);
+				return new ChangeFocusOperation(viewer, null);
 
 			}
 		}
@@ -108,8 +105,8 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
 	 * Executes an operation on the history that hides the {@link #getHost()
-	 * host} {@link NodePart} (and removes it from the {@link FocusModel}
-	 * and from the {@link SelectionModel}).
+	 * host} {@link NodePart} (and removes it from the {@link FocusModel} and
+	 * from the {@link SelectionModel}).
 	 */
 	public void hide() {
 		checkInitialized();

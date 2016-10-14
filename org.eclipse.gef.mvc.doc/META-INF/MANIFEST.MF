@@ -8,6 +8,7 @@ Require-Bundle: org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)";resolut
  org.eclipse.ui.views;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
  org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
+ org.eclipse.gef.geometry.convert.fx;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.fx;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.fx.swt;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
  org.eclipse.gef.fx.jface;bundle-version="[5.0.0,6.0.0)";resolution:=optional,
@@ -20,4 +21,5 @@ Import-Package: com.google.common.collect;version="[12.0.0,16.0.0)";resolution:=
  com.google.inject;version="[1.3.0,2.0.0)";resolution:=optional,
  com.google.inject.binder;version="[1.3.0,2.0.0)";resolution:=optional,
  com.google.inject.multibindings;version="[1.3.0,2.0.0)";resolution:=optional,
+ com.google.inject.assistedinject;version="[1.3.0,2.0.0)";resolution:=optional,
  javax.inject;version="[1.0.0,2.0.0)";resolution:=optional

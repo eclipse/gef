@@ -39,7 +39,6 @@
       <import feature="org.eclipse.gef.geometry" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.geometry.convert.fx" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.fx" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.mvc" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 

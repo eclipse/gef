@@ -28,13 +28,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef.mvc.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
+import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXEditor;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
@@ -44,7 +44,6 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 
 import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
@@ -144,7 +143,7 @@ public class AbstractFXEditorTests {
 	private static class Module extends MvcFxModule {
 		/**
 		 * Binds an {@link IFXCanvasFactory} that creates an {@link FXCanvasEx}
-		 * as the container for the {@link FXViewer}.
+		 * as the container for the {@link Viewer}.
 		 */
 		protected void bindFXCanvasFactory() {
 			// TODO: change to assisted inject
@@ -157,11 +156,10 @@ public class AbstractFXEditorTests {
 		}
 
 		protected void bindIContentPartFactory() {
-			binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-			}).toInstance(new IContentPartFactory<Node>() {
+			binder().bind(IContentPartFactory.class).toInstance(new IContentPartFactory() {
 				@Override
-				public IContentPart<Node, ? extends Node> createContentPart(Object content,
-						IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+				public IContentPart<? extends Node> createContentPart(Object content, IBehavior contextBehavior,
+						Map<Object, Object> contextMap) {
 					return null;
 				}
 			});

@@ -13,10 +13,9 @@ package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.GridModel;
-import org.eclipse.gef.mvc.policies.IPolicy;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.models.GridModel;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -27,7 +26,7 @@ import javafx.scene.Node;
  */
 public class SnapSupport {
 
-	private IPolicy<Node> hostPolicy;
+	private IPolicy hostPolicy;
 
 	/**
 	 * Constructs a new {@link SnapSupport} for the given host {@link IPolicy},
@@ -36,7 +35,7 @@ public class SnapSupport {
 	 * @param hostPolicy
 	 *            The host {@link IPolicy} for this {@link SnapSupport}.
 	 */
-	public SnapSupport(IPolicy<Node> hostPolicy) {
+	public SnapSupport(IPolicy hostPolicy) {
 		this.hostPolicy = hostPolicy;
 	}
 
@@ -45,17 +44,17 @@ public class SnapSupport {
 	 * positions are at
 	 * <code>(n * grid-cell-width, m * grid-cell-height)</code>. Per default,
 	 * the content group of the {@link InfiniteCanvas} is returned for an
-	 * {@link FXViewer}. For other {@link IViewer} implementations, the visual
-	 * of the root part is used.
+	 * {@link Viewer}. For other {@link IViewer} implementations, the visual of
+	 * the root part is used.
 	 *
 	 * @param viewer
 	 *            The {@link IViewer} for which to determine a grid-local
 	 *            visual.
 	 * @return A grid-local visual for the given {@link IViewer}.
 	 */
-	protected Node getGridLocalVisual(IViewer<Node> viewer) {
-		return viewer instanceof FXViewer
-				? ((FXViewer) viewer).getCanvas().getContentGroup()
+	protected Node getGridLocalVisual(IViewer viewer) {
+		return viewer instanceof Viewer
+				? ((Viewer) viewer).getCanvas().getContentGroup()
 				: viewer.getRootPart().getVisual();
 	}
 
@@ -90,7 +89,7 @@ public class SnapSupport {
 	 * @return The snapped position in scene coordinates.
 	 */
 	protected Point snapToGrid(double sceneX, double sceneY) {
-		IViewer<Node> viewer = hostPolicy.getHost().getRoot().getViewer();
+		IViewer viewer = hostPolicy.getHost().getRoot().getViewer();
 		return snapToGrid(sceneX, sceneY,
 				viewer.<GridModel> getAdapter(GridModel.class),
 				getSnapToGridGranularityX(), getSnapToGridGranularityY(),

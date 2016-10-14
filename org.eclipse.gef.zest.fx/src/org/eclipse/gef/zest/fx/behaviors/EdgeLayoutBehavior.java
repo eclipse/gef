@@ -13,7 +13,7 @@
 package org.eclipse.gef.zest.fx.behaviors;
 
 import org.eclipse.gef.layout.LayoutContext;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.zest.fx.parts.EdgePart;
 
 import javafx.scene.Node;
@@ -35,7 +35,7 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected LayoutContext getLayoutContext() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
+		IContentPart<? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
 		return graphPart.getAdapter(GraphLayoutBehavior.class).getLayoutContext();
 	}

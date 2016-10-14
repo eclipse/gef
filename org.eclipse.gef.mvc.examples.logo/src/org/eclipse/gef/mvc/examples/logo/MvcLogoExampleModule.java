@@ -17,18 +17,16 @@ import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef.mvc.behaviors.HoverBehavior;
-import org.eclipse.gef.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.examples.logo.behaviors.PaletteFocusBehavior;
-import org.eclipse.gef.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
-import org.eclipse.gef.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricCurvePart;
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricModelPart;
-import org.eclipse.gef.mvc.examples.logo.parts.FXGeometricShapePart;
-import org.eclipse.gef.mvc.examples.logo.parts.FXLogoContentPartFactory;
-import org.eclipse.gef.mvc.examples.logo.parts.FXLogoHoverHandlePartFactory;
-import org.eclipse.gef.mvc.examples.logo.parts.FXLogoPaletteContentPartFactory;
-import org.eclipse.gef.mvc.examples.logo.parts.FXLogoSelectionHandlePartFactory;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurveCreationHoverHandlePart;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricElementDeletionHandlePart;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricModelPart;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
+import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleContentPartFactory;
+import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleHoverHandlePartFactory;
+import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExamplePaletteContentPartFactory;
+import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteElementPart;
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteModelPart;
 import org.eclipse.gef.mvc.examples.logo.policies.CloneCurvePolicy;
@@ -41,47 +39,49 @@ import org.eclipse.gef.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
-import org.eclipse.gef.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.FXFocusBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.FXHoverBehavior;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.parts.FXCircleSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
-import org.eclipse.gef.mvc.fx.parts.FXRectangleSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef.mvc.fx.parts.FXSquareSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.policies.FXBendConnectionPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXBendOnSegmentDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXCreationMenuOnClickPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
-import org.eclipse.gef.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXNormalizeConnectedOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXResizeConnectionPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXResizePolicy;
-import org.eclipse.gef.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
-import org.eclipse.gef.mvc.fx.policies.FXSelectFocusedOnTypePolicy;
-import org.eclipse.gef.mvc.fx.policies.FXTransformConnectionPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
+import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.models.FocusModel;
+import org.eclipse.gef.mvc.fx.models.HoverModel;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.parts.RectangleSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.parts.RootPart;
+import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
+import org.eclipse.gef.mvc.fx.policies.BendFirstAnchorageOnSegmentHandleDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.BendOnSegmentDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.CreationMenuOnClickPolicy;
+import org.eclipse.gef.mvc.fx.policies.DeleteSelectedOnTypePolicy;
+import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
+import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
+import org.eclipse.gef.mvc.fx.policies.NormalizeConnectedOnDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.ResizeConnectionPolicy;
+import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
+import org.eclipse.gef.mvc.fx.policies.ResizeTransformSelectedOnHandleDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.ResizeTranslateFirstAnchorageOnHandleDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnHandleDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnRotatePolicy;
+import org.eclipse.gef.mvc.fx.policies.SelectFocusedOnTypePolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformConnectionPolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
+import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
+import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
-import org.eclipse.gef.mvc.models.FocusModel;
-import org.eclipse.gef.mvc.models.HoverModel;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
@@ -89,7 +89,6 @@ import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
 public class MvcLogoExampleModule extends MvcFxModule {
@@ -100,9 +99,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
 		// select on click
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickPolicy.class);
 		// select on type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
 	}
 
 	protected void bindContentModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -122,45 +121,20 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentRestrictedChangeViewportPolicy.class);
 	}
 
-	@Override
-	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindContentViewerAdapters(adapterMapBinder);
-		// bind content part factory
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoContentPartFactory.class);
-	}
-
-	@Override
-	protected void bindContentViewerRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindContentViewerRootPartAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCreationMenuOnClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role(FXCreationMenuOnClickPolicy.MENU_ITEM_PROVIDER_ROLE))
-				.to(FXCreationMenuItemProvider.class);
-		// interaction policy to delete on key type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXDeleteSelectedOnTypePolicy.class);
-		// interaction policy to rotate selected through rotate gesture
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXRotateSelectedOnRotatePolicy.class);
-		// keyboard focus traversal through key navigation
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTraverseFocusOnTypePolicy.class);
-		// select on type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
-		// hover behavior
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverBehavior.class);
-	}
-
 	protected void bindFocusFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXFocusBehavior.FOCUS_FEEDBACK_PART_FACTORY))
-				.to(FXDefaultFocusFeedbackPartFactory.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FocusBehavior.FOCUS_FEEDBACK_PART_FACTORY))
+				.to(DefaultFocusFeedbackPartFactory.class);
 	}
 
 	@SuppressWarnings("serial")
 	protected void bindFocusModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<FocusModel<Node>>() {
-		})).to(new TypeLiteral<FocusModel<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<FocusModel>() {
+		})).to(new TypeLiteral<FocusModel>() {
 		});
 	}
 
 	protected void bindFXCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -171,77 +145,71 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXDeleteFirstAnchorageOnClickPolicy.class);
 	}
 
-	@Override
-	protected void bindFXDomainAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindFXDomainAdapters(adapterMapBinder);
-		bindFXPaletteViewerAsFXDomainAdapter(adapterMapBinder);
-	}
-
 	protected void bindFXGeometricCurvePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hover on hover
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
 
 		// geometry provider for selection feedback
 		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 		// geometry provider for selection handles
 		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey.role(DefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(
+						AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 		// geometry provider for focus feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 
 		// transaction policy for resize + transform
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizeConnectionPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeConnectionPolicy.class);
 
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendConnectionPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
 
 		// interaction policy to relocate on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
 
 		// drag individual segments
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendOnSegmentDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendOnSegmentDragPolicy.class);
 
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformConnectionPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformConnectionPolicy.class);
 
 		// cloning
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneCurvePolicy.class);
 
 		// clickable area resizing
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXConnectionClickableAreaBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectionClickableAreaBehavior.class);
 
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCloneOnClickPolicy.class);
 	}
 
 	/**
-	 * Binds adapters for {@link FXGeometricModelPart}.
+	 * Binds adapters for {@link GeometricModelPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the bindings are added.
 	 */
 	protected void bindFXGeometricModelPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// geometry provider for focus feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
 	protected void bindFXGeometricShapePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hover on hover
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
 
 		// geometry provider for selection feedback
 		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -250,7 +218,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				});
 		// geometry provider for selection handles
 		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey.role(DefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -258,17 +226,17 @@ public class MvcLogoExampleModule extends MvcFxModule {
 					}
 				});
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(
+						AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 		// geometry provider for hover handles
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 		// geometry provider for focus feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -277,11 +245,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				});
 
 		// register resize/transform policies (writing changes also to model)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizePolicy.class);
 
 		// relocate on drag (including anchored elements, which are linked)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXRelocateLinkedOnDragPolicy.class);
 
 		// clone
@@ -294,77 +262,103 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCloneOnClickPolicy.class);
 
 		// normalize connected on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXNormalizeConnectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragPolicy.class);
 	}
 
 	/**
 	 * Adds a binding for {@link FXPaletteViewer} to the {@link AdapterMap}
-	 * binder for {@link FXDomain}.
+	 * binder for {@link Domain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXDomain} as a key.
+	 *            {@link Domain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindFXPaletteViewerAsFXDomainAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(FXViewer.class);
+		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(IViewer.class);
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
 	protected void bindFXRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(FXRootPart.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
+		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(RootPart.class)
+				.in(AdaptableScopes.typed(Viewer.class));
 	}
 
 	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
 		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXRotateSelectedOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnHandleDragPolicy.class);
 
 		// multi selection: scale relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizeTransformSelectedOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTransformSelectedOnHandleDragPolicy.class);
 	}
 
 	protected void bindHoverFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_FEEDBACK_PART_FACTORY))
-				.to(FXDefaultHoverFeedbackPartFactory.class);
+				.to(DefaultHoverFeedbackPartFactory.class);
 	}
 
 	protected void bindHoverHandleFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
-				.to(FXDefaultHoverHandlePartFactory.class);
+				.to(DefaultHoverHandlePartFactory.class);
 	}
 
 	@Override
 	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
-				.to(FXLogoHoverHandlePartFactory.class);
+				.to(MvcLogoExampleHoverHandlePartFactory.class);
 	}
 
-	@SuppressWarnings("serial")
 	protected void bindHoverModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<HoverModel<Node>>() {
-		})).to(new TypeLiteral<HoverModel<Node>>() {
-		});
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverModel.class);
 	}
 
 	protected void bindIContentPartFactory() {
-		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).toInstance(new FXLogoContentPartFactory());
+		binder().bind(IContentPartFactory.class).toInstance(new MvcLogoExampleContentPartFactory());
+	}
+
+	@Override
+	protected void bindIDomainAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindIDomainAdapters(adapterMapBinder);
+		bindFXPaletteViewerAsFXDomainAdapter(adapterMapBinder);
+	}
+
+	@Override
+	protected void bindIRootPartAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindIRootPartAdaptersForContentViewer(adapterMapBinder);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreationMenuOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role(CreationMenuOnClickPolicy.MENU_ITEM_PROVIDER_ROLE))
+				.to(FXCreationMenuItemProvider.class);
+		// interaction policy to delete on key type
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DeleteSelectedOnTypePolicy.class);
+		// interaction policy to rotate selected through rotate gesture
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnRotatePolicy.class);
+		// keyboard focus traversal through key navigation
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypePolicy.class);
+		// select on type
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+		// hover behavior
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
+	}
+
+	@Override
+	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
+		// bind content part factory
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(MvcLogoExampleContentPartFactory.class);
 	}
 
 	protected void bindPaletteElementPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateAndTranslateOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 	}
 
@@ -373,7 +367,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link FXViewer} and all
+	 * Adds (default) {@link AdapterMap} bindings for {@link Viewer} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -381,7 +375,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXViewer} as a key.
+	 *            {@link Viewer} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -400,8 +394,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindHoverHandleFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		bindFocusFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		// bind content part factory
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXLogoPaletteContentPartFactory.class);
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(MvcLogoExamplePaletteContentPartFactory.class);
+		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR_PROVIDER))
 				.toInstance(new Provider<Color>() {
 					@Override
 					public Color get() {
@@ -413,45 +407,42 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindPaletteViewerRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
-		bindFXHoverOnHoverPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindHoverOnHoverPolicyAsIRootPartAdapter(adapterMapBinder);
+		bindPanOrZoomOnScrollPolicyAsIRootPartAdapter(adapterMapBinder);
+		bindPanOnTypePolicyAsIRootPartAdapter(adapterMapBinder);
 		// register change viewport policy
 		bindContentRestrictedChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register default behaviors
-		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		bindContentBehaviorAsIRootPartAdapter(adapterMapBinder);
 		// XXX: PaletteFocusBehavior only changes the viewer focus and default
 		// styles.
 		bindPaletteFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// bind focus traversal policy
-		bindFocusTraversalPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFocusTraversalPolicyAsIRootPartAdapter(adapterMapBinder);
 		// hover behavior
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
 	}
 
 	protected void bindSelectionFeedbackFactoryAsPaletteViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_FEEDBACK_PART_FACTORY))
-				.to(FXDefaultSelectionFeedbackPartFactory.class);
+				.to(DefaultSelectionFeedbackPartFactory.class);
 	}
 
 	protected void bindSelectionHandleFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_HANDLE_PART_FACTORY))
-				.to(FXDefaultSelectionHandlePartFactory.class);
+				.to(DefaultSelectionHandlePartFactory.class);
 	}
 
 	@Override
 	protected void bindSelectionHandlePartFactoryAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_HANDLE_PART_FACTORY))
-				.to(FXLogoSelectionHandlePartFactory.class);
+				.to(MvcLogoExampleSelectionHandlePartFactory.class);
 	}
 
-	@SuppressWarnings("serial")
 	protected void bindSelectionModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<SelectionModel<Node>>() {
-		})).to(new TypeLiteral<SelectionModel<Node>>() {
-		});
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectionModel.class);
 	}
 
 	@Override
@@ -461,32 +452,30 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindIContentPartFactory();
 
 		// contents
-		bindFXGeometricModelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXGeometricModelPart.class));
-		bindFXGeometricShapePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXGeometricShapePart.class));
-		bindFXGeometricCurvePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXGeometricCurvePart.class));
+		bindFXGeometricModelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GeometricModelPart.class));
+		bindFXGeometricShapePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GeometricShapePart.class));
+		bindFXGeometricCurvePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GeometricCurvePart.class));
 
 		// node selection handles and multi selection handles
-		bindFXSquareSegmentHandlePartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXSquareSegmentHandlePart.class));
+		bindFXSquareSegmentHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), SquareSegmentHandlePart.class));
 
 		// curve selection handles
-		bindFXCircleSegmentHandlePartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXCircleSegmentHandlePart.class));
+		bindFXCircleSegmentHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), CircleSegmentHandlePart.class));
 		bindFXRectangleSegmentHandlePartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXRectangleSegmentHandlePart.class));
+				AdapterMaps.getAdapterMapBinder(binder(), RectangleSegmentHandlePart.class));
 
 		// hover handles
-		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXDeleteHoverHandlePart.class));
+		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GeometricElementDeletionHandlePart.class));
 		bindFXCreateCurveHandlePartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXCreateCurveHoverHandlePart.class));
+				AdapterMaps.getAdapterMapBinder(binder(), GeometricCurveCreationHoverHandlePart.class));
 
 		// palette
-		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXViewer.class, PALETTE_VIEWER_ROLE));
+		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), Viewer.class, PALETTE_VIEWER_ROLE));
 		bindPaletteViewerRootPartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class, PALETTE_VIEWER_ROLE));
+				AdapterMaps.getAdapterMapBinder(binder(), RootPart.class, PALETTE_VIEWER_ROLE));
 		bindPaletteElementPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), PaletteElementPart.class));
 		AdapterMaps.getAdapterMapBinder(binder(), PaletteModelPart.class).addBinding(AdapterKey.defaultRole())
-				.to(FXHoverOnHoverPolicy.class);
+				.to(HoverOnHoverPolicy.class);
 	}
 
 	@Override

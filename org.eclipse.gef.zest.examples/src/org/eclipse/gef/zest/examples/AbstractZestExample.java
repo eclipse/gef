@@ -19,9 +19,10 @@ import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Edge.Builder;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.ZestFxModule;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -84,8 +85,8 @@ public abstract class AbstractZestExample extends Application {
 	}
 
 	private String title;
-	protected FXDomain domain;
-	protected FXViewer viewer;
+	protected Domain domain;
+	protected Viewer viewer;
 	protected Graph graph;
 
 	public AbstractZestExample(String title) {
@@ -101,9 +102,9 @@ public abstract class AbstractZestExample extends Application {
 
 		// configure application
 		Injector injector = Guice.createInjector(createModule());
-		domain = injector.getInstance(FXDomain.class);
+		domain = injector.getInstance(Domain.class);
 		viewer = domain.getAdapter(
-				AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+				AdapterKey.get(Viewer.class, Domain.CONTENT_VIEWER_ROLE));
 		primaryStage.setScene(createScene(viewer));
 
 		primaryStage.setResizable(true);
@@ -126,8 +127,8 @@ public abstract class AbstractZestExample extends Application {
 		});
 	}
 
-	protected Scene createScene(FXViewer viewer) {
-		return new Scene(viewer.getCanvas());
+	protected Scene createScene(IViewer viewer) {
+		return new Scene(((IViewer) viewer).getCanvas());
 	}
 
 	protected int getStageHeight() {

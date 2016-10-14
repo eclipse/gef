@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.policies;
 
-import org.eclipse.gef.mvc.fx.policies.IFXOnClickPolicy;
-import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 
 import com.google.common.collect.SetMultimap;
@@ -24,22 +24,22 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * The {@link ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy} is an
- * {@link IFXOnClickPolicy} that shows all hidden neighbors of its host upon
+ * {@link IOnClickPolicy} that shows all hidden neighbors of its host upon
  * mouse click by removing them from the {@link HidingModel}.
  *
  * @author mwienand
  *
  */
-public class ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy<Node>
-		implements IFXOnClickPolicy {
+public class ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy
+		implements IOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost().getAnchoragesUnmodifiable();
+		SetMultimap<IVisualPart<? extends Node>, String> anchorages = getHost().getAnchoragesUnmodifiable();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
+		IVisualPart<? extends Node> anchorage = anchorages.keySet().iterator().next();
 		ShowHiddenNeighborsPolicy hiddenNeighborsPolicy = anchorage.getAdapter(ShowHiddenNeighborsPolicy.class);
 		init(hiddenNeighborsPolicy);
 		hiddenNeighborsPolicy.showHiddenNeighbors();

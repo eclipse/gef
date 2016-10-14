@@ -27,11 +27,11 @@ import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.ILayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -70,18 +70,17 @@ import javafx.scene.Scene;
  */
 public class ZestContentViewer extends ContentViewer {
 
-	private ListChangeListener<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> selectionNotifier = new ListChangeListener<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>>() {
+	private ListChangeListener<IContentPart<? extends javafx.scene.Node>> selectionNotifier = new ListChangeListener<IContentPart<? extends javafx.scene.Node>>() {
 		@Override
-		public void onChanged(
-				ListChangeListener.Change<? extends IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> c) {
+		public void onChanged(ListChangeListener.Change<? extends IContentPart<? extends javafx.scene.Node>> c) {
 			fireSelectionChanged(new SelectionChangedEvent(ZestContentViewer.this, getSelection()));
 		}
 	};
 
 	private Injector injector;
 	private FXCanvas canvas;
-	private FXDomain domain;
-	private FXViewer viewer;
+	private Domain domain;
+	private Viewer viewer;
 	private ILayoutAlgorithm layoutAlgorithm;
 	private Map<Object, Node> contentNodeMap = new IdentityHashMap<>();
 
@@ -89,7 +88,7 @@ public class ZestContentViewer extends ContentViewer {
 	 * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
 	 * saved so that it can be later used to create an {@link Injector} that is
 	 * later used for the injection of members and the construction of the
-	 * {@link FXDomain}.
+	 * {@link Domain}.
 	 *
 	 * @param module
 	 *            The {@link Module} from which an {@link Injector} is created
@@ -131,10 +130,10 @@ public class ZestContentViewer extends ContentViewer {
 		canvas = createCanvas(parent, style);
 
 		// inject domain
-		domain = injector.getInstance(FXDomain.class);
+		domain = injector.getInstance(Domain.class);
 
 		// hook viewer
-		viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+		viewer = domain.getAdapter(AdapterKey.get(Viewer.class, Domain.CONTENT_VIEWER_ROLE));
 		canvas.setScene(new Scene(viewer.getCanvas()));
 
 		getSelectionModel().getSelectionUnmodifiable().addListener(selectionNotifier);
@@ -420,11 +419,11 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	/**
-	 * Returns the {@link FXViewer} that displays the contents.
+	 * Returns the {@link Viewer} that displays the contents.
 	 *
-	 * @return The {@link FXViewer} that displays the contents.
+	 * @return The {@link Viewer} that displays the contents.
 	 */
-	public FXViewer getFXViewer() {
+	public Viewer getFXViewer() {
 		return viewer;
 	}
 
@@ -448,9 +447,8 @@ public class ZestContentViewer extends ContentViewer {
 	public ISelection getSelection() {
 		// construct a new selection by using the selection model contents
 		List<Object> selectedContents = new ArrayList<>();
-		SelectionModel<javafx.scene.Node> selectionModel = getSelectionModel();
-		for (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> selectedPart : selectionModel
-				.getSelectionUnmodifiable()) {
+		SelectionModel selectionModel = getSelectionModel();
+		for (IContentPart<? extends javafx.scene.Node> selectedPart : selectionModel.getSelectionUnmodifiable()) {
 			selectedContents.add(selectedPart.getContent());
 		}
 		return new StructuredSelection(selectedContents);
@@ -463,9 +461,8 @@ public class ZestContentViewer extends ContentViewer {
 	 * @return The {@link SelectionModel} adapted to the viewer (
 	 *         {@link #getFXViewer()}).
 	 */
-	protected SelectionModel<javafx.scene.Node> getSelectionModel() {
-		@SuppressWarnings({ "unchecked" })
-		SelectionModel<javafx.scene.Node> selectionModel = viewer.getAdapter(SelectionModel.class);
+	protected SelectionModel getSelectionModel() {
+		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
 		if (selectionModel == null) {
 			throw new IllegalStateException("No SelectionModel bound.");
 		}
@@ -513,10 +510,10 @@ public class ZestContentViewer extends ContentViewer {
 		} else if (selection instanceof StructuredSelection) {
 			StructuredSelection structuredSelection = (StructuredSelection) selection;
 			if (!structuredSelection.isEmpty()) {
-				List<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> toBeSelectedParts = new ArrayList<>();
+				List<IContentPart<? extends javafx.scene.Node>> toBeSelectedParts = new ArrayList<>();
 				for (Object toBeSelectedContent : structuredSelection.toArray()) {
-					IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> toBeSelectedPart = viewer
-							.getContentPartMap().get(toBeSelectedContent);
+					IContentPart<? extends javafx.scene.Node> toBeSelectedPart = viewer.getContentPartMap()
+							.get(toBeSelectedContent);
 					if (toBeSelectedPart != null) {
 						toBeSelectedParts.add(toBeSelectedPart);
 						if (reveal) {

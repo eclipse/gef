@@ -13,9 +13,8 @@ package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.List;
 
-import org.eclipse.gef.mvc.policies.IPolicy;
-import org.eclipse.gef.mvc.tools.ITool;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.policies.IPolicy;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.scene.Node;
 
@@ -46,8 +45,8 @@ public interface ITargetPolicyResolver {
 	 * @return All matching policies within the hierarchy from the root part to
 	 *         the target part.
 	 */
-	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			ITool<Node> contextTool, Node target, Class<T> policyClass);
+	public <T extends IPolicy> List<? extends T> getTargetPolicies(
+			ITool contextTool, Node target, Class<T> policyClass);
 
 	/**
 	 * Determines and prioritizes all policies of the specified type for the
@@ -69,8 +68,8 @@ public interface ITargetPolicyResolver {
 	 * @return All matching policies within the hierarchy from the root part to
 	 *         the target part.
 	 */
-	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			ITool<Node> contextTool, Node target, IViewer<Node> viewer,
+	public <T extends IPolicy> List<? extends T> getTargetPolicies(
+			ITool contextTool, Node target, IViewer viewer,
 			Class<T> policyClass);
 
 }

@@ -12,23 +12,21 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.policies;
 
-import org.eclipse.gef.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef.mvc.policies.AbstractTransactionPolicy;
+import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef.mvc.fx.policies.AbstractTransactionPolicy;
 import org.eclipse.gef.zest.fx.operations.ShowHiddenNeighborsOperation;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
-import javafx.scene.Node;
-
 /**
- * The {@link ShowHiddenNeighborsPolicy} can be installed on
- * {@link NodePart} to show its hidden neighbours
+ * The {@link ShowHiddenNeighborsPolicy} can be installed on {@link NodePart} to
+ * show its hidden neighbours
  *
  * @author mwienand
  *
  */
-public class ShowHiddenNeighborsPolicy extends AbstractTransactionPolicy<Node> {
+public class ShowHiddenNeighborsPolicy extends AbstractTransactionPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {

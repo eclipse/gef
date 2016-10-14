@@ -17,12 +17,12 @@ import java.util.List;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.geometry.planar.IShape;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
+import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 
 import com.google.common.collect.SetMultimap;
 
-public class PaletteElementPart extends AbstractFXContentPart<GeometryNode<IShape>> {
+public class PaletteElementPart extends AbstractContentPart<GeometryNode<IShape>> {
 
 	@Override
 	protected GeometryNode<IShape> doCreateVisual() {
@@ -49,8 +49,8 @@ public class PaletteElementPart extends AbstractFXContentPart<GeometryNode<IShap
 	}
 
 	@Override
-	public FXGeometricShape getContent() {
-		return (FXGeometricShape) super.getContent();
+	public GeometricShape getContent() {
+		return (GeometricShape) super.getContent();
 	}
 
 }

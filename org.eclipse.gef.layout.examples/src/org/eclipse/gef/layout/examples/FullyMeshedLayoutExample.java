@@ -15,10 +15,11 @@ package org.eclipse.gef.layout.examples;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.examples.AbstractZestExample;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -48,9 +49,10 @@ public class FullyMeshedLayoutExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected Scene createScene(FXViewer viewer) {
+	protected Scene createScene(IViewer viewer) {
 		Scene scene = super.createScene(viewer);
-		Group overlay = viewer.getCanvas().getOverlayGroup();
+		Group overlay = ((InfiniteCanvas) ((IViewer) viewer).getCanvas())
+				.getOverlayGroup();
 		Button addNodeButton = new Button("add node");
 		overlay.getChildren().add(addNodeButton);
 		addNodeButton.setOnAction(new EventHandler<ActionEvent>() {

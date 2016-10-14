@@ -12,20 +12,20 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.parts;
 
-import org.eclipse.gef.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef.mvc.models.GridModel;
+import org.eclipse.gef.mvc.fx.models.GridModel;
+import org.eclipse.gef.mvc.fx.parts.RootPart;
 
 import javafx.scene.Scene;
 
 /**
- * The {@link ZestFxRootPart} is an extension to {@link FXRootPart} that hides
+ * The {@link ZestFxRootPart} is an extension to {@link RootPart} that hides
  * the grid (see {@link GridModel#setShowGrid(boolean)}) and adds a stylesheet
  * to the {@link Scene} (see {@link Scene#getStylesheets()}).
  *
  * @author mwienand
  *
  */
-public class ZestFxRootPart extends FXRootPart {
+public class ZestFxRootPart extends RootPart {
 
 	/**
 	 * The url to the stylesheet that is added to the {@link Scene}.

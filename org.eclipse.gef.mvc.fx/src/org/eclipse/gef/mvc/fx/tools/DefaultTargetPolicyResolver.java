@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef.mvc.parts.IVisualPart;
-import org.eclipse.gef.mvc.policies.IPolicy;
-import org.eclipse.gef.mvc.tools.ITool;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.policies.IPolicy;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -122,11 +121,11 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 	 * by the calling tool.
 	 */
 	@Override
-	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			ITool<Node> contextTool, Node target, Class<T> policyClass) {
+	public <T extends IPolicy> List<? extends T> getTargetPolicies(
+			ITool contextTool, Node target, Class<T> policyClass) {
 		// determine viewer that contains the given target part
-		IViewer<Node> viewer = FXPartUtils
-				.retrieveViewer(contextTool.getDomain(), target);
+		IViewer viewer = PartUtils.retrieveViewer(contextTool.getDomain(),
+				target);
 		if (viewer == null) {
 			return Collections.emptyList();
 		}
@@ -182,8 +181,8 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 	 */
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
-	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			ITool<Node> contextTool, Node target, IViewer<Node> viewer,
+	public <T extends IPolicy> List<? extends T> getTargetPolicies(
+			ITool contextTool, Node target, IViewer viewer,
 			Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");
 		// System.out.println("viewer = " + viewer);
@@ -194,13 +193,13 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 		// other tools
 		// System.out.println("Outer target policies:");
 		List<T> outerTargetPolicies = new ArrayList<>();
-		Collection<ITool<Node>> tools = viewer.getDomain()
-				.getAdapters(new TypeToken<ITool<Node>>() {
+		Collection<ITool> tools = viewer.getDomain()
+				.getAdapters(new TypeToken<ITool>() {
 				}).values();
-		for (ITool<Node> tool : tools) {
+		for (ITool tool : tools) {
 			// System.out.println("[find active policies of " + tool + "]");
 			if (tool != contextTool) {
-				for (IPolicy<Node> policy : tool.getActivePolicies(viewer)) {
+				for (IPolicy policy : tool.getActivePolicies(viewer)) {
 					if (policy.getClass().isAssignableFrom(policyClass)) {
 						// System.out.println("add active policy " + policy);
 						try {
@@ -227,14 +226,14 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 		// determine target part as the part that controls the first node in the
 		// scene graph hierarchy of the given target node
 		// System.out.println("Inner target policies:");
-		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
+		IVisualPart<? extends Node> targetPart = PartUtils
 				.retrieveVisualPart(viewer, target);
 
 		// System.out.println("target part = " + targetPart);
 
 		// collect all on-drag-policies on the way from the target part to the
 		// root part
-		IVisualPart<Node, ? extends Node> part = targetPart;
+		IVisualPart<? extends Node> part = targetPart;
 		List<T> policies = new ArrayList<>();
 		while (part != null) {
 			// System.out.println("[find policies for " + part + "]");

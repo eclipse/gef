@@ -43,7 +43,8 @@ import org.eclipse.gef.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
-import org.eclipse.gef.mvc.models.ContentModel;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
@@ -244,7 +245,7 @@ public class DotGraphView extends ZestFxUiView {
 		initResourceLabel(parent, loadFileAction, updateToggleAction);
 		super.createPartControl(parent);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
-		Scene scene = getContentViewer().getScene();
+		Scene scene = getContentViewer().getCanvas().getScene();
 		// specify stylesheet
 		scene.getStylesheets().add(STYLES_CSS_FILE);
 	}
@@ -337,7 +338,8 @@ public class DotGraphView extends ZestFxUiView {
 
 			@Override
 			public void run() {
-				InfiniteCanvas canvas = getContentViewer().getCanvas();
+				InfiniteCanvas canvas = ((Viewer) getContentViewer())
+						.getCanvas();
 				canvas.setHorizontalScrollOffset(
 						canvas.getHorizontalScrollOffset()
 								- canvas.getContentBounds().getMinX());

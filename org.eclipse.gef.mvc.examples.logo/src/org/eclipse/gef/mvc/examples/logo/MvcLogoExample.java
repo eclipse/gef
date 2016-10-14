@@ -16,10 +16,10 @@ import java.util.List;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.examples.AbstractMvcExample;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricModel;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.PaletteModel;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Module;
 
@@ -28,8 +28,8 @@ import javafx.scene.Scene;
 
 public class MvcLogoExample extends AbstractMvcExample {
 
-	public static List<FXGeometricModel> createDefaultContents() {
-		return Collections.singletonList(new FXGeometricModel());
+	public static List<GeometricModel> createDefaultContents() {
+		return Collections.singletonList(new GeometricModel());
 	}
 
 	public static List<PaletteModel> createPaletteContents() {
@@ -49,8 +49,8 @@ public class MvcLogoExample extends AbstractMvcExample {
 		return new MvcLogoExampleModule();
 	}
 
-	protected FXViewer getPaletteViewer() {
-		return getDomain().getAdapter(AdapterKey.get(FXViewer.class, MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
+	protected IViewer getPaletteViewer() {
+		return getDomain().getAdapter(AdapterKey.get(IViewer.class, MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
 	}
 
 	@Override

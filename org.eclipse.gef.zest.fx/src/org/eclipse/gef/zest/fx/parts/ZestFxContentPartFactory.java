@@ -16,9 +16,9 @@ import java.util.Map;
 
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.behaviors.IBehavior;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import com.google.inject.Inject;
@@ -36,16 +36,16 @@ import javafx.util.Pair;
  * @author mwienand
  *
  */
-public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
+public class ZestFxContentPartFactory implements IContentPartFactory {
 
 	@Inject
 	private Injector injector;
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public IContentPart<Node, ? extends Node> createContentPart(Object content, IBehavior<Node> contextBehavior,
+	public IContentPart<? extends Node> createContentPart(Object content, IBehavior contextBehavior,
 			Map<Object, Object> contextMap) {
-		IContentPart<Node, ? extends Node> part = null;
+		IContentPart<? extends Node> part = null;
 		if (content instanceof Graph) {
 			part = new GraphPart();
 		} else if (content instanceof org.eclipse.gef.graph.Node) {

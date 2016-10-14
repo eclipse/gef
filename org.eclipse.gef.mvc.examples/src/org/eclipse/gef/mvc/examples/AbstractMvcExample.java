@@ -12,8 +12,9 @@
 package org.eclipse.gef.mvc.examples;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import com.google.inject.Guice;
 import com.google.inject.Module;
@@ -26,7 +27,7 @@ public abstract class AbstractMvcExample extends Application {
 
 	protected final String title;
 	private Stage primaryStage;
-	private FXDomain domain;
+	private Domain domain;
 
 	public AbstractMvcExample(String title) {
 		this.title = title;
@@ -34,12 +35,11 @@ public abstract class AbstractMvcExample extends Application {
 
 	protected abstract Module createModule();
 
-	protected FXViewer getContentViewer() {
-		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
-		return viewer;
+	protected IViewer getContentViewer() {
+		return domain.getAdapter(AdapterKey.get(IViewer.class, Domain.CONTENT_VIEWER_ROLE));
 	}
 
-	protected FXDomain getDomain() {
+	protected Domain getDomain() {
 		return domain;
 	}
 
@@ -58,7 +58,7 @@ public abstract class AbstractMvcExample extends Application {
 		this.primaryStage = primaryStage;
 
 		// create domain using guice
-		this.domain = Guice.createInjector(createModule()).getInstance(FXDomain.class);
+		this.domain = Guice.createInjector(createModule()).getInstance(Domain.class);
 
 		// create viewers
 		hookViewers();

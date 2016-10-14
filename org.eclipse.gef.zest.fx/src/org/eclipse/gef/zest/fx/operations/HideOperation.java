@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
@@ -33,7 +33,7 @@ import org.eclipse.gef.zest.fx.parts.NodePart;
 public class HideOperation extends AbstractOperation implements ITransactionalOperation {
 
 	private NodePart nodePart;
-	private IViewer<javafx.scene.Node> viewer;
+	private IViewer viewer;
 	private HidingModel hidingModel;
 	private boolean initialHiddenStatus;
 
@@ -46,11 +46,11 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 	 * @param nodePart
 	 *            The {@link NodePart} to show/hide.
 	 */
-	public HideOperation(IViewer<javafx.scene.Node> viewer, NodePart nodePart) {
+	public HideOperation(IViewer viewer, NodePart nodePart) {
 		super("Hide");
 		this.viewer = viewer;
 		this.nodePart = nodePart;
-		hidingModel = viewer.<HidingModel> getAdapter(HidingModel.class);
+		hidingModel = viewer.<HidingModel>getAdapter(HidingModel.class);
 		initialHiddenStatus = hidingModel.isHidden(nodePart);
 	}
 

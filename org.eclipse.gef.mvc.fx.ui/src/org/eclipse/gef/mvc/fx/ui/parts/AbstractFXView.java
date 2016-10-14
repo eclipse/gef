@@ -15,10 +15,10 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.ui.parts.ISelectionProviderFactory;
-import org.eclipse.gef.mvc.ui.properties.IPropertySheetPageFactory;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -45,7 +45,7 @@ import javafx.scene.Scene;
 public abstract class AbstractFXView extends ViewPart {
 
 	@Inject
-	private FXDomain domain;
+	private Domain domain;
 
 	@Inject
 	private IFXCanvasFactory canvasFactory;
@@ -76,7 +76,7 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Activates this {@link AbstractFXView} by activating the {@link FXDomain}
+	 * Activates this {@link AbstractFXView} by activating the {@link Domain}
 	 * that was previously injected.
 	 */
 	protected void activate() {
@@ -131,7 +131,7 @@ public abstract class AbstractFXView extends ViewPart {
 
 	/**
 	 * Deactivates this {@link AbstractFXView} by deactivating its
-	 * {@link FXDomain} that was previously injected.
+	 * {@link Domain} that was previously injected.
 	 */
 	protected void deactivate() {
 		domain.deactivate();
@@ -215,23 +215,23 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Returns the {@link FXViewer} of the {@link FXDomain} that was previously
+	 * Returns the {@link IViewer} of the {@link Domain} that was previously
 	 * injected.
 	 *
-	 * @return The {@link FXViewer} of the {@link FXDomain} that was previously
+	 * @return The {@link IViewer} of the {@link Domain} that was previously
 	 *         injected.
 	 */
-	protected FXViewer getContentViewer() {
+	protected IViewer getContentViewer() {
 		return domain.getAdapter(
-				AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+				AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 	}
 
 	/**
-	 * Returns the {@link FXDomain} that was previously injected.
+	 * Returns the {@link Domain} that was previously injected.
 	 *
-	 * @return The {@link FXDomain} that was previously injected.
+	 * @return The {@link Domain} that was previously injected.
 	 */
-	public FXDomain getDomain() {
+	public Domain getDomain() {
 		return domain;
 	}
 
@@ -254,8 +254,7 @@ public abstract class AbstractFXView extends ViewPart {
 	protected void hookViewers() {
 		// by default we only have a single (content) viewer, so hook its
 		// visuals as root visuals into the scene
-		final FXViewer contentViewer = getContentViewer();
-		canvas.setScene(new Scene(contentViewer.getCanvas()));
+		canvas.setScene(new Scene(getContentViewer().getCanvas()));
 	}
 
 	@Override

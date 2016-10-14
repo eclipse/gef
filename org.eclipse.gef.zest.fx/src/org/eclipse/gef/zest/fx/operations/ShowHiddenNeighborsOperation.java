@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
@@ -43,16 +43,16 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 
 	/**
 	 * Constructs a new {@link ShowHiddenNeighborsOperation} that will show all
-	 * hidden neighbors of the given {@link NodePart} by removing them
-	 * from the {@link HidingModel} of the given {@link IViewer} upon execution.
+	 * hidden neighbors of the given {@link NodePart} by removing them from the
+	 * {@link HidingModel} of the given {@link IViewer} upon execution.
 	 *
 	 * @param viewer
 	 *            The viewer from which to retrieve the {@link HidingModel}.
 	 * @param nodePart
-	 *            The {@link NodePart} of which the hidden neighbors are
-	 *            to be shown.
+	 *            The {@link NodePart} of which the hidden neighbors are to be
+	 *            shown.
 	 */
-	public ShowHiddenNeighborsOperation(IViewer<javafx.scene.Node> viewer, NodePart nodePart) {
+	public ShowHiddenNeighborsOperation(IViewer viewer, NodePart nodePart) {
 		super("ShowHiddenNeighbors");
 		this.nodePart = nodePart;
 		hidingModel = viewer.getAdapter(HidingModel.class);

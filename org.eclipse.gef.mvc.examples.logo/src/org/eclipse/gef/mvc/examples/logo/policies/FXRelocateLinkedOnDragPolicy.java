@@ -14,35 +14,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.gef.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 
 import javafx.scene.Node;
 
-public class FXRelocateLinkedOnDragPolicy
-		extends FXTranslateSelectedOnDragPolicy {
+public class FXRelocateLinkedOnDragPolicy extends TranslateSelectedOnDragPolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
-		List<IContentPart<Node, ? extends Node>> selected = super.getTargetParts();
+	public List<IContentPart<? extends Node>> getTargetParts() {
+		List<IContentPart<? extends Node>> selected = super.getTargetParts();
 
-		List<IContentPart<Node, ? extends Node>> linked = new ArrayList<>();
-		for (IContentPart<Node, ? extends Node> cp : selected) {
+		List<IContentPart<? extends Node>> linked = new ArrayList<>();
+		for (IContentPart<? extends Node> cp : selected) {
 			// ensure that linked parts are moved with us during dragging
-			linked.addAll(
-					(Collection<? extends IContentPart<Node, ? extends Node>>) new ArrayList<>(
-							PartUtils.filterParts(
-									PartUtils.getAnchoreds(cp, "link"),
-									IContentPart.class)));
+			linked.addAll((Collection<? extends IContentPart<? extends Node>>) new ArrayList<>(
+					PartUtils.filterParts(PartUtils.getAnchoreds(cp, "link"), IContentPart.class)));
 		}
 
 		// remove all linked that are selected already (these will be translated
-		// via the FXTranslateSelectedOnDragPolicy) already
-		SelectionModel<?> selectionModel = getHost().getRoot().getViewer()
-				.getAdapter(SelectionModel.class);
+		// via the TranslateSelectedOnDragPolicy) already
+		SelectionModel selectionModel = getHost().getRoot().getViewer().getAdapter(SelectionModel.class);
 		linked.removeAll(selectionModel.getSelectionUnmodifiable());
 
 		return linked;

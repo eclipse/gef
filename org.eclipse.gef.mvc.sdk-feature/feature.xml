@@ -35,14 +35,6 @@
    </url>
 
    <includes
-         id="org.eclipse.gef.mvc.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.gef.mvc.ui.source"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.gef.mvc.fx.source"
          version="0.0.0"/>
 

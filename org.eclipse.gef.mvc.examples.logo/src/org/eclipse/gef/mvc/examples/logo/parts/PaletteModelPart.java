@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.mvc.examples.logo.model.PaletteModel;
-import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 
@@ -26,10 +26,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
-public class PaletteModelPart extends AbstractFXContentPart<VBox> {
+public class PaletteModelPart extends AbstractContentPart<VBox> {
 
 	@Override
-	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doAddChildVisual(IVisualPart<? extends Node> child, int index) {
 		// wrap child.visual in group so that it is not resizable
 		getVisual().getChildren().add(index, new Group(child.getVisual()));
 	}
@@ -66,7 +66,7 @@ public class PaletteModelPart extends AbstractFXContentPart<VBox> {
 	}
 
 	@Override
-	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void doRemoveChildVisual(IVisualPart<? extends Node> child, int index) {
 		Node removed = getVisual().getChildren().remove(index);
 		if (!(removed instanceof Group) || ((Group) removed).getChildren().get(0) != child.getVisual()) {
 			throw new IllegalStateException("Child visual was not removed!");

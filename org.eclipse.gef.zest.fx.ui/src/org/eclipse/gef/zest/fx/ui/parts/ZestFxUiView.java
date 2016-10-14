@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.ZestFxModule;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 
@@ -69,7 +69,7 @@ public class ZestFxUiView extends AbstractFXView {
 	 */
 	public void setGraph(Graph graph) {
 		// check we have a content viewer
-		FXViewer contentViewer = getContentViewer();
+		IViewer contentViewer = getContentViewer();
 		if (contentViewer == null) {
 			throw new IllegalStateException("Invalid configuration: Content viewer could not be retrieved.");
 		}

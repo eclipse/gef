@@ -11,11 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo.policies;
 
-import org.eclipse.gef.mvc.policies.AbstractPolicy;
+import org.eclipse.gef.mvc.fx.policies.AbstractPolicy;
 
-import javafx.scene.Node;
-
-public abstract class AbstractCloneContentPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractCloneContentPolicy extends AbstractPolicy {
 
 	public abstract Object cloneContent();
 

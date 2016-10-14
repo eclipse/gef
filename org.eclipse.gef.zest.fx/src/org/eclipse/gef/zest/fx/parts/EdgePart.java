@@ -26,11 +26,11 @@ import org.eclipse.gef.fx.nodes.IConnectionRouter;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Edge;
-import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef.mvc.fx.parts.IFXBendableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
+import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
+import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
-import org.eclipse.gef.mvc.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import com.google.common.collect.HashMultimap;
@@ -46,8 +46,8 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class EdgePart extends AbstractFXContentPart<Connection>
-		implements IFXTransformableContentPart<Connection>, IFXBendableContentPart {
+public class EdgePart extends AbstractContentPart<Connection>
+		implements ITransformableContentPart<Connection>, IBendableContentPart<Connection> {
 
 	/**
 	 * The role used for attaching to the source node.
@@ -81,7 +81,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			if (ZestProperties.ROUTER__E.equals(change.getKey())) {
 				// if the router changed, re-attach the visual (so we attach to
 				// a different anchor)
-				for (Entry<IVisualPart<Node, ? extends Node>, String> anchoragesByRole : getAnchoragesUnmodifiable()
+				for (Entry<IVisualPart<? extends Node>, String> anchoragesByRole : getAnchoragesUnmodifiable()
 						.entries()) {
 					doDetachFromAnchorageVisual(anchoragesByRole.getKey(), anchoragesByRole.getValue());
 					doAttachToAnchorageVisual(anchoragesByRole.getKey(), anchoragesByRole.getValue());
@@ -93,26 +93,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	};
 
 	@Override
-	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		if (!getVisual().getChildren().contains(child.getVisual())) {
-			getVisual().getChildren().add(child.getVisual());
-		}
-	}
-
-	@Override
-	protected void doAttachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
-		if (role.equals(SOURCE_ROLE)) {
-			getVisual().setStartAnchor(anchor);
-		} else if (role.equals(TARGET_ROLE)) {
-			getVisual().setEndAnchor(anchor);
-		} else {
-			throw new IllegalArgumentException("Cannot attach to anchor with role <" + role + ">.");
-		}
-	}
-
-	@Override
-	public void bendContent(List<org.eclipse.gef.mvc.parts.IBendableContentPart.BendPoint> bendPoints) {
+	public void bendContent(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
 		// disable refreshing of visuals
 		boolean wasRefreshVisual = isRefreshVisual();
 		setRefreshVisual(false);
@@ -192,6 +173,42 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	}
 
 	@Override
+	protected void doActivate() {
+		super.doActivate();
+		getContent().attributesProperty().addListener(edgeAttributesObserver);
+	}
+
+	@Override
+	protected void doAddChildVisual(IVisualPart<? extends Node> child, int index) {
+		if (!getVisual().getChildren().contains(child.getVisual())) {
+			getVisual().getChildren().add(child.getVisual());
+		}
+	}
+
+	@Override
+	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
+		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
+		if (role.equals(SOURCE_ROLE)) {
+			getVisual().setStartAnchor(anchor);
+		} else if (role.equals(TARGET_ROLE)) {
+			getVisual().setEndAnchor(anchor);
+		} else {
+			throw new IllegalArgumentException("Cannot attach to anchor with role <" + role + ">.");
+		}
+	}
+
+	@Override
+	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		if (SOURCE_ROLE.equals(role)) {
+			getContent().setSource((org.eclipse.gef.graph.Node) contentAnchorage);
+		} else if (TARGET_ROLE.equals(role)) {
+			getContent().setTarget((org.eclipse.gef.graph.Node) contentAnchorage);
+		} else {
+			throw new IllegalArgumentException("Cannot attach to content anchorage with role <" + role + ">.");
+		}
+	}
+
+	@Override
 	protected Connection doCreateVisual() {
 		Connection visual = new Connection();
 		visual.getStyleClass().add(CSS_CLASS);
@@ -214,7 +231,13 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	}
 
 	@Override
-	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doDeactivate() {
+		getContent().attributesProperty().removeListener(edgeAttributesObserver);
+		super.doDeactivate();
+	}
+
+	@Override
+	protected void doDetachFromAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		Connection connection = getVisual();
 		if (role.equals(SOURCE_ROLE)) {
 			Point startPoint = connection.getStartPoint();
@@ -225,29 +248,6 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		} else {
 			throw new IllegalArgumentException("Cannot detach from anchor with role <" + role + ">.");
 		}
-	}
-
-	@Override
-	protected void doActivate() {
-		super.doActivate();
-		getContent().attributesProperty().addListener(edgeAttributesObserver);
-	}
-
-	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-		if (SOURCE_ROLE.equals(role)) {
-			getContent().setSource((org.eclipse.gef.graph.Node) contentAnchorage);
-		} else if (TARGET_ROLE.equals(role)) {
-			getContent().setTarget((org.eclipse.gef.graph.Node) contentAnchorage);
-		} else {
-			throw new IllegalArgumentException("Cannot attach to content anchorage with role <" + role + ">.");
-		}
-	}
-
-	@Override
-	protected void doDeactivate() {
-		getContent().attributesProperty().removeListener(edgeAttributesObserver);
-		super.doDeactivate();
 	}
 
 	@Override
@@ -380,6 +380,11 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 	}
 
 	@Override
+	protected void doRemoveChildVisual(IVisualPart<? extends Node> child, int index) {
+		getVisual().getChildren().remove(child.getVisual());
+	}
+
+	@Override
 	public Edge getContent() {
 		return (Edge) super.getContent();
 	}
@@ -401,11 +406,6 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				curve.getStyleClass().add(CSS_CLASS_CURVE);
 			}
 		}
-	}
-
-	@Override
-	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		getVisual().getChildren().remove(child.getVisual());
 	}
 
 	@Override

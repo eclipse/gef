@@ -17,29 +17,29 @@ import java.util.List;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.IShape;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricModel;
-import org.eclipse.gef.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef.mvc.fx.policies.FXCreationMenuOnClickPolicy;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.parts.IRootPart;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.policies.CreationMenuOnClickPolicy;
 
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
-public class FXCreationMenuItemProvider implements Provider<List<FXCreationMenuOnClickPolicy.ICreationMenuItem>> {
+public class FXCreationMenuItemProvider implements Provider<List<CreationMenuOnClickPolicy.ICreationMenuItem>> {
 
-	static class GeometricShapeItem implements FXCreationMenuOnClickPolicy.ICreationMenuItem {
-		private final FXGeometricShape template;
+	static class GeometricShapeItem implements CreationMenuOnClickPolicy.ICreationMenuItem {
+		private final GeometricShape template;
 
-		public GeometricShapeItem(FXGeometricShape content) {
+		public GeometricShapeItem(GeometricShape content) {
 			template = content;
 		}
 
 		@Override
 		public Object createContent() {
-			FXGeometricShape content = new FXGeometricShape(template.getGeometry(), template.getTransform(),
+			GeometricShape content = new GeometricShape(template.getGeometry(), template.getTransform(),
 					template.getFill(), template.getEffect());
 			content.setStroke(template.getStroke());
 			content.setStrokeWidth(template.getStrokeWidth());
@@ -57,25 +57,25 @@ public class FXCreationMenuItemProvider implements Provider<List<FXCreationMenuO
 		}
 
 		@Override
-		public IContentPart<Node, ? extends Node> findContentParent(IRootPart<Node, ? extends Node> rootPart) {
+		public IContentPart<? extends Node> findContentParent(IRootPart<? extends Node> rootPart) {
 			return rootPart.getContentPartChildren().get(0);
 		}
 	}
 
 	@Override
-	public List<FXCreationMenuOnClickPolicy.ICreationMenuItem> get() {
-		List<FXCreationMenuOnClickPolicy.ICreationMenuItem> items = new ArrayList<>();
+	public List<CreationMenuOnClickPolicy.ICreationMenuItem> get() {
+		List<CreationMenuOnClickPolicy.ICreationMenuItem> items = new ArrayList<>();
 		// handle shape
-		items.add(new GeometricShapeItem(new FXGeometricShape(FXGeometricModel.createHandleShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE, FXGeometricModel.GEF_SHADOW_EFFECT)));
+		items.add(new GeometricShapeItem(new GeometricShape(GeometricModel.createHandleShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE, GeometricModel.GEF_SHADOW_EFFECT)));
 		// E shape
 		items.add(new GeometricShapeItem(
-				new FXGeometricShape(FXGeometricModel.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 100, 22),
-						FXGeometricModel.GEF_COLOR_BLUE, FXGeometricModel.GEF_SHADOW_EFFECT)));
+				new GeometricShape(GeometricModel.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 100, 22),
+						GeometricModel.GEF_COLOR_BLUE, GeometricModel.GEF_SHADOW_EFFECT)));
 		// cursor shape
-		items.add(new GeometricShapeItem(new FXGeometricShape(FXGeometricModel.createCursorShapeGeometry(),
+		items.add(new GeometricShapeItem(new GeometricShape(GeometricModel.createCursorShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 227, 45), Color.WHITE, 2, Color.BLACK,
-				FXGeometricModel.GEF_SHADOW_EFFECT)));
+				GeometricModel.GEF_SHADOW_EFFECT)));
 		return items;
 	}
 

@@ -16,26 +16,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef.mvc.behaviors.IBehavior;
-import org.eclipse.gef.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
-import org.eclipse.gef.mvc.parts.IHandlePart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.IHandlePart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.scene.Node;
 
 /**
  * The {@link ZestFxSelectionHandlePartFactory} is a specialization of the
- * {@link FXDefaultSelectionHandlePartFactory} that suppresses the generation of
+ * {@link DefaultSelectionHandlePartFactory} that suppresses the generation of
  * multi selection handles.
  *
  * @author mwienand
  *
  */
-public class ZestFxSelectionHandlePartFactory extends FXDefaultSelectionHandlePartFactory {
+public class ZestFxSelectionHandlePartFactory extends DefaultSelectionHandlePartFactory {
 
 	@Override
-	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targets, IBehavior<Node> contextBehavior,
+	protected List<IHandlePart<? extends Node>> createMultiSelectionHandleParts(
+			List<? extends IVisualPart<? extends Node>> targets, IBehavior contextBehavior,
 			Map<Object, Object> contextMap) {
 		return Collections.emptyList();
 	}

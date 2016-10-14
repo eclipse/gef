@@ -11,19 +11,26 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui;
 
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXEditor;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.ui.MvcUiModule;
-import org.eclipse.gef.mvc.ui.parts.ContentSelectionProvider;
-import org.eclipse.gef.mvc.ui.parts.ISelectionProviderFactory;
+import org.eclipse.gef.mvc.fx.ui.parts.ContentSelectionProvider;
+import org.eclipse.gef.mvc.fx.ui.parts.ISelectionProviderFactory;
+import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
+import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 import javafx.embed.swt.FXCanvas;
 
@@ -34,11 +41,11 @@ import javafx.embed.swt.FXCanvas;
  * @author anyssen
  *
  */
-public class MvcFxUiModule extends MvcUiModule {
+public class MvcFxUiModule extends AbstractModule {
 
 	/**
-	 * Binds an {@link IFXCanvasFactory} that creates an {@link FXCanvasEx} as
-	 * the container for the {@link FXViewer}.
+	 * Binds an {@link IFXCanvasFactory} that can be used to create an
+	 * {@link FXCanvas}.
 	 */
 	protected void bindFXCanvasFactory() {
 		// TODO: change to assisted inject
@@ -52,6 +59,26 @@ public class MvcFxUiModule extends MvcUiModule {
 	}
 
 	/**
+	 * Binds {@link IOperationHistory} to the operation history of the Eclipse
+	 * workbench.
+	 */
+	protected void bindIOperationHistory() {
+		binder().bind(IOperationHistory.class).toInstance(PlatformUI
+				.getWorkbench().getOperationSupport().getOperationHistory());
+	}
+
+	/**
+	 * Binds a factory for assisted injection of
+	 * {@link UndoablePropertySheetPage} as {@link IPropertySheetPage}.
+	 */
+	protected void bindIPropertySheetPageFactory() {
+		install(new FactoryModuleBuilder()
+				.implement(IPropertySheetPage.class,
+						UndoablePropertySheetPage.class)
+				.build(IPropertySheetPageFactory.class));
+	}
+
+	/**
 	 * Binds a factory for the creation of {@link ContentSelectionProvider} as
 	 * {@link ISelectionProvider}.
 	 */
@@ -59,33 +86,35 @@ public class MvcFxUiModule extends MvcUiModule {
 		binder().bind(ISelectionProviderFactory.class)
 				.toInstance(new ISelectionProviderFactory() {
 
-					@SuppressWarnings("serial")
 					@Override
 					public ISelectionProvider create(
 							IWorkbenchPart workbenchPart) {
-						FXViewer contentViewer = null;
+						IViewer contentViewer = null;
 						if (workbenchPart instanceof AbstractFXView) {
 							contentViewer = ((AbstractFXView) workbenchPart)
 									.getDomain()
-									.getAdapter(AdapterKey.get(FXViewer.class,
-											FXDomain.CONTENT_VIEWER_ROLE));
+									.getAdapter(AdapterKey.get(IViewer.class,
+											IDomain.CONTENT_VIEWER_ROLE));
 						} else if (workbenchPart instanceof AbstractFXEditor) {
 							contentViewer = ((AbstractFXEditor) workbenchPart)
 									.getDomain()
-									.getAdapter(AdapterKey.get(FXViewer.class,
-											FXDomain.CONTENT_VIEWER_ROLE));
+									.getAdapter(AdapterKey.get(IViewer.class,
+											IDomain.CONTENT_VIEWER_ROLE));
 						} else {
 							throw new IllegalArgumentException(
 									"Cannot handle " + workbenchPart);
 						}
-						return new ContentSelectionProvider<>(contentViewer);
+						return new ContentSelectionProvider(contentViewer);
 					}
 				});
 	}
 
 	@Override
 	protected void configure() {
-		super.configure();
+		// bindings related to workbench integration
+		bindIOperationHistory();
+		bindIPropertySheetPageFactory();
+
 		// install FXCanvas factory
 		bindFXCanvasFactory();
 		bindISelectionProviderFactory();

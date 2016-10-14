@@ -21,11 +21,11 @@ import org.eclipse.gef.fx.listeners.VisualChangeListener;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.fx.operations.FXTransformOperation;
-import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.operations.TransformOperation;
+import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import javafx.collections.MapChangeListener;
@@ -47,8 +47,7 @@ import javafx.util.Pair;
  * @author anyssen
  *
  */
-public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
-		implements IFXTransformableContentPart<Group> {
+public abstract class AbstractLabelPart extends AbstractContentPart<Group> implements ITransformableContentPart<Group> {
 
 	/**
 	 * The CSS class that is assigned to the visualization of the
@@ -77,11 +76,6 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 
 	private Text text;
 
-	@Override
-	protected void doAttachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		vcl.register(anchorage.getVisual(), getVisual());
-	}
-
 	/**
 	 * Computes a position for this label.
 	 *
@@ -106,20 +100,25 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 	}
 
 	@Override
-	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		vcl.unregister();
-	}
-
-	@Override
 	protected void doActivate() {
 		super.doActivate();
 		getContent().getKey().attributesProperty().addListener(elementAttributesObserver);
 	}
 
 	@Override
+	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
+		vcl.register(anchorage.getVisual(), getVisual());
+	}
+
+	@Override
 	protected void doDeactivate() {
 		getContent().getKey().attributesProperty().removeListener(elementAttributesObserver);
 		super.doDeactivate();
+	}
+
+	@Override
+	protected void doDetachFromAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
+		vcl.unregister();
 	}
 
 	@Override
@@ -191,8 +190,8 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 	protected void refreshPosition(Node visual, Point position) {
 		if (position != null) {
 			// translate using a transform operation
-			FXTransformOperation refreshPositionOp = new FXTransformOperation(
-					getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get(),
+			TransformOperation refreshPositionOp = new TransformOperation(
+					getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get(),
 					Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
 			try {
 				refreshPositionOp.execute(null, null);

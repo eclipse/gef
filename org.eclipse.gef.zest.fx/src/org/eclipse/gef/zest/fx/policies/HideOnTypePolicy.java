@@ -12,24 +12,23 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.policies;
 
-import org.eclipse.gef.mvc.fx.policies.IFXOnStrokePolicy;
-import org.eclipse.gef.mvc.fx.policies.IFXOnTypePolicy;
-import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnStrokePolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnTypePolicy;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link HideOnTypePolicy} is an {@link IFXOnTypePolicy} that hides its
+ * The {@link HideOnTypePolicy} is an {@link IOnTypePolicy} that hides its
  * {@link #getHost() host} {@link NodePart} upon the press of a
  * {@link KeyCode#P} key.
  *
  * @author mwienand
  *
  */
-public class HideOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnStrokePolicy {
+public class HideOnTypePolicy extends AbstractInteractionPolicy implements IOnStrokePolicy {
 
 	@Override
 	public void abortPress() {

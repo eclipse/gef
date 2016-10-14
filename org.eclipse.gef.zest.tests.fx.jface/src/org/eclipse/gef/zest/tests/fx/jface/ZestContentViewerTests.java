@@ -27,10 +27,10 @@ import java.util.Map;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.ContentModel;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.models.ContentModel;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.jface.IGraphAttributesProvider;
 import org.eclipse.gef.zest.fx.jface.IGraphContentProvider;
@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -55,8 +54,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.google.common.reflect.TypeToken;
 
 import javafx.scene.Node;
 
@@ -88,7 +85,7 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(org.eclipse.jface.viewers.Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
@@ -168,7 +165,7 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(org.eclipse.jface.viewers.Viewer viewer, Object oldInput, Object newInput) {
 			input = newInput;
 		}
 	}
@@ -258,7 +255,7 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(org.eclipse.jface.viewers.Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
@@ -473,14 +470,13 @@ public class ZestContentViewerTests {
 		viewer.setInput(new Object());
 
 		// determine "First" node
-		FXViewer fxViewer = viewer.getFXViewer();
+		Viewer fxViewer = viewer.getFXViewer();
 		org.eclipse.gef.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 
 		// select "First" node
 		expectation.add(firstNode);
-		IContentPart<Node, ? extends Node> firstPart = fxViewer.getContentPartMap().get(firstNode);
-		fxViewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
-		}).prependToSelection(Collections.singletonList(firstPart));
+		IContentPart<? extends Node> firstPart = fxViewer.getContentPartMap().get(firstNode);
+		fxViewer.getAdapter(SelectionModel.class).prependToSelection(Collections.singletonList(firstPart));
 	}
 
 	@Test
@@ -500,11 +496,10 @@ public class ZestContentViewerTests {
 		viewer.setInput(new Object());
 		org.eclipse.gef.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 		viewer.setSelection(new StructuredSelection(Arrays.asList(firstNode)));
-		List<IContentPart<Node, ? extends Node>> selected = viewer.getFXViewer()
-				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelectionUnmodifiable();
+		List<IContentPart<? extends Node>> selected = viewer.getFXViewer().getAdapter(SelectionModel.class)
+				.getSelectionUnmodifiable();
 		assertEquals(1, selected.size());
-		IContentPart<Node, ? extends Node> selectedPart = selected.get(0);
+		IContentPart<? extends Node> selectedPart = selected.get(0);
 		assertEquals(firstNode, selectedPart.getContent());
 	}
 

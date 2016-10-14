@@ -25,11 +25,11 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef.mvc.fx.parts.IFXResizableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IFXTransformableVisualPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
+import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import com.google.common.collect.HashMultimap;
@@ -72,8 +72,8 @@ import javafx.scene.transform.Transform;
  * @author mwienand
  *
  */
-public class NodePart extends AbstractFXContentPart<Group>
-		implements IFXTransformableContentPart<Group>, IFXResizableContentPart<Group> {
+public class NodePart extends AbstractContentPart<Group>
+		implements ITransformableContentPart<Group>, IResizableContentPart<Group> {
 
 	/**
 	 * JavaFX Node displaying a small icon representing a nested graph.
@@ -187,11 +187,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	private Pane nestedContentPane;
 	private AnchorPane nestedContentAnchorPane;
 
-	@Override
-	protected void doAddChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		getNestedContentPane().getChildren().add(index, child.getVisual());
-	}
-
 	/**
 	 * Creates the shape used to display the node's border and background.
 	 *
@@ -223,6 +218,17 @@ public class NodePart extends AbstractFXContentPart<Group>
 		scale.setX(DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
 		scale.setY(DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
 		return nestedChildrenPaneScaled;
+	}
+
+	@Override
+	protected void doActivate() {
+		super.doActivate();
+		getContent().attributesProperty().addListener(nodeAttributesObserver);
+	}
+
+	@Override
+	protected void doAddChildVisual(IVisualPart<? extends Node> child, int index) {
+		getNestedContentPane().getChildren().add(index, child.getVisual());
 	}
 
 	@Override
@@ -324,12 +330,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 		// place the box below the other visuals
 		group.getChildren().addAll(shape, vbox);
 		return group;
-	}
-
-	@Override
-	protected void doActivate() {
-		super.doActivate();
-		getContent().attributesProperty().addListener(nodeAttributesObserver);
 	}
 
 	@Override
@@ -435,7 +435,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 		Point position = ZestProperties.getPosition(node);
 		if (position != null) {
 			// translate using a transform operation
-			Affine transform = getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
+			Affine transform = getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
 			Affine newTransform = Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y));
 			if (!NodeUtils.equals(transform, newTransform)) {
 				NodeUtils.setAffine(transform, newTransform);
@@ -448,6 +448,11 @@ public class NodePart extends AbstractFXContentPart<Group>
 		} else {
 			getVisual().autosize();
 		}
+	}
+
+	@Override
+	protected void doRemoveChildVisual(IVisualPart<? extends Node> child, int index) {
+		getNestedContentPane().getChildren().remove(index);
 	}
 
 	@Override
@@ -586,11 +591,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	@Override
-	protected void doRemoveChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		getNestedContentPane().getChildren().remove(index);
-	}
-
-	@Override
 	public void resizeContent(Dimension size) {
 		ZestProperties.setSize(getContent(), size);
 	}
@@ -615,7 +615,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 			Bounds hostBounds = getVisual().getLayoutBounds();
 			double minx = hostBounds.getMinX();
 			double miny = hostBounds.getMinY();
-			Affine tx = getAdapter(IFXTransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
+			Affine tx = getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
 			position = new Point(tx.getTx() + minx, tx.getTy() + miny);
 		} else {
 			position = transform.getTransformed(ZestProperties.getPosition(getContent()));

@@ -11,7 +11,7 @@
  *******************************************************************************/
 /**
  * This package contains a JavaFX-specific
- * {@link org.eclipse.gef.mvc.viewer.IViewer} implementation:
- * {@link org.eclipse.gef.mvc.fx.viewer.FXViewer}.
+ * {@link org.eclipse.gef.mvc.fx.viewer.IViewer} implementation:
+ * {@link org.eclipse.gef.mvc.fx.viewer.Viewer}.
  */
 package org.eclipse.gef.mvc.fx.viewer;

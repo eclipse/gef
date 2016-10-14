@@ -20,14 +20,14 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * The {@link GeometricBoundsProvider} is a {@link Provider Provider
- * <IGeometry>} that returns a {@link Rectangle} that corresponds to the
+ * &lt;IGeometry&gt;} that returns a {@link Rectangle} that corresponds to the
  * geometric bounds of its host visual, i.e. it does not include the stroke of
  * the visual or other visual properties (e.g. clip or effect). The
  * {@link Rectangle} is specified within the local coordinate system of the host
  * visual.
  *
  * @author anyssen
- * @auther mwienand
+ * @author mwienand
  *
  */
 public class GeometricBoundsProvider extends GeometricOutlineProvider {

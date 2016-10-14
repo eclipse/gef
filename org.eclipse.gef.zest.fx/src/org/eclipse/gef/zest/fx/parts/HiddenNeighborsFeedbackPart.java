@@ -14,8 +14,8 @@ package org.eclipse.gef.zest.fx.parts;
 
 import java.util.Set;
 
-import org.eclipse.gef.mvc.fx.parts.AbstractFXFeedbackPart;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.AbstractFeedbackPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 
 import javafx.geometry.Bounds;
@@ -26,7 +26,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 /**
- * The {@link HiddenNeighborsFeedbackPart} is an {@link AbstractFXFeedbackPart}
+ * The {@link HiddenNeighborsFeedbackPart} is an {@link AbstractFeedbackPart}
  * that displays the number of hidden neighbors (see
  * {@link HidingModel#getHiddenNeighbors(org.eclipse.gef.graph.Node)}) of its
  * first anchorage.
@@ -35,13 +35,13 @@ import javafx.scene.text.Text;
  *
  */
 // TODO: only applicable for NodePart (anchorage)
-public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
+public class HiddenNeighborsFeedbackPart extends AbstractFeedbackPart<Group> {
 
 	private Circle circle;
 	private Text text;
 
 	@Override
-	protected void doAttachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		super.doAttachToAnchorageVisual(anchorage, role);
 		getVisual().visibleProperty().bind(anchorage.getVisual().visibleProperty());
 	}
@@ -64,18 +64,18 @@ public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 	}
 
 	@Override
-	protected void doDetachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void doDetachFromAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		super.doDetachFromAnchorageVisual(anchorage, role);
 		getVisual().visibleProperty().unbind();
 	}
 
 	@Override
 	protected void doRefreshVisual(Group visual) {
-		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchoragesUnmodifiable().keySet();
+		Set<IVisualPart<? extends Node>> keySet = getAnchoragesUnmodifiable().keySet();
 		if (keySet.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node, ? extends Node> anchorage = keySet.iterator().next();
+		IVisualPart<? extends Node> anchorage = keySet.iterator().next();
 		if (((NodePart) anchorage).getContent() == null) {
 			return;
 		}

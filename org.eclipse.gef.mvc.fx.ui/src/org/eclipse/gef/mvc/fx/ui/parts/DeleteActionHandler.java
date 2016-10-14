@@ -16,18 +16,17 @@ import java.util.ArrayList;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
-import org.eclipse.gef.mvc.fx.domain.FXDomain;
-import org.eclipse.gef.mvc.fx.tools.FXTypeTool;
-import org.eclipse.gef.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef.mvc.models.SelectionModel;
-import org.eclipse.gef.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.parts.IContentPart;
-import org.eclipse.gef.mvc.policies.DeletionPolicy;
+import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
+import org.eclipse.gef.mvc.fx.tools.TypeTool;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
-
-import com.google.common.reflect.TypeToken;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -37,7 +36,7 @@ import javafx.scene.Scene;
 
 /**
  * An {@link Action} to handle deletion of selection elements in an
- * {@link FXViewer}
+ * {@link Viewer}
  * <P>
  * IMPORTANT: Usually, an action handler will only be executed in case the
  * widget that currently has focus does not already consume the triggering key
@@ -46,21 +45,21 @@ import javafx.scene.Scene;
  * {@link Scene}, while a consumption of the mapping JavaFX event is not
  * propagated back.
  * <p>
- * Additionally, the JavaFX event handler (i.e. the {@link FXTypeTool}, in case
- * its registered at the {@link FXDomain}) will be notified after the execution
- * of the action handler, because {@link FXCanvasEx} wraps the event forwarding
- * in an {@link Platform#runLater(Runnable)} call.
+ * Additionally, the JavaFX event handler (i.e. the {@link TypeTool}, in case
+ * its registered at the {@link Domain}) will be notified after the execution of
+ * the action handler, because {@link FXCanvasEx} wraps the event forwarding in
+ * an {@link Platform#runLater(Runnable)} call.
  *
  * @author anyssen
  *
  */
 public class DeleteActionHandler extends Action {
 
-	private FXViewer viewer = null;
-	private ListChangeListener<IContentPart<?, ?>> selectionListener = new ListChangeListener<IContentPart<?, ?>>() {
+	private IViewer viewer = null;
+	private ListChangeListener<IContentPart<? extends Node>> selectionListener = new ListChangeListener<IContentPart<? extends Node>>() {
 		@Override
 		public void onChanged(
-				ListChangeListener.Change<? extends IContentPart<?, ?>> c) {
+				ListChangeListener.Change<? extends IContentPart<? extends Node>> c) {
 			updateEnabledState(getSelectionModel());
 		}
 	};
@@ -74,31 +73,26 @@ public class DeleteActionHandler extends Action {
 		setEnabled(false);
 	}
 
-	@SuppressWarnings("serial")
-	private SelectionModel<Node> getSelectionModel() {
+	private SelectionModel getSelectionModel() {
 		if (viewer == null) {
 			return null;
 		}
-		return viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
-		});
+		return viewer.getAdapter(SelectionModel.class);
 	}
 
 	/**
 	 * Binds this {@link DeleteActionHandler} to the given viewer.
 	 *
 	 * @param viewer
-	 *            The {@link FXViewer} to bind this {@link Action} to. May be
+	 *            The {@link IViewer} to bind this {@link Action} to. May be
 	 *            <code>null</code> to unbind this action.
 	 */
-	@SuppressWarnings("serial")
-	public void init(FXViewer viewer) {
-		SelectionModel<Node> oldSelectionModel = getSelectionModel();
-		SelectionModel<Node> newSelectionModel = null;
+	public void init(IViewer viewer) {
+		SelectionModel oldSelectionModel = getSelectionModel();
+		SelectionModel newSelectionModel = null;
 		this.viewer = viewer;
 		if (viewer != null) {
-			newSelectionModel = viewer
-					.getAdapter(new TypeToken<SelectionModel<Node>>() {
-					});
+			newSelectionModel = viewer.getAdapter(SelectionModel.class);
 		}
 		// register listeners to update enabled state
 		if (oldSelectionModel != null
@@ -114,19 +108,17 @@ public class DeleteActionHandler extends Action {
 		updateEnabledState(newSelectionModel);
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void runWithEvent(Event event) {
 		// delete selected parts
-		DeletionPolicy<Node> deletionPolicy = viewer.getRootPart()
-				.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
-				});
+		DeletionPolicy deletionPolicy = viewer.getRootPart()
+				.getAdapter(DeletionPolicy.class);
 		if (deletionPolicy == null) {
 			throw new IllegalStateException(
 					"DeleteActionHandler requires a DeletionPolicy to be registered at the viewer's root part.");
 		}
 		deletionPolicy.init();
-		for (IContentPart<Node, ? extends Node> s : new ArrayList<>(
+		for (IContentPart<? extends Node> s : new ArrayList<>(
 				getSelectionModel().getSelectionUnmodifiable())) {
 			deletionPolicy.delete(s);
 		}
@@ -150,7 +142,7 @@ public class DeleteActionHandler extends Action {
 	 * @param selectionModel
 	 *            The {@link SelectionModel} to obtain the selection from.
 	 */
-	protected void updateEnabledState(SelectionModel<Node> selectionModel) {
+	protected void updateEnabledState(SelectionModel selectionModel) {
 		if (selectionModel == null) {
 			setEnabled(false);
 		} else {

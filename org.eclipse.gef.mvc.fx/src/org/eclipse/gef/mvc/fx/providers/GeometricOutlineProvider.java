@@ -17,7 +17,7 @@ import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.IGeometry;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
@@ -35,7 +35,7 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * The {@link GeometricOutlineProvider} is a {@link Provider Provider
- * <IGeometry>} that returns an {@link IGeometry} that corresponds to the
+ * &lt;IGeometry&gt;} that returns an {@link IGeometry} that corresponds to the
  * geometric outline of its host visual, i.e. it does not include the stroke of
  * the visual or other visual properties (e.g. clip or effect). The
  * {@link IGeometry} is specified within the local coordinate system of the host
@@ -61,7 +61,7 @@ import javafx.scene.shape.Rectangle;
  *
  */
 public class GeometricOutlineProvider
-		extends IAdaptable.Bound.Impl<IVisualPart<Node, ? extends Node>>
+		extends IAdaptable.Bound.Impl<IVisualPart<? extends Node>>
 		implements Provider<IGeometry> {
 
 	@Override

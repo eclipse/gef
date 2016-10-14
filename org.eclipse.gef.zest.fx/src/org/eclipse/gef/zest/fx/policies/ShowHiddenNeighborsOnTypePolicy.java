@@ -12,23 +12,22 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.policies;
 
-import org.eclipse.gef.mvc.fx.policies.IFXOnStrokePolicy;
-import org.eclipse.gef.mvc.fx.policies.IFXOnTypePolicy;
-import org.eclipse.gef.mvc.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnStrokePolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnTypePolicy;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link ShowHiddenNeighborsOnTypePolicy} is an {@link IFXOnTypePolicy}
+ * The {@link ShowHiddenNeighborsOnTypePolicy} is an {@link IOnTypePolicy}
  * that shows all hidden neighbors of its host upon {@link KeyCode#E} key press.
  *
  * @author mwienand
  *
  */
-public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<Node> implements IFXOnStrokePolicy {
+public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy implements IOnStrokePolicy {
 
 	@Override
 	public void abortPress() {

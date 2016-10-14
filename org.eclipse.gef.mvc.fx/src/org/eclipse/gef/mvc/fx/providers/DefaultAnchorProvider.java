@@ -14,15 +14,15 @@ package org.eclipse.gef.mvc.fx.providers;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.fx.anchors.ChopBoxStrategy;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
+import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.IComputationStrategy;
 import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
-import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.IGeometry;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.value.ChangeListener;
@@ -37,7 +37,7 @@ import javafx.scene.Node;
  * Otherwise, a {@link DynamicAnchor} with a {@link ChopBoxStrategy} is used.
  */
 public class DefaultAnchorProvider
-		extends IAdaptable.Bound.Impl<IVisualPart<Node, ? extends Node>>
+		extends IAdaptable.Bound.Impl<IVisualPart<? extends Node>>
 		implements IAnchorProvider {
 
 	private DynamicAnchor defaultAnchor;
@@ -83,7 +83,7 @@ public class DefaultAnchorProvider
 	}
 
 	@Override
-	public IAnchor get(IVisualPart<Node, ? extends Node> anchoredPart) {
+	public IAnchor get(IVisualPart<? extends Node> anchoredPart) {
 		Node anchoredVisual = anchoredPart.getVisual();
 		// check if orthogonal anchor should be used
 		if (anchoredVisual instanceof Connection) {
@@ -97,8 +97,7 @@ public class DefaultAnchorProvider
 	}
 
 	@Override
-	public IAnchor get(IVisualPart<Node, ? extends Node> anchoredPart,
-			String role) {
+	public IAnchor get(IVisualPart<? extends Node> anchoredPart, String role) {
 		return get(anchoredPart);
 	}
 
@@ -148,19 +147,21 @@ public class DefaultAnchorProvider
 						// respective anchorage changes.
 						anchor.anchorageProperty()
 								.addListener(new ChangeListener<Node>() {
-							@Override
-							public void changed(
-									ObservableValue<? extends Node> observable,
-									Node oldValue, Node newValue) {
-								if (oldValue != null) {
-									unbind(oldValue.layoutBoundsProperty());
-								}
-								if (newValue != null) {
-									bind(newValue.layoutBoundsProperty());
-								}
-								invalidate();
-							}
-						});
+									@Override
+									public void changed(
+											ObservableValue<? extends Node> observable,
+											Node oldValue, Node newValue) {
+										if (oldValue != null) {
+											unbind(oldValue
+													.layoutBoundsProperty());
+										}
+										if (newValue != null) {
+											bind(newValue
+													.layoutBoundsProperty());
+										}
+										invalidate();
+									}
+								});
 						bind(anchor.getAnchorage().layoutBoundsProperty());
 					}
 

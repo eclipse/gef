@@ -19,8 +19,8 @@ import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef.mvc.behaviors.IBehavior;
-import org.eclipse.gef.mvc.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.zest.fx.jface.IGraphAttributesProvider;
 import org.eclipse.gef.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef.zest.fx.jface.ZestContentViewer;
@@ -157,9 +157,8 @@ public class JFaceCustomNodeExample {
 		private Injector injector;
 
 		@Override
-		public IContentPart<Node, ? extends Node> createContentPart(
-				Object content, IBehavior<Node> contextBehavior,
-				Map<Object, Object> contextMap) {
+		public IContentPart<? extends Node> createContentPart(Object content,
+				IBehavior contextBehavior, Map<Object, Object> contextMap) {
 			if (content instanceof org.eclipse.gef.graph.Node) {
 				// create custom node if we find the custom attribute
 				org.eclipse.gef.graph.Node n = (org.eclipse.gef.graph.Node) content;

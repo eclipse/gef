@@ -20,29 +20,29 @@ import javafx.scene.paint.Color;
 
 public class PaletteModel {
 
-	private static final FXGeometricShape HANDLE_PROTO = new FXGeometricShape(
-			FXGeometricModel.createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 23, 5), Color.WHITE,
-			FXGeometricModel.GEF_SHADOW_EFFECT);
-	private static final FXGeometricShape CURSOR_PROTO = new FXGeometricShape(
-			FXGeometricModel.createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1, 5, 32), Color.WHITE, 2,
-			Color.BLACK, FXGeometricModel.GEF_SHADOW_EFFECT);
-	private static final FXGeometricShape E_PROTO = new FXGeometricShape(FXGeometricModel.createEShapeGeometry(),
-			new AffineTransform(1, 0, 0, 1, 100, 22), FXGeometricModel.GEF_COLOR_BLUE,
-			FXGeometricModel.GEF_SHADOW_EFFECT);
-	private static final FXGeometricShape F_PROTO = new FXGeometricShape(FXGeometricModel.createFShapeGeometry(),
-			new AffineTransform(1, 0, 0, 1, 175, 22), FXGeometricModel.GEF_COLOR_BLUE,
-			FXGeometricModel.GEF_SHADOW_EFFECT);
-	private static final FXGeometricShape DOT_PROTO = new FXGeometricShape(FXGeometricModel.createDotShapeGeometry(),
-			new AffineTransform(1, 0, 0, 1, 87, 104), FXGeometricModel.GEF_COLOR_BLUE,
-			FXGeometricModel.GEF_SHADOW_EFFECT);
+	private static final GeometricShape HANDLE_PROTO = new GeometricShape(
+			GeometricModel.createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 23, 5), Color.WHITE,
+			GeometricModel.GEF_SHADOW_EFFECT);
+	private static final GeometricShape CURSOR_PROTO = new GeometricShape(
+			GeometricModel.createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1, 5, 32), Color.WHITE, 2,
+			Color.BLACK, GeometricModel.GEF_SHADOW_EFFECT);
+	private static final GeometricShape E_PROTO = new GeometricShape(GeometricModel.createEShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 100, 22), GeometricModel.GEF_COLOR_BLUE,
+			GeometricModel.GEF_SHADOW_EFFECT);
+	private static final GeometricShape F_PROTO = new GeometricShape(GeometricModel.createFShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 175, 22), GeometricModel.GEF_COLOR_BLUE,
+			GeometricModel.GEF_SHADOW_EFFECT);
+	private static final GeometricShape DOT_PROTO = new GeometricShape(GeometricModel.createDotShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 87, 104), GeometricModel.GEF_COLOR_BLUE,
+			GeometricModel.GEF_SHADOW_EFFECT);
 
-	private final List<FXGeometricShape> creatableShapes = new ArrayList<>();
+	private final List<GeometricShape> creatableShapes = new ArrayList<>();
 
 	public PaletteModel() {
 		initCreatableGeometries();
 	}
 
-	public List<FXGeometricShape> getCreatableShapes() {
+	public List<GeometricShape> getCreatableShapes() {
 		return creatableShapes;
 	}
 

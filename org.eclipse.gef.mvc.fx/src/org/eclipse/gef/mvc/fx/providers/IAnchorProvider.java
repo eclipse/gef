@@ -12,7 +12,7 @@
 package org.eclipse.gef.mvc.fx.providers;
 
 import org.eclipse.gef.fx.anchors.IAnchor;
-import org.eclipse.gef.mvc.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.scene.Node;
 
@@ -33,7 +33,7 @@ public interface IAnchorProvider {
 	 * @return An {@link IAnchor} that should be used to provide a position for
 	 *         the given anchored {@link IVisualPart}.
 	 */
-	public IAnchor get(IVisualPart<Node, ? extends Node> anchoredPart);
+	public IAnchor get(IVisualPart<? extends Node> anchoredPart);
 
 	/**
 	 * Returns an {@link IAnchor} that should be used to provide a position for
@@ -48,7 +48,6 @@ public interface IAnchorProvider {
 	 * @return An {@link IAnchor} that should be used to provide a position for
 	 *         the given anchored {@link IVisualPart} and the given role.
 	 */
-	public IAnchor get(IVisualPart<Node, ? extends Node> anchoredPart,
-			String role);
+	public IAnchor get(IVisualPart<? extends Node> anchoredPart, String role);
 
 }

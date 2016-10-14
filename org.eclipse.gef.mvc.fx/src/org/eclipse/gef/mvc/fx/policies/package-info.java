@@ -10,7 +10,7 @@
  *
  *******************************************************************************/
 /**
- * This package contains all {@link org.eclipse.gef.mvc.policies.IPolicy}
+ * This package contains all {@link org.eclipse.gef.mvc.fx.policies.IPolicy}
  * implementations contributed by MVC.FX.
  */
 package org.eclipse.gef.mvc.fx.policies;
