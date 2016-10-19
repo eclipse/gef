@@ -126,18 +126,6 @@ public interface IViewer extends IAdaptable, IActivatable, IDisposable,
 	public boolean isViewerFocused();
 
 	/**
-	 * Returns <code>true</code> if the given visual is contained within this
-	 * {@link IViewer}. Otherwise returns <code>false</code>.
-	 *
-	 * @param node
-	 *            The visual for which is determined if it is contained within
-	 *            this {@link IViewer}.
-	 * @return <code>true</code> if the given visual is contained within this
-	 *         {@link IViewer}, otherwise <code>false</code>.
-	 */
-	public boolean isViewerVisual(Node node);
-
-	/**
 	 * Ensure that the visual of the given {@link IVisualPart} is visible in
 	 * this viewer.
 	 *

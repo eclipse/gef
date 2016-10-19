@@ -388,6 +388,27 @@ public class NodeUtils {
 	}
 
 	/**
+	 * Returns true if the given {@link Node} is contained within the visual
+	 * hierarchy of the given {@link Parent}.
+	 *
+	 * @param parent
+	 *            The {@link Parent}, whose hierarchy is to be searched.
+	 * @param node
+	 *            The {@link Node} to test.
+	 * @return <code>true</code> if the given node is contained in the visual
+	 *         hierarchy of the {@link Parent}, <code>false</code> otherwise.
+	 */
+	public static boolean isNested(Parent parent, Node node) {
+		while (node != null) {
+			if (node == parent) {
+				return true;
+			}
+			node = node.getParent();
+		}
+		return false;
+	}
+
+	/**
 	 * Transforms the given {@link IGeometry} from the local coordinate system
 	 * of the given {@link Node} into the coordinate system of the {@link Node}
 	 * 's parent.

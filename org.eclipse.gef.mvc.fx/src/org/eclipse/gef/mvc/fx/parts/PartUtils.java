@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
+import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
@@ -153,7 +154,7 @@ public class PartUtils {
 
 		// test if the target node is contained within any of the viewers
 		for (IViewer viewer : viewers.values()) {
-			if (viewer.isViewerVisual(target)) {
+			if (NodeUtils.isNested(viewer.getCanvas(), target)) {
 				return viewer;
 			}
 		}

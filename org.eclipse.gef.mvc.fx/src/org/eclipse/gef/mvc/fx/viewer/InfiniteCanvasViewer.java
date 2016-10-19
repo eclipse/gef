@@ -22,6 +22,7 @@ import org.eclipse.gef.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -367,23 +368,14 @@ public class InfiniteCanvasViewer implements IViewer {
 		return viewerFocusedProperty.get();
 	}
 
-	@Override
-	public boolean isViewerVisual(Node node) {
-		while (node != null) {
-			if (node == infiniteCanvas) {
-				return true;
-			}
-			node = node.getParent();
-		}
-		return false;
-	}
-
 	private void onFocusOwnerChanged(Node oldFocusOwner, Node newFocusOwner) {
-		if (oldFocusOwner != null && isViewerVisual(oldFocusOwner)) {
+		if (oldFocusOwner != null
+				&& NodeUtils.isNested(getCanvas(), oldFocusOwner)) {
 			oldFocusOwner.focusedProperty()
 					.removeListener(focusOwnerFocusedObserver);
 		}
-		if (newFocusOwner != null && isViewerVisual(newFocusOwner)) {
+		if (newFocusOwner != null
+				&& NodeUtils.isNested(getCanvas(), newFocusOwner)) {
 			newFocusOwner.focusedProperty()
 					.addListener(focusOwnerFocusedObserver);
 			// check if viewer is focused
