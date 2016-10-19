@@ -19,8 +19,8 @@ import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.mvc.examples.logo.behaviors.PaletteFocusBehavior;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurveCreationHoverHandlePart;
-import org.eclipse.gef.mvc.examples.logo.parts.GeometricElementDeletionHandlePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
+import org.eclipse.gef.mvc.examples.logo.parts.GeometricElementDeletionHandlePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricModelPart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleContentPartFactory;
@@ -44,7 +44,6 @@ import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
@@ -101,10 +100,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickPolicy.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
-	}
-
-	protected void bindContentModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentModel.class);
 	}
 
 	/**
@@ -284,11 +279,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
-	protected void bindIRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(IRootPart.class)
-				.in(AdaptableScopes.typed(IViewer.class));
-	}
-
 	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
@@ -347,6 +337,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
 	}
 
+	protected void bindIRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(IRootPart.class)
+				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
 	@Override
 	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
@@ -380,7 +375,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	 */
 	protected void bindPaletteViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind models
-		bindContentModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindFocusModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindHoverModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
@@ -464,7 +458,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				AdapterMaps.getAdapterMapBinder(binder(), RectangleSegmentHandlePart.class));
 
 		// hover handles
-		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GeometricElementDeletionHandlePart.class));
+		bindFXDeleteHandlePartAdapters(
+				AdapterMaps.getAdapterMapBinder(binder(), GeometricElementDeletionHandlePart.class));
 		bindFXCreateCurveHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), GeometricCurveCreationHoverHandlePart.class));
 

@@ -19,6 +19,8 @@ import org.eclipse.gef.common.activate.ActivatableSupport;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
+import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
@@ -32,11 +34,14 @@ import com.google.inject.Inject;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -59,6 +64,12 @@ public class InfiniteCanvasViewer implements IViewer {
 
 	private ReadOnlyBooleanWrapper viewerFocusedProperty = new ReadOnlyBooleanWrapper(
 			false);
+
+	private ObservableList<Object> contents = CollectionUtils
+			.observableArrayList();
+
+	private ReadOnlyListWrapper<Object> contentsProperty = new ReadOnlyListWrapperEx<>(
+			this, CONTENTS_PROPERTY, contents);
 
 	private BooleanBinding viewerFocusedPropertyBinding = new BooleanBinding() {
 		@Override
@@ -126,6 +137,7 @@ public class InfiniteCanvasViewer implements IViewer {
 	private ContentPartPool contentPartPool;
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
+
 	private AdaptableSupport<IViewer> ads = new AdaptableSupport<>(this);
 
 	private Map<Object, IContentPart<? extends Node>> contentsToContentPartMap = new IdentityHashMap<>();
@@ -170,6 +182,11 @@ public class InfiniteCanvasViewer implements IViewer {
 	@Override
 	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
 		return ads.adaptersProperty();
+	}
+
+	@Override
+	public ReadOnlyListProperty<Object> contentsProperty() {
+		return contentsProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -302,6 +319,11 @@ public class InfiniteCanvasViewer implements IViewer {
 	@Override
 	public Map<Object, IContentPart<? extends Node>> getContentPartMap() {
 		return contentsToContentPartMap;
+	}
+
+	@Override
+	public ObservableList<Object> getContents() {
+		return contents;
 	}
 
 	@Override

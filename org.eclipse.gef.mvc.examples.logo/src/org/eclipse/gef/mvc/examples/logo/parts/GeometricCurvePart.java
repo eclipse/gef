@@ -35,7 +35,6 @@ import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.Decoration;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.RoutingStyle;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.fx.parts.IResizableVisualPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;

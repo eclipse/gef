@@ -24,7 +24,6 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
@@ -137,7 +136,7 @@ public class TransformPolicyTests {
 		panel.setScene(scene);
 		// set viewer contents
 		Point content = new Point(0, 0);
-		viewer.getAdapter(ContentModel.class).getContents().setAll(Collections.singletonList(content));
+		viewer.getContents().setAll(Collections.singletonList(content));
 		// activate domain
 		domain.activate();
 		// get content part for the content object

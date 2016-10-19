@@ -30,7 +30,6 @@ import org.eclipse.gef.mvc.fx.behaviors.RevealPrimarySelectionBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
@@ -70,8 +69,8 @@ import org.eclipse.gef.mvc.fx.tools.PinchSpreadTool;
 import org.eclipse.gef.mvc.fx.tools.RotateTool;
 import org.eclipse.gef.mvc.fx.tools.ScrollTool;
 import org.eclipse.gef.mvc.fx.tools.TypeTool;
-import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
@@ -284,25 +283,6 @@ public class MvcFxModule extends AbstractModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(IDomain.CONTENT_VIEWER_ROLE))
 				.to(IViewer.class);
-	}
-
-	/**
-	 * Adds a binding for {@link ContentModel} to the {@link AdapterMap} binder
-	 * for {@link IViewer}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link IViewer} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindContentModelAsContentViewerAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ContentModel.class)
-				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
 	/**
@@ -738,7 +718,6 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindIViewerAdaptersForContentViewer(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		bindIContentPartFactoryAsContentViewerAdapter(adapterMapBinder);
-		bindContentModelAsContentViewerAdapter(adapterMapBinder);
 		bindGridModelAsContentViewerAdapter(adapterMapBinder);
 		bindFocusModelAsContentViewerAdapter(adapterMapBinder);
 		bindHoverModelAsContentViewerAdapter(adapterMapBinder);

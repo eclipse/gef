@@ -24,14 +24,13 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.operations.ChangeContentsOperation;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.models.NavigationModel.ViewportState;
 
@@ -120,7 +119,7 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 		super("Navigate Graph");
 
 		this.viewer = viewer;
-		sourceGraph = (Graph) viewer.getAdapter(ContentModel.class).getContents().get(0);
+		sourceGraph = (Graph) viewer.getContents().get(0);
 		// retrieve initial viewport state of source graph
 		navigationModel = viewer.getAdapter(NavigationModel.class);
 

@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
@@ -56,7 +55,6 @@ public class FocusTraversalPolicyTests {
 
 	private IDomain domain;
 	private IViewer viewer;
-	private ContentModel contentModel;
 	private FocusModel focusModel;
 	private FocusTraversalPolicy traversePolicy;
 
@@ -95,12 +93,10 @@ public class FocusTraversalPolicyTests {
 				focusModel = viewer.getAdapter(FocusModel.class);
 				IRootPart<? extends Node> rootPart = viewer.getRootPart();
 				traversePolicy = rootPart.getAdapter(FocusTraversalPolicy.class);
-				contentModel = viewer.getAdapter(ContentModel.class);
 			});
 		}
 		assertNotNull(focusModel);
 		assertNotNull(traversePolicy);
-		assertNotNull(contentModel);
 		ctx.runAndWait(() -> {
 			domain.activate();
 		});
@@ -161,7 +157,7 @@ public class FocusTraversalPolicyTests {
 	@After
 	public void deactivate() throws Throwable {
 		ctx.runAndWait(() -> {
-			contentModel.getContents().setAll(Collections.emptyList());
+			viewer.getContents().setAll(Collections.emptyList());
 			domain.deactivate();
 		});
 	}
@@ -206,7 +202,7 @@ public class FocusTraversalPolicyTests {
 		Cell root = Cell.createCellTree(String.join("\n", "R-C0", "R-C1"), cells);
 
 		ctx.runAndWait(() -> {
-			contentModel.getContents().setAll(root.children);
+			viewer.getContents().setAll(root.children);
 		});
 
 		// check initial state
@@ -272,7 +268,7 @@ public class FocusTraversalPolicyTests {
 		Cell root = Cell.createCellTree(String.join("\n", "R-C-C0-C00", "R-C-C1-C10", "R-C-C2-C20"), cells);
 
 		ctx.runAndWait(() -> {
-			contentModel.getContents().setAll(root.children);
+			viewer.getContents().setAll(root.children);
 		});
 
 		// check initial state
@@ -329,7 +325,7 @@ public class FocusTraversalPolicyTests {
 		Cell root = Cell.createCellTree(String.join("\n", "R-V0", "R-C1", "R-V2"), cells);
 
 		ctx.runAndWait(() -> {
-			contentModel.getContents().setAll(root.children);
+			viewer.getContents().setAll(root.children);
 		});
 
 		// check initial state
@@ -384,7 +380,7 @@ public class FocusTraversalPolicyTests {
 		Cell root = Cell.createCellTree(String.join("\n", "R-V0-C0", "R-V1-C1"), cells);
 
 		ctx.runAndWait(() -> {
-			contentModel.getContents().setAll(root.children);
+			viewer.getContents().setAll(root.children);
 		});
 
 		// check initial state

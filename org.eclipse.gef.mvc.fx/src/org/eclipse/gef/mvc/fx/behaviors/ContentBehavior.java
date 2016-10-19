@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.eclipse.gef.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef.common.dispose.IDisposable;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -164,9 +163,9 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	protected void doActivate() {
 		IVisualPart<? extends Node> host = getHost();
 		if (host == host.getRoot()) {
-			final ContentModel contentModel = getContentModel();
-			contentModel.getContents().addListener(contentModelObserver);
-			synchronizeContentChildren(contentModel.getContents());
+			IViewer viewer = host.getRoot().getViewer();
+			viewer.getContents().addListener(contentModelObserver);
+			synchronizeContentChildren(viewer.getContents());
 		} else {
 			synchronizeContentChildren(
 					ImmutableList.copyOf(((IContentPart<? extends Node>) host)
@@ -189,7 +188,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	protected void doDeactivate() {
 		IVisualPart<? extends Node> host = getHost();
 		if (host == host.getRoot()) {
-			getContentModel().getContents()
+			host.getRoot().getViewer().getContents()
 					.removeListener(contentModelObserver);
 		} else {
 			((IContentPart<? extends Node>) host).contentProperty()
@@ -250,19 +249,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			contentPart.setContent(content);
 			return contentPart;
 		}
-	}
-
-	/**
-	 * Returns the {@link ContentModel} in the context of the {@link #getHost()
-	 * host}.
-	 *
-	 * @return The {@link ContentModel} in the context of the {@link #getHost()
-	 *         host}.
-	 */
-	protected ContentModel getContentModel() {
-		ContentModel contentModel = getHost().getRoot().getViewer()
-				.getAdapter(ContentModel.class);
-		return contentModel;
 	}
 
 	/**

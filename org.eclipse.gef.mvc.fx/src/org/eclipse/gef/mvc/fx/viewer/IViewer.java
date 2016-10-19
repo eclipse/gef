@@ -26,6 +26,8 @@ import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 
@@ -46,6 +48,18 @@ public interface IViewer extends IAdaptable, IActivatable, IDisposable,
 		IAdaptable.Bound<IDomain> {
 
 	/**
+	 * Name of the {@link #contentsProperty()}.
+	 */
+	public static final String CONTENTS_PROPERTY = "contents";
+
+	/**
+	 * A read-only property containing the current content objects.
+	 *
+	 * @return A read-only list property named {@link #CONTENTS_PROPERTY}.
+	 */
+	public ReadOnlyListProperty<Object> contentsProperty();
+
+	/**
 	 * Returns the {@link Parent} that displays the visuals of this
 	 * {@link IViewer viewer's} {@link IVisualPart parts}
 	 *
@@ -61,6 +75,13 @@ public interface IViewer extends IAdaptable, IActivatable, IDisposable,
 	 * @return The content part map
 	 */
 	public Map<Object, IContentPart<? extends Node>> getContentPartMap();
+
+	/**
+	 * Returns an {@link ObservableList} containing the content objects.
+	 *
+	 * @return An {@link ObservableList}.
+	 */
+	public ObservableList<Object> getContents();
 
 	/**
 	 * Returns the {@link IDomain} this {@link IViewer} is bound to.

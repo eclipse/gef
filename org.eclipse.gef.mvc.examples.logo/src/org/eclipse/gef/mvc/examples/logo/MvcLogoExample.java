@@ -18,7 +18,6 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.PaletteModel;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Module;
@@ -61,9 +60,8 @@ public class MvcLogoExample extends AbstractMvcExample {
 
 	@Override
 	protected void populateViewerContents() {
-		getContentViewer().getAdapter(ContentModel.class).getContents().setAll(createDefaultContents());
-		getPaletteViewer().getAdapter(ContentModel.class).getContents().setAll(createPaletteContents());
-
+		getContentViewer().getContents().setAll(createDefaultContents());
+		getPaletteViewer().getContents().setAll(createPaletteContents());
 		getPrimaryStage().sizeToScene();
 	}
 

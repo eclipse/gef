@@ -25,7 +25,6 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -77,7 +76,7 @@ public class ContentSynchronizationTests {
 	@After
 	public void deactivate() throws Throwable {
 		ctx.runAndWait(() -> {
-			viewer.getAdapter(ContentModel.class).getContents().clear();
+			viewer.getContents().clear();
 			domain.deactivate();
 		});
 	}
@@ -97,13 +96,13 @@ public class ContentSynchronizationTests {
 		assertNull(contentPartMap.get(firstContents.get(0)));
 		assertNull(contentPartMap.get(secondContents.get(0)));
 		ctx.runAndWait(() -> {
-			viewer.getAdapter(ContentModel.class).getContents().setAll(firstContents);
+			viewer.getContents().setAll(firstContents);
 		});
 		// both parts created now
 		assertNotNull(contentPartMap.get(firstContents.get(0)));
 		assertNotNull(contentPartMap.get(secondContents.get(0)));
 		ctx.runAndWait(() -> {
-			viewer.getAdapter(ContentModel.class).getContents().setAll(secondContents);
+			viewer.getContents().setAll(secondContents);
 		});
 		// first part removed now
 		assertNull(contentPartMap.get(firstContents.get(0)));
@@ -125,7 +124,7 @@ public class ContentSynchronizationTests {
 		AtomicReference<IllegalStateException> exceptionRef = new AtomicReference<>();
 		ctx.runAndWait(() -> {
 			try {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(sameContents);
+				viewer.getContents().setAll(sameContents);
 			} catch (IllegalStateException e) {
 				exceptionRef.set(e);
 			}

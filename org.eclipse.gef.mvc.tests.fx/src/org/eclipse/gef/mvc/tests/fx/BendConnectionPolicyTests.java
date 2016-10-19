@@ -47,7 +47,6 @@ import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
@@ -465,7 +464,7 @@ public class BendConnectionPolicyTests {
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
+				viewer.getContents().setAll(contents);
 			}
 		});
 

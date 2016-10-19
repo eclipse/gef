@@ -20,7 +20,6 @@ import org.eclipse.gef.graph.Edge.Builder;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.ZestFxModule;
 import org.eclipse.gef.zest.fx.ZestProperties;
@@ -120,8 +119,7 @@ public abstract class AbstractZestExample extends Application {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				viewer.getAdapter(ContentModel.class).getContents()
-						.setAll(Collections.singletonList(graph));
+				viewer.getContents().setAll(Collections.singletonList(graph));
 			}
 		});
 	}

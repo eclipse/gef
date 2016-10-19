@@ -28,7 +28,6 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.ILayoutAlgorithm;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -488,7 +487,7 @@ public class ZestContentViewer extends ContentViewer {
 	@Override
 	public void refresh() {
 		contentNodeMap.clear();
-		viewer.getAdapter(ContentModel.class).getContents()
+		viewer.getContents()
 				.setAll(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
 	}
 

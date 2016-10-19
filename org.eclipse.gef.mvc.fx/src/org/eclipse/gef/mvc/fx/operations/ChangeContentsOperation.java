@@ -20,12 +20,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 /**
  * The {@link ChangeContentsOperation} can be used to change the content objects
- * stored in the {@link ContentModel}.
+ * stored in the {@link IViewer#contentsProperty()}.
  *
  * @author anyssen
  *
@@ -58,12 +57,11 @@ public class ChangeContentsOperation extends AbstractOperation
 	 * {@link #setNewContents(List)} method.
 	 *
 	 * @param viewer
-	 *            The {@link IViewer} of which the {@link ContentModel} is to be
-	 *            changed.
+	 *            The {@link IViewer} of which the
+	 *            {@link IViewer#contentsProperty()} is to be changed.
 	 */
 	public ChangeContentsOperation(IViewer viewer) {
-		this(DEFAULT_LABEL, viewer, new ArrayList<>(
-				viewer.getAdapter(ContentModel.class).getContents()));
+		this(DEFAULT_LABEL, viewer, new ArrayList<>(viewer.getContents()));
 	}
 
 	/**
@@ -71,10 +69,11 @@ public class ChangeContentsOperation extends AbstractOperation
 	 * of the given {@link IViewer} to the specified list of objects.
 	 *
 	 * @param viewer
-	 *            The {@link IViewer} of which the {@link ContentModel} is to be
-	 *            changed.
+	 *            The {@link IViewer} of which the
+	 *            {@link IViewer#contentsProperty()} is to be changed.
 	 * @param contents
-	 *            The new content objects to store in the {@link ContentModel}.
+	 *            The new content objects to store in the
+	 *            {@link IViewer#contentsProperty()}.
 	 */
 	public ChangeContentsOperation(IViewer viewer,
 			List<? extends Object> contents) {
@@ -89,10 +88,11 @@ public class ChangeContentsOperation extends AbstractOperation
 	 * @param label
 	 *            The label of the operation.
 	 * @param viewer
-	 *            The {@link IViewer} of which the {@link ContentModel} is to be
-	 *            changed.
+	 *            The {@link IViewer} of which the
+	 *            {@link IViewer#contentsProperty()} is to be changed.
 	 * @param contents
-	 *            The new content objects to store in the {@link ContentModel}.
+	 *            The new content objects to store in the
+	 *            {@link IViewer#contentsProperty()}.
 	 */
 	// TODO: pass in content model instead of viewer
 	public ChangeContentsOperation(String label, IViewer viewer,
@@ -100,8 +100,7 @@ public class ChangeContentsOperation extends AbstractOperation
 		super(label);
 		this.viewer = viewer;
 		this.newContents = new ArrayList<>(contents);
-		this.initialContents = new ArrayList<>(
-				viewer.getAdapter(ContentModel.class).getContents());
+		this.initialContents = new ArrayList<>(viewer.getContents());
 	}
 
 	/*
@@ -114,9 +113,8 @@ public class ChangeContentsOperation extends AbstractOperation
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
-		if (!contentModel.getContents().equals(newContents)) {
-			contentModel.getContents().setAll(newContents);
+		if (!viewer.getContents().equals(newContents)) {
+			viewer.getContents().setAll(newContents);
 		}
 		return Status.OK_STATUS;
 	}
@@ -183,8 +181,7 @@ public class ChangeContentsOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
-		contentModel.getContents().setAll(initialContents);
+		viewer.getContents().setAll(initialContents);
 		return Status.OK_STATUS;
 	}
 

@@ -27,7 +27,6 @@ import java.util.Map;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -454,7 +453,6 @@ public class ZestContentViewerTests {
 		viewer.setInput(new Object());
 	}
 
-	@SuppressWarnings("serial")
 	@Test
 	public void test_selectionModel() {
 		final List<Object> expectation = new ArrayList<>();
@@ -486,11 +484,10 @@ public class ZestContentViewerTests {
 		viewer.setLayoutAlgorithm(layoutAlgorithm);
 		assertEquals(layoutAlgorithm, viewer.getLayoutAlgorithm());
 		viewer.setInput(new Object());
-		Graph rootGraph = (Graph) viewer.getContentViewer().getAdapter(ContentModel.class).getContents().get(0);
+		Graph rootGraph = (Graph) viewer.getContentViewer().getContents().get(0);
 		assertEquals(layoutAlgorithm, ZestProperties.getLayoutAlgorithm(rootGraph));
 	}
 
-	@SuppressWarnings("serial")
 	@Test
 	public void test_setSelection() {
 		viewer.setInput(new Object());

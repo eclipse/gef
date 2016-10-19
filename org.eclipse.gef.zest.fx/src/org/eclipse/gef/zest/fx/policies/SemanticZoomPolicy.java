@@ -21,12 +21,12 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.operations.NavigateOperation;
@@ -49,20 +49,19 @@ import javafx.scene.Node;
  */
 public class SemanticZoomPolicy extends ChangeViewportPolicy {
 
-	private ContentModel contentModel;
 	private NavigationModel navigationModel;
+	private IViewer viewer;
 
 	@Override
 	public ITransactionalOperation commit() {
-		contentModel = null;
 		navigationModel = null;
-
+		viewer = null;
 		return super.commit();
 	}
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new NavigateOperation(getHost().getRoot().getViewer());
+		return new NavigateOperation(viewer);
 	}
 
 	/**
@@ -113,16 +112,11 @@ public class SemanticZoomPolicy extends ChangeViewportPolicy {
 
 	@Override
 	public void init() {
-		contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
-		if (contentModel == null) {
-			throw new IllegalArgumentException("ContentModel could not be obtained!");
-		}
-
-		navigationModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
+		viewer = getHost().getRoot().getViewer();
+		navigationModel = viewer.getAdapter(NavigationModel.class);
 		if (navigationModel == null) {
 			throw new IllegalArgumentException("NavigationModel could not be obtained!");
 		}
-
 		super.init();
 	}
 
@@ -147,7 +141,7 @@ public class SemanticZoomPolicy extends ChangeViewportPolicy {
 			double pivotDistance = Double.MAX_VALUE;
 			NodePart pivotPart = null;
 
-			InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas();
+			InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) viewer).getCanvas();
 			org.eclipse.gef.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef.geometry.planar.Rectangle(0,
 					0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
 			Point pivotPoint = FX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
@@ -172,7 +166,7 @@ public class SemanticZoomPolicy extends ChangeViewportPolicy {
 			}
 		} else if (initialZoomLevel > finalZoomLevel && finalZoomLevel < 0.7) {
 			// zooming out => open nesting graph (if any)
-			final Graph currentGraph = (Graph) contentModel.getContents().get(0);
+			final Graph currentGraph = (Graph) viewer.getContents().get(0);
 			final Graph nestingGraph = currentGraph.getNestingNode() != null ? currentGraph.getNestingNode().getGraph()
 					: null;
 			if (nestingGraph != null) {

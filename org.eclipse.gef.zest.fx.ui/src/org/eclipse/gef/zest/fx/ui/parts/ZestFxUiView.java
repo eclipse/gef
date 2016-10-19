@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.ZestFxModule;
@@ -62,7 +61,7 @@ public class ZestFxUiView extends AbstractFXView {
 	/**
 	 * Changes the contents of the {@link #getContentViewer()} to the given
 	 * {@link Graph}. The contents are changed by changing the
-	 * {@link ContentModel}.
+	 * {@link IViewer#contentsProperty()}.
 	 *
 	 * @param graph
 	 *            The new contents for the viewer.
@@ -73,17 +72,12 @@ public class ZestFxUiView extends AbstractFXView {
 		if (contentViewer == null) {
 			throw new IllegalStateException("Invalid configuration: Content viewer could not be retrieved.");
 		}
-		// check we have a content model
-		ContentModel contentModel = getContentViewer().getAdapter(ContentModel.class);
-		if (contentModel == null) {
-			throw new IllegalStateException("Invalid configuration: Content model could not be retrieved.");
-		}
 		// set contents (will wrap graph into contents list)
 		List<Object> contents = new ArrayList<>(1);
 		if (graph != null) {
 			contents.add(graph);
 		}
-		contentModel.getContents().setAll(contents);
+		contentViewer.getContents().setAll(contents);
 	}
 
 }

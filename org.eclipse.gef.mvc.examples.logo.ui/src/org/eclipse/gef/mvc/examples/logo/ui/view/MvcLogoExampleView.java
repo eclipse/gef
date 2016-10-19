@@ -33,7 +33,6 @@ import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricCurvePropertySource;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
@@ -42,11 +41,9 @@ import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef.mvc.fx.ui.properties.SetPropertyValueOperation;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
-import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
@@ -108,9 +105,9 @@ public class MvcLogoExampleView extends AbstractFXView {
 				.with(new MvcLogoExampleUiModule())));
 
 		// set initial contents
-		getContentViewer().getAdapter(ContentModel.class).getContents()
+		getContentViewer().getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
-		getPaletteViewer().getAdapter(ContentModel.class).getContents()
+		getPaletteViewer().getContents()
 				.setAll(MvcLogoExample.createPaletteContents());
 	}
 
@@ -118,9 +115,9 @@ public class MvcLogoExampleView extends AbstractFXView {
 	public void dispose() {
 
 		// clear viewer contents
-		getContentViewer().getAdapter(ContentModel.class).contentsProperty()
+		getContentViewer().contentsProperty()
 				.clear();
-		getPaletteViewer().getAdapter(ContentModel.class).contentsProperty()
+		getPaletteViewer().contentsProperty()
 				.clear();
 
 		super.dispose();
@@ -226,7 +223,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 						if (objects == null || objects.length == 0) {
 							// TODO: test
 							objects = new Object[] { getContentViewer()
-									.getAdapter(ContentModel.class)
+									
 									.getContents().get(0) };
 						}
 						super.setValues(objects);

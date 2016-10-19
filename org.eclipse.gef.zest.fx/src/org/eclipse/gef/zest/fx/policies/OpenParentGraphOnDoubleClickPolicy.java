@@ -15,7 +15,6 @@ package org.eclipse.gef.zest.fx.policies;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -44,17 +43,11 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 			}
 
 			// double click, so open nesting graph, if it exists
-			ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
-			if (contentModel == null) {
-				throw new IllegalArgumentException("ContentModel could not be obtained!");
-			}
-
-			final Graph currentGraph = (Graph) contentModel.getContents().get(0);
+			IViewer viewer = getHost().getRoot().getViewer();
+			final Graph currentGraph = (Graph) viewer.getContents().get(0);
 			final Graph nestingGraph = currentGraph.getNestingNode() != null ? currentGraph.getNestingNode().getGraph()
 					: null;
-
 			if (nestingGraph != null) {
-				IViewer viewer = getHost().getRoot().getViewer();
 				try {
 					viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false),
 							new NullProgressMonitor());
