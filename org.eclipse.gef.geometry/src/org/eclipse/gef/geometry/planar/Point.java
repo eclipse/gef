@@ -558,6 +558,19 @@ public class Point implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Transforms a copy of this {@link Point} using the given
+	 * {@link AffineTransform}.
+	 *
+	 * @param transformation
+	 *            The {@link AffineTransform} to apply.
+	 * @return A copy of this {@link Point}, transformed by the given
+	 *         {@link AffineTransform}.
+	 */
+	public Point getTransformed(AffineTransform transformation) {
+		return transformation.getTransformed(this);
+	}
+
+	/**
 	 * Creates a new Point which is translated by the values of the input
 	 * Dimension.
 	 *
@@ -727,6 +740,21 @@ public class Point implements Cloneable, Serializable {
 	@Override
 	public String toString() {
 		return "Point(" + x + ", " + y + ")";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+	}
+
+	/**
+	 * Transforms this {@link Point} in-place using the given
+	 * {@link AffineTransform}.
+	 *
+	 * @param transformation
+	 *            The {@link AffineTransform} to apply.
+	 * @return <code>this</code> for convenience.
+	 */
+	public Point transform(AffineTransform transformation) {
+		Point transformed = transformation.getTransformed(this);
+		x = transformed.x;
+		y = transformed.y;
+		return this;
 	}
 
 	/**
