@@ -27,15 +27,14 @@ import org.eclipse.gef.mvc.fx.parts.IResizableVisualPart;
 import javafx.geometry.Bounds;
 
 /**
- * The {@link ResizeConnectionPolicy} is a specialization of the
+ * The {@link ResizeBendablePolicy} is a specialization of the
  * {@link ResizePolicy} that performs a resize of an {@link Connection} visual
  * by proportionally relocating its bend points.
  *
  * @author mwienand
  *
  */
-// ResizeBendable instead?
-public class ResizeConnectionPolicy extends ResizePolicy {
+public class ResizeBendablePolicy extends ResizePolicy {
 
 	private List<BendPoint> initialBendPoints;
 	private Point[] initialPositions;
@@ -62,7 +61,6 @@ public class ResizeConnectionPolicy extends ResizePolicy {
 
 	@Override
 	protected ITransactionalOperation createResizeContentOperation() {
-		@SuppressWarnings("unchecked")
 		IBendableContentPart<Connection> bendablePart = (IBendableContentPart<Connection>) getHost();
 		return new BendContentOperation<>(bendablePart, initialBendPoints,
 				bendablePart.getVisualBendPoints());

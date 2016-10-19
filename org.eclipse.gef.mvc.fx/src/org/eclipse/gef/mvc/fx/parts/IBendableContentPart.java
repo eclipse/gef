@@ -14,10 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.fx.anchors.IAnchor;
+import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
+import org.eclipse.gef.geometry.planar.AffineTransform;
+import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 /**
@@ -30,8 +35,8 @@ import javafx.scene.Node;
  *            The visual node used by this {@link IBendableContentPart}.
  *
  */
-// TODO: extract IBendableVisualPart
-public interface IBendableContentPart<V extends Node> extends IContentPart<V> {
+public interface IBendableContentPart<V extends Node>
+		extends ITransformableContentPart<V>, IResizableContentPart<V> {
 
 	/**
 	 * A representation of a bend point, which is defined either by a point or
@@ -168,6 +173,70 @@ public interface IBendableContentPart<V extends Node> extends IContentPart<V> {
 	 */
 	public void bendContent(List<BendPoint> bendPoints);
 
+	/**
+	 * Bends the visual as specified by the given bend points.
+	 *
+	 * @param bendPoints
+	 *            The bend points.
+	 */
+	public default void bendVisual(List<BendPoint> bendPoints) {
+		if (bendPoints == null || bendPoints.size() < 2) {
+			throw new IllegalArgumentException(
+					"Not enough bend points supplied!");
+		}
+
+		// compute anchors for the given bend points
+		List<IAnchor> newAnchors = new ArrayList<>();
+		for (int i = 0; i < bendPoints.size(); i++) {
+			BendPoint bp = bendPoints.get(i);
+			if (bp.isAttached()) {
+				// create anchor
+				// TODO: verify anchor computation is correct
+				IAnchorProvider anchorProvider = getRoot().getViewer()
+						.getContentPartMap().get(bp.getContentAnchorage())
+						.getAdapter(IAnchorProvider.class);
+				if (anchorProvider == null) {
+					throw new IllegalStateException(
+							"Anchorage does not provide anchor!");
+				}
+				IAnchor anchor = anchorProvider.get(this);
+				if (anchor == null) {
+					throw new IllegalStateException(
+							"AnchorProvider does not provide anchor!");
+				}
+				newAnchors.add(anchor);
+
+				// update hints
+				if (i == 0) {
+					// update start point hint
+					getBendableVisual()
+							.setStartPointHint(bendPoints.get(0).getPosition());
+				}
+				if (i == bendPoints.size() - 1) {
+					// update end point hint
+					getBendableVisual().setEndPointHint(bendPoints
+							.get(bendPoints.size() - 1).getPosition());
+				}
+			} else {
+				// TODO: verify position is anchorage local
+				newAnchors.add(new StaticAnchor(getBendableVisual(),
+						bp.getPosition()));
+			}
+		}
+
+		// update anchors
+		getBendableVisual().setAnchors(newAnchors);
+	}
+
+	/**
+	 * Returns the visual to bend.
+	 *
+	 * @return The visual to bend.
+	 */
+	public default Connection getBendableVisual() {
+		return (Connection) getVisual();
+	}
+
 	// TODO: Refresh
 	// /**
 	// * Returns the current {@link BendPoint}s of this
@@ -178,13 +247,14 @@ public interface IBendableContentPart<V extends Node> extends IContentPart<V> {
 	// */
 	// public List<BendPoint> getContentBendPoints();
 
-	/**
-	 * Returns the visual to bend.
-	 *
-	 * @return The visual to bend.
-	 */
-	public default Connection getBendableVisual() {
-		return (Connection) getVisual();
+	@Override
+	default Node getResizableVisual() {
+		return getBendableVisual();
+	}
+
+	@Override
+	default Node getTransformableVisual() {
+		return getBendableVisual();
 	}
 
 	/**
@@ -229,6 +299,111 @@ public interface IBendableContentPart<V extends Node> extends IContentPart<V> {
 			}
 		}
 		return bendPoints;
+	}
+
+	@Override
+	default void resizeContent(Dimension size) {
+		// TODO: verify that current visual bend points are up-to-date
+		bendContent(getVisualBendPoints());
+
+		// TODO: get content bend points => resize => bend content
+	}
+
+	@Override
+	default void resizeVisual(Dimension size) {
+		/*
+		 * Resize visual by transforming the bend points relative to the size
+		 * change:
+		 *
+		 * 1. Determine current relative positions of bend points.
+		 *
+		 * 2. Compute new real positions of bend points using relative positions
+		 * and new size.
+		 *
+		 * 3. Apply resulting bend points to the visual.
+		 */
+
+		// determine delta size
+		Dimension currentSize = getVisualSize();
+		// TODO: validate +/-
+		double dw = size.width - currentSize.width;
+		double dh = size.height - currentSize.width;
+
+		// determine absolute positions
+		Connection connection = getBendableVisual();
+		Point[] points = connection.getPointsUnmodifiable()
+				.toArray(new Point[] {});
+
+		// compute relative positions
+		// TODO: is it allowed to use layout bounds ???
+		Bounds layoutBounds = connection.getLayoutBounds();
+		double[] relX = new double[points.length];
+		double[] relY = new double[points.length];
+		for (int i = 0; i < points.length; i++) {
+			if (connection.isConnected(i)) {
+				continue;
+			}
+			// TODO: use size.width/height ???
+			relX[i] = (points[i].x - layoutBounds.getMinX())
+					/ layoutBounds.getWidth();
+			relY[i] = (points[i].y - layoutBounds.getMinY())
+					/ layoutBounds.getHeight();
+		}
+
+		// compute absolute new positions
+		List<BendPoint> bendPoints = getVisualBendPoints();
+		for (int i = 0; i < bendPoints.size(); i++) {
+			BendPoint bp = bendPoints.get(i);
+			if (!bp.isAttached()) {
+				bp.getPosition().x += relX[i] * dw;
+				bp.getPosition().y += relY[i] * dh;
+			}
+		}
+
+		// apply new positions to the visual
+		bendVisual(bendPoints);
+	}
+
+	@Override
+	default void transformContent(AffineTransform transform) {
+		// TODO: verify that current visual bend points are up-to-date
+		bendContent(getVisualBendPoints());
+
+		// TODO: get content bend points => transform => bend content
+	}
+
+	@Override
+	default void transformVisual(AffineTransform transformation) {
+		// optimize null/identity case
+		if (transformation == null || transformation.isIdentity()) {
+			return;
+		}
+
+		/*
+		 * Transforms the (visual) bend points, as follows:
+		 *
+		 * 1. Determine current (non-initial) bend points using
+		 * #getVisualBendPoints().
+		 *
+		 * 2. Compute new bend points by applying the given (delta)
+		 * transformation to all unattached bend points.
+		 *
+		 * 3. Apply computed bend points to the visual using #bendVisual().
+		 */
+
+		// determine bend points
+		List<BendPoint> bendPoints = getVisualBendPoints();
+
+		// compute new bend points
+		for (BendPoint bp : bendPoints) {
+			if (!bp.isAttached()) {
+				// transform unattached bend points
+				bp.getPosition().transform(transformation);
+			}
+		}
+
+		// apply computed bend points to the visual
+		bendVisual(bendPoints);
 	}
 
 }

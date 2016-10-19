@@ -31,7 +31,7 @@ import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import javafx.collections.ObservableList;
 
 /**
- * The {@link TransformConnectionPolicy} is an {@link TransformPolicy} that is
+ * The {@link TransformBendablePolicy} is an {@link TransformPolicy} that is
  * adjusted for the relocation of an {@link Connection}. It uses an
  * {@link BendConnectionOperation} to update the anchors of the
  * {@link Connection} according to the applied translation.
@@ -39,8 +39,7 @@ import javafx.collections.ObservableList;
  * @author mwienand
  *
  */
-// TODO: TransformBendable instead??
-public class TransformConnectionPolicy extends TransformPolicy {
+public class TransformBendablePolicy extends TransformPolicy {
 
 	private List<BendPoint> initialBendPoints;
 	private List<Point> initialConnectionPositions;

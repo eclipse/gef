@@ -35,8 +35,6 @@ import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.Decoration;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.RoutingStyle;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IResizableVisualPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
 
@@ -53,8 +51,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 
-public class GeometricCurvePart extends AbstractGeometricElementPart<Connection> implements
-		ITransformableContentPart<Connection>, IBendableContentPart<Connection>, IResizableVisualPart<Connection> {
+public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
+		implements IBendableContentPart<Connection> {
 
 	public static class ArrowHead extends Polygon {
 		public ArrowHead() {
@@ -432,12 +430,6 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 			getContent().sourceDecorationProperty().addListener(decorationChangeListener);
 			getContent().targetDecorationProperty().addListener(decorationChangeListener);
 		}
-	}
-
-	@Override
-	public void transformContent(AffineTransform transform) {
-		// applying transform to content is done by transforming waypoints
-		getContent().setWayPoints(transform.getTransformed(getContent().getWayPoints().toArray(new Point[] {})));
 	}
 
 }

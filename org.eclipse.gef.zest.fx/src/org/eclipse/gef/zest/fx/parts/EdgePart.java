@@ -13,7 +13,6 @@
 package org.eclipse.gef.zest.fx.parts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +22,10 @@ import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef.fx.nodes.IConnectionRouter;
-import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef.zest.fx.ZestProperties;
@@ -46,8 +43,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class EdgePart extends AbstractContentPart<Connection>
-		implements ITransformableContentPart<Connection>, IBendableContentPart<Connection> {
+public class EdgePart extends AbstractContentPart<Connection> implements IBendableContentPart<Connection> {
 
 	/**
 	 * The role used for attaching to the source node.
@@ -406,12 +402,6 @@ public class EdgePart extends AbstractContentPart<Connection>
 				curve.getStyleClass().add(CSS_CLASS_CURVE);
 			}
 		}
-	}
-
-	@Override
-	public void transformContent(AffineTransform transform) {
-		ZestProperties.setControlPoints(getContent(), Arrays.asList(
-				transform.getTransformed(ZestProperties.getControlPoints(getContent()).toArray(new Point[] {}))));
 	}
 
 }

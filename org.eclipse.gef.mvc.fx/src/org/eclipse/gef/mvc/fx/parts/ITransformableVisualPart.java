@@ -29,6 +29,7 @@ import javafx.scene.transform.Affine;
  * @param <V>
  *            visual type
  */
+// TODO: Merge into ITransformableContentPart.
 public interface ITransformableVisualPart<V extends Node>
 		extends IVisualPart<V> {
 

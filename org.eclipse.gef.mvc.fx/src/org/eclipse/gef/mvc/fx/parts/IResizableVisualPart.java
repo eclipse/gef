@@ -25,6 +25,7 @@ import javafx.scene.Node;
  * @param <V>
  *            visual type
  */
+// TODO: Merge into IResizableContentPart.
 public interface IResizableVisualPart<V extends Node> extends IVisualPart<V> {
 
 	/**

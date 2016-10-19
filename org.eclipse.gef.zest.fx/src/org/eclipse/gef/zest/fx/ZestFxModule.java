@@ -38,7 +38,7 @@ import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.SelectFocusedOnTypePolicy;
-import org.eclipse.gef.mvc.fx.policies.TransformConnectionPolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformBendablePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
@@ -196,7 +196,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectionClickableAreaBehavior.class);
 
 		// transform policy
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformConnectionPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformBendablePolicy.class);
 
 		// translate selected on-drag policy
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndRelocateLabelsOnDragPolicy.class);
