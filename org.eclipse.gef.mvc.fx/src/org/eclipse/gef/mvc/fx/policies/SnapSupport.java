@@ -15,7 +15,7 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -44,7 +44,7 @@ public class SnapSupport {
 	 * positions are at
 	 * <code>(n * grid-cell-width, m * grid-cell-height)</code>. Per default,
 	 * the content group of the {@link InfiniteCanvas} is returned for an
-	 * {@link Viewer}. For other {@link IViewer} implementations, the visual of
+	 * {@link InfiniteCanvasViewer}. For other {@link IViewer} implementations, the visual of
 	 * the root part is used.
 	 *
 	 * @param viewer
@@ -53,8 +53,8 @@ public class SnapSupport {
 	 * @return A grid-local visual for the given {@link IViewer}.
 	 */
 	protected Node getGridLocalVisual(IViewer viewer) {
-		return viewer instanceof Viewer
-				? ((Viewer) viewer).getCanvas().getContentGroup()
+		return viewer instanceof InfiniteCanvasViewer
+				? ((InfiniteCanvasViewer) viewer).getCanvas().getContentGroup()
 				: viewer.getRootPart().getVisual();
 	}
 

@@ -37,7 +37,7 @@ import javafx.scene.Parent;
  * controller, and visual objects.
  *
  * @noimplement This interface is not intended to be implemented by clients.
- *              Instead, {@link Viewer} should be subclassed.
+ *              Instead, {@link InfiniteCanvasViewer} should be subclassed.
  *
  * @author anyssen
  *
@@ -47,10 +47,10 @@ public interface IViewer extends IAdaptable, IActivatable, IDisposable,
 
 	/**
 	 * Returns the {@link Parent} that displays the visuals of this
-	 * {@link Viewer viewer's} {@link IVisualPart parts}
+	 * {@link IViewer viewer's} {@link IVisualPart parts}
 	 *
-	 * @return The {@link Parent} that displays the visuals of the {@link Viewer
-	 *         viewer's} {@link IVisualPart parts}.
+	 * @return The {@link Parent} that displays the visuals of the
+	 *         {@link IViewer viewer's} {@link IVisualPart parts}.
 	 */
 	public Parent getCanvas();
 

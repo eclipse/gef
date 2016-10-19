@@ -25,7 +25,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
-import org.eclipse.gef.mvc.fx.domain.Domain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
@@ -33,7 +32,6 @@ import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.policies.FocusTraversalPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.stubs.Cell;
 import org.eclipse.gef.mvc.tests.fx.stubs.CellContentPartFactory;
@@ -78,8 +76,9 @@ public class FocusTraversalPolicyTests {
 					binder().bind(IContentPartFactory.class).to(CellContentPartFactory.class);
 
 					// bind FocusModel
-					// AdapterMaps.getAdapterMapBinder(binder(), Viewer.class,
-					// Domain.CONTENT_VIEWER_ROLE)
+					// AdapterMaps.getAdapterMapBinder(binder(),
+					// InfiniteCanvasViewer.class,
+					// HistoricizingDomain.CONTENT_VIEWER_ROLE)
 					// .addBinding(AdapterKey.defaultRole()).to(FocusModel.class);
 
 					// // bind FocusTraversalPolicy
@@ -88,9 +87,9 @@ public class FocusTraversalPolicyTests {
 					// .addBinding(AdapterKey.defaultRole()).to(FocusTraversalPolicy.class);
 				}
 			});
-			domain = injector.getInstance(Domain.class);
-			viewer = domain.getAdapter(AdapterKey.get(Viewer.class, IDomain.CONTENT_VIEWER_ROLE));
-			ctx.createScene(((IViewer) viewer).getCanvas(), 100, 100);
+			domain = injector.getInstance(IDomain.class);
+			viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
+			ctx.createScene(viewer.getCanvas(), 100, 100);
 
 			ctx.runAndWait(() -> {
 				focusModel = viewer.getAdapter(FocusModel.class);

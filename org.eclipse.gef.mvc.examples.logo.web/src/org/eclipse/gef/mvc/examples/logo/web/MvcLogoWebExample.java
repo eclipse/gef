@@ -21,7 +21,7 @@ import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleViewersComposite;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.PaletteModel;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Module;
 
@@ -52,8 +52,8 @@ public class MvcLogoWebExample extends AbstractMvcExample {
 		return new MvcLogoExampleModule();
 	}
 
-	protected Viewer getPaletteViewer() {
-		return getDomain().getAdapter(AdapterKey.get(Viewer.class,
+	protected IViewer getPaletteViewer() {
+		return getDomain().getAdapter(AdapterKey.get(IViewer.class,
 				MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
 	}
 

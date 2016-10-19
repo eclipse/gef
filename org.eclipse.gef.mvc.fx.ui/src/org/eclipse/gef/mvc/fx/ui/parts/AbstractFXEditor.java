@@ -21,7 +21,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
@@ -44,7 +44,7 @@ import javafx.embed.swt.FXCanvas;
 import javafx.scene.Scene;
 
 /**
- * Abstract base class for editors. The {@link Domain},
+ * Abstract base class for editors. The {@link HistoricizingDomain},
  * {@link IFXCanvasFactory}, and {@link ISelectionProvider} are injected into
  * the editor on construction.
  *
@@ -87,7 +87,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Activates the editor by activating its {@link Domain}.
+	 * Activates the editor by activating its {@link IDomain}.
 	 */
 	protected void activate() {
 		domain.activate();
@@ -118,8 +118,11 @@ public abstract class AbstractFXEditor extends EditorPart {
 			@Override
 			public void historyNotification(final OperationHistoryEvent event) {
 				IUndoableOperation operation = event.getOperation();
-				IUndoContext undoContext = getDomain().getUndoContext();
-				if (Arrays.asList(operation.getContexts()).contains(undoContext)
+				IUndoContext undoContext = (IUndoContext) getAdapter(
+						IUndoContext.class);
+				if (undoContext != null
+						&& Arrays.asList(operation.getContexts())
+								.contains(undoContext)
 						&& event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
 						&& event.getHistory().getUndoHistory(
 								operation.getContexts()[0]).length > 0
@@ -177,7 +180,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Deactivates the editor by deactivating its {@link Domain}.
+	 * Deactivates the editor by deactivating its {@link IDomain}.
 	 */
 	protected void deactivate() {
 		domain.deactivate();
@@ -192,8 +195,12 @@ public abstract class AbstractFXEditor extends EditorPart {
 		unhookViewers();
 
 		// unregister operation history listener
-		domain.getOperationHistory()
-				.removeOperationHistoryListener(operationHistoryListener);
+		IOperationHistory operationHistory = (IOperationHistory) getAdapter(
+				IOperationHistory.class);
+		if (operationHistory != null) {
+			operationHistory
+					.removeOperationHistoryListener(operationHistoryListener);
+		}
 		operationHistoryListener = null;
 
 		// unregister selection provider
@@ -245,9 +252,13 @@ public abstract class AbstractFXEditor extends EditorPart {
 			// used by action bar contributor
 			return undoRedoActionGroup;
 		} else if (IUndoContext.class.equals(key)) {
-			return domain.getUndoContext();
+			if (domain instanceof HistoricizingDomain) {
+				return ((HistoricizingDomain) domain).getUndoContext();
+			}
 		} else if (IOperationHistory.class.equals(key)) {
-			return domain.getOperationHistory();
+			if (domain instanceof HistoricizingDomain) {
+				return ((HistoricizingDomain) domain).getOperationHistory();
+			}
 		}
 		return super.getAdapter(key);
 	}
@@ -264,10 +275,10 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Returns the {@link IViewer} of the {@link Domain} which was previously
+	 * Returns the {@link IViewer} of the {@link IDomain} which was previously
 	 * injected into this editor.
 	 *
-	 * @return The {@link IViewer} of the {@link Domain} which was previously
+	 * @return The {@link IViewer} of the {@link IDomain} which was previously
 	 *         injected into this editor.
 	 */
 	protected IViewer getContentViewer() {
@@ -276,9 +287,11 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Returns the {@link Domain} that was previously injected into this editor.
+	 * Returns the {@link IDomain} that was previously injected into this
+	 * editor.
 	 *
-	 * @return The {@link Domain} that was previously injected into this editor.
+	 * @return The {@link IDomain} that was previously injected into this
+	 *         editor.
 	 */
 	public IDomain getDomain() {
 		return domain;
@@ -322,8 +335,12 @@ public abstract class AbstractFXEditor extends EditorPart {
 
 		operationHistoryListener = createOperationHistoryListener();
 		if (operationHistoryListener != null) {
-			getDomain().getOperationHistory()
-					.addOperationHistoryListener(operationHistoryListener);
+			IOperationHistory operationHistory = (IOperationHistory) getAdapter(
+					IOperationHistory.class);
+			if (operationHistory != null) {
+				operationHistory
+						.addOperationHistoryListener(operationHistoryListener);
+			}
 		}
 	}
 

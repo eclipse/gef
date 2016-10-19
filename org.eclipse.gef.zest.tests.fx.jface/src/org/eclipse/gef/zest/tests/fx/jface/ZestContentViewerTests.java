@@ -30,7 +30,7 @@ import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.jface.IGraphAttributesProvider;
 import org.eclipse.gef.zest.fx.jface.IGraphContentProvider;
@@ -470,7 +470,7 @@ public class ZestContentViewerTests {
 		viewer.setInput(new Object());
 
 		// determine "First" node
-		Viewer fxViewer = viewer.getFXViewer();
+		IViewer fxViewer = viewer.getContentViewer();
 		org.eclipse.gef.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 
 		// select "First" node
@@ -486,7 +486,7 @@ public class ZestContentViewerTests {
 		viewer.setLayoutAlgorithm(layoutAlgorithm);
 		assertEquals(layoutAlgorithm, viewer.getLayoutAlgorithm());
 		viewer.setInput(new Object());
-		Graph rootGraph = (Graph) viewer.getFXViewer().getAdapter(ContentModel.class).getContents().get(0);
+		Graph rootGraph = (Graph) viewer.getContentViewer().getAdapter(ContentModel.class).getContents().get(0);
 		assertEquals(layoutAlgorithm, ZestProperties.getLayoutAlgorithm(rootGraph));
 	}
 
@@ -496,7 +496,7 @@ public class ZestContentViewerTests {
 		viewer.setInput(new Object());
 		org.eclipse.gef.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 		viewer.setSelection(new StructuredSelection(Arrays.asList(firstNode)));
-		List<IContentPart<? extends Node>> selected = viewer.getFXViewer().getAdapter(SelectionModel.class)
+		List<IContentPart<? extends Node>> selected = viewer.getContentViewer().getAdapter(SelectionModel.class)
 				.getSelectionUnmodifiable();
 		assertEquals(1, selected.size());
 		IContentPart<? extends Node> selectedPart = selected.get(0);

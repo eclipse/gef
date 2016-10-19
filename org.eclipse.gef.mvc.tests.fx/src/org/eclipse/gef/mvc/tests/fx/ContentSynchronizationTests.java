@@ -24,13 +24,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
-import org.eclipse.gef.mvc.fx.domain.Domain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.stubs.Cell;
 import org.eclipse.gef.mvc.tests.fx.stubs.CellContentPartFactory;
@@ -67,9 +65,9 @@ public class ContentSynchronizationTests {
 					binder().bind(IContentPartFactory.class).to(CellContentPartFactory.class);
 					super.configure();
 				}
-			}).getInstance(Domain.class);
-			viewer = domain.getAdapter(AdapterKey.get(Viewer.class, IDomain.CONTENT_VIEWER_ROLE));
-			ctx.createScene(((Viewer) viewer).getCanvas(), 100, 100);
+			}).getInstance(IDomain.class);
+			viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
+			ctx.createScene(viewer.getCanvas(), 100, 100);
 		}
 		ctx.runAndWait(() -> {
 			domain.activate();

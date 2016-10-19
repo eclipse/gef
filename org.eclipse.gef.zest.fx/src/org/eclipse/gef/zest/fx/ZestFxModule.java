@@ -28,8 +28,8 @@ import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
-import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
@@ -44,7 +44,6 @@ import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.behaviors.EdgeHidingBehavior;
 import org.eclipse.gef.zest.fx.behaviors.EdgeLabelHidingBehavior;
@@ -102,23 +101,10 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	@Override
-	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
-		bindNavigationModelAsContentViewerAdapter(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
-	}
-
-	@Override
-	protected void bindIRootPartAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindIRootPartAdaptersForContentViewer(adapterMapBinder);
-
-		adapterMapBinder.addBinding(AdapterKey.role("open-parent-graph")).to(OpenParentGraphOnDoubleClickPolicy.class);
-
-		// keyboard focus traversal
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypePolicy.class);
-
-		// select focused on type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+	protected void bindChangeViewportPolicyAsIRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// overwrite default zoom policy to perform semantic zooming (navigating
+		// nested graphs on zoom level changes)
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SemanticZoomPolicy.class);
 	}
 
 	/**
@@ -137,8 +123,8 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindEdgeLabelPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// selection link feedback provider
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(
+						AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// selection feedback provider
@@ -184,8 +170,8 @@ public class ZestFxModule extends MvcFxModule {
 
 		// selection link feedback provider
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(
+						AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 
 		// selection feedback provider
@@ -221,13 +207,6 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
 	}
 
-	@Override
-	protected void bindChangeViewportPolicyAsIRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// overwrite default zoom policy to perform semantic zooming (navigating
-		// nested graphs on zoom level changes)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SemanticZoomPolicy.class);
-	}
-
 	/**
 	 * Bind bend-on-drag policy to {@link CircleSegmentHandlePart}.
 	 *
@@ -240,12 +219,6 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		AdapterMaps.getAdapterMapBinder(binder(), CircleSegmentHandlePart.class).addBinding(AdapterKey.defaultRole())
 				.to(BendFirstAnchorageAndRelocateLabelsOnDrag.class);
-	}
-
-	@Override
-	protected void bindRootPartAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(IDomain.CONTENT_VIEWER_ROLE)).to(ZestFxRootPart.class)
-				.in(AdaptableScopes.typed(Viewer.class));
 	}
 
 	/**
@@ -309,7 +282,27 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindIContentPartFactory() {
 		binder().bind(IContentPartFactory.class).to(ZestFxContentPartFactory.class)
-				.in(AdaptableScopes.typed(Viewer.class));
+				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	@Override
+	protected void bindIRootPartAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindIRootPartAdaptersForContentViewer(adapterMapBinder);
+
+		adapterMapBinder.addBinding(AdapterKey.role("open-parent-graph")).to(OpenParentGraphOnDoubleClickPolicy.class);
+
+		// keyboard focus traversal
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypePolicy.class);
+
+		// select focused on type
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+	}
+
+	@Override
+	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
+		bindNavigationModelAsContentViewerAdapter(adapterMapBinder);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
 	}
 
 	/**
@@ -339,8 +332,8 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindNodeLabelPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// selection link feedback provider
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(
+						AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// selection feedback provider
@@ -426,8 +419,8 @@ public class ZestFxModule extends MvcFxModule {
 
 		// selection link feedback provider
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(
+						AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -453,6 +446,12 @@ public class ZestFxModule extends MvcFxModule {
 
 		// normalize on drag
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragPolicy.class);
+	}
+
+	@Override
+	protected void bindRootPartAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(IDomain.CONTENT_VIEWER_ROLE)).to(ZestFxRootPart.class)
+				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
 	@Override
@@ -507,10 +506,8 @@ public class ZestFxModule extends MvcFxModule {
 		bindEdgeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeLabelPart.class));
 		bindNodeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodeLabelPart.class));
 
-		bindFXSquareSegmentHandlePartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), SquareSegmentHandlePart.class));
-		bindFXCircleSegmentHandlePartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), CircleSegmentHandlePart.class));
+		bindFXSquareSegmentHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), SquareSegmentHandlePart.class));
+		bindFXCircleSegmentHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), CircleSegmentHandlePart.class));
 
 		bindHidingHoverHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), HideHoverHandlePart.class));
 		bindShowHiddenNeighborsHoverHandlePartAdapters(

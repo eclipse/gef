@@ -14,7 +14,7 @@ package org.eclipse.gef.mvc.examples.logo;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.examples.logo.behaviors.PaletteFocusBehavior;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,7 +36,7 @@ public class MvcLogoExampleViewersComposite {
 	public MvcLogoExampleViewersComposite(IViewer contentViewer, IViewer paletteViewer) {
 		// determine viewers' root nodes
 		Parent contentRootNode = contentViewer.getCanvas();
-		final InfiniteCanvas paletteRootNode = ((Viewer) paletteViewer).getCanvas();
+		final InfiniteCanvas paletteRootNode = ((InfiniteCanvasViewer) paletteViewer).getCanvas();
 
 		// arrange viewers above each other
 		AnchorPane viewersPane = new AnchorPane();

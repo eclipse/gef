@@ -44,7 +44,7 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
@@ -338,7 +338,7 @@ public class DotGraphView extends ZestFxUiView {
 
 			@Override
 			public void run() {
-				InfiniteCanvas canvas = ((Viewer) getContentViewer())
+				InfiniteCanvas canvas = ((InfiniteCanvasViewer) getContentViewer())
 						.getCanvas();
 				canvas.setHorizontalScrollOffset(
 						canvas.getHorizontalScrollOffset()

@@ -12,6 +12,6 @@
 /**
  * This package contains a JavaFX-specific
  * {@link org.eclipse.gef.mvc.fx.domain.IDomain} implementation:
- * {@link org.eclipse.gef.mvc.fx.domain.Domain}.
+ * {@link org.eclipse.gef.mvc.fx.domain.HistoricizingDomain}.
  */
 package org.eclipse.gef.mvc.fx.domain;

@@ -13,13 +13,13 @@ package org.eclipse.gef.mvc.fx.behaviors;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.models.GridModel;
-import org.eclipse.gef.mvc.fx.parts.RootPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 /**
- * The {@link GridBehavior} can be registered on an {@link RootPart} to apply
+ * The {@link GridBehavior} can be registered on an {@link IRootPart} to apply
  * the information from the {@link GridModel} to the background grid that is
- * managed by the {@link Viewer}.
+ * managed by the {@link InfiniteCanvasViewer}.
  *
  * @author anyssen
  *
@@ -53,13 +53,14 @@ public class GridBehavior extends AbstractBehavior {
 
 	/**
 	 * Returns the {@link InfiniteCanvas} of the {@link #getHost() host's}
-	 * {@link Viewer}.
+	 * {@link InfiniteCanvasViewer}.
 	 *
 	 * @return The {@link InfiniteCanvas} of the {@link #getHost() host's}
-	 *         {@link Viewer}.
+	 *         {@link InfiniteCanvasViewer}.
 	 */
 	protected InfiniteCanvas getCanvas() {
-		return ((Viewer) getHost().getRoot().getViewer()).getCanvas();
+		return ((InfiniteCanvasViewer) getHost().getRoot().getViewer())
+				.getCanvas();
 	}
 
 }

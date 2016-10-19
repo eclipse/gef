@@ -26,13 +26,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 
 /**
- * The {@link RootPart} is an {@link IRootPart} that is parameterized by
- * {@link Group}. It manages a number of layers for the visualization, namely,
- * the content layer, feedback layer, and handle layer. The visuals of the
- * different {@link IVisualPart}s are inserted into these layers depending on
- * their type, i.e. {@link IContentPart} visuals are inserted into the content
- * layer, {@link IFeedbackPart} visuals are inserted into the feedback layer,
- * and {@link IHandlePart} visuals are inserted into the handle layer.
+ * The {@link LayeredRootPart} is an {@link IRootPart} that manages a number of
+ * layers for the visualization, namely, the content layer, feedback layer, and
+ * handle layer. The visuals of the different {@link IVisualPart}s are inserted
+ * into these layers depending on their type, i.e. {@link IContentPart} visuals
+ * are inserted into the content layer, {@link IFeedbackPart} visuals are
+ * inserted into the feedback layer, and {@link IHandlePart} visuals are
+ * inserted into the handle layer.
  * <p>
  * The layers are stacked on top of each other with the content layer at the
  * bottom and the handle layer at the top. The feedback layer in the middle is
@@ -41,7 +41,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class RootPart extends AbstractVisualPart<Group>
+public class LayeredRootPart extends AbstractVisualPart<Group>
 		implements IRootPart<Group> {
 
 	private ReadOnlyObjectWrapper<IViewer> viewerProperty = new ReadOnlyObjectWrapper<>();
@@ -53,7 +53,7 @@ public class RootPart extends AbstractVisualPart<Group>
 	/**
 	 * Default constructor.
 	 */
-	public RootPart() {
+	public LayeredRootPart() {
 	}
 
 	@Override

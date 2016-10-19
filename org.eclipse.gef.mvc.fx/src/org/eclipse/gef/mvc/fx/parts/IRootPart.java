@@ -29,9 +29,6 @@ import javafx.scene.Node;
  * typically can not be interacted with by the User. The Root provides a
  * homogeneous context for the applications "real" {@link IVisualPart}.
  *
- * @noimplement This interface is not intended to be implemented by clients.
- *              Instead, {@link RootPart} should be sub-classed.
- *
  * @author anyssen
  *
  * @param <V>

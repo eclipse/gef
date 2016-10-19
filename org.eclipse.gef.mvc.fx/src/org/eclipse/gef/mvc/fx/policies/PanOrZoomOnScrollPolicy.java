@@ -14,7 +14,7 @@ package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Bounds;
 import javafx.scene.input.ScrollEvent;
@@ -215,7 +215,7 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	 *         adjusted, otherwise <code>false</code>.
 	 */
 	protected boolean stopAtContentBounds(Dimension delta) {
-		InfiniteCanvas infiniteCanvas = ((Viewer) getHost().getRoot()
+		InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost().getRoot()
 				.getViewer()).getCanvas();
 		Bounds contentBounds = infiniteCanvas.getContentBounds();
 		boolean stopped = false;

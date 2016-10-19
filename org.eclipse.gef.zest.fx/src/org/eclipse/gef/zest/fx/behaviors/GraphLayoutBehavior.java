@@ -22,7 +22,7 @@ import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
@@ -174,7 +174,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		NavigationModel navigationModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
 		ViewportState savedViewport = navigationModel == null ? null
 				: navigationModel.getViewportState(getHost().getContent());
-		InfiniteCanvas canvas = ((Viewer) getHost().getRoot().getViewer()).getCanvas();
+		InfiniteCanvas canvas = ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas();
 		boolean isNested = getNestingPart() != null;
 		boolean isViewportChanged = savedViewport != null
 				&& (savedViewport.getWidth() != canvas.getWidth() || savedViewport.getHeight() != canvas.getHeight());
@@ -215,7 +215,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 *         {@link #getHost() host}.
 	 */
 	protected InfiniteCanvas getInfiniteCanvas() {
-		return ((Viewer) getHost().getRoot().getViewer()).getCanvas();
+		return ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas();
 	}
 
 	@Override

@@ -42,7 +42,8 @@ import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef.mvc.fx.ui.properties.SetPropertyValueOperation;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.common.reflect.TypeToken;
@@ -289,8 +290,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 		return super.getAdapter(key);
 	}
 
-	protected Viewer getPaletteViewer() {
-		return getDomain().getAdapter(AdapterKey.get(Viewer.class,
+	protected IViewer getPaletteViewer() {
+		return getDomain().getAdapter(AdapterKey.get(IViewer.class,
 				MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
 	}
 

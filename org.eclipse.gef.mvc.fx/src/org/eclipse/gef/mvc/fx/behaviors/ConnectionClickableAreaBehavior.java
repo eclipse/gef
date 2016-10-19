@@ -15,7 +15,7 @@ import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
@@ -48,7 +48,7 @@ public class ConnectionClickableAreaBehavior extends AbstractBehavior {
 			@Override
 			protected double computeValue() {
 				double localClickableWidth = ABSOLUTE_CLICKABLE_WIDTH
-						/ ((Viewer) getHost().getRoot().getViewer()).getCanvas()
+						/ ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas()
 								.getContentTransform().getMxx();
 				return Math.min(localClickableWidth, ABSOLUTE_CLICKABLE_WIDTH);
 			}
@@ -57,7 +57,7 @@ public class ConnectionClickableAreaBehavior extends AbstractBehavior {
 		// binding in case the curve node is changed
 		((GeometryNode<ICurve>) getHost().getVisual().getCurve())
 				.clickableAreaWidthProperty().bind(clickableAreaBinding);
-		((Viewer) getHost().getRoot().getViewer()).getCanvas()
+		((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas()
 				.getContentTransform().mxxProperty()
 				.addListener(scaleXListener);
 	}
@@ -65,7 +65,7 @@ public class ConnectionClickableAreaBehavior extends AbstractBehavior {
 	@Override
 	protected void doDeactivate() {
 		clickableAreaBinding.dispose();
-		((Viewer) getHost().getRoot().getViewer()).getCanvas()
+		((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas()
 				.getContentTransform().mxxProperty()
 				.removeListener(scaleXListener);
 	}

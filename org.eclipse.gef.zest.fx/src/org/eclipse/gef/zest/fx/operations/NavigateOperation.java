@@ -30,7 +30,8 @@ import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.models.NavigationModel.ViewportState;
 
@@ -101,7 +102,7 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	private ChangeContentsOperation changeContentsOperation;
 	private ChangeViewportOperation changeViewportOperation;
 	private NavigationModel navigationModel;
-	private Viewer viewer;
+	private IViewer viewer;
 	private Graph sourceGraph;
 	private UpdateViewportStateOperation updateViewportStateOperation;
 
@@ -112,10 +113,10 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	 * {@link #setFinalState(Graph, boolean)}.
 	 *
 	 * @param viewer
-	 *            The {@link Viewer} of which the contents and viewport are
-	 *            manipulated.
+	 *            The {@link InfiniteCanvasViewer} of which the contents and
+	 *            viewport are manipulated.
 	 */
-	public NavigateOperation(Viewer viewer) {
+	public NavigateOperation(IViewer viewer) {
 		super("Navigate Graph");
 
 		this.viewer = viewer;
@@ -125,7 +126,7 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 
 		// create sub-operations
 		changeContentsOperation = new ChangeContentsOperation(viewer, Collections.singletonList(sourceGraph));
-		changeViewportOperation = new ChangeViewportOperation(viewer.getCanvas());
+		changeViewportOperation = new ChangeViewportOperation(((InfiniteCanvasViewer) viewer).getCanvas());
 		updateViewportStateOperation = new UpdateViewportStateOperation(navigationModel.getViewportState(sourceGraph));
 
 		// arrange sub-operations
@@ -143,16 +144,16 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	 * instead it will be reset.
 	 *
 	 * @param viewer
-	 *            The {@link Viewer} of which the contents and viewport are
-	 *            manipulated.
+	 *            The {@link InfiniteCanvasViewer} of which the contents and
+	 *            viewport are manipulated.
 	 * @param targetGraph
 	 *            The final {@link Graph} to be displayed within the given
-	 *            {@link Viewer}.
+	 *            {@link InfiniteCanvasViewer}.
 	 * @param isNestedGraph
 	 *            Specifies whether or not the given <i>finalGraph</i> is a
 	 *            nested {@link Graph}.
 	 */
-	public NavigateOperation(Viewer viewer, Graph targetGraph, boolean isNestedGraph) {
+	public NavigateOperation(IViewer viewer, Graph targetGraph, boolean isNestedGraph) {
 		this(viewer);
 		setFinalState(targetGraph, isNestedGraph);
 	}
@@ -182,7 +183,7 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	 */
 	public void setFinalState(Graph targetGraph, boolean isNestedGraph) {
 		// persist the state of the current graph (before zooming in)
-		InfiniteCanvas canvas = viewer.getCanvas();
+		InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer).getCanvas();
 		if (isNestedGraph) {
 			// is we are navigating to a nested graph, store our viewport
 			ViewportState sourceGraphFinalViewportState = new ViewportState(canvas.getHorizontalScrollOffset(),

@@ -23,7 +23,7 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Point2D;
 
@@ -39,7 +39,7 @@ public class ChangeViewportPolicy extends AbstractTransactionPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		Viewer viewer = (Viewer) getHost().getRoot().getViewer();
+		InfiniteCanvasViewer viewer = (InfiniteCanvasViewer) getHost().getRoot().getViewer();
 		return new ChangeViewportOperation(viewer.getCanvas(), FX2Geometry
 				.toAffineTransform(viewer.getCanvas().getContentTransform()));
 	}
@@ -175,7 +175,7 @@ public class ChangeViewportPolicy extends AbstractTransactionPolicy {
 		}
 
 		// transform pivot to local coordinates
-		Point2D contentGroupPivot = ((Viewer) getHost().getRoot().getViewer())
+		Point2D contentGroupPivot = ((InfiniteCanvasViewer) getHost().getRoot().getViewer())
 				.getCanvas().getContentGroup().sceneToLocal(sceneX, sceneY);
 		// compute zoom transform
 		AffineTransform zoomTx = new AffineTransform()

@@ -24,7 +24,7 @@ import org.eclipse.gef.fx.listeners.VisualChangeListener;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.AbstractHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.parts.RootPart;
+import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,7 +49,8 @@ public class AbstractHandlePartTests {
 	@Rule
 	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
 
-	private RootPart rp = new RootPart() {
+	// TODO: use injection
+	private LayeredRootPart rp = new LayeredRootPart() {
 
 		@Override
 		protected void doAddChildVisual(IVisualPart<? extends Node> child, int index) {

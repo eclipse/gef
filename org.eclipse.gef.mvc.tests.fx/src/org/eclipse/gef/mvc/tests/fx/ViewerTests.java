@@ -20,12 +20,12 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -58,9 +58,8 @@ public class ViewerTests {
 				bindIContentPartFactory();
 			}
 		});
-		Domain domain = new Domain();
-		injector.injectMembers(domain);
-		Viewer viewer = domain.getAdapter(AdapterKey.get(Viewer.class, Domain.CONTENT_VIEWER_ROLE));
+		IDomain domain = injector.getInstance(IDomain.class);
+		IViewer viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 		IRootPart<? extends Node> rootPart = viewer.getRootPart();
 		assertNotNull(rootPart);
 		rootPart = viewer.getAdapter(new TypeToken<IRootPart<? extends Node>>() {

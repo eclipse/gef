@@ -12,6 +12,6 @@
 /**
  * This package contains a JavaFX-specific
  * {@link org.eclipse.gef.mvc.fx.viewer.IViewer} implementation:
- * {@link org.eclipse.gef.mvc.fx.viewer.Viewer}.
+ * {@link org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer}.
  */
 package org.eclipse.gef.mvc.fx.viewer;

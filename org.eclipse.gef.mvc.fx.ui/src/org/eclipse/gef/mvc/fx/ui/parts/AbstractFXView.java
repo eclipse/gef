@@ -15,7 +15,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -45,7 +45,7 @@ import javafx.scene.Scene;
 public abstract class AbstractFXView extends ViewPart {
 
 	@Inject
-	private Domain domain;
+	private IDomain domain;
 
 	@Inject
 	private IFXCanvasFactory canvasFactory;
@@ -76,7 +76,7 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Activates this {@link AbstractFXView} by activating the {@link Domain}
+	 * Activates this {@link AbstractFXView} by activating the {@link IDomain}
 	 * that was previously injected.
 	 */
 	protected void activate() {
@@ -131,7 +131,7 @@ public abstract class AbstractFXView extends ViewPart {
 
 	/**
 	 * Deactivates this {@link AbstractFXView} by deactivating its
-	 * {@link Domain} that was previously injected.
+	 * {@link IDomain} that was previously injected.
 	 */
 	protected void deactivate() {
 		domain.deactivate();
@@ -196,9 +196,13 @@ public abstract class AbstractFXView extends ViewPart {
 			}
 			return propertySheetPage;
 		} else if (IUndoContext.class.equals(key)) {
-			return domain.getUndoContext();
+			if (domain instanceof HistoricizingDomain) {
+				return ((HistoricizingDomain) domain).getUndoContext();
+			}
 		} else if (IOperationHistory.class.equals(key)) {
-			return domain.getOperationHistory();
+			if (domain instanceof HistoricizingDomain) {
+				return ((HistoricizingDomain) domain).getOperationHistory();
+			}
 		}
 		return super.getAdapter(key);
 	}
@@ -215,10 +219,10 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Returns the {@link IViewer} of the {@link Domain} that was previously
+	 * Returns the {@link IViewer} of the {@link IDomain} that was previously
 	 * injected.
 	 *
-	 * @return The {@link IViewer} of the {@link Domain} that was previously
+	 * @return The {@link IViewer} of the {@link IDomain} that was previously
 	 *         injected.
 	 */
 	protected IViewer getContentViewer() {
@@ -227,11 +231,11 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Returns the {@link Domain} that was previously injected.
+	 * Returns the {@link IDomain} that was previously injected.
 	 *
-	 * @return The {@link Domain} that was previously injected.
+	 * @return The {@link IDomain} that was previously injected.
 	 */
-	public Domain getDomain() {
+	public IDomain getDomain() {
 		return domain;
 	}
 

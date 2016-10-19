@@ -23,7 +23,7 @@ import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.reflect.TypeToken;
@@ -59,7 +59,7 @@ import javafx.scene.transform.Affine;
  * @author wienand
  *
  */
-// TODO: only applicable for RootPart and Viewer
+// TODO: only applicable for LayeredRootPart and InfiniteCanvasViewer
 public class CreationMenuOnClickPolicy extends AbstractInteractionPolicy
 		implements IOnClickPolicy {
 
@@ -329,12 +329,12 @@ public class CreationMenuOnClickPolicy extends AbstractInteractionPolicy
 	}
 
 	/**
-	 * Returns the {@link Viewer} in which to open the creation menu.
+	 * Returns the {@link InfiniteCanvasViewer} in which to open the creation menu.
 	 *
-	 * @return The {@link Viewer} in which to open the creation menu.
+	 * @return The {@link InfiniteCanvasViewer} in which to open the creation menu.
 	 */
-	protected Viewer getViewer() {
-		return (Viewer) getHost().getRoot().getViewer();
+	protected InfiniteCanvasViewer getViewer() {
+		return (InfiniteCanvasViewer) getHost().getRoot().getViewer();
 	}
 
 	/**

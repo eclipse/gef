@@ -15,11 +15,11 @@ package org.eclipse.gef.mvc.fx.behaviors;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.value.ChangeListener;
@@ -37,7 +37,20 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
+// TODO: viewer focus needs to be handled inside viewer directly and should be
+// moved out of here
 public class FocusBehavior extends AbstractBehavior {
+
+	/**
+	 * Defines the default CSS styling for the {@link InfiniteCanvas}: no
+	 * background, no border.
+	 */
+	public static final String UNFOCUSED_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(0,0,0,0);";
+
+	/**
+	 * Defines the CSS styling that is used to highlight a focused viewer.
+	 */
+	public static final String FOCUSED_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(0,0,0,0); -fx-border-color: #8ec0fc; -fx-border-width: 2;";
 
 	/**
 	 * The adapter role for the "focus" {@link IFeedbackPartFactory}.
@@ -87,9 +100,7 @@ public class FocusBehavior extends AbstractBehavior {
 	 * Adds viewer focused feedback.
 	 */
 	protected void addViewerFocusedFeedback() {
-		if (viewer instanceof Viewer) {
-			((IViewer) viewer).getCanvas().setStyle(Viewer.FOCUSED_STYLE);
-		}
+		viewer.getCanvas().setStyle(FOCUSED_STYLE);
 		hasViewerFocusedFeedback = true;
 	}
 
@@ -177,9 +188,7 @@ public class FocusBehavior extends AbstractBehavior {
 	 * Removes viewer focused feedback.
 	 */
 	protected void removeViewerFocusedFeedback() {
-		if (viewer instanceof Viewer) {
-			((IViewer) viewer).getCanvas().setStyle(Viewer.DEFAULT_STYLE);
-		}
+		viewer.getCanvas().setStyle(UNFOCUSED_STYLE);
 		hasViewerFocusedFeedback = false;
 	}
 

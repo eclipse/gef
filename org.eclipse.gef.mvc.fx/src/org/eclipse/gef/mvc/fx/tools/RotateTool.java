@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.fx.gestures.AbstractRotateGesture;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.policies.IOnRotatePolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -35,7 +35,7 @@ import javafx.scene.input.RotateEvent;
  * interaction gestures.
  * <p>
  * The {@link RotateTool} handles the opening and closing of an transaction
- * operation via the {@link Domain}, to which it is adapted. It controls that a
+ * operation via the {@link IDomain}, to which it is adapted. It controls that a
  * single transaction operation is used for the complete interaction , so all
  * interaction results can be undone in a single undo step.
  *

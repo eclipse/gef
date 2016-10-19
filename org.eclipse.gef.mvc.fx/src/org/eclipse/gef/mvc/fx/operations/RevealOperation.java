@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.scene.Node;
 
@@ -37,7 +37,7 @@ public class RevealOperation extends AbstractOperation
 	private double tx = 0d;
 	private double ty = 0d;
 
-	private Viewer viewer;
+	private InfiniteCanvasViewer viewer;
 	private IVisualPart<? extends Node> part = null;
 
 	/**
@@ -51,7 +51,7 @@ public class RevealOperation extends AbstractOperation
 	public RevealOperation(IVisualPart<? extends Node> part) {
 		super("Reveal");
 		this.part = part;
-		viewer = (Viewer) part.getRoot().getViewer();
+		viewer = (InfiniteCanvasViewer) part.getRoot().getViewer();
 	}
 
 	@Override

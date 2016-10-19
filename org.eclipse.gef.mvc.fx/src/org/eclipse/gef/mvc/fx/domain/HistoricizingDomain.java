@@ -21,7 +21,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.common.activate.ActivatableSupport;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
@@ -42,12 +44,13 @@ import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.collections.ObservableMap;
 
 /**
- * The {@link Domain} is an implementation of {@link IDomain}.
+ * The {@link HistoricizingDomain} is an {@link IDomain} that uses an
+ * {@link IOperationHistory} for executing {@link ITransactionalOperation
+ * ITransactionalOperations}.
  *
  * @author anyssen
- *
  */
-public class Domain implements IDomain {
+public class HistoricizingDomain implements IDomain {
 
 	private static final int DEFAULT_UNDO_LIMIT = 128;
 	private static final UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER = new UncaughtExceptionHandler() {
@@ -63,7 +66,8 @@ public class Domain implements IDomain {
 	};
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
-	private AdaptableSupport<Domain> ads = new AdaptableSupport<>(this);
+	private AdaptableSupport<HistoricizingDomain> ads = new AdaptableSupport<>(
+			this);
 
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
@@ -89,9 +93,9 @@ public class Domain implements IDomain {
 	};
 
 	/**
-	 * Creates a new {@link Domain} instance.
+	 * Creates a new {@link HistoricizingDomain} instance.
 	 */
-	public Domain() {
+	public HistoricizingDomain() {
 		// ensure uncaught exception handler is used
 		Thread.currentThread()
 				.setUncaughtExceptionHandler(UNCAUGHT_EXCEPTION_HANDLER);
@@ -216,7 +220,16 @@ public class Domain implements IDomain {
 	}
 
 	/**
-	 * @since 1.1
+	 * {@inheritDoc}
+	 *
+	 * In case an execution transaction is currently open (see
+	 * {@link #openExecutionTransaction(ITool)},
+	 * {@link #closeExecutionTransaction(ITool)}) the enclosing transaction will
+	 * refer to the {@link IUndoContext} used by this {@link IDomain}) (so that
+	 * no specific {@link IUndoContext} is set on the passed in
+	 * {@link IUndoableOperation}). If no transaction is currently open, the
+	 * {@link IUndoContext} of this {@link IDomain} will be set on the passed in
+	 * {@link IUndoableOperation}.
 	 */
 	@Override
 	public void execute(ITransactionalOperation operation,
@@ -281,7 +294,12 @@ public class Domain implements IDomain {
 		return ads.getAdapters(key);
 	}
 
-	@Override
+	/**
+	 * Returns the {@link IOperationHistory} used by this
+	 * {@link HistoricizingDomain} to execute transactions.
+	 *
+	 * @return The {@link IOperationHistory}.
+	 */
 	public IOperationHistory getOperationHistory() {
 		return operationHistory;
 	}
@@ -291,7 +309,12 @@ public class Domain implements IDomain {
 		return ads.getAdapters(ITool.class);
 	}
 
-	@Override
+	/**
+	 * Returns the {@link UndoContext} that is used by this domain to execute
+	 * transactions.
+	 *
+	 * @return The {@link UndoContext}.
+	 */
 	public IUndoContext getUndoContext() {
 		return undoContext;
 	}
@@ -367,9 +390,9 @@ public class Domain implements IDomain {
 	}
 
 	/**
-	 * Sets the {@link IOperationHistory} that is used by this {@link Domain}
-	 * to the given value. Operation history listeners are un-/registered
-	 * accordingly.
+	 * Sets the {@link IOperationHistory} that is used by this
+	 * {@link HistoricizingDomain} to the given value. Operation history
+	 * listeners are un-/registered accordingly.
 	 *
 	 * @param operationHistory
 	 *            The new {@link IOperationHistory} for this domain.
@@ -395,8 +418,8 @@ public class Domain implements IDomain {
 	}
 
 	/**
-	 * Sets the {@link IUndoContext} that is used by this {@link Domain} to
-	 * the given value.
+	 * Sets the {@link IUndoContext} that is used by this
+	 * {@link HistoricizingDomain} to the given value.
 	 *
 	 * @param undoContext
 	 *            The new {@link IUndoContext} for this domain.

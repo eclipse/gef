@@ -17,8 +17,8 @@ import java.util.List;
 import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
 import org.eclipse.gef.mvc.fx.operations.BendConnectionOperation;
+import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
@@ -34,6 +34,7 @@ import javafx.geometry.Bounds;
  * @author mwienand
  *
  */
+// ResizeBendable instead?
 public class ResizeConnectionPolicy extends ResizePolicy {
 
 	private List<BendPoint> initialBendPoints;

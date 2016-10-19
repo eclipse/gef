@@ -27,11 +27,11 @@ import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.ILayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -79,8 +79,8 @@ public class ZestContentViewer extends ContentViewer {
 
 	private Injector injector;
 	private FXCanvas canvas;
-	private Domain domain;
-	private Viewer viewer;
+	private IDomain domain;
+	private IViewer viewer;
 	private ILayoutAlgorithm layoutAlgorithm;
 	private Map<Object, Node> contentNodeMap = new IdentityHashMap<>();
 
@@ -88,7 +88,7 @@ public class ZestContentViewer extends ContentViewer {
 	 * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
 	 * saved so that it can be later used to create an {@link Injector} that is
 	 * later used for the injection of members and the construction of the
-	 * {@link Domain}.
+	 * {@link IDomain}.
 	 *
 	 * @param module
 	 *            The {@link Module} from which an {@link Injector} is created
@@ -130,10 +130,10 @@ public class ZestContentViewer extends ContentViewer {
 		canvas = createCanvas(parent, style);
 
 		// inject domain
-		domain = injector.getInstance(Domain.class);
+		domain = injector.getInstance(IDomain.class);
 
 		// hook viewer
-		viewer = domain.getAdapter(AdapterKey.get(Viewer.class, Domain.CONTENT_VIEWER_ROLE));
+		viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 		canvas.setScene(new Scene(viewer.getCanvas()));
 
 		getSelectionModel().getSelectionUnmodifiable().addListener(selectionNotifier);
@@ -413,18 +413,18 @@ public class ZestContentViewer extends ContentViewer {
 		return Collections.unmodifiableMap(contentNodeMap);
 	}
 
+	/**
+	 * Returns the {@link IViewer} that displays the contents.
+	 *
+	 * @return The {@link IViewer} that displays the contents.
+	 */
+	public IViewer getContentViewer() {
+		return viewer;
+	}
+
 	@Override
 	public FXCanvas getControl() {
 		return canvas;
-	}
-
-	/**
-	 * Returns the {@link Viewer} that displays the contents.
-	 *
-	 * @return The {@link Viewer} that displays the contents.
-	 */
-	public Viewer getFXViewer() {
-		return viewer;
 	}
 
 	@Override
@@ -456,10 +456,10 @@ public class ZestContentViewer extends ContentViewer {
 
 	/**
 	 * Retrieves the {@link SelectionModel} used by the viewer (
-	 * {@link #getFXViewer()})
+	 * {@link #getContentViewer()})
 	 *
 	 * @return The {@link SelectionModel} adapted to the viewer (
-	 *         {@link #getFXViewer()}).
+	 *         {@link #getContentViewer()}).
 	 */
 	protected SelectionModel getSelectionModel() {
 		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);

@@ -27,7 +27,7 @@ import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -62,7 +62,7 @@ public class SemanticZoomPolicy extends ChangeViewportPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new NavigateOperation((Viewer) getHost().getRoot().getViewer());
+		return new NavigateOperation(getHost().getRoot().getViewer());
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class SemanticZoomPolicy extends ChangeViewportPolicy {
 			double pivotDistance = Double.MAX_VALUE;
 			NodePart pivotPart = null;
 
-			InfiniteCanvas infiniteCanvas = ((Viewer) getHost().getRoot().getViewer()).getCanvas();
+			InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas();
 			org.eclipse.gef.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef.geometry.planar.Rectangle(0,
 					0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
 			Point pivotPoint = FX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));

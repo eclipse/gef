@@ -16,14 +16,13 @@ import java.util.ArrayList;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
 import org.eclipse.gef.mvc.fx.tools.TypeTool;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
@@ -36,7 +35,7 @@ import javafx.scene.Scene;
 
 /**
  * An {@link Action} to handle deletion of selection elements in an
- * {@link Viewer}
+ * {@link IViewer}
  * <P>
  * IMPORTANT: Usually, an action handler will only be executed in case the
  * widget that currently has focus does not already consume the triggering key
@@ -46,9 +45,9 @@ import javafx.scene.Scene;
  * propagated back.
  * <p>
  * Additionally, the JavaFX event handler (i.e. the {@link TypeTool}, in case
- * its registered at the {@link Domain}) will be notified after the execution of
- * the action handler, because {@link FXCanvasEx} wraps the event forwarding in
- * an {@link Platform#runLater(Runnable)} call.
+ * its registered at the {@link IDomain}) will be notified after the execution
+ * of the action handler, because {@link FXCanvasEx} wraps the event forwarding
+ * in an {@link Platform#runLater(Runnable)} call.
  *
  * @author anyssen
  *

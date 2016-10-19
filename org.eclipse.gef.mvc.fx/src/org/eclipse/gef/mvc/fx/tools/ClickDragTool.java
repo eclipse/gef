@@ -21,14 +21,14 @@ import java.util.Map;
 import org.eclipse.gef.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.inject.Inject;
 
@@ -56,7 +56,7 @@ import javafx.scene.input.MouseEvent;
  * {@link IOnDragPolicy}.
  * <p>
  * The {@link ClickDragTool} handles the opening and closing of an transaction
- * operation via the {@link Domain}, to which it is adapted. It controls that a
+ * operation via the {@link IDomain}, to which it is adapted. It controls that a
  * single transaction operation is used for the complete interaction (including
  * the click and potential drag part), so all interaction results can be undone
  * in a single undo step.
@@ -236,8 +236,8 @@ public class ClickDragTool extends AbstractTool {
 
 				@Override
 				protected void press(Node target, MouseEvent e) {
-					if (viewer instanceof Viewer) {
-						InfiniteCanvas canvas = ((Viewer) viewer).getCanvas();
+					if (viewer instanceof InfiniteCanvasViewer) {
+						InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer).getCanvas();
 						// if any node in the target hierarchy is a scrollbar,
 						// do not process the event
 						if (e.getTarget() instanceof Node) {

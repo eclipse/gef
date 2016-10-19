@@ -23,12 +23,12 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
-import org.eclipse.gef.mvc.fx.parts.RootPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
+import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.providers.TransformProvider;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXApplicationThreadRule;
 import org.eclipse.gef.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef.zest.fx.parts.NodePart;
@@ -90,8 +90,9 @@ public class NodeLayoutBehaviorTests {
 							return node;
 						}
 					};
-					RootPart rootPart = new RootPart();
-					Viewer viewer = new Viewer();
+					// TODO: use injection
+					LayeredRootPart rootPart = new LayeredRootPart();
+					InfiniteCanvasViewer viewer = new InfiniteCanvasViewer();
 					viewer.setAdapter(rootPart);
 					host.setParent(rootPart);
 				}

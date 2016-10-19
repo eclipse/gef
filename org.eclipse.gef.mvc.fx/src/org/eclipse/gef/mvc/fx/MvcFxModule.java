@@ -28,7 +28,7 @@ import org.eclipse.gef.mvc.fx.behaviors.GridBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.RevealPrimarySelectionBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
@@ -49,7 +49,7 @@ import org.eclipse.gef.mvc.fx.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
-import org.eclipse.gef.mvc.fx.parts.RootPart;
+import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.ContentPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
@@ -70,8 +70,8 @@ import org.eclipse.gef.mvc.fx.tools.PinchSpreadTool;
 import org.eclipse.gef.mvc.fx.tools.RotateTool;
 import org.eclipse.gef.mvc.fx.tools.ScrollTool;
 import org.eclipse.gef.mvc.fx.tools.TypeTool;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
@@ -189,13 +189,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link ChangeViewportPolicy} to the {@link AdapterMap}
-	 * binder for {@link RootPart}.
+	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -206,22 +206,22 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link ClickDragTool} to the {@link Domain} adaptable scope.
+	 * Binds {@link ClickDragTool} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindClickDragTool() {
 		binder().bind(ClickDragTool.class)
-				.in(AdaptableScopes.typed(Domain.class));
+				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
 	 * Adds a binding for {@link ClickDragTool} to the {@link AdapterMap} binder
-	 * for {@link Domain}.
+	 * for {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -251,13 +251,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link ContentBehavior}, parameterized by {@link Node}
-	 * , to the {@link AdapterMap} binder for {@link RootPart}.
+	 * , to the {@link AdapterMap} binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -275,7 +275,7 @@ public class MvcFxModule extends AbstractModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -370,13 +370,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link FocusAndSelectOnClickPolicy} to the
-	 * {@link AdapterMap} binder for {@link RootPart}.
+	 * {@link AdapterMap} binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -391,7 +391,7 @@ public class MvcFxModule extends AbstractModule {
 	 * binder.
 	 *
 	 * @param adapterMapBinder
-	 *            An adapter map binder for {@link RootPart}.
+	 *            An adapter map binder for {@link IRootPart}.
 	 */
 	protected void bindFocusBehaviorAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -416,13 +416,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link FocusModel}, parameterized by {@link Node}, to
-	 * the {@link AdapterMap} binder for {@link Viewer}.
+	 * the {@link AdapterMap} binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Viewer} as a key.
+	 *            {@link IViewer} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -452,13 +452,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link GridBehavior} to the {@link AdapterMap} binder
-	 * for {@link RootPart}.
+	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -518,13 +518,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link HoverModel}, parameterized by {@link Node}, to
-	 * the {@link AdapterMap} binder for {@link Viewer}.
+	 * the {@link AdapterMap} binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Viewer} as a key.
+	 *            {@link IViewer} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -554,13 +554,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link HoverOnHoverPolicy} to the {@link AdapterMap}
-	 * binder for {@link RootPart}.
+	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -571,21 +571,21 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link HoverTool} to the {@link Domain} adaptable scope.
+	 * Binds {@link HoverTool} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindHoverTool() {
-		binder().bind(HoverTool.class).in(AdaptableScopes.typed(Domain.class));
+		binder().bind(HoverTool.class).in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
 	 * Adds a binding for {@link HoverTool} to the {@link AdapterMap} binder for
-	 * {@link Domain}.
+	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -610,14 +610,15 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link IDomain} to a respective {@link Domain} implementation.
+	 * Binds {@link IDomain} to a respective {@link HistoricizingDomain}
+	 * implementation.
 	 */
 	protected void bindIDomain() {
-		binder().bind(IDomain.class).to(Domain.class);
+		binder().bind(IDomain.class).to(HistoricizingDomain.class);
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link Domain} and all
+	 * Adds (default) {@link AdapterMap} bindings for {@link IDomain} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -625,7 +626,7 @@ public class MvcFxModule extends AbstractModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -635,7 +636,7 @@ public class MvcFxModule extends AbstractModule {
 		bindClickDragToolAsDomainAdapter(adapterMapBinder);
 		bindTypeToolAsDomainAdapter(adapterMapBinder);
 		bindRotateToolAsDomainAdapter(adapterMapBinder);
-		bindPinchSpreadToolAsDomainAdapter(adapterMapBinder);
+		bindPinchSpreadToolAsIDomainAdapter(adapterMapBinder);
 		bindScrollToolAsDomainAdapter(adapterMapBinder);
 		bindContentIViewerAsIDomainAdapter(adapterMapBinder);
 	}
@@ -653,11 +654,11 @@ public class MvcFxModule extends AbstractModule {
 	 * Binds the default implementation of {@link IRootPart}.
 	 */
 	protected void bindIRootPart() {
-		binder().bind(IRootPart.class).to(RootPart.class);
+		binder().bind(IRootPart.class).to(LayeredRootPart.class);
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link RootPart} and all
+	 * Adds (default) {@link AdapterMap} bindings for {@link IRootPart} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -665,7 +666,7 @@ public class MvcFxModule extends AbstractModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -696,7 +697,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Binds {@link DefaultTargetPolicyResolver} to
-	 * {@link ITargetPolicyResolver} in adaptable scope of {@link Viewer}.
+	 * {@link ITargetPolicyResolver} in adaptable scope of {@link IDomain}.
 	 */
 	protected void bindITargetPolicyResolver() {
 		binder().bind(ITargetPolicyResolver.class)
@@ -714,14 +715,15 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link IViewer} to a respective {@link Viewer} implementation.
+	 * Binds {@link IViewer} to a respective {@link InfiniteCanvasViewer}
+	 * implementation.
 	 */
 	protected void bindIViewer() {
-		binder().bind(IViewer.class).to(Viewer.class);
+		binder().bind(IViewer.class).to(InfiniteCanvasViewer.class);
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link Viewer} and all
+	 * Adds (default) {@link AdapterMap} bindings for {@link IViewer} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -729,7 +731,7 @@ public class MvcFxModule extends AbstractModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Viewer} as a key.
+	 *            {@link IViewer} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -752,13 +754,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link MarqueeOnDragPolicy} to the {@link AdapterMap}
-	 * binder for {@link RootPart}.
+	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -770,13 +772,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link PanOnTypePolicy} to the {@link AdapterMap}
-	 * binder for {@link RootPart}.
+	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -788,13 +790,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link PanOrZoomOnScrollPolicy} to the
-	 * {@link AdapterMap} binder for {@link RootPart}.
+	 * {@link AdapterMap} binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -805,26 +807,26 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link PinchSpreadTool} to the {@link Domain} adaptable scope.
+	 * Binds {@link PinchSpreadTool} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindPinchSpreadTool() {
 		binder().bind(PinchSpreadTool.class)
-				.in(AdaptableScopes.typed(Domain.class));
+				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
 	 * Adds a binding for {@link PinchSpreadTool} to the {@link AdapterMap}
-	 * binder for {@link Domain}.
+	 * binder for {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindPinchSpreadToolAsDomainAdapter(
+	protected void bindPinchSpreadToolAsIDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(PinchSpreadTool.class);
@@ -832,13 +834,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link RevealPrimarySelectionBehavior}, parameterized
-	 * by {@link Node}, to the {@link AdapterMap} binder for {@link RootPart}.
+	 * by {@link Node}, to the {@link AdapterMap} binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -850,13 +852,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link IRootPart}, parameterized by {@link Node}, to
-	 * the {@link AdapterMap} binder for {@link Viewer}.
+	 * the {@link AdapterMap} binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Viewer} as a key.
+	 *            {@link IViewer} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -868,21 +870,22 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link RotateTool} to the {@link Domain} adaptable scope.
+	 * Binds {@link RotateTool} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindRotateTool() {
-		binder().bind(RotateTool.class).in(AdaptableScopes.typed(Domain.class));
+		binder().bind(RotateTool.class)
+				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
 	 * Adds a binding for {@link RotateTool} to the {@link AdapterMap} binder
-	 * for {@link Domain}.
+	 * for {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -893,21 +896,22 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link ScrollTool} to the {@link Domain} adaptable scope.
+	 * Binds {@link ScrollTool} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindScrollTool() {
-		binder().bind(ScrollTool.class).in(AdaptableScopes.typed(Domain.class));
+		binder().bind(ScrollTool.class)
+				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
 	 * Adds a binding for {@link ScrollTool} to the {@link AdapterMap} binder
-	 * for {@link Domain}.
+	 * for {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -919,13 +923,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link SelectionBehavior}, parameterized by
-	 * {@link Node}, to the {@link AdapterMap} binder for {@link RootPart}.
+	 * {@link Node}, to the {@link AdapterMap} binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -967,13 +971,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link SelectionModel}, parameterized by {@link Node},
-	 * to the {@link AdapterMap} binder for {@link Viewer}.
+	 * to the {@link AdapterMap} binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Viewer} as a key.
+	 *            {@link IViewer} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -1005,21 +1009,21 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link TypeTool} to the {@link Domain} adaptable scope.
+	 * Binds {@link TypeTool} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindTypeTool() {
-		binder().bind(TypeTool.class).in(AdaptableScopes.typed(Domain.class));
+		binder().bind(TypeTool.class).in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
 	 * Adds a binding for {@link TypeTool} to the {@link AdapterMap} binder for
-	 * {@link Domain}.
+	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -1031,13 +1035,13 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link ZoomOnPinchSpreadPolicy} to the
-	 * {@link AdapterMap} binder for {@link RootPart}.
+	 * {@link AdapterMap} binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link RootPart} as a key.
+	 *            {@link IRootPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -1063,15 +1067,15 @@ public class MvcFxModule extends AbstractModule {
 		// bind part pool being used for behaviors
 		bindContentPartPool();
 
-		// bind additional adapters for Domain
+		// bind additional adapters for HistoricizingDomain
 		bindIDomainAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), IDomain.class));
 
-		// bind additional adapters for Viewer
+		// bind additional adapters for InfiniteCanvasViewer
 		bindIViewerAdaptersForContentViewer(AdapterMaps.getAdapterMapBinder(
 				binder(), IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 
-		// bind additional adapters for RootPart
+		// bind additional adapters for LayeredRootPart
 		bindIRootPartAdaptersForContentViewer(AdapterMaps.getAdapterMapBinder(
 				binder(), IRootPart.class, IDomain.CONTENT_VIEWER_ROLE));
 

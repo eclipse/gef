@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,9 +37,6 @@ import com.google.common.reflect.TypeToken;
  * with these. It also holds a reference to the {@link IOperationHistory} and
  * {@link UndoContext} used by all {@link ITool} as well as {@link IPolicy}s (in
  * the {@link IViewer}s) to execute {@link IUndoableOperation}s.
- *
- * @noimplement This interface is not intended to be implemented by clients.
- *              Instead, {@link Domain} should be sub-classed.
  *
  * @author anyssen
  *
@@ -65,19 +61,7 @@ public interface IDomain extends IAdaptable, IActivatable, IDisposable {
 	public void closeExecutionTransaction(ITool tool);
 
 	/**
-	 * Executes the given {@link IUndoableOperation} on the
-	 * {@link IOperationHistory} used by this {@link IDomain} (see
-	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
-	 * {@link IDomain}.
-	 *
-	 * In case an execution transaction is currently open (see
-	 * {@link #openExecutionTransaction(ITool)},
-	 * {@link #closeExecutionTransaction(ITool)}) the enclosing transaction will
-	 * refer to the {@link IUndoContext} used by this {@link IDomain}) (so that
-	 * no specific {@link IUndoContext} is set on the passed in
-	 * {@link IUndoableOperation}). If no transaction is currently open, the
-	 * {@link IUndoContext} of this {@link IDomain} will be set on the passed in
-	 * {@link IUndoableOperation}.
+	 * Executes the given {@link IUndoableOperation}.
 	 *
 	 * @param operation
 	 *            The {@link IUndoableOperation} to be executed on the
@@ -88,17 +72,9 @@ public interface IDomain extends IAdaptable, IActivatable, IDisposable {
 	 * @throws ExecutionException
 	 *             In case an exception occurred during the execution of the
 	 *             operation.
-	 * @since 1.1
 	 */
 	public void execute(ITransactionalOperation operation,
 			IProgressMonitor monitor) throws ExecutionException;
-
-	/**
-	 * Returns the {@link IOperationHistory} that is used by this domain.
-	 *
-	 * @return The {@link IOperationHistory}.
-	 */
-	public IOperationHistory getOperationHistory();
 
 	/**
 	 * Returns the {@link ITool}s registered at this {@link IDomain} (via
@@ -111,13 +87,6 @@ public interface IDomain extends IAdaptable, IActivatable, IDisposable {
 	 * @see IAdaptable#setAdapter(TypeToken, Object)
 	 */
 	public Map<AdapterKey<? extends ITool>, ITool> getTools();
-
-	/**
-	 * Returns the {@link UndoContext} that is used by this domain.
-	 *
-	 * @return The {@link UndoContext}.
-	 */
-	public IUndoContext getUndoContext();
 
 	/**
 	 * Returns the {@link IViewer}s registered at this {@link IDomain} (via
@@ -148,9 +117,7 @@ public interface IDomain extends IAdaptable, IActivatable, IDisposable {
 	 * Opens a new transaction or adds the given {@link ITool} to the currently
 	 * opened transaction for executing operations (via
 	 * {@link #execute(ITransactionalOperation, IProgressMonitor)}) on the
-	 * {@link IOperationHistory} used by this {@link IDomain} (see
-	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
-	 * {@link IDomain}.
+	 * {@link IOperationHistory} used by this {@link IDomain}.
 	 *
 	 * @param tool
 	 *            The {@link ITool} starting/joining the transaction.

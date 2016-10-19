@@ -27,7 +27,7 @@ import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -88,7 +88,7 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 			layoutBoundsRect.setFill(null);
 			layoutBoundsRect.setStroke(Color.RED);
 			layoutBoundsRect.setStrokeWidth(0.5);
-			((Viewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup().getChildren().add(layoutBoundsRect);
+			((InfiniteCanvasViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup().getChildren().add(layoutBoundsRect);
 			geometryNode.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 				@Override
 				public void changed(javafx.beans.value.ObservableValue<? extends Bounds> observable, Bounds oldValue,
@@ -217,7 +217,7 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 
 	private void updateLayoutBoundsRect(GeometryNode<IShape> geometryNode) {
 		Bounds boundsInScene = geometryNode.localToScene(geometryNode.getLayoutBounds());
-		Bounds boundsInParent = ((Viewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup()
+		Bounds boundsInParent = ((InfiniteCanvasViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup()
 				.sceneToLocal(boundsInScene);
 		layoutBoundsRect.setX(boundsInParent.getMinX());
 		layoutBoundsRect.setY(boundsInParent.getMinY());

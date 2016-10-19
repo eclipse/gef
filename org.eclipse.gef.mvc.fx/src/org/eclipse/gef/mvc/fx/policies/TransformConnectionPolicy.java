@@ -21,8 +21,8 @@ import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.IConnectionRouter;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
 import org.eclipse.gef.mvc.fx.operations.BendConnectionOperation;
+import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
@@ -31,14 +31,15 @@ import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import javafx.collections.ObservableList;
 
 /**
- * The {@link TransformConnectionPolicy} is an {@link TransformPolicy} that
- * is adjusted for the relocation of an {@link Connection}. It uses an
+ * The {@link TransformConnectionPolicy} is an {@link TransformPolicy} that is
+ * adjusted for the relocation of an {@link Connection}. It uses an
  * {@link BendConnectionOperation} to update the anchors of the
  * {@link Connection} according to the applied translation.
  *
  * @author mwienand
  *
  */
+// TODO: TransformBendable instead??
 public class TransformConnectionPolicy extends TransformPolicy {
 
 	private List<BendPoint> initialBendPoints;
@@ -74,8 +75,7 @@ public class TransformConnectionPolicy extends TransformPolicy {
 	/**
 	 * Returns the {@link BendConnectionOperation} to be used by this policy.
 	 *
-	 * @return The {@link BendConnectionOperation} used to transform the
-	 *         visual.
+	 * @return The {@link BendConnectionOperation} used to transform the visual.
 	 */
 	protected BendConnectionOperation getBendConnectionOperation() {
 		return (BendConnectionOperation) getOperation();

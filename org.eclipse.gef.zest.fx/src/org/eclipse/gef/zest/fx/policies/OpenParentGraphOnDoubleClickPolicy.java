@@ -18,7 +18,7 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef.zest.fx.parts.ZestFxRootPart;
 
@@ -54,7 +54,7 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 					: null;
 
 			if (nestingGraph != null) {
-				Viewer viewer = (Viewer) getHost().getRoot().getViewer();
+				IViewer viewer = getHost().getRoot().getViewer();
 				try {
 					viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false),
 							new NullProgressMonitor());

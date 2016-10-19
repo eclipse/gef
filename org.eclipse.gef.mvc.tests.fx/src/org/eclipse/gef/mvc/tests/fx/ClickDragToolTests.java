@@ -21,13 +21,13 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
 import org.eclipse.gef.mvc.fx.tools.ITool;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.junit.Rule;
@@ -41,7 +41,7 @@ import javafx.scene.Scene;
 
 public class ClickDragToolTests {
 
-	private static class FXDomainDriver extends Domain {
+	private static class FXDomainDriver extends HistoricizingDomain {
 		protected int openedExecutionTransactions = 0;
 		protected int closedExecutionTransactions = 0;
 
@@ -110,7 +110,7 @@ public class ClickDragToolTests {
 
 		// inject domain
 		final FXDomainDriver domain = injector.getInstance(FXDomainDriver.class);
-		final Viewer viewer = domain.getAdapter(AdapterKey.get(Viewer.class, Domain.CONTENT_VIEWER_ROLE));
+		final IViewer viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 
 		final Scene scene = ctx.createScene(viewer.getCanvas(), 100, 100);
 

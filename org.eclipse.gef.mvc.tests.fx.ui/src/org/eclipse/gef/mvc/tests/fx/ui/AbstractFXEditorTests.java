@@ -13,6 +13,7 @@
 package org.eclipse.gef.mvc.tests.fx.ui;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +36,6 @@ import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXEditor;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
@@ -142,8 +143,7 @@ public class AbstractFXEditorTests {
 
 	private static class Module extends MvcFxModule {
 		/**
-		 * Binds an {@link IFXCanvasFactory} that creates an {@link FXCanvasEx}
-		 * as the container for the {@link Viewer}.
+		 * Binds an {@link IFXCanvasFactory} that creates an {@link FXCanvasEx}.
 		 */
 		protected void bindFXCanvasFactory() {
 			// TODO: change to assisted inject
@@ -199,9 +199,10 @@ public class AbstractFXEditorTests {
 
 		// execute content relevant operation
 		ContentRelevantOperation operation = new ContentRelevantOperation();
-		operation.addContext(editor.getDomain().getUndoContext());
+		IUndoContext undoContext = (IUndoContext) editor.getAdapter(IUndoContext.class);
+		operation.addContext(undoContext);
 		try {
-			editor.getDomain().getOperationHistory().execute(operation, null, null);
+			((IOperationHistory) editor.getAdapter(IOperationHistory.class)).execute(operation, null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -231,11 +232,19 @@ public class AbstractFXEditorTests {
 		}
 		assertFalse(editor2.isDirty());
 
+		IOperationHistory operationHistory1 = (IOperationHistory) editor1.getAdapter(IOperationHistory.class);
+		IOperationHistory operationHistory2 = (IOperationHistory) editor2.getAdapter(IOperationHistory.class);
+		assertNotSame(operationHistory1, operationHistory2);
+
+		IUndoContext undoContext1 = (IUndoContext) editor1.getAdapter(IUndoContext.class);
+		IUndoContext undoContext2 = (IUndoContext) editor2.getAdapter(IUndoContext.class);
+		assertNotSame(undoContext1, undoContext2);
+
 		// make first dirty
 		IUndoableOperation operation = new ContentRelevantOperation();
-		operation.addContext(editor1.getDomain().getUndoContext());
+		operation.addContext(undoContext1);
 		try {
-			editor1.getDomain().getOperationHistory().execute(operation, null, null);
+			operationHistory1.execute(operation, null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -244,9 +253,9 @@ public class AbstractFXEditorTests {
 
 		// make second dirty
 		operation = new ContentRelevantOperation();
-		operation.addContext(editor2.getDomain().getUndoContext());
+		operation.addContext(undoContext2);
 		try {
-			editor2.getDomain().getOperationHistory().execute(operation, null, null);
+			operationHistory2.execute(operation, null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -279,9 +288,9 @@ public class AbstractFXEditorTests {
 
 		// make second dirty
 		IUndoableOperation operation = new ContentRelevantOperation();
-		operation.addContext(editor2.getDomain().getUndoContext());
+		operation.addContext((IUndoContext) editor2.getAdapter(IUndoContext.class));
 		try {
-			editor2.getDomain().getOperationHistory().execute(operation, null, null);
+			((IOperationHistory) editor2.getAdapter(IOperationHistory.class)).execute(operation, null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -290,9 +299,9 @@ public class AbstractFXEditorTests {
 
 		// make first dirty
 		operation = new ContentRelevantOperation();
-		operation.addContext(editor1.getDomain().getUndoContext());
+		operation.addContext((IUndoContext) editor1.getAdapter(IUndoContext.class));
 		try {
-			editor1.getDomain().getOperationHistory().execute(operation, null, null);
+			((IOperationHistory) editor1.getAdapter(IOperationHistory.class)).execute(operation, null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -316,9 +325,9 @@ public class AbstractFXEditorTests {
 
 		// execute content relevant operation
 		IUndoableOperation operation = new ContentIrrelevantOperation();
-		operation.addContext(editor.getDomain().getUndoContext());
+		operation.addContext((IUndoContext) editor.getAdapter(IUndoContext.class));
 		try {
-			editor.getDomain().getOperationHistory().execute(operation, null, null);
+			((IOperationHistory) editor.getAdapter(IOperationHistory.class)).execute(operation, null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}

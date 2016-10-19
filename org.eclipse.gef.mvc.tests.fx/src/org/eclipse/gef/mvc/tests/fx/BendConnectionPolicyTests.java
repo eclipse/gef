@@ -46,7 +46,6 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
-import org.eclipse.gef.mvc.fx.domain.Domain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
@@ -64,7 +63,6 @@ import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResultAndParam;
@@ -433,7 +431,7 @@ public class BendConnectionPolicyTests {
 	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
 
 	@Inject
-	private Domain domain;
+	private IDomain domain;
 
 	public int countExplicit(final Connection connection) {
 		int numExplicit = 0;
@@ -445,14 +443,14 @@ public class BendConnectionPolicyTests {
 		return numExplicit;
 	}
 
-	private Viewer createViewer(final List<Object> contents) throws Throwable {
+	private IViewer createViewer(final List<Object> contents) throws Throwable {
 		// create injector (adjust module bindings for test)
 		final Injector injector = Guice.createInjector(new TestModule());
 
 		// inject domain
 		injector.injectMembers(this);
 
-		final Viewer viewer = domain.getAdapter(AdapterKey.get(Viewer.class, IDomain.CONTENT_VIEWER_ROLE));
+		final IViewer viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -2706,7 +2704,7 @@ public class BendConnectionPolicyTests {
 	@Test
 	public void test_relocateAnchor() throws Throwable {
 		final List<Object> contents = TestModels.getABC_AB_BC();
-		final Viewer viewer = createViewer(contents);
+		final IViewer viewer = createViewer(contents);
 
 		// save initial start point of second connection
 		final ConnectionPart secondConnectionPart = (ConnectionPart) viewer.getContentPartMap()

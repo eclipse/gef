@@ -34,7 +34,7 @@ import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
 import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multiset;
@@ -119,7 +119,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy impleme
 	}
 
 	protected Point getLocation(MouseEvent e) {
-		Point2D location = ((Viewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
+		Point2D location = ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		return new Point(location.getX(), location.getY());
 	}

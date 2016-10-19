@@ -19,10 +19,9 @@ import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Edge.Builder;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 import org.eclipse.gef.zest.fx.ZestFxModule;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -85,8 +84,8 @@ public abstract class AbstractZestExample extends Application {
 	}
 
 	private String title;
-	protected Domain domain;
-	protected Viewer viewer;
+	protected IDomain domain;
+	protected IViewer viewer;
 	protected Graph graph;
 
 	public AbstractZestExample(String title) {
@@ -102,9 +101,9 @@ public abstract class AbstractZestExample extends Application {
 
 		// configure application
 		Injector injector = Guice.createInjector(createModule());
-		domain = injector.getInstance(Domain.class);
+		domain = injector.getInstance(IDomain.class);
 		viewer = domain.getAdapter(
-				AdapterKey.get(Viewer.class, Domain.CONTENT_VIEWER_ROLE));
+				AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 		primaryStage.setScene(createScene(viewer));
 
 		primaryStage.setResizable(true);

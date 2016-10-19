@@ -44,25 +44,12 @@ import javafx.scene.Scene;
 import javafx.stage.Window;
 
 /**
- * The {@link Viewer} is an {@link IViewer} that manages an
- * {@link InfiniteCanvas} that displays the viewer's contents, adds scrollbars
- * when necessary, and renders a background grid.
+ * The {@link InfiniteCanvasViewer} is an {@link IViewer} that manages an
+ * {@link InfiniteCanvas} to display the viewer's contents.
  *
  * @author anyssen
- *
  */
-public class Viewer implements IViewer {
-
-	/**
-	 * Defines the default CSS styling for the {@link InfiniteCanvas}: no
-	 * background, no border.
-	 */
-	public static final String DEFAULT_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(0,0,0,0);";
-
-	/**
-	 * Defines the CSS styling that is used to highlight a focused viewer.
-	 */
-	public static final String FOCUSED_STYLE = "-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgba(0,0,0,0); -fx-border-color: #8ec0fc; -fx-border-width: 2;";
+public class InfiniteCanvasViewer implements IViewer {
 
 	private InfiniteCanvas infiniteCanvas;
 
@@ -147,9 +134,9 @@ public class Viewer implements IViewer {
 	private ReadOnlyObjectWrapper<IDomain> domainProperty = new ReadOnlyObjectWrapper<>();
 
 	/**
-	 * Creates a new {@link Viewer}.
+	 * Creates a new {@link InfiniteCanvasViewer}.
 	 */
-	public Viewer() {
+	public InfiniteCanvasViewer() {
 		super();
 		// add binding to viewer focused property to have its value computed
 		// based on the values of:
@@ -164,7 +151,7 @@ public class Viewer implements IViewer {
 		if (!acs.isActive()) {
 			if (getDomain() == null) {
 				throw new IllegalStateException(
-						"Domain has to be set before activation.");
+						"HistoricizingDomain has to be set before activation.");
 			}
 			acs.activate();
 		}
@@ -190,7 +177,7 @@ public class Viewer implements IViewer {
 		if (acs.isActive()) {
 			if (getDomain() == null) {
 				throw new IllegalStateException(
-						"Domain may not be unset before deactivation is completed.");
+						"HistoricizingDomain may not be unset before deactivation is completed.");
 			}
 			acs.deactivate();
 		}
@@ -284,18 +271,18 @@ public class Viewer implements IViewer {
 	}
 
 	/**
-	 * Returns the {@link InfiniteCanvas} that is managed by this {@link Viewer}
-	 * .
+	 * Returns the {@link InfiniteCanvas} that is managed by this
+	 * {@link InfiniteCanvasViewer} .
 	 *
-	 * @return The {@link InfiniteCanvas} that is managed by this {@link Viewer}
-	 *         .
+	 * @return The {@link InfiniteCanvas} that is managed by this
+	 *         {@link InfiniteCanvasViewer} .
 	 */
+	@Override
 	public InfiniteCanvas getCanvas() {
 		if (infiniteCanvas == null) {
 			IRootPart<? extends Node> rootPart = getRootPart();
 			if (rootPart != null) {
 				infiniteCanvas = new InfiniteCanvas();
-				infiniteCanvas.setStyle(DEFAULT_STYLE);
 
 				// register root visual
 				infiniteCanvas.getContentGroup().getChildren()
@@ -331,10 +318,10 @@ public class Viewer implements IViewer {
 
 	/**
 	 * Returns the {@link Scene} in which the {@link InfiniteCanvas} of this
-	 * {@link Viewer} is displayed.
+	 * {@link InfiniteCanvasViewer} is displayed.
 	 *
 	 * @return The {@link Scene} in which the {@link InfiniteCanvas} of this
-	 *         {@link Viewer} is displayed.
+	 *         {@link InfiniteCanvasViewer} is displayed.
 	 */
 	public Scene getScene() {
 		return getCanvas().getScene();

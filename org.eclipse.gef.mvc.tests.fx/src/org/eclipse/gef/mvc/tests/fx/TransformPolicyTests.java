@@ -23,7 +23,6 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
-import org.eclipse.gef.mvc.fx.domain.Domain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
@@ -31,7 +30,7 @@ import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXApplicationThreadRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -101,7 +100,7 @@ public class TransformPolicyTests {
 	private TransformPolicy transformPolicy;
 
 	@Inject
-	private Domain domain;
+	private IDomain domain;
 
 	/**
 	 * Ensure all tests are executed on the JavaFX application thread (and the
@@ -131,7 +130,7 @@ public class TransformPolicyTests {
 		});
 		injector.injectMembers(this);
 		// get viewer
-		Viewer viewer = domain.getAdapter(AdapterKey.get(Viewer.class, IDomain.CONTENT_VIEWER_ROLE));
+		IViewer viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 		// hook viewer to scene
 		Scene scene = new Scene(viewer.getCanvas(), 100, 100);
 		JFXPanel panel = new JFXPanel();

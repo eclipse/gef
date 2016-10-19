@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
@@ -40,7 +40,7 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 			// double click, so open nested graph, if it exists
 			final Graph nestedGraph = getHost().getContent().getNestedGraph();
 			if (nestedGraph != null) {
-				Viewer viewer = (Viewer) getHost().getRoot().getViewer();
+				IViewer viewer = getHost().getRoot().getViewer();
 				try {
 					viewer.getDomain().execute(new NavigateOperation(viewer, nestedGraph, true),
 							new NullProgressMonitor());

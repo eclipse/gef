@@ -35,8 +35,8 @@ import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
 import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import com.google.common.collect.HashMultimap;
 
@@ -99,11 +99,11 @@ public class CreateAndTranslateOnDragPolicy extends AbstractInteractionPolicy im
 		dragPolicies = null;
 	}
 
-	protected Viewer getContentViewer() {
+	protected IViewer getContentViewer() {
 		Map<AdapterKey<? extends IViewer>, IViewer> viewers = getHost().getRoot().getViewer().getDomain().getViewers();
 		for (Entry<AdapterKey<? extends IViewer>, IViewer> e : viewers.entrySet()) {
 			if (IDomain.CONTENT_VIEWER_ROLE.equals(e.getKey().getRole())) {
-				return (Viewer) e.getValue();
+				return e.getValue();
 			}
 		}
 		throw new IllegalStateException("Cannot find content viewer!");
@@ -115,7 +115,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractInteractionPolicy im
 	}
 
 	protected Point getLocation(MouseEvent e) {
-		Point2D location = ((Viewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
+		Point2D location = ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		return new Point(location.getX(), location.getY());
 	}

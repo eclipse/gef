@@ -110,8 +110,8 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 	 * and a leaf part, the target policy selection for a policy of type X could
 	 * yield the following results:
 	 * <ol>
-	 * <li>RootPart.X with role "0"
-	 * <li>RootPart.X with role "1"
+	 * <li>LayeredRootPart.X with role "0"
+	 * <li>LayeredRootPart.X with role "1"
 	 * <li>IntermediatePart.X with role "a"
 	 * <li>IntermediatePart.X with role "b"
 	 * <li>LeafPart.X with role "x"
@@ -169,8 +169,8 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 	 * and a leaf part, the target policy selection for a policy of type X could
 	 * yield the following results:
 	 * <ol>
-	 * <li>RootPart.X with role "0"
-	 * <li>RootPart.X with role "1"
+	 * <li>LayeredRootPart.X with role "0"
+	 * <li>LayeredRootPart.X with role "1"
 	 * <li>IntermediatePart.X with role "a"
 	 * <li>IntermediatePart.X with role "b"
 	 * <li>LeafPart.X with role "x"

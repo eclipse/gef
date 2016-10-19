@@ -43,7 +43,7 @@ import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
-import org.eclipse.gef.mvc.fx.domain.Domain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.ContentModel;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
@@ -55,8 +55,8 @@ import org.eclipse.gef.mvc.fx.parts.DefaultHoverHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.RectangleSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.parts.RootPart;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.BendFirstAnchorageOnSegmentHandleDragPolicy;
@@ -81,7 +81,6 @@ import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.Viewer;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
@@ -267,13 +266,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link FXPaletteViewer} to the {@link AdapterMap}
-	 * binder for {@link Domain}.
+	 * binder for {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Domain} as a key.
+	 *            {@link IDomain} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -285,9 +284,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
-	protected void bindFXRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(RootPart.class)
-				.in(AdaptableScopes.typed(Viewer.class));
+	protected void bindIRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(IRootPart.class)
+				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
 	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -367,7 +366,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link Viewer} and all
+	 * Adds (default) {@link AdapterMap} bindings for {@link IViewer} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -375,7 +374,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link Viewer} as a key.
+	 *            {@link IViewer} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -386,7 +385,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindHoverModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
 		// bind root part
-		bindFXRootPartAsPaletteViewerAdapter(adapterMapBinder);
+		bindIRootPartAsPaletteViewerAdapter(adapterMapBinder);
 		// add hover feedback factory
 		bindSelectionFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		bindSelectionHandleFactoryAsPaletteViewerAdapter(adapterMapBinder);
@@ -470,9 +469,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				AdapterMaps.getAdapterMapBinder(binder(), GeometricCurveCreationHoverHandlePart.class));
 
 		// palette
-		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), Viewer.class, PALETTE_VIEWER_ROLE));
+		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), IViewer.class, PALETTE_VIEWER_ROLE));
 		bindPaletteViewerRootPartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), RootPart.class, PALETTE_VIEWER_ROLE));
+				AdapterMaps.getAdapterMapBinder(binder(), IRootPart.class, PALETTE_VIEWER_ROLE));
 		bindPaletteElementPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), PaletteElementPart.class));
 		AdapterMaps.getAdapterMapBinder(binder(), PaletteModelPart.class).addBinding(AdapterKey.defaultRole())
 				.to(HoverOnHoverPolicy.class);
