@@ -69,9 +69,9 @@ public class StraightRouter extends AbstractRouter {
 			 * the DynamicAnchor to work with).
 			 */
 			newRef = new Point();
-		} else if (pred != null) {
+		} else if (succ == null && pred != null) {
 			newRef = pred;
-		} else if (succ != null) {
+		} else if (pred == null && succ != null) {
 			newRef = succ;
 		} else {
 			newRef = new Line(pred, succ).get(0.5);
