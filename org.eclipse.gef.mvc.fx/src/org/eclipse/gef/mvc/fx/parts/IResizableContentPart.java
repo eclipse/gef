@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.parts;
 
+import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
 
 import javafx.scene.Node;
@@ -23,12 +24,33 @@ import javafx.scene.Node;
  *            The visual node used by this {@link IResizableContentPart}.
  *
  */
-public interface IResizableContentPart<V extends Node>
-		extends IResizableVisualPart<V> {
+public interface IResizableContentPart<V extends Node> extends IVisualPart<V> {
 
 	// TODO: Refresh
 	// Returns the current size according to this part's content.
 	// public Dimension getContentSize();
+
+	/**
+	 * Returns the visual of this {@link IResizableContentPart} that should be
+	 * used for resizing.
+	 *
+	 * @return The visual of this {@link IResizableContentPart} that should be
+	 *         used for resizing.
+	 */
+	public default Node getResizableVisual() {
+		return getVisual();
+	}
+
+	/**
+	 * Returns the current size according to this
+	 * {@link IResizableContentPart}'s visual.
+	 *
+	 * @return The current size according to this
+	 *         {@link IResizableContentPart}'s visual.
+	 */
+	public default Dimension getVisualSize() {
+		return NodeUtils.getShapeBounds(getResizableVisual()).getSize();
+	}
 
 	/**
 	 * Resizes the content element as specified by the given {@link Dimension}.
@@ -37,5 +59,16 @@ public interface IResizableContentPart<V extends Node>
 	 *            The new size.
 	 */
 	public void resizeContent(Dimension size);
+
+	/**
+	 * Resizes the visual of this {@link IResizableContentPart} to the given
+	 * size.
+	 *
+	 * @param size
+	 *            The new size for this {@link IResizableContentPart}'s visual.
+	 */
+	public default void resizeVisual(Dimension size) {
+		getResizableVisual().resize(size.width, size.height);
+	}
 
 }

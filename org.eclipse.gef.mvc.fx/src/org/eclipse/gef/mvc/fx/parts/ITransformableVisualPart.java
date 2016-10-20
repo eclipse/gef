@@ -75,11 +75,11 @@ public interface ITransformableVisualPart<V extends Node>
 
 	/**
 	 * Applies the given {@link AffineTransform} to the visual of this
-	 * {@link IResizableVisualPart}.
+	 * {@link ITransformableVisualPart}.
 	 *
 	 * @param transformation
 	 *            The {@link AffineTransform} that is applied to the visual of
-	 *            this {@link IResizableVisualPart}.
+	 *            this {@link ITransformableVisualPart}.
 	 */
 	// TODO: this should be called by transform policy
 	public default void transformVisual(AffineTransform transformation) {

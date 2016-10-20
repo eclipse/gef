@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.parts.IResizableVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
 
 import javafx.scene.Node;
 
@@ -34,7 +34,7 @@ import javafx.scene.Node;
 public class ResizeOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
-	private final IResizableVisualPart<? extends Node> resizablePart;
+	private final IResizableContentPart<? extends Node> resizablePart;
 	private final Dimension initialSize;
 	private double dw;
 	private double dh;
@@ -46,7 +46,8 @@ public class ResizeOperation extends AbstractOperation
 	 * @param resizablePart
 	 *            The {@link Node} that is manipulated by this operation.
 	 */
-	public ResizeOperation(IResizableVisualPart<? extends Node> resizablePart) {
+	public ResizeOperation(
+			IResizableContentPart<? extends Node> resizablePart) {
 		this(resizablePart, 0, 0);
 	}
 
@@ -63,7 +64,7 @@ public class ResizeOperation extends AbstractOperation
 	 *            The delta height that is applied when executing this
 	 *            operation.
 	 */
-	public ResizeOperation(IResizableVisualPart<? extends Node> resizablePart,
+	public ResizeOperation(IResizableContentPart<? extends Node> resizablePart,
 			double dw, double dh) {
 		this("Resize", resizablePart, resizablePart.getVisualSize(), dw, dh);
 	}
@@ -84,7 +85,7 @@ public class ResizeOperation extends AbstractOperation
 	 *            The vertical size difference.
 	 */
 	public ResizeOperation(String label,
-			IResizableVisualPart<? extends Node> resizablePart,
+			IResizableContentPart<? extends Node> resizablePart,
 			Dimension initialSize, double dw, double dh) {
 		super(label);
 		this.resizablePart = resizablePart;
@@ -138,13 +139,13 @@ public class ResizeOperation extends AbstractOperation
 	}
 
 	/**
-	 * Returns the {@link IResizableVisualPart} that is resized by this
+	 * Returns the {@link IResizableContentPart} that is resized by this
 	 * operation.
 	 *
-	 * @return The {@link IResizableVisualPart} that is resized by this
+	 * @return The {@link IResizableContentPart} that is resized by this
 	 *         operation.
 	 */
-	public IResizableVisualPart<? extends Node> getResizablePart() {
+	public IResizableContentPart<? extends Node> getResizablePart() {
 		return resizablePart;
 	}
 

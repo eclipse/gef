@@ -26,7 +26,6 @@ import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
-import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 
 import javafx.collections.ObservableList;
 
@@ -66,7 +65,7 @@ public class TransformBendablePolicy extends TransformPolicy {
 
 	@Override
 	protected ITransactionalOperation createTransformContentOperation() {
-		IBendableContentPart<Connection> bendablePart = (IBendableContentPart<Connection>) getHost();
+		IBendableContentPart<Connection> bendablePart = getHost();
 		return new BendContentOperation<>(bendablePart, initialBendPoints,
 				bendablePart.getVisualBendPoints());
 	}
@@ -82,8 +81,8 @@ public class TransformBendablePolicy extends TransformPolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ITransformableVisualPart<Connection> getHost() {
-		return (ITransformableVisualPart<Connection>) super.getHost();
+	public IBendableContentPart<Connection> getHost() {
+		return (IBendableContentPart<Connection>) super.getHost();
 	}
 
 	/**
@@ -142,8 +141,7 @@ public class TransformBendablePolicy extends TransformPolicy {
 		for (Point p : connection.getPointsUnmodifiable()) {
 			initialConnectionPositions.add(inverse.getTransformed(p));
 		}
-		initialBendPoints = ((IBendableContentPart<Connection>) getHost())
-				.getVisualBendPoints();
+		initialBendPoints = getHost().getVisualBendPoints();
 	}
 
 	@Override

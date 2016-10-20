@@ -12,21 +12,20 @@
 package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.operations.ResizeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.ResizeContentOperation;
-import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.operations.ResizeOperation;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IResizableVisualPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 /**
- * The {@link ResizePolicy} is an {@link AbstractTransactionPolicy} that
- * handles the resize of an {@link IVisualPart}.
+ * The {@link ResizePolicy} is an {@link AbstractTransactionPolicy} that handles
+ * the resize of an {@link IVisualPart}.
  *
  * @author mwienand
  *
@@ -111,8 +110,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new ResizeOperation("Resize", getHost(), getCurrentSize(), 0,
-				0);
+		return new ResizeOperation("Resize", getHost(), getCurrentSize(), 0, 0);
 	}
 
 	/**
@@ -122,8 +120,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 */
 	protected ITransactionalOperation createResizeContentOperation() {
 		ResizeContentOperation<Node> resizeOperation = new ResizeContentOperation<>(
-				(IResizableContentPart<? extends Node>) getHost(),
-				getInitialSize(), getCurrentSize());
+				getHost(), getInitialSize(), getCurrentSize());
 		return resizeOperation;
 	}
 
@@ -159,8 +156,8 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	}
 
 	@Override
-	public IResizableVisualPart<? extends Node> getHost() {
-		return (IResizableVisualPart<? extends Node>) super.getHost();
+	public IResizableContentPart<? extends Node> getHost() {
+		return (IResizableContentPart<? extends Node>) super.getHost();
 	}
 
 	/**
@@ -204,8 +201,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 		} else if (visualToResize.isResizable()) {
 			computedMinWidth = visualToResize.minWidth(-1);
 		}
-		return Math.max(computedMinWidth,
-				SquareSegmentHandlePart.DEFAULT_SIZE);
+		return Math.max(computedMinWidth, SquareSegmentHandlePart.DEFAULT_SIZE);
 	}
 
 	/**

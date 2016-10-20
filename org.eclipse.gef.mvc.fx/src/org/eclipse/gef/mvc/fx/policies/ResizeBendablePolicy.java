@@ -22,7 +22,6 @@ import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
-import org.eclipse.gef.mvc.fx.parts.IResizableVisualPart;
 
 import javafx.geometry.Bounds;
 
@@ -61,7 +60,7 @@ public class ResizeBendablePolicy extends ResizePolicy {
 
 	@Override
 	protected ITransactionalOperation createResizeContentOperation() {
-		IBendableContentPart<Connection> bendablePart = (IBendableContentPart<Connection>) getHost();
+		IBendableContentPart<Connection> bendablePart = getHost();
 		return new BendContentOperation<>(bendablePart, initialBendPoints,
 				bendablePart.getVisualBendPoints());
 	}
@@ -77,8 +76,8 @@ public class ResizeBendablePolicy extends ResizePolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IResizableVisualPart<Connection> getHost() {
-		return (IResizableVisualPart<Connection>) super.getHost();
+	public IBendableContentPart<Connection> getHost() {
+		return (IBendableContentPart<Connection>) super.getHost();
 	}
 
 	/**

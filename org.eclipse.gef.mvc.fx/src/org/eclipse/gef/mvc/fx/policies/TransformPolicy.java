@@ -17,10 +17,10 @@ import java.util.List;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.planar.AffineTransform;
-import org.eclipse.gef.mvc.fx.operations.TransformOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.TransformContentOperation;
+import org.eclipse.gef.mvc.fx.operations.TransformOperation;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 
@@ -210,7 +210,7 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 		AffineTransform delta = getInitialTransform().getInverse()
 				.preConcatenate(getCurrentTransform());
 		ITransactionalOperation transformContentOperation = new TransformContentOperation<>(
-				(ITransformableContentPart<? extends Node>) getHost(), delta);
+				getHost(), delta);
 		return transformContentOperation;
 	}
 
@@ -225,8 +225,8 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 	}
 
 	@Override
-	public ITransformableVisualPart<? extends Node> getHost() {
-		return (ITransformableVisualPart<? extends Node>) super.getHost();
+	public ITransformableContentPart<? extends Node> getHost() {
+		return (ITransformableContentPart<? extends Node>) super.getHost();
 	}
 
 	/**
