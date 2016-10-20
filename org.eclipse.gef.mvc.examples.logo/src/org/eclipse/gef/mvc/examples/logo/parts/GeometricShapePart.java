@@ -214,8 +214,8 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 	}
 
 	@Override
-	public void transformContent(AffineTransform transform) {
-		getContent().setTransform(getContent().getTransform().preConcatenate(transform));
+	public void transformContent(AffineTransform totalTransform) {
+		getContent().setTransform(totalTransform);
 	}
 
 	private void updateLayoutBoundsRect(GeometryNode<IShape> geometryNode) {

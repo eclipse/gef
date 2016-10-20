@@ -68,7 +68,9 @@ public class TransformVisualOperation extends AbstractOperation
 			ITransformableContentPart<? extends Node> transformablePart,
 			Affine newTransform) {
 		super("Transform");
-		this.initialTransform = transformablePart.getVisualTransform();
+		this.transformablePart = transformablePart;
+		this.initialTransform = NodeUtils.setAffine(new Affine(),
+				transformablePart.getVisualTransform());
 		this.finalTransform = NodeUtils.setAffine(new Affine(), newTransform);
 	}
 
