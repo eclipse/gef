@@ -141,7 +141,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 *         operation} that is used by this policy.
 	 */
 	public double getDeltaHeight() {
-		return getResizeOperation().getDw();
+		return getResizeOperation().getDh();
 	}
 
 	/**
