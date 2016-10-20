@@ -42,7 +42,7 @@ public interface ITransactionalOperation extends IUndoableOperation {
 	 * Returns <code>true</code> if this {@link ITransactionalOperation} is
 	 * actually changing model data (instead of only affecting the
 	 * visualization). Otherwise returns <code>false</code>. The content
-	 * relevancy of an {@link ITransactionalOperation} can be checked to
+	 * relevance of an {@link ITransactionalOperation} can be checked to
 	 * determine if the execution of the operation will affect the model, for
 	 * example, to set an editor's dirty flag.
 	 *
