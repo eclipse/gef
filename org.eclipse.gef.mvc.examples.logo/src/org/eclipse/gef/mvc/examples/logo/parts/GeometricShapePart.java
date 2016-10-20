@@ -25,7 +25,6 @@ import org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
@@ -88,7 +87,8 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 			layoutBoundsRect.setFill(null);
 			layoutBoundsRect.setStroke(Color.RED);
 			layoutBoundsRect.setStrokeWidth(0.5);
-			((InfiniteCanvasViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup().getChildren().add(layoutBoundsRect);
+			((InfiniteCanvasViewer) getRoot().getViewer()).getCanvas().getScrolledOverlayGroup().getChildren()
+					.add(layoutBoundsRect);
 			geometryNode.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 				@Override
 				public void changed(javafx.beans.value.ObservableValue<? extends Bounds> observable, Bounds oldValue,
@@ -148,7 +148,7 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 		AffineTransform transform = content.getTransform();
 		if (transform != null) {
 			// transfer transformation to JavaFX
-			Affine affine = getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
+			Affine affine = getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
 			affine.setMxx(transform.getM00());
 			affine.setMxy(transform.getM01());
 			affine.setMyx(transform.getM10());

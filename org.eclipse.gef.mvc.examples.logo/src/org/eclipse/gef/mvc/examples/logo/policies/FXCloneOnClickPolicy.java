@@ -23,11 +23,11 @@ import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
-import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
@@ -81,7 +81,7 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy implements I
 
 		// copy the transformation
 		AffineTransform originalTransform = FX2Geometry
-				.toAffineTransform(getHost().getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get());
+				.toAffineTransform(getHost().getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get());
 		TransformPolicy transformPolicy = clonedContentPart.getAdapter(TransformPolicy.class);
 		init(transformPolicy);
 		transformPolicy.setTransform(originalTransform);

@@ -22,7 +22,7 @@ import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.TransformContentOperation;
 import org.eclipse.gef.mvc.fx.operations.TransformOperation;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -143,7 +143,7 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 	@Override
 	protected ITransactionalOperation createOperation() {
 		return new TransformOperation(getHost()
-				.getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY)
+				.getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY)
 				.get());
 	}
 

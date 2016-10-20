@@ -15,7 +15,6 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.geometry.Bounds;
@@ -219,7 +218,7 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 
 	private Affine getTargetTransform() {
 		return getTargetPart()
-				.getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY)
+				.getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY)
 				.get();
 	}
 

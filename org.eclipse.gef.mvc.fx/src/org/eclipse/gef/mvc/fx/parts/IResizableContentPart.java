@@ -24,7 +24,7 @@ import javafx.scene.Node;
  *            The visual node used by this {@link IResizableContentPart}.
  *
  */
-public interface IResizableContentPart<V extends Node> extends IVisualPart<V> {
+public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 
 	// TODO: Refresh
 	// Returns the current size according to this part's content.
@@ -55,20 +55,20 @@ public interface IResizableContentPart<V extends Node> extends IVisualPart<V> {
 	/**
 	 * Resizes the content element as specified by the given {@link Dimension}.
 	 *
-	 * @param size
+	 * @param totalSize
 	 *            The new size.
 	 */
-	public void resizeContent(Dimension size);
+	public void resizeContent(Dimension totalSize);
 
 	/**
 	 * Resizes the visual of this {@link IResizableContentPart} to the given
 	 * size.
 	 *
-	 * @param size
+	 * @param totalSize
 	 *            The new size for this {@link IResizableContentPart}'s visual.
 	 */
-	public default void resizeVisual(Dimension size) {
-		getResizableVisual().resize(size.width, size.height);
+	public default void resizeVisual(Dimension totalSize) {
+		getResizableVisual().resize(totalSize.width, totalSize.height);
 	}
 
 }

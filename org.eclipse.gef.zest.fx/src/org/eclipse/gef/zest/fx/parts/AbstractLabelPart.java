@@ -24,7 +24,6 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.TransformOperation;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -191,7 +190,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 		if (position != null) {
 			// translate using a transform operation
 			TransformOperation refreshPositionOp = new TransformOperation(
-					getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get(),
+					getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get(),
 					Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
 			try {
 				refreshPositionOp.execute(null, null);

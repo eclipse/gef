@@ -302,11 +302,12 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	@Override
-	default void resizeContent(Dimension size) {
+	default void resizeContent(Dimension totalSize) {
 		// TODO: verify that current visual bend points are up-to-date
-		bendContent(getVisualBendPoints());
-
 		// TODO: get content bend points => resize => bend content
+		// FIXME: we should not rely on the visual bendpoints here, but only on
+		// the content bend points; the passed in size is the total size
+		bendContent(getVisualBendPoints());
 	}
 
 	@Override

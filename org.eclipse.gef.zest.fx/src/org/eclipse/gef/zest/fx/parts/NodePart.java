@@ -28,7 +28,6 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableVisualPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
@@ -435,7 +434,7 @@ public class NodePart extends AbstractContentPart<Group>
 		Point position = ZestProperties.getPosition(node);
 		if (position != null) {
 			// translate using a transform operation
-			Affine transform = getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
+			Affine transform = getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
 			Affine newTransform = Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y));
 			if (!NodeUtils.equals(transform, newTransform)) {
 				NodeUtils.setAffine(transform, newTransform);
@@ -615,7 +614,7 @@ public class NodePart extends AbstractContentPart<Group>
 			Bounds hostBounds = getVisual().getLayoutBounds();
 			double minx = hostBounds.getMinX();
 			double miny = hostBounds.getMinY();
-			Affine tx = getAdapter(ITransformableVisualPart.TRANSFORM_PROVIDER_KEY).get();
+			Affine tx = getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
 			position = new Point(tx.getTx() + minx, tx.getTy() + miny);
 		} else {
 			position = transform.getTransformed(ZestProperties.getPosition(getContent()));
