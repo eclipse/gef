@@ -85,6 +85,8 @@ public class BendConnectionPolicyTests {
 
 	public static class AnchoragePart extends AbstractContentPart<Rectangle>
 			implements ITransformableContentPart<Rectangle> {
+		private AffineTransform transform = new AffineTransform();
+
 		@Override
 		protected Rectangle doCreateVisual() {
 			return new Rectangle(100, 100);
@@ -111,7 +113,13 @@ public class BendConnectionPolicyTests {
 		}
 
 		@Override
+		public AffineTransform getContentTransform() {
+			return transform;
+		}
+
+		@Override
 		public void transformContent(AffineTransform transform) {
+			this.transform = transform;
 		}
 	}
 
@@ -143,6 +151,8 @@ public class BendConnectionPolicyTests {
 			implements IBendableContentPart<Connection>, ITransformableContentPart<Connection> {
 		public static final String START_ROLE = "start";
 		public static final String END_ROLE = "end";
+
+		private AffineTransform transform = new AffineTransform();
 
 		@Override
 		public void bendContent(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
@@ -202,7 +212,13 @@ public class BendConnectionPolicyTests {
 		}
 
 		@Override
+		public AffineTransform getContentTransform() {
+			return transform;
+		}
+
+		@Override
 		public void transformContent(AffineTransform transform) {
+			this.transform = transform;
 		}
 
 	}

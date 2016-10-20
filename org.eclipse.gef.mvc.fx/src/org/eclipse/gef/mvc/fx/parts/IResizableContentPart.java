@@ -26,9 +26,12 @@ import javafx.scene.Node;
  */
 public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 
-	// TODO: Refresh
-	// Returns the current size according to this part's content.
-	// public Dimension getContentSize();
+	/**
+	 * Returns the current size according to this part's content.
+	 * 
+	 * @return The current size according to this part's content.
+	 */
+	public Dimension getContentSize();
 
 	/**
 	 * Returns the visual of this {@link IResizableContentPart} that should be

@@ -37,8 +37,8 @@ public class TransformContentOperation<VR> extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final ITransformableContentPart<? extends Node> transformableContentPart;
-	private AffineTransform finalDelta;
-	private AffineTransform currentDelta;
+	private AffineTransform finalTransform;
+	private AffineTransform initialTransform;
 
 	/**
 	 * Creates a new {@link TransformContentOperation} for the given
@@ -47,30 +47,37 @@ public class TransformContentOperation<VR> extends AbstractOperation
 	 *
 	 * @param transformableContentPart
 	 *            The part to transform.
-	 * @param deltaTransform
-	 *            The delta {@link AffineTransform} to apply.
+	 * @param finalTransform
+	 *            The total final {@link AffineTransform} to set.
 	 */
 	public TransformContentOperation(
 			ITransformableContentPart<? extends Node> transformableContentPart,
-			AffineTransform deltaTransform) {
+			AffineTransform finalTransform) {
 		super("Transform Content");
 		this.transformableContentPart = transformableContentPart;
-		this.currentDelta = new AffineTransform();
-		this.finalDelta = deltaTransform;
+		this.initialTransform = transformableContentPart.getContentTransform()
+				.getCopy();
+		this.finalTransform = finalTransform;
+	}
+
+	private void applyTransform(AffineTransform transform) {
+		if (!transformableContentPart.getContentTransform()
+				.equals(finalTransform)) {
+			transformableContentPart.transformContent(transform);
+			AffineTransform resultingTransform = transformableContentPart
+					.getContentTransform();
+			if (!resultingTransform.equals(transform)) {
+				throw new IllegalStateException(
+						"ITransformableVisualPart#transformVisual() did not transform the visual as expected. The resulting transformation should be "
+								+ transform + ", but is " + resultingTransform);
+			}
+		}
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		// compute delta between current transform and delta transform
-		AffineTransform delta = currentDelta.getInverse()
-				.preConcatenate(finalDelta);
-		currentDelta = finalDelta;
-
-		// apply delta, update current transform to new transform
-		if (!delta.isIdentity()) {
-			transformableContentPart.transformContent(delta);
-		}
+		applyTransform(finalTransform);
 		return Status.OK_STATUS;
 	}
 
@@ -81,7 +88,7 @@ public class TransformContentOperation<VR> extends AbstractOperation
 
 	@Override
 	public boolean isNoOp() {
-		return finalDelta.isIdentity();
+		return initialTransform.equals(finalTransform);
 	}
 
 	@Override
@@ -98,18 +105,13 @@ public class TransformContentOperation<VR> extends AbstractOperation
 	 *            The new {@link AffineTransform} to set.
 	 */
 	public void setFinalDelta(AffineTransform transform) {
-		this.finalDelta = transform;
+		this.finalTransform = transform;
 	}
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		// apply inversed delta, update current transform to new transform
-		if (!currentDelta.isIdentity()) {
-			transformableContentPart
-					.transformContent(currentDelta.getInverse());
-		}
-		currentDelta = new AffineTransform();
+		applyTransform(initialTransform);
 		return Status.OK_STATUS;
 	}
 }

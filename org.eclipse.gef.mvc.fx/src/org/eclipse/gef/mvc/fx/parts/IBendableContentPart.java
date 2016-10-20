@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
@@ -24,6 +25,7 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 /**
  * An {@link IContentPart} that supports content related bend, i.e. manipulation
@@ -237,23 +239,35 @@ public interface IBendableContentPart<V extends Node>
 		return (Connection) getVisual();
 	}
 
-	// TODO: Refresh
-	// /**
-	// * Returns the current {@link BendPoint}s of this
-	// * {@link IBendableContentPart}'s content.
-	// *
-	// * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
-	// * content.
-	// */
-	// public List<BendPoint> getContentBendPoints();
+	/**
+	 * Returns the current {@link BendPoint}s of this
+	 * {@link IBendableContentPart}'s content.
+	 *
+	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
+	 *         content.
+	 */
+	public default List<BendPoint> getContentBendPoints() {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
-	default Node getResizableVisual() {
+	public default Dimension getContentSize() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public default AffineTransform getContentTransform() {
+		// TODO: query content bend points
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public default Node getResizableVisual() {
 		return getBendableVisual();
 	}
 
 	@Override
-	default Node getTransformableVisual() {
+	public default Node getTransformableVisual() {
 		return getBendableVisual();
 	}
 
@@ -303,11 +317,8 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	default void resizeContent(Dimension totalSize) {
-		// TODO: verify that current visual bend points are up-to-date
+		throw new UnsupportedOperationException();
 		// TODO: get content bend points => resize => bend content
-		// FIXME: we should not rely on the visual bendpoints here, but only on
-		// the content bend points; the passed in size is the total size
-		bendContent(getVisualBendPoints());
 	}
 
 	@Override
@@ -367,16 +378,14 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	default void transformContent(AffineTransform transform) {
-		// TODO: verify that current visual bend points are up-to-date
-		bendContent(getVisualBendPoints());
-
+		throw new UnsupportedOperationException();
 		// TODO: get content bend points => transform => bend content
 	}
 
 	@Override
-	default void transformVisual(AffineTransform transformation) {
+	default void transformVisual(Affine totalTransform) {
 		// optimize null/identity case
-		if (transformation == null || transformation.isIdentity()) {
+		if (totalTransform == null || totalTransform.isIdentity()) {
 			return;
 		}
 
@@ -399,7 +408,11 @@ public interface IBendableContentPart<V extends Node>
 		for (BendPoint bp : bendPoints) {
 			if (!bp.isAttached()) {
 				// transform unattached bend points
-				bp.getPosition().transform(transformation);
+				AffineTransform deltaTransform = FX2Geometry
+						.toAffineTransform(getVisualTransform()).getInverse()
+						.concatenate(
+								FX2Geometry.toAffineTransform(totalTransform));
+				bp.getPosition().transform(deltaTransform);
 			}
 		}
 

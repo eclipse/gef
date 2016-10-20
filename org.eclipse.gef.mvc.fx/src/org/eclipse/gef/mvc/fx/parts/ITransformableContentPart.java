@@ -11,11 +11,10 @@
 package org.eclipse.gef.mvc.fx.parts;
 
 import org.eclipse.gef.fx.utils.NodeUtils;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 /**
  * An {@link IContentPart} that supports content related transformations.
@@ -29,7 +28,14 @@ import javafx.scene.Node;
 public interface ITransformableContentPart<V extends Node>
 		extends IContentPart<V> {
 
-	// getContentTransform()
+	/**
+	 * Returns the current {@link AffineTransform} according to this
+	 * {@link ITransformableContentPart}'s content.
+	 *
+	 * @return The current {@link AffineTransform} according to this
+	 *         {@link ITransformableContentPart}'s content.
+	 */
+	public AffineTransform getContentTransform();
 
 	/**
 	 * Returns the visual of this {@link ITransformableContentPart} to which
@@ -49,35 +55,32 @@ public interface ITransformableContentPart<V extends Node>
 	 * @return The current transform according to this
 	 *         {@link ITransformableContentPart}'s visual.
 	 */
-	public default AffineTransform getVisualTransform() {
-		return FX2Geometry.toAffineTransform(
-				getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get());
+	public default Affine getVisualTransform() {
+		return getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
 	}
 
 	/**
-	 * Transform the content element as specified by the given
+	 * Set the content transformation as specified by the given
 	 * {@link AffineTransform}.
 	 *
-	 * @param deltaTransform
-	 *            The {@link AffineTransform} to apply.
+	 * @param totalTransform
+	 *            The {@link AffineTransform} to set.
 	 */
-	public void transformContent(AffineTransform deltaTransform);
+	public void transformContent(AffineTransform totalTransform);
 
 	/**
-	 * Applies the given {@link AffineTransform} to the visual of this
-	 * {@link ITransformableContentPart}.
+	 * Sets the given {@link Affine} as the {@link #getVisualTransform() visual
+	 * transform} of this {@link ITransformableContentPart}.
 	 *
-	 * @param deltaTransform
-	 *            The {@link AffineTransform} that is to be concatenated to the
-	 *            current {@link #getVisualTransform()} of this
+	 * @param totalTransform
+	 *            The {@link Affine} that is to be set as the
+	 *            {@link #getVisualTransform() visual transform} of this
 	 *            {@link ITransformableContentPart}.
 	 */
-	// TODO: this should be called by transform policy
-	public default void transformVisual(AffineTransform deltaTransform) {
+	public default void transformVisual(Affine totalTransform) {
 		NodeUtils.setAffine(
 				getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get(),
-				Geometry2FX.toFXAffine(
-						getVisualTransform().concatenate(deltaTransform)));
+				totalTransform);
 	}
 
 }

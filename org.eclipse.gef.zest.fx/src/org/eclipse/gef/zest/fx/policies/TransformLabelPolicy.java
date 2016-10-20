@@ -19,12 +19,14 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Node;
-import org.eclipse.gef.mvc.fx.operations.TransformOperation;
+import org.eclipse.gef.mvc.fx.operations.TransformVisualOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.operations.ChangeAttributeOperation;
 import org.eclipse.gef.zest.fx.parts.AbstractLabelPart;
+
+import javafx.scene.transform.Affine;
 
 /**
  * The {@link TransformLabelPolicy} is a specialization of the
@@ -130,10 +132,12 @@ public class TransformLabelPolicy extends TransformPolicy {
 		}
 		Point currentLabelOffset = getLabelOffsetInParent();
 		Point delta = currentLabelOffset.getTranslated(initialOffset.getNegated());
-		TransformOperation op = ((TransformOperation) getOperation());
-		op.getNewTransform().setTx(op.getInitialTransform().getTx() - delta.x);
-		op.getNewTransform().setTy(op.getInitialTransform().getTy() - delta.y);
+		TransformVisualOperation op = ((TransformVisualOperation) getOperation());
+		Affine newTransform = op.getNewTransform();
+		newTransform.setTx(op.getInitialTransform().getTx() - delta.x);
+		newTransform.setTy(op.getInitialTransform().getTy() - delta.y);
 		locallyExecuteOperation();
 		return true;
 	}
+
 }

@@ -18,7 +18,6 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
-import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 
@@ -86,7 +85,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		double miny = hostBounds.getMinY();
 		double maxx = hostBounds.getMaxX();
 		double maxy = hostBounds.getMaxY();
-		Affine transform = getHost().getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
+		Affine transform = getHost().getVisualTransform();
 
 		// initialize size
 		if (ZestProperties.getSize(content) != null) {
@@ -104,7 +103,6 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		if (ZestProperties.getPosition(content) != null) {
 			LayoutProperties.setLocation(content,
 					ZestProperties.getPosition(content).getTranslated(preLayoutSize.getScaled(0.5)));
-
 		} else {
 			// no model information available yet, use visual location
 			LayoutProperties.setLocation(content, new Point(transform.getTx() + minx + (maxx - minx) / 2,
@@ -114,4 +112,5 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		// additional information inferred from visual
 		LayoutProperties.setResizable(content, visual.isResizable());
 	}
+
 }

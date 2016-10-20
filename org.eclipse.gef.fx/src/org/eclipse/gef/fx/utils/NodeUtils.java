@@ -82,6 +82,7 @@ public class NodeUtils {
 	 *         otherwise <code>false</code>.
 	 */
 	public static boolean equals(Affine a1, Affine a2) {
+		// TODO: verify if Affine#equals() works with Java 8
 		// Affine does not properly implement equals, so we have to implement
 		// that here
 		return a1.getMxx() == a2.getMxx() && a1.getMxy() == a2.getMxy()

@@ -49,6 +49,7 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 	 * The role used for attaching to the source node.
 	 */
 	protected static final String SOURCE_ROLE = "SOURCE";
+
 	/**
 	 * The role used for attaching to the target node.
 	 */

@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
@@ -63,6 +62,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 /**
  * The {@link NodePart} is the controller for a
@@ -433,11 +433,9 @@ public class NodePart extends AbstractContentPart<Group>
 
 		Point position = ZestProperties.getPosition(node);
 		if (position != null) {
-			// translate using a transform operation
-			Affine transform = getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
-			Affine newTransform = Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y));
-			if (!NodeUtils.equals(transform, newTransform)) {
-				NodeUtils.setAffine(transform, newTransform);
+			Affine newTransform = new Affine(new Translate(position.x, position.y));
+			if (!NodeUtils.equals(getVisualTransform(), newTransform)) {
+				transformVisual(newTransform);
 			}
 		}
 
@@ -457,6 +455,24 @@ public class NodePart extends AbstractContentPart<Group>
 	@Override
 	public org.eclipse.gef.graph.Node getContent() {
 		return (org.eclipse.gef.graph.Node) super.getContent();
+	}
+
+	@Override
+	public Dimension getContentSize() {
+		Dimension size = ZestProperties.getSize(getContent());
+		if (size == null) {
+			size = new Dimension();
+		}
+		return size;
+	}
+
+	@Override
+	public AffineTransform getContentTransform() {
+		Point position = ZestProperties.getPosition(getContent());
+		if (position == null) {
+			position = new Point();
+		}
+		return new AffineTransform().setToTranslation(position.x, position.y);
 	}
 
 	/**
@@ -606,20 +622,9 @@ public class NodePart extends AbstractContentPart<Group>
 	}
 
 	@Override
-	public void transformContent(AffineTransform transform) {
-		// transform operation
-		Point position = null;
-		if (ZestProperties.getPosition(getContent()) == null) {
-			// use visual location (that was already applied)
-			Bounds hostBounds = getVisual().getLayoutBounds();
-			double minx = hostBounds.getMinX();
-			double miny = hostBounds.getMinY();
-			Affine tx = getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
-			position = new Point(tx.getTx() + minx, tx.getTy() + miny);
-		} else {
-			position = transform.getTransformed(ZestProperties.getPosition(getContent()));
-		}
-		ZestProperties.setPosition(getContent(), position);
+	public void transformContent(AffineTransform totalTransform) {
+		ZestProperties.setPosition(getContent(),
+				new Point(totalTransform.getTranslateX(), totalTransform.getTranslateY()));
 	}
 
 }

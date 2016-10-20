@@ -18,12 +18,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
-import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
@@ -34,6 +33,7 @@ import com.google.common.collect.HashMultimap;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Affine;
 
 public class FXCloneOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
 
@@ -80,12 +80,15 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy implements I
 		}
 
 		// copy the transformation
-		AffineTransform originalTransform = FX2Geometry
-				.toAffineTransform(getHost().getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get());
-		TransformPolicy transformPolicy = clonedContentPart.getAdapter(TransformPolicy.class);
-		init(transformPolicy);
-		transformPolicy.setTransform(originalTransform);
-		commit(transformPolicy);
+		if (getHost() instanceof ITransformableContentPart) {
+			@SuppressWarnings("unchecked")
+			ITransformableContentPart<Node> transformableContentPart = (ITransformableContentPart<Node>) getHost();
+			Affine originalTransform = transformableContentPart.getVisualTransform();
+			TransformPolicy transformPolicy = clonedContentPart.getAdapter(TransformPolicy.class);
+			init(transformPolicy);
+			transformPolicy.setTransform(FX2Geometry.toAffineTransform(originalTransform));
+			commit(transformPolicy);
+		}
 	}
 
 	protected boolean isCloneModifierDown(MouseEvent e) {

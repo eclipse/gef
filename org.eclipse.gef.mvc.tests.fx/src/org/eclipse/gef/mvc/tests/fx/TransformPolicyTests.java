@@ -50,6 +50,8 @@ import javafx.scene.shape.Rectangle;
 public class TransformPolicyTests {
 
 	static class PointPart extends AbstractContentPart<Rectangle> implements ITransformableContentPart<Rectangle> {
+		private AffineTransform transform = new AffineTransform();
+
 		@Override
 		protected Rectangle doCreateVisual() {
 			return new Rectangle(10, 10);
@@ -77,7 +79,13 @@ public class TransformPolicyTests {
 		}
 
 		@Override
+		public AffineTransform getContentTransform() {
+			return transform;
+		}
+
+		@Override
 		public void transformContent(AffineTransform transform) {
+			this.transform = transform;
 		}
 	}
 

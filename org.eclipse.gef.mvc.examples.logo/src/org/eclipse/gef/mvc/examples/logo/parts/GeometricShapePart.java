@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef.fx.nodes.GeometryNode;
+import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.IGeometry;
@@ -38,7 +39,6 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
 public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNode<IShape>>
@@ -147,14 +147,7 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 
 		AffineTransform transform = content.getTransform();
 		if (transform != null) {
-			// transfer transformation to JavaFX
-			Affine affine = getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
-			affine.setMxx(transform.getM00());
-			affine.setMxy(transform.getM01());
-			affine.setMyx(transform.getM10());
-			affine.setMyy(transform.getM11());
-			affine.setTx(transform.getTranslateX());
-			affine.setTy(transform.getTranslateY());
+			transformVisual(Geometry2FX.toFXAffine(transform));
 		}
 
 		// apply stroke paint
@@ -187,6 +180,16 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 	@Override
 	public GeometricShape getContent() {
 		return (GeometricShape) super.getContent();
+	}
+
+	@Override
+	public Dimension getContentSize() {
+		return getContent().getGeometry().getBounds().getSize();
+	}
+
+	@Override
+	public AffineTransform getContentTransform() {
+		return getContent().getTransform();
 	}
 
 	@Override

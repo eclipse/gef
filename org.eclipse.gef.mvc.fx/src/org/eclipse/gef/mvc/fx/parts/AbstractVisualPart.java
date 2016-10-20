@@ -606,6 +606,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	public V getVisual() {
 		if (visual == null) {
 			visual = doCreateVisual();
+			// TODO: insert transform
 			IViewer viewer = getViewer();
 			if (viewer != null) {
 				registerAtVisualPartMap(viewer, visual);

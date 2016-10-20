@@ -119,7 +119,8 @@ public interface IVisualPart<V extends Node>
 	 * The role for the adapter key of the <code>Provider&lt;Affine&gt;</code>
 	 * that will be used to obtain the part's {@link Affine} transformation.
 	 */
-	// TODO: replace with an object property instead of using a provider
+	// TODO: replace with a read-only object (Affine) property instead of using
+	// a provider, inserting the Affine within #getVisual()
 	String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
 
 	/**

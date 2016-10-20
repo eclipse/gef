@@ -18,10 +18,9 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.fx.listeners.VisualChangeListener;
-import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.fx.operations.TransformOperation;
+import org.eclipse.gef.mvc.fx.operations.TransformVisualOperation;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -34,7 +33,9 @@ import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import javafx.util.Pair;
 
 /**
@@ -131,6 +132,15 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 		return (Pair<? extends IAttributeStore, String>) super.getContent();
 	}
 
+	@Override
+	public AffineTransform getContentTransform() {
+		Point p = getStoredLabelPosition();
+		if (p == null) {
+			p = new Point();
+		}
+		return new AffineTransform().setToTranslation(p.x, p.y);
+	}
+
 	/**
 	 * Retrieves the position attribute key for the given label role.
 	 *
@@ -189,9 +199,8 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	protected void refreshPosition(Node visual, Point position) {
 		if (position != null) {
 			// translate using a transform operation
-			TransformOperation refreshPositionOp = new TransformOperation(
-					getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get(),
-					Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
+			TransformVisualOperation refreshPositionOp = new TransformVisualOperation(this,
+					new Affine(new Translate(position.x, position.y)));
 			try {
 				refreshPositionOp.execute(null, null);
 			} catch (ExecutionException e) {
@@ -207,18 +216,12 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 *            The new label position.
 	 */
 	public void setStoredLabelPosition(Point computedPosition) {
-		String key = getLabelPositionAttributeKey();
-		ObservableMap<String, Object> attributes = getContent().getKey().getAttributes();
-		attributes.put(key, computedPosition);
+		getContent().getKey().getAttributes().put(getLabelPositionAttributeKey(), computedPosition);
 	}
 
 	@Override
 	public void transformContent(AffineTransform transform) {
-		Point storedLabelPosition = getStoredLabelPosition();
-		if (storedLabelPosition == null) {
-			storedLabelPosition = new Point();
-		}
-		setStoredLabelPosition(transform.getTransformed(storedLabelPosition));
+		setStoredLabelPosition(new Point(transform.getTranslateX(), transform.getTranslateY()));
 	}
 
 }

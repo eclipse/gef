@@ -166,4 +166,5 @@ public class EdgeLabelPart extends AbstractLabelPart {
 		return NodeUtils.sceneToLocal(getVisual().getParent(),
 				NodeUtils.localToScene(connection, startPoint.getTranslated(v.x, v.y)));
 	}
+
 }

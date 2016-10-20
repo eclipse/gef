@@ -14,18 +14,17 @@ package org.eclipse.gef.mvc.fx.policies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.TransformContentOperation;
-import org.eclipse.gef.mvc.fx.operations.TransformOperation;
+import org.eclipse.gef.mvc.fx.operations.TransformVisualOperation;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
-import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.scene.Node;
-import javafx.scene.transform.Affine;
 
 /**
  * The {@link TransformPolicy} is a JavaFX-specific
@@ -142,9 +141,7 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new TransformOperation(getHost()
-				.getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY)
-				.get());
+		return new TransformVisualOperation(getHost());
 	}
 
 	/**
@@ -207,11 +204,8 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 	 * @return The ITransactionalOperation to transform the content.
 	 */
 	protected ITransactionalOperation createTransformContentOperation() {
-		AffineTransform delta = getInitialTransform().getInverse()
-				.preConcatenate(getCurrentTransform());
-		ITransactionalOperation transformContentOperation = new TransformContentOperation<>(
-				getHost(), delta);
-		return transformContentOperation;
+		return new TransformContentOperation<>(
+				getHost(), getCurrentTransform());
 	}
 
 	/**
@@ -221,7 +215,7 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 	 * @return The host's {@link AffineTransform}.
 	 */
 	public AffineTransform getCurrentTransform() {
-		return getHost().getVisualTransform();
+		return FX2Geometry.toAffineTransform(getHost().getVisualTransform());
 	}
 
 	@Override
@@ -444,10 +438,8 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 	 *            The new transformation for the host.
 	 */
 	protected void updateTransformOperation(AffineTransform newTransform) {
-		// transform to JavaFX Affine
-		Affine affine = Geometry2FX.toFXAffine(newTransform);
-		// update operation
-		((TransformOperation) getOperation()).setNewTransform(affine);
+		((TransformVisualOperation) getOperation())
+				.setNewTransform(Geometry2FX.toFXAffine(newTransform));
 	}
 
 }

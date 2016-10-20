@@ -15,6 +15,7 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.geometry.Bounds;
@@ -212,14 +213,8 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 	 *
 	 * @return The target part of this policy.
 	 */
-	protected IVisualPart<? extends Node> getTargetPart() {
-		return targetPart;
-	}
-
-	private Affine getTargetTransform() {
-		return getTargetPart()
-				.getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY)
-				.get();
+	protected ITransformableContentPart<? extends Node> getTargetPart() {
+		return (ITransformableContentPart<? extends Node>) targetPart;
 	}
 
 	/**
@@ -305,7 +300,7 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 		}
 		storeAndDisableRefreshVisuals(getTargetPart());
 		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
-		Affine targetTransform = getTargetTransform();
+		Affine targetTransform = getTargetPart().getVisualTransform();
 		initialTx = targetTransform.getTx();
 		initialTy = targetTransform.getTy();
 		init(getResizePolicy());
