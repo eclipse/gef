@@ -23,7 +23,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.transform.Affine;
 
 /**
  * The {@link ResizeTranslateFirstAnchorageOnHandleDragPolicy} is an
@@ -42,8 +41,6 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 	private SnapSupport snapSupport = new SnapSupport(this);
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
-	private double initialTx;
-	private double initialTy;
 	private int translationIndex;
 	private IVisualPart<? extends Node> targetPart;
 	private Point initialVertex;
@@ -78,11 +75,14 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 		// compute end point
 		Node visual = getTargetPart().getVisual();
 		Point newEndScene = new Point(e.getSceneX(), e.getSceneY());
+
 		// compute delta in scene
 		Point deltaInScene = new Point(newEndScene.x - initialPointerLocation.x,
 				newEndScene.y - initialPointerLocation.y);
+
 		// apply delta to the moved vertex
 		Point newVertex = initialVertex.getTranslated(deltaInScene);
+
 		// snap the moved vertex (unless isPrecise(e))
 		Point snappedVertex = newVertex;
 		if (!isPrecise(e)) {
@@ -94,9 +94,11 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 				initialVertex.y);
 		Point2D endLocal = visual.sceneToLocal(snappedVertex.x,
 				snappedVertex.y);
+
 		// compute delta in local coordinates
 		double deltaX = endLocal.getX() - startLocal.getX();
 		double deltaY = endLocal.getY() - startLocal.getY();
+
 		// segment index determines logical position (0 = top left, 1 = top
 		// right, 2 = bottom right, 3 = bottom left)
 		int segment = getHost().getSegmentIndex();
@@ -124,6 +126,7 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 		Dimension applicableDelta = new Dimension(
 				getResizePolicy().getDeltaWidth(),
 				getResizePolicy().getDeltaHeight());
+
 		// Only apply translation if possible, i.e. if the resize cannot be
 		// applied in total, the translation can probably not be applied in
 		// total as well.
@@ -140,36 +143,12 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 			}
 		}
 
-		// compute translation, i.e. layout delta
-		double pdx = 0;
-		double pdy = 0;
-		if (segment == 0 || segment == 1 || segment == 3) {
-			// determine current layout position in local coordinates
-			Point2D layout = visual.parentToLocal(initialTx, initialTy);
-			double lx = layout.getX();
-			double ly = layout.getY();
-			if (segment == 0 || segment == 3) {
-				// left side => change layout x by local delta x
-				lx += deltaX;
-			}
-			if (segment == 0 || segment == 1) {
-				// top side => change layout y by local delta y
-				ly += deltaY;
-			}
-			// transform new layout position to parent coordinates
-			Point2D layoutParent = visual.localToParent(lx, ly);
-			// compute layout delta in parent coordinates
-			if (segment == 0 || segment == 3) {
-				pdx = layoutParent.getX() - initialTx;
-			}
-			if (segment == 0 || segment == 1) {
-				pdy = layoutParent.getY() - initialTy;
-			}
-		}
+		// compute (local) translation
+		double ldx = segment == 0 || segment == 3 ? deltaX : 0;
+		double ldy = segment == 0 || segment == 1 ? deltaY : 0;
 
-		// apply translation and resize using underlying policies
-
-		getTransformPolicy().setPostTranslate(translationIndex, pdx, pdy);
+		// apply translation
+		getTransformPolicy().setPreTranslate(translationIndex, ldx, ldy);
 	}
 
 	@Override
@@ -300,12 +279,9 @@ public class ResizeTranslateFirstAnchorageOnHandleDragPolicy
 		}
 		storeAndDisableRefreshVisuals(getTargetPart());
 		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
-		Affine targetTransform = getTargetPart().getVisualTransform();
-		initialTx = targetTransform.getTx();
-		initialTy = targetTransform.getTy();
 		init(getResizePolicy());
 		init(getTransformPolicy());
-		translationIndex = getTransformPolicy().createPostTransform();
+		translationIndex = getTransformPolicy().createPreTransform();
 		// determine initial bounds in scene
 		Bounds layoutBounds = getTargetPart().getVisual().getLayoutBounds();
 		Bounds initialBoundsInScene = getTargetPart().getVisual()
