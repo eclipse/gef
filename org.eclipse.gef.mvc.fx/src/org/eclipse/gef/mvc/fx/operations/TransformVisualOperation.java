@@ -147,8 +147,8 @@ public class TransformVisualOperation extends AbstractOperation
 	 *            The {@link Affine} that will be set as the transformation
 	 *            matrix of the {@link ITransformableContentPart}.
 	 */
-	public void setNewTransform(Affine newTransform) {
-		this.finalTransform = newTransform;
+	public void setFinalTransform(Affine newTransform) {
+		this.finalTransform = NodeUtils.setAffine(new Affine(), newTransform);
 	}
 
 	@Override

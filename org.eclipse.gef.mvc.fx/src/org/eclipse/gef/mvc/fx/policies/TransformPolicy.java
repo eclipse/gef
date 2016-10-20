@@ -439,7 +439,7 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 	 */
 	protected void updateTransformOperation(AffineTransform newTransform) {
 		((TransformVisualOperation) getOperation())
-				.setNewTransform(Geometry2FX.toFXAffine(newTransform));
+				.setFinalTransform(Geometry2FX.toFXAffine(newTransform));
 	}
 
 }
