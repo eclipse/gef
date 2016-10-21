@@ -99,9 +99,6 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 	 *            {@link AdaptableScope} for.
 	 */
 	public void leave(A instance) {
-		if (scopedInstances.containsKey(instance)) {
-			scopedInstances.remove(instance);
-		}
 		this.adaptable = null;
 	}
 
