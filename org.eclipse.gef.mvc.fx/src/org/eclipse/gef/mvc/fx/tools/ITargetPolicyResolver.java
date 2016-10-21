@@ -13,6 +13,8 @@ package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.List;
 
+import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -26,7 +28,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public interface ITargetPolicyResolver {
+public interface ITargetPolicyResolver extends IAdaptable.Bound<IDomain> {
 
 	/**
 	 * Determines and prioritizes all policies of the specified type for the

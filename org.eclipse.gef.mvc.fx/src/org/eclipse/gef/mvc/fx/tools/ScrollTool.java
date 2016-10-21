@@ -20,8 +20,6 @@ import org.eclipse.gef.fx.gestures.AbstractScrollGesture;
 import org.eclipse.gef.mvc.fx.policies.IOnScrollPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import com.google.inject.Inject;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
@@ -41,8 +39,6 @@ public class ScrollTool extends AbstractTool {
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IOnScrollPolicy> ON_SCROLL_POLICY_KEY = IOnScrollPolicy.class;
-	@Inject
-	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<Scene, AbstractScrollGesture> gestures = new HashMap<>();
 	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
@@ -109,7 +105,7 @@ public class ScrollTool extends AbstractTool {
 					EventTarget eventTarget = event.getTarget();
 					getDomain().openExecutionTransaction(ScrollTool.this);
 					setActivePolicies(viewer,
-							targetPolicyResolver.getTargetPolicies(
+							getTargetPolicyResolver().getTargetPolicies(
 									ScrollTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,

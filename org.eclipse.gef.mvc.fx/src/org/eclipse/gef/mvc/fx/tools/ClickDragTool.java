@@ -30,8 +30,6 @@ import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
-import com.google.inject.Inject;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -78,9 +76,6 @@ public class ClickDragTool extends AbstractTool {
 	 * drag part of the click/drag interaction gesture.
 	 */
 	public static final Class<IOnDragPolicy> ON_DRAG_POLICY_KEY = IOnDragPolicy.class;
-
-	@Inject
-	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<Scene, AbstractMouseDragGesture> gestures = new HashMap<>();
 	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
@@ -161,7 +156,7 @@ public class ClickDragTool extends AbstractTool {
 						// notified about events
 						Node target = (Node) eventTarget;
 						possibleDragPolicies[0] = new ArrayList<>(
-								targetPolicyResolver.getTargetPolicies(
+								getTargetPolicyResolver().getTargetPolicies(
 										ClickDragTool.this, target,
 										ON_DRAG_POLICY_KEY));
 
@@ -237,7 +232,8 @@ public class ClickDragTool extends AbstractTool {
 				@Override
 				protected void press(Node target, MouseEvent e) {
 					if (viewer instanceof InfiniteCanvasViewer) {
-						InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer).getCanvas();
+						InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer)
+								.getCanvas();
 						// if any node in the target hierarchy is a scrollbar,
 						// do not process the event
 						if (e.getTarget() instanceof Node) {
@@ -269,7 +265,7 @@ public class ClickDragTool extends AbstractTool {
 
 					// determine click policies
 					boolean opened = false;
-					List<? extends IOnClickPolicy> clickPolicies = targetPolicyResolver
+					List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
 							.getTargetPolicies(ClickDragTool.this, target,
 									ON_CLICK_POLICY_KEY);
 
@@ -294,7 +290,7 @@ public class ClickDragTool extends AbstractTool {
 						// hierarchy so that the viewer cannot be determined for
 						// the target node anymore. If that is the case, no drag
 						// policies should be notified about the event.
-						policies = targetPolicyResolver.getTargetPolicies(
+						policies = getTargetPolicyResolver().getTargetPolicies(
 								ClickDragTool.this, target, activeViewer,
 								ON_DRAG_POLICY_KEY);
 					}

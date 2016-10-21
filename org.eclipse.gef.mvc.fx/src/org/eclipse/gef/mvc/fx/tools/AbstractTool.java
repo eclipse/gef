@@ -106,6 +106,15 @@ public abstract class AbstractTool implements ITool {
 		return getAdaptable();
 	}
 
+	/**
+	 * Returns the {@link ITargetPolicyResolver} of the {@link IDomain}.
+	 *
+	 * @return the {@link ITargetPolicyResolver} of the {@link IDomain}.
+	 */
+	protected ITargetPolicyResolver getTargetPolicyResolver() {
+		return getDomain().getAdapter(ITargetPolicyResolver.class);
+	}
+
 	@Override
 	public boolean isActive() {
 		return acs.isActive();

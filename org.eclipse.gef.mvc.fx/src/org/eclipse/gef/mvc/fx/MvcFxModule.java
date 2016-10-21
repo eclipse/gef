@@ -623,6 +623,7 @@ public class MvcFxModule extends AbstractModule {
 		bindPinchSpreadToolAsIDomainAdapter(adapterMapBinder);
 		bindScrollToolAsDomainAdapter(adapterMapBinder);
 		bindContentIViewerAsIDomainAdapter(adapterMapBinder);
+		bindITargetPolicyResolverAsIDomainAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -705,6 +706,20 @@ public class MvcFxModule extends AbstractModule {
 		binder().bind(ITargetPolicyResolver.class)
 				.to(DefaultTargetPolicyResolver.class)
 				.in(AdaptableScopes.typed(IDomain.class));
+	}
+
+	/**
+	 * Binds {@link DefaultTargetPolicyResolver} as a domain adapter.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to add the binding.
+	 */
+	protected void bindITargetPolicyResolverAsIDomainAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// TODO: verify binding or use two level bindings (interface and
+		// implementation)
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(DefaultTargetPolicyResolver.class);
 	}
 
 	/**

@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
+import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
@@ -50,7 +52,8 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
+public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
+		implements ITargetPolicyResolver {
 
 	private final static class AdapterKeyComparator
 			implements Comparator<AdapterKey<?>> {

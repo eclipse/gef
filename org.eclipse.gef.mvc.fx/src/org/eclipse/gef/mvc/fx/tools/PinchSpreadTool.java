@@ -22,8 +22,6 @@ import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.policies.IOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import com.google.inject.Inject;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
@@ -49,8 +47,6 @@ public class PinchSpreadTool extends AbstractTool {
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IOnPinchSpreadPolicy> ON_PINCH_SPREAD_POLICY_KEY = IOnPinchSpreadPolicy.class;
-	@Inject
-	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<Scene, AbstractPinchSpreadGesture> gestures = new HashMap<>();
 	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
@@ -134,7 +130,7 @@ public class PinchSpreadTool extends AbstractTool {
 					// determine target policies
 					EventTarget eventTarget = e.getTarget();
 					setActivePolicies(viewer,
-							targetPolicyResolver.getTargetPolicies(
+							getTargetPolicyResolver().getTargetPolicies(
 									PinchSpreadTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,

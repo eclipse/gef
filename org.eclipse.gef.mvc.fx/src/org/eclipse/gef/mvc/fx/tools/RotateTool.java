@@ -21,8 +21,6 @@ import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.policies.IOnRotatePolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import com.google.inject.Inject;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
@@ -47,8 +45,6 @@ public class RotateTool extends AbstractTool {
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IOnRotatePolicy> ON_ROTATE_POLICY_KEY = IOnRotatePolicy.class;
-	@Inject
-	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<Scene, AbstractRotateGesture> gestures = new HashMap<>();
 	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
@@ -113,7 +109,7 @@ public class RotateTool extends AbstractTool {
 				protected void rotationStarted(RotateEvent event) {
 					EventTarget eventTarget = event.getTarget();
 					setActivePolicies(viewer,
-							targetPolicyResolver.getTargetPolicies(
+							getTargetPolicyResolver().getTargetPolicies(
 									RotateTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,

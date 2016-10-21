@@ -25,8 +25,6 @@ import org.eclipse.gef.mvc.fx.policies.IOnStrokePolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnTypePolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import com.google.inject.Inject;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -37,8 +35,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link TypeTool} is an {@link AbstractTool} that handles keyboard
- * input.
+ * The {@link TypeTool} is an {@link AbstractTool} that handles keyboard input.
  *
  * @author mwienand
  *
@@ -61,9 +58,6 @@ public class TypeTool extends AbstractTool {
 	private Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	private IViewer activeViewer;
-
-	@Inject
-	private ITargetPolicyResolver targetPolicyResolver;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -170,7 +164,7 @@ public class TypeTool extends AbstractTool {
 
 						// determine target policies on first key press
 						setActivePolicies(activeViewer,
-								targetPolicyResolver.getTargetPolicies(
+								getTargetPolicyResolver().getTargetPolicies(
 										TypeTool.this, targetNode,
 										ON_STROKE_POLICY_KEY));
 					}
@@ -249,7 +243,7 @@ public class TypeTool extends AbstractTool {
 								"Unsupported event target: " + target);
 					}
 
-					Collection<? extends IOnTypePolicy> policies = targetPolicyResolver
+					Collection<? extends IOnTypePolicy> policies = getTargetPolicyResolver()
 							.getTargetPolicies(TypeTool.this, targetNode,
 									ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a

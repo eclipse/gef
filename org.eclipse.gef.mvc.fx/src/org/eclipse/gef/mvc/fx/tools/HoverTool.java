@@ -18,8 +18,6 @@ import java.util.Map;
 import org.eclipse.gef.mvc.fx.policies.IOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import com.google.inject.Inject;
-
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -39,9 +37,6 @@ public class HoverTool extends AbstractTool {
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IOnHoverPolicy> ON_HOVER_POLICY_KEY = IOnHoverPolicy.class;
-
-	@Inject
-	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<Scene, EventHandler<MouseEvent>> hoverFilters = new HashMap<>();
 
@@ -75,7 +70,7 @@ public class HoverTool extends AbstractTool {
 				if (eventTarget instanceof Node) {
 					// FIXME: For some events, "The given target Node is not
 					// contained within an IViewer."
-					Collection<? extends IOnHoverPolicy> policies = targetPolicyResolver
+					Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
 							.getTargetPolicies(HoverTool.this,
 									(Node) eventTarget, ON_HOVER_POLICY_KEY);
 					getDomain().openExecutionTransaction(HoverTool.this);
