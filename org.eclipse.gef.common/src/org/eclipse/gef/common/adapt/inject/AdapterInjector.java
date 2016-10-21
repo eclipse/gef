@@ -16,21 +16,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 
+import com.google.common.base.Equivalence;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Inject;
@@ -52,6 +51,7 @@ import com.google.inject.spi.ProviderInstanceBinding;
 import com.google.inject.spi.ProviderKeyBinding;
 import com.google.inject.spi.UntargettedBinding;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -308,12 +308,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final MultibinderBinding<? extends Object> multibinding) {
-			Map<AdapterKey<?>, Object> adapters = new HashMap<>();
-			for (Binding<?> binding : multibinding.getElements()) {
-				// process the individual bindings
-				adapters.putAll(binding.acceptTargetVisitor(this));
-			}
-			return adapters;
+			return null;
 		}
 
 		@Override
@@ -322,36 +317,10 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			return null;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final ProviderInstanceBinding<? extends Object> binding) {
-			Map<AdapterKey<?>, Object> adapters = new HashMap<>();
-			Map<AdapterKey<?>, ?> adaptersOrProvidersByKeys = (Map<AdapterKey<?>, ?>) binding
-					.getProviderInstance().get();
-			for (AdapterKey<?> adapterKey : adaptersOrProvidersByKeys
-					.keySet()) {
-				// provider already provides adapters per AdapterKey
-				Object adaptersOrProvider = adaptersOrProvidersByKeys
-						.get(adapterKey);
-				if (adaptersOrProvider instanceof Provider) {
-					Object adapter = ((Provider<?>) adaptersOrProvider).get();
-					TypeToken<?> adapterType = determineAdapterType(binding,
-							adapterKey, adapter);
-					adapters.put(
-							AdapterKey.get(adapterType, adapterKey.getRole()),
-							adapter);
-				} else if (adaptersOrProvider instanceof Set) {
-					for (Object adapter : (Set<?>) adaptersOrProvider) {
-						// determine adapter type
-						TypeToken<?> adapterType = determineAdapterType(binding,
-								adapterKey, adapter);
-						adapters.put(AdapterKey.get(adapterType,
-								adapterKey.getRole()), adapter);
-					}
-				}
-			}
-			return adapters;
+			return null;
 		}
 
 		@Override
@@ -428,22 +397,23 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				UntargettedBinding<? extends Object> binding) {
 			return null;
 		}
-
 	}
 
-	private static final Comparator<Key<?>> ADAPTER_MAP_BINDING_KEY_COMPARATOR = new Comparator<Key<?>>() {
+	private static final Comparator<Equivalence.Wrapper<Key<?>>> ADAPTER_MAP_BINDING_KEY_COMPARATOR = new Comparator<Equivalence.Wrapper<Key<?>>>() {
 
 		@Override
-		public int compare(final Key<?> o1, final Key<?> o2) {
-			if (!AdapterMap.class.equals(o1.getAnnotationType())
-					|| !AdapterMap.class.equals(o2.getAnnotationType())) {
+		public int compare(final Equivalence.Wrapper<Key<?>> o1,
+				final Equivalence.Wrapper<Key<?>> o2) {
+			if (!AdapterMap.class.equals(o1.get().getAnnotationType())
+					|| !AdapterMap.class.equals(o2.get().getAnnotationType())) {
 				throw new IllegalArgumentException(
 						"Can only compare keys with AdapterMap annotations");
 			}
-			final AdapterMap a1 = (AdapterMap) o1.getAnnotation();
-			final AdapterMap a2 = (AdapterMap) o2.getAnnotation();
+			final AdapterMap a1 = (AdapterMap) o1.get().getAnnotation();
+			final AdapterMap a2 = (AdapterMap) o2.get().getAnnotation();
 			if (a1.adaptableType().equals(a2.adaptableType())) {
-				return 0;
+				// ensure consistency with equals
+				return o1.equals(o2) ? 0 : o2.hashCode() - o1.hashCode();
 			} else if (a1.adaptableType()
 					.isAssignableFrom(a2.adaptableType())) {
 				return -1;
@@ -480,6 +450,71 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		this.loggingMode = loggingMode;
 	}
 
+	private void deferAdapterInjection(IAdaptable adaptable,
+			Runnable runnable) {
+		if (adaptable instanceof IAdaptable.Bound) {
+			@SuppressWarnings("unchecked")
+			ReadOnlyObjectProperty<? extends IAdaptable> adaptableProperty = ((IAdaptable.Bound<? extends IAdaptable>) adaptable)
+					.adaptableProperty();
+			if (adaptableProperty.get() == null) {
+				// defer until we have an adaptable and can test the rest of the
+				// chain
+				adaptableProperty.addListener(new ChangeListener<IAdaptable>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends IAdaptable> observable,
+							IAdaptable oldValue, IAdaptable newValue) {
+						if (newValue != null) {
+							observable.removeListener(this);
+							deferAdapterInjection(newValue, runnable);
+						}
+					}
+				});
+			} else {
+				// test rest of the chain
+				deferAdapterInjection(adaptableProperty.get(), runnable);
+			}
+		} else {
+			// the chain is complete, thus perform the injection
+			runnable.run();
+		}
+	}
+
+	/**
+	 * Retrieves to be injected adapters based on adapter map bindings.
+	 *
+	 * @param adaptable
+	 *            The adaptable to inject adapters into.
+	 * @param issues
+	 *            A {@link String} list, to which issues may be added that arise
+	 *            during injection.
+	 * @param adapterMapBindings
+	 *            The applicable bindings for the injection.
+	 * @return The adapters mapped to their adapter keys.
+	 */
+	protected Map<AdapterKey<?>, Object> inferAdapters(IAdaptable adaptable,
+			Collection<Binding<?>> adapterMapBindings, List<String> issues) {
+		// handle scope while retrieving adapters
+		System.out.println(Thread.currentThread().getStackTrace().length
+				+ " AI: Entering scope of " + adaptable);
+		AdaptableScopes.enter(adaptable);
+
+		// System.out.println("--");
+		final Map<AdapterKey<?>, Object> adapters = new HashMap<>();
+		for (Binding<?> b : adapterMapBindings) {
+			Map<AdapterKey<?>, Object> adaptersForBinding = b
+					.acceptTargetVisitor(new AdapterMapInferrer(issues));
+			// TODO: detect where keys are overwritten??
+			adapters.putAll(adaptersForBinding);
+		}
+
+		System.out.println(Thread.currentThread().getStackTrace().length
+				+ " AI: Leaving scope of " + adaptable);
+		AdaptableScopes.leave(adaptable);
+
+		return adapters;
+	}
+
 	/**
 	 * Performs the adapter map injection for the given adaptable instance.
 	 *
@@ -487,13 +522,31 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 *            The adaptable to inject adapters into.
 	 */
 	protected void injectAdapters(final IAdaptable adaptable) {
-		List<String> issues = new ArrayList<>();
-		injectAdapters(adaptable, issues);
-		for (String issue : issues) {
-			if (LoggingMode.DEVELOPMENT.equals(loggingMode)
-					|| issue.startsWith("*** ERROR")) {
-				System.err.println(issue);
+		// defer until the adaptable.bound chain is complete
+		deferAdapterInjection(adaptable, () -> {
+			List<String> issues = new ArrayList<>();
+			performAdapterInjection(adaptable, issues);
+			for (String issue : issues) {
+				if (LoggingMode.DEVELOPMENT.equals(loggingMode)
+						|| issue.startsWith("*** ERROR")) {
+					System.err.println(issue);
+				}
 			}
+		});
+	}
+
+	@Override
+	public void injectMembers(final IAdaptable instance) {
+		// inject all adapters bound by polymorphic AdapterBinding
+		// annotations
+		if (injector == null) {
+			// XXX: It may happen that this member injector is
+			// exercised before the type listener is injected. In such a
+			// case we need to defer the injections until the injector is
+			// available (bug #439949).
+			deferredInstances.add(instance);
+		} else {
+			injectAdapters(instance);
 		}
 	}
 
@@ -503,18 +556,19 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 * @param adaptable
 	 *            The adaptable to inject adapters into.
 	 * @param issues
-	 *            A {@link String} list, to which issues may be added that arise
-	 *            during injection.
+	 *            The list of issues.
 	 */
-	protected void injectAdapters(final IAdaptable adaptable,
-			final List<String> issues) {
+	protected void performAdapterInjection(final IAdaptable adaptable,
+			List<String> issues) {
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
-		// XXX: Use a sorted map, where keys are sorted according to
-		// hierarchy of annotation types
-
-		final SortedMap<Key<?>, Binding<?>> directlyApplicableBindings = new TreeMap<>(
+		// XXX: The applicable bindings are kept in a sorted map,
+		// where keys are sorted according to hierarchy of annotation types, so
+		// more specific bindings get precedence over more general ones; they
+		// contain all sorts of bindings, not only MapBinderBindings; the
+		// MapBinderBindings are sorted out when inferring the adapters, aas the
+		// AdapterMapInferrer evaluates only them
+		final Map<Equivalence.Wrapper<Key<?>>, Binding<?>> applicableBindings = new TreeMap<>(
 				ADAPTER_MAP_BINDING_KEY_COMPARATOR);
-		final IdentityHashMap<Key<?>, Binding<?>> deferredBindings = new IdentityHashMap<>();
 		for (final Key<?> key : allBindings.keySet()) {
 			// only consider bindings that are qualified by an AdapterMap
 			// binding annotation.
@@ -524,7 +578,6 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						.getAnnotation();
 				if (keyAnnotation.adaptableType()
 						.isAssignableFrom(adaptable.getClass())) {
-					// TODO: check role
 					if (!AdapterMap.DEFAULT_ROLE
 							.equals(keyAnnotation.adaptableRole())) {
 						// the adapter map binding is targeting a specific role
@@ -537,23 +590,21 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 							// evaluation until the adaptable is registered as
 							// adapter.
 							if (((IAdaptable.Bound<?>) adaptable)
-									.getAdaptable() != null) {
-								if (keyAnnotation.adaptableRole()
-										.equals(((IAdaptable.Bound<?>) adaptable)
-												.getAdaptable()
-												.getAdapterKey(adaptable)
-												.getRole())) {
-									// add all bindings in case the roles match
-									directlyApplicableBindings.put(key,
-											allBindings.get(key));
-								}
-							} else {
-								// defer the binding until the adaptable is
-								// registered as an adapter itself.
-								Binding<?> binding = allBindings.get(key);
-								// System.out.println(
-								// "Deferring binding " + binding);
-								deferredBindings.put(key, binding);
+									.getAdaptable() == null) {
+								// this should not happen, as we defer injection
+								// until the chain is complete
+								throw new IllegalStateException(
+										"Adapter injection seems to have been performed while the adaptable chain is not complete yet.");
+							}
+							String adaptableRole = ((IAdaptable.Bound<?>) adaptable)
+									.getAdaptable().getAdapterKey(adaptable)
+									.getRole();
+							if (keyAnnotation.adaptableRole()
+									.equals(adaptableRole)) {
+								// add all bindings in case the roles match
+								applicableBindings.put(
+										Equivalence.identity().wrap(key),
+										allBindings.get(key));
 							}
 						}
 					} else {
@@ -564,61 +615,15 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						// System.out.println("Applying binding for " +
 						// keyAnnotation.value() + " to " + type +
 						// " as subtype of " + methodAnnotation.value());
-						directlyApplicableBindings.put(key,
+
+						// only one applicable binding??
+						applicableBindings.put(Equivalence.identity().wrap(key),
 								allBindings.get(key));
 					}
 				}
 			}
 		}
-		injectAdapters(adaptable, issues, directlyApplicableBindings);
-		if (!deferredBindings.isEmpty()) {
-			// defer injection until the adaptable is
-			// registered as an adapter itself
-			((IAdaptable.Bound<?>) adaptable).adaptableProperty()
-					.addListener(new ChangeListener<IAdaptable>() {
-
-						@Override
-						public void changed(
-								ObservableValue<? extends IAdaptable> observable,
-								IAdaptable oldValue, IAdaptable newValue) {
-							// if the adaptable is itself registered as adapter,
-							// check if the role (under which it is registered
-							// at its own adaptable) matches the role in the map
-							// binding.
-							if (newValue != null) {
-								String adaptableRole = newValue
-										.getAdapterKey(adaptable).getRole();
-								// System.out.println(
-								// "Evaluating deferred bindings for adaptable "
-								// + adaptable + " with role "
-								// + adaptableRole);
-								final SortedMap<Key<?>, Binding<?>> deferredApplicableBindings = new TreeMap<>(
-										ADAPTER_MAP_BINDING_KEY_COMPARATOR);
-								for (final Key<?> key : deferredBindings
-										.keySet()) {
-									if (((AdapterMap) key.getAnnotation())
-											.adaptableRole()
-											.equals(adaptableRole)) {
-										deferredApplicableBindings.put(key,
-												allBindings.get(key));
-									}
-								}
-								injectAdapters(adaptable, issues,
-										deferredApplicableBindings);
-								// if we defer the injection, we have to
-								// print issues ourselves
-								for (String issue : issues) {
-									if (LoggingMode.DEVELOPMENT
-											.equals(loggingMode)
-											|| issue.startsWith("*** ERROR")) {
-										System.err.println(issue);
-									}
-								}
-								observable.removeListener(this);
-							}
-						}
-					});
-		}
+		performAdapterInjection(adaptable, issues, applicableBindings);
 	}
 
 	/**
@@ -631,21 +636,27 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 *            A {@link String} list, to which issues may be added that arise
 	 *            during injection.
 	 * @param adapterMapBindings
-	 *            The bindings for the injection.
+	 *            The applicable bindings for the adapter injection. These do
+	 *            not only contain {@link MapBinderBinding}s but all bindings
+	 *            whose key is applicable.
 	 */
-	protected void injectAdapters(final IAdaptable adaptable,
-			List<String> issues,
-			final SortedMap<Key<?>, Binding<?>> adapterMapBindings) {
-		// XXX: Ensure scope is switched to the given adaptable instance so that
-		// bound instances are re-used
+	protected void performAdapterInjection(final IAdaptable adaptable,
+			List<String> issues, final Map<?, Binding<?>> adapterMapBindings) {
 		// System.out.println("Entering scope of " + adaptable);
+
+		// System.out.println("Performing adapter injection for " + adaptable
+		// + " with bindings " + adapterMapBindings);
+
+		// XXX: We have to enter the scope before retrieving adapters
 		AdaptableScopes.enter(adaptable);
 
-		// System.out.println("--");
-		for (final Map.Entry<Key<?>, Binding<?>> entry : adapterMapBindings
+		// System.out.println(" Injecting adapters...");
+		// XXX: An adapter map entry may result from multiple bindings. Before
+		// processing it, we thus compute all applicable bindings, so earlier
+		// ones are overwritten by more specific ones.
+		for (final Map.Entry<?, Binding<?>> entry : adapterMapBindings
 				.entrySet()) {
 			try {
-				// retrieve the to be injected adapters, mapped to adapter keys.
 				final Map<AdapterKey<?>, Object> adapterMap = entry.getValue()
 						.acceptTargetVisitor(new AdapterMapInferrer(issues));
 
@@ -672,24 +683,13 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				e.printStackTrace();
 			}
 		}
+		// System.out.println(" Done.");
 
 		// System.out.println("Leaving scope of " + adaptable);
-		AdaptableScopes.enter(adaptable);
-	}
+		AdaptableScopes.leave(adaptable);
 
-	@Override
-	public void injectMembers(final IAdaptable instance) {
-		// inject all adapters bound by polymorphic AdapterBinding
-		// annotations
-		if (injector == null) {
-			// XXX: It may happen that this member injector is
-			// exercised before the type listener is injected. In such a
-			// case we need to defer the injections until the injector is
-			// available (bug #439949).
-			deferredInstances.add(instance);
-		} else {
-			injectAdapters(instance);
-		}
+		// System.out.println("Finished adapter injection for " + adaptable
+		// + " with bindings " + adapterMapBindings);
 	}
 
 	/**

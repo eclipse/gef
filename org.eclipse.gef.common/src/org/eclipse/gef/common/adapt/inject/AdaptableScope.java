@@ -49,9 +49,14 @@ import com.google.inject.Scope;
  */
 class AdaptableScope<A extends IAdaptable> implements Scope {
 
-	// hold a set of scoped instances per adaptable instance
-	// TODO: we should ensure scoped instances can be garbage collected
-	private Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new IdentityHashMap<>();
+	// Maintain a set of scoped instances per adaptable instance
+	// XXX: As the scoped instances need to be shared by scopes, to which the
+	// type of the adaptable instance is applicable, we need to use a static
+	// field here. The scope method will ensure that only entered scopes really
+	// accesses the field.
+	// FIXME: We need to ensure scoped instances can be garbage collected (use
+	// week references here)
+	private static Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new IdentityHashMap<>();
 
 	private A adaptable = null;
 	private Class<? extends A> type;
@@ -113,6 +118,9 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 							+ " is scoped to adaptable '" + type
 							+ "', for which no scope has been activated. You can only scope adapters in a scope of a transitive adaptable.");
 				} else {
+					// FIXME: We need to process all scopes of superclasses and
+					// interfaces here to retrieve an instance.
+
 					// obtain the map of scoped instances for the given
 					// adaptable
 					Map<Key<?>, Object> scope = scopedInstances.get(adaptable);

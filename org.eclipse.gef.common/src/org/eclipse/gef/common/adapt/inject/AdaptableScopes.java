@@ -62,7 +62,8 @@ public class AdaptableScopes {
 			}
 		}
 
-		// System.out.println("Entering scope for " + adaptable);
+		// System.out.println("Entering all typed scopes for " + adaptable);
+
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
 			public void process(Class<? extends IAdaptable> adaptableType,
@@ -97,7 +98,7 @@ public class AdaptableScopes {
 						.leave(adaptableInstance);
 			}
 		});
-		// System.out.println("Left scope for " + adaptable);
+		// System.out.println("Left all typed scopes for " + adaptable);
 
 		// XXX: If the given adaptable is an adapter itself, recursively
 		// leave the scope the adaptable it is bound to.

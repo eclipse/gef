@@ -62,7 +62,7 @@ public class AdaptableScopeTests {
 	}
 
 	@Test
-	public void testScopingOnAdapters() {
+	public void testTransitiveScoping() {
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -87,12 +87,24 @@ public class AdaptableScopeTests {
 				intermediate2Binder.addBinding(AdapterKey.defaultRole())
 						.to(Leaf.class);
 
-				binder().bind(Intermediate.class);
 				binder().bind(Leaf.class).in(AdaptableScopes.typed(Root.class));
 			}
 		};
 		Injector injector = Guice.createInjector(module);
 		AdapterStore root1 = injector.getInstance(Root.class);
+
+		// ensure intermediate instances are not shared
+		Assert.assertNotSame(
+				root1.getAdapter(AdapterKey.get(Intermediate.class, "a1")),
+				root1.getAdapter(AdapterKey.get(Intermediate.class, "a2")));
+
+		// ensure leaf instance is shared
+		Assert.assertSame(
+				root1.getAdapter(AdapterKey.get(Intermediate.class, "a1"))
+						.getAdapter(Leaf.class),
+				root1.getAdapter(AdapterKey.get(Intermediate.class, "a2"))
+						.getAdapter(Leaf.class));
+
 		AdapterStore root2 = injector.getInstance(Root.class);
 
 		// ensure intermediate instances are not shared
@@ -102,10 +114,18 @@ public class AdaptableScopeTests {
 
 		// ensure leaf instance is shared
 		Assert.assertSame(
+				root2.getAdapter(AdapterKey.get(Intermediate.class, "a1"))
+						.getAdapter(Leaf.class),
+				root2.getAdapter(AdapterKey.get(Intermediate.class, "a2"))
+						.getAdapter(Leaf.class));
+
+		// ensure instances are not shared outside scope
+		Assert.assertNotSame(
 				root1.getAdapter(AdapterKey.get(Intermediate.class, "a1"))
 						.getAdapter(Leaf.class),
-				root1.getAdapter(AdapterKey.get(Intermediate.class, "a2"))
+				root2.getAdapter(AdapterKey.get(Intermediate.class, "a1"))
 						.getAdapter(Leaf.class));
+
 	}
 
 }

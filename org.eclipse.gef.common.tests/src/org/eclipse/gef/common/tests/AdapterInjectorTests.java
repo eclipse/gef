@@ -548,7 +548,7 @@ public class AdapterInjectorTests {
 		List<String> issues = new ArrayList<>();
 		// call adapterInjector.injectAdapters(adaptable, issues);
 		Method injectAdaptersMethod = AdapterInjector.class.getDeclaredMethod(
-				"injectAdapters", IAdaptable.class, List.class);
+				"performAdapterInjection", IAdaptable.class, List.class);
 		injectAdaptersMethod.setAccessible(true);
 		injectAdaptersMethod.invoke(adapterInjector, adaptable, issues);
 		return issues;
