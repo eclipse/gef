@@ -62,15 +62,7 @@ public class AdaptableScopes {
 			}
 		}
 
-		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
-			@Override
-			public void process(Class<? extends IAdaptable> adaptableType,
-					IAdaptable adaptableInstance) {
-				AdaptableScopes.<IAdaptable> typed(adaptableType)
-						.enter(adaptableInstance);
-			}
-		});
-
+		// System.out.println("Entering scope for " + adaptable);
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
 			public void process(Class<? extends IAdaptable> adaptableType,
@@ -97,6 +89,16 @@ public class AdaptableScopes {
 					"The given IAdaptable may not be null.");
 		}
 
+		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
+			@Override
+			public void process(Class<? extends IAdaptable> adaptableType,
+					IAdaptable adaptableInstance) {
+				AdaptableScopes.<IAdaptable> typed(adaptableType)
+						.leave(adaptableInstance);
+			}
+		});
+		// System.out.println("Left scope for " + adaptable);
+
 		// XXX: If the given adaptable is an adapter itself, recursively
 		// leave the scope the adaptable it is bound to.
 		if (adaptable instanceof IAdaptable.Bound) {
@@ -106,24 +108,6 @@ public class AdaptableScopes {
 				leave(boundTo);
 			}
 		}
-
-		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
-			@Override
-			public void process(Class<? extends IAdaptable> adaptableType,
-					IAdaptable adaptableInstance) {
-				AdaptableScopes.<IAdaptable> typed(adaptableType)
-						.leave(adaptableInstance);
-			}
-		});
-
-		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
-			@Override
-			public void process(Class<? extends IAdaptable> adaptableType,
-					IAdaptable adaptableInstance) {
-				AdaptableScopes.<IAdaptable> typed(adaptableType)
-						.leave(adaptableInstance);
-			}
-		});
 	}
 
 	@SuppressWarnings("unchecked")
