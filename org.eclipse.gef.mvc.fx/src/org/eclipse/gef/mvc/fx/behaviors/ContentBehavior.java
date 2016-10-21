@@ -38,7 +38,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
-import com.google.inject.Inject;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -125,15 +124,10 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 	};
 
-	@Inject
-	// scoped to single instance within viewer
-	private ContentPartPool contentPartPool;
-
 	@Override
 	public void dispose() {
 		// the content part pool is shared by all content behaviors of a viewer,
 		// so the viewer disposes it.
-		contentPartPool = null;
 		contentObserver = null;
 		contentModelObserver = null;
 		contentChildrenObserver = null;
@@ -152,7 +146,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchoredsUnmodifiable().isEmpty()) {
 			// System.out.println("DISPOSE " + contentPart.getContent());
-			contentPartPool.add(contentPart);
+			getContentPartPool().add(contentPart);
 			contentPart.setContent(null);
 		} // else {
 			// System.out.println("CANNOT DISPOSE " + contentPart.getContent());
@@ -207,8 +201,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * <i>content</i> {@link Object}. If an {@link IContentPart} for the given
 	 * content {@link Object} can be found in the viewer's content-part-map,
 	 * then this part is returned. If an {@link IContentPart} for the given
-	 * content {@link Object} is stored in the injected {@link ContentPartPool},
-	 * then this part is returned. Otherwise, the injected
+	 * content {@link Object} is stored in the {@link ContentPartPool}, then
+	 * this part is returned. Otherwise, the injected
 	 * {@link IContentPartFactory} is used to create a new {@link IContentPart}
 	 * for the given content {@link Object}.
 	 *
@@ -227,7 +221,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		} else {
 			// 'Revive' a content part, if it was removed before
 			IContentPart<? extends Node> contentPart = null;
-			contentPart = contentPartPool.remove(content);
+			contentPart = getContentPartPool().remove(content);
 
 			// If the part could not be revived, a new one is created
 			if (contentPart == null) {
@@ -259,6 +253,16 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	protected IContentPartFactory getContentPartFactory() {
 		IViewer viewer = getHost().getRoot().getViewer();
 		return viewer.getAdapter(IContentPartFactory.class);
+	}
+
+	/**
+	 * Returns the {@link ContentPartPool} that is used to recylce content parts
+	 * in the context of an {@link IRootPart}.
+	 *
+	 * @return The {@link ContentPartPool} of the {@link IRootPart}.
+	 */
+	protected ContentPartPool getContentPartPool() {
+		return getHost().getRoot().getAdapter(ContentPartPool.class);
 	}
 
 	/**

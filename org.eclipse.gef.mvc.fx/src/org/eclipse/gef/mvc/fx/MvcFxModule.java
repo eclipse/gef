@@ -286,12 +286,16 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link ContentPartPool}, parameterized by {@link Node}, to the
-	 * {@link IViewer} adaptable scope.
+	 * Ensures that {@link ContentPartPool} is injected into {@link IRootPart}
+	 * using the given adapter {@link MapBinder}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to establish the binding.
 	 */
-	protected void bindContentPartPool() {
-		binder().bind(ContentPartPool.class)
-				.in(AdaptableScopes.typed(IViewer.class));
+	protected void bindContentPartPoolAsIRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(ContentPartPool.class);
 	}
 
 	/**
@@ -362,7 +366,7 @@ public class MvcFxModule extends AbstractModule {
 	 */
 	protected void bindFocusAndSelectOnClickPolicyAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("0"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FocusAndSelectOnClickPolicy.class);
 	}
 
@@ -641,6 +645,24 @@ public class MvcFxModule extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for {@link IRootPart} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link IRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindIRootPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		bindContentPartPoolAsIRootPartAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for "content"
+	 * {@link IRootPart} and all sub-classes. May be overwritten by sub-classes
+	 * to change the default bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -982,8 +1004,9 @@ public class MvcFxModule extends AbstractModule {
 	 */
 	protected void bindTransformProviderAsAbstractContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(
-				IVisualPart.TRANSFORM_PROVIDER_KEY.getRole()))
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(IVisualPart.TRANSFORM_PROVIDER_KEY.getRole()))
 				.to(TransformProvider.class);
 	}
 
@@ -1043,9 +1066,6 @@ public class MvcFxModule extends AbstractModule {
 		bindIDomain();
 		bindIRootPart();
 
-		// bind part pool being used for behaviors
-		bindContentPartPool();
-
 		// bind additional adapters for HistoricizingDomain
 		bindIDomainAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), IDomain.class));
@@ -1054,7 +1074,9 @@ public class MvcFxModule extends AbstractModule {
 		bindIViewerAdaptersForContentViewer(AdapterMaps.getAdapterMapBinder(
 				binder(), IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 
-		// bind additional adapters for LayeredRootPart
+		// bind adapters for RootPart
+		bindIRootPartAdapters(
+				AdapterMaps.getAdapterMapBinder(binder(), IRootPart.class));
 		bindIRootPartAdaptersForContentViewer(AdapterMaps.getAdapterMapBinder(
 				binder(), IRootPart.class, IDomain.CONTENT_VIEWER_ROLE));
 

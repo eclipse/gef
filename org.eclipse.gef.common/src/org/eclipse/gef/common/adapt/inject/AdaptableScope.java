@@ -163,4 +163,5 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 	public void switchTo(A instance) {
 		this.adaptable = instance;
 	}
+
 }
