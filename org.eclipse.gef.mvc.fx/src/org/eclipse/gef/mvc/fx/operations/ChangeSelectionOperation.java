@@ -32,11 +32,8 @@ import javafx.scene.Node;
  *
  * @author mwienand
  *
- * @param <VR>
- *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
- *            case of JavaFX.
  */
-public class ChangeSelectionOperation<VR> extends AbstractOperation
+public class ChangeSelectionOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	/**

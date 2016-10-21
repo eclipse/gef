@@ -83,7 +83,7 @@ public class SelectFocusedOnTypePolicy extends AbstractInteractionPolicy
 				}
 			} else {
 				// set selection
-				op = new ChangeSelectionOperation<>(viewer,
+				op = new ChangeSelectionOperation(viewer,
 						Collections.singletonList(contentPart));
 			}
 		}

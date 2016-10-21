@@ -91,7 +91,7 @@ public class FocusAndSelectOnClickPolicy extends AbstractInteractionPolicy
 							singletonHostList);
 				} else {
 					// clear old selection, host becomes the only selected
-					selectionChangeOperation = new ChangeSelectionOperation<>(
+					selectionChangeOperation = new ChangeSelectionOperation(
 							viewer, singletonHostList);
 				}
 			}

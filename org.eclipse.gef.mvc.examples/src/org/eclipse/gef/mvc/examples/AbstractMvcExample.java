@@ -12,7 +12,6 @@
 package org.eclipse.gef.mvc.examples;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
