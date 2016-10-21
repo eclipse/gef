@@ -65,14 +65,12 @@ import org.eclipse.gef.mvc.fx.policies.DeleteSelectedOnTypePolicy;
 import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.policies.NormalizeConnectedOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.ResizeBendablePolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizeTransformSelectedOnHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnRotatePolicy;
 import org.eclipse.gef.mvc.fx.policies.SelectFocusedOnTypePolicy;
-import org.eclipse.gef.mvc.fx.policies.TransformBendablePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
@@ -163,7 +161,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(GeometricOutlineProvider.class);
 
 		// transaction policy for resize + transform
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeBendablePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizePolicy.class);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
 
@@ -173,7 +171,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// drag individual segments
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendOnSegmentDragPolicy.class);
 
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformBendablePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
 
 		// cloning
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneCurvePolicy.class);

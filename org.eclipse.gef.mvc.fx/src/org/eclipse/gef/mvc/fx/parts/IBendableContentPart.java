@@ -257,8 +257,9 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	public default AffineTransform getContentTransform() {
+		return new AffineTransform();
 		// TODO: query content bend points
-		throw new UnsupportedOperationException();
+		// throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -312,7 +313,18 @@ public interface IBendableContentPart<V extends Node>
 				}
 			}
 		}
+
+		for (BendPoint bp : bendPoints) {
+			bp.getPosition().transform(
+					FX2Geometry.toAffineTransform(getVisualTransform()));
+		}
+
 		return bendPoints;
+	}
+
+	@Override
+	default Affine getVisualTransform() {
+		return ITransformableContentPart.super.getVisualTransform();
 	}
 
 	@Override
@@ -378,7 +390,7 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	default void transformContent(AffineTransform transform) {
-		throw new UnsupportedOperationException();
+		// throw new UnsupportedOperationException();
 		// TODO: get content bend points => transform => bend content
 	}
 
@@ -388,6 +400,11 @@ public interface IBendableContentPart<V extends Node>
 		if (totalTransform == null || totalTransform.isIdentity()) {
 			return;
 		}
+
+		// TODO: visual transform vs. bend points
+
+		AffineTransform totalInverseTransform = FX2Geometry
+				.toAffineTransform(totalTransform).getInverse();
 
 		/*
 		 * Transforms the (visual) bend points, as follows:
@@ -408,15 +425,12 @@ public interface IBendableContentPart<V extends Node>
 		for (BendPoint bp : bendPoints) {
 			if (!bp.isAttached()) {
 				// transform unattached bend points
-				AffineTransform deltaTransform = FX2Geometry
-						.toAffineTransform(getVisualTransform()).getInverse()
-						.concatenate(
-								FX2Geometry.toAffineTransform(totalTransform));
-				bp.getPosition().transform(deltaTransform);
+				bp.getPosition().transform(totalInverseTransform);
 			}
 		}
 
 		// apply computed bend points to the visual
+		ITransformableContentPart.super.transformVisual(totalTransform);
 		bendVisual(bendPoints);
 	}
 
