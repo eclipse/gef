@@ -37,22 +37,39 @@ public class AdaptableScopes {
 	private static final Map<Class<? extends IAdaptable>, AdaptableScope<? extends IAdaptable>> scopes = new HashMap<>();
 
 	/**
-	 * Enters the {@link AdaptableScope} of all {@link IAdaptable}-compliant
-	 * types (i.e. (super-)classes implementing {@link IAdaptable} and
-	 * (super-)interfaces extending {@link IAdaptable}) of the given
-	 * {@link IAdaptable} for the given {@link IAdaptable}.
+	 * Transitively enters the {@link AdaptableScope} of all
+	 * {@link IAdaptable}-compliant types (i.e. (super-)classes implementing
+	 * {@link IAdaptable} and (super-)interfaces extending {@link IAdaptable})
+	 * of the given {@link IAdaptable} for the given {@link IAdaptable}.
 	 *
 	 * @param adaptable
 	 *            The {@link IAdaptable} instance, for whose types to enter the
 	 *            {@link AdaptableScope}s with the instance.
-	 *
-	 * @see AdaptableScope#enter(IAdaptable)
 	 */
-	public static void enter(final IAdaptable adaptable) {
+	static void enter(final IAdaptable adaptable) {
 		if (adaptable == null) {
 			throw new IllegalArgumentException(
 					"The given IAdaptable may not be null.");
 		}
+
+		// XXX: If the given adaptable is an adapter itself, recursively
+		// enter the scope of the adaptable it is bound to.
+		if (adaptable instanceof IAdaptable.Bound) {
+			IAdaptable boundTo = ((IAdaptable.Bound<?>) adaptable)
+					.getAdaptable();
+			if (boundTo != null) {
+				enter(boundTo);
+			}
+		}
+
+		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
+			@Override
+			public void process(Class<? extends IAdaptable> adaptableType,
+					IAdaptable adaptableInstance) {
+				AdaptableScopes.<IAdaptable> typed(adaptableType)
+						.enter(adaptableInstance);
+			}
+		});
 
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
@@ -65,22 +82,39 @@ public class AdaptableScopes {
 	}
 
 	/**
-	 * Leaves the {@link AdaptableScope} of all {@link IAdaptable}-compliant
-	 * types (i.e. (super-)classes implementing {@link IAdaptable} and
-	 * (super-)interfaces extending {@link IAdaptable}) of the given
-	 * {@link IAdaptable} for the given {@link IAdaptable}.
+	 * Transitively leaves the {@link AdaptableScope} of all
+	 * {@link IAdaptable}-compliant types (i.e. (super-)classes implementing
+	 * {@link IAdaptable} and (super-)interfaces extending {@link IAdaptable})
+	 * of the given {@link IAdaptable} for the given {@link IAdaptable}.
 	 *
 	 * @param adaptable
 	 *            The {@link IAdaptable} instance, for whose types to leave the
 	 *            {@link AdaptableScope}s with the instance.
-	 *
-	 * @see AdaptableScope#leave(IAdaptable)
 	 */
-	public static void leave(final IAdaptable adaptable) {
+	static void leave(final IAdaptable adaptable) {
 		if (adaptable == null) {
 			throw new IllegalArgumentException(
 					"The given IAdaptable may not be null.");
 		}
+
+		// XXX: If the given adaptable is an adapter itself, recursively
+		// leave the scope the adaptable it is bound to.
+		if (adaptable instanceof IAdaptable.Bound) {
+			IAdaptable boundTo = ((IAdaptable.Bound<?>) adaptable)
+					.getAdaptable();
+			if (boundTo != null) {
+				leave(boundTo);
+			}
+		}
+
+		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
+			@Override
+			public void process(Class<? extends IAdaptable> adaptableType,
+					IAdaptable adaptableInstance) {
+				AdaptableScopes.<IAdaptable> typed(adaptableType)
+						.leave(adaptableInstance);
+			}
+		});
 
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
@@ -110,43 +144,6 @@ public class AdaptableScopes {
 						adaptableInstance, processor);
 			}
 		}
-	}
-
-	/**
-	 * Switches the {@link AdaptableScope} of all {@link IAdaptable}-compliant
-	 * types (i.e. (super-)classes implementing {@link IAdaptable} and
-	 * (super-)interfaces extending {@link IAdaptable}) of the given
-	 * {@link IAdaptable} to the given {@link IAdaptable}.
-	 *
-	 * @param adaptable
-	 *            The {@link IAdaptable} instance, for whose types to switch the
-	 *            {@link AdaptableScope}s to the instance.
-	 *
-	 * @see AdaptableScope#switchTo(IAdaptable)
-	 */
-	public static void switchTo(final IAdaptable adaptable) {
-		if (adaptable == null) {
-			throw new IllegalArgumentException(
-					"The given IAdaptable may not be null.");
-		}
-
-		// XXX: If the given adaptable is an adapter itself, recursively
-		// switch to the adaptable it is bound to.
-		if (adaptable instanceof IAdaptable.Bound) {
-			IAdaptable boundTo = ((IAdaptable.Bound<?>) adaptable)
-					.getAdaptable();
-			if (boundTo != null) {
-				switchTo(boundTo);
-			}
-		}
-		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
-			@Override
-			public void process(Class<? extends IAdaptable> adaptableType,
-					IAdaptable adaptableInstance) {
-				AdaptableScopes.<IAdaptable> typed(adaptableType)
-						.switchTo(adaptableInstance);
-			}
-		});
 	}
 
 	/**

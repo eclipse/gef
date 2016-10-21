@@ -637,14 +637,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			List<String> issues,
 			final SortedMap<Key<?>, Binding<?>> adapterMapBindings) {
 		// XXX: Ensure scope is switched to the given adaptable instance so that
-		// bound instances are re-used. This is necessary even though the scope
-		// is entered in the constructor for domain, viewer, and parts, because
-		// Guice creates all instances before putting them together.
-		// FIXME: Moreover, enter, leave (clean-up), and swtich-to should be
-		// properly integrated into Guice instead of having to call these
-		// functions from the individual IAdaptables. Also, only IAdaptables
-		// that are used as adapters can be scoped using the current mechanism.
-		AdaptableScopes.switchTo(adaptable);
+		// bound instances are re-used
+		// System.out.println("Entering scope of " + adaptable);
+		AdaptableScopes.enter(adaptable);
 
 		// System.out.println("--");
 		for (final Map.Entry<Key<?>, Binding<?>> entry : adapterMapBindings
@@ -677,6 +672,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				e.printStackTrace();
 			}
 		}
+
+		// System.out.println("Leaving scope of " + adaptable);
+		AdaptableScopes.enter(adaptable);
 	}
 
 	@Override

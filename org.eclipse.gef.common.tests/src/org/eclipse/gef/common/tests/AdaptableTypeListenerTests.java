@@ -24,7 +24,7 @@ import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
-import org.eclipse.gef.common.tests.AdaptableScopeTests.AdapterStoreAdapter;
+import org.eclipse.gef.common.tests.AdaptableScopeTests.Intermediate;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -137,7 +137,7 @@ public class AdaptableTypeListenerTests {
 								AdaptableSpecifyingAdapterMapAndInjectAnnotation.class);
 				// bind adapter under different roles (which is valid)
 				mapBinder.addBinding(AdapterKey.role("a1"))
-						.to(AdapterStoreAdapter.class);
+						.to(Intermediate.class);
 			}
 		};
 		try {

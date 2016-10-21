@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.multibindings.MapBinder;
@@ -34,92 +33,32 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 public class AdaptableScopeTests {
 
 	// an adapter for an adapter store
-	public static class AdapterStoreAdapter
-			implements IAdaptable.Bound<AdapterStore> {
+	public static class Intermediate extends AdapterStore
+			implements IAdaptable.Bound<Root> {
 
-		@Inject
-		protected InjectionTarget fieldTarget;
-
-		private ReadOnlyObjectWrapper<AdapterStore> adaptableProperty = new ReadOnlyObjectWrapper<>();
+		private ReadOnlyObjectWrapper<Root> adaptableProperty = new ReadOnlyObjectWrapper<>();
 
 		@Override
-		public ReadOnlyObjectProperty<AdapterStore> adaptableProperty() {
+		public ReadOnlyObjectProperty<Root> adaptableProperty() {
 			return adaptableProperty.getReadOnlyProperty();
 		}
 
 		@Override
-		public AdapterStore getAdaptable() {
+		public Root getAdaptable() {
 			return adaptableProperty.get();
 		}
 
 		@Override
-		public void setAdaptable(AdapterStore adaptable) {
+		public void setAdaptable(Root adaptable) {
 			this.adaptableProperty.set(adaptable);
 		}
-
 	}
 
 	// a dummy target for injection
-	static class InjectionTarget extends Object {
+	static class Leaf extends IAdaptable.Bound.Impl<Intermediate> {
 	}
 
-	// adapter store
-	public static class MyAdapterStore extends AdapterStore
-			implements IAdaptable.Bound<AdapterStore> {
-
-		@Inject
-		protected InjectionTarget fieldTarget;
-
-		private ReadOnlyObjectWrapper<AdapterStore> adaptableProperty = new ReadOnlyObjectWrapper<>();
-
-		public MyAdapterStore() {
-			AdaptableScopes.enter(this);
-		}
-
-		@Override
-		public ReadOnlyObjectProperty<AdapterStore> adaptableProperty() {
-			return adaptableProperty.getReadOnlyProperty();
-		}
-
-		@Override
-		public AdapterStore getAdaptable() {
-			return adaptableProperty.get();
-		}
-
-		@Override
-		public void setAdaptable(AdapterStore adaptable) {
-			this.adaptableProperty.set(adaptable);
-		}
-	}
-
-	// a scoped adapter store implementation that may be bound as an adapter to
-	// another adapter store.
-	public static class ScopingAdapterStore extends AdapterStore
-			implements IAdaptable.Bound<AdapterStore> {
-
-		@Inject
-		protected InjectionTarget fieldTarget;
-
-		private ReadOnlyObjectWrapper<AdapterStore> adaptableProperty = new ReadOnlyObjectWrapper<>();
-
-		public ScopingAdapterStore() {
-			AdaptableScopes.enter(this);
-		}
-
-		@Override
-		public ReadOnlyObjectProperty<AdapterStore> adaptableProperty() {
-			return adaptableProperty.getReadOnlyProperty();
-		}
-
-		@Override
-		public AdapterStore getAdaptable() {
-			return adaptableProperty.get();
-		}
-
-		@Override
-		public void setAdaptable(AdapterStore adaptable) {
-			this.adaptableProperty.set(adaptable);
-		}
+	public static class Root extends AdapterStore {
 	}
 
 	@Test
@@ -129,159 +68,44 @@ public class AdaptableScopeTests {
 			protected void configure() {
 				install(new AdapterInjectionSupport());
 
-				MapBinder<AdapterKey<?>, Object> s1Binder = AdapterMaps
-						.getAdapterMapBinder(binder(),
-								ScopingAdapterStore.class);
-				// bind adapter under different roles (which is valid)
-				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a1"))
-						.to(AdapterStoreAdapter.class);
-				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a2"))
-						.to(AdapterStoreAdapter.class);
+				MapBinder<AdapterKey<?>, Object> rootBinder = AdapterMaps
+						.getAdapterMapBinder(binder(), Root.class);
+				rootBinder.addBinding(AdapterKey.get(Intermediate.class, "a1"))
+						.to(Intermediate.class);
+				rootBinder.addBinding(AdapterKey.get(Intermediate.class, "a2"))
+						.to(Intermediate.class);
 
-				binder().bind(ScopingAdapterStore.class);
-				binder().bind(AdapterStoreAdapter.class)
-						.in(AdaptableScopes.typed(ScopingAdapterStore.class));
-				binder().bind(InjectionTarget.class);
+				MapBinder<AdapterKey<?>, Object> intermediate1Binder = AdapterMaps
+						.getAdapterMapBinder(binder(), Intermediate.class,
+								"a1");
+				intermediate1Binder.addBinding(AdapterKey.defaultRole())
+						.to(Leaf.class);
+
+				MapBinder<AdapterKey<?>, Object> intermediate2Binder = AdapterMaps
+						.getAdapterMapBinder(binder(), Intermediate.class,
+								"a2");
+				intermediate2Binder.addBinding(AdapterKey.defaultRole())
+						.to(Leaf.class);
+
+				binder().bind(Intermediate.class);
+				binder().bind(Leaf.class).in(AdaptableScopes.typed(Root.class));
 			}
 		};
 		Injector injector = Guice.createInjector(module);
-		ScopingAdapterStore s1 = injector
-				.getInstance(ScopingAdapterStore.class);
-		ScopingAdapterStore s2 = injector
-				.getInstance(ScopingAdapterStore.class);
+		AdapterStore root1 = injector.getInstance(Root.class);
+		AdapterStore root2 = injector.getInstance(Root.class);
 
-		Assert.assertSame(
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")),
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")));
-
-		Assert.assertSame(
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")),
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")));
-
+		// ensure intermediate instances are not shared
 		Assert.assertNotSame(
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")),
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")));
+				root2.getAdapter(AdapterKey.get(Intermediate.class, "a1")),
+				root2.getAdapter(AdapterKey.get(Intermediate.class, "a2")));
 
-		Assert.assertNotSame(
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")),
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")));
+		// ensure leaf instance is shared
+		Assert.assertSame(
+				root1.getAdapter(AdapterKey.get(Intermediate.class, "a1"))
+						.getAdapter(Leaf.class),
+				root1.getAdapter(AdapterKey.get(Intermediate.class, "a2"))
+						.getAdapter(Leaf.class));
 	}
 
-	@Test
-	public void testScopingOnAdaptersWithRoles() {
-		Module module = new AbstractModule() {
-			@Override
-			protected void configure() {
-				install(new AdapterInjectionSupport());
-
-				MapBinder<AdapterKey<?>, Object> topBinder = AdapterMaps
-						.getAdapterMapBinder(binder(), MyAdapterStore.class);
-				topBinder
-						.addBinding(
-								AdapterKey.get(ScopingAdapterStore.class, "r1"))
-						.to(ScopingAdapterStore.class);
-				topBinder
-						.addBinding(
-								AdapterKey.get(ScopingAdapterStore.class, "r2"))
-						.to(ScopingAdapterStore.class);
-
-				MapBinder<AdapterKey<?>, Object> s1Binder1 = AdapterMaps
-						.getAdapterMapBinder(binder(),
-								ScopingAdapterStore.class, "r1");
-				MapBinder<AdapterKey<?>, Object> s1Binder2 = AdapterMaps
-						.getAdapterMapBinder(binder(),
-								ScopingAdapterStore.class, "r2");
-				// bind adapter under different roles (which is valid)
-				s1Binder1
-						.addBinding(
-								AdapterKey.get(AdapterStoreAdapter.class, "a1"))
-						.to(AdapterStoreAdapter.class);
-				s1Binder1
-						.addBinding(
-								AdapterKey.get(AdapterStoreAdapter.class, "a2"))
-						.to(AdapterStoreAdapter.class);
-
-				s1Binder2
-						.addBinding(
-								AdapterKey.get(AdapterStoreAdapter.class, "a1"))
-						.to(AdapterStoreAdapter.class);
-				s1Binder2
-						.addBinding(
-								AdapterKey.get(AdapterStoreAdapter.class, "a2"))
-						.to(AdapterStoreAdapter.class);
-
-				binder().bind(ScopingAdapterStore.class);
-				binder().bind(AdapterStoreAdapter.class)
-						.in(AdaptableScopes.typed(ScopingAdapterStore.class));
-				binder().bind(InjectionTarget.class);
-			}
-		};
-		Injector injector = Guice.createInjector(module);
-		MyAdapterStore s = injector.getInstance(MyAdapterStore.class);
-
-		ScopingAdapterStore s1 = s
-				.getAdapter(AdapterKey.get(ScopingAdapterStore.class, "r1"));
-		ScopingAdapterStore s2 = s
-				.getAdapter(AdapterKey.get(ScopingAdapterStore.class, "r2"));
-
-		Assert.assertSame(
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")),
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")));
-
-		Assert.assertSame(
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")),
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")));
-
-		Assert.assertNotSame(
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")),
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")));
-
-		Assert.assertNotSame(
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")),
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")));
-	}
-
-	@Test
-	public void testScopingOnFields() {
-		Module module = new AbstractModule() {
-			@Override
-			protected void configure() {
-				install(new AdapterInjectionSupport());
-
-				MapBinder<AdapterKey<?>, Object> s1Binder = AdapterMaps
-						.getAdapterMapBinder(binder(),
-								ScopingAdapterStore.class);
-				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a1"))
-						.to(AdapterStoreAdapter.class);
-				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a2"))
-						.to(AdapterStoreAdapter.class);
-
-				binder().bind(ScopingAdapterStore.class);
-				binder().bind(AdapterStoreAdapter.class);
-				binder().bind(InjectionTarget.class)
-						.in(AdaptableScopes.typed(ScopingAdapterStore.class));
-			}
-		};
-		Injector injector = Guice.createInjector(module);
-		ScopingAdapterStore s1 = injector
-				.getInstance(ScopingAdapterStore.class);
-		ScopingAdapterStore s2 = injector
-				.getInstance(ScopingAdapterStore.class);
-
-		Assert.assertSame(s1.fieldTarget, s1.getAdapter(
-				AdapterKey.get(AdapterStoreAdapter.class, "a1")).fieldTarget);
-		Assert.assertSame(s1.fieldTarget, s1.getAdapter(
-				AdapterKey.get(AdapterStoreAdapter.class, "a2")).fieldTarget);
-
-		Assert.assertSame(s2.fieldTarget, s2.getAdapter(
-				AdapterKey.get(AdapterStoreAdapter.class, "a1")).fieldTarget);
-		Assert.assertSame(s2.fieldTarget, s2.getAdapter(
-				AdapterKey.get(AdapterStoreAdapter.class, "a2")).fieldTarget);
-
-		Assert.assertNotSame(s1.fieldTarget, s2.fieldTarget);
-	}
 }

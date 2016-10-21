@@ -22,8 +22,6 @@ import java.util.Map;
 import org.eclipse.gef.common.activate.ActivatableSupport;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.common.adapt.IAdaptable;
-import org.eclipse.gef.common.adapt.inject.AdaptableScope;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.beans.property.ReadOnlyMultisetProperty;
@@ -94,16 +92,6 @@ public abstract class AbstractVisualPart<V extends Node>
 	private BooleanProperty refreshVisualProperty = new SimpleBooleanProperty(
 			this, REFRESH_VISUAL_PROPERTY, true);
 	private V visual;
-
-	/**
-	 * Creates a new {@link AbstractVisualPart} instance, setting the
-	 * {@link AdaptableScope} for each of its {@link IAdaptable}-compliant types
-	 * (super classes implementing {@link IAdaptable} and super-interfaces
-	 * extending {@link IAdaptable}) to the newly created instance (see
-	 * AdaptableScopes#scopeTo(IAdaptable)).
-	 */
-	public AbstractVisualPart() {
-	}
 
 	/**
 	 * Activates this {@link IVisualPart} (if it is not already active) by

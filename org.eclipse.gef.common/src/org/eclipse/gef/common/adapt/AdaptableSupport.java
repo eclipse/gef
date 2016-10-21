@@ -21,7 +21,6 @@ import java.util.TreeMap;
 
 import org.eclipse.gef.common.activate.ActivatableSupport;
 import org.eclipse.gef.common.activate.IActivatable;
-import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef.common.dispose.IDisposable;
 
@@ -78,11 +77,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			throw new IllegalArgumentException("source may not be null.");
 		}
 		this.source = source;
-		// XXX: Enter the scope for the source adaptable so that the source
-		// adaptable does not have to do this. As AdaptableSupport should be
-		// initialized as a field in the source adaptable, this constructor is
-		// called before the source adaptable's constructor.
-		AdaptableScopes.enter(source);
 	}
 
 	private void activateAdapters() {
@@ -154,10 +148,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 
 		adapters.clear();
-
-		// XXX: Leave the scope for the source adaptable so that the cached
-		// instances are disposed.
-		AdaptableScopes.leave(source);
 		source = null;
 	}
 

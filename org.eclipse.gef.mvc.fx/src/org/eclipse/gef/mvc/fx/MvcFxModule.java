@@ -413,7 +413,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindFocusModelAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FocusModel.class).in(AdaptableScopes.typed(IViewer.class));
+				.to(FocusModel.class);
 	}
 
 	/**
@@ -515,7 +515,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindHoverModelAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverModel.class).in(AdaptableScopes.typed(IViewer.class));
+				.to(HoverModel.class);
 	}
 
 	/**
@@ -558,7 +558,7 @@ public class MvcFxModule extends AbstractModule {
 	 * Binds {@link HoverTool} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindHoverTool() {
-		binder().bind(HoverTool.class).in(AdaptableScopes.typed(IDomain.class));
+		binder().bind(HoverTool.class);
 	}
 
 	/**
@@ -631,8 +631,8 @@ public class MvcFxModule extends AbstractModule {
 	 * adaptable scope of {@link IDomain}.
 	 */
 	protected void bindIOperationHistory() {
-		binder().bind(IOperationHistory.class).to(DefaultOperationHistory.class)
-				.in(AdaptableScopes.typed(IDomain.class));
+		binder().bind(IOperationHistory.class)
+				.to(DefaultOperationHistory.class);
 	}
 
 	/**
@@ -727,8 +727,7 @@ public class MvcFxModule extends AbstractModule {
 	 * {@link IDomain}.
 	 */
 	protected void bindIUndoContext() {
-		binder().bind(IUndoContext.class).to(UndoContext.class)
-				.in(AdaptableScopes.typed(IDomain.class));
+		binder().bind(IUndoContext.class).to(UndoContext.class);
 	}
 
 	/**
