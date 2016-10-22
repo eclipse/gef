@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -478,41 +477,6 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			// the chain is complete, thus perform the injection
 			runnable.run();
 		}
-	}
-
-	/**
-	 * Retrieves to be injected adapters based on adapter map bindings.
-	 *
-	 * @param adaptable
-	 *            The adaptable to inject adapters into.
-	 * @param issues
-	 *            A {@link String} list, to which issues may be added that arise
-	 *            during injection.
-	 * @param adapterMapBindings
-	 *            The applicable bindings for the injection.
-	 * @return The adapters mapped to their adapter keys.
-	 */
-	protected Map<AdapterKey<?>, Object> inferAdapters(IAdaptable adaptable,
-			Collection<Binding<?>> adapterMapBindings, List<String> issues) {
-		// handle scope while retrieving adapters
-		System.out.println(Thread.currentThread().getStackTrace().length
-				+ " AI: Entering scope of " + adaptable);
-		AdaptableScopes.enter(adaptable);
-
-		// System.out.println("--");
-		final Map<AdapterKey<?>, Object> adapters = new HashMap<>();
-		for (Binding<?> b : adapterMapBindings) {
-			Map<AdapterKey<?>, Object> adaptersForBinding = b
-					.acceptTargetVisitor(new AdapterMapInferrer(issues));
-			// TODO: detect where keys are overwritten??
-			adapters.putAll(adaptersForBinding);
-		}
-
-		System.out.println(Thread.currentThread().getStackTrace().length
-				+ " AI: Leaving scope of " + adaptable);
-		AdaptableScopes.leave(adaptable);
-
-		return adapters;
 	}
 
 	/**
