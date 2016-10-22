@@ -16,9 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
-import org.eclipse.gef.mvc.fx.parts.IRootPart;
 
 import javafx.scene.Node;
 
@@ -37,8 +35,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class ContentPartPool
-		extends IAdaptable.Bound.Impl<IRootPart<? extends Node>> {
+public class ContentPartPool {
 
 	private Map<Object, IContentPart<? extends Node>> pool = new HashMap<>();
 
