@@ -33,6 +33,7 @@ import org.eclipse.gef.dot.internal.parser.dot.GraphType
 import org.eclipse.gef.dot.internal.parser.dot.NodeId
 import org.eclipse.gef.dot.internal.parser.dot.NodeStmt
 import org.eclipse.gef.dot.internal.parser.dot.Stmt
+import org.eclipse.gef.dot.internal.parser.dot.Subgraph
 import org.eclipse.gef.dot.internal.parser.parser.antlr.DotParser
 import org.eclipse.gef.dot.internal.parser.splines.Splines
 import org.eclipse.gef.graph.Edge
@@ -168,7 +169,6 @@ class DotImport {
 	}
 
 	private def Node transformNodeId(NodeId it) {
-
 		// create an empty attribute lists indicating no local node attribute definitions
 		transformNodeId(#[DotFactory.eINSTANCE.createAttrList])
 	}
@@ -251,7 +251,7 @@ class DotImport {
 	private def dispatch void transformStmt(NodeStmt it) {
 		node.transformNodeId(attrLists)
 	}
-
+	
 	private def dispatch void transformStmt(EdgeStmtNode it) {
 		var sourceNode = node.transformNodeId
 		for (EdgeRhs edgeRhs : edgeRHS) {
@@ -268,6 +268,11 @@ class DotImport {
 				}
 			}
 		}
+	}
+	
+	private def dispatch void transformStmt(Subgraph it) {
+		//FIXME: we ignore subgraphs for now, but transform nested statements
+		it.stmts.forEach[transformStmt]
 	}
 
 	private def create new Node.Builder().buildNode() createNode(String nodeName) {
