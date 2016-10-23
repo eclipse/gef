@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.MembersInjector;
-import com.google.inject.Provider;
 import com.google.inject.multibindings.MapBinderBinding;
 import com.google.inject.multibindings.MultibinderBinding;
 import com.google.inject.multibindings.MultibindingsTargetVisitor;
@@ -85,10 +83,10 @@ import javafx.beans.value.ObservableValue;
 public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	/**
-	 * Provides the to be injected adapters mapped to {@link AdapterKey}s,
-	 * ensuring that the key type of the {@link AdapterKey} either corresponds
-	 * to the one provided in the binding, or to the actual type (as far as this
-	 * can be inferred).
+	 * Retrieves the to be injected adapters mapped to their {@link AdapterKey}s
+	 * from the visited {@link MapBinderBinding}s, ensuring that the key type of
+	 * the {@link AdapterKey} either corresponds to the one provided in the
+	 * binding, or to the actual type (as far as this can be inferred).
 	 *
 	 * @author anyssen
 	 *
@@ -262,22 +260,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final InstanceBinding<? extends Object> binding) {
-			@SuppressWarnings("unchecked")
-			Map.Entry<AdapterKey<?>, ?> entry = (Map.Entry<AdapterKey<?>, ?>) binding
-					.getProvider().get();
-
-			// TODO: check in which cases an instance binding is found and
-			// whether its safe to assume that the entry is a provider in each
-			// case.
-			AdapterKey<?> key = entry.getKey();
-			Object adapter = ((Provider<?>) entry.getValue()).get();
-
-			// determine adapter type
-			TypeToken<?> adapterType = determineAdapterType(binding, key,
-					adapter);
-
-			return Collections.<AdapterKey<?>, Object> singletonMap(
-					AdapterKey.get(adapterType, key.getRole()), adapter);
+			return null;
 		}
 
 		@Override
@@ -336,8 +319,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	}
 
 	/**
-	 * Tries to infer the actual type of an adapter from bindings that are
-	 * applied (in case linked bindings point to constructor bindings).
+	 * Tries to infer the actual type of an adapter from the visited binding.
 	 *
 	 * @author anyssen
 	 *
@@ -527,15 +509,17 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
 		// XXX: The applicable bindings are kept in a sorted map,
 		// where keys are sorted according to hierarchy of annotation types, so
-		// more specific bindings get precedence over more general ones; they
-		// contain all sorts of bindings, not only MapBinderBindings; the
-		// MapBinderBindings are sorted out when inferring the adapters, aas the
-		// AdapterMapInferrer evaluates only them
+		// more specific bindings get precedence over more general ones.
+		// XXX: The MapBinderBindings of relevance are wrapped into
+		// ProviderInstanceBindings, so they an instance check is not sufficient
+		// to retrieve them, but a MultibindingsTargetVisitor is to be used.
 		final Map<Equivalence.Wrapper<Key<?>>, Binding<?>> applicableBindings = new TreeMap<>(
 				ADAPTER_MAP_BINDING_KEY_COMPARATOR);
-		for (final Key<?> key : allBindings.keySet()) {
+		for (final Entry<Key<?>, Binding<?>> entry : allBindings.entrySet()) {
 			// only consider bindings that are qualified by an AdapterMap
 			// binding annotation.
+			Key<?> key = entry.getKey();
+			Binding<?> binding = entry.getValue();
 			if ((key.getAnnotationType() != null)
 					&& AdapterMap.class.equals(key.getAnnotationType())) {
 				final AdapterMap keyAnnotation = (AdapterMap) key
@@ -568,7 +552,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 								// add all bindings in case the roles match
 								applicableBindings.put(
 										Equivalence.identity().wrap(key),
-										allBindings.get(key));
+										binding);
 							}
 						}
 					} else {
@@ -582,43 +566,20 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 						// only one applicable binding??
 						applicableBindings.put(Equivalence.identity().wrap(key),
-								allBindings.get(key));
+								binding);
 					}
 				}
 			}
 		}
-		performAdapterInjection(adaptable, issues, applicableBindings);
-	}
-
-	/**
-	 * Performs the adapter map injection with the given adapter map bindings
-	 * for the given adaptable instance.
-	 *
-	 * @param adaptable
-	 *            The adaptable to inject adapters into.
-	 * @param issues
-	 *            A {@link String} list, to which issues may be added that arise
-	 *            during injection.
-	 * @param adapterMapBindings
-	 *            The applicable bindings for the adapter injection. These do
-	 *            not only contain {@link MapBinderBinding}s but all bindings
-	 *            whose key is applicable.
-	 */
-	protected void performAdapterInjection(final IAdaptable adaptable,
-			List<String> issues, final Map<?, Binding<?>> adapterMapBindings) {
-		// System.out.println("Entering scope of " + adaptable);
-
-		// System.out.println("Performing adapter injection for " + adaptable
-		// + " with bindings " + adapterMapBindings);
 
 		// XXX: We have to enter the scope before retrieving adapters
+		// System.out.println("Entering scope of " + adaptable);
 		AdaptableScopes.enter(adaptable);
 
-		// System.out.println(" Injecting adapters...");
 		// XXX: An adapter map entry may result from multiple bindings. Before
 		// processing it, we thus compute all applicable bindings, so earlier
 		// ones are overwritten by more specific ones.
-		for (final Map.Entry<?, Binding<?>> entry : adapterMapBindings
+		for (final Map.Entry<?, Binding<?>> entry : applicableBindings
 				.entrySet()) {
 			try {
 				final Map<AdapterKey<?>, Object> adapterMap = entry.getValue()
@@ -647,7 +608,6 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				e.printStackTrace();
 			}
 		}
-		// System.out.println(" Done.");
 
 		// System.out.println("Leaving scope of " + adaptable);
 		AdaptableScopes.leave(adaptable);
