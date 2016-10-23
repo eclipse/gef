@@ -296,6 +296,9 @@ public class ZestFxModule extends MvcFxModule {
 
 		// select focused on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+
+		// hover behavior
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
 	}
 
 	@Override

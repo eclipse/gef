@@ -13,7 +13,6 @@ package org.eclipse.gef.mvc.examples.logo.behaviors;
 
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 public class PaletteFocusBehavior extends FocusBehavior {
 
