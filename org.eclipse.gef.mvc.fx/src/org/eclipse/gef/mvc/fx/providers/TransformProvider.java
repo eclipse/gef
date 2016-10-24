@@ -12,6 +12,7 @@
 package org.eclipse.gef.mvc.fx.providers;
 
 import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import com.google.inject.Provider;
@@ -20,8 +21,8 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 /**
- * The {@link TransformProvider} can be registered on an {@link IVisualPart}
- * to insert an {@link Affine} into its visual's transformations list and access
+ * The {@link TransformProvider} can be registered on an {@link IVisualPart} to
+ * insert an {@link Affine} into its visual's transformations list and access
  * that {@link Affine}. Per default, this {@link Affine} is manipulated to
  * relocate or transform an {@link IVisualPart}.
  *
@@ -45,7 +46,9 @@ public class TransformProvider
 	public Affine get() {
 		if (affine == null) {
 			affine = new Affine();
-			getAdaptable().getVisual().getTransforms().add(affine);
+			if (!(getAdaptable() instanceof IBendableContentPart)) {
+				getAdaptable().getVisual().getTransforms().add(affine);
+			}
 		}
 		return affine;
 	}
