@@ -393,8 +393,15 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			final AdapterMap a1 = (AdapterMap) o1.get().getAnnotation();
 			final AdapterMap a2 = (AdapterMap) o2.get().getAnnotation();
 			if (a1.adaptableType().equals(a2.adaptableType())) {
-				// ensure consistency with equals
-				return o1.equals(o2) ? 0 : o2.hashCode() - o1.hashCode();
+				// XXX: TreeMap uses the Comparator to identify the bucket for
+				// value insertion. Even if the identity-wrappers
+				// (Equivalence.Wrapper) return different hash codes and are
+				// unequal, returning 0 here would lead to having them mapped to
+				// the same bucket, i.e. shadowing the previous value.
+				// Therefore, the hash code difference is returned here in case
+				// the types are equal and the ordering is thus, logically,
+				// irrelevant.
+				return o2.hashCode() - o1.hashCode();
 			} else if (a1.adaptableType()
 					.isAssignableFrom(a2.adaptableType())) {
 				return -1;

@@ -392,7 +392,6 @@ public class AdapterInjectorTests {
 							}
 						});
 			}
-
 		};
 		Injector injector = Guice.createInjector(module);
 		AdapterStore adapterStore = new AdapterStore();
