@@ -483,12 +483,10 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	@Override
 	public void injectMembers(final IAdaptable instance) {
-		// inject all adapters bound by polymorphic AdapterBinding
-		// annotations
 		if (injector == null) {
-			// XXX: It may happen that this member injector is
-			// exercised before the type listener is injected. In such a
-			// case we need to defer the injections until the injector is
+			// XXX: This member injector may be exercised before the injector
+			// (from which the map bindings are inferred) is injected. In such a
+			// case we need to defer the adapter injection until the injector is
 			// available (bug #439949).
 			deferredInstances.add(instance);
 		} else {
@@ -504,7 +502,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 * @param issues
 	 *            The list of issues.
 	 */
-	protected void performAdapterInjection(final IAdaptable adaptable,
+	private void performAdapterInjection(final IAdaptable adaptable,
 			List<String> issues) {
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
 		// XXX: The applicable bindings are kept in a sorted map,
@@ -625,7 +623,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	@Inject
 	public void setInjector(final Injector injector) {
 		this.injector = injector;
-		// perform deferred injections (if there have been any)
+		// perform injections for those instances that had to be exercised
+		// before the injector was available (if there have been any)
 		for (final IAdaptable instance : deferredInstances) {
 			injectAdapters(instance);
 		}
