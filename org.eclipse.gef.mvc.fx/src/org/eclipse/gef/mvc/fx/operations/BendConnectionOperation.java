@@ -58,6 +58,8 @@ public class BendConnectionOperation extends AbstractOperation
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
+			// FIXME: use IBendableContentPart.bendVisual(List<BendPoint>)
+
 			// update anchors (if needed)
 			if (!onlyExplicit(connection.getAnchorsUnmodifiable())
 					.equals(newAnchors)) {
@@ -135,6 +137,7 @@ public class BendConnectionOperation extends AbstractOperation
 
 	@Override
 	public boolean isNoOp() {
+		// FIXME: use IBendableContentPart.bendVisual(List<BendPoint>)
 		return initialAnchors.equals(newAnchors);
 	}
 
@@ -165,6 +168,7 @@ public class BendConnectionOperation extends AbstractOperation
 	 *            connection's anchors upon execution.
 	 */
 	public void setNewAnchors(List<IAnchor> newAnchors) {
+		// FIXME: use List<BendPoint>
 		this.newAnchors.clear();
 		this.newAnchors.addAll(onlyExplicit(newAnchors));
 	}
@@ -178,6 +182,8 @@ public class BendConnectionOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
+			// FIXME: use IBendableContentPart
+
 			// check if we have to update anchors here
 			if (!onlyExplicit(connection.getAnchorsUnmodifiable())
 					.equals(initialAnchors)) {

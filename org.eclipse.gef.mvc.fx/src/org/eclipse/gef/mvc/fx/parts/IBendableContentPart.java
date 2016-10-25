@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzilla #504480
+ *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.parts;
 
@@ -26,12 +28,14 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 
 /**
  * An {@link IContentPart} that supports content related bend, i.e. manipulation
  * of control points.
  *
  * @author anyssen
+ * @author mwienand
  *
  * @param <V>
  *            The visual node used by this {@link IBendableContentPart}.
@@ -168,12 +172,42 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	/**
+	 * Transforms the given {@link List} of {@link BendPoint}s in-place using
+	 * the given {@link AffineTransform}.
+	 *
+	 * @param bendPoints
+	 *            The {@link List} of {@link BendPoint}s to transform.
+	 * @param transform
+	 *            The {@link AffineTransform} that is applied to the unattached
+	 *            bend points.
+	 * @return The given {@link List} of {@link BendPoint}s for convenience.
+	 */
+	public static List<BendPoint> transformBendPoints(
+			List<BendPoint> bendPoints, AffineTransform transform) {
+		// optimize identity transform
+		if (transform == null || transform.isIdentity()) {
+			return bendPoints;
+		}
+
+		for (BendPoint bp : bendPoints) {
+			if (!bp.isAttached()) {
+				// transform unattached bend points
+				bp.getPosition().transform(transform);
+			}
+		}
+
+		return bendPoints;
+	}
+
+	/**
 	 * Bends the content element as specified through the given bend points.
 	 *
 	 * @param bendPoints
 	 *            The bend points.
 	 */
-	public void bendContent(List<BendPoint> bendPoints);
+	public default void bendContent(List<BendPoint> bendPoints) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Bends the visual as specified by the given bend points.
@@ -252,14 +286,29 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	public default Dimension getContentSize() {
-		throw new UnsupportedOperationException();
+		// XXX: Return value does not matter..
+		return new Dimension();
 	}
 
 	@Override
 	public default AffineTransform getContentTransform() {
+		// // try to extract transform using CONTENT_TRANSFORM_KEY
+		// AdapterKey<AffineTransform> CONTENT_TRANSFORM_KEY = AdapterKey
+		// .get(AffineTransform.class, "CONTENT_TRANSFORM_ROLE");
+		// AffineTransform contentTransform = getAdapter(CONTENT_TRANSFORM_KEY);
+		// if (contentTransform == null) {
+		// contentTransform = new AffineTransform();
+		// setAdapter(contentTransform, CONTENT_TRANSFORM_KEY.getRole());
+		// }
+		// return contentTransform;
+
+		// XXX: Return value does not matter..
+
+		// XXX: Identity transform is fine. transformContent() adapts to the
+		// visual transform by transforming bend points. therefore, the content
+		// transform does not need to be altered. validation for bendables is
+		// invalid.
 		return new AffineTransform();
-		// TODO: query content bend points
-		// throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -313,12 +362,6 @@ public interface IBendableContentPart<V extends Node>
 				}
 			}
 		}
-
-		for (BendPoint bp : bendPoints) {
-			bp.getPosition().transform(
-					FX2Geometry.toAffineTransform(getVisualTransform()));
-		}
-
 		return bendPoints;
 	}
 
@@ -329,8 +372,7 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	default void resizeContent(Dimension totalSize) {
-		throw new UnsupportedOperationException();
-		// TODO: get content bend points => resize => bend content
+		bendContent(getVisualBendPoints());
 	}
 
 	@Override
@@ -389,48 +431,32 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	@Override
-	default void transformContent(AffineTransform transform) {
-		// throw new UnsupportedOperationException();
-		// TODO: get content bend points => transform => bend content
+	default void transformContent(AffineTransform totalTransform) {
+		bendContent(getVisualBendPoints());
 	}
 
 	@Override
 	default void transformVisual(Affine totalTransform) {
-		// optimize null/identity case
-		if (totalTransform == null || totalTransform.isIdentity()) {
+		// compute delta transform
+		Transform deltaTransform = ITransformableContentPart
+				.computeDeltaTransform(getVisualTransform(), totalTransform);
+
+		// optimize identity transform
+		if (deltaTransform.isIdentity()) {
 			return;
 		}
 
-		// TODO: visual transform vs. bend points
-
-		AffineTransform totalInverseTransform = FX2Geometry
-				.toAffineTransform(totalTransform).getInverse();
-
-		/*
-		 * Transforms the (visual) bend points, as follows:
-		 *
-		 * 1. Determine current (non-initial) bend points using
-		 * #getVisualBendPoints().
-		 *
-		 * 2. Compute new bend points by applying the given (delta)
-		 * transformation to all unattached bend points.
-		 *
-		 * 3. Apply computed bend points to the visual using #bendVisual().
-		 */
+		// save total transform
+		ITransformableContentPart.super.transformVisual(totalTransform);
 
 		// determine bend points
 		List<BendPoint> bendPoints = getVisualBendPoints();
 
-		// compute new bend points
-		for (BendPoint bp : bendPoints) {
-			if (!bp.isAttached()) {
-				// transform unattached bend points
-				bp.getPosition().transform(totalInverseTransform);
-			}
-		}
+		// transform bend points
+		transformBendPoints(bendPoints,
+				FX2Geometry.toAffineTransform(deltaTransform));
 
-		// apply computed bend points to the visual
-		ITransformableContentPart.super.transformVisual(totalTransform);
+		// apply transformed bend points to the visual
 		bendVisual(bendPoints);
 	}
 

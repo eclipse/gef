@@ -36,12 +36,6 @@ public class TransformProvider
 
 	private Affine affine = null;
 
-	/**
-	 * Default constructor.
-	 */
-	public void FXTransformaionProvider() {
-	}
-
 	@Override
 	public Affine get() {
 		if (affine == null) {

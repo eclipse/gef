@@ -71,6 +71,7 @@ public class BendContentOperation<VR> extends AbstractOperation
 		// bendableContentPart and only
 		// call bendContent if a change occurred.
 		bendableContentPart.bendContent(finalBendPoints);
+		// TODO: validate bending worked
 		return Status.OK_STATUS;
 	}
 
@@ -98,6 +99,7 @@ public class BendContentOperation<VR> extends AbstractOperation
 		// bendableContentPart and only
 		// call bendContent if a change occurred.
 		bendableContentPart.bendContent(initialBendPoints);
+		// TODO: validate bending worked
 		return Status.OK_STATUS;
 	}
 }

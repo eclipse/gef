@@ -108,6 +108,7 @@ public class ResizeOperation extends AbstractOperation
 		Dimension newSize = new Dimension(initialSize.getWidth() + dw,
 				initialSize.getHeight() + dh);
 		resizablePart.resizeVisual(newSize);
+		// TODO: check resize was successful
 		return Status.OK_STATUS;
 	}
 

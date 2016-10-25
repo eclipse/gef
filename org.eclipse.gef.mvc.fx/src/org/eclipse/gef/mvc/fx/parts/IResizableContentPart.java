@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzilla #504480
+ *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.parts;
 
@@ -19,6 +21,7 @@ import javafx.scene.Node;
  * An {@link IContentPart} that supports content related resize.
  *
  * @author anyssen
+ * @author mwienand
  *
  * @param <V>
  *            The visual node used by this {@link IResizableContentPart}.
@@ -28,7 +31,7 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 
 	/**
 	 * Returns the current size according to this part's content.
-	 * 
+	 *
 	 * @return The current size according to this part's content.
 	 */
 	public Dimension getContentSize();

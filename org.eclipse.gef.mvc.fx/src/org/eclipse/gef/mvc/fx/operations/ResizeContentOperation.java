@@ -65,6 +65,7 @@ public class ResizeContentOperation<VR> extends AbstractOperation
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		resizableContentPart.resizeContent(finalSize);
+		// TODO: check resize was successful
 		return Status.OK_STATUS;
 	}
 
