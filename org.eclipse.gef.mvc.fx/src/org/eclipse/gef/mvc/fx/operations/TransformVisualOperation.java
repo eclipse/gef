@@ -84,7 +84,7 @@ public class TransformVisualOperation extends AbstractOperation
 	protected void applyTransform(Affine transform) {
 		if (!NodeUtils.equals(transformablePart.getVisualTransform(),
 				transform)) {
-			transformablePart.transformVisual(transform);
+			transformablePart.setVisualTransform(transform);
 		}
 	}
 

@@ -147,7 +147,7 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 
 		AffineTransform transform = content.getTransform();
 		if (transform != null) {
-			transformVisual(Geometry2FX.toFXAffine(transform));
+			setVisualTransform(Geometry2FX.toFXAffine(transform));
 		}
 
 		// apply stroke paint
@@ -193,7 +193,7 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 	}
 
 	@Override
-	public void resizeContent(Dimension size) {
+	public void setContentSize(Dimension size) {
 		IShape geometry = getContent().getGeometry();
 		Rectangle geometricBounds = geometry.getBounds();
 		// XXX: The given <i>size</i> contains the stroke of the underlying
@@ -214,7 +214,7 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 	}
 
 	@Override
-	public void transformContent(AffineTransform totalTransform) {
+	public void setContentTransform(AffineTransform totalTransform) {
 		getContent().setTransform(totalTransform);
 	}
 

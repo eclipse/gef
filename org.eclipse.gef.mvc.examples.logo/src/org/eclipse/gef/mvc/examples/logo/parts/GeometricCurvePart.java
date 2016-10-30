@@ -127,7 +127,7 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void bendContent(List<BendPoint> bendPoints) {
+	public void setContentBendPoints(List<BendPoint> bendPoints) {
 		getContent().getSourceAnchorages().clear();
 		getContent().getTargetAnchorages().clear();
 		List<Point> waypoints = new ArrayList<>();

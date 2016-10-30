@@ -220,7 +220,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	}
 
 	@Override
-	public void transformContent(AffineTransform transform) {
+	public void setContentTransform(AffineTransform transform) {
 		setStoredLabelPosition(new Point(transform.getTranslateX(), transform.getTranslateY()));
 	}
 

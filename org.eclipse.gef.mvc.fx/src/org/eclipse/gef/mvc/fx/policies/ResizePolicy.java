@@ -79,9 +79,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 *         given values.
 	 */
 	protected Dimension computeApplicableDelta(double dw, double dh) {
-		ResizeOperation resizeOperation = getResizeOperation();
-
-		Node visual = resizeOperation.getResizablePart().getResizableVisual();
+		Node visual = getVisualToResize();
 		boolean resizable = visual.isResizable();
 
 		// convert resize into relocate in case node is not resizable
@@ -92,6 +90,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 			// ensure visual is not resized below threshold
 			double minimumWidth = getMinimumWidth();
 			double minimumHeight = getMinimumHeight();
+			ResizeOperation resizeOperation = getResizeOperation();
 			if (resizeOperation.getInitialSize().width
 					+ layoutDw < minimumWidth) {
 				layoutDw = minimumWidth
@@ -222,7 +221,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 * @return The {@link Node} that should be resized.
 	 */
 	protected Node getVisualToResize() {
-		return getHost().getResizableVisual();
+		return getHost().getVisual();
 	}
 
 	@Override

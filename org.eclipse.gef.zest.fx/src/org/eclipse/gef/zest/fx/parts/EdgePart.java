@@ -90,7 +90,7 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 	};
 
 	@Override
-	public void bendContent(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
+	public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
 		// disable refreshing of visuals
 		boolean wasRefreshVisual = isRefreshVisual();
 		setRefreshVisual(false);

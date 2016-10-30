@@ -34,17 +34,8 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	 *
 	 * @return The current size according to this part's content.
 	 */
-	public Dimension getContentSize();
-
-	/**
-	 * Returns the visual of this {@link IResizableContentPart} that should be
-	 * used for resizing.
-	 *
-	 * @return The visual of this {@link IResizableContentPart} that should be
-	 *         used for resizing.
-	 */
-	public default Node getResizableVisual() {
-		return getVisual();
+	public default Dimension getContentSize() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -55,7 +46,7 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	 *         {@link IResizableContentPart}'s visual.
 	 */
 	public default Dimension getVisualSize() {
-		return NodeUtils.getShapeBounds(getResizableVisual()).getSize();
+		return NodeUtils.getShapeBounds(getVisual()).getSize();
 	}
 
 	/**
@@ -64,7 +55,9 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	 * @param totalSize
 	 *            The new size.
 	 */
-	public void resizeContent(Dimension totalSize);
+	public default void setContentSize(Dimension totalSize) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Resizes the visual of this {@link IResizableContentPart} to the given
@@ -73,8 +66,8 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	 * @param totalSize
 	 *            The new size for this {@link IResizableContentPart}'s visual.
 	 */
-	public default void resizeVisual(Dimension totalSize) {
-		getResizableVisual().resize(totalSize.width, totalSize.height);
+	public default void setVisualSize(Dimension totalSize) {
+		getVisual().resize(totalSize.width, totalSize.height);
 	}
 
 }

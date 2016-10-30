@@ -117,7 +117,7 @@ public class BendConnectionPolicyTests {
 		}
 
 		@Override
-		public void transformContent(AffineTransform transform) {
+		public void setContentTransform(AffineTransform transform) {
 			this.transform = transform;
 		}
 	}
@@ -154,7 +154,7 @@ public class BendConnectionPolicyTests {
 		private AffineTransform transform = new AffineTransform();
 
 		@Override
-		public void bendContent(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
+		public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
 		}
 
 		@Override
@@ -216,7 +216,7 @@ public class BendConnectionPolicyTests {
 		}
 
 		@Override
-		public void transformContent(AffineTransform transform) {
+		public void setContentTransform(AffineTransform transform) {
 			this.transform = transform;
 		}
 

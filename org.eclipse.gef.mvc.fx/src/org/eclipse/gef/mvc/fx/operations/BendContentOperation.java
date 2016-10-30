@@ -70,7 +70,7 @@ public class BendContentOperation<VR> extends AbstractOperation
 		// TODO (bug #493515): retrieve current bend points from
 		// bendableContentPart and only
 		// call bendContent if a change occurred.
-		bendableContentPart.bendContent(finalBendPoints);
+		bendableContentPart.setContentBendPoints(finalBendPoints);
 		// TODO: validate bending worked
 		return Status.OK_STATUS;
 	}
@@ -98,7 +98,7 @@ public class BendContentOperation<VR> extends AbstractOperation
 		// TODO (bug #493515): retrieve current bend points from
 		// bendableContentPart and only
 		// call bendContent if a change occurred.
-		bendableContentPart.bendContent(initialBendPoints);
+		bendableContentPart.setContentBendPoints(initialBendPoints);
 		// TODO: validate bending worked
 		return Status.OK_STATUS;
 	}

@@ -171,6 +171,50 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	/**
+	 * Computes the size from the given list of {@link BendPoint}s as the size
+	 * of the bounds around the unattached bend points.
+	 *
+	 * @param bendPoints
+	 *            The list of {@link BendPoint}s for which to compute the size.
+	 * @return The size of the bounds around the unattached bend points.
+	 */
+	public static Dimension computeSizeFromBendPoints(
+			List<BendPoint> bendPoints) {
+		// determine min and max point to compute the bounds
+		Point min = null;
+		Point max = null;
+		for (BendPoint bp : bendPoints) {
+			if (!bp.isAttached()) {
+				Point pos = bp.getPosition();
+				if (min == null) {
+					// XXX: The first unattached bend-point determines the
+					// initial values for min and max. Copies are used so that
+					// we can safely change min and max.
+					min = pos.getCopy();
+					max = min.getCopy();
+				} else {
+					// expand min and max
+					if (min.x > pos.x) {
+						min.x = pos.x;
+					}
+					if (min.y > pos.y) {
+						min.y = pos.y;
+					}
+					if (max.x < pos.x) {
+						max.x = pos.x;
+					}
+					if (max.y < pos.y) {
+						max.y = pos.y;
+					}
+				}
+			}
+		}
+		// XXX: min == null if there are no unattached bend points
+		return min == null ? new Dimension()
+				: new Dimension(max.x - min.x, max.y - min.y);
+	}
+
+	/**
 	 * Resizes the given list of {@link BendPoint}s according to the
 	 * bounds-change that is given by the current offset, current size, and
 	 * final size. The unattached {@link BendPoint}s will remain their relative
@@ -262,13 +306,177 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	/**
+	 * Returns the visual to bend.
+	 *
+	 * @return The visual to bend.
+	 */
+	public default Connection getBendableVisual() {
+		return (Connection) getVisual();
+	}
+
+	/**
+	 * Returns the current {@link BendPoint}s of this
+	 * {@link IBendableContentPart}'s content.
+	 *
+	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
+	 *         content.
+	 */
+	public default List<BendPoint> getContentBendPoints() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public default Dimension getContentSize() {
+		return computeSizeFromBendPoints(getContentBendPoints());
+	}
+
+	@Override
+	public default AffineTransform getContentTransform() {
+		// compute transformation from bend-points as a translation that equals
+		// the offset/min of the unattached bend-points
+		List<BendPoint> bendPoints = getContentBendPoints();
+		// iterate over the unattached bend-points to find the minimum
+		Point min = null;
+		for (BendPoint bp : bendPoints) {
+			if (!bp.isAttached()) {
+				Point pos = bp.getPosition();
+				if (min == null) {
+					// initialize min
+					// XXX: copy so it can safely be changed
+					min = pos.getCopy();
+				} else {
+					// adjust min to the given position
+					if (min.x > pos.x) {
+						min.x = pos.x;
+					}
+					if (min.y > pos.y) {
+						min.y = pos.y;
+					}
+				}
+			}
+		}
+		// XXX: in case there are no unattached bend-points, an identity
+		// transformation is returned
+		return min == null ? new AffineTransform()
+				: new AffineTransform(1, 0, 0, 1, min.x, min.y);
+	}
+
+	/**
+	 * Returns the current {@link BendPoint}s of this
+	 * {@link IBendableContentPart}'s visual.
+	 *
+	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
+	 *         visual.
+	 */
+	public default List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> getVisualBendPoints() {
+		List<BendPoint> bendPoints = new ArrayList<>();
+		Connection connection = getBendableVisual();
+		IViewer viewer = getRoot().getViewer();
+		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
+		for (int i = 0; i < anchors.size(); i++) {
+			IAnchor anchor = anchors.get(i);
+			if (!connection.getRouter().wasInserted(anchor)) {
+				if (connection.isConnected(i)) {
+					// provide a position hint for a connected bend point
+					Point positionHint = connection.getPoint(i);
+					if (i == 0 && connection.getStartPointHint() != null) {
+						positionHint = connection.getStartPointHint();
+					}
+					if (i == anchors.size() - 1
+							&& connection.getEndPointHint() != null) {
+						positionHint = connection.getEndPointHint();
+					}
+					// determine anchorage content
+					Node anchorageNode = anchor.getAnchorage();
+					IVisualPart<? extends Node> part = PartUtils
+							.retrieveVisualPart(viewer, anchorageNode);
+					Object anchorageContent = null;
+					if (part instanceof IContentPart) {
+						anchorageContent = ((IContentPart<? extends Node>) part)
+								.getContent();
+					}
+					bendPoints
+							.add(new BendPoint(anchorageContent, positionHint));
+				} else {
+					bendPoints.add(new BendPoint(connection.getPoint(i)));
+				}
+			}
+		}
+		return bendPoints;
+	}
+
+	@Override
+	default Dimension getVisualSize() {
+		return computeSizeFromBendPoints(getVisualBendPoints());
+	}
+
+	@Override
+	default Affine getVisualTransform() {
+		// compute transformation from bend-points as a translation that equals
+		// the offset/min of the unattached bend-points
+		List<BendPoint> bendPoints = getVisualBendPoints();
+		// iterate over the unattached bend-points to find the minimum
+		Point min = null;
+		for (BendPoint bp : bendPoints) {
+			if (!bp.isAttached()) {
+				Point pos = bp.getPosition();
+				if (min == null) {
+					// initialize min
+					// XXX: copy so it can safely be changed
+					min = pos.getCopy();
+				} else {
+					// adjust min to the given position
+					if (min.x > pos.x) {
+						min.x = pos.x;
+					}
+					if (min.y > pos.y) {
+						min.y = pos.y;
+					}
+				}
+			}
+		}
+		// XXX: in case there are no unattached bend-points, an identity
+		// transformation is returned
+		return min == null ? new Affine()
+				: new Affine(1, 0, min.x, 0, 1, min.y);
+	}
+
+	/**
 	 * Bends the content element as specified through the given bend points.
 	 *
 	 * @param bendPoints
 	 *            The bend points.
 	 */
-	public default void bendContent(List<BendPoint> bendPoints) {
+	public default void setContentBendPoints(List<BendPoint> bendPoints) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	default void setContentSize(Dimension totalSize) {
+		// determine visual offset
+		AffineTransform visualTransform = getContentTransform();
+		double currentX = visualTransform.getTranslateX();
+		double currentY = visualTransform.getTranslateY();
+		// resize content bend points
+		List<BendPoint> resizedBendPoints = resizeBendPoints(
+				getContentBendPoints(), currentX, currentY, getContentSize(),
+				totalSize);
+		setContentBendPoints(resizedBendPoints);
+	}
+
+	@Override
+	default void setContentTransform(AffineTransform totalTransform) {
+		// compute delta transform
+		AffineTransform deltaTransform = ITransformableContentPart
+				.computeDeltaTransform(getContentTransform(), totalTransform);
+		// optimize for identity transform
+		if (deltaTransform.isIdentity()) {
+			return;
+		}
+		// transform content bend points
+		List<BendPoint> bendPoints = transformBendPoints(getContentBendPoints(),
+				deltaTransform);
+		setContentBendPoints(bendPoints);
 	}
 
 	/**
@@ -277,7 +485,7 @@ public interface IBendableContentPart<V extends Node>
 	 * @param bendPoints
 	 *            The bend points.
 	 */
-	public default void bendVisual(List<BendPoint> bendPoints) {
+	public default void setVisualBendPoints(List<BendPoint> bendPoints) {
 		if (bendPoints == null || bendPoints.size() < 2) {
 			throw new IllegalArgumentException(
 					"Not enough bend points supplied!");
@@ -324,236 +532,8 @@ public interface IBendableContentPart<V extends Node>
 		getBendableVisual().setAnchors(newAnchors);
 	}
 
-	/**
-	 * Returns the visual to bend.
-	 *
-	 * @return The visual to bend.
-	 */
-	public default Connection getBendableVisual() {
-		return (Connection) getVisual();
-	}
-
-	/**
-	 * Returns the current {@link BendPoint}s of this
-	 * {@link IBendableContentPart}'s content.
-	 *
-	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
-	 *         content.
-	 */
-	// TODO: protected getUnattachedContentBendPoints()
-	public default List<BendPoint> getContentBendPoints() {
-		throw new UnsupportedOperationException();
-	}
-
 	@Override
-	public default Dimension getContentSize() {
-		// compute size from bend-points as the size of the bounds
-		// around the unattached bend-points.
-		List<BendPoint> bendPoints = getContentBendPoints();
-		// determine min and max point to compute the bounds
-		Point min = null;
-		Point max = null;
-		for (BendPoint bp : bendPoints) {
-			if (!bp.isAttached()) {
-				Point pos = bp.getPosition();
-				if (min == null) {
-					// XXX: The first unattached bend-point determines the
-					// initial values for min and max. Copies are used so that
-					// we can safely change min and max.
-					min = pos.getCopy();
-					max = min.getCopy();
-				} else {
-					// expand min and max
-					if (min.x > pos.x) {
-						min.x = pos.x;
-					}
-					if (min.y > pos.y) {
-						min.y = pos.y;
-					}
-					if (max.x < pos.x) {
-						max.x = pos.x;
-					}
-					if (max.y < pos.y) {
-						max.y = pos.y;
-					}
-				}
-			}
-		}
-		return new Dimension(max.x - min.x, max.y - min.y);
-	}
-
-	@Override
-	public default AffineTransform getContentTransform() {
-		// compute transformation from bend-points as a translation that equals
-		// the offset/min of the unattached bend-points
-		List<BendPoint> bendPoints = getContentBendPoints();
-		// iterate over the unattached bend-points to find the minimum
-		Point min = null;
-		for (BendPoint bp : bendPoints) {
-			if (!bp.isAttached()) {
-				Point pos = bp.getPosition();
-				if (min == null) {
-					// initialize min
-					// XXX: copy so it can safely be changed
-					min = pos.getCopy();
-				} else {
-					// adjust min to the given position
-					if (min.x > pos.x) {
-						min.x = pos.x;
-					}
-					if (min.y > pos.y) {
-						min.y = pos.y;
-					}
-				}
-			}
-		}
-		// XXX: in case there are no unattached bend-points, an identity
-		// transformation is returned
-		return min == null ? new AffineTransform()
-				: new AffineTransform(1, 0, 0, 1, min.x, min.y);
-	}
-
-	@Override
-	public default Node getResizableVisual() {
-		return getBendableVisual();
-	}
-
-	@Override
-	public default Node getTransformableVisual() {
-		return getBendableVisual();
-	}
-
-	/**
-	 * Returns the current {@link BendPoint}s of this
-	 * {@link IBendableContentPart}'s visual.
-	 *
-	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
-	 *         visual.
-	 */
-	// TODO: protected getUnattachedVisualBendPoints()
-	public default List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> getVisualBendPoints() {
-		List<BendPoint> bendPoints = new ArrayList<>();
-		Connection connection = getBendableVisual();
-		IViewer viewer = getRoot().getViewer();
-		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
-		for (int i = 0; i < anchors.size(); i++) {
-			IAnchor anchor = anchors.get(i);
-			if (!connection.getRouter().wasInserted(anchor)) {
-				if (connection.isConnected(i)) {
-					// provide a position hint for a connected bend point
-					Point positionHint = connection.getPoint(i);
-					if (i == 0 && connection.getStartPointHint() != null) {
-						positionHint = connection.getStartPointHint();
-					}
-					if (i == anchors.size() - 1
-							&& connection.getEndPointHint() != null) {
-						positionHint = connection.getEndPointHint();
-					}
-					// determine anchorage content
-					Node anchorageNode = anchor.getAnchorage();
-					IVisualPart<? extends Node> part = PartUtils
-							.retrieveVisualPart(viewer, anchorageNode);
-					Object anchorageContent = null;
-					if (part instanceof IContentPart) {
-						anchorageContent = ((IContentPart<? extends Node>) part)
-								.getContent();
-					}
-					bendPoints
-							.add(new BendPoint(anchorageContent, positionHint));
-				} else {
-					bendPoints.add(new BendPoint(connection.getPoint(i)));
-				}
-			}
-		}
-		return bendPoints;
-	}
-
-	@Override
-	default Dimension getVisualSize() {
-		// compute size from bend-points as the size of the bounds
-		// around the unattached bend-points.
-		List<BendPoint> bendPoints = getVisualBendPoints();
-		// determine min and max point to compute the bounds
-		Point min = null;
-		Point max = null;
-		for (BendPoint bp : bendPoints) {
-			if (!bp.isAttached()) {
-				Point pos = bp.getPosition();
-				if (min == null) {
-					// XXX: The first unattached bend-point determines the
-					// initial values for min and max. Copies are used so that
-					// we can safely change min and max.
-					min = pos.getCopy();
-					max = min.getCopy();
-				} else {
-					// expand min and max
-					if (min.x > pos.x) {
-						min.x = pos.x;
-					}
-					if (min.y > pos.y) {
-						min.y = pos.y;
-					}
-					if (max.x < pos.x) {
-						max.x = pos.x;
-					}
-					if (max.y < pos.y) {
-						max.y = pos.y;
-					}
-				}
-			}
-		}
-		// XXX: in case there were no unattached bend-points, an empty dimension
-		// is returned
-		return min == null ? new Dimension()
-				: new Dimension(max.x - min.x, max.y - min.y);
-	}
-
-	@Override
-	default Affine getVisualTransform() {
-		// compute transformation from bend-points as a translation that equals
-		// the offset/min of the unattached bend-points
-		List<BendPoint> bendPoints = getVisualBendPoints();
-		// iterate over the unattached bend-points to find the minimum
-		Point min = null;
-		for (BendPoint bp : bendPoints) {
-			if (!bp.isAttached()) {
-				Point pos = bp.getPosition();
-				if (min == null) {
-					// initialize min
-					// XXX: copy so it can safely be changed
-					min = pos.getCopy();
-				} else {
-					// adjust min to the given position
-					if (min.x > pos.x) {
-						min.x = pos.x;
-					}
-					if (min.y > pos.y) {
-						min.y = pos.y;
-					}
-				}
-			}
-		}
-		// XXX: in case there are no unattached bend-points, an identity
-		// transformation is returned
-		return min == null ? new Affine()
-				: new Affine(1, 0, min.x, 0, 1, min.y);
-	}
-
-	@Override
-	default void resizeContent(Dimension totalSize) {
-		// determine visual offset
-		AffineTransform visualTransform = getContentTransform();
-		double currentX = visualTransform.getTranslateX();
-		double currentY = visualTransform.getTranslateY();
-		// resize content bend points
-		List<BendPoint> resizedBendPoints = resizeBendPoints(
-				getContentBendPoints(), currentX, currentY, getContentSize(),
-				totalSize);
-		bendContent(resizedBendPoints);
-	}
-
-	@Override
-	default void resizeVisual(Dimension totalSize) {
+	default void setVisualSize(Dimension totalSize) {
 		// determine visual offset
 		Affine visualTransform = getVisualTransform();
 		double currentX = visualTransform.getTx();
@@ -562,26 +542,11 @@ public interface IBendableContentPart<V extends Node>
 		List<BendPoint> resizedBendPoints = resizeBendPoints(
 				getVisualBendPoints(), currentX, currentY, getVisualSize(),
 				totalSize);
-		bendVisual(resizedBendPoints);
+		setVisualBendPoints(resizedBendPoints);
 	}
 
 	@Override
-	default void transformContent(AffineTransform totalTransform) {
-		// compute delta transform
-		AffineTransform deltaTransform = ITransformableContentPart
-				.computeDeltaTransform(getContentTransform(), totalTransform);
-		// optimize for identity transform
-		if (deltaTransform.isIdentity()) {
-			return;
-		}
-		// transform content bend points
-		List<BendPoint> bendPoints = transformBendPoints(getContentBendPoints(),
-				deltaTransform);
-		bendContent(bendPoints);
-	}
-
-	@Override
-	default void transformVisual(Affine totalTransform) {
+	default void setVisualTransform(Affine totalTransform) {
 		// compute delta transform
 		Transform deltaTransform = ITransformableContentPart
 				.computeDeltaTransform(getVisualTransform(), totalTransform);
@@ -593,7 +558,7 @@ public interface IBendableContentPart<V extends Node>
 		List<BendPoint> transformedBendPoints = transformBendPoints(
 				getVisualBendPoints(),
 				FX2Geometry.toAffineTransform(deltaTransform));
-		bendVisual(transformedBendPoints);
+		setVisualBendPoints(transformedBendPoints);
 	}
 
 }

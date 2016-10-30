@@ -63,7 +63,7 @@ public class TransformContentOperation<VR> extends AbstractOperation
 	private void applyTransform(AffineTransform transform) {
 		if (!transformableContentPart.getContentTransform()
 				.equals(finalTransform)) {
-			transformableContentPart.transformContent(transform);
+			transformableContentPart.setContentTransform(transform);
 		}
 	}
 

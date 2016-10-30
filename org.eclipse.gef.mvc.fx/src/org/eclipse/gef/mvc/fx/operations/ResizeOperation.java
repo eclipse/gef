@@ -108,7 +108,7 @@ public class ResizeOperation extends AbstractOperation
 		Dimension newSize = new Dimension(initialSize.getWidth() + dw,
 				initialSize.getHeight() + dh);
 		if (!resizablePart.getVisualSize().equals(newSize)) {
-			resizablePart.resizeVisual(newSize);
+			resizablePart.setVisualSize(newSize);
 		}
 		return Status.OK_STATUS;
 	}
@@ -195,7 +195,7 @@ public class ResizeOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (!resizablePart.getVisualSize().equals(initialSize)) {
-			resizablePart.resizeVisual(initialSize);
+			resizablePart.setVisualSize(initialSize);
 		}
 		return Status.OK_STATUS;
 	}

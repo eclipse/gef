@@ -32,7 +32,7 @@ public class BendableTests {
 		}
 
 		@Override
-		public void bendContent(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
+		public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
 			contentBendPoints = bendPoints;
 		}
 
@@ -81,7 +81,7 @@ public class BendableTests {
 		// check resize
 		Point newEnd = end.getTranslated(0, 50);
 		Rectangle newBounds = new Rectangle(start, newEnd);
-		bendable.resizeContent(newBounds.getSize());
+		bendable.setContentSize(newBounds.getSize());
 		assertEquals(newBounds.getSize(), bendable.getContentSize());
 		// check content offset did not change
 		contentOffset = new Point(bendable.getContentTransform().getTranslateX(),
@@ -109,7 +109,7 @@ public class BendableTests {
 		Point newStart = start.getTranslated(20, 50);
 		Point newEnd = end.getTranslated(20, 50);
 		Rectangle newBounds = new Rectangle(newStart, newEnd);
-		bendable.transformContent(new AffineTransform().setToTranslation(newStart.x, newStart.y));
+		bendable.setContentTransform(new AffineTransform().setToTranslation(newStart.x, newStart.y));
 		assertEquals(newBounds.getSize(), bendable.getContentSize());
 		contentOffset = new Point(bendable.getContentTransform().getTranslateX(),
 				bendable.getContentTransform().getTranslateY());

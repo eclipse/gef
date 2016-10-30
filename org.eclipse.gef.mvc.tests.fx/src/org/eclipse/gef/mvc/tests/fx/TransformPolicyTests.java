@@ -84,7 +84,7 @@ public class TransformPolicyTests {
 		}
 
 		@Override
-		public void transformContent(AffineTransform transform) {
+		public void setContentTransform(AffineTransform transform) {
 			this.transform = transform;
 		}
 	}

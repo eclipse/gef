@@ -79,17 +79,8 @@ public interface ITransformableContentPart<V extends Node>
 	 * @return The current {@link AffineTransform} according to this
 	 *         {@link ITransformableContentPart}'s content.
 	 */
-	public AffineTransform getContentTransform();
-
-	/**
-	 * Returns the visual of this {@link ITransformableContentPart} to which
-	 * transformations should be applied.
-	 *
-	 * @return The visual of this {@link ITransformableContentPart} to which
-	 *         transformations should be applied.
-	 */
-	public default Node getTransformableVisual() {
-		return getVisual();
+	public default AffineTransform getContentTransform() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -110,7 +101,9 @@ public interface ITransformableContentPart<V extends Node>
 	 * @param totalTransform
 	 *            The {@link AffineTransform} to set.
 	 */
-	public void transformContent(AffineTransform totalTransform);
+	public default void setContentTransform(AffineTransform totalTransform) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Sets the given {@link Affine} as the {@link #getVisualTransform() visual
@@ -121,7 +114,7 @@ public interface ITransformableContentPart<V extends Node>
 	 *            {@link #getVisualTransform() visual transform} of this
 	 *            {@link ITransformableContentPart}.
 	 */
-	public default void transformVisual(Affine totalTransform) {
+	public default void setVisualTransform(Affine totalTransform) {
 		NodeUtils.setAffine(
 				getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get(),
 				totalTransform);

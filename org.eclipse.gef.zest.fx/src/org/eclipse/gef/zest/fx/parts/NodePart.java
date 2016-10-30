@@ -435,7 +435,7 @@ public class NodePart extends AbstractContentPart<Group>
 		if (position != null) {
 			Affine newTransform = new Affine(new Translate(position.x, position.y));
 			if (!NodeUtils.equals(getVisualTransform(), newTransform)) {
-				transformVisual(newTransform);
+				setVisualTransform(newTransform);
 			}
 		}
 
@@ -606,7 +606,7 @@ public class NodePart extends AbstractContentPart<Group>
 	}
 
 	@Override
-	public void resizeContent(Dimension size) {
+	public void setContentSize(Dimension size) {
 		ZestProperties.setSize(getContent(), size);
 	}
 
@@ -622,7 +622,7 @@ public class NodePart extends AbstractContentPart<Group>
 	}
 
 	@Override
-	public void transformContent(AffineTransform totalTransform) {
+	public void setContentTransform(AffineTransform totalTransform) {
 		ZestProperties.setPosition(getContent(),
 				new Point(totalTransform.getTranslateX(), totalTransform.getTranslateY()));
 	}
