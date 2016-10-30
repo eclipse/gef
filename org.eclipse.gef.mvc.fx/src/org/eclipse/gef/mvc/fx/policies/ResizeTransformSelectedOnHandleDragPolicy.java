@@ -345,6 +345,11 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 		Dimension visualSize = ((IResizableContentPart<? extends Node>) contentPart)
 				.getVisualSize();
 
+		// FIXME: visualTransform needs to be multiplied with the parentToScene
+		// transform in order to yield the offset in scene coordinates
+		// TODO: do not just use translation but real visual minimum position,
+		// based on the visual transform as reported by the part
+
 		// determine min and max points
 		Point min = isTransformable
 				? new Point(visualTransform.getTx(), visualTransform.getTy())

@@ -90,86 +90,6 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 	};
 
 	@Override
-	public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
-		// disable refreshing of visuals
-		boolean wasRefreshVisual = isRefreshVisual();
-		setRefreshVisual(false);
-
-		// collect positions and de-/attach source & target
-		List<Point> positions = new ArrayList<>();
-		boolean attachedSource = false;
-		boolean attachedTarget = false;
-		for (int i = 0; i < bendPoints.size(); i++) {
-			BendPoint bp = bendPoints.get(i);
-			if (i == 0) {
-				// update source
-				org.eclipse.gef.graph.Node newSource = bp.isAttached()
-						? (org.eclipse.gef.graph.Node) bp.getContentAnchorage() : null;
-				org.eclipse.gef.graph.Node oldSource = getContent().getSource();
-				if (oldSource != newSource) {
-					if (oldSource != null) {
-						detachFromContentAnchorage(oldSource, SOURCE_ROLE);
-					}
-					if (newSource != null) {
-						attachToContentAnchorage(newSource, SOURCE_ROLE);
-						attachedSource = true;
-					}
-				} else if (oldSource != null) {
-					attachedSource = true;
-				}
-			}
-			if (i == bendPoints.size() - 1) {
-				// update target
-				org.eclipse.gef.graph.Node newTarget = bp.isAttached()
-						? (org.eclipse.gef.graph.Node) bp.getContentAnchorage() : null;
-				org.eclipse.gef.graph.Node oldTarget = getContent().getTarget();
-				if (oldTarget != newTarget) {
-					if (oldTarget != null) {
-						detachFromContentAnchorage(oldTarget, TARGET_ROLE);
-					}
-					if (newTarget != null) {
-						attachToContentAnchorage(newTarget, TARGET_ROLE);
-						attachedTarget = true;
-					}
-				} else if (oldTarget != null) {
-					attachedTarget = true;
-				}
-			}
-			if (!bp.isAttached()) {
-				positions.add(bp.getPosition());
-			}
-		}
-		// update properties
-		if (!attachedSource) {
-			if (positions.size() > 0) {
-				ZestProperties.setStartPoint(getContent(), positions.remove(0));
-			} else {
-				throw new IllegalStateException("No start point provided.");
-			}
-		} else {
-			// XXX: Set start hint as Zest start point property so it can be
-			// used within doRefreshVisual().
-			ZestProperties.setStartPoint(getContent(), getVisual().getStartPointHint());
-		}
-		if (!attachedTarget) {
-			if (positions.size() > 0) {
-				ZestProperties.setEndPoint(getContent(), positions.remove(positions.size() - 1));
-			} else {
-				throw new IllegalStateException("No end point provided.");
-			}
-		} else {
-			// XXX: Set start hint as Zest start point property so it can be
-			// used within doRefreshVisual().
-			ZestProperties.setEndPoint(getContent(), getVisual().getEndPointHint());
-		}
-		ZestProperties.setControlPoints(getContent(), positions);
-
-		// restore refreshing of visuals
-		setRefreshVisual(wasRefreshVisual);
-		refreshVisual();
-	}
-
-	@Override
 	protected void doActivate() {
 		super.doActivate();
 		getContent().attributesProperty().addListener(edgeAttributesObserver);
@@ -347,11 +267,12 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 			visual.setInterpolator(interpolator);
 		}
 
+		// TODO: replace the following code with
+		// setVisualBendPoints(getContentBendPoints());
+
 		// start point or hint
 		Point startPoint = ZestProperties.getStartPoint(edge);
-		if (!
-
-		getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
+		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
 			if (startPoint != null) {
 				visual.setStartPoint(startPoint);
 			}
@@ -435,6 +356,86 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 				curve.getStyleClass().add(CSS_CLASS_CURVE);
 			}
 		}
+	}
+
+	@Override
+	public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
+		// disable refreshing of visuals
+		boolean wasRefreshVisual = isRefreshVisual();
+		setRefreshVisual(false);
+
+		// collect positions and de-/attach source & target
+		List<Point> positions = new ArrayList<>();
+		boolean attachedSource = false;
+		boolean attachedTarget = false;
+		for (int i = 0; i < bendPoints.size(); i++) {
+			BendPoint bp = bendPoints.get(i);
+			if (i == 0) {
+				// update source
+				org.eclipse.gef.graph.Node newSource = bp.isAttached()
+						? (org.eclipse.gef.graph.Node) bp.getContentAnchorage() : null;
+				org.eclipse.gef.graph.Node oldSource = getContent().getSource();
+				if (oldSource != newSource) {
+					if (oldSource != null) {
+						detachFromContentAnchorage(oldSource, SOURCE_ROLE);
+					}
+					if (newSource != null) {
+						attachToContentAnchorage(newSource, SOURCE_ROLE);
+						attachedSource = true;
+					}
+				} else if (oldSource != null) {
+					attachedSource = true;
+				}
+			}
+			if (i == bendPoints.size() - 1) {
+				// update target
+				org.eclipse.gef.graph.Node newTarget = bp.isAttached()
+						? (org.eclipse.gef.graph.Node) bp.getContentAnchorage() : null;
+				org.eclipse.gef.graph.Node oldTarget = getContent().getTarget();
+				if (oldTarget != newTarget) {
+					if (oldTarget != null) {
+						detachFromContentAnchorage(oldTarget, TARGET_ROLE);
+					}
+					if (newTarget != null) {
+						attachToContentAnchorage(newTarget, TARGET_ROLE);
+						attachedTarget = true;
+					}
+				} else if (oldTarget != null) {
+					attachedTarget = true;
+				}
+			}
+			if (!bp.isAttached()) {
+				positions.add(bp.getPosition());
+			}
+		}
+		// update properties
+		if (!attachedSource) {
+			if (positions.size() > 0) {
+				ZestProperties.setStartPoint(getContent(), positions.remove(0));
+			} else {
+				throw new IllegalStateException("No start point provided.");
+			}
+		} else {
+			// XXX: Set start hint as Zest start point property so it can be
+			// used within doRefreshVisual().
+			ZestProperties.setStartPoint(getContent(), getVisual().getStartPointHint());
+		}
+		if (!attachedTarget) {
+			if (positions.size() > 0) {
+				ZestProperties.setEndPoint(getContent(), positions.remove(positions.size() - 1));
+			} else {
+				throw new IllegalStateException("No end point provided.");
+			}
+		} else {
+			// XXX: Set start hint as Zest start point property so it can be
+			// used within doRefreshVisual().
+			ZestProperties.setEndPoint(getContent(), getVisual().getEndPointHint());
+		}
+		ZestProperties.setControlPoints(getContent(), positions);
+
+		// restore refreshing of visuals
+		setRefreshVisual(wasRefreshVisual);
+		refreshVisual();
 	}
 
 }

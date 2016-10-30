@@ -125,39 +125,6 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 				});
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void setContentBendPoints(List<BendPoint> bendPoints) {
-		getContent().getSourceAnchorages().clear();
-		getContent().getTargetAnchorages().clear();
-		List<Point> waypoints = new ArrayList<>();
-		for (int i = 0; i < bendPoints.size(); i++) {
-			BendPoint bp = bendPoints.get(i);
-			if (bp.isAttached()) {
-				if (i == 0) {
-					// update start anchorage
-					// TODO: introduce setter so this is more concise
-					getContent().addSourceAnchorage(
-							(AbstractGeometricElement<? extends IGeometry>) bp.getContentAnchorage());
-					// update start hint
-					waypoints.add(bp.getPosition());
-				}
-				if (i == bendPoints.size() - 1) {
-					// update end anchorage
-					// TODO: introduce setter so this is more concise
-					getContent().addTargetAnchorage(
-							(AbstractGeometricElement<? extends IGeometry>) bp.getContentAnchorage());
-					// update end point hint
-					waypoints.add(bp.getPosition());
-				}
-			} else {
-				waypoints.add(bp.getPosition());
-			}
-		}
-		refreshContentAnchorages();
-		getContent().setWayPoints(waypoints.toArray(new Point[] {}));
-	}
-
 	@Override
 	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
@@ -238,6 +205,10 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 	@Override
 	protected void doRefreshVisual(Connection visual) {
 		GeometricCurve content = getContent();
+
+		// TODO: extract router code and replace start/end/control point
+		// handling by calling
+		// setVisualBendPoints(getContentBendPoints());
 
 		List<Point> wayPoints = content.getWayPointsCopy();
 
@@ -454,6 +425,39 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 			getContent().sourceDecorationProperty().addListener(decorationChangeListener);
 			getContent().targetDecorationProperty().addListener(decorationChangeListener);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setContentBendPoints(List<BendPoint> bendPoints) {
+		getContent().getSourceAnchorages().clear();
+		getContent().getTargetAnchorages().clear();
+		List<Point> waypoints = new ArrayList<>();
+		for (int i = 0; i < bendPoints.size(); i++) {
+			BendPoint bp = bendPoints.get(i);
+			if (bp.isAttached()) {
+				if (i == 0) {
+					// update start anchorage
+					// TODO: introduce setter so this is more concise
+					getContent().addSourceAnchorage(
+							(AbstractGeometricElement<? extends IGeometry>) bp.getContentAnchorage());
+					// update start hint
+					waypoints.add(bp.getPosition());
+				}
+				if (i == bendPoints.size() - 1) {
+					// update end anchorage
+					// TODO: introduce setter so this is more concise
+					getContent().addTargetAnchorage(
+							(AbstractGeometricElement<? extends IGeometry>) bp.getContentAnchorage());
+					// update end point hint
+					waypoints.add(bp.getPosition());
+				}
+			} else {
+				waypoints.add(bp.getPosition());
+			}
+		}
+		refreshContentAnchorages();
+		getContent().setWayPoints(waypoints.toArray(new Point[] {}));
 	}
 
 }

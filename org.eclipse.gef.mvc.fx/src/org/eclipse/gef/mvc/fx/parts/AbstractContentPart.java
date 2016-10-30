@@ -44,8 +44,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  * @param <V>
- *            The visual {@link Node} used by this {@link AbstractContentPart}
- *            .
+ *            The visual {@link Node} used by this {@link AbstractContentPart} .
  */
 public abstract class AbstractContentPart<V extends Node>
 		extends AbstractVisualPart<V> implements IContentPart<V> {
@@ -78,6 +77,22 @@ public abstract class AbstractContentPart<V extends Node>
 			}
 		});
 	}
+
+	// TODO: Implement refresh(ITransformable), refresh(IResizable), and
+	// refresh(IBendable)
+	// @Override
+	// protected void doRefreshVisual(V visual) {
+	// if (this instanceof IBendable) {
+	// refresh((IBendable) this);
+	// } else {
+	// if (this instanceof ITransformable) {
+	// refresh((ITransformable) this);
+	// }
+	// if (this instanceof IResizable) {
+	// refresh((IResizable) this);
+	// }
+	// }
+	// }
 
 	/**
 	 * {@inheritDoc}
