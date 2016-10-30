@@ -64,8 +64,9 @@ public class ResizeContentOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		resizableContentPart.resizeContent(finalSize);
-		// TODO: check resize was successful
+		if (!resizableContentPart.getContentSize().equals(finalSize)) {
+			resizableContentPart.resizeContent(finalSize);
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -88,7 +89,9 @@ public class ResizeContentOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		resizableContentPart.resizeContent(initialSize);
+		if (!resizableContentPart.getContentSize().equals(initialSize)) {
+			resizableContentPart.resizeContent(initialSize);
+		}
 		return Status.OK_STATUS;
 	}
 }

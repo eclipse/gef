@@ -107,8 +107,9 @@ public class ResizeOperation extends AbstractOperation
 			throws ExecutionException {
 		Dimension newSize = new Dimension(initialSize.getWidth() + dw,
 				initialSize.getHeight() + dh);
-		resizablePart.resizeVisual(newSize);
-		// TODO: check resize was successful
+		if (!resizablePart.getVisualSize().equals(newSize)) {
+			resizablePart.resizeVisual(newSize);
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -193,7 +194,9 @@ public class ResizeOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		resizablePart.resizeVisual(initialSize);
+		if (!resizablePart.getVisualSize().equals(initialSize)) {
+			resizablePart.resizeVisual(initialSize);
+		}
 		return Status.OK_STATUS;
 	}
 

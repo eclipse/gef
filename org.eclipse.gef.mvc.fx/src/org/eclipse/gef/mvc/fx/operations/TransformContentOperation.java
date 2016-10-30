@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.geometry.planar.AffineTransform;
-import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 
 import javafx.scene.Node;
@@ -62,21 +61,10 @@ public class TransformContentOperation<VR> extends AbstractOperation
 	}
 
 	private void applyTransform(AffineTransform transform) {
-		// XXX: Cannot check content transform if bendable
-
-		// if (!transformableContentPart.getContentTransform()
-		// .equals(finalTransform)) {
-		transformableContentPart.transformContent(transform);
-		if (!(transformableContentPart instanceof IBendableContentPart)) {
-			AffineTransform resultingTransform = transformableContentPart
-					.getContentTransform();
-			if (!resultingTransform.equals(transform)) {
-				throw new IllegalStateException(
-						"ITransformableVisualPart#transformVisual() did not transform the visual as expected. The resulting transformation should be "
-								+ transform + ", but is " + resultingTransform);
-			}
+		if (!transformableContentPart.getContentTransform()
+				.equals(finalTransform)) {
+			transformableContentPart.transformContent(transform);
 		}
-		// }
 	}
 
 	@Override

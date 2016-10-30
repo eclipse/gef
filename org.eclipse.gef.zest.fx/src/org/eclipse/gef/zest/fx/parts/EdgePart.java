@@ -155,7 +155,7 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 			if (positions.size() > 0) {
 				ZestProperties.setEndPoint(getContent(), positions.remove(positions.size() - 1));
 			} else {
-				throw new IllegalStateException("No start point provided.");
+				throw new IllegalStateException("No end point provided.");
 			}
 		} else {
 			// XXX: Set start hint as Zest start point property so it can be
@@ -384,6 +384,38 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 	@Override
 	public Edge getContent() {
 		return (Edge) super.getContent();
+	}
+
+	@Override
+	public List<BendPoint> getContentBendPoints() {
+		List<BendPoint> bendPoints = new ArrayList<>();
+
+		// determine start point, end point, and control points from content
+		Edge edge = getContent();
+		Point startPoint = ZestProperties.getStartPoint(edge);
+		Point endPoint = ZestProperties.getEndPoint(edge);
+		List<Point> controlPoints = ZestProperties.getControlPoints(edge);
+
+		// add start bend point
+		if (edge.getSource() == null) {
+			bendPoints.add(new BendPoint(startPoint));
+		} else {
+			bendPoints.add(new BendPoint(edge.getSource(), startPoint));
+		}
+
+		// add control bend points
+		for (Point cp : controlPoints) {
+			bendPoints.add(new BendPoint(cp));
+		}
+
+		// add end bend point
+		if (edge.getTarget() == null) {
+			bendPoints.add(new BendPoint(endPoint));
+		} else {
+			bendPoints.add(new BendPoint(edge.getTarget(), endPoint));
+		}
+
+		return bendPoints;
 	}
 
 	/**

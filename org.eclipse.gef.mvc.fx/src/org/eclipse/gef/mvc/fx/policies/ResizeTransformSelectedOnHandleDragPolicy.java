@@ -25,6 +25,8 @@ import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -34,6 +36,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.transform.Affine;
 
 /**
  * The {@link ResizeTransformSelectedOnHandleDragPolicy} is an
@@ -102,7 +105,7 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 	 * @param targetPart
 	 */
 	private void computeRelatives(IContentPart<? extends Node> targetPart) {
-		Rectangle bounds = getVisualBounds(targetPart);
+		Rectangle bounds = getVisualBounds(targetPart, false);
 
 		double left = bounds.getX() - selectionBounds.getX();
 		relX1.put(targetPart, left / selectionBounds.getWidth());
@@ -242,13 +245,12 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 	 * {@link IContentPart}.
 	 *
 	 * @param part
-	 *            The {@link IContentPart} of which the {@link ResizePolicy}
-	 *            is returned.
+	 *            The {@link IContentPart} of which the {@link ResizePolicy} is
+	 *            returned.
 	 * @return The {@link ResizePolicy} that is installed on the given
 	 *         {@link IContentPart}.
 	 */
-	protected ResizePolicy getResizePolicy(
-			IContentPart<? extends Node> part) {
+	protected ResizePolicy getResizePolicy(IContentPart<? extends Node> part) {
 		return part.getAdapter(ResizePolicy.class);
 	}
 
@@ -265,7 +267,7 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 			throw new IllegalArgumentException("No target parts given.");
 		}
 
-		Rectangle bounds = getVisualBounds(targetParts.get(0));
+		Rectangle bounds = getVisualBounds(targetParts.get(0), true);
 		if (targetParts.size() == 1) {
 			return bounds;
 		}
@@ -274,7 +276,7 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 				.listIterator(1);
 		while (iterator.hasNext()) {
 			IContentPart<? extends Node> cp = iterator.next();
-			bounds.union(getVisualBounds(cp));
+			bounds.union(getVisualBounds(cp, true));
 		}
 		return bounds;
 	}
@@ -297,8 +299,8 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 	 * {@link IContentPart}.
 	 *
 	 * @param part
-	 *            The {@link IContentPart} of which the
-	 *            {@link TransformPolicy} is returned.
+	 *            The {@link IContentPart} of which the {@link TransformPolicy}
+	 *            is returned.
 	 * @return The {@link TransformPolicy} that is installed on the given
 	 *         {@link IContentPart}.
 	 */
@@ -314,17 +316,46 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 	 * @param contentPart
 	 *            The {@link IContentPart} of which the visual bounds are
 	 *            computed.
+	 * @param unionWithLayoutBounds
+	 *            TODO
 	 * @return A {@link Rectangle} representing the visual bounds of the given
 	 *         {@link IContentPart} within the coordinate system of the
 	 *         {@link Scene}.
 	 */
 	protected Rectangle getVisualBounds(
-			IContentPart<? extends Node> contentPart) {
+			IContentPart<? extends Node> contentPart,
+			boolean unionWithLayoutBounds) {
 		if (contentPart == null) {
 			throw new IllegalArgumentException("contentPart may not be null!");
 		}
-		return FX2Geometry.toRectangle(contentPart.getVisual()
-				.localToScene(contentPart.getVisual().getLayoutBounds()));
+
+		boolean isTransformable = contentPart instanceof ITransformableContentPart;
+		boolean isResizable = contentPart instanceof IResizableContentPart;
+
+		// determine layout-bounds in scene for untransformable or unresizable
+		// visuals
+		Rectangle layoutBoundsInScene = FX2Geometry
+				.toRectangle(contentPart.getVisual().localToScene(
+						contentPart.getVisual().getLayoutBounds()));
+
+		// compute visual transform using itransformable api
+		Affine visualTransform = ((ITransformableContentPart<? extends Node>) contentPart)
+				.getVisualTransform();
+		// compute visual size using itransformable api
+		Dimension visualSize = ((IResizableContentPart<? extends Node>) contentPart)
+				.getVisualSize();
+
+		// determine min and max points
+		Point min = isTransformable
+				? new Point(visualTransform.getTx(), visualTransform.getTy())
+				: layoutBoundsInScene.getTopLeft();
+		Point max = isResizable ? min.getTranslated(visualSize)
+				: layoutBoundsInScene.getBottomRight();
+
+		// return rectangle around min and max
+		return unionWithLayoutBounds
+				? new Rectangle(min, max).union(layoutBoundsInScene)
+				: new Rectangle(min, max);
 	}
 
 	@Override
@@ -395,7 +426,8 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 				computeRelatives(targetPart);
 				init(transformPolicy);
 				// transform scale pivot to parent coordinates
-				Point pivotInScene = getVisualBounds(targetPart).getTopLeft();
+				Point pivotInScene = getVisualBounds(targetPart, false)
+						.getTopLeft();
 				Point pivotInParent = FX2Geometry
 						.toPoint(getHost().getVisual().getParent()
 								.sceneToLocal(pivotInScene.x, pivotInScene.y));

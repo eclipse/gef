@@ -56,7 +56,6 @@ import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
-import org.eclipse.gef.mvc.fx.policies.TransformBendablePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
@@ -376,8 +375,6 @@ public class BendConnectionPolicyTests {
 		}
 
 		protected void bindConnectionAdapters(final MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			// transform policy
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformBendablePolicy.class);
 			// relocate on drag
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
 			// bend

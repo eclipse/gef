@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.fx.utils.NodeUtils;
-import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 
 import javafx.scene.Node;
@@ -86,18 +85,6 @@ public class TransformVisualOperation extends AbstractOperation
 		if (!NodeUtils.equals(transformablePart.getVisualTransform(),
 				transform)) {
 			transformablePart.transformVisual(transform);
-			if (!(transformablePart instanceof IBendableContentPart)) {
-				Affine resultingTransform = transformablePart
-						.getVisualTransform();
-				if (!NodeUtils.equals(resultingTransform, transform)) {
-					throw new IllegalStateException(
-							"ITransformableVisualPart#transformVisual() did not transform the visual as expected. The resulting transformation should be "
-									+ transform + ", but is "
-									+ resultingTransform);
-				}
-			} else {
-				// TODO: check if visual bend points == content bend points
-			}
 		}
 	}
 

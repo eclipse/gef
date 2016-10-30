@@ -409,6 +409,30 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 	}
 
 	@Override
+	public List<BendPoint> getContentBendPoints() {
+		List<BendPoint> bendPoints = new ArrayList<>();
+		// use content way points for the positions
+		List<Point> wayPoints = getContent().getWayPointsCopy();
+		// if we have a source/target anchorage, create an attached bend point
+		// for it
+		Set<AbstractGeometricElement<? extends IGeometry>> sourceAnchorages = getContent().getSourceAnchorages();
+		int startIndex = 0;
+		if (sourceAnchorages != null && !sourceAnchorages.isEmpty()) {
+			bendPoints.add(new BendPoint(sourceAnchorages.iterator().next(), wayPoints.get(startIndex++)));
+		}
+		Set<AbstractGeometricElement<? extends IGeometry>> targetAnchorages = getContent().getTargetAnchorages();
+		int lastIndex = wayPoints.size() - 1;
+		if (targetAnchorages != null && !targetAnchorages.isEmpty()) {
+			bendPoints.add(new BendPoint(targetAnchorages.iterator().next(), wayPoints.get(lastIndex--)));
+		}
+		// add unattached bend-points for the rest of the way points
+		for (int i = startIndex; i <= lastIndex; i++) {
+			bendPoints.add(i, new BendPoint(wayPoints.get(i)));
+		}
+		return bendPoints;
+	}
+
+	@Override
 	public void setContent(Object model) {
 		if (model != null && !(model instanceof GeometricCurve)) {
 			throw new IllegalArgumentException("Only ICurve models are supported.");

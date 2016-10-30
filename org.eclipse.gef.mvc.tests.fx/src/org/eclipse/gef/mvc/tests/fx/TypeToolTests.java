@@ -133,7 +133,6 @@ public class TypeToolTests {
 				scene.getRoot().snapshot(new Callback<SnapshotResult, Void>() {
 					@Override
 					public Void call(SnapshotResult param) {
-						System.out.println("SNAPSHOT");
 						latch.countDown();
 						return null;
 					}

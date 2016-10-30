@@ -170,6 +170,28 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	protected List<IHandlePart<? extends Node>> createMultiSelectionHandleParts(
 			final List<? extends IVisualPart<? extends Node>> targets,
 			IBehavior contextBehavior, Map<Object, Object> contextMap) {
+		// TODO: use multi selection handle goemetry provider so it can be
+		// configured
+		// Provider<? extends IGeometry> rtGeometryProvider = new
+		// Provider<IGeometry>() {
+		// @Override
+		// public IGeometry get() {
+		// Rectangle bounds = null;
+		// for (IVisualPart<? extends Node> part : targets) {
+		// ResizableTransformableBoundsProvider rtBoundsProvider = new
+		// ResizableTransformableBoundsProvider();
+		// rtBoundsProvider.setAdaptable(part);
+		// Rectangle boundsInScene = (Rectangle) rtBoundsProvider
+		// .get();
+		// if (bounds == null) {
+		// bounds = boundsInScene;
+		// } else {
+		// bounds.union(boundsInScene);
+		// }
+		// }
+		// return bounds;
+		// }
+		// };
 		Provider<? extends IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
