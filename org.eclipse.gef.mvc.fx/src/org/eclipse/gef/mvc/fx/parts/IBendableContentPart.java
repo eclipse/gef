@@ -28,6 +28,7 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 /**
  * An {@link IContentPart} that supports content related bend, i.e. manipulation
@@ -215,6 +216,43 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	/**
+	 * Computes the translation from the given list of {@link BendPoint}s as the
+	 * offset of the bounds around the unattached bend points.
+	 *
+	 * @param bendPoints
+	 *            The list of {@link BendPoint}s for which to compute the
+	 *            translation.
+	 * @return The translation of the bounds around the unattached bend points.
+	 */
+	public static Affine computeTranslationFromBendPoints(
+			List<BendPoint> bendPoints) {
+		// iterate over the unattached bend-points to find the minimum
+		Point min = null;
+		for (BendPoint bp : bendPoints) {
+			if (!bp.isAttached()) {
+				Point pos = bp.getPosition();
+				if (min == null) {
+					// initialize min
+					// XXX: copy so it can safely be changed
+					min = pos.getCopy();
+				} else {
+					// adjust min to the given position
+					if (min.x > pos.x) {
+						min.x = pos.x;
+					}
+					if (min.y > pos.y) {
+						min.y = pos.y;
+					}
+				}
+			}
+		}
+		// XXX: in case there are no unattached bend-points, an identity
+		// transformation is returned
+		return min == null ? new Affine()
+				: new Affine(new Translate(min.x, min.y));
+	}
+
+	/**
 	 * Resizes the given list of {@link BendPoint}s according to the
 	 * bounds-change that is given by the current offset, current size, and
 	 * final size. The unattached {@link BendPoint}s will remain their relative
@@ -280,26 +318,33 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	/**
-	 * Transforms the given {@link List} of {@link BendPoint}s in-place using
-	 * the given {@link AffineTransform}.
+	 * Transforms the given {@link List} of {@link BendPoint}s according to the
+	 * change specified by the given current and final {@link Affine}
+	 * transformations.
 	 *
 	 * @param bendPoints
 	 *            The {@link List} of {@link BendPoint}s to transform.
-	 * @param transform
-	 *            The {@link AffineTransform} that is applied to the unattached
-	 *            bend points.
-	 * @return The given {@link List} of {@link BendPoint}s for convenience.
+	 * @param currentTransform
+	 *            The current {@link Affine} transformation.
+	 * @param totalTransform
+	 *            The final {@link Affine} transformation.
+	 * @return The given, transformed {@link List} of {@link BendPoint}s.
 	 */
 	public static List<BendPoint> transformBendPoints(
-			List<BendPoint> bendPoints, AffineTransform transform) {
+			List<BendPoint> bendPoints, Affine currentTransform,
+			Affine totalTransform) {
+		// compute delta transform
+		Transform deltaTransform = ITransformableContentPart
+				.computeDeltaTransform(currentTransform, totalTransform);
 		// optimize for identity transform
-		if (transform == null || transform.isIdentity()) {
+		if (deltaTransform.isIdentity()) {
 			return bendPoints;
 		}
+		AffineTransform tx = FX2Geometry.toAffineTransform(deltaTransform);
 		// transform unattached bend points in-place
 		for (BendPoint bp : bendPoints) {
 			if (!bp.isAttached()) {
-				bp.getPosition().transform(transform);
+				bp.getPosition().transform(tx);
 			}
 		}
 		return bendPoints;
@@ -331,34 +376,8 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	@Override
-	public default AffineTransform getContentTransform() {
-		// compute transformation from bend-points as a translation that equals
-		// the offset/min of the unattached bend-points
-		List<BendPoint> bendPoints = getContentBendPoints();
-		// iterate over the unattached bend-points to find the minimum
-		Point min = null;
-		for (BendPoint bp : bendPoints) {
-			if (!bp.isAttached()) {
-				Point pos = bp.getPosition();
-				if (min == null) {
-					// initialize min
-					// XXX: copy so it can safely be changed
-					min = pos.getCopy();
-				} else {
-					// adjust min to the given position
-					if (min.x > pos.x) {
-						min.x = pos.x;
-					}
-					if (min.y > pos.y) {
-						min.y = pos.y;
-					}
-				}
-			}
-		}
-		// XXX: in case there are no unattached bend-points, an identity
-		// transformation is returned
-		return min == null ? new AffineTransform()
-				: new AffineTransform(1, 0, 0, 1, min.x, min.y);
+	public default Affine getContentTransform() {
+		return computeTranslationFromBendPoints(getContentBendPoints());
 	}
 
 	/**
@@ -412,33 +431,7 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	default Affine getVisualTransform() {
-		// compute transformation from bend-points as a translation that equals
-		// the offset/min of the unattached bend-points
-		List<BendPoint> bendPoints = getVisualBendPoints();
-		// iterate over the unattached bend-points to find the minimum
-		Point min = null;
-		for (BendPoint bp : bendPoints) {
-			if (!bp.isAttached()) {
-				Point pos = bp.getPosition();
-				if (min == null) {
-					// initialize min
-					// XXX: copy so it can safely be changed
-					min = pos.getCopy();
-				} else {
-					// adjust min to the given position
-					if (min.x > pos.x) {
-						min.x = pos.x;
-					}
-					if (min.y > pos.y) {
-						min.y = pos.y;
-					}
-				}
-			}
-		}
-		// XXX: in case there are no unattached bend-points, an identity
-		// transformation is returned
-		return min == null ? new Affine()
-				: new Affine(1, 0, min.x, 0, 1, min.y);
+		return computeTranslationFromBendPoints(getVisualBendPoints());
 	}
 
 	/**
@@ -454,9 +447,9 @@ public interface IBendableContentPart<V extends Node>
 	@Override
 	default void setContentSize(Dimension totalSize) {
 		// determine visual offset
-		AffineTransform visualTransform = getContentTransform();
-		double currentX = visualTransform.getTranslateX();
-		double currentY = visualTransform.getTranslateY();
+		Affine visualTransform = getContentTransform();
+		double currentX = visualTransform.getTx();
+		double currentY = visualTransform.getTy();
 		// resize content bend points
 		List<BendPoint> resizedBendPoints = resizeBendPoints(
 				getContentBendPoints(), currentX, currentY, getContentSize(),
@@ -465,18 +458,9 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	@Override
-	default void setContentTransform(AffineTransform totalTransform) {
-		// compute delta transform
-		AffineTransform deltaTransform = ITransformableContentPart
-				.computeDeltaTransform(getContentTransform(), totalTransform);
-		// optimize for identity transform
-		if (deltaTransform.isIdentity()) {
-			return;
-		}
-		// transform content bend points
-		List<BendPoint> bendPoints = transformBendPoints(getContentBendPoints(),
-				deltaTransform);
-		setContentBendPoints(bendPoints);
+	default void setContentTransform(Affine totalTransform) {
+		setContentBendPoints(transformBendPoints(getContentBendPoints(),
+				getContentTransform(), totalTransform));
 	}
 
 	/**
@@ -547,18 +531,8 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	default void setVisualTransform(Affine totalTransform) {
-		// compute delta transform
-		Transform deltaTransform = ITransformableContentPart
-				.computeDeltaTransform(getVisualTransform(), totalTransform);
-		// optimize for identity transform
-		if (deltaTransform.isIdentity()) {
-			return;
-		}
-		// transform visual bend points
-		List<BendPoint> transformedBendPoints = transformBendPoints(
-				getVisualBendPoints(),
-				FX2Geometry.toAffineTransform(deltaTransform));
-		setVisualBendPoints(transformedBendPoints);
+		setVisualBendPoints(transformBendPoints(getVisualBendPoints(),
+				getVisualTransform(), totalTransform));
 	}
 
 }

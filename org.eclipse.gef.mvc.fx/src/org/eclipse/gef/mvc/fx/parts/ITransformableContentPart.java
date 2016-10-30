@@ -18,7 +18,6 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
 
 /**
  * An {@link IContentPart} that supports content related transformations.
@@ -44,7 +43,7 @@ public interface ITransformableContentPart<V extends Node>
 	 * @return The delta transformation that yields the final {@link Affine} if
 	 *         applied to the initial {@link Affine}.
 	 */
-	public static Transform computeDeltaTransform(Affine initialTransform,
+	public static Affine computeDeltaTransform(Affine initialTransform,
 			Affine finalTransform) {
 		Affine inverse;
 		try {
@@ -52,7 +51,7 @@ public interface ITransformableContentPart<V extends Node>
 		} catch (NonInvertibleTransformException e) {
 			throw new RuntimeException(e);
 		}
-		return inverse.createConcatenation(finalTransform);
+		return new Affine(inverse.createConcatenation(finalTransform));
 	}
 
 	/**
@@ -73,13 +72,13 @@ public interface ITransformableContentPart<V extends Node>
 	}
 
 	/**
-	 * Returns the current {@link AffineTransform} according to this
+	 * Returns the current {@link Affine} according to this
 	 * {@link ITransformableContentPart}'s content.
 	 *
-	 * @return The current {@link AffineTransform} according to this
+	 * @return The current {@link Affine} according to this
 	 *         {@link ITransformableContentPart}'s content.
 	 */
-	public default AffineTransform getContentTransform() {
+	public default Affine getContentTransform() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -101,7 +100,7 @@ public interface ITransformableContentPart<V extends Node>
 	 * @param totalTransform
 	 *            The {@link AffineTransform} to set.
 	 */
-	public default void setContentTransform(AffineTransform totalTransform) {
+	public default void setContentTransform(Affine totalTransform) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -40,7 +40,6 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Vector;
-import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
@@ -79,12 +78,13 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Affine;
 
 public class BendConnectionPolicyTests {
 
 	public static class AnchoragePart extends AbstractContentPart<Rectangle>
 			implements ITransformableContentPart<Rectangle> {
-		private AffineTransform transform = new AffineTransform();
+		private Affine transform = new Affine();
 
 		@Override
 		protected Rectangle doCreateVisual() {
@@ -112,12 +112,12 @@ public class BendConnectionPolicyTests {
 		}
 
 		@Override
-		public AffineTransform getContentTransform() {
+		public Affine getContentTransform() {
 			return transform;
 		}
 
 		@Override
-		public void setContentTransform(AffineTransform transform) {
+		public void setContentTransform(Affine transform) {
 			this.transform = transform;
 		}
 	}
@@ -151,11 +151,7 @@ public class BendConnectionPolicyTests {
 		public static final String START_ROLE = "start";
 		public static final String END_ROLE = "end";
 
-		private AffineTransform transform = new AffineTransform();
-
-		@Override
-		public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
-		}
+		private Affine transform = new Affine();
 
 		@Override
 		protected void doAttachToAnchorageVisual(final IVisualPart<? extends Node> anchorage, final String role) {
@@ -211,12 +207,16 @@ public class BendConnectionPolicyTests {
 		}
 
 		@Override
-		public AffineTransform getContentTransform() {
+		public Affine getContentTransform() {
 			return transform;
 		}
 
 		@Override
-		public void setContentTransform(AffineTransform transform) {
+		public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
+		}
+
+		@Override
+		public void setContentTransform(Affine transform) {
 			this.transform = transform;
 		}
 

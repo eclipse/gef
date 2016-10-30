@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef.fx.nodes.GeometryNode;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
@@ -39,6 +40,7 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
 public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNode<IShape>>
@@ -188,8 +190,16 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 	}
 
 	@Override
-	public AffineTransform getContentTransform() {
-		return getContent().getTransform();
+	public Affine getContentTransform() {
+		return Geometry2FX.toFXAffine(getContent().getTransform());
+	}
+
+	@Override
+	public void setContent(Object model) {
+		if (model != null && !(model instanceof GeometricShape)) {
+			throw new IllegalArgumentException("Only IShape models are supported.");
+		}
+		super.setContent(model);
 	}
 
 	@Override
@@ -206,16 +216,8 @@ public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNod
 	}
 
 	@Override
-	public void setContent(Object model) {
-		if (model != null && !(model instanceof GeometricShape)) {
-			throw new IllegalArgumentException("Only IShape models are supported.");
-		}
-		super.setContent(model);
-	}
-
-	@Override
-	public void setContentTransform(AffineTransform totalTransform) {
-		getContent().setTransform(totalTransform);
+	public void setContentTransform(Affine totalTransform) {
+		getContent().setTransform(FX2Geometry.toAffineTransform(totalTransform));
 	}
 
 	private void updateLayoutBoundsRect(GeometryNode<IShape> geometryNode) {

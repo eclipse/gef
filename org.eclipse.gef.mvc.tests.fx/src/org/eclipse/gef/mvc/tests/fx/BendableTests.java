@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.fx.nodes.Connection;
-import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -18,6 +17,9 @@ import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
 import org.junit.Test;
 
 import com.google.common.collect.SetMultimap;
+
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Translate;
 
 public class BendableTests {
 
@@ -29,11 +31,6 @@ public class BendableTests {
 			for (Point p : points) {
 				contentBendPoints.add(new BendPoint(p));
 			}
-		}
-
-		@Override
-		public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
-			contentBendPoints = bendPoints;
 		}
 
 		@Override
@@ -60,6 +57,11 @@ public class BendableTests {
 			return contentBendPoints;
 		}
 
+		@Override
+		public void setContentBendPoints(List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> bendPoints) {
+			contentBendPoints = bendPoints;
+		}
+
 	}
 
 	@Test
@@ -75,8 +77,7 @@ public class BendableTests {
 		Dimension contentSize = bendable.getContentSize();
 		assertEquals(new Rectangle(start, end).getSize(), contentSize);
 		// check transform (should equal translation to offset)
-		Point contentOffset = new Point(bendable.getContentTransform().getTranslateX(),
-				bendable.getContentTransform().getTranslateY());
+		Point contentOffset = new Point(bendable.getContentTransform().getTx(), bendable.getContentTransform().getTy());
 		assertEquals(start, contentOffset);
 		// check resize
 		Point newEnd = end.getTranslated(0, 50);
@@ -84,8 +85,7 @@ public class BendableTests {
 		bendable.setContentSize(newBounds.getSize());
 		assertEquals(newBounds.getSize(), bendable.getContentSize());
 		// check content offset did not change
-		contentOffset = new Point(bendable.getContentTransform().getTranslateX(),
-				bendable.getContentTransform().getTranslateY());
+		contentOffset = new Point(bendable.getContentTransform().getTx(), bendable.getContentTransform().getTy());
 		assertEquals(start, contentOffset);
 	}
 
@@ -102,17 +102,15 @@ public class BendableTests {
 		Dimension contentSize = bendable.getContentSize();
 		assertEquals(new Rectangle(start, end).getSize(), contentSize);
 		// check transform (should equal translation to offset)
-		Point contentOffset = new Point(bendable.getContentTransform().getTranslateX(),
-				bendable.getContentTransform().getTranslateY());
+		Point contentOffset = new Point(bendable.getContentTransform().getTx(), bendable.getContentTransform().getTy());
 		assertEquals(start, contentOffset);
 		// apply translation
 		Point newStart = start.getTranslated(20, 50);
 		Point newEnd = end.getTranslated(20, 50);
 		Rectangle newBounds = new Rectangle(newStart, newEnd);
-		bendable.setContentTransform(new AffineTransform().setToTranslation(newStart.x, newStart.y));
+		bendable.setContentTransform(new Affine(new Translate(newStart.x, newStart.y)));
 		assertEquals(newBounds.getSize(), bendable.getContentSize());
-		contentOffset = new Point(bendable.getContentTransform().getTranslateX(),
-				bendable.getContentTransform().getTranslateY());
+		contentOffset = new Point(bendable.getContentTransform().getTx(), bendable.getContentTransform().getTy());
 		assertEquals(newStart, contentOffset);
 	}
 

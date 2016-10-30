@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 
@@ -37,6 +39,7 @@ public class TransformContentOperation<VR> extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final ITransformableContentPart<? extends Node> transformableContentPart;
+	// TODO: Use JavaFX Affine
 	private AffineTransform finalTransform;
 	private AffineTransform initialTransform;
 
@@ -55,15 +58,16 @@ public class TransformContentOperation<VR> extends AbstractOperation
 			AffineTransform finalTransform) {
 		super("Transform Content");
 		this.transformableContentPart = transformableContentPart;
-		this.initialTransform = transformableContentPart.getContentTransform()
-				.getCopy();
+		this.initialTransform = FX2Geometry.toAffineTransform(
+				transformableContentPart.getContentTransform());
 		this.finalTransform = finalTransform;
 	}
 
 	private void applyTransform(AffineTransform transform) {
 		if (!transformableContentPart.getContentTransform()
 				.equals(finalTransform)) {
-			transformableContentPart.setContentTransform(transform);
+			transformableContentPart
+					.setContentTransform(Geometry2FX.toFXAffine(transform));
 		}
 	}
 

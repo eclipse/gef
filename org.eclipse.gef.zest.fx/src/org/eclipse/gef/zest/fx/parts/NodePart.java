@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Graph;
@@ -467,12 +466,12 @@ public class NodePart extends AbstractContentPart<Group>
 	}
 
 	@Override
-	public AffineTransform getContentTransform() {
+	public Affine getContentTransform() {
 		Point position = ZestProperties.getPosition(getContent());
 		if (position == null) {
 			position = new Point();
 		}
-		return new AffineTransform().setToTranslation(position.x, position.y);
+		return new Affine(new Translate(position.x, position.y));
 	}
 
 	/**
@@ -610,6 +609,11 @@ public class NodePart extends AbstractContentPart<Group>
 		ZestProperties.setSize(getContent(), size);
 	}
 
+	@Override
+	public void setContentTransform(Affine totalTransform) {
+		ZestProperties.setPosition(getContent(), new Point(totalTransform.getTx(), totalTransform.getTy()));
+	}
+
 	/**
 	 * Creates the nested graph icon and adds it to the
 	 * {@link #getNestedContentStackPane()}.
@@ -619,12 +623,6 @@ public class NodePart extends AbstractContentPart<Group>
 			nestedGraphIcon = new NestedGraphIcon();
 			getNestedContentStackPane().getChildren().add(nestedGraphIcon);
 		}
-	}
-
-	@Override
-	public void setContentTransform(AffineTransform totalTransform) {
-		ZestProperties.setPosition(getContent(),
-				new Point(totalTransform.getTranslateX(), totalTransform.getTranslateY()));
 	}
 
 }

@@ -46,11 +46,12 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Affine;
 
 public class TransformPolicyTests {
 
 	static class PointPart extends AbstractContentPart<Rectangle> implements ITransformableContentPart<Rectangle> {
-		private AffineTransform transform = new AffineTransform();
+		private Affine transform = new Affine();
 
 		@Override
 		protected Rectangle doCreateVisual() {
@@ -79,12 +80,12 @@ public class TransformPolicyTests {
 		}
 
 		@Override
-		public AffineTransform getContentTransform() {
+		public Affine getContentTransform() {
 			return transform;
 		}
 
 		@Override
-		public void setContentTransform(AffineTransform transform) {
+		public void setContentTransform(Affine transform) {
 			this.transform = transform;
 		}
 	}

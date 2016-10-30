@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.fx.listeners.VisualChangeListener;
-import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.TransformVisualOperation;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
@@ -133,12 +132,12 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	}
 
 	@Override
-	public AffineTransform getContentTransform() {
+	public Affine getContentTransform() {
 		Point p = getStoredLabelPosition();
 		if (p == null) {
 			p = new Point();
 		}
-		return new AffineTransform().setToTranslation(p.x, p.y);
+		return new Affine(new Translate(p.x, p.y));
 	}
 
 	/**
@@ -209,6 +208,11 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 		}
 	}
 
+	@Override
+	public void setContentTransform(Affine transform) {
+		setStoredLabelPosition(new Point(transform.getTx(), transform.getTy()));
+	}
+
 	/**
 	 * Sets the stored label position to the given value.
 	 *
@@ -217,11 +221,6 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 */
 	public void setStoredLabelPosition(Point computedPosition) {
 		getContent().getKey().getAttributes().put(getLabelPositionAttributeKey(), computedPosition);
-	}
-
-	@Override
-	public void setContentTransform(AffineTransform transform) {
-		setStoredLabelPosition(new Point(transform.getTranslateX(), transform.getTranslateY()));
 	}
 
 }
