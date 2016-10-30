@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.zest.fx.jface.IGraphAttributesProvider;
 import org.eclipse.gef.zest.fx.jface.IGraphContentProvider;
@@ -158,7 +157,7 @@ public class JFaceCustomNodeExample {
 
 		@Override
 		public IContentPart<? extends Node> createContentPart(Object content,
-				IBehavior contextBehavior, Map<Object, Object> contextMap) {
+				Map<Object, Object> contextMap) {
 			if (content instanceof org.eclipse.gef.graph.Node) {
 				// create custom node if we find the custom attribute
 				org.eclipse.gef.graph.Node n = (org.eclipse.gef.graph.Node) content;
@@ -170,8 +169,7 @@ public class JFaceCustomNodeExample {
 					return part;
 				}
 			}
-			return super.createContentPart(content, contextBehavior,
-					contextMap);
+			return super.createContentPart(content, contextMap);
 		}
 	}
 

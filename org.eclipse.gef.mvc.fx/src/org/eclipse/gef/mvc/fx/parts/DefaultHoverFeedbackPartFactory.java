@@ -18,8 +18,6 @@ import java.util.Map;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.IGeometry;
-import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -59,13 +57,7 @@ public class DefaultHoverFeedbackPartFactory implements IFeedbackPartFactory {
 	@Override
 	public List<IFeedbackPart<? extends Node>> createFeedbackParts(
 			List<? extends IVisualPart<? extends Node>> targets,
-			IBehavior contextBehavior, Map<Object, Object> contextMap) {
-		// check creation context
-		if (!(contextBehavior instanceof HoverBehavior)) {
-			throw new IllegalArgumentException(
-					"The DefaultHoverFeedbackPartFactory can only generate feedback parts in the context of a HoverBehavior, but the context behavior is a <"
-							+ contextBehavior + ">.");
-		}
+			Map<Object, Object> contextMap) {
 		// check that we have targets
 		if (targets == null || targets.isEmpty()) {
 			throw new IllegalArgumentException(

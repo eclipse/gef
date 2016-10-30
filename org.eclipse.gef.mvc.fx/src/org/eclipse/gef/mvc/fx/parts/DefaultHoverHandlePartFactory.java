@@ -24,7 +24,6 @@ import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Rectangle;
-import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 
 import com.google.common.reflect.TypeToken;
@@ -53,13 +52,7 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 	@Override
 	public List<IHandlePart<? extends Node>> createHandleParts(
 			List<? extends IVisualPart<? extends Node>> targets,
-			IBehavior contextBehavior, Map<Object, Object> contextMap) {
-		// check creation context
-		if (!(contextBehavior instanceof HoverBehavior)) {
-			throw new IllegalArgumentException(
-					"The DefaultHoverHandlePartFactory can only generate handle parts in the context of a HoverBehavior, but the context behavior is a <"
-							+ contextBehavior + ">.");
-		}
+			Map<Object, Object> contextMap) {
 		// check that we have targets
 		if (targets == null || targets.isEmpty()) {
 			throw new IllegalArgumentException(
@@ -123,19 +116,17 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 
 		if (hoverHandlesGeometry instanceof ICurve) {
 			// create curve handles
-			return createHoverHandlePartsForCurve(target, contextBehavior,
-					contextMap, hoverHandlesSegmentsInSceneProvider);
+			return createHoverHandlePartsForCurve(target, contextMap,
+					hoverHandlesSegmentsInSceneProvider);
 		} else if (hoverHandlesGeometry instanceof IShape) {
 			if (hoverHandlesGeometry instanceof Rectangle) {
 				// create box handles
 				return createHoverHandlePartsForRectangularOutline(target,
-						contextBehavior, contextMap,
-						hoverHandlesSegmentsInSceneProvider);
+						contextMap, hoverHandlesSegmentsInSceneProvider);
 			} else {
 				// create segment handles (based on outline)
 				return createHoverHandlePartsForPolygonalOutline(target,
-						contextBehavior, contextMap,
-						hoverHandlesSegmentsInSceneProvider);
+						contextMap, hoverHandlesSegmentsInSceneProvider);
 			}
 		} else {
 			throw new IllegalStateException(
@@ -151,9 +142,6 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 	 * @param target
 	 *            The target {@link IVisualPart} for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -170,8 +158,7 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 	 *         given targets.
 	 */
 	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForCurve(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior,
-			Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		return Collections.emptyList();
 	}
@@ -183,9 +170,6 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 	 * @param target
 	 *            The target {@link IVisualPart} for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -202,8 +186,7 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 	 *         given targets.
 	 */
 	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForPolygonalOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior,
-			Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();
@@ -225,9 +208,6 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 	 * @param target
 	 *            The target {@link IVisualPart} for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -244,8 +224,7 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 	 *         given targets.
 	 */
 	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForRectangularOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior,
-			Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		return Collections.emptyList();
 	}

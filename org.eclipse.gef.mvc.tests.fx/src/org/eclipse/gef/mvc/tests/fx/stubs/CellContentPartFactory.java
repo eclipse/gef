@@ -13,7 +13,6 @@ package org.eclipse.gef.mvc.tests.fx.stubs;
 
 import java.util.Map;
 
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 
@@ -28,8 +27,7 @@ public class CellContentPartFactory implements IContentPartFactory {
 	private Injector injector;
 
 	@Override
-	public IContentPart<Node> createContentPart(Object content, IBehavior contextBehavior,
-			Map<Object, Object> contextMap) {
+	public IContentPart<Node> createContentPart(Object content, Map<Object, Object> contextMap) {
 		if (content instanceof Cell) {
 			return injector.getInstance(CellContentPart.class);
 		} else {

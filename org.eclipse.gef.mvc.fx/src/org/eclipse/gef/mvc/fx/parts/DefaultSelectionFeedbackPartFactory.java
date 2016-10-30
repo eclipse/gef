@@ -28,8 +28,6 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -87,13 +85,7 @@ public class DefaultSelectionFeedbackPartFactory
 	@Override
 	public List<IFeedbackPart<? extends Node>> createFeedbackParts(
 			List<? extends IVisualPart<? extends Node>> targets,
-			IBehavior contextBehavior, Map<Object, Object> contextMap) {
-		// check creation context
-		if (!(contextBehavior instanceof SelectionBehavior)) {
-			throw new IllegalArgumentException(
-					"The DefaultSelectionFeedbackPartFactory can only generate feedback parts in the context of a SelectionBehavior, but the context behavior is a <"
-							+ contextBehavior + ">.");
-		}
+			Map<Object, Object> contextMap) {
 		// check that we have targets
 		if (targets == null || targets.isEmpty()) {
 			throw new IllegalArgumentException(

@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -87,8 +86,7 @@ public class ClickDragToolTests {
 			protected void bindIContentPartFactory() {
 				binder().bind(IContentPartFactory.class).toInstance(new IContentPartFactory() {
 					@Override
-					public IContentPart<? extends Node> createContentPart(Object content, IBehavior contextBehavior,
-							Map<Object, Object> contextMap) {
+					public IContentPart<? extends Node> createContentPart(Object content, Map<Object, Object> contextMap) {
 						return null;
 					}
 				});

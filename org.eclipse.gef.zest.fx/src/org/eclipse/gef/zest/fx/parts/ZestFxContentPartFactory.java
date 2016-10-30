@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.zest.fx.ZestProperties;
@@ -43,8 +42,7 @@ public class ZestFxContentPartFactory implements IContentPartFactory {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public IContentPart<? extends Node> createContentPart(Object content, IBehavior contextBehavior,
-			Map<Object, Object> contextMap) {
+	public IContentPart<? extends Node> createContentPart(Object content, Map<Object, Object> contextMap) {
 		IContentPart<? extends Node> part = null;
 		if (content instanceof Graph) {
 			part = new GraphPart();

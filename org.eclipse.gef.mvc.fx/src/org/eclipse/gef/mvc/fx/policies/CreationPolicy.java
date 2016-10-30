@@ -93,7 +93,7 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 
 		// create content part beforehand
 		IContentPart<? extends Node> contentPart = getContentPartFactory()
-				.createContentPart(content, null, null);
+				.createContentPart(content, null);
 		// establish relationships to parent and anchored parts
 		contentPart.setContent(content);
 		parent.addChild(contentPart, index);

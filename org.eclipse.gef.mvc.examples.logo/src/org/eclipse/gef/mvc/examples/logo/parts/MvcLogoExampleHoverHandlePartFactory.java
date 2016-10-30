@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.planar.BezierCurve;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -34,7 +33,7 @@ public class MvcLogoExampleHoverHandlePartFactory extends DefaultHoverHandlePart
 
 	@Override
 	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForPolygonalOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior, Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<? extends Node>> handles = new ArrayList<>();
 		if (target instanceof GeometricShapePart) {
@@ -57,9 +56,9 @@ public class MvcLogoExampleHoverHandlePartFactory extends DefaultHoverHandlePart
 
 	@Override
 	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForRectangularOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior, Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
-		return createHoverHandlePartsForPolygonalOutline(target, contextBehavior, contextMap, segmentsProvider);
+		return createHoverHandlePartsForPolygonalOutline(target, contextMap, segmentsProvider);
 	}
 
 }

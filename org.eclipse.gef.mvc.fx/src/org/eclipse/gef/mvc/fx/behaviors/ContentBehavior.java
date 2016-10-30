@@ -229,7 +229,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				// System.out.println("CREATE " + content);
 				IContentPartFactory contentPartFactory = getContentPartFactory();
 				contentPart = contentPartFactory.createContentPart(content,
-						this, Collections.emptyMap());
+						Collections.emptyMap());
 				if (contentPart == null) {
 					throw new IllegalStateException("IContentPartFactory '"
 							+ contentPartFactory.getClass().getSimpleName()

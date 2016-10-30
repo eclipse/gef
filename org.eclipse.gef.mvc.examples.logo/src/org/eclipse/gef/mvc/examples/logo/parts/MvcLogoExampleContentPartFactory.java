@@ -16,7 +16,6 @@ import java.util.Map;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 
@@ -31,8 +30,7 @@ public class MvcLogoExampleContentPartFactory implements IContentPartFactory {
 	private Injector injector;
 
 	@Override
-	public IContentPart<? extends Node> createContentPart(Object content, IBehavior contextBehavior,
-			Map<Object, Object> contextMap) {
+	public IContentPart<? extends Node> createContentPart(Object content, Map<Object, Object> contextMap) {
 
 		if (content instanceof GeometricModel) {
 			return injector.getInstance(GeometricModelPart.class);

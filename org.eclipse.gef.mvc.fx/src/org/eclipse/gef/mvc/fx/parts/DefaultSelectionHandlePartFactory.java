@@ -28,7 +28,6 @@ import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Polyline;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -124,13 +123,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	@Override
 	public List<IHandlePart<? extends Node>> createHandleParts(
 			List<? extends IVisualPart<? extends Node>> targets,
-			IBehavior contextBehavior, Map<Object, Object> contextMap) {
-		// check creation context
-		if (!(contextBehavior instanceof SelectionBehavior)) {
-			throw new IllegalArgumentException(
-					"The DefaultSelectionHandlePartFactory can only generate handle parts in the context of a SelectionBehavior, but the context behavior is a <"
-							+ contextBehavior + ">.");
-		}
+			Map<Object, Object> contextMap) {
 		// check that we have targets
 		if (targets == null || targets.isEmpty()) {
 			throw new IllegalArgumentException(
@@ -138,11 +131,9 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 		}
 
 		if (targets.size() == 1) {
-			return createSingleSelectionHandleParts(targets.get(0),
-					contextBehavior, contextMap);
+			return createSingleSelectionHandleParts(targets.get(0), contextMap);
 		} else {
-			return createMultiSelectionHandleParts(targets, contextBehavior,
-					contextMap);
+			return createMultiSelectionHandleParts(targets, contextMap);
 		}
 	}
 
@@ -152,9 +143,6 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 * @param targets
 	 *            The target {@link IVisualPart}s for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -169,7 +157,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 */
 	protected List<IHandlePart<? extends Node>> createMultiSelectionHandleParts(
 			final List<? extends IVisualPart<? extends Node>> targets,
-			IBehavior contextBehavior, Map<Object, Object> contextMap) {
+			Map<Object, Object> contextMap) {
 		// TODO: use multi selection handle goemetry provider so it can be
 		// configured
 		// Provider<? extends IGeometry> rtGeometryProvider = new
@@ -223,9 +211,6 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 * @param target
 	 *            The target {@link IVisualPart} for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -240,8 +225,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 */
 	@SuppressWarnings("serial")
 	protected List<IHandlePart<? extends Node>> createSingleSelectionHandleParts(
-			final IVisualPart<? extends Node> target, IBehavior contextBehavior,
-			Map<Object, Object> contextMap) {
+			final IVisualPart<? extends Node> target, Map<Object, Object> contextMap) {
 		// determine handle geometry (in target visual local coordinates)
 		final Provider<? extends IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
 				.getAdapter(AdapterKey
@@ -267,19 +251,16 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 		if (selectionHandlesGeometry instanceof ICurve) {
 			// create curve handles
 			return createSingleSelectionHandlePartsForCurve(target,
-					contextBehavior, contextMap,
-					selectionHandlesSegmentsInSceneProvider);
+					contextMap, selectionHandlesSegmentsInSceneProvider);
 		} else if (selectionHandlesGeometry instanceof IShape) {
 			if (selectionHandlesGeometry instanceof Rectangle) {
 				// create box handles
 				return createSingleSelectionHandlePartsForRectangularOutline(
-						target, contextBehavior, contextMap,
-						selectionHandlesSegmentsInSceneProvider);
+						target, contextMap, selectionHandlesSegmentsInSceneProvider);
 			} else {
 				// create segment handles (based on outline)
 				return createSingleSelectionHandlePartsForPolygonalOutline(
-						target, contextBehavior, contextMap,
-						selectionHandlesSegmentsInSceneProvider);
+						target, contextMap, selectionHandlesSegmentsInSceneProvider);
 			}
 		} else {
 			throw new IllegalStateException(
@@ -295,9 +276,6 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 * @param target
 	 *            The target {@link IVisualPart} for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -314,8 +292,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 *         given targets.
 	 */
 	protected List<IHandlePart<? extends Node>> createSingleSelectionHandlePartsForCurve(
-			final IVisualPart<? extends Node> target, IBehavior contextBehavior,
-			Map<Object, Object> contextMap,
+			final IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<? extends Node>> hps = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();
@@ -420,9 +397,6 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 * @param target
 	 *            The target {@link IVisualPart} for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -439,8 +413,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 *         given targets.
 	 */
 	protected List<IHandlePart<? extends Node>> createSingleSelectionHandlePartsForPolygonalOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior,
-			Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();
@@ -463,9 +436,6 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 * @param target
 	 *            The target {@link IVisualPart} for which handles are to be
 	 *            created.
-	 * @param contextBehavior
-	 *            The context {@link IBehavior} which initiates the creation of
-	 *            feedback.
 	 * @param contextMap
 	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
@@ -482,8 +452,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 *         given targets.
 	 */
 	protected List<IHandlePart<? extends Node>> createSingleSelectionHandlePartsForRectangularOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior,
-			Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<? extends Node>> hps = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();

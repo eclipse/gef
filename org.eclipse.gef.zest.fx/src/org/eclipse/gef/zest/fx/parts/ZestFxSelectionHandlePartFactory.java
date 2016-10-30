@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -35,8 +34,7 @@ public class ZestFxSelectionHandlePartFactory extends DefaultSelectionHandlePart
 
 	@Override
 	protected List<IHandlePart<? extends Node>> createMultiSelectionHandleParts(
-			List<? extends IVisualPart<? extends Node>> targets, IBehavior contextBehavior,
-			Map<Object, Object> contextMap) {
+			List<? extends IVisualPart<? extends Node>> targets, Map<Object, Object> contextMap) {
 		return Collections.emptyList();
 	}
 

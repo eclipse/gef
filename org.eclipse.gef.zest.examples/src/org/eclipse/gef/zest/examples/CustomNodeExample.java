@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.zest.fx.ZestFxModule;
@@ -47,7 +46,7 @@ public class CustomNodeExample extends AbstractZestExample {
 
 		@Override
 		public IContentPart<? extends Node> createContentPart(Object content,
-				IBehavior contextBehavior, Map<Object, Object> contextMap) {
+				Map<Object, Object> contextMap) {
 			if (content instanceof org.eclipse.gef.graph.Node) {
 				// create custom node if we find the custom attribute
 				org.eclipse.gef.graph.Node n = (org.eclipse.gef.graph.Node) content;
@@ -60,8 +59,7 @@ public class CustomNodeExample extends AbstractZestExample {
 					return part;
 				}
 			}
-			return super.createContentPart(content, contextBehavior,
-					contextMap);
+			return super.createContentPart(content, contextMap);
 		}
 	}
 

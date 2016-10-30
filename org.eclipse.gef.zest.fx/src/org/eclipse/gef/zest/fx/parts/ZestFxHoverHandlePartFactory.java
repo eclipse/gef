@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.planar.BezierCurve;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -31,8 +30,8 @@ import javafx.scene.Node;
 
 /**
  * The {@link ZestFxHoverHandlePartFactory} is a specialization of the
- * {@link DefaultHoverHandlePartFactory} that performs the generation of
- * "hide" and "show" hover handles.
+ * {@link DefaultHoverHandlePartFactory} that performs the generation of "hide"
+ * and "show" hover handles.
  *
  * @author mwienand
  *
@@ -44,7 +43,7 @@ public class ZestFxHoverHandlePartFactory extends DefaultHoverHandlePartFactory 
 
 	@Override
 	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForPolygonalOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior, Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
 		if (target instanceof NodePart) {
@@ -72,9 +71,9 @@ public class ZestFxHoverHandlePartFactory extends DefaultHoverHandlePartFactory 
 
 	@Override
 	protected List<IHandlePart<? extends Node>> createHoverHandlePartsForRectangularOutline(
-			IVisualPart<? extends Node> target, IBehavior contextBehavior, Map<Object, Object> contextMap,
+			IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
-		return createHoverHandlePartsForPolygonalOutline(target, contextBehavior, contextMap, segmentsProvider);
+		return createHoverHandlePartsForPolygonalOutline(target, contextMap, segmentsProvider);
 	}
 
 }

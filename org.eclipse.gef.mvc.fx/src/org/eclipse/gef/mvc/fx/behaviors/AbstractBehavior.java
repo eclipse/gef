@@ -170,8 +170,7 @@ public abstract class AbstractBehavior implements IBehavior {
 		// generate feedback parts
 		List<IFeedbackPart<? extends Node>> feedbackParts = null;
 		if (factory != null) {
-			feedbackParts = factory.createFeedbackParts(targets, this,
-					Collections.emptyMap());
+			feedbackParts = factory.createFeedbackParts(targets, Collections.emptyMap());
 		}
 		if (feedbackParts == null) {
 			// XXX: An empty list is put into the feedback per target set map,
@@ -232,8 +231,7 @@ public abstract class AbstractBehavior implements IBehavior {
 		// generate handle parts
 		List<IHandlePart<? extends Node>> handleParts = null;
 		if (factory != null) {
-			handleParts = factory.createHandleParts(targets, this,
-					Collections.emptyMap());
+			handleParts = factory.createHandleParts(targets, Collections.emptyMap());
 		}
 		if (handleParts == null) {
 			// XXX: An empty list is put into the handles per target set map,
@@ -788,7 +786,7 @@ public abstract class AbstractBehavior implements IBehavior {
 
 		// determine new handles
 		List<IHandlePart<? extends Node>> newHandles = handlePartFactory
-				.createHandleParts(targets, this, Collections.emptyMap());
+				.createHandleParts(targets, Collections.emptyMap());
 
 		// compare to current handles => remove/add as needed
 		IHandlePart<? extends Node> replacementHandle = null;

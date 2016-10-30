@@ -22,7 +22,6 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -95,8 +94,7 @@ public class TransformPolicyTests {
 		private Injector injector;
 
 		@Override
-		public IContentPart<? extends Node> createContentPart(Object content, IBehavior contextBehavior,
-				Map<Object, Object> contextMap) {
+		public IContentPart<? extends Node> createContentPart(Object content, Map<Object, Object> contextMap) {
 			if (content instanceof Point) {
 				return injector.getInstance(PointPart.class);
 			} else {

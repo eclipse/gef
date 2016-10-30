@@ -44,7 +44,6 @@ import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
@@ -240,8 +239,7 @@ public class BendConnectionPolicyTests {
 		private Injector injector;
 
 		@Override
-		public IContentPart<? extends Node> createContentPart(final Object content, final IBehavior contextBehavior,
-				final Map<Object, Object> contextMap) {
+		public IContentPart<? extends Node> createContentPart(final Object content, final Map<Object, Object> contextMap) {
 			if (content instanceof org.eclipse.gef.geometry.planar.IShape) {
 				return injector.getInstance(AnchoragePart.class);
 			} else if (content instanceof ConnectionContent) {

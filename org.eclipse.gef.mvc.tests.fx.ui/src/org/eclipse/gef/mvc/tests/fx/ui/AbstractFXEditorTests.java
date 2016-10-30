@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
-import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
@@ -158,8 +157,7 @@ public class AbstractFXEditorTests {
 		protected void bindIContentPartFactory() {
 			binder().bind(IContentPartFactory.class).toInstance(new IContentPartFactory() {
 				@Override
-				public IContentPart<? extends Node> createContentPart(Object content, IBehavior contextBehavior,
-						Map<Object, Object> contextMap) {
+				public IContentPart<? extends Node> createContentPart(Object content, Map<Object, Object> contextMap) {
 					return null;
 				}
 			});
