@@ -38,9 +38,7 @@ public interface ITransformableContentPart<V extends Node>
 	 * @return The current {@link Affine} according to this
 	 *         {@link ITransformableContentPart}'s content.
 	 */
-	public default Affine getContentTransform() {
-		throw new UnsupportedOperationException();
-	}
+	public Affine getContentTransform();
 
 	/**
 	 * Returns the current transform according to this
@@ -60,9 +58,7 @@ public interface ITransformableContentPart<V extends Node>
 	 * @param totalTransform
 	 *            The {@link AffineTransform} to set.
 	 */
-	public default void setContentTransform(Affine totalTransform) {
-		throw new UnsupportedOperationException();
-	}
+	public void setContentTransform(Affine totalTransform);
 
 	/**
 	 * Sets the given {@link Affine} as the {@link #getVisualTransform() visual

@@ -373,9 +373,7 @@ public interface IBendableContentPart<V extends Node>
 	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
 	 *         content.
 	 */
-	public default List<BendPoint> getContentBendPoints() {
-		throw new UnsupportedOperationException();
-	}
+	public List<BendPoint> getContentBendPoints();
 
 	@Override
 	public default Dimension getContentSize() {
@@ -447,9 +445,7 @@ public interface IBendableContentPart<V extends Node>
 	 * @param bendPoints
 	 *            The bend points.
 	 */
-	public default void setContentBendPoints(List<BendPoint> bendPoints) {
-		throw new UnsupportedOperationException();
-	}
+	public void setContentBendPoints(List<BendPoint> bendPoints);
 
 	@Override
 	default void setContentSize(Dimension totalSize) {

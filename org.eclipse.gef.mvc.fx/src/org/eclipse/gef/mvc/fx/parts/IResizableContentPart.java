@@ -34,9 +34,7 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	 *
 	 * @return The current size according to this part's content.
 	 */
-	public default Dimension getContentSize() {
-		throw new UnsupportedOperationException();
-	}
+	public Dimension getContentSize();
 
 	/**
 	 * Returns the current size according to this
@@ -55,9 +53,7 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	 * @param totalSize
 	 *            The new size.
 	 */
-	public default void setContentSize(Dimension totalSize) {
-		throw new UnsupportedOperationException();
-	}
+	public void setContentSize(Dimension totalSize);
 
 	/**
 	 * Resizes the visual of this {@link IResizableContentPart} to the given
