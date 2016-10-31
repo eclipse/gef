@@ -777,7 +777,8 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getControlPoint(int index) {
-		return points.get(getAnchorIndex(getControlAnchorKey(index)));
+		int anchorIndex = getAnchorIndex(getControlAnchorKey(index));
+		return anchorIndex < 0 ? null : points.get(anchorIndex);
 	}
 
 	/**
@@ -853,7 +854,8 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getEndPoint() {
-		return points.get(getAnchorIndex(getEndAnchorKey()));
+		int anchorIndex = getAnchorIndex(getEndAnchorKey());
+		return anchorIndex < 0 ? null : points.get(anchorIndex);
 	}
 
 	/**
@@ -962,7 +964,8 @@ public class Connection extends Group {
 	 *         <code>null</code>.
 	 */
 	public Point getStartPoint() {
-		return points.get(getAnchorIndex(getStartAnchorKey()));
+		int anchorIndex = getAnchorIndex(getStartAnchorKey());
+		return anchorIndex < 0 ? null : points.get(anchorIndex);
 	}
 
 	/**
