@@ -28,6 +28,7 @@ import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Polyline;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.providers.ResizableTransformableBoundsProvider;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -160,34 +161,36 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 			Map<Object, Object> contextMap) {
 		// TODO: use multi selection handle goemetry provider so it can be
 		// configured
-		// Provider<? extends IGeometry> rtGeometryProvider = new
-		// Provider<IGeometry>() {
-		// @Override
-		// public IGeometry get() {
-		// Rectangle bounds = null;
-		// for (IVisualPart<? extends Node> part : targets) {
-		// ResizableTransformableBoundsProvider rtBoundsProvider = new
-		// ResizableTransformableBoundsProvider();
-		// rtBoundsProvider.setAdaptable(part);
-		// Rectangle boundsInScene = (Rectangle) rtBoundsProvider
-		// .get();
-		// if (bounds == null) {
-		// bounds = boundsInScene;
-		// } else {
-		// bounds.union(boundsInScene);
-		// }
-		// }
-		// return bounds;
-		// }
-		// };
+
 		Provider<? extends IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
-				// TODO: move code out of PartUtils into a geometry provider
-				// (move to FX)
-				return PartUtils.getUnionedVisualBoundsInScene(targets);
+				Rectangle bounds = null;
+				for (IVisualPart<? extends Node> part : targets) {
+					ResizableTransformableBoundsProvider rtBoundsProvider = new ResizableTransformableBoundsProvider();
+					rtBoundsProvider.setAdaptable(part);
+					Rectangle boundsInScene = (Rectangle) rtBoundsProvider
+							.get();
+					if (bounds == null) {
+						bounds = boundsInScene;
+					} else {
+						bounds.union(boundsInScene);
+					}
+				}
+				return bounds;
 			}
 		};
+
+		// Provider<? extends IGeometry> handleGeometryProvider = new
+		// Provider<IGeometry>() {
+		// @Override
+		// public IGeometry get() {
+		// // TODO: move code out of PartUtils into a geometry provider
+		// // (move to FX)
+		// return PartUtils.getUnionedVisualBoundsInScene(targets);
+		// }
+		// };
+
 		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
 		// per default, handle parts are created for the 4 corners of the
 		// multi selection bounds
@@ -225,7 +228,8 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 */
 	@SuppressWarnings("serial")
 	protected List<IHandlePart<? extends Node>> createSingleSelectionHandleParts(
-			final IVisualPart<? extends Node> target, Map<Object, Object> contextMap) {
+			final IVisualPart<? extends Node> target,
+			Map<Object, Object> contextMap) {
 		// determine handle geometry (in target visual local coordinates)
 		final Provider<? extends IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
 				.getAdapter(AdapterKey
@@ -250,17 +254,19 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 
 		if (selectionHandlesGeometry instanceof ICurve) {
 			// create curve handles
-			return createSingleSelectionHandlePartsForCurve(target,
-					contextMap, selectionHandlesSegmentsInSceneProvider);
+			return createSingleSelectionHandlePartsForCurve(target, contextMap,
+					selectionHandlesSegmentsInSceneProvider);
 		} else if (selectionHandlesGeometry instanceof IShape) {
 			if (selectionHandlesGeometry instanceof Rectangle) {
 				// create box handles
 				return createSingleSelectionHandlePartsForRectangularOutline(
-						target, contextMap, selectionHandlesSegmentsInSceneProvider);
+						target, contextMap,
+						selectionHandlesSegmentsInSceneProvider);
 			} else {
 				// create segment handles (based on outline)
 				return createSingleSelectionHandlePartsForPolygonalOutline(
-						target, contextMap, selectionHandlesSegmentsInSceneProvider);
+						target, contextMap,
+						selectionHandlesSegmentsInSceneProvider);
 			}
 		} else {
 			throw new IllegalStateException(
@@ -292,7 +298,8 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	 *         given targets.
 	 */
 	protected List<IHandlePart<? extends Node>> createSingleSelectionHandlePartsForCurve(
-			final IVisualPart<? extends Node> target, Map<Object, Object> contextMap,
+			final IVisualPart<? extends Node> target,
+			Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<? extends Node>> hps = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();
