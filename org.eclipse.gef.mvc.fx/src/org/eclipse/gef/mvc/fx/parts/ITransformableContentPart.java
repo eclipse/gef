@@ -17,7 +17,6 @@ import org.eclipse.gef.geometry.planar.AffineTransform;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.NonInvertibleTransformException;
 
 /**
  * An {@link IContentPart} that supports content related transformations.
@@ -31,45 +30,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
  */
 public interface ITransformableContentPart<V extends Node>
 		extends IContentPart<V> {
-
-	/**
-	 * Returns the {@link Affine} transformation that yields the given final
-	 * transformation if applied to the given initial transformation.
-	 *
-	 * @param initialTransform
-	 *            The initial {@link Affine}.
-	 * @param finalTransform
-	 *            The final {@link Affine}.
-	 * @return The delta transformation that yields the final {@link Affine} if
-	 *         applied to the initial {@link Affine}.
-	 */
-	public static Affine computeDeltaTransform(Affine initialTransform,
-			Affine finalTransform) {
-		Affine inverse;
-		try {
-			inverse = initialTransform.createInverse();
-		} catch (NonInvertibleTransformException e) {
-			throw new RuntimeException(e);
-		}
-		return new Affine(inverse.createConcatenation(finalTransform));
-	}
-
-	/**
-	 * Returns the {@link AffineTransform} that yields the given final
-	 * transformation if applied to the given initial transformation.
-	 *
-	 * @param initialTransform
-	 *            The initial {@link AffineTransform}.
-	 * @param finalTransform
-	 *            The final {@link AffineTransform}.
-	 * @return The delta transformation that yields the final
-	 *         {@link AffineTransform} if applied to the initial
-	 *         {@link AffineTransform}.
-	 */
-	public static AffineTransform computeDeltaTransform(
-			AffineTransform initialTransform, AffineTransform finalTransform) {
-		return initialTransform.getInverse().concatenate(finalTransform);
-	}
 
 	/**
 	 * Returns the current {@link Affine} according to this

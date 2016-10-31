@@ -27,6 +27,7 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
@@ -334,8 +335,14 @@ public interface IBendableContentPart<V extends Node>
 			List<BendPoint> bendPoints, Affine currentTransform,
 			Affine totalTransform) {
 		// compute delta transform
-		Transform deltaTransform = ITransformableContentPart
-				.computeDeltaTransform(currentTransform, totalTransform);
+		Affine inverse;
+		try {
+			inverse = currentTransform.createInverse();
+		} catch (NonInvertibleTransformException e) {
+			throw new RuntimeException(e);
+		}
+		Transform deltaTransform = new Affine(
+				inverse.createConcatenation(totalTransform));
 		// optimize for identity transform
 		if (deltaTransform.isIdentity()) {
 			return bendPoints;
