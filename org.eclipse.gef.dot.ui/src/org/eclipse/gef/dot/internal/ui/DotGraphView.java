@@ -381,6 +381,7 @@ public class DotGraphView extends ZestFxUiView {
 		// (native mode); otherwise we emulate layout with GEF Layout
 		// algorithms.
 		if (isNativeMode()) {
+			// System.out.println("[DOT Input] [" + currentDot + "]");
 			String[] result;
 			if (isEmbeddedDotFile) {
 				File tempDotFile = dotExtractor.getDotTempFile();
@@ -397,6 +398,7 @@ public class DotGraphView extends ZestFxUiView {
 						true, file, null, null);
 			}
 			currentDot = result[0];
+			// System.out.println("[DOT Output] [" + currentDot + "]");
 		}
 		setGraphAsync(currentDot, currentFile);
 		return true;

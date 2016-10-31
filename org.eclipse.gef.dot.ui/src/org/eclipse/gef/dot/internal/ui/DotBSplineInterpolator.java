@@ -90,7 +90,7 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 		List<BezierCurve> segments = new ArrayList<>();
 		Point p0 = controlPoints.get(0);
 		if (!startReference.equals(p0)) {
-			segments.add(new Line(start, p0));
+			segments.add(new Line(startReference, p0));
 		} else {
 			p0 = start;
 		}
@@ -110,7 +110,7 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 			// (which is the start point of the next segment)
 		}
 		if (!endReference.equals(p2)) {
-			segments.add(new Line(p2, end));
+			segments.add(new Line(p2, endReference));
 		}
 		return new PolyBezier(segments.toArray(new BezierCurve[] {}));
 	}
@@ -119,7 +119,6 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 			AnchorKey anchorKey) {
 		return anchor.getComputationParameter(anchorKey,
 				AnchoredReferencePoint.class).get();
-
 	}
 
 	@Override
