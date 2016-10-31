@@ -61,6 +61,19 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 
 	@Override
 	protected ICurve computeCurve(Connection connection) {
+		// {
+		// System.out.println("Connection:");
+		// System.out.println(" sp) " + connection.getStartPoint() + " (hint="
+		// + connection.getStartPointHint() + ")");
+		// List<Point> controlPoints = connection.getControlPoints();
+		// for (int i = 0; i < controlPoints.size(); i++) {
+		// System.out.println(String.format(" cp%02d) ", i + 1)
+		// + controlPoints.get(i));
+		// }
+		// System.out.println(" ep) " + connection.getEndPoint() + " (hint="
+		// + connection.getEndPointHint() + ")");
+		// }
+
 		Point start = connection.getStartPoint();
 		Point end = connection.getEndPoint();
 
@@ -90,6 +103,10 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 		List<BezierCurve> segments = new ArrayList<>();
 		Point p0 = controlPoints.get(0);
 		if (!startReference.equals(p0)) {
+			// XXX: Currently, the start point that was computed by the anchor
+			// is overridden by using the startReference here. Once the anchor
+			// computation yields the same value as supplied by dot, we should
+			// be able to use start instead of startReference here.
 			segments.add(new Line(startReference, p0));
 		} else {
 			p0 = start;
@@ -110,6 +127,10 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 			// (which is the start point of the next segment)
 		}
 		if (!endReference.equals(p2)) {
+			// XXX: Currently, the end point that was computed by the anchor
+			// is overridden by using the endReference here. Once the anchor
+			// computation yields the same value as supplied by dot, we should
+			// be able to use end instead of endReference here.
 			segments.add(new Line(p2, endReference));
 		}
 		return new PolyBezier(segments.toArray(new BezierCurve[] {}));
