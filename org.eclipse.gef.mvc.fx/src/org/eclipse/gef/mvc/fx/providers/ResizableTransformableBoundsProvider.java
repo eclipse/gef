@@ -29,6 +29,9 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 /**
+ * The {@link ResizableTransformableBoundsProvider} returns bounds according to
+ * the size and transformation as returned by the part API, i.e.
+ * {@link IResizableContentPart} and {@link ITransformableContentPart}.
  *
  * @author wienand
  *
@@ -72,10 +75,9 @@ public class ResizableTransformableBoundsProvider
 			h = boundsInParent.getHeight();
 		}
 
-		// construct bounds and transform to scene
-		return FX2Geometry
-				.toRectangle(part.getVisual().getParent().localToScene(
-						Geometry2FX.toFXBounds(new Rectangle(x, y, w, h))));
+		// construct bounds and transform to local
+		return FX2Geometry.toRectangle(part.getVisual().parentToLocal(
+				Geometry2FX.toFXBounds(new Rectangle(x, y, w, h))));
 	}
 
 }

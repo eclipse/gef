@@ -21,6 +21,8 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.utils.NodeUtils;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.BezierCurve;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.IGeometry;
@@ -167,10 +169,14 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 			public IGeometry get() {
 				Rectangle bounds = null;
 				for (IVisualPart<? extends Node> part : targets) {
-					ResizableTransformableBoundsProvider rtBoundsProvider = new ResizableTransformableBoundsProvider();
-					rtBoundsProvider.setAdaptable(part);
-					Rectangle boundsInScene = (Rectangle) rtBoundsProvider
-							.get();
+					ResizableTransformableBoundsProvider boundsProvider = new ResizableTransformableBoundsProvider();
+					boundsProvider.setAdaptable(part);
+					Rectangle boundsInLocal = boundsProvider.get().getBounds();
+
+					// transform to scene
+					Rectangle boundsInScene = FX2Geometry
+							.toRectangle(part.getVisual().localToScene(
+									Geometry2FX.toFXBounds(boundsInLocal)));
 					if (bounds == null) {
 						bounds = boundsInScene;
 					} else {

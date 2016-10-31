@@ -81,6 +81,9 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	protected Dimension computeApplicableDelta(double dw, double dh) {
 		Node visual = getVisualToResize();
 		boolean resizable = visual.isResizable();
+		// TODO: remove boolean resizable, only use ResizePolicy for
+		// IResizableContentPart so that we can safely resize it
+		resizable = true;
 
 		// convert resize into relocate in case node is not resizable
 		double layoutDw = resizable ? dw : 0;
@@ -263,6 +266,11 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 */
 	protected void updateResizeOperation(double dw, double dh) {
 		Dimension adjusted = computeApplicableDelta(dw, dh);
+
+		// System.out.println(
+		// "want to resize by " + dw + ", " + dh + ", but applicable is "
+		// + adjusted.width + ", " + adjusted.height);
+
 		double layoutDw = adjusted.width;
 		double layoutDh = adjusted.height;
 		// update and locally execute operation

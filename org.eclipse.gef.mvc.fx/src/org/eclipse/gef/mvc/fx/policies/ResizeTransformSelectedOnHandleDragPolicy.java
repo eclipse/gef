@@ -17,6 +17,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
@@ -146,6 +147,14 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 			Bounds initialBounds = getBounds(selectionBounds, targetPart);
 			Bounds newBounds = getBounds(sel, targetPart);
 
+			// System.out.println(targetPart.getClass().getSimpleName()
+			// + " bounds change from " + initialBounds.getMinX() + ", "
+			// + initialBounds.getMinY() + " : " + initialBounds.getWidth()
+			// + " x " + initialBounds.getHeight() + " to "
+			// + newBounds.getMinX() + ", " + newBounds.getMinY() + " : "
+			// + newBounds.getWidth() + " x " + newBounds.getHeight()
+			// + ".");
+
 			// compute translation in scene coordinates
 			double dx = newBounds.getMinX() - initialBounds.getMinX();
 			double dy = newBounds.getMinY() - initialBounds.getMinY();
@@ -169,12 +178,20 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 				// TODO: special case 90 degree rotations
 				double dw = newBounds.getWidth() - initialBounds.getWidth();
 				double dh = newBounds.getHeight() - initialBounds.getHeight();
+
+				// System.out.println(
+				// "delta size in scene: " + dw + ", " + dh + ".");
+
 				Point2D originInLocal = visual.sceneToLocal(newBounds.getMinX(),
 						newBounds.getMinY());
 				Point2D dstInLocal = visual.sceneToLocal(
 						newBounds.getMinX() + dw, newBounds.getMinY() + dh);
 				dw = dstInLocal.getX() - originInLocal.getX();
 				dh = dstInLocal.getY() - originInLocal.getY();
+
+				// System.out.println(
+				// "delta size in local: " + dw + ", " + dh + ".");
+
 				getResizePolicy(targetPart).resize(dw, dh);
 			} else {
 				// compute scaling based on bounds change
@@ -327,8 +344,11 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 		// use provider to compute bounds
 		ResizableTransformableBoundsProvider boundsProvider = new ResizableTransformableBoundsProvider();
 		boundsProvider.setAdaptable(contentPart);
+		Rectangle boundsInLocal = boundsProvider.get().getBounds();
 
-		return boundsProvider.get().getBounds();
+		// transform to scene
+		return FX2Geometry.toRectangle(contentPart.getVisual()
+				.localToScene(Geometry2FX.toFXBounds(boundsInLocal)));
 	}
 
 	@Override

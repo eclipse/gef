@@ -76,6 +76,7 @@ import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
+import org.eclipse.gef.mvc.fx.providers.ResizableTransformableOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -144,7 +145,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// geometry provider for selection feedback
 		adapterMapBinder
 				.addBinding(AdapterKey.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(GeometricOutlineProvider.class);
+				.to(ResizableTransformableOutlineProvider.class);
 		// geometry provider for selection handles
 		adapterMapBinder
 				.addBinding(AdapterKey.role(DefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
@@ -155,7 +156,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(GeometricOutlineProvider.class);
 		// geometry provider for hover feedback
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(GeometricOutlineProvider.class);
+				.to(ResizableTransformableOutlineProvider.class);
 		// geometry provider for focus feedback
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);

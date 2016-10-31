@@ -274,6 +274,10 @@ public interface IBendableContentPart<V extends Node>
 	public static List<BendPoint> resizeBendPoints(List<BendPoint> bendPoints,
 			double currentX, double currentY, Dimension currentSize,
 			Dimension finalSize) {
+
+		// System.out.println(
+		// "Resize from " + currentSize + " to " + finalSize + ".");
+
 		// determine unattached bend points
 		List<Point> points = new ArrayList<>();
 		for (BendPoint bp : bendPoints) {
@@ -347,6 +351,10 @@ public interface IBendableContentPart<V extends Node>
 		if (deltaTransform.isIdentity()) {
 			return bendPoints;
 		}
+
+		// System.out.println("Transform by " + deltaTransform.getTx() + ", "
+		// + deltaTransform.getTy() + ".");
+
 		AffineTransform tx = FX2Geometry.toAffineTransform(deltaTransform);
 		// transform unattached bend points in-place
 		for (BendPoint bp : bendPoints) {
