@@ -206,6 +206,11 @@ public class BendConnectionPolicyTests {
 		}
 
 		@Override
+		public List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> getContentBendPoints() {
+			return null;
+		}
+
+		@Override
 		public Affine getContentTransform() {
 			return transform;
 		}
@@ -239,7 +244,8 @@ public class BendConnectionPolicyTests {
 		private Injector injector;
 
 		@Override
-		public IContentPart<? extends Node> createContentPart(final Object content, final Map<Object, Object> contextMap) {
+		public IContentPart<? extends Node> createContentPart(final Object content,
+				final Map<Object, Object> contextMap) {
 			if (content instanceof org.eclipse.gef.geometry.planar.IShape) {
 				return injector.getInstance(AnchoragePart.class);
 			} else if (content instanceof ConnectionContent) {
