@@ -79,13 +79,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		this.source = source;
 	}
 
-	private void activateAdapters() {
-		for (IActivatable adapter : this
-				.<IActivatable> getAdapters(IActivatable.class).values()) {
-			adapter.activate();
-		}
-	}
-
 	/**
 	 * Returns a read-only map property, containing the adapters mapped to their
 	 * keys.
@@ -99,13 +92,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 					IAdaptable.ADAPTERS_PROPERTY, getAdapters());
 		}
 		return adaptersUnmodifiableProperty.getReadOnlyProperty();
-	}
-
-	private void deactivateAdapters() {
-		for (IActivatable adapter : this
-				.<IActivatable> getAdapters(IActivatable.class).values()) {
-			adapter.deactivate();
-		}
 	}
 
 	/**
@@ -468,25 +454,16 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			}
 		}
 
-		// deactivate already registered adapters, if adaptable is
-		// IActivatable
-		// and currently active
-		if (source instanceof IActivatable
-				&& ((IActivatable) source).isActive()) {
-			deactivateAdapters();
-		}
-
 		adapters.put(key, adapter);
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(source);
 		}
 
 		// activate all adapters, if adaptable is IActivatable and
-		// currently
-		// active
-		if (source instanceof IActivatable
+		// currently active
+		if (adapter instanceof IActivatable && source instanceof IActivatable
 				&& ((IActivatable) source).isActive()) {
-			activateAdapters();
+			((IActivatable) adapter).activate();
 		}
 	}
 
@@ -506,14 +483,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 					"Given adapter is not registered.");
 		}
 
-		// deactivate already registered adapters, if adaptable is
-		// IActivatable
-		// and currently active
-		if (source instanceof IActivatable
-				&& ((IActivatable) source).isActive()) {
-			deactivateAdapters();
-		}
-
 		// process all keys and remove those pointing to the given adapter
 		for (AdapterKey<?> key : adapters.keySet()) {
 			if (adapters.get(key) == adapter) {
@@ -527,9 +496,9 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 
 		// re-activate remaining adapters, if adaptable is IActivatable
 		// and currently active
-		if (source instanceof IActivatable
-				&& ((IActivatable) source).isActive()) {
-			activateAdapters();
+		if (adapter instanceof IActivatable && source instanceof IActivatable
+				&& ((IActivatable) adapter).isActive()) {
+			((IActivatable) adapter).activate();
 		}
 	}
 
