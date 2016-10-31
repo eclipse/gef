@@ -341,13 +341,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
-	@Override
-	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
-		// bind content part factory
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(MvcLogoExampleContentPartFactory.class);
-	}
-
 	protected void bindPaletteElementPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateAndTranslateOnDragPolicy.class);
