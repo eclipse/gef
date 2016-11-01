@@ -16,7 +16,6 @@ package org.eclipse.gef.common.activate;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
 
@@ -33,12 +32,10 @@ import javafx.collections.MapChangeListener;
  * <p>
  * If the given {@link IActivatable} is also {@link IAdaptable}, all calls to
  * {@link #activate()} and {@link #deactivate()} will be forwarded to all
- * adapters registered at the {@link IActivatable} at that moment. However, the
- * {@link ActivatableSupport} will not register a change listener on the
+ * adapters registered at the {@link IActivatable} at that moment. The
+ * {@link ActivatableSupport} will also register a change listener on the
  * {@link IAdaptable} to get notified about newly set or unset adapters, so they
- * will not be automatically activated/deactivated. The source
- * {@link IActivatable} may use an {@link AdaptableSupport} as a second delegate
- * for this purpose.
+ * can be automatically activated/deactivated.
  *
  * @author anyssen
  *
