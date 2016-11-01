@@ -240,6 +240,7 @@ public interface IAdaptable {
 	 *
 	 * @return An unmodifiable {@link ObservableMap}.
 	 */
+	// TODO: rename to getAdaptersUnmodifiable
 	public ObservableMap<AdapterKey<?>, Object> getAdapters();
 
 	/**

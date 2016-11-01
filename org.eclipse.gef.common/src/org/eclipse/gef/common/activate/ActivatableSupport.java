@@ -23,6 +23,7 @@ import org.eclipse.gef.common.adapt.IAdaptable;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.collections.MapChangeListener;
 
 /**
  * A support class to manage the activeProperty state for a source
@@ -46,6 +47,25 @@ public class ActivatableSupport {
 
 	private ReadOnlyBooleanWrapper activeProperty = null;
 	private IActivatable source;
+	private MapChangeListener<AdapterKey<?>, Object> adaptersChangeListener = new MapChangeListener<AdapterKey<?>, Object>() {
+
+		@Override
+		public void onChanged(
+				MapChangeListener.Change<? extends AdapterKey<?>, ? extends Object> change) {
+			Object added = change.getValueAdded();
+			if (added instanceof IActivatable) {
+				if (isActive()) {
+					((IActivatable) added).activate();
+				}
+			}
+			Object removed = change.getValueRemoved();
+			if (removed instanceof IActivatable) {
+				if (isActive()) {
+					((IActivatable) removed).deactivate();
+				}
+			}
+		}
+	};
 
 	/**
 	 * Creates a new {@link ActivatableSupport} for the given source
@@ -79,8 +99,14 @@ public class ActivatableSupport {
 		if (!isActive()) {
 			activeProperty.set(true);
 
-			// activate all adapters, if the IActivatable is also an IAdaptable
-			activateAdapters();
+			if (source instanceof IAdaptable) {
+				((IAdaptable) source).adaptersProperty()
+						.addListener(adaptersChangeListener);
+
+				// activate all adapters, if the IActivatable is also an
+				// IAdaptable
+				activateAdapters();
+			}
 		}
 	}
 
@@ -118,9 +144,14 @@ public class ActivatableSupport {
 	 */
 	public void deactivate() {
 		if (isActive()) {
-			// deactivate all adapters, if the IActivatable is also an
-			// IAdaptable
-			deactivateAdapters();
+			if (source instanceof IAdaptable) {
+				// deactivate all adapters, if the IActivatable is also an
+				// IAdaptable
+				deactivateAdapters();
+
+				((IAdaptable) source).adaptersProperty()
+						.removeListener(adaptersChangeListener);
+			}
 
 			activeProperty.set(false);
 		}

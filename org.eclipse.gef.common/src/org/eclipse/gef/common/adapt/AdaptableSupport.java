@@ -19,8 +19,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.gef.common.activate.ActivatableSupport;
-import org.eclipse.gef.common.activate.IActivatable;
 import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef.common.dispose.IDisposable;
 
@@ -35,15 +33,6 @@ import javafx.collections.ObservableMap;
  * all methods defined by {@link IAdaptable}, while not formally implementing
  * the interface, and can thus be used by a source {@link IAdaptable} as a
  * delegate.
- * <p>
- * If the {@link IAdaptable} is also {@link IActivatable}, it will ensure
- * adapters are activated/deactivated when being set/unset dependent on the
- * active state of the adaptable at that moment. However, the
- * {@link AdaptableSupport} will not register a listener for the active state of
- * the source {@link IAdaptable}, so changes to its active state will not result
- * in state changes of the registered adapters. For this purpose, an
- * {@link ActivatableSupport} may be used by the source {@link IAdaptable} as a
- * second delegate.
  *
  * @author anyssen
  *
@@ -98,26 +87,12 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * Disposes this {@link AdaptableSupport}, which will unregister all
 	 * currently registered adapters, unbind them from their source
 	 * {@link IAdaptable} (in case they are {@link IAdaptable.Bound}), and
-	 * dispose them (if they are {@link IDisposable}). No notification will be
-	 * fired to notify listeners about the unregistering of adapters. It is
-	 * expected that in case the source {@link IAdaptable} is
-	 * {@link IActivatable}, it is deactivated before disposing this
-	 * {@link AdaptableSupport}.
+	 * dispose them (if they are {@link IDisposable}).
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public void dispose() {
-		// deactivate already registered adapters, if adaptable is
-		// IActivatable
-		// and currently active (thus adapters are also active)
-		if (source instanceof IActivatable
-				&& ((IActivatable) source).isActive()) {
-			throw new IllegalStateException(
-					"source needs to be deactivated before disposing this AdaptableSupport.");
-		}
-
 		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(adapters);
-
 		for (AdapterKey<?> key : oldAdapters.keySet()) {
 			Object adapter = adapters.remove(key);
 			if (adapter != null) {
@@ -257,7 +232,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * @return An unmodifiable observable map containing the registered adapters
 	 *         under their {@link AdapterKey}s as a copy.
 	 */
-	// TODO: rename to getAdaptersUnmodifiable
 	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
 		if (adaptersUnmodifiable == null) {
 			adaptersUnmodifiable = FXCollections
@@ -459,13 +433,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(source);
 		}
-
-		// activate all adapters, if adaptable is IActivatable and
-		// currently active
-		if (adapter instanceof IActivatable && source instanceof IActivatable
-				&& ((IActivatable) source).isActive()) {
-			((IActivatable) adapter).activate();
-		}
 	}
 
 	/**
@@ -482,12 +449,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		if (!adapters.containsValue(adapter)) {
 			throw new IllegalArgumentException(
 					"Given adapter is not registered.");
-		}
-
-		// deactivate adapter
-		if (adapter instanceof IActivatable && source instanceof IActivatable
-				&& ((IActivatable) source).isActive()) {
-			((IActivatable) adapter).deactivate();
 		}
 
 		if (adapter instanceof IAdaptable.Bound) {
