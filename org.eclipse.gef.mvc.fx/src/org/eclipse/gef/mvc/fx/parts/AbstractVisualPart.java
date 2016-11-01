@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.gef.common.activate.ActivatableSupport;
+import org.eclipse.gef.common.activate.IActivatable;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
@@ -110,6 +112,13 @@ public abstract class AbstractVisualPart<V extends Node>
 			// System.out.println("Activate " + this);
 			acs.activate();
 			activateChildren();
+			// XXX: We keep a sorted map of adapters so activation
+			// is performed in a deterministic order
+			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+				if (adapter instanceof IActivatable) {
+					((IActivatable) adapter).activate();
+				}
+			});
 			doActivate();
 		}
 	}
@@ -276,6 +285,13 @@ public abstract class AbstractVisualPart<V extends Node>
 		if (acs.isActive()) {
 			// System.out.println("Deactivate " + this);
 			doDeactivate();
+			// XXX: We keep a sorted map of adapters so deactivation
+			// is performed in a deterministic order
+			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+				if (adapter instanceof IActivatable) {
+					((IActivatable) adapter).deactivate();
+				}
+			});
 			deactivateChildren();
 			acs.deactivate();
 		}

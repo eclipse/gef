@@ -13,29 +13,15 @@
  *******************************************************************************/
 package org.eclipse.gef.common.activate;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.eclipse.gef.common.adapt.AdapterKey;
-import org.eclipse.gef.common.adapt.IAdaptable;
-
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.collections.MapChangeListener;
 
 /**
  * A support class to manage the activeProperty state for a source
  * {@link IActivatable}. It offers all methods defined by {@link IActivatable},
  * while not formally implementing the interface, and can thus be used by a
  * source {@link IActivatable} as a delegate.
- * <p>
- * If the given {@link IActivatable} is also {@link IAdaptable}, all calls to
- * {@link #activate()} and {@link #deactivate()} will be forwarded to all
- * adapters registered at the {@link IActivatable} at that moment. The
- * {@link ActivatableSupport} will also register a change listener on the
- * {@link IAdaptable} to get notified about newly set or unset adapters, so they
- * can be automatically activated/deactivated.
  *
  * @author anyssen
  *
@@ -43,26 +29,6 @@ import javafx.collections.MapChangeListener;
 public class ActivatableSupport {
 
 	private ReadOnlyBooleanWrapper activeProperty = null;
-	private IActivatable source;
-	private MapChangeListener<AdapterKey<?>, Object> adaptersChangeListener = new MapChangeListener<AdapterKey<?>, Object>() {
-
-		@Override
-		public void onChanged(
-				MapChangeListener.Change<? extends AdapterKey<?>, ? extends Object> change) {
-			Object added = change.getValueAdded();
-			if (added instanceof IActivatable) {
-				if (isActive()) {
-					((IActivatable) added).activate();
-				}
-			}
-			Object removed = change.getValueRemoved();
-			if (removed instanceof IActivatable) {
-				if (isActive()) {
-					((IActivatable) removed).deactivate();
-				}
-			}
-		}
-	};
 
 	/**
 	 * Creates a new {@link ActivatableSupport} for the given source
@@ -77,46 +43,18 @@ public class ActivatableSupport {
 		if (source == null) {
 			throw new IllegalArgumentException("source may not be null.");
 		}
-		this.source = source;
 		this.activeProperty = new ReadOnlyBooleanWrapper(source,
 				IActivatable.ACTIVE_PROPERTY, false);
 	}
 
 	/**
-	 * Activates this {@link ActivatableSupport} if it is not yet
-	 * activeProperty.
-	 *
-	 * Will first adjust the activeProperty state, then activate any
-	 * {@link IActivatable} adapters, being registered at the source
-	 * {@link IActivatable}.
+	 * Activates this {@link ActivatableSupport} if it is not yet active.
 	 *
 	 * @see IActivatable#activate()
 	 */
 	public void activate() {
 		if (!isActive()) {
 			activeProperty.set(true);
-
-			if (source instanceof IAdaptable) {
-				((IAdaptable) source).adaptersProperty()
-						.addListener(adaptersChangeListener);
-
-				// activate all adapters, if the IActivatable is also an
-				// IAdaptable
-				activateAdapters();
-			}
-		}
-	}
-
-	private void activateAdapters() {
-		if (source instanceof IAdaptable) {
-			// XXX: We keep a sorted map of adapters (so activation/deactivation
-			// is in deterministic order)
-			SortedMap<AdapterKey<? extends IActivatable>, IActivatable> activatableAdapters = new TreeMap<>();
-			activatableAdapters.putAll(((IAdaptable) source)
-					.<IActivatable> getAdapters(IActivatable.class));
-			for (IActivatable adapter : activatableAdapters.values()) {
-				adapter.activate();
-			}
 		}
 	}
 
@@ -134,37 +72,11 @@ public class ActivatableSupport {
 	/**
 	 * Deactivates this {@link ActivatableSupport} if it is not yet inactive.
 	 *
-	 * Will first deactivate any {@link IActivatable} adapters, being registered
-	 * at the source {@link IActivatable}, then adjust the activeProperty state.
-	 *
 	 * @see IActivatable#deactivate()
 	 */
 	public void deactivate() {
 		if (isActive()) {
-			if (source instanceof IAdaptable) {
-				// deactivate all adapters, if the IActivatable is also an
-				// IAdaptable
-				deactivateAdapters();
-
-				((IAdaptable) source).adaptersProperty()
-						.removeListener(adaptersChangeListener);
-			}
-
 			activeProperty.set(false);
-		}
-	}
-
-	private void deactivateAdapters() {
-		if (source instanceof IAdaptable) {
-			// XXX: We keep a sorted map of adapters (so activation/deactivation
-			// is in
-			// deterministic order)
-			SortedMap<AdapterKey<? extends IActivatable>, IActivatable> activatableAdapters = new TreeMap<>();
-			activatableAdapters.putAll(((IAdaptable) source)
-					.<IActivatable> getAdapters(IActivatable.class));
-			for (IActivatable adapter : activatableAdapters.values()) {
-				adapter.deactivate();
-			}
 		}
 	}
 

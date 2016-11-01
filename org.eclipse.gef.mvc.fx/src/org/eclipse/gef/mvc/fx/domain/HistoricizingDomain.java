@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -26,6 +27,7 @@ import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.common.activate.ActivatableSupport;
+import org.eclipse.gef.common.activate.IActivatable;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
@@ -105,6 +107,13 @@ public class HistoricizingDomain implements IDomain {
 	public void activate() {
 		if (!acs.isActive()) {
 			acs.activate();
+			// XXX: We keep a sorted map of adapters so activation
+			// is performed in a deterministic order
+			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+				if (adapter instanceof IActivatable) {
+					((IActivatable) adapter).activate();
+				}
+			});
 		}
 	}
 
@@ -195,6 +204,13 @@ public class HistoricizingDomain implements IDomain {
 	@Override
 	public void deactivate() {
 		if (acs.isActive()) {
+			// XXX: We keep a sorted map of adapters so deactivation
+			// is performed in a deterministic order
+			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+				if (adapter instanceof IActivatable) {
+					((IActivatable) adapter).deactivate();
+				}
+			});
 			acs.deactivate();
 		}
 	}

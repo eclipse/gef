@@ -14,8 +14,10 @@ package org.eclipse.gef.mvc.fx.viewer;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.gef.common.activate.ActivatableSupport;
+import org.eclipse.gef.common.activate.IActivatable;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
@@ -167,6 +169,13 @@ public class InfiniteCanvasViewer implements IViewer {
 						"HistoricizingDomain has to be set before activation.");
 			}
 			acs.activate();
+			// XXX: We keep a sorted map of adapters so activation
+			// is performed in a deterministic order
+			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+				if (adapter instanceof IActivatable) {
+					((IActivatable) adapter).activate();
+				}
+			});
 		}
 	}
 
@@ -197,6 +206,13 @@ public class InfiniteCanvasViewer implements IViewer {
 				throw new IllegalStateException(
 						"HistoricizingDomain may not be unset before deactivation is completed.");
 			}
+			// XXX: We keep a sorted map of adapters so deactivation
+			// is performed in a deterministic order
+			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+				if (adapter instanceof IActivatable) {
+					((IActivatable) adapter).deactivate();
+				}
+			});
 			acs.deactivate();
 		}
 	}
