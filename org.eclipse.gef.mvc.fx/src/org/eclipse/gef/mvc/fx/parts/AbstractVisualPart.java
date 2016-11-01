@@ -220,12 +220,20 @@ public abstract class AbstractVisualPart<V extends Node>
 				.create(anchoreds);
 		newAnchoreds.add(anchored);
 		IViewer newViewer = determineViewer(getParent(), newAnchoreds);
-		if (oldViewer == null && newViewer != null) {
-			register(newViewer);
+
+		// unregister from old viewer in case we were registered (oldViewer !=
+		// null) and the viewer changes (newViewer != oldViewer)
+		if (oldViewer != null && newViewer != oldViewer) {
+			unregister(oldViewer);
 		}
 
-		// attach to the anchoreds (and fire change notifications)
+		// detach anchoreds (and fire change notifications)
 		anchoreds.add(anchored);
+
+		// if we obtain a link to the viewer then register at new viewer
+		if (newViewer != null && newViewer != oldViewer) {
+			register(newViewer);
+		}
 	}
 
 	@Override
@@ -315,13 +323,19 @@ public abstract class AbstractVisualPart<V extends Node>
 		oldAnchoreds.remove(anchored);
 		IViewer newViewer = determineViewer(getParent(), oldAnchoreds);
 
-		// unregister if we lose the link to the viewer
-		if (oldViewer != null && newViewer == null) {
+		// unregister from old viewer in case we were registered (oldViewer !=
+		// null) and the viewer changes (newViewer != oldViewer)
+		if (oldViewer != null && newViewer != oldViewer) {
 			unregister(oldViewer);
 		}
 
 		// detach anchoreds (and fire change notifications)
 		anchoreds.remove(anchored);
+
+		// if we obtain a link to the viewer then register at new viewer
+		if (newViewer != null && newViewer != oldViewer) {
+			register(newViewer);
+		}
 	}
 
 	@Override
@@ -786,13 +800,13 @@ public abstract class AbstractVisualPart<V extends Node>
 			unregister(oldViewer);
 		}
 
+		// change the parent property (which will notify listeners)
+		parentProperty.set(newParent);
+
 		// if we obtain a link to the viewer then register at new viewer
 		if (newViewer != null && newViewer != oldViewer) {
 			register(newViewer);
 		}
-
-		// change the parent property (which will notify listeners)
-		parentProperty.set(newParent);
 	}
 
 	@Override
