@@ -455,6 +455,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 
 		adapters.put(key, adapter);
+
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(source);
 		}
@@ -483,22 +484,21 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 					"Given adapter is not registered.");
 		}
 
-		// process all keys and remove those pointing to the given adapter
-		for (AdapterKey<?> key : adapters.keySet()) {
-			if (adapters.get(key) == adapter) {
-				adapters.remove(key);
-			}
+		// deactivate adapter
+		if (adapter instanceof IActivatable && source instanceof IActivatable
+				&& ((IActivatable) source).isActive()) {
+			((IActivatable) adapter).deactivate();
 		}
 
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(null);
 		}
 
-		// re-activate remaining adapters, if adaptable is IActivatable
-		// and currently active
-		if (adapter instanceof IActivatable && source instanceof IActivatable
-				&& ((IActivatable) adapter).isActive()) {
-			((IActivatable) adapter).activate();
+		// process all keys and remove those pointing to the given adapter
+		for (AdapterKey<?> key : new HashMap<>(adapters).keySet()) {
+			if (adapters.get(key) == adapter) {
+				adapters.remove(key);
+			}
 		}
 	}
 
