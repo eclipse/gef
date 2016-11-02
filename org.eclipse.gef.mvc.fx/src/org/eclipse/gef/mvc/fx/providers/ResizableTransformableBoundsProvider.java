@@ -12,8 +12,6 @@
 package org.eclipse.gef.mvc.fx.providers;
 
 import org.eclipse.gef.common.adapt.IAdaptable;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -43,7 +41,7 @@ public class ResizableTransformableBoundsProvider
 	@Override
 	public IGeometry get() {
 		IVisualPart<? extends Node> part = getAdaptable();
-		Bounds boundsInParent = part.getVisual().getBoundsInParent();
+		Bounds boundsInParent = part.getVisual().getBoundsInLocal();// getBoundsInParent();
 
 		// determine x and y offset
 		double x, y;
@@ -76,8 +74,10 @@ public class ResizableTransformableBoundsProvider
 		}
 
 		// construct bounds and transform to local
-		return FX2Geometry.toRectangle(part.getVisual().parentToLocal(
-				Geometry2FX.toFXBounds(new Rectangle(x, y, w, h))));
+		return // FX2Geometry.toRectangle(part.getVisual().parentToLocal(
+				// Geometry2FX.toFXBounds(
+		new Rectangle(x, y, w, h);
+		// )));
 	}
 
 }
