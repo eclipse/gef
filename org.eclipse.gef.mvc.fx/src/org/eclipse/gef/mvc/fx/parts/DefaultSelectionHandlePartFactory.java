@@ -84,6 +84,12 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
 
 	/**
+	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
+	 * used to generate selection handles for a multi selection.
+	 */
+	public static final String MULTI_SELECTION_HANDLES_GEOMETRY_PROVIDER = "MULTI_SELECTION_HANDLES_GEOMETRY_PROVIDER";
+
+	/**
 	 * The minimum segment length so that creation handles are shown.
 	 */
 	protected static final double BENDPOINT_CREATE_HANDLE_MINIMUM_SEGMENT_LENGTH = 30;
@@ -98,6 +104,8 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 
 	private static Provider<BezierCurve[]> createSegmentsProvider(
 			final Provider<? extends IGeometry> geometryProvider) {
+		// TODO: get() call is very expensive, maybe cache the result and/or use
+		// a binding mechanism instead?
 		return new Provider<BezierCurve[]>() {
 			@Override
 			public BezierCurve[] get() {
@@ -161,49 +169,57 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 	protected List<IHandlePart<? extends Node>> createMultiSelectionHandleParts(
 			final List<? extends IVisualPart<? extends Node>> targets,
 			Map<Object, Object> contextMap) {
-		// TODO: use multi selection handle goemetry provider so it can be
-		// configured
+		// determine handle geometry provider
+		@SuppressWarnings("serial")
+		Provider<? extends IGeometry> multiSelectionHandlesGeometryInSceneProvider = targets
+				.get(0).getRoot().getAdapter(AdapterKey
+						.get(new TypeToken<Provider<? extends IGeometry>>() {
+						}, MULTI_SELECTION_HANDLES_GEOMETRY_PROVIDER));
 
-		Provider<? extends IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				Rectangle bounds = null;
-				for (IVisualPart<? extends Node> part : targets) {
-					ResizableTransformableBoundsProvider boundsProvider = new ResizableTransformableBoundsProvider();
-					boundsProvider.setAdaptable(part);
-					Rectangle boundsInLocal = boundsProvider.get().getBounds();
+		if (multiSelectionHandlesGeometryInSceneProvider == null) {
+			// generate default handle geometry provider that unions the
+			// ResizableTransformable bounds of all targets
+			multiSelectionHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
+				@Override
+				public IGeometry get() {
+					Rectangle bounds = null;
+					for (IVisualPart<? extends Node> part : targets) {
+						ResizableTransformableBoundsProvider boundsProvider = new ResizableTransformableBoundsProvider();
+						boundsProvider.setAdaptable(part);
+						Rectangle boundsInLocal = boundsProvider.get()
+								.getBounds();
 
-					// transform to scene
-					Rectangle boundsInScene = FX2Geometry
-							.toRectangle(part.getVisual().localToScene(
-									Geometry2FX.toFXBounds(boundsInLocal)));
-					if (bounds == null) {
-						bounds = boundsInScene;
-					} else {
-						bounds.union(boundsInScene);
+						// transform to scene
+						Rectangle boundsInScene = FX2Geometry
+								.toRectangle(part.getVisual().localToScene(
+										Geometry2FX.toFXBounds(boundsInLocal)));
+						if (bounds == null) {
+							bounds = boundsInScene;
+						} else {
+							bounds.union(boundsInScene);
+						}
 					}
+					return bounds;
 				}
-				return bounds;
-			}
-		};
+			};
+		}
 
-		// Provider<? extends IGeometry> handleGeometryProvider = new
-		// Provider<IGeometry>() {
-		// @Override
-		// public IGeometry get() {
-		// // TODO: move code out of PartUtils into a geometry provider
-		// // (move to FX)
-		// return PartUtils.getUnionedVisualBoundsInScene(targets);
-		// }
-		// };
-
-		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
 		// per default, handle parts are created for the 4 corners of the
 		// multi selection bounds
 		Provider<BezierCurve[]> segmentsProvider = createSegmentsProvider(
-				handleGeometryProvider);
+				multiSelectionHandlesGeometryInSceneProvider);
+
+		// check if provider is OK
+		int segments = segmentsProvider.get().length;
+		if (segments != 4) {
+			throw new IllegalStateException(
+					"The multi selection handle geometry provider is expected to return bounds around the selection. However, instead of 4 segments, the provider provides "
+							+ segments + " segments.");
+		}
+
+		// create a handle for each start point of the segments
+		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			// create handle for the start point of the segment
 			SquareSegmentHandlePart part = injector
 					.getInstance(SquareSegmentHandlePart.class);
 			part.setSegmentsProvider(segmentsProvider);
