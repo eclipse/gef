@@ -27,6 +27,7 @@ import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -51,6 +52,24 @@ public interface IViewer extends IAdaptable, IActivatable, IDisposable,
 	 * Name of the {@link #contentsProperty()}.
 	 */
 	public static final String CONTENTS_PROPERTY = "contents";
+
+	/**
+	 * Name of the {@link #contentPartMapProperty()}.
+	 */
+	public static final String CONTENT_PART_MAP_PROPERTY = "contentPartMap";
+
+	/**
+	 * Name of the {@link #visualPartMapProperty()}.
+	 */
+	public static final String VISUAL_PART_MAP_PROPERTY = "visualPartMap";
+
+	/**
+	 * Returns an unmodifiable read-only map property that contains the
+	 * registered {@link IContentPart}s mapped to their respective content.
+	 *
+	 * @return An unmodifiable read-only map property.
+	 */
+	public ReadOnlyMapProperty<Object, IContentPart<? extends Node>> contentPartMapProperty();
 
 	/**
 	 * A read-only property containing the current content objects.
@@ -144,5 +163,13 @@ public interface IViewer extends IAdaptable, IActivatable, IDisposable,
 	 *         state of this {@link IViewer}.
 	 */
 	public ReadOnlyBooleanProperty viewerFocusedProperty();
+
+	/**
+	 * Returns an unmodifiable read-only map property that contains the
+	 * registered {@link IVisualPart}s mapped to their respective visual.
+	 *
+	 * @return An unmodifiable read-only map property.
+	 */
+	public ReadOnlyMapProperty<Node, IVisualPart<? extends Node>> visualPartMapProperty();
 
 }

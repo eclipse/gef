@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.viewer;
 
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,6 +21,7 @@ import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.fx.utils.NodeUtils;
@@ -44,6 +44,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.scene.Node;
@@ -143,8 +144,12 @@ public class InfiniteCanvasViewer implements IViewer {
 
 	private AdaptableSupport<IViewer> ads = new AdaptableSupport<>(this);
 
-	private Map<Object, IContentPart<? extends Node>> contentsToContentPartMap = new IdentityHashMap<>();
-	private Map<Node, IVisualPart<? extends Node>> visualsToVisualPartMap = new HashMap<>();
+	private ObservableMap<Object, IContentPart<? extends Node>> contentPartMap = FXCollections
+			.observableMap(new IdentityHashMap<>());
+	private ReadOnlyMapProperty<Object, IContentPart<? extends Node>> contentPartMapProperty;
+	private ObservableMap<Node, IVisualPart<? extends Node>> visualPartMap = FXCollections
+			.observableMap(new IdentityHashMap<>());
+	private ReadOnlyMapProperty<Node, IVisualPart<? extends Node>> visualPartMapProperty;
 
 	private ReadOnlyObjectWrapper<IDomain> domainProperty = new ReadOnlyObjectWrapper<>();
 
@@ -192,6 +197,15 @@ public class InfiniteCanvasViewer implements IViewer {
 	@Override
 	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
 		return ads.adaptersProperty();
+	}
+
+	@Override
+	public ReadOnlyMapProperty<Object, IContentPart<? extends Node>> contentPartMapProperty() {
+		if (contentPartMapProperty == null) {
+			contentPartMapProperty = new ReadOnlyMapWrapperEx<>(this,
+					CONTENT_PART_MAP_PROPERTY, contentPartMap);
+		}
+		return contentPartMapProperty;
 	}
 
 	@Override
@@ -245,18 +259,18 @@ public class InfiniteCanvasViewer implements IViewer {
 		contentPartPool = null;
 
 		// clear content part map
-		if (!contentsToContentPartMap.isEmpty()) {
+		if (!contentPartMap.isEmpty()) {
 			throw new IllegalStateException(
 					"Content part map was not properly cleared!");
 		}
-		contentsToContentPartMap = null;
+		contentPartMap = null;
 
 		// clear visual part map
-		if (!visualsToVisualPartMap.isEmpty()) {
+		if (!visualPartMap.isEmpty()) {
 			throw new IllegalStateException(
 					"Visual part map was not properly cleared!");
 		}
-		visualsToVisualPartMap = null;
+		visualPartMap = null;
 
 		// unset activatable support
 		acs = null;
@@ -330,7 +344,7 @@ public class InfiniteCanvasViewer implements IViewer {
 	 */
 	@Override
 	public Map<Object, IContentPart<? extends Node>> getContentPartMap() {
-		return contentsToContentPartMap;
+		return contentPartMap;
 	}
 
 	@Override
@@ -366,7 +380,7 @@ public class InfiniteCanvasViewer implements IViewer {
 	 */
 	@Override
 	public Map<Node, IVisualPart<? extends Node>> getVisualPartMap() {
-		return visualsToVisualPartMap;
+		return visualPartMap;
 	}
 
 	@Override
@@ -506,6 +520,15 @@ public class InfiniteCanvasViewer implements IViewer {
 	@Override
 	public ReadOnlyBooleanProperty viewerFocusedProperty() {
 		return viewerFocusedProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public ReadOnlyMapProperty<Node, IVisualPart<? extends Node>> visualPartMapProperty() {
+		if (visualPartMapProperty == null) {
+			visualPartMapProperty = new ReadOnlyMapWrapperEx<>(this,
+					VISUAL_PART_MAP_PROPERTY, visualPartMap);
+		}
+		return visualPartMapProperty;
 	}
 
 }
