@@ -192,7 +192,7 @@ public class SemanticZoomPolicy extends ChangeViewportPolicy {
 		for (NodePart nestingNodePart : findNestingNodes()) {
 			nestingNodePart.refreshContentChildren();
 			nestingNodePart.getAdapter(ContentBehavior.class)
-					.synchronizeContentChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));
+					.synchronizeContentPartChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));
 			nestingNodePart.refreshVisual();
 		}
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /

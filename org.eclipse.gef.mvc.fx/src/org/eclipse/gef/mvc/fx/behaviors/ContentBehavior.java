@@ -64,7 +64,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			// to iterate through the individual changes but may simply
 			// synchronize with the list as it emerges after the changes have
 			// been applied.
-			synchronizeContentChildren(change.getList());
+			synchronizeContentPartChildren(change.getList());
 
 			// TODO: Check if the flushing of the viewer models can be done in a
 			// more appropriate place.
@@ -88,10 +88,10 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		@Override
 		public void changed(ObservableValue<? extends Object> observable,
 				Object oldValue, Object newValue) {
-			synchronizeContentChildren(ImmutableList
+			synchronizeContentPartChildren(ImmutableList
 					.copyOf(((IContentPart<? extends Node>) getHost())
 							.getContentChildrenUnmodifiable()));
-			synchronizeContentAnchorages(ImmutableSetMultimap
+			synchronizeContentPartAnchorages(ImmutableSetMultimap
 					.copyOf(((IContentPart<? extends Node>) getHost())
 							.getContentAnchoragesUnmodifiable()));
 		}
@@ -106,7 +106,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			// to iterate through the individual changes but may simply
 			// synchronize with the list as it emerges after the changes have
 			// been applied.
-			synchronizeContentChildren(new ArrayList<>(change.getList()));
+			synchronizeContentPartChildren(new ArrayList<>(change.getList()));
 		}
 	};
 
@@ -119,7 +119,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			// not have to iterate through the individual changes but may simply
 			// synchronize with the list as it emerges after the changes have
 			// been applied.
-			synchronizeContentAnchorages(
+			synchronizeContentPartAnchorages(
 					HashMultimap.create(change.getSetMultimap()));
 		}
 	};
@@ -159,12 +159,12 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		if (host == host.getRoot()) {
 			IViewer viewer = host.getRoot().getViewer();
 			viewer.getContents().addListener(contentModelObserver);
-			synchronizeContentChildren(viewer.getContents());
+			synchronizeContentPartChildren(viewer.getContents());
 		} else {
-			synchronizeContentChildren(
+			synchronizeContentPartChildren(
 					ImmutableList.copyOf(((IContentPart<? extends Node>) host)
 							.getContentChildrenUnmodifiable()));
-			synchronizeContentAnchorages(ImmutableSetMultimap
+			synchronizeContentPartAnchorages(ImmutableSetMultimap
 					.copyOf(((IContentPart<? extends Node>) host)
 							.getContentAnchoragesUnmodifiable()));
 			((IContentPart<? extends Node>) host).contentProperty()
@@ -184,7 +184,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		if (host == host.getRoot()) {
 			host.getRoot().getViewer().getContents()
 					.removeListener(contentModelObserver);
-			synchronizeContentChildren(Collections.emptyList());
+			synchronizeContentPartChildren(Collections.emptyList());
 		} else {
 			((IContentPart<? extends Node>) host).contentProperty()
 					.removeListener(contentObserver);
@@ -194,8 +194,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			((IContentPart<? extends Node>) host)
 					.getContentAnchoragesUnmodifiable()
 					.removeListener(contentAnchoragesObserver);
-			synchronizeContentChildren(Collections.emptyList());
-			synchronizeContentAnchorages(HashMultimap.create());
+			synchronizeContentPartChildren(Collections.emptyList());
+			synchronizeContentPartAnchorages(HashMultimap.create());
 		}
 	}
 
@@ -281,7 +281,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * @see IContentPart#getContentAnchoragesUnmodifiable()
 	 * @see IContentPart#getAnchoragesUnmodifiable()
 	 */
-	public void synchronizeContentAnchorages(
+	public void synchronizeContentPartAnchorages(
 			SetMultimap<? extends Object, ? extends String> contentAnchorages) {
 		if (contentAnchorages == null) {
 			throw new IllegalArgumentException(
@@ -346,7 +346,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * @see IContentPart#getChildrenUnmodifiable()
 	 */
 	@SuppressWarnings("unchecked")
-	public void synchronizeContentChildren(
+	public void synchronizeContentPartChildren(
 			final List<? extends Object> contentChildren) {
 		if (contentChildren == null) {
 			throw new IllegalArgumentException(

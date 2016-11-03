@@ -522,8 +522,8 @@ public abstract class AbstractContentPart<V extends Node>
 		// remove content children and anchorages
 		ContentBehavior contentBehavior = getAdapter(ContentBehavior.class);
 		if (contentBehavior != null) {
-			contentBehavior.synchronizeContentChildren(Collections.emptyList());
-			contentBehavior.synchronizeContentAnchorages(
+			contentBehavior.synchronizeContentPartChildren(Collections.emptyList());
+			contentBehavior.synchronizeContentPartAnchorages(
 					HashMultimap.<Object, String> create());
 		}
 		super.unregister(viewer);

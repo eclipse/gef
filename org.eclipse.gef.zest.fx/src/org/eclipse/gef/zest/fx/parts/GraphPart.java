@@ -48,7 +48,7 @@ public class GraphPart extends AbstractContentPart<Group> {
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends Object> c) {
 			// synchronize children
-			getAdapter(ContentBehavior.class).synchronizeContentChildren(doGetContentChildren());
+			getAdapter(ContentBehavior.class).synchronizeContentPartChildren(doGetContentChildren());
 
 			// apply layout
 			GraphLayoutBehavior layoutBehavior = getAdapter(GraphLayoutBehavior.class);
