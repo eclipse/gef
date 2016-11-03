@@ -11,10 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.parts;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -340,16 +338,4 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 			register(viewer);
 		}
 	}
-
-	@Override
-	protected void unregister(IViewer viewer) {
-		// synchronize content children
-		ContentBehavior contentBehavior = this
-				.getAdapter(ContentBehavior.class);
-		if (contentBehavior != null) {
-			contentBehavior.synchronizeContentChildren(Collections.emptyList());
-		}
-		super.unregister(viewer);
-	}
-
 }

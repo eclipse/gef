@@ -184,6 +184,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		if (host == host.getRoot()) {
 			host.getRoot().getViewer().getContents()
 					.removeListener(contentModelObserver);
+			synchronizeContentChildren(Collections.emptyList());
 		} else {
 			((IContentPart<? extends Node>) host).contentProperty()
 					.removeListener(contentObserver);
@@ -193,6 +194,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			((IContentPart<? extends Node>) host)
 					.getContentAnchoragesUnmodifiable()
 					.removeListener(contentAnchoragesObserver);
+			synchronizeContentChildren(Collections.emptyList());
+			synchronizeContentAnchorages(HashMultimap.create());
 		}
 	}
 

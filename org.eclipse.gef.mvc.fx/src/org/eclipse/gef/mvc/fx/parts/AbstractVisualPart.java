@@ -624,11 +624,6 @@ public abstract class AbstractVisualPart<V extends Node>
 	public V getVisual() {
 		if (visual == null) {
 			visual = doCreateVisual();
-			// TODO: insert transform
-			IViewer viewer = getViewer();
-			if (viewer != null) {
-				registerAtVisualPartMap(viewer, visual);
-			}
 		}
 		return visual;
 	}
@@ -686,10 +681,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 *            The {@link IViewer} to register at.
 	 */
 	protected void register(IViewer viewer) {
-		// TODO: Check if the guard (visual != null) really is necessary.
-		if (visual != null) {
-			registerAtVisualPartMap(viewer, visual);
-		}
+		registerAtVisualPartMap(viewer, getVisual());
 	}
 
 	/**
@@ -831,9 +823,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 *            The {@link IViewer} to unregister from.
 	 */
 	protected void unregister(IViewer viewer) {
-		if (visual != null) {
-			unregisterFromVisualPartMap(viewer, visual);
-		}
+		unregisterFromVisualPartMap(viewer, getVisual());
 	}
 
 	/**
