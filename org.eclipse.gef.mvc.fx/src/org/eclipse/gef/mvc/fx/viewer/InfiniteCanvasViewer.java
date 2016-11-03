@@ -314,18 +314,13 @@ public class InfiniteCanvasViewer implements IViewer {
 	@Override
 	public InfiniteCanvas getCanvas() {
 		if (infiniteCanvas == null) {
-			IRootPart<? extends Node> rootPart = getRootPart();
-			if (rootPart != null) {
-				infiniteCanvas = new InfiniteCanvas();
+			infiniteCanvas = new InfiniteCanvas();
+			infiniteCanvas.sceneProperty().addListener(sceneListener);
 
-				// register root visual
-				infiniteCanvas.getContentGroup().getChildren()
-						.addAll((Parent) rootPart.getVisual());
-				infiniteCanvas.sceneProperty().addListener(sceneListener);
-				if (infiniteCanvas.getScene() != null) {
-					onSceneChanged(null, infiniteCanvas.getScene());
-				}
-			}
+			// hook root visual
+			IRootPart<? extends Node> rootPart = getRootPart();
+			infiniteCanvas.getContentGroup().getChildren()
+					.addAll((Parent) rootPart.getVisual());
 		}
 		return infiniteCanvas;
 	}
