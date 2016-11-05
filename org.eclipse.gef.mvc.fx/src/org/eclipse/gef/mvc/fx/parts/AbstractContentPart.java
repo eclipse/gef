@@ -12,7 +12,6 @@
 package org.eclipse.gef.mvc.fx.parts;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import org.eclipse.gef.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef.common.beans.property.ReadOnlySetMultimapWrapper;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.collections.ObservableSetMultimap;
-import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
@@ -520,12 +518,6 @@ public abstract class AbstractContentPart<V extends Node>
 	@Override
 	protected void unregister(IViewer viewer) {
 		// remove content children and anchorages
-		ContentBehavior contentBehavior = getAdapter(ContentBehavior.class);
-		if (contentBehavior != null) {
-			contentBehavior.synchronizeContentPartChildren(Collections.emptyList());
-			contentBehavior.synchronizeContentPartAnchorages(
-					HashMultimap.<Object, String> create());
-		}
 		super.unregister(viewer);
 		if (getContent() != null) {
 			unregisterFromContentPartMap(viewer, getContent());
