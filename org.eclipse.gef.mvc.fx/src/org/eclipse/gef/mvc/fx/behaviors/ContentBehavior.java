@@ -254,18 +254,19 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * @return the {@link IContentPartFactory} of the current viewer.
 	 */
 	protected IContentPartFactory getContentPartFactory() {
-		IViewer viewer = getHost().getRoot().getViewer();
-		return viewer.getAdapter(IContentPartFactory.class);
+		return getHost().getRoot().getViewer()
+				.getAdapter(IContentPartFactory.class);
 	}
 
 	/**
-	 * Returns the {@link ContentPartPool} that is used to recylce content parts
-	 * in the context of an {@link IRootPart}.
+	 * Returns the {@link ContentPartPool} that is used to recycle content parts
+	 * in the context of an {@link IViewer}.
 	 *
-	 * @return The {@link ContentPartPool} of the {@link IRootPart}.
+	 * @return The {@link ContentPartPool} of the {@link IViewer}.
 	 */
 	protected ContentPartPool getContentPartPool() {
-		return getHost().getRoot().getAdapter(ContentPartPool.class);
+		return getHost().getRoot().getViewer()
+				.getAdapter(ContentPartPool.class);
 	}
 
 	/**

@@ -32,7 +32,6 @@ import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -136,10 +135,6 @@ public class InfiniteCanvasViewer implements IViewer {
 		}
 	};
 
-	@Inject
-	// scoped to single instance within viewer
-	private ContentPartPool contentPartPool;
-
 	private ActivatableSupport acs = new ActivatableSupport(this);
 
 	private AdaptableSupport<IViewer> ads = new AdaptableSupport<>(this);
@@ -171,7 +166,15 @@ public class InfiniteCanvasViewer implements IViewer {
 		if (!acs.isActive()) {
 			if (getDomain() == null) {
 				throw new IllegalStateException(
-						"HistoricizingDomain has to be set before activation.");
+						"Domain has to be set before activation.");
+			}
+			if (getRootPart() == null) {
+				throw new IllegalStateException(
+						"RootPart has to be set before activation.");
+			}
+			if (infiniteCanvas == null || infiniteCanvas.getScene() == null) {
+				throw new IllegalStateException(
+						"Viewer controls have to be hooked (to scene) before activation.");
 			}
 			acs.activate();
 			// XXX: We keep a sorted map of adapters so activation
@@ -246,17 +249,21 @@ public class InfiniteCanvasViewer implements IViewer {
 		viewerFocusedProperty.unbind();
 		viewerFocusedProperty = null;
 
+		// dispose the content part pool (we share a single instance by all
+		// content behaviors of a viewer, so need to dispose this here)
+		// TODO: make it disposable, so no special handling is needed
+		ContentPartPool contentPartPool = getAdapter(ContentPartPool.class);
+		if (contentPartPool != null) {
+			for (IContentPart<? extends Node> cp : contentPartPool
+					.getPooled()) {
+				cp.dispose();
+			}
+			contentPartPool.clear();
+		}
+
 		// dispose adapters (including root part and models)
 		ads.dispose();
 		ads = null;
-
-		// dispose the content part pool (we share a single instance by all
-		// content behaviors of a viewer, so need to dispose this here)
-		for (IContentPart<? extends Node> cp : contentPartPool.getPooled()) {
-			cp.dispose();
-		}
-		contentPartPool.clear();
-		contentPartPool = null;
 
 		// clear content part map
 		if (!contentPartMap.isEmpty()) {
