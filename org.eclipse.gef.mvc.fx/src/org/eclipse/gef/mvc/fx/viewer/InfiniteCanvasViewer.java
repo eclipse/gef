@@ -25,7 +25,6 @@ import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.fx.utils.NodeUtils;
-import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
@@ -248,18 +247,6 @@ public class InfiniteCanvasViewer implements IViewer {
 		// unbind viewer focused property
 		viewerFocusedProperty.unbind();
 		viewerFocusedProperty = null;
-
-		// dispose the content part pool (we share a single instance by all
-		// content behaviors of a viewer, so need to dispose this here)
-		// TODO: make it disposable, so no special handling is needed
-		ContentPartPool contentPartPool = getAdapter(ContentPartPool.class);
-		if (contentPartPool != null) {
-			for (IContentPart<? extends Node> cp : contentPartPool
-					.getPooled()) {
-				cp.dispose();
-			}
-			contentPartPool.clear();
-		}
 
 		// dispose adapters (including root part and models)
 		ads.dispose();

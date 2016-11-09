@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 
 import javafx.scene.Node;
@@ -35,7 +36,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class ContentPartPool {
+public class ContentPartPool implements IDisposable {
 
 	private Map<Object, IContentPart<? extends Node>> pool = new HashMap<>();
 
@@ -63,13 +64,19 @@ public class ContentPartPool {
 		pool.clear();
 	}
 
+	@Override
+	public void dispose() {
+		for (IContentPart<? extends Node> cp : getPooled()) {
+			cp.dispose();
+		}
+		clear();
+	}
+
 	/**
 	 * Returns the {@link IContentPart}'s that are contained in this pool.
 	 *
 	 * @return The {@link IContentPart}s that are currently contained in this
 	 *         pool.
-	 *
-	 * @since 1.1
 	 */
 	public Collection<IContentPart<? extends Node>> getPooled() {
 		return Collections.unmodifiableCollection(pool.values());

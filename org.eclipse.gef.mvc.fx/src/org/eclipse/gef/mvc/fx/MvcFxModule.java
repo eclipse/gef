@@ -292,7 +292,7 @@ public class MvcFxModule extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} that is used to establish the binding.
 	 */
-	protected void bindContentPartPoolAsIViewerAdapter(
+	protected void bindContentPartPoolAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(ContentPartPool.class);
@@ -721,24 +721,6 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link IRootPart} and all
-	 * sub-classes. May be overwritten by sub-classes to change the default
-	 * bindings.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link IViewer} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindIViewerAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		bindContentPartPoolAsIViewerAdapter(adapterMapBinder);
-	}
-
-	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link IViewer} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
@@ -754,6 +736,8 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindIViewerAdaptersForContentViewer(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		bindIContentPartFactoryAsContentViewerAdapter(adapterMapBinder);
+		bindContentPartPoolAsContentViewerAdapter(adapterMapBinder);
+
 		bindGridModelAsContentViewerAdapter(adapterMapBinder);
 		bindFocusModelAsContentViewerAdapter(adapterMapBinder);
 		bindHoverModelAsContentViewerAdapter(adapterMapBinder);
@@ -1085,8 +1069,6 @@ public class MvcFxModule extends AbstractModule {
 				AdapterMaps.getAdapterMapBinder(binder(), IDomain.class));
 
 		// bind additional adapters for InfiniteCanvasViewer
-		bindIViewerAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), IViewer.class));
 		bindIViewerAdaptersForContentViewer(AdapterMaps.getAdapterMapBinder(
 				binder(), IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 

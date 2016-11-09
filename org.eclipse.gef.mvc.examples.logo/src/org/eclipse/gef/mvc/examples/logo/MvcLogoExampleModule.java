@@ -40,6 +40,7 @@ import org.eclipse.gef.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickP
 import org.eclipse.gef.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
@@ -378,6 +379,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindHoverHandleFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		bindFocusFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		// bind content part factory
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentPartPool.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(MvcLogoExamplePaletteContentPartFactory.class);
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR_PROVIDER))
 				.toInstance(new Provider<Color>() {
