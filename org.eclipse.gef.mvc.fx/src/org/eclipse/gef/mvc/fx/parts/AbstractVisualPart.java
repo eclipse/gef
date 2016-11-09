@@ -111,7 +111,6 @@ public abstract class AbstractVisualPart<V extends Node>
 		if (!acs.isActive()) {
 			// System.out.println("Activate " + this);
 			acs.activate();
-			activateChildren();
 			// XXX: We keep a sorted map of adapters so activation
 			// is performed in a deterministic order
 			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
@@ -119,6 +118,7 @@ public abstract class AbstractVisualPart<V extends Node>
 					((IActivatable) adapter).activate();
 				}
 			});
+			activateChildren();
 			doActivate();
 		}
 	}
@@ -293,6 +293,7 @@ public abstract class AbstractVisualPart<V extends Node>
 		if (acs.isActive()) {
 			// System.out.println("Deactivate " + this);
 			doDeactivate();
+			deactivateChildren();
 			// XXX: We keep a sorted map of adapters so deactivation
 			// is performed in a deterministic order
 			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
@@ -300,7 +301,6 @@ public abstract class AbstractVisualPart<V extends Node>
 					((IActivatable) adapter).deactivate();
 				}
 			});
-			deactivateChildren();
 			acs.deactivate();
 		}
 	}
