@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.parts;
 
-import java.util.Arrays;
-
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -73,6 +71,8 @@ public abstract class AbstractFXEditor extends EditorPart {
 
 	private UndoRedoActionGroup undoRedoActionGroup;
 
+	private IUndoableOperation saveLocation = null;
+
 	/**
 	 * Constructs a new {@link AbstractFXEditor} and uses the given
 	 * {@link Injector} to inject its members.
@@ -117,19 +117,21 @@ public abstract class AbstractFXEditor extends EditorPart {
 		return new IOperationHistoryListener() {
 			@Override
 			public void historyNotification(final OperationHistoryEvent event) {
-				IUndoableOperation operation = event.getOperation();
-				IUndoContext undoContext = (IUndoContext) getAdapter(
-						IUndoContext.class);
-				if (undoContext != null
-						&& Arrays.asList(operation.getContexts())
-								.contains(undoContext)
-						&& event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
-						&& event.getHistory().getUndoHistory(
-								operation.getContexts()[0]).length > 0
-						&& (!(operation instanceof ITransactionalOperation)
-								|| ((ITransactionalOperation) operation)
-										.isContentRelevant())) {
-					setDirty(true);
+				// XXX: Only react to a subset of the history event
+				// notifications. OPERATION_ADDED is issued when a transaction
+				// is committed on the domain or an operation without a
+				// transaction (that was executed locally before); in the latter
+				// case, we would also obtain a DONE notification (which we
+				// ignore here). OPERATION_REMOVED is issued then flushing the
+				// history
+				IUndoableOperation[] undoHistory = event.getHistory()
+						.getUndoHistory(getUndoContext());
+				if (event.getEventType() == OperationHistoryEvent.UNDONE
+						|| event.getEventType() == OperationHistoryEvent.REDONE
+						|| event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
+						|| event.getEventType() == OperationHistoryEvent.OPERATION_REMOVED) {
+					setDirty(getMostRecentDirtyRelevantOperation(
+							undoHistory) != saveLocation);
 				}
 			}
 		};
@@ -193,6 +195,8 @@ public abstract class AbstractFXEditor extends EditorPart {
 
 		// unhook selection forwarder
 		unhookViewers();
+
+		saveLocation = null;
 
 		// unregister operation history listener
 		IOperationHistory operationHistory = (IOperationHistory) getAdapter(
@@ -297,6 +301,20 @@ public abstract class AbstractFXEditor extends EditorPart {
 		return domain;
 	}
 
+	private IUndoableOperation getMostRecentDirtyRelevantOperation(
+			IUndoableOperation[] undoHistory) {
+		for (int i = undoHistory.length - 1; i >= 0; i--) {
+			if (isDirtyRelevant(undoHistory[i])) {
+				return undoHistory[i];
+			}
+		}
+		return null;
+	}
+
+	private IOperationHistory getOperationHistory() {
+		return (IOperationHistory) getAdapter(IOperationHistory.class);
+	}
+
 	/**
 	 * Returns the {@link ISelectionProvider} used by this
 	 * {@link AbstractFXEditor}. May be <code>null</code> in case no injection
@@ -306,6 +324,10 @@ public abstract class AbstractFXEditor extends EditorPart {
 	 */
 	public ISelectionProvider getSelectionProvider() {
 		return selectionProvider;
+	}
+
+	private IUndoContext getUndoContext() {
+		return (IUndoContext) getAdapter(IUndoContext.class);
 	}
 
 	/**
@@ -350,15 +372,35 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
-	 * Sets the dirty flag of this editor to the given value.
+	 * Tests whether the given {@link IUndoableOperation} is relevant for the
+	 * dirty-state of the editor.
 	 *
-	 * @param isDirty
-	 *            <code>true</code> to indicate that the editor's contents
-	 *            changed, otherwise <code>false</code>.
+	 * @param operation
+	 *            The {@link IUndoableOperation} to test.
+	 * @return <code>true</code> if the operation encapsulates a dirty-state
+	 *         relevant change, <code>false</code> otherwise.
 	 */
-	protected void setDirty(boolean isDirty) {
-		if (this.isDirty != isDirty) {
-			this.isDirty = isDirty;
+	protected boolean isDirtyRelevant(IUndoableOperation operation) {
+		return operation instanceof ITransactionalOperation
+				&& !((ITransactionalOperation) operation).isNoOp()
+				&& ((ITransactionalOperation) operation).isContentRelevant();
+	}
+
+	/**
+	 * Sets the most recent dirty-state relevant operation on the history as
+	 * being the current save location and sets the {@link #isDirty() dirty}
+	 * state to <code>false</code>.
+	 */
+	protected void markSaveLocation() {
+		IUndoableOperation[] undoHistory = getOperationHistory()
+				.getUndoHistory(getUndoContext());
+		saveLocation = getMostRecentDirtyRelevantOperation(undoHistory);
+		setDirty(false);
+	}
+
+	private void setDirty(boolean dirty) {
+		if (this.isDirty != dirty) {
+			this.isDirty = dirty;
 			firePropertyChange(PROP_DIRTY);
 		}
 	}
