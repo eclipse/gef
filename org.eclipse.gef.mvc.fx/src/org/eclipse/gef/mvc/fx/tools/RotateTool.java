@@ -56,8 +56,8 @@ public class RotateTool extends AbstractTool {
 	}
 
 	@Override
-	protected void registerListeners() {
-		super.registerListeners();
+	protected void doActivate() {
+		super.doActivate();
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
 			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
@@ -127,7 +127,7 @@ public class RotateTool extends AbstractTool {
 	}
 
 	@Override
-	protected void unregisterListeners() {
+	protected void doDeactivate() {
 		for (IViewer viewer : new ArrayList<>(
 				viewerFocusChangeListeners.keySet())) {
 			viewer.viewerFocusedProperty()
@@ -136,7 +136,7 @@ public class RotateTool extends AbstractTool {
 		for (Scene scene : new ArrayList<>(gestures.keySet())) {
 			gestures.remove(scene).setScene(null);
 		}
-		super.unregisterListeners();
+		super.doDeactivate();
 	}
 
 }

@@ -223,9 +223,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			return contentPartMap.get(content);
 		} else {
 			// 'Revive' a content part, if it was removed before
-			IContentPart<? extends Node> contentPart = null;
-			contentPart = getContentPartPool().remove(content);
-
+			IContentPart<? extends Node> contentPart = getContentPartPool()
+					.remove(content);
 			// If the part could not be revived, a new one is created
 			if (contentPart == null) {
 				// create part using the factory

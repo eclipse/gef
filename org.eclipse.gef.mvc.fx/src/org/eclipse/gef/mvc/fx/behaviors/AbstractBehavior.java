@@ -60,14 +60,11 @@ public abstract class AbstractBehavior implements IBehavior {
 
 	@Override
 	public final void activate() {
-		if (!acs.isActive()) {
-			acs.activate();
-			doActivate();
-		}
+		acs.activate(this::doActivate);
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty activeProperty() {
+	public final ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
 	}
 
@@ -170,7 +167,8 @@ public abstract class AbstractBehavior implements IBehavior {
 		// generate feedback parts
 		List<IFeedbackPart<? extends Node>> feedbackParts = null;
 		if (factory != null) {
-			feedbackParts = factory.createFeedbackParts(targets, Collections.emptyMap());
+			feedbackParts = factory.createFeedbackParts(targets,
+					Collections.emptyMap());
 		}
 		if (feedbackParts == null) {
 			// XXX: An empty list is put into the feedback per target set map,
@@ -231,7 +229,8 @@ public abstract class AbstractBehavior implements IBehavior {
 		// generate handle parts
 		List<IHandlePart<? extends Node>> handleParts = null;
 		if (factory != null) {
-			handleParts = factory.createHandleParts(targets, Collections.emptyMap());
+			handleParts = factory.createHandleParts(targets,
+					Collections.emptyMap());
 		}
 		if (handleParts == null) {
 			// XXX: An empty list is put into the handles per target set map,
@@ -280,10 +279,7 @@ public abstract class AbstractBehavior implements IBehavior {
 
 	@Override
 	public final void deactivate() {
-		if (acs.isActive()) {
-			doDeactivate();
-			acs.deactivate();
-		}
+		acs.deactivate(this::doDeactivate);
 	}
 
 	/**
@@ -539,7 +535,7 @@ public abstract class AbstractBehavior implements IBehavior {
 	}
 
 	@Override
-	public boolean isActive() {
+	public final boolean isActive() {
 		return acs.isActive();
 	}
 

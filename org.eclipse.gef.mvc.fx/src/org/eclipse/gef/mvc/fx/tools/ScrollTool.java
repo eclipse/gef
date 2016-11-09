@@ -50,8 +50,8 @@ public class ScrollTool extends AbstractTool {
 	}
 
 	@Override
-	protected void registerListeners() {
-		super.registerListeners();
+	protected void doActivate() {
+		super.doActivate();
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
 			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
@@ -121,7 +121,7 @@ public class ScrollTool extends AbstractTool {
 	}
 
 	@Override
-	protected void unregisterListeners() {
+	protected void doDeactivate() {
 		for (Scene scene : new ArrayList<>(gestures.keySet())) {
 			gestures.remove(scene).setScene(null);
 		}
@@ -130,7 +130,7 @@ public class ScrollTool extends AbstractTool {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 		}
-		super.unregisterListeners();
+		super.doDeactivate();
 	}
 
 }

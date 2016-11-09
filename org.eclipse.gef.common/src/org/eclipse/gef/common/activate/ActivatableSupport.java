@@ -50,11 +50,15 @@ public class ActivatableSupport {
 	/**
 	 * Activates this {@link ActivatableSupport} if it is not yet active.
 	 *
+	 * @param activationCallback
+	 *            A callback that is executed upon activation.
+	 *
 	 * @see IActivatable#activate()
 	 */
-	public void activate() {
+	public void activate(Runnable activationCallback) {
 		if (!isActive()) {
 			activeProperty.set(true);
+			activationCallback.run();
 		}
 	}
 
@@ -72,10 +76,14 @@ public class ActivatableSupport {
 	/**
 	 * Deactivates this {@link ActivatableSupport} if it is not yet inactive.
 	 *
+	 * @param deactivationCallback
+	 *            A {@link Runnable} that is executed when being deactivated.
+	 *
 	 * @see IActivatable#deactivate()
 	 */
-	public void deactivate() {
+	public void deactivate(Runnable deactivationCallback) {
 		if (isActive()) {
+			deactivationCallback.run();
 			activeProperty.set(false);
 		}
 	}

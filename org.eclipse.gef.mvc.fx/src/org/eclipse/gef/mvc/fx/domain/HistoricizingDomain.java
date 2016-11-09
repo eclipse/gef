@@ -104,21 +104,12 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public void activate() {
-		if (!acs.isActive()) {
-			acs.activate();
-			// XXX: We keep a sorted map of adapters so activation
-			// is performed in a deterministic order
-			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-				if (adapter instanceof IActivatable) {
-					((IActivatable) adapter).activate();
-				}
-			});
-		}
+	public final void activate() {
+		acs.activate(this::doActivate);
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty activeProperty() {
+	public final ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
 	}
 
@@ -202,17 +193,8 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public void deactivate() {
-		if (acs.isActive()) {
-			// XXX: We keep a sorted map of adapters so deactivation
-			// is performed in a deterministic order
-			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-				if (adapter instanceof IActivatable) {
-					((IActivatable) adapter).deactivate();
-				}
-			});
-			acs.deactivate();
-		}
+	public final void deactivate() {
+		acs.deactivate(this::doDeactivate);
 	}
 
 	@Override
@@ -233,6 +215,33 @@ public class HistoricizingDomain implements IDomain {
 		ads.dispose();
 		ads = null;
 		acs = null;
+	}
+
+	/**
+	 * Activates this {@link HistoricizingDomain}, which activates its adapters.
+	 */
+	protected void doActivate() {
+		// XXX: We keep a sorted map of adapters so activation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).activate();
+			}
+		});
+	}
+
+	/**
+	 * Deactivates this {@link HistoricizingDomain}, which deactivates its
+	 * adapters.
+	 */
+	protected void doDeactivate() {
+		// XXX: We keep a sorted map of adapters so deactivation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).deactivate();
+			}
+		});
 	}
 
 	/**
@@ -341,7 +350,7 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public boolean isActive() {
+	public final boolean isActive() {
 		return acs.isActive();
 	}
 

@@ -86,8 +86,8 @@ public class HoverTool extends AbstractTool {
 	}
 
 	@Override
-	protected void registerListeners() {
-		super.registerListeners();
+	protected void doActivate() {
+		super.doActivate();
 		for (IViewer viewer : getDomain().getViewers().values()) {
 			Scene scene = viewer.getCanvas().getScene();
 			if (!hoverFilters.containsKey(scene)) {
@@ -100,11 +100,11 @@ public class HoverTool extends AbstractTool {
 	}
 
 	@Override
-	protected void unregisterListeners() {
+	protected void doDeactivate() {
 		for (Scene scene : hoverFilters.keySet()) {
 			scene.removeEventFilter(MouseEvent.ANY, hoverFilters.remove(scene));
 		}
-		super.unregisterListeners();
+		super.doDeactivate();
 	}
 
 }

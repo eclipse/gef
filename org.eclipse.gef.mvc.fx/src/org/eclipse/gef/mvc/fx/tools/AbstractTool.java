@@ -42,19 +42,12 @@ public abstract class AbstractTool implements ITool {
 	private Map<IViewer, List<IPolicy>> activePolicies = new IdentityHashMap<>();
 
 	@Override
-	public void activate() {
-		if (getDomain() == null) {
-			throw new IllegalStateException(
-					"The IEditDomain has to be set via setDomain(IDomain) before activation.");
-		}
-
-		acs.activate();
-
-		registerListeners();
+	public final void activate() {
+		acs.activate(this::doActivate);
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty activeProperty() {
+	public final ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
 	}
 
@@ -81,10 +74,24 @@ public abstract class AbstractTool implements ITool {
 	}
 
 	@Override
-	public void deactivate() {
-		unregisterListeners();
+	public final void deactivate() {
+		acs.deactivate(this::doDeactivate);
+	}
 
-		acs.deactivate();
+	/**
+	 * This method is called when a valid {@link IDomain} is attached to this
+	 * tool so that you can register event listeners for various inputs
+	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
+	 */
+	protected void doActivate() {
+	}
+
+	/**
+	 * This method is called when the attached {@link IDomain} is reset to
+	 * <code>null</code> so that you can unregister previously registered event
+	 * listeners.
+	 */
+	protected void doDeactivate() {
 	}
 
 	@Override
@@ -116,16 +123,8 @@ public abstract class AbstractTool implements ITool {
 	}
 
 	@Override
-	public boolean isActive() {
+	public final boolean isActive() {
 		return acs.isActive();
-	}
-
-	/**
-	 * This method is called when a valid {@link IDomain} is attached to this
-	 * tool so that you can register event listeners for various inputs
-	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
-	 */
-	protected void registerListeners() {
 	}
 
 	/**
@@ -160,14 +159,6 @@ public abstract class AbstractTool implements ITool {
 					"The reference to the IDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
 		}
 		domainProperty.set(adaptable);
-	}
-
-	/**
-	 * This method is called when the attached {@link IDomain} is reset to
-	 * <code>null</code> so that you can unregister previously registered event
-	 * listeners.
-	 */
-	protected void unregisterListeners() {
 	}
 
 }

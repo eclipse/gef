@@ -66,7 +66,7 @@ public class TypeTool extends AbstractTool {
 	}
 
 	@Override
-	protected void registerListeners() {
+	protected void doActivate() {
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// check if we have access to a FocusModel
 			FocusModel focusModel = viewer.getAdapter(FocusModel.class);
@@ -265,7 +265,7 @@ public class TypeTool extends AbstractTool {
 	}
 
 	@Override
-	protected void unregisterListeners() {
+	protected void doDeactivate() {
 		for (IViewer viewer : getDomain().getViewers().values()) {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));

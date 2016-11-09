@@ -161,33 +161,12 @@ public class InfiniteCanvasViewer implements IViewer {
 	}
 
 	@Override
-	public void activate() {
-		if (!acs.isActive()) {
-			if (getDomain() == null) {
-				throw new IllegalStateException(
-						"Domain has to be set before activation.");
-			}
-			if (getRootPart() == null) {
-				throw new IllegalStateException(
-						"RootPart has to be set before activation.");
-			}
-			if (infiniteCanvas == null || infiniteCanvas.getScene() == null) {
-				throw new IllegalStateException(
-						"Viewer controls have to be hooked (to scene) before activation.");
-			}
-			acs.activate();
-			// XXX: We keep a sorted map of adapters so activation
-			// is performed in a deterministic order
-			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-				if (adapter instanceof IActivatable) {
-					((IActivatable) adapter).activate();
-				}
-			});
-		}
+	public final void activate() {
+		acs.activate(this::doActivate);
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty activeProperty() {
+	public final ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
 	}
 
@@ -216,21 +195,8 @@ public class InfiniteCanvasViewer implements IViewer {
 	}
 
 	@Override
-	public void deactivate() {
-		if (acs.isActive()) {
-			if (getDomain() == null) {
-				throw new IllegalStateException(
-						"HistoricizingDomain may not be unset before deactivation is completed.");
-			}
-			// XXX: We keep a sorted map of adapters so deactivation
-			// is performed in a deterministic order
-			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-				if (adapter instanceof IActivatable) {
-					((IActivatable) adapter).deactivate();
-				}
-			});
-			acs.deactivate();
-		}
+	public final void deactivate() {
+		acs.deactivate(this::doDeactivate);
 	}
 
 	@Override
@@ -268,6 +234,44 @@ public class InfiniteCanvasViewer implements IViewer {
 
 		// unset activatable support
 		acs = null;
+	}
+
+	/**
+	 * Activates this {@link InfiniteCanvasViewer}, which activates its
+	 * adapters.
+	 */
+	protected void doActivate() {
+		if (getDomain() == null) {
+			throw new IllegalStateException(
+					"Domain has to be set before activation.");
+		}
+		if (getRootPart() == null) {
+			throw new IllegalStateException(
+					"RootPart has to be set before activation.");
+		}
+		if (infiniteCanvas == null || infiniteCanvas.getScene() == null) {
+			throw new IllegalStateException(
+					"Viewer controls have to be hooked (to scene) before activation.");
+		}
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).activate();
+			}
+		});
+	}
+
+	/**
+	 * Deactivates this {@link InfiniteCanvasViewer}, which deactivates its
+	 * adapters.
+	 */
+	protected void doDeactivate() {
+		// XXX: We keep a sorted map of adapters so deactivation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).deactivate();
+			}
+		});
 	}
 
 	@Override
@@ -378,7 +382,7 @@ public class InfiniteCanvasViewer implements IViewer {
 	}
 
 	@Override
-	public boolean isActive() {
+	public final boolean isActive() {
 		return acs.isActive();
 	}
 

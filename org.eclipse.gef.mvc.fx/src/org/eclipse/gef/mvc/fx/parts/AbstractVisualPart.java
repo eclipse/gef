@@ -108,19 +108,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 */
 	@Override
 	public final void activate() {
-		if (!acs.isActive()) {
-			// System.out.println("Activate " + this);
-			acs.activate();
-			// XXX: We keep a sorted map of adapters so activation
-			// is performed in a deterministic order
-			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-				if (adapter instanceof IActivatable) {
-					((IActivatable) adapter).activate();
-				}
-			});
-			activateChildren();
-			doActivate();
-		}
+		acs.activate(this::doActivate);
 	}
 
 	/**
@@ -290,19 +278,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 */
 	@Override
 	public final void deactivate() {
-		if (acs.isActive()) {
-			// System.out.println("Deactivate " + this);
-			doDeactivate();
-			deactivateChildren();
-			// XXX: We keep a sorted map of adapters so deactivation
-			// is performed in a deterministic order
-			new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-				if (adapter instanceof IActivatable) {
-					((IActivatable) adapter).deactivate();
-				}
-			});
-			acs.deactivate();
-		}
+		acs.deactivate(this::doDeactivate);
 	}
 
 	/**
@@ -415,10 +391,18 @@ public abstract class AbstractVisualPart<V extends Node>
 	}
 
 	/**
-	 * Post {@link #activate()} hook. Does nothing by default
+	 * Activates this {@link AbstractVisualPart}, which activates its children
+	 * and adapters.
 	 */
 	protected void doActivate() {
-		// nothing to do by default
+		// XXX: We keep a sorted map of adapters so activation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).activate();
+			}
+		});
+		activateChildren();
 	}
 
 	/**
@@ -461,10 +445,18 @@ public abstract class AbstractVisualPart<V extends Node>
 	protected abstract V doCreateVisual();
 
 	/**
-	 * Pre {@link #deactivate()} hook. Does nothing by default
+	 * Deactivates this {@link AbstractVisualPart}, which deactivates its
+	 * children and adapters.
 	 */
 	protected void doDeactivate() {
-		// nothing to do by default
+		deactivateChildren();
+		// XXX: We keep a sorted map of adapters so deactivation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).deactivate();
+			}
+		});
 	}
 
 	/**
