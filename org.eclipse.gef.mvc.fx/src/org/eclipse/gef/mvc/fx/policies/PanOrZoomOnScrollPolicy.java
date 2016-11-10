@@ -152,22 +152,30 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 		return event.isControlDown() || event.isAltDown();
 	}
 
+	/**
+	 * Performs panning according to the given {@link ScrollEvent}.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} according to which panning is
+	 *            performed.
+	 */
+	protected void pan(ScrollEvent event) {
+		// Determine horizontal and vertical translation.
+		Dimension delta = computeDelta(event);
+		// Stop scrolling at the content-bounds.
+		setStopped(stopAtContentBounds(delta));
+		// change viewport via operation
+		getViewportPolicy().scroll(true, delta.width, delta.height);
+	}
+
 	@Override
 	public void scroll(ScrollEvent event) {
 		// each event is tested for suitability so that you can switch between
 		// multiple scroll actions instantly when pressing/releasing modifiers
 		if (isPan(event) && !isStopped()) {
-			// Determine horizontal and vertical translation.
-			Dimension delta = computeDelta(event);
-			// Stop scrolling at the content-bounds.
-			setStopped(stopAtContentBounds(delta));
-			// change viewport via operation
-			getViewportPolicy().scroll(true, delta.width, delta.height);
+			pan(event);
 		} else if (isZoom(event)) {
-			// zoom into/out-of the event location
-			getViewportPolicy().zoom(true, true,
-					event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
-					event.getSceneY());
+			zoom(event);
 		}
 	}
 
@@ -215,8 +223,8 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	 *         adjusted, otherwise <code>false</code>.
 	 */
 	protected boolean stopAtContentBounds(Dimension delta) {
-		InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost().getRoot()
-				.getViewer()).getCanvas();
+		InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost()
+				.getRoot().getViewer()).getCanvas();
 		Bounds contentBounds = infiniteCanvas.getContentBounds();
 		boolean stopped = false;
 		if (contentBounds.getMinX() < 0
@@ -260,6 +268,20 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 			stopped = true;
 		}
 		return stopped;
+	}
+
+	/**
+	 * Performs zooming according to the given {@link ScrollEvent}.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} according to which zooming is
+	 *            performed.
+	 */
+	protected void zoom(ScrollEvent event) {
+		// zoom into/out-of the event location
+		getViewportPolicy().zoom(true, true,
+				event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
+				event.getSceneY());
 	}
 
 }
