@@ -645,18 +645,6 @@ public class InfiniteCanvas extends Region {
 		registerFadeInOutTransitions(horizontalScrollBar);
 		registerFadeInOutTransitions(verticalScrollBar);
 
-		// update scrollable bounds on mouse press
-		EventHandler<MouseEvent> mousePressFilter = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				updateScrollBars();
-			}
-		};
-		horizontalScrollBar.addEventFilter(MouseEvent.MOUSE_PRESSED,
-				mousePressFilter);
-		verticalScrollBar.addEventFilter(MouseEvent.MOUSE_PRESSED,
-				mousePressFilter);
-
 		// translate on scroll
 		horizontalScrollBar.valueProperty()
 				.addListener(new ChangeListener<Number>() {
@@ -682,16 +670,6 @@ public class InfiniteCanvas extends Region {
 						}
 					}
 				});
-
-		// update scrollbars on mouse release
-		EventHandler<MouseEvent> mouseReleasedHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				updateScrollBars();
-			}
-		};
-		horizontalScrollBar.setOnMouseReleased(mouseReleasedHandler);
-		verticalScrollBar.setOnMouseReleased(mouseReleasedHandler);
 
 		return new Group(horizontalScrollBar, verticalScrollBar);
 	}
@@ -1171,7 +1149,7 @@ public class InfiniteCanvas extends Region {
 	 * when one of the bounds is changed.
 	 */
 	protected void registerUpdateScrollBarsOnBoundsChanges() {
-		getScrolledPane().boundsInLocalProperty()
+		getScrolledPane().boundsInParentProperty()
 				.addListener(updateScrollBarsOnBoundsChangeListener);
 		getContentGroup().boundsInParentProperty()
 				.addListener(updateScrollBarsOnBoundsChangeListener);
@@ -1296,25 +1274,40 @@ public class InfiniteCanvas extends Region {
 	 */
 	public void setContentTransform(Affine tx) {
 		Affine viewportTransform = contentTransformProperty.get();
+		// Unregister bounds listeners so that transformation changes do not
+		// cause updates. Use flag to be aware if the transformation changed.
+		unregisterUpdateScrollBarsOnBoundsChanges();
+		boolean valuesChanged = false;
 		if (viewportTransform.getMxx() != tx.getMxx()) {
 			viewportTransform.setMxx(tx.getMxx());
+			valuesChanged = true;
 		}
 		if (viewportTransform.getMxy() != tx.getMxy()) {
 			viewportTransform.setMxy(tx.getMxy());
+			valuesChanged = true;
 		}
 		if (viewportTransform.getMyx() != tx.getMyx()) {
 			viewportTransform.setMyx(tx.getMyx());
+			valuesChanged = true;
 		}
 		if (viewportTransform.getMyy() != tx.getMyy()) {
 			viewportTransform.setMyy(tx.getMyy());
+			valuesChanged = true;
 		}
 		if (viewportTransform.getTx() != tx.getTx()) {
 			viewportTransform.setTx(tx.getTx());
+			valuesChanged = true;
 		}
 		if (viewportTransform.getTy() != tx.getTy()) {
 			viewportTransform.setTy(tx.getTy());
+			valuesChanged = true;
 		}
-		updateScrollBars();
+		// Update scrollbars if the transformation changed.
+		if (valuesChanged) {
+			updateScrollBars();
+		}
+		// Register previously unregistered listeners.
+		registerUpdateScrollBarsOnBoundsChanges();
 	}
 
 	/**
@@ -1515,6 +1508,17 @@ public class InfiniteCanvas extends Region {
 		clippingRectangle.widthProperty().unbind();
 		clippingRectangle.heightProperty().unbind();
 		setClip(null);
+	}
+
+	/**
+	 * Unregisters the listeners that were previously registered within
+	 * {@link #registerUpdateScrollBarsOnBoundsChanges()}.
+	 */
+	protected void unregisterUpdateScrollBarsOnBoundsChanges() {
+		getScrolledPane().boundsInParentProperty()
+				.removeListener(updateScrollBarsOnBoundsChangeListener);
+		getContentGroup().boundsInParentProperty()
+				.removeListener(updateScrollBarsOnBoundsChangeListener);
 	}
 
 	/**
