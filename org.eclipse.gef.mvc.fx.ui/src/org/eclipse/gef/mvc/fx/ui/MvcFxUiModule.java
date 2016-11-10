@@ -12,6 +12,7 @@
 package org.eclipse.gef.mvc.fx.ui;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
@@ -19,6 +20,9 @@ import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXEditor;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef.mvc.fx.ui.parts.ContentSelectionProvider;
+import org.eclipse.gef.mvc.fx.ui.parts.HistoryBasedDirtyStateProvider;
+import org.eclipse.gef.mvc.fx.ui.parts.IDirtyStateProvider;
+import org.eclipse.gef.mvc.fx.ui.parts.IDirtyStateProviderFactory;
 import org.eclipse.gef.mvc.fx.ui.parts.ISelectionProviderFactory;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
@@ -54,6 +58,26 @@ public class MvcFxUiModule extends AbstractModule {
 					@Override
 					public FXCanvas createCanvas(Composite parent, int style) {
 						return new FXCanvasEx(parent, style);
+					}
+				});
+	}
+
+	/**
+	 * Binds a factory for the creation of
+	 * {@link HistoryBasedDirtyStateProvider} as {@link IDirtyStateProvider}.
+	 */
+	protected void bindIDirtyStateProviderFactory() {
+		binder().bind(IDirtyStateProviderFactory.class)
+				.toInstance(new IDirtyStateProviderFactory() {
+
+					@Override
+					public IDirtyStateProvider create(
+							IWorkbenchPart workbenchPart) {
+						return new HistoryBasedDirtyStateProvider(
+								(IOperationHistory) workbenchPart
+										.getAdapter(IOperationHistory.class),
+								(IUndoContext) workbenchPart
+										.getAdapter(IUndoContext.class));
 					}
 				});
 	}
@@ -113,11 +137,12 @@ public class MvcFxUiModule extends AbstractModule {
 	protected void configure() {
 		// bindings related to workbench integration
 		bindIOperationHistory();
-		bindIPropertySheetPageFactory();
 
-		// install FXCanvas factory
 		bindFXCanvasFactory();
+
 		bindISelectionProviderFactory();
+		bindIDirtyStateProviderFactory();
+		bindIPropertySheetPageFactory();
 	}
 
 }

@@ -84,16 +84,22 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Creates an {@link FXCanvas} to allow the interoperability between SWT and
-	 * JavaFX using the {@link IFXCanvasFactory} that was previously injected.
-	 *
-	 * @param parent
-	 *            The {@link Composite} that serves as the parent for the
-	 *            created {@link FXCanvas}.
-	 * @return The {@link FXCanvas} that is created by the previously injected
-	 *         {@link IFXCanvasFactory}.
+	 * Create actions for this view and registers at the action bars of the
+	 * view's site.
 	 */
-	protected FXCanvas createCanvas(final Composite parent) {
+	protected void createActions() {
+		IViewSite site = getViewSite();
+		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
+				(IUndoContext) getAdapter(IUndoContext.class), true);
+		undoRedoActionGroup.fillActionBars(site.getActionBars());
+
+		deleteActionHandler = new DeleteActionHandler();
+		deleteActionHandler.init(getContentViewer());
+		site.getActionBars().setGlobalActionHandler(
+				ActionFactory.DELETE.getId(), deleteActionHandler);
+	}
+
+	private FXCanvas createCanvas(final Composite parent) {
 		return canvasFactory.createCanvas(parent, SWT.NONE);
 	}
 
@@ -115,14 +121,7 @@ public abstract class AbstractFXView extends ViewPart {
 		activate();
 	}
 
-	/**
-	 * Creates an {@link IPropertySheetPage} using the injected
-	 * {@link IPropertySheetPageFactory}, if present.
-	 *
-	 * @return An {@link IPropertySheetPage}, or <code>null</code> in case no
-	 *         factory was injected.
-	 */
-	protected IPropertySheetPage createPropertySheetPage() {
+	private IPropertySheetPage createPropertySheetPage() {
 		if (propertySheetPageFactory != null) {
 			return propertySheetPageFactory.create(this);
 		}
@@ -160,13 +159,7 @@ public abstract class AbstractFXView extends ViewPart {
 		propertySheetPage = null;
 		propertySheetPageFactory = null;
 
-		if (undoRedoActionGroup != null) {
-			undoRedoActionGroup.dispose();
-			undoRedoActionGroup = null;
-		}
-
-		deleteActionHandler.init(null);
-		deleteActionHandler = null;
+		disposeActions();
 
 		domain.dispose();
 		domain = null;
@@ -180,6 +173,19 @@ public abstract class AbstractFXView extends ViewPart {
 		super.dispose();
 	}
 
+	/**
+	 * Dispose the actions created by this view.
+	 */
+	protected void disposeActions() {
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.dispose();
+			undoRedoActionGroup = null;
+		}
+
+		deleteActionHandler.init(null);
+		deleteActionHandler = null;
+	}
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(final Class key) {
@@ -187,19 +193,25 @@ public abstract class AbstractFXView extends ViewPart {
 		// handling the key and returning a different implementation
 		// replace with binding
 		if (ISelectionProvider.class.equals(key)) {
-			return selectionProvider;
+			if (selectionProvider != null) {
+				return selectionProvider;
+			}
 		}
-		// contribute to Properties view
-		else if (IPropertySheetPage.class.equals(key)) {
+		// contribute to Properties view (only created if required)
+		if (IPropertySheetPage.class.equals(key)) {
 			if (propertySheetPage == null) {
 				propertySheetPage = createPropertySheetPage();
 			}
-			return propertySheetPage;
-		} else if (IUndoContext.class.equals(key)) {
+			if (propertySheetPage != null) {
+				return propertySheetPage;
+			}
+		}
+		if (IUndoContext.class.equals(key)) {
 			if (domain instanceof HistoricizingDomain) {
 				return ((HistoricizingDomain) domain).getUndoContext();
 			}
-		} else if (IOperationHistory.class.equals(key)) {
+		}
+		if (IOperationHistory.class.equals(key)) {
 			if (domain instanceof HistoricizingDomain) {
 				return ((HistoricizingDomain) domain).getOperationHistory();
 			}
@@ -240,17 +252,6 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Returns the {@link ISelectionProvider} used by this
-	 * {@link AbstractFXView}. May be <code>null</code> in case no injection
-	 * provider is used.
-	 *
-	 * @return {@link ISelectionProvider}
-	 */
-	public ISelectionProvider getSelectionProvider() {
-		return selectionProvider;
-	}
-
-	/**
 	 * Hooks all viewers that are part of this {@link AbstractFXView} into the
 	 * {@link FXCanvas} that was previously created by the injected
 	 * {@link IFXCanvasFactory}.
@@ -264,15 +265,7 @@ public abstract class AbstractFXView extends ViewPart {
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-
-		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
-				(IUndoContext) getAdapter(IUndoContext.class), true);
-		undoRedoActionGroup.fillActionBars(site.getActionBars());
-
-		deleteActionHandler = new DeleteActionHandler();
-		deleteActionHandler.init(getContentViewer());
-		site.getActionBars().setGlobalActionHandler(
-				ActionFactory.DELETE.getId(), deleteActionHandler);
+		createActions();
 	}
 
 	@Override

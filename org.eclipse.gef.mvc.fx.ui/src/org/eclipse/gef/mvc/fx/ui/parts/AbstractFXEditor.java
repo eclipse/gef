@@ -13,15 +13,11 @@
 package org.eclipse.gef.mvc.fx.ui.parts;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -38,6 +34,8 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
 import javafx.scene.Scene;
 
@@ -66,12 +64,12 @@ public abstract class AbstractFXEditor extends EditorPart {
 	private IPropertySheetPageFactory propertySheetPageFactory;
 	private IPropertySheetPage propertySheetPage;
 
-	private IOperationHistoryListener operationHistoryListener;
-	private boolean isDirty;
-
 	private UndoRedoActionGroup undoRedoActionGroup;
 
-	private IUndoableOperation saveLocation = null;
+	@Inject(optional = true)
+	private IDirtyStateProviderFactory dirtyStateProviderFactory;
+	private IDirtyStateProvider dirtyStateProvider;
+	private ChangeListener<Boolean> dirtyStateNotifier;
 
 	/**
 	 * Constructs a new {@link AbstractFXEditor} and uses the given
@@ -94,6 +92,20 @@ public abstract class AbstractFXEditor extends EditorPart {
 	}
 
 	/**
+	 * Creates the actions for this editor and registers them in the editor's
+	 * site action bar.
+	 *
+	 */
+	protected void createActions() {
+		IEditorSite site = getEditorSite();
+		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
+				(IUndoContext) getAdapter(IUndoContext.class), true);
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.fillActionBars(site.getActionBars());
+		}
+	}
+
+	/**
 	 * Uses the {@link IFXCanvasFactory} to create the {@link FXCanvas} that
 	 * allows the interoperability between SWT and JavaFX.
 	 *
@@ -102,39 +114,15 @@ public abstract class AbstractFXEditor extends EditorPart {
 	 *            created.
 	 * @return The {@link FXCanvas} created by the {@link IFXCanvasFactory}.
 	 */
-	protected FXCanvas createCanvas(final Composite parent) {
+	private FXCanvas createCanvas(final Composite parent) {
 		return canvasFactory.createCanvas(parent, SWT.NONE);
 	}
 
-	/**
-	 * Returns the {@link IOperationHistoryListener} that is to be used to
-	 * update the dirty state of this editor.
-	 *
-	 * @return The {@link IOperationHistoryListener} that is to be used to
-	 *         update the dirty state of this editor.
-	 */
-	protected IOperationHistoryListener createOperationHistoryListener() {
-		return new IOperationHistoryListener() {
-			@Override
-			public void historyNotification(final OperationHistoryEvent event) {
-				// XXX: Only react to a subset of the history event
-				// notifications. OPERATION_ADDED is issued when a transaction
-				// is committed on the domain or an operation without a
-				// transaction (that was executed locally before); in the latter
-				// case, we would also obtain a DONE notification (which we
-				// ignore here). OPERATION_REMOVED is issued then flushing the
-				// history
-				IUndoableOperation[] undoHistory = event.getHistory()
-						.getUndoHistory(getUndoContext());
-				if (event.getEventType() == OperationHistoryEvent.UNDONE
-						|| event.getEventType() == OperationHistoryEvent.REDONE
-						|| event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
-						|| event.getEventType() == OperationHistoryEvent.OPERATION_REMOVED) {
-					setDirty(getMostRecentDirtyRelevantOperation(
-							undoHistory) != saveLocation);
-				}
-			}
-		};
+	private IDirtyStateProvider createDirtyStateProvider() {
+		if (dirtyStateProviderFactory != null) {
+			return dirtyStateProviderFactory.create(this);
+		}
+		return null;
 	}
 
 	@Override
@@ -148,37 +136,20 @@ public abstract class AbstractFXEditor extends EditorPart {
 		// register selection provider (if we want to a provide selection)
 		if (selectionProviderFactory != null) {
 			selectionProvider = selectionProviderFactory.create(this);
-			getSite().setSelectionProvider(selectionProvider);
+			if (selectionProvider != null) {
+				getSite().setSelectionProvider(selectionProvider);
+			}
 		}
 
 		// activate domain
 		activate();
 	}
 
-	/**
-	 * Creates an {@link IPropertySheetPage} using the injected
-	 * {@link IPropertySheetPageFactory}, if present.
-	 *
-	 * @return An {@link IPropertySheetPage}, or <code>null</code> in case no
-	 *         factory was injected.
-	 */
-	protected IPropertySheetPage createPropertySheetPage() {
+	private IPropertySheetPage createPropertySheetPage() {
 		if (propertySheetPageFactory != null) {
 			return propertySheetPageFactory.create(this);
 		}
 		return null;
-	}
-
-	/**
-	 * Returns the {@link UndoRedoActionGroup} that is to be used to add undo
-	 * and redo actions.
-	 *
-	 * @return The {@link UndoRedoActionGroup} that is to be used to add undo
-	 *         and redo actions.
-	 */
-	protected UndoRedoActionGroup createUndoRedoActionGroup() {
-		return new UndoRedoActionGroup(getSite(),
-				(IUndoContext) getAdapter(IUndoContext.class), true);
 	}
 
 	/**
@@ -196,16 +167,18 @@ public abstract class AbstractFXEditor extends EditorPart {
 		// unhook selection forwarder
 		unhookViewers();
 
-		saveLocation = null;
-
-		// unregister operation history listener
-		IOperationHistory operationHistory = (IOperationHistory) getAdapter(
-				IOperationHistory.class);
-		if (operationHistory != null) {
-			operationHistory
-					.removeOperationHistoryListener(operationHistoryListener);
+		// The support class used for handling the dirty state
+		if (dirtyStateProvider != null) {
+			if (dirtyStateNotifier != null) {
+				dirtyStateProvider.dirtyProperty()
+						.removeListener(dirtyStateNotifier);
+			}
+			if (dirtyStateProvider instanceof IDisposable) {
+				((IDisposable) dirtyStateProvider).dispose();
+			}
+			dirtyStateProvider = null;
+			dirtyStateNotifier = null;
 		}
-		operationHistoryListener = null;
 
 		// unregister selection provider
 		if (selectionProvider != null) {
@@ -220,10 +193,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 		propertySheetPage = null;
 		propertySheetPageFactory = null;
 
-		if (undoRedoActionGroup != null) {
-			undoRedoActionGroup.dispose();
-			undoRedoActionGroup = null;
-		}
+		disposeActions();
 
 		domain.dispose();
 		domain = null;
@@ -237,6 +207,16 @@ public abstract class AbstractFXEditor extends EditorPart {
 		super.dispose();
 	}
 
+	/**
+	 * Dispose the actions created by this editor.
+	 */
+	protected void disposeActions() {
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.dispose();
+			undoRedoActionGroup = null;
+		}
+	}
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(final Class key) {
@@ -244,22 +224,25 @@ public abstract class AbstractFXEditor extends EditorPart {
 		// handling the key and returning a different implementation
 		// replace with binding
 		if (ISelectionProvider.class.equals(key)) {
-			return selectionProvider;
+			if (selectionProvider != null) {
+				return selectionProvider;
+			}
 		}
 		// contribute to Properties view
-		else if (IPropertySheetPage.class.equals(key)) {
+		if (IPropertySheetPage.class.equals(key)) {
 			if (propertySheetPage == null) {
 				propertySheetPage = createPropertySheetPage();
 			}
-			return propertySheetPage;
-		} else if (UndoRedoActionGroup.class.equals(key)) {
-			// used by action bar contributor
-			return undoRedoActionGroup;
-		} else if (IUndoContext.class.equals(key)) {
+			if (propertySheetPage != null) {
+				return propertySheetPage;
+			}
+		}
+		if (IUndoContext.class.equals(key)) {
 			if (domain instanceof HistoricizingDomain) {
 				return ((HistoricizingDomain) domain).getUndoContext();
 			}
-		} else if (IOperationHistory.class.equals(key)) {
+		}
+		if (IOperationHistory.class.equals(key)) {
 			if (domain instanceof HistoricizingDomain) {
 				return ((HistoricizingDomain) domain).getOperationHistory();
 			}
@@ -301,35 +284,6 @@ public abstract class AbstractFXEditor extends EditorPart {
 		return domain;
 	}
 
-	private IUndoableOperation getMostRecentDirtyRelevantOperation(
-			IUndoableOperation[] undoHistory) {
-		for (int i = undoHistory.length - 1; i >= 0; i--) {
-			if (isDirtyRelevant(undoHistory[i])) {
-				return undoHistory[i];
-			}
-		}
-		return null;
-	}
-
-	private IOperationHistory getOperationHistory() {
-		return (IOperationHistory) getAdapter(IOperationHistory.class);
-	}
-
-	/**
-	 * Returns the {@link ISelectionProvider} used by this
-	 * {@link AbstractFXEditor}. May be <code>null</code> in case no injection
-	 * provider is used.
-	 *
-	 * @return {@link ISelectionProvider}
-	 */
-	public ISelectionProvider getSelectionProvider() {
-		return selectionProvider;
-	}
-
-	private IUndoContext getUndoContext() {
-		return (IUndoContext) getAdapter(IUndoContext.class);
-	}
-
 	/**
 	 * Hooks all viewers that are part of this editor into the {@link FXCanvas}.
 	 */
@@ -345,63 +299,38 @@ public abstract class AbstractFXEditor extends EditorPart {
 		setInput(input);
 		setSite(site);
 
-		// register selection provider (if we want to a provide selection)
-		if (selectionProvider != null) {
-			site.setSelectionProvider(selectionProvider);
-		}
+		createActions();
 
-		undoRedoActionGroup = createUndoRedoActionGroup();
-		if (undoRedoActionGroup != null) {
-			undoRedoActionGroup.fillActionBars(site.getActionBars());
-		}
-
-		operationHistoryListener = createOperationHistoryListener();
-		if (operationHistoryListener != null) {
-			IOperationHistory operationHistory = (IOperationHistory) getAdapter(
-					IOperationHistory.class);
-			if (operationHistory != null) {
-				operationHistory
-						.addOperationHistoryListener(operationHistoryListener);
-			}
+		dirtyStateProvider = createDirtyStateProvider();
+		if (dirtyStateProvider != null) {
+			dirtyStateNotifier = new ChangeListener<Boolean>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Boolean> observable,
+						Boolean oldValue, Boolean newValue) {
+					AbstractFXEditor.this.firePropertyChange(PROP_DIRTY);
+				}
+			};
+			dirtyStateProvider.dirtyProperty().addListener(dirtyStateNotifier);
 		}
 	}
 
 	@Override
 	public boolean isDirty() {
-		return isDirty;
+		if (dirtyStateProvider == null) {
+			return false;
+		}
+		return dirtyStateProvider.isDirty();
 	}
 
 	/**
-	 * Tests whether the given {@link IUndoableOperation} is relevant for the
-	 * dirty-state of the editor.
-	 *
-	 * @param operation
-	 *            The {@link IUndoableOperation} to test.
-	 * @return <code>true</code> if the operation encapsulates a dirty-state
-	 *         relevant change, <code>false</code> otherwise.
+	 * Marks the current state of the editor to be non-dirty. Should be called
+	 * from {@link #doSave(org.eclipse.core.runtime.IProgressMonitor)} and
+	 * {@link #doSaveAs()} in case of successful save.
 	 */
-	protected boolean isDirtyRelevant(IUndoableOperation operation) {
-		return operation instanceof ITransactionalOperation
-				&& !((ITransactionalOperation) operation).isNoOp()
-				&& ((ITransactionalOperation) operation).isContentRelevant();
-	}
-
-	/**
-	 * Sets the most recent dirty-state relevant operation on the history as
-	 * being the current save location and sets the {@link #isDirty() dirty}
-	 * state to <code>false</code>.
-	 */
-	protected void markSaveLocation() {
-		IUndoableOperation[] undoHistory = getOperationHistory()
-				.getUndoHistory(getUndoContext());
-		saveLocation = getMostRecentDirtyRelevantOperation(undoHistory);
-		setDirty(false);
-	}
-
-	private void setDirty(boolean dirty) {
-		if (this.isDirty != dirty) {
-			this.isDirty = dirty;
-			firePropertyChange(PROP_DIRTY);
+	protected void markNonDirty() {
+		if (dirtyStateProvider != null) {
+			dirtyStateProvider.markNonDirty();
 		}
 	}
 

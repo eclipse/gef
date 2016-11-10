@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.part.NullEditorInput;
-import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -115,11 +114,6 @@ public class AbstractFXEditorTests {
 	private final class FXEditor extends AbstractFXEditor {
 		private FXEditor(Injector injector) {
 			super(injector);
-		}
-
-		@Override
-		protected UndoRedoActionGroup createUndoRedoActionGroup() {
-			return null;
 		}
 
 		@Override
