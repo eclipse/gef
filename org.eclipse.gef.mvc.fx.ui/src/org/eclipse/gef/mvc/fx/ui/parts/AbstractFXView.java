@@ -60,7 +60,7 @@ public abstract class AbstractFXView extends ViewPart {
 	private IPropertySheetPage propertySheetPage;
 
 	private UndoRedoActionGroup undoRedoActionGroup;
-	private DeleteActionHandler deleteActionHandler;
+	private DeleteActionHandler deleteAction;
 
 	/**
 	 * Constructs a new {@link AbstractFXView} that uses the given
@@ -93,10 +93,10 @@ public abstract class AbstractFXView extends ViewPart {
 				(IUndoContext) getAdapter(IUndoContext.class), true);
 		undoRedoActionGroup.fillActionBars(site.getActionBars());
 
-		deleteActionHandler = new DeleteActionHandler();
-		deleteActionHandler.init(getContentViewer());
+		deleteAction = new DeleteActionHandler();
+		deleteAction.init(getContentViewer());
 		site.getActionBars().setGlobalActionHandler(
-				ActionFactory.DELETE.getId(), deleteActionHandler);
+				ActionFactory.DELETE.getId(), deleteAction);
 	}
 
 	private FXCanvas createCanvas(final Composite parent) {
@@ -182,8 +182,11 @@ public abstract class AbstractFXView extends ViewPart {
 			undoRedoActionGroup = null;
 		}
 
-		deleteActionHandler.init(null);
-		deleteActionHandler = null;
+		if (deleteAction != null) {
+			deleteAction.dispose();
+			deleteAction = null;
+		}
+		deleteAction = null;
 	}
 
 	@SuppressWarnings("rawtypes")

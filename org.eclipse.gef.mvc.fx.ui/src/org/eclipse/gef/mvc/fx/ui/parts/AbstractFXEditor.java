@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.services.IDisposable;
@@ -71,6 +72,8 @@ public abstract class AbstractFXEditor extends EditorPart {
 	private IDirtyStateProvider dirtyStateProvider;
 	private ChangeListener<Boolean> dirtyStateNotifier;
 
+	private DeleteActionHandler deleteAction;
+
 	/**
 	 * Constructs a new {@link AbstractFXEditor} and uses the given
 	 * {@link Injector} to inject its members.
@@ -103,6 +106,11 @@ public abstract class AbstractFXEditor extends EditorPart {
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.fillActionBars(site.getActionBars());
 		}
+
+		deleteAction = new DeleteActionHandler();
+		deleteAction.init(getContentViewer());
+		site.getActionBars().setGlobalActionHandler(
+				ActionFactory.DELETE.getId(), deleteAction);
 	}
 
 	/**
@@ -215,6 +223,11 @@ public abstract class AbstractFXEditor extends EditorPart {
 			undoRedoActionGroup.dispose();
 			undoRedoActionGroup = null;
 		}
+		if (deleteAction != null) {
+			deleteAction.dispose();
+			deleteAction = null;
+		}
+		deleteAction = null;
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -26,6 +26,7 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.services.IDisposable;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -52,7 +53,7 @@ import javafx.scene.Scene;
  * @author anyssen
  *
  */
-public class DeleteActionHandler extends Action {
+public class DeleteActionHandler extends Action implements IDisposable {
 
 	private IViewer viewer = null;
 	private ListChangeListener<IContentPart<? extends Node>> selectionListener = new ListChangeListener<IContentPart<? extends Node>>() {
@@ -70,6 +71,11 @@ public class DeleteActionHandler extends Action {
 		super("Delete");
 		setId(ActionFactory.DELETE.getId());
 		setEnabled(false);
+	}
+
+	@Override
+	public void dispose() {
+		init(null);
 	}
 
 	private SelectionModel getSelectionModel() {
