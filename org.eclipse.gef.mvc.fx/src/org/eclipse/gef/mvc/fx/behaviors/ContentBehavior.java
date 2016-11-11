@@ -16,7 +16,6 @@ package org.eclipse.gef.mvc.fx.behaviors;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,14 +33,12 @@ import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 
 /**
@@ -59,24 +56,35 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends Object> change) {
+			System.out.println("Content changed " + change);
 			// XXX: An atomic operation (including setAll()) on the
 			// ObservableList will lead to an atomic change here; we do not have
 			// to iterate through the individual changes but may simply
 			// synchronize with the list as it emerges after the changes have
 			// been applied.
-			synchronizeContentPartChildren(change.getList());
+			// while (change.next()) {
+			// if (change.wasRemoved()) {
+			// removeContentPartChildren(getHost(),
+			// ImmutableList.copyOf(change.getRemoved()));
+			// } else if (change.wasAdded()) {
+			// addContentPartChildren(getHost(),
+			// ImmutableList.copyOf(change.getAddedSubList()),
+			// change.getFrom());
+			// } else if (change.wasPermutated()) {
+			// throw new UnsupportedOperationException(
+			// "Reorder not yet implemented");
+			// }
+			// }
+			synchronizeContentPartChildren(getHost(), change.getList());
 
 			// TODO: Check if the flushing of the viewer models can be done in a
 			// more appropriate place.
-
-			// clear selection
 			IViewer viewer = getHost().getRoot().getViewer();
 			SelectionModel selectionModel = viewer
 					.getAdapter(SelectionModel.class);
 			if (selectionModel != null) {
 				selectionModel.clearSelection();
 			}
-			// clear hover
 			HoverModel hoverModel = viewer.getAdapter(HoverModel.class);
 			if (hoverModel != null) {
 				hoverModel.clearHover();
@@ -84,51 +92,193 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 	};
 
-	private ChangeListener<Object> contentObserver = new ChangeListener<Object>() {
-		@Override
-		public void changed(ObservableValue<? extends Object> observable,
-				Object oldValue, Object newValue) {
-			synchronizeContentPartChildren(ImmutableList
-					.copyOf(((IContentPart<? extends Node>) getHost())
-							.getContentChildrenUnmodifiable()));
-			synchronizeContentPartAnchorages(ImmutableSetMultimap
-					.copyOf(((IContentPart<? extends Node>) getHost())
-							.getContentAnchoragesUnmodifiable()));
-		}
-	};
-
 	private ListChangeListener<Object> contentChildrenObserver = new ListChangeListener<Object>() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void onChanged(
 				final ListChangeListener.Change<? extends Object> change) {
+			System.out.println("Content children changed " + change);
 			// XXX: An atomic operation (including setAll()) on the
 			// ObservableList will lead to an atomic change here; we do not have
 			// to iterate through the individual changes but may simply
 			// synchronize with the list as it emerges after the changes have
 			// been applied.
-			synchronizeContentPartChildren(new ArrayList<>(change.getList()));
+			IContentPart<? extends Node> parent = (IContentPart<? extends Node>) ((ReadOnlyProperty<?>) change
+					.getList()).getBean();
+			// while (change.next()) {
+			// if (change.wasRemoved()) {
+			// removeContentPartChildren(parent,
+			// ImmutableList.copyOf(change.getRemoved()));
+			// } else if (change.wasAdded()) {
+			// addContentPartChildren(parent,
+			// ImmutableList.copyOf(change.getAddedSubList()),
+			// change.getFrom());
+			// } else if (change.wasPermutated()) {
+			// throw new UnsupportedOperationException(
+			// "Reorder not yet implemented");
+			// }
+			// }
+			synchronizeContentPartChildren(parent, change.getList());
 		}
 	};
 
 	private SetMultimapChangeListener<Object, String> contentAnchoragesObserver = new SetMultimapChangeListener<Object, String>() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void onChanged(
 				final SetMultimapChangeListener.Change<? extends Object, ? extends String> change) {
+			System.out.println("Content anchorages changed " + change);
 			// XXX: An atomic operation (including replaceAll()) on the
 			// ObservableSetMultimap will lead to an atomic change here; we do
 			// not have to iterate through the individual changes but may simply
 			// synchronize with the list as it emerges after the changes have
 			// been applied.
-			synchronizeContentPartAnchorages(
+			// TODO: detach or attach directly
+			IContentPart<? extends Node> anchored = (IContentPart<? extends Node>) ((ReadOnlyProperty<?>) change
+					.getSetMultimap()).getBean();
+			synchronizeContentPartAnchorages(anchored,
 					HashMultimap.create(change.getSetMultimap()));
 		}
 	};
+
+	private MapChangeListener<Object, IContentPart<? extends Node>> contentPartMapObserver = new MapChangeListener<Object, IContentPart<? extends Node>>() {
+
+		@Override
+		public void onChanged(
+				MapChangeListener.Change<? extends Object, ? extends IContentPart<? extends Node>> change) {
+			if (change.wasRemoved()) {
+				IContentPart<? extends Node> contentPart = change
+						.getValueRemoved();
+				contentPart.contentChildrenUnmodifiableProperty()
+						.removeListener(contentChildrenObserver);
+				contentPart.contentAnchoragesUnmodifiableProperty()
+						.removeListener(contentAnchoragesObserver);
+			}
+			if (change.wasAdded()) {
+				IContentPart<? extends Node> contentPart = change
+						.getValueAdded();
+				contentPart.contentChildrenUnmodifiableProperty()
+						.addListener(contentChildrenObserver);
+				contentPart.contentAnchoragesUnmodifiableProperty()
+						.addListener(contentAnchoragesObserver);
+			}
+		}
+	};
+
+	// private void addContentPartChildren(IVisualPart<? extends Node> parent,
+	// final List<? extends Object> contentChildren, int index) {
+	// // find all content parts for which no content element exists in
+	// // contentChildren, and therefore have to be removed
+	// for (Object contentChild : contentChildren) {
+	// IContentPart<? extends Node> contentPart = findOrCreatePartFor(
+	// contentChild);
+	// if (contentPart.getParent() != null) {
+	// // TODO: Up to now a model element may only be controlled by
+	// // a single content part; unless we differentiate content
+	// // elements by context (which is not covered by the current
+	// // content part map implementation) it is an illegal state
+	// // if we locate a content part, which is already bound to a
+	// // parent and whose content is equal to the one we are
+	// // processing here.
+	// throw new IllegalStateException(
+	// "Located a ContentPart which controls the same (or an equal) content
+	// element but is already bound to a parent. A content element may only be
+	// controlled by a single ContentPart.");
+	// }
+	// parent.addChild(contentPart,
+	// index + contentChildren.indexOf(contentChild));
+	// }
+	// }
+
+	@SuppressWarnings("unchecked")
+	private List<IContentPart<? extends Node>> addAll(
+			IVisualPart<? extends Node> parent,
+			List<? extends Object> contentChildren) {
+		List<IContentPart<? extends Node>> childContentParts = PartUtils
+				.filterParts(parent.getChildrenUnmodifiable(),
+						IContentPart.class);
+		List<IContentPart<? extends Node>> added = new ArrayList<>();
+		// store the existing content parts in a map using the contents as keys
+		Map<Object, IContentPart<? extends Node>> contentPartMap = new HashMap<>();
+		// find all content parts for which no content element exists in
+		// contentChildren, and therefore have to be removed
+		for (IContentPart<? extends Node> contentPart : childContentParts) {
+			// store content part in map
+			contentPartMap.put(contentPart.getContent(), contentPart);
+		}
+		int contentChildrenSize = contentChildren.size();
+		int childContentPartsSize = childContentParts.size();
+		for (int i = 0; i < contentChildrenSize; i++) {
+			Object content = contentChildren.get(i);
+			// Do a quick check to see if the existing content part is at
+			// the
+			// correct location in the children list.
+			if (i < childContentPartsSize
+					&& childContentParts.get(i).getContent() == content) {
+				continue;
+			}
+			// Look to see if the ContentPart is already around but in the
+			// wrong location.
+			IContentPart<? extends Node> contentPart = findOrCreatePartFor(
+					content);
+			if (contentPartMap.containsKey(content)) {
+				// Re-order the existing content part to its designated
+				// location in the children list.
+				// TODO: this is wrong, it has to take into consideration
+				// the
+				// visual parts in between
+				parent.reorderChild(contentPart, i);
+			} else {
+				// A ContentPart for this model does not exist yet. Create
+				// and
+				// insert one.
+				if (contentPart.getParent() != null) {
+					// TODO: Up to now a model element may only be
+					// controlled by a single content part; unless we
+					// differentiate content elements by context (which is not
+					// covered by the current content part map implementation)
+					// it is an illegal state if we locate a content part, which
+					// is already bound to a parent and whose content is equal
+					// to the one we are processing here.
+					throw new IllegalStateException(
+							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.");
+				}
+				parent.addChild(contentPart, i);
+				added.add(contentPart);
+				added.addAll(addAll(contentPart,
+						contentPart.getContentChildrenUnmodifiable()));
+			}
+		}
+		return added;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<IContentPart<? extends Node>> detachAll(
+			IVisualPart<? extends Node> parent,
+			final List<? extends Object> contentChildren) {
+		List<IContentPart<? extends Node>> toRemove = new ArrayList<>();
+		// only synchronize IContentPart children
+		// find all content parts for which no content element exists in
+		// contentChildren, and therefore have to be removed
+		for (IContentPart<? extends Node> contentPart : (List<IContentPart<? extends Node>>) PartUtils
+				.filterParts(parent.getChildrenUnmodifiable(),
+						IContentPart.class)) {
+			// mark for removal
+			if (!contentChildren.contains(contentPart.getContent())) {
+				toRemove.addAll(
+						detachAll(contentPart, Collections.emptyList()));
+				toRemove.add(contentPart);
+				synchronizeContentPartAnchorages(contentPart,
+						HashMultimap.create());
+			}
+		}
+		return toRemove;
+	}
 
 	@Override
 	public void dispose() {
 		// the content part pool is shared by all content behaviors of a viewer,
 		// so the viewer disposes it.
-		contentObserver = null;
 		contentModelObserver = null;
 		contentChildrenObserver = null;
 		contentAnchoragesObserver = null;
@@ -156,47 +306,22 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	@Override
 	protected void doActivate() {
 		IVisualPart<? extends Node> host = getHost();
-		if (host == host.getRoot()) {
-			IViewer viewer = host.getRoot().getViewer();
-			viewer.getContents().addListener(contentModelObserver);
-			synchronizeContentPartChildren(viewer.getContents());
-		} else {
-			synchronizeContentPartChildren(
-					ImmutableList.copyOf(((IContentPart<? extends Node>) host)
-							.getContentChildrenUnmodifiable()));
-			synchronizeContentPartAnchorages(ImmutableSetMultimap
-					.copyOf(((IContentPart<? extends Node>) host)
-							.getContentAnchoragesUnmodifiable()));
-			((IContentPart<? extends Node>) host).contentProperty()
-					.addListener(contentObserver);
-			((IContentPart<? extends Node>) host)
-					.getContentChildrenUnmodifiable()
-					.addListener(contentChildrenObserver);
-			((IContentPart<? extends Node>) host)
-					.getContentAnchoragesUnmodifiable()
-					.addListener(contentAnchoragesObserver);
+		if (host != host.getRoot()) {
+			throw new IllegalArgumentException();
 		}
+		IViewer viewer = host.getRoot().getViewer();
+		viewer.contentPartMapProperty().addListener(contentPartMapObserver);
+		synchronizeContentPartChildren(getHost(), viewer.getContents());
+		viewer.getContents().addListener(contentModelObserver);
 	}
 
 	@Override
 	protected void doDeactivate() {
 		IVisualPart<? extends Node> host = getHost();
-		if (host == host.getRoot()) {
-			host.getRoot().getViewer().getContents()
-					.removeListener(contentModelObserver);
-			synchronizeContentPartChildren(Collections.emptyList());
-		} else {
-			((IContentPart<? extends Node>) host).contentProperty()
-					.removeListener(contentObserver);
-			((IContentPart<? extends Node>) host)
-					.getContentChildrenUnmodifiable()
-					.removeListener(contentChildrenObserver);
-			((IContentPart<? extends Node>) host)
-					.getContentAnchoragesUnmodifiable()
-					.removeListener(contentAnchoragesObserver);
-			synchronizeContentPartChildren(Collections.emptyList());
-			synchronizeContentPartAnchorages(HashMultimap.create());
-		}
+		IViewer viewer = host.getRoot().getViewer();
+		viewer.getContents().removeListener(contentModelObserver);
+		synchronizeContentPartChildren(getHost(), Collections.emptyList());
+		viewer.contentPartMapProperty().removeListener(contentPartMapObserver);
 	}
 
 	/**
@@ -273,6 +398,10 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * (see {@link IVisualPart#getAnchoragesUnmodifiable()}) so that it is in
 	 * sync with the set of content anchorages that is passed in.
 	 *
+	 * @param anchored
+	 *            The anchored {@link IVisualPart} whose content part anchorages
+	 *            to synchronize with the given content anchorages.
+	 *
 	 * @param contentAnchorages
 	 *            * The map of content anchorages with roles to be synchronized
 	 *            with the list of {@link IContentPart} anchorages (
@@ -282,12 +411,13 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * @see IContentPart#getAnchoragesUnmodifiable()
 	 */
 	public void synchronizeContentPartAnchorages(
+			IVisualPart<? extends Node> anchored,
 			SetMultimap<? extends Object, ? extends String> contentAnchorages) {
 		if (contentAnchorages == null) {
 			throw new IllegalArgumentException(
 					"contentAnchorages may not be null");
 		}
-		SetMultimap<IVisualPart<? extends Node>, String> anchorages = getHost()
+		SetMultimap<IVisualPart<? extends Node>, String> anchorages = anchored
 				.getAnchoragesUnmodifiable();
 
 		// find anchorages whose content vanished
@@ -307,9 +437,11 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 
 		// Correspondingly remove the anchorages. This is done in a separate
 		// step to prevent ConcurrentModificationException.
-		for (Entry<IVisualPart<? extends Node>, String> e : toRemove) {
-			getHost().detachFromAnchorage(e.getKey(), e.getValue());
-			disposeIfObsolete((IContentPart<? extends Node>) e.getKey());
+		for (Entry<IVisualPart<? extends Node>, String> contentPart : toRemove) {
+			anchored.detachFromAnchorage(contentPart.getKey(),
+					contentPart.getValue());
+			disposeIfObsolete(
+					(IContentPart<? extends Node>) contentPart.getKey());
 		}
 
 		// find content for which no anchorages exist
@@ -325,10 +457,10 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			}
 		}
 
-		// Correspondingly add the anchorages. This is done in a separate step
-		// to prevent ConcurrentModificationException.
+		// Correspondingly add the anchorages. This is done in a separate
+		// step to prevent ConcurrentModificationException.
 		for (Entry<IVisualPart<? extends Node>, String> e : toAdd) {
-			getHost().attachToAnchorage(e.getKey(), e.getValue());
+			anchored.attachToAnchorage(e.getKey(), e.getValue());
 		}
 	}
 
@@ -337,86 +469,38 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * {@link IVisualPart#getChildrenUnmodifiable()}) so that it is in sync with
 	 * the set of content children that is passed in.
 	 *
+	 * @param parent
+	 *            The parent {@link IVisualPart} whose content part children to
+	 *            synchronize against the given content children.
+	 *
 	 * @param contentChildren
-	 *            The list of content children to be synchronized with the list
-	 *            of {@link IContentPart} children (
+	 *            The list of content part children to be synchronized with the
+	 *            list of {@link IContentPart} children (
 	 *            {@link IContentPart#getChildrenUnmodifiable()}).
 	 *
 	 * @see IContentPart#getContentChildrenUnmodifiable()
 	 * @see IContentPart#getChildrenUnmodifiable()
 	 */
-	@SuppressWarnings("unchecked")
 	public void synchronizeContentPartChildren(
+			IVisualPart<? extends Node> parent,
 			final List<? extends Object> contentChildren) {
 		if (contentChildren == null) {
 			throw new IllegalArgumentException(
 					"contentChildren may not be null");
 		}
-		// only synchronize IContentPart children
-		List<IContentPart<? extends Node>> childContentParts = PartUtils
-				.filterParts(getHost().getChildrenUnmodifiable(),
-						IContentPart.class);
-		// store the existing content parts in a map using the contents as keys
-		Map<Object, IContentPart<? extends Node>> contentPartMap = new HashMap<>();
-		// find all content parts for which no content element exists in
-		// contentChildren, and therefore have to be removed
-		Set<? extends Object> newContents = new HashSet<>(contentChildren);
-		List<IContentPart<? extends Node>> toRemove = new ArrayList<>();
-		for (IContentPart<? extends Node> cp : childContentParts) {
-			// store content part in map
-			contentPartMap.put(cp.getContent(), cp);
-			// mark for removal
-			if (!newContents.contains(cp.getContent())) {
-				toRemove.add(cp);
-			}
+
+		List<IContentPart<? extends Node>> toRemove = detachAll(parent,
+				contentChildren);
+		for (IContentPart<? extends Node> contentPart : toRemove) {
+			contentPart.getParent().removeChild(contentPart);
+			disposeIfObsolete(contentPart);
 		}
-		// remove the parts
-		childContentParts.removeAll(toRemove);
-		for (IContentPart<? extends Node> cp : toRemove) {
-			getHost().removeChild(cp);
-			disposeIfObsolete(cp);
-		}
-		// walk over the new content children to reorder existing parts or
-		// create missing parts
-		Object content;
-		int contentChildrenSize = contentChildren.size();
-		int childContentPartsSize = childContentParts.size();
-		for (int i = 0; i < contentChildrenSize; i++) {
-			content = contentChildren.get(i);
-			// Do a quick check to see if the existing content part is at the
-			// correct location in the children list.
-			if (i < childContentPartsSize
-					&& childContentParts.get(i).getContent() == content) {
-				continue;
-			}
-			// Look to see if the ContentPart is already around but in the
-			// wrong location.
-			IContentPart<? extends Node> contentPart = contentPartMap
-					.get(content);
-			if (contentPart != null) {
-				// Re-order the existing content part to its designated
-				// location in the children list.
-				// TODO: this is wrong, it has to take into consideration the
-				// visual parts in between
-				getHost().reorderChild(contentPart, i);
-			} else {
-				// A ContentPart for this model does not exist yet. Create and
-				// insert one.
-				contentPart = findOrCreatePartFor(content);
-				if (contentPart.getParent() != null) {
-					// TODO: Up to now a model element may only be controlled by
-					// a single content part; unless we differentiate content
-					// elements by context (which is not covered by the current
-					// content part map implementation) it is an illegal state
-					// if we locate a content part, which is already bound to a
-					// parent and whose content is equal to the one we are
-					// processing here.
-					throw new IllegalStateException(
-							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.");
-				}
-				getHost().addChild(contentPart, i);
-			}
+
+		List<IContentPart<? extends Node>> added = addAll(parent,
+				contentChildren);
+		for (IContentPart<? extends Node> cp : added) {
+			synchronizeContentPartAnchorages(cp,
+					cp.getContentAnchoragesUnmodifiable());
 		}
 	}
-
 }

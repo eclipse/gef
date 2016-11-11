@@ -125,9 +125,6 @@ public class MvcFxModule extends AbstractModule {
 		// register default providers
 		bindTransformProviderAsAbstractContentPartAdapter(adapterMapBinder);
 
-		// register default behaviors
-		bindContentBehaviorAsAbstractContentPartAdapter(adapterMapBinder);
-
 		// register default policies
 		bindContentPolicyAsAbstractContentPartAdapter(adapterMapBinder);
 	}
@@ -228,24 +225,6 @@ public class MvcFxModule extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(ClickDragTool.class);
-	}
-
-	/**
-	 * Adds a binding for {@link ContentBehavior}, parameterized by {@link Node}
-	 * , to the {@link AdapterMap} binder for {@link AbstractContentPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractContentPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindContentBehaviorAsAbstractContentPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ContentBehavior.class);
 	}
 
 	/**
