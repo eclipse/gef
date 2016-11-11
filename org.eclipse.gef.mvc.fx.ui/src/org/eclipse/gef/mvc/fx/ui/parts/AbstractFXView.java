@@ -186,7 +186,6 @@ public abstract class AbstractFXView extends ViewPart {
 			deleteAction.dispose();
 			deleteAction = null;
 		}
-		deleteAction = null;
 	}
 
 	@SuppressWarnings("rawtypes")

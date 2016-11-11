@@ -227,7 +227,6 @@ public abstract class AbstractFXEditor extends EditorPart {
 			deleteAction.dispose();
 			deleteAction = null;
 		}
-		deleteAction = null;
 	}
 
 	@SuppressWarnings("rawtypes")
