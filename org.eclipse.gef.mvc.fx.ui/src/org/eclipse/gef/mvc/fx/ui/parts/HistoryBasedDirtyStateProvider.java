@@ -74,7 +74,7 @@ public class HistoryBasedDirtyStateProvider
 				// XXX: Only react to a subset of the history event
 				// notifications. OPERATION_ADDED is issued when a transaction
 				// is committed on the domain or an operation without a
-				// transaction (that was executed locally before); in the latter
+				// transaction is executed on the domain; in the latter
 				// case, we would also obtain a DONE notification (which we
 				// ignore here). OPERATION_REMOVED is issued then flushing the
 				// history
