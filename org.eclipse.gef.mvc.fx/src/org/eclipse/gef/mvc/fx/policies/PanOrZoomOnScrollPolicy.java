@@ -13,10 +13,13 @@
 package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Dimension;
+import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.input.ScrollEvent;
 
 /**
@@ -62,6 +65,17 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	}
 
 	/**
+	 * Computes the zoom factor from the given {@link ScrollEvent}.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} from which to compute the zoom factor.
+	 * @return The zoom factor according to the given {@link ScrollEvent}.
+	 */
+	protected double computeZoomFactor(ScrollEvent event) {
+		return event.getDeltaY() > 0 ? 1.05 : 1 / 1.05;
+	}
+
+	/**
 	 * Returns the {@link ChangeViewportPolicy} that is to be used for changing
 	 * the viewport. This method is called within
 	 * {@link #startScroll(ScrollEvent)} where the resulting policy is cached
@@ -96,6 +110,24 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	}
 
 	/**
+	 * Returns <code>true</code> to signify that scrolling and zooming is
+	 * restricted to the content bounds, <code>false</code> otherwise.
+	 * <p>
+	 * When content-restricted, the policy behaves texteditor-like, i.e. the
+	 * pivot point for zooming is at the top of the viewport and at the left of
+	 * the contents, and free space is only allowed to the right and to the
+	 * bottom of the contents. Therefore, the policy does not allow panning or
+	 * zooming if it would result in free space within the viewport at the top
+	 * or left sides of the contents.
+	 *
+	 * @return <code>true</code> to signify that scrolling and zooming is
+	 *         restricted to the content bounds, <code>false</code> otherwise.
+	 */
+	protected boolean isContentRestricted() {
+		return false;
+	}
+
+	/**
 	 * Returns <code>true</code> if the given {@link ScrollEvent} should trigger
 	 * panning. Otherwise returns <code>false</code>.
 	 *
@@ -121,6 +153,17 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	 */
 	protected boolean isStopped() {
 		return stopped;
+	}
+
+	/**
+	 * Returns <code>true</code> to signify that panning should stop once the
+	 * content bounds are hit, <code>false</code> otherwise.
+	 *
+	 * @return <code>true</code> to signify that panning should stop once the
+	 *         content bounds are hit, <code>false</code> otherwise.
+	 */
+	protected boolean isStoppingAtContentBounds() {
+		return !isContentRestricted();
 	}
 
 	/**
@@ -162,10 +205,85 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	protected void pan(ScrollEvent event) {
 		// Determine horizontal and vertical translation.
 		Dimension delta = computeDelta(event);
-		// Stop scrolling at the content-bounds.
-		setStopped(stopAtContentBounds(delta));
+		// stop scrolling at the content-bounds
+		if (isStoppingAtContentBounds()) {
+			setStopped(stopAtContentBounds(delta));
+		}
 		// change viewport via operation
 		getViewportPolicy().scroll(true, delta.width, delta.height);
+		// restrict panning to contents
+		if (isContentRestricted()) {
+			removeFreeSpaceTopLeft();
+			removeFreeSpaceBottomRight();
+		}
+	}
+
+	/**
+	 * Removes any free space within the viewport on the bottom and right sides
+	 * of the contents if the contents do not fit into the viewport.
+	 */
+	protected void removeFreeSpaceBottomRight() {
+		// compute free space at top and left sides depending on bounds
+		InfiniteCanvas canvas = ((InfiniteCanvasViewer) getHost().getRoot()
+				.getViewer()).getCanvas();
+		Rectangle viewportBoundsInCanvasLocal = new Rectangle(0, 0,
+				canvas.getWidth(), canvas.getHeight());
+		Rectangle contentBoundsInCanvasLocal = FX2Geometry
+				.toRectangle(canvas.getContentBounds());
+
+		// compute delta tx and ty depending on free space and content size
+		// relative to viewport size
+		double freeSpaceRight = viewportBoundsInCanvasLocal.getRight().x
+				- contentBoundsInCanvasLocal.getRight().x;
+		double freeSpaceBottom = viewportBoundsInCanvasLocal.getBottom().y
+				- contentBoundsInCanvasLocal.getBottom().y;
+		double deltaTx = contentBoundsInCanvasLocal
+				.getWidth() > viewportBoundsInCanvasLocal.getWidth()
+				&& freeSpaceRight > 0 ? freeSpaceRight : 0;
+		double deltaTy = contentBoundsInCanvasLocal
+				.getHeight() > viewportBoundsInCanvasLocal.getHeight()
+				&& freeSpaceBottom > 0 ? freeSpaceBottom : 0;
+
+		// scroll to align content with viewport (if necessary)
+		if (deltaTx != 0 || deltaTy != 0) {
+			getViewportPolicy().scroll(true, deltaTx, deltaTy);
+		}
+	}
+
+	/**
+	 * Removes any free space within the viewport on the top and left sides of
+	 * the contents.
+	 */
+	protected void removeFreeSpaceTopLeft() {
+		// compute free space at top and left sides depending on bounds
+		InfiniteCanvas canvas = ((InfiniteCanvasViewer) getHost().getRoot()
+				.getViewer()).getCanvas();
+		Rectangle viewportBoundsInCanvasLocal = new Rectangle(0, 0,
+				canvas.getWidth(), canvas.getHeight());
+		Rectangle contentBoundsInCanvasLocal = FX2Geometry
+				.toRectangle(canvas.getContentBounds());
+		double freeSpaceLeft = contentBoundsInCanvasLocal.getLeft().x
+				- viewportBoundsInCanvasLocal.getLeft().x;
+		double freeSpaceTop = contentBoundsInCanvasLocal.getTop().y
+				- viewportBoundsInCanvasLocal.getTop().y;
+
+		// compute delta tx and ty depending on free space and content size
+		// relative to viewport size
+		double deltaTx = contentBoundsInCanvasLocal
+				.getWidth() <= viewportBoundsInCanvasLocal.getWidth()
+				|| contentBoundsInCanvasLocal
+						.getWidth() > viewportBoundsInCanvasLocal.getWidth()
+						&& freeSpaceLeft > 0 ? -freeSpaceLeft : 0;
+		double deltaTy = contentBoundsInCanvasLocal
+				.getHeight() <= viewportBoundsInCanvasLocal.getHeight()
+				|| contentBoundsInCanvasLocal
+						.getHeight() > viewportBoundsInCanvasLocal.getHeight()
+						&& freeSpaceTop > 0 ? -freeSpaceTop : 0;
+
+		// scroll to align content with viewport (if necessary)
+		if (deltaTx != 0 || deltaTy != 0) {
+			getViewportPolicy().scroll(true, deltaTx, deltaTy);
+		}
 	}
 
 	@Override
@@ -278,10 +396,36 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	 *            performed.
 	 */
 	protected void zoom(ScrollEvent event) {
-		// zoom into/out-of the event location
-		getViewportPolicy().zoom(true, true,
-				event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
-				event.getSceneY());
+		// compute zoom factor from the given event
+		double zoomFactor = computeZoomFactor(event);
+
+		if (isContentRestricted()) {
+			// Ensure content is aligned with the viewport on the left and top
+			// sides if there is free space on these sides and the content fits
+			// into the viewport
+			removeFreeSpaceTopLeft();
+
+			// calculate a pivot points to achieve a zooming similar to that of
+			// a text editor (fix absolute content left in x-direction, fix
+			// visible content top in y-direction)
+			InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost()
+					.getRoot().getViewer()).getCanvas();
+			Point2D pivotPointInScene = infiniteCanvas.localToScene(
+					infiniteCanvas.getContentBounds().getMinX(), 0);
+
+			// performing zooming
+			getViewportPolicy().zoom(true, true, zoomFactor,
+					pivotPointInScene.getX(), pivotPointInScene.getY());
+
+			// Ensure content is aligned with the viewport on the right and
+			// bottom sides if there is free space on these sides and the
+			// content does not fit into the viewport
+			removeFreeSpaceBottomRight();
+		} else {
+			// zoom into/out-of the event location
+			getViewportPolicy().zoom(true, true, zoomFactor, event.getSceneX(),
+					event.getSceneY());
+		}
 	}
 
 }
