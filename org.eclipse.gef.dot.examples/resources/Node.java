@@ -13,7 +13,7 @@
  * references to the parent and the children (left and right).
  <pre> 
  graph {
-   node[label=Node]
+   node[label="Node"]
    root; parent; left; right
    parent -- root[label=parent]
    root -- left[label=left] 
