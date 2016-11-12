@@ -38,6 +38,7 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			IssueResolutionAcceptor acceptor) {
 		for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {
 			// quote values if needed, otherwise use plain attribute value
+			// TODO: Use value converter for ID instead
 			final String validValue = DotTerminalConverters
 					.needsToBeQuoted(edgeStyle.toString())
 							? DotTerminalConverters.quote(edgeStyle.toString())

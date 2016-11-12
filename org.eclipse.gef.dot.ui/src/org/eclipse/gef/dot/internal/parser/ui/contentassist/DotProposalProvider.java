@@ -330,7 +330,6 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 
 		String text = context.getPrefix();
-
 		if (text.startsWith("\"")) { //$NON-NLS-1$
 			text = DotTerminalConverters.unquote(text);
 			context = context.copy().setPrefix(text).toContext();
@@ -363,6 +362,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		for (Object value : values) {
 			// quote attribute value only if needed
+			// TODO: use value converter service instead
 			final String proposedValue = DotTerminalConverters
 					.needsToBeQuoted(value.toString())
 							? DotTerminalConverters.quote(value.toString())

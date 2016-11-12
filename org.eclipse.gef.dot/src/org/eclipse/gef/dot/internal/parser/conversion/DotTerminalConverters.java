@@ -12,11 +12,15 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.parser.conversion;
 
+import org.eclipse.xtext.AbstractRule;
+import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.conversion.IValueConverter;
 import org.eclipse.xtext.conversion.ValueConverter;
+import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.xtext.conversion.impl.AbstractDeclarativeValueConverterService;
 import org.eclipse.xtext.conversion.impl.IDValueConverter;
-import org.eclipse.xtext.conversion.impl.STRINGValueConverter;
+import org.eclipse.xtext.nodemodel.ILeafNode;
+import org.eclipse.xtext.nodemodel.INode;
 
 import com.google.inject.Inject;
 
@@ -39,7 +43,7 @@ public class DotTerminalConverters
 	private DotStringValueConverter stringValueConverter;
 
 	@Inject
-	private STRINGValueConverter quotedStringValueConverter;
+	private DotQuotedStringValueConverter quotedStringValueConverter;
 
 	/**
 	 * A {@link ValueConverter} for Dot "STRING" terminals:
@@ -54,6 +58,36 @@ public class DotTerminalConverters
 	@ValueConverter(rule = "STRING")
 	public IValueConverter<String> STRING() {
 		return stringValueConverter;
+	}
+
+	@Override
+	public Object toValue(String string, String lexerRule, INode node)
+			throws ValueConverterException {
+		if ("ID".equals(lexerRule)) {
+			for (ILeafNode leaf : node.getLeafNodes()) {
+				Object grammarElement = leaf.getGrammarElement();
+				if (grammarElement instanceof RuleCall) {
+					RuleCall lexerRuleCall = (RuleCall) grammarElement;
+					AbstractRule nestedLexerRule = lexerRuleCall.getRule();
+					return super.toValue(string, nestedLexerRule.getName(),
+							node);
+				}
+			}
+		}
+		return super.toValue(string, lexerRule, node);
+	}
+
+	@Override
+	public String toString(Object value, String lexerRule) {
+		if (lexerRule.equals("ID")) {
+			if (value instanceof String) {
+				// use quoted string where needed
+				if (needsToBeQuoted((String) value)) {
+					return super.toString(value, "QUOTED_STRING");
+				}
+			}
+		}
+		return super.toString(value, lexerRule);
 	}
 
 	/**
@@ -113,6 +147,7 @@ public class DotTerminalConverters
 	 */
 	// TODO: check for keywords as well, which need to be quoted in addition
 	public static boolean needsToBeQuoted(String value) {
+		// FIXE: if it contains quotes, it needs to be quoted
 		return value.isEmpty() || value.matches(".*\\s.*");
 	}
 
@@ -143,7 +178,7 @@ public class DotTerminalConverters
 	 * @return <code>true</code> if the given value starts and ends with a
 	 *         quotation mark, <code>false</code> otherwise.
 	 */
-	public static boolean isQuoted(String value) {
+	protected static boolean isQuoted(String value) {
 		return value.startsWith("\"") && value.endsWith("\"");
 	}
 

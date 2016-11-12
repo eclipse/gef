@@ -18,7 +18,8 @@ import org.eclipse.xtext.conversion.impl.AbstractValueConverter;
 import org.eclipse.xtext.nodemodel.INode;
 
 /**
- * A converter that converts terminals that are valid IDs into Strings.
+ * A converter that converts terminals that are valid STRING Dot IDs into
+ * Strings.
  * 
  * @author anyssen
  *
@@ -36,5 +37,4 @@ public class DotStringValueConverter extends AbstractValueConverter<String>
 	public String toString(String value) throws ValueConverterException {
 		return value;
 	}
-
 }

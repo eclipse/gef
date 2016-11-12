@@ -43,7 +43,6 @@ import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParser;
 import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowtypePackage;
 import org.eclipse.gef.dot.internal.parser.color.ColorPackage;
 import org.eclipse.gef.dot.internal.parser.color.DotColors;
-import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.parser.dot.Attribute;
@@ -125,44 +124,41 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * @param name
 	 *            The name of the attribute.
 	 * @param value
-	 *            The value of the attribute (may be quoted).
+	 *            The value of the attribute.
 	 * @return A list of {@link Diagnostic} objects representing the identified
 	 *         issues, or an empty list if no issues were found.
 	 */
 	public List<Diagnostic> validateAttributeValue(
 			final AttributeContext context, final String name,
 			final String value) {
-		// if quoted, we need to unquote the value before parsing it
-		String unquotedValue = DotTerminalConverters.unquote(value);
-
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.FORCELABELS__G.equals(name)) {
 			return validateBooleanAttributeValue(DotAttributes.FORCELABELS__G,
-					unquotedValue);
+					value);
 		} else if (DotAttributes.FIXEDSIZE__N.equals(name)) {
 			return validateBooleanAttributeValue(DotAttributes.FIXEDSIZE__N,
-					unquotedValue);
+					value);
 		} else if (DotAttributes.CLUSTERRANK__G.equals(name)) {
 			return validateEnumAttributeValue(
-					DotLanguageSupport.CLUSTERMODE_PARSER, name, unquotedValue,
+					DotLanguageSupport.CLUSTERMODE_PARSER, name, value,
 					"clusterMode");
 		} else if (DotAttributes.OUTPUTORDER__G.equals(name)) {
 			return validateEnumAttributeValue(
-					DotLanguageSupport.OUTPUTMODE_PARSER, name, unquotedValue,
+					DotLanguageSupport.OUTPUTMODE_PARSER, name, value,
 					"outputMode");
 		} else if (DotAttributes.PAGEDIR__G.equals(name)) {
 			return validateEnumAttributeValue(DotLanguageSupport.PAGEDIR_PARSER,
-					name, unquotedValue, "pagedir");
+					name, value, "pagedir");
 		} else if (DotAttributes.RANKDIR__G.equals(name)) {
 			return validateEnumAttributeValue(DotLanguageSupport.RANKDIR_PARSER,
-					name, unquotedValue, "rankdir");
+					name, value, "rankdir");
 		} else if (DotAttributes.SPLINES__G.equals(name)) {
 			// XXX: splines can either be an enum or a bool value; we try both
 			// options here
 			List<Diagnostic> booleanCaseFindings = validateBooleanAttributeValue(
-					name, unquotedValue);
+					name, value);
 			List<Diagnostic> stringCaseFindings = validateStringAttributeValue(
-					name, unquotedValue, "splines string", Splines.values());
+					name, value, "splines string", Splines.values());
 			if (booleanCaseFindings.isEmpty() || stringCaseFindings.isEmpty()) {
 				return Collections.emptyList();
 			} else {
@@ -173,64 +169,62 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				return combinedFindings;
 			}
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
-			return validateStringAttributeValue(name, unquotedValue, "layout",
+			return validateStringAttributeValue(name, value, "layout",
 					Layout.values());
 		} else if (DotAttributes.DIR__E.equals(name)) {
 			// dirType enum
 			return validateEnumAttributeValue(DotLanguageSupport.DIRTYPE_PARSER,
-					name, unquotedValue, "dirType");
+					name, value, "dirType");
 		} else if (DotAttributes.ARROWHEAD__E.equals(name)
 				|| DotAttributes.ARROWTAIL__E.equals(name)) {
 			// validate arrowtype using delegate parser and validator
 			return validateObjectAttributeValue(
 					DotLanguageSupport.ARROWTYPE_PARSER,
-					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, unquotedValue,
+					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, value,
 					ArrowtypePackage.Literals.ARROW_TYPE, "arrowType");
 		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
-			return validateDoubleAttributeValue(name, unquotedValue, 0.0);
+			return validateDoubleAttributeValue(name, value, 0.0);
 		} else if (DotAttributes.POS__NE.equals(name)) {
 			// validate point (node) or splinetype (edge) using delegate parser
 			// and validator
 			if (AttributeContext.NODE.equals(context)) {
 				return validateObjectAttributeValue(
 						DotLanguageSupport.POINT_PARSER,
-						DotLanguageSupport.POINT_VALIDATOR, name, unquotedValue,
+						DotLanguageSupport.POINT_VALIDATOR, name, value,
 						PointPackage.Literals.POINT, "point");
 			} else if (AttributeContext.EDGE.equals(context)) {
 				return validateObjectAttributeValue(
 						DotLanguageSupport.SPLINETYPE_PARSER,
-						DotLanguageSupport.SPLINETYPE_VALIDATOR, name,
-						unquotedValue, SplinetypePackage.Literals.SPLINE_TYPE,
-						"splineType");
+						DotLanguageSupport.SPLINETYPE_VALIDATOR, name, value,
+						SplinetypePackage.Literals.SPLINE_TYPE, "splineType");
 			}
 		} else if (DotAttributes.SHAPE__N.equals(name)) {
 			// validate shape using delegate parser and validator
 			return validateObjectAttributeValue(DotLanguageSupport.SHAPE_PARSER,
-					DotLanguageSupport.SHAPE_VALIDATOR, name, unquotedValue,
+					DotLanguageSupport.SHAPE_VALIDATOR, name, value,
 					ShapePackage.Literals.SHAPE, "shape");
 		} else if (DotAttributes.SIDES__N.equals(name)) {
-			return validateIntAttributeValue(name, unquotedValue, 0);
+			return validateIntAttributeValue(name, value, 0);
 		} else if (DotAttributes.SKEW__N.equals(name)) {
-			return validateDoubleAttributeValue(name, unquotedValue, -100.0);
+			return validateDoubleAttributeValue(name, value, -100.0);
 		} else if (DotAttributes.DISTORTION__N.equals(name)) {
-			return validateDoubleAttributeValue(name, unquotedValue, -100.0);
+			return validateDoubleAttributeValue(name, value, -100.0);
 		} else if (DotAttributes.WIDTH__N.equals(name)) {
-			return validateDoubleAttributeValue(name, unquotedValue, 0.01);
+			return validateDoubleAttributeValue(name, value, 0.01);
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
-			return validateDoubleAttributeValue(name, unquotedValue, 0.02);
-		} else if (DotAttributes.STYLE__GNE.equals(name)
-				&& !unquotedValue.isEmpty()) {
+			return validateDoubleAttributeValue(name, value, 0.02);
+		} else if (DotAttributes.STYLE__GNE.equals(name) && !value.isEmpty()) {
 			// validate style using delegate parser and validator
 			List<Diagnostic> grammarFindings = validateObjectAttributeValue(
 					DotLanguageSupport.STYLE_PARSER,
-					DotLanguageSupport.STYLE_VALIDATOR, name, unquotedValue,
+					DotLanguageSupport.STYLE_VALIDATOR, name, value,
 					StylePackage.Literals.STYLE, "style");
 			if (!grammarFindings.isEmpty()) {
 				return grammarFindings;
 			}
 			// validate according to the corresponding NodeStyle/EdgeStyle enums
 			IParseResult parseResult = DotLanguageSupport.STYLE_PARSER
-					.parse(new StringReader(unquotedValue));
+					.parse(new StringReader(value));
 			Style style = (Style) parseResult.getRootASTElement();
 
 			List<Diagnostic> findings = new ArrayList<>();
@@ -253,7 +247,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				|| DotAttributes.TAIL_LP__E.equals(name)
 				|| DotAttributes.XLP__NE.equals(name)) {
 			return validateObjectAttributeValue(DotLanguageSupport.POINT_PARSER,
-					DotLanguageSupport.POINT_VALIDATOR, name, unquotedValue,
+					DotLanguageSupport.POINT_VALIDATOR, name, value,
 					PointPackage.Literals.POINT, "point");
 		} else if (DotAttributes.BGCOLOR__G.equals(name)
 				|| DotAttributes.COLOR__NE.equals(name)
@@ -261,10 +255,10 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				|| DotAttributes.FONTCOLOR__GNE.equals(name)
 				|| DotAttributes.LABELFONTCOLOR__E.equals(name)) {
 			return validateObjectAttributeValue(DotLanguageSupport.COLOR_PARSER,
-					DotLanguageSupport.COLOR_VALIDATOR, name, unquotedValue,
+					DotLanguageSupport.COLOR_VALIDATOR, name, value,
 					ColorPackage.Literals.COLOR, "color");
 		} else if (DotAttributes.COLORSCHEME__GNE.equals(name)) {
-			return validateStringAttributeValue(name, unquotedValue,
+			return validateStringAttributeValue(name, value,
 					DotAttributes.COLORSCHEME__GNE,
 					DotColors.getColorSchemes().toArray());
 		}

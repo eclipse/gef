@@ -92,6 +92,7 @@ class DotExport {
 	}
 
 	private def printNonMetaAttributes(IAttributeStore store, String separator) {
+		// TODO: use value converter service instead of quoting here
 		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + DotTerminalConverters.quote(value.toString)].sort.join(separator + " ")
 	}
 }

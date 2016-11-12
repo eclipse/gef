@@ -19,7 +19,6 @@ import java.io.StringReader
 import java.util.List
 import java.util.Map
 import org.eclipse.gef.dot.internal.parser.DotStandaloneSetup
-import org.eclipse.gef.dot.internal.parser.conversion.DotTerminalConverters
 import org.eclipse.gef.dot.internal.parser.dot.AttrList
 import org.eclipse.gef.dot.internal.parser.dot.AttrStmt
 import org.eclipse.gef.dot.internal.parser.dot.Attribute
@@ -54,7 +53,7 @@ class DotImport {
 	// fields are private by default 
 	@Inject
 	var static DotParser dotParser
-
+	
 	Builder graphBuilder
 	Map<String, String> globalGraphAttributes = newHashMap
 	Map<String, String> globalNodeAttributes = newHashMap
@@ -103,7 +102,7 @@ class DotImport {
 		_createCache_createNode.clear
 
 		// name (meta-attribute)
-		val escapedName = name.escaped
+		val escapedName = name
 		if (escapedName != null) {
 			graphBuilder.attr(_NAME__GNE, escapedName)
 		}
@@ -174,9 +173,9 @@ class DotImport {
 	}
 
 	private def Node transformNodeId(NodeId it, List<AttrList> attrLists) {
-		val isExistingNode = _createCache_createNode.containsKey(CollectionLiterals.newArrayList(name.escaped))
+		val isExistingNode = _createCache_createNode.containsKey(CollectionLiterals.newArrayList(name))
 
-		val node = name.escaped.createNode
+		val node = name.createNode
 
 		val setter = [ String attributeName, (Node, String)=>void f |
 			val attributeValue = attrLists.getAttributeValue(attributeName)
@@ -225,7 +224,7 @@ class DotImport {
 				// global graph attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalGraphAttributes.put(name, value.escaped)
+						globalGraphAttributes.put(name, value)
 					]
 				]
 			}
@@ -233,7 +232,7 @@ class DotImport {
 				// global node attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalNodeAttributes.put(name, value.escaped)
+						globalNodeAttributes.put(name, value)
 					]
 				]
 			}
@@ -241,7 +240,7 @@ class DotImport {
 				// global edge attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalEdgeAttributes.put(name, value.escaped)
+						globalEdgeAttributes.put(name, value)
 					]
 				]
 			}
@@ -352,17 +351,13 @@ class DotImport {
 	}
 
 	def private static String getAttributeValue(AttrList attrList, String name) {
-		attrList.attributes.findFirst[it.name == name]?.value.escaped
+		attrList.attributes.findFirst[it.name == name]?.value
 	}
 
 	def private static String getAttributeValue(Attribute attribute, String name) {
 		if (attribute.name.equals(name)) {
-			return attribute.value.escaped
+			return attribute.value
 		}
 		null
-	}
-
-	def private static escaped(String it) {
-		DotTerminalConverters.unquote(it)
 	}
 }
