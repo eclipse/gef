@@ -176,7 +176,6 @@ Workflow {
 			}
 
 			// The antlr parser generator fragment
-//			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
 			    options = {
 			        backtrack = false
@@ -190,7 +189,7 @@ Workflow {
 			    runtime = true
 			    antlrParam = "-lib"
 			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}/src/org/eclipse/gef/dot/internal/lexer/color"
+			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/lexer/color"
 			}
 			
 			// Java-based content assist API
