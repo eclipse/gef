@@ -80,7 +80,7 @@ NodeId:
 
 	// XXX: While node, edge, graph, digraph, subgraph, and strict are keywords (and thus not allowed as part of an ID), compass point values are no keywords (and may thus be used as ID)
 ID:
-	STRING | QUOTED_STRING | NUMERAL | COMPASS_PT;
+	NUMERAL | STRING | QUOTED_STRING | COMPASS_PT ;
 
 enum EdgeOp:
 	directed="->" | undirected="--";
@@ -105,6 +105,12 @@ terminal NUMERAL:
 terminal QUOTED_STRING:
 	('"' ('\\' '"' | !('"'))* '"');
 
+//terminal HTML_STRING:
+//	'<' HTML_TAG '>';
+//
+//terminal HTML_TAG: 
+//	'<' ((!'<'))* ('<' | '/' '>') (HTML_TAG* '<' '/' ((!'<'))* '>')?;
+
 terminal ML_COMMENT:
 	'/*'->'*/';
 
@@ -112,7 +118,7 @@ terminal SL_COMMENT:
 	('//' | '#') !('\n' | '\r')* ('\r'? '\n')?;
 
 terminal WS:
-	(' ' | '\t' | '\r' | '\n')+;
-
+	(' ' | '\t' | '\r' | '\n' | '\u000C')+;
+	
 terminal ANY_OTHER:
 	.;

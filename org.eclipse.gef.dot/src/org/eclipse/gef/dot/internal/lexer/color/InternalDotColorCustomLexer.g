@@ -13,7 +13,7 @@
 lexer grammar InternalDotColorCustomLexer;
 
 @header {
-package org.eclipse.gef.dot.internal.lexer;
+package org.eclipse.gef.dot.internal.lexer.color;
 
 // Hack: Use our own Lexer superclass by means of import. 
 // Currently there is no other way to specify the superclass for the lexer.

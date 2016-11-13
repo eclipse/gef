@@ -229,6 +229,11 @@ public class DotParserTests {
 		testFile("styled_graph2.dot");
 	}
 
+	@Test
+	public void testColoredGraph() {
+		testFile("colored_graph.dot");
+	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
