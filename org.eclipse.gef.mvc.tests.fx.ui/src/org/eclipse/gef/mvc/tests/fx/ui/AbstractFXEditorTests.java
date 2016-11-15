@@ -35,7 +35,11 @@ import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXEditor;
+import org.eclipse.gef.mvc.fx.ui.parts.HistoryBasedDirtyStateProvider;
+import org.eclipse.gef.mvc.fx.ui.parts.IDirtyStateProvider;
+import org.eclipse.gef.mvc.fx.ui.parts.IDirtyStateProviderFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.part.NullEditorInput;
@@ -117,6 +121,14 @@ public class AbstractFXEditorTests {
 		}
 
 		@Override
+		protected void createActions() {
+		}
+
+		@Override
+		protected void disposeActions() {
+		}
+
+		@Override
 		public void doSave(IProgressMonitor monitor) {
 		}
 
@@ -158,6 +170,22 @@ public class AbstractFXEditorTests {
 		}
 
 		/**
+		 * Binds a factory for the creation of
+		 * {@link HistoryBasedDirtyStateProvider} as
+		 * {@link IDirtyStateProvider}.
+		 */
+		protected void bindIDirtyStateProviderFactory() {
+			binder().bind(IDirtyStateProviderFactory.class).toInstance(new IDirtyStateProviderFactory() {
+
+				@Override
+				public IDirtyStateProvider create(IWorkbenchPart workbenchPart) {
+					return new HistoryBasedDirtyStateProvider(workbenchPart.getAdapter(IOperationHistory.class),
+							workbenchPart.getAdapter(IUndoContext.class));
+				}
+			});
+		}
+
+		/**
 		 * Binds {@link IOperationHistory} to the operation history of the
 		 * Eclipse workbench.
 		 */
@@ -172,6 +200,7 @@ public class AbstractFXEditorTests {
 			bindIOperationHistory();
 			bindIContentPartFactory();
 			bindFXCanvasFactory();
+			bindIDirtyStateProviderFactory();
 		}
 	}
 
