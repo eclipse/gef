@@ -14,7 +14,6 @@ package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -223,8 +222,8 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 			// calculate a pivot points to achieve a zooming similar to that of
 			// a text editor (fix absolute content left in x-direction, fix
 			// visible content top in y-direction)
-			InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost()
-					.getRoot().getViewer()).getCanvas();
+			InfiniteCanvas infiniteCanvas = (InfiniteCanvas) getHost().getRoot()
+					.getViewer().getCanvas();
 			// XXX: The pivot point computation needs to be done after free
 			// space top/left is removed so that the content-bounds minX
 			// coordinate is correct.
