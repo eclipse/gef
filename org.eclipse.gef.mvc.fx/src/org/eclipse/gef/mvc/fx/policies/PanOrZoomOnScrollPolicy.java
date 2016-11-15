@@ -17,6 +17,7 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.input.ScrollEvent;
 
 /**
@@ -30,7 +31,7 @@ import javafx.scene.input.ScrollEvent;
 public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 		implements IOnScrollPolicy {
 
-	private PanningSupport panningSupport = new PanningSupport(this);
+	private PanningSupport panningSupport = new PanningSupport();
 	private ViewportPolicy viewportPolicy;
 
 	@Override
@@ -179,14 +180,9 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 		viewportPolicy.scroll(true, delta.width, delta.height);
 		// restrict panning to contents
 		if (isContentRestricted()) {
-			Dimension alignmentTranslation = panningSupport
-					.computePanTranslationForTopLeftAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
-			alignmentTranslation = panningSupport
-					.computePanTranslationForBottomRightAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.TOP_LEFT, true);
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.BOTTOM_RIGHT,
+					false);
 		}
 	}
 
@@ -219,16 +215,11 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 	protected void zoom(ScrollEvent event) {
 		// compute zoom factor from the given event
 		double zoomFactor = computeZoomFactor(event);
-
 		if (isContentRestricted()) {
 			// Ensure content is aligned with the viewport on the left and top
 			// sides if there is free space on these sides and the content fits
 			// into the viewport
-			Dimension alignmentTranslation = panningSupport
-					.computePanTranslationForTopLeftAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
-
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.TOP_LEFT, true);
 			// calculate a pivot points to achieve a zooming similar to that of
 			// a text editor (fix absolute content left in x-direction, fix
 			// visible content top in y-direction)
@@ -239,18 +230,14 @@ public class PanOrZoomOnScrollPolicy extends AbstractInteractionPolicy
 			// coordinate is correct.
 			Point2D pivotPointInScene = infiniteCanvas.localToScene(
 					infiniteCanvas.getContentBounds().getMinX(), 0);
-
 			// performing zooming
 			viewportPolicy.zoom(true, true, zoomFactor,
 					pivotPointInScene.getX(), pivotPointInScene.getY());
-
 			// Ensure content is aligned with the viewport on the right and
 			// bottom sides if there is free space on these sides and the
 			// content does not fit into the viewport
-			alignmentTranslation = panningSupport
-					.computePanTranslationForBottomRightAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.BOTTOM_RIGHT,
+					false);
 		} else {
 			// zoom into/out-of the event location
 			viewportPolicy.zoom(true, true, zoomFactor, event.getSceneX(),

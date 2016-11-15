@@ -12,9 +12,9 @@
 package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.geometry.planar.Dimension;
 
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -34,7 +34,7 @@ public class PanOnStrokePolicy extends AbstractInteractionPolicy
 	 */
 	public static final double DEFAULT_SCROLL_AMOUNT_PER_SECOND = 150d;
 
-	private PanningSupport panningSupport = new PanningSupport(this);
+	private PanningSupport panningSupport = new PanningSupport();
 
 	private AnimationTimer timer;
 	// store pressed state for direction keys
@@ -272,14 +272,9 @@ public class PanOnStrokePolicy extends AbstractInteractionPolicy
 
 		// restrict panning to contents
 		if (isContentRestricted()) {
-			Dimension alignmentTranslation = panningSupport
-					.computePanTranslationForTopLeftAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
-			alignmentTranslation = panningSupport
-					.computePanTranslationForBottomRightAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.TOP_LEFT, true);
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.BOTTOM_RIGHT,
+					false);
 		}
 	}
 

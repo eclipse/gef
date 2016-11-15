@@ -14,11 +14,11 @@ package org.eclipse.gef.mvc.fx.policies;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.input.ZoomEvent;
 
 /**
@@ -30,7 +30,7 @@ import javafx.scene.input.ZoomEvent;
 public class ZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy
 		implements IOnPinchSpreadPolicy {
 
-	private PanningSupport panningSupport = new PanningSupport(this);
+	private PanningSupport panningSupport = new PanningSupport();
 
 	// gesture validity
 	private boolean invalidGesture = false;
@@ -106,7 +106,7 @@ public class ZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy
 	 *         restricted to the content bounds, <code>false</code> otherwise.
 	 */
 	protected boolean isContentRestricted() {
-		return true;
+		return false;
 	}
 
 	/**
@@ -137,19 +137,13 @@ public class ZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy
 		if (invalidGesture) {
 			return;
 		}
-
 		// compute zoom factor from the given event
 		double zoomFactor = computeZoomFactor(event);
-
 		if (isContentRestricted()) {
 			// Ensure content is aligned with the viewport on the left and top
 			// sides if there is free space on these sides and the content fits
 			// into the viewport
-			Dimension alignmentTranslation = panningSupport
-					.computePanTranslationForTopLeftAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
-
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.TOP_LEFT, true);
 			// calculate a pivot points to achieve a zooming similar to that of
 			// a text editor (fix absolute content left in x-direction, fix
 			// visible content top in y-direction)
@@ -160,18 +154,14 @@ public class ZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy
 			// coordinate is correct.
 			Point2D pivotPointInScene = infiniteCanvas.localToScene(
 					infiniteCanvas.getContentBounds().getMinX(), 0);
-
 			// performing zooming
 			viewportPolicy.zoom(true, true, zoomFactor,
 					pivotPointInScene.getX(), pivotPointInScene.getY());
-
 			// Ensure content is aligned with the viewport on the right and
 			// bottom sides if there is free space on these sides and the
 			// content does not fit into the viewport
-			alignmentTranslation = panningSupport
-					.computePanTranslationForBottomRightAlignment();
-			viewportPolicy.scroll(true, alignmentTranslation.width,
-					alignmentTranslation.height);
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.BOTTOM_RIGHT,
+					false);
 		} else {
 			// zoom into/out-of the event location
 			viewportPolicy.zoom(true, true, zoomFactor, event.getSceneX(),
