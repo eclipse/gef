@@ -35,7 +35,7 @@ import javafx.geometry.Point2D;
  * @author mwienand
  *
  */
-public class ChangeViewportPolicy extends AbstractTransactionPolicy {
+public class ViewportPolicy extends AbstractTransactionPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {

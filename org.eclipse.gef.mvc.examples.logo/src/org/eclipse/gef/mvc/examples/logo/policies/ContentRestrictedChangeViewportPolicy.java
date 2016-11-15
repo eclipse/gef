@@ -12,12 +12,12 @@
 package org.eclipse.gef.mvc.examples.logo.policies;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
+import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.geometry.Bounds;
 
-public class ContentRestrictedChangeViewportPolicy extends ChangeViewportPolicy {
+public class ContentRestrictedChangeViewportPolicy extends ViewportPolicy {
 
 	@Override
 	protected void doLocallyExecuteOperation() {

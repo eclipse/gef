@@ -49,7 +49,7 @@ import org.eclipse.gef.mvc.fx.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
-import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
+import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.ContentPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
@@ -57,7 +57,7 @@ import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.FocusTraversalPolicy;
 import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.policies.MarqueeOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.PanOnTypePolicy;
+import org.eclipse.gef.mvc.fx.policies.PanOnStrokePolicy;
 import org.eclipse.gef.mvc.fx.policies.PanOrZoomOnScrollPolicy;
 import org.eclipse.gef.mvc.fx.policies.ZoomOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.providers.TransformProvider;
@@ -187,7 +187,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ChangeViewportPolicy} to the {@link AdapterMap}
+	 * Adds a binding for {@link ViewportPolicy} to the {@link AdapterMap}
 	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
@@ -201,7 +201,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindChangeViewportPolicyAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ChangeViewportPolicy.class);
+				.to(ViewportPolicy.class);
 	}
 
 	/**
@@ -770,7 +770,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link PanOnTypePolicy} to the {@link AdapterMap}
+	 * Adds a binding for {@link PanOnStrokePolicy} to the {@link AdapterMap}
 	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
@@ -784,7 +784,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindPanOnTypePolicyAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(PanOnTypePolicy.class);
+				.to(PanOnStrokePolicy.class);
 	}
 
 	/**

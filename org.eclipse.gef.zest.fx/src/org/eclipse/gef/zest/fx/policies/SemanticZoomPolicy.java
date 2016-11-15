@@ -25,7 +25,7 @@ import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.ChangeViewportPolicy;
+import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
@@ -39,7 +39,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 
 /**
- * The {@link SemanticZoomPolicy} extends the {@link ChangeViewportPolicy} for
+ * The {@link SemanticZoomPolicy} extends the {@link ViewportPolicy} for
  * associating semantic changes with viewport changes, i.e. opening of
  * nested/nesting graphs when the zoom level is changed below/above a certain
  * threshold.
@@ -47,7 +47,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class SemanticZoomPolicy extends ChangeViewportPolicy {
+public class SemanticZoomPolicy extends ViewportPolicy {
 
 	private NavigationModel navigationModel;
 	private IViewer viewer;

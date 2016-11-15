@@ -13,8 +13,12 @@ package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.gef.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.ZoomEvent;
 
 /**
@@ -26,23 +30,40 @@ import javafx.scene.input.ZoomEvent;
 public class ZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy
 		implements IOnPinchSpreadPolicy {
 
+	private PanningSupport panningSupport = new PanningSupport(this);
+
 	// gesture validity
 	private boolean invalidGesture = false;
 
-	private ChangeViewportPolicy viewportPolicy;
+	private ViewportPolicy viewportPolicy;
 
 	@Override
 	public void abortZoom() {
+		if (invalidGesture) {
+			return;
+		}
+		rollback(viewportPolicy);
+		viewportPolicy = null;
 	}
 
 	/**
-	 * Determines the {@link ChangeViewportPolicy} that is used by this
-	 * policy.
+	 * Computes the zoom factor from the given {@link ZoomEvent}.
 	 *
-	 * @return The {@link ChangeViewportPolicy} that is used by this policy.
+	 * @param event
+	 *            The {@link ZoomEvent} from which to compute the zoom factor.
+	 * @return The zoom factor according to the given {@link ZoomEvent}.
 	 */
-	protected ChangeViewportPolicy determineViewportPolicy() {
-		return getHost().getRoot().getAdapter(ChangeViewportPolicy.class);
+	protected double computeZoomFactor(ZoomEvent event) {
+		return event.getZoomFactor();
+	}
+
+	/**
+	 * Determines the {@link ViewportPolicy} that is used by this policy.
+	 *
+	 * @return The {@link ViewportPolicy} that is used by this policy.
+	 */
+	protected ViewportPolicy determineViewportPolicy() {
+		return getHost().getRoot().getAdapter(ViewportPolicy.class);
 	}
 
 	@Override
@@ -62,30 +83,48 @@ public class ZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy
 	}
 
 	/**
-	 * Returns the {@link ChangeViewportPolicy} that is used by this policy.
+	 * Returns the {@link ViewportPolicy} that is used by this policy.
 	 *
-	 * @return The {@link ChangeViewportPolicy} that is used by this policy.
+	 * @return The {@link ViewportPolicy} that is used by this policy.
 	 */
-	protected ChangeViewportPolicy getViewportPolicy() {
+	protected final ViewportPolicy getViewportPolicy() {
 		return viewportPolicy;
+	}
+
+	/**
+	 * Returns <code>true</code> to signify that scrolling and zooming is
+	 * restricted to the content bounds, <code>false</code> otherwise.
+	 * <p>
+	 * When content-restricted, the policy behaves texteditor-like, i.e. the
+	 * pivot point for zooming is at the top of the viewport and at the left of
+	 * the contents, and free space is only allowed to the right and to the
+	 * bottom of the contents. Therefore, the policy does not allow panning or
+	 * zooming if it would result in free space within the viewport at the top
+	 * or left sides of the contents.
+	 *
+	 * @return <code>true</code> to signify that scrolling and zooming is
+	 *         restricted to the content bounds, <code>false</code> otherwise.
+	 */
+	protected boolean isContentRestricted() {
+		return true;
 	}
 
 	/**
 	 * Returns whether the given {@link ZoomEvent} should trigger zooming. Per
 	 * default, will always return <code>true</code>.
 	 *
-	 * @param e
+	 * @param event
 	 *            The {@link ZoomEvent} in question.
 	 * @return <code>true</code> if the given {@link ZoomEvent} should trigger
 	 *         zoom, otherwise <code>false</code>.
 	 */
-	protected boolean isZoom(ZoomEvent e) {
+	protected boolean isZoom(ZoomEvent event) {
 		return true;
 	}
 
 	@Override
-	public void startZoom(ZoomEvent e) {
-		invalidGesture = !isZoom(e);
+	public void startZoom(ZoomEvent event) {
+		invalidGesture = !isZoom(event);
 		if (invalidGesture) {
 			return;
 		}
@@ -94,12 +133,50 @@ public class ZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy
 	}
 
 	@Override
-	public void zoom(ZoomEvent e) {
+	public void zoom(ZoomEvent event) {
 		if (invalidGesture) {
 			return;
 		}
-		getViewportPolicy().zoom(true, true, e.getZoomFactor(), e.getSceneX(),
-				e.getSceneY());
+
+		// compute zoom factor from the given event
+		double zoomFactor = computeZoomFactor(event);
+
+		if (isContentRestricted()) {
+			// Ensure content is aligned with the viewport on the left and top
+			// sides if there is free space on these sides and the content fits
+			// into the viewport
+			Dimension alignmentTranslation = panningSupport
+					.computePanTranslationForTopLeftAlignment();
+			viewportPolicy.scroll(true, alignmentTranslation.width,
+					alignmentTranslation.height);
+
+			// calculate a pivot points to achieve a zooming similar to that of
+			// a text editor (fix absolute content left in x-direction, fix
+			// visible content top in y-direction)
+			InfiniteCanvas infiniteCanvas = ((InfiniteCanvasViewer) getHost()
+					.getRoot().getViewer()).getCanvas();
+			// XXX: The pivot point computation needs to be done after free
+			// space top/left is removed so that the content-bounds minX
+			// coordinate is correct.
+			Point2D pivotPointInScene = infiniteCanvas.localToScene(
+					infiniteCanvas.getContentBounds().getMinX(), 0);
+
+			// performing zooming
+			viewportPolicy.zoom(true, true, zoomFactor,
+					pivotPointInScene.getX(), pivotPointInScene.getY());
+
+			// Ensure content is aligned with the viewport on the right and
+			// bottom sides if there is free space on these sides and the
+			// content does not fit into the viewport
+			alignmentTranslation = panningSupport
+					.computePanTranslationForBottomRightAlignment();
+			viewportPolicy.scroll(true, alignmentTranslation.width,
+					alignmentTranslation.height);
+		} else {
+			// zoom into/out-of the event location
+			viewportPolicy.zoom(true, true, zoomFactor, event.getSceneX(),
+					event.getSceneY());
+		}
 	}
 
 }
