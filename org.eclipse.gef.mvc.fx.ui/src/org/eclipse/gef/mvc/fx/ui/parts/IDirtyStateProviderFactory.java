@@ -11,11 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.parts;
 
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * A factory for the creation of an {@link ISelectionProvider}.
+ * A factory for the creation of an {@link IDirtyStateProvider}.
  *
  * @author anyssen
  *
