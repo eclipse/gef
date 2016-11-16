@@ -179,8 +179,9 @@ public class AbstractFXEditorTests {
 
 				@Override
 				public IDirtyStateProvider create(IWorkbenchPart workbenchPart) {
-					return new HistoryBasedDirtyStateProvider(workbenchPart.getAdapter(IOperationHistory.class),
-							workbenchPart.getAdapter(IUndoContext.class));
+					return new HistoryBasedDirtyStateProvider(
+							(IOperationHistory) workbenchPart.getAdapter(IOperationHistory.class),
+							(IUndoContext) workbenchPart.getAdapter(IUndoContext.class));
 				}
 			});
 		}
