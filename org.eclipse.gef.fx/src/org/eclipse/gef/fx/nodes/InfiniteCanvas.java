@@ -1577,8 +1577,8 @@ public class InfiniteCanvas extends Region {
 
 		// show/hide horizontal scrollbar
 		ScrollBarPolicy hbarPolicy = horizontalScrollBarPolicyProperty.get();
-		boolean hbarIsNeeded = contentBounds[0] < 0
-				|| contentBounds[2] > getWidth();
+		boolean hbarIsNeeded = contentBounds[0] < -0.01
+				|| contentBounds[2] > getWidth() + 0.01;
 		if (hbarPolicy.equals(ScrollBarPolicy.ALWAYS)
 				|| hbarPolicy.equals(ScrollBarPolicy.AS_NEEDED)
 						&& hbarIsNeeded) {
@@ -1589,8 +1589,8 @@ public class InfiniteCanvas extends Region {
 
 		// show/hide vertical scrollbar
 		ScrollBarPolicy vbarPolicy = verticalScrollBarPolicyProperty.get();
-		boolean vbarIsNeeded = contentBounds[1] < 0
-				|| contentBounds[3] > getHeight();
+		boolean vbarIsNeeded = contentBounds[1] < -0.01
+				|| contentBounds[3] > getHeight() + 0.01;
 		if (vbarPolicy.equals(ScrollBarPolicy.ALWAYS)
 				|| vbarPolicy.equals(ScrollBarPolicy.AS_NEEDED)
 						&& vbarIsNeeded) {
