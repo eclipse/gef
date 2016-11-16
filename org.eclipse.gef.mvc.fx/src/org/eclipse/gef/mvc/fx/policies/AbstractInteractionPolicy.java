@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
+import org.eclipse.gef.mvc.fx.tools.AbstractTool;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.event.EventTarget;
@@ -33,15 +35,76 @@ import javafx.scene.Node;
  */
 public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 
+	// SNIP debug utilities
+
+	private static Map<AbstractTransactionPolicy, StackTraceElement[]> started = new HashMap<>();
+	private static Map<AbstractTransactionPolicy, StackTraceElement[]> finished = new HashMap<>();
+
+	private static boolean isDebug = false; // true;
+
+	private static boolean canFinish(AbstractTransactionPolicy policy) {
+		if (!started.containsKey(policy)) {
+			System.out.println(
+					"[ERROR] Trying to finish not-yet-started transaction policy "
+							+ policy + " from:");
+			printStackTrace(getRelevantStackTrace());
+			if (finished.containsKey(policy)) {
+				System.out.println(
+						"[INFO] The policy was previously finished at:");
+				printStackTrace(finished.get(policy));
+			}
+			return false;
+		} else {
+			started.remove(policy);
+			finished.put(policy, getRelevantStackTrace());
+			return true;
+		}
+	}
+
+	private static boolean canStart(AbstractTransactionPolicy policy) {
+		if (started.containsKey(policy)) {
+			System.out.println(
+					"[ERROR] Trying to start already-started transaction policy "
+							+ policy + " from:");
+			printStackTrace(getRelevantStackTrace());
+			System.out.println("[INFO] The policy was previously started at:");
+			printStackTrace(started.get(policy));
+			return false;
+		} else {
+			started.put(policy, getRelevantStackTrace());
+			return true;
+		}
+	}
+
+	private static StackTraceElement[] getRelevantStackTrace() {
+		StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+		// keep method calls until we find a Tool
+		int i = 2; // start at 2 so no abstract interaction bullshit
+		for (; i < trace.length; i++) {
+			if (AbstractTool.class.isAssignableFrom(trace[i].getClass())) {
+				break;
+			}
+		}
+		return Arrays.copyOfRange(trace, 2, i);
+	}
+
+	private static void printStackTrace(StackTraceElement[] trace) {
+		for (int i = 0; i < trace.length; i++) {
+			System.out.println("*) " + trace[i]);
+		}
+	}
+
+	// SNAP debug utilities
+
 	private final Map<IVisualPart<? extends Node>, Boolean> initialRefreshVisual = new HashMap<>();
+
+	// TODO: add lifecycle of start, end, and abort interaction -> disable
+	// visuals, etc.
 
 	// If using e.g. a hover handle, it may be that this policy looses its
 	// viewer link between init() and commit(). In order to being able to safely
 	// commit(), we need to keep track of the domains.
 	private Map<IPolicy, IDomain> domains = new HashMap<>();
-
-	// TODO: add lifecycle of start, end, and abort interaction -> disable
-	// visuals, etc.
 
 	/**
 	 * If the given {@link IPolicy} is not <code>null</code>, executes its
@@ -52,11 +115,18 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 	 */
 	protected void commit(AbstractTransactionPolicy policy) {
 		if (policy != null) {
+			IDomain domain = domains.remove(policy);
+
+			if (isDebug) {
+				if (!canFinish(policy)) {
+					return;
+				}
+			}
+
 			ITransactionalOperation o = policy.commit();
 			if (o != null && !o.isNoOp()) {
 				try {
-					domains.remove(policy).execute(o,
-							new NullProgressMonitor());
+					domain.execute(o, new NullProgressMonitor());
 				} catch (ExecutionException e) {
 					throw new RuntimeException(
 							"An exception occured when committing policy "
@@ -75,6 +145,12 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 	 */
 	protected void init(AbstractTransactionPolicy policy) {
 		if (policy != null) {
+			if (isDebug) {
+				if (!canStart(policy)) {
+					return;
+				}
+			}
+
 			domains.put(policy, getHost().getRoot().getViewer().getDomain());
 			policy.init();
 		}
@@ -151,6 +227,13 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 	protected void rollback(AbstractTransactionPolicy policy) {
 		if (policy != null) {
 			domains.remove(policy);
+
+			if (isDebug) {
+				if (!canFinish(policy)) {
+					return;
+				}
+			}
+
 			policy.rollback();
 		}
 	}
