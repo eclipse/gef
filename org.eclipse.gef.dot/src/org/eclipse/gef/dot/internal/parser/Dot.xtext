@@ -80,7 +80,7 @@ NodeId:
 
 	// XXX: While node, edge, graph, digraph, subgraph, and strict are keywords (and thus not allowed as part of an ID), compass point values are no keywords (and may thus be used as ID)
 ID:
-	NUMERAL | STRING | QUOTED_STRING | COMPASS_PT ;
+	NUMERAL | COMPASS_PT | STRING | QUOTED_STRING | HTML_STRING ;
 
 enum EdgeOp:
 	directed="->" | undirected="--";
@@ -91,6 +91,9 @@ enum GraphType:
 enum AttributeType:
 	graph="graph" | node="node" | edge="edge";
 
+terminal NUMERAL:
+	('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)?;
+
 	// XXX: While keywords are case insensitive, compass point values are not; we thus parse them as terminals
 terminal COMPASS_PT:
 	'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'c' | '_';
@@ -99,17 +102,21 @@ terminal COMPASS_PT:
 terminal STRING:
 	('a'..'z' | 'A'..'Z' | '\u0080'..'\u00FF' | '_') ('a'..'z' | 'A'..'Z' | '\u0080'..'\u00FF' | '_' | '0'..'9')*;
 
-terminal NUMERAL:
-	('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)?;
-
 terminal QUOTED_STRING:
 	('"' ('\\' '"' | !('"'))* '"');
+	
+terminal HTML_STRING : '<' HTML_CONTENT* '>';
 
-//terminal HTML_STRING:
-//	'<' HTML_TAG '>';
-//
-//terminal HTML_TAG: 
-//	'<' ((!'<'))* ('<' | '/' '>') (HTML_TAG* '<' '/' ((!'<'))* '>')?;
+terminal fragment HTML_CONTENT : HTML_TAG | HTML_PCDATA ;
+terminal fragment HTML_TAG
+    : HTML_TAG_START_OPEN HTML_TAG_DATA ( HTML_TAG_EMPTY_CLOSE | HTML_TAG_CLOSE  
+     (HTML_CONTENT)* HTML_TAG_END_OPEN HTML_TAG_DATA HTML_TAG_CLOSE);
+terminal fragment HTML_TAG_START_OPEN : '<'  ;
+terminal fragment HTML_TAG_END_OPEN : '<''/' ;
+terminal fragment HTML_TAG_CLOSE : '>'  ;
+terminal fragment HTML_TAG_EMPTY_CLOSE : '/''>' ;
+terminal fragment HTML_TAG_DATA : !('/') (!('>'))* ;
+terminal fragment HTML_PCDATA : (!('<'))+ ;
 
 terminal ML_COMMENT:
 	'/*'->'*/';
@@ -118,7 +125,7 @@ terminal SL_COMMENT:
 	('//' | '#') !('\n' | '\r')* ('\r'? '\n')?;
 
 terminal WS:
-	(' ' | '\t' | '\r' | '\n' | '\u000C')+;
+	(' ' | '\t' | '\r' | '\n' | '\f')+;
 	
 terminal ANY_OTHER:
 	.;

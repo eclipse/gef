@@ -234,6 +234,11 @@ public class DotParserTests {
 		testFile("colored_graph.dot");
 	}
 
+	@Test
+	public void testHtmlLikeLabels() {
+		testFile("html_like_lables.dot");
+	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));

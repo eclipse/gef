@@ -74,12 +74,23 @@ Workflow {
 			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
 
 			// The antlr parser generator fragment (for case-insensitive keywords)
-			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {
-				options = {
-					ignoreCase = true
-				}
+			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
+			    options = {
+			    	ignoreCase = true
+			        backtrack = false
+			        backtrackLexer = false
+			    }
 			}
-
+			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
+			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+			    // A grammar file with .g will be expected in this package (should be stored in src folder)
+			    lexerGrammar = "org.eclipse.gef.dot.internal.lexer.InternalDotCustomLexer"
+			    runtime = true
+			    antlrParam = "-lib"
+			    // This is the folder where the lexer will be created
+			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/lexer"
+			}
+			
 			// Java-based validation API
 			fragment = validation.JavaValidatorFragment auto-inject {}
 
