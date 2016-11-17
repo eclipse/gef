@@ -58,6 +58,9 @@ public class FocusAndSelectOnClickPolicy extends AbstractInteractionPolicy
 		IViewer viewer = host.getRoot().getViewer();
 		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
 
+		// determine if replacing or extending the selection
+		boolean append = isAppend(e);
+
 		// perform different changes depending on host type
 		if (host instanceof IContentPart) {
 			IContentPart<? extends Node> contentPart = (IContentPart<? extends Node>) host;
@@ -69,8 +72,6 @@ public class FocusAndSelectOnClickPolicy extends AbstractInteractionPolicy
 				return;
 			}
 
-			// determine if replacing or extending the selection
-			boolean append = e.isControlDown();
 			List<IContentPart<? extends Node>> singletonHostList = Collections
 					.<IContentPart<? extends Node>> singletonList(contentPart);
 
@@ -144,6 +145,12 @@ public class FocusAndSelectOnClickPolicy extends AbstractInteractionPolicy
 			// an unregistered visual)
 			if (!isRegistered(e.getTarget())
 					|| isRegisteredForHost(e.getTarget())) {
+				// check if append-modifier is pressed
+				if (append) {
+					// do nothing
+					return;
+				}
+
 				// unset focus and clear selection
 				try {
 					FocusModel focusModel = viewer
@@ -169,6 +176,22 @@ public class FocusAndSelectOnClickPolicy extends AbstractInteractionPolicy
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the selection should be extended according
+	 * to the given {@link MouseEvent}, <code>false</code> if it should be
+	 * replaced.
+	 *
+	 * @param e
+	 *            The {@link MouseEvent} for which to determine if the selection
+	 *            is to be replaced or extended.
+	 * @return <code>true</code> if the selection should be extended according
+	 *         to the given {@link MouseEvent}, <code>false</code> if it should
+	 *         be replaced.
+	 */
+	protected boolean isAppend(MouseEvent e) {
+		return e.isControlDown();
 	}
 
 	/**
