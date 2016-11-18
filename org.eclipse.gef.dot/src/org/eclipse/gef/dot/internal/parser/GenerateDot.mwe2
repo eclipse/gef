@@ -73,6 +73,12 @@ Workflow {
 			// a custom ResourceFactory for use with EMF
 			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
 
+			/*
+			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar. 
+			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment 
+			 * ensures that a separate lexer and a separate parser are generated. 
+			 * This enables us to override the lexer. 
+			 */
 			// The antlr parser generator fragment (for case-insensitive keywords)
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
 			    options = {
@@ -180,12 +186,18 @@ Workflow {
 			
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
-						
+
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
 			}
 
+			/*
+			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar. 
+			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment 
+			 * ensures that a separate lexer and a separate parser are generated. 
+			 * This enables us to override the lexer. 
+			 */
 			// The antlr parser generator fragment
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
 			    options = {
