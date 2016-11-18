@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.parser.ui.syntaxcoloring;
+package org.eclipse.gef.dot.internal.parser.ui.highlighting;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.parser.dot.Attribute;

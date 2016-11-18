@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.parser.ui;
 
-import org.eclipse.gef.dot.internal.parser.ui.syntaxcoloring.DotAntlrTokenToAttributeIdMapper;
-import org.eclipse.gef.dot.internal.parser.ui.syntaxcoloring.DotHighlightingConfiguration;
-import org.eclipse.gef.dot.internal.parser.ui.syntaxcoloring.DotSemanticHighlightingCalculator;
+import org.eclipse.gef.dot.internal.parser.ui.highlighting.DotAntlrTokenToAttributeIdMapper;
+import org.eclipse.gef.dot.internal.parser.ui.highlighting.DotHighlightingConfiguration;
+import org.eclipse.gef.dot.internal.parser.ui.highlighting.DotSemanticHighlightingCalculator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;

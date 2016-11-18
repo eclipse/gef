@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.parser.ui.syntaxcoloring;
+package org.eclipse.gef.dot.internal.parser.ui.highlighting;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -27,6 +27,7 @@ public class DotHighlightingConfiguration
 
 	public static final String EDGE_OP_ID = "edge_op"; //$NON-NLS-1$
 
+	public static final String HTML_STRING_ID = "html_string"; //$NON-NLS-1$
 	public static final String QUOTED_STRING_ID = "quoted_string"; //$NON-NLS-1$
 	public static final String NUMERAL_ID = "numeral"; //$NON-NLS-1$
 
@@ -50,12 +51,15 @@ public class DotHighlightingConfiguration
 				keywordTextStyle());
 
 		// lexical highlighting
-		acceptor.acceptDefaultHighlighting(STRING_ID, "(Unquoted) String", //$NON-NLS-1$
-				stringTextStyle());
 		acceptor.acceptDefaultHighlighting(NUMERAL_ID, "Numeral", //$NON-NLS-1$
 				numberTextStyle());
 		acceptor.acceptDefaultHighlighting(QUOTED_STRING_ID, "Quoted String", //$NON-NLS-1$
 				quotedStringTextStyle());
+		acceptor.acceptDefaultHighlighting(STRING_ID, "(Unquoted) String", //$NON-NLS-1$
+				stringTextStyle());
+		acceptor.acceptDefaultHighlighting(HTML_STRING_ID, "HTML String", //$NON-NLS-1$
+				htmlStringTextStyle());
+
 		acceptor.acceptDefaultHighlighting(COMMENT_ID, "Comment", //$NON-NLS-1$
 				commentTextStyle());
 
@@ -99,6 +103,12 @@ public class DotHighlightingConfiguration
 	public TextStyle stringTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(153, 76, 0));
+		return textStyle;
+	}
+
+	public TextStyle htmlStringTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(76, 153, 0));
 		return textStyle;
 	}
 

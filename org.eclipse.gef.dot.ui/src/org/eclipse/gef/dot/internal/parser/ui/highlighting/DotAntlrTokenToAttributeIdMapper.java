@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.parser.ui.syntaxcoloring;
+package org.eclipse.gef.dot.internal.parser.ui.highlighting;
 
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper;
 
@@ -32,6 +32,8 @@ public class DotAntlrTokenToAttributeIdMapper
 			return DotHighlightingConfiguration.NUMERAL_ID;
 		} else if ("RULE_QUOTED_STRING".equals(tokenName)) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.QUOTED_STRING_ID;
+		} else if ("RULE_HTML_STRING".equals(tokenName)) { //$NON-NLS-1$
+			return DotHighlightingConfiguration.HTML_STRING_ID;
 		} else if ("RULE_ML_COMMENT".equals(tokenName) //$NON-NLS-1$
 				|| "RULE_SL_COMMENT".equals(tokenName)) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.COMMENT_ID;
