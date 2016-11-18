@@ -17,6 +17,7 @@
  *                      insensitive keywords properly (bug #454626)
  *                    - refactored grammar to be unambiguous (not relying on 
  *                      backtracking)
+ *                    - integration of HTML-string terminals (bug #321775)
  *     Tamas Miklossy - modify grammar to allow empty attribute lists (bug #461506)
  * 
  *******************************************************************************/

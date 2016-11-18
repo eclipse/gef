@@ -7,8 +7,9 @@
  * Contributors: 
  * 		Fabian Steeg    - initial implementation (bug #277380)
  * 		Alexander Nyßen - migration to Xtext 2.7.3 (bug #478562); 
- *                        support for case insensitive keywords (bug #454626)
- *                        integration of attribute grammars
+ *                      - support for case insensitive keywords (bug #454626)
+ *                      - integration of attribute grammars
+ *                      - integration of custom lexers for DOT (bug #321775)
  *      Tamas Miklossy  - support for junit test plugin generation
  *                      - support for formatter API generation
  *                      - support for content assistant API generation
