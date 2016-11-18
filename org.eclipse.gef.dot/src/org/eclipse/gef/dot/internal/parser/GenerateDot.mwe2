@@ -90,11 +90,11 @@ Workflow {
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.lexer.InternalDotCustomLexer"
+			    lexerGrammar = "org.eclipse.gef.dot.internal.parser.parser.antlr.lexer.CustomInternalDotLexer"
 			    runtime = true
 			    antlrParam = "-lib"
 			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/lexer"
+			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/parser/parser/antlr/lexer"
 			}
 			
 			// Java-based validation API
@@ -208,11 +208,11 @@ Workflow {
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.lexer.color.InternalDotColorCustomLexer"
+			    lexerGrammar = "org.eclipse.gef.dot.internal.parser.parser.antlr.lexer.CustomInternalDotColorLexer"
 			    runtime = true
 			    antlrParam = "-lib"
 			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/lexer/color"
+			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/parser/parser/antlr/lexer"
 			}
 			
 			// Java-based content assist API

@@ -11,10 +11,10 @@
  *     
  *******************************************************************************/
 
-lexer grammar InternalDotCustomLexer;
+lexer grammar CustomInternalDotLexer;
 
 @header {
-package org.eclipse.gef.dot.internal.lexer;
+package org.eclipse.gef.dot.internal.parser.parser.antlr.lexer;
 
 	// Hack: Use our own Lexer superclass by means of import. 
 	// Currently there is no other way to specify the superclass for the lexer.
@@ -69,12 +69,19 @@ RULE_QUOTED_STRING : { !htmlMode }?=> '"' ('\\' '"'|~('"'))* '"';
 RULE_HTML_STRING : { !htmlMode }?=> '<' { htmlMode = true; } HTML_CONTENT* '>' { htmlMode = false; };
 
 fragment HTML_CONTENT : { htmlMode }?=> (HTML_TAG | HTML_PCDATA) ;
+
 fragment HTML_TAG : { htmlMode }?=> HTML_TAG_START_OPEN HTML_TAG_DATA ( HTML_TAG_EMPTY_CLOSE | HTML_TAG_CLOSE (HTML_CONTENT)* HTML_TAG_END_OPEN HTML_TAG_DATA HTML_TAG_CLOSE);
+
 fragment HTML_TAG_START_OPEN : { htmlMode && !tagMode }?=> '<' { tagMode = true; };
+
 fragment HTML_TAG_END_OPEN : { htmlMode && !tagMode }?=> '<''/' { tagMode = true; };
+
 fragment HTML_TAG_CLOSE : { htmlMode && tagMode }?=> '>' { tagMode = false; } ;
+
 fragment HTML_TAG_EMPTY_CLOSE : { htmlMode && tagMode }?=> '/''>' { tagMode = false; } ;
+
 fragment HTML_TAG_DATA : { htmlMode && tagMode }?=>  ~('/') ({ input.LA(1) != '>' && (input.LA(1) != '/' || input.LA(2) != '>')}?=> ~('>'))*;
+
 fragment HTML_PCDATA : { htmlMode && !tagMode }?=> (~('<'|'>'))+ ;
 
 RULE_ML_COMMENT : { !htmlMode }?=> '/*' ( options {greedy=false;} : . )* '*/';

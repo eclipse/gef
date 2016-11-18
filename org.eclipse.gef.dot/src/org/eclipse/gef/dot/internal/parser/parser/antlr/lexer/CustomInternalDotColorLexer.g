@@ -10,10 +10,10 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #461506)
  *     
  *******************************************************************************/
-lexer grammar InternalDotColorCustomLexer;
+lexer grammar CustomInternalDotColorLexer;
 
 @header {
-package org.eclipse.gef.dot.internal.lexer.color;
+package org.eclipse.gef.dot.internal.parser.parser.antlr.lexer;
 
 // Hack: Use our own Lexer superclass by means of import. 
 // Currently there is no other way to specify the superclass for the lexer.
