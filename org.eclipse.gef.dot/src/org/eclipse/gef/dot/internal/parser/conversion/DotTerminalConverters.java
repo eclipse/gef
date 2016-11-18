@@ -147,7 +147,7 @@ public class DotTerminalConverters
 	 */
 	// TODO: check for keywords as well, which need to be quoted in addition
 	public static boolean needsToBeQuoted(String value) {
-		// FIXE: if it contains quotes, it needs to be quoted
+		// FIXME: if it contains quotes, it needs to be quoted
 		return value.isEmpty() || value.matches(".*\\s.*");
 	}
 
