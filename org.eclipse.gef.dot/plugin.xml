@@ -14,8 +14,8 @@
 <plugin>
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/parser/Dot" 
-       class = "org.eclipse.gef.dot.internal.parser.dot.DotPackage"
+       uri = "http://www.eclipse.org/gef/dot/internal/language/Dot" 
+       class = "org.eclipse.gef.dot.internal.language.dot.DotPackage"
        genModel = "model/generated/Dot.genmodel" /> 
   </extension>
 </plugin>

@@ -1,0 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
+grammar org.eclipse.gef.dot.internal.language.DotPoint hidden(WS)
+
+generate point "http://www.eclipse.org/gef/dot/internal/language/DotPoint"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+Point:
+	x=DOUBLE "," y=DOUBLE ("," z=DOUBLE)? (inputOnly?="!")?;
+
+terminal DOUBLE returns ecore::EDouble:
+	('-')? (('.' ('0'..'9')+) | (('0'..'9')+ (('.') ('0'..'9')*)?));
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;

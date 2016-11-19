@@ -12,10 +12,10 @@
  ***********************************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
 
-import org.eclipse.gef.dot.internal.parser.arrowtype.AbstractArrowShape;
-import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowShape;
-import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
-import org.eclipse.gef.dot.internal.parser.arrowtype.DeprecatedArrowShape;
+import org.eclipse.gef.dot.internal.language.arrowtype.AbstractArrowShape;
+import org.eclipse.gef.dot.internal.language.arrowtype.ArrowShape;
+import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
+import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef.fx.utils.NodeUtils;
 
 import javafx.collections.ObservableList;
@@ -200,7 +200,7 @@ public class DotArrowShapeDecorations {
 	}
 
 	private static Shape getPrimitiveShape(
-			org.eclipse.gef.dot.internal.parser.arrowtype.PrimitiveShape primitiveShape,
+			org.eclipse.gef.dot.internal.language.arrowtype.PrimitiveShape primitiveShape,
 			double arrowSize) {
 		switch (primitiveShape) {
 		case BOX:

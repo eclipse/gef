@@ -15,7 +15,7 @@ package org.eclipse.gef.dot.internal.ui;
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.parser.point.PointFactory;
+import org.eclipse.gef.dot.internal.language.point.PointFactory;
 import org.eclipse.gef.dot.internal.ui.Dot2ZestAttributesConverter.Options;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
@@ -109,7 +109,7 @@ public class Zest2DotAttributesConverter implements IAttributeCopier {
 			if (zestPosition != null && !options().ignorePositions) {
 				// node position is interpreted as center of node in Dot, and
 				// top-left in Zest
-				org.eclipse.gef.dot.internal.parser.point.Point dotPos = PointFactory.eINSTANCE
+				org.eclipse.gef.dot.internal.language.point.Point dotPos = PointFactory.eINSTANCE
 						.createPoint();
 				dotPos.setX(zestPosition.x - zestSize.width / 2);
 				dotPos.setY((options().invertYAxis ? -1 : 1)
@@ -125,7 +125,7 @@ public class Zest2DotAttributesConverter implements IAttributeCopier {
 				.getExternalLabelPosition(zest);
 		if (zestExternalLabel != null && zestExternalLabelPosition != null
 				&& !options().ignorePositions) {
-			org.eclipse.gef.dot.internal.parser.point.Point dotXlp = PointFactory.eINSTANCE
+			org.eclipse.gef.dot.internal.language.point.Point dotXlp = PointFactory.eINSTANCE
 					.createPoint();
 			Bounds labelSize = new Text(zestExternalLabel).getLayoutBounds();
 			dotXlp.setX(zestExternalLabelPosition.x - labelSize.getWidth() / 2);

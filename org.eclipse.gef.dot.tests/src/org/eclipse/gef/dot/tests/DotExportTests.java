@@ -22,7 +22,7 @@ import java.util.Scanner;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotExport;
 import org.eclipse.gef.dot.internal.DotFileUtils;
-import org.eclipse.gef.dot.internal.parser.layout.Layout;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.graph.Graph;
 import org.junit.Assert;
 import org.junit.BeforeClass;

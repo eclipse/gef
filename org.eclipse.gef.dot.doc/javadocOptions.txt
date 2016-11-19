@@ -17,15 +17,15 @@
 org.eclipse.gef.dot.internal
 org.eclipse.gef.dot.internal.ui
 org.eclipse.gef.dot.internal.ui.handlers
-org.eclipse.gef.dot.internal.parser
-org.eclipse.gef.dot.internal.parser.conversion
-org.eclipse.gef.dot.internal.parser.formatting
-org.eclipse.gef.dot.internal.parser.scoping
-org.eclipse.gef.dot.internal.parser.validation
-org.eclipse.gef.dot.internal.parser.ui
-org.eclipse.gef.dot.internal.parser.ui.contentassist
-org.eclipse.gef.dot.internal.parser.ui.labeling
-org.eclipse.gef.dot.internal.parser.ui.outline
-org.eclipse.gef.dot.internal.parser.ui.quickfix
-org.eclipse.gef.dot.internal.parser.ui.syntaxcoloring
+org.eclipse.gef.dot.internal.language
+org.eclipse.gef.dot.internal.language.conversion
+org.eclipse.gef.dot.internal.language.formatting
+org.eclipse.gef.dot.internal.language.scoping
+org.eclipse.gef.dot.internal.language.validation
+org.eclipse.gef.dot.internal.language.ui
+org.eclipse.gef.dot.internal.language.ui.contentassist
+org.eclipse.gef.dot.internal.language.ui.labeling
+org.eclipse.gef.dot.internal.language.ui.outline
+org.eclipse.gef.dot.internal.language.ui.quickfix
+org.eclipse.gef.dot.internal.language.ui.highlighting
 

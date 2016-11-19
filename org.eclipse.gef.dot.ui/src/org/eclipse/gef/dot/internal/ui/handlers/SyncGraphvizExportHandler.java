@@ -204,7 +204,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 	private void checkActiveEditorAndExportGraph(IWorkbenchPart part) {
 		if (part instanceof XtextEditor) {
 			XtextEditor editor = (XtextEditor) part;
-			if ("org.eclipse.gef.dot.internal.parser.Dot" //$NON-NLS-1$
+			if ("org.eclipse.gef.dot.internal.language.Dot" //$NON-NLS-1$
 					.equals(editor.getLanguageName())
 					&& editor.getEditorInput() instanceof FileEditorInput) {
 				IFile file = ((FileEditorInput) editor.getEditorInput())

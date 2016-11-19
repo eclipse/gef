@@ -15,7 +15,7 @@ package org.eclipse.gef.dot.examples;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotExport;
-import org.eclipse.gef.dot.internal.parser.style.EdgeStyle;
+import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.graph.Graph;
 
 public final class DotExportExample {

@@ -5,16 +5,16 @@ Bundle-SymbolicName: org.eclipse.gef.dot.ui;singleton:=true
 Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.gef.dot.internal.parser.ui;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.contentassist;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.contentassist.antlr;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.contentassist.antlr.internal;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.contentassist.antlr.lexer;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.highlighting;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.internal;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.labeling;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.outline;x-friends:="org.eclipse.gef.dot.tests",
- org.eclipse.gef.dot.internal.parser.ui.quickfix;x-friends:="org.eclipse.gef.dot.tests",
+Export-Package: org.eclipse.gef.dot.internal.language.ui;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.contentassist;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.contentassist.antlr;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.contentassist.antlr.internal;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.contentassist.antlr.lexer;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.highlighting;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.internal;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.labeling;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.outline;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.language.ui.quickfix;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.handlers;x-friends:="org.eclipse.gef.dot.tests"
 Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
@@ -39,4 +39,4 @@ Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.gef.dot;bundle-version="[5.0.0,6.0.0)"
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.eclipse.gef.dot.internal.parser.ui.internal.DotActivator
+Bundle-Activator: org.eclipse.gef.dot.internal.language.ui.internal.DotActivator

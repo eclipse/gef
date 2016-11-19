@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotImport;
-import org.eclipse.gef.dot.internal.parser.DotUiInjectorProvider;
-import org.eclipse.gef.dot.internal.parser.layout.Layout;
-import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
+import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
+import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;

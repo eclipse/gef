@@ -16,8 +16,8 @@ package org.eclipse.gef.dot.tests;
 import java.io.File;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.parser.layout.Layout;
-import org.eclipse.gef.dot.internal.parser.style.EdgeStyle;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
+import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;

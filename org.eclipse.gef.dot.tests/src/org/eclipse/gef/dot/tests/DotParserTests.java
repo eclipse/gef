@@ -22,8 +22,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import org.eclipse.gef.dot.internal.DotFileUtils;
-import org.eclipse.gef.dot.internal.parser.DotInjectorProvider;
-import org.eclipse.gef.dot.internal.parser.dot.DotAst;
+import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
+import org.eclipse.gef.dot.internal.language.dot.DotAst;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;

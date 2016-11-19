@@ -15,7 +15,7 @@ package org.eclipse.gef.dot.tests;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.eclipse.gef.dot.internal.parser.DotUiInjectorProvider;
+import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;

@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.DotImport;
-import org.eclipse.gef.dot.internal.parser.ui.internal.DotActivator;
+import org.eclipse.gef.dot.internal.language.ui.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
@@ -556,7 +556,7 @@ public class DotGraphView extends ZestFxUiView {
 		private void checkActiveEditorAndUpdateGraph(IWorkbenchPart part) {
 			if (part instanceof XtextEditor) {
 				XtextEditor editor = (XtextEditor) part;
-				if ("org.eclipse.gef.dot.internal.parser.Dot" //$NON-NLS-1$
+				if ("org.eclipse.gef.dot.internal.language.Dot" //$NON-NLS-1$
 						.equals(editor.getLanguageName())
 						&& editor.getEditorInput() instanceof FileEditorInput) {
 					try {

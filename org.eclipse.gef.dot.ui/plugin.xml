@@ -42,31 +42,31 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
             extensions="dot"
-            id="org.eclipse.gef.dot.internal.parser.Dot"
+            id="org.eclipse.gef.dot.internal.language.Dot"
             name="DOT Editor">
         </editor>
     </extension>
     <extension
         point="org.eclipse.ui.handlers">
         <handler
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
             commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
         <handler
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
-            commandId="org.eclipse.gef.dot.internal.parser.Dot.validate">
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
+            commandId="org.eclipse.gef.dot.internal.language.Dot.validate">
          <activeWhen>
             <reference
-                    definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
             </reference>
          </activeWhen>
       </handler>
@@ -76,12 +76,12 @@
       </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
-        <definition id="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+        <definition id="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="org.eclipse.gef.dot.internal.parser.Dot" 
+                        value="org.eclipse.gef.dot.internal.language.Dot" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
@@ -90,27 +90,27 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.gef.dot.internal.parser.Dot"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="org.eclipse.gef.dot.internal.language.Dot"
             name="Dot">
-            <keywordReference id="org.eclipse.gef.dot.internal.parser.ui.keyword_Dot"/>
+            <keywordReference id="org.eclipse.gef.dot.internal.language.ui.keyword_Dot"/>
         </page>
         <page
-            category="org.eclipse.gef.dot.internal.parser.Dot"
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="org.eclipse.gef.dot.internal.parser.Dot.coloring"
+            category="org.eclipse.gef.dot.internal.language.Dot"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+            id="org.eclipse.gef.dot.internal.language.Dot.coloring"
             name="Syntax Coloring">
-            <keywordReference id="org.eclipse.gef.dot.internal.parser.ui.keyword_Dot"/>
+            <keywordReference id="org.eclipse.gef.dot.internal.language.ui.keyword_Dot"/>
         </page>
         <page
-            category="org.eclipse.gef.dot.internal.parser.Dot"
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="org.eclipse.gef.dot.internal.parser.Dot.templates"
+            category="org.eclipse.gef.dot.internal.language.Dot"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+            id="org.eclipse.gef.dot.internal.language.Dot.templates"
             name="Templates">
-            <keywordReference id="org.eclipse.gef.dot.internal.parser.ui.keyword_Dot"/>
+            <keywordReference id="org.eclipse.gef.dot.internal.language.ui.keyword_Dot"/>
         </page>
         <page
-              category="org.eclipse.gef.dot.internal.parser.Dot"
+              category="org.eclipse.gef.dot.internal.language.Dot"
               class="org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage"
               id="org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage"
               name="Graphviz">
@@ -119,14 +119,14 @@
     <extension
         point="org.eclipse.ui.keywords">
         <keyword
-            id="org.eclipse.gef.dot.internal.parser.ui.keyword_Dot"
+            id="org.eclipse.gef.dot.internal.language.ui.keyword_Dot"
             label="Dot"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
       <command
             description="Trigger expensive validation"
-            id="org.eclipse.gef.dot.internal.parser.Dot.validate"
+            id="org.eclipse.gef.dot.internal.language.Dot.validate"
             name="Validate">
       </command>
       <command
@@ -138,12 +138,12 @@
         <menuContribution
             locationURI="popup:#TextEditorContext?after=group.edit">
              <command
-                 commandId="org.eclipse.gef.dot.internal.parser.Dot.validate"
+                 commandId="org.eclipse.gef.dot.internal.language.Dot.validate"
                  style="push"
                  tooltip="Trigger expensive validation">
             <visibleWhen checkEnabled="false">
                 <reference
-                    definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
                 </reference>
             </visibleWhen>
          </command>  
@@ -160,7 +160,7 @@
                  <visibleWhen
                        checkEnabled="false">
                     <reference
-                          definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+                          definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
                     </reference>
                  </visibleWhen>
               </command>
@@ -171,7 +171,7 @@
         <menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
             <command commandId="org.eclipse.xtext.ui.editor.FindReferences">
                 <visibleWhen checkEnabled="false">
-                    <reference definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+                    <reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
                     </reference>
                 </visibleWhen>
             </command>
@@ -179,11 +179,11 @@
     </extension>
     <extension point="org.eclipse.ui.handlers">
         <handler
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
             commandId="org.eclipse.xtext.ui.editor.FindReferences">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
@@ -194,13 +194,13 @@
     <extension
         point="org.eclipse.emf.ecore.extension_parser">
         <parser
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
             type="dot">
         </parser>
     </extension>
     <extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
             uriExtension="dot">
         </resourceServiceProvider>
     </extension>
@@ -212,11 +212,11 @@
     <extension
         point="org.eclipse.ui.handlers">
         <handler 
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
             commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened">
+                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
@@ -236,7 +236,7 @@
                 style="push"
                 tooltip="Open Quick Outline">
                 <visibleWhen checkEnabled="false">
-                    <reference definitionId="org.eclipse.gef.dot.internal.parser.Dot.Editor.opened"/>
+                    <reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened"/>
                 </visibleWhen>
             </command>
         </menuContribution>
@@ -245,7 +245,7 @@
    <extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
-            class="org.eclipse.gef.dot.internal.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
+            class="org.eclipse.gef.dot.internal.language.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
       </markerResolutionGenerator>
    </extension>
    <!-- DOT view -->

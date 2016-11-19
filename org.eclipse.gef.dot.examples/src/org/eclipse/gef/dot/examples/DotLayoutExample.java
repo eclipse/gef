@@ -22,8 +22,8 @@ import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotExport;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.DotImport;
-import org.eclipse.gef.dot.internal.parser.layout.Layout;
-import org.eclipse.gef.dot.internal.parser.point.PointFactory;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
+import org.eclipse.gef.dot.internal.language.point.PointFactory;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
@@ -71,7 +71,7 @@ public class DotLayoutExample extends AbstractZestExample {
 						// DotAttributes#pos
 						Point location = LayoutProperties
 								.getLocation((Node) source);
-						org.eclipse.gef.dot.internal.parser.point.Point posParsed = PointFactory.eINSTANCE
+						org.eclipse.gef.dot.internal.language.point.Point posParsed = PointFactory.eINSTANCE
 								.createPoint();
 						posParsed.setX(location.x);
 						posParsed.setY(location.y);
@@ -114,7 +114,7 @@ public class DotLayoutExample extends AbstractZestExample {
 					if (nodeName.equals(DotAttributes._getName(source))) {
 						// convert DotAttributes#pos to
 						// LayoutProperties#location
-						org.eclipse.gef.dot.internal.parser.point.Point posParsed = DotAttributes
+						org.eclipse.gef.dot.internal.language.point.Point posParsed = DotAttributes
 								.getPosParsed(source);
 						LayoutProperties.setLocation(target,
 								new Point(posParsed.getX(), posParsed.getY()));

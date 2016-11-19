@@ -22,24 +22,24 @@ import java.util.List;
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.parser.arrowtype.ArrowType;
-import org.eclipse.gef.dot.internal.parser.color.Color;
-import org.eclipse.gef.dot.internal.parser.color.DotColors;
-import org.eclipse.gef.dot.internal.parser.color.HSVColor;
-import org.eclipse.gef.dot.internal.parser.color.RGBColor;
-import org.eclipse.gef.dot.internal.parser.color.StringColor;
-import org.eclipse.gef.dot.internal.parser.dir.DirType;
-import org.eclipse.gef.dot.internal.parser.layout.Layout;
-import org.eclipse.gef.dot.internal.parser.rankdir.Rankdir;
-import org.eclipse.gef.dot.internal.parser.shape.PolygonBasedNodeShape;
-import org.eclipse.gef.dot.internal.parser.shape.PolygonBasedShape;
-import org.eclipse.gef.dot.internal.parser.splines.Splines;
-import org.eclipse.gef.dot.internal.parser.splinetype.Spline;
-import org.eclipse.gef.dot.internal.parser.splinetype.SplineType;
-import org.eclipse.gef.dot.internal.parser.style.EdgeStyle;
-import org.eclipse.gef.dot.internal.parser.style.NodeStyle;
-import org.eclipse.gef.dot.internal.parser.style.Style;
-import org.eclipse.gef.dot.internal.parser.style.StyleItem;
+import org.eclipse.gef.dot.internal.language.color.DotColors;
+import org.eclipse.gef.dot.internal.language.dir.DirType;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
+import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
+import org.eclipse.gef.dot.internal.language.splines.Splines;
+import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
+import org.eclipse.gef.dot.internal.language.color.Color;
+import org.eclipse.gef.dot.internal.language.color.HSVColor;
+import org.eclipse.gef.dot.internal.language.color.RGBColor;
+import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
+import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
+import org.eclipse.gef.dot.internal.language.splinetype.Spline;
+import org.eclipse.gef.dot.internal.language.splinetype.SplineType;
+import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
+import org.eclipse.gef.dot.internal.language.style.NodeStyle;
+import org.eclipse.gef.dot.internal.language.style.Style;
+import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.nodes.PolylineInterpolator;
@@ -415,7 +415,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		List<Point> controlPoints = new ArrayList<>();
 		for (Spline spline : splineType.getSplines()) {
 			// start
-			org.eclipse.gef.dot.internal.parser.point.Point startp = spline
+			org.eclipse.gef.dot.internal.language.point.Point startp = spline
 					.getStartp();
 			if (startp == null) {
 				// if we have no start point, add the first control
@@ -426,14 +426,14 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					(options().invertYAxis ? -1 : 1) * startp.getY()));
 
 			// control points
-			for (org.eclipse.gef.dot.internal.parser.point.Point cp : spline
+			for (org.eclipse.gef.dot.internal.language.point.Point cp : spline
 					.getControlPoints()) {
 				controlPoints.add(new Point(cp.getX(),
 						(options().invertYAxis ? -1 : 1) * cp.getY()));
 			}
 
 			// end
-			org.eclipse.gef.dot.internal.parser.point.Point endp = spline
+			org.eclipse.gef.dot.internal.language.point.Point endp = spline
 					.getEndp();
 			if (endp == null) {
 				// if we have no end point, add the last control point
@@ -456,7 +456,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		// style and color
 		String zestShapeStyle = computeZestStyle(dot);
-		org.eclipse.gef.dot.internal.parser.shape.Shape dotShape = DotAttributes
+		org.eclipse.gef.dot.internal.language.shape.Shape dotShape = DotAttributes
 				.getShapeParsed(dot);
 		javafx.scene.Node zestShape = null;
 		if (dotShape == null) {
@@ -542,7 +542,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// node position is interpreted as center of node in Dot,
 			// and
 			// top-left in Zest
-			org.eclipse.gef.dot.internal.parser.point.Point dotPosParsed = DotAttributes
+			org.eclipse.gef.dot.internal.language.point.Point dotPosParsed = DotAttributes
 					.getPosParsed(dot);
 			ZestProperties.setPosition(zest,
 					computeZestPosition(dotPosParsed, zestWidth, zestHeight));
@@ -555,7 +555,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// external label position (xlp)
 		String dotXlp = DotAttributes.getXlp(dot);
 		if (dotXLabel != null && dotXlp != null && !options().ignorePositions) {
-			org.eclipse.gef.dot.internal.parser.point.Point dotXlpParsed = DotAttributes
+			org.eclipse.gef.dot.internal.language.point.Point dotXlpParsed = DotAttributes
 					.getXlpParsed(dot);
 			ZestProperties.setExternalLabelPosition(zest,
 					computeZestLabelPosition(dotXlpParsed, dotXLabel));
@@ -599,7 +599,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	}
 
 	private Point computeZestPosition(
-			org.eclipse.gef.dot.internal.parser.point.Point dotPosition,
+			org.eclipse.gef.dot.internal.language.point.Point dotPosition,
 			double widthInPixel, double heightInPixel) {
 		// dot positions are provided as center positions, Zest uses
 		// top-left
@@ -609,7 +609,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	}
 
 	private Point computeZestLabelPosition(
-			org.eclipse.gef.dot.internal.parser.point.Point dotLabelPosition,
+			org.eclipse.gef.dot.internal.language.point.Point dotLabelPosition,
 			String labelText) {
 		Dimension labelSize = computeZestLabelSize(labelText);
 		return computeZestPosition(dotLabelPosition, labelSize.getWidth(),
