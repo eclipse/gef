@@ -241,31 +241,30 @@
             </command>
         </menuContribution>
     </extension>
-   <!-- quickfix marker resolution generator -->
-   <extension
-         point="org.eclipse.ui.ide.markerResolution">
-      <markerResolutionGenerator
+    <!-- quickfix marker resolution generator -->
+    <extension
+            point="org.eclipse.ui.ide.markerResolution">
+        <markerResolutionGenerator
             class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
-      </markerResolutionGenerator>
-   </extension>
-   <!-- DOT view -->
-   <extension
-         point="org.eclipse.ui.views">
-      <category
+        </markerResolutionGenerator>
+    </extension>
+    <!-- DOT view -->
+    <extension
+        point="org.eclipse.ui.views">
+        <category
             id="org.eclipse.gef.visualization"
             name="Visualization">
-      </category>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
+        </category>
+    </extension>
+    <extension
+        point="org.eclipse.ui.views">
+        <view
             class="org.eclipse.gef.dot.internal.ui.DotGraphView"
             id="org.eclipse.gef.dot.view"
             icon="icons/graph_view.png"
             category="org.eclipse.gef.visualization"
             name="DOT Graph"
             restorable="true">
-      </view>
-   </extension>
-   
+        </view>
+    </extension>
 </plugin>
