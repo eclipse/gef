@@ -54,6 +54,7 @@ Workflow {
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
+		naming = DotNaming {}
 		language = auto-inject {
 		// grammarURI has to be platform:/resource for headless execution (Tycho)
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/Dot.xtext"// Java API to access grammar elements (required by several other fragments)
@@ -126,15 +127,15 @@ Workflow {
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.language.ui.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
+			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
 			    contentAssist = true
 			    antlrParam = "-lib"
 			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/language/ui/contentassist/antlr/lexer"
+			    antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
 			}
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.language.ui.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
+			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
 			    highlighting = true
 			}
 

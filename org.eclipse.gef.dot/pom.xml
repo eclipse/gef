@@ -86,6 +86,13 @@
 						<artifactId>org.eclipse.xtext.xtext</artifactId>
 						<version>${xtext.version}</version>
 					</dependency>
+					<dependency>
+						<groupId>org.eclipse.gef.dot</groupId>
+						<artifactId>xtext-generator-extensions</artifactId>
+						<version>5.0.0</version>
+						<scope>system</scope>
+						<systemPath>${project.basedir}/xtext-generator-extensions.jar</systemPath>
+					</dependency>
 				</dependencies>
 			</plugin>
 			<plugin>

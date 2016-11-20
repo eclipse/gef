@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.DotImport;
-import org.eclipse.gef.dot.internal.language.ui.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;

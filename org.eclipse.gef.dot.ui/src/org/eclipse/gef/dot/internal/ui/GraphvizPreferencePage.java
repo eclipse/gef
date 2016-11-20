@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
-import org.eclipse.gef.dot.internal.language.ui.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
