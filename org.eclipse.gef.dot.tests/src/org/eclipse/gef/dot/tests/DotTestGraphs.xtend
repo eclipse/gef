@@ -234,7 +234,7 @@ class DotTestGraphs {
 	
 /*
  ************************************************************************************************************
- * Sample dot graphs with different dot attribute valid values
+ * Test dot graphs with different dot attribute valid values
  ************************************************************************************************************
  */
 
@@ -281,7 +281,7 @@ class DotTestGraphs {
 
 /*
  ************************************************************************************************************
- * Sample dot graphs with global/local/override dot attributes
+ * Test dot graphs with global/local/override dot attributes
  ************************************************************************************************************
  */
 	public static val EDGE_ARROWHEAD_GLOBAL = '''
