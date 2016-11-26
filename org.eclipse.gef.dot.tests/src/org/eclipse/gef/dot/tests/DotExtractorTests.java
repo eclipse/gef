@@ -14,8 +14,7 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
-import org.eclipse.gef.dot.internal.ui.DotGraphView;
-import org.eclipse.gef.dot.internal.ui.DotGraphView.DotExtractor;
+import org.eclipse.gef.dot.internal.DotExtractor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -75,8 +74,7 @@ public class DotExtractorTests {
 	}
 
 	private void testDotExtraction(String embedded, String expected) {
-		String extracted = new DotGraphView.DotExtractor(embedded)
-				.getDotString();
+		String extracted = new DotExtractor(embedded).getDotString();
 		Assert.assertEquals(
 				String.format("Incorrect DOT extraction for '%s';", embedded),
 				expected.trim(), extracted);
