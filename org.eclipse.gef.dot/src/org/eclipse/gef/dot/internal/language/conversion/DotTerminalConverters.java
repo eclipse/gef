@@ -79,7 +79,7 @@ public class DotTerminalConverters
 
 	@Override
 	public String toString(Object value, String lexerRule) {
-		if (lexerRule.equals("ID")) {
+		if ("ID".equals(lexerRule)) {
 			if (value instanceof String) {
 				// use quoted string where needed
 				if (needsToBeQuoted((String) value)) {
