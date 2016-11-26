@@ -9,35 +9,35 @@
    
     Contributors:
         Alexander Nyßen (itemis AG) - initial API and implementation
- -->
+-->
 <plugin>
-   <extension point="org.eclipse.ui.activities">
-     <activity
-           description="Provides a Graphviz DOT authoring environment, consisting of an Xtext-based DOT editor, a Graphviz-based DOT export, and a DOT Graph view."
-           id="org.eclipse.gef.dot.ui.capabilities.activity"
-           name="Graphviz DOT editing/visualization support">
-     </activity>
-     <category
-           description="GEF DOT end-user features"
-           id="org.eclipse.gef.dot.ui.capabilities.category"
-           name="GEF DOT">
-     </category>
-     <categoryActivityBinding
-           activityId="org.eclipse.gef.dot.ui.capabilities.activity"
-           categoryId="org.eclipse.gef.dot.ui.capabilities.category">
-     </categoryActivityBinding>
-     <activityPatternBinding
-           activityId="org.eclipse.gef.dot.ui.capabilities.activity"
-           isEqualityPattern="false"
-           pattern="org.eclipse.gef.dot/.*">
-     </activityPatternBinding>
-     <activityPatternBinding
-           activityId="org.eclipse.gef.dot.ui.capabilities.activity"
-           isEqualityPattern="false"
-           pattern="org.eclipse.gef.dot.ui/.*">
-     </activityPatternBinding>
-     <defaultEnablement id="org.eclipse.gef.dot.ui.capabilities.activity"/>
-   </extension>
+    <extension point="org.eclipse.ui.activities">
+        <activity
+            description="Provides a Graphviz DOT authoring environment, consisting of an Xtext-based DOT editor, a Graphviz-based DOT export, and a DOT Graph view."
+            id="org.eclipse.gef.dot.ui.capabilities.activity"
+            name="Graphviz DOT editing/visualization support">
+        </activity>
+        <category
+            description="GEF DOT end-user features"
+            id="org.eclipse.gef.dot.ui.capabilities.category"
+            name="GEF DOT">
+        </category>
+        <categoryActivityBinding
+            activityId="org.eclipse.gef.dot.ui.capabilities.activity"
+            categoryId="org.eclipse.gef.dot.ui.capabilities.category">
+        </categoryActivityBinding>
+        <activityPatternBinding
+            activityId="org.eclipse.gef.dot.ui.capabilities.activity"
+            isEqualityPattern="false"
+            pattern="org.eclipse.gef.dot/.*">
+        </activityPatternBinding>
+        <activityPatternBinding
+            activityId="org.eclipse.gef.dot.ui.capabilities.activity"
+            isEqualityPattern="false"
+            pattern="org.eclipse.gef.dot.ui/.*">
+        </activityPatternBinding>
+        <defaultEnablement id="org.eclipse.gef.dot.ui.capabilities.activity"/>
+    </extension>
 	<!-- DOT editor -->
     <extension
             point="org.eclipse.ui.editors">
@@ -69,11 +69,11 @@
                     definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
             </reference>
          </activeWhen>
-      </handler>
-      <handler
-          class="org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler"
-          commandId="org.eclipse.gef.dot.ui.export">
-      </handler>
+        </handler>
+        <handler
+            class="org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler"
+            commandId="org.eclipse.gef.dot.ui.export">
+        </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
@@ -148,7 +148,7 @@
             </visibleWhen>
          </command>  
          </menuContribution>
-        <menuContribution
+         <menuContribution
               allPopups="false"
               locationURI=" toolbar:org.eclipse.ui.main.toolbar?after=additions">
            <toolbar
@@ -187,7 +187,7 @@
                 </reference>
             </activeWhen>
         </handler>
-    </extension>   
+    </extension>
 
 <!-- adding resource factories -->
 
@@ -204,8 +204,6 @@
             uriExtension="dot">
         </resourceServiceProvider>
     </extension>
-
-
 
 
     <!-- Quick Outline -->
@@ -241,7 +239,7 @@
             </command>
         </menuContribution>
     </extension>
-    <!-- quickfix marker resolution generator -->
+    <!-- quickfix marker resolution generator for org.eclipse.gef.dot.internal.language.Dot -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
