@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
@@ -27,8 +28,9 @@ import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.graph.Graph;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Tests for the {@link DotExport} class.
@@ -37,16 +39,10 @@ import org.junit.Test;
  */
 public class DotExportTests {
 
-	public static final File OUTPUT = new File("output"); //$NON-NLS-1$
-	private final DotExport dotExport = new DotExport();
+	@Rule
+	public TemporaryFolder outputFolder = new TemporaryFolder();
 
-	@BeforeClass
-	public static void wipe() {
-		DotTestUtils.wipeOutput(DotExportTests.OUTPUT, ".dot"); //$NON-NLS-1$
-		if (!DotExportTests.OUTPUT.exists()) {
-			DotExportTests.OUTPUT.mkdirs();
-		}
-	}
+	private final DotExport dotExport = new DotExport();
 
 	@Test
 	public void simpleGraph() {
@@ -102,7 +98,16 @@ public class DotExportTests {
 		assertNoBlankLines(dot);
 
 		// test exporting the graph into a file
-		File outputFile = new File(OUTPUT, fileName);
+		File outputFile;
+		try {
+			outputFile = outputFolder.newFile(fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail("Cannot create temporary file " + fileName + " "
+					+ e.getMessage());
+			return;
+		}
+
 		dotExport.exportDot(graph, outputFile.getPath());
 		Assert.assertTrue("Generated file " + outputFile.getName() //$NON-NLS-1$
 				+ " must exist!", outputFile.exists());
