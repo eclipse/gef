@@ -48,26 +48,6 @@ public class DotExportTests {
 		}
 	}
 
-	private void testDotExport(final Graph graph, String fileName) {
-		// test exporting the graph into a string
-		String dot = dotExport.exportDot(graph);
-		String fileContents = DotFileUtils
-				.read(new File(RESOURCES_TESTS + fileName));
-		assertEquals(fileContents, dot);
-
-		/* verify that there is no blank lines in the exported dot string */
-		assertNoBlankLines(dot);
-
-		// test exporting the graph into a file
-		File outputFile = new File(OUTPUT, fileName);
-		dotExport.exportDot(graph, outputFile.getPath());
-		Assert.assertTrue("Generated file " + outputFile.getName() //$NON-NLS-1$
-				+ " must exist!", outputFile.exists());
-		String dotRead = DotFileUtils.read(outputFile);
-		Assert.assertEquals("File output and String output should be equal;", //$NON-NLS-1$
-				dot, dotRead);
-	}
-
 	@Test
 	public void simpleGraph() {
 		testDotExport(DotTestUtils.getSimpleGraph(), "simple_graph.dot");
@@ -109,6 +89,26 @@ public class DotExportTests {
 		graph.attr(DotAttributes.LAYOUT__G, Layout.SFDP.toString());
 		assertTrue("'sfdp'",
 				dotExport.exportDot(graph.build()).contains("layout=\"sfdp\""));
+	}
+
+	private void testDotExport(final Graph graph, String fileName) {
+		// test exporting the graph into a string
+		String dot = dotExport.exportDot(graph);
+		String fileContents = DotFileUtils
+				.read(new File(RESOURCES_TESTS + fileName));
+		assertEquals(fileContents, dot);
+
+		/* verify that there is no blank lines in the exported dot string */
+		assertNoBlankLines(dot);
+
+		// test exporting the graph into a file
+		File outputFile = new File(OUTPUT, fileName);
+		dotExport.exportDot(graph, outputFile.getPath());
+		Assert.assertTrue("Generated file " + outputFile.getName() //$NON-NLS-1$
+				+ " must exist!", outputFile.exists());
+		String dotRead = DotFileUtils.read(outputFile);
+		Assert.assertEquals("File output and String output should be equal;", //$NON-NLS-1$
+				dot, dotRead);
 	}
 
 	private void assertNoBlankLines(final String dot) {

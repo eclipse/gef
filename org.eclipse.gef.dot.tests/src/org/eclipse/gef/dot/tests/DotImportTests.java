@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
@@ -44,14 +44,6 @@ import org.junit.runner.RunWith;
 public final class DotImportTests {
 
 	private final DotImport dotImport = new DotImport();
-
-	private Graph testFileImport(final File dotFile) {
-		Assert.assertTrue("DOT input file must exist: " + dotFile, //$NON-NLS-1$
-				dotFile.exists());
-		Graph graph = dotImport.importDot(dotFile);
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		return graph;
-	}
 
 	/**
 	 * Test valid graphs can be imported without exceptions.
@@ -1484,6 +1476,14 @@ public final class DotImportTests {
 		Node n4 = new Node.Builder().attr(DotAttributes._NAME__GNE, "4") //$NON-NLS-1$
 				.buildNode();
 		return new Node[] { n1, n2, n3, n4 };
+	}
+
+	private Graph testFileImport(final File dotFile) {
+		Assert.assertTrue("DOT input file must exist: " + dotFile, //$NON-NLS-1$
+				dotFile.exists());
+		Graph graph = dotImport.importDot(dotFile);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		return graph;
 	}
 
 	private void testStringImport(Graph expected, String dot) {
