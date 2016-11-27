@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Fabian Steeg and others.
+ * Copyright (c) 2010, 2016 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +8,9 @@
  *
  * Contributors:
  *     Fabian Steeg    - intial Xtext generation (see bug #277380)
- *     Alexander Nyßen - initial implementation (value converter binding)
+ *     Alexander Nyßen (itemis AG) - initial implementation (value converter binding)
+ *     Tamas Miklossy  (itemis AG) - request for static injection (#498324)
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
