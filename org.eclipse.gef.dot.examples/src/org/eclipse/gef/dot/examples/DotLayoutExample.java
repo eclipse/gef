@@ -12,8 +12,6 @@
 package org.eclipse.gef.dot.examples;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
@@ -53,14 +51,11 @@ public class DotLayoutExample extends AbstractZestExample {
 
 		@Override
 		public void applyLayout(boolean clean) {
-			// convert a Graph with LayoutAttributes (input model to
+			// Convert a Graph with LayoutAttributes (input model to
 			// ILayoutAlgorithm) to a Graph with DotAttributes, which can be
-			// exported to a DOT string; keep track of converted nodes (as a
-			// side-effect)
-			final Map<Node, String> nodesToNameMap = new HashMap<>();
-			IAttributeCopier layout2DotAttributesConverter = new IAttributeCopier() {
-
-				int nodeIndex = 0;
+			// exported to a DOT string; transfer node names to be able to
+			// retrieve the results
+			Graph dotGraph = new GraphCopier(new IAttributeCopier() {
 
 				@Override
 				public void copy(IAttributeStore source,
@@ -76,15 +71,13 @@ public class DotLayoutExample extends AbstractZestExample {
 						posParsed.setY(location.y);
 						DotAttributes.setPosParsed((Node) target, posParsed);
 
+						// transfer name for identification purpose
 						DotAttributes._setName((Node) target,
-								Integer.toString(++nodeIndex));
-						nodesToNameMap.put((Node) source,
-								DotAttributes._getName((Node) target));
+								(String) ((Node) source).attributesProperty()
+										.get(LABEL));
 					}
 				}
-			};
-			Graph dotGraph = new GraphCopier(layout2DotAttributesConverter)
-					.copy(context.getGraph());
+			}).copy(context.getGraph());
 
 			// set graph type and DOT layout algorithm
 			DotAttributes._setType(dotGraph, DotAttributes._TYPE__G__DIGRAPH);
@@ -92,9 +85,8 @@ public class DotLayoutExample extends AbstractZestExample {
 
 			// export the Graph with DotAttributs to a DOT string and call the
 			// dot executable to add layout info to it
-			DotExport dotExport = new DotExport();
-			String dot = dotExport.exportDot(dotGraph);
-			File tmpFile = DotFileUtils.write(dot);
+			File tmpFile = DotFileUtils
+					.write(new DotExport().exportDot(dotGraph));
 			String[] dotResult = DotExecutableUtils.executeDot(
 					new File(dotExecutablePath), true, tmpFile, null, null);
 			if (!dotResult[1].isEmpty()) {
@@ -105,12 +97,11 @@ public class DotLayoutExample extends AbstractZestExample {
 
 			// transfer the DOT provided position information back to the input
 			// Graph
-			for (Node target : context.getGraph().getNodes()) {
-				String nodeName = nodesToNameMap.get(target);
-				for (Node source : layoutedDotGraph.getNodes()) {
-					if (nodeName.equals(DotAttributes._getName(source))) {
-						// convert DotAttributes#pos to
-						// LayoutProperties#location
+			for (Node source : layoutedDotGraph.getNodes()) {
+				String sourceName = DotAttributes._getName(source);
+				for (Node target : context.getGraph().getNodes()) {
+					if (target.getAttributes().get(LABEL).equals(sourceName)) {
+						// transfer back (layouted location information)
 						org.eclipse.gef.dot.internal.language.point.Point posParsed = DotAttributes
 								.getPosParsed(source);
 						LayoutProperties.setLocation(target,
