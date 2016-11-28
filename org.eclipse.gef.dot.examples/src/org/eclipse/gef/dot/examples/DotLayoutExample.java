@@ -25,7 +25,6 @@ import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.point.PointFactory;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
 import org.eclipse.gef.graph.Node;
@@ -87,10 +86,8 @@ public class DotLayoutExample extends AbstractZestExample {
 			Graph dotGraph = new GraphCopier(layout2DotAttributesConverter)
 					.copy(context.getGraph());
 
-			// set graph type
+			// set graph type and DOT layout algorithm
 			DotAttributes._setType(dotGraph, DotAttributes._TYPE__G__DIGRAPH);
-
-			// specify layout algorithm
 			DotAttributes.setLayout(dotGraph, Layout.CIRCO.toString());
 
 			// export the Graph with DotAttributs to a DOT string and call the
@@ -145,29 +142,20 @@ public class DotLayoutExample extends AbstractZestExample {
 
 	@Override
 	protected Graph createGraph() {
-		Node paper = n(LABEL, "Paper");
-		Node rock = n(LABEL, "Rock");
-		Node scissors = n(LABEL, "Scissors");
-		Node spock = n(LABEL, "Spock");
-		Node lizard = n(LABEL, "Lizard");
-		Edge paper_disproves_spock = new Edge(paper, spock);
-		Edge paper_covers_rock = new Edge(paper, rock);
-		Edge rock_crushes_scissors = new Edge(rock, scissors);
-		Edge rock_crushes_lizard = new Edge(rock, lizard);
-		Edge scissors_cuts_paper = new Edge(scissors, paper);
-		Edge scissors_decapitates_lizard = new Edge(scissors, lizard);
-		Edge spock_smashes_scissors = new Edge(spock, scissors);
-		Edge spock_vaporizes_rock = new Edge(spock, rock);
-		Edge lizard_poisons_spock = new Edge(lizard, spock);
-		Edge lizard_eats_paper = new Edge(lizard, paper);
-		return new Graph.Builder().nodes(paper, rock, scissors, spock, lizard)
-				.edges(paper_disproves_spock, paper_covers_rock,
-						rock_crushes_scissors, rock_crushes_lizard,
-						scissors_cuts_paper, scissors_decapitates_lizard,
-						spock_smashes_scissors, spock_vaporizes_rock,
-						lizard_poisons_spock, lizard_eats_paper)
+		String paper = "Paper";
+		String rock = "Rock";
+		String scissors = "Scissors";
+		String spock = "Spock";
+		String lizard = "Lizard";
+		return new Graph.Builder()
 				.attr(ZestProperties.LAYOUT_ALGORITHM__G, new DotNativeLayout())
-				.build();
+				.node(paper).attr(LABEL, paper).node(rock).attr(LABEL, rock)
+				.node(scissors).attr(LABEL, scissors).node(spock)
+				.attr(LABEL, spock).node(lizard).attr(LABEL, lizard)
+				.edge(paper, spock).edge(paper, rock).edge(rock, scissors)
+				.edge(rock, lizard).edge(scissors, paper).edge(scissors, lizard)
+				.edge(spock, scissors).edge(spock, rock).edge(lizard, spock)
+				.edge(lizard, paper).build();
 	}
 
 }
