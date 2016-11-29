@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
+import com.google.common.collect.Multiset;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -133,6 +135,16 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 				child.deactivate();
 			}
 		}
+	}
+
+	@Override
+	protected IViewer determineViewer(IVisualPart<? extends Node> parent,
+			Multiset<IVisualPart<? extends Node>> anchoreds) {
+		// XXX: The root part is the only part that has a direct link to the
+		// viewer. It should not be unregistered via the default mechanism, but
+		// when the viewer is explicitly unset. (see #setAdaptable(IViewer)
+		// below)
+		return getViewer();
 	}
 
 	@Override
