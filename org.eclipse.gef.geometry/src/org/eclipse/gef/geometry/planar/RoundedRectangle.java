@@ -405,7 +405,7 @@ public final class RoundedRectangle
 
 	@Override
 	public Path toPath() {
-		return CurveUtils.toPath(getOutlineSegments());
+		return CurveUtils.toPath(getOutlineSegments()).close();
 	}
 
 	@Override

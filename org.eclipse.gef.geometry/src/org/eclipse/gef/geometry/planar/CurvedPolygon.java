@@ -500,7 +500,7 @@ public class CurvedPolygon extends AbstractGeometry
 
 	@Override
 	public Path toPath() {
-		return CurveUtils.toPath(edges);
+		return CurveUtils.toPath(edges).close();
 	}
 
 	@Override

@@ -23,6 +23,8 @@ import org.eclipse.gef.geometry.planar.BezierCurve;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Line;
+import org.eclipse.gef.geometry.planar.Path;
+import org.eclipse.gef.geometry.planar.Path.Segment;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.geometry.planar.RoundedRectangle;
@@ -214,7 +216,12 @@ public class RoundedRectangleTests {
 
 	@Test
 	public void test_toPath() {
-		check_Point_containment(rr.toPath());
+		Path path = rr.toPath();
+		check_Point_containment(path);
+
+		Segment[] segments = path.toPath().getSegments();
+		// check path is closed
+		assertTrue(segments[segments.length - 1].getType() == Segment.CLOSE);
 	}
 
 	@Test

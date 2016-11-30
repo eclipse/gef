@@ -418,7 +418,7 @@ public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse, PolyBezier>
 	 */
 	@Override
 	public Path toPath() {
-		return CurveUtils.toPath(getOutlineSegments());
+		return CurveUtils.toPath(getOutlineSegments()).close();
 	}
 
 	@Override

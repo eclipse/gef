@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2015 IBM Corporation and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.geometry.tests;
 
@@ -21,6 +21,7 @@ import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Line;
+import org.eclipse.gef.geometry.planar.Path.Segment;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -28,12 +29,12 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link Rectangle}.
- * 
+ *
  * @author sshaw
  * @author ahunter
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class RectangleTests {
 
@@ -212,6 +213,7 @@ public class RectangleTests {
 	@Test
 	public void test_getBounds() {
 		forRectangles(new IAction() {
+			@Override
 			public void action(Rectangle rect, Point tl, Point br) {
 				assertEquals(rect, rect.getBounds());
 			}
@@ -252,6 +254,7 @@ public class RectangleTests {
 	@Test
 	public void test_getRotatedCCW() {
 		forRectangles(new IAction() {
+			@Override
 			public void action(Rectangle rect, Point tl, Point br) {
 				assertEquals(
 						fromRectangle(tl.x, tl.y - rect.getWidth(),
@@ -265,6 +268,7 @@ public class RectangleTests {
 	@Test
 	public void test_getRotatedCW() {
 		forRectangles(new IAction() {
+			@Override
 			public void action(Rectangle rect, Point tl, Point br) {
 				Polygon expected = fromRectangle(tl.x - rect.getHeight(), tl.y,
 						rect.getHeight(), rect.getWidth());
@@ -313,6 +317,7 @@ public class RectangleTests {
 	@Test
 	public void test_getSegments() {
 		forRectangles(new IAction() {
+			@Override
 			public void action(Rectangle rect, Point tl, Point br) {
 				Line[] segments = rect.getOutlineSegments();
 				// segments are top, right, bottom, left. in order.
@@ -329,6 +334,7 @@ public class RectangleTests {
 	@Test
 	public void test_getSize() {
 		forRectangles(new IAction() {
+			@Override
 			public void action(Rectangle rect, Point tl, Point br) {
 				assertEquals(new Dimension(br.x - tl.x, br.y - tl.y),
 						rect.getSize());
@@ -348,6 +354,7 @@ public class RectangleTests {
 	@Test
 	public void test_getTransposed() {
 		forRectangles(new IAction() {
+			@Override
 			public void action(Rectangle rect, Point tl, Point br) {
 				assertEquals(
 						new Rectangle(tl.y, tl.x, br.y - tl.y, br.x - tl.x),
@@ -629,6 +636,13 @@ public class RectangleTests {
 		assertEquals(preciseRect, recognizableShrinked);
 	}
 
+	public void test_toPath() {
+		Rectangle r = new Rectangle(50, 100, 200, 300);
+		Segment[] segments = r.toPath().getSegments();
+		// check path is closed
+		assertTrue(segments[segments.length - 1].getType() == Segment.CLOSE);
+	}
+
 	@Test
 	public void test_toPolygon() {
 		Point[] points = new Point[] { new Point(10, 10),
@@ -664,6 +678,7 @@ public class RectangleTests {
 	@Test
 	public void testBorderPointsCalculation() {
 		forRectangles(new IAction() {
+			@Override
 			public void action(Rectangle rect, Point tl, Point br) {
 				Point to = new Point((tl.x + br.x) / 2, tl.y);
 				Point le = new Point(tl.x, (tl.y + br.y) / 2);

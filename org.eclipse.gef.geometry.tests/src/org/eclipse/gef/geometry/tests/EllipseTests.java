@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2015 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.geometry.tests;
 
@@ -21,16 +21,18 @@ import org.eclipse.gef.geometry.planar.CubicCurve;
 import org.eclipse.gef.geometry.planar.Ellipse;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Line;
+import org.eclipse.gef.geometry.planar.Path;
+import org.eclipse.gef.geometry.planar.Path.Segment;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.junit.Test;
 
 /**
  * Unit tests for {@link Ellipse}.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class EllipseTests {
 
@@ -416,7 +418,13 @@ public class EllipseTests {
 	public void test_toPath() {
 		Rectangle r = new Rectangle(0, 0, 100, 50);
 		Ellipse e = new Ellipse(r);
-		checkPointContainment(r, e.toPath());
+
+		Path path = e.toPath();
+		checkPointContainment(r, path);
+
+		// check path is closed
+		Segment[] segments = path.getSegments();
+		assertTrue(segments[segments.length - 1].getType() == Segment.CLOSE);
 	}
 
 	@Test

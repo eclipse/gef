@@ -38,7 +38,7 @@ import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
  *
  */
 public final class Rectangle extends
-		AbstractRectangleBasedGeometry<Rectangle, Polygon>implements IShape {
+		AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -580,13 +580,8 @@ public final class Rectangle extends
 	 */
 	@Override
 	public Path toPath() {
-		Path path = new Path();
-		path.moveTo(x, y);
-		path.lineTo(x + width, y);
-		path.lineTo(x + width, y + height);
-		path.lineTo(x, y + height);
-		path.close();
-		return path;
+		return new Path().moveTo(x, y).lineTo(x + width, y)
+				.lineTo(x + width, y + height).lineTo(x, y + height).close();
 	}
 
 	/**

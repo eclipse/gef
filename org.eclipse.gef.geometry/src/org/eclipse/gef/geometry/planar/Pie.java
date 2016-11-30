@@ -28,7 +28,7 @@ import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
  * @author anyssen
  * @author mwienand
  */
-public class Pie extends AbstractArcBasedGeometry<Pie, Path>implements IShape {
+public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -200,7 +200,7 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path>implements IShape {
 		}
 		curves[arc.length] = endToMid;
 		curves[arc.length + 1] = midToStart;
-		return CurveUtils.toPath(curves);
+		return CurveUtils.toPath(curves).close();
 	}
 
 }
