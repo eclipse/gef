@@ -59,6 +59,13 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends Object> change) {
+			// XXX: An atomic operation (including setAll()) on the
+			// ObservableList will lead to an atomic change here; we do not have
+			// to iterate through the individual changes but may simply
+			// synchronize with the list as it emerges after the changes have
+			// been applied.
+			synchronizeContentPartChildren(change.getList());
+
 			// TODO: Check if the flushing of the viewer models can be done in a
 			// more appropriate place.
 
@@ -75,12 +82,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				hoverModel.clearHover();
 			}
 
-			// XXX: An atomic operation (including setAll()) on the
-			// ObservableList will lead to an atomic change here; we do not have
-			// to iterate through the individual changes but may simply
-			// synchronize with the list as it emerges after the changes have
-			// been applied.
-			synchronizeContentPartChildren(change.getList());
 		}
 	};
 

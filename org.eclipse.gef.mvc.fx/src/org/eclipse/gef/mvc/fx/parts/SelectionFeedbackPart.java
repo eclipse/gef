@@ -30,8 +30,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
 /**
- * The {@link SelectionFeedbackPart} is an {@link AbstractFeedbackPart} that
- * is parameterized by <code>GeometryNode&lt;IGeometry&gt;</code>.
+ * The {@link SelectionFeedbackPart} is an {@link AbstractFeedbackPart} that is
+ * parameterized by <code>GeometryNode&lt;IGeometry&gt;</code>.
  *
  * @author mwienand
  *
@@ -69,6 +69,15 @@ public class SelectionFeedbackPart
 		if (anchorages.isEmpty()) {
 			return;
 		}
+		IVisualPart<? extends Node> anchorage = anchorages.iterator().next();
+		IRootPart<? extends Node> root = anchorage.getRoot();
+		if (root == null) {
+			return;
+		}
+		IViewer viewer = anchorage.getRoot().getViewer();
+		if (viewer == null) {
+			return;
+		}
 		IGeometry feedbackGeometry = getFeedbackGeometry();
 		if (feedbackGeometry == null) {
 			return;
@@ -88,8 +97,6 @@ public class SelectionFeedbackPart
 		}
 
 		// update color
-		IVisualPart<? extends Node> anchorage = anchorages.iterator().next();
-		IViewer viewer = anchorage.getRoot().getViewer();
 		List<IContentPart<? extends Node>> selected = viewer
 				.getAdapter(SelectionModel.class).getSelectionUnmodifiable();
 		if (selected != null && selected.size() > 0
