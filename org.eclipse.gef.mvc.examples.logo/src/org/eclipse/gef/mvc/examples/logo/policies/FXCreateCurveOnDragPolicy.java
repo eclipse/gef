@@ -152,8 +152,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy impleme
 
 		// create new curve
 		GeometricCurve curve = new GeometricCurve(new Point[] { new Point(), new Point() },
-				GeometricModel.GEF_COLOR_GREEN, GeometricModel.GEF_STROKE_WIDTH, GeometricModel.GEF_DASH_PATTERN,
-				null);
+				GeometricModel.GEF_COLOR_GREEN, GeometricModel.GEF_STROKE_WIDTH, GeometricModel.GEF_DASH_PATTERN, null);
 		curve.addSourceAnchorage(getShapePart().getContent());
 
 		// create using CreationPolicy from root part
@@ -174,7 +173,6 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy impleme
 				getHost().getRoot().getViewer().getAdapter(SelectionModel.class).getSelectionUnmodifiable());
 		toBeDeselected.remove(curvePart);
 		DeselectOperation deselectOperation = new DeselectOperation(getHost().getRoot().getViewer(), toBeDeselected);
-
 		// execute on stack
 		try {
 			getHost().getRoot().getViewer().getDomain().execute(deselectOperation, new NullProgressMonitor());
@@ -188,8 +186,16 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy impleme
 			dragPolicies = bendTargetPart.getAdapters(ClickDragTool.ON_DRAG_POLICY_KEY);
 		}
 		if (dragPolicies != null) {
+			MouseEvent dragEvent = new MouseEvent(event.getSource(), event.getTarget(), MouseEvent.MOUSE_DRAGGED,
+					event.getX(), event.getY(), event.getScreenX(), event.getScreenY(), event.getButton(),
+					event.getClickCount(), event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+					event.isMetaDown(), event.isPrimaryButtonDown(), event.isMiddleButtonDown(),
+					event.isSecondaryButtonDown(), event.isSynthesized(), event.isPopupTrigger(),
+					event.isStillSincePress(), event.getPickResult());
 			for (IOnDragPolicy dragPolicy : dragPolicies.values()) {
 				dragPolicy.startDrag(event);
+				// XXX: send initial drag event so that the end position is set
+				dragPolicy.drag(dragEvent, new Dimension());
 			}
 		}
 	}
