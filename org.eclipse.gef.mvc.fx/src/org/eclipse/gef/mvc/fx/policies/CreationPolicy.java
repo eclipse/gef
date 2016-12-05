@@ -72,11 +72,17 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 	 * @param anchoreds
 	 *            The {@link IContentPart} whose content should be attached to
 	 *            the new content under the given roles.
+	 * @param doFocus
+	 *            <code>true</code> if the newly created part should be focused.
+	 * @param doSelect
+	 *            <code>true</code> if the newly created part should be
+	 *            selected.
 	 * @return The {@link IContentPart} controlling the newly created content.
 	 */
 	public IContentPart<? extends Node> create(Object content,
 			IContentPart<? extends Node> parent, int index,
-			SetMultimap<IContentPart<? extends Node>, String> anchoreds) {
+			SetMultimap<IContentPart<? extends Node>, String> anchoreds,
+			boolean doFocus, boolean doSelect) {
 		checkInitialized();
 		if (content == null) {
 			throw new IllegalArgumentException(
@@ -140,18 +146,22 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 			}
 		}
 
-		// set as focus part
-		ITransactionalOperation focusOperation = createFocusOperation(
-				contentPart);
-		if (focusOperation != null) {
-			getCompositeOperation().add(focusOperation);
+		if (doFocus) {
+			// set as focus part
+			ITransactionalOperation focusOperation = createFocusOperation(
+					contentPart);
+			if (focusOperation != null) {
+				getCompositeOperation().add(focusOperation);
+			}
 		}
 
-		// select the newly created part
-		ITransactionalOperation selectOperation = createSelectOperation(
-				contentPart);
-		if (selectOperation != null) {
-			getCompositeOperation().add(selectOperation);
+		if (doSelect) {
+			// select the newly created part
+			ITransactionalOperation selectOperation = createSelectOperation(
+					contentPart);
+			if (selectOperation != null) {
+				getCompositeOperation().add(selectOperation);
+			}
 		}
 
 		locallyExecuteOperation();
@@ -179,7 +189,7 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 			IContentPart<? extends Node> parent,
 			SetMultimap<IContentPart<? extends Node>, String> anchoreds) {
 		return create(content, parent, parent.getChildrenUnmodifiable().size(),
-				anchoreds);
+				anchoreds, true, true);
 	}
 
 	/**

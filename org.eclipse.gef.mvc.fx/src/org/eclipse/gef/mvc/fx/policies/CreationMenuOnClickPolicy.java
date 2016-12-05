@@ -329,9 +329,11 @@ public class CreationMenuOnClickPolicy extends AbstractInteractionPolicy
 	}
 
 	/**
-	 * Returns the {@link InfiniteCanvasViewer} in which to open the creation menu.
+	 * Returns the {@link InfiniteCanvasViewer} in which to open the creation
+	 * menu.
 	 *
-	 * @return The {@link InfiniteCanvasViewer} in which to open the creation menu.
+	 * @return The {@link InfiniteCanvasViewer} in which to open the creation
+	 *         menu.
 	 */
 	protected InfiniteCanvasViewer getViewer() {
 		return (InfiniteCanvasViewer) getHost().getRoot().getViewer();
@@ -380,9 +382,13 @@ public class CreationMenuOnClickPolicy extends AbstractInteractionPolicy
 		IRootPart<? extends Node> root = getHost().getRoot();
 		CreationPolicy creationPolicy = root.getAdapter(CreationPolicy.class);
 		creationPolicy.init();
+		IContentPart<? extends Node> contentParent = item
+				.findContentParent(root);
 		IContentPart<? extends Node> contentPart = creationPolicy.create(
-				toCreate, item.findContentParent(root),
-				HashMultimap.<IContentPart<? extends Node>, String> create());
+				toCreate, contentParent,
+				contentParent.getChildrenUnmodifiable().size(),
+				HashMultimap.<IContentPart<? extends Node>, String> create(),
+				false, false);
 
 		// relocate to final position
 		TransformPolicy txPolicy = contentPart

@@ -70,12 +70,11 @@ public class FXCreationMenuItemProvider implements Provider<List<CreationMenuOnC
 				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE, GeometricModel.GEF_SHADOW_EFFECT)));
 		// E shape
 		items.add(new GeometricShapeItem(
-				new GeometricShape(GeometricModel.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 100, 22),
+				new GeometricShape(GeometricModel.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 0, 0),
 						GeometricModel.GEF_COLOR_BLUE, GeometricModel.GEF_SHADOW_EFFECT)));
 		// cursor shape
 		items.add(new GeometricShapeItem(new GeometricShape(GeometricModel.createCursorShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 227, 45), Color.WHITE, 2, Color.BLACK,
-				GeometricModel.GEF_SHADOW_EFFECT)));
+				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE, 2, Color.BLACK, GeometricModel.GEF_SHADOW_EFFECT)));
 		return items;
 	}
 
