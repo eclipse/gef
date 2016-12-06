@@ -37,27 +37,27 @@ Edge : { !htmlMode }?=>('E'|'e')('D'|'d')('G'|'g')('E'|'e');
 
 Node : { !htmlMode }?=>('N'|'n')('O'|'o')('D'|'d')('E'|'e');
 
-HyphenMinusHyphenMinus : { !htmlMode }?=>'-''-';
+HyphenMinusHyphenMinus : { !htmlMode }?=> '-''-';
 
-HyphenMinusGreaterThanSign : { !htmlMode }?=>'-''>';
+HyphenMinusGreaterThanSign : { !htmlMode }?=> '-''>';
 
-Comma : { !htmlMode }?=>',';
+Comma : { !htmlMode }?=> ',';
 
-Colon : { !htmlMode }?=>':';
+Colon : { !htmlMode }?=> ':';
 
-Semicolon : { !htmlMode }?=>';';
+Semicolon : { !htmlMode }?=> ';';
 
-EqualsSign : { !htmlMode }?=>'=';
+EqualsSign : { !htmlMode }?=> '=';
 
-LeftSquareBracket : { !htmlMode }?=>'[';
+LeftSquareBracket : { !htmlMode }?=> '[';
 
-RightSquareBracket : { !htmlMode }?=>']';
+RightSquareBracket : { !htmlMode }?=> ']';
 
-LeftCurlyBracket : { !htmlMode }?=>'{';
+LeftCurlyBracket : { !htmlMode }?=> '{';
 
-RightCurlyBracket : { !htmlMode }?=>'}';
+RightCurlyBracket : { !htmlMode }?=> '}';
 
-RULE_NUMERAL : { !htmlMode }?=> ('-'? '.' ('0'..'9')+|('0'..'9')+ ('.' ('0'..'9')*)?);
+RULE_NUMERAL : { !htmlMode }?=> '-'? ('.' ('0'..'9')+ | ('0'..'9')+ ('.' ('0'..'9')*)?);
 
 RULE_COMPASS_PT : { !htmlMode }?=> ('n'|'ne'|'e'|'se'|'s'|'sw'|'w'|'nw'|'c'|'_');
 

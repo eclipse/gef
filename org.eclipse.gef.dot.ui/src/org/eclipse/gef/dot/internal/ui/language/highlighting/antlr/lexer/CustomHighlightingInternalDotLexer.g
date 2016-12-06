@@ -57,7 +57,7 @@ LeftCurlyBracket : { !htmlMode }?=>'{';
 
 RightCurlyBracket : { !htmlMode }?=>'}';
 
-RULE_NUMERAL : { !htmlMode }?=> ('-'? '.' ('0'..'9')+|('0'..'9')+ ('.' ('0'..'9')*)?);
+RULE_NUMERAL : { !htmlMode }?=> '-'? ('.' ('0'..'9')+ | ('0'..'9')+ ('.' ('0'..'9')*)?);
 
 RULE_COMPASS_PT : { !htmlMode }?=> ('n'|'ne'|'e'|'se'|'s'|'sw'|'w'|'nw'|'c'|'_');
 
