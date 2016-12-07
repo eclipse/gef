@@ -14,12 +14,13 @@ package org.eclipse.gef.dot.internal
 import java.io.File
 import org.eclipse.gef.common.attributes.IAttributeStore
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp
+import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
 
-import static org.eclipse.gef.dot.internal.DotAttributes.*
-import org.eclipse.gef.dot.internal.language.conversion.DotTerminalConverters
+import static extension org.eclipse.gef.dot.internal.DotAttributes.*
+import org.eclipse.gef.dot.internal.language.terminals.ID
 
 /**
  * A serializer that creates a Graphviz DOT string or file from a {@link Graph} with {@link DotAttributes}.
@@ -32,12 +33,12 @@ class DotExport {
 	// TODO: support a list of graphs
 	def String exportDot(Graph graph) {
 		// graph type is mandatory meta-attribute
-		if (!graph.attributes.containsKey(_TYPE__G)) {
+		if (graph.type == null ) {
 			throw new IllegalArgumentException(
 				"The " + _TYPE__G + " attribute has to be set on the input graph " + graph + ".");
 		}
 		// node name is mandatory meta-attribute
-		if (graph.nodes.exists[it.attributes.get(_NAME__GNE) == null]) {
+		if (graph.nodes.exists[!hasName]) {
 			throw new IllegalArgumentException(
 				"The " + _NAME__GNE + " attribute has to be set for all nodes of the input graph " + graph + ".");
 		}
@@ -50,12 +51,12 @@ class DotExport {
 	}
 
 	private def String print(Graph graph) '''
-		«graph.attributes.get(_TYPE__G)» «IF graph.hasName»«graph.name» «ENDIF»{
+		«graph.type» «IF graph.hasName»«graph.name» «ENDIF»{
 			«IF graph.hasNonMetaAttributes»
 				«graph.printNonMetaAttributes(";")»
 			«ENDIF»
-			«graph.nodes.sortBy[it.attributes.get(_NAME__GNE) as String].map[it.print].join("; ")»
-			«FOR edge : graph.edges.sortBy[it.attributes.get(_NAME__GNE) as String]»
+			«graph.nodes.sortBy[name].map[print].join("; ")»
+			«FOR edge : graph.edges.sortBy[name]»
 				«edge.name»«IF edge.hasNonMetaAttributes» [«edge.printNonMetaAttributes(",")»]«ENDIF»
 			«ENDFOR»
 		}
@@ -65,8 +66,8 @@ class DotExport {
 		key.startsWith("_")
 	}
 
-	private def isDirected(Graph graph) {
-		_TYPE__G__DIGRAPH.equals(graph.attributes.get(_TYPE__G))
+	private def isDirected(Graph it) {
+		GraphType.DIGRAPH.equals(type)
 	}
 
 	private def print(Node node) {
@@ -76,9 +77,13 @@ class DotExport {
 	private def hasName(IAttributeStore it) {
 		it.attributes.get(_NAME__GNE) != null
 	}
+	
+	private def GraphType type(Graph it) {
+		_getType
+	}
 
 	private def dispatch String name(IAttributeStore store) {
-		store.attributes.get(_NAME__GNE) as String
+		(store.attributes.get(_NAME__GNE) as ID).toValue
 	}
 
 	private def dispatch String name(Edge edge) {
@@ -92,7 +97,6 @@ class DotExport {
 	}
 
 	private def printNonMetaAttributes(IAttributeStore store, String separator) {
-		// TODO: use value converter service instead of quoting here
-		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + DotTerminalConverters.quote(value.toString)].sort.join(separator + " ")
+		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + value.toString].sort.join(separator + " ")
 	}
 }

@@ -38,13 +38,10 @@ import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
 import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport;
-import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParseResult;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParser;
-import org.eclipse.gef.dot.internal.language.color.DotColors;
-import org.eclipse.gef.dot.internal.language.layout.Layout;
-import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage;
 import org.eclipse.gef.dot.internal.language.color.ColorPackage;
+import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
@@ -55,16 +52,17 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode;
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsSubgraph;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.point.PointPackage;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.ShapePackage;
+import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.splinetype.SplinetypePackage;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.style.Style;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.dot.internal.language.style.StylePackage;
-import org.eclipse.gef.dot.internal.language.validation.AbstractDotJavaValidator;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
@@ -94,24 +92,24 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkValidAttributeValue(final Attribute attribute) {
 		List<Diagnostic> diagnostics = validateAttributeValue(
-				DotAttributes.getContext(attribute), attribute.getName(),
-				attribute.getValue());
+				DotAttributes.getContext(attribute),
+				attribute.getName().toValue(), attribute.getValue().toValue());
 		for (Diagnostic d : diagnostics) {
 			if (d.getSeverity() == Diagnostic.ERROR) {
 				getMessageAcceptor().acceptError(d.getMessage(), attribute,
 						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attribute.getName(),
-						attribute.getValue());
+						INSIGNIFICANT_INDEX, attribute.getName().toValue(),
+						attribute.getValue().toValue());
 			} else if (d.getSeverity() == Diagnostic.WARNING) {
 				getMessageAcceptor().acceptWarning(d.getMessage(), attribute,
 						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attribute.getName(),
-						attribute.getValue());
+						INSIGNIFICANT_INDEX, attribute.getName().toValue(),
+						attribute.getValue().toValue());
 			} else if (d.getSeverity() == Diagnostic.INFO) {
 				getMessageAcceptor().acceptInfo(d.getMessage(), attribute,
 						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attribute.getName(),
-						attribute.getValue());
+						INSIGNIFICANT_INDEX, attribute.getName().toValue(),
+						attribute.getValue().toValue());
 			}
 		}
 	}
@@ -277,8 +275,10 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkValidCombinationOfNodeShapeAndStyle(Attribute attribute) {
 		if (DotAttributes.isNodeAttribute(attribute)
-				&& attribute.getName().equals(DotAttributes.STYLE__GNE)
-				&& attribute.getValue().equals(NodeStyle.STRIPED.toString())) {
+				&& attribute.getName().toValue()
+						.equals(DotAttributes.STYLE__GNE)
+				&& attribute.getValue().toValue()
+						.equals(NodeStyle.STRIPED.toString())) {
 			EList<AttrList> attributeList = null;
 			NodeStmt node = EcoreUtil2.getContainerOfType(attribute,
 					NodeStmt.class);
@@ -294,7 +294,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 			if (attributeList != null) {
 				String shapeValue = DotImport.getAttributeValue(attributeList,
-						DotAttributes.SHAPE__N);
+						DotAttributes.SHAPE__N).toValue();
 				if (shapeValue != null) {
 					switch (PolygonBasedNodeShape.get(shapeValue)) {
 					case BOX:
@@ -355,7 +355,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	private List<Diagnostic> validateBooleanAttributeValue(
 			final String attributeName, String attributeValue) {
 		// parse value
-		IPrimitiveValueParseResult<Boolean> parseResult = DotLanguageSupport.BOOL_PARSER
+		IPrimitiveValueParser.IParseResult<Boolean> parseResult = DotLanguageSupport.BOOL_PARSER
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -396,7 +396,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	}
 
 	private String getFormattedSyntaxErrorMessages(
-			IPrimitiveValueParseResult<?> parseResult) {
+			IPrimitiveValueParser.IParseResult<?> parseResult) {
 		StringBuilder sb = new StringBuilder();
 		for (Diagnostic d : parseResult.getSyntaxErrors()) {
 			String message = d.getMessage();
@@ -416,7 +416,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			final String attributeName, String attributeValue,
 			double minValue) {
 		// parse value
-		IPrimitiveValueParseResult<Double> parseResult = DotLanguageSupport.DOUBLE_PARSER
+		IPrimitiveValueParser.IParseResult<Double> parseResult = DotLanguageSupport.DOUBLE_PARSER
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -443,7 +443,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	private List<Diagnostic> validateIntAttributeValue(
 			final String attributeName, String attributeValue, int minValue) {
 		// parse value
-		IPrimitiveValueParseResult<Integer> parseResult = DotLanguageSupport.INT_PARSER
+		IPrimitiveValueParser.IParseResult<Integer> parseResult = DotLanguageSupport.INT_PARSER
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -479,7 +479,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	private List<Diagnostic> validateEnumAttributeValue(
 			final IPrimitiveValueParser<?> parser, final String attributeName,
 			String attributeValue, String attributeTypeName) {
-		IPrimitiveValueParseResult<?> parseResult = parser
+		IPrimitiveValueParser.IParseResult<?> parseResult = parser
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -610,7 +610,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 	}
 
-	private Diagnostic createSemanticAttributeValueProblem(int severity,
+	private static Diagnostic createSemanticAttributeValueProblem(int severity,
 			String attributeValue, String attributeTypeName,
 			String validatorMessage, String issueCode) {
 		return new FeatureBasedDiagnostic(severity,

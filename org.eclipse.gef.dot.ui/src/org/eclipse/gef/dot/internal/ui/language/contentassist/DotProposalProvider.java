@@ -29,7 +29,6 @@ import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
 import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
-import org.eclipse.gef.dot.internal.language.conversion.DotTerminalConverters;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
@@ -47,6 +46,8 @@ import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess;
 import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
+import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
@@ -188,7 +189,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
 			if (DotAttributes.isEdgeAttribute(attribute)) {
-				switch (attribute.getName()) {
+				switch (attribute.getName().toValue()) {
 				case DotAttributes.ARROWHEAD__E:
 				case DotAttributes.ARROWTAIL__E:
 					proposeAttributeValues(
@@ -230,7 +231,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					break;
 				}
 			} else if (DotAttributes.isGraphAttribute(attribute)) {
-				switch (attribute.getName()) {
+				switch (attribute.getName().toValue()) {
 				case DotAttributes.BGCOLOR__G:
 				case DotAttributes.FONTCOLOR__GNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
@@ -274,7 +275,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					break;
 				}
 			} else if (DotAttributes.isNodeAttribute(attribute)) {
-				switch (attribute.getName()) {
+				switch (attribute.getName().toValue()) {
 				case DotAttributes.COLOR__NE:
 				case DotAttributes.FILLCOLOR__NE:
 				case DotAttributes.FONTCOLOR__GNE:
@@ -331,7 +332,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 		String text = context.getPrefix();
 		if (text.startsWith("\"")) { //$NON-NLS-1$
-			text = DotTerminalConverters.unquote(text);
+			text = ID.fromString(text, Type.QUOTED_STRING).toValue();
 			context = context.copy().setPrefix(text).toContext();
 		}
 
@@ -361,16 +362,13 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		for (Object value : values) {
-			// quote attribute value only if needed
-			// TODO: use value converter service instead
-			final String proposedValue = DotTerminalConverters
-					.needsToBeQuoted(value.toString())
-							? DotTerminalConverters.quote(value.toString())
-							: value.toString();
+			final String proposedValue = ID.fromValue(value.toString())
+					.toString();
 			acceptor.accept(createCompletionProposal(proposedValue, context));
 		}
 	}
 
+	// TODO: add color constants to delegate color proposal provider
 	private void proposeColorAttributeValues(Attribute attribute,
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
@@ -440,32 +438,32 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		EObject container = EcoreUtil2.getContainerOfType(attribute,
 				EdgeStmtNode.class);
 		if (container != null) {
-			String colorScheme = DotImport.getAttributeValue(
+			ID colorScheme = DotImport.getAttributeValue(
 					((EdgeStmtNode) container).getAttrLists(),
 					DotAttributes.COLORSCHEME__GNE);
 			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme);
+				return DotColors.getColorNames(colorScheme.toValue());
 			}
 		}
 
 		// attribute nested below NodeStmt
 		container = EcoreUtil2.getContainerOfType(attribute, NodeStmt.class);
 		if (container != null) {
-			String colorScheme = DotImport.getAttributeValue(
+			ID colorScheme = DotImport.getAttributeValue(
 					((NodeStmt) container).getAttrLists(),
 					DotAttributes.COLORSCHEME__GNE);
 			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme);
+				return DotColors.getColorNames(colorScheme.toValue());
 			}
 		}
 
 		// attribute nested below Graph
 		container = EcoreUtil2.getContainerOfType(attribute, DotGraph.class);
 		if (container != null) {
-			String colorScheme = DotImport.getAttributeValue(
-					(DotGraph) container, DotAttributes.COLORSCHEME__GNE);
+			ID colorScheme = DotImport.getAttributeValue((DotGraph) container,
+					DotAttributes.COLORSCHEME__GNE);
 			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme);
+				return DotColors.getColorNames(colorScheme.toValue());
 			}
 		}
 
@@ -473,10 +471,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
 				AttrStmt.class);
 		if (attrStmt != null) {
-			String colorScheme = DotImport.getAttributeValue(
+			ID colorScheme = DotImport.getAttributeValue(
 					attrStmt.getAttrLists(), DotAttributes.COLORSCHEME__GNE);
 			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme);
+				return DotColors.getColorNames(colorScheme.toValue());
 			}
 		}
 

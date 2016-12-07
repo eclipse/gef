@@ -22,18 +22,20 @@ import java.util.List;
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.language.color.DotColors;
-import org.eclipse.gef.dot.internal.language.dir.DirType;
-import org.eclipse.gef.dot.internal.language.layout.Layout;
-import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
-import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.color.Color;
+import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.language.dir.DirType;
+import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
+import org.eclipse.gef.dot.internal.language.dot.GraphType;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
+import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
+import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.splinetype.Spline;
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
@@ -124,7 +126,13 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotLabel != null && dotLabel.equals("\\E")) { //$NON-NLS-1$
 			// The edge default label '\E' is used to indicate that an edge's
 			// name or id becomes its label.
-			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
+			boolean directed = GraphType.DIGRAPH
+					.equals(DotAttributes._getType(dot.getGraph()));
+			String dotName = DotAttributes._getName(dot.getSource())
+					+ (directed ? EdgeOp.DIRECTED.toString()
+							: EdgeOp.UNDIRECTED.toString())
+					+ DotAttributes._getName(dot.getTarget());
+			dotLabel = dotId != null ? dotId : dotName;
 		}
 		if (dotLabel != null) {
 			ZestProperties.setLabel(zest, dotLabel);
@@ -168,8 +176,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotDir == null) {
 			// use the default direction if no direction is specified for
 			// the edge
-			dotDir = DotAttributes._TYPE__G__DIGRAPH.equals(
-					dot.getGraph().getAttributes().get(DotAttributes._TYPE__G))
+			dotDir = GraphType.DIGRAPH
+					.equals(DotAttributes._getType(dot.getGraph()))
 							? DirType.FORWARD : DirType.NONE;
 		}
 
@@ -222,8 +230,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotArrowHead == null) {
 			// use the default arrow head decoration in case the graph is
 			// directed
-			if (DotAttributes._TYPE__G__DIGRAPH.equals(dot.getGraph()
-					.getAttributes().get(DotAttributes._TYPE__G))) {
+			if (GraphType.DIGRAPH
+					.equals(DotAttributes._getType(dot.getGraph()))) {
 				zestEdgeTargetDecoration = DotArrowShapeDecorations
 						.getDefault(arrowSize, true);
 			}
@@ -244,8 +252,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotArrowTail == null) {
 			// use the default arrow tail decoration in case the graph is
 			// directed
-			if (DotAttributes._TYPE__G__DIGRAPH.equals(dot.getGraph()
-					.getAttributes().get(DotAttributes._TYPE__G))) {
+			if (GraphType.DIGRAPH
+					.equals(DotAttributes._getType(dot.getGraph()))) {
 				zestEdgeSourceDecoration = DotArrowShapeDecorations
 						.getDefault(arrowSize, true);
 			}

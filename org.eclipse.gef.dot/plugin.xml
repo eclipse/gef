@@ -18,4 +18,10 @@
        class = "org.eclipse.gef.dot.internal.language.dot.DotPackage"
        genModel = "model/generated/Dot.genmodel" /> 
   </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.eclipse.org/gef/dot/internal/language/DotTerminals"
+            class="org.eclipse.gef.dot.internal.language.terminals.TerminalsPackage"
+            genModel="model/DotTerminals.genmodel"/>
+   </extension>
 </plugin>

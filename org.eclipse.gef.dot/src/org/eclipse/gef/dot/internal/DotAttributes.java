@@ -21,16 +21,10 @@ import java.util.List;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.DotStandaloneSetup;
-import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
-import org.eclipse.gef.dot.internal.language.dir.DirType;
-import org.eclipse.gef.dot.internal.language.layout.Layout;
-import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
-import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
-import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
-import org.eclipse.gef.dot.internal.language.splines.Splines;
-import org.eclipse.gef.dot.internal.language.validation.DotJavaValidator;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
+import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.Color;
+import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.language.dot.AttributeType;
@@ -39,15 +33,22 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeStmtSubgraph;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.language.dot.Subgraph;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
+import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
+import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.language.point.Point;
+import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.shape.Shape;
+import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType;
 import org.eclipse.gef.dot.internal.language.style.Style;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
+import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
+import org.eclipse.gef.dot.internal.language.validation.DotJavaValidator;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.serializer.ISerializer;
 
 import com.google.inject.Inject;
 
@@ -72,23 +73,9 @@ public class DotAttributes {
 	public static final String _NAME__GNE = "_name";
 
 	/**
-	 * Specifies the graph type. Possible values are defined by
-	 * {@link #_TYPE__G__GRAPH} and {@link #_TYPE__G__DIGRAPH}.
+	 * Specifies the graph type.
 	 */
 	public static final String _TYPE__G = "_type";
-
-	/**
-	 * This {@link #_TYPE__G} value specifies that the edges within the graph
-	 * are undirected.
-	 */
-	public static final String _TYPE__G__DIGRAPH = GraphType.DIGRAPH
-			.getLiteral();
-
-	/**
-	 * This {@link #_TYPE__G} value specifies that the edges within the graph
-	 * are directed.
-	 */
-	public static final String _TYPE__G__GRAPH = GraphType.GRAPH.getLiteral();
 
 	/**
 	 * Specifies the 'arrowhead' attribute of an edge.
@@ -270,16 +257,16 @@ public class DotAttributes {
 
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
-	 * {@link Edge}.
+	 * {@link Graph}.
 	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
 	 *            {@link #_NAME__GNE} attribute.
 	 * @return The value of the {@link #_NAME__GNE} attribute of the given
-	 *         {@link Edge}.
+	 *         {@link Graph}.
 	 */
-	public static String _getName(Edge edge) {
-		return (String) edge.attributesProperty().get(_NAME__GNE);
+	public static ID _getNameRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(_NAME__GNE);
 	}
 
 	/**
@@ -293,7 +280,22 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static String _getName(Graph graph) {
-		return (String) graph.attributesProperty().get(_NAME__GNE);
+		ID _nameRaw = _getNameRaw(graph);
+		return _nameRaw != null ? _nameRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #_NAME__GNE} attribute.
+	 * @return The value of the {@link #_NAME__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID _getNameRaw(Node node) {
+		return (ID) node.attributesProperty().get(_NAME__GNE);
 	}
 
 	/**
@@ -307,7 +309,8 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static String _getName(Node node) {
-		return (String) node.attributesProperty().get(_NAME__GNE);
+		ID _nameRaw = _getNameRaw(node);
+		return _nameRaw != null ? _nameRaw.toValue() : null;
 	}
 
 	/**
@@ -320,22 +323,22 @@ public class DotAttributes {
 	 * @return The value of the {@link #_TYPE__G} attribute of the given
 	 *         {@link Graph}.
 	 */
-	public static String _getType(Graph graph) {
-		return (String) graph.attributesProperty().get(_TYPE__G);
+	public static GraphType _getType(Graph graph) {
+		return (GraphType) graph.attributesProperty().get(_TYPE__G);
 	}
 
 	/**
-	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Edge} to the
+	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Graph} to the
 	 * given <i>name</i> value.
 	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
 	 *            {@link #_NAME__GNE} attribute.
 	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
-	public static void _setName(Edge edge, String name) {
-		edge.attributesProperty().put(_NAME__GNE, name);
+	public static void _setNameRaw(Graph graph, ID name) {
+		graph.attributesProperty().put(_NAME__GNE, name);
 	}
 
 	/**
@@ -349,7 +352,21 @@ public class DotAttributes {
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
 	public static void _setName(Graph graph, String name) {
-		graph.attributesProperty().put(_NAME__GNE, name);
+		_setNameRaw(graph, ID.fromValue(name));
+	}
+
+	/**
+	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Node} to the
+	 * given <i>name</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #_NAME__GNE} attribute.
+	 * @param name
+	 *            The new value for the {@link #_NAME__GNE} attribute.
+	 */
+	public static void _setNameRaw(Node node, ID name) {
+		node.attributesProperty().put(_NAME__GNE, name);
 	}
 
 	/**
@@ -363,7 +380,7 @@ public class DotAttributes {
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
 	public static void _setName(Node node, String name) {
-		node.attributesProperty().put(_NAME__GNE, name);
+		_setNameRaw(node, ID.fromValue(name));
 	}
 
 	/**
@@ -378,13 +395,7 @@ public class DotAttributes {
 	 * @throws IllegalArgumentException
 	 *             when the given <i>type</i> value is not supported.
 	 */
-	public static void _setType(Graph graph, String type) {
-		if (!_TYPE__G__GRAPH.equals(type) && !_TYPE__G__DIGRAPH.equals(type)) {
-			throw new IllegalArgumentException(
-					"Cannot set graph attribute \"type\" to \"" + type
-							+ "\"; supported values: " + _TYPE__G__GRAPH + ", "
-							+ _TYPE__G__DIGRAPH);
-		}
+	public static void _setType(Graph graph, GraphType type) {
 		graph.attributesProperty().put(_TYPE__G, type);
 	}
 
@@ -409,8 +420,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #ARROWHEAD__E} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getArrowHeadRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(ARROWHEAD__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #ARROWHEAD__E} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWHEAD__E} attribute.
+	 * @return The value of the {@link #ARROWHEAD__E} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getArrowHead(Edge edge) {
-		return (String) edge.attributesProperty().get(ARROWHEAD__E);
+		ID arrowHeadRaw = getArrowHeadRaw(edge);
+		return arrowHeadRaw != null ? arrowHeadRaw.toValue() : null;
 	}
 
 	/**
@@ -439,8 +465,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #ARROWSIZE__E} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getArrowSizeRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(ARROWSIZE__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #ARROWSIZE__E} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWSIZE__E} attribute, parsed as a {@link Double}.
+	 * @return The value of the {@link #ARROWSIZE__E} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getArrowSize(Edge edge) {
-		return (String) edge.attributesProperty().get(ARROWSIZE__E);
+		ID arrowSize = getArrowSizeRaw(edge);
+		return arrowSize != null ? arrowSize.toValue() : null;
 	}
 
 	/**
@@ -468,8 +509,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #ARROWTAIL__E} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getArrowTailRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(ARROWTAIL__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #ARROWTAIL__E} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWTAIL__E} attribute.
+	 * @return The value of the {@link #ARROWTAIL__E} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getArrowTail(Edge edge) {
-		return (String) edge.attributesProperty().get(ARROWTAIL__E);
+		ID arrowTail = getArrowTailRaw(edge);
+		return arrowTail != null ? arrowTail.toValue() : null;
 	}
 
 	/**
@@ -498,8 +554,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #BGCOLOR__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getBgColorRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(BGCOLOR__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #BGCOLOR__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #BGCOLOR__G} attribute.
+	 * @return The value of the {@link #BGCOLOR__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getBgColor(Graph graph) {
-		return (String) graph.attributesProperty().get(BGCOLOR__G);
+		ID bgColorRaw = getBgColorRaw(graph);
+		return bgColorRaw != null ? bgColorRaw.toValue() : null;
 	}
 
 	/**
@@ -527,8 +598,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #CLUSTERRANK__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getClusterRankRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(CLUSTERRANK__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #CLUSTERRANK__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #CLUSTERRANK__G} attribute.
+	 * @return The value of the {@link #CLUSTERRANK__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getClusterRank(Graph graph) {
-		return (String) graph.attributesProperty().get(CLUSTERRANK__G);
+		ID clusterRankRaw = getClusterRankRaw(graph);
+		return clusterRankRaw != null ? clusterRankRaw.toValue() : null;
 	}
 
 	/**
@@ -557,22 +643,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #COLOR__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
-	public static String getColor(Edge edge) {
-		return (String) edge.attributesProperty().get(COLOR__NE);
+	public static ID getColorRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(COLOR__NE);
 	}
 
 	/**
 	 * Returns the value of the {@link #COLOR__NE} attribute of the given
-	 * {@link Node}.
+	 * {@link Edge}.
 	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
 	 *            {@link #COLOR__NE} attribute.
 	 * @return The value of the {@link #COLOR__NE} attribute of the given
-	 *         {@link Node}.
+	 *         {@link Edge}.
 	 */
-	public static String getColor(Node node) {
-		return (String) node.attributesProperty().get(COLOR__NE);
+	public static String getColor(Edge edge) {
+		ID colorRaw = getColorRaw(edge);
+		return colorRaw != null ? colorRaw.toValue() : null;
 	}
 
 	/**
@@ -588,6 +675,35 @@ public class DotAttributes {
 	public static Color getColorParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.COLOR_PARSER, getColor(edge));
+	}
+
+	/**
+	 * Returns the value of the {@link #COLOR__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @return The value of the {@link #COLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getColorRaw(Node node) {
+		return (ID) node.attributesProperty().get(COLOR__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #COLOR__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @return The value of the {@link #COLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getColor(Node node) {
+		ID colorRaw = getColorRaw(node);
+		return colorRaw != null ? colorRaw.toValue() : null;
 	}
 
 	/**
@@ -615,8 +731,52 @@ public class DotAttributes {
 	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getColorSchemeRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(COLORSCHEME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getColorScheme(Edge edge) {
-		return (String) edge.attributesProperty().get(COLORSCHEME__GNE);
+		ID colorSchemeRaw = getColorSchemeRaw(edge);
+		return colorSchemeRaw != null ? colorSchemeRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #COLORSCHEME__GNE} attribute of
+	 * the given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getColorSchemeParsed(Edge edge) {
+		// TODO: use LblString parser
+		return getColorScheme(edge);
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static ID getColorSchemeRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(COLORSCHEME__GNE);
 	}
 
 	/**
@@ -630,7 +790,37 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static String getColorScheme(Graph graph) {
-		return (String) graph.attributesProperty().get(COLORSCHEME__GNE);
+		ID colorSchemeRaw = getColorSchemeRaw(graph);
+		return colorSchemeRaw != null ? colorSchemeRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getColorSchemeParsed(Graph graph) {
+		// TODO: use LblString parser
+		return getColorScheme(graph);
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getColorSchemeRaw(Node node) {
+		return (ID) node.attributesProperty().get(COLORSCHEME__GNE);
 	}
 
 	/**
@@ -644,7 +834,37 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static String getColorScheme(Node node) {
-		return (String) node.attributesProperty().get(COLORSCHEME__GNE);
+		ID colorSchemeRaw = getColorSchemeRaw(node);
+		return colorSchemeRaw != null ? colorSchemeRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @return The value of the {@link #COLORSCHEME__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getColorSchemeParsed(Node node) {
+		// TODO: use LblString parser
+		return getColorScheme(node);
+	}
+
+	/**
+	 * Returns the value of the {@link #DIR__E} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #DIR__E} attribute.
+	 * @return The value of the {@link #DIR__E} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static ID getDirRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(DIR__E);
 	}
 
 	/**
@@ -658,7 +878,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static String getDir(Edge edge) {
-		return (String) edge.attributesProperty().get(DIR__E);
+		ID dirRaw = getDirRaw(edge);
+		return dirRaw != null ? dirRaw.toValue() : null;
 	}
 
 	/**
@@ -686,8 +907,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #DISTORTION__N} attribute of the given
 	 *         {@link Node}.
 	 */
+	public static ID getDistortionRaw(Node node) {
+		return (ID) node.attributesProperty().get(DISTORTION__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #DISTORTION__N} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #DISTORTION__N} attribute.
+	 * @return The value of the {@link #DISTORTION__N} attribute of the given
+	 *         {@link Node}.
+	 */
 	public static String getDistortion(Node node) {
-		return (String) node.attributesProperty().get(DISTORTION__N);
+		ID distortionRaw = getDistortionRaw(node);
+		return distortionRaw != null ? distortionRaw.toValue() : null;
 	}
 
 	/**
@@ -715,22 +951,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
-	public static String getFillColor(Edge edge) {
-		return (String) edge.attributesProperty().get(FILLCOLOR__NE);
+	public static ID getFillColorRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(FILLCOLOR__NE);
 	}
 
 	/**
 	 * Returns the value of the {@link #FILLCOLOR__NE} attribute of the given
-	 * {@link Node}.
+	 * {@link Edge}.
 	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
 	 *            {@link #FILLCOLOR__NE} attribute.
 	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
-	 *         {@link Node}.
+	 *         {@link Edge}.
 	 */
-	public static String getFillColor(Node node) {
-		return (String) node.attributesProperty().get(FILLCOLOR__NE);
+	public static String getFillColor(Edge edge) {
+		ID fillColorRaw = getFillColorRaw(edge);
+		return fillColorRaw != null ? fillColorRaw.toValue() : null;
 	}
 
 	/**
@@ -746,6 +983,35 @@ public class DotAttributes {
 	public static Color getFillColorParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.COLOR_PARSER, getFillColor(edge));
+	}
+
+	/**
+	 * Returns the value of the {@link #FILLCOLOR__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getFillColorRaw(Node node) {
+		return (ID) node.attributesProperty().get(FILLCOLOR__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #FILLCOLOR__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @return The value of the {@link #FILLCOLOR__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getFillColor(Node node) {
+		ID fillColorRaw = getFillColorRaw(node);
+		return fillColorRaw != null ? fillColorRaw.toValue() : null;
 	}
 
 	/**
@@ -773,8 +1039,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #FIXEDSIZE__N} attribute of the given
 	 *         {@link Node}.
 	 */
+	public static ID getFixedSizeRaw(Node node) {
+		return (ID) node.attributesProperty().get(FIXEDSIZE__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #FIXEDSIZE__N} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FIXEDSIZE__N} attribute.
+	 * @return The value of the {@link #FIXEDSIZE__N} attribute of the given
+	 *         {@link Node}.
+	 */
 	public static String getFixedSize(Node node) {
-		return (String) node.attributesProperty().get(FIXEDSIZE__N);
+		ID fixedSizeRaw = getFixedSizeRaw(node);
+		return fixedSizeRaw != null ? fixedSizeRaw.toValue() : null;
 	}
 
 	/**
@@ -802,36 +1083,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getFontColorRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(FONTCOLOR__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getFontColor(Edge edge) {
-		return (String) edge.attributesProperty().get(FONTCOLOR__GNE);
-	}
-
-	/**
-	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #FONTCOLOR__GNE} attribute.
-	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
-	 *         {@link Graph}.
-	 */
-	public static String getFontColor(Graph graph) {
-		return (String) graph.attributesProperty().get(FONTCOLOR__GNE);
-	}
-
-	/**
-	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #FONTCOLOR__GNE} attribute.
-	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
-	 *         {@link Node}.
-	 */
-	public static String getFontColor(Node node) {
-		return (String) node.attributesProperty().get(FONTCOLOR__GNE);
+		ID fontColorRaw = getFontColorRaw(edge);
+		return fontColorRaw != null ? fontColorRaw.toValue() : null;
 	}
 
 	/**
@@ -850,6 +1118,35 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static ID getFontColorRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(FONTCOLOR__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getFontColor(Graph graph) {
+		ID fontColorRaw = getFontColorRaw(graph);
+		return fontColorRaw != null ? fontColorRaw.toValue() : null;
+	}
+
+	/**
 	 * Returns the (parsed) value of the {@link #FONTCOLOR__GNE} attribute of
 	 * the given {@link Graph}.
 	 * 
@@ -862,6 +1159,35 @@ public class DotAttributes {
 	public static Color getFontColorParsed(Graph graph) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.COLOR_PARSER, getFontColor(graph));
+	}
+
+	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getFontColorRaw(Node node) {
+		return (ID) node.attributesProperty().get(FONTCOLOR__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @return The value of the {@link #FONTCOLOR__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getFontColor(Node node) {
+		ID fontColorRaw = getFontColorRaw(node);
+		return fontColorRaw != null ? fontColorRaw.toValue() : null;
 	}
 
 	/**
@@ -889,8 +1215,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #FORCELABELS__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getForceLabelsRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(FORCELABELS__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #FORCELABELS__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FORCELABELS__G} attribute.
+	 * @return The value of the {@link #FORCELABELS__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getForceLabels(Graph graph) {
-		return (String) graph.attributesProperty().get(FORCELABELS__G);
+		ID forceLabelsRaw = getForceLabelsRaw(graph);
+		return forceLabelsRaw != null ? forceLabelsRaw.toValue() : null;
 	}
 
 	/**
@@ -934,8 +1275,51 @@ public class DotAttributes {
 	 * @return The value of the {@link #HEADLABEL__E} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getHeadLabelRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(HEADLABEL__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #HEADLABEL__E} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #HEADLABEL__E} attribute.
+	 * @return The value of the {@link #HEADLABEL__E} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getHeadLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(HEADLABEL__E);
+		ID headLabelRaw = getHeadLabelRaw(edge);
+		return headLabelRaw != null ? headLabelRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #HEADLABEL__E} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #HEADLABEL__E} attribute.
+	 * @return The value of the {@link #HEADLABEL__E} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getHeadLabelParsed(Edge edge) {
+		return getHeadLabel(edge);
+	}
+
+	/**
+	 * Returns the value of the {@link #HEAD_LP__E} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #HEAD_LP__E} attribute.
+	 * @return The value of the {@link #HEAD_LP__E} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static ID getHeadLpRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(HEAD_LP__E);
 	}
 
 	/**
@@ -949,7 +1333,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static String getHeadLp(Edge edge) {
-		return (String) edge.attributesProperty().get(HEAD_LP__E);
+		ID headLpRaw = getHeadLpRaw(edge);
+		return headLpRaw != null ? headLpRaw.toValue() : null;
 	}
 
 	/**
@@ -977,8 +1362,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #HEIGHT__N} attribute of the given
 	 *         {@link Node}.
 	 */
+	public static ID getHeightRaw(Node node) {
+		return (ID) node.attributesProperty().get(HEIGHT__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #HEIGHT__N} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #HEIGHT__N} attribute.
+	 * @return The value of the {@link #HEIGHT__N} attribute of the given
+	 *         {@link Node}.
+	 */
 	public static String getHeight(Node node) {
-		return (String) node.attributesProperty().get(HEIGHT__N);
+		ID heightRaw = getHeightRaw(node);
+		return heightRaw != null ? heightRaw.toValue() : null;
 	}
 
 	/**
@@ -1006,8 +1406,51 @@ public class DotAttributes {
 	 * @return The value of the {@link #ID__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getIdRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(ID__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getId(Edge edge) {
-		return (String) edge.attributesProperty().get(ID__GNE);
+		ID idRaw = getIdRaw(edge);
+		return idRaw != null ? idRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (pared) value of the {@link #ID__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getIdParsed(Edge edge) {
+		return getId(edge);
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static ID getIdRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(ID__GNE);
 	}
 
 	/**
@@ -1021,7 +1464,36 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static String getId(Graph graph) {
-		return (String) graph.attributesProperty().get(ID__GNE);
+		ID idRaw = getIdRaw(graph);
+		return idRaw != null ? idRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getIdParsed(Graph graph) {
+		return getId(graph);
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getIdRaw(Node node) {
+		return (ID) node.attributesProperty().get(ID__GNE);
 	}
 
 	/**
@@ -1035,7 +1507,36 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static String getId(Node node) {
-		return (String) node.attributesProperty().get(ID__GNE);
+		ID idRaw = getIdRaw(node);
+		return idRaw != null ? idRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @return The value of the {@link #ID__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getIdParsed(Node node) {
+		return getId(node);
+	}
+
+	/**
+	 * Returns the value of the {@link #LABEL__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static ID getLabelRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(LABEL__GNE);
 	}
 
 	/**
@@ -1049,7 +1550,36 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static String getLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(LABEL__GNE);
+		ID labelRaw = getLabelRaw(edge);
+		return labelRaw != null ? labelRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #LABEL__GNE} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getLabelParsed(Edge edge) {
+		return getLabel(edge);
+	}
+
+	/**
+	 * Returns the value of the {@link #LABEL__GNE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static ID getLabelRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(LABEL__GNE);
 	}
 
 	/**
@@ -1063,7 +1593,36 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static String getLabel(Graph graph) {
-		return (String) graph.attributesProperty().get(LABEL__GNE);
+		ID labelRaw = getLabelRaw(graph);
+		return labelRaw != null ? labelRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #LABEL__GNE} attribute of the
+	 * given {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getLabelParsed(Graph graph) {
+		return getLabel(graph);
+	}
+
+	/**
+	 * Returns the value of the {@link #LABEL__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getLabelRaw(Node node) {
+		return (ID) node.attributesProperty().get(LABEL__GNE);
 	}
 
 	/**
@@ -1077,7 +1636,36 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static String getLabel(Node node) {
-		return (String) node.attributesProperty().get(LABEL__GNE);
+		ID labelRaw = getLabelRaw(node);
+		return labelRaw != null ? labelRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #LABEL__GNE} attribute of the
+	 * given {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @return The value of the {@link #LABEL__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getLabelParsed(Node node) {
+		return getLabel(node);
+	}
+
+	/**
+	 * Returns the value of the {@link #LABELFONTCOLOR__E} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LABELFONTCOLOR__E} attribute.
+	 * @return The value of the {@link #LABELFONTCOLOR__E} attribute of the
+	 *         given {@link Edge}.
+	 */
+	public static ID getLabelFontColorRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(LABELFONTCOLOR__E);
 	}
 
 	/**
@@ -1091,7 +1679,8 @@ public class DotAttributes {
 	 *         given {@link Edge}.
 	 */
 	public static String getLabelFontColor(Edge edge) {
-		return (String) edge.attributesProperty().get(LABELFONTCOLOR__E);
+		ID labelFontColor = getLabelFontColorRaw(edge);
+		return labelFontColor != null ? labelFontColor.toValue() : null;
 	}
 
 	/**
@@ -1120,8 +1709,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #LAYOUT__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getLayoutRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(LAYOUT__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #LAYOUT__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LAYOUT__G} attribute.
+	 * @return The value of the {@link #LAYOUT__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getLayout(Graph graph) {
-		return (String) graph.attributesProperty().get(LAYOUT__G);
+		ID layoutRaw = getLayoutRaw(graph);
+		return layoutRaw != null ? layoutRaw.toValue() : null;
 	}
 
 	/**
@@ -1135,7 +1739,22 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static Layout getLayoutParsed(Graph graph) {
-		return Layout.get(getLayout(graph));
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.LAYOUT_PARSER, getLayout(graph));
+	}
+
+	/**
+	 * Returns the value of the {@link #LP__GE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LP__GE} attribute.
+	 * @return The value of the {@link #LP__GE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static ID getLpRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(LP__GE);
 	}
 
 	/**
@@ -1149,21 +1768,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static String getLp(Edge edge) {
-		return (String) edge.attributesProperty().get(LP__GE);
-	}
-
-	/**
-	 * Returns the value of the {@link #LP__GE} attribute of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LP__GE} attribute.
-	 * @return The value of the {@link #LP__GE} attribute of the given
-	 *         {@link Graph}.
-	 */
-	public static String getLp(Graph graph) {
-		return (String) graph.attributesProperty().get(LP__GE);
+		ID lpRaw = getLpRaw(edge);
+		return lpRaw != null ? lpRaw.toValue() : null;
 	}
 
 	/**
@@ -1179,6 +1785,35 @@ public class DotAttributes {
 	public static Point getLpParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getLp(edge));
+	}
+
+	/**
+	 * Returns the value of the {@link #LP__GE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LP__GE} attribute.
+	 * @return The value of the {@link #LP__GE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static ID getLpRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(LP__GE);
+	}
+
+	/**
+	 * Returns the value of the {@link #LP__GE} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LP__GE} attribute.
+	 * @return The value of the {@link #LP__GE} attribute of the given
+	 *         {@link Graph}.
+	 */
+	public static String getLp(Graph graph) {
+		ID lpRaw = getLpRaw(graph);
+		return lpRaw != null ? lpRaw.toValue() : null;
 	}
 
 	/**
@@ -1206,8 +1841,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #OUTPUTORDER__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getOutputOrderRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(OUTPUTORDER__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #OUTPUTORDER__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #OUTPUTORDER__G} attribute.
+	 * @return The value of the {@link #OUTPUTORDER__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getOutputOrder(Graph graph) {
-		return (String) graph.attributesProperty().get(OUTPUTORDER__G);
+		ID outputOrderRaw = getOutputOrderRaw(graph);
+		return outputOrderRaw != null ? outputOrderRaw.toValue() : null;
 	}
 
 	/**
@@ -1236,8 +1886,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #PAGEDIR__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getPagedirRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(PAGEDIR__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #PAGEDIR__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #PAGEDIR__G} attribute.
+	 * @return The value of the {@link #PAGEDIR__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getPagedir(Graph graph) {
-		return (String) graph.attributesProperty().get(PAGEDIR__G);
+		ID pagedirRaw = getPagedirRaw(graph);
+		return pagedirRaw != null ? pagedirRaw.toValue() : null;
 	}
 
 	/**
@@ -1265,22 +1930,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #POS__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
-	public static String getPos(Edge edge) {
-		return (String) edge.attributesProperty().get(POS__NE);
+	public static ID getPosRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(POS__NE);
 	}
 
 	/**
 	 * Returns the value of the {@link #POS__NE} attribute of the given
-	 * {@link Node}.
+	 * {@link Edge}.
 	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
 	 *            {@link #POS__NE} attribute.
 	 * @return The value of the {@link #POS__NE} attribute of the given
-	 *         {@link Node}.
+	 *         {@link Edge}.
 	 */
-	public static String getPos(Node node) {
-		return (String) node.attributesProperty().get(POS__NE);
+	public static String getPos(Edge edge) {
+		ID posRaw = getPosRaw(edge);
+		return posRaw != null ? posRaw.toValue() : null;
 	}
 
 	/**
@@ -1296,6 +1962,35 @@ public class DotAttributes {
 	public static SplineType getPosParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.SPLINETYPE_PARSER, getPos(edge));
+	}
+
+	/**
+	 * Returns the value of the {@link #POS__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #POS__NE} attribute.
+	 * @return The value of the {@link #POS__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getPosRaw(Node node) {
+		return (ID) node.attributesProperty().get(POS__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #POS__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #POS__NE} attribute.
+	 * @return The value of the {@link #POS__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getPos(Node node) {
+		ID posRaw = getPosRaw(node);
+		return posRaw != null ? posRaw.toValue() : null;
 	}
 
 	/**
@@ -1323,8 +2018,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #RANKDIR__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getRankdirRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(RANKDIR__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #RANKDIR__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #RANKDIR__G} attribute.
+	 * @return The value of the {@link #RANKDIR__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getRankdir(Graph graph) {
-		return (String) graph.attributesProperty().get(RANKDIR__G);
+		ID rankdirRaw = getRankdirRaw(graph);
+		return rankdirRaw != null ? rankdirRaw.toValue() : null;
 	}
 
 	/**
@@ -1352,8 +2062,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #SHAPE__N} attribute of the given
 	 *         {@link Node}.
 	 */
+	public static ID getShapeRaw(Node node) {
+		return (ID) node.attributesProperty().get(SHAPE__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #SHAPE__N} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SHAPE__N} attribute.
+	 * @return The value of the {@link #SHAPE__N} attribute of the given
+	 *         {@link Node}.
+	 */
 	public static String getShape(Node node) {
-		return (String) node.attributesProperty().get(SHAPE__N);
+		ID shapeRaw = getShapeRaw(node);
+		return shapeRaw != null ? shapeRaw.toValue() : null;
 	}
 
 	/**
@@ -1381,8 +2106,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #SIDES__N} attribute of the given
 	 *         {@link Node}.
 	 */
+	public static ID getSidesRaw(Node node) {
+		return (ID) node.attributesProperty().get(SIDES__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #SIDES__N} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SIDES__N} attribute.
+	 * @return The value of the {@link #SIDES__N} attribute of the given
+	 *         {@link Node}.
+	 */
 	public static String getSides(Node node) {
-		return (String) node.attributesProperty().get(SIDES__N);
+		ID sidesRaw = getSidesRaw(node);
+		return sidesRaw != null ? sidesRaw.toValue() : null;
 	}
 
 	/**
@@ -1410,8 +2150,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #SKEW__N} attribute of the given
 	 *         {@link Node}.
 	 */
+	public static ID getSkewRaw(Node node) {
+		return (ID) node.attributesProperty().get(SKEW__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #SKEW__N} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SKEW__N} attribute.
+	 * @return The value of the {@link #SKEW__N} attribute of the given
+	 *         {@link Node}.
+	 */
 	public static String getSkew(Node node) {
-		return (String) node.attributesProperty().get(SKEW__N);
+		ID skewRaw = getSkewRaw(node);
+		return skewRaw != null ? skewRaw.toValue() : null;
 	}
 
 	/**
@@ -1439,8 +2194,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #SPLINES__G} attribute of the given
 	 *         {@link Graph}.
 	 */
+	public static ID getSplinesRaw(Graph graph) {
+		return (ID) graph.attributesProperty().get(SPLINES__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #SPLINES__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #SPLINES__G} attribute.
+	 * @return The value of the {@link #SPLINES__G} attribute of the given
+	 *         {@link Graph}.
+	 */
 	public static String getSplines(Graph graph) {
-		return (String) graph.attributesProperty().get(SPLINES__G);
+		ID splinesRaw = getSplinesRaw(graph);
+		return splinesRaw != null ? splinesRaw.toValue() : null;
 	}
 
 	/**
@@ -1454,7 +2224,22 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static Splines getSplinesParsed(Graph graph) {
-		return Splines.get(getSplines(graph));
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.SPLINES_PARSER, getSplines(graph));
+	}
+
+	/**
+	 * Returns the value of the {@link #STYLE__GNE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #STYLE__GNE} attribute.
+	 * @return The value of the {@link #STYLE__GNE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static ID getStyleRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(STYLE__GNE);
 	}
 
 	/**
@@ -1468,21 +2253,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static String getStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(STYLE__GNE);
-	}
-
-	/**
-	 * Returns the value of the {@link #STYLE__GNE} attribute of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #STYLE__GNE} attribute.
-	 * @return The value of the {@link #STYLE__GNE} attribute of the given
-	 *         {@link Node}.
-	 */
-	public static String getStyle(Node node) {
-		return (String) node.attributesProperty().get(STYLE__GNE);
+		ID styleRaw = getStyleRaw(edge);
+		return styleRaw != null ? styleRaw.toValue() : null;
 	}
 
 	/**
@@ -1498,6 +2270,35 @@ public class DotAttributes {
 	public static Style getStyleParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.STYLE_PARSER, getStyle(edge));
+	}
+
+	/**
+	 * Returns the value of the {@link #STYLE__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #STYLE__GNE} attribute.
+	 * @return The value of the {@link #STYLE__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getStyleRaw(Node node) {
+		return (ID) node.attributesProperty().get(STYLE__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #STYLE__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #STYLE__GNE} attribute.
+	 * @return The value of the {@link #STYLE__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getStyle(Node node) {
+		ID styleRaw = getStyleRaw(node);
+		return styleRaw != null ? styleRaw.toValue() : null;
 	}
 
 	/**
@@ -1525,8 +2326,51 @@ public class DotAttributes {
 	 * @return The value of the {@link #TAILLABEL__E} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getTailLabelRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(TAILLABEL__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #TAILLABEL__E} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #TAILLABEL__E} attribute.
+	 * @return The value of the {@link #TAILLABEL__E} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getTailLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(TAILLABEL__E);
+		ID tailLabelParsed = getTailLabelRaw(edge);
+		return tailLabelParsed != null ? tailLabelParsed.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #TAILLABEL__E} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #TAILLABEL__E} attribute.
+	 * @return The value of the {@link #TAILLABEL__E} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getTailLabelParsed(Edge edge) {
+		return getTailLabel(edge);
+	}
+
+	/**
+	 * Returns the value of the {@link #TAIL_LP__E} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #TAIL_LP__E} attribute.
+	 * @return The value of the {@link #TAIL_LP__E} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static ID getTailLpRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(TAIL_LP__E);
 	}
 
 	/**
@@ -1540,7 +2384,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static String getTailLp(Edge edge) {
-		return (String) edge.attributesProperty().get(TAIL_LP__E);
+		ID tailLpRaw = getTailLpRaw(edge);
+		return tailLpRaw != null ? tailLpRaw.toValue() : null;
 	}
 
 	/**
@@ -1568,8 +2413,23 @@ public class DotAttributes {
 	 * @return The value of the {@link #WIDTH__N} attribute of the given
 	 *         {@link Node}.
 	 */
+	public static ID getWidthRaw(Node node) {
+		return (ID) node.attributesProperty().get(WIDTH__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #WIDTH__N} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #WIDTH__N} attribute.
+	 * @return The value of the {@link #WIDTH__N} attribute of the given
+	 *         {@link Node}.
+	 */
 	public static String getWidth(Node node) {
-		return (String) node.attributesProperty().get(WIDTH__N);
+		ID widthRaw = getWidthRaw(node);
+		return widthRaw != null ? widthRaw.toValue() : null;
 	}
 
 	/**
@@ -1597,8 +2457,51 @@ public class DotAttributes {
 	 * @return The value of the {@link #XLABEL__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
+	public static ID getXLabelRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(XLABEL__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLABEL__NE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @return The value of the {@link #XLABEL__NE} attribute of the given
+	 *         {@link Edge}.
+	 */
 	public static String getXLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(XLABEL__NE);
+		ID xLabelRaw = getXLabelRaw(edge);
+		return xLabelRaw != null ? xLabelRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #XLABEL__NE} attribute of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @return The value of the {@link #XLABEL__NE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static String getXLabelParsed(Edge edge) {
+		return getXLabel(edge);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLABEL__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @return The value of the {@link #XLABEL__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getXLabelRaw(Node node) {
+		return (ID) node.attributesProperty().get(XLABEL__NE);
 	}
 
 	/**
@@ -1612,7 +2515,36 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static String getXLabel(Node node) {
-		return (String) node.attributesProperty().get(XLABEL__NE);
+		ID xLabelRaw = getXLabelRaw(node);
+		return xLabelRaw != null ? xLabelRaw.toValue() : null;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #XLABEL__NE} attribute of the
+	 * given {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @return The value of the {@link #XLABEL__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getXLabelParsed(Node node) {
+		return getXLabel(node);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLP__NE} attribute of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #XLP__NE} attribute.
+	 * @return The value of the {@link #XLP__NE} attribute of the given
+	 *         {@link Edge}.
+	 */
+	public static ID getXlpRaw(Edge edge) {
+		return (ID) edge.attributesProperty().get(XLP__NE);
 	}
 
 	/**
@@ -1626,21 +2558,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static String getXlp(Edge edge) {
-		return (String) edge.attributesProperty().get(XLP__NE);
-	}
-
-	/**
-	 * Returns the value of the {@link #XLP__NE} attribute of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #XLP__NE} attribute.
-	 * @return The value of the {@link #XLP__NE} attribute of the given
-	 *         {@link Node}.
-	 */
-	public static String getXlp(Node node) {
-		return (String) node.attributesProperty().get(XLP__NE);
+		ID xlpRaw = getXlpRaw(edge);
+		return xlpRaw != null ? xlpRaw.toValue() : null;
 	}
 
 	/**
@@ -1659,6 +2578,35 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #XLP__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #XLP__NE} attribute.
+	 * @return The value of the {@link #XLP__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static ID getXlpRaw(Node node) {
+		return (ID) node.attributesProperty().get(XLP__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLP__NE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #XLP__NE} attribute.
+	 * @return The value of the {@link #XLP__NE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static String getXlp(Node node) {
+		ID xlpRaw = getXlpRaw(node);
+		return xlpRaw != null ? xlpRaw.toValue() : null;
+	}
+
+	/**
 	 * Returns the (parsed) value of the {@link #XLP__NE} attribute of the given
 	 * {@link Node}.
 	 * 
@@ -1673,12 +2621,21 @@ public class DotAttributes {
 				DotLanguageSupport.POINT_PARSER, getXlp(node));
 	}
 
-	private static <T extends EObject> String serialize(ISerializer serializer,
-			T parsedValue) {
-		if (parsedValue == null) {
-			return null;
-		}
-		return serializer.serialize(parsedValue);
+	/**
+	 * Sets the {@link #ARROWHEAD__E} attribute of the given {@link Edge} to the
+	 * given <i>arrowHead</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWHEAD__E} attribute.
+	 * @param arrowHead
+	 *            The new value for the {@link #ARROWHEAD__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowHead</i> value is not supported.
+	 */
+	public static void setArrowHeadRaw(Edge edge, ID arrowHead) {
+		validate(AttributeContext.EDGE, ARROWHEAD__E, arrowHead.toValue());
+		edge.attributesProperty().put(ARROWHEAD__E, arrowHead);
 	}
 
 	/**
@@ -1694,8 +2651,7 @@ public class DotAttributes {
 	 *             when the given <i>arrowHead</i> value is not supported.
 	 */
 	public static void setArrowHead(Edge edge, String arrowHead) {
-		validate(AttributeContext.EDGE, ARROWHEAD__E, arrowHead);
-		edge.attributesProperty().put(ARROWHEAD__E, arrowHead);
+		setArrowHeadRaw(edge, ID.fromValue(arrowHead, Type.STRING));
 	}
 
 	/**
@@ -1712,8 +2668,25 @@ public class DotAttributes {
 	 */
 	public static void setArrowHeadParsed(Edge edge,
 			ArrowType arrowHeadParsed) {
-		setArrowHead(edge, serialize(DotLanguageSupport.ARROWTYPE_SERIALIZER,
-				arrowHeadParsed));
+		setArrowHead(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.ARROWTYPE_SERIALIZER, arrowHeadParsed));
+	}
+
+	/**
+	 * Sets the {@link #ARROWSIZE__E} attribute of the given {@link Edge} to the
+	 * given <i>arrowSize</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWSIZE__E} attribute.
+	 * @param arrowSize
+	 *            The new value for the {@link #ARROWSIZE__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowSize</i> value is not supported.
+	 */
+	public static void setArrowSizeRaw(Edge edge, ID arrowSize) {
+		validate(AttributeContext.EDGE, ARROWSIZE__E, arrowSize.toValue());
+		edge.attributesProperty().put(ARROWSIZE__E, arrowSize);
 	}
 
 	/**
@@ -1729,8 +2702,7 @@ public class DotAttributes {
 	 *             when the given <i>arrowSize</i> value is not supported.
 	 */
 	public static void setArrowSize(Edge edge, String arrowSize) {
-		validate(AttributeContext.EDGE, ARROWSIZE__E, arrowSize);
-		edge.attributesProperty().put(ARROWSIZE__E, arrowSize);
+		setArrowSizeRaw(edge, ID.fromValue(arrowSize, Type.NUMERAL));
 	}
 
 	/**
@@ -1746,7 +2718,25 @@ public class DotAttributes {
 	 *             when the given <i>arrowSizeParsed</i> value is not supported.
 	 */
 	public static void setArrowSizeParsed(Edge edge, Double arrowSizeParsed) {
-		setArrowSize(edge, arrowSizeParsed.toString());
+		setArrowSize(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.DOUBLE_SERIALIZER, arrowSizeParsed));
+	}
+
+	/**
+	 * Sets the {@link #ARROWTAIL__E} attribute of the given {@link Edge} to the
+	 * given <i>arrowTail</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWTAIL__E} attribute.
+	 * @param arrowTail
+	 *            The new value for the {@link #ARROWTAIL__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowTail</i> value is not supported.
+	 */
+	public static void setArrowTailRaw(Edge edge, ID arrowTail) {
+		validate(AttributeContext.EDGE, ARROWTAIL__E, arrowTail.toValue());
+		edge.attributesProperty().put(ARROWTAIL__E, arrowTail);
 	}
 
 	/**
@@ -1762,8 +2752,7 @@ public class DotAttributes {
 	 *             when the given <i>arrowTail</i> value is not supported.
 	 */
 	public static void setArrowTail(Edge edge, String arrowTail) {
-		validate(AttributeContext.EDGE, ARROWTAIL__E, arrowTail);
-		edge.attributesProperty().put(ARROWTAIL__E, arrowTail);
+		setArrowTailRaw(edge, ID.fromValue(arrowTail, Type.STRING));
 	}
 
 	/**
@@ -1780,8 +2769,25 @@ public class DotAttributes {
 	 */
 	public static void setArrowTailParsed(Edge edge,
 			ArrowType arrowTailParsed) {
-		setArrowTail(edge, serialize(DotLanguageSupport.ARROWTYPE_SERIALIZER,
-				arrowTailParsed));
+		setArrowTail(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.ARROWTYPE_SERIALIZER, arrowTailParsed));
+	}
+
+	/**
+	 * Sets the {@link #BGCOLOR__G} attribute of the given {@link Graph} to the
+	 * given <i>bgColor</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #BGCOLOR__G} attribute.
+	 * @param bgColor
+	 *            The new value for the {@link #BGCOLOR__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>bgColor</i> value is not supported.
+	 */
+	public static void setBgColorRaw(Graph graph, ID bgColor) {
+		validate(AttributeContext.GRAPH, BGCOLOR__G, bgColor.toValue());
+		graph.attributesProperty().put(BGCOLOR__G, bgColor);
 	}
 
 	/**
@@ -1797,8 +2803,7 @@ public class DotAttributes {
 	 *             when the given <i>bgColor</i> value is not supported.
 	 */
 	public static void setBgColor(Graph graph, String bgColor) {
-		validate(AttributeContext.GRAPH, BGCOLOR__G, bgColor);
-		graph.attributesProperty().put(BGCOLOR__G, bgColor);
+		setBgColorRaw(graph, ID.fromValue(bgColor));
 	}
 
 	/**
@@ -1814,8 +2819,25 @@ public class DotAttributes {
 	 *             when the given <i>bgColorParsed</i> value is not supported.
 	 */
 	public static void setBgColorParsed(Graph graph, Color bgColorParsed) {
-		setBgColor(graph,
-				serialize(DotLanguageSupport.COLOR_SERIALIZER, bgColorParsed));
+		setBgColor(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, bgColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #CLUSTERRANK__G} attribute of the given {@link Graph} to
+	 * the given <i>clusterRank</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #CLUSTERRANK__G} attribute.
+	 * @param clusterRank
+	 *            The new value for the {@link #CLUSTERRANK__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>clusterRank</i> value is not supported.
+	 */
+	public static void setClusterRankRaw(Graph graph, ID clusterRank) {
+		validate(AttributeContext.GRAPH, CLUSTERRANK__G, clusterRank.toValue());
+		graph.attributesProperty().put(CLUSTERRANK__G, clusterRank);
 	}
 
 	/**
@@ -1831,8 +2853,7 @@ public class DotAttributes {
 	 *             when the given <i>clusterRank</i> value is not supported.
 	 */
 	public static void setClusterRank(Graph graph, String clusterRank) {
-		validate(AttributeContext.GRAPH, CLUSTERRANK__G, clusterRank);
-		graph.attributesProperty().put(CLUSTERRANK__G, clusterRank);
+		setClusterRankRaw(graph, ID.fromValue(clusterRank, Type.STRING));
 	}
 
 	/**
@@ -1850,7 +2871,25 @@ public class DotAttributes {
 	 */
 	public static void setClusterRankParsed(Graph graph,
 			ClusterMode clusterRankParsed) {
-		setClusterRank(graph, clusterRankParsed.toString());
+		setClusterRank(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.CLUSTERMODE_SERIALIZER, clusterRankParsed));
+	}
+
+	/**
+	 * Sets the {@link #COLOR__NE} attribute of the given {@link Edge} to the
+	 * given <i>color</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @param color
+	 *            The new value for the {@link #COLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>color</i> value is not supported.
+	 */
+	public static void setColorRaw(Edge edge, ID color) {
+		validate(AttributeContext.EDGE, COLOR__NE, color.toValue());
+		edge.attributesProperty().put(COLOR__NE, color);
 	}
 
 	/**
@@ -1866,25 +2905,7 @@ public class DotAttributes {
 	 *             when the given <i>color</i> value is not supported.
 	 */
 	public static void setColor(Edge edge, String color) {
-		validate(AttributeContext.EDGE, COLOR__NE, color);
-		edge.attributesProperty().put(COLOR__NE, color);
-	}
-
-	/**
-	 * Sets the {@link #COLOR__NE} attribute of the given {@link Node} to the
-	 * given <i>color</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #COLOR__NE} attribute.
-	 * @param color
-	 *            The new value for the {@link #COLOR__NE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>color</i> value is not supported.
-	 */
-	public static void setColor(Node node, String color) {
-		validate(AttributeContext.NODE, COLOR__NE, color);
-		node.attributesProperty().put(COLOR__NE, color);
+		setColorRaw(edge, ID.fromValue(color));
 	}
 
 	/**
@@ -1900,8 +2921,41 @@ public class DotAttributes {
 	 *             when the given <i>colorParsed</i> value is not supported.
 	 */
 	public static void setColorParsed(Edge edge, Color colorParsed) {
-		setColor(edge,
-				serialize(DotLanguageSupport.COLOR_SERIALIZER, colorParsed));
+		setColor(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, colorParsed));
+	}
+
+	/**
+	 * Sets the {@link #COLOR__NE} attribute of the given {@link Node} to the
+	 * given <i>color</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @param color
+	 *            The new value for the {@link #COLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>color</i> value is not supported.
+	 */
+	public static void setColorRaw(Node node, ID color) {
+		validate(AttributeContext.NODE, COLOR__NE, color.toValue());
+		node.attributesProperty().put(COLOR__NE, color);
+	}
+
+	/**
+	 * Sets the {@link #COLOR__NE} attribute of the given {@link Node} to the
+	 * given <i>color</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #COLOR__NE} attribute.
+	 * @param color
+	 *            The new value for the {@link #COLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>color</i> value is not supported.
+	 */
+	public static void setColor(Node node, String color) {
+		setColorRaw(node, ID.fromValue(color));
 	}
 
 	/**
@@ -1917,8 +2971,26 @@ public class DotAttributes {
 	 *             when the given <i>colorParsed</i> value is not supported.
 	 */
 	public static void setColorParsed(Node node, Color colorParsed) {
-		setColor(node,
-				serialize(DotLanguageSupport.COLOR_SERIALIZER, colorParsed));
+		setColor(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, colorParsed));
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Edge} to
+	 * the given <i>colorScheme</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorScheme
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorSchemeRaw(Edge edge, ID colorScheme) {
+		validate(AttributeContext.EDGE, COLORSCHEME__GNE,
+				colorScheme.toValue());
+		edge.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
 	}
 
 	/**
@@ -1934,8 +3006,42 @@ public class DotAttributes {
 	 *             when the given <i>colorScheme</i> value is not supported.
 	 */
 	public static void setColorScheme(Edge edge, String colorScheme) {
-		validate(AttributeContext.EDGE, COLORSCHEME__GNE, colorScheme);
-		edge.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
+		setColorSchemeRaw(edge, ID.fromValue(colorScheme));
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Edge} to
+	 * the given <i>colorScheme</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorSchemeParsed
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorSchemeParsed(Edge edge,
+			String colorSchemeParsed) {
+		setColorScheme(edge, colorSchemeParsed);
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Graph}
+	 * to the given <i>colorScheme</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorScheme
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorSchemeRaw(Graph graph, ID colorScheme) {
+		validate(AttributeContext.GRAPH, COLORSCHEME__GNE,
+				colorScheme.toValue());
+		graph.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
 	}
 
 	/**
@@ -1951,8 +3057,42 @@ public class DotAttributes {
 	 *             when the given <i>colorScheme</i> value is not supported.
 	 */
 	public static void setColorScheme(Graph graph, String colorScheme) {
-		validate(AttributeContext.GRAPH, COLORSCHEME__GNE, colorScheme);
-		graph.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
+		setColorSchemeRaw(graph, ID.fromValue(colorScheme));
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Graph}
+	 * to the given <i>colorScheme</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorSchemeParsed
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorSchemeParsed(Graph graph,
+			String colorSchemeParsed) {
+		setColorScheme(graph, colorSchemeParsed);
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Node} to
+	 * the given <i>colorScheme</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorScheme
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorSchemeRaw(Node node, ID colorScheme) {
+		validate(AttributeContext.NODE, COLORSCHEME__GNE,
+				colorScheme.toValue());
+		node.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
 	}
 
 	/**
@@ -1968,8 +3108,41 @@ public class DotAttributes {
 	 *             when the given <i>colorScheme</i> value is not supported.
 	 */
 	public static void setColorScheme(Node node, String colorScheme) {
-		validate(AttributeContext.NODE, COLORSCHEME__GNE, colorScheme);
-		node.attributesProperty().put(COLORSCHEME__GNE, colorScheme);
+		setColorSchemeRaw(node, ID.fromValue(colorScheme));
+	}
+
+	/**
+	 * Sets the {@link #COLORSCHEME__GNE} attribute of the given {@link Node} to
+	 * the given <i>colorScheme</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #COLORSCHEME__GNE} attribute.
+	 * @param colorSchemeParsed
+	 *            The new value for the {@link #COLORSCHEME__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>colorScheme</i> value is not supported.
+	 */
+	public static void setColorSchemeParsed(Node node,
+			String colorSchemeParsed) {
+		setColorScheme(node, colorSchemeParsed);
+	}
+
+	/**
+	 * Sets the {@link #DIR__E} attribute of the given {@link Edge} to the given
+	 * <i>dir</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #DIR__E} attribute.
+	 * @param dir
+	 *            The new value for the {@link #DIR__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>dir</i> value is not supported.
+	 */
+	public static void setDirRaw(Edge edge, ID dir) {
+		validate(AttributeContext.EDGE, DIR__E, dir.toValue());
+		edge.attributesProperty().put(DIR__E, dir);
 	}
 
 	/**
@@ -1985,8 +3158,7 @@ public class DotAttributes {
 	 *             when the given <i>dir</i> value is not supported.
 	 */
 	public static void setDir(Edge edge, String dir) {
-		validate(AttributeContext.EDGE, DIR__E, dir);
-		edge.attributesProperty().put(DIR__E, dir);
+		setDirRaw(edge, ID.fromValue(dir, Type.STRING));
 	}
 
 	/**
@@ -2002,7 +3174,25 @@ public class DotAttributes {
 	 *             when the given <i>dirParsed</i> value is not supported.
 	 */
 	public static void setDirParsed(Edge edge, DirType dirParsed) {
-		setDir(edge, dirParsed.toString());
+		setDir(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.DIRTYPE_SERIALIZER, dirParsed));
+	}
+
+	/**
+	 * Sets the {@link #DISTORTION__N} attribute of the given {@link Node} to
+	 * the given <i>distortion</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #DISTORTION__N} attribute.
+	 * @param distortion
+	 *            The new value for the {@link #DISTORTION__N} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>distortion</i> value is not supported.
+	 */
+	public static void setDistortionRaw(Node node, ID distortion) {
+		validate(AttributeContext.NODE, DISTORTION__N, distortion.toValue());
+		node.attributesProperty().put(DISTORTION__N, distortion);
 	}
 
 	/**
@@ -2018,8 +3208,7 @@ public class DotAttributes {
 	 *             when the given <i>distortion</i> value is not supported.
 	 */
 	public static void setDistortion(Node node, String distortion) {
-		validate(AttributeContext.NODE, DISTORTION__N, distortion);
-		node.attributesProperty().put(DISTORTION__N, distortion);
+		setDistortionRaw(node, ID.fromValue(distortion, Type.NUMERAL));
 	}
 
 	/**
@@ -2036,7 +3225,25 @@ public class DotAttributes {
 	 *             supported.
 	 */
 	public static void setDistortionParsed(Node node, Double distortionParsed) {
-		setDistortion(node, distortionParsed.toString());
+		setDistortion(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.DOUBLE_SERIALIZER, distortionParsed));
+	}
+
+	/**
+	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Edge} to
+	 * the given <i>fillColor</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @param fillColor
+	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fillColor</i> value is not supported.
+	 */
+	public static void setFillColorRaw(Edge edge, ID fillColor) {
+		validate(AttributeContext.EDGE, FILLCOLOR__NE, fillColor.toValue());
+		edge.attributesProperty().put(FILLCOLOR__NE, fillColor);
 	}
 
 	/**
@@ -2052,25 +3259,7 @@ public class DotAttributes {
 	 *             when the given <i>fillColor</i> value is not supported.
 	 */
 	public static void setFillColor(Edge edge, String fillColor) {
-		validate(AttributeContext.EDGE, FILLCOLOR__NE, fillColor);
-		edge.attributesProperty().put(FILLCOLOR__NE, fillColor);
-	}
-
-	/**
-	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Node} to
-	 * the given <i>fillColor</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #FILLCOLOR__NE} attribute.
-	 * @param fillColor
-	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>fillColor</i> value is not supported.
-	 */
-	public static void setFillColor(Node node, String fillColor) {
-		validate(AttributeContext.NODE, FILLCOLOR__NE, fillColor);
-		node.attributesProperty().put(FILLCOLOR__NE, fillColor);
+		setFillColorRaw(edge, ID.fromValue(fillColor));
 	}
 
 	/**
@@ -2086,8 +3275,41 @@ public class DotAttributes {
 	 *             when the given <i>fillColorParsed</i> value is not supported.
 	 */
 	public static void setFillColorParsed(Edge edge, Color fillColorParsed) {
-		setFillColor(edge, serialize(DotLanguageSupport.COLOR_SERIALIZER,
-				fillColorParsed));
+		setFillColor(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, fillColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Node} to
+	 * the given <i>fillColor</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @param fillColor
+	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fillColor</i> value is not supported.
+	 */
+	public static void setFillColorRaw(Node node, ID fillColor) {
+		validate(AttributeContext.NODE, FILLCOLOR__NE, fillColor.toValue());
+		node.attributesProperty().put(FILLCOLOR__NE, fillColor);
+	}
+
+	/**
+	 * Sets the {@link #FILLCOLOR__NE} attribute of the given {@link Node} to
+	 * the given <i>fillColor</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FILLCOLOR__NE} attribute.
+	 * @param fillColor
+	 *            The new value for the {@link #FILLCOLOR__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fillColor</i> value is not supported.
+	 */
+	public static void setFillColor(Node node, String fillColor) {
+		setFillColorRaw(node, ID.fromValue(fillColor));
 	}
 
 	/**
@@ -2103,8 +3325,25 @@ public class DotAttributes {
 	 *             when the given <i>fillColorParsed</i> value is not supported.
 	 */
 	public static void setFillColorParsed(Node node, Color fillColorParsed) {
-		setFillColor(node, serialize(DotLanguageSupport.COLOR_SERIALIZER,
-				fillColorParsed));
+		setFillColor(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, fillColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FIXEDSIZE__N} attribute of the given {@link Node} to the
+	 * given <i>fixedSize</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FIXEDSIZE__N} attribute.
+	 * @param fixedSize
+	 *            The new value for the {@link #FIXEDSIZE__N} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fixedSize</i> value is not supported.
+	 */
+	public static void setFixedSizeRaw(Node node, ID fixedSize) {
+		validate(AttributeContext.NODE, FIXEDSIZE__N, fixedSize.toValue());
+		node.attributesProperty().put(FIXEDSIZE__N, fixedSize);
 	}
 
 	/**
@@ -2120,8 +3359,7 @@ public class DotAttributes {
 	 *             when the given <i>fixedSize</i> value is not supported.
 	 */
 	public static void setFixedSize(Node node, String fixedSize) {
-		validate(AttributeContext.NODE, FIXEDSIZE__N, fixedSize);
-		node.attributesProperty().put(FIXEDSIZE__N, fixedSize);
+		setFixedSizeRaw(node, ID.fromValue(fixedSize, Type.STRING));
 	}
 
 	/**
@@ -2137,7 +3375,25 @@ public class DotAttributes {
 	 *             when the given <i>fixedSizeParsed</i> value is not supported.
 	 */
 	public static void setFixedSizeParsed(Node node, Boolean fixedSizeParsed) {
-		setFixedSize(node, fixedSizeParsed.toString());
+		setFixedSize(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.BOOL_SERIALIZER, fixedSizeParsed));
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Edge} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColorRaw(Edge edge, ID fontColor) {
+		validate(AttributeContext.EDGE, FONTCOLOR__GNE, fontColor.toValue());
+		edge.attributesProperty().put(FONTCOLOR__GNE, fontColor);
 	}
 
 	/**
@@ -2153,42 +3409,7 @@ public class DotAttributes {
 	 *             when the given <i>fontColor</i> value is not supported.
 	 */
 	public static void setFontColor(Edge edge, String fontColor) {
-		validate(AttributeContext.EDGE, FONTCOLOR__GNE, fontColor);
-		edge.attributesProperty().put(FONTCOLOR__GNE, fontColor);
-	}
-
-	/**
-	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Graph} to
-	 * the given <i>fontColor</i> value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #FONTCOLOR__GNE} attribute.
-	 * @param fontColor
-	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>fontColor</i> value is not supported.
-	 */
-	public static void setFontColor(Graph graph, String fontColor) {
-		validate(AttributeContext.GRAPH, FONTCOLOR__GNE, fontColor);
-		graph.attributesProperty().put(FONTCOLOR__GNE, fontColor);
-	}
-
-	/**
-	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Node} to
-	 * the given <i>fontColor</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #FONTCOLOR__GNE} attribute.
-	 * @param fontColor
-	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>fontColor</i> value is not supported.
-	 */
-	public static void setFontColor(Node node, String fontColor) {
-		validate(AttributeContext.NODE, FONTCOLOR__GNE, fontColor);
-		node.attributesProperty().put(FONTCOLOR__GNE, fontColor);
+		setFontColorRaw(edge, ID.fromValue(fontColor));
 	}
 
 	/**
@@ -2204,8 +3425,41 @@ public class DotAttributes {
 	 *             when the given <i>fontColorParsed</i> value is not supported.
 	 */
 	public static void setFontColorParsed(Edge edge, Color fontColorParsed) {
-		setFontColor(edge, serialize(DotLanguageSupport.COLOR_SERIALIZER,
-				fontColorParsed));
+		setFontColor(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, fontColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Graph} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColorRaw(Graph graph, ID fontColor) {
+		validate(AttributeContext.GRAPH, FONTCOLOR__GNE, fontColor.toValue());
+		graph.attributesProperty().put(FONTCOLOR__GNE, fontColor);
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Graph} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColor(Graph graph, String fontColor) {
+		setFontColorRaw(graph, ID.fromValue(fontColor));
 	}
 
 	/**
@@ -2221,8 +3475,41 @@ public class DotAttributes {
 	 *             when the given <i>fontColorParsed</i> value is not supported.
 	 */
 	public static void setFontColorParsed(Graph graph, Color fontColorParsed) {
-		setFontColor(graph, serialize(DotLanguageSupport.COLOR_SERIALIZER,
-				fontColorParsed));
+		setFontColor(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, fontColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Node} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColorRaw(Node node, ID fontColor) {
+		validate(AttributeContext.NODE, FONTCOLOR__GNE, fontColor.toValue());
+		node.attributesProperty().put(FONTCOLOR__GNE, fontColor);
+	}
+
+	/**
+	 * Sets the {@link #FONTCOLOR__GNE} attribute of the given {@link Node} to
+	 * the given <i>fontColor</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #FONTCOLOR__GNE} attribute.
+	 * @param fontColor
+	 *            The new value for the {@link #FONTCOLOR__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>fontColor</i> value is not supported.
+	 */
+	public static void setFontColor(Node node, String fontColor) {
+		setFontColorRaw(node, ID.fromValue(fontColor));
 	}
 
 	/**
@@ -2238,8 +3525,25 @@ public class DotAttributes {
 	 *             when the given <i>fontColorParsed</i> value is not supported.
 	 */
 	public static void setFontColorParsed(Node node, Color fontColorParsed) {
-		setFontColor(node, serialize(DotLanguageSupport.COLOR_SERIALIZER,
-				fontColorParsed));
+		setFontColor(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, fontColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #FORCELABELS__G} attribute of the given {@link Graph} to
+	 * the given <i>forceLabels</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FORCELABELS__G} attribute.
+	 * @param forceLabels
+	 *            The new value for the {@link #FORCELABELS__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>forceLabels</i> value is not supported.
+	 */
+	public static void setForceLabelsRaw(Graph graph, ID forceLabels) {
+		validate(AttributeContext.GRAPH, FORCELABELS__G, forceLabels.toValue());
+		graph.attributesProperty().put(FORCELABELS__G, forceLabels);
 	}
 
 	/**
@@ -2255,8 +3559,7 @@ public class DotAttributes {
 	 *             when the given <i>forceLabels</i> value is not supported.
 	 */
 	public static void setForceLabels(Graph graph, String forceLabels) {
-		validate(AttributeContext.GRAPH, FORCELABELS__G, forceLabels);
-		graph.attributesProperty().put(FORCELABELS__G, forceLabels);
+		setForceLabelsRaw(graph, ID.fromValue(forceLabels, Type.STRING));
 	}
 
 	/**
@@ -2274,7 +3577,22 @@ public class DotAttributes {
 	 */
 	public static void setForceLabelsParsed(Graph graph,
 			Boolean forceLabelsParsed) {
-		setForceLabels(graph, forceLabelsParsed.toString());
+		setForceLabels(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.BOOL_SERIALIZER, forceLabelsParsed));
+	}
+
+	/**
+	 * Sets the {@link #HEADLABEL__E} attribute of the given {@link Edge} to the
+	 * given <i>headLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #HEADLABEL__E} attribute.
+	 * @param headLabel
+	 *            The new value for the {@link #HEADLABEL__E} attribute.
+	 */
+	public static void setHeadLabelRaw(Edge edge, ID headLabel) {
+		edge.attributesProperty().put(HEADLABEL__E, headLabel);
 	}
 
 	/**
@@ -2288,7 +3606,41 @@ public class DotAttributes {
 	 *            The new value for the {@link #HEADLABEL__E} attribute.
 	 */
 	public static void setHeadLabel(Edge edge, String headLabel) {
-		edge.attributesProperty().put(HEADLABEL__E, headLabel);
+		setHeadLabelRaw(edge, ID.fromValue(headLabel));
+	}
+
+	/**
+	 * Sets the {@link #HEADLABEL__E} attribute of the given {@link Edge} to the
+	 * given <i>headLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #HEADLABEL__E} attribute.
+	 * @param headLabel
+	 *            The new value for the {@link #HEADLABEL__E} attribute.
+	 */
+	// TODO: use LblString
+	public static void setHeadLabelParsed(Edge edge, String headLabel) {
+		// TODO: use LBL_STRING_SERIALIZER and infer type from LblString
+		// sub-type
+		setHeadLabel(edge, headLabel);
+	}
+
+	/**
+	 * Sets the {@link #HEAD_LP__E} attribute of the given {@link Edge} to the
+	 * given <i>headLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #HEAD_LP__E} attribute.
+	 * @param headLp
+	 *            The new value for the {@link #HEAD_LP__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>headLp</i> value is not supported.
+	 */
+	public static void setHeadLpRaw(Edge edge, ID headLp) {
+		validate(AttributeContext.EDGE, HEAD_LP__E, headLp.toValue());
+		edge.attributesProperty().put(HEAD_LP__E, headLp);
 	}
 
 	/**
@@ -2304,8 +3656,7 @@ public class DotAttributes {
 	 *             when the given <i>headLp</i> value is not supported.
 	 */
 	public static void setHeadLp(Edge edge, String headLp) {
-		validate(AttributeContext.EDGE, HEAD_LP__E, headLp);
-		edge.attributesProperty().put(HEAD_LP__E, headLp);
+		setHeadLpRaw(edge, ID.fromValue(headLp, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -2321,8 +3672,25 @@ public class DotAttributes {
 	 *             when the given <i>headLpParsed</i> value is not supported.
 	 */
 	public static void setHeadLpParsed(Edge edge, Point headLpParsed) {
-		setHeadLp(edge,
-				serialize(DotLanguageSupport.POINT_SERIALIZER, headLpParsed));
+		setHeadLp(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.POINT_SERIALIZER, headLpParsed));
+	}
+
+	/**
+	 * Sets the {@link #HEIGHT__N} attribute of the given {@link Node} to the
+	 * given <i>height</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #HEIGHT__N} attribute.
+	 * @param height
+	 *            The new value for the {@link #HEIGHT__N} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>height</i> value is not supported.
+	 */
+	public static void setHeightRaw(Node node, ID height) {
+		validate(AttributeContext.NODE, HEIGHT__N, height.toValue());
+		node.attributesProperty().put(HEIGHT__N, height);
 	}
 
 	/**
@@ -2338,8 +3706,7 @@ public class DotAttributes {
 	 *             when the given <i>height</i> value is not supported.
 	 */
 	public static void setHeight(Node node, String height) {
-		validate(AttributeContext.NODE, HEIGHT__N, height);
-		node.attributesProperty().put(HEIGHT__N, height);
+		setHeightRaw(node, ID.fromValue(height, Type.NUMERAL));
 	}
 
 	/**
@@ -2355,7 +3722,22 @@ public class DotAttributes {
 	 *             when the given <i>heightParsed</i> value is not supported.
 	 */
 	public static void setHeightParsed(Node node, Double heightParsed) {
-		setHeight(node, heightParsed.toString());
+		setHeight(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.DOUBLE_SERIALIZER, heightParsed));
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Edge} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} attribute.
+	 */
+	public static void setIdRaw(Edge edge, ID id) {
+		edge.attributesProperty().put(ID__GNE, id);
 	}
 
 	/**
@@ -2369,7 +3751,36 @@ public class DotAttributes {
 	 *            The new value for the {@link #ID__GNE} attribute.
 	 */
 	public static void setId(Edge edge, String id) {
-		edge.attributesProperty().put(ID__GNE, id);
+		setIdRaw(edge, ID.fromValue(id));
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Edge} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} attribute.
+	 */
+	// TODO: use EscString
+	public static void setIdParsed(Edge edge, String id) {
+		setId(edge, id);
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Graph} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} attribute.
+	 */
+	public static void setIdRaw(Graph graph, ID id) {
+		graph.attributesProperty().put(ID__GNE, id);
 	}
 
 	/**
@@ -2383,7 +3794,36 @@ public class DotAttributes {
 	 *            The new value for the {@link #ID__GNE} attribute.
 	 */
 	public static void setId(Graph graph, String id) {
-		graph.attributesProperty().put(ID__GNE, id);
+		setIdRaw(graph, ID.fromValue(id));
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Graph} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} attribute.
+	 */
+	// TODO: use EscString
+	public static void setIdParsed(Graph graph, String id) {
+		setId(graph, id);
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Node} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} attribute.
+	 */
+	public static void setIdRaw(Node node, ID id) {
+		node.attributesProperty().put(ID__GNE, id);
 	}
 
 	/**
@@ -2397,7 +3837,36 @@ public class DotAttributes {
 	 *            The new value for the {@link #ID__GNE} attribute.
 	 */
 	public static void setId(Node node, String id) {
-		node.attributesProperty().put(ID__GNE, id);
+		setIdRaw(node, ID.fromValue(id));
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} attribute of the given {@link Node} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #ID__GNE} attribute.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} attribute.
+	 */
+	// TODO: use EscString
+	public static void setIdParsed(Node node, String id) {
+		setId(node, id);
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Edge} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} attribute.
+	 */
+	public static void setLabelRaw(Edge edge, ID label) {
+		edge.attributesProperty().put(LABEL__GNE, label);
 	}
 
 	/**
@@ -2411,7 +3880,38 @@ public class DotAttributes {
 	 *            The new value for the {@link #LABEL__GNE} attribute.
 	 */
 	public static void setLabel(Edge edge, String label) {
-		edge.attributesProperty().put(LABEL__GNE, label);
+		setLabelRaw(edge, ID.fromValue(label));
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Edge} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} attribute.
+	 */
+	// TODO: use LblString
+	public static void setLabelParsed(Edge edge, String label) {
+		// TODO: use LBL_STRING_SERIALIZER and infer type from LblString
+		// sub-type
+		setLabel(edge, label);
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Graph} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} attribute.
+	 */
+	public static void setLabelRaw(Graph graph, ID label) {
+		graph.attributesProperty().put(LABEL__GNE, label);
 	}
 
 	/**
@@ -2425,7 +3925,38 @@ public class DotAttributes {
 	 *            The new value for the {@link #LABEL__GNE} attribute.
 	 */
 	public static void setLabel(Graph graph, String label) {
-		graph.attributesProperty().put(LABEL__GNE, label);
+		setLabelRaw(graph, ID.fromValue(label));
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Graph} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} attribute.
+	 */
+	// TODO: use LblString
+	public static void setLabelParsed(Graph graph, String label) {
+		// TODO: use LBL_STRING_SERIALIZER and infer type from LblString
+		// sub-type
+		setLabel(graph, label);
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Node} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} attribute.
+	 */
+	public static void setLabelRaw(Node node, ID label) {
+		node.attributesProperty().put(LABEL__GNE, label);
 	}
 
 	/**
@@ -2439,7 +3970,42 @@ public class DotAttributes {
 	 *            The new value for the {@link #LABEL__GNE} attribute.
 	 */
 	public static void setLabel(Node node, String label) {
-		node.attributesProperty().put(LABEL__GNE, label);
+		setLabelRaw(node, ID.fromValue(label));
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} attribute of the given {@link Node} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #LABEL__GNE} attribute.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} attribute.
+	 */
+	// TODO: use LblString
+	public static void setLabelParsed(Node node, String label) {
+		// TODO: use LBL_STRING_SERIALIZER and infer type from LblString
+		// sub-type
+		setLabel(node, label);
+	}
+
+	/**
+	 * Sets the {@link #LABELFONTCOLOR__E} attribute of the given {@link Edge}
+	 * to the given <i>labelFontColor</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LABELFONTCOLOR__E} attribute.
+	 * @param labelFontColor
+	 *            The new value for the {@link #LABELFONTCOLOR__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>labelFontColor</i> value is not supported.
+	 */
+	public static void setLabelFontColorRaw(Edge edge, ID labelFontColor) {
+		validate(AttributeContext.EDGE, LABELFONTCOLOR__E,
+				labelFontColor.toValue());
+		edge.attributesProperty().put(LABELFONTCOLOR__E, labelFontColor);
 	}
 
 	/**
@@ -2455,8 +4021,7 @@ public class DotAttributes {
 	 *             when the given <i>labelFontColor</i> value is not supported.
 	 */
 	public static void setLabelFontColor(Edge edge, String labelFontColor) {
-		validate(AttributeContext.EDGE, LABELFONTCOLOR__E, labelFontColor);
-		edge.attributesProperty().put(LABELFONTCOLOR__E, labelFontColor);
+		setLabelFontColorRaw(edge, ID.fromValue(labelFontColor));
 	}
 
 	/**
@@ -2474,8 +4039,25 @@ public class DotAttributes {
 	 */
 	public static void setLabelFontColorParsed(Edge edge,
 			Color labelFontColorParsed) {
-		setLabelFontColor(edge, serialize(DotLanguageSupport.COLOR_SERIALIZER,
-				labelFontColorParsed));
+		setLabelFontColor(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.COLOR_SERIALIZER, labelFontColorParsed));
+	}
+
+	/**
+	 * Sets the {@link #LAYOUT__G} attribute of the given {@link Graph} to the
+	 * given <i>layout</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LAYOUT__G} attribute.
+	 * @param layout
+	 *            The new value for the {@link #LAYOUT__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>layout</i> value is not supported.
+	 */
+	public static void setLayoutRaw(Graph graph, ID layout) {
+		validate(AttributeContext.GRAPH, LAYOUT__G, layout.toValue());
+		graph.attributesProperty().put(LAYOUT__G, layout);
 	}
 
 	/**
@@ -2491,8 +4073,7 @@ public class DotAttributes {
 	 *             when the given <i>layout</i> value is not supported.
 	 */
 	public static void setLayout(Graph graph, String layout) {
-		validate(AttributeContext.GRAPH, LAYOUT__G, layout);
-		graph.attributesProperty().put(LAYOUT__G, layout);
+		setLayoutRaw(graph, ID.fromValue(layout, Type.STRING));
 	}
 
 	/**
@@ -2508,7 +4089,25 @@ public class DotAttributes {
 	 *             when the given <i>layoutParsed</i> value is not supported.
 	 */
 	public static void setLayoutParsed(Graph graph, Layout layoutParsed) {
-		setLayout(graph, layoutParsed.toString());
+		setLayout(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.LAYOUT_SERIALIZER, layoutParsed));
+	}
+
+	/**
+	 * Sets the {@link #LP__GE} attribute of the given {@link Edge} to the given
+	 * <i>lp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LP__GE} attribute.
+	 * @param lp
+	 *            The new value for the {@link #LP__GE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>lp</i> value is not supported.
+	 */
+	public static void setLpRaw(Edge edge, ID lp) {
+		validate(AttributeContext.EDGE, LP__GE, lp.toValue());
+		edge.attributesProperty().put(LP__GE, lp);
 	}
 
 	/**
@@ -2524,25 +4123,7 @@ public class DotAttributes {
 	 *             when the given <i>lp</i> value is not supported.
 	 */
 	public static void setLp(Edge edge, String lp) {
-		validate(AttributeContext.EDGE, LP__GE, lp);
-		edge.attributesProperty().put(LP__GE, lp);
-	}
-
-	/**
-	 * Sets the {@link #LP__GE} attribute of the given {@link Graph} to the
-	 * given <i>lp</i> value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #LP__GE} attribute.
-	 * @param lp
-	 *            The new value for the {@link #LP__GE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>lp</i> value is not supported.
-	 */
-	public static void setLp(Graph graph, String lp) {
-		validate(AttributeContext.GRAPH, LP__GE, lp);
-		graph.attributesProperty().put(LP__GE, lp);
+		setLpRaw(edge, ID.fromValue(lp, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -2558,7 +4139,41 @@ public class DotAttributes {
 	 *             when the given <i>lpParsed</i> value is not supported.
 	 */
 	public static void setLpParsed(Edge edge, Point lpParsed) {
-		setLp(edge, serialize(DotLanguageSupport.POINT_SERIALIZER, lpParsed));
+		setLp(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.POINT_SERIALIZER, lpParsed));
+	}
+
+	/**
+	 * Sets the {@link #LP__GE} attribute of the given {@link Graph} to the
+	 * given <i>lp</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LP__GE} attribute.
+	 * @param lp
+	 *            The new value for the {@link #LP__GE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>lp</i> value is not supported.
+	 */
+	public static void setLpRaw(Graph graph, ID lp) {
+		validate(AttributeContext.GRAPH, LP__GE, lp.toValue());
+		graph.attributesProperty().put(LP__GE, lp);
+	}
+
+	/**
+	 * Sets the {@link #LP__GE} attribute of the given {@link Graph} to the
+	 * given <i>lp</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LP__GE} attribute.
+	 * @param lp
+	 *            The new value for the {@link #LP__GE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>lp</i> value is not supported.
+	 */
+	public static void setLp(Graph graph, String lp) {
+		setLpRaw(graph, ID.fromValue(lp, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -2574,7 +4189,25 @@ public class DotAttributes {
 	 *             when the given <i>lpParsed</i> value is not supported.
 	 */
 	public static void setLpParsed(Graph graph, Point lpParsed) {
-		setLp(graph, serialize(DotLanguageSupport.POINT_SERIALIZER, lpParsed));
+		setLp(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.POINT_SERIALIZER, lpParsed));
+	}
+
+	/**
+	 * Sets the {@link #OUTPUTORDER__G} attribute of the given {@link Graph} to
+	 * the given <i>outputOrder</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #OUTPUTORDER__G} attribute.
+	 * @param outputOrder
+	 *            The new value for the {@link #OUTPUTORDER__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>outputOrder</i> value is not supported.
+	 */
+	public static void setOutputOrderRaw(Graph graph, ID outputOrder) {
+		validate(AttributeContext.GRAPH, OUTPUTORDER__G, outputOrder.toValue());
+		graph.attributesProperty().put(OUTPUTORDER__G, outputOrder);
 	}
 
 	/**
@@ -2590,8 +4223,7 @@ public class DotAttributes {
 	 *             when the given <i>outputOrder</i> value is not supported.
 	 */
 	public static void setOutputOrder(Graph graph, String outputOrder) {
-		validate(AttributeContext.GRAPH, OUTPUTORDER__G, outputOrder);
-		graph.attributesProperty().put(OUTPUTORDER__G, outputOrder);
+		setOutputOrderRaw(graph, ID.fromValue(outputOrder, Type.STRING));
 	}
 
 	/**
@@ -2609,7 +4241,25 @@ public class DotAttributes {
 	 */
 	public static void setOutputOrderParsed(Graph graph,
 			OutputMode outputOrderParsed) {
-		setOutputOrder(graph, outputOrderParsed.toString());
+		setOutputOrder(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.OUTPUTMODE_SERIALIZER, outputOrderParsed));
+	}
+
+	/**
+	 * Sets the {@link #PAGEDIR__G} attribute of the given {@link Graph} to the
+	 * given <i>pageDir</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #PAGEDIR__G} attribute.
+	 * @param pagedir
+	 *            The new value for the {@link #PAGEDIR__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pageDir</i> value is not supported.
+	 */
+	public static void setPagedirRaw(Graph graph, ID pagedir) {
+		validate(AttributeContext.GRAPH, PAGEDIR__G, pagedir.toValue());
+		graph.attributesProperty().put(PAGEDIR__G, pagedir);
 	}
 
 	/**
@@ -2625,8 +4275,7 @@ public class DotAttributes {
 	 *             when the given <i>pageDir</i> value is not supported.
 	 */
 	public static void setPagedir(Graph graph, String pagedir) {
-		validate(AttributeContext.GRAPH, PAGEDIR__G, pagedir);
-		graph.attributesProperty().put(PAGEDIR__G, pagedir);
+		setPagedirRaw(graph, ID.fromValue(pagedir, Type.STRING));
 	}
 
 	/**
@@ -2642,7 +4291,25 @@ public class DotAttributes {
 	 *             when the given <i>pageDirParsed</i> value is not supported.
 	 */
 	public static void setPagedirParsed(Graph graph, Pagedir pagedirParsed) {
-		setPagedir(graph, pagedirParsed.toString());
+		setPagedir(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.PAGEDIR_SERIALIZER, pagedirParsed));
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} attribute of the given {@link Edge} to the
+	 * given <i>pos</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #POS__NE} attribute.
+	 * @param pos
+	 *            The new value for the {@link #POS__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pos</i> value is not supported.
+	 */
+	public static void setPosRaw(Edge edge, ID pos) {
+		validate(AttributeContext.EDGE, POS__NE, pos.toValue());
+		edge.attributesProperty().put(POS__NE, pos);
 	}
 
 	/**
@@ -2658,25 +4325,7 @@ public class DotAttributes {
 	 *             when the given <i>pos</i> value is not supported.
 	 */
 	public static void setPos(Edge edge, String pos) {
-		validate(AttributeContext.EDGE, POS__NE, pos);
-		edge.attributesProperty().put(POS__NE, pos);
-	}
-
-	/**
-	 * Sets the {@link #POS__NE} attribute of the given {@link Node} to the
-	 * given <i>pos</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #POS__NE} attribute.
-	 * @param pos
-	 *            The new value for the {@link #POS__NE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>pos</i> value is not supported.
-	 */
-	public static void setPos(Node node, String pos) {
-		validate(AttributeContext.NODE, POS__NE, pos);
-		node.attributesProperty().put(POS__NE, pos);
+		setPosRaw(edge, ID.fromValue(pos, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -2692,8 +4341,41 @@ public class DotAttributes {
 	 *             when the given <i>posParsed</i> value is not supported.
 	 */
 	public static void setPosParsed(Edge edge, SplineType posParsed) {
-		setPos(edge,
-				serialize(DotLanguageSupport.SPLINETYPE_SERIALIZER, posParsed));
+		setPos(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.SPLINETYPE_SERIALIZER, posParsed));
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} attribute of the given {@link Node} to the
+	 * given <i>pos</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #POS__NE} attribute.
+	 * @param pos
+	 *            The new value for the {@link #POS__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pos</i> value is not supported.
+	 */
+	public static void setPosRaw(Node node, ID pos) {
+		validate(AttributeContext.NODE, POS__NE, pos.toValue());
+		node.attributesProperty().put(POS__NE, pos);
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} attribute of the given {@link Node} to the
+	 * given <i>pos</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #POS__NE} attribute.
+	 * @param pos
+	 *            The new value for the {@link #POS__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>pos</i> value is not supported.
+	 */
+	public static void setPos(Node node, String pos) {
+		setPosRaw(node, ID.fromValue(pos, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -2709,7 +4391,25 @@ public class DotAttributes {
 	 *             when the given <i>posParsed</i> value is not supported.
 	 */
 	public static void setPosParsed(Node node, Point posParsed) {
-		setPos(node, serialize(DotLanguageSupport.POINT_SERIALIZER, posParsed));
+		setPos(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.POINT_SERIALIZER, posParsed));
+	}
+
+	/**
+	 * Sets the {@link #RANKDIR__G} attribute of the given {@link Graph} to the
+	 * given <i>rankdir</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #RANKDIR__G} attribute.
+	 * @param rankdir
+	 *            The new value for the {@link #RANKDIR__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>rankdir</i> value is not supported.
+	 */
+	public static void setRankdirRaw(Graph graph, ID rankdir) {
+		validate(AttributeContext.GRAPH, RANKDIR__G, rankdir.toValue());
+		graph.attributesProperty().put(RANKDIR__G, rankdir);
 	}
 
 	/**
@@ -2725,8 +4425,7 @@ public class DotAttributes {
 	 *             when the given <i>rankdir</i> value is not supported.
 	 */
 	public static void setRankdir(Graph graph, String rankdir) {
-		validate(AttributeContext.GRAPH, RANKDIR__G, rankdir);
-		graph.attributesProperty().put(RANKDIR__G, rankdir);
+		setRankdirRaw(graph, ID.fromValue(rankdir, Type.STRING));
 	}
 
 	/**
@@ -2742,7 +4441,25 @@ public class DotAttributes {
 	 *             when the given <i>rankdirParsed</i> value is not supported.
 	 */
 	public static void setRankdirParsed(Graph graph, Rankdir rankdirParsed) {
-		setRankdir(graph, rankdirParsed.toString());
+		setRankdir(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.RANKDIR_SERIALIZER, rankdirParsed));
+	}
+
+	/**
+	 * Sets the {@link #SHAPE__N} attribute of the given {@link Node} to the
+	 * given <i>shape</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SHAPE__N} attribute.
+	 * @param shape
+	 *            The new value for the {@link #SHAPE__N} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>shape</i> value is not supported.
+	 */
+	public static void setShapeRaw(Node node, ID shape) {
+		validate(AttributeContext.NODE, SHAPE__N, shape.toValue());
+		node.attributesProperty().put(SHAPE__N, shape);
 	}
 
 	/**
@@ -2758,8 +4475,7 @@ public class DotAttributes {
 	 *             when the given <i>shape</i> value is not supported.
 	 */
 	public static void setShape(Node node, String shape) {
-		validate(AttributeContext.NODE, SHAPE__N, shape);
-		node.attributesProperty().put(SHAPE__N, shape);
+		setShapeRaw(node, ID.fromValue(shape));
 	}
 
 	/**
@@ -2775,8 +4491,25 @@ public class DotAttributes {
 	 *             when the given <i>shapeParsed</i> value is not supported.
 	 */
 	public static void setShapeParsed(Node node, Shape shapeParsed) {
-		setShape(node,
-				serialize(DotLanguageSupport.SHAPE_SERIALIZER, shapeParsed));
+		setShape(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.SHAPE_SERIALIZER, shapeParsed));
+	}
+
+	/**
+	 * Sets the {@link #SIDES__N} attribute of the given {@link Node} to the
+	 * given <i>sides</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SIDES__N} attribute.
+	 * @param sides
+	 *            The new value for the {@link #SIDES__N} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>sides</i> value is not supported.
+	 */
+	public static void setSidesRaw(Node node, ID sides) {
+		validate(AttributeContext.NODE, SIDES__N, sides.toValue());
+		node.attributesProperty().put(SIDES__N, sides);
 	}
 
 	/**
@@ -2792,8 +4525,7 @@ public class DotAttributes {
 	 *             when the given <i>sides</i> value is not supported.
 	 */
 	public static void setSides(Node node, String sides) {
-		validate(AttributeContext.NODE, SIDES__N, sides);
-		node.attributesProperty().put(SIDES__N, sides);
+		setSidesRaw(node, ID.fromValue(sides, Type.NUMERAL));
 	}
 
 	/**
@@ -2809,7 +4541,25 @@ public class DotAttributes {
 	 *             when the given <i>sidesParsed</i> value is not supported.
 	 */
 	public static void setSidesParsed(Node node, Integer sidesParsed) {
-		setSides(node, sidesParsed.toString());
+		setSides(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.INT_SERIALIZER, sidesParsed));
+	}
+
+	/**
+	 * Sets the {@link #SKEW__N} attribute of the given {@link Node} to the
+	 * given <i>skew</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SKEW__N} attribute.
+	 * @param skew
+	 *            The new value for the {@link #SKEW__N} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>skew</i> value is not supported.
+	 */
+	public static void setSkewRaw(Node node, ID skew) {
+		validate(AttributeContext.NODE, SKEW__N, skew.toValue());
+		node.attributesProperty().put(SKEW__N, skew);
 	}
 
 	/**
@@ -2825,8 +4575,7 @@ public class DotAttributes {
 	 *             when the given <i>skew</i> value is not supported.
 	 */
 	public static void setSkew(Node node, String skew) {
-		validate(AttributeContext.NODE, SKEW__N, skew);
-		node.attributesProperty().put(SKEW__N, skew);
+		setSkewRaw(node, ID.fromValue(skew, Type.NUMERAL));
 	}
 
 	/**
@@ -2842,7 +4591,25 @@ public class DotAttributes {
 	 *             when the given <i>skewParsed</i> value is not supported.
 	 */
 	public static void setSkewParsed(Node node, Double skewParsed) {
-		setSkew(node, skewParsed.toString());
+		setSkew(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.DOUBLE_SERIALIZER, skewParsed));
+	}
+
+	/**
+	 * Sets the {@link #SPLINES__G} attribute of the given {@link Graph} to the
+	 * given <i>splines</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #SPLINES__G} attribute.
+	 * @param splines
+	 *            The new value for the {@link #SPLINES__G} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>splines</i> value is not supported.
+	 */
+	public static void setSplinesRaw(Graph graph, ID splines) {
+		validate(AttributeContext.GRAPH, SPLINES__G, splines.toValue());
+		graph.attributesProperty().put(SPLINES__G, splines);
 	}
 
 	/**
@@ -2858,8 +4625,7 @@ public class DotAttributes {
 	 *             when the given <i>splines</i> value is not supported.
 	 */
 	public static void setSplines(Graph graph, String splines) {
-		validate(AttributeContext.GRAPH, SPLINES__G, splines);
-		graph.attributesProperty().put(SPLINES__G, splines);
+		setSplinesRaw(graph, ID.fromValue(splines, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -2875,7 +4641,25 @@ public class DotAttributes {
 	 *             when the given <i>splinesParsed</i> value is not supported.
 	 */
 	public static void setSplinesParsed(Graph graph, Splines splinesParsed) {
-		setSplines(graph, splinesParsed.toString());
+		setSplines(graph, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.SPLINES_SERIALIZER, splinesParsed));
+	}
+
+	/**
+	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Edge} to the
+	 * given <i>style</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #STYLE__GNE} attribute.
+	 * @param style
+	 *            The new value for the {@link #STYLE__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>style</i> value is not supported.
+	 */
+	public static void setStyleRaw(Edge edge, ID style) {
+		validate(AttributeContext.EDGE, STYLE__GNE, style.toValue());
+		edge.attributesProperty().put(STYLE__GNE, style);
 	}
 
 	/**
@@ -2891,25 +4675,7 @@ public class DotAttributes {
 	 *             when the given <i>style</i> value is not supported.
 	 */
 	public static void setStyle(Edge edge, String style) {
-		validate(AttributeContext.EDGE, STYLE__GNE, style);
-		edge.attributesProperty().put(STYLE__GNE, style);
-	}
-
-	/**
-	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Node} to the
-	 * given <i>style</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #STYLE__GNE} attribute.
-	 * @param style
-	 *            The new value for the {@link #STYLE__GNE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>style</i> value is not supported.
-	 */
-	public static void setStyle(Node node, String style) {
-		validate(AttributeContext.NODE, STYLE__GNE, style);
-		node.attributesProperty().put(STYLE__GNE, style);
+		setStyleRaw(edge, ID.fromValue(style));
 	}
 
 	/**
@@ -2925,8 +4691,41 @@ public class DotAttributes {
 	 *             when the given <i>styleParsed</i> value is not supported.
 	 */
 	public static void setStyleParsed(Edge edge, Style styleParsed) {
-		setStyle(edge,
-				serialize(DotLanguageSupport.STYLE_SERIALIZER, styleParsed));
+		setStyle(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.STYLE_SERIALIZER, styleParsed));
+	}
+
+	/**
+	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Node} to the
+	 * given <i>style</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #STYLE__GNE} attribute.
+	 * @param style
+	 *            The new value for the {@link #STYLE__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>style</i> value is not supported.
+	 */
+	public static void setStyleRaw(Node node, ID style) {
+		validate(AttributeContext.NODE, STYLE__GNE, style.toValue());
+		node.attributesProperty().put(STYLE__GNE, style);
+	}
+
+	/**
+	 * Sets the {@link #STYLE__GNE} attribute of the given {@link Node} to the
+	 * given <i>style</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #STYLE__GNE} attribute.
+	 * @param style
+	 *            The new value for the {@link #STYLE__GNE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>style</i> value is not supported.
+	 */
+	public static void setStyle(Node node, String style) {
+		setStyleRaw(node, ID.fromValue(style));
 	}
 
 	/**
@@ -2942,8 +4741,22 @@ public class DotAttributes {
 	 *             when the given <i>styleParsed</i> value is not supported.
 	 */
 	public static void setStyleParsed(Node node, Style styleParsed) {
-		setStyle(node,
-				serialize(DotLanguageSupport.STYLE_SERIALIZER, styleParsed));
+		setStyle(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.STYLE_SERIALIZER, styleParsed));
+	}
+
+	/**
+	 * Sets the {@link #TAILLABEL__E} attribute of the given {@link Edge} to the
+	 * given <i>tailLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #TAILLABEL__E} attribute.
+	 * @param tailLabel
+	 *            The new value for the {@link #TAILLABEL__E} attribute.
+	 */
+	public static void setTailLabelRaw(Edge edge, ID tailLabel) {
+		edge.attributesProperty().put(TAILLABEL__E, tailLabel);
 	}
 
 	/**
@@ -2957,7 +4770,38 @@ public class DotAttributes {
 	 *            The new value for the {@link #TAILLABEL__E} attribute.
 	 */
 	public static void setTailLabel(Edge edge, String tailLabel) {
-		edge.attributesProperty().put(TAILLABEL__E, tailLabel);
+		setTailLabelRaw(edge, ID.fromValue(tailLabel));
+	}
+
+	/**
+	 * Sets the {@link #TAILLABEL__E} attribute of the given {@link Edge} to the
+	 * given <i>tailLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #TAILLABEL__E} attribute.
+	 * @param tailLabel
+	 *            The new value for the {@link #TAILLABEL__E} attribute.
+	 */
+	public static void setTailLabelParsed(Edge edge, String tailLabel) {
+		setTailLabel(edge, tailLabel);
+	}
+
+	/**
+	 * Sets the {@link #TAIL_LP__E} attribute of the given {@link Edge} to the
+	 * given <i>tailLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #TAIL_LP__E} attribute.
+	 * @param tailLp
+	 *            The new value for the {@link #TAIL_LP__E} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>tailLp</i> value is not supported.
+	 */
+	public static void setTailLpRaw(Edge edge, ID tailLp) {
+		validate(AttributeContext.EDGE, TAIL_LP__E, tailLp.toValue());
+		edge.attributesProperty().put(TAIL_LP__E, tailLp);
 	}
 
 	/**
@@ -2973,8 +4817,7 @@ public class DotAttributes {
 	 *             when the given <i>tailLp</i> value is not supported.
 	 */
 	public static void setTailLp(Edge edge, String tailLp) {
-		validate(AttributeContext.EDGE, TAIL_LP__E, tailLp);
-		edge.attributesProperty().put(TAIL_LP__E, tailLp);
+		setTailLpRaw(edge, ID.fromValue(tailLp, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -2990,8 +4833,25 @@ public class DotAttributes {
 	 *             when the given <i>tailLpParsed</i> value is not supported.
 	 */
 	public static void setTailLpParsed(Edge edge, Point tailLpParsed) {
-		setTailLp(edge,
-				serialize(DotLanguageSupport.POINT_SERIALIZER, tailLpParsed));
+		setTailLp(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.POINT_SERIALIZER, tailLpParsed));
+	}
+
+	/**
+	 * Sets the {@link #WIDTH__N} attribute of the given {@link Node} to the
+	 * given <i>width</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #WIDTH__N} attribute.
+	 * @param width
+	 *            The new value for the {@link #WIDTH__N} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>width</i> value is not supported.
+	 */
+	public static void setWidthRaw(Node node, ID width) {
+		validate(AttributeContext.NODE, WIDTH__N, width.toValue());
+		node.attributesProperty().put(WIDTH__N, width);
 	}
 
 	/**
@@ -3007,8 +4867,7 @@ public class DotAttributes {
 	 *             when the given <i>width</i> value is not supported.
 	 */
 	public static void setWidth(Node node, String width) {
-		validate(AttributeContext.NODE, WIDTH__N, width);
-		node.attributesProperty().put(WIDTH__N, width);
+		setWidthRaw(node, ID.fromValue(width, Type.NUMERAL));
 	}
 
 	/**
@@ -3024,7 +4883,22 @@ public class DotAttributes {
 	 *             when the given <i>widthParsed</i> value is not supported.
 	 */
 	public static void setWidthParsed(Node node, Double widthParsed) {
-		setWidth(node, widthParsed.toString());
+		setWidth(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.DOUBLE_SERIALIZER, widthParsed));
+	}
+
+	/**
+	 * Sets the {@link #XLABEL__NE} attribute of the given {@link Edge} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @param xLabel
+	 *            The new value for the {@link #XLABEL__NE} attribute.
+	 */
+	public static void setXLabelRaw(Edge edge, ID xLabel) {
+		edge.attributesProperty().put(XLABEL__NE, xLabel);
 	}
 
 	/**
@@ -3038,7 +4912,38 @@ public class DotAttributes {
 	 *            The new value for the {@link #XLABEL__NE} attribute.
 	 */
 	public static void setXLabel(Edge edge, String xLabel) {
-		edge.attributesProperty().put(XLABEL__NE, xLabel);
+		setXLabelRaw(edge, ID.fromValue(xLabel));
+	}
+
+	/**
+	 * Sets the {@link #XLABEL__NE} attribute of the given {@link Edge} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @param xLabel
+	 *            The new value for the {@link #XLABEL__NE} attribute.
+	 */
+	// TODO: introduce LblString
+	public static void setXLabelParsed(Edge edge, String xLabel) {
+		// TODO: use LBL_STRING_SERIALIZER and infer type from LblString
+		// sub-type
+		setXLabel(edge, xLabel);
+	}
+
+	/**
+	 * Sets the {@link #XLABEL__NE} attribute of the given {@link Node} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @param xLabel
+	 *            The new value for the {@link #XLABEL__NE} attribute.
+	 */
+	public static void setXLabelRaw(Node node, ID xLabel) {
+		node.attributesProperty().put(XLABEL__NE, xLabel);
 	}
 
 	/**
@@ -3052,7 +4957,41 @@ public class DotAttributes {
 	 *            The new value for the {@link #XLABEL__NE} attribute.
 	 */
 	public static void setXLabel(Node node, String xLabel) {
-		node.attributesProperty().put(XLABEL__NE, xLabel);
+		setXLabelRaw(node, ID.fromValue(xLabel));
+	}
+
+	/**
+	 * Sets the {@link #XLABEL__NE} attribute of the given {@link Node} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #XLABEL__NE} attribute.
+	 * @param xLabel
+	 *            The new value for the {@link #XLABEL__NE} attribute.
+	 */
+	// TODO: introduce LblString
+	public static void setXLabelParsed(Node node, String xLabel) {
+		// TODO: use LBL_STRING_SERIALIZER and infer type from LblString
+		// sub-type
+		setXLabel(node, xLabel);
+	}
+
+	/**
+	 * Sets the {@link #XLP__NE} attribute of the given {@link Edge} to the
+	 * given <i>xlp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #XLP__NE} attribute.
+	 * @param xlp
+	 *            The new value for the {@link #XLP__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>xlp</i> value is not supported.
+	 */
+	public static void setXlpRaw(Edge edge, ID xlp) {
+		validate(AttributeContext.EDGE, XLP__NE, xlp.toValue());
+		edge.attributesProperty().put(XLP__NE, xlp);
 	}
 
 	/**
@@ -3068,25 +5007,7 @@ public class DotAttributes {
 	 *             when the given <i>xlp</i> value is not supported.
 	 */
 	public static void setXlp(Edge edge, String xlp) {
-		validate(AttributeContext.EDGE, XLP__NE, xlp);
-		edge.attributesProperty().put(XLP__NE, xlp);
-	}
-
-	/**
-	 * Sets the {@link #XLP__NE} attribute of the given {@link Node} to the
-	 * given <i>xlp</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #XLP__NE} attribute.
-	 * @param xlp
-	 *            The new value for the {@link #XLP__NE} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>xlp</i> value is not supported.
-	 */
-	public static void setXlp(Node node, String xlp) {
-		validate(AttributeContext.NODE, XLP__NE, xlp);
-		node.attributesProperty().put(XLP__NE, xlp);
+		setXlpRaw(edge, ID.fromValue(xlp, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -3102,7 +5023,41 @@ public class DotAttributes {
 	 *             when the given <i>xlpParsed</i> value is not supported.
 	 */
 	public static void setXlpParsed(Edge edge, Point xlpParsed) {
-		setXlp(edge, serialize(DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
+		setXlp(edge, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
+	}
+
+	/**
+	 * Sets the {@link #XLP__NE} attribute of the given {@link Node} to the
+	 * given <i>xlp</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #XLP__NE} attribute.
+	 * @param xlp
+	 *            The new value for the {@link #XLP__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>xlp</i> value is not supported.
+	 */
+	public static void setXlpRaw(Node node, ID xlp) {
+		validate(AttributeContext.NODE, XLP__NE, xlp.toValue());
+		node.attributesProperty().put(XLP__NE, xlp);
+	}
+
+	/**
+	 * Sets the {@link #XLP__NE} attribute of the given {@link Node} to the
+	 * given <i>xlp</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #XLP__NE} attribute.
+	 * @param xlp
+	 *            The new value for the {@link #XLP__NE} attribute.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>xlp</i> value is not supported.
+	 */
+	public static void setXlp(Node node, String xlp) {
+		setXlpRaw(node, ID.fromValue(xlp, Type.QUOTED_STRING));
 	}
 
 	/**
@@ -3118,7 +5073,8 @@ public class DotAttributes {
 	 *             when the given <i>xlpParsed</i> value is not supported.
 	 */
 	public static void setXlpParsed(Node node, Point xlpParsed) {
-		setXlp(node, serialize(DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
+		setXlp(node, DotLanguageSupport.serializeAttributeValue(
+				DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
 	}
 
 	private static void validate(AttributeContext context, String attributeName,

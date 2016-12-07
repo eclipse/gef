@@ -21,13 +21,6 @@ import static org.junit.Assert.fail;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
-import org.eclipse.gef.dot.internal.language.dir.DirType;
-import org.eclipse.gef.dot.internal.language.layout.Layout;
-import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
-import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
-import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
-import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
@@ -35,18 +28,25 @@ import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypeFactory;
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.PrimitiveShape;
+import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.ColorFactory;
 import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.language.dir.DirType;
+import org.eclipse.gef.dot.internal.language.layout.Layout;
+import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
+import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.language.point.Point;
 import org.eclipse.gef.dot.internal.language.point.PointFactory;
+import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedShape;
 import org.eclipse.gef.dot.internal.language.shape.Shape;
 import org.eclipse.gef.dot.internal.language.shape.ShapeFactory;
+import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.splinetype.Spline;
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType;
 import org.eclipse.gef.dot.internal.language.splinetype.SplinetypeFactory;
@@ -741,20 +741,6 @@ public class DotAttributesTests {
 					"Cannot set edge attribute 'lp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
 					e.getMessage());
 		}
-	}
-
-	@Test
-	public void edge_name() {
-		Node n1 = new Node.Builder().buildNode();
-		Node n2 = new Node.Builder().buildNode();
-		Edge edge = new Edge.Builder(n1, n2).buildEdge();
-
-		// set valid string values
-		final String validEdgeName = "simpleEdge";
-		DotAttributes._setName(edge, validEdgeName);
-		assertEquals(validEdgeName, DotAttributes._getName(edge));
-
-		// TODO: add test case for setting invalid edge name (e.g. a keyword)
 	}
 
 	@Test
@@ -1458,18 +1444,6 @@ public class DotAttributesTests {
 	}
 
 	@Test
-	public void graph_name() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		final String validGraphName = "simpleGraph";
-		DotAttributes._setName(g, validGraphName);
-		assertEquals(validGraphName, DotAttributes._getName(g));
-
-		// TODO: add test cases for setting invalid graph name (e.g. a keyword)
-	}
-
-	@Test
 	public void graph_outputorder() {
 		Graph g = new Graph.Builder().build();
 
@@ -1821,30 +1795,6 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of 'compound', 'curved', '', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
-					e.getMessage());
-		}
-	}
-
-	@Test
-	public void graph_type() {
-		Graph g = new Graph.Builder().build();
-
-		// set valid string values
-		String validGraphType = "graph";
-		DotAttributes._setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes._getType(g));
-
-		validGraphType = "digraph";
-		DotAttributes._setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes._getType(g));
-
-		// set invalid string values
-		try {
-			DotAttributes._setType(g, "foo");
-			fail("Expecting IllegalArgumentException.");
-		} catch (IllegalArgumentException e) {
-			assertEquals(
-					"Cannot set graph attribute \"type\" to \"foo\"; supported values: graph, digraph",
 					e.getMessage());
 		}
 	}
@@ -2263,18 +2213,6 @@ public class DotAttributesTests {
 		final String validNodeLabel = "nodeLabel";
 		DotAttributes.setLabel(n, validNodeLabel);
 		assertEquals(validNodeLabel, DotAttributes.getLabel(n));
-	}
-
-	@Test
-	public void node_name() {
-		Node n = new Node.Builder().buildNode();
-
-		// set valid string values
-		final String validNodeName = "simpleNode";
-		DotAttributes._setName(n, validNodeName);
-		assertEquals(validNodeName, DotAttributes._getName(n));
-
-		// TODO: add test case for setting invalid node name (e.g. a keyword)
 	}
 
 	@Test

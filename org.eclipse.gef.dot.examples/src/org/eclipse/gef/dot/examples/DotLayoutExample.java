@@ -20,6 +20,7 @@ import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotExport;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.point.PointFactory;
 import org.eclipse.gef.geometry.planar.Point;
@@ -80,8 +81,8 @@ public class DotLayoutExample extends AbstractZestExample {
 			}).copy(context.getGraph());
 
 			// set graph type and DOT layout algorithm
-			DotAttributes._setType(dotGraph, DotAttributes._TYPE__G__DIGRAPH);
-			DotAttributes.setLayout(dotGraph, Layout.CIRCO.toString());
+			DotAttributes._setType(dotGraph, GraphType.DIGRAPH);
+			DotAttributes.setLayoutParsed(dotGraph, Layout.CIRCO);
 
 			// export the Graph with DotAttributs to a DOT string and call the
 			// dot executable to add layout info to it

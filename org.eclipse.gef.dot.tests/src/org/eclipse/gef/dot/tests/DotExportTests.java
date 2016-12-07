@@ -16,16 +16,13 @@ package org.eclipse.gef.dot.tests;
 
 import static org.eclipse.gef.dot.tests.DotTestUtils.RESOURCES_TESTS;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotExport;
 import org.eclipse.gef.dot.internal.DotFileUtils;
-import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.graph.Graph;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -62,29 +59,6 @@ public class DotExportTests {
 	@Test
 	public void styledGraph() {
 		testDotExport(DotTestUtils.getStyledGraph(), "styled_graph.dot");
-	}
-
-	/** Test setting layout algorithms. */
-	@Test
-	public void layoutToGraphvizLayoutMapping() {
-		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotAttributes._NAME__GNE, "LayoutMapping")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
-				.attr(DotAttributes.LAYOUT__G, Layout.DOT.toString());
-		assertTrue("'dot'",
-				dotExport.exportDot(graph.build()).contains("layout=\"dot\""));
-		graph.attr(DotAttributes.LAYOUT__G, Layout.TWOPI.toString());
-		assertTrue("'twopi'", dotExport.exportDot(graph.build())
-				.contains("layout=\"twopi\""));
-		graph.attr(DotAttributes.LAYOUT__G, Layout.OSAGE.toString());
-		assertTrue("'osage'", dotExport.exportDot(graph.build())
-				.contains("layout=\"osage\""));
-		graph.attr(DotAttributes.LAYOUT__G, Layout.FDP.toString());
-		assertTrue("'fdp'",
-				dotExport.exportDot(graph.build()).contains("layout=\"fdp\""));
-		graph.attr(DotAttributes.LAYOUT__G, Layout.SFDP.toString());
-		assertTrue("'sfdp'",
-				dotExport.exportDot(graph.build()).contains("layout=\"sfdp\""));
 	}
 
 	private void testDotExport(final Graph graph, String fileName) {

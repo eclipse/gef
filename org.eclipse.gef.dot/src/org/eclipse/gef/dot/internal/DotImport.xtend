@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - merge DotInterpreter into DotImport (bug #491261)
+ *     Tamas Miklossy  (itemis AG) - Merge DotInterpreter into DotImport (bug #491261)
  *                                 - Add support for all dot attributes (bug #461506)
  * 
  *******************************************************************************/
@@ -28,19 +28,20 @@ import org.eclipse.gef.dot.internal.language.dot.DotGraph
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhs
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
-import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.dot.NodeId
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.gef.dot.internal.language.dot.Stmt
 import org.eclipse.gef.dot.internal.language.dot.Subgraph
 import org.eclipse.gef.dot.internal.language.parser.antlr.DotParser
 import org.eclipse.gef.dot.internal.language.splines.Splines
+import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Graph.Builder
 import org.eclipse.gef.graph.Node
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
+import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.
@@ -53,15 +54,16 @@ class DotImport {
 	// fields are private by default 
 	@Inject
 	var static DotParser dotParser
-	
+
 	Builder graphBuilder
-	Map<String, String> globalGraphAttributes = newHashMap
-	Map<String, String> globalNodeAttributes = newHashMap
-	Map<String, String> globalEdgeAttributes = newHashMap
+	Map<String, ID> globalGraphAttributes = newHashMap
+	Map<String, ID> globalNodeAttributes = newHashMap
+	Map<String, ID> globalEdgeAttributes = newHashMap
 
 	// TODO: support a list of graphs
 	def Graph importDot(String dotString) {
 		if (dotParser == null) {
+
 			// if we are not injected (standalone), create parser instance
 			dotParser = new DotStandaloneSetup().createInjectorAndDoEMFRegistration().getInstance(DotParser)
 		}
@@ -102,19 +104,12 @@ class DotImport {
 		_createCache_createNode.clear
 
 		// name (meta-attribute)
-		val escapedName = name
-		if (escapedName != null) {
-			graphBuilder.attr(_NAME__GNE, escapedName)
+		if (name != null) {
+			graphBuilder.attr(_NAME__GNE, name)
 		}
 
 		// type (meta-attribute)
-		graphBuilder.attr(
-			_TYPE__G,
-			if (type == GraphType.GRAPH)
-				_TYPE__G__GRAPH
-			else
-				_TYPE__G__DIGRAPH
-		)
+		graphBuilder.attr(_TYPE__G, type)
 
 		// process all statements except for graph attributes, they will be processed later
 		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt]
@@ -124,7 +119,7 @@ class DotImport {
 		// ensure attribute values get properly validated.
 		val graph = graphBuilder.build
 
-		val setter = [ String attributeName, (Graph, String)=>void f |
+		val setter = [ String attributeName, (Graph, ID)=>void f |
 			val attributeValue = getAttributeValue(attributeName)
 			if (attributeValue != null) {
 				f.apply(graph, attributeValue)
@@ -133,13 +128,13 @@ class DotImport {
 			}
 		]
 
-		setter.apply(BGCOLOR__G, [g, value|g.setBgColor(value)])
-		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterRank(value)])
-		setter.apply(FONTCOLOR__GNE, [g, value|g.setFontColor(value)])
-		setter.apply(LAYOUT__G, [g, value|g.setLayout(value)])
-		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputOrder(value)])
-		setter.apply(PAGEDIR__G, [g, value|g.setPagedir(value)])
-		setter.apply(RANKDIR__G, [g, value|g.setRankdir(value)])
+		setter.apply(BGCOLOR__G, [g, value|g.setBgColorRaw(value)])
+		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterRankRaw(value)])
+		setter.apply(FONTCOLOR__GNE, [g, value|g.setFontColorRaw(value)])
+		setter.apply(LAYOUT__G, [g, value|g.setLayoutRaw(value)])
+		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputOrderRaw(value)])
+		setter.apply(PAGEDIR__G, [g, value|g.setPagedirRaw(value)])
+		setter.apply(RANKDIR__G, [g, value|g.setRankdirRaw(value)])
 
 		// splines
 		var splines = getAttributeValue(SPLINES__G)
@@ -147,11 +142,11 @@ class DotImport {
 			splines = globalGraphAttributes.get(SPLINES__G)
 		}
 		if (splines != null) {
-
 			// XXX: splines can either be a defined enum value or a bool value
 			// (which is mapped to respective enum values) we use the enum
 			// values alone and thus map the bool value here
-			val Boolean booleanValue = DotLanguageSupport.parseAttributeValue(DotLanguageSupport.BOOL_PARSER, splines)
+			val Boolean booleanValue = DotLanguageSupport.parseAttributeValue(DotLanguageSupport.BOOL_PARSER,
+				splines.toValue)
 			if (booleanValue != null) {
 				graph.setSplinesParsed(
 					if (Boolean.TRUE.equals(booleanValue))
@@ -160,7 +155,7 @@ class DotImport {
 						Splines.FALSE
 				)
 			} else {
-				graph.setSplines(splines)
+				graph.setSplinesRaw(splines)
 			}
 		}
 
@@ -168,6 +163,7 @@ class DotImport {
 	}
 
 	private def Node transformNodeId(NodeId it) {
+
 		// create an empty attribute lists indicating no local node attribute definitions
 		transformNodeId(#[DotFactory.eINSTANCE.createAttrList])
 	}
@@ -177,7 +173,7 @@ class DotImport {
 
 		val node = name.createNode
 
-		val setter = [ String attributeName, (Node, String)=>void f |
+		val setter = [ String attributeName, (Node, ID)=>void f |
 			val attributeValue = attrLists.getAttributeValue(attributeName)
 			if (attributeValue != null) {
 				f.apply(node, attributeValue)
@@ -188,23 +184,23 @@ class DotImport {
 			}
 		]
 
-		setter.apply(COLOR__NE, [n, value|n.setColor(value)])
-		setter.apply(COLORSCHEME__GNE, [n, value|n.setColorScheme(value)])
-		setter.apply(DISTORTION__N, [n, value|n.setDistortion(value)])
-		setter.apply(FILLCOLOR__NE, [n, value|n.setFillColor(value)])
-		setter.apply(FIXEDSIZE__N, [n, value|n.setFixedSize(value)])
-		setter.apply(FONTCOLOR__GNE, [n, value|n.setFontColor(value)])
-		setter.apply(HEIGHT__N, [n, value|n.setHeight(value)])
-		setter.apply(ID__GNE, [n, value|n.setId(value)])
-		setter.apply(LABEL__GNE, [n, value|n.setLabel(value)])
-		setter.apply(POS__NE, [n, value|n.setPos(value)])
-		setter.apply(SHAPE__N, [n, value|n.setShape(value)])
-		setter.apply(SIDES__N, [n, value|n.setSides(value)])
-		setter.apply(SKEW__N, [n, value|n.setSkew(value)])
-		setter.apply(STYLE__GNE, [n, value|n.setStyle(value)])
-		setter.apply(WIDTH__N, [n, value|n.setWidth(value)])
-		setter.apply(XLABEL__NE, [n, value|n.setXLabel(value)])
-		setter.apply(XLP__NE, [n, value|n.setXlp(value)])
+		setter.apply(COLOR__NE, [n, value|n.setColorRaw(value)])
+		setter.apply(COLORSCHEME__GNE, [n, value|n.setColorSchemeRaw(value)])
+		setter.apply(DISTORTION__N, [n, value|n.setDistortionRaw(value)])
+		setter.apply(FILLCOLOR__NE, [n, value|n.setFillColorRaw(value)])
+		setter.apply(FIXEDSIZE__N, [n, value|n.setFixedSizeRaw(value)])
+		setter.apply(FONTCOLOR__GNE, [n, value|n.setFontColorRaw(value)])
+		setter.apply(HEIGHT__N, [n, value|n.setHeightRaw(value)])
+		setter.apply(ID__GNE, [n, value|n.setIdRaw(value)])
+		setter.apply(LABEL__GNE, [n, value|n.setLabelRaw(value)])
+		setter.apply(POS__NE, [n, value|n.setPosRaw(value)])
+		setter.apply(SHAPE__N, [n, value|n.setShapeRaw(value)])
+		setter.apply(SIDES__N, [n, value|n.setSidesRaw(value)])
+		setter.apply(SKEW__N, [n, value|n.setSkewRaw(value)])
+		setter.apply(STYLE__GNE, [n, value|n.setStyleRaw(value)])
+		setter.apply(WIDTH__N, [n, value|n.setWidthRaw(value)])
+		setter.apply(XLABEL__NE, [n, value|n.setXLabelRaw(value)])
+		setter.apply(XLP__NE, [n, value|n.setXlpRaw(value)])
 
 		node
 	}
@@ -221,26 +217,29 @@ class DotImport {
 	private def dispatch void transformStmt(AttrStmt it) {
 		switch type {
 			case GRAPH: {
+
 				// global graph attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalGraphAttributes.put(name, value)
+						globalGraphAttributes.put(name.toValue, value)
 					]
 				]
 			}
 			case NODE: {
+
 				// global node attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalNodeAttributes.put(name, value)
+						globalNodeAttributes.put(name.toValue, value)
 					]
 				]
 			}
 			case EDGE: {
+
 				// global edge attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalEdgeAttributes.put(name, value)
+						globalEdgeAttributes.put(name.toValue, value)
 					]
 				]
 			}
@@ -250,7 +249,7 @@ class DotImport {
 	private def dispatch void transformStmt(NodeStmt it) {
 		node.transformNodeId(attrLists)
 	}
-	
+
 	private def dispatch void transformStmt(EdgeStmtNode it) {
 		var sourceNode = node.transformNodeId
 		for (EdgeRhs edgeRhs : edgeRHS) {
@@ -268,22 +267,22 @@ class DotImport {
 			}
 		}
 	}
-	
+
 	private def dispatch void transformStmt(Subgraph it) {
+
 		//FIXME: we ignore subgraphs for now, but transform nested statements
 		it.stmts.forEach[transformStmt]
 	}
 
-	private def create new Node.Builder().buildNode() createNode(String nodeName) {
-		_setName(nodeName)
+	private def create new Node.Builder().buildNode() createNode(ID nodeName) {
+		_setNameRaw(nodeName)
 		graphBuilder.nodes(it)
 	}
 
 	def private void createEdge(Node sourceNode, String edgeOp, Node targetNode, List<AttrList> attrLists) {
-		val edge = new Edge.Builder(sourceNode, targetNode).attr(_NAME__GNE,
-			sourceNode._getName + edgeOp + targetNode._getName).buildEdge()
+		val edge = new Edge.Builder(sourceNode, targetNode).buildEdge()
 
-		val setter = [ String attributeName, (Edge, String)=>void f |
+		val setter = [ String attributeName, (Edge, ID)=>void f |
 			val attributeValue = attrLists.getAttributeValue(attributeName)
 			if (attributeValue != null) {
 				f.apply(edge, attributeValue)
@@ -292,35 +291,36 @@ class DotImport {
 			}
 		]
 
-		setter.apply(ARROWHEAD__E, [e, value|e.setArrowHead(value)])
-		setter.apply(ARROWSIZE__E, [e, value|e.setArrowSize(value)])
-		setter.apply(ARROWTAIL__E, [e, value|e.setArrowTail(value)])
-		setter.apply(COLOR__NE, [e, value|e.setColor(value)])
-		setter.apply(COLORSCHEME__GNE, [e, value|e.setColorScheme(value)])
-		setter.apply(DIR__E, [e, value|e.setDir(value)])
-		setter.apply(FILLCOLOR__NE, [e, value|e.setFillColor(value)])
-		setter.apply(FONTCOLOR__GNE, [e, value|e.setFontColor(value)])
-		setter.apply(HEAD_LP__E, [e, value|e.setHeadLp(value)])
-		setter.apply(HEADLABEL__E, [e, value|e.setHeadLabel(value)])
-		setter.apply(ID__GNE, [e, value|e.setId(value)])
-		setter.apply(LABEL__GNE, [e, value|e.setLabel(value)])
-		setter.apply(LABELFONTCOLOR__E, [e, value|e.setLabelFontColor(value)])
-		setter.apply(LP__GE, [e, value|e.setLp(value)])
-		setter.apply(POS__NE, [e, value|e.setPos(value)])
-		setter.apply(STYLE__GNE, [e, value|e.setStyle(value)])
-		setter.apply(TAILLABEL__E, [e, value|e.setTailLabel(value)])
-		setter.apply(TAIL_LP__E, [e, value|e.setTailLp(value)])
-		setter.apply(XLABEL__NE, [e, value|e.setXLabel(value)])
-		setter.apply(XLP__NE, [e, value|e.setXlp(value)])
+		setter.apply(ARROWHEAD__E, [e, value|e.setArrowHeadRaw(value)])
+		setter.apply(ARROWSIZE__E, [e, value|e.setArrowSizeRaw(value)])
+		setter.apply(ARROWTAIL__E, [e, value|e.setArrowTailRaw(value)])
+		setter.apply(COLOR__NE, [e, value|e.setColorRaw(value)])
+		setter.apply(COLORSCHEME__GNE, [e, value|e.setColorSchemeRaw(value)])
+		setter.apply(DIR__E, [e, value|e.setDirRaw(value)])
+		setter.apply(FILLCOLOR__NE, [e, value|e.setFillColorRaw(value)])
+		setter.apply(FONTCOLOR__GNE, [e, value|e.setFontColorRaw(value)])
+		setter.apply(HEAD_LP__E, [e, value|e.setHeadLpRaw(value)])
+		setter.apply(HEADLABEL__E, [e, value|e.setHeadLabelRaw(value)])
+		setter.apply(ID__GNE, [e, value|e.setIdRaw(value)])
+		setter.apply(LABEL__GNE, [e, value|e.setLabelRaw(value)])
+		setter.apply(LABELFONTCOLOR__E, [e, value|e.setLabelFontColorRaw(value)])
+		setter.apply(LP__GE, [e, value|e.setLpRaw(value)])
+		setter.apply(POS__NE, [e, value|e.setPosRaw(value)])
+		setter.apply(STYLE__GNE, [e, value|e.setStyleRaw(value)])
+		setter.apply(TAILLABEL__E, [e, value|e.setTailLabelRaw(value)])
+		setter.apply(TAIL_LP__E, [e, value|e.setTailLpRaw(value)])
+		setter.apply(XLABEL__NE, [e, value|e.setXLabelRaw(value)])
+		setter.apply(XLP__NE, [e, value|e.setXlpRaw(value)])
 
 		graphBuilder.edges(edge)
 	}
 
-	def static String getAttributeValue(DotGraph graph, String name) {
+	def static ID getAttributeValue(DotGraph graph, String name) {
 		for (stmt : graph.stmts) {
-			var String value = switch stmt {
+			var ID value = switch stmt {
 				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
-				Attribute: stmt.getAttributeValue(name)
+				Attribute:
+					stmt.getAttributeValue(name)
 			}
 			if (value != null) {
 				return value
@@ -340,7 +340,7 @@ class DotImport {
 	 * @return The attribute value or <code>null</code> in case the attribute
 	 *         could not be found.
 	 */
-	def static String getAttributeValue(List<AttrList> attrLists, String name) {
+	def static ID getAttributeValue(List<AttrList> attrLists, String name) {
 		for (AttrList attrList : attrLists) {
 			val value = attrList.getAttributeValue(name)
 			if (value != null) {
@@ -350,12 +350,12 @@ class DotImport {
 		null
 	}
 
-	def private static String getAttributeValue(AttrList attrList, String name) {
-		attrList.attributes.findFirst[it.name == name]?.value
+	def private static ID getAttributeValue(AttrList attrList, String name) {
+		attrList.attributes.findFirst[it.name.toValue == name]?.value
 	}
 
-	def private static String getAttributeValue(Attribute attribute, String name) {
-		if (attribute.name.equals(name)) {
+	def private static ID getAttributeValue(Attribute attribute, String name) {
+		if (attribute.name.toValue.equals(name)) {
 			return attribute.value
 		}
 		null

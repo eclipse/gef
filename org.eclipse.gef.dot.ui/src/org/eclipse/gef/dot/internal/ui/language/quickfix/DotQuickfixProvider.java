@@ -16,9 +16,10 @@ package org.eclipse.gef.dot.internal.ui.language.quickfix;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.language.conversion.DotTerminalConverters;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
+import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
@@ -37,12 +38,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	public void fixEdgeStyleAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {
-			// quote values if needed, otherwise use plain attribute value
-			// TODO: Use value converter for ID instead
-			final String validValue = DotTerminalConverters
-					.needsToBeQuoted(edgeStyle.toString())
-							? DotTerminalConverters.quote(edgeStyle.toString())
-							: edgeStyle.toString();
+			final ID validValue = ID.fromValue(edgeStyle.toString(),
+					Type.QUOTED_STRING);
 			acceptor.accept(issue,
 					"Replace '" + issue.getData()[0] + "' with '" + validValue //$NON-NLS-1$ //$NON-NLS-2$
 							+ "'.", //$NON-NLS-1$

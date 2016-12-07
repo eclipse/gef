@@ -16,7 +16,7 @@ package org.eclipse.gef.dot.internal.language;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotImport;
-import org.eclipse.gef.dot.internal.language.conversion.DotTerminalConverters;
+import org.eclipse.gef.dot.internal.language.terminals.DotTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverterService;
 
 import com.google.inject.Binder;

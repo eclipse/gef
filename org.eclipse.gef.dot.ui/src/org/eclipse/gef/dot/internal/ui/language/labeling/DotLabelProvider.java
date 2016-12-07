@@ -86,12 +86,12 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	Object text(DotGraph graph) {
-		String name = graph.getName();
+		String name = graph.getName().toValue();
 		return styled((name != null ? name : "<?>") + ": Graph"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	Object text(Subgraph graph) {
-		String name = graph.getName();
+		String name = graph.getName().toValue();
 		return styled((name != null ? name : "<?>") + ": Subgraph"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -101,7 +101,7 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
 	Object text(EdgeStmtNode edge) {
 		String format = "%s %s [%s %s]: Edges"; //$NON-NLS-1$
-		String sourceNode = edge.getNode().getName();
+		String sourceNode = edge.getNode().getName().toValue();
 		String opLiteral = edge.getEdgeRHS().get(0).getOp().getLiteral();
 		int targetNodeCount = edge.getEdgeRHS().size();
 		return styled(String.format(format, sourceNode, opLiteral,

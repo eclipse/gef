@@ -14,6 +14,7 @@
 package org.eclipse.gef.dot.tests;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
+import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.graph.Edge;
@@ -35,32 +36,29 @@ public final class DotTestUtils {
 	public static Graph getLabeledGraph() {
 		/* Global settings: */
 		Graph.Builder graph = new Graph.Builder()
-				.attr(DotAttributes._NAME__GNE, "LabeledGraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH);
+				.attr(DotAttributes::_setName, "LabeledGraph")
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH);
 
 		/* Nodes: */
-		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
-				.attr(DotAttributes.LABEL__GNE, "one \"1\"").buildNode();
-		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2") //$NON-NLS-1$
-				.attr(DotAttributes.LABEL__GNE, "two").buildNode();
-		Node n3 = new Node.Builder().attr(DotAttributes._NAME__GNE, "3") //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
+				.attr(DotAttributes::setLabel, "one \"1\"").buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2") //$NON-NLS-1$
+				.attr(DotAttributes::setLabel, "two").buildNode();
+		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "3") //$NON-NLS-1$
 				.buildNode();
-		Node n4 = new Node.Builder().attr(DotAttributes._NAME__GNE, "4") //$NON-NLS-1$
+		Node n4 = new Node.Builder().attr(DotAttributes::_setName, "4") //$NON-NLS-1$
 				.buildNode();
 
 		/* Connection from n1 to n2: */
-		Edge e1 = new Edge.Builder(n1, n2)
-				.attr(DotAttributes._NAME__GNE, "1->2") //$NON-NLS-1$
-				.attr(DotAttributes.LABEL__GNE, "+1").buildEdge();
+		Edge e1 = new Edge.Builder(n1, n2).attr(DotAttributes::setLabel, "+1")
+				.buildEdge();
 
 		/* Connection from n1 to n3: */
-		Edge e2 = new Edge.Builder(n1, n3)
-				.attr(DotAttributes._NAME__GNE, "1->3") //$NON-NLS-1$
-				.attr(DotAttributes.LABEL__GNE, "+2").buildEdge();
+		Edge e2 = new Edge.Builder(n1, n3).attr(DotAttributes::setLabel, "+2")
+				.buildEdge();
 
 		/* Connection from n3 to n4: */
-		Edge e3 = new Edge.Builder(n3, n4)
-				.attr(DotAttributes._NAME__GNE, "3->4").buildEdge();
+		Edge e3 = new Edge.Builder(n3, n4).buildEdge();
 
 		return graph.nodes(n1, n2, n3, n4).edges(e1, e2, e3).build();
 	}
@@ -69,24 +67,22 @@ public final class DotTestUtils {
 
 		/* Global settings, here we set the directed property: */
 		Graph.Builder graph = new Graph.Builder()
-				.attr(DotAttributes._NAME__GNE, "SimpleDigraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH);
+				.attr(DotAttributes::_setName, "SimpleDigraph")
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH);
 
 		/* Nodes: */
-		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
 				.buildNode();
-		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2") //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2") //$NON-NLS-1$
 				.buildNode();
-		Node n3 = new Node.Builder().attr(DotAttributes._NAME__GNE, "3") //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "3") //$NON-NLS-1$
 				.buildNode();
 
 		/* Connection from n1 to n2: */
-		Edge e1 = new Edge.Builder(n1, n2)
-				.attr(DotAttributes._NAME__GNE, "1->2").buildEdge();
+		Edge e1 = new Edge.Builder(n1, n2).buildEdge();
 
 		/* Connection from n2 to n3: */
-		Edge e2 = new Edge.Builder(n2, n3)
-				.attr(DotAttributes._NAME__GNE, "2->3").buildEdge();
+		Edge e2 = new Edge.Builder(n2, n3).buildEdge();
 
 		return graph.nodes(n1, n2, n3).edges(e1, e2).build();
 	}
@@ -94,24 +90,22 @@ public final class DotTestUtils {
 	public static Graph getSimpleGraph() {
 		/* Set a layout algorithm: */
 		Graph.Builder graph = new Graph.Builder()
-				.attr(DotAttributes._NAME__GNE, "SimpleGraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH);
+				.attr(DotAttributes::_setName, "SimpleGraph")
+				.attr(DotAttributes::_setType, GraphType.GRAPH);
 
 		/* Set the nodes: */
-		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
 				.buildNode();
-		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2") //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2") //$NON-NLS-1$
 				.buildNode();
-		Node n3 = new Node.Builder().attr(DotAttributes._NAME__GNE, "3") //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "3") //$NON-NLS-1$
 				.buildNode();
 
 		/* Connection from n1 to n2: */
-		Edge e1 = new Edge.Builder(n1, n2)
-				.attr(DotAttributes._NAME__GNE, "1--2").buildEdge();
+		Edge e1 = new Edge.Builder(n1, n2).buildEdge();
 
 		/* Connection from n1 to n3: */
-		Edge e2 = new Edge.Builder(n1, n3)
-				.attr(DotAttributes._NAME__GNE, "1--3").buildEdge();
+		Edge e2 = new Edge.Builder(n1, n3).buildEdge();
 
 		return graph.nodes(n1, n2, n3).edges(e1, e2).build();
 	}
@@ -119,49 +113,44 @@ public final class DotTestUtils {
 	public static Graph getStyledGraph() {
 		/* Global properties: */
 		Graph.Builder graph = new Graph.Builder()
-				.attr(DotAttributes._NAME__GNE, "StyledGraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
-				.attr(DotAttributes.LAYOUT__G, Layout.DOT.toString());
+				.attr(DotAttributes::_setName, "StyledGraph")
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH)
+				.attr(DotAttributes::setLayoutParsed, Layout.DOT);
 
 		/* Nodes: */
-		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
 				.buildNode();
-		Node n2 = new Node.Builder().attr(DotAttributes._NAME__GNE, "2") //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2") //$NON-NLS-1$
 				.buildNode();
-		Node n3 = new Node.Builder().attr(DotAttributes._NAME__GNE, "3") //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "3") //$NON-NLS-1$
 				.buildNode();
-		Node n4 = new Node.Builder().attr(DotAttributes._NAME__GNE, "4") //$NON-NLS-1$
+		Node n4 = new Node.Builder().attr(DotAttributes::_setName, "4") //$NON-NLS-1$
 				.buildNode();
-		Node n5 = new Node.Builder().attr(DotAttributes._NAME__GNE, "5") //$NON-NLS-1$
+		Node n5 = new Node.Builder().attr(DotAttributes::_setName, "5") //$NON-NLS-1$
 				.buildNode();
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2)
-				.attr(DotAttributes._NAME__GNE, "1->2")
-				.attr(DotAttributes.STYLE__GNE, EdgeStyle.DASHED.toString())
+				.attr(DotAttributes::setStyle, EdgeStyle.DASHED.toString())
 				.buildEdge();
 
 		/* Connection from n2 to n3: */
 		Edge e2 = new Edge.Builder(n2, n3)
-				.attr(DotAttributes._NAME__GNE, "2->3")
-				.attr(DotAttributes.STYLE__GNE, EdgeStyle.DOTTED.toString())
+				.attr(DotAttributes::setStyle, EdgeStyle.DOTTED.toString())
 				.buildEdge();
 
 		/* Connection from n3 to n4: */
 		Edge e3 = new Edge.Builder(n3, n4)
-				.attr(DotAttributes._NAME__GNE, "3->4")
-				.attr(DotAttributes.STYLE__GNE, EdgeStyle.DASHED.toString())
+				.attr(DotAttributes::setStyle, EdgeStyle.DASHED.toString())
 				.buildEdge();
 
 		/* Connection from n3 to n5: */
 		Edge e4 = new Edge.Builder(n3, n5)
-				.attr(DotAttributes._NAME__GNE, "3->5")
-				.attr(DotAttributes.STYLE__GNE, EdgeStyle.DASHED.toString())
+				.attr(DotAttributes::setStyle, EdgeStyle.DASHED.toString())
 				.buildEdge();
 
 		Edge e5 = new Edge.Builder(n4, n5)
-				.attr(DotAttributes._NAME__GNE, "4->5")
-				.attr(DotAttributes.STYLE__GNE, EdgeStyle.SOLID.toString())
+				.attr(DotAttributes::setStyle, EdgeStyle.SOLID.toString())
 				.buildEdge();
 
 		return graph.nodes(n1, n2, n3, n4, n5).edges(e1, e2, e3, e4, e5)

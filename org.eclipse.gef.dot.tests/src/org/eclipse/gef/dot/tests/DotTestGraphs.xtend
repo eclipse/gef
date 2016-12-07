@@ -501,21 +501,21 @@ class DotTestGraphs {
 	public static val EDGE_COLOR_LOCAL = '''
 		graph {
 			1--2[color="0.000 0.000 1.000"]
-			3--4[color="white"]
+			3--4[color=white]
 		}
 	'''
 	
 	public static val EDGE_COLOR_OVERRIDE = '''
 		graph {
 			edge[color="0.000 0.000 1.000"]
-			1--2[color="white"]
+			1--2[color=white]
 			3--4
 		}
 	'''
 	
 	public static val EDGE_COLORSCHEME_GLOBAL = '''
 		graph {
-			edge[colorscheme="accent3"]
+			edge[colorscheme=accent3]
 			1--2
 			3--4
 		}
@@ -523,15 +523,15 @@ class DotTestGraphs {
 	
 	public static val EDGE_COLORSCHEME_LOCAL = '''
 		graph {
-			1--2[colorscheme="accent3"]
-			3--4[colorscheme="accent4"]
+			1--2[colorscheme=accent3]
+			3--4[colorscheme=accent4]
 		}
 	'''
 	
 	public static val EDGE_COLORSCHEME_OVERRIDE = '''
 		graph {
-			edge[colorscheme="accent3"]
-			1--2[colorscheme="accent4"]
+			edge[colorscheme=accent3]
+			1--2[colorscheme=accent4]
 			3--4
 		}
 	'''
@@ -570,14 +570,14 @@ class DotTestGraphs {
 	public static val EDGE_FILLCOLOR_LOCAL = '''
 		graph {
 			1--2[fillcolor="0.000 0.000 0.000"]
-			3--4[fillcolor="black"]
+			3--4[fillcolor=black]
 		}
 	'''
 	
 	public static val EDGE_FILLCOLOR_OVERRIDE = '''
 		graph {
 			edge[fillcolor="0.000 0.000 0.000"]
-			1--2[fillcolor="black"]
+			1--2[fillcolor=black]
 			3--4
 		}
 	'''
@@ -593,14 +593,14 @@ class DotTestGraphs {
 	public static val EDGE_FONTCOLOR_LOCAL = '''
 		graph {
 			1--2[fontcolor="0.000 1.000 1.000"]
-			3--4[fontcolor="red"]
+			3--4[fontcolor=red]
 		}
 	'''
 	
 	public static val EDGE_FONTCOLOR_OVERRIDE = '''
 		graph {
 			edge[fontcolor="0.000 1.000 1.000"]
-			1--2[fontcolor="red"]
+			1--2[fontcolor=red]
 			3--4
 		}
 	'''
@@ -677,14 +677,14 @@ class DotTestGraphs {
 	public static val EDGE_LABELFONTCOLOR_LOCAL = '''
 		graph {
 			1--2[labelfontcolor="0.482 0.714 0.878"]
-			3--4[labelfontcolor="turquoise"]
+			3--4[labelfontcolor=turquoise]
 		}
 	'''
 	
 	public static val EDGE_LABELFONTCOLOR_OVERRIDE = '''
 		graph {
 			edge[labelfontcolor="0.482 0.714 0.878"]
-			1--2[labelfontcolor="turquoise"]
+			1--2[labelfontcolor=turquoise]
 			3--4
 		}
 	'''
@@ -832,7 +832,7 @@ class DotTestGraphs {
 	
 	public static val NODE_COLORSCHEME_GLOBAL = '''
 		graph {
-			node[colorscheme="accent5"]
+			node[colorscheme=accent5]
 			1
 			2
 		}
@@ -840,15 +840,15 @@ class DotTestGraphs {
 	
 	public static val NODE_COLORSCHEME_LOCAL = '''
 		graph {
-			1[colorscheme="accent5"]
-			2[colorscheme="accent6"]
+			1[colorscheme=accent5]
+			2[colorscheme=accent6]
 		}
 	'''
 	
 	public static val NODE_COLORSCHEME_OVERRIDE = '''
 		graph {
-			node[colorscheme="accent5"]
-			1[colorscheme="accent6"]
+			node[colorscheme=accent5]
+			1[colorscheme=accent6]
 			2
 		}
 	'''
@@ -1089,7 +1089,7 @@ class DotTestGraphs {
 	public static val NODE_SKEW_OVERRIDE = '''
 		graph {
 			node[skew=7.8]
-			1[skew="-7.8"]
+			1[skew=-7.8]
 			2
 		}
 	'''
