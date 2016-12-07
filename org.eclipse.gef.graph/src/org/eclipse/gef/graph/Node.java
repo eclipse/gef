@@ -13,13 +13,18 @@
  *******************************************************************************/
 package org.eclipse.gef.graph;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
@@ -45,9 +50,9 @@ public class Node implements IAttributeStore {
 	 */
 	public static class Builder {
 
-		private Map<String, Object> attrs = new HashMap<>();
 		private Graph.Builder.Context context;
 		private Object key;
+		private List<Entry<Object, Object>> attr = new ArrayList<>();
 
 		/**
 		 * Constructs a new (anonymous) context-free {@link Node.Builder}, which
@@ -87,6 +92,23 @@ public class Node implements IAttributeStore {
 		}
 
 		/**
+		 * Uses the given setter to set the attribute value.
+		 *
+		 * @param <T>
+		 *            The type of the attribute.
+		 *
+		 * @param setter
+		 *            The setter to apply.
+		 * @param value
+		 *            The value to apply.
+		 * @return <code>this</code> for convenience.
+		 */
+		public <T> Node.Builder attr(BiConsumer<Node, T> setter, T value) {
+			attr.add(new AbstractMap.SimpleImmutableEntry<>(setter, value));
+			return this;
+		}
+
+		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
 		 * {@link Node#attributesProperty() attributesProperty map} of the
 		 * {@link Node} which is constructed by this {@link Builder}.
@@ -98,7 +120,7 @@ public class Node implements IAttributeStore {
 		 * @return <code>this</code> for convenience.
 		 */
 		public Node.Builder attr(String key, Object value) {
-			attrs.put(key, value);
+			attr.add(new AbstractMap.SimpleImmutableEntry<>(key, value));
 			return this;
 		}
 
@@ -118,8 +140,17 @@ public class Node implements IAttributeStore {
 		 *
 		 * @return A newly created {@link Node}.
 		 */
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public Node buildNode() {
-			return new Node(attrs);
+			Node n = new Node();
+			for (Entry<Object, Object> s : attr) {
+				if (s.getKey() instanceof String) {
+					n.attributesProperty().put((String) s.getKey(), s.getValue());
+				} else {
+					((BiConsumer) s.getKey()).accept(n, s.getValue());
+				}
+			}
+			return n;
 		}
 
 		/**
@@ -342,8 +373,7 @@ public class Node implements IAttributeStore {
 
 	/**
 	 * Returns all (local) neighbors of this {@link Node}, i.e. the union of the
-	 * {@link #getPredecessorNodes()} and {@link #getSuccessorNodes()}
-	 * .
+	 * {@link #getPredecessorNodes()} and {@link #getSuccessorNodes()} .
 	 *
 	 * @return All (local) neighbors of this {@link Node}.
 	 */
@@ -352,6 +382,17 @@ public class Node implements IAttributeStore {
 		neighbors.addAll(getPredecessorNodes());
 		neighbors.addAll(getSuccessorNodes());
 		return neighbors;
+	}
+
+	/**
+	 * Returns the {@link Graph} that is nested inside of this {@link Node}. May
+	 * be <code>null</code>.
+	 *
+	 * @return The {@link Graph} that is nested inside of this {@link Node}, or
+	 *         <code>null</code>.
+	 */
+	public Graph getNestedGraph() {
+		return nestedGraph;
 	}
 
 	/**
@@ -402,17 +443,6 @@ public class Node implements IAttributeStore {
 			successors.add(outgoing.getTarget());
 		}
 		return successors;
-	}
-
-	/**
-	 * Returns the {@link Graph} that is nested inside of this {@link Node}. May
-	 * be <code>null</code>.
-	 *
-	 * @return The {@link Graph} that is nested inside of this {@link Node}, or
-	 *         <code>null</code>.
-	 */
-	public Graph getNestedGraph() {
-		return nestedGraph;
 	}
 
 	/**

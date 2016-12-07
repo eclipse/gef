@@ -13,14 +13,17 @@
  *******************************************************************************/
 package org.eclipse.gef.graph;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
@@ -77,10 +80,10 @@ public final class Graph implements IAttributeStore {
 			protected List<Object> nodeKeys = new ArrayList<>();
 		}
 
+		private List<Entry<Object, Object>> attr = new ArrayList<>();
 		private HashMap<Object, Node> nodes = new HashMap<>();
 		private List<Edge> edges = new ArrayList<>();
 		private Context context;
-		private Map<String, Object> attrs = new HashMap<>();
 
 		/**
 		 * Constructs a new {@link Builder} without {@link Node}s and
@@ -89,6 +92,23 @@ public final class Graph implements IAttributeStore {
 		public Builder() {
 			context = new Context();
 			context.builder = this;
+		}
+
+		/**
+		 * Uses the given setter to set the attribute value.
+		 *
+		 * @param <T>
+		 *            The type of the attribute.
+		 *
+		 * @param setter
+		 *            The setter to apply.
+		 * @param value
+		 *            The value to apply.
+		 * @return <code>this</code> for convenience.
+		 */
+		public <T> Graph.Builder attr(BiConsumer<Graph, T> setter, T value) {
+			attr.add(new AbstractMap.SimpleImmutableEntry<>(setter, value));
+			return this;
 		}
 
 		/**
@@ -103,7 +123,7 @@ public final class Graph implements IAttributeStore {
 		 * @return <code>this</code> for convenience.
 		 */
 		public Graph.Builder attr(String key, Object value) {
-			attrs.put(key, value);
+			attr.add(new AbstractMap.SimpleImmutableEntry<>(key, value));
 			return this;
 		}
 
@@ -114,6 +134,7 @@ public final class Graph implements IAttributeStore {
 		 * @return A new {@link Graph} from the values which have been supplied
 		 *         to this {@link Builder}.
 		 */
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public Graph build() {
 			for (Node.Builder nb : context.nodeBuilders.values()) {
 				nodes.put(nb.getKey(), nb.buildNode());
@@ -125,7 +146,15 @@ public final class Graph implements IAttributeStore {
 			for (Object key : context.nodeKeys) {
 				nodeList.add(nodes.get(key));
 			}
-			return new Graph(attrs, nodeList, edges);
+			Graph g = new Graph(nodeList, edges);
+			for (Entry<Object, Object> s : attr) {
+				if (s.getKey() instanceof String) {
+					g.attributesProperty().put((String) s.getKey(), s.getValue());
+				} else {
+					((BiConsumer) s.getKey()).accept(g, s.getValue());
+				}
+			}
+			return g;
 		}
 
 		/**
@@ -297,10 +326,24 @@ public final class Graph implements IAttributeStore {
 
 	/**
 	 * Default constructor, using empty collections for attributes, nodes, and
-	 * edgesProperty.
+	 * edges.
 	 */
 	public Graph() {
 		this(new HashMap<String, Object>(), new ArrayList<Node>(), new ArrayList<Edge>());
+	}
+
+	/**
+	 * Constructs a new {@link Graph} from the given nodes, and edges but empty
+	 * attributes. Associates all nodes and edgesProperty with this
+	 * {@link Graph}.
+	 *
+	 * @param nodes
+	 *            List of {@link Node}s.
+	 * @param edges
+	 *            List of {@link Edge}s.
+	 */
+	public Graph(Collection<? extends Node> nodes, Collection<? extends Edge> edges) {
+		this(new HashMap<String, Object>(), nodes, edges);
 	}
 
 	/**

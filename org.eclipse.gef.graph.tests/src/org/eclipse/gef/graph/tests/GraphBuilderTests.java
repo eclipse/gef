@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
@@ -169,6 +170,41 @@ public class GraphBuilderTests {
 				.get("label"), "n1");
 		assertEquals(graph.getEdges().get(1).getTarget().getAttributes()
 				.get("label"), "n3");
+	}
+
+	/**
+	 * Test that values are overwritten in the order they are specified in the
+	 * builder.
+	 */
+	@Test
+	public void overrideAttributeWithSetter() {
+		Builder b = new Graph.Builder();
+		b.attr(new BiConsumer<Graph, String>() {
+
+			@Override
+			public void accept(Graph t, String u) {
+				t.attributesProperty().put("test", u);
+			}
+		}, "v1");
+		assertEquals("v1", b.build().attributesProperty().get("test"));
+		b.attr("test", "v2");
+		assertEquals("v2", b.build().attributesProperty().get("test"));
+		b.attr(new BiConsumer<Graph, String>() {
+
+			@Override
+			public void accept(Graph t, String u) {
+				t.attributesProperty().put("test", u);
+			}
+		}, "v3");
+		assertEquals("v3", b.build().attributesProperty().get("test"));
+		b.attr(new BiConsumer<Graph, String>() {
+
+			@Override
+			public void accept(Graph t, String u) {
+				t.attributesProperty().put("test", u);
+			}
+		}, "v4");
+		assertEquals("v4", b.build().attributesProperty().get("test"));
 	}
 
 	@Test

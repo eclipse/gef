@@ -13,9 +13,14 @@
  *******************************************************************************/
 package org.eclipse.gef.graph;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
 
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
@@ -42,8 +47,8 @@ public class Edge implements IAttributeStore {
 	 */
 	public static class Builder {
 
+		private List<Entry<Object, Object>> attr = new ArrayList<>();
 		private Graph.Builder.Context context;
-		private Map<String, Object> attrs = new HashMap<>();
 		private Object sourceNodeOrKey;
 		private Object targetNodeOrKey;
 
@@ -86,6 +91,23 @@ public class Edge implements IAttributeStore {
 		}
 
 		/**
+		 * Uses the given setter to set the attribute value.
+		 *
+		 * @param <T>
+		 *            The attribute type.
+		 *
+		 * @param setter
+		 *            The setter to apply.
+		 * @param value
+		 *            The value to apply.
+		 * @return <code>this</code> for convenience.
+		 */
+		public <T> Edge.Builder attr(BiConsumer<Edge, T> setter, T value) {
+			attr.add(new AbstractMap.SimpleImmutableEntry<>(setter, value));
+			return this;
+		}
+
+		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
 		 * {@link Edge#attributesProperty() attributesProperty map} of the
 		 * {@link Edge} which is constructed by this {@link Builder}.
@@ -97,7 +119,7 @@ public class Edge implements IAttributeStore {
 		 * @return <code>this</code> for convenience.
 		 */
 		public Edge.Builder attr(String key, Object value) {
-			attrs.put(key, value);
+			attr.add(new AbstractMap.SimpleImmutableEntry<>(key, value));
 			return this;
 		}
 
@@ -120,6 +142,7 @@ public class Edge implements IAttributeStore {
 		 *
 		 * @return A newly created {@link Edge}.
 		 */
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public Edge buildEdge() {
 			if (context == null && !(sourceNodeOrKey instanceof Node)) {
 				throw new IllegalStateException("May only use builder keys in case of chained builders.");
@@ -131,7 +154,16 @@ public class Edge implements IAttributeStore {
 					: context.builder.findOrCreateNode(sourceNodeOrKey);
 			Node targetNode = targetNodeOrKey instanceof Node ? (Node) targetNodeOrKey
 					: context.builder.findOrCreateNode(targetNodeOrKey);
-			return new Edge(attrs, sourceNode, targetNode);
+
+			Edge e = new Edge(sourceNode, targetNode);
+			for (Entry<Object, Object> s : attr) {
+				if (s.getKey() instanceof String) {
+					e.attributesProperty().put((String) s.getKey(), s.getValue());
+				} else {
+					((BiConsumer) s.getKey()).accept(e, s.getValue());
+				}
+			}
+			return e;
 		}
 
 		/**
