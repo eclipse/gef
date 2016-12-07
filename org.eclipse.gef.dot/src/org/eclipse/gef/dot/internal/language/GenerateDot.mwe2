@@ -251,6 +251,21 @@ Workflow {
 					ignoreCase = true
 				}
 			}
+			
+			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
+			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+			    // A grammar file with .g will be expected in this package (should be stored in src folder)
+			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorLexer"
+			    contentAssist = true
+			    antlrParam = "-lib"
+			    // This is the folder where the lexer will be created
+			    antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
+			}
+			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+			    // A grammar file with .g will be expected in this package (should be stored in src folder)
+			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorLexer"
+			    highlighting = true
+			}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
