@@ -14,7 +14,6 @@ package org.eclipse.gef.mvc.examples.logo.policies;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -35,8 +34,8 @@ import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
 import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
-import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.common.collect.HashMultimap;
 
@@ -100,13 +99,8 @@ public class CreateAndTranslateOnDragPolicy extends AbstractInteractionPolicy im
 	}
 
 	protected IViewer getContentViewer() {
-		Map<AdapterKey<? extends IViewer>, IViewer> viewers = getHost().getRoot().getViewer().getDomain().getViewers();
-		for (Entry<AdapterKey<? extends IViewer>, IViewer> e : viewers.entrySet()) {
-			if (IDomain.CONTENT_VIEWER_ROLE.equals(e.getKey().getRole())) {
-				return e.getValue();
-			}
-		}
-		throw new IllegalStateException("Cannot find content viewer!");
+		return getHost().getRoot().getViewer().getDomain()
+				.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 	}
 
 	@Override
@@ -156,7 +150,7 @@ public class CreateAndTranslateOnDragPolicy extends AbstractInteractionPolicy im
 		// create copy of host's geometry using CreationPolicy from root part
 		CreationPolicy creationPolicy = contentRoot.getAdapter(CreationPolicy.class);
 		init(creationPolicy);
-		createdShapePart = (GeometricShapePart) creationPolicy.create(copy, (GeometricModelPart) modelPart,
+		createdShapePart = (GeometricShapePart) creationPolicy.create(copy, modelPart,
 				HashMultimap.<IContentPart<? extends Node>, String> create());
 		commit(creationPolicy);
 

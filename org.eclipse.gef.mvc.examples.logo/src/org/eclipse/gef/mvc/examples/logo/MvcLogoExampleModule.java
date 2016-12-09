@@ -28,7 +28,7 @@ import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleHoverHandlePartFact
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExamplePaletteContentPartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteElementPart;
-import org.eclipse.gef.mvc.examples.logo.parts.PaletteModelPart;
+import org.eclipse.gef.mvc.examples.logo.parts.PaletteRootPart;
 import org.eclipse.gef.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.ContentRestrictedChangeViewportPolicy;
@@ -331,11 +331,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
 	}
 
-	protected void bindIRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(IRootPart.class)
-				.in(AdaptableScopes.typed(IViewer.class));
-	}
-
 	protected void bindPaletteElementPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateAndTranslateOnDragPolicy.class);
@@ -345,6 +340,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(PaletteFocusBehavior.class);
+	}
+
+	protected void bindPaletteRootPartAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE)).to(PaletteRootPart.class)
+				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
 	/**
@@ -366,7 +366,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindHoverModelAsPaletteViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsPaletteViewerAdapter(adapterMapBinder);
 		// bind root part
-		bindIRootPartAsPaletteViewerAdapter(adapterMapBinder);
+		bindPaletteRootPartAsPaletteViewerAdapter(adapterMapBinder);
 		// add hover feedback factory
 		bindSelectionFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		bindSelectionHandleFactoryAsPaletteViewerAdapter(adapterMapBinder);
@@ -456,8 +456,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindPaletteViewerRootPartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), IRootPart.class, PALETTE_VIEWER_ROLE));
 		bindPaletteElementPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), PaletteElementPart.class));
-		AdapterMaps.getAdapterMapBinder(binder(), PaletteModelPart.class).addBinding(AdapterKey.defaultRole())
-				.to(HoverOnHoverPolicy.class);
 	}
 
 	@Override

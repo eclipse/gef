@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.examples.logo.model.PaletteModel;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -31,8 +32,8 @@ public class MvcLogoExample extends AbstractMvcExample {
 		return Collections.singletonList(new GeometricModel());
 	}
 
-	public static List<PaletteModel> createPaletteContents() {
-		return Collections.singletonList(new PaletteModel());
+	public static List<GeometricShape> createPaletteContents() {
+		return new PaletteModel().getCreatableShapes();
 	}
 
 	public static void main(String[] args) {
