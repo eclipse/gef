@@ -58,7 +58,10 @@ import com.google.inject.Module;
  * {@link AdapterMap#adaptableType() type} (by being qualified with a respective
  * {@link AdapterMap} annotation), which is either the same or a super-type or
  * super-interface of the {@link IAdaptable} will be evaluated, and respective
- * adapters will be injected.
+ * adapters will be injected. If the {@link AdapterMap} specifies a
+ * {@link AdapterMap#adaptableRole() role}, adapters will only be injected, if
+ * the adaptable is itself adapted (as an adapter to another adapter) with the
+ * specified role.
  * <p>
  * In order to enable adapter injection, {@link AdapterInjectionSupport} has to
  * be installed by one of the {@link Module}s used by the {@link Injector}.
@@ -76,7 +79,7 @@ import com.google.inject.Module;
 public @interface AdapterMap {
 
 	/**
-	 * The default adaptable role (if no specific role is to be used).
+	 * The default adapter role (if no specific role is to be used).
 	 */
 	public static final String DEFAULT_ROLE = "default";
 

@@ -53,9 +53,8 @@ public class AdapterMaps {
 	}
 
 	/**
-	 * Returns a {@link MapBinder}, which is bound to an {@link AdapterMap}
-	 * annotation of the given type, and can thus be used to specify adapter
-	 * that are to injected into {@link IAdaptable}s of the respective type.
+	 * Returns a {@link MapBinder}, which can be used to define adapter bindings
+	 * for an {@link IAdaptable}s of the given type.
 	 *
 	 * @param binder
 	 *            The {@link Binder} used to create a new {@link MapBinder}.
@@ -74,22 +73,30 @@ public class AdapterMaps {
 	}
 
 	/**
-	 * Returns a {@link MapBinder}, which is bound to an {@link AdapterMap}
-	 * annotation of the given type and role, and can thus be used to specify
-	 * adapter that are to injected into {@link IAdaptable}s of the respective
-	 * type and role.
+	 * Returns a {@link MapBinder}, which can be used to define adapter bindings
+	 * for an {@link IAdaptable}s of the given type, restricting it further to
+	 * those {@link IAdaptable}s that are themselves
+	 * {@link org.eclipse.gef.common.adapt.IAdaptable.Bound adapted} to another
+	 * {@link IAdaptable} with the specified role.
 	 *
 	 * @param binder
 	 *            The {@link Binder} used to create a new {@link MapBinder}.
 	 * @param type
 	 *            The type to be used as type of the {@link AdapterMap}.
 	 * @param role
-	 *            The role of the adaptable to bind values to.
+	 *            The role of the adaptable to bind values to. This refers to
+	 *            the role under which the {@link IAdaptable} is itself
+	 *            {@link org.eclipse.gef.common.adapt.IAdaptable.Bound bound} to
+	 *            another {@link IAdaptable} as adapter.
 	 * @return A new {@link MapBinder} used to define adapter map bindings for
 	 *         the given type (and all sub-types).
 	 */
 	public static MapBinder<AdapterKey<?>, Object> getAdapterMapBinder(
 			Binder binder, Class<? extends IAdaptable> type, String role) {
+		if (!IAdaptable.Bound.class.isAssignableFrom(type)) {
+			throw new IllegalArgumentException(
+					"In order to restrict adapter map bindings with a role, the IAdaptable has to be IAdaptable.Bound (with the role).");
+		}
 		MapBinder<AdapterKey<?>, Object> adapterMapBinder = MapBinder
 				.newMapBinder(binder, new TypeLiteral<AdapterKey<?>>() {
 				}, new TypeLiteral<Object>() {
