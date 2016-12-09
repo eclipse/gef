@@ -80,10 +80,8 @@ import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.Provider;
-import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 import javafx.scene.paint.Color;
@@ -119,11 +117,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(DefaultFocusFeedbackPartFactory.class);
 	}
 
-	@SuppressWarnings("serial")
 	protected void bindFocusModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<FocusModel>() {
-		})).to(new TypeLiteral<FocusModel>() {
-		});
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusModel.class);
 	}
 
 	protected void bindFXCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
