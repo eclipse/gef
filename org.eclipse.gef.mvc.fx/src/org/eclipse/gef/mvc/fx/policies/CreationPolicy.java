@@ -12,13 +12,16 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
+import org.eclipse.gef.mvc.fx.operations.ChangeContentsOperation;
 import org.eclipse.gef.mvc.fx.operations.ChangeFocusOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
@@ -26,6 +29,7 @@ import org.eclipse.gef.mvc.fx.operations.SelectOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
@@ -66,7 +70,7 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 	 *            The content {@link Object} to be created.
 	 * @param parent
 	 *            The {@link IContentPart} where the <i>content</i> is added as
-	 *            a child.
+	 *            a child or the {@link IRootPart} for 'root' content.
 	 * @param index
 	 *            The index for the new element.
 	 * @param anchoreds
@@ -80,7 +84,7 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 	 * @return The {@link IContentPart} controlling the newly created content.
 	 */
 	public IContentPart<? extends Node> create(Object content,
-			IContentPart<? extends Node> parent, int index,
+			IVisualPart<? extends Node> parent, int index,
 			SetMultimap<IContentPart<? extends Node>, String> anchoreds,
 			boolean doFocus, boolean doSelect) {
 		checkInitialized();
@@ -97,9 +101,11 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 					"The given anchored parts may not be null");
 		}
 
+		IViewer viewer = getHost().getRoot().getViewer();
+
 		// create content part beforehand
 		IContentPart<? extends Node> contentPart = getContentPartFactory()
-				.createContentPart(content, null);
+				.createContentPart(content, Collections.emptyMap());
 		// establish relationships to parent and anchored parts
 		contentPart.setContent(content);
 		parent.addChild(contentPart, index);
@@ -112,19 +118,29 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 		// synchronization reuses it (when committing the create operation)
 		contentPartPool.add(contentPart);
 
-		// add to parent via content policy
-		ContentPolicy parentContentPolicy = parent
-				.getAdapter(ContentPolicy.class);
-		if (parentContentPolicy == null) {
-			throw new IllegalStateException(
-					"No ContentPolicy registered for <" + parent + ">.");
-		}
-		parentContentPolicy.init();
-		parentContentPolicy.addContentChild(content, index);
-		ITransactionalOperation addToParentOperation = parentContentPolicy
-				.commit();
-		if (addToParentOperation != null) {
-			getCompositeOperation().add(addToParentOperation);
+		if (parent instanceof IRootPart) {
+			// add to viewer content
+			ChangeContentsOperation changeContentsOperation = new ChangeContentsOperation(
+					viewer);
+			List<Object> newContents = new ArrayList<>(viewer.getContents());
+			newContents.add(index, content);
+			changeContentsOperation.setNewContents(newContents);
+			getCompositeOperation().add(changeContentsOperation);
+		} else {
+			// add to content parent
+			ContentPolicy parentContentPolicy = parent
+					.getAdapter(ContentPolicy.class);
+			if (parentContentPolicy == null) {
+				throw new IllegalStateException(
+						"No ContentPolicy registered for <" + parent + ">.");
+			}
+			parentContentPolicy.init();
+			parentContentPolicy.addContentChild(content, index);
+			ITransactionalOperation addToParentOperation = parentContentPolicy
+					.commit();
+			if (addToParentOperation != null) {
+				getCompositeOperation().add(addToParentOperation);
+			}
 		}
 
 		// add anchoreds via content policy
@@ -171,6 +187,12 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 	/**
 	 * Creates an {@link IContentPart} for the given content {@link Object} and
 	 * establishes parent and anchored relationships for the newly created part.
+	 * The respective content operations are also created.
+	 *
+	 * In case the given part is to be created for root contents, the root part
+	 * is expected to be passed in as parent. The content will then be added to
+	 * the viewer contents.
+	 *
 	 * Besides, operations are created for the establishment of the parent and
 	 * anchored relationships within the content model. These operations are
 	 * part of the operation returned by {@link #commit()}.
@@ -186,10 +208,13 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 	 * @return The {@link IContentPart} controlling the newly created content.
 	 */
 	public IContentPart<? extends Node> create(Object content,
-			IContentPart<? extends Node> parent,
+			IVisualPart<? extends Node> parent,
 			SetMultimap<IContentPart<? extends Node>, String> anchoreds) {
-		return create(content, parent, parent.getChildrenUnmodifiable().size(),
-				anchoreds, true, true);
+		int index = parent instanceof IRootPart
+				? getHost().getRoot().getViewer().getContents().size()
+				: ((IContentPart<? extends Node>) parent)
+						.getContentChildrenUnmodifiable().size();
+		return create(content, parent, index, anchoreds, true, true);
 	}
 
 	/**

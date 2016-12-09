@@ -12,10 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
+import org.eclipse.gef.mvc.fx.operations.ChangeContentsOperation;
 import org.eclipse.gef.mvc.fx.operations.ChangeFocusOperation;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
 import org.eclipse.gef.mvc.fx.operations.DetachFromContentAnchorageOperation;
@@ -55,6 +58,7 @@ public class DeletionPolicy extends AbstractTransactionPolicy {
 	protected ITransactionalOperation createOperation() {
 		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation(
 				"Delete Content");
+		// TODO: inline creation of nested operations into createOperation()
 		IViewer viewer = getHost().getRoot().getViewer();
 		// unfocus
 		IContentPart<? extends Node> currentlyFocusedPart = viewer
@@ -86,9 +90,9 @@ public class DeletionPolicy extends AbstractTransactionPolicy {
 		checkInitialized();
 
 		// clear viewer models so that anchoreds are removed
+		IViewer viewer = getHost().getRoot().getViewer();
 		getDeselectOperation().getToBeDeselected().add(contentPartToDelete);
-		FocusModel focusModel = getHost().getRoot().getViewer()
-				.getAdapter(FocusModel.class);
+		FocusModel focusModel = viewer.getAdapter(FocusModel.class);
 		if (focusModel != null) {
 			if (focusModel.getFocus() == contentPartToDelete) {
 				getUnfocusOperation().setNewFocused(null);
@@ -114,32 +118,42 @@ public class DeletionPolicy extends AbstractTransactionPolicy {
 						anchoredContentPolicy.detachFromContentAnchorage(
 								contentPartToDelete.getContent(), role);
 					}
-					ITransactionalOperation detachAnchoredOperation = anchoredContentPolicy
+					ITransactionalOperation detachFromContentAnchoredOperation = anchoredContentPolicy
 							.commit();
-					if (detachAnchoredOperation != null
-							&& !detachAnchoredOperation.isNoOp()) {
-						getDetachAnchoragesOperation()
-								.add(detachAnchoredOperation);
+					if (detachFromContentAnchoredOperation != null
+							&& !detachFromContentAnchoredOperation.isNoOp()) {
+						getDetachContentAnchoragesOperation()
+								.add(detachFromContentAnchoredOperation);
 					}
 				}
 			}
 		}
 
-		// remove from content parent
-		ContentPolicy parentContentPolicy = contentPartToDelete.getParent()
-				.getAdapter(ContentPolicy.class);
-		if (parentContentPolicy != null) {
-			parentContentPolicy.init();
-			parentContentPolicy
-					.removeContentChild(contentPartToDelete.getContent());
-			ITransactionalOperation removeFromParentOperation = parentContentPolicy
-					.commit();
-			if (removeFromParentOperation != null
-					&& !removeFromParentOperation.isNoOp()) {
-				getRemoveChildrenOperation().add(removeFromParentOperation);
+		if (contentPartToDelete.getParent() instanceof IRootPart) {
+			// remove content from viewer contents
+			ChangeContentsOperation changeContentsOperation = new ChangeContentsOperation(
+					viewer);
+			List<Object> newContents = new ArrayList<>(viewer.getContents());
+			newContents.remove(contentPartToDelete.getContent());
+			changeContentsOperation.setNewContents(newContents);
+			getRemoveContentChildrenOperation().add(changeContentsOperation);
+		} else {
+			// remove from content parent
+			ContentPolicy parentContentPolicy = contentPartToDelete.getParent()
+					.getAdapter(ContentPolicy.class);
+			if (parentContentPolicy != null) {
+				parentContentPolicy.init();
+				parentContentPolicy
+						.removeContentChild(contentPartToDelete.getContent());
+				ITransactionalOperation removeFromParentOperation = parentContentPolicy
+						.commit();
+				if (removeFromParentOperation != null
+						&& !removeFromParentOperation.isNoOp()) {
+					getRemoveContentChildrenOperation()
+							.add(removeFromParentOperation);
+				}
 			}
 		}
-
 		locallyExecuteOperation();
 
 		// verify that all anchoreds were removed
@@ -181,7 +195,7 @@ public class DeletionPolicy extends AbstractTransactionPolicy {
 	 * @return The {@link AbstractCompositeOperation} that is used for detaching
 	 *         anchorages.
 	 */
-	protected AbstractCompositeOperation getDetachAnchoragesOperation() {
+	private AbstractCompositeOperation getDetachContentAnchoragesOperation() {
 		return (AbstractCompositeOperation) getCompositeOperation()
 				.getOperations().get(2);
 	}
@@ -194,7 +208,7 @@ public class DeletionPolicy extends AbstractTransactionPolicy {
 	 * @return The {@link AbstractCompositeOperation} that is used for removing
 	 *         children.
 	 */
-	protected AbstractCompositeOperation getRemoveChildrenOperation() {
+	private AbstractCompositeOperation getRemoveContentChildrenOperation() {
 		return (AbstractCompositeOperation) getCompositeOperation()
 				.getOperations().get(3);
 	}
