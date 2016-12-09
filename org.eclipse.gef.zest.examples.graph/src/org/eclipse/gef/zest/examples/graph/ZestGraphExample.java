@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef.zest.examples.AbstractZestExample;
 import org.eclipse.gef.zest.fx.ZestProperties;
@@ -32,13 +33,7 @@ public class ZestGraphExample extends AbstractZestExample {
 	private static Graph buildAC(String id) {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef.graph.Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(
-				n(ZestProperties.LABEL__NE, "A", ZestProperties.TOOLTIP__N, "Alpha", ZestProperties.CSS_ID__NE,
-						id + "A"),
-				n(ZestProperties.LABEL__NE, "B", ZestProperties.TOOLTIP__N, "Beta", ZestProperties.CSS_ID__NE,
-						id + "B"),
-				n(ZestProperties.LABEL__NE, "C", ZestProperties.TOOLTIP__N, "Gamma", ZestProperties.CSS_ID__NE,
-						id + "C")));
+		nodes.addAll(Arrays.asList(n("A", id, "Alpha"), n("B", id, "Beta"), n("C", id, "Gamma")));
 
 		// create some edges between those nodes
 		List<Edge> edges = new ArrayList<>();
@@ -54,17 +49,8 @@ public class ZestGraphExample extends AbstractZestExample {
 	private static Graph buildAE(String id) {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef.graph.Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(
-				n(ZestProperties.LABEL__NE, "A", ZestProperties.TOOLTIP__N, "Alpha", ZestProperties.CSS_ID__NE,
-						id + "A"),
-				n(ZestProperties.LABEL__NE, "B", ZestProperties.TOOLTIP__N, "Beta", ZestProperties.CSS_ID__NE,
-						id + "B"),
-				n(ZestProperties.LABEL__NE, "C", ZestProperties.TOOLTIP__N, "Gamma", ZestProperties.CSS_ID__NE,
-						id + "C"),
-				n(ZestProperties.LABEL__NE, "D", ZestProperties.TOOLTIP__N, "Delta", ZestProperties.CSS_ID__NE,
-						id + "D"),
-				n(ZestProperties.LABEL__NE, "E", ZestProperties.TOOLTIP__N, "Epsilon", ZestProperties.CSS_ID__NE,
-						id + "E")));
+		nodes.addAll(Arrays.asList(n("A", id, "Alpha"), n("B", id, "Beta"), n("C", id, "Gamma"), n("D", id, "Delta"),
+				n("E", id, "Epsilon")));
 
 		// add nested graphs
 		nodes.get(4).setNestedGraph(buildAC("c"));
@@ -83,16 +69,9 @@ public class ZestGraphExample extends AbstractZestExample {
 	public static Graph createDefaultGraph() {
 		// create nodes "0" to "9"
 		List<org.eclipse.gef.graph.Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(n(ZestProperties.LABEL__NE, "0", ZestProperties.TOOLTIP__N, "zero"),
-				n(ZestProperties.LABEL__NE, "1", ZestProperties.TOOLTIP__N, "one"),
-				n(ZestProperties.LABEL__NE, "2", ZestProperties.TOOLTIP__N, "two"),
-				n(ZestProperties.LABEL__NE, "3", ZestProperties.TOOLTIP__N, "three"),
-				n(ZestProperties.LABEL__NE, "4", ZestProperties.TOOLTIP__N, "four"),
-				n(ZestProperties.LABEL__NE, "5", ZestProperties.TOOLTIP__N, "five"),
-				n(ZestProperties.LABEL__NE, "6", ZestProperties.TOOLTIP__N, "six"),
-				n(ZestProperties.LABEL__NE, "7", ZestProperties.TOOLTIP__N, "seven"),
-				n(ZestProperties.LABEL__NE, "8", ZestProperties.TOOLTIP__N, "eight"),
-				n(ZestProperties.LABEL__NE, "9", ZestProperties.TOOLTIP__N, "nine")));
+		nodes.addAll(Arrays.asList(n("0", "", "zero"), n("1", "", "one"), n("2", "", "two"), n("3", "", "three"),
+				n("4", "", "four"), n("5", "", "five"), n("6", "", "six"), n("7", "", "seven"), n("8", "", "eight"),
+				n("9", "", "nine")));
 
 		// set nested graphs
 		nodes.get(0).setNestedGraph(buildAC("a"));
@@ -109,11 +88,20 @@ public class ZestGraphExample extends AbstractZestExample {
 		HashMap<String, Object> attrs = new HashMap<>();
 		attrs.put(ZestProperties.LAYOUT_ALGORITHM__G, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
+	}
 
+	private static Edge e(Node n, Node m) {
+		return e(n, m, ZestProperties.TARGET_DECORATION__E, new javafx.scene.shape.Polygon(0, 0, 10, 3, 10, -3),
+				ZestProperties.TARGET_DECORATION_CSS_STYLE__E, "-fx-fill: white;");
 	}
 
 	public static void main(String[] args) {
 		Application.launch(args);
+	}
+
+	private static Node n(String label, String idPrefix, String tooltip) {
+		return n(ZestProperties.LABEL__NE, label, ZestProperties.CSS_ID__NE, idPrefix + label,
+				ZestProperties.TOOLTIP__N, tooltip);
 	}
 
 	public ZestGraphExample() {
