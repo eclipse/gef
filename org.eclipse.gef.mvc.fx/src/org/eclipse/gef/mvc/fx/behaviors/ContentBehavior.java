@@ -81,7 +81,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			if (hoverModel != null) {
 				hoverModel.clearHover();
 			}
-
 		}
 	};
 

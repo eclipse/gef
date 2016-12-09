@@ -1,0 +1,63 @@
+digraph g1 {
+    layout="dot";
+    node [shape=rect, style=filled]
+    edge [style=dashed, arrowhead=open]
+
+    common [label="<<component>>\nCommon", fillcolor="grey"];
+    
+    cloudio [label="<<component>>\nCloudio", fillcolor="purple"];
+
+    dot [label="<<component>>\nDOT", fillcolor="pink"];
+    /*dotui [label="DOT.UI"];*/
+
+    fx [label="<<component>>\nFX", fillcolor="orange"];
+    /*fxswt [label="FX.SWT"];*/
+    /*fxui [label="FX.UI"];*/
+
+    geometry [label="<<component>>\nGeometry", fillcolor="green"];
+
+    grap [label="<<component>>\nGraph", fillcolor="red"];
+    
+    layout [label="<<component>>\nLayout", fillcolor="yellow"];
+    
+    mvc [label="<<component>>\nMVC", fillcolor="#6666ff"];
+    /*mvcfx [label="MVC.FX"];
+    mvcui [label="MVC.UI"];
+    mvcfxui [label="MVC.FX.UI"];*/
+
+    zest [label="<<component>>\nZest", fillcolor="cyan"];
+    /*zestfx [label="Zest.FX"];
+    zestfxui [label="Zest.FX.UI"];
+    zestjface [label="Zest.JFace"];*/
+
+    /* cloudio -> ui; */
+    /* common: no deps */
+    /* geometry: no deps */
+    
+    dot -> common;
+    dot -> geometry;
+    dot -> fx;
+    dot -> grap;
+    dot -> layout;
+    dot -> mvc;
+    dot -> zest;
+    
+    fx -> common;
+    fx -> geometry;
+    
+    grap -> common;
+    
+    layout -> common;
+    layout -> geometry;
+    
+    mvc -> common;
+    mvc -> geometry;
+    mvc -> fx;
+    
+    zest -> common;
+    zest -> geometry;
+    zest -> fx;
+    zest -> mvc;
+    zest -> grap;
+    zest -> layout;
+}
