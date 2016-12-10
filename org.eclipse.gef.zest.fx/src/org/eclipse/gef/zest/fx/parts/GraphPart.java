@@ -21,7 +21,6 @@ import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
-import org.eclipse.gef.zest.fx.behaviors.GraphLayoutBehavior;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -49,19 +48,12 @@ public class GraphPart extends AbstractContentPart<Group> {
 		public void onChanged(ListChangeListener.Change<? extends Object> c) {
 			// synchronize children
 			getAdapter(ContentBehavior.class).synchronizeContentPartChildren(doGetContentChildren());
-
-			// apply layout
-			GraphLayoutBehavior layoutBehavior = getAdapter(GraphLayoutBehavior.class);
-			if (layoutBehavior != null) {
-				layoutBehavior.applyLayout(true);
-			}
 		}
 	};
 
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-
 		getContent().getNodes().addListener(graphChildrenObserver);
 		getContent().getEdges().addListener(graphChildrenObserver);
 	}

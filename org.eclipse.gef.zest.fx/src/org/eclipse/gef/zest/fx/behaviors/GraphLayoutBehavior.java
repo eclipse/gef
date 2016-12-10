@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.behaviors;
 
+import java.util.Map;
+
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.graph.Edge;
@@ -20,6 +22,7 @@ import org.eclipse.gef.layout.ILayoutAlgorithm;
 import org.eclipse.gef.layout.ILayoutFilter;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
@@ -32,6 +35,8 @@ import org.eclipse.gef.zest.fx.parts.NodePart;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.SetChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -78,6 +83,21 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		}
 	};
 
+	private ListChangeListener<IVisualPart<? extends Node>> childrenObserver = new ListChangeListener<IVisualPart<? extends Node>>() {
+		@Override
+		public void onChanged(ListChangeListener.Change<? extends IVisualPart<? extends Node>> c) {
+			applyLayout(true);
+		}
+	};
+
+	private SetChangeListener<org.eclipse.gef.graph.Node> hidingModelObserver = new SetChangeListener<org.eclipse.gef.graph.Node>() {
+
+		@Override
+		public void onChanged(SetChangeListener.Change<? extends org.eclipse.gef.graph.Node> change) {
+			applyLayout(true);
+		}
+	};
+
 	/**
 	 * Performs one layout pass using the static layout algorithm that is
 	 * configured for the layout context.
@@ -86,6 +106,14 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 *            Whether to fully re-compute the layout or not.
 	 */
 	public void applyLayout(boolean clean) {
+		// check child parts exist for all content children
+		IViewer viewer = getHost().getRoot().getViewer();
+		Map<Object, IContentPart<? extends Node>> contentPartMap = viewer.getContentPartMap();
+		for (Object c : getHost().getContentChildrenUnmodifiable()) {
+			if (!contentPartMap.containsKey(c)) {
+				return;
+			}
+		}
 		Graph graph = getHost().getContent();
 
 		// update layout algorithm (apply layout will depend on it)
@@ -132,6 +160,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void doActivate() {
+		getHost().getChildrenUnmodifiable().addListener(childrenObserver);
+
 		LayoutContext layoutContext = getLayoutContext();
 		layoutContext.schedulePreLayoutPass(preLayout);
 		layoutContext.schedulePostLayoutPass(postLayout);
@@ -159,7 +189,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 				@Override
 				public boolean isLayoutIrrelevant(Edge edge) {
 					return Boolean.TRUE.equals(ZestProperties.getLayoutIrrelevant(edge))
-							|| isLayoutIrrelevant(edge.getSource()) || isLayoutIrrelevant(edge.getTarget());
+							|| isLayoutIrrelevant(edge.getSource()) || hidingModel.isHidden(edge.getSource())
+							|| isLayoutIrrelevant(edge.getTarget()) || hidingModel.isHidden(edge.getTarget());
 				}
 
 				@Override
@@ -168,6 +199,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 				}
 			});
 		}
+		hidingModel.hiddenProperty().addListener(hidingModelObserver);
 
 		// initially apply layout if no viewport state is saved for this graph,
 		// or we are nested inside a node, or the saved viewport is outdated
@@ -189,6 +221,11 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void doDeactivate() {
+		getHost().getChildrenUnmodifiable().removeListener(childrenObserver);
+
+		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
+		hidingModel.hiddenProperty().removeListener(hidingModelObserver);
+
 		LayoutContext layoutContext = getLayoutContext();
 		layoutContext.unschedulePreLayoutPass(preLayout);
 		layoutContext.unschedulePostLayoutPass(postLayout);
