@@ -91,7 +91,7 @@ public class NodeLabelPart extends AbstractLabelPart {
 			return;
 		}
 
-		refreshPosition(getVisual(), getStoredLabelPosition());
+		refreshPosition(getVisual(), getLabelPosition());
 	}
 
 	@SuppressWarnings("unchecked")

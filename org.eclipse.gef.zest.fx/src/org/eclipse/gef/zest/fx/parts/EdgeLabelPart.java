@@ -119,7 +119,7 @@ public class EdgeLabelPart extends AbstractLabelPart {
 			return;
 		}
 
-		refreshPosition(getVisual(), getStoredLabelPosition());
+		refreshPosition(getVisual(), getLabelPosition());
 	}
 
 	@SuppressWarnings("unchecked")

@@ -107,6 +107,9 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	@Override
 	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		vcl.register(anchorage.getVisual(), getVisual());
+
+		// re-initialize label position (if not already set)
+		setLabelPosition(computeLabelPosition());
 	}
 
 	@Override
@@ -133,7 +136,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 
 	@Override
 	public Affine getContentTransform() {
-		Point p = getStoredLabelPosition();
+		Point p = getLabelPosition();
 		if (p == null) {
 			p = new Point();
 		}
@@ -146,7 +149,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 * @return The key via which to retrieve the position attribute for the
 	 *         label.
 	 */
-	public String getLabelPositionAttributeKey() {
+	private String getLabelPositionAttributeKey() {
 		String labelRole = getContent().getValue();
 		String attributeKey = null;
 		if (ZestProperties.EXTERNAL_LABEL__NE.equals(labelRole)) {
@@ -169,7 +172,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 *
 	 * @return The label position stored in the attributes.
 	 */
-	public Point getStoredLabelPosition() {
+	public Point getLabelPosition() {
 		String key = getLabelPositionAttributeKey();
 		ObservableMap<String, Object> attributes = getContent().getKey().getAttributes();
 		if (!attributes.containsKey(key)) {
@@ -210,7 +213,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 
 	@Override
 	public void setContentTransform(Affine transform) {
-		setStoredLabelPosition(new Point(transform.getTx(), transform.getTy()));
+		setLabelPosition(new Point(transform.getTx(), transform.getTy()));
 	}
 
 	/**
@@ -219,7 +222,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 * @param computedPosition
 	 *            The new label position.
 	 */
-	public void setStoredLabelPosition(Point computedPosition) {
+	public void setLabelPosition(Point computedPosition) {
 		getContent().getKey().getAttributes().put(getLabelPositionAttributeKey(), computedPosition);
 	}
 

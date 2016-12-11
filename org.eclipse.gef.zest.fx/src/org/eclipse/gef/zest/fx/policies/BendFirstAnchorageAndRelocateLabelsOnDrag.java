@@ -74,7 +74,7 @@ public class BendFirstAnchorageAndRelocateLabelsOnDrag extends BendFirstAnchorag
 				.addAll(getEdgeLabelParts((EdgePart) getHost().getAnchoragesUnmodifiable().keySet().iterator().next()));
 		for (Iterator<AbstractLabelPart> iterator = labelParts.iterator(); iterator.hasNext();) {
 			// filter out those that do not have a stored position
-			if (iterator.next().getStoredLabelPosition() == null) {
+			if (iterator.next().getLabelPosition() == null) {
 				iterator.remove();
 			}
 		}

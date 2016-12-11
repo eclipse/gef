@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.behaviors;
 
-import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.behaviors.AbstractBehavior;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -67,10 +66,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 			if (anchored instanceof AbstractLabelPart) {
 				AbstractLabelPart labelPart = (AbstractLabelPart) anchored;
 				// compute label position
-				Point computedPosition = labelPart.computeLabelPosition();
-				// store it as an attribute
-				labelPart.setStoredLabelPosition(computedPosition);
-				labelPart.refreshVisual();
+				labelPart.setLabelPosition(labelPart.computeLabelPosition());
 			}
 		}
 	}

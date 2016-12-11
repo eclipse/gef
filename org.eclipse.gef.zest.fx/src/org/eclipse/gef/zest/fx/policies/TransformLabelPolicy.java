@@ -53,7 +53,7 @@ public class TransformLabelPolicy extends TransformPolicy {
 	}
 
 	private Point getLabelOffsetInParent() {
-		Point labelPositionInScene = getHost().getStoredLabelPosition();
+		Point labelPositionInScene = getHost().getLabelPosition();
 		if (labelPositionInScene == null) {
 			return null;
 		}
