@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
@@ -80,6 +81,27 @@ public class DotExecutableUtilsTests {
 			String[] dotResult = DotExecutableUtils.executeDot(
 					new File(dotExecutablePath), true, dotFile, null, null);
 			assertNotNull("Result should not be null", dotResult);
+		}
+	}
+
+	@Test
+	public void testSupportedExportFormatCalculation() {
+		if (dotExecutablePath != null) {
+			String[] expectedExportFormats = { "bmp", "canon", "cmap", "cmapx",
+					"cmapx_np", "dot", "emf", "emfplus", "eps", "fig", "gd",
+					"gd2", "gif", "gv", "imap", "imap_np", "ismap", "jpe",
+					"jpeg", "jpg", "metafile", "pdf", "pic", "plain",
+					"plain-ext", "png", "pov", "ps", "ps2", "svg", "svgz",
+					"tif", "tiff", "tk", "vml", "vmlz", "vrml", "wbmp", "xdot",
+					"xdot1.2", "xdot1.4" };
+
+			String[] actualExportFormats = DotExecutableUtils
+					.getSupportedExportFormats(dotExecutablePath);
+
+			// compare the string representation of the arrays to get better
+			// feedback in case of failing test cases
+			Assert.assertEquals(Arrays.toString(expectedExportFormats),
+					Arrays.toString(actualExportFormats));
 		}
 	}
 
