@@ -9,9 +9,10 @@
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
+ *                                - minor refactorings
  *     Darius Jockel (itemis AG)  - Added tests for calling dot with large 
  *                                  input files #492395
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
@@ -33,7 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Tests for the {@link DotExport} class.
+ * Tests for the {@link DotExecutableUtils} class.
  * 
  * @author Fabian Steeg (fsteeg)
  * @author Tamas Miklossy
@@ -48,11 +49,56 @@ public class DotExecutableUtilsTests {
 		dotExecutablePath = getDotExecutablePath();
 	}
 
+	@Test
+	public void simpleGraph() {
+		testDotGeneration(DotTestUtils.getSimpleGraph(),
+				"arrowshapes_direction_both.dot");
+	}
+
+	@Test
+	public void directedGraph() {
+		testDotGeneration(DotTestUtils.getSimpleDiGraph(),
+				"simple_digraph.dot");
+	}
+
+	@Test
+	public void labeledGraph() {
+		testDotGeneration(DotTestUtils.getLabeledGraph(), "labeled_graph.dot");
+	}
+
+	@Test
+	public void styledGraph() {
+		testDotGeneration(DotTestUtils.getStyledGraph(), "styled_graph.dot");
+	}
+
+	@Test(timeout = 2000)
+	public void testComplexDot() throws Exception {
+		if (dotExecutablePath != null) {
+			File dotFile = new File(DotTestUtils.RESOURCES_TESTS
+					+ "arrowshapes_direction_both.dot");
+			assertTrue(dotFile.exists());
+			String[] dotResult = DotExecutableUtils.executeDot(
+					new File(dotExecutablePath), true, dotFile, null, null);
+			assertNotNull("Result should not be null", dotResult);
+		}
+	}
+
+	private void testDotGeneration(final Graph graph, String fileName) {
+		if (dotExecutablePath != null) {
+			File dotFile = DotFileUtils.write(new DotExport().exportDot(graph));
+			File image = DotExecutableUtils.renderImage(
+					new File(dotExecutablePath), dotFile, "pdf", null, null); //$NON-NLS-1$
+			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$
+			System.out.println("Created image: " + image); //$NON-NLS-1$
+			Assert.assertTrue("Image must exist", image.exists()); //$NON-NLS-1$
+		}
+	}
+
 	/**
 	 * @return The path of the local Graphviz DOT executable, as specified in
 	 *         the test.properties file
 	 */
-	public static String getDotExecutablePath() {
+	private static String getDotExecutablePath() {
 		if (dotExecutablePath == null) {
 			Properties props = new Properties();
 			InputStream stream = DotExecutableUtilsTests.class
@@ -83,51 +129,6 @@ public class DotExecutableUtilsTests {
 				}
 		}
 		return dotExecutablePath;
-	}
-
-	@Test
-	public void simpleGraph() {
-		testDotGeneration(DotTestUtils.getSimpleGraph(),
-				"arrowshapes_direction_both.dot");
-	}
-
-	@Test
-	public void directedGraph() {
-		testDotGeneration(DotTestUtils.getSimpleDiGraph(),
-				"simple_digraph.dot");
-	}
-
-	@Test
-	public void labeledGraph() {
-		testDotGeneration(DotTestUtils.getLabeledGraph(), "labeled_graph.dot");
-	}
-
-	@Test
-	public void styledGraph() {
-		testDotGeneration(DotTestUtils.getStyledGraph(), "styled_graph.dot");
-	}
-
-	protected void testDotGeneration(final Graph graph, String fileName) {
-		if (dotExecutablePath != null) {
-			File dotFile = DotFileUtils.write(new DotExport().exportDot(graph));
-			File image = DotExecutableUtils.renderImage(
-					new File(dotExecutablePath), dotFile, "pdf", null, null); //$NON-NLS-1$
-			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$
-			System.out.println("Created image: " + image); //$NON-NLS-1$
-			Assert.assertTrue("Image must exist", image.exists()); //$NON-NLS-1$
-		}
-	}
-
-	@Test(timeout = 2000)
-	public void testComplexDot() throws Exception {
-		if (dotExecutablePath != null) {
-			File dotFile = new File(DotTestUtils.RESOURCES_TESTS
-					+ "arrowshapes_direction_both.dot");
-			assertTrue(dotFile.exists());
-			String[] dotResult = DotExecutableUtils.executeDot(
-					new File(dotExecutablePath), true, dotFile, null, null);
-			assertNotNull("Result should not be null", dotResult);
-		}
 	}
 
 }
