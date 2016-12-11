@@ -108,8 +108,14 @@ public class DotExecutableUtilsTests {
 	private void testDotGeneration(final Graph graph, String fileName) {
 		if (dotExecutablePath != null) {
 			File dotFile = DotFileUtils.write(new DotExport().exportDot(graph));
+			String[] outputs = new String[2];
 			File image = DotExecutableUtils.renderImage(
-					new File(dotExecutablePath), dotFile, "pdf", null, null); //$NON-NLS-1$
+					new File(dotExecutablePath), dotFile, "pdf", null, outputs); //$NON-NLS-1$
+
+			Assert.assertEquals(
+					"The dot executable produced the following errors:", "",
+					outputs[1]);
+
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$
 			System.out.println("Created image: " + image); //$NON-NLS-1$
 			Assert.assertTrue("Image must exist", image.exists()); //$NON-NLS-1$
