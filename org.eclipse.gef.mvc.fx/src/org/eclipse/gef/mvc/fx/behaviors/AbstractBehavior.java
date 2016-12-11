@@ -60,7 +60,7 @@ public abstract class AbstractBehavior implements IBehavior {
 
 	@Override
 	public final void activate() {
-		acs.activate(this::doActivate);
+		acs.activate(null, this::doActivate);
 	}
 
 	@Override
@@ -279,7 +279,7 @@ public abstract class AbstractBehavior implements IBehavior {
 
 	@Override
 	public final void deactivate() {
-		acs.deactivate(this::doDeactivate);
+		acs.deactivate(this::doDeactivate, null);
 	}
 
 	/**

@@ -105,7 +105,7 @@ public class HistoricizingDomain implements IDomain {
 
 	@Override
 	public final void activate() {
-		acs.activate(this::doActivate);
+		acs.activate(null, this::doActivate);
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public class HistoricizingDomain implements IDomain {
 
 	@Override
 	public final void deactivate() {
-		acs.deactivate(this::doDeactivate);
+		acs.deactivate(this::doDeactivate, null);
 	}
 
 	@Override

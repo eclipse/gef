@@ -162,7 +162,7 @@ public class InfiniteCanvasViewer implements IViewer {
 
 	@Override
 	public final void activate() {
-		acs.activate(this::doActivate);
+		acs.activate(null, this::doActivate);
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class InfiniteCanvasViewer implements IViewer {
 
 	@Override
 	public final void deactivate() {
-		acs.deactivate(this::doDeactivate);
+		acs.deactivate(this::doDeactivate, null);
 	}
 
 	@Override

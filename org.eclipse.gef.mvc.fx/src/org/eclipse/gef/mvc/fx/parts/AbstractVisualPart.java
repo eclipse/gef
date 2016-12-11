@@ -108,7 +108,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 */
 	@Override
 	public final void activate() {
-		acs.activate(this::doActivate);
+		acs.activate(null, this::doActivate);
 	}
 
 	/**
@@ -278,7 +278,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 */
 	@Override
 	public final void deactivate() {
-		acs.deactivate(this::doDeactivate);
+		acs.deactivate(this::doDeactivate, null);
 	}
 
 	/**

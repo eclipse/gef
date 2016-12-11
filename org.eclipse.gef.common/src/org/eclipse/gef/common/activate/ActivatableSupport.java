@@ -50,15 +50,25 @@ public class ActivatableSupport {
 	/**
 	 * Activates this {@link ActivatableSupport} if it is not yet active.
 	 *
-	 * @param activationCallback
-	 *            A callback that is executed upon activation.
+	 * @param preActivationCallback
+	 *            An optional callback that is executed before the active state
+	 *            is set.
+	 * @param postActivationCallback
+	 *            An optional callback that is executed after the active state
+	 *            has been set.
 	 *
 	 * @see IActivatable#activate()
 	 */
-	public void activate(Runnable activationCallback) {
+	public void activate(Runnable preActivationCallback,
+			Runnable postActivationCallback) {
 		if (!isActive()) {
+			if (preActivationCallback != null) {
+				preActivationCallback.run();
+			}
 			activeProperty.set(true);
-			activationCallback.run();
+			if (postActivationCallback != null) {
+				postActivationCallback.run();
+			}
 		}
 	}
 
@@ -76,15 +86,25 @@ public class ActivatableSupport {
 	/**
 	 * Deactivates this {@link ActivatableSupport} if it is not yet inactive.
 	 *
-	 * @param deactivationCallback
-	 *            A {@link Runnable} that is executed when being deactivated.
+	 * @param preDeactivationCallback
+	 *            An optional callback that is executed before the active state
+	 *            is unset.
+	 * @param postDeactivationCallback
+	 *            An optional callback that is executed after the active state
+	 *            has been unset.
 	 *
 	 * @see IActivatable#deactivate()
 	 */
-	public void deactivate(Runnable deactivationCallback) {
+	public void deactivate(Runnable preDeactivationCallback,
+			Runnable postDeactivationCallback) {
 		if (isActive()) {
-			deactivationCallback.run();
+			if (preDeactivationCallback != null) {
+				preDeactivationCallback.run();
+			}
 			activeProperty.set(false);
+			if (postDeactivationCallback != null) {
+				postDeactivationCallback.run();
+			}
 		}
 	}
 
