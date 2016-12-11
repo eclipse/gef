@@ -52,24 +52,24 @@ public class DotExecutableUtilsTests {
 
 	@Test
 	public void simpleGraph() {
-		testDotGeneration(DotTestUtils.getSimpleGraph(),
+		testImageExport(DotTestUtils.getSimpleGraph(),
 				"arrowshapes_direction_both.dot");
 	}
 
 	@Test
 	public void directedGraph() {
-		testDotGeneration(DotTestUtils.getSimpleDiGraph(),
+		testImageExport(DotTestUtils.getSimpleDiGraph(),
 				"simple_digraph.dot");
 	}
 
 	@Test
 	public void labeledGraph() {
-		testDotGeneration(DotTestUtils.getLabeledGraph(), "labeled_graph.dot");
+		testImageExport(DotTestUtils.getLabeledGraph(), "labeled_graph.dot");
 	}
 
 	@Test
 	public void styledGraph() {
-		testDotGeneration(DotTestUtils.getStyledGraph(), "styled_graph.dot");
+		testImageExport(DotTestUtils.getStyledGraph(), "styled_graph.dot");
 	}
 
 	@Test(timeout = 2000)
@@ -105,7 +105,7 @@ public class DotExecutableUtilsTests {
 		}
 	}
 
-	private void testDotGeneration(final Graph graph, String fileName) {
+	private void testImageExport(final Graph graph, String fileName) {
 		if (dotExecutablePath != null) {
 			File dotFile = DotFileUtils.write(new DotExport().exportDot(graph));
 			String[] outputs = new String[2];
