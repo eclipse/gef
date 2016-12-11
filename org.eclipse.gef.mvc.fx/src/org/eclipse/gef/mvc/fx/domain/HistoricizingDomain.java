@@ -108,6 +108,19 @@ public class HistoricizingDomain implements IDomain {
 		acs.activate(null, this::doActivate);
 	}
 
+	/**
+	 * Activates the adapters registered at this {@link HistoricizingDomain}.
+	 */
+	protected void activateAdapters() {
+		// XXX: We keep a sorted map of adapters so activation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).activate();
+			}
+		});
+	}
+
 	@Override
 	public final ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
@@ -197,6 +210,19 @@ public class HistoricizingDomain implements IDomain {
 		acs.deactivate(this::doDeactivate, null);
 	}
 
+	/**
+	 * Deactivates the adapters registered at this {@link HistoricizingDomain}.
+	 */
+	protected void deactivateAdapters() {
+		// XXX: We keep a sorted map of adapters so deactivation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).deactivate();
+			}
+		});
+	}
+
 	@Override
 	public void dispose() {
 		// dispose transaction related objects
@@ -221,13 +247,7 @@ public class HistoricizingDomain implements IDomain {
 	 * Activates this {@link HistoricizingDomain}, which activates its adapters.
 	 */
 	protected void doActivate() {
-		// XXX: We keep a sorted map of adapters so activation
-		// is performed in a deterministic order
-		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-			if (adapter instanceof IActivatable) {
-				((IActivatable) adapter).activate();
-			}
-		});
+		activateAdapters();
 	}
 
 	/**
@@ -235,13 +255,7 @@ public class HistoricizingDomain implements IDomain {
 	 * adapters.
 	 */
 	protected void doDeactivate() {
-		// XXX: We keep a sorted map of adapters so deactivation
-		// is performed in a deterministic order
-		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-			if (adapter instanceof IActivatable) {
-				((IActivatable) adapter).deactivate();
-			}
-		});
+		deactivateAdapters();
 	}
 
 	/**

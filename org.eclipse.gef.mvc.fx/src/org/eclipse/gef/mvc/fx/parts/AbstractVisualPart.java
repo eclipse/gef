@@ -112,6 +112,19 @@ public abstract class AbstractVisualPart<V extends Node>
 	}
 
 	/**
+	 * Activates the adapters registered at this {@link AbstractVisualPart}.
+	 */
+	protected void activateAdapters() {
+		// XXX: We keep a sorted map of adapters so activation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).activate();
+			}
+		});
+	}
+
+	/**
 	 * Activates the children of this {@link AbstractVisualPart}.
 	 */
 	protected void activateChildren() {
@@ -282,6 +295,19 @@ public abstract class AbstractVisualPart<V extends Node>
 	}
 
 	/**
+	 * Deactivates the adapters registered at this {@link AbstractVisualPart}.
+	 */
+	protected void deactivateAdapters() {
+		// XXX: We keep a sorted map of adapters so deactivation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).deactivate();
+			}
+		});
+	}
+
+	/**
 	 * Deactivates the children of this {@link AbstractVisualPart}.
 	 */
 	protected void deactivateChildren() {
@@ -395,13 +421,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 * and adapters.
 	 */
 	protected void doActivate() {
-		// XXX: We keep a sorted map of adapters so activation
-		// is performed in a deterministic order
-		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-			if (adapter instanceof IActivatable) {
-				((IActivatable) adapter).activate();
-			}
-		});
+		activateAdapters();
 		activateChildren();
 	}
 
@@ -450,13 +470,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	 */
 	protected void doDeactivate() {
 		deactivateChildren();
-		// XXX: We keep a sorted map of adapters so deactivation
-		// is performed in a deterministic order
-		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-			if (adapter instanceof IActivatable) {
-				((IActivatable) adapter).deactivate();
-			}
-		});
+		deactivateAdapters();
 	}
 
 	/**

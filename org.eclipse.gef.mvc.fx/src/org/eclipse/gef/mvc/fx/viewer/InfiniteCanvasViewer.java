@@ -165,6 +165,19 @@ public class InfiniteCanvasViewer implements IViewer {
 		acs.activate(null, this::doActivate);
 	}
 
+	/**
+	 * Activates the adapters registered at this {@link InfiniteCanvasViewer}.
+	 */
+	protected void activateAdapters() {
+		// XXX: We keep a sorted map of adapters so activation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).activate();
+			}
+		});
+	}
+
 	@Override
 	public final ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
@@ -197,6 +210,19 @@ public class InfiniteCanvasViewer implements IViewer {
 	@Override
 	public final void deactivate() {
 		acs.deactivate(this::doDeactivate, null);
+	}
+
+	/**
+	 * Deactivates the adapters registered at this {@link InfiniteCanvasViewer}.
+	 */
+	protected void deactivateAdapters() {
+		// XXX: We keep a sorted map of adapters so deactivation
+		// is performed in a deterministic order
+		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
+			if (adapter instanceof IActivatable) {
+				((IActivatable) adapter).deactivate();
+			}
+		});
 	}
 
 	@Override
@@ -253,11 +279,7 @@ public class InfiniteCanvasViewer implements IViewer {
 			throw new IllegalStateException(
 					"Viewer controls have to be hooked (to scene) before activation.");
 		}
-		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-			if (adapter instanceof IActivatable) {
-				((IActivatable) adapter).activate();
-			}
-		});
+		activateAdapters();
 	}
 
 	/**
@@ -265,13 +287,7 @@ public class InfiniteCanvasViewer implements IViewer {
 	 * adapters.
 	 */
 	protected void doDeactivate() {
-		// XXX: We keep a sorted map of adapters so deactivation
-		// is performed in a deterministic order
-		new TreeMap<>(ads.getAdapters()).values().forEach((adapter) -> {
-			if (adapter instanceof IActivatable) {
-				((IActivatable) adapter).deactivate();
-			}
-		});
+		deactivateAdapters();
 	}
 
 	@Override
