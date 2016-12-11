@@ -26,10 +26,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
-import org.eclipse.gef.dot.internal.DotExport;
-import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage;
-import org.eclipse.gef.graph.Graph;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,24 +49,22 @@ public class DotExecutableUtilsTests {
 
 	@Test
 	public void simpleGraph() {
-		testImageExport(DotTestUtils.getSimpleGraph(),
-				"arrowshapes_direction_both.dot");
+		testImageExport("simple_graph.dot");
 	}
 
 	@Test
 	public void directedGraph() {
-		testImageExport(DotTestUtils.getSimpleDiGraph(),
-				"simple_digraph.dot");
+		testImageExport("simple_digraph.dot");
 	}
 
 	@Test
 	public void labeledGraph() {
-		testImageExport(DotTestUtils.getLabeledGraph(), "labeled_graph.dot");
+		testImageExport("labeled_graph.dot");
 	}
 
 	@Test
 	public void styledGraph() {
-		testImageExport(DotTestUtils.getStyledGraph(), "styled_graph.dot");
+		testImageExport("styled_graph.dot");
 	}
 
 	@Test(timeout = 2000)
@@ -105,12 +100,22 @@ public class DotExecutableUtilsTests {
 		}
 	}
 
-	private void testImageExport(final Graph graph, String fileName) {
+	private void testImageExport(String fileName) {
 		if (dotExecutablePath != null) {
-			File dotFile = DotFileUtils.write(new DotExport().exportDot(graph));
+			File inputFile = new File(DotTestUtils.RESOURCES_TESTS + fileName);
+			File outputFile = null;
+			try {
+				outputFile = File.createTempFile("tmp_"
+						+ fileName.substring(0, fileName.lastIndexOf('.')),
+						".pdf");
+			} catch (IOException e) {
+				e.printStackTrace();
+				Assert.fail("Cannot create temporary file" + e.getMessage());
+			}
 			String[] outputs = new String[2];
 			File image = DotExecutableUtils.renderImage(
-					new File(dotExecutablePath), dotFile, "pdf", null, outputs); //$NON-NLS-1$
+					new File(dotExecutablePath), inputFile, "pdf", //$NON-NLS-1$
+					outputFile, outputs);
 
 			Assert.assertEquals(
 					"The dot executable produced the following errors:", "",
