@@ -47,10 +47,10 @@ final public class DotExecutableUtils {
 	 *            The DOT content to render
 	 * @param format
 	 *            The image format to export the graph to (e.g. 'pdf' or 'png')
-	 * @param outputFileName
-	 *            The output image file name, e.g. "output.pdf" or
-	 *            <code>null</code> if the input file name should be used (where
-	 *            the file extension is changed dependent on the format)
+	 * @param outputFile
+	 *            The output file or <code>null</code> if the input file name
+	 *            and location should be used (where only the file extension is
+	 *            changed dependent on the format)
 	 * @param outputs
 	 *            A String array with two Strings, where the first contains the
 	 *            output of the input stream and the second contains the output
@@ -59,18 +59,15 @@ final public class DotExecutableUtils {
 	 *         Graphviz, using the specified format
 	 */
 	public static File renderImage(final File dotExecutablePath,
-			final File dotInputFile, final String format,
-			final String outputFileName, String[] outputs) {
-		String dotFile = dotInputFile.getName();
-		String resultFile = outputFileName == null
-				? dotFile.substring(0, dotFile.lastIndexOf('.') + 1) + format
-				: outputFileName; // $NON-NLS-1$
-		String inputFolder = new File(dotInputFile.getParent())
-				.getAbsolutePath() + File.separator;
-		String outputFolder = outputFileName == null ? inputFolder
-				: new File(new File(outputFileName).getAbsolutePath())
-						.getParentFile().getAbsolutePath() + File.separator;
-		File outputFile = new File(outputFolder, resultFile);
+			final File dotInputFile, final String format, File outputFile,
+			String[] outputs) {
+		if (outputFile == null) {
+			String dotFile = dotInputFile.getName();
+			outputFile = new File(dotInputFile.getParent() + File.separator
+					+ dotFile.substring(0, dotFile.lastIndexOf('.') + 1)
+					+ format);
+		}
+
 		String[] localOutputs = executeDot(dotExecutablePath, false,
 				dotInputFile, outputFile, format);
 		if (!localOutputs[0].isEmpty()) {
