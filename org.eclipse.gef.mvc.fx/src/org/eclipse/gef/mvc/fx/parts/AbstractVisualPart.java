@@ -271,7 +271,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	}
 
 	@Override
-	public ReadOnlyListProperty<IVisualPart<? extends Node>> childrenProperty() {
+	public ReadOnlyListProperty<IVisualPart<? extends Node>> childrenUnmodifiableProperty() {
 		if (childrenUnmodifiableProperty == null) {
 			childrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(this,
 					CHILDREN_PROPERTY, getChildrenUnmodifiable());

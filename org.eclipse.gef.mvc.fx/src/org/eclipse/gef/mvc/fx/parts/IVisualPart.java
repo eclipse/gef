@@ -238,8 +238,8 @@ public interface IVisualPart<V extends Node>
 			String role);
 
 	/**
-	 * Returns a read-only property containing the children of this
-	 * {@link IVisualPart}.
+	 * Returns an unmodifiable read-only property containing the children of
+	 * this {@link IVisualPart}.
 	 *
 	 * @see #getChildrenUnmodifiable()
 	 * @see #addChild(IVisualPart)
@@ -250,9 +250,10 @@ public interface IVisualPart<V extends Node>
 	 * @see #removeChildren(List)
 	 * @see #reorderChild(IVisualPart, int)
 	 *
-	 * @return A read-only property named {@link #CHILDREN_PROPERTY}.
+	 * @return An unmodifiable read-only property named
+	 *         {@link #CHILDREN_PROPERTY}.
 	 */
-	public ReadOnlyListProperty<IVisualPart<? extends Node>> childrenProperty();
+	public ReadOnlyListProperty<IVisualPart<? extends Node>> childrenUnmodifiableProperty();
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to unestablish an
