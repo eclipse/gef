@@ -405,20 +405,22 @@ public abstract class AbstractContentPart<V extends Node>
 				registerAtContentPartMap(getViewer(), newContent);
 			}
 			// lazily initialize content children and anchorages
-			// XXX: We use atomic operations here to replace the contents so we
-			// have minimal resulting change notifications.
-			contentChildren.setAll(doGetContentChildren());
-			contentAnchorages.replaceAll(doGetContentAnchorages());
+			refreshContentChildren();
+			refreshContentAnchorages();
 		}
 	}
 
 	@Override
 	public void refreshContentAnchorages() {
+		// XXX: We use atomic operations here to replace the contents so we
+		// have minimal resulting change notifications.
 		contentAnchorages.replaceAll(doGetContentAnchorages());
 	}
 
 	@Override
 	public void refreshContentChildren() {
+		// XXX: We use atomic operations here to replace the contents so we
+		// have minimal resulting change notifications.
 		contentChildren.setAll(doGetContentChildren());
 	}
 
