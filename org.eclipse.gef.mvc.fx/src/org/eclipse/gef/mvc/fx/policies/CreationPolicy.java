@@ -15,7 +15,6 @@ package org.eclipse.gef.mvc.fx.policies;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
@@ -33,7 +32,6 @@ import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
-import com.google.inject.Inject;
 
 import javafx.scene.Node;
 
@@ -55,9 +53,6 @@ import javafx.scene.Node;
  *
  */
 public class CreationPolicy extends AbstractTransactionPolicy {
-
-	@Inject
-	private ContentPartPool contentPartPool;
 
 	/**
 	 * Creates an {@link IContentPart} for the given content {@link Object} and
@@ -103,23 +98,9 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 
 		IViewer viewer = getHost().getRoot().getViewer();
 
-		// create content part beforehand
-		IContentPart<? extends Node> contentPart = getContentPartFactory()
-				.createContentPart(content, Collections.emptyMap());
-		// establish relationships to parent and anchored parts
-		contentPart.setContent(content);
-		parent.addChild(contentPart, index);
-		for (Entry<IContentPart<? extends Node>, String> anchored : anchoreds
-				.entries()) {
-			anchored.getKey().attachToAnchorage(contentPart,
-					anchored.getValue());
-		}
-		// register the content part, so that the ContentBehavior
-		// synchronization reuses it (when committing the create operation)
-		contentPartPool.add(contentPart);
-
+		// add content to parent
 		if (parent instanceof IRootPart) {
-			// add to viewer content
+			// add content to viewer content
 			ChangeContentsOperation changeContentsOperation = new ChangeContentsOperation(
 					viewer);
 			List<Object> newContents = new ArrayList<>(viewer.getContents());
@@ -127,7 +108,7 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 			changeContentsOperation.setNewContents(newContents);
 			getCompositeOperation().add(changeContentsOperation);
 		} else {
-			// add to content parent
+			// add content to parent
 			ContentPolicy parentContentPolicy = parent
 					.getAdapter(ContentPolicy.class);
 			if (parentContentPolicy == null) {
@@ -143,7 +124,7 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 			}
 		}
 
-		// add anchoreds via content policy
+		// attach anchoreds to content
 		for (IContentPart<? extends Node> anchored : anchoreds.keys()) {
 			ContentPolicy anchoredPolicy = anchored
 					.getAdapter(ContentPolicy.class);
@@ -161,6 +142,10 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 				getCompositeOperation().add(attachToAnchorageOperation);
 			}
 		}
+
+		locallyExecuteOperation();
+		IContentPart<? extends Node> contentPart = viewer.getContentPartMap()
+				.get(content);
 
 		if (doFocus) {
 			// set as focus part
@@ -180,7 +165,6 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 			}
 		}
 
-		locallyExecuteOperation();
 		return contentPart;
 	}
 
