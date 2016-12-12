@@ -394,9 +394,6 @@ public class DotValidatorTests {
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 
 		// TODO: implement test case
-		// text = "graph {1[style=striped]}";
-
-		// TODO: implement test case
 		// text = "graph {node[shape=ellipse] 1[style=striped]}";
 	}
 

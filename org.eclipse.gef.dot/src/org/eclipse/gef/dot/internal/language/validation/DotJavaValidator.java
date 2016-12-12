@@ -294,6 +294,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			}
 
 			if (attributeList != null) {
+				// TODO: DotImport should not be referenced here
 				ID shapeValue = DotImport.getAttributeValue(attributeList,
 						DotAttributes.SHAPE__N);
 				// if the shape value is not explicitly set, use the default
