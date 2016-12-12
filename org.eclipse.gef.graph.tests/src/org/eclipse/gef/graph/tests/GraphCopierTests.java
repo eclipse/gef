@@ -16,6 +16,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
@@ -26,6 +28,34 @@ import org.junit.Test;
 public class GraphCopierTests {
 
 	private static final String ID = "id";
+
+	@Test
+	public void buildNestedWithKeys() {
+		// build source graph containing a nested graph in the second node
+		Node n = new Node();
+		Node m = new Node();
+		Edge nm = new Edge(n, m);
+		Node ma = new Node();
+		Node mb = new Node();
+		Edge mab = new Edge(ma, mb);
+		Graph mg = new Graph(Arrays.asList(ma, mb), Arrays.asList(mab));
+		m.setNestedGraph(mg);
+		Graph sourceGraph = new Graph(Arrays.asList(n, m), Arrays.asList(nm));
+
+		// copy source graph
+		GraphCopier copier = new GraphCopier(IAttributeCopier.NULL_COPY);
+		Graph copy = copier.copy(sourceGraph);
+
+		// check number of nodes and edges
+		assertEquals(2, copy.getNodes().size());
+		assertEquals(1, copy.getEdges().size());
+
+		// check source and target of first edge
+		assertEquals(copy.getNodes().get(0),
+				copy.getEdges().get(0).getSource());
+		assertEquals(copy.getNodes().get(1),
+				copy.getEdges().get(0).getTarget());
+	}
 
 	private Graph genGraph(int size) {
 		Graph.Builder gb = new Graph.Builder();

@@ -54,29 +54,7 @@ public class GraphCopier {
 		// clear input to output maps
 		inputToOutputNodes.clear();
 		inputToOutputEdges.clear();
-		// create new graph to hold the copy
-		Graph outputGraph = new Graph();
-		copyAttributes(graph, outputGraph);
-		// copy nodes, keeping track of copied nodes (so we can relocate them to
-		// link edges)
-		for (Node inputNode : graph.getNodes()) {
-			Node outputNode = copyNode(inputNode);
-			if (outputNode != null) {
-				inputToOutputNodes.put(inputNode, outputNode);
-				outputNode.setGraph(outputGraph);
-				outputGraph.getNodes().add(outputNode);
-			}
-		}
-		// copy edges
-		for (Edge inputEdge : graph.getEdges()) {
-			Edge outputEdge = copyEdge(inputEdge);
-			if (outputEdge != null) {
-				inputToOutputEdges.put(inputEdge, outputEdge);
-				outputEdge.setGraph(outputGraph);
-				outputGraph.getEdges().add(outputEdge);
-			}
-		}
-		return outputGraph;
+		return copyGraph(graph);
 	}
 
 	/**
@@ -118,6 +96,42 @@ public class GraphCopier {
 	}
 
 	/**
+	 * Copies the given {@link Graph} using the current
+	 * {@link IAttributeCopier}. Records the copied nodes in the
+	 * {@link #getInputToOutputNodeMap()} and the copied edges in the
+	 * {@link #getInputToOutputEdgeMap()}.
+	 *
+	 * @param graph
+	 *            The input {@link Graph} to copy.
+	 * @return The copied result {@link Graph}.
+	 */
+	protected Graph copyGraph(Graph graph) {
+		// create new graph to hold the copy
+		Graph outputGraph = new Graph();
+		copyAttributes(graph, outputGraph);
+		// copy nodes, keeping track of copied nodes (so we can relocate them to
+		// link edges)
+		for (Node inputNode : graph.getNodes()) {
+			Node outputNode = copyNode(inputNode);
+			if (outputNode != null) {
+				inputToOutputNodes.put(inputNode, outputNode);
+				outputNode.setGraph(outputGraph);
+				outputGraph.getNodes().add(outputNode);
+			}
+		}
+		// copy edges
+		for (Edge inputEdge : graph.getEdges()) {
+			Edge outputEdge = copyEdge(inputEdge);
+			if (outputEdge != null) {
+				inputToOutputEdges.put(inputEdge, outputEdge);
+				outputEdge.setGraph(outputGraph);
+				outputGraph.getEdges().add(outputEdge);
+			}
+		}
+		return outputGraph;
+	}
+
+	/**
 	 * Creates a copy of the given node.
 	 *
 	 * @param node
@@ -129,7 +143,7 @@ public class GraphCopier {
 		copyAttributes(node, outputNode);
 		// convert nested graph
 		if (node.getNestedGraph() != null) {
-			Graph nested = copy(node.getNestedGraph());
+			Graph nested = copyGraph(node.getNestedGraph());
 			outputNode.setNestedGraph(nested);
 		}
 		return outputNode;
