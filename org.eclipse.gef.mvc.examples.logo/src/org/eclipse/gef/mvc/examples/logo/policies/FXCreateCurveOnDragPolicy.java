@@ -158,7 +158,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy impleme
 		// create using CreationPolicy from root part
 		CreationPolicy creationPolicy = getHost().getRoot().getAdapter(CreationPolicy.class);
 		init(creationPolicy);
-		curvePart = (GeometricCurvePart) creationPolicy.create(curve, (GeometricModelPart) modelPart,
+		curvePart = (GeometricCurvePart) creationPolicy.create(curve, modelPart,
 				HashMultimap.<IContentPart<? extends Node>, String> create());
 		commit(creationPolicy);
 
