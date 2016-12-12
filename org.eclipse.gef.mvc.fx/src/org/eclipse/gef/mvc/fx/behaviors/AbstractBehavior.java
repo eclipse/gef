@@ -98,7 +98,7 @@ public abstract class AbstractBehavior implements IBehavior {
 	/**
 	 * Adds the given anchoreds as children to the root part and anchors them to
 	 * the given target parts. The given index determines the position where the
-	 * anchroeds are inserted into the children list of the root part. The index
+	 * anchoreds are inserted into the children list of the root part. The index
 	 * can be used to control the z-order.
 	 *
 	 * @param targets
