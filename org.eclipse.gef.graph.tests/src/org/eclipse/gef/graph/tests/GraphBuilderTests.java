@@ -29,6 +29,14 @@ import javafx.collections.ObservableList;
 
 public class GraphBuilderTests {
 
+	public static class Semantic {
+		public String data;
+
+		public Semantic(String data) {
+			this.data = data;
+		}
+	}
+
 	private void addNodeBuilders(Graph.Builder graphBuilder, int count,
 			int startNumber) {
 		for (int i = 0; i < count; i++) {
@@ -117,6 +125,21 @@ public class GraphBuilderTests {
 				"n1");
 		assertEquals(edges.get(1).getTarget().getAttributes().get("label"),
 				"n3");
+	}
+
+	@Test
+	public void buildSemanticTwice() {
+		Builder b = new Graph.Builder();
+		Semantic s1 = new Semantic("a");
+		b.node(s1).attr("test", "value");
+		b.node(s1).attr("test2", "value2");
+		Graph graph = b.build();
+		assertEquals(1, graph.getNodes().size());
+		assertEquals(0, graph.getEdges().size());
+		assertEquals("value",
+				graph.getNodes().get(0).getAttributes().get("test"));
+		assertEquals("value2",
+				graph.getNodes().get(0).getAttributes().get("test2"));
 	}
 
 	@Test

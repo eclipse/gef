@@ -78,6 +78,10 @@ public final class Graph implements IAttributeStore {
 			 * Stores incoming node keys in order.
 			 */
 			protected List<Object> nodeKeys = new ArrayList<>();
+			/**
+			 * Stores node builders
+			 */
+			protected Map<Object, Node.Builder> nodeKeyToBuilderMap = new HashMap<>();
 		}
 
 		private List<Entry<Object, Object>> attr = new ArrayList<>();
@@ -249,6 +253,9 @@ public final class Graph implements IAttributeStore {
 		 * @return A new {@link Node.Builder}.
 		 */
 		public Node.Builder node(Object key) {
+			if (context.nodeBuilders.containsKey(key)) {
+				return context.nodeBuilders.get(key);
+			}
 			Node.Builder nb = new Node.Builder(context, key);
 			context.nodeKeys.add(key);
 			return nb;
