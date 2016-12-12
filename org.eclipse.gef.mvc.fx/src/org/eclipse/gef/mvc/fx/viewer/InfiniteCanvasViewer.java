@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.viewer;
 
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -23,13 +24,17 @@ import org.eclipse.gef.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
+import org.eclipse.gef.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.models.HoverModel;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.reflect.TypeToken;
 
 import javafx.beans.binding.BooleanBinding;
@@ -40,9 +45,12 @@ import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.scene.Node;
@@ -131,6 +139,120 @@ public class InfiniteCanvasViewer implements IViewer {
 		public void changed(ObservableValue<? extends Scene> observable,
 				Scene oldValue, Scene newValue) {
 			onSceneChanged(oldValue, newValue);
+		}
+	};
+
+	private ListChangeListener<Object> contentModelObserver = new ListChangeListener<Object>() {
+		@Override
+		public void onChanged(
+				ListChangeListener.Change<? extends Object> change) {
+			System.out.println("Content changed " + change);
+			// XXX: An atomic operation (including setAll()) on the
+			// ObservableList will lead to an atomic change here; we do not have
+			// to iterate through the individual changes but may simply
+			// synchronize with the list as it emerges after the changes have
+			// been applied.
+			// while (change.next()) {
+			// if (change.wasRemoved()) {
+			// removeContentPartChildren(getHost(),
+			// ImmutableList.copyOf(change.getRemoved()));
+			// } else if (change.wasAdded()) {
+			// addContentPartChildren(getHost(),
+			// ImmutableList.copyOf(change.getAddedSubList()),
+			// change.getFrom());
+			// } else if (change.wasPermutated()) {
+			// throw new UnsupportedOperationException(
+			// "Reorder not yet implemented");
+			// }
+			// }
+			getAdapter(ContentPartSynchronizer.class)
+					.synchronizeContentPartChildren(getRootPart(),
+							change.getList());
+
+			// flush viewer models (if they exist)
+			SelectionModel selectionModel = getAdapter(SelectionModel.class);
+			if (selectionModel != null) {
+				selectionModel.clearSelection();
+			}
+			HoverModel hoverModel = getAdapter(HoverModel.class);
+			if (hoverModel != null) {
+				hoverModel.clearHover();
+			}
+		}
+	};
+
+	private ListChangeListener<Object> contentChildrenObserver = new ListChangeListener<Object>() {
+		@SuppressWarnings("unchecked")
+		@Override
+		public void onChanged(
+				final ListChangeListener.Change<? extends Object> change) {
+			System.out.println("Content children changed " + change);
+			// XXX: An atomic operation (including setAll()) on the
+			// ObservableList will lead to an atomic change here; we do not have
+			// to iterate through the individual changes but may simply
+			// synchronize with the list as it emerges after the changes have
+			// been applied.
+			IContentPart<? extends Node> parent = (IContentPart<? extends Node>) ((ReadOnlyProperty<?>) change
+					.getList()).getBean();
+			// while (change.next()) {
+			// if (change.wasRemoved()) {
+			// removeContentPartChildren(parent,
+			// ImmutableList.copyOf(change.getRemoved()));
+			// } else if (change.wasAdded()) {
+			// addContentPartChildren(parent,
+			// ImmutableList.copyOf(change.getAddedSubList()),
+			// change.getFrom());
+			// } else if (change.wasPermutated()) {
+			// throw new UnsupportedOperationException(
+			// "Reorder not yet implemented");
+			// }
+			// }
+			getAdapter(ContentPartSynchronizer.class)
+					.synchronizeContentPartChildren(parent, change.getList());
+		}
+	};
+
+	private SetMultimapChangeListener<Object, String> contentAnchoragesObserver = new SetMultimapChangeListener<Object, String>() {
+		@SuppressWarnings("unchecked")
+		@Override
+		public void onChanged(
+				final SetMultimapChangeListener.Change<? extends Object, ? extends String> change) {
+			System.out.println("Content anchorages changed " + change);
+			// XXX: An atomic operation (including replaceAll()) on the
+			// ObservableSetMultimap will lead to an atomic change here; we do
+			// not have to iterate through the individual changes but may simply
+			// synchronize with the list as it emerges after the changes have
+			// been applied.
+			// TODO: detach or attach directly
+			IContentPart<? extends Node> anchored = (IContentPart<? extends Node>) ((ReadOnlyProperty<?>) change
+					.getSetMultimap()).getBean();
+			getAdapter(ContentPartSynchronizer.class)
+					.synchronizeContentPartAnchorages(anchored,
+							HashMultimap.create(change.getSetMultimap()));
+		}
+	};
+
+	private MapChangeListener<Object, IContentPart<? extends Node>> contentPartMapObserver = new MapChangeListener<Object, IContentPart<? extends Node>>() {
+
+		@Override
+		public void onChanged(
+				MapChangeListener.Change<? extends Object, ? extends IContentPart<? extends Node>> change) {
+			if (change.wasRemoved()) {
+				IContentPart<? extends Node> contentPart = change
+						.getValueRemoved();
+				contentPart.contentChildrenUnmodifiableProperty()
+						.removeListener(contentChildrenObserver);
+				contentPart.contentAnchoragesUnmodifiableProperty()
+						.removeListener(contentAnchoragesObserver);
+			}
+			if (change.wasAdded()) {
+				IContentPart<? extends Node> contentPart = change
+						.getValueAdded();
+				contentPart.contentChildrenUnmodifiableProperty()
+						.addListener(contentChildrenObserver);
+				contentPart.contentAnchoragesUnmodifiableProperty()
+						.addListener(contentAnchoragesObserver);
+			}
 		}
 	};
 
@@ -244,6 +366,12 @@ public class InfiniteCanvasViewer implements IViewer {
 		ads.dispose();
 		ads = null;
 
+		// the content part pool is shared by all content behaviors of a viewer,
+		// so the viewer disposes it.
+		contentModelObserver = null;
+		contentChildrenObserver = null;
+		contentAnchoragesObserver = null;
+
 		// clear content part map
 		if (!contentPartMap.isEmpty()) {
 			throw new IllegalStateException(
@@ -280,6 +408,17 @@ public class InfiniteCanvasViewer implements IViewer {
 					"Viewer controls have to be hooked (to scene) before activation.");
 		}
 		activateAdapters();
+
+		// XXX: Listener on content part map needs to be registered first, as it
+		// will add children and anchorage listeners.
+		contentPartMapProperty().addListener(contentPartMapObserver);
+		// synchronize content parts
+		if (!getContents().isEmpty()) {
+			getAdapter(ContentPartSynchronizer.class)
+					.synchronizeContentPartChildren(getRootPart(),
+							getContents());
+		}
+		getContents().addListener(contentModelObserver);
 	}
 
 	/**
@@ -287,6 +426,16 @@ public class InfiniteCanvasViewer implements IViewer {
 	 * adapters.
 	 */
 	protected void doDeactivate() {
+		getContents().removeListener(contentModelObserver);
+		if (!getContents().isEmpty()) {
+			getAdapter(ContentPartSynchronizer.class)
+					.synchronizeContentPartChildren(getRootPart(),
+							Collections.emptyList());
+		}
+		// XXX: Listener on content part map needs to be unregistered last, as
+		// it will remove children and anchorage listeners.
+		contentPartMapProperty().removeListener(contentPartMapObserver);
+
 		deactivateAdapters();
 	}
 

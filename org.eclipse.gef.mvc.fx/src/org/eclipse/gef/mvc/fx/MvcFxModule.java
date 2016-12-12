@@ -21,8 +21,6 @@ import org.eclipse.gef.common.adapt.inject.AdaptableTypeListener;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.GridBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
@@ -49,7 +47,6 @@ import org.eclipse.gef.mvc.fx.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
-import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.ContentPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
@@ -59,6 +56,7 @@ import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.policies.MarqueeOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.PanOnStrokePolicy;
 import org.eclipse.gef.mvc.fx.policies.PanOrZoomOnScrollPolicy;
+import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.ZoomOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.providers.TransformProvider;
 import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
@@ -69,6 +67,8 @@ import org.eclipse.gef.mvc.fx.tools.PinchSpreadTool;
 import org.eclipse.gef.mvc.fx.tools.RotateTool;
 import org.eclipse.gef.mvc.fx.tools.ScrollTool;
 import org.eclipse.gef.mvc.fx.tools.TypeTool;
+import org.eclipse.gef.mvc.fx.viewer.ContentPartPool;
+import org.eclipse.gef.mvc.fx.viewer.ContentPartSynchronizer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
@@ -228,24 +228,6 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ContentBehavior}, parameterized by {@link Node}
-	 * , to the {@link AdapterMap} binder for {@link IRootPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link IRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindContentBehaviorAsIRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ContentBehavior.class);
-	}
-
-	/**
 	 * Adds a binding for {@link IViewer} to the {@link AdapterMap} binder for
 	 * {@link IDomain}.
 	 *
@@ -265,8 +247,9 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Ensures that {@link ContentPartPool} is injected into {@link IRootPart}
-	 * using the given adapter {@link MapBinder}.
+	 * Ensures that {@link ContentPartPool} is injected into the content
+	 * {@link ContentPartSynchronizer} using the given adapter
+	 * {@link MapBinder}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} that is used to establish the binding.
@@ -275,6 +258,19 @@ public class MvcFxModule extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(ContentPartPool.class);
+	}
+
+	/**
+	 * Ensures that {@link ContentPartSynchronizer} is injected into the content
+	 * {@link IViewer} using the given adapter {@link MapBinder}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to establish the binding.
+	 */
+	protected void bindContentPartSynchronizerAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(ContentPartSynchronizer.class);
 	}
 
 	/**
@@ -647,7 +643,6 @@ public class MvcFxModule extends AbstractModule {
 		// register change viewport policy
 		bindChangeViewportPolicyAsIRootPartAdapter(adapterMapBinder);
 		// register default behaviors
-		bindContentBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindSelectionBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindRevealPrimarySelectionBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindGridBehaviorAsIRootPartAdapter(adapterMapBinder);
@@ -716,6 +711,7 @@ public class MvcFxModule extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		bindIContentPartFactoryAsContentViewerAdapter(adapterMapBinder);
 		bindContentPartPoolAsContentViewerAdapter(adapterMapBinder);
+		bindContentPartSynchronizerAsContentViewerAdapter(adapterMapBinder);
 
 		bindGridModelAsContentViewerAdapter(adapterMapBinder);
 		bindFocusModelAsContentViewerAdapter(adapterMapBinder);

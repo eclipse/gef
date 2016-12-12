@@ -40,7 +40,6 @@ import org.eclipse.gef.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickP
 import org.eclipse.gef.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
@@ -78,6 +77,8 @@ import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
+import org.eclipse.gef.mvc.fx.viewer.ContentPartPool;
+import org.eclipse.gef.mvc.fx.viewer.ContentPartSynchronizer;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Binder;
@@ -375,6 +376,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFocusFeedbackFactoryAsPaletteViewerAdapter(adapterMapBinder);
 		// bind content part factory
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentPartPool.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentPartSynchronizer.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(MvcLogoExamplePaletteContentPartFactory.class);
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_COLOR_PROVIDER))
 				.toInstance(new Provider<Color>() {
@@ -393,8 +395,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindPanOnTypePolicyAsIRootPartAdapter(adapterMapBinder);
 		// register change viewport policy
 		bindContentRestrictedChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
-		// register default behaviors
-		bindContentBehaviorAsIRootPartAdapter(adapterMapBinder);
 		// XXX: PaletteFocusBehavior only changes the viewer focus and default
 		// styles.
 		bindPaletteFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);

@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.behaviors;
+package org.eclipse.gef.mvc.fx.viewer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,8 +23,8 @@ import javafx.scene.Node;
 
 /**
  * A temporary store for {@link IContentPart}s that is used by
- * {@link ContentBehavior}s. They will add {@link IContentPart}s, which are
- * removed from the viewer during content synchronization (e.g. because the
+ * {@link ContentPartSynchronizer}s. They will add {@link IContentPart}s, which
+ * are removed from the viewer during content synchronization (e.g. because the
  * related content element was deleted), to be re-used (i.e. removed again and
  * restored within the viewer) when the content element re-appears during
  * synchronization, e.g. because of an undo of a delete operation. The
@@ -66,7 +66,7 @@ public class ContentPartPool implements IDisposable {
 
 	@Override
 	public void dispose() {
-		for (IContentPart<? extends Node> cp : getPooled()) {
+		for (IContentPart<? extends Node> cp : values()) {
 			cp.dispose();
 		}
 		clear();
@@ -78,7 +78,7 @@ public class ContentPartPool implements IDisposable {
 	 * @return The {@link IContentPart}s that are currently contained in this
 	 *         pool.
 	 */
-	public Collection<IContentPart<? extends Node>> getPooled() {
+	public Collection<IContentPart<? extends Node>> values() {
 		return Collections.unmodifiableCollection(pool.values());
 	}
 
