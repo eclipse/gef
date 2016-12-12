@@ -20,7 +20,6 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -31,8 +30,6 @@ import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef.zest.fx.parts.NodePart;
-
-import com.google.common.collect.ImmutableList;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
@@ -191,8 +188,6 @@ public class SemanticZoomPolicy extends ViewportPolicy {
 		// OpenParentGraphOnDoubleClickPolicy.
 		for (NodePart nestingNodePart : findNestingNodes()) {
 			nestingNodePart.refreshContentChildren();
-			nestingNodePart.getAdapter(ContentBehavior.class)
-					.synchronizeContentPartChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));
 			nestingNodePart.refreshVisual();
 		}
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /

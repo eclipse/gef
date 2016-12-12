@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.behaviors;
 
-import java.util.Map;
+import java.util.List;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -24,6 +24,7 @@ import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ZestProperties;
@@ -105,13 +106,18 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 * @param clean
 	 *            Whether to fully re-compute the layout or not.
 	 */
+	@SuppressWarnings("unchecked")
 	public void applyLayout(boolean clean) {
 		// check child parts exist for all content children
-		IViewer viewer = getHost().getRoot().getViewer();
-		Map<Object, IContentPart<? extends Node>> contentPartMap = viewer.getContentPartMap();
-		for (Object c : getHost().getContentChildrenUnmodifiable()) {
-			if (!contentPartMap.containsKey(c)) {
-				return;
+		if (getHost().getChildrenUnmodifiable().size() != getHost().getContentChildrenUnmodifiable().size()) {
+			return;
+		} else {
+			List<IContentPart<? extends Node>> childContentParts = PartUtils
+					.filterParts(getHost().getChildrenUnmodifiable(), IContentPart.class);
+			for (IContentPart<? extends Node> cp : childContentParts) {
+				if (!getHost().getContentChildrenUnmodifiable().contains(cp.getContent())) {
+					return;
+				}
 			}
 		}
 		Graph graph = getHost().getContent();

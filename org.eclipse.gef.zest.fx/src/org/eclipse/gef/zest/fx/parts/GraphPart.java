@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.ZestProperties;
@@ -46,8 +45,9 @@ public class GraphPart extends AbstractContentPart<Group> {
 
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends Object> c) {
-			// synchronize children
-			getAdapter(ContentBehavior.class).synchronizeContentPartChildren(doGetContentChildren());
+			// synchronize children (triggered through content children)
+			refreshContentChildren();
+			refreshVisual();
 		}
 	};
 
