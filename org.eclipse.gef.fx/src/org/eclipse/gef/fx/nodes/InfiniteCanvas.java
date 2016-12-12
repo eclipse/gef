@@ -518,10 +518,11 @@ public class InfiniteCanvas extends Region {
 
 	/**
 	 * Provides the visual bounds of the content group in the local coordinate
-	 * system of this {@link InfiniteCanvas}
+	 * system of this {@link InfiniteCanvas} as a (read-only) property.
 	 *
 	 * @return The bounds of the content group, i.e.
-	 *         <code>minx, miny, maxx, maxy</code>.
+	 *         <code>minx, miny, maxx, maxy</code> as
+	 *         {@link ReadOnlyObjectProperty}.
 	 */
 	public ReadOnlyObjectProperty<Bounds> contentBoundsProperty() {
 		return contentBoundsProperty.getReadOnlyProperty();
@@ -1242,13 +1243,15 @@ public class InfiniteCanvas extends Region {
 
 	/**
 	 * Returns the bounds of the scrollable area in local coordinates of this
-	 * {@link InfiniteCanvas}. The scrollable area corresponds to the visual
-	 * bounds of the content group, which is expanded to cover at least the area
-	 * of this {@link InfiniteCanvas} (i.e. the viewport) if necessary. It is
-	 * thereby also the area that can be navigated via the scroll bars.
+	 * {@link InfiniteCanvas} as a (read-only) property. The scrollable area
+	 * corresponds to the visual bounds of the content group, which is expanded
+	 * to cover at least the area of this {@link InfiniteCanvas} (i.e. the
+	 * viewport) if necessary. It is thereby also the area that can be navigated
+	 * via the scroll bars.
 	 *
 	 * @return The bounds of the scrollable area, i.e.
-	 *         <code>minx, miny, maxx, maxy</code>.
+	 *         <code>minx, miny, maxx, maxy</code> as
+	 *         {@link ReadOnlyObjectProperty}.
 	 */
 	public ReadOnlyObjectProperty<Bounds> scrollableBoundsProperty() {
 		return scrollableBoundsProperty.getReadOnlyProperty();
