@@ -351,9 +351,11 @@ public class DotValidatorTests {
 
 		DotAst dotAst = parserHelper.parse(text);
 
+		String expectedErrorMessage = "The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.";
+
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), null,
-				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+				expectedErrorMessage);
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
@@ -364,7 +366,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), null,
-				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+				expectedErrorMessage);
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
@@ -375,7 +377,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), null,
-				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+				expectedErrorMessage);
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
@@ -386,7 +388,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), null,
-				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+				expectedErrorMessage);
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
