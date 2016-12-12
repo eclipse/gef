@@ -25,7 +25,7 @@ digraph StyledGraph2{
      7[style=radial                      label="radial"                  ]
      8[style=rounded                     label="rounded"                 ]
      9[style=solid                       label="solid"                   ]
-    10[style=striped                     label="striped"                 ]
+    10[style=striped                     label="striped"       shape=box ]
     11[style=wedged                      label="wedged"                  ]
     12[style="bold, dashed"              label="bold, dashed"            ] 
     13[style="dashed, bold"              label="dashed, bold"            ]

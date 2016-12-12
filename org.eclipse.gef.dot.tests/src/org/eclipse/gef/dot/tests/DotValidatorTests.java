@@ -380,6 +380,17 @@ public class DotValidatorTests {
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 
+		text = "graph {1[style=striped]}";
+
+		dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), null,
+				"The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+
 		// TODO: implement test case
 		// text = "graph {1[style=striped]}";
 

@@ -63,6 +63,7 @@ import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.style.Style;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.dot.internal.language.style.StylePackage;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
@@ -293,19 +294,23 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			}
 
 			if (attributeList != null) {
-				String shapeValue = DotImport.getAttributeValue(attributeList,
-						DotAttributes.SHAPE__N).toValue();
-				if (shapeValue != null) {
-					switch (PolygonBasedNodeShape.get(shapeValue)) {
-					case BOX:
-					case RECT:
-					case RECTANGLE:
-					case SQUARE:
-						break;
-					default:
-						error("The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.",
-								DotPackage.eINSTANCE.getAttribute_Value());
-					}
+				ID shapeValue = DotImport.getAttributeValue(attributeList,
+						DotAttributes.SHAPE__N);
+				// if the shape value is not explicitly set, use the default
+				// shape value for evaluation
+				if (shapeValue == null) {
+					shapeValue = ID.fromString(
+							PolygonBasedNodeShape.ELLIPSE.toString());
+				}
+				switch (PolygonBasedNodeShape.get(shapeValue.toValue())) {
+				case BOX:
+				case RECT:
+				case RECTANGLE:
+				case SQUARE:
+					break;
+				default:
+					error("The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'.",
+							DotPackage.eINSTANCE.getAttribute_Value());
 				}
 			}
 		}
