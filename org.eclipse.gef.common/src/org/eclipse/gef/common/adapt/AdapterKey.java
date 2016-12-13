@@ -163,9 +163,9 @@ public class AdapterKey<T> implements Comparable<AdapterKey<T>> {
 			throw new IllegalArgumentException(
 					"An AdapterKey that is used for binding cannot be compared.");
 		}
-		// primarily sort by key
+		// primarily sort by role
 		if (role.equals(o.getRole())) {
-			// secondarily sort by key (type) name
+			// secondarily sort by type key
 			return key.toString().compareTo(o.getKey().toString());
 		} else {
 			return role.compareTo(o.getRole());
