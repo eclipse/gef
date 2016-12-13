@@ -17,8 +17,6 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.Multiset;
 
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
@@ -44,8 +42,6 @@ import javafx.scene.Node;
 public class LayeredRootPart extends AbstractVisualPart<Group>
 		implements IRootPart<Group> {
 
-	private ReadOnlyObjectWrapper<IViewer> viewerProperty = new ReadOnlyObjectWrapper<>();
-
 	private Group contentLayer;
 	private Group handleLayer;
 	private Group feedbackLayer;
@@ -69,11 +65,6 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 				child.activate();
 			}
 		}
-	}
-
-	@Override
-	public ReadOnlyObjectProperty<IViewer> adaptableProperty() {
-		return viewerProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -258,11 +249,6 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 		}
 	}
 
-	@Override
-	public IViewer getAdaptable() {
-		return getViewer();
-	}
-
 	/**
 	 * Returns the content layer visual. The content layer visual is created in
 	 * case it was not created before.
@@ -332,22 +318,5 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 	@Override
 	public IRootPart<? extends Node> getRoot() {
 		return this;
-	}
-
-	@Override
-	public IViewer getViewer() {
-		return viewerProperty.get();
-	}
-
-	@Override
-	public void setAdaptable(IViewer viewer) {
-		IViewer oldViewer = viewerProperty.get();
-		if (oldViewer != null && viewer != oldViewer) {
-			unregister(oldViewer);
-		}
-		viewerProperty.set(viewer);
-		if (viewer != null && viewer != oldViewer) {
-			register(viewer);
-		}
 	}
 }

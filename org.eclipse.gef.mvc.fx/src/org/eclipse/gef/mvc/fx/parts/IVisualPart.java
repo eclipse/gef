@@ -87,8 +87,8 @@ import javafx.scene.transform.Affine;
  * @param <V>
  *            The visual node used by this {@link IVisualPart}.
  */
-public interface IVisualPart<V extends Node>
-		extends IAdaptable, IActivatable, IDisposable {
+public interface IVisualPart<V extends Node> extends IAdaptable,
+		IAdaptable.Bound<IViewer>, IActivatable, IDisposable {
 
 	/**
 	 * Name of the property storing this part's parent.
@@ -359,11 +359,20 @@ public interface IVisualPart<V extends Node>
 	public IRootPart<? extends Node> getRoot();
 
 	/**
+	 * Returns the {@link IViewer} this {@link IVisualPart} is bound to.
+	 *
+	 * @return The {@link IViewer} this {@link IVisualPart} is attached to.
+	 */
+	public default IViewer getViewer() {
+		return getAdaptable();
+	}
+
+	/**
 	 * Returns this part's visual.
 	 *
 	 * @return This part's visual.
 	 */
-	public abstract V getVisual();
+	public V getVisual();
 
 	/**
 	 * Returns <code>true</code> if this part is allowed to refresh its

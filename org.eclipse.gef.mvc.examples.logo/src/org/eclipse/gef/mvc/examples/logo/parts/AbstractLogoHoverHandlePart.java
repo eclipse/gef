@@ -40,10 +40,11 @@ public abstract class AbstractLogoHoverHandlePart<T extends Node> extends Abstra
 			IViewer oldViewer = getViewer(change.getPreviousContents().keySet());
 			IViewer newViewer = getViewer(change.getSetMultimap().keySet());
 			if (registered && oldViewer != null && oldViewer != newViewer) {
-				unregister(oldViewer);
+				oldViewer.unsetAdapter(AbstractLogoHoverHandlePart.this);
 			}
 			if (!registered && newViewer != null && oldViewer != newViewer) {
-				register(newViewer);
+				newViewer.setAdapter(AbstractLogoHoverHandlePart.this,
+						String.valueOf(System.identityHashCode(AbstractLogoHoverHandlePart.this)));
 			}
 		}
 	};

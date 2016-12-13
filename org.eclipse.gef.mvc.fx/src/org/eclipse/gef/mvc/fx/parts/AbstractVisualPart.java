@@ -95,6 +95,8 @@ public abstract class AbstractVisualPart<V extends Node>
 			this, REFRESH_VISUAL_PROPERTY, true);
 	private V visual;
 
+	private ReadOnlyObjectWrapper<IViewer> viewerProperty = new ReadOnlyObjectWrapper<>();
+
 	/**
 	 * Activates this {@link IVisualPart} (if it is not already active) by
 	 * setting (and propagating) the new active state first and delegating to
@@ -136,6 +138,11 @@ public abstract class AbstractVisualPart<V extends Node>
 	@Override
 	public ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<IViewer> adaptableProperty() {
+		return viewerProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -225,7 +232,7 @@ public abstract class AbstractVisualPart<V extends Node>
 		// unregister from old viewer in case we were registered (oldViewer !=
 		// null) and the viewer changes (newViewer != oldViewer)
 		if (oldViewer != null && newViewer != oldViewer) {
-			unregister(oldViewer);
+			oldViewer.unsetAdapter(this);
 		}
 
 		// detach anchoreds (and fire change notifications)
@@ -233,7 +240,8 @@ public abstract class AbstractVisualPart<V extends Node>
 
 		// if we obtain a link to the viewer then register at new viewer
 		if (newViewer != null && newViewer != oldViewer) {
-			register(newViewer);
+			newViewer.setAdapter(this,
+					String.valueOf(System.identityHashCode(this)));
 		}
 	}
 
@@ -328,7 +336,7 @@ public abstract class AbstractVisualPart<V extends Node>
 		// unregister from old viewer in case we were registered (oldViewer !=
 		// null) and the viewer changes (newViewer != oldViewer)
 		if (oldViewer != null && newViewer != oldViewer) {
-			unregister(oldViewer);
+			oldViewer.unsetAdapter(this);
 		}
 
 		// detach anchoreds (and fire change notifications)
@@ -336,7 +344,8 @@ public abstract class AbstractVisualPart<V extends Node>
 
 		// if we obtain a link to the viewer then register at new viewer
 		if (newViewer != null && newViewer != oldViewer) {
-			register(newViewer);
+			newViewer.setAdapter(this,
+					String.valueOf(System.identityHashCode(this)));
 		}
 	}
 
@@ -512,6 +521,11 @@ public abstract class AbstractVisualPart<V extends Node>
 	}
 
 	@Override
+	public IViewer getAdaptable() {
+		return viewerProperty.get();
+	}
+
+	@Override
 	public <T> T getAdapter(AdapterKey<T> key) {
 		return ads.getAdapter(key);
 	}
@@ -611,19 +625,6 @@ public abstract class AbstractVisualPart<V extends Node>
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Returns the {@link IViewer} that contains this part.
-	 *
-	 * @return The {@link IViewer} that contains this part.
-	 */
-	protected IViewer getViewer() {
-		IRootPart<? extends Node> root = getRoot();
-		if (root == null) {
-			return null;
-		}
-		return root.getViewer();
 	}
 
 	@Override
@@ -755,6 +756,18 @@ public abstract class AbstractVisualPart<V extends Node>
 	}
 
 	@Override
+	public void setAdaptable(IViewer viewer) {
+		IViewer oldViewer = viewerProperty.get();
+		if (oldViewer != null && viewer != oldViewer) {
+			unregister(oldViewer);
+		}
+		viewerProperty.set(viewer);
+		if (viewer != null && viewer != oldViewer) {
+			register(viewer);
+		}
+	}
+
+	@Override
 	public <T> void setAdapter(T adapter) {
 		ads.setAdapter(adapter);
 	}
@@ -795,7 +808,7 @@ public abstract class AbstractVisualPart<V extends Node>
 		// unregister from old viewer in case we were registered (oldViewer !=
 		// null) and the viewer changes (newViewer != oldViewer)
 		if (oldViewer != null && newViewer != oldViewer) {
-			unregister(oldViewer);
+			oldViewer.unsetAdapter(this);
 		}
 
 		// change the parent property (which will notify listeners)
@@ -803,7 +816,8 @@ public abstract class AbstractVisualPart<V extends Node>
 
 		// if we obtain a link to the viewer then register at new viewer
 		if (newViewer != null && newViewer != oldViewer) {
-			register(newViewer);
+			newViewer.setAdapter(this,
+					String.valueOf(System.identityHashCode(this)));
 		}
 	}
 

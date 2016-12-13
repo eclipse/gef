@@ -15,7 +15,6 @@ package org.eclipse.gef.mvc.fx.parts;
 
 import java.util.List;
 
-import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.scene.Node;
@@ -35,8 +34,7 @@ import javafx.scene.Node;
  *            The visual node used by this {@link IRootPart}.
  *
  */
-public interface IRootPart<V extends Node>
-		extends IVisualPart<V>, IAdaptable.Bound<IViewer> {
+public interface IRootPart<V extends Node> extends IVisualPart<V> {
 
 	/**
 	 * Returns all children of type {@link IContentPart} contained by this
@@ -61,12 +59,5 @@ public interface IRootPart<V extends Node>
 	 * @return A list containing all {@link IHandlePart} children.
 	 */
 	public List<IHandlePart<? extends Node>> getHandlePartChildren();
-
-	/**
-	 * Returns the {@link IViewer} this {@link IRootPart} is bound to.
-	 *
-	 * @return The {@link IViewer} this {@link IRootPart} is attached to.
-	 */
-	public IViewer getViewer();
 
 }
