@@ -56,7 +56,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends Object> change) {
-			System.out.println("Content changed " + change);
+			// System.out.println("Content changed " + change);
 			// XXX: An atomic operation (including setAll()) on the
 			// ObservableList will lead to an atomic change here; we do not have
 			// to iterate through the individual changes but may simply
@@ -97,7 +97,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		@Override
 		public void onChanged(
 				final ListChangeListener.Change<? extends Object> change) {
-			System.out.println("Content children changed " + change);
+			// System.out.println("Content children changed " + change);
 			// XXX: An atomic operation (including setAll()) on the
 			// ObservableList will lead to an atomic change here; we do not have
 			// to iterate through the individual changes but may simply
@@ -127,7 +127,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		@Override
 		public void onChanged(
 				final SetMultimapChangeListener.Change<? extends Object, ? extends String> change) {
-			System.out.println("Content anchorages changed " + change);
+			// System.out.println("Content anchorages changed " + change);
 			// XXX: An atomic operation (including replaceAll()) on the
 			// ObservableSetMultimap will lead to an atomic change here; we do
 			// not have to iterate through the individual changes but may simply
