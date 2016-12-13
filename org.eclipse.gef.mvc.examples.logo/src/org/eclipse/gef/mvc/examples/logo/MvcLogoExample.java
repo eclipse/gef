@@ -11,20 +11,22 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
+import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
-import org.eclipse.gef.mvc.examples.logo.model.PaletteModel;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Module;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 
 public class MvcLogoExample extends AbstractMvcExample {
 
@@ -33,7 +35,26 @@ public class MvcLogoExample extends AbstractMvcExample {
 	}
 
 	public static List<GeometricShape> createPaletteContents() {
-		return new PaletteModel().getCreatableShapes();
+		final List<GeometricShape> paletteContents = new ArrayList<>();
+		final GeometricShape handlePrototype = new GeometricShape(GeometricModel.createHandleShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 23, 5), Color.WHITE, GeometricModel.GEF_SHADOW_EFFECT);
+		paletteContents.add(handlePrototype);
+		final GeometricShape cursorPrototype = new GeometricShape(GeometricModel.createCursorShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 5, 32), Color.WHITE, 2, Color.BLACK, GeometricModel.GEF_SHADOW_EFFECT);
+		paletteContents.add(cursorPrototype);
+		final GeometricShape eShapePrototype = new GeometricShape(GeometricModel.createEShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 100, 22), GeometricModel.GEF_COLOR_BLUE,
+				GeometricModel.GEF_SHADOW_EFFECT);
+		paletteContents.add(eShapePrototype);
+		final GeometricShape fShapePrototype = new GeometricShape(GeometricModel.createFShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 175, 22), GeometricModel.GEF_COLOR_BLUE,
+				GeometricModel.GEF_SHADOW_EFFECT);
+		paletteContents.add(fShapePrototype);
+		final GeometricShape dotShapePrototype = new GeometricShape(GeometricModel.createDotShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 87, 104), GeometricModel.GEF_COLOR_BLUE,
+				GeometricModel.GEF_SHADOW_EFFECT);
+		paletteContents.add(dotShapePrototype);
+		return paletteContents;
 	}
 
 	public static void main(String[] args) {

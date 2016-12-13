@@ -23,7 +23,6 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricModelPart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
-import org.eclipse.gef.mvc.examples.logo.parts.PaletteElementPart;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
@@ -44,7 +43,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-public class CreateAndTranslateOnDragPolicy extends AbstractInteractionPolicy implements IOnDragPolicy {
+public class CreateAndTranslateShapeOnDragPolicy extends AbstractInteractionPolicy implements IOnDragPolicy {
 
 	private GeometricShapePart createdShapePart;
 	private Map<AdapterKey<? extends IOnDragPolicy>, IOnDragPolicy> dragPolicies;
@@ -104,8 +103,8 @@ public class CreateAndTranslateOnDragPolicy extends AbstractInteractionPolicy im
 	}
 
 	@Override
-	public PaletteElementPart getHost() {
-		return (PaletteElementPart) super.getHost();
+	public GeometricShapePart getHost() {
+		return (GeometricShapePart) super.getHost();
 	}
 
 	protected Point getLocation(MouseEvent e) {

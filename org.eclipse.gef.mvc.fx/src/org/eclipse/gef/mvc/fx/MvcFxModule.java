@@ -563,8 +563,6 @@ public class MvcFxModule extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} for the content viewer.
 	 */
-	// TODO: Instead of binding to an interface here, we should require a
-	// binding of the actual content part factory.
 	protected void bindIContentPartFactoryAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())

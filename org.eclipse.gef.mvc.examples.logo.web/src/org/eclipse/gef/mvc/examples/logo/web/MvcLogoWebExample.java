@@ -16,10 +16,11 @@ import java.util.List;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.examples.AbstractMvcExample;
+import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleViewersComposite;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
-import org.eclipse.gef.mvc.examples.logo.model.PaletteModel;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Module;
@@ -34,8 +35,8 @@ public class MvcLogoWebExample extends AbstractMvcExample {
 		return Collections.singletonList(new GeometricModel());
 	}
 
-	public static List<PaletteModel> createPaletteContents() {
-		return Collections.singletonList(new PaletteModel());
+	public static List<GeometricShape> createPaletteContents() {
+		return MvcLogoExample.createPaletteContents();
 	}
 
 	public static void main(String[] args) {
