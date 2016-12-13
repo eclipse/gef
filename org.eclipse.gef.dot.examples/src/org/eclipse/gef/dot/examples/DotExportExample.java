@@ -22,18 +22,21 @@ import org.eclipse.gef.graph.Graph;
 public final class DotExportExample {
 
 	public static void main(final String[] args) {
-		/* Set up a directed graph with a single connection: */
+		/* Set up a directed graph with a single connection */
 		Graph graph = new Graph.Builder()
-				.attr(DotAttributes::_setType, GraphType.DIGRAPH).node("n1")
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH)//
+				.node("n1")//
 				.attr(DotAttributes::_setName, "1")
 				.attr(DotAttributes::setLabel, "Node 1")//
-				.node("n2").attr(DotAttributes::_setName, "2")
+				.node("n2")//
+				.attr(DotAttributes::_setName, "2")
 				.attr(DotAttributes::setLabel, "Node 2")//
-				.edge("n1", "n2").attr(DotAttributes::setLabel, "A dotted edge")
-				.attr(DotAttributes::setStyle, EdgeStyle.DOTTED.toString())
+				.edge("n1", "n2")//
+				.attr(DotAttributes::setLabel, "A dotted edge")//
+				.attr(DotAttributes::setStyle, EdgeStyle.DOTTED.toString())//
 				.build();
 
-		/* Export the graph to a DOT string or a DOT file: */
+		/* Export the graph to a DOT string */
 		System.out.println(new DotExport().exportDot(graph));
 	}
 
