@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012, 2015 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.geometry.tests;
 
@@ -21,8 +21,10 @@ import java.lang.reflect.Method;
 
 import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Path;
+import org.eclipse.gef.geometry.planar.Path.Segment;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
+import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.geometry.planar.Ring;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,6 +108,41 @@ public class RingTests {
 	public static class ToPathTests {
 
 		@Test
+		public void toPath() {
+			// empty Region
+			Ring ring = new Ring();
+			assertEquals(new Path(), ring.toPath());
+
+			// one rectangle
+			ring = new Ring(new Rectangle(0, 0, 100, 50).toPolygon());
+			Path path = ring.toPath();
+			Segment[] segs = path.getSegments();
+			assertEquals(6, segs.length);
+			assertEquals(Path.Segment.MOVE_TO, segs[0].getType());
+			assertEquals(Path.Segment.CLOSE, segs[5].getType());
+
+			// overlapping rectangles
+			ring = new Ring(new Rectangle(0, 0, 100, 100).toPolygon(),
+					new Rectangle(50, 50, 100, 100).toPolygon());
+			path = ring.toPath();
+			segs = path.getSegments();
+			assertEquals(10, segs.length);
+			assertEquals(Path.Segment.MOVE_TO, segs[0].getType());
+			assertEquals(Path.Segment.CLOSE, segs[9].getType());
+
+			// distinct rectangles
+			ring = new Ring(new Rectangle(0, 0, 50, 50).toPolygon(),
+					new Rectangle(60, 60, 50, 50).toPolygon());
+			path = ring.toPath();
+			segs = path.getSegments();
+			assertEquals(10, segs.length);
+			assertEquals(Path.Segment.MOVE_TO, segs[0].getType());
+			assertEquals(Path.Segment.CLOSE, segs[4].getType());
+			assertEquals(Path.Segment.MOVE_TO, segs[5].getType());
+			assertEquals(Path.Segment.CLOSE, segs[9].getType());
+		}
+
+		@Test
 		public void toPath_with_void() {
 			Ring r = new Ring(
 					new Polygon(0, 0, 100, 0, 100, 50, 50, 50, 50, 100, 100,
@@ -143,7 +180,7 @@ public class RingTests {
 	 * <p>
 	 * The {@link Ring#triangulate(Polygon, Line)} method is tested here.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The test names indicate the various situations that are tested. Each
 	 * situation comprises the location of the start and end point of the
@@ -153,14 +190,14 @@ public class RingTests {
 	 * the {@link Polygon}. Imaginary {@link Point}s of intersection do not lie
 	 * on the {@link Line} but on its expansion to infinity in both directions.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The first two characters indicate the location of the start and the end
 	 * {@link Point} of the {@link Line} relative to the {@link Polygon}. 'o'
 	 * means 'outside the polygon'. 'i' means 'inside the polygon'. 'e' means
 	 * 'on an edge of the polygon'. 'v' means 'on a vertex of the polygon'.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * After that, number and type of expected intersections are stated. Real
 	 * intersection {@link Point}s ('r' for 'real') are named before the
@@ -169,7 +206,7 @@ public class RingTests {
 	 * is a vertex of the polygon'. 'e' means 'the intersection point is on an
 	 * edge of the polygon'.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The postfix indicates the expected number of resulting {@link Polygon}s.
 	 * 'ntd' means 'nothing to do' and therefore, it appears when a copy of the

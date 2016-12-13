@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012, 2015 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.geometry.tests;
 
@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef.geometry.planar.Path;
+import org.eclipse.gef.geometry.planar.Path.Segment;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.geometry.planar.Region;
@@ -119,6 +120,41 @@ public class RegionTests {
 				new Rectangle(50, 50, 100, 100));
 		assertFalse(r0.equals(r1));
 		assertFalse(r1.equals(r0));
+	}
+
+	@Test
+	public void test_toPath() {
+		// empty Region
+		Region region = new Region();
+		assertEquals(new Path(), region.toPath());
+
+		// one rectangle
+		region = new Region(new Rectangle(0, 0, 100, 50));
+		Path path = region.toPath();
+		Segment[] segs = path.getSegments();
+		assertEquals(6, segs.length);
+		assertEquals(Path.Segment.MOVE_TO, segs[0].getType());
+		assertEquals(Path.Segment.CLOSE, segs[5].getType());
+
+		// overlapping rectangles
+		region = new Region(new Rectangle(0, 0, 100, 100),
+				new Rectangle(50, 50, 100, 100));
+		path = region.toPath();
+		segs = path.getSegments();
+		assertEquals(12, segs.length);
+		assertEquals(Path.Segment.MOVE_TO, segs[0].getType());
+		assertEquals(Path.Segment.CLOSE, segs[11].getType());
+
+		// distinct rectangles
+		region = new Region(new Rectangle(0, 0, 50, 50),
+				new Rectangle(60, 60, 50, 50));
+		path = region.toPath();
+		segs = path.getSegments();
+		assertEquals(10, segs.length);
+		assertEquals(Path.Segment.MOVE_TO, segs[0].getType());
+		assertEquals(Path.Segment.CLOSE, segs[4].getType());
+		assertEquals(Path.Segment.MOVE_TO, segs[5].getType());
+		assertEquals(Path.Segment.CLOSE, segs[9].getType());
 	}
 
 	@Test
