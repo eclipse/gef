@@ -77,13 +77,13 @@ public class AdaptableScopeTests {
 
 				MapBinder<AdapterKey<?>, Object> intermediate1Binder = AdapterMaps
 						.getAdapterMapBinder(binder(), Intermediate.class,
-								"a1");
+								AdapterKey.get(Intermediate.class, "a1"));
 				intermediate1Binder.addBinding(AdapterKey.defaultRole())
 						.to(Leaf.class);
 
 				MapBinder<AdapterKey<?>, Object> intermediate2Binder = AdapterMaps
 						.getAdapterMapBinder(binder(), Intermediate.class,
-								"a2");
+								AdapterKey.get(Intermediate.class, "a2"));
 				intermediate2Binder.addBinding(AdapterKey.defaultRole())
 						.to(Leaf.class);
 

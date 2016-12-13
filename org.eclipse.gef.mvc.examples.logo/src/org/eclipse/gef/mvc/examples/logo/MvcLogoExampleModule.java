@@ -15,7 +15,6 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
-import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.mvc.examples.logo.behaviors.PaletteFocusBehavior;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurveCreationHoverHandlePart;
@@ -452,9 +451,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				AdapterMaps.getAdapterMapBinder(binder(), GeometricCurveCreationHoverHandlePart.class));
 
 		// palette
-		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), IViewer.class, PALETTE_VIEWER_ROLE));
-		bindPaletteViewerRootPartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), IRootPart.class, PALETTE_VIEWER_ROLE));
+		bindPaletteViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(), IViewer.class,
+				AdapterKey.get(IViewer.class, PALETTE_VIEWER_ROLE)));
+		bindPaletteViewerRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), IRootPart.class,
+				AdapterKey.get(IViewer.class, PALETTE_VIEWER_ROLE)));
 		bindPaletteElementPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), PaletteElementPart.class));
 	}
 

@@ -19,7 +19,6 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.adapt.inject.AdaptableTypeListener;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
-import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
@@ -49,7 +48,6 @@ import org.eclipse.gef.mvc.fx.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
-import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.ContentPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
@@ -59,6 +57,7 @@ import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.policies.MarqueeOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.PanOnStrokePolicy;
 import org.eclipse.gef.mvc.fx.policies.PanOrZoomOnScrollPolicy;
+import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.ZoomOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.providers.TransformProvider;
 import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
@@ -108,9 +107,9 @@ import javafx.scene.Node;
 public class MvcFxModule extends AbstractModule {
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for
-	 * {@link AbstractContentPart} and all sub-classes. May be overwritten by
-	 * sub-classes to change the default bindings.
+	 * Adds (default) adapter map bindings for {@link AbstractContentPart} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -130,9 +129,9 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for
-	 * {@link AbstractFeedbackPart} and all sub-classes. May be overwritten by
-	 * sub-classes to change the default bindings.
+	 * Adds (default) adapter map bindings for {@link AbstractFeedbackPart} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -148,9 +147,9 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractHandlePart}
-	 * and all sub-classes. May be overwritten by sub-classes to change the
-	 * default bindings.
+	 * Adds (default) adapter map bindings for {@link AbstractHandlePart} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -166,9 +165,9 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} binding for {@link AbstractVisualPart}
-	 * and all sub-classes. May be overwritten by sub-classes to change the
-	 * default bindings.
+	 * Adds (default) adapter map binding for {@link AbstractVisualPart} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -184,8 +183,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ViewportPolicy} to the {@link AdapterMap}
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link ViewportPolicy} to the adapter map binder for
+	 * {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -210,8 +209,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ClickDragTool} to the {@link AdapterMap} binder
-	 * for {@link IDomain}.
+	 * Adds a binding for {@link ClickDragTool} to the adapter map binder for
+	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -229,7 +228,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link ContentBehavior}, parameterized by {@link Node}
-	 * , to the {@link AdapterMap} binder for {@link IRootPart}.
+	 * , to the adapter map binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -246,7 +245,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link IViewer} to the {@link AdapterMap} binder for
+	 * Adds a binding for {@link IViewer} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -279,7 +278,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link ContentPolicy}, parameterized by {@link Node} ,
-	 * to the {@link AdapterMap} binder for {@link AbstractContentPart}.
+	 * to the adapter map binder for {@link AbstractContentPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -296,8 +295,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link CreationPolicy} to the {@link AdapterMap}
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link CreationPolicy} to the adapter map binder for
+	 * {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -314,8 +313,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link DeletionPolicy} to the {@link AdapterMap}
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link DeletionPolicy} to the adapter map binder for
+	 * {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -332,8 +331,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FocusAndSelectOnClickPolicy} to the
-	 * {@link AdapterMap} binder for {@link IRootPart}.
+	 * Adds a binding for {@link FocusAndSelectOnClickPolicy} to the adapter map
+	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -379,7 +378,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link FocusModel}, parameterized by {@link Node}, to
-	 * the {@link AdapterMap} binder for {@link IViewer}.
+	 * the adapter map binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -396,8 +395,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FocusTraversalPolicy} to the {@link AdapterMap}
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link FocusTraversalPolicy} to the adapter map binder
+	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -414,8 +413,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link GridBehavior} to the {@link AdapterMap} binder
-	 * for {@link IRootPart}.
+	 * Adds a binding for {@link GridBehavior} to the adapter map binder for
+	 * {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -432,7 +431,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link GridModel} to the {@link AdapterMap} binder for
+	 * Adds a binding for {@link GridModel} to the adapter map binder for
 	 * {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
@@ -481,7 +480,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link HoverModel}, parameterized by {@link Node}, to
-	 * the {@link AdapterMap} binder for {@link IViewer}.
+	 * the adapter map binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -498,8 +497,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link HoverOnHoverPolicy} to the {@link AdapterMap}
-	 * binder for {@link AbstractHandlePart}.
+	 * Adds a binding for {@link HoverOnHoverPolicy} to the adapter map binder
+	 * for {@link AbstractHandlePart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -516,8 +515,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link HoverOnHoverPolicy} to the {@link AdapterMap}
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link HoverOnHoverPolicy} to the adapter map binder
+	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -541,7 +540,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link HoverTool} to the {@link AdapterMap} binder for
+	 * Adds a binding for {@link HoverTool} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -581,7 +580,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link IDomain} and all
+	 * Adds (default) adapter map bindings for {@link IDomain} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -622,9 +621,9 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for "content"
-	 * {@link IRootPart} and all sub-classes. May be overwritten by sub-classes
-	 * to change the default bindings.
+	 * Adds (default) adapter map bindings for "content" {@link IRootPart} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -700,7 +699,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link IViewer} and all
+	 * Adds (default) adapter map bindings for {@link IViewer} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -731,8 +730,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link MarqueeOnDragPolicy} to the {@link AdapterMap}
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link MarqueeOnDragPolicy} to the adapter map binder
+	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -749,8 +748,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link PanOnStrokePolicy} to the {@link AdapterMap}
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link PanOnStrokePolicy} to the adapter map binder
+	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -767,8 +766,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link PanOrZoomOnScrollPolicy} to the
-	 * {@link AdapterMap} binder for {@link IRootPart}.
+	 * Adds a binding for {@link PanOrZoomOnScrollPolicy} to the adapter map
+	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -793,8 +792,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link PinchSpreadTool} to the {@link AdapterMap}
-	 * binder for {@link IDomain}.
+	 * Adds a binding for {@link PinchSpreadTool} to the adapter map binder for
+	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -812,7 +811,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link RevealPrimarySelectionBehavior}, parameterized
-	 * by {@link Node}, to the {@link AdapterMap} binder for {@link IRootPart}.
+	 * by {@link Node}, to the adapter map binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -830,7 +829,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link IRootPart}, parameterized by {@link Node}, to
-	 * the {@link AdapterMap} binder for {@link IViewer}.
+	 * the adapter map binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -842,8 +841,7 @@ public class MvcFxModule extends AbstractModule {
 	 */
 	protected void bindRootPartAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey.role(IDomain.CONTENT_VIEWER_ROLE))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(IRootPart.class).in(AdaptableScopes.typed(IViewer.class));
 	}
 
@@ -856,8 +854,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link RotateTool} to the {@link AdapterMap} binder
-	 * for {@link IDomain}.
+	 * Adds a binding for {@link RotateTool} to the adapter map binder for
+	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -882,8 +880,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ScrollTool} to the {@link AdapterMap} binder
-	 * for {@link IDomain}.
+	 * Adds a binding for {@link ScrollTool} to the adapter map binder for
+	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -901,7 +899,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link SelectionBehavior}, parameterized by
-	 * {@link Node}, to the {@link AdapterMap} binder for {@link IRootPart}.
+	 * {@link Node}, to the adapter map binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -949,7 +947,7 @@ public class MvcFxModule extends AbstractModule {
 
 	/**
 	 * Adds a binding for {@link SelectionModel}, parameterized by {@link Node},
-	 * to the {@link AdapterMap} binder for {@link IViewer}.
+	 * to the adapter map binder for {@link IViewer}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -967,8 +965,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link TransformProvider} to the {@link AdapterMap}
-	 * binder for {@link AbstractContentPart}, using the
+	 * Adds a binding for {@link TransformProvider} to the adapter map binder
+	 * for {@link AbstractContentPart}, using the
 	 * {@link IVisualPart#TRANSFORM_PROVIDER_KEY}.
 	 *
 	 * @param adapterMapBinder
@@ -995,7 +993,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link TypeTool} to the {@link AdapterMap} binder for
+	 * Adds a binding for {@link TypeTool} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -1013,8 +1011,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ZoomOnPinchSpreadPolicy} to the
-	 * {@link AdapterMap} binder for {@link IRootPart}.
+	 * Adds a binding for {@link ZoomOnPinchSpreadPolicy} to the adapter map
+	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -1049,11 +1047,13 @@ public class MvcFxModule extends AbstractModule {
 
 		// bind additional adapters for InfiniteCanvasViewer
 		bindIViewerAdaptersForContentViewer(AdapterMaps.getAdapterMapBinder(
-				binder(), IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
+				binder(), IViewer.class,
+				AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE)));
 
 		// bind adapters for RootPart
 		bindIRootPartAdaptersForContentViewer(AdapterMaps.getAdapterMapBinder(
-				binder(), IRootPart.class, IDomain.CONTENT_VIEWER_ROLE));
+				binder(), IRootPart.class,
+				AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE)));
 
 		// bind visual part adapters
 		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),

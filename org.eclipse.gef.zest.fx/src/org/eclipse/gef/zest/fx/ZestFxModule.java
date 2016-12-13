@@ -14,7 +14,6 @@ package org.eclipse.gef.zest.fx;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
-import org.eclipse.gef.common.adapt.inject.AdapterMap;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
@@ -107,8 +106,8 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link EdgeLabelPart} and
-	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * Adds (default) adapter map bindings for {@link EdgeLabelPart} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
 	 * @param adapterMapBinder
@@ -149,7 +148,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link EdgePart} and all
+	 * Adds (default) adapter map bindings for {@link EdgePart} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -233,7 +232,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link GraphPart} and all
+	 * Adds (default) adapter map bindings for {@link GraphPart} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -251,9 +250,9 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for
-	 * {@link HideHoverHandlePart} and all sub-classes. May be overwritten by
-	 * sub-classes to change the default bindings.
+	 * Adds (default) adapter map bindings for {@link HideHoverHandlePart} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -316,8 +315,8 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link NodeLabelPart} and
-	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * Adds (default) adapter map bindings for {@link NodeLabelPart} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
 	 * @param adapterMapBinder
@@ -356,7 +355,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link NodePart} and all
+	 * Adds (default) adapter map bindings for {@link NodePart} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
 	 *
@@ -461,7 +460,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for
+	 * Adds (default) adapter map bindings for
 	 * {@link ShowHiddenNeighborsHoverHandlePart} and all sub-classes. May be
 	 * overwritten by sub-classes to change the default bindings.
 	 *

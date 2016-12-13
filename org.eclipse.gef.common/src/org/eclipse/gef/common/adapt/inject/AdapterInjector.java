@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
+import org.eclipse.gef.common.adapt.inject.AdapterMap.ContextElement;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
@@ -330,6 +331,43 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		}
 	}
 
+	private boolean isContextApplicable(IAdaptable injectionTarget,
+			ContextElement[] injectionContext) {
+		// walk up the adaptable chain and see whether context elements can be
+		// found
+		int contextIndex = 0;
+		String contextRole = injectionContext[contextIndex].adapterRole();
+		Class<?> contextType = injectionContext[contextIndex].adapterType();
+
+		IAdaptable chainElement = injectionTarget;
+		while (chainElement instanceof IAdaptable.Bound) {
+			IAdaptable nextChainElement = ((IAdaptable.Bound<?>) chainElement)
+					.getAdaptable();
+			if (nextChainElement == null) {
+				// this should not happen, as we defer injection
+				// until the chain is complete
+				throw new IllegalStateException(
+						"Adapter injection seems to have been performed while the adaptable chain is not complete yet. The adaptable is not yet set.");
+			}
+			if (nextChainElement.getAdapterKey(chainElement) == null) {
+				throw new IllegalStateException(
+						"Adapter injection seems to have been performed while the adaptable chain is not complete yet. The adapter is not yet set.");
+			}
+			if (contextRole.equals(
+					nextChainElement.getAdapterKey(chainElement).getRole())
+					&& contextType.isAssignableFrom(chainElement.getClass())) {
+				contextIndex++;
+				if (contextIndex == injectionContext.length) {
+					return true;
+				}
+				contextRole = injectionContext[contextIndex].adapterRole();
+				contextType = injectionContext[contextIndex].adapterType();
+			}
+			chainElement = nextChainElement;
+		}
+		return false;
+	}
+
 	/**
 	 * Performs the adapter map injection for the given adaptable instance.
 	 *
@@ -362,40 +400,22 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						.getAnnotation();
 				if (keyAnnotation.adaptableType()
 						.isAssignableFrom(adaptable.getClass())) {
-					if (!AdapterMap.DEFAULT_ROLE
-							.equals(keyAnnotation.adaptableRole())) {
-						// the adapter map binding is targeting a specific role
+					if (keyAnnotation.adaptableContext().length != 0) {
+						// the adapter map binding is targeting a specific
+						// context
 						// if the adaptable is itself Adaptable.Bound and uses a
 						// role for its registration, consider that role here
-						if (adaptable instanceof IAdaptable.Bound) {
-							// if the adaptable is already registered as an
-							// adaptable, we might evaluate the bindings
-							// directly. Otherwise we have to defer the
-							// evaluation until the adaptable is registered as
-							// adapter.
-							if (((IAdaptable.Bound<?>) adaptable)
-									.getAdaptable() == null) {
-								// this should not happen, as we defer injection
-								// until the chain is complete
-								throw new IllegalStateException(
-										"Adapter injection seems to have been performed while the adaptable chain is not complete yet.");
-							}
-							String adaptableRole = ((IAdaptable.Bound<?>) adaptable)
-									.getAdaptable().getAdapterKey(adaptable)
-									.getRole();
-							// add all bindings in case the roles match
-							if (keyAnnotation.adaptableRole()
-									.equals(adaptableRole)) {
-								// XXX: The MapBinderBindings of relevance are
-								// wrapped into
-								// ProviderInstanceBindings, so they an instance
-								// check is not
-								// sufficient
-								// to retrieve them, but a
-								// MultibindingsTargetVisitor is to be used.
-								adapterMapBinding = binding.acceptTargetVisitor(
-										ADAPTER_MAP_BINDING_FILTER);
-							}
+						if (isContextApplicable(adaptable,
+								keyAnnotation.adaptableContext())) {
+							// XXX: The MapBinderBindings of relevance are
+							// wrapped into
+							// ProviderInstanceBindings, so they an instance
+							// check is not
+							// sufficient
+							// to retrieve them, but a
+							// MultibindingsTargetVisitor is to be used.
+							adapterMapBinding = binding.acceptTargetVisitor(
+									ADAPTER_MAP_BINDING_FILTER);
 						}
 					} else {
 						// XXX: All adapter (map) bindings that are bound to the
@@ -506,7 +526,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 							+ "          The redundant type key "
 							+ bindingKeyType
 							+ " may be omitted in the adapter key of the binding, using "
-							+ (AdapterMap.DEFAULT_ROLE
+							+ (AdapterKey.DEFAULT_ROLE
 									.equals(adapterKey.getRole())
 											? "AdapterKey.defaultRole()"
 											: " AdapterKey.role("
@@ -558,7 +578,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						+ TypeToken.of(adapter.getClass())
 						+ ", which is the actual type inferred from the instance.\n"
 						+ "             You should probably adjust your binding to provide a type key using "
-						+ (AdapterMap.DEFAULT_ROLE.equals(adapterKey.getRole())
+						+ (AdapterKey.DEFAULT_ROLE.equals(adapterKey.getRole())
 								? "AdapterKey.get(<type>)"
 								: "AdapterKey.get(<type>, "
 										+ adapterKey.getRole() + ")")

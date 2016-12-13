@@ -58,10 +58,11 @@ import com.google.inject.Module;
  * {@link AdapterMap#adaptableType() type} (by being qualified with a respective
  * {@link AdapterMap} annotation), which is either the same or a super-type or
  * super-interface of the {@link IAdaptable} will be evaluated, and respective
- * adapters will be injected. If the {@link AdapterMap} specifies a
- * {@link AdapterMap#adaptableRole() role}, adapters will only be injected, if
- * the adaptable is itself adapted (as an adapter to another adapter) with the
- * specified role.
+ * adapters will be injected.
+ * <p>
+ * If the {@link AdapterMap} specifies a {@link AdapterMap#adaptableContext()
+ * context}, adapters will only be injected, if the adaptable is itself resides
+ * within a compatible context.
  * <p>
  * In order to enable adapter injection, {@link AdapterInjectionSupport} has to
  * be installed by one of the {@link Module}s used by the {@link Injector}.
@@ -76,20 +77,51 @@ import com.google.inject.Module;
 @Target({ PARAMETER })
 @Retention(RUNTIME)
 @BindingAnnotation
-public @interface AdapterMap {
+@interface AdapterMap {
 
 	/**
-	 * The default adapter role (if no specific role is to be used).
+	 * Specifies the context of an adaptable. The adaptable itself, or one of
+	 * its ancestors (within an adapter-chain).
 	 */
-	public static final String DEFAULT_ROLE = "default";
+	@interface ContextElement {
+
+		/**
+		 * The default adapter role (if no specific role is to be used).
+		 */
+		public static final String DEFAULT_ROLE = "default";
+
+		/**
+		 * The role under which an adaptable, which itself is
+		 * {@link org.eclipse.gef.common.adapt.IAdaptable.Bound}, is registered
+		 * at its adaptable.
+		 *
+		 * @return The role under which the adaptable is bound to its (parent)
+		 *         adaptable.
+		 */
+		String adapterRole() default DEFAULT_ROLE;
+
+		/**
+		 * The type of the adaptable that is bound with the specified role.
+		 *
+		 * @return The type of the adaptable.
+		 */
+		Class<?> adapterType();
+	}
 
 	/**
-	 * An (optional) role that can be used to restrict adapter map bindings to
-	 * those adaptable instances that provide the respective role.
+	 * The context of the adaptable to inject into. If specified the injection
+	 * will be restricted to {@link IAdaptable}s with a compatible context only.
+	 * <p>
+	 * The context of an adaptable is compatible when respective context
+	 * elements are visited in the given order when walking the
+	 * adaptable-adapter chain, beginning with the adaptable in which to inject.
+	 * The actual chain may contain additional elements, that do not correspond
+	 * to context element, in between (which are ignored), but it has to contain
+	 * the specified context elements in the given order.
 	 *
-	 * @return The adaptable role this {@link AdapterMap} is bound to.
+	 * @return The context of the adaptable to inject into.
 	 */
-	String adaptableRole() default DEFAULT_ROLE;
+	ContextElement[] adaptableContext();
 
 	/**
 	 * The type used to qualify the {@link AdapterMap} annotation. It is used to

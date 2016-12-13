@@ -439,7 +439,9 @@ public class AdapterInjectorTests {
 				// create map bindings for AdapterStore, which is an IAdaptable
 				MapBinder<AdapterKey<?>, Object> firstRoleBinder = AdapterMaps
 						.getAdapterMapBinder(binder(),
-								AdapterStoreBoundAdaptable.class, firstRole);
+								AdapterStoreBoundAdaptable.class,
+								AdapterKey.get(AdapterStoreBoundAdaptable.class,
+										firstRole));
 
 				// register adapter
 				firstRoleBinder.addBinding(AdapterKey.role(role1))
@@ -467,7 +469,9 @@ public class AdapterInjectorTests {
 				// create map bindings for AdapterStore, which is an IAdaptable
 				MapBinder<AdapterKey<?>, Object> secondRoleBinder = AdapterMaps
 						.getAdapterMapBinder(binder(),
-								AdapterStoreBoundAdaptable.class, secondRole);
+								AdapterStoreBoundAdaptable.class,
+								AdapterKey.get(AdapterStoreBoundAdaptable.class,
+										secondRole));
 				// register adapter
 				secondRoleBinder.addBinding(AdapterKey.role(role1))
 						.to(RawType.class);

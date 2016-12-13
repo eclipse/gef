@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.common.adapt;
 
-import org.eclipse.gef.common.adapt.inject.AdapterMap;
+import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 
 import com.google.common.reflect.TypeToken;
 
@@ -46,7 +46,7 @@ public class AdapterKey<T> implements Comparable<AdapterKey<T>> {
 
 	/**
 	 * Returns an {@link AdapterKey} with no type key and the 'default' role,
-	 * which can only be used in adapter map bindings. See {@link AdapterMap}.
+	 * which can only be used in adapter map bindings. See {@link AdapterMaps}.
 	 *
 	 * @return An AdapterKey without type key, using the 'default' role.
 	 */
@@ -136,7 +136,7 @@ public class AdapterKey<T> implements Comparable<AdapterKey<T>> {
 
 	/**
 	 * Returns an {@link AdapterKey} with no type key and the given role, which
-	 * can only be used in adapter map bindings. See {@link AdapterMap}.
+	 * can only be used in adapter map bindings. See {@link AdapterMaps}.
 	 *
 	 * @param role
 	 *            The role to use.
