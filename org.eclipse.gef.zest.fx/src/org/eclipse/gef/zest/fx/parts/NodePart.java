@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.parts;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -192,11 +193,8 @@ public class NodePart extends AbstractContentPart<Group>
 	 */
 	private Node createDefaultShape() {
 		GeometryNode<?> shape = new GeometryNode<>(new org.eclipse.gef.geometry.planar.Rectangle());
-		shape.setUserData(DEFAULT_SHAPE_ROLE); // TODO: we need a proper
-												// mechanism to
+		shape.setUserData(DEFAULT_SHAPE_ROLE);
 		shape.getStyleClass().add(CSS_CLASS_SHAPE);
-		// handle
-		// padding
 		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
 				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
 		shape.setStroke(new Color(0, 0, 0, 1));
@@ -364,11 +362,14 @@ public class NodePart extends AbstractContentPart<Group>
 		}
 
 		// set CSS class
-		visual.getStyleClass().clear();
-		visual.getStyleClass().add(CSS_CLASS);
 		Map<String, Object> attrs = node.attributesProperty();
+		List<String> cssClasses = new ArrayList<>();
+		cssClasses.add(CSS_CLASS);
 		if (attrs.containsKey(ZestProperties.CSS_CLASS__NE)) {
-			visual.getStyleClass().add(ZestProperties.getCssClass(node));
+			cssClasses.add(ZestProperties.getCssClass(node));
+		}
+		if (!visual.getStyleClass().equals(cssClasses)) {
+			visual.getStyleClass().setAll(cssClasses);
 		}
 
 		// set CSS id
@@ -376,20 +377,25 @@ public class NodePart extends AbstractContentPart<Group>
 		if (attrs.containsKey(ZestProperties.CSS_ID__NE)) {
 			id = ZestProperties.getCssId(node);
 		}
-		visual.setId(id);
+		if (visual.getId() != id || id != null && !id.equals(visual.getId())) {
+			visual.setId(id);
+		}
 
 		refreshShape();
 
 		// set CSS style
 		if (attrs.containsKey(ZestProperties.SHAPE_CSS_STYLE__N)) {
 			if (getShape() != null) {
-				getShape().setStyle(ZestProperties.getShapeCssStyle(node));
+				if (!getShape().getStyle().equals(ZestProperties.getShapeCssStyle(node))) {
+					getShape().setStyle(ZestProperties.getShapeCssStyle(node));
+				}
 			}
-
 		}
 		if (attrs.containsKey(ZestProperties.LABEL_CSS_STYLE__NE)) {
 			if (getLabelText() != null) {
-				getLabelText().setStyle(ZestProperties.getLabelCssStyle(node));
+				if (!getLabelText().getStyle().equals(ZestProperties.getLabelCssStyle(node))) {
+					getLabelText().setStyle(ZestProperties.getLabelCssStyle(node));
+				}
 			}
 		}
 
@@ -440,7 +446,9 @@ public class NodePart extends AbstractContentPart<Group>
 
 		Dimension size = ZestProperties.getSize(node);
 		if (size != null) {
-			getVisual().resize(size.width, size.height);
+			if (!size.equals(getVisualSize())) {
+				getVisual().resize(size.width, size.height);
+			}
 		} else {
 			getVisual().autosize();
 		}

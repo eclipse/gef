@@ -41,4 +41,5 @@ public class GeometricCurveCreationHoverHandlePart extends AbstractLogoHoverHand
 		blendImageView.overlayImageProperty().set(overlayImage);
 		return blendImageView;
 	}
+
 }
