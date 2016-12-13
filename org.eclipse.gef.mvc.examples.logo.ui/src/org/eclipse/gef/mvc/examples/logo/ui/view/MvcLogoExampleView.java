@@ -115,10 +115,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 	public void dispose() {
 
 		// clear viewer contents
-		getContentViewer().contentsProperty()
-				.clear();
-		getPaletteViewer().contentsProperty()
-				.clear();
+		getContentViewer().contentsProperty().clear();
+		getPaletteViewer().contentsProperty().clear();
 
 		super.dispose();
 	}
@@ -155,7 +153,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
-			part.getRoot().getAdapter(SelectionBehavior.class).updateHandles(part, null, null);
+			part.getRoot().getAdapter(SelectionBehavior.class)
+					.updateHandles(part, null, null);
 			return Status.OK_STATUS;
 		}
 
@@ -221,10 +220,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 					@Override
 					public void setValues(Object[] objects) {
 						if (objects == null || objects.length == 0) {
-							// TODO: test
-							objects = new Object[] { getContentViewer()
-									
-									.getContents().get(0) };
+							objects = new Object[] {
+									getContentViewer().getContents().get(0) };
 						}
 						super.setValues(objects);
 					}
