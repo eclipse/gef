@@ -319,4 +319,5 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 	public IRootPart<? extends Node> getRoot() {
 		return this;
 	}
+
 }

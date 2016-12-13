@@ -393,30 +393,10 @@ public abstract class AbstractVisualPart<V extends Node>
 	 */
 	protected IViewer determineViewer(IVisualPart<? extends Node> parent,
 			Multiset<IVisualPart<? extends Node>> anchoreds) {
-		IViewer newViewer = null;
 		if (parent != null && parent.getRoot() != null) {
-			// the new viewer will be determined via the new
-			// parent's root
-			newViewer = parent.getRoot().getViewer();
-		} else {
-			// the new viewer will be determined via the current
-			// anchoreds
-			for (IVisualPart<? extends Node> anchored : anchoreds
-					.elementSet()) {
-				// skip feedback and handles (bug #498298)
-				if (anchored instanceof IFeedbackPart
-						|| anchored instanceof IHandlePart) {
-					continue;
-				}
-				// determine root via anchored
-				IRootPart<? extends Node> root = anchored.getRoot();
-				if (root != null) {
-					newViewer = root.getViewer();
-					break;
-				}
-			}
+			return parent.getRoot().getViewer();
 		}
-		return newViewer;
+		return null;
 	}
 
 	@Override
@@ -606,24 +586,18 @@ public abstract class AbstractVisualPart<V extends Node>
 
 	@Override
 	public IRootPart<? extends Node> getRoot() {
-		if (getParent() != null) {
-			IRootPart<? extends Node> root = getParent().getRoot();
-			if (root != null) {
-				return root;
-			}
+		// start at first parent as the root part will directly return itself
+		IVisualPart<? extends Node> parent = getParent();
+		// walk up the part hierarchy until the root part (which has no parent)
+		// is found
+		while (parent != null && parent.getParent() != null) {
+			parent = parent.getParent();
 		}
-		for (IVisualPart<? extends Node> anchored : getAnchoredsUnmodifiable()
-				.elementSet()) {
-			// skip feedback and handles (bug #498298)
-			if (anchored instanceof IFeedbackPart
-					|| anchored instanceof IHandlePart) {
-				continue;
-			}
-			IRootPart<? extends Node> root = anchored.getRoot();
-			if (root != null) {
-				return root;
-			}
+		// check if we really reached the root part
+		if (parent instanceof IRootPart) {
+			return (IRootPart<? extends Node>) parent;
 		}
+		// return null if the root part could not be determined
 		return null;
 	}
 
