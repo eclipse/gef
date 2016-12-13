@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.BiFunction;
 
 import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
 
@@ -42,6 +43,8 @@ import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
  */
 abstract class AbstractMultiShape extends AbstractGeometry
 		implements IMultiShape {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * <p>
@@ -77,8 +80,6 @@ abstract class AbstractMultiShape extends AbstractGeometry
 		}
 		return 1;
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	private void assignRemainingSegment(HashMap<Line, Integer> seen,
 			Stack<Line> addends, Line toAdd, Point start, Point end) {
@@ -397,13 +398,36 @@ abstract class AbstractMultiShape extends AbstractGeometry
 
 	@Override
 	public Path toPath() {
+		return toPath(Path::exclusiveOr);
+	}
+
+	/**
+	 * Computes a {@link Path} for this {@link AbstractMultiShape} by combining
+	 * the {@link Path} representations of the individual {@link #getOutlines()
+	 * outlines} using the given <i>pathCombinator</i> ({@link BiFunction}). The
+	 * <i>pathCombinator</i> is used as a folding operator, i.e. for three
+	 * outlines A, B, and C, the <i>pathCombinator</i> is used as follows:
+	 * <ol>
+	 * <li><code>path = A.toPath();</code></li>
+	 * <li><code>path = pathCombinator(path, B);</code></li>
+	 * <li><code>path = pathCombinator(path, C);</code></li>
+	 * </ol>
+	 *
+	 * @param pathCombinator
+	 *            The {@link BiFunction} that is used to combine two consecutive
+	 *            {@link Path}s to a result {@link Path}.
+	 * @return The result of folding the (<i>closed</i>) {@link #getOutlines()
+	 *         outlines} of this {@link AbstractMultiShape} using the given
+	 *         <i>pathCombinator</i>.
+	 */
+	private Path toPath(BiFunction<Path, Path, Path> pathCombinator) {
 		Polyline[] outlines = getOutlines();
 		if (outlines == null || outlines.length < 1) {
 			return new Path();
 		}
-		Path path = outlines[0].toPath();
+		Path path = outlines[0].toPath().close();
 		for (int i = 1; i < outlines.length; i++) {
-			path = Path.exclusiveOr(path, outlines[i].toPath());
+			path = pathCombinator.apply(path, outlines[i].toPath().close());
 		}
 		return path;
 	}
