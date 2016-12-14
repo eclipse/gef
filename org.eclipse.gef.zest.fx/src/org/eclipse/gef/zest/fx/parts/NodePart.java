@@ -446,9 +446,10 @@ public class NodePart extends AbstractContentPart<Group>
 
 		Dimension size = ZestProperties.getSize(node);
 		if (size != null) {
-			if (!size.equals(getVisualSize())) {
-				getVisual().resize(size.width, size.height);
-			}
+			// XXX: Resize is needed even though the visual size is already
+			// up-to-date, because otherwise a nesting node might be resized to
+			// 0, 0 (unknown reason, need debug).
+			getVisual().resize(size.width, size.height);
 		} else {
 			getVisual().autosize();
 		}
