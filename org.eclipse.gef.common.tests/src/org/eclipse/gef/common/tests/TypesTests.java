@@ -22,13 +22,7 @@ import com.google.common.reflect.TypeToken;
 
 public class TypesTests {
 
-	private class ParameterizedSubType<T> extends ParameterizedType<T> {
-	}
-
-	private class ParameterizedSuperType<T> extends Object {
-	}
-
-	private class ParameterizedType<T> extends ParameterizedSuperType<T> {
+	private class ParameterizedType<T> {
 	}
 
 	private class ParameterType1 extends Object {
