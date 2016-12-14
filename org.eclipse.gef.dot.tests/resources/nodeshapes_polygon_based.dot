@@ -19,7 +19,7 @@ graph PolygonBasedNodeShapes {
      1[shape=box]
      
      /* If shape="polygon", the attributes sides, skew and distortion are also used.*/
-     2[shape=polygon sides=5, skew=0, distortion=0]
+     2[shape=polygon sides=7, skew=0, distortion=0]
      3[shape=ellipse]
      4[shape=oval]
      5[shape=circle]
@@ -32,7 +32,7 @@ graph PolygonBasedNodeShapes {
      * The node shape=plain requires also the label attribute to be set, otherwise it will be rendered
      * as a box shape with the following warning: "Warning: using box for unknown shape plain."
      */
-	10[shape=plain label=PLAIN_LABEL]
+    10[shape=plain label=PLAIN_LABEL]
     11[shape=diamond]
     12[shape=trapezium]
     13[shape=parallelogram]
@@ -82,4 +82,11 @@ graph PolygonBasedNodeShapes {
     57[shape=rarrow]
     58[shape=larrow]
     59[shape=lpromoter]
+    
+    // define invisible edges to lay out the graph in a grid
+    edge[style=invis]
+    1--5-- 9--13--17--21--25--29--33--37--41--45--49--53--57
+    2--6--10--14--18--22--26--30--34--38--42--46--50--54--58
+    3--7--11--15--19--23--27--31--35--39--43--47--51--55--59
+    4--8--12--16--20--24--28--32--36--40--44--48--52--56
 }
