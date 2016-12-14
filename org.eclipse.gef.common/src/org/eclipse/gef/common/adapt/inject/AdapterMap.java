@@ -18,7 +18,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.common.reflect.Types;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.BindingAnnotation;
@@ -80,10 +82,24 @@ import com.google.inject.Module;
 @interface AdapterMap {
 
 	/**
-	 * Specifies the context of an adaptable. The adaptable itself, or one of
-	 * its ancestors (within an adapter-chain).
+	 * Characterizes a {@link org.eclipse.gef.common.adapt.IAdaptable.Bound
+	 * bound} adapter by specifying its type and the role, via which it is
+	 * {@link org.eclipse.gef.common.adapt.IAdaptable.Bound bound} to its
+	 * {@link IAdaptable adaptable}. It can be used to specify a context element
+	 * in the adaptable-adapter chain of the adaptable, into which adapters are
+	 * to be injected.
+	 * <p>
+	 * The information captured by a {@link BoundAdapter} corresponds to that of
+	 * an {@link AdapterKey}, which cannot be directly used to characterize the
+	 * {@link AdapterMap#adaptableContext() context} within an
+	 * {@link AdapterMap} because of the type restrictions that hold for
+	 * annotation fields. This is also the cause for representing the type
+	 * information not via a {@link TypeToken} directly, but through a
+	 * {@link Types#serialize(TypeToken) serialized} string representation, that
+	 * has to be {@link Types#deserialize(String) deserialized} into a
+	 * {@link TypeToken}.
 	 */
-	@interface ContextElement {
+	@interface BoundAdapter {
 
 		/**
 		 * The default adapter role (if no specific role is to be used).
@@ -103,9 +119,11 @@ import com.google.inject.Module;
 		/**
 		 * The type of the adaptable that is bound with the specified role.
 		 *
-		 * @return The type of the adaptable.
+		 * @return The type of the adaptable as a serialized {@link TypeToken}
+		 *         (see {@link Types#serialize(TypeToken)} and
+		 *         {@link Types#deserialize(String)}).
 		 */
-		Class<?> adapterType();
+		String adapterType();
 	}
 
 	/**
@@ -121,7 +139,7 @@ import com.google.inject.Module;
 	 *
 	 * @return The context of the adaptable to inject into.
 	 */
-	ContextElement[] adaptableContext();
+	BoundAdapter[] adaptableContext();
 
 	/**
 	 * The type used to qualify the {@link AdapterMap} annotation. It is used to

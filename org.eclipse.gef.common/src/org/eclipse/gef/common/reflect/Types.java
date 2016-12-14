@@ -12,7 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef.common.reflect;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.ParameterizedType;
+import java.util.Base64;
 
 import com.google.common.reflect.TypeToken;
 
@@ -44,5 +50,55 @@ public class Types {
 		return (TypeToken<T>) TypeToken
 				.of(((ParameterizedType) contextClass.getGenericSuperclass())
 						.getActualTypeArguments()[0]);
+	}
+
+	/**
+	 * Deserializes the given {@link String}-representation in Base64 encoding
+	 * into a {@link TypeToken}.
+	 *
+	 * @param string
+	 *            The {@link String}-representation to deserialize.
+	 * @return The deserialized {@link TypeToken}.
+	 */
+	public static final TypeToken<?> deserialize(String string) {
+		try {
+			ByteArrayInputStream bis = new ByteArrayInputStream(
+					Base64.getDecoder().decode(string));
+			ObjectInputStream ois = new ObjectInputStream(bis);
+			TypeToken<?> typeToken;
+
+			typeToken = (TypeToken<?>) ois.readObject();
+
+			ois.close();
+			return typeToken;
+		} catch (ClassNotFoundException | ClassCastException e) {
+			throw new IllegalArgumentException(
+					"String does not seem to be of type TokeToken.");
+		} catch (IOException e2) {
+			throw new IllegalArgumentException(
+					"Could not deserialize TypeToken.");
+		}
+	}
+
+	/**
+	 * Serializes a given {@link TypeToken} into a {@link String}
+	 * representation.
+	 *
+	 * @param typeToken
+	 *            The {@link TypeToken} to serialize.
+	 * @return The string representation of the {@link TypeToken} encoded in
+	 *         Base64.
+	 */
+	public static final String serialize(TypeToken<?> typeToken) {
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream os = new ObjectOutputStream(bos);
+			os.writeObject(typeToken);
+			os.close();
+			return Base64.getEncoder().encodeToString(bos.toByteArray());
+		} catch (IOException e) {
+			throw new IllegalArgumentException(
+					"Could not serialize " + typeToken);
+		}
 	}
 }

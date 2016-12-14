@@ -16,6 +16,9 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.common.reflect.Types;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link AdapterMap} annotation.
@@ -31,38 +34,40 @@ class AdapterMapImpl implements AdapterMap, Serializable {
 	 * {@link org.eclipse.gef.common.adapt.IAdaptable.Bound} with a specific
 	 * role.
 	 */
-	static class ContextElementImpl implements ContextElement, Serializable {
+	static class BoundAdapterImpl implements BoundAdapter, Serializable {
 		private static final long serialVersionUID = 1L;
 
-		private Class<?> adapterType = null;
+		private String adapterType = null;
 		private String adapterRole = DEFAULT_ROLE;
 
 		/**
-		 * Creates a new {@link ContextElementImpl} for the given adapter type.
+		 * Creates a new {@link BoundAdapterImpl} for the given adapter type.
 		 *
 		 * @param adapterType
 		 *            The type of the context element.
 		 */
-		public ContextElementImpl(Class<?> adapterType) {
-			if (!IAdaptable.class.isAssignableFrom(adapterType)
-					|| !IAdaptable.Bound.class.isAssignableFrom(adapterType)) {
+		public BoundAdapterImpl(String adapterType) {
+			TypeToken<?> type = Types.deserialize(adapterType);
+			if (!TypeToken.of(IAdaptable.class).isAssignableFrom(type)
+					|| !TypeToken.of(IAdaptable.Bound.class)
+							.isAssignableFrom(type)) {
 				throw new IllegalArgumentException(
 						"Context element has to be IAdaptable and IAdaptable.Bound, which does not hold for "
-								+ adapterType.getName());
+								+ type.toString());
 			}
 			this.adapterType = adapterType;
 		}
 
 		/**
-		 * Create a new {@link ContextElementImpl} for the given adapter type
-		 * and role.
+		 * Create a new {@link BoundAdapterImpl} for the given adapter type and
+		 * role.
 		 *
 		 * @param adapterType
 		 *            The type of the context element.
 		 * @param adapterRole
 		 *            The role under which the context element is bound.
 		 */
-		public ContextElementImpl(Class<?> adapterType, String adapterRole) {
+		public BoundAdapterImpl(String adapterType, String adapterRole) {
 			this(adapterType);
 			this.adapterRole = adapterRole;
 		}
@@ -73,22 +78,22 @@ class AdapterMapImpl implements AdapterMap, Serializable {
 		}
 
 		@Override
-		public Class<?> adapterType() {
+		public String adapterType() {
 			return adapterType;
 		}
 
 		@Override
 		public Class<? extends Annotation> annotationType() {
-			return ContextElement.class;
+			return BoundAdapter.class;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof ContextElement)) {
+			if (!(obj instanceof BoundAdapter)) {
 				return false;
 			}
 
-			ContextElement other = (ContextElement) obj;
+			BoundAdapter other = (BoundAdapter) obj;
 			return adapterType.equals(other.adapterType())
 					&& adapterRole.equals(other.adapterRole());
 		}
@@ -102,14 +107,16 @@ class AdapterMapImpl implements AdapterMap, Serializable {
 
 		@Override
 		public String toString() {
-			return "@" + ContextElement.class.getName() + "(adapterType="
+			return "@" + BoundAdapter.class.getName() + "(adapterType="
 					+ adapterType + ", " + "adapterRole=" + adapterRole + ")";
 		}
 	}
 
 	private static final long serialVersionUID = 1L;
+
 	private Class<? extends IAdaptable> adaptableType;
-	private ContextElement[] adaptableContext = new ContextElement[] {};
+
+	private BoundAdapter[] adaptableContext = new BoundAdapter[] {};
 
 	/**
 	 * Creates a new {@link AdapterMapImpl} with the given {@link IAdaptable}
@@ -135,13 +142,13 @@ class AdapterMapImpl implements AdapterMap, Serializable {
 	 *            {@link AdapterMapImpl}.
 	 */
 	public AdapterMapImpl(Class<? extends IAdaptable> adaptableType,
-			ContextElement... adaptableContext) {
+			BoundAdapter... adaptableContext) {
 		this.adaptableType = adaptableType;
 		this.adaptableContext = adaptableContext;
 	}
 
 	@Override
-	public ContextElement[] adaptableContext() {
+	public BoundAdapter[] adaptableContext() {
 		return adaptableContext;
 	}
 

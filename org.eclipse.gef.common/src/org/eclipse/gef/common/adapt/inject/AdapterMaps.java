@@ -13,7 +13,8 @@ package org.eclipse.gef.common.adapt.inject;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
-import org.eclipse.gef.common.adapt.inject.AdapterMap.ContextElement;
+import org.eclipse.gef.common.adapt.inject.AdapterMap.BoundAdapter;
+import org.eclipse.gef.common.reflect.Types;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -52,10 +53,10 @@ public class AdapterMaps {
 			AdapterKey<?>... context) {
 		// convert keys into annotations (which are needed because the
 		// AdapterMap annotation may not use AdapterKey type directly
-		ContextElement[] ce = new ContextElement[context.length];
+		BoundAdapter[] ce = new BoundAdapter[context.length];
 		for (int i = 0; i < context.length; i++) {
-			ce[i] = new AdapterMapImpl.ContextElementImpl(
-					context[i].getKey().getRawType(), context[i].getRole());
+			ce[i] = new AdapterMapImpl.BoundAdapterImpl(
+					Types.serialize(context[i].getKey()), context[i].getRole());
 		}
 		return new AdapterMapImpl(type, ce);
 	}

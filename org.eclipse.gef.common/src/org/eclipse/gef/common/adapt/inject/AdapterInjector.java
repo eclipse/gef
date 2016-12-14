@@ -22,7 +22,8 @@ import java.util.Map.Entry;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
-import org.eclipse.gef.common.adapt.inject.AdapterMap.ContextElement;
+import org.eclipse.gef.common.adapt.inject.AdapterMap.BoundAdapter;
+import org.eclipse.gef.common.reflect.Types;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
@@ -332,12 +333,13 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	}
 
 	private boolean isContextApplicable(IAdaptable injectionTarget,
-			ContextElement[] injectionContext) {
+			BoundAdapter[] injectionContext) {
 		// walk up the adaptable chain and see whether context elements can be
 		// found
 		int contextIndex = 0;
 		String contextRole = injectionContext[contextIndex].adapterRole();
-		Class<?> contextType = injectionContext[contextIndex].adapterType();
+		TypeToken<?> contextType = Types
+				.deserialize(injectionContext[contextIndex].adapterType());
 
 		IAdaptable chainElement = injectionTarget;
 		while (chainElement instanceof IAdaptable.Bound) {
@@ -361,7 +363,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 					return true;
 				}
 				contextRole = injectionContext[contextIndex].adapterRole();
-				contextType = injectionContext[contextIndex].adapterType();
+				contextType = Types.deserialize(
+						injectionContext[contextIndex].adapterType());
 			}
 			chainElement = nextChainElement;
 		}
