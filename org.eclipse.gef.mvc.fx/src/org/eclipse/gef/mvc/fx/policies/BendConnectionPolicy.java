@@ -328,8 +328,6 @@ public class BendConnectionPolicy extends AbstractTransactionPolicy {
 			if (part == getHost()) {
 				continue;
 			}
-			// TODO: this is not correct; we should not hard-code the compatible
-			// anchor via the computation strategy.
 			IAnchorProvider anchorProvider = part
 					.getAdapter(IAnchorProvider.class);
 			if (anchorProvider != null) {
@@ -1107,6 +1105,11 @@ public class BendConnectionPolicy extends AbstractTransactionPolicy {
 		// System.out.println("selection: " + selectedExplicitAnchorIndices);
 		// System.out.println(
 		// "overlain: " + toList(overlainPointIndicesRelativeToSelection));
+		// System.out.println("overlain points: " + overlainPoints);
+		// System.out.println(
+		// "selection line: " + selectionStart + " -> " + selectionEnd);
+		// System.out.println("result line: " + resultStart + " -> " +
+		// resultEnd);
 		// System.out.println("distance: " + distance);
 
 		// at this point, the overlay is confirmed and needs to be removed.
@@ -1151,17 +1154,27 @@ public class BendConnectionPolicy extends AbstractTransactionPolicy {
 
 		// overwrite the first and last explicit anchor with a new unconnected
 		// anchor for the adjusted result position if the respective anchor is
-		// currently unconnected
+		// currently unconnected and neither the start nor the end point
 		Integer resultStartIndex = explicit.get(0);
-		if (!(getBendOperation().getNewAnchors()
-				.get(resultStartIndex) instanceof DynamicAnchor)) {
+		IAnchor resultStartAnchor = getBendOperation().getNewAnchors()
+				.get(resultStartIndex);
+		Connection connection = getBendOperation().getConnection();
+		if (resultStartIndex > 0
+				&& !connection.isConnected(resultStartAnchor)) {
+			// System.out.println(
+			// "Insert unconnected result start at " + resultStartIndex);
 			getBendOperation().getNewAnchors().set(resultStartIndex,
 					createUnconnectedAnchor(resultStart));
 		}
+
 		Integer resultEndIndex = explicit.get(explicit.size() - 1)
 				- removedCount;
-		if (!(getBendOperation().getNewAnchors()
-				.get(resultEndIndex) instanceof DynamicAnchor)) {
+		IAnchor resultEndAnchor = getBendOperation().getNewAnchors()
+				.get(resultEndIndex);
+		if (resultEndIndex < getBendOperation().getNewAnchors().size() - 1
+				&& !connection.isConnected(resultEndAnchor)) {
+			// System.out.println(
+			// "Insert unconnected result end at " + resultEndIndex);
 			getBendOperation().getNewAnchors().set(resultEndIndex,
 					createUnconnectedAnchor(resultEnd));
 		}

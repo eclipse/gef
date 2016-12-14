@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,6 +34,7 @@ import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.PreferredOrientation;
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
+import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
@@ -41,6 +43,7 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Vector;
 import org.eclipse.gef.geometry.planar.IShape;
+import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
@@ -239,6 +242,18 @@ public class BendConnectionPolicyTests {
 		}
 	}
 
+	public static class TestAnchorProviderWithStaticAnchor extends DefaultAnchorProvider {
+		private IAnchor staticAnchor;
+
+		@Override
+		public IAnchor get(IVisualPart<? extends Node> anchoredPart) {
+			if (staticAnchor == null) {
+				staticAnchor = new StaticAnchor(getAdaptable().getVisual(), new Point());
+			}
+			return staticAnchor;
+		}
+	}
+
 	public static class TestContentPartFactory implements IContentPartFactory {
 		@Inject
 		private Injector injector;
@@ -401,6 +416,18 @@ public class BendConnectionPolicyTests {
 		}
 	}
 
+	public static class TestModuleWithStaticAnchor extends TestModule {
+		@Override
+		protected void bindAnchorageAdapters(final MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+			// transform policy
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
+			// relocate on drag
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
+			// bind dynamic anchor provider
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TestAnchorProviderWithStaticAnchor.class);
+		}
+	}
+
 	/**
 	 * Returns the index within the Connection's anchors for the given explicit
 	 * anchor index.
@@ -462,6 +489,40 @@ public class BendConnectionPolicyTests {
 	private IViewer createViewer(final List<Object> contents) throws Throwable {
 		// create injector (adjust module bindings for test)
 		final Injector injector = Guice.createInjector(new TestModule());
+
+		// inject domain
+		injector.injectMembers(this);
+
+		final IViewer viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
+		ctx.createScene(viewer.getCanvas(), 400, 200);
+
+		// activate domain, so tool gets activated and can register listeners
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+			}
+		});
+
+		// set contents on JavaFX application thread (visuals are created)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getContents().setAll(contents);
+			}
+		});
+
+		// check that the parts have been created
+		for (final Object content : contents) {
+			assertTrue(viewer.getContentPartMap().containsKey(content));
+		}
+
+		return viewer;
+	}
+
+	private IViewer createViewerWithStaticAnchor(final List<Object> contents) throws Throwable {
+		// create injector (adjust module bindings for test)
+		final Injector injector = Guice.createInjector(new TestModuleWithStaticAnchor());
 
 		// inject domain
 		injector.injectMembers(this);
@@ -2986,6 +3047,569 @@ public class BendConnectionPolicyTests {
 		});
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
+	}
+
+	@Test
+	public void test_static_connected_move_orthogonal_segment_overlay_start_and_end() throws Throwable {
+		final List<Object> contents = TestModels.getAB_AB_simple();
+		final IViewer viewer = createViewerWithStaticAnchor(contents);
+
+		// query bend policy for first connection
+		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
+				.get(contents.get(contents.size() - 1));
+		Set<Entry<IVisualPart<? extends Node>, String>> anchorages = connection.getAnchoragesUnmodifiable().entries();
+		AnchoragePart sourceAnchorage = null;
+		AnchoragePart targetAnchorage = null;
+		for (Entry<IVisualPart<? extends Node>, String> e : anchorages) {
+			if (e.getValue().equals(ConnectionPart.START_ROLE)) {
+				sourceAnchorage = (AnchoragePart) e.getKey();
+			}
+			if (e.getValue().equals(ConnectionPart.END_ROLE)) {
+				targetAnchorage = (AnchoragePart) e.getKey();
+			}
+		}
+		final AnchoragePart startAnchorage = sourceAnchorage;
+		final AnchoragePart endAnchorage = targetAnchorage;
+
+		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
+
+		// setup connection to be orthogonal, i.e. use orthogonal router
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				connection.getVisual().setRouter(new OrthogonalRouter());
+				// FIXME: anchorage visuals do not have correct size, therefore,
+				// the start and end position is not computed but manually
+				// specified here
+				StaticAnchor anchor = (StaticAnchor) startAnchorage.getAdapter(IAnchorProvider.class).get(connection);
+				anchor.setReferencePosition(new Point());
+				anchor = (StaticAnchor) endAnchorage.getAdapter(IAnchorProvider.class).get(connection);
+				anchor.setReferencePosition(new Point(500, 0));
+			}
+		});
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		final Point startPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		});
+		final Point endPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		});
+
+		// copy start and end point and move segment (start-copy, end-copy) down
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+			}
+		});
+		final int startAnchorIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.getExplicitIndexAtOrBefore(0);
+			}
+		});
+		Point firstWayPoint = startPoint.getCopy();
+		Point secondWayPoint = endPoint.getCopy();
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				int firstWayIndex = bendPolicy.createAfter(startAnchorIndex, firstWayPoint);
+				int secondWayIndex = bendPolicy.createAfter(firstWayIndex, secondWayPoint);
+				bendPolicy.select(firstWayIndex);
+				bendPolicy.select(secondWayIndex);
+				bendPolicy.move(new Point(), new Point(0, 100));
+				firstWayPoint.translate(0, 100);
+				secondWayPoint.translate(0, 100);
+				bendPolicy.commit();
+			}
+		});
+
+		// check points
+		assertEquals(4, (int) ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return connection.getVisual().getPointsUnmodifiable().size();
+			}
+		}));
+		equalsUnprecise(startPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		}));
+		equalsUnprecise(firstWayPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(0);
+			}
+		}));
+		equalsUnprecise(secondWayPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(1);
+			}
+		}));
+		equalsUnprecise(endPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		}));
+
+		// move segment up so that the way points are removed
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+				bendPolicy.select(1);
+				bendPolicy.select(2);
+				bendPolicy.move(new Point(), new Point(0, -100));
+				bendPolicy.commit();
+			}
+		});
+		// check points
+		assertEquals(2, (int) ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return connection.getVisual().getPointsUnmodifiable().size();
+			}
+		}));
+		equalsUnprecise(startPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		}));
+		equalsUnprecise(endPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		}));
+	}
+
+	@Test
+	public void test_unconnected_move_orthogonal_segment_overlay_end() throws Throwable {
+		final List<Object> contents = TestModels.getAB_AB_simple();
+		final IViewer viewer = createViewer(contents);
+
+		// query bend policy for first connection
+		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
+				.get(contents.get(contents.size() - 1));
+		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				((DynamicAnchor) connection.getVisual().getStartAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				((DynamicAnchor) connection.getVisual().getEndAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				connection.getVisual().setRouter(new OrthogonalRouter());
+			}
+		});
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		final Point startPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		});
+		final Point endPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		});
+
+		// disconnect start point
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+			}
+		});
+		final int startAnchorIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.getExplicitIndexAtOrBefore(0);
+			}
+		});
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.select(startAnchorIndex);
+				bendPolicy.move(new Point(), new Point(20, 0));
+				bendPolicy.commit();
+			}
+		});
+		startPoint.translate(20, 0);
+
+		// ensure number of points did not change
+		assertEquals(2, (int) ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return connection.getVisual().getPointsUnmodifiable().size();
+			}
+		}));
+
+		// disconnect end point
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+			}
+		});
+		{
+			final int endAnchorIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+				@Override
+				public Integer run() {
+					return bendPolicy.getExplicitIndexAtOrBefore(1);
+				}
+			});
+			ctx.runAndWait(new Runnable() {
+				@Override
+				public void run() {
+					bendPolicy.select(endAnchorIndex);
+					bendPolicy.move(new Point(), new Point(-20, 0));
+					bendPolicy.commit();
+				}
+			});
+		}
+		endPoint.translate(-20, 0);
+
+		// ensure number of points did not change
+		assertEquals(2, (int) ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return connection.getVisual().getPointsUnmodifiable().size();
+			}
+		}));
+
+		// insert way point and copy that way point, so that the right segment
+		// (way-copy, end) can be dragged down to create three segments
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+			}
+		});
+		final int firstWayIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.createAfter(startAnchorIndex, new Line(startPoint, endPoint).get(0.5));
+			}
+		});
+		final int secondWayIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.createAfter(firstWayIndex, new Line(startPoint, endPoint).get(0.5));
+			}
+		});
+		final Point firstWayPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(0);
+			}
+		});
+		final int endAnchorIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.getExplicitIndexAtOrAfter(secondWayIndex + 1);
+			}
+		});
+
+		// drag right segment (way-copy, end) down, so that the connection is
+		// divided into three segments: (start, way), (way, way-copy),
+		// (way-copy, end)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.select(secondWayIndex);
+				bendPolicy.select(endAnchorIndex);
+				bendPolicy.move(new Point(), new Point(0, 100));
+				endPoint.translate(0, 100);
+				bendPolicy.commit();
+			}
+		});
+
+		// check number of points and their positions
+		assertEquals(4, countExplicit(connection.getVisual()));
+		equalsUnprecise(firstWayPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(0);
+			}
+		}));
+		equalsUnprecise(firstWayPoint.getTranslated(0, 100), ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(1);
+			}
+		}));
+
+		// drag middle segment (first-way, second-way) onto the end point in
+		// order to remove the second way point
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+				bendPolicy.select(firstWayIndex);
+				bendPolicy.select(secondWayIndex);
+				double dx = endPoint.x - firstWayPoint.x;
+				bendPolicy.move(new Point(), new Point(dx, 0));
+				firstWayPoint.translate(dx, 0);
+				bendPolicy.commit();
+			}
+		});
+
+		// ensure second way point was removed and the rest is in place
+		assertEquals(3, countExplicit(connection.getVisual()));
+		equalsUnprecise(startPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		}));
+		equalsUnprecise(firstWayPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(0);
+			}
+		}));
+		equalsUnprecise(endPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		}));
+	}
+
+	@Test
+	public void test_unconnected_move_orthogonal_segment_overlay_start() throws Throwable {
+		final List<Object> contents = TestModels.getAB_AB_simple();
+		final IViewer viewer = createViewer(contents);
+
+		// query bend policy for first connection
+		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
+				.get(contents.get(contents.size() - 1));
+		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				((DynamicAnchor) connection.getVisual().getStartAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				((DynamicAnchor) connection.getVisual().getEndAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				connection.getVisual().setRouter(new OrthogonalRouter());
+			}
+		});
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		final Point startPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		});
+		final Point endPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		});
+
+		// disconnect start point
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+			}
+		});
+		final int startAnchorIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.getExplicitIndexAtOrBefore(0);
+			}
+		});
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.select(startAnchorIndex);
+				bendPolicy.move(new Point(), new Point(20, 0));
+				bendPolicy.commit();
+			}
+		});
+		startPoint.translate(20, 0);
+
+		// ensure number of points did not change
+		assertEquals(2, (int) ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return connection.getVisual().getPointsUnmodifiable().size();
+			}
+		}));
+
+		// disconnect end point
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+			}
+		});
+		{
+			final int endAnchorIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+				@Override
+				public Integer run() {
+					return bendPolicy.getExplicitIndexAtOrBefore(1);
+				}
+			});
+			ctx.runAndWait(new Runnable() {
+				@Override
+				public void run() {
+					bendPolicy.select(endAnchorIndex);
+					bendPolicy.move(new Point(), new Point(-20, 0));
+					bendPolicy.commit();
+				}
+			});
+		}
+		endPoint.translate(-20, 0);
+
+		// ensure number of points did not change
+		assertEquals(2, (int) ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return connection.getVisual().getPointsUnmodifiable().size();
+			}
+		}));
+
+		// insert way point and copy that way point, so that the right segment
+		// (way-copy, end) can be dragged down to create three segments
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+			}
+		});
+		final int firstWayIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.createAfter(startAnchorIndex, new Line(startPoint, endPoint).get(0.5));
+			}
+		});
+		final int secondWayIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.createAfter(firstWayIndex, new Line(startPoint, endPoint).get(0.5));
+			}
+		});
+		final Point firstWayPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(0);
+			}
+		});
+		final Point secondWayPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(1);
+			}
+		});
+		final int endAnchorIndex = ctx.runAndWait(new RunnableWithResult<Integer>() {
+			@Override
+			public Integer run() {
+				return bendPolicy.getExplicitIndexAtOrAfter(secondWayIndex + 1);
+			}
+		});
+
+		// drag right segment (way-copy, end) down, so that the connection is
+		// divided into three segments: (start, way), (way, way-copy),
+		// (way-copy, end)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.select(secondWayIndex);
+				bendPolicy.select(endAnchorIndex);
+				bendPolicy.move(new Point(), new Point(0, 100));
+				endPoint.translate(0, 100);
+				secondWayPoint.translate(0, 100);
+				bendPolicy.commit();
+			}
+		});
+
+		// check number of points and their positions
+		assertEquals(4, countExplicit(connection.getVisual()));
+		equalsUnprecise(firstWayPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(0);
+			}
+		}));
+		equalsUnprecise(secondWayPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(1);
+			}
+		}));
+
+		// drag middle segment (first-way, second-way) onto the start point in
+		// order to remove the first way point
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+				bendPolicy.select(firstWayIndex);
+				bendPolicy.select(secondWayIndex);
+				double dx = startPoint.x - firstWayPoint.x;
+				bendPolicy.move(new Point(), new Point(dx, 0));
+				firstWayPoint.translate(dx, 0);
+				secondWayPoint.translate(dx, 0);
+				bendPolicy.commit();
+			}
+		});
+
+		// ensure second way point was removed and the rest is in place
+		assertEquals(3, countExplicit(connection.getVisual()));
+		equalsUnprecise(startPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		}));
+		equalsUnprecise(secondWayPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getControlPoint(0);
+			}
+		}));
+		equalsUnprecise(endPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		}));
 	}
 
 	@Test

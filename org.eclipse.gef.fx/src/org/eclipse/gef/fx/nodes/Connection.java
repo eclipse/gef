@@ -1001,7 +1001,7 @@ public class Connection extends Group {
 	 * @return <code>true</code> if the anchor is connected, <code>false</code>
 	 *         otherwise.
 	 */
-	protected boolean isConnected(IAnchor anchor) {
+	public boolean isConnected(IAnchor anchor) {
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
 	}
