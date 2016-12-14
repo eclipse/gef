@@ -92,12 +92,13 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	};
 
 	private SetChangeListener<org.eclipse.gef.graph.Node> hidingModelObserver = new SetChangeListener<org.eclipse.gef.graph.Node>() {
-
 		@Override
 		public void onChanged(SetChangeListener.Change<? extends org.eclipse.gef.graph.Node> change) {
 			applyLayout(true);
 		}
 	};
+
+	private boolean skipNextLayout;
 
 	/**
 	 * Performs one layout pass using the static layout algorithm that is
@@ -120,6 +121,12 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 				}
 			}
 		}
+
+		if (skipNextLayout) {
+			skipNextLayout = false;
+			return;
+		}
+
 		Graph graph = getHost().getContent();
 
 		// update layout algorithm (apply layout will depend on it)
@@ -219,6 +226,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		// TODO: we should store one viewport state for the viewport of the
 		// nesting part and one for the viewport of the graph part, so that
 		// nested graphs are not unnecessarily layouted
+		skipNextLayout = savedViewport != null;
 		if (savedViewport == null || isNested || isViewportChanged) {
 			LayoutProperties.setBounds(getHost().getContent(), computeLayoutBounds());
 			applyLayout(true);
