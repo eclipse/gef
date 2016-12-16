@@ -56,19 +56,19 @@ public class Zest2DotAttributesConverter implements IAttributeCopier {
 		// external label (xlabel)
 		String zestExternalLabel = ZestProperties.getExternalLabel(zest);
 		if (zestExternalLabel != null) {
-			DotAttributes.setXLabel(dot, zestExternalLabel);
+			DotAttributes.setXlabel(dot, zestExternalLabel);
 		}
 
 		// tail label
 		String zestSourceLabel = ZestProperties.getSourceLabel(zest);
 		if (zestSourceLabel != null) {
-			DotAttributes.setTailLabel(dot, zestSourceLabel);
+			DotAttributes.setTaillabel(dot, zestSourceLabel);
 		}
 
 		// head label
 		String zestTargetLabel = ZestProperties.getTargetLabel(zest);
 		if (zestTargetLabel != null) {
-			DotAttributes.setHeadLabel(dot, zestTargetLabel);
+			DotAttributes.setHeadlabel(dot, zestTargetLabel);
 		}
 
 		// TODO: positions of labels
@@ -90,7 +90,7 @@ public class Zest2DotAttributesConverter implements IAttributeCopier {
 		// external label (xlabel)
 		String zestExternalLabel = ZestProperties.getExternalLabel(zest);
 		if (zestExternalLabel != null) {
-			DotAttributes.setXLabel(dot, zestExternalLabel);
+			DotAttributes.setXlabel(dot, zestExternalLabel);
 		}
 
 		// Convert position and size; as node position is interpreted as center,

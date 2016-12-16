@@ -15,6 +15,7 @@
 package org.eclipse.gef.dot.internal;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,26 +28,33 @@ import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.DotShapeStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.DotSplineTypeStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.DotStyleStandaloneSetup;
+import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
+import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
+import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
+import org.eclipse.gef.dot.internal.language.dot.AttributeType;
+import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode;
+import org.eclipse.gef.dot.internal.language.dot.EdgeStmtSubgraph;
+import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
+import org.eclipse.gef.dot.internal.language.dot.Subgraph;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
-import org.eclipse.gef.dot.internal.language.parser.antlr.DotArrowTypeParser;
-import org.eclipse.gef.dot.internal.language.parser.antlr.DotColorParser;
-import org.eclipse.gef.dot.internal.language.parser.antlr.DotPointParser;
-import org.eclipse.gef.dot.internal.language.parser.antlr.DotShapeParser;
-import org.eclipse.gef.dot.internal.language.parser.antlr.DotSplineTypeParser;
-import org.eclipse.gef.dot.internal.language.parser.antlr.DotStyleParser;
+import org.eclipse.gef.dot.internal.language.point.Point;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
+import org.eclipse.gef.dot.internal.language.shape.Shape;
 import org.eclipse.gef.dot.internal.language.splines.Splines;
+import org.eclipse.gef.dot.internal.language.splinetype.SplineType;
+import org.eclipse.gef.dot.internal.language.style.Style;
 import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator;
-import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.serializer.ISerializer;
 
@@ -59,25 +67,52 @@ import com.google.inject.Injector;
  * @author nyssen
  *
  */
-// TODO: Merge this class into DotAttributes, moving the validator fields to
-// DotJavaValidator.
+// TODO: Move the contents of this class into DotAttributes, move the validator
+// of DotAttributes and the parser of DotImport here. This class should be
+// statically injected.
 public class DotLanguageSupport {
 
-	private static class PrimitiveValueParseResultImpl<T>
-			implements IPrimitiveValueParser.IParseResult<T> {
+	/**
+	 * Contexts by which attributes may be used.
+	 */
+	public static enum Context {
+		/**
+		 * Graph context
+		 */
+		GRAPH,
+		/**
+		 * Edge context
+		 */
+		EDGE,
+		/**
+		 * Node context
+		 */
+		NODE,
+		/**
+		 * Subgraph context
+		 */
+		SUBGRAPH,
+		/**
+		 * Cluster context
+		 */
+		CLUSTER
+	}
+
+	private static class AttributeValueParseResultImpl<T>
+			implements IAttributeValueParser.IParseResult<T> {
 
 		private T parsedValue;
 		private List<Diagnostic> syntaxErrors;
 
-		private PrimitiveValueParseResultImpl(T parsedValue) {
+		private AttributeValueParseResultImpl(T parsedValue) {
 			this(parsedValue, Collections.<Diagnostic> emptyList());
 		}
 
-		private PrimitiveValueParseResultImpl(List<Diagnostic> syntaxErrors) {
+		private AttributeValueParseResultImpl(List<Diagnostic> syntaxErrors) {
 			this(null, syntaxErrors);
 		}
 
-		private PrimitiveValueParseResultImpl(T parsedValue,
+		private AttributeValueParseResultImpl(T parsedValue,
 				List<Diagnostic> syntaxErrors) {
 			this.parsedValue = parsedValue;
 			this.syntaxErrors = syntaxErrors;
@@ -105,10 +140,10 @@ public class DotLanguageSupport {
 	 * @param <T>
 	 *            The java equivalent of the parsed DOT value.
 	 */
-	public interface IPrimitiveValueParser<T> {
+	public interface IAttributeValueParser<T> {
 
 		/**
-		 * The parse result of an {@link IPrimitiveValueParser}, which comprises
+		 * The parse result of an {@link IAttributeValueParser}, which comprises
 		 * a parsed value and/or syntax errors.
 		 * 
 		 * @param <T>
@@ -144,11 +179,11 @@ public class DotLanguageSupport {
 		/**
 		 * Parses the given raw value as a DOT primitive value.
 		 * 
-		 * @param rawValue
+		 * @param attributeValue
 		 *            The raw value to parse.
 		 * @return An {@link IParseResult} indicating the parse result.
 		 */
-		IParseResult<T> parse(String rawValue);
+		IParseResult<T> parse(String attributeValue);
 	}
 
 	/**
@@ -157,7 +192,7 @@ public class DotLanguageSupport {
 	 * @param <T>
 	 *            The java equivalent of the parsed DOT value.
 	 */
-	public interface IPrimitiveValueSerializer<T> {
+	public interface IAttributeValueSerializer<T> {
 
 		/**
 		 * Serializes the given value.
@@ -171,251 +206,222 @@ public class DotLanguageSupport {
 	}
 
 	/**
-	 * Parses the given value as a DOT dirType.
+	 * A generic {@link IAttributeValueParser} for enumeration values.
+	 * 
+	 * @param <E>
+	 *            The type of enumeration to parse.
 	 */
-	public static IPrimitiveValueParser<DirType> DIRTYPE_PARSER = new IPrimitiveValueParser<DirType>() {
+	private static class EnumValueParser<E extends Enum<E>>
+			implements IAttributeValueParser<E> {
+
+		private Class<E> definition;
+
+		/**
+		 * Creates a new parser for the given enumeration definition
+		 * 
+		 * @param attributeType
+		 *            The enumeration class.
+		 */
+		public EnumValueParser(Class<E> attributeType) {
+			this.definition = attributeType;
+		}
+
 		@Override
-		public IPrimitiveValueParser.IParseResult<DirType> parse(
-				String rawValue) {
-			if (rawValue == null) {
+		public IParseResult<E> parse(String attributeValue) {
+			if (attributeValue == null) {
 				return null;
 			}
-			for (DirType value : DirType.values()) {
-				if (value.toString().equals(rawValue)) {
-					return new PrimitiveValueParseResultImpl<>(value);
+			for (E value : definition.getEnumConstants()) {
+				if (value.toString().equals(attributeValue)) {
+					return new AttributeValueParseResultImpl<>(value);
 				}
 			}
-			return new PrimitiveValueParseResultImpl<>(
+			return new AttributeValueParseResultImpl<>(
 					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
-							Diagnostic.ERROR, rawValue, -1,
-							"Value has to be one of "
-									+ getFormattedValues(DirType.values()),
+							Diagnostic.ERROR, attributeValue, -1,
+							"Value has to be one of " + getFormattedValues(
+									definition.getEnumConstants()),
 							new Object[] {})));
 		}
-	};
+	}
+
+	/**
+	 * A generic {@link IAttributeValueSerializer} for enumeration values.
+	 * 
+	 * @param <E>
+	 *            The type of enumeration to serialize.
+	 */
+	private static class EnumValueSerializer<E extends Enum<E>>
+			implements IAttributeValueSerializer<E> {
+
+		private Class<E> definition;
+
+		/**
+		 * Creates a new serializer for the given enumeration definition
+		 * 
+		 * @param definition
+		 *            The enumeration class.
+		 */
+		public EnumValueSerializer(Class<E> definition) {
+			this.definition = definition;
+		}
+
+		@Override
+		public String serialize(E value) {
+			if (!definition.isAssignableFrom(value.getClass())) {
+				throw new IllegalArgumentException(
+						"Value does not comply to definition " + definition);
+			}
+			return value.toString();
+		}
+	}
+
+	private static class XtextDelegateValueParser<T extends EObject>
+			implements IAttributeValueParser<T> {
+
+		private Injector injector;
+		private IParser xtextParser;
+
+		public XtextDelegateValueParser(Injector injector) {
+			this.injector = injector;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public IParseResult<T> parse(String attributeValue) {
+			IParser xtextParser = getParser();
+			org.eclipse.xtext.parser.IParseResult xtextParseResult = xtextParser
+					.parse(new StringReader(attributeValue));
+			if (xtextParseResult.hasSyntaxErrors()) {
+				List<Diagnostic> syntaxProblems = new ArrayList<>();
+				for (INode xtextSyntaxError : xtextParseResult
+						.getSyntaxErrors()) {
+					syntaxProblems.add(new BasicDiagnostic(Diagnostic.ERROR,
+							attributeValue, -1, xtextSyntaxError
+									.getSyntaxErrorMessage().getMessage(),
+							new Object[] {}));
+				}
+				return new AttributeValueParseResultImpl<>(syntaxProblems);
+			}
+			return new AttributeValueParseResultImpl<>(
+					(T) xtextParseResult.getRootASTElement());
+		}
+
+		protected IParser getParser() {
+			if (xtextParser == null) {
+				xtextParser = injector.getInstance(IParser.class);
+			}
+			return xtextParser;
+		}
+	}
+
+	private static class XtextDelegateValueSerializer<T extends EObject>
+			implements IAttributeValueSerializer<T> {
+
+		private Injector injector;
+		private ISerializer serializer;
+
+		public XtextDelegateValueSerializer(Injector injector) {
+			this.injector = injector;
+		}
+
+		@Override
+		public String serialize(T value) {
+			ISerializer serializer = getSerializer();
+			return serializer.serialize(value);
+		}
+
+		protected ISerializer getSerializer() {
+			if (serializer == null) {
+				serializer = injector.getInstance(ISerializer.class);
+			}
+			return serializer;
+		}
+	}
+
+	/**
+	 * Parses the given value as a DOT dirType.
+	 */
+	public static IAttributeValueParser<DirType> DIRTYPE_PARSER = new EnumValueParser<>(
+			DirType.class);
 
 	/**
 	 * A serializer for {@link DirType} values.
 	 */
-	public static IPrimitiveValueSerializer<DirType> DIRTYPE_SERIALIZER = new IPrimitiveValueSerializer<DirType>() {
-
-		@Override
-		public String serialize(DirType value) {
-			return value.toString();
-		}
-	};
+	public static IAttributeValueSerializer<DirType> DIRTYPE_SERIALIZER = new EnumValueSerializer<>(
+			DirType.class);
 
 	/**
 	 * Parses the given value as a DOT dirType.
 	 */
-	public static IPrimitiveValueParser<Layout> LAYOUT_PARSER = new IPrimitiveValueParser<Layout>() {
-		@Override
-		public IPrimitiveValueParser.IParseResult<Layout> parse(
-				String rawValue) {
-			if (rawValue == null) {
-				return null;
-			}
-			for (Layout value : Layout.values()) {
-				if (value.toString().equals(rawValue)) {
-					return new PrimitiveValueParseResultImpl<>(value);
-				}
-			}
-			return new PrimitiveValueParseResultImpl<>(
-					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
-							Diagnostic.ERROR, rawValue, -1,
-							"Value has to be one of "
-									+ getFormattedValues(DirType.values()),
-							new Object[] {})));
-		}
-	};
+	public static IAttributeValueParser<Layout> LAYOUT_PARSER = new EnumValueParser<>(
+			Layout.class);
 
 	/**
 	 * A serializer for {@link DirType} values.
 	 */
-	public static IPrimitiveValueSerializer<Layout> LAYOUT_SERIALIZER = new IPrimitiveValueSerializer<Layout>() {
-
-		@Override
-		public String serialize(Layout value) {
-			return value.toString();
-		}
-	};
+	public static IAttributeValueSerializer<Layout> LAYOUT_SERIALIZER = new EnumValueSerializer<>(
+			Layout.class);
 
 	/**
 	 * Parses the given value as a {@link ClusterMode}.
 	 */
-	public static IPrimitiveValueParser<ClusterMode> CLUSTERMODE_PARSER = new IPrimitiveValueParser<ClusterMode>() {
-		@Override
-		public IPrimitiveValueParser.IParseResult<ClusterMode> parse(
-				String rawValue) {
-			if (rawValue == null) {
-				return null;
-			}
-			for (ClusterMode value : ClusterMode.values()) {
-				if (value.toString().equals(rawValue)) {
-					return new PrimitiveValueParseResultImpl<>(value);
-				}
-			}
-			return new PrimitiveValueParseResultImpl<>(
-					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
-							Diagnostic.ERROR, rawValue, -1,
-							"Value has to be one of "
-									+ getFormattedValues(ClusterMode.values()),
-							new Object[] {})));
-		}
-	};
+	public static IAttributeValueParser<ClusterMode> CLUSTERMODE_PARSER = new EnumValueParser<>(
+			ClusterMode.class);
 
 	/**
 	 * Serializes the given {@link ClusterMode} value.
 	 */
-	public static IPrimitiveValueSerializer<ClusterMode> CLUSTERMODE_SERIALIZER = new IPrimitiveValueSerializer<ClusterMode>() {
-
-		@Override
-		public String serialize(ClusterMode value) {
-			return value.toString();
-		}
-	};
+	public static IAttributeValueSerializer<ClusterMode> CLUSTERMODE_SERIALIZER = new EnumValueSerializer<>(
+			ClusterMode.class);
 
 	/**
 	 * Parses the given value as a DOT outputMode.
 	 */
-	public static IPrimitiveValueParser<OutputMode> OUTPUTMODE_PARSER = new IPrimitiveValueParser<OutputMode>() {
-		@Override
-		public IPrimitiveValueParser.IParseResult<OutputMode> parse(
-				String rawValue) {
-			if (rawValue == null) {
-				return null;
-			}
-			for (OutputMode value : OutputMode.values()) {
-				if (value.toString().equals(rawValue)) {
-					return new PrimitiveValueParseResultImpl<>(value);
-				}
-			}
-			return new PrimitiveValueParseResultImpl<>(
-					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
-							Diagnostic.ERROR, rawValue, -1,
-							"Value has to be one of "
-									+ getFormattedValues(OutputMode.values()),
-							new Object[] {})));
-		}
-	};
+	public static IAttributeValueParser<OutputMode> OUTPUTMODE_PARSER = new EnumValueParser<>(
+			OutputMode.class);
 
 	/**
 	 * Serializes the given {@link OutputMode} value.
 	 */
-	public static IPrimitiveValueSerializer<OutputMode> OUTPUTMODE_SERIALIZER = new IPrimitiveValueSerializer<OutputMode>() {
-
-		@Override
-		public String serialize(OutputMode value) {
-			return value.toString();
-		}
-	};
+	public static IAttributeValueSerializer<OutputMode> OUTPUTMODE_SERIALIZER = new EnumValueSerializer<>(
+			OutputMode.class);
 
 	/**
 	 * Parses the given value as a DOT pagedir.
 	 */
-	public static IPrimitiveValueParser<Pagedir> PAGEDIR_PARSER = new IPrimitiveValueParser<Pagedir>() {
-		@Override
-		public IPrimitiveValueParser.IParseResult<Pagedir> parse(
-				String rawValue) {
-			if (rawValue == null) {
-				return null;
-			}
-			for (Pagedir value : Pagedir.values()) {
-				if (value.toString().equals(rawValue)) {
-					return new PrimitiveValueParseResultImpl<>(value);
-				}
-			}
-			return new PrimitiveValueParseResultImpl<>(
-					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
-							Diagnostic.ERROR, rawValue, -1,
-							"Value has to be one of "
-									+ getFormattedValues(Pagedir.values()),
-							new Object[] {})));
-		}
-	};
+	public static IAttributeValueParser<Pagedir> PAGEDIR_PARSER = new EnumValueParser<>(
+			Pagedir.class);
 
 	/**
 	 * Serializes the given {@link Pagedir} value.
 	 */
-	public static IPrimitiveValueSerializer<Pagedir> PAGEDIR_SERIALIZER = new IPrimitiveValueSerializer<Pagedir>() {
-
-		@Override
-		public String serialize(Pagedir value) {
-			return value.toString();
-		}
-	};
+	public static IAttributeValueSerializer<Pagedir> PAGEDIR_SERIALIZER = new EnumValueSerializer<>(
+			Pagedir.class);
 
 	/**
 	 * A parser used to parse DOT rankdir values.
 	 */
-	public static IPrimitiveValueParser<Rankdir> RANKDIR_PARSER = new IPrimitiveValueParser<Rankdir>() {
-		@Override
-		public IPrimitiveValueParser.IParseResult<Rankdir> parse(
-				String rawValue) {
-			if (rawValue == null) {
-				return null;
-			}
-			for (Rankdir value : Rankdir.values()) {
-				if (value.toString().equals(rawValue)) {
-					return new PrimitiveValueParseResultImpl<>(value);
-				}
-			}
-			return new PrimitiveValueParseResultImpl<>(
-					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
-							Diagnostic.ERROR, rawValue, -1,
-							"The given value '" + rawValue
-									+ "' has to be one of "
-									+ getFormattedValues(Rankdir.values()),
-							new Object[] {})));
-		}
-	};
+	public static IAttributeValueParser<Rankdir> RANKDIR_PARSER = new EnumValueParser<>(
+			Rankdir.class);
 
 	/**
 	 * Serializes the given {@link Rankdir} value.
 	 */
-	public static IPrimitiveValueSerializer<Rankdir> RANKDIR_SERIALIZER = new IPrimitiveValueSerializer<Rankdir>() {
-
-		@Override
-		public String serialize(Rankdir value) {
-			return value.toString();
-		}
-	};
+	public static IAttributeValueSerializer<Rankdir> RANKDIR_SERIALIZER = new EnumValueSerializer<>(
+			Rankdir.class);
 
 	/**
 	 * A parser used to parse DOT {@link Splines} values.
 	 */
-	public static IPrimitiveValueParser<Splines> SPLINES_PARSER = new IPrimitiveValueParser<Splines>() {
-		@Override
-		public IPrimitiveValueParser.IParseResult<Splines> parse(
-				String rawValue) {
-			if (rawValue == null) {
-				return null;
-			}
-			for (Splines value : Splines.values()) {
-				if (value.toString().equals(rawValue)) {
-					return new PrimitiveValueParseResultImpl<>(value);
-				}
-			}
-			return new PrimitiveValueParseResultImpl<>(
-					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
-							Diagnostic.ERROR, rawValue, -1,
-							"The given value '" + rawValue
-									+ "' has to be one of "
-									+ getFormattedValues(Splines.values()),
-							new Object[] {})));
-		}
-	};
+	public static IAttributeValueParser<Splines> SPLINES_PARSER = new EnumValueParser<>(
+			Splines.class);
 
 	/**
 	 * Serializes the given {@link Splines} value.
 	 */
-	public static IPrimitiveValueSerializer<Splines> SPLINES_SERIALIZER = new IPrimitiveValueSerializer<Splines>() {
-
-		@Override
-		public String serialize(Splines value) {
-			return value.toString();
-		}
-	};
+	public static IAttributeValueSerializer<Splines> SPLINES_SERIALIZER = new EnumValueSerializer<>(
+			Splines.class);
 
 	private static String getFormattedValues(Object[] values) {
 		StringBuilder sb = new StringBuilder();
@@ -431,10 +437,10 @@ public class DotLanguageSupport {
 	/**
 	 * A parser for bool values.
 	 */
-	public static IPrimitiveValueParser<Boolean> BOOL_PARSER = new IPrimitiveValueParser<Boolean>() {
+	public static IAttributeValueParser<Boolean> BOOL_PARSER = new IAttributeValueParser<Boolean>() {
 
 		@Override
-		public IPrimitiveValueParser.IParseResult<Boolean> parse(
+		public IAttributeValueParser.IParseResult<Boolean> parse(
 				String rawValue) {
 			if (rawValue == null) {
 				return null;
@@ -442,20 +448,20 @@ public class DotLanguageSupport {
 			// case insensitive "true" or "yes"
 			if (Boolean.TRUE.toString().equalsIgnoreCase(rawValue)
 					|| "yes".equalsIgnoreCase(rawValue)) {
-				return new PrimitiveValueParseResultImpl<>(Boolean.TRUE);
+				return new AttributeValueParseResultImpl<>(Boolean.TRUE);
 			}
 			// case insensitive "false" or "no"
 			if (Boolean.FALSE.toString().equalsIgnoreCase(rawValue)
 					|| "no".equalsIgnoreCase(rawValue)) {
-				return new PrimitiveValueParseResultImpl<>(Boolean.FALSE);
+				return new AttributeValueParseResultImpl<>(Boolean.FALSE);
 			}
 			// an integer value
 			try {
 				int parsedValue = Integer.parseInt(rawValue);
-				return new PrimitiveValueParseResultImpl<>(
+				return new AttributeValueParseResultImpl<>(
 						parsedValue > 0 ? Boolean.TRUE : Boolean.FALSE);
 			} catch (NumberFormatException e) {
-				return new PrimitiveValueParseResultImpl<>(Collections
+				return new AttributeValueParseResultImpl<>(Collections
 						.<Diagnostic> singletonList(new BasicDiagnostic(
 								Diagnostic.ERROR, rawValue, -1,
 								"The given value '" + rawValue
@@ -468,7 +474,7 @@ public class DotLanguageSupport {
 	/**
 	 * A serializer for bool values.
 	 */
-	public static IPrimitiveValueSerializer<Boolean> BOOL_SERIALIZER = new IPrimitiveValueSerializer<Boolean>() {
+	public static IAttributeValueSerializer<Boolean> BOOL_SERIALIZER = new IAttributeValueSerializer<Boolean>() {
 
 		@Override
 		public String serialize(Boolean value) {
@@ -479,10 +485,10 @@ public class DotLanguageSupport {
 	/**
 	 * A parser for double values.
 	 */
-	public static IPrimitiveValueParser<Double> DOUBLE_PARSER = new IPrimitiveValueParser<Double>() {
+	public static IAttributeValueParser<Double> DOUBLE_PARSER = new IAttributeValueParser<Double>() {
 
 		@Override
-		public IPrimitiveValueParser.IParseResult<Double> parse(
+		public IAttributeValueParser.IParseResult<Double> parse(
 				String rawValue) {
 			if (rawValue == null) {
 				return null;
@@ -490,10 +496,10 @@ public class DotLanguageSupport {
 			try {
 				// TODO: check that this resembles the DOT double interpretation
 				double parsedValue = Double.parseDouble(rawValue);
-				return new PrimitiveValueParseResultImpl<>(
+				return new AttributeValueParseResultImpl<>(
 						new Double(parsedValue));
 			} catch (NumberFormatException exception) {
-				return new PrimitiveValueParseResultImpl<>(Collections
+				return new AttributeValueParseResultImpl<>(Collections
 						.<Diagnostic> singletonList(new BasicDiagnostic(
 								Diagnostic.ERROR, rawValue, -1,
 								exception.getMessage(), new Object[] {})));
@@ -504,7 +510,7 @@ public class DotLanguageSupport {
 	/**
 	 * A serializer for double values.
 	 */
-	public static IPrimitiveValueSerializer<Double> DOUBLE_SERIALIZER = new IPrimitiveValueSerializer<Double>() {
+	public static IAttributeValueSerializer<Double> DOUBLE_SERIALIZER = new IAttributeValueSerializer<Double>() {
 
 		@Override
 		public String serialize(Double value) {
@@ -515,20 +521,20 @@ public class DotLanguageSupport {
 	/**
 	 * A parser used to parse DOT int values.
 	 */
-	public static IPrimitiveValueParser<Integer> INT_PARSER = new IPrimitiveValueParser<Integer>() {
+	public static IAttributeValueParser<Integer> INT_PARSER = new IAttributeValueParser<Integer>() {
 
 		@Override
-		public IPrimitiveValueParser.IParseResult<Integer> parse(
+		public IAttributeValueParser.IParseResult<Integer> parse(
 				String rawValue) {
 			if (rawValue == null) {
 				return null;
 			}
 			try {
 				int parsedValue = Integer.parseInt(rawValue);
-				return new PrimitiveValueParseResultImpl<>(
+				return new AttributeValueParseResultImpl<>(
 						new Integer(parsedValue));
 			} catch (NumberFormatException exception) {
-				return new PrimitiveValueParseResultImpl<>(Collections
+				return new AttributeValueParseResultImpl<>(Collections
 						.<Diagnostic> singletonList(new BasicDiagnostic(
 								Diagnostic.ERROR, rawValue, -1,
 								exception.getMessage(), new Object[] {})));
@@ -539,7 +545,7 @@ public class DotLanguageSupport {
 	/**
 	 * A serializer for int values.
 	 */
-	public static IPrimitiveValueSerializer<Integer> INT_SERIALIZER = new IPrimitiveValueSerializer<Integer>() {
+	public static IAttributeValueSerializer<Integer> INT_SERIALIZER = new IAttributeValueSerializer<Integer>() {
 
 		@Override
 		public String serialize(Integer value) {
@@ -560,14 +566,14 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for arrowtype attribute values.
 	 */
-	public static final DotArrowTypeParser ARROWTYPE_PARSER = arrowTypeInjector
-			.getInstance(DotArrowTypeParser.class);
+	public static final IAttributeValueParser<ArrowType> ARROWTYPE_PARSER = new XtextDelegateValueParser<>(
+			arrowTypeInjector);
 
 	/**
 	 * The serializer for arrowtype attribute values.
 	 */
-	public static final ISerializer ARROWTYPE_SERIALIZER = arrowTypeInjector
-			.getInstance(ISerializer.class);
+	public static final IAttributeValueSerializer<ArrowType> ARROWTYPE_SERIALIZER = new XtextDelegateValueSerializer<>(
+			arrowTypeInjector);
 
 	private static final Injector colorInjector = new DotColorStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
@@ -575,14 +581,14 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for color attribute values.
 	 */
-	public static final DotColorParser COLOR_PARSER = colorInjector
-			.getInstance(DotColorParser.class);
+	public static final IAttributeValueParser<Color> COLOR_PARSER = new XtextDelegateValueParser<>(
+			colorInjector);
 
 	/**
 	 * The serializer for color attribute values.
 	 */
-	public static final ISerializer COLOR_SERIALIZER = colorInjector
-			.getInstance(ISerializer.class);
+	public static final IAttributeValueSerializer<Color> COLOR_SERIALIZER = new XtextDelegateValueSerializer<>(
+			colorInjector);
 
 	private static final Injector pointInjector = new DotPointStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
@@ -590,14 +596,14 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for point attribute values.
 	 */
-	public static final DotPointParser POINT_PARSER = pointInjector
-			.getInstance(DotPointParser.class);
+	public static final IAttributeValueParser<Point> POINT_PARSER = new XtextDelegateValueParser<>(
+			pointInjector);
 
 	/**
 	 * The serializer for point attribute values.
 	 */
-	public static final ISerializer POINT_SERIALIZER = pointInjector
-			.getInstance(ISerializer.class);
+	public static final IAttributeValueSerializer<Point> POINT_SERIALIZER = new XtextDelegateValueSerializer<>(
+			pointInjector);
 
 	private static final Injector shapeInjector = new DotShapeStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
@@ -605,14 +611,14 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for shape attribute values.
 	 */
-	public static final DotShapeParser SHAPE_PARSER = shapeInjector
-			.getInstance(DotShapeParser.class);
+	public static final IAttributeValueParser<Shape> SHAPE_PARSER = new XtextDelegateValueParser<>(
+			shapeInjector);
 
 	/**
 	 * The serializer for shape attribute values.
 	 */
-	public static final ISerializer SHAPE_SERIALIZER = shapeInjector
-			.getInstance(ISerializer.class);
+	public static final IAttributeValueSerializer<Shape> SHAPE_SERIALIZER = new XtextDelegateValueSerializer<>(
+			shapeInjector);
 
 	private static final Injector splineTypeInjector = new DotSplineTypeStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
@@ -620,14 +626,14 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for splinetype attribute values.
 	 */
-	public static final DotSplineTypeParser SPLINETYPE_PARSER = splineTypeInjector
-			.getInstance(DotSplineTypeParser.class);
+	public static final IAttributeValueParser<SplineType> SPLINETYPE_PARSER = new XtextDelegateValueParser<>(
+			splineTypeInjector);
 
 	/**
 	 * The serializer for splinetype attribute values.
 	 */
-	public static final ISerializer SPLINETYPE_SERIALIZER = splineTypeInjector
-			.getInstance(ISerializer.class);
+	public static final IAttributeValueSerializer<SplineType> SPLINETYPE_SERIALIZER = new XtextDelegateValueSerializer<>(
+			splineTypeInjector);
 
 	private static final Injector styleInjector = new DotStyleStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
@@ -635,14 +641,14 @@ public class DotLanguageSupport {
 	/**
 	 * The serializer for style attribute values.
 	 */
-	public static final ISerializer STYLE_SERIALIZER = styleInjector
-			.getInstance(ISerializer.class);
+	public static final IAttributeValueSerializer<Style> STYLE_SERIALIZER = new XtextDelegateValueSerializer<>(
+			styleInjector);
 
 	/**
 	 * The parser for style attribute values.
 	 */
-	public static final DotStyleParser STYLE_PARSER = styleInjector
-			.getInstance(DotStyleParser.class);
+	public static final IAttributeValueParser<Style> STYLE_PARSER = new XtextDelegateValueParser<>(
+			styleInjector);
 
 	/**
 	 * Validator for Color types.
@@ -678,34 +684,15 @@ public class DotLanguageSupport {
 	 * Serialize the given attribute value using the given serializer.
 	 * 
 	 * @param <T>
-	 *            The object type of the to be serialized value.
-	 * @param serializer
-	 *            The {@link ISerializer} to use for serializing.
-	 * @param attributeValue
-	 *            The value to serialize.
-	 * @return The serialized value.
-	 */
-	public static <T extends EObject> String serializeAttributeValue(
-			ISerializer serializer, T attributeValue) {
-		if (attributeValue == null) {
-			return null;
-		}
-		return serializer.serialize(attributeValue);
-	}
-
-	/**
-	 * Serialize the given attribute value using the given serializer.
-	 * 
-	 * @param <T>
 	 *            The (primitive) object type of the to be serialized value.
 	 * @param serializer
-	 *            The {@link IPrimitiveValueSerializer} to use for serializing.
+	 *            The {@link IAttributeValueSerializer} to use for serializing.
 	 * @param attributeValue
 	 *            The value to serialize.
 	 * @return The serialized value.
 	 */
 	public static <T> String serializeAttributeValue(
-			IPrimitiveValueSerializer<T> serializer, T attributeValue) {
+			IAttributeValueSerializer<T> serializer, T attributeValue) {
 		if (attributeValue == null) {
 			return null;
 		}
@@ -714,7 +701,7 @@ public class DotLanguageSupport {
 
 	/**
 	 * Parses the given (unquoted) attribute, using the given
-	 * {@link IPrimitiveValueParser}.
+	 * {@link IAttributeValueParser}.
 	 * 
 	 * @param <T>
 	 *            The (primitive) object type of the parsed value.
@@ -725,36 +712,57 @@ public class DotLanguageSupport {
 	 * @return The parsed value, or <code>null</code> if the value could not be
 	 *         parsed.
 	 */
-	public static <T> T parseAttributeValue(IPrimitiveValueParser<T> parser,
+	public static <T> T parseAttributeValue(IAttributeValueParser<T> parser,
 			String attributeValue) {
 		if (attributeValue == null) {
 			return null;
 		}
-		IPrimitiveValueParser.IParseResult<T> parsedAttributeValue = parser
+		IAttributeValueParser.IParseResult<T> parsedAttributeValue = parser
 				.parse(attributeValue);
 		return parsedAttributeValue.getParsedValue();
 	}
 
 	/**
-	 * Parses the given (unquoted) attribute, using the given {@link IParser}.
+	 * Determine the context in which the given {@link EObject} is used.
 	 * 
-	 * @param <T>
-	 *            The type of the parsed value.
-	 * @param parser
-	 *            The parser to be used for parsing.
-	 * @param attributeValue
-	 *            The (unquoted) attribute value that is to be parsed.
-	 * @return The parsed value, or <code>null</code> if the value could not be
-	 *         parsed.
+	 * @param eObject
+	 *            The {@link EObject} for which the context is to be determined.
+	 * @return the context in which the given {@link EObject} is used.
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends EObject> T parseAttributeValue(IParser parser,
-			String attributeValue) {
-		if (attributeValue == null) {
-			return null;
+	public static Context getContext(EObject eObject) {
+		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
+		if (EcoreUtil2.getContainerOfType(eObject, EdgeStmtNode.class) != null
+				|| EcoreUtil2.getContainerOfType(eObject,
+						EdgeStmtSubgraph.class) != null) {
+			return Context.EDGE;
 		}
-		IParseResult parsedAttributeValue = parser
-				.parse(new StringReader(attributeValue));
-		return (T) parsedAttributeValue.getRootASTElement();
+		// global AttrStmt with AttributeType 'edge'
+		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(eObject,
+				AttrStmt.class);
+		if (attrStmt != null && AttributeType.EDGE.equals(attrStmt.getType())) {
+			return Context.EDGE;
+		}
+
+		// attribute nested below NodeStmt
+		if (EcoreUtil2.getContainerOfType(eObject, NodeStmt.class) != null) {
+			return Context.NODE;
+		}
+		// global AttrStmt with AttributeType 'node'
+		if (attrStmt != null && AttributeType.NODE.equals(attrStmt.getType())) {
+			return Context.NODE;
+		}
+
+		// attribute nested below Subgraph
+		Subgraph subgraph = EcoreUtil2.getContainerOfType(eObject,
+				Subgraph.class);
+		if (subgraph != null) {
+			if (subgraph.getName().toValue().startsWith("cluster")) {
+				return Context.CLUSTER;
+			}
+			return Context.SUBGRAPH;
+		}
+
+		// attribute is neither edge nor node nor subgraph attribute
+		return Context.GRAPH;
 	}
 }

@@ -41,7 +41,6 @@ import org.eclipse.gef.graph.Graph.Builder
 import org.eclipse.gef.graph.Node
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
-import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.
@@ -128,11 +127,11 @@ class DotImport {
 			}
 		]
 
-		setter.apply(BGCOLOR__G, [g, value|g.setBgColorRaw(value)])
-		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterRankRaw(value)])
-		setter.apply(FONTCOLOR__GNE, [g, value|g.setFontColorRaw(value)])
+		setter.apply(BGCOLOR__G, [g, value|g.setBgcolorRaw(value)])
+		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterrankRaw(value)])
+		setter.apply(FONTCOLOR__GNE, [g, value|g.setFontcolorRaw(value)])
 		setter.apply(LAYOUT__G, [g, value|g.setLayoutRaw(value)])
-		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputOrderRaw(value)])
+		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputorderRaw(value)])
 		setter.apply(PAGEDIR__G, [g, value|g.setPagedirRaw(value)])
 		setter.apply(RANKDIR__G, [g, value|g.setRankdirRaw(value)])
 
@@ -185,11 +184,11 @@ class DotImport {
 		]
 
 		setter.apply(COLOR__NE, [n, value|n.setColorRaw(value)])
-		setter.apply(COLORSCHEME__GNE, [n, value|n.setColorSchemeRaw(value)])
+		setter.apply(COLORSCHEME__GNE, [n, value|n.setColorschemeRaw(value)])
 		setter.apply(DISTORTION__N, [n, value|n.setDistortionRaw(value)])
-		setter.apply(FILLCOLOR__NE, [n, value|n.setFillColorRaw(value)])
-		setter.apply(FIXEDSIZE__N, [n, value|n.setFixedSizeRaw(value)])
-		setter.apply(FONTCOLOR__GNE, [n, value|n.setFontColorRaw(value)])
+		setter.apply(FILLCOLOR__NE, [n, value|n.setFillcolorRaw(value)])
+		setter.apply(FIXEDSIZE__N, [n, value|n.setFixedsizeRaw(value)])
+		setter.apply(FONTCOLOR__GNE, [n, value|n.setFontcolorRaw(value)])
 		setter.apply(HEIGHT__N, [n, value|n.setHeightRaw(value)])
 		setter.apply(ID__GNE, [n, value|n.setIdRaw(value)])
 		setter.apply(LABEL__GNE, [n, value|n.setLabelRaw(value)])
@@ -199,7 +198,7 @@ class DotImport {
 		setter.apply(SKEW__N, [n, value|n.setSkewRaw(value)])
 		setter.apply(STYLE__GNE, [n, value|n.setStyleRaw(value)])
 		setter.apply(WIDTH__N, [n, value|n.setWidthRaw(value)])
-		setter.apply(XLABEL__NE, [n, value|n.setXLabelRaw(value)])
+		setter.apply(XLABEL__NE, [n, value|n.setXlabelRaw(value)])
 		setter.apply(XLP__NE, [n, value|n.setXlpRaw(value)])
 
 		node
@@ -291,25 +290,25 @@ class DotImport {
 			}
 		]
 
-		setter.apply(ARROWHEAD__E, [e, value|e.setArrowHeadRaw(value)])
-		setter.apply(ARROWSIZE__E, [e, value|e.setArrowSizeRaw(value)])
-		setter.apply(ARROWTAIL__E, [e, value|e.setArrowTailRaw(value)])
+		setter.apply(ARROWHEAD__E, [e, value|e.setArrowheadRaw(value)])
+		setter.apply(ARROWSIZE__E, [e, value|e.setArrowsizeRaw(value)])
+		setter.apply(ARROWTAIL__E, [e, value|e.setArrowtailRaw(value)])
 		setter.apply(COLOR__NE, [e, value|e.setColorRaw(value)])
-		setter.apply(COLORSCHEME__GNE, [e, value|e.setColorSchemeRaw(value)])
+		setter.apply(COLORSCHEME__GNE, [e, value|e.setColorschemeRaw(value)])
 		setter.apply(DIR__E, [e, value|e.setDirRaw(value)])
-		setter.apply(FILLCOLOR__NE, [e, value|e.setFillColorRaw(value)])
-		setter.apply(FONTCOLOR__GNE, [e, value|e.setFontColorRaw(value)])
+		setter.apply(FILLCOLOR__NE, [e, value|e.setFillcolorRaw(value)])
+		setter.apply(FONTCOLOR__GNE, [e, value|e.setFontcolorRaw(value)])
 		setter.apply(HEAD_LP__E, [e, value|e.setHeadLpRaw(value)])
-		setter.apply(HEADLABEL__E, [e, value|e.setHeadLabelRaw(value)])
+		setter.apply(HEADLABEL__E, [e, value|e.setHeadlabelRaw(value)])
 		setter.apply(ID__GNE, [e, value|e.setIdRaw(value)])
 		setter.apply(LABEL__GNE, [e, value|e.setLabelRaw(value)])
-		setter.apply(LABELFONTCOLOR__E, [e, value|e.setLabelFontColorRaw(value)])
+		setter.apply(LABELFONTCOLOR__E, [e, value|e.setLabelfontcolorRaw(value)])
 		setter.apply(LP__GE, [e, value|e.setLpRaw(value)])
 		setter.apply(POS__NE, [e, value|e.setPosRaw(value)])
 		setter.apply(STYLE__GNE, [e, value|e.setStyleRaw(value)])
-		setter.apply(TAILLABEL__E, [e, value|e.setTailLabelRaw(value)])
+		setter.apply(TAILLABEL__E, [e, value|e.setTaillabelRaw(value)])
 		setter.apply(TAIL_LP__E, [e, value|e.setTailLpRaw(value)])
-		setter.apply(XLABEL__NE, [e, value|e.setXLabelRaw(value)])
+		setter.apply(XLABEL__NE, [e, value|e.setXlabelRaw(value)])
 		setter.apply(XLP__NE, [e, value|e.setXlpRaw(value)])
 
 		graphBuilder.edges(edge)

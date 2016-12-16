@@ -72,8 +72,8 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values
-		DotAttributes.setArrowHead(edge, "olbox");
-		assertEquals("olbox", DotAttributes.getArrowHead(edge));
+		DotAttributes.setArrowhead(edge, "olbox");
+		assertEquals("olbox", DotAttributes.getArrowhead(edge));
 
 		ArrowType arrowHead = ArrowtypeFactory.eINSTANCE.createArrowType();
 		ArrowShape olBox = ArrowtypeFactory.eINSTANCE.createArrowShape();
@@ -82,7 +82,7 @@ public class DotAttributesTests {
 		olBox.setShape(PrimitiveShape.BOX);
 		arrowHead.getArrowShapes().add(olBox);
 		assertTrue(EcoreUtil.equals(arrowHead,
-				DotAttributes.getArrowHeadParsed(edge)));
+				DotAttributes.getArrowheadParsed(edge)));
 
 		// set valid parsed values
 		ArrowType arrowHeadParsed = ArrowtypeFactory.eINSTANCE
@@ -92,19 +92,19 @@ public class DotAttributesTests {
 		rdiamond.setSide("r");
 		rdiamond.setShape(PrimitiveShape.DIAMOND);
 		arrowHeadParsed.getArrowShapes().add(rdiamond);
-		DotAttributes.setArrowHeadParsed(edge, arrowHeadParsed);
-		assertEquals("rdiamond", DotAttributes.getArrowHead(edge));
+		DotAttributes.setArrowheadParsed(edge, arrowHeadParsed);
+		assertEquals("rdiamond", DotAttributes.getArrowhead(edge));
 
 		// set valid values - multiple arrow shapes
 		arrowHeadParsed = ArrowtypeFactory.eINSTANCE.createArrowType();
 		arrowHeadParsed.getArrowShapes().add(olBox);
 		arrowHeadParsed.getArrowShapes().add(rdiamond);
-		DotAttributes.setArrowHeadParsed(edge, arrowHeadParsed);
-		assertEquals("olboxrdiamond", DotAttributes.getArrowHead(edge));
+		DotAttributes.setArrowheadParsed(edge, arrowHeadParsed);
+		assertEquals("olboxrdiamond", DotAttributes.getArrowhead(edge));
 
 		// set deprecated (but valid) values
-		DotAttributes.setArrowHead(edge, "ediamond");
-		assertEquals("ediamond", DotAttributes.getArrowHead(edge));
+		DotAttributes.setArrowhead(edge, "ediamond");
+		assertEquals("ediamond", DotAttributes.getArrowhead(edge));
 
 		arrowHead = ArrowtypeFactory.eINSTANCE.createArrowType();
 		DeprecatedArrowShape deprecatedArrowShape = ArrowtypeFactory.eINSTANCE
@@ -112,11 +112,11 @@ public class DotAttributesTests {
 		deprecatedArrowShape.setShape(DeprecatedShape.EDIAMOND);
 		arrowHead.getArrowShapes().add(deprecatedArrowShape);
 		assertTrue(EcoreUtil.equals(arrowHead,
-				DotAttributes.getArrowHeadParsed(edge)));
+				DotAttributes.getArrowheadParsed(edge)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setArrowHead(edge, "olox");
+			DotAttributes.setArrowhead(edge, "olox");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -133,18 +133,18 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validEdgeArrowSize = "0.5";
-		DotAttributes.setArrowSize(edge, validEdgeArrowSize);
-		assertEquals(validEdgeArrowSize, DotAttributes.getArrowSize(edge));
+		DotAttributes.setArrowsize(edge, validEdgeArrowSize);
+		assertEquals(validEdgeArrowSize, DotAttributes.getArrowsize(edge));
 
 		// set valid parsed values
 		Double validEdgeArrowSizeParsed = new Double(0.0);
-		DotAttributes.setArrowSizeParsed(edge, validEdgeArrowSizeParsed);
+		DotAttributes.setArrowsizeParsed(edge, validEdgeArrowSizeParsed);
 		assertEquals(validEdgeArrowSizeParsed,
-				DotAttributes.getArrowSizeParsed(edge));
+				DotAttributes.getArrowsizeParsed(edge));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setArrowSize(edge, "0,5");
+			DotAttributes.setArrowsize(edge, "0,5");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -153,7 +153,7 @@ public class DotAttributesTests {
 		}
 
 		try {
-			DotAttributes.setArrowSize(edge, "foo");
+			DotAttributes.setArrowsize(edge, "foo");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -163,7 +163,7 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setArrowSize(edge, "-0.5");
+			DotAttributes.setArrowsize(edge, "-0.5");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -179,8 +179,8 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values
-		DotAttributes.setArrowTail(edge, "olbox");
-		assertEquals("olbox", DotAttributes.getArrowTail(edge));
+		DotAttributes.setArrowtail(edge, "olbox");
+		assertEquals("olbox", DotAttributes.getArrowtail(edge));
 
 		ArrowType arrowTail = ArrowtypeFactory.eINSTANCE.createArrowType();
 		ArrowShape olBox = ArrowtypeFactory.eINSTANCE.createArrowShape();
@@ -189,7 +189,7 @@ public class DotAttributesTests {
 		olBox.setShape(PrimitiveShape.BOX);
 		arrowTail.getArrowShapes().add(olBox);
 		assertTrue(EcoreUtil.equals(arrowTail,
-				DotAttributes.getArrowTailParsed(edge)));
+				DotAttributes.getArrowtailParsed(edge)));
 
 		// set valid parsed values
 		ArrowType arrowTailParsed = ArrowtypeFactory.eINSTANCE
@@ -199,19 +199,19 @@ public class DotAttributesTests {
 		rdiamond.setSide("r");
 		rdiamond.setShape(PrimitiveShape.DIAMOND);
 		arrowTailParsed.getArrowShapes().add(rdiamond);
-		DotAttributes.setArrowTailParsed(edge, arrowTailParsed);
-		assertEquals("rdiamond", DotAttributes.getArrowTail(edge));
+		DotAttributes.setArrowtailParsed(edge, arrowTailParsed);
+		assertEquals("rdiamond", DotAttributes.getArrowtail(edge));
 
 		// set valid values - multiple arrow shapes
 		arrowTailParsed = ArrowtypeFactory.eINSTANCE.createArrowType();
 		arrowTailParsed.getArrowShapes().add(olBox);
 		arrowTailParsed.getArrowShapes().add(rdiamond);
-		DotAttributes.setArrowTailParsed(edge, arrowTailParsed);
-		assertEquals("olboxrdiamond", DotAttributes.getArrowTail(edge));
+		DotAttributes.setArrowtailParsed(edge, arrowTailParsed);
+		assertEquals("olboxrdiamond", DotAttributes.getArrowtail(edge));
 
 		// set deprecated (but valid) values
-		DotAttributes.setArrowTail(edge, "ediamond");
-		assertEquals("ediamond", DotAttributes.getArrowTail(edge));
+		DotAttributes.setArrowtail(edge, "ediamond");
+		assertEquals("ediamond", DotAttributes.getArrowtail(edge));
 
 		arrowTail = ArrowtypeFactory.eINSTANCE.createArrowType();
 		DeprecatedArrowShape deprecatedArrowShape = ArrowtypeFactory.eINSTANCE
@@ -219,11 +219,11 @@ public class DotAttributesTests {
 		deprecatedArrowShape.setShape(DeprecatedShape.EDIAMOND);
 		arrowTail.getArrowShapes().add(deprecatedArrowShape);
 		assertTrue(EcoreUtil.equals(arrowTail,
-				DotAttributes.getArrowTailParsed(edge)));
+				DotAttributes.getArrowtailParsed(edge)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setArrowTail(edge, "olox");
+			DotAttributes.setArrowtail(edge, "olox");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -321,12 +321,12 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validColorScheme = "x11";
-		DotAttributes.setColorScheme(edge, validColorScheme);
-		assertEquals(validColorScheme, DotAttributes.getColorScheme(edge));
+		DotAttributes.setColorscheme(edge, validColorScheme);
+		assertEquals(validColorScheme, DotAttributes.getColorscheme(edge));
 
 		// set invalid string values
 		try {
-			DotAttributes.setColorScheme(edge, "#foo");
+			DotAttributes.setColorscheme(edge, "#foo");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -402,72 +402,72 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values - rgb format
-		DotAttributes.setFillColor(edge, "#000000");
-		assertEquals("#000000", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolor(edge, "#000000");
+		assertEquals("#000000", DotAttributes.getFillcolor(edge));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("00");
 		rgbColor.setB("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFillColor(edge, "#0000002a");
-		assertEquals("#0000002a", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolor(edge, "#0000002a");
+		assertEquals("#0000002a", DotAttributes.getFillcolor(edge));
 		rgbColor.setA("2a");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFillColor(edge, "0.000 0.000 0.000");
-		assertEquals("0.000 0.000 0.000", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolor(edge, "0.000 0.000 0.000");
+		assertEquals("0.000 0.000 0.000", DotAttributes.getFillcolor(edge));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.000");
 		hsvColor.setS("0.000");
 		hsvColor.setV("0.000");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set valid string values - string format
-		DotAttributes.setFillColor(edge, "black");
-		assertEquals("black", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolor(edge, "black");
+		assertEquals("black", DotAttributes.getFillcolor(edge));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("black");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("12");
 		rgbColor.setG("34");
 		rgbColor.setB("56");
-		DotAttributes.setFillColorParsed(edge, rgbColor);
-		assertEquals("#123456", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolorParsed(edge, rgbColor);
+		assertEquals("#123456", DotAttributes.getFillcolor(edge));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("78");
-		DotAttributes.setFillColorParsed(edge, rgbColor);
-		assertEquals("#12345678", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolorParsed(edge, rgbColor);
+		assertEquals("#12345678", DotAttributes.getFillcolor(edge));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFillColorParsed(edge, hsvColor);
-		assertEquals("0.000 0.000 0.000", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolorParsed(edge, hsvColor);
+		assertEquals("0.000 0.000 0.000", DotAttributes.getFillcolor(edge));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFillColorParsed(edge, stringColor);
-		assertEquals("black", DotAttributes.getFillColor(edge));
+		DotAttributes.setFillcolorParsed(edge, stringColor);
+		assertEquals("black", DotAttributes.getFillcolor(edge));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillColorParsed(edge)));
+				DotAttributes.getFillcolorParsed(edge)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFillColor(edge, "#ff");
+			DotAttributes.setFillcolor(edge, "#ff");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -483,72 +483,72 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values - rgb format
-		DotAttributes.setFontColor(edge, "#ff0000");
-		assertEquals("#ff0000", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolor(edge, "#ff0000");
+		assertEquals("#ff0000", DotAttributes.getFontcolor(edge));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("00");
 		rgbColor.setB("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFontColor(edge, "#ff0000bb");
-		assertEquals("#ff0000bb", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolor(edge, "#ff0000bb");
+		assertEquals("#ff0000bb", DotAttributes.getFontcolor(edge));
 		rgbColor.setA("bb");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFontColor(edge, "0.000 1.000 1.000");
-		assertEquals("0.000 1.000 1.000", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolor(edge, "0.000 1.000 1.000");
+		assertEquals("0.000 1.000 1.000", DotAttributes.getFontcolor(edge));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.000");
 		hsvColor.setS("1.000");
 		hsvColor.setV("1.000");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set valid string values - string format
-		DotAttributes.setFontColor(edge, "red");
-		assertEquals("red", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolor(edge, "red");
+		assertEquals("red", DotAttributes.getFontcolor(edge));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("red");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("00");
 		rgbColor.setB("00");
-		DotAttributes.setFontColorParsed(edge, rgbColor);
-		assertEquals("#ff0000", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolorParsed(edge, rgbColor);
+		assertEquals("#ff0000", DotAttributes.getFontcolor(edge));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("bb");
-		DotAttributes.setFontColorParsed(edge, rgbColor);
-		assertEquals("#ff0000bb", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolorParsed(edge, rgbColor);
+		assertEquals("#ff0000bb", DotAttributes.getFontcolor(edge));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFontColorParsed(edge, hsvColor);
-		assertEquals("0.000 1.000 1.000", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolorParsed(edge, hsvColor);
+		assertEquals("0.000 1.000 1.000", DotAttributes.getFontcolor(edge));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFontColorParsed(edge, stringColor);
-		assertEquals("red", DotAttributes.getFontColor(edge));
+		DotAttributes.setFontcolorParsed(edge, stringColor);
+		assertEquals("red", DotAttributes.getFontcolor(edge));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontColorParsed(edge)));
+				DotAttributes.getFontcolorParsed(edge)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFontColor(edge, "#fffffffff");
+			DotAttributes.setFontcolor(edge, "#fffffffff");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -565,8 +565,8 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validEdgeHeadLabel = "simpleEdgeLabel";
-		DotAttributes.setHeadLabel(edge, validEdgeHeadLabel);
-		assertEquals(validEdgeHeadLabel, DotAttributes.getHeadLabel(edge));
+		DotAttributes.setHeadlabel(edge, validEdgeHeadLabel);
+		assertEquals(validEdgeHeadLabel, DotAttributes.getHeadlabel(edge));
 	}
 
 	@Test
@@ -637,74 +637,74 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// set valid string values - rgb format
-		DotAttributes.setLabelFontColor(edge, "#40e0d0");
-		assertEquals("#40e0d0", DotAttributes.getLabelFontColor(edge));
+		DotAttributes.setLabelfontcolor(edge, "#40e0d0");
+		assertEquals("#40e0d0", DotAttributes.getLabelfontcolor(edge));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("40");
 		rgbColor.setG("e0");
 		rgbColor.setB("d0");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set valid string values - rgba format
-		DotAttributes.setLabelFontColor(edge, "#40e0d0cc");
-		assertEquals("#40e0d0cc", DotAttributes.getLabelFontColor(edge));
+		DotAttributes.setLabelfontcolor(edge, "#40e0d0cc");
+		assertEquals("#40e0d0cc", DotAttributes.getLabelfontcolor(edge));
 		rgbColor.setA("cc");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set valid string values - hsv format
-		DotAttributes.setLabelFontColor(edge, "0.482 0.714 0.878");
+		DotAttributes.setLabelfontcolor(edge, "0.482 0.714 0.878");
 		assertEquals("0.482 0.714 0.878",
-				DotAttributes.getLabelFontColor(edge));
+				DotAttributes.getLabelfontcolor(edge));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.482");
 		hsvColor.setS("0.714");
 		hsvColor.setV("0.878");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set valid string values - string format
-		DotAttributes.setLabelFontColor(edge, "turquoise");
-		assertEquals("turquoise", DotAttributes.getLabelFontColor(edge));
+		DotAttributes.setLabelfontcolor(edge, "turquoise");
+		assertEquals("turquoise", DotAttributes.getLabelfontcolor(edge));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("turquoise");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("40");
 		rgbColor.setG("e0");
 		rgbColor.setB("d0");
-		DotAttributes.setLabelFontColorParsed(edge, rgbColor);
-		assertEquals("#40e0d0", DotAttributes.getLabelFontColor(edge));
+		DotAttributes.setLabelfontcolorParsed(edge, rgbColor);
+		assertEquals("#40e0d0", DotAttributes.getLabelfontcolor(edge));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("cc");
-		DotAttributes.setLabelFontColorParsed(edge, rgbColor);
-		assertEquals("#40e0d0cc", DotAttributes.getLabelFontColor(edge));
+		DotAttributes.setLabelfontcolorParsed(edge, rgbColor);
+		assertEquals("#40e0d0cc", DotAttributes.getLabelfontcolor(edge));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setLabelFontColorParsed(edge, hsvColor);
+		DotAttributes.setLabelfontcolorParsed(edge, hsvColor);
 		assertEquals("0.482 0.714 0.878",
-				DotAttributes.getLabelFontColor(edge));
+				DotAttributes.getLabelfontcolor(edge));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set valid parsed values - string format
-		DotAttributes.setLabelFontColorParsed(edge, stringColor);
-		assertEquals("turquoise", DotAttributes.getLabelFontColor(edge));
+		DotAttributes.setLabelfontcolorParsed(edge, stringColor);
+		assertEquals("turquoise", DotAttributes.getLabelfontcolor(edge));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getLabelFontColorParsed(edge)));
+				DotAttributes.getLabelfontcolorParsed(edge)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setLabelFontColor(edge, "");
+			DotAttributes.setLabelfontcolor(edge, "");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -947,8 +947,8 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validEdgeTailLabel = "simpleEdgeLabel";
-		DotAttributes.setTailLabel(edge, validEdgeTailLabel);
-		assertEquals(validEdgeTailLabel, DotAttributes.getTailLabel(edge));
+		DotAttributes.setTaillabel(edge, validEdgeTailLabel);
+		assertEquals(validEdgeTailLabel, DotAttributes.getTaillabel(edge));
 	}
 
 	@Test
@@ -993,8 +993,8 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validEdgeXLabel = "edgeXLabel";
-		DotAttributes.setXLabel(edge, validEdgeXLabel);
-		assertEquals(validEdgeXLabel, DotAttributes.getXLabel(edge));
+		DotAttributes.setXlabel(edge, validEdgeXLabel);
+		assertEquals(validEdgeXLabel, DotAttributes.getXlabel(edge));
 	}
 
 	@Test
@@ -1031,72 +1031,72 @@ public class DotAttributesTests {
 		Graph g = new Graph.Builder().build();
 
 		// set valid string values - rgb format
-		DotAttributes.setBgColor(g, "#a0522d");
-		assertEquals("#a0522d", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolor(g, "#a0522d");
+		assertEquals("#a0522d", DotAttributes.getBgcolor(g));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("a0");
 		rgbColor.setG("52");
 		rgbColor.setB("2d");
 		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgColorParsed(g)));
+				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
 
 		// set valid string values - rgba format
-		DotAttributes.setBgColor(g, "#a0522dcc");
-		assertEquals("#a0522dcc", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolor(g, "#a0522dcc");
+		assertEquals("#a0522dcc", DotAttributes.getBgcolor(g));
 		rgbColor.setA("cc");
 		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgColorParsed(g)));
+				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
 
 		// set valid string values - hsv format
-		DotAttributes.setBgColor(g, ".051 .718 .627");
-		assertEquals(".051 .718 .627", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolor(g, ".051 .718 .627");
+		assertEquals(".051 .718 .627", DotAttributes.getBgcolor(g));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH(".051");
 		hsvColor.setS(".718");
 		hsvColor.setV(".627");
 		assertTrue(
-				EcoreUtil.equals(hsvColor, DotAttributes.getBgColorParsed(g)));
+				EcoreUtil.equals(hsvColor, DotAttributes.getBgcolorParsed(g)));
 
 		// set valid string values - string format
-		DotAttributes.setBgColor(g, "sienna");
-		assertEquals("sienna", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolor(g, "sienna");
+		assertEquals("sienna", DotAttributes.getBgcolor(g));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("sienna");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getBgColorParsed(g)));
+				DotAttributes.getBgcolorParsed(g)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("a0");
 		rgbColor.setG("52");
 		rgbColor.setB("2d");
-		DotAttributes.setBgColorParsed(g, rgbColor);
-		assertEquals("#a0522d", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolorParsed(g, rgbColor);
+		assertEquals("#a0522d", DotAttributes.getBgcolor(g));
 		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgColorParsed(g)));
+				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("cc");
-		DotAttributes.setBgColorParsed(g, rgbColor);
-		assertEquals("#a0522dcc", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolorParsed(g, rgbColor);
+		assertEquals("#a0522dcc", DotAttributes.getBgcolor(g));
 		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgColorParsed(g)));
+				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setBgColorParsed(g, hsvColor);
-		assertEquals(".051 .718 .627", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolorParsed(g, hsvColor);
+		assertEquals(".051 .718 .627", DotAttributes.getBgcolor(g));
 		assertTrue(
-				EcoreUtil.equals(hsvColor, DotAttributes.getBgColorParsed(g)));
+				EcoreUtil.equals(hsvColor, DotAttributes.getBgcolorParsed(g)));
 
 		// set valid parsed values - string format
-		DotAttributes.setBgColorParsed(g, stringColor);
-		assertEquals("sienna", DotAttributes.getBgColor(g));
+		DotAttributes.setBgcolorParsed(g, stringColor);
+		assertEquals("sienna", DotAttributes.getBgcolor(g));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getBgColorParsed(g)));
+				DotAttributes.getBgcolorParsed(g)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setBgColor(g, "#gggggg");
+			DotAttributes.setBgcolor(g, "#gggggg");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1111,45 +1111,45 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validGraphClusterMode = "local";
-		DotAttributes.setClusterRank(g, validGraphClusterMode);
-		assertEquals(validGraphClusterMode, DotAttributes.getClusterRank(g));
-		assertEquals(ClusterMode.LOCAL, DotAttributes.getClusterRankParsed(g));
+		DotAttributes.setClusterrank(g, validGraphClusterMode);
+		assertEquals(validGraphClusterMode, DotAttributes.getClusterrank(g));
+		assertEquals(ClusterMode.LOCAL, DotAttributes.getClusterrankParsed(g));
 
 		validGraphClusterMode = "global";
-		DotAttributes.setClusterRank(g, validGraphClusterMode);
-		assertEquals(validGraphClusterMode, DotAttributes.getClusterRank(g));
-		assertEquals(ClusterMode.GLOBAL, DotAttributes.getClusterRankParsed(g));
+		DotAttributes.setClusterrank(g, validGraphClusterMode);
+		assertEquals(validGraphClusterMode, DotAttributes.getClusterrank(g));
+		assertEquals(ClusterMode.GLOBAL, DotAttributes.getClusterrankParsed(g));
 
 		validGraphClusterMode = "none";
-		DotAttributes.setClusterRank(g, validGraphClusterMode);
-		assertEquals(validGraphClusterMode, DotAttributes.getClusterRank(g));
-		assertEquals(ClusterMode.NONE, DotAttributes.getClusterRankParsed(g));
+		DotAttributes.setClusterrank(g, validGraphClusterMode);
+		assertEquals(validGraphClusterMode, DotAttributes.getClusterrank(g));
+		assertEquals(ClusterMode.NONE, DotAttributes.getClusterrankParsed(g));
 
 		// set valid parsed values
 		ClusterMode validGraphClusterModeParsed = ClusterMode.LOCAL;
-		DotAttributes.setClusterRankParsed(g, validGraphClusterModeParsed);
+		DotAttributes.setClusterrankParsed(g, validGraphClusterModeParsed);
 		assertEquals(validGraphClusterModeParsed.toString(),
-				DotAttributes.getClusterRank(g));
+				DotAttributes.getClusterrank(g));
 		assertEquals(validGraphClusterModeParsed,
-				DotAttributes.getClusterRankParsed(g));
+				DotAttributes.getClusterrankParsed(g));
 
 		validGraphClusterModeParsed = ClusterMode.GLOBAL;
-		DotAttributes.setClusterRankParsed(g, validGraphClusterModeParsed);
+		DotAttributes.setClusterrankParsed(g, validGraphClusterModeParsed);
 		assertEquals(validGraphClusterModeParsed.toString(),
-				DotAttributes.getClusterRank(g));
+				DotAttributes.getClusterrank(g));
 		assertEquals(validGraphClusterModeParsed,
-				DotAttributes.getClusterRankParsed(g));
+				DotAttributes.getClusterrankParsed(g));
 
 		validGraphClusterModeParsed = ClusterMode.NONE;
-		DotAttributes.setClusterRankParsed(g, validGraphClusterModeParsed);
+		DotAttributes.setClusterrankParsed(g, validGraphClusterModeParsed);
 		assertEquals(validGraphClusterModeParsed.toString(),
-				DotAttributes.getClusterRank(g));
+				DotAttributes.getClusterrank(g));
 		assertEquals(validGraphClusterModeParsed,
-				DotAttributes.getClusterRankParsed(g));
+				DotAttributes.getClusterrankParsed(g));
 
 		// set invalid string values
 		try {
-			DotAttributes.setClusterRank(g, "foo");
+			DotAttributes.setClusterrank(g, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1164,11 +1164,11 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validColorScheme = "svg";
-		DotAttributes.setColorScheme(g, validColorScheme);
-		assertEquals(validColorScheme, DotAttributes.getColorScheme(g));
+		DotAttributes.setColorscheme(g, validColorScheme);
+		assertEquals(validColorScheme, DotAttributes.getColorscheme(g));
 
 		try {
-			DotAttributes.setColorScheme(g, "foo");
+			DotAttributes.setColorscheme(g, "foo");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1182,72 +1182,72 @@ public class DotAttributesTests {
 		Graph g = new Graph.Builder().build();
 
 		// set valid string values - rgb format
-		DotAttributes.setFontColor(g, "#ffffff");
-		assertEquals("#ffffff", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolor(g, "#ffffff");
+		assertEquals("#ffffff", DotAttributes.getFontcolor(g));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFontColor(g, "#ffffff00");
-		assertEquals("#ffffff00", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolor(g, "#ffffff00");
+		assertEquals("#ffffff00", DotAttributes.getFontcolor(g));
 		rgbColor.setA("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFontColor(g, "0.000,0.000,1.000");
-		assertEquals("0.000,0.000,1.000", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolor(g, "0.000,0.000,1.000");
+		assertEquals("0.000,0.000,1.000", DotAttributes.getFontcolor(g));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.000");
 		hsvColor.setS("0.000");
 		hsvColor.setV("1.000");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set valid string values - string format
-		DotAttributes.setFontColor(g, "//white");
-		assertEquals("//white", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolor(g, "//white");
+		assertEquals("//white", DotAttributes.getFontcolor(g));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("white");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
-		DotAttributes.setFontColorParsed(g, rgbColor);
-		assertEquals("#ffffff", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolorParsed(g, rgbColor);
+		assertEquals("#ffffff", DotAttributes.getFontcolor(g));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("00");
-		DotAttributes.setFontColorParsed(g, rgbColor);
-		assertEquals("#ffffff00", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolorParsed(g, rgbColor);
+		assertEquals("#ffffff00", DotAttributes.getFontcolor(g));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFontColorParsed(g, hsvColor);
-		assertEquals("0.000 0.000 1.000", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolorParsed(g, hsvColor);
+		assertEquals("0.000 0.000 1.000", DotAttributes.getFontcolor(g));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFontColorParsed(g, stringColor);
-		assertEquals("white", DotAttributes.getFontColor(g));
+		DotAttributes.setFontcolorParsed(g, stringColor);
+		assertEquals("white", DotAttributes.getFontcolor(g));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontColorParsed(g)));
+				DotAttributes.getFontcolorParsed(g)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFontColor(g, "/white");
+			DotAttributes.setFontcolor(g, "/white");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1262,27 +1262,27 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validGraphForceLabels = "true";
-		DotAttributes.setForceLabels(g, validGraphForceLabels);
-		assertEquals(validGraphForceLabels, DotAttributes.getForceLabels(g));
+		DotAttributes.setForcelabels(g, validGraphForceLabels);
+		assertEquals(validGraphForceLabels, DotAttributes.getForcelabels(g));
 
 		validGraphForceLabels = "false";
-		DotAttributes.setForceLabels(g, validGraphForceLabels);
-		assertEquals(validGraphForceLabels, DotAttributes.getForceLabels(g));
+		DotAttributes.setForcelabels(g, validGraphForceLabels);
+		assertEquals(validGraphForceLabels, DotAttributes.getForcelabels(g));
 
 		// set valid parsed values
 		boolean validGraphForceLabelsParsed = true;
-		DotAttributes.setForceLabelsParsed(g, validGraphForceLabelsParsed);
+		DotAttributes.setForcelabelsParsed(g, validGraphForceLabelsParsed);
 		assertEquals(validGraphForceLabelsParsed,
-				DotAttributes.getForceLabelsParsed(g));
+				DotAttributes.getForcelabelsParsed(g));
 
 		validGraphForceLabelsParsed = false;
-		DotAttributes.setForceLabelsParsed(g, validGraphForceLabelsParsed);
+		DotAttributes.setForcelabelsParsed(g, validGraphForceLabelsParsed);
 		assertEquals(validGraphForceLabelsParsed,
-				DotAttributes.getForceLabelsParsed(g));
+				DotAttributes.getForcelabelsParsed(g));
 
 		// set invalid string values
 		try {
-			DotAttributes.setForceLabels(g, "foo");
+			DotAttributes.setForcelabels(g, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1449,48 +1449,48 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validGraphOutputMode = "breadthfirst";
-		DotAttributes.setOutputOrder(g, validGraphOutputMode);
-		assertEquals(validGraphOutputMode, DotAttributes.getOutputOrder(g));
+		DotAttributes.setOutputorder(g, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(g));
 		assertEquals(OutputMode.BREADTHFIRST,
-				DotAttributes.getOutputOrderParsed(g));
+				DotAttributes.getOutputorderParsed(g));
 
 		validGraphOutputMode = "nodesfirst";
-		DotAttributes.setOutputOrder(g, validGraphOutputMode);
-		assertEquals(validGraphOutputMode, DotAttributes.getOutputOrder(g));
+		DotAttributes.setOutputorder(g, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(g));
 		assertEquals(OutputMode.NODESFIRST,
-				DotAttributes.getOutputOrderParsed(g));
+				DotAttributes.getOutputorderParsed(g));
 
 		validGraphOutputMode = "edgesfirst";
-		DotAttributes.setOutputOrder(g, validGraphOutputMode);
-		assertEquals(validGraphOutputMode, DotAttributes.getOutputOrder(g));
+		DotAttributes.setOutputorder(g, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(g));
 		assertEquals(OutputMode.EDGEFIRST,
-				DotAttributes.getOutputOrderParsed(g));
+				DotAttributes.getOutputorderParsed(g));
 
 		// set valid parsed values
 		OutputMode validGraphOutputModeParsed = OutputMode.BREADTHFIRST;
-		DotAttributes.setOutputOrderParsed(g, validGraphOutputModeParsed);
+		DotAttributes.setOutputorderParsed(g, validGraphOutputModeParsed);
 		assertEquals(validGraphOutputModeParsed.toString(),
-				DotAttributes.getOutputOrder(g));
+				DotAttributes.getOutputorder(g));
 		assertEquals(validGraphOutputModeParsed,
-				DotAttributes.getOutputOrderParsed(g));
+				DotAttributes.getOutputorderParsed(g));
 
 		validGraphOutputModeParsed = OutputMode.NODESFIRST;
-		DotAttributes.setOutputOrderParsed(g, validGraphOutputModeParsed);
+		DotAttributes.setOutputorderParsed(g, validGraphOutputModeParsed);
 		assertEquals(validGraphOutputModeParsed.toString(),
-				DotAttributes.getOutputOrder(g));
+				DotAttributes.getOutputorder(g));
 		assertEquals(validGraphOutputModeParsed,
-				DotAttributes.getOutputOrderParsed(g));
+				DotAttributes.getOutputorderParsed(g));
 
 		validGraphOutputModeParsed = OutputMode.EDGEFIRST;
-		DotAttributes.setOutputOrderParsed(g, validGraphOutputModeParsed);
+		DotAttributes.setOutputorderParsed(g, validGraphOutputModeParsed);
 		assertEquals(validGraphOutputModeParsed.toString(),
-				DotAttributes.getOutputOrder(g));
+				DotAttributes.getOutputorder(g));
 		assertEquals(validGraphOutputModeParsed,
-				DotAttributes.getOutputOrderParsed(g));
+				DotAttributes.getOutputorderParsed(g));
 
 		// set invalid string values
 		try {
-			DotAttributes.setOutputOrder(g, "foo");
+			DotAttributes.setOutputorder(g, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1672,7 +1672,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'rankdir' to 'foo'. The value 'foo' is not a syntactically correct rankdir: The given value 'foo' has to be one of 'TB', 'LR', 'BT', 'RL'.",
+					"Cannot set graph attribute 'rankdir' to 'foo'. The value 'foo' is not a syntactically correct rankdir: Value has to be one of 'TB', 'LR', 'BT', 'RL'.",
 					e.getMessage());
 		}
 	}
@@ -1888,11 +1888,11 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validColorScheme = "accent3";
-		DotAttributes.setColorScheme(n, validColorScheme);
-		assertEquals(validColorScheme, DotAttributes.getColorScheme(n));
+		DotAttributes.setColorscheme(n, validColorScheme);
+		assertEquals(validColorScheme, DotAttributes.getColorscheme(n));
 
 		try {
-			DotAttributes.setColorScheme(n, "1");
+			DotAttributes.setColorscheme(n, "1");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1958,73 +1958,73 @@ public class DotAttributesTests {
 		Node n = new Node.Builder().buildNode();
 
 		// set valid string values - rgb format
-		DotAttributes.setFillColor(n, "#00ff00");
-		assertEquals("#00ff00", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolor(n, "#00ff00");
+		assertEquals("#00ff00", DotAttributes.getFillcolor(n));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFillColor(n, "#00ff00ff");
-		assertEquals("#00ff00ff", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolor(n, "#00ff00ff");
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(n));
 		rgbColor.setA("ff");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFillColor(n, "0.3 .8 .7");
-		assertEquals("0.3 .8 .7", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolor(n, "0.3 .8 .7");
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(n));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.3");
 		hsvColor.setS(".8");
 		hsvColor.setV(".7");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set valid string values - string format
-		DotAttributes.setFillColor(n, "/bugn9/7");
-		assertEquals("/bugn9/7", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolor(n, "/bugn9/7");
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(n));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("bugn9");
 		stringColor.setName("7");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		DotAttributes.setFillColorParsed(n, rgbColor);
-		assertEquals("#00ff00", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolorParsed(n, rgbColor);
+		assertEquals("#00ff00", DotAttributes.getFillcolor(n));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("ff");
-		DotAttributes.setFillColorParsed(n, rgbColor);
-		assertEquals("#00ff00ff", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolorParsed(n, rgbColor);
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(n));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFillColorParsed(n, hsvColor);
-		assertEquals("0.3 .8 .7", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolorParsed(n, hsvColor);
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(n));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFillColorParsed(n, stringColor);
-		assertEquals("/bugn9/7", DotAttributes.getFillColor(n));
+		DotAttributes.setFillcolorParsed(n, stringColor);
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(n));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillColorParsed(n)));
+				DotAttributes.getFillcolorParsed(n)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFillColor(n, "//");
+			DotAttributes.setFillcolor(n, "//");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2039,27 +2039,27 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validNodeFixedSize = "true";
-		DotAttributes.setFixedSize(n, validNodeFixedSize);
-		assertEquals(validNodeFixedSize, DotAttributes.getFixedSize(n));
+		DotAttributes.setFixedsize(n, validNodeFixedSize);
+		assertEquals(validNodeFixedSize, DotAttributes.getFixedsize(n));
 
 		validNodeFixedSize = "false";
-		DotAttributes.setFixedSize(n, validNodeFixedSize);
-		assertEquals(validNodeFixedSize, DotAttributes.getFixedSize(n));
+		DotAttributes.setFixedsize(n, validNodeFixedSize);
+		assertEquals(validNodeFixedSize, DotAttributes.getFixedsize(n));
 
 		// set valid parsed values
-		boolean validNodeFixedSizeParsed = true;
-		DotAttributes.setFixedSizeParsed(n, validNodeFixedSizeParsed);
-		assertEquals(validNodeFixedSizeParsed,
-				DotAttributes.getFixedSizeParsed(n));
+		boolean validNodeFixedsizeParsed = true;
+		DotAttributes.setFixedsizeParsed(n, validNodeFixedsizeParsed);
+		assertEquals(validNodeFixedsizeParsed,
+				DotAttributes.getFixedsizeParsed(n));
 
-		validNodeFixedSizeParsed = false;
-		DotAttributes.setFixedSizeParsed(n, validNodeFixedSizeParsed);
-		assertEquals(validNodeFixedSizeParsed,
-				DotAttributes.getFixedSizeParsed(n));
+		validNodeFixedsizeParsed = false;
+		DotAttributes.setFixedsizeParsed(n, validNodeFixedsizeParsed);
+		assertEquals(validNodeFixedsizeParsed,
+				DotAttributes.getFixedsizeParsed(n));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFixedSize(n, "foo");
+			DotAttributes.setFixedsize(n, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2073,73 +2073,73 @@ public class DotAttributesTests {
 		Node n = new Node.Builder().buildNode();
 
 		// set valid string values - rgb format
-		DotAttributes.setFontColor(n, "#00ff00");
-		assertEquals("#00ff00", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolor(n, "#00ff00");
+		assertEquals("#00ff00", DotAttributes.getFontcolor(n));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFontColor(n, "#00ff00ff");
-		assertEquals("#00ff00ff", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolor(n, "#00ff00ff");
+		assertEquals("#00ff00ff", DotAttributes.getFontcolor(n));
 		rgbColor.setA("ff");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFontColor(n, "0.3, .8, .7");
-		assertEquals("0.3, .8, .7", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolor(n, "0.3, .8, .7");
+		assertEquals("0.3, .8, .7", DotAttributes.getFontcolor(n));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.3");
 		hsvColor.setS(".8");
 		hsvColor.setV(".7");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set valid string values - string format
-		DotAttributes.setFontColor(n, "/brbg11/10");
-		assertEquals("/brbg11/10", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolor(n, "/brbg11/10");
+		assertEquals("/brbg11/10", DotAttributes.getFontcolor(n));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("brbg11");
 		stringColor.setName("10");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		DotAttributes.setFontColorParsed(n, rgbColor);
-		assertEquals("#00ff00", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolorParsed(n, rgbColor);
+		assertEquals("#00ff00", DotAttributes.getFontcolor(n));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("ff");
-		DotAttributes.setFontColorParsed(n, rgbColor);
-		assertEquals("#00ff00ff", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolorParsed(n, rgbColor);
+		assertEquals("#00ff00ff", DotAttributes.getFontcolor(n));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFontColorParsed(n, hsvColor);
-		assertEquals("0.3 .8 .7", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolorParsed(n, hsvColor);
+		assertEquals("0.3 .8 .7", DotAttributes.getFontcolor(n));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFontColorParsed(n, stringColor);
-		assertEquals("/brbg11/10", DotAttributes.getFontColor(n));
+		DotAttributes.setFontcolorParsed(n, stringColor);
+		assertEquals("/brbg11/10", DotAttributes.getFontcolor(n));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontColorParsed(n)));
+				DotAttributes.getFontcolorParsed(n)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFontColor(n, "///");
+			DotAttributes.setFontcolor(n, "///");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2531,8 +2531,8 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validNodeXLabel = "nodeXLabel";
-		DotAttributes.setXLabel(n, validNodeXLabel);
-		assertEquals(validNodeXLabel, DotAttributes.getXLabel(n));
+		DotAttributes.setXlabel(n, validNodeXLabel);
+		assertEquals(validNodeXLabel, DotAttributes.getXlabel(n));
 	}
 
 	@Test

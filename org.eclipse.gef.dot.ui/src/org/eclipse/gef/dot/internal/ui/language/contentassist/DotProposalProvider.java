@@ -23,10 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.AbstractDocument.AttributeContext;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.DotLanguageSupport;
+import org.eclipse.gef.dot.internal.DotLanguageSupport.Context;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
@@ -72,7 +75,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 	@Inject
 	DotGrammarAccess dotGrammarAccess;
 
-	private static Map<AttributeContext, List<String>> dotAttributeNames;
+	private static Map<Context, List<String>> dotAttributeNames;
 	private String[] booleanAttributeValuesProposals = { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	public DotProposalProvider() {
@@ -173,11 +176,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				acceptor);
 
 		if (model instanceof AttrList) {
-			AttributeContext attributeContext = DotAttributes.getContext(model);
+			Context attributeContext = DotLanguageSupport.getContext(model);
 			proposeAttributeNames(attributeContext, contentAssistContext,
 					acceptor);
 		} else if (model instanceof DotGraph || model instanceof NodeStmt) {
-			proposeAttributeNames(AttributeContext.GRAPH, contentAssistContext,
+			proposeAttributeNames(Context.GRAPH, contentAssistContext,
 					acceptor);
 		}
 	}
@@ -188,7 +191,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
-			if (DotAttributes.isEdgeAttribute(attribute)) {
+			if (DotLanguageSupport.getContext(attribute) == Context.EDGE) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.ARROWHEAD__E:
 				case DotAttributes.ARROWTAIL__E:
@@ -230,7 +233,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				}
-			} else if (DotAttributes.isGraphAttribute(attribute)) {
+			} else if (DotLanguageSupport
+					.getContext(attribute) == Context.GRAPH) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.BGCOLOR__G:
 				case DotAttributes.FONTCOLOR__GNE:
@@ -274,7 +278,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				}
-			} else if (DotAttributes.isNodeAttribute(attribute)) {
+			} else if (DotLanguageSupport
+					.getContext(attribute) == Context.NODE) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.COLOR__NE:
 				case DotAttributes.FILLCOLOR__NE:
@@ -315,7 +320,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		}
 	}
 
-	private void proposeAttributeNames(AttributeContext attributeContext,
+	private void proposeAttributeNames(Context attributeContext,
 			ContentAssistContext contentAssistContext,
 			ICompletionProposalAcceptor acceptor) {
 
@@ -389,7 +394,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 	 *         {@link AttributeContext#EDGE}, {@link AttributeContext#GRAPH},
 	 *         {@link AttributeContext#NODE} to the valid dot attribute names.
 	 */
-	private Map<AttributeContext, List<String>> getDotAttributeNames() {
+	private Map<Context, List<String>> getDotAttributeNames() {
 		List<String> edgeAttributeNames = new ArrayList<>();
 		List<String> graphAttributeNames = new ArrayList<>();
 		List<String> nodeAttributeNames = new ArrayList<>();
@@ -426,10 +431,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			}
 		}
 
-		Map<AttributeContext, List<String>> dotAttributeNames = new HashMap<>();
-		dotAttributeNames.put(AttributeContext.EDGE, edgeAttributeNames);
-		dotAttributeNames.put(AttributeContext.GRAPH, graphAttributeNames);
-		dotAttributeNames.put(AttributeContext.NODE, nodeAttributeNames);
+		Map<Context, List<String>> dotAttributeNames = new HashMap<>();
+		dotAttributeNames.put(Context.EDGE, edgeAttributeNames);
+		dotAttributeNames.put(Context.GRAPH, graphAttributeNames);
+		dotAttributeNames.put(Context.NODE, nodeAttributeNames);
 		return dotAttributeNames;
 	}
 

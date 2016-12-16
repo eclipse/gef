@@ -11,7 +11,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.language;
+package org.eclipse.gef.dot.internal.generator;
 
 import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.generator.Naming;

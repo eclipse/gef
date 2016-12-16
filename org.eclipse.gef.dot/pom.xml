@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Copyright (c) 2016 itemis AG and others.
-    All rights reserved. This program and the accompanying materials
-    are made available under the terms of the Eclipse Public License v1.0
-    which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
-   
-    Contributors:
-        Alexander Nyßen (itemis AG) - initial API and implementation
- -->
+<!-- Copyright (c) 2016 itemis AG and others. All rights reserved. This program 
+	and the accompanying materials are made available under the terms of the 
+	Eclipse Public License v1.0 which accompanies this distribution, and is available 
+	at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Nyßen 
+	(itemis AG) - initial API and implementation -->
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -87,11 +82,11 @@
 						<version>${xtext.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>org.eclipse.gef.dot</groupId>
-						<artifactId>xtext-generator-extensions</artifactId>
+						<groupId>org.eclipse.gef</groupId>
+						<artifactId>org.eclipse.gef.dot.generator</artifactId>
 						<version>5.0.0</version>
 						<scope>system</scope>
-						<systemPath>${project.basedir}/xtext-generator-extensions.jar</systemPath>
+						<systemPath>${project.basedir}/../org.eclipse.gef.dot.generator/xtext-extensions.jar</systemPath>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -110,6 +105,15 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<outputDirectory>xtend-gen</outputDirectory>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.gef</groupId>
+						<artifactId>org.eclipse.gef.dot.generator</artifactId>
+						<version>5.0.0</version>
+						<scope>system</scope>
+						<systemPath>${project.basedir}/../org.eclipse.gef.dot.generator/xtend-extensions.jar</systemPath>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

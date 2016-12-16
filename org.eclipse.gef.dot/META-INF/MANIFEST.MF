@@ -16,8 +16,9 @@ Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.gef.graph;bundle-version="[5.0.0,6.0.0)",
  org.apache.commons.logging;bundle-version="[1.1.1,2.0.0)";resolution:=optional,
  org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
+ org.eclipse.emf.mwe2.launch;bundle-version="[2.7.0,3.0.0)";resolution:=optional,
  org.eclipse.xtext.generator;bundle-version="[2.7.3,3.0.0)";resolution:=optional,
- org.eclipse.emf.mwe2.launch;bundle-version="[2.7.0,3.0.0)";resolution:=optional
+ org.eclipse.gef.dot.generator;bundle-version="[5.0.0,6.0.0)";resolution:=optional
 Export-Package: org.eclipse.gef.dot.internal;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.arrowtype;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
@@ -58,5 +59,3 @@ Export-Package: org.eclipse.gef.dot.internal;x-friends:="org.eclipse.gef.dot.tes
  org.eclipse.gef.dot.internal.language.terminals;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.validation;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui"
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"
-Bundle-ClassPath: xtext-generator-extensions.jar,
- .

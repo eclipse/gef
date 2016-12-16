@@ -139,17 +139,17 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		// external label (xlabel)
-		String dotXLabel = DotAttributes.getXLabel(dot);
+		String dotXLabel = DotAttributes.getXlabel(dot);
 		if (dotXLabel != null) {
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
 
 		// head and tail labels (headlabel, taillabel)
-		String dotHeadLabel = DotAttributes.getHeadLabel(dot);
+		String dotHeadLabel = DotAttributes.getHeadlabel(dot);
 		if (dotHeadLabel != null) {
 			ZestProperties.setTargetLabel(zest, dotHeadLabel);
 		}
-		String dotTailLabel = DotAttributes.getTailLabel(dot);
+		String dotTailLabel = DotAttributes.getTaillabel(dot);
 		if (dotTailLabel != null) {
 			ZestProperties.setSourceLabel(zest, dotTailLabel);
 		}
@@ -204,7 +204,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		ZestProperties.setCurveCssStyle(zest, connectionCssStyle);
 
 		// fillcolor
-		Color dotFillColor = DotAttributes.getFillColorParsed(dot);
+		Color dotFillColor = DotAttributes.getFillcolorParsed(dot);
 		String javaFxFillColor = computeZestColor(dotFillColor);
 		if (javaFxFillColor != null) {
 			String zestSourceDecorationCssStyle = ZestProperties
@@ -221,11 +221,11 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		// arrow size
-		Double arrowSizeParsed = DotAttributes.getArrowSizeParsed(dot);
+		Double arrowSizeParsed = DotAttributes.getArrowsizeParsed(dot);
 		double arrowSize = arrowSizeParsed == null ? 1.0 : arrowSizeParsed;
 
 		// arrow head
-		String dotArrowHead = DotAttributes.getArrowHead(dot);
+		String dotArrowHead = DotAttributes.getArrowhead(dot);
 		javafx.scene.Node zestEdgeTargetDecoration = null;
 		if (dotArrowHead == null) {
 			// use the default arrow head decoration in case the graph is
@@ -237,7 +237,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			}
 		} else {
 			zestEdgeTargetDecoration = computeZestDecoration(
-					DotAttributes.getArrowHeadParsed(dot), arrowSize);
+					DotAttributes.getArrowheadParsed(dot), arrowSize);
 		}
 
 		// The zest edge target decoration should only appear if the edge
@@ -247,7 +247,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		// arrow tail
-		String dotArrowTail = DotAttributes.getArrowTail(dot);
+		String dotArrowTail = DotAttributes.getArrowtail(dot);
 		javafx.scene.Node zestEdgeSourceDecoration = null;
 		if (dotArrowTail == null) {
 			// use the default arrow tail decoration in case the graph is
@@ -259,7 +259,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			}
 		} else {
 			zestEdgeSourceDecoration = computeZestDecoration(
-					DotAttributes.getArrowTailParsed(dot), arrowSize);
+					DotAttributes.getArrowtailParsed(dot), arrowSize);
 		}
 
 		// The zest edge source decoration should only appear if the edge
@@ -516,7 +516,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		ZestProperties.setLabel(zest, dotLabel);
 
 		// external label (xlabel)
-		String dotXLabel = DotAttributes.getXLabel(dot);
+		String dotXLabel = DotAttributes.getXlabel(dot);
 		if (dotXLabel != null) {
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
@@ -534,7 +534,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		double zestHeight = (dotHeight == null ? 0.5
 				: Double.parseDouble(dotHeight)) * 72;
 		if (options().emulateLayout && !Boolean.TRUE
-				.equals(DotAttributes.getFixedSizeParsed(dot))) {
+				.equals(DotAttributes.getFixedsizeParsed(dot))) {
 			// if we are to emulate dot and fixedsize=true is not given, we have
 			// to compute the size to enclose image, label, and margin.
 			// TODO: also enclose image and margin
@@ -592,7 +592,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		if (isFilledStyle) {
-			Color dotFillColor = DotAttributes.getFillColorParsed(dot);
+			Color dotFillColor = DotAttributes.getFillcolorParsed(dot);
 			String javaFxFillColor = computeZestColor(dotFillColor);
 			if (javaFxFillColor != null) {
 				if (zestStyle == null) {

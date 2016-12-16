@@ -17,7 +17,6 @@
 
 package org.eclipse.gef.dot.internal.language.validation;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,10 +34,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.DotAttributes.AttributeContext;
 import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport;
-import org.eclipse.gef.dot.internal.DotLanguageSupport.IPrimitiveValueParser;
+import org.eclipse.gef.dot.internal.DotLanguageSupport.Context;
+import org.eclipse.gef.dot.internal.DotLanguageSupport.IAttributeValueParser;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage;
 import org.eclipse.gef.dot.internal.language.color.ColorPackage;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
@@ -65,9 +64,6 @@ import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.dot.internal.language.style.StylePackage;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.AbstractInjectableValidator;
 import org.eclipse.xtext.validation.Check;
@@ -93,7 +89,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkValidAttributeValue(final Attribute attribute) {
 		List<Diagnostic> diagnostics = validateAttributeValue(
-				DotAttributes.getContext(attribute),
+				DotLanguageSupport.getContext(attribute),
 				attribute.getName().toValue(), attribute.getValue().toValue());
 		for (Diagnostic d : diagnostics) {
 			if (d.getSeverity() == Diagnostic.ERROR) {
@@ -128,9 +124,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * @return A list of {@link Diagnostic} objects representing the identified
 	 *         issues, or an empty list if no issues were found.
 	 */
-	public List<Diagnostic> validateAttributeValue(
-			final AttributeContext context, final String name,
-			final String value) {
+	public List<Diagnostic> validateAttributeValue(final Context context,
+			final String name, final String value) {
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.FORCELABELS__G.equals(name)) {
 			return validateBooleanAttributeValue(DotAttributes.FORCELABELS__G,
@@ -187,12 +182,12 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		} else if (DotAttributes.POS__NE.equals(name)) {
 			// validate point (node) or splinetype (edge) using delegate parser
 			// and validator
-			if (AttributeContext.NODE.equals(context)) {
+			if (Context.NODE.equals(context)) {
 				return validateObjectAttributeValue(
 						DotLanguageSupport.POINT_PARSER,
 						DotLanguageSupport.POINT_VALIDATOR, name, value,
 						PointPackage.Literals.POINT, "point");
-			} else if (AttributeContext.EDGE.equals(context)) {
+			} else if (Context.EDGE.equals(context)) {
 				return validateObjectAttributeValue(
 						DotLanguageSupport.SPLINETYPE_PARSER,
 						DotLanguageSupport.SPLINETYPE_VALIDATOR, name, value,
@@ -223,18 +218,18 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				return grammarFindings;
 			}
 			// validate according to the corresponding NodeStyle/EdgeStyle enums
-			IParseResult parseResult = DotLanguageSupport.STYLE_PARSER
-					.parse(new StringReader(value));
-			Style style = (Style) parseResult.getRootASTElement();
+			IAttributeValueParser.IParseResult<Style> parseResult = DotLanguageSupport.STYLE_PARSER
+					.parse(value);
+			Style style = parseResult.getParsedValue();
 
 			List<Diagnostic> findings = new ArrayList<>();
-			if (AttributeContext.NODE.equals(context)) {
+			if (Context.NODE.equals(context)) {
 				// check each style item with the corresponding parser
 				for (StyleItem styleItem : style.getStyleItems()) {
 					findings.addAll(validateStringAttributeValue(name,
 							styleItem.getName(), "style", NodeStyle.values()));
 				}
-			} else if (AttributeContext.EDGE.equals(context)) {
+			} else if (Context.EDGE.equals(context)) {
 				// check each style item with the corresponding parser
 				for (StyleItem styleItem : style.getStyleItems()) {
 					findings.addAll(validateStringAttributeValue(name,
@@ -263,7 +258,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					DotColors.getColorSchemes().toArray());
 		}
 		return Collections.emptyList();
-
 	}
 
 	/**
@@ -275,7 +269,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 */
 	@Check
 	public void checkValidCombinationOfNodeShapeAndStyle(Attribute attribute) {
-		if (DotAttributes.isNodeAttribute(attribute)
+		if (DotLanguageSupport.getContext(attribute) == Context.NODE
 				&& attribute.getName().toValue()
 						.equals(DotAttributes.STYLE__GNE)
 				&& attribute.getValue().toValue()
@@ -361,7 +355,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	private List<Diagnostic> validateBooleanAttributeValue(
 			final String attributeName, String attributeValue) {
 		// parse value
-		IPrimitiveValueParser.IParseResult<Boolean> parseResult = DotLanguageSupport.BOOL_PARSER
+		IAttributeValueParser.IParseResult<Boolean> parseResult = DotLanguageSupport.BOOL_PARSER
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -385,24 +379,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				issueCode, attributeValue);
 	}
 
-	private String getFormattedSyntaxErrorMessages(IParseResult parseResult) {
-		StringBuilder sb = new StringBuilder();
-		for (INode n : parseResult.getSyntaxErrors()) {
-			String message = n.getSyntaxErrorMessage().getMessage();
-			if (!message.isEmpty()) {
-				if (sb.length() != 0) {
-					sb.append(" ");
-				}
-				sb.append(message.substring(0, 1).toUpperCase()
-						+ message.substring(1)
-						+ (message.endsWith(".") ? "" : "."));
-			}
-		}
-		return sb.toString();
-	}
-
 	private String getFormattedSyntaxErrorMessages(
-			IPrimitiveValueParser.IParseResult<?> parseResult) {
+			IAttributeValueParser.IParseResult<?> parseResult) {
 		StringBuilder sb = new StringBuilder();
 		for (Diagnostic d : parseResult.getSyntaxErrors()) {
 			String message = d.getMessage();
@@ -422,7 +400,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			final String attributeName, String attributeValue,
 			double minValue) {
 		// parse value
-		IPrimitiveValueParser.IParseResult<Double> parseResult = DotLanguageSupport.DOUBLE_PARSER
+		IAttributeValueParser.IParseResult<Double> parseResult = DotLanguageSupport.DOUBLE_PARSER
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -449,7 +427,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	private List<Diagnostic> validateIntAttributeValue(
 			final String attributeName, String attributeValue, int minValue) {
 		// parse value
-		IPrimitiveValueParser.IParseResult<Integer> parseResult = DotLanguageSupport.INT_PARSER
+		IAttributeValueParser.IParseResult<Integer> parseResult = DotLanguageSupport.INT_PARSER
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -483,9 +461,9 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	}
 
 	private List<Diagnostic> validateEnumAttributeValue(
-			final IPrimitiveValueParser<?> parser, final String attributeName,
+			final IAttributeValueParser<?> parser, final String attributeName,
 			String attributeValue, String attributeTypeName) {
-		IPrimitiveValueParser.IParseResult<?> parseResult = parser
+		IAttributeValueParser.IParseResult<?> parseResult = parser
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
@@ -516,13 +494,14 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 								null));
 	}
 
-	private List<Diagnostic> validateObjectAttributeValue(final IParser parser,
+	private List<Diagnostic> validateObjectAttributeValue(
+			final IAttributeValueParser<? extends EObject> parser,
 			final AbstractDeclarativeValidator validator,
 			final String attributeName, final String attributeValue,
 			final EClass attributeType, final String attributeTypeName) {
 		// ensure we always use the unquoted value
-		IParseResult parseResult = parser
-				.parse(new StringReader(attributeValue));
+		IAttributeValueParser.IParseResult<? extends EObject> parseResult = parser
+				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			// handle syntactical problems
 			return Collections.<Diagnostic> singletonList(
@@ -599,7 +578,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 						ReflectionUtils.getPrivateFieldValue(validator,
 								"languageName"));
 
-				EObject root = parseResult.getRootASTElement();
+				EObject root = parseResult.getParsedValue();
 				// validate the root element...
 				validator.validate(attributeType, root,
 						null /* diagnostic chain */, context);
@@ -626,5 +605,4 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				ValidationMessageAcceptor.INSIGNIFICANT_INDEX, CheckType.NORMAL,
 				issueCode, attributeValue);
 	}
-
 }
