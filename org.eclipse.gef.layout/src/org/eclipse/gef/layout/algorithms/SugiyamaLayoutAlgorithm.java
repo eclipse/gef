@@ -179,11 +179,9 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			updateIndex(layer);
 		}
 
-		private void refineLayers() { // from
-										// Sugiyama
-			// paper: down,
-			// up and down
-			// again yields best results, wonder why...
+		private void refineLayers() {
+			// from Sugiyama
+			// paper: down, up, and down yields best results, wonder why..
 			for (int index = 1; index < layers.size(); index++)
 				refineLayersDown(layers.get(index));
 			for (int index = layers.size() - 2; index >= 0; index--)
@@ -202,14 +200,13 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				}
 			});
 			// second, remove padding from the layer's end and place them in
-			// front
-			// of the current node to improve its position
+			// front of the current node to improve its position
 			for (NodeWrapper iter : list) {
+				// break, if there are no more "real" nodes
 				if (iter.isPadding())
-					break; // break, if there are no more "real" nodes
-				int delta = iter.getBaryCenter(iter.pred) - iter.index; // distance
-				// to new
-				// position
+					break;
+				// compute distance to new position
+				int delta = iter.getBaryCenter(iter.pred) - iter.index;
 				for (int i = 0; i < delta; i++)
 					layer.add(iter.index, layer.remove(last));
 			}
@@ -221,19 +218,18 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			List<NodeWrapper> list = new ArrayList<>(layer);
 			Collections.sort(list, new Comparator<NodeWrapper>() {
 				public int compare(NodeWrapper node1, NodeWrapper node2) {
-					return (node2.getPriorityUp() - node1.getPriorityUp()); // descending
-					// ordering!!!
+					// descending order
+					return (node2.getPriorityUp() - node1.getPriorityUp());
 				}
 			});
 			// second, remove padding from the layer's end and place them in
-			// front
-			// of the current node to improve its position
+			// front of the current node to improve its position
 			for (NodeWrapper iter : list) {
+				// break, if there are no more "real" nodes
 				if (iter.isPadding())
-					break; // break, if there are no more "real" nodes
-				int delta = iter.getBaryCenter(iter.succ) - iter.index; // distance
-				// to new
-				// position
+					break;
+				// compute distance to new position
+				int delta = iter.getBaryCenter(iter.succ) - iter.index;
 				for (int i = 0; i < delta; i++)
 					layer.add(iter.index, layer.remove(last));
 			}
@@ -250,10 +246,9 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		public void crossReduction(List<List<NodeWrapper>> nodes) {
 			this.layers = nodes;
 			padLayers();
-			for (int i = 0; i < layers.size(); i++) { // reduce and
-				// refine
-				// iteratively, depending on
-				// the depth of the graph
+			// reduce and refine iteratively, depending on the depth of the
+			// graph
+			for (int i = 0; i < layers.size(); i++) {
 				reduceCrossings();
 				refineLayers();
 			}
@@ -764,9 +759,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			double barycenter = 0;
 			for (NodeWrapper node : list)
 				barycenter += node.index;
-			return ((int) (barycenter / list.size())); // always rounding off to
-														// avoid wrap around in
-														// position refining!!!
+			// always round down to avoid wrap around in position refining
+			return ((int) (barycenter / list.size()));
 		}
 
 		/**
@@ -786,10 +780,11 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			if (isDummy()) {
 				if (succ != null && succ.size() > 0) {
 					if (succ.get(0).isDummy())
-						return (Integer.MAX_VALUE); // part of a straight line
+						// part of a straight line
+						return (Integer.MAX_VALUE);
 					else
-						return (Integer.MAX_VALUE >> 1); // start of a straight
-															// line
+						// start of a straight line
+						return (Integer.MAX_VALUE >> 1);
 				}
 			}
 			return (pred.size());
@@ -813,10 +808,11 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			if (isDummy()) {
 				if (pred != null && pred.size() > 0) {
 					if (pred.get(0).isDummy())
-						return (Integer.MAX_VALUE); // part of a straight line
+						// part of a straight line
+						return (Integer.MAX_VALUE);
 					else
-						return (Integer.MAX_VALUE >> 1); // start of a straight
-															// line
+						// start of a straight line
+						return (Integer.MAX_VALUE >> 1);
 				}
 			}
 			return (succ.size());
@@ -900,8 +896,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 					res.add(node);
 				else {
 					int sizeOfIntersect = intersectOfConnections(
-							node.getIncomingEdges(),
-							node.getOutgoingEdges()).size();
+							node.getIncomingEdges(), node.getOutgoingEdges())
+									.size();
 					// there are more outgoing edges, besides the bidirectionals
 					if (node.getOutgoingEdges().size() > sizeOfIntersect)
 						res.add(node);
@@ -965,8 +961,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			ArrayList<NodeWrapper> layer = new ArrayList<>(list.size());
 			for (Node node : list) {
 				// wrap each NodeLayout with the internal data object and
-				// provide a
-				// corresponding mapping
+				// provide a corresponding mapping
 				NodeWrapper nw = new NodeWrapper(node, layers.size());
 				map.put(node, nw);
 				layer.add(nw);
@@ -1025,8 +1020,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			}
 
 			// Only at first iteration, clearing initClosedList, starting to
-			// build
-			// layers
+			// build layers
 			if (initClosedList.size() > 0) {
 				closedList.addAll(initClosedList);
 				nodes.removeAll(initClosedList);
@@ -1072,8 +1066,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
 			while (nodes.size() > 0) {
 				// while openedList isn't empty it searches for further nodes
-				// and
-				// adding them to the next layer
+				// and adding them to the next layer
 				while (openedList.size() != 0) {
 					ArrayList<Node> unfolded = Unfold(toUnfold, openedList,
 							closedList);
@@ -1128,9 +1121,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
 		private static List<Node> findRoots(List<Node> list) {
 			List<Node> roots = new ArrayList<>();
-			for (Node iter : list) { // no predecessors means: this is a
-										// root,
-										// add it to list
+			for (Node iter : list) {
+				// no predecessors means: this is a root, add it to list
 				if (iter.getPredecessorNodes().size() == 0)
 					roots.add(iter);
 			}
@@ -1153,16 +1145,13 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			ArrayList<NodeWrapper> layer = new ArrayList<>(list.size());
 			for (Node node : list) {
 				// wrap each NodeLayout with the internal data object and
-				// provide a
-				// corresponding mapping
+				// provide a corresponding mapping
 				NodeWrapper nw = new NodeWrapper(node, layers.size());
 				map.put(node, nw);
 				layer.add(nw);
 				// insert dummy nodes if the adjacent layer does not contain the
 				// predecessor
-				for (Node node_predecessor : node.getPredecessorNodes()) { // for
-																				// all
-																				// predecessors
+				for (Node node_predecessor : node.getPredecessorNodes()) {
 					NodeWrapper nw_predecessor = map.get(node_predecessor);
 					if (nw_predecessor != null) {
 						for (int level = nw_predecessor.layer
@@ -1170,8 +1159,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 							// add "virtual" wrappers (dummies) to the layers in
 							// between
 							// virtual wrappers are in fact parts of a double
-							// linked
-							// list
+							// linked list
 							NodeWrapper nw_dummy = new NodeWrapper(level);
 							nw_dummy.addPredecessor(nw_predecessor);
 							nw_predecessor.addSuccessor(nw_dummy);
@@ -1196,9 +1184,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			map.clear();
 
 			List<Node> predecessors = findRoots(nodes);
-			nodes.removeAll(predecessors); // nodes now contains only nodes that
-											// are
-											// no roots
+			nodes.removeAll(predecessors);
+			// nodes now contains only nodes that are no roots
 			addLayer(predecessors);
 			for (int level = 1; nodes.isEmpty() == false; level++) {
 				if (level > MAX_LAYERS)
@@ -1208,8 +1195,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 									+ "! (Graph not directed? Cycles?)");
 				List<Node> layer = new ArrayList<>();
 				for (Node item : nodes) {
-					if (predecessors
-							.containsAll(item.getPredecessorNodes()))
+					if (predecessors.containsAll(item.getPredecessorNodes()))
 						layer.add(item);
 				}
 				if (layer.size() == 0)
@@ -1230,8 +1216,9 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 	private final Dimension dimension;
 
 	private LayoutContext context;
-	private int last; // index of the last element in a layer after padding
-						// process
+
+	// index of the last element in a layer after padding process
+	private int last;
 
 	private LayerProvider layerProvider;
 	private CrossingReducer crossingReducer;
