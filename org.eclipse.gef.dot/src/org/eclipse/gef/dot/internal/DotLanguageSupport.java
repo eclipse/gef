@@ -17,11 +17,17 @@ package org.eclipse.gef.dot.internal;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup;
@@ -57,6 +63,9 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.serializer.ISerializer;
+import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
+import org.eclipse.xtext.validation.AbstractInjectableValidator;
+import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
 import com.google.inject.Injector;
 
@@ -184,6 +193,25 @@ public class DotLanguageSupport {
 		 * @return An {@link IParseResult} indicating the parse result.
 		 */
 		IParseResult<T> parse(String attributeValue);
+	}
+
+	/**
+	 * A validator for attribute values
+	 * 
+	 * @param <T>
+	 *            The type of the attribute.
+	 */
+	public interface IAttributeValueValidator<T> {
+
+		/**
+		 * Validates the given attribute value.
+		 * 
+		 * @param attributeValue
+		 *            The value to validate.
+		 * @return A list of {@link Diagnostic}s that represent the validation
+		 *         result.
+		 */
+		public List<Diagnostic> validate(T attributeValue);
 	}
 
 	/**
@@ -339,6 +367,107 @@ public class DotLanguageSupport {
 		}
 	}
 
+	private static class XtextDelegateValueValidator<T extends EObject>
+			implements IAttributeValueValidator<T> {
+
+		private Injector injector;
+		private Class<? extends AbstractDeclarativeValidator> validatorClass;
+		private AbstractDeclarativeValidator validator;
+
+		public XtextDelegateValueValidator(Injector injector,
+				Class<? extends AbstractDeclarativeValidator> validatorClass) {
+			this.injector = injector;
+			this.validatorClass = validatorClass;
+		}
+
+		protected AbstractDeclarativeValidator getValidator() {
+			if (validator == null) {
+				validator = injector.getInstance(validatorClass);
+			}
+			return validator;
+		}
+
+		@Override
+		public List<Diagnostic> validate(T attributeValue) {
+			AbstractDeclarativeValidator validator = getValidator();
+
+			final List<Diagnostic> diagnostics = new ArrayList<>();
+			// validation is optional; if validator is provided, check for
+			// semantic problems using it
+			if (validator != null) {
+				// we need a specific message acceptor
+				validator.setMessageAcceptor(new ValidationMessageAcceptor() {
+
+					@Override
+					public void acceptError(String message, EObject object,
+							EStructuralFeature feature, int index, String code,
+							String... issueData) {
+						diagnostics.add(new BasicDiagnostic(Diagnostic.ERROR,
+								null, -1, message, new Object[] {}));
+					}
+
+					@Override
+					public void acceptError(String message, EObject object,
+							int offset, int length, String code,
+							String... issueData) {
+						diagnostics.add(new BasicDiagnostic(Diagnostic.ERROR,
+								null, -1, message, new Object[] {}));
+					}
+
+					@Override
+					public void acceptInfo(String message, EObject object,
+							EStructuralFeature feature, int index, String code,
+							String... issueData) {
+						diagnostics.add(new BasicDiagnostic(Diagnostic.INFO,
+								null, -1, message, new Object[] {}));
+					}
+
+					@Override
+					public void acceptInfo(String message, EObject object,
+							int offset, int length, String code,
+							String... issueData) {
+						diagnostics.add(new BasicDiagnostic(Diagnostic.INFO,
+								null, -1, message, new Object[] {}));
+					}
+
+					@Override
+					public void acceptWarning(String message, EObject object,
+							EStructuralFeature feature, int index, String code,
+							String... issueData) {
+						diagnostics.add(new BasicDiagnostic(Diagnostic.WARNING,
+								null, -1, message, new Object[] {}));
+					}
+
+					@Override
+					public void acceptWarning(String message, EObject object,
+							int offset, int length, String code,
+							String... issueData) {
+						diagnostics.add(new BasicDiagnostic(Diagnostic.WARNING,
+								null, -1, message, new Object[] {}));
+					}
+				});
+
+				Map<Object, Object> context = new HashMap<>();
+				context.put(AbstractInjectableValidator.CURRENT_LANGUAGE_NAME,
+						ReflectionUtils.getPrivateFieldValue(validator,
+								"languageName"));
+
+				// validate the root element...
+				validator.validate(attributeValue, null /* diagnostic chain */,
+						context);
+
+				// ...and all its children
+				for (Iterator<EObject> iterator = EcoreUtil
+						.getAllProperContents(attributeValue, true); iterator
+								.hasNext();) {
+					validator.validate(iterator.next(),
+							null /* diagnostic chain */, context);
+				}
+			}
+			return diagnostics;
+		}
+	}
+
 	/**
 	 * Parses the given value as a DOT dirType.
 	 */
@@ -414,8 +543,36 @@ public class DotLanguageSupport {
 	/**
 	 * A parser used to parse DOT {@link Splines} values.
 	 */
-	public static IAttributeValueParser<Splines> SPLINES_PARSER = new EnumValueParser<>(
-			Splines.class);
+	public static IAttributeValueParser<Splines> SPLINES_PARSER = new IAttributeValueParser<Splines>() {
+
+		private EnumValueParser<Splines> enumParser = new EnumValueParser<>(
+				Splines.class);
+
+		@Override
+		public IParseResult<Splines> parse(String attributeValue) {
+			// XXX: splines can either be an enum or a bool value; we try both
+			// options here and convert boolean expressions into respective
+			// splines
+			IParseResult<Boolean> boolResult = BOOL_PARSER
+					.parse(attributeValue);
+			if (!boolResult.hasSyntaxErrors()) {
+				return new AttributeValueParseResultImpl<>(
+						boolResult.getParsedValue() ? Splines.TRUE
+								: Splines.FALSE);
+			}
+			IParseResult<Splines> enumResult = enumParser.parse(attributeValue);
+			if (!enumResult.hasSyntaxErrors()) {
+				return new AttributeValueParseResultImpl<>(
+						enumResult.getParsedValue());
+			}
+
+			// TODO: create a better, combined error message here
+			List<Diagnostic> combinedFindings = new ArrayList<>();
+			combinedFindings.addAll(boolResult.getSyntaxErrors());
+			combinedFindings.addAll(enumResult.getSyntaxErrors());
+			return new AttributeValueParseResultImpl<>(combinedFindings);
+		}
+	};
 
 	/**
 	 * Serializes the given {@link Splines} value.
@@ -560,8 +717,8 @@ public class DotLanguageSupport {
 	 * The validator for arrowtype attribute values.
 	 */
 	// TODO: move to DotJavaValidator
-	public static final DotArrowTypeJavaValidator ARROWTYPE_VALIDATOR = arrowTypeInjector
-			.getInstance(DotArrowTypeJavaValidator.class);
+	public static final IAttributeValueValidator<ArrowType> ARROWTYPE_VALIDATOR = new XtextDelegateValueValidator<>(
+			arrowTypeInjector, DotArrowTypeJavaValidator.class);
 
 	/**
 	 * The parser for arrowtype attribute values.
@@ -653,32 +810,32 @@ public class DotLanguageSupport {
 	/**
 	 * Validator for Color types.
 	 */
-	public static final DotColorJavaValidator COLOR_VALIDATOR = colorInjector
-			.getInstance(DotColorJavaValidator.class);
+	public static final IAttributeValueValidator<Color> COLOR_VALIDATOR = new XtextDelegateValueValidator<>(
+			colorInjector, DotColorJavaValidator.class);
 
 	/**
 	 * Validator for SplineType types.
 	 */
-	public static final DotSplineTypeJavaValidator SPLINETYPE_VALIDATOR = splineTypeInjector
-			.getInstance(DotSplineTypeJavaValidator.class);
+	public static final IAttributeValueValidator<SplineType> SPLINETYPE_VALIDATOR = new XtextDelegateValueValidator<>(
+			splineTypeInjector, DotSplineTypeJavaValidator.class);
 
 	/**
 	 * Validator for Point types.
 	 */
-	public static final DotPointJavaValidator POINT_VALIDATOR = pointInjector
-			.getInstance(DotPointJavaValidator.class);
+	public static final IAttributeValueValidator<Point> POINT_VALIDATOR = new XtextDelegateValueValidator<>(
+			pointInjector, DotPointJavaValidator.class);
 
 	/**
 	 * Validator for Shape types.
 	 */
-	public static final DotShapeJavaValidator SHAPE_VALIDATOR = shapeInjector
-			.getInstance(DotShapeJavaValidator.class);
+	public static final IAttributeValueValidator<Shape> SHAPE_VALIDATOR = new XtextDelegateValueValidator<>(
+			shapeInjector, DotShapeJavaValidator.class);
 
 	/**
 	 * Validator for Style types.
 	 */
-	public static final DotStyleJavaValidator STYLE_VALIDATOR = styleInjector
-			.getInstance(DotStyleJavaValidator.class);
+	public static final IAttributeValueValidator<Style> STYLE_VALIDATOR = new XtextDelegateValueValidator<>(
+			styleInjector, DotStyleJavaValidator.class);
 
 	/**
 	 * Serialize the given attribute value using the given serializer.

@@ -1409,7 +1409,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'circo', 'dot', 'fdp', 'neato', 'osage', 'sfdp', 'twopi'.",
+					"Cannot set graph attribute 'layout' to 'foo'. The value 'foo' is not a syntactically correct layout: Value has to be one of 'circo', 'dot', 'fdp', 'neato', 'osage', 'sfdp', 'twopi'.",
 					e.getMessage());
 		}
 	}
@@ -1794,7 +1794,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of 'compound', 'curved', '', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
+					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct splines: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. Value has to be one of 'compound', 'curved', '', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
 					e.getMessage());
 		}
 	}

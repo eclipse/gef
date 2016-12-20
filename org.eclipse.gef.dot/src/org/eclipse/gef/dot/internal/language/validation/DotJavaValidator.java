@@ -20,26 +20,17 @@ package org.eclipse.gef.dot.internal.language.validation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.Context;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IAttributeValueParser;
-import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage;
-import org.eclipse.gef.dot.internal.language.color.ColorPackage;
+import org.eclipse.gef.dot.internal.DotLanguageSupport.IAttributeValueValidator;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
@@ -51,21 +42,13 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode;
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsSubgraph;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
-import org.eclipse.gef.dot.internal.language.layout.Layout;
-import org.eclipse.gef.dot.internal.language.point.PointPackage;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
-import org.eclipse.gef.dot.internal.language.shape.ShapePackage;
-import org.eclipse.gef.dot.internal.language.splines.Splines;
-import org.eclipse.gef.dot.internal.language.splinetype.SplinetypePackage;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.style.Style;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
-import org.eclipse.gef.dot.internal.language.style.StylePackage;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
-import org.eclipse.xtext.validation.AbstractInjectableValidator;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.FeatureBasedDiagnostic;
@@ -128,76 +111,58 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			final String name, final String value) {
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.FORCELABELS__G.equals(name)) {
-			return validateBooleanAttributeValue(DotAttributes.FORCELABELS__G,
-					value);
+			return validateAttributeValue(DotLanguageSupport.BOOL_PARSER, null,
+					DotAttributes.FORCELABELS__G, value, "bool");
 		} else if (DotAttributes.FIXEDSIZE__N.equals(name)) {
-			return validateBooleanAttributeValue(DotAttributes.FIXEDSIZE__N,
-					value);
+			return validateAttributeValue(DotLanguageSupport.BOOL_PARSER, null,
+					DotAttributes.FIXEDSIZE__N, value, "bool");
 		} else if (DotAttributes.CLUSTERRANK__G.equals(name)) {
-			return validateEnumAttributeValue(
-					DotLanguageSupport.CLUSTERMODE_PARSER, name, value,
-					"clusterMode");
+			return validateAttributeValue(DotLanguageSupport.CLUSTERMODE_PARSER,
+					null, name, value, "clusterMode");
 		} else if (DotAttributes.OUTPUTORDER__G.equals(name)) {
-			return validateEnumAttributeValue(
-					DotLanguageSupport.OUTPUTMODE_PARSER, name, value,
-					"outputMode");
+			return validateAttributeValue(DotLanguageSupport.OUTPUTMODE_PARSER,
+					null, name, value, "outputMode");
 		} else if (DotAttributes.PAGEDIR__G.equals(name)) {
-			return validateEnumAttributeValue(DotLanguageSupport.PAGEDIR_PARSER,
-					name, value, "pagedir");
+			return validateAttributeValue(DotLanguageSupport.PAGEDIR_PARSER,
+					null, name, value, "pagedir");
 		} else if (DotAttributes.RANKDIR__G.equals(name)) {
-			return validateEnumAttributeValue(DotLanguageSupport.RANKDIR_PARSER,
-					name, value, "rankdir");
+			return validateAttributeValue(DotLanguageSupport.RANKDIR_PARSER,
+					null, name, value, "rankdir");
 		} else if (DotAttributes.SPLINES__G.equals(name)) {
-			// XXX: splines can either be an enum or a bool value; we try both
-			// options here
-			List<Diagnostic> booleanCaseFindings = validateBooleanAttributeValue(
-					name, value);
-			List<Diagnostic> stringCaseFindings = validateStringAttributeValue(
-					name, value, "splines string", Splines.values());
-			if (booleanCaseFindings.isEmpty() || stringCaseFindings.isEmpty()) {
-				return Collections.emptyList();
-			} else {
-				// TODO: create a better, combined error message here
-				List<Diagnostic> combinedFindings = new ArrayList<>();
-				combinedFindings.addAll(booleanCaseFindings);
-				combinedFindings.addAll(stringCaseFindings);
-				return combinedFindings;
-			}
+			return validateAttributeValue(DotLanguageSupport.SPLINES_PARSER,
+					null, name, value, "splines");
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
-			return validateStringAttributeValue(name, value, "layout",
-					Layout.values());
+			return validateAttributeValue(DotLanguageSupport.LAYOUT_PARSER,
+					null, name, value, "layout");
 		} else if (DotAttributes.DIR__E.equals(name)) {
 			// dirType enum
-			return validateEnumAttributeValue(DotLanguageSupport.DIRTYPE_PARSER,
-					name, value, "dirType");
+			return validateAttributeValue(DotLanguageSupport.DIRTYPE_PARSER,
+					null, name, value, "dirType");
 		} else if (DotAttributes.ARROWHEAD__E.equals(name)
 				|| DotAttributes.ARROWTAIL__E.equals(name)) {
 			// validate arrowtype using delegate parser and validator
-			return validateObjectAttributeValue(
-					DotLanguageSupport.ARROWTYPE_PARSER,
+			return validateAttributeValue(DotLanguageSupport.ARROWTYPE_PARSER,
 					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, value,
-					ArrowtypePackage.Literals.ARROW_TYPE, "arrowType");
+					"arrowType");
 		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
 			return validateDoubleAttributeValue(name, value, 0.0);
 		} else if (DotAttributes.POS__NE.equals(name)) {
 			// validate point (node) or splinetype (edge) using delegate parser
 			// and validator
 			if (Context.NODE.equals(context)) {
-				return validateObjectAttributeValue(
-						DotLanguageSupport.POINT_PARSER,
+				return validateAttributeValue(DotLanguageSupport.POINT_PARSER,
 						DotLanguageSupport.POINT_VALIDATOR, name, value,
-						PointPackage.Literals.POINT, "point");
+						"point");
 			} else if (Context.EDGE.equals(context)) {
-				return validateObjectAttributeValue(
+				return validateAttributeValue(
 						DotLanguageSupport.SPLINETYPE_PARSER,
 						DotLanguageSupport.SPLINETYPE_VALIDATOR, name, value,
-						SplinetypePackage.Literals.SPLINE_TYPE, "splineType");
+						"splineType");
 			}
 		} else if (DotAttributes.SHAPE__N.equals(name)) {
 			// validate shape using delegate parser and validator
-			return validateObjectAttributeValue(DotLanguageSupport.SHAPE_PARSER,
-					DotLanguageSupport.SHAPE_VALIDATOR, name, value,
-					ShapePackage.Literals.SHAPE, "shape");
+			return validateAttributeValue(DotLanguageSupport.SHAPE_PARSER,
+					DotLanguageSupport.SHAPE_VALIDATOR, name, value, "shape");
 		} else if (DotAttributes.SIDES__N.equals(name)) {
 			return validateIntAttributeValue(name, value, 0);
 		} else if (DotAttributes.SKEW__N.equals(name)) {
@@ -210,10 +175,9 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateDoubleAttributeValue(name, value, 0.02);
 		} else if (DotAttributes.STYLE__GNE.equals(name) && !value.isEmpty()) {
 			// validate style using delegate parser and validator
-			List<Diagnostic> grammarFindings = validateObjectAttributeValue(
+			List<Diagnostic> grammarFindings = validateAttributeValue(
 					DotLanguageSupport.STYLE_PARSER,
-					DotLanguageSupport.STYLE_VALIDATOR, name, value,
-					StylePackage.Literals.STYLE, "style");
+					DotLanguageSupport.STYLE_VALIDATOR, name, value, "style");
 			if (!grammarFindings.isEmpty()) {
 				return grammarFindings;
 			}
@@ -223,6 +187,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			Style style = parseResult.getParsedValue();
 
 			List<Diagnostic> findings = new ArrayList<>();
+			// TODO: this logic should rather be within
+			// DotStyleValidator
 			if (Context.NODE.equals(context)) {
 				// check each style item with the corresponding parser
 				for (StyleItem styleItem : style.getStyleItems()) {
@@ -241,17 +207,15 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				|| DotAttributes.LP__GE.equals(name)
 				|| DotAttributes.TAIL_LP__E.equals(name)
 				|| DotAttributes.XLP__NE.equals(name)) {
-			return validateObjectAttributeValue(DotLanguageSupport.POINT_PARSER,
-					DotLanguageSupport.POINT_VALIDATOR, name, value,
-					PointPackage.Literals.POINT, "point");
+			return validateAttributeValue(DotLanguageSupport.POINT_PARSER,
+					DotLanguageSupport.POINT_VALIDATOR, name, value, "point");
 		} else if (DotAttributes.BGCOLOR__G.equals(name)
 				|| DotAttributes.COLOR__NE.equals(name)
 				|| DotAttributes.FILLCOLOR__NE.equals(name)
 				|| DotAttributes.FONTCOLOR__GNE.equals(name)
 				|| DotAttributes.LABELFONTCOLOR__E.equals(name)) {
-			return validateObjectAttributeValue(DotLanguageSupport.COLOR_PARSER,
-					DotLanguageSupport.COLOR_VALIDATOR, name, value,
-					ColorPackage.Literals.COLOR, "color");
+			return validateAttributeValue(DotLanguageSupport.COLOR_PARSER,
+					DotLanguageSupport.COLOR_VALIDATOR, name, value, "color");
 		} else if (DotAttributes.COLORSCHEME__GNE.equals(name)) {
 			return validateStringAttributeValue(name, value,
 					DotAttributes.COLORSCHEME__GNE,
@@ -352,21 +316,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 	}
 
-	private List<Diagnostic> validateBooleanAttributeValue(
-			final String attributeName, String attributeValue) {
-		// parse value
-		IAttributeValueParser.IParseResult<Boolean> parseResult = DotLanguageSupport.BOOL_PARSER
-				.parse(attributeValue);
-		if (parseResult.hasSyntaxErrors()) {
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue, "bool",
-							getFormattedSyntaxErrorMessages(parseResult),
-							attributeName));
-		}
-		// no semantic validation
-		return Collections.emptyList();
-	}
-
 	private static Diagnostic createSyntacticAttributeValueProblem(
 			String attributeValue, String attributeTypeName,
 			String parserMessage, String issueCode) {
@@ -460,22 +409,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		return sb.toString();
 	}
 
-	private List<Diagnostic> validateEnumAttributeValue(
-			final IAttributeValueParser<?> parser, final String attributeName,
-			String attributeValue, String attributeTypeName) {
-		IAttributeValueParser.IParseResult<?> parseResult = parser
-				.parse(attributeValue);
-		if (parseResult.hasSyntaxErrors()) {
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue,
-							attributeTypeName,
-							getFormattedSyntaxErrorMessages(parseResult),
-							attributeName));
-		}
-		// no semantic validation
-		return Collections.emptyList();
-	}
-
 	private List<Diagnostic> validateStringAttributeValue(
 			final String attributeName, String attributeValue,
 			String attributeTypeName, Object[] validValues) {
@@ -494,13 +427,13 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 								null));
 	}
 
-	private List<Diagnostic> validateObjectAttributeValue(
-			final IAttributeValueParser<? extends EObject> parser,
-			final AbstractDeclarativeValidator validator,
+	private <T> List<Diagnostic> validateAttributeValue(
+			final IAttributeValueParser<T> parser,
+			final IAttributeValueValidator<T> validator,
 			final String attributeName, final String attributeValue,
-			final EClass attributeType, final String attributeTypeName) {
+			final String attributeTypeName) {
 		// ensure we always use the unquoted value
-		IAttributeValueParser.IParseResult<? extends EObject> parseResult = parser
+		IAttributeValueParser.IParseResult<T> parseResult = parser
 				.parse(attributeValue);
 		if (parseResult.hasSyntaxErrors()) {
 			// handle syntactical problems
@@ -511,84 +444,14 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							attributeName));
 		} else {
 			// handle semantical problems
-			final List<Diagnostic> diagnostics = new ArrayList<>();
-			// validation is optional; if validator is provided, check for
-			// semantic problems using it
+			List<Diagnostic> diagnostics = new ArrayList<>();
 			if (validator != null) {
-				// we need a specific message acceptor
-				validator.setMessageAcceptor(new ValidationMessageAcceptor() {
-
-					@Override
-					public void acceptError(String message, EObject object,
-							EStructuralFeature feature, int index, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.ERROR, attributeValue,
-								attributeTypeName, message, attributeName));
-					}
-
-					@Override
-					public void acceptError(String message, EObject object,
-							int offset, int length, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.ERROR, attributeValue,
-								attributeTypeName, message, attributeName));
-					}
-
-					@Override
-					public void acceptInfo(String message, EObject object,
-							EStructuralFeature feature, int index, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.INFO, attributeValue,
-								attributeTypeName, message, attributeName));
-					}
-
-					@Override
-					public void acceptInfo(String message, EObject object,
-							int offset, int length, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.INFO, attributeValue,
-								attributeTypeName, message, attributeName));
-					}
-
-					@Override
-					public void acceptWarning(String message, EObject object,
-							EStructuralFeature feature, int index, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.WARNING, attributeValue,
-								attributeTypeName, message, attributeName));
-					}
-
-					@Override
-					public void acceptWarning(String message, EObject object,
-							int offset, int length, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.WARNING, attributeValue,
-								attributeTypeName, message, attributeName));
-					}
-				});
-
-				Map<Object, Object> context = new HashMap<>();
-				context.put(AbstractInjectableValidator.CURRENT_LANGUAGE_NAME,
-						ReflectionUtils.getPrivateFieldValue(validator,
-								"languageName"));
-
-				EObject root = parseResult.getParsedValue();
-				// validate the root element...
-				validator.validate(attributeType, root,
-						null /* diagnostic chain */, context);
-
-				// ...and all its children
-				for (Iterator<EObject> iterator = EcoreUtil
-						.getAllProperContents(root, true); iterator
-								.hasNext();) {
-					validator.validate(attributeType, iterator.next(),
-							null /* diagnostic chain */, context);
+				final List<Diagnostic> validationResults = validator
+						.validate((T) parseResult.getParsedValue());
+				for (Diagnostic r : validationResults) {
+					diagnostics.add(createSemanticAttributeValueProblem(
+							r.getSeverity(), attributeValue, attributeTypeName,
+							r.getMessage(), attributeName));
 				}
 			}
 			return diagnostics;
