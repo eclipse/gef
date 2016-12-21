@@ -173,7 +173,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateDoubleAttributeValue(name, value, 0.01);
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
 			return validateDoubleAttributeValue(name, value, 0.02);
-		} else if (DotAttributes.STYLE__GNE.equals(name) && !value.isEmpty()) {
+		} else if (DotAttributes.STYLE__GNE.equals(name)) {
 			// validate style using delegate parser and validator
 			List<Diagnostic> grammarFindings = validateAttributeValue(
 					DotLanguageSupport.STYLE_PARSER,
@@ -185,7 +185,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			IAttributeValueParser.IParseResult<Style> parseResult = DotLanguageSupport.STYLE_PARSER
 					.parse(value);
 			Style style = parseResult.getParsedValue();
-
 			List<Diagnostic> findings = new ArrayList<>();
 			// TODO: this logic should rather be within
 			// DotStyleValidator
@@ -217,6 +216,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateAttributeValue(DotLanguageSupport.COLOR_PARSER,
 					DotLanguageSupport.COLOR_VALIDATOR, name, value, "color");
 		} else if (DotAttributes.COLORSCHEME__GNE.equals(name)) {
+			// TODO: Move into ColorScheme validator
 			return validateStringAttributeValue(name, value,
 					DotAttributes.COLORSCHEME__GNE,
 					DotColors.getColorSchemes().toArray());

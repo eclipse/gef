@@ -447,21 +447,21 @@ public class DotLanguageSupport {
 					}
 				});
 
-				Map<Object, Object> context = new HashMap<>();
-				context.put(AbstractInjectableValidator.CURRENT_LANGUAGE_NAME,
+				Map<Object, Object> validationContext = new HashMap<>();
+				validationContext.put(
+						AbstractInjectableValidator.CURRENT_LANGUAGE_NAME,
 						ReflectionUtils.getPrivateFieldValue(validator,
 								"languageName"));
-
 				// validate the root element...
 				validator.validate(attributeValue, null /* diagnostic chain */,
-						context);
+						validationContext);
 
 				// ...and all its children
 				for (Iterator<EObject> iterator = EcoreUtil
 						.getAllProperContents(attributeValue, true); iterator
 								.hasNext();) {
 					validator.validate(iterator.next(),
-							null /* diagnostic chain */, context);
+							null /* diagnostic chain */, validationContext);
 				}
 			}
 			return diagnostics;

@@ -19,12 +19,52 @@ package org.eclipse.gef.dot.internal.language.validation;
 public class DotStyleJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotStyleJavaValidator {
 
+	// /**
+	// * Validates that the used {@link StyleItem}s are applicable in the
+	// * respective {@link Context}.
+	// *
+	// * @param styleItem
+	// * The {@link StyleItem} to check.
+	// */
 	// @Check
-	// public void checkGreetingStartsWithCapital(Greeting greeting) {
-	// if (!Character.isUpperCase(greeting.getName().charAt(0))) {
-	// warning("Name should start with a capital",
-	// MyDslPackage.Literals.GREETING__NAME);
+	// public void checkNodeAndEdgeStylesUsedInRightContext(StyleItem styleItem)
+	// {
+	// Context attributeContext = (Context) getContext()
+	// .get(DotLanguageSupport.Context.class.getName());
+	// if (attributeContext == null) {
+	// throw new IllegalStateException("Attribute context not specified.");
+	// }
+	// if (Context.NODE.equals(attributeContext)) {
+	// for (Object validValue : NodeStyle.values()) {
+	// if (validValue.toString().equals(styleItem.getName())) {
+	// return;
 	// }
 	// }
-	// TODO: validate edge style and node style
+	// // check each style item with the corresponding parser
+	// error("Value should be one of "
+	// + getFormattedValues(NodeStyle.values()) + ".",
+	// StylePackage.Literals.STYLE__STYLE_ITEMS);
+	// } else if (Context.EDGE.equals(attributeContext)) {
+	// for (Object validValue : EdgeStyle.values()) {
+	// if (validValue.toString().equals(styleItem.getName())) {
+	// return;
+	// }
+	// }
+	// // check each style item with the corresponding parser
+	// error("Value should be one of "
+	// + getFormattedValues(EdgeStyle.values()) + ".",
+	// StylePackage.Literals.STYLE__STYLE_ITEMS);
+	// }
+	// }
+	//
+	// private String getFormattedValues(Object[] values) {
+	// StringBuilder sb = new StringBuilder();
+	// for (Object value : new TreeSet<>(Arrays.asList(values))) {
+	// if (sb.length() > 0) {
+	// sb.append(", ");
+	// }
+	// sb.append("'" + value + "'");
+	// }
+	// return sb.toString();
+	// }
 }
