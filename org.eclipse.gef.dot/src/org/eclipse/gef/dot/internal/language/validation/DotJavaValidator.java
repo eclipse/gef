@@ -18,10 +18,8 @@
 package org.eclipse.gef.dot.internal.language.validation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
@@ -31,7 +29,6 @@ import org.eclipse.gef.dot.internal.DotLanguageSupport;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.Context;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IAttributeValueParser;
 import org.eclipse.gef.dot.internal.DotLanguageSupport.IAttributeValueValidator;
-import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
@@ -43,10 +40,7 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeRhsSubgraph;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
-import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
-import org.eclipse.gef.dot.internal.language.style.Style;
-import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.Check;
@@ -111,115 +105,117 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			final String name, final String value) {
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.FORCELABELS__G.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.BOOL_PARSER, null,
+			return validateAttributeValue(context,
+					DotLanguageSupport.BOOL_PARSER, null,
 					DotAttributes.FORCELABELS__G, value, "bool");
 		} else if (DotAttributes.FIXEDSIZE__N.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.BOOL_PARSER, null,
+			return validateAttributeValue(context,
+					DotLanguageSupport.BOOL_PARSER, null,
 					DotAttributes.FIXEDSIZE__N, value, "bool");
 		} else if (DotAttributes.CLUSTERRANK__G.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.CLUSTERMODE_PARSER,
-					null, name, value, "clusterMode");
+			return validateAttributeValue(context,
+					DotLanguageSupport.CLUSTERMODE_PARSER, null, name, value,
+					"clusterMode");
 		} else if (DotAttributes.OUTPUTORDER__G.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.OUTPUTMODE_PARSER,
-					null, name, value, "outputMode");
+			return validateAttributeValue(context,
+					DotLanguageSupport.OUTPUTMODE_PARSER, null, name, value,
+					"outputMode");
 		} else if (DotAttributes.PAGEDIR__G.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.PAGEDIR_PARSER,
-					null, name, value, "pagedir");
+			return validateAttributeValue(context,
+					DotLanguageSupport.PAGEDIR_PARSER, null, name, value,
+					"pagedir");
 		} else if (DotAttributes.RANKDIR__G.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.RANKDIR_PARSER,
-					null, name, value, "rankdir");
+			return validateAttributeValue(context,
+					DotLanguageSupport.RANKDIR_PARSER, null, name, value,
+					"rankdir");
 		} else if (DotAttributes.SPLINES__G.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.SPLINES_PARSER,
-					null, name, value, "splines");
+			return validateAttributeValue(context,
+					DotLanguageSupport.SPLINES_PARSER, null, name, value,
+					"splines");
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.LAYOUT_PARSER,
-					null, name, value, "layout");
+			return validateAttributeValue(context,
+					DotLanguageSupport.LAYOUT_PARSER, null, name, value,
+					"layout");
 		} else if (DotAttributes.DIR__E.equals(name)) {
 			// dirType enum
-			return validateAttributeValue(DotLanguageSupport.DIRTYPE_PARSER,
-					null, name, value, "dirType");
+			return validateAttributeValue(context,
+					DotLanguageSupport.DIRTYPE_PARSER, null, name, value,
+					"dirType");
 		} else if (DotAttributes.ARROWHEAD__E.equals(name)
 				|| DotAttributes.ARROWTAIL__E.equals(name)) {
 			// validate arrowtype using delegate parser and validator
-			return validateAttributeValue(DotLanguageSupport.ARROWTYPE_PARSER,
+			return validateAttributeValue(context,
+					DotLanguageSupport.ARROWTYPE_PARSER,
 					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, value,
 					"arrowType");
 		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
-			return validateDoubleAttributeValue(name, value, 0.0);
+			return validateAttributeValue(context,
+					DotLanguageSupport.DOUBLE_PARSER,
+					DotLanguageSupport.ARROWSIZE_VALIDATOR, name, value,
+					"double");
 		} else if (DotAttributes.POS__NE.equals(name)) {
 			// validate point (node) or splinetype (edge) using delegate parser
 			// and validator
 			if (Context.NODE.equals(context)) {
-				return validateAttributeValue(DotLanguageSupport.POINT_PARSER,
+				return validateAttributeValue(context,
+						DotLanguageSupport.POINT_PARSER,
 						DotLanguageSupport.POINT_VALIDATOR, name, value,
 						"point");
 			} else if (Context.EDGE.equals(context)) {
-				return validateAttributeValue(
+				return validateAttributeValue(context,
 						DotLanguageSupport.SPLINETYPE_PARSER,
 						DotLanguageSupport.SPLINETYPE_VALIDATOR, name, value,
 						"splineType");
 			}
 		} else if (DotAttributes.SHAPE__N.equals(name)) {
 			// validate shape using delegate parser and validator
-			return validateAttributeValue(DotLanguageSupport.SHAPE_PARSER,
+			return validateAttributeValue(context,
+					DotLanguageSupport.SHAPE_PARSER,
 					DotLanguageSupport.SHAPE_VALIDATOR, name, value, "shape");
 		} else if (DotAttributes.SIDES__N.equals(name)) {
-			return validateIntAttributeValue(name, value, 0);
+			return validateAttributeValue(context,
+					DotLanguageSupport.INT_PARSER,
+					DotLanguageSupport.SIDES_VALIDATOR, name, value, "int");
 		} else if (DotAttributes.SKEW__N.equals(name)) {
-			return validateDoubleAttributeValue(name, value, -100.0);
+			return validateAttributeValue(context,
+					DotLanguageSupport.DOUBLE_PARSER,
+					DotLanguageSupport.SKEW_VALIDATOR, name, value, "double");
 		} else if (DotAttributes.DISTORTION__N.equals(name)) {
-			return validateDoubleAttributeValue(name, value, -100.0);
+			return validateAttributeValue(context,
+					DotLanguageSupport.DOUBLE_PARSER,
+					DotLanguageSupport.DISTORTION_VALIDATOR, name, value,
+					"double");
 		} else if (DotAttributes.WIDTH__N.equals(name)) {
-			return validateDoubleAttributeValue(name, value, 0.01);
+			return validateAttributeValue(context,
+					DotLanguageSupport.DOUBLE_PARSER,
+					DotLanguageSupport.WIDTH_VALIDATOR, name, value, "double");
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
-			return validateDoubleAttributeValue(name, value, 0.02);
+			return validateAttributeValue(context,
+					DotLanguageSupport.DOUBLE_PARSER,
+					DotLanguageSupport.HEIGHT_VALIDATOR, name, value, "double");
 		} else if (DotAttributes.STYLE__GNE.equals(name)) {
-			// validate style using delegate parser and validator
-			List<Diagnostic> grammarFindings = validateAttributeValue(
+			return validateAttributeValue(context,
 					DotLanguageSupport.STYLE_PARSER,
 					DotLanguageSupport.STYLE_VALIDATOR, name, value, "style");
-			if (!grammarFindings.isEmpty()) {
-				return grammarFindings;
-			}
-			// validate according to the corresponding NodeStyle/EdgeStyle enums
-			IAttributeValueParser.IParseResult<Style> parseResult = DotLanguageSupport.STYLE_PARSER
-					.parse(value);
-			Style style = parseResult.getParsedValue();
-			List<Diagnostic> findings = new ArrayList<>();
-			// TODO: this logic should rather be within
-			// DotStyleValidator
-			if (Context.NODE.equals(context)) {
-				// check each style item with the corresponding parser
-				for (StyleItem styleItem : style.getStyleItems()) {
-					findings.addAll(validateStringAttributeValue(name,
-							styleItem.getName(), "style", NodeStyle.values()));
-				}
-			} else if (Context.EDGE.equals(context)) {
-				// check each style item with the corresponding parser
-				for (StyleItem styleItem : style.getStyleItems()) {
-					findings.addAll(validateStringAttributeValue(name,
-							styleItem.getName(), "style", EdgeStyle.values()));
-				}
-			}
-			return findings;
 		} else if (DotAttributes.HEAD_LP__E.equals(name)
 				|| DotAttributes.LP__GE.equals(name)
 				|| DotAttributes.TAIL_LP__E.equals(name)
 				|| DotAttributes.XLP__NE.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.POINT_PARSER,
+			return validateAttributeValue(context,
+					DotLanguageSupport.POINT_PARSER,
 					DotLanguageSupport.POINT_VALIDATOR, name, value, "point");
 		} else if (DotAttributes.BGCOLOR__G.equals(name)
 				|| DotAttributes.COLOR__NE.equals(name)
 				|| DotAttributes.FILLCOLOR__NE.equals(name)
 				|| DotAttributes.FONTCOLOR__GNE.equals(name)
 				|| DotAttributes.LABELFONTCOLOR__E.equals(name)) {
-			return validateAttributeValue(DotLanguageSupport.COLOR_PARSER,
+			return validateAttributeValue(context,
+					DotLanguageSupport.COLOR_PARSER,
 					DotLanguageSupport.COLOR_VALIDATOR, name, value, "color");
 		} else if (DotAttributes.COLORSCHEME__GNE.equals(name)) {
-			// TODO: Move into ColorScheme validator
-			return validateStringAttributeValue(name, value,
-					DotAttributes.COLORSCHEME__GNE,
-					DotColors.getColorSchemes().toArray());
+			return validateAttributeValue(context, null,
+					DotLanguageSupport.COLORSCHEME_VALIDATOR, name, value,
+					"colorscheme");
 		}
 		return Collections.emptyList();
 	}
@@ -345,117 +341,44 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		return sb.toString();
 	}
 
-	private List<Diagnostic> validateDoubleAttributeValue(
-			final String attributeName, String attributeValue,
-			double minValue) {
-		// parse value
-		IAttributeValueParser.IParseResult<Double> parseResult = DotLanguageSupport.DOUBLE_PARSER
-				.parse(attributeValue);
-		if (parseResult.hasSyntaxErrors()) {
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue,
-							"double",
-							getFormattedSyntaxErrorMessages(parseResult),
-							attributeName));
-		} else {
-			// validate value
-			if (parseResult.getParsedValue().doubleValue() < minValue) {
-				return Collections
-						.<Diagnostic> singletonList(
-								createSemanticAttributeValueProblem(
-										Diagnostic.ERROR, attributeValue,
-										"double",
-										"Value may not be smaller than "
-												+ minValue + ".",
-										attributeName));
-			}
-			return Collections.emptyList();
-		}
-	}
-
-	private List<Diagnostic> validateIntAttributeValue(
-			final String attributeName, String attributeValue, int minValue) {
-		// parse value
-		IAttributeValueParser.IParseResult<Integer> parseResult = DotLanguageSupport.INT_PARSER
-				.parse(attributeValue);
-		if (parseResult.hasSyntaxErrors()) {
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue, "int",
-							getFormattedSyntaxErrorMessages(parseResult),
-							attributeName));
-		} else {
-			// validate value
-			if (parseResult.getParsedValue().intValue() < minValue) {
-				return Collections
-						.<Diagnostic> singletonList(
-								createSemanticAttributeValueProblem(
-										Diagnostic.ERROR, attributeValue, "int",
-										"Value may not be smaller than "
-												+ minValue + ".",
-										attributeName));
-			}
-			return Collections.emptyList();
-		}
-	}
-
-	private String getFormattedValues(Object[] values) {
-		StringBuilder sb = new StringBuilder();
-		for (Object value : new TreeSet<>(Arrays.asList(values))) {
-			if (sb.length() > 0) {
-				sb.append(", ");
-			}
-			sb.append("'" + value + "'");
-		}
-		return sb.toString();
-	}
-
-	private List<Diagnostic> validateStringAttributeValue(
-			final String attributeName, String attributeValue,
-			String attributeTypeName, Object[] validValues) {
-		for (Object validValue : validValues) {
-			if (validValue.toString().equals(attributeValue)) {
-				return Collections.emptyList();
-			}
-		}
-		// TODO: we should probably only issue a warning here
-		return Collections
-				.<Diagnostic> singletonList(
-						createSemanticAttributeValueProblem(Diagnostic.ERROR,
-								attributeValue, attributeTypeName,
-								"Value should be one of "
-										+ getFormattedValues(validValues) + ".",
-								null));
-	}
-
+	@SuppressWarnings("unchecked")
 	private <T> List<Diagnostic> validateAttributeValue(
-			final IAttributeValueParser<T> parser,
+			Context attributeContext, final IAttributeValueParser<T> parser,
 			final IAttributeValueValidator<T> validator,
 			final String attributeName, final String attributeValue,
 			final String attributeTypeName) {
-		// ensure we always use the unquoted value
-		IAttributeValueParser.IParseResult<T> parseResult = parser
-				.parse(attributeValue);
-		if (parseResult.hasSyntaxErrors()) {
-			// handle syntactical problems
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue,
-							attributeTypeName,
-							getFormattedSyntaxErrorMessages(parseResult),
-							attributeName));
-		} else {
-			// handle semantical problems
-			List<Diagnostic> diagnostics = new ArrayList<>();
-			if (validator != null) {
-				final List<Diagnostic> validationResults = validator
-						.validate((T) parseResult.getParsedValue());
-				for (Diagnostic r : validationResults) {
-					diagnostics.add(createSemanticAttributeValueProblem(
-							r.getSeverity(), attributeValue, attributeTypeName,
-							r.getMessage(), attributeName));
-				}
+		// parse value first (if a parser is given); otherwise take the (String)
+		// value
+		T parsedValue = null;
+		if (parser != null) {
+			IAttributeValueParser.IParseResult<T> parseResult = parser
+					.parse(attributeValue);
+			if (parseResult.hasSyntaxErrors()) {
+				// handle syntactical problems
+				return Collections.<Diagnostic> singletonList(
+						createSyntacticAttributeValueProblem(attributeValue,
+								attributeTypeName,
+								getFormattedSyntaxErrorMessages(parseResult),
+								attributeName));
 			}
-			return diagnostics;
+			parsedValue = parseResult.getParsedValue();
+		} else {
+			// for string values there is no parser
+			parsedValue = (T) attributeValue;
 		}
+
+		// handle semantical problems
+		List<Diagnostic> diagnostics = new ArrayList<>();
+		if (validator != null) {
+			final List<Diagnostic> validationResults = validator
+					.validate(attributeContext, parsedValue);
+			for (Diagnostic r : validationResults) {
+				diagnostics.add(createSemanticAttributeValueProblem(
+						r.getSeverity(), attributeValue, attributeTypeName,
+						r.getMessage(), attributeName));
+			}
+		}
+		return diagnostics;
 	}
 
 	private static Diagnostic createSemanticAttributeValueProblem(int severity,

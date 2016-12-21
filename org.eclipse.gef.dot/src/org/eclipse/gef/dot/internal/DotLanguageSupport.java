@@ -16,11 +16,13 @@ package org.eclipse.gef.dot.internal;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -37,6 +39,7 @@ import org.eclipse.gef.dot.internal.language.DotStyleStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.Color;
+import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.language.dot.AttributeType;
@@ -206,12 +209,16 @@ public class DotLanguageSupport {
 		/**
 		 * Validates the given attribute value.
 		 * 
+		 * @param attributeContext
+		 *            The context of the attribute.
+		 * 
 		 * @param attributeValue
 		 *            The value to validate.
 		 * @return A list of {@link Diagnostic}s that represent the validation
 		 *         result.
 		 */
-		public List<Diagnostic> validate(T attributeValue);
+		public List<Diagnostic> validate(Context attributeContext,
+				T attributeValue);
 	}
 
 	/**
@@ -239,7 +246,7 @@ public class DotLanguageSupport {
 	 * @param <E>
 	 *            The type of enumeration to parse.
 	 */
-	private static class EnumValueParser<E extends Enum<E>>
+	private static class EnumParser<E extends Enum<E>>
 			implements IAttributeValueParser<E> {
 
 		private Class<E> definition;
@@ -250,7 +257,7 @@ public class DotLanguageSupport {
 		 * @param attributeType
 		 *            The enumeration class.
 		 */
-		public EnumValueParser(Class<E> attributeType) {
+		public EnumParser(Class<E> attributeType) {
 			this.definition = attributeType;
 		}
 
@@ -279,7 +286,7 @@ public class DotLanguageSupport {
 	 * @param <E>
 	 *            The type of enumeration to serialize.
 	 */
-	private static class EnumValueSerializer<E extends Enum<E>>
+	private static class EnumSerializer<E extends Enum<E>>
 			implements IAttributeValueSerializer<E> {
 
 		private Class<E> definition;
@@ -290,7 +297,7 @@ public class DotLanguageSupport {
 		 * @param definition
 		 *            The enumeration class.
 		 */
-		public EnumValueSerializer(Class<E> definition) {
+		public EnumSerializer(Class<E> definition) {
 			this.definition = definition;
 		}
 
@@ -304,13 +311,13 @@ public class DotLanguageSupport {
 		}
 	}
 
-	private static class XtextDelegateValueParser<T extends EObject>
+	private static class EObjectParser<T extends EObject>
 			implements IAttributeValueParser<T> {
 
 		private Injector injector;
 		private IParser xtextParser;
 
-		public XtextDelegateValueParser(Injector injector) {
+		public EObjectParser(Injector injector) {
 			this.injector = injector;
 		}
 
@@ -343,13 +350,13 @@ public class DotLanguageSupport {
 		}
 	}
 
-	private static class XtextDelegateValueSerializer<T extends EObject>
+	private static class EObjectSerializer<T extends EObject>
 			implements IAttributeValueSerializer<T> {
 
 		private Injector injector;
 		private ISerializer serializer;
 
-		public XtextDelegateValueSerializer(Injector injector) {
+		public EObjectSerializer(Injector injector) {
 			this.injector = injector;
 		}
 
@@ -367,14 +374,94 @@ public class DotLanguageSupport {
 		}
 	}
 
-	private static class XtextDelegateValueValidator<T extends EObject>
+	private static class DoubleValidator
+			implements IAttributeValueValidator<Double> {
+
+		private double minValue;
+
+		public DoubleValidator(double minValue) {
+			this.minValue = minValue;
+		}
+
+		@Override
+		public List<Diagnostic> validate(Context attributeContext,
+				Double attributeValue) {
+			if (attributeValue.doubleValue() < minValue) {
+				return Collections.singletonList(new BasicDiagnostic(
+						Diagnostic.ERROR, attributeValue.toString(), -1,
+						"Value may not be smaller than " + minValue + ".",
+						new Object[] {}));
+			}
+			return Collections.emptyList();
+		}
+	}
+
+	private static class IntValidator
+			implements IAttributeValueValidator<Integer> {
+
+		private int minValue;
+
+		public IntValidator(int minValue) {
+			this.minValue = minValue;
+		}
+
+		@Override
+		public List<Diagnostic> validate(Context attributeContext,
+				Integer attributeValue) {
+			if (attributeValue.doubleValue() < minValue) {
+				return Collections.singletonList(new BasicDiagnostic(
+						Diagnostic.ERROR, attributeValue.toString(), -1,
+						"Value may not be smaller than " + minValue + ".",
+						new Object[] {}));
+			}
+			return Collections.emptyList();
+		}
+	}
+
+	private static class StringValidator
+			implements IAttributeValueValidator<String> {
+
+		private Object[] validValues;
+
+		public StringValidator(Object[] validValues) {
+			this.validValues = validValues;
+		}
+
+		@Override
+		public List<Diagnostic> validate(Context attributeContext,
+				String attributeValue) {
+			for (Object validValue : validValues) {
+				if (validValue.toString().equals(attributeValue)) {
+					return Collections.emptyList();
+				}
+			}
+			return Collections.singletonList(
+					new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
+							"Value should be one of "
+									+ getFormattedValues(validValues) + ".",
+							new Object[] {}));
+		}
+
+		private String getFormattedValues(Object[] values) {
+			StringBuilder sb = new StringBuilder();
+			for (Object value : new TreeSet<>(Arrays.asList(values))) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append("'" + value + "'");
+			}
+			return sb.toString();
+		}
+	}
+
+	private static class EObjectValidator<T extends EObject>
 			implements IAttributeValueValidator<T> {
 
 		private Injector injector;
 		private Class<? extends AbstractDeclarativeValidator> validatorClass;
 		private AbstractDeclarativeValidator validator;
 
-		public XtextDelegateValueValidator(Injector injector,
+		public EObjectValidator(Injector injector,
 				Class<? extends AbstractDeclarativeValidator> validatorClass) {
 			this.injector = injector;
 			this.validatorClass = validatorClass;
@@ -388,7 +475,8 @@ public class DotLanguageSupport {
 		}
 
 		@Override
-		public List<Diagnostic> validate(T attributeValue) {
+		public List<Diagnostic> validate(Context attributeContext,
+				T attributeValue) {
 			AbstractDeclarativeValidator validator = getValidator();
 
 			final List<Diagnostic> diagnostics = new ArrayList<>();
@@ -452,6 +540,10 @@ public class DotLanguageSupport {
 						AbstractInjectableValidator.CURRENT_LANGUAGE_NAME,
 						ReflectionUtils.getPrivateFieldValue(validator,
 								"languageName"));
+				// put attribute context information into validation context
+				validationContext.put(Context.class.getName(),
+						attributeContext);
+
 				// validate the root element...
 				validator.validate(attributeValue, null /* diagnostic chain */,
 						validationContext);
@@ -471,73 +563,73 @@ public class DotLanguageSupport {
 	/**
 	 * Parses the given value as a DOT dirType.
 	 */
-	public static IAttributeValueParser<DirType> DIRTYPE_PARSER = new EnumValueParser<>(
+	public static IAttributeValueParser<DirType> DIRTYPE_PARSER = new EnumParser<>(
 			DirType.class);
 
 	/**
 	 * A serializer for {@link DirType} values.
 	 */
-	public static IAttributeValueSerializer<DirType> DIRTYPE_SERIALIZER = new EnumValueSerializer<>(
+	public static IAttributeValueSerializer<DirType> DIRTYPE_SERIALIZER = new EnumSerializer<>(
 			DirType.class);
 
 	/**
 	 * Parses the given value as a DOT dirType.
 	 */
-	public static IAttributeValueParser<Layout> LAYOUT_PARSER = new EnumValueParser<>(
+	public static IAttributeValueParser<Layout> LAYOUT_PARSER = new EnumParser<>(
 			Layout.class);
 
 	/**
 	 * A serializer for {@link DirType} values.
 	 */
-	public static IAttributeValueSerializer<Layout> LAYOUT_SERIALIZER = new EnumValueSerializer<>(
+	public static IAttributeValueSerializer<Layout> LAYOUT_SERIALIZER = new EnumSerializer<>(
 			Layout.class);
 
 	/**
 	 * Parses the given value as a {@link ClusterMode}.
 	 */
-	public static IAttributeValueParser<ClusterMode> CLUSTERMODE_PARSER = new EnumValueParser<>(
+	public static IAttributeValueParser<ClusterMode> CLUSTERMODE_PARSER = new EnumParser<>(
 			ClusterMode.class);
 
 	/**
 	 * Serializes the given {@link ClusterMode} value.
 	 */
-	public static IAttributeValueSerializer<ClusterMode> CLUSTERMODE_SERIALIZER = new EnumValueSerializer<>(
+	public static IAttributeValueSerializer<ClusterMode> CLUSTERMODE_SERIALIZER = new EnumSerializer<>(
 			ClusterMode.class);
 
 	/**
 	 * Parses the given value as a DOT outputMode.
 	 */
-	public static IAttributeValueParser<OutputMode> OUTPUTMODE_PARSER = new EnumValueParser<>(
+	public static IAttributeValueParser<OutputMode> OUTPUTMODE_PARSER = new EnumParser<>(
 			OutputMode.class);
 
 	/**
 	 * Serializes the given {@link OutputMode} value.
 	 */
-	public static IAttributeValueSerializer<OutputMode> OUTPUTMODE_SERIALIZER = new EnumValueSerializer<>(
+	public static IAttributeValueSerializer<OutputMode> OUTPUTMODE_SERIALIZER = new EnumSerializer<>(
 			OutputMode.class);
 
 	/**
 	 * Parses the given value as a DOT pagedir.
 	 */
-	public static IAttributeValueParser<Pagedir> PAGEDIR_PARSER = new EnumValueParser<>(
+	public static IAttributeValueParser<Pagedir> PAGEDIR_PARSER = new EnumParser<>(
 			Pagedir.class);
 
 	/**
 	 * Serializes the given {@link Pagedir} value.
 	 */
-	public static IAttributeValueSerializer<Pagedir> PAGEDIR_SERIALIZER = new EnumValueSerializer<>(
+	public static IAttributeValueSerializer<Pagedir> PAGEDIR_SERIALIZER = new EnumSerializer<>(
 			Pagedir.class);
 
 	/**
 	 * A parser used to parse DOT rankdir values.
 	 */
-	public static IAttributeValueParser<Rankdir> RANKDIR_PARSER = new EnumValueParser<>(
+	public static IAttributeValueParser<Rankdir> RANKDIR_PARSER = new EnumParser<>(
 			Rankdir.class);
 
 	/**
 	 * Serializes the given {@link Rankdir} value.
 	 */
-	public static IAttributeValueSerializer<Rankdir> RANKDIR_SERIALIZER = new EnumValueSerializer<>(
+	public static IAttributeValueSerializer<Rankdir> RANKDIR_SERIALIZER = new EnumSerializer<>(
 			Rankdir.class);
 
 	/**
@@ -545,7 +637,7 @@ public class DotLanguageSupport {
 	 */
 	public static IAttributeValueParser<Splines> SPLINES_PARSER = new IAttributeValueParser<Splines>() {
 
-		private EnumValueParser<Splines> enumParser = new EnumValueParser<>(
+		private EnumParser<Splines> enumParser = new EnumParser<>(
 				Splines.class);
 
 		@Override
@@ -577,7 +669,7 @@ public class DotLanguageSupport {
 	/**
 	 * Serializes the given {@link Splines} value.
 	 */
-	public static IAttributeValueSerializer<Splines> SPLINES_SERIALIZER = new EnumValueSerializer<>(
+	public static IAttributeValueSerializer<Splines> SPLINES_SERIALIZER = new EnumSerializer<>(
 			Splines.class);
 
 	private static String getFormattedValues(Object[] values) {
@@ -710,6 +802,48 @@ public class DotLanguageSupport {
 		}
 	};
 
+	/**
+	 * A validator for colorscheme {@link String} attribute values.
+	 */
+	public static IAttributeValueValidator<String> COLORSCHEME_VALIDATOR = new StringValidator(
+			DotColors.getColorSchemes().toArray());
+
+	/**
+	 * A validator for skew {@link Double} attribute values.
+	 */
+	public static IAttributeValueValidator<Integer> SIDES_VALIDATOR = new IntValidator(
+			0);
+
+	/**
+	 * A validator for arrowsize {@link Double} attribute values.
+	 */
+	public static IAttributeValueValidator<Double> ARROWSIZE_VALIDATOR = new DoubleValidator(
+			0.0);
+
+	/**
+	 * A validator for skew {@link Double} attribute values.
+	 */
+	public static IAttributeValueValidator<Double> SKEW_VALIDATOR = new DoubleValidator(
+			-100.0);
+
+	/**
+	 * A validator for distortion {@link Double} attribute values.
+	 */
+	public static IAttributeValueValidator<Double> DISTORTION_VALIDATOR = new DoubleValidator(
+			-100.0);
+
+	/**
+	 * A validator for width {@link Double} attribute values.
+	 */
+	public static IAttributeValueValidator<Double> WIDTH_VALIDATOR = new DoubleValidator(
+			0.01);
+
+	/**
+	 * A validator for height {@link Double} attribute values.
+	 */
+	public static IAttributeValueValidator<Double> HEIGHT_VALIDATOR = new DoubleValidator(
+			0.02);
+
 	private static final Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
 
@@ -717,19 +851,19 @@ public class DotLanguageSupport {
 	 * The validator for arrowtype attribute values.
 	 */
 	// TODO: move to DotJavaValidator
-	public static final IAttributeValueValidator<ArrowType> ARROWTYPE_VALIDATOR = new XtextDelegateValueValidator<>(
+	public static final IAttributeValueValidator<ArrowType> ARROWTYPE_VALIDATOR = new EObjectValidator<>(
 			arrowTypeInjector, DotArrowTypeJavaValidator.class);
 
 	/**
 	 * The parser for arrowtype attribute values.
 	 */
-	public static final IAttributeValueParser<ArrowType> ARROWTYPE_PARSER = new XtextDelegateValueParser<>(
+	public static final IAttributeValueParser<ArrowType> ARROWTYPE_PARSER = new EObjectParser<>(
 			arrowTypeInjector);
 
 	/**
 	 * The serializer for arrowtype attribute values.
 	 */
-	public static final IAttributeValueSerializer<ArrowType> ARROWTYPE_SERIALIZER = new XtextDelegateValueSerializer<>(
+	public static final IAttributeValueSerializer<ArrowType> ARROWTYPE_SERIALIZER = new EObjectSerializer<>(
 			arrowTypeInjector);
 
 	private static final Injector colorInjector = new DotColorStandaloneSetup()
@@ -738,13 +872,13 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for color attribute values.
 	 */
-	public static final IAttributeValueParser<Color> COLOR_PARSER = new XtextDelegateValueParser<>(
+	public static final IAttributeValueParser<Color> COLOR_PARSER = new EObjectParser<>(
 			colorInjector);
 
 	/**
 	 * The serializer for color attribute values.
 	 */
-	public static final IAttributeValueSerializer<Color> COLOR_SERIALIZER = new XtextDelegateValueSerializer<>(
+	public static final IAttributeValueSerializer<Color> COLOR_SERIALIZER = new EObjectSerializer<>(
 			colorInjector);
 
 	private static final Injector pointInjector = new DotPointStandaloneSetup()
@@ -753,13 +887,13 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for point attribute values.
 	 */
-	public static final IAttributeValueParser<Point> POINT_PARSER = new XtextDelegateValueParser<>(
+	public static final IAttributeValueParser<Point> POINT_PARSER = new EObjectParser<>(
 			pointInjector);
 
 	/**
 	 * The serializer for point attribute values.
 	 */
-	public static final IAttributeValueSerializer<Point> POINT_SERIALIZER = new XtextDelegateValueSerializer<>(
+	public static final IAttributeValueSerializer<Point> POINT_SERIALIZER = new EObjectSerializer<>(
 			pointInjector);
 
 	private static final Injector shapeInjector = new DotShapeStandaloneSetup()
@@ -768,13 +902,13 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for shape attribute values.
 	 */
-	public static final IAttributeValueParser<Shape> SHAPE_PARSER = new XtextDelegateValueParser<>(
+	public static final IAttributeValueParser<Shape> SHAPE_PARSER = new EObjectParser<>(
 			shapeInjector);
 
 	/**
 	 * The serializer for shape attribute values.
 	 */
-	public static final IAttributeValueSerializer<Shape> SHAPE_SERIALIZER = new XtextDelegateValueSerializer<>(
+	public static final IAttributeValueSerializer<Shape> SHAPE_SERIALIZER = new EObjectSerializer<>(
 			shapeInjector);
 
 	private static final Injector splineTypeInjector = new DotSplineTypeStandaloneSetup()
@@ -783,13 +917,13 @@ public class DotLanguageSupport {
 	/**
 	 * The parser for splinetype attribute values.
 	 */
-	public static final IAttributeValueParser<SplineType> SPLINETYPE_PARSER = new XtextDelegateValueParser<>(
+	public static final IAttributeValueParser<SplineType> SPLINETYPE_PARSER = new EObjectParser<>(
 			splineTypeInjector);
 
 	/**
 	 * The serializer for splinetype attribute values.
 	 */
-	public static final IAttributeValueSerializer<SplineType> SPLINETYPE_SERIALIZER = new XtextDelegateValueSerializer<>(
+	public static final IAttributeValueSerializer<SplineType> SPLINETYPE_SERIALIZER = new EObjectSerializer<>(
 			splineTypeInjector);
 
 	private static final Injector styleInjector = new DotStyleStandaloneSetup()
@@ -798,43 +932,43 @@ public class DotLanguageSupport {
 	/**
 	 * The serializer for style attribute values.
 	 */
-	public static final IAttributeValueSerializer<Style> STYLE_SERIALIZER = new XtextDelegateValueSerializer<>(
+	public static final IAttributeValueSerializer<Style> STYLE_SERIALIZER = new EObjectSerializer<>(
 			styleInjector);
 
 	/**
 	 * The parser for style attribute values.
 	 */
-	public static final IAttributeValueParser<Style> STYLE_PARSER = new XtextDelegateValueParser<>(
+	public static final IAttributeValueParser<Style> STYLE_PARSER = new EObjectParser<>(
 			styleInjector);
 
 	/**
 	 * Validator for Color types.
 	 */
-	public static final IAttributeValueValidator<Color> COLOR_VALIDATOR = new XtextDelegateValueValidator<>(
+	public static final IAttributeValueValidator<Color> COLOR_VALIDATOR = new EObjectValidator<>(
 			colorInjector, DotColorJavaValidator.class);
 
 	/**
 	 * Validator for SplineType types.
 	 */
-	public static final IAttributeValueValidator<SplineType> SPLINETYPE_VALIDATOR = new XtextDelegateValueValidator<>(
+	public static final IAttributeValueValidator<SplineType> SPLINETYPE_VALIDATOR = new EObjectValidator<>(
 			splineTypeInjector, DotSplineTypeJavaValidator.class);
 
 	/**
 	 * Validator for Point types.
 	 */
-	public static final IAttributeValueValidator<Point> POINT_VALIDATOR = new XtextDelegateValueValidator<>(
+	public static final IAttributeValueValidator<Point> POINT_VALIDATOR = new EObjectValidator<>(
 			pointInjector, DotPointJavaValidator.class);
 
 	/**
 	 * Validator for Shape types.
 	 */
-	public static final IAttributeValueValidator<Shape> SHAPE_VALIDATOR = new XtextDelegateValueValidator<>(
+	public static final IAttributeValueValidator<Shape> SHAPE_VALIDATOR = new EObjectValidator<>(
 			shapeInjector, DotShapeJavaValidator.class);
 
 	/**
 	 * Validator for Style types.
 	 */
-	public static final IAttributeValueValidator<Style> STYLE_VALIDATOR = new XtextDelegateValueValidator<>(
+	public static final IAttributeValueValidator<Style> STYLE_VALIDATOR = new EObjectValidator<>(
 			styleInjector, DotStyleJavaValidator.class);
 
 	/**
