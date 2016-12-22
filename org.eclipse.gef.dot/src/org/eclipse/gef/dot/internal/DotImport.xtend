@@ -33,7 +33,6 @@ import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.gef.dot.internal.language.dot.Stmt
 import org.eclipse.gef.dot.internal.language.dot.Subgraph
 import org.eclipse.gef.dot.internal.language.parser.antlr.DotParser
-import org.eclipse.gef.dot.internal.language.splines.Splines
 import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
@@ -134,31 +133,8 @@ class DotImport {
 		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputorderRaw(value)])
 		setter.apply(PAGEDIR__G, [g, value|g.setPagedirRaw(value)])
 		setter.apply(RANKDIR__G, [g, value|g.setRankdirRaw(value)])
-
-		// splines
-		var splines = getAttributeValue(SPLINES__G)
-		if (splines == null && globalGraphAttributes.containsKey(SPLINES__G)) {
-			splines = globalGraphAttributes.get(SPLINES__G)
-		}
-		if (splines != null) {
-			// XXX: splines can either be a defined enum value or a bool value
-			// (which is mapped to respective enum values) we use the enum
-			// values alone and thus map the bool value here
-			val Boolean booleanValue = DotLanguageSupport.parseAttributeValue(DotLanguageSupport.BOOL_PARSER,
-				splines.toValue)
-			if (booleanValue != null) {
-				graph.setSplinesParsed(
-					if (Boolean.TRUE.equals(booleanValue))
-						Splines.TRUE
-					else
-						Splines.FALSE
-				)
-			} else {
-				graph.setSplinesRaw(splines)
-			}
-		}
-
-		graph
+		setter.apply(SPLINES__G, [g, value | g.setSplinesRaw(value)])
+		return graph
 	}
 
 	private def Node transformNodeId(NodeId it) {

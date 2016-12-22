@@ -13,8 +13,7 @@ package org.eclipse.gef.dot.internal.language.validation;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import org.eclipse.gef.dot.internal.DotLanguageSupport;
-import org.eclipse.gef.dot.internal.DotLanguageSupport.Context;
+import org.eclipse.gef.dot.internal.DotAttributes.Context;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
@@ -66,7 +65,7 @@ public class DotStyleJavaValidator extends
 	private Context getAttributeContext() {
 		// XXX: This context information is provided by the EObjectValidator
 		Context attributeContext = (Context) getContext()
-				.get(DotLanguageSupport.Context.class.getName());
+				.get(Context.class.getName());
 		if (attributeContext == null) {
 			throw new IllegalStateException("Attribute context not specified.");
 		}

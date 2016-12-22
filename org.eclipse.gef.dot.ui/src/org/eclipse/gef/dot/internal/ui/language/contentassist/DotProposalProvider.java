@@ -27,9 +27,8 @@ import javax.swing.text.AbstractDocument.AttributeContext;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
+import org.eclipse.gef.dot.internal.DotAttributes.Context;
 import org.eclipse.gef.dot.internal.DotImport;
-import org.eclipse.gef.dot.internal.DotLanguageSupport;
-import org.eclipse.gef.dot.internal.DotLanguageSupport.Context;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
@@ -176,7 +175,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				acceptor);
 
 		if (model instanceof AttrList) {
-			Context attributeContext = DotLanguageSupport.getContext(model);
+			Context attributeContext = DotAttributes.getContext(model);
 			proposeAttributeNames(attributeContext, contentAssistContext,
 					acceptor);
 		} else if (model instanceof DotGraph || model instanceof NodeStmt) {
@@ -191,7 +190,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
-			if (DotLanguageSupport.getContext(attribute) == Context.EDGE) {
+			if (DotAttributes.getContext(attribute) == Context.EDGE) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.ARROWHEAD__E:
 				case DotAttributes.ARROWTAIL__E:
@@ -233,8 +232,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				}
-			} else if (DotLanguageSupport
-					.getContext(attribute) == Context.GRAPH) {
+			} else if (DotAttributes.getContext(attribute) == Context.GRAPH) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.BGCOLOR__G:
 				case DotAttributes.FONTCOLOR__GNE:
@@ -278,8 +276,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				}
-			} else if (DotLanguageSupport
-					.getContext(attribute) == Context.NODE) {
+			} else if (DotAttributes.getContext(attribute) == Context.NODE) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.COLOR__NE:
 				case DotAttributes.FILLCOLOR__NE:

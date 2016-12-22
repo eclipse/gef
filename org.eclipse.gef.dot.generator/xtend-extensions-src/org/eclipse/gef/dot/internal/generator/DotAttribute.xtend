@@ -94,7 +94,7 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 				addParameter(attributeName, "org.eclipse.gef.dot.internal.language.terminals.ID".newTypeReference())
 				body = [
 					'''
-						validate(DotLanguageSupport.Context.«c.name.toUpperCase», «field.simpleName», «attributeName».toValue());
+						validateAttributeValueInternal(Context.«c.name.toUpperCase», «field.simpleName», «attributeName».toValue());
 						«c.paramName».attributesProperty().put(«field.simpleName», «attributeName»);
 					'''
 				]
@@ -176,7 +176,7 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 			// no further serialization needed for String
 			return attributeValue
 		}
-		return "DotLanguageSupport.serializeAttributeValue(" + attributeParsedType.serializer + ", " + attributeValue + ")"
+		return "serializeAttributeValue(" + attributeParsedType.serializer + ", " + attributeValue + ")"
 	}
 	
 	def String parsed(String attributeValue, TypeReference attributeParsedType) {
@@ -184,17 +184,17 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 			// no further parsing needed or string
 			return attributeValue
 		}
-		return "DotLanguageSupport.parseAttributeValue(" + attributeParsedType.parser + ", " + attributeValue + ")"
+		return "parseAttributeValue(" + attributeParsedType.parser + ", " + attributeValue + ")"
 	}
 	
 	// TODO: handle String and enum values distinctively
 	def String serializer(TypeReference attributeParsedType) {
-		return "DotLanguageSupport." + dotTypeName(attributeParsedType) + "_SERIALIZER"
+		return dotTypeName(attributeParsedType) + "_SERIALIZER"
 	}
 	
 	// TODO: handle String and enum values distinctively.
 	def String parser(TypeReference attributeParsedType) {
-		return "DotLanguageSupport." + dotTypeName(attributeParsedType) + "_PARSER"
+		return dotTypeName(attributeParsedType) + "_PARSER"
 	}
 	
 	def dotTypeName(TypeReference attributeParsedType) {
