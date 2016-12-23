@@ -37,6 +37,9 @@
 									<directory>${basedir}/src-gen/</directory>
 								</fileset>
 								<fileset>
+									<directory>${basedir}/emf-gen/</directory>
+								</fileset>
+								<fileset>
 									<directory>${basedir}/xtend-gen/</directory>
 								</fileset>
 								<fileset>
