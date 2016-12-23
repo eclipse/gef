@@ -9,5 +9,3 @@ Require-Bundle: org.eclipse.xtext;bundle-version="[2.7.3,3.0.0)",
  org.eclipse.xtext.generator;bundle-version="[2.7.3,3.0.0)",
  org.eclipse.xtend.core;bundle-version="[2.7.3,3.0.0)"
 Export-Package: org.eclipse.gef.dot.internal.generator
-Bundle-ClassPath: xtext-extensions.jar,
- xtend-extensions.jar

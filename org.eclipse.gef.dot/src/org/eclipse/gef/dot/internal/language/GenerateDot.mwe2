@@ -65,7 +65,7 @@ Workflow {
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
-		naming = org.eclipse.gef.dot.internal.generator.DotNaming {}
+		naming = DotNaming {}
 		language = auto-inject {
 			// grammarURI has to be platform:/resource for headless execution (Tycho)
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/Dot.xtext"// Java API to access grammar elements (required by several other fragments)
