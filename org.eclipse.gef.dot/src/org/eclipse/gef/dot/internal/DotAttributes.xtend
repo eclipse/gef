@@ -1040,7 +1040,7 @@ public class DotAttributes {
 	 *            The context element the attribute is related to.
 	 * @param attributeName
 	 *            The name of the attribute.
-	 * @param value
+	 * @param attributeValue
 	 *            The value of the attribute.
 	 * @return A list of {@link Diagnostic} objects representing the identified
 	 *         issues, or an empty list if no issues were found.
