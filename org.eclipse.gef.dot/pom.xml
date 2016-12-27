@@ -94,7 +94,7 @@
 						<artifactId>xtext-generator-extensions</artifactId>
 						<version>5.0.0</version>
 						<scope>system</scope>
-						<systemPath>${project.basedir}/xtext-generator-extensions.jar</systemPath>
+						<systemPath>${project.basedir}/../org.eclipse.gef.dot.generator/xtext-generator-extensions.jar</systemPath>
 					</dependency>
 				</dependencies>
 			</plugin>
