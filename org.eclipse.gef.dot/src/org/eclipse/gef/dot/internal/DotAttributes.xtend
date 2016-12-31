@@ -1160,7 +1160,7 @@ public class DotAttributes {
 		} else if (DotAttributes.COLORSCHEME__GNE.equals(attributeName)) {
 			return validateAttributeValue(attributeContext, null,
 					COLORSCHEME_VALIDATOR, attributeName, attributeValue,
-					"colorscheme");
+					"string");
 		}
 		return Collections.emptyList();
 	}
