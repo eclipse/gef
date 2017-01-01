@@ -94,7 +94,7 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 				addParameter(attributeName, "org.eclipse.gef.dot.internal.language.terminals.ID".newTypeReference())
 				body = [
 					'''
-						validateAttributeValueInternal(Context.«c.name.toUpperCase», «field.simpleName», «attributeName».toValue());
+						checkAttributeRawValue(Context.«c.name.toUpperCase», «field.simpleName», «attributeName»);
 						«c.paramName».attributesProperty().put(«field.simpleName», «attributeName»);
 					'''
 				]

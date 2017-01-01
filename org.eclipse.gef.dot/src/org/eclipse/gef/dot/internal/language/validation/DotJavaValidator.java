@@ -62,39 +62,42 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkValidAttributeValue(final Attribute attribute) {
 		String attributeName = attribute.getName().toValue();
-		String attributeValue = attribute.getValue().toValue();
+		ID attributeValue = attribute.getValue();
 		List<Diagnostic> diagnostics = convertToFeatureBasedDiagnostic(
-				DotAttributes.validateAttributeValue(
-						DotAttributes.getContext(attribute),
-						attributeName, attributeValue),
+				DotAttributes.validateAttributeRawValue(
+						DotAttributes.getContext(attribute), attributeName,
+						attributeValue),
 				attributeName, attributeValue);
 		for (Diagnostic d : diagnostics) {
 			if (d.getSeverity() == Diagnostic.ERROR) {
 				getMessageAcceptor().acceptError(d.getMessage(), attribute,
 						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attributeName, attributeValue);
+						INSIGNIFICANT_INDEX, attributeName,
+						attributeValue.toValue());
 			} else if (d.getSeverity() == Diagnostic.WARNING) {
 				getMessageAcceptor().acceptWarning(d.getMessage(), attribute,
 						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attributeName, attributeValue);
+						INSIGNIFICANT_INDEX, attributeName,
+						attributeValue.toValue());
 			} else if (d.getSeverity() == Diagnostic.INFO) {
 				getMessageAcceptor().acceptInfo(d.getMessage(), attribute,
 						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attributeName, attributeValue);
+						INSIGNIFICANT_INDEX, attributeName,
+						attributeValue.toValue());
 			}
 		}
 	}
 
 	private List<Diagnostic> convertToFeatureBasedDiagnostic(
 			List<Diagnostic> diagnostics, String attributeName,
-			String attributeValue) {
+			ID attributeValue) {
 		List<Diagnostic> result = new ArrayList<>();
 		for (Diagnostic d : diagnostics) {
 			result.add(new FeatureBasedDiagnostic(d.getSeverity(),
 					d.getMessage(), null /* current object */,
 					DotPackage.Literals.ATTRIBUTE__VALUE,
 					ValidationMessageAcceptor.INSIGNIFICANT_INDEX,
-					CheckType.NORMAL, attributeName, attributeValue));
+					CheckType.NORMAL, attributeName, attributeValue.toValue()));
 		}
 		return result;
 	}
