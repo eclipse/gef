@@ -39,7 +39,7 @@ package org.eclipse.gef.geometry.planar;
  * @author mwienand
  *
  */
-public abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?, ?>, S extends IGeometry>
+abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?, ?>, S extends IGeometry>
 		extends AbstractGeometry
 		implements ITranslatable<T>, IScalable<T>, IRotatable<S> {
 
