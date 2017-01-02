@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 
@@ -38,6 +39,7 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
  */
 public class UndoablePropertySheetEntry extends PropertySheetEntry {
 
+	private IWorkbenchPart workbenchPart;
 	private IOperationHistory operationHistory;
 	private IOperationHistoryListener operationHistoryListener;
 	private IUndoContext undoContext;
@@ -51,15 +53,19 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	}
 
 	/**
-	 * Constructs the root entry using the given {@link IOperationHistory}.
+	 * Constructs a new root entry.
 	 *
+	 * @param workbenchPart
+	 *            The {@link IWorkbenchPart} to adapt for an
+	 *            {@link IPropertySource}, in case no values are provided.
 	 * @param operationHistory
-	 *            the operation history to use
+	 *            The {@link IOperationHistory} to use.
 	 * @param undoContext
-	 *            the undo context to use
+	 *            The {@link IUndoContext} to use.
 	 */
-	public UndoablePropertySheetEntry(IOperationHistory operationHistory,
-			IUndoContext undoContext) {
+	public UndoablePropertySheetEntry(IWorkbenchPart workbenchPart,
+			IOperationHistory operationHistory, IUndoContext undoContext) {
+		this.workbenchPart = workbenchPart;
 		this.operationHistory = operationHistory;
 		this.undoContext = undoContext;
 		this.operationHistoryListener = new IOperationHistoryListener() {
@@ -108,6 +114,14 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 		return operationHistory;
 	}
 
+	@Override
+	protected IPropertySource getPropertySource(Object object) {
+		if (object instanceof IPropertySource) {
+			return (IPropertySource) object;
+		}
+		return super.getPropertySource(object);
+	}
+
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySheetEntry#resetPropertyValue()
 	 */
@@ -142,6 +156,24 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 			}
 			refreshFromRoot();
 		}
+	}
+
+	@Override
+	public void setValues(Object[] objects) {
+		if (objects == null || objects.length == 0) {
+			if (workbenchPart != null) {
+				IPropertySource source = (IPropertySource) workbenchPart
+						.getAdapter(IPropertySource.class);
+				if (source != null) {
+					// wrap source itself; it will be unwrapped by super
+					// implementation and then passed to
+					// #getPropertySource(Object), which will return it, so the
+					// editable value can be retrieved from it
+					objects = new Object[] { source };
+				}
+			}
+		}
+		super.setValues(objects);
 	}
 
 	/**

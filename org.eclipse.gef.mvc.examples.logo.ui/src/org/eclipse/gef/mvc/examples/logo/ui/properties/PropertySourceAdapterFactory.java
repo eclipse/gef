@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
+import org.eclipse.gef.mvc.examples.logo.ui.view.MvcLogoExampleView;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PropertySourceAdapterFactory implements IAdapterFactory {
@@ -28,9 +29,6 @@ public class PropertySourceAdapterFactory implements IAdapterFactory {
 			} else if (adaptableObject instanceof GeometricShape) {
 				return new GeometricShapePropertySource(
 						(GeometricShape) adaptableObject);
-			} else if (adaptableObject instanceof GeometricModel) {
-				return new GeometricModelPropertySource(
-						(GeometricModel) adaptableObject);
 			}
 		}
 		return null;

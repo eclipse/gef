@@ -26,10 +26,5 @@
 				adaptableType="org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement">
 			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
 		</factory>
-		<factory
-				class="org.eclipse.gef.mvc.examples.logo.ui.properties.PropertySourceAdapterFactory"
-				adaptableType="org.eclipse.gef.mvc.examples.logo.model.GeometricModel">
-			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
-		</factory>
 	</extension>
 </plugin>

@@ -81,7 +81,8 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	 *         {@link UndoablePropertySheetPage}.
 	 */
 	protected UndoablePropertySheetEntry createRootEntry() {
-		return new UndoablePropertySheetEntry(operationHistory, undoContext);
+		return new UndoablePropertySheetEntry(workbenchPart, operationHistory,
+				undoContext);
 	}
 
 	/**

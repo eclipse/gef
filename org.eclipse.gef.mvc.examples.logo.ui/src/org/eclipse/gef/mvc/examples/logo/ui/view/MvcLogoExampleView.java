@@ -30,8 +30,10 @@ import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleViewersComposite;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricCurvePropertySource;
+import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricModelPropertySource;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
@@ -43,6 +45,7 @@ import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
@@ -181,7 +184,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 			UndoablePropertySheetPage propertySheetPage = (UndoablePropertySheetPage) super.getAdapter(
 					key);
 			if (rootEntry == null) {
-				rootEntry = new UndoablePropertySheetEntry(
+				rootEntry = new UndoablePropertySheetEntry(this,
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class)) {
 					// FIXME: Code copied from BendConnectionPolicy (see
@@ -215,15 +218,6 @@ public class MvcLogoExampleView extends AbstractFXView {
 							return translated;
 						}
 						return null;
-					}
-
-					@Override
-					public void setValues(Object[] objects) {
-						if (objects == null || objects.length == 0) {
-							objects = new Object[] {
-									getContentViewer().getContents().get(0) };
-						}
-						super.setValues(objects);
 					}
 
 					@Override
@@ -280,6 +274,10 @@ public class MvcLogoExampleView extends AbstractFXView {
 				propertySheetPage.setRootEntry(rootEntry);
 			}
 			return propertySheetPage;
+		}
+		else if (IPropertySource.class.equals(key)) {
+			return new GeometricModelPropertySource(
+					(GeometricModel) getContentViewer().getContents().get(0));
 		}
 		return super.getAdapter(key);
 	}
