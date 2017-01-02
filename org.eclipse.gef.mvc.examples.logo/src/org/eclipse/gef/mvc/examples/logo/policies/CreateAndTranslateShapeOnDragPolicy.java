@@ -21,14 +21,13 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
-import org.eclipse.gef.mvc.examples.logo.parts.GeometricModelPart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
-import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
@@ -131,16 +130,13 @@ public class CreateAndTranslateShapeOnDragPolicy extends AbstractInteractionPoli
 	public void startDrag(MouseEvent event) {
 		// find model part
 		IRootPart<? extends Node> contentRoot = getContentViewer().getRootPart();
-		IVisualPart<? extends Node> modelPart = contentRoot.getChildrenUnmodifiable().get(0);
-		if (!(modelPart instanceof GeometricModelPart)) {
-			throw new IllegalStateException("Cannot find GeometricModelPart.");
-		}
 
 		// copy the prototype
 		GeometricShape copy = getHost().getContent().getCopy();
 		// determine coordinates of prototype's origin in model coordinates
 		Point2D localToScene = getHost().getVisual().localToScene(0, 0);
-		Point2D originInModel = modelPart.getVisual().sceneToLocal(localToScene.getX(), localToScene.getY());
+		Point2D originInModel = ((LayeredRootPart) getContentViewer().getRootPart()).getContentLayer()
+				.sceneToLocal(localToScene.getX(), localToScene.getY());
 		// initially move to the originInModel
 		double[] matrix = copy.getTransform().getMatrix();
 		copy.getTransform().setTransform(matrix[0], matrix[1], matrix[2], matrix[3], originInModel.getX(),
@@ -149,7 +145,7 @@ public class CreateAndTranslateShapeOnDragPolicy extends AbstractInteractionPoli
 		// create copy of host's geometry using CreationPolicy from root part
 		CreationPolicy creationPolicy = contentRoot.getAdapter(CreationPolicy.class);
 		init(creationPolicy);
-		createdShapePart = (GeometricShapePart) creationPolicy.create(copy, modelPart,
+		createdShapePart = (GeometricShapePart) creationPolicy.create(copy, contentRoot,
 				HashMultimap.<IContentPart<? extends Node>, String> create());
 		commit(creationPolicy);
 

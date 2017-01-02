@@ -257,7 +257,7 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 	 *
 	 * @return The content layer visual.
 	 */
-	protected Group getContentLayer() {
+	public Group getContentLayer() {
 		if (contentLayer == null) {
 			doCreateVisual();
 		}
@@ -279,7 +279,7 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 	 *
 	 * @return The feedback layer visual.
 	 */
-	protected Group getFeedbackLayer() {
+	public Group getFeedbackLayer() {
 		if (feedbackLayer == null) {
 			doCreateVisual();
 		}
@@ -301,7 +301,7 @@ public class LayeredRootPart extends AbstractVisualPart<Group>
 	 *
 	 * @return The handle layer visual.
 	 */
-	protected Group getHandleLayer() {
+	public Group getHandleLayer() {
 		if (handleLayer == null) {
 			doCreateVisual();
 		}

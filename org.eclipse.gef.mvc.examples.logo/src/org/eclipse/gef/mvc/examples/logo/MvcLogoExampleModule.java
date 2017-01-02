@@ -20,7 +20,6 @@ import org.eclipse.gef.mvc.examples.logo.behaviors.PaletteFocusBehavior;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurveCreationHoverHandlePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricElementDeletionHandlePart;
-import org.eclipse.gef.mvc.examples.logo.parts.GeometricModelPart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleContentPartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleHoverHandlePartFactory;
@@ -132,18 +131,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFocusModelAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusModel.class);
-	}
-
-	/**
-	 * Binds adapters for {@link GeometricModelPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The adapter map binder to which the bindings are added.
-	 */
-	protected void bindFXGeometricModelPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// geometry provider for focus feedback
-		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
 	}
 
 	/**
@@ -482,7 +469,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				GeometricShapePart.class, AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE)));
 		bindGeometricCurvePartAdaptersInContentViewerContext(AdapterMaps.getAdapterMapBinder(binder(),
 				GeometricCurvePart.class, AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE)));
-		bindFXGeometricModelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GeometricModelPart.class));
 
 		// node selection handles and multi selection handles
 		bindSquareSegmentHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), SquareSegmentHandlePart.class));

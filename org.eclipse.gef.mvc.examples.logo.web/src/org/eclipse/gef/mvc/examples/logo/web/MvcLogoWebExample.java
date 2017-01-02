@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo.web;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -19,7 +18,7 @@ import org.eclipse.gef.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleViewersComposite;
-import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
+import org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -31,12 +30,12 @@ import javafx.scene.Scene;
 // TODO: Better extend MvcLogoExample (same code).
 public class MvcLogoWebExample extends AbstractMvcExample {
 
-	public static List<GeometricModel> createDefaultContents() {
-		return Collections.singletonList(new GeometricModel());
+	public static List<? extends AbstractGeometricElement<?>> createContentViewerContents() {
+		return MvcLogoExample.createContentViewerContents();
 	}
 
-	public static List<GeometricShape> createPaletteContents() {
-		return MvcLogoExample.createPaletteContents();
+	public static List<GeometricShape> createPaletteViewerContents() {
+		return MvcLogoExample.createPaletteViewerContents();
 	}
 
 	public static void main(String[] args) {
@@ -66,8 +65,8 @@ public class MvcLogoWebExample extends AbstractMvcExample {
 
 	@Override
 	protected void populateViewerContents() {
-		getContentViewer().getContents().setAll(createDefaultContents());
-		getPaletteViewer().getContents().setAll(createPaletteContents());
+		getContentViewer().getContents().setAll(createContentViewerContents());
+		getPaletteViewer().getContents().setAll(createPaletteViewerContents());
 	}
 
 }

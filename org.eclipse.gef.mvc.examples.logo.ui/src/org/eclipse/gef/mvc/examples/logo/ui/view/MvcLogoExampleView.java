@@ -30,7 +30,6 @@ import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExampleViewersComposite;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
-import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricCurvePropertySource;
 import org.eclipse.gef.mvc.examples.logo.ui.properties.MvcLogoExampleViewPropertySource;
@@ -109,9 +108,9 @@ public class MvcLogoExampleView extends AbstractFXView {
 
 		// set initial contents
 		getContentViewer().getContents()
-				.setAll(MvcLogoExample.createDefaultContents());
+				.setAll(MvcLogoExample.createContentViewerContents());
 		getPaletteViewer().getContents()
-				.setAll(MvcLogoExample.createPaletteContents());
+				.setAll(MvcLogoExample.createPaletteViewerContents());
 	}
 
 	@Override
@@ -274,8 +273,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 				propertySheetPage.setRootEntry(rootEntry);
 			}
 			return propertySheetPage;
-		}
-		else if (IPropertySource.class.equals(key)) {
+		} else if (IPropertySource.class.equals(key)) {
 			return new MvcLogoExampleViewPropertySource(this);
 		}
 		return super.getAdapter(key);

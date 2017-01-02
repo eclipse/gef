@@ -20,10 +20,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
-import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
-import org.eclipse.gef.mvc.examples.logo.parts.GeometricModelPart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
@@ -144,21 +143,15 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy impleme
 
 	@Override
 	public void startDrag(MouseEvent event) {
-		// find model part
-		IVisualPart<? extends Node> modelPart = getHost().getRoot().getContentPartChildren().get(0);
-		if (!(modelPart instanceof GeometricModelPart)) {
-			throw new IllegalStateException("Cannot find GeometricModelPart.");
-		}
-
 		// create new curve
 		GeometricCurve curve = new GeometricCurve(new Point[] { new Point(), new Point() },
-				GeometricModel.GEF_COLOR_GREEN, GeometricModel.GEF_STROKE_WIDTH, GeometricModel.GEF_DASH_PATTERN, null);
+				MvcLogoExample.GEF_COLOR_GREEN, MvcLogoExample.GEF_STROKE_WIDTH, MvcLogoExample.GEF_DASH_PATTERN, null);
 		curve.addSourceAnchorage(getShapePart().getContent());
 
 		// create using CreationPolicy from root part
 		CreationPolicy creationPolicy = getHost().getRoot().getAdapter(CreationPolicy.class);
 		init(creationPolicy);
-		curvePart = (GeometricCurvePart) creationPolicy.create(curve, modelPart,
+		curvePart = (GeometricCurvePart) creationPolicy.create(curve, getHost().getRoot(),
 				HashMultimap.<IContentPart<? extends Node>, String> create());
 		commit(creationPolicy);
 

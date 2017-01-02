@@ -15,17 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.fx.nodes.GeometryNode;
-import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.IShape;
-import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
+import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
-import org.eclipse.gef.mvc.fx.parts.IContentPart;
-import org.eclipse.gef.mvc.fx.parts.IRootPart;
 
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 
 public class FXCreationMenuItemProvider implements Provider<List<CreationMenuOnClickPolicy.ICreationMenuItem>> {
 
@@ -38,11 +34,7 @@ public class FXCreationMenuItemProvider implements Provider<List<CreationMenuOnC
 
 		@Override
 		public Object createContent() {
-			GeometricShape content = new GeometricShape(template.getGeometry(), template.getTransform(),
-					template.getFill(), template.getEffect());
-			content.setStroke(template.getStroke());
-			content.setStrokeWidth(template.getStrokeWidth());
-			return content;
+			return template.getCopy();
 		}
 
 		@Override
@@ -55,25 +47,14 @@ public class FXCreationMenuItemProvider implements Provider<List<CreationMenuOnC
 			return visual;
 		}
 
-		@Override
-		public IContentPart<? extends Node> findContentParent(IRootPart<? extends Node> rootPart) {
-			return rootPart.getContentPartChildren().get(0);
-		}
 	}
 
 	@Override
 	public List<CreationMenuOnClickPolicy.ICreationMenuItem> get() {
 		List<CreationMenuOnClickPolicy.ICreationMenuItem> items = new ArrayList<>();
-		// handle shape
-		items.add(new GeometricShapeItem(new GeometricShape(GeometricModel.createHandleShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE, GeometricModel.GEF_SHADOW_EFFECT)));
-		// E shape
-		items.add(new GeometricShapeItem(
-				new GeometricShape(GeometricModel.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 0, 0),
-						GeometricModel.GEF_COLOR_BLUE, GeometricModel.GEF_SHADOW_EFFECT)));
-		// cursor shape
-		items.add(new GeometricShapeItem(new GeometricShape(GeometricModel.createCursorShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE, 2, Color.BLACK, GeometricModel.GEF_SHADOW_EFFECT)));
+		for (GeometricShape shape : MvcLogoExample.createPaletteViewerContents()) {
+			items.add(new GeometricShapeItem(shape));
+		}
 		return items;
 	}
 
