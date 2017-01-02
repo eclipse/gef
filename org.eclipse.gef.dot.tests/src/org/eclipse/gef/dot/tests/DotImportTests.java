@@ -267,6 +267,14 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void multilineQuotedId() {
+		Graph graph = dotImport.importDot(DotTestGraphs.MULTILINE_QUOTED_IDS);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("node 1", //$NON-NLS-1$
+				DotAttributes.getLabel(graph.getNodes().get(0)));
+	}
+
+	@Test
 	public void fullyQuoted() {
 		Graph graph = dotImport.importDot(DotTestGraphs.FULLY_QUOTED_IDS);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$

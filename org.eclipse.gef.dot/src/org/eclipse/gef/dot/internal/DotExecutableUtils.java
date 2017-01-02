@@ -203,8 +203,7 @@ final public class DotExecutableUtils {
 
 	private static String read(InputStream is) {
 		try {
-			return DotFileUtils.read(is)
-					.replaceAll("\\\\" + System.lineSeparator(), "").trim();
+			return DotFileUtils.read(is);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

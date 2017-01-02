@@ -127,6 +127,13 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val MULTILINE_QUOTED_IDS = '''
+		graph {
+			n1[label="node\
+		 1"]
+		}
+	'''
+	
 	public static val FULLY_QUOTED_IDS = '''
 		graph {
 			"n1"

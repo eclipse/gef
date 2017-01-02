@@ -224,13 +224,25 @@ public class ID {
 			return string;
 		case QUOTED_STRING:
 			return string
-					/* In DOT, an ID can be quoted... */
+					/* Un-quote */
 					.replaceAll("^\"|\"$", "") //$NON-NLS-1$//$NON-NLS-2$
 					/*
-					 * ...and may contain escaped quotes (see footnote on
-					 * http://www.graphviz.org/doc/info/lang.html)
+					 * 'As another aid for readability, dot allows double-quoted
+					 * strings to span multiple physical lines using the
+					 * standard C convention of a backslash
+					 * immediately.'[footnote on
+					 * http://www.graphviz.org/doc/info/lang.html]
 					 */
-					.replaceAll("\\\\\"", "\""); //$NON-NLS-1$//$NON-NLS-2$
+					.replaceAll("\\\\(?:\\r\\n|\\r|\\n)", "")
+					/*
+					 * Un-escape escaped quotes: 'In quoted strings in DOT, the
+					 * only escaped character is double-quote
+					 * ("). That is, in quoted strings, the dyad \" is converted to "
+					 * ; all other characters are left unchanged. In particular,
+					 * \\ remains \\.' [footnote on
+					 * http://www.graphviz.org/doc/info/lang.html]
+					 */
+					.replaceAll("\\\\\"", "\"");//$NON-NLS-1$//$NON-NLS-2$
 		case HTML_STRING:
 			return string.replaceAll("^<|>$", ""); //$NON-NLS-1$//$NON-NLS-2$
 		default:
