@@ -21,7 +21,6 @@ import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
-import org.eclipse.gef.mvc.fx.policies.CreationMenuOnClickPolicy;
 
 import com.google.inject.Provider;
 

@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.policies;
+package org.eclipse.gef.mvc.examples.logo.policies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,10 @@ import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
+import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
+import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.common.collect.HashMultimap;
