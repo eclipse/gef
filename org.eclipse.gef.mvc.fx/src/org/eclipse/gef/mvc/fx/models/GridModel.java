@@ -29,6 +29,31 @@ import javafx.beans.property.SimpleDoubleProperty;
 public class GridModel {
 
 	/**
+	 * The default value for {@link #isZoomGrid()}.
+	 */
+	public static final boolean ZOOM_GRID_DEFAULT = true;
+
+	/**
+	 * The default value for {@link #isShowGrid()}.
+	 */
+	public static final boolean SHOW_GRID_DEFAULT = true;
+
+	/**
+	 * The default value for {@link #isSnapToGrid()}.
+	 */
+	public static final boolean SNAP_TO_GRID_DEFAULT = false;
+
+	/**
+	 * The default grid cell height.
+	 */
+	public static final double GRID_CELL_HEIGHT_DEFAULT = 10;
+
+	/**
+	 * The default grid cell width.
+	 */
+	public static final double GRID_CELL_WIDTH_DEFAULT = 10;
+
+	/**
 	 * Name of the "grid cell width" property.
 	 */
 	public static final String GRID_CELL_WIDTH_PROPERTY = "gridCellWidth";
@@ -54,15 +79,15 @@ public class GridModel {
 	public static final String SNAP_TO_GRID_PROPERTY = "snapToGrid";
 
 	private DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
-			this, GRID_CELL_WIDTH_PROPERTY, 10);
+			this, GRID_CELL_WIDTH_PROPERTY, GRID_CELL_WIDTH_DEFAULT);
 	private DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
-			this, GRID_CELL_HEIGHT_PROPERTY, 10);
+			this, GRID_CELL_HEIGHT_PROPERTY, GRID_CELL_HEIGHT_DEFAULT);
 	private BooleanProperty showGridProperty = new SimpleBooleanProperty(this,
-			SHOW_GRID_PROPERTY, true);
+			SHOW_GRID_PROPERTY, SHOW_GRID_DEFAULT);
 	private BooleanProperty snapToGridProperty = new SimpleBooleanProperty(this,
-			SNAP_TO_GRID_PROPERTY, false);
+			SNAP_TO_GRID_PROPERTY, SNAP_TO_GRID_DEFAULT);
 	private BooleanProperty zoomGridProperty = new SimpleBooleanProperty(this,
-			ZOOM_GRID_PROPERTY, true);
+			ZOOM_GRID_PROPERTY, ZOOM_GRID_DEFAULT);
 
 	/**
 	 * Returns the grid cell height.

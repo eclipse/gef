@@ -33,7 +33,7 @@ import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
 import org.eclipse.gef.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricCurvePropertySource;
-import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricModelPropertySource;
+import org.eclipse.gef.mvc.examples.logo.ui.properties.MvcLogoExampleViewPropertySource;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
@@ -276,8 +276,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 			return propertySheetPage;
 		}
 		else if (IPropertySource.class.equals(key)) {
-			return new GeometricModelPropertySource(
-					(GeometricModel) getContentViewer().getContents().get(0));
+			return new MvcLogoExampleViewPropertySource(this);
 		}
 		return super.getAdapter(key);
 	}

@@ -239,7 +239,7 @@ public abstract class AbstractFXView extends ViewPart {
 	 * @return The {@link IViewer} of the {@link IDomain} that was previously
 	 *         injected.
 	 */
-	protected IViewer getContentViewer() {
+	public IViewer getContentViewer() {
 		return domain.getAdapter(
 				AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 	}

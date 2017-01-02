@@ -24,10 +24,6 @@ import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.PolyBezier;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
@@ -47,18 +43,6 @@ public class GeometricModel {
 	public static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 
 	public static final Double[] GEF_DASH_PATTERN = new Double[] { 13d, 8d };
-
-	public static final String SNAP_TO_GRID_PROPERTY = "snapToGrid";
-
-	public static final String GRID_CELL_WIDTH_PROPERTY = "gridCellWidth";
-
-	public static final String GRID_CELL_HEIGHT_PROPERTY = "gridCellHeight";
-
-	public static final boolean SNAP_TO_GRID_PROPERTY_DEFAULT = false;
-
-	public static final int GRID_CELL_WIDTH_PROPERTY_DEFAULT = 10;
-
-	public static final int GRID_CELL_HEIGHT_PROPERTY_DEFAULT = 10;
 
 	public static IShape createCursorShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<>();
@@ -301,15 +285,6 @@ public class GeometricModel {
 
 	private List<AbstractGeometricElement<? extends IGeometry>> visualShapes;
 
-	private final BooleanProperty snapToGridProperty = new SimpleBooleanProperty(this, SNAP_TO_GRID_PROPERTY,
-			SNAP_TO_GRID_PROPERTY_DEFAULT);
-
-	private final IntegerProperty gridCellWidthProperty = new SimpleIntegerProperty(this, GRID_CELL_WIDTH_PROPERTY,
-			GRID_CELL_WIDTH_PROPERTY_DEFAULT);
-
-	private final IntegerProperty gridCellHeightProperty = new SimpleIntegerProperty(this, GRID_CELL_HEIGHT_PROPERTY,
-			GRID_CELL_HEIGHT_PROPERTY_DEFAULT);
-
 	public GeometricModel() {
 		// anchor curves to shapes
 		selectionBoundsTopLine.addSourceAnchorage(topLeftSelectionHandle);
@@ -339,14 +314,6 @@ public class GeometricModel {
 		return visualShapes;
 	}
 
-	public IntegerProperty gridCellHeightProperty() {
-		return gridCellHeightProperty;
-	}
-
-	public IntegerProperty gridCellWidthProperty() {
-		return gridCellWidthProperty;
-	}
-
 	private void initVisualShapes() {
 		visualShapes = new ArrayList<>();
 
@@ -372,10 +339,6 @@ public class GeometricModel {
 		visualShapes.add(fDotShape);
 
 		visualShapes.add(cursorShape);
-	}
-
-	public BooleanProperty snapToGridProperty() {
-		return snapToGridProperty;
 	}
 
 }

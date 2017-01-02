@@ -280,7 +280,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 	 * @return The {@link IViewer} of the {@link IDomain} which was previously
 	 *         injected into this editor.
 	 */
-	protected IViewer getContentViewer() {
+	public IViewer getContentViewer() {
 		return domain.getAdapter(
 				AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
 	}

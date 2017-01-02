@@ -11,26 +11,31 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo.ui.properties;
 
-import org.eclipse.gef.mvc.examples.logo.model.GeometricModel;
+import org.eclipse.gef.mvc.examples.logo.ui.view.MvcLogoExampleView;
+import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-public class GeometricModelPropertySource implements IPropertySource {
-	
+public class MvcLogoExampleViewPropertySource implements IPropertySource {
+
 	private static final IPropertyDescriptor SNAP_TO_GRID_PROPERTY_DESCRIPTOR = new ComboBoxPropertyDescriptor(
-			GeometricModel.SNAP_TO_GRID_PROPERTY, "Snap To Grid",
+			GridModel.SNAP_TO_GRID_PROPERTY, "Snap To Grid",
 			new String[] { Boolean.FALSE.toString(), Boolean.TRUE.toString() });
 	private static final IPropertyDescriptor GRID_CELL_WIDTH_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(
-			GeometricModel.GRID_CELL_WIDTH_PROPERTY, "Grid Cell Width");
+			GridModel.GRID_CELL_WIDTH_PROPERTY, "Grid Cell Width");
 	private static final IPropertyDescriptor GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(
-			GeometricModel.GRID_CELL_HEIGHT_PROPERTY, "Grid Cell Height");
+			GridModel.GRID_CELL_HEIGHT_PROPERTY, "Grid Cell Height");
 
-	private GeometricModel model;
+	private MvcLogoExampleView view;
 
-	public GeometricModelPropertySource(GeometricModel model) {
-		this.model = model;
+	public MvcLogoExampleViewPropertySource(MvcLogoExampleView view) {
+		this.view = view;
+	}
+
+	private GridModel getGridModel() {
+		return view.getContentViewer().getAdapter(GridModel.class);
 	}
 
 	@Override
@@ -40,17 +45,21 @@ public class GeometricModelPropertySource implements IPropertySource {
 
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return new IPropertyDescriptor[] { SNAP_TO_GRID_PROPERTY_DESCRIPTOR, GRID_CELL_WIDTH_PROPERTY_DESCRIPTOR, GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR };
+		return new IPropertyDescriptor[] { SNAP_TO_GRID_PROPERTY_DESCRIPTOR,
+				GRID_CELL_WIDTH_PROPERTY_DESCRIPTOR,
+				GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR };
 	}
 
 	@Override
 	public Object getPropertyValue(Object id) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return model.snapToGridProperty().get() ? 1 : 0;
+			return getGridModel().snapToGridProperty().get() ? 1 : 0;
 		} else if (GRID_CELL_WIDTH_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return Integer.toString(model.gridCellWidthProperty().get());
+			return Double
+					.toString(getGridModel().gridCellWidthProperty().get());
 		} else if (GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return Integer.toString(model.gridCellHeightProperty().get());
+			return Double
+					.toString(getGridModel().gridCellHeightProperty().get());
 		} else {
 			return null;
 		}
@@ -59,11 +68,14 @@ public class GeometricModelPropertySource implements IPropertySource {
 	@Override
 	public boolean isPropertySet(Object id) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return model.snapToGridProperty().get() == GeometricModel.SNAP_TO_GRID_PROPERTY_DEFAULT;
+			return getGridModel().snapToGridProperty()
+					.get() == GridModel.SNAP_TO_GRID_DEFAULT;
 		} else if (GRID_CELL_WIDTH_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return model.gridCellWidthProperty().get() == GeometricModel.GRID_CELL_WIDTH_PROPERTY_DEFAULT;
+			return getGridModel().gridCellWidthProperty()
+					.get() == GridModel.GRID_CELL_WIDTH_DEFAULT;
 		} else if (GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			return model.gridCellHeightProperty().get() == GeometricModel.GRID_CELL_HEIGHT_PROPERTY_DEFAULT;
+			return getGridModel().gridCellHeightProperty()
+					.get() == GridModel.GRID_CELL_HEIGHT_DEFAULT;
 		} else {
 			return false;
 		}
@@ -72,22 +84,28 @@ public class GeometricModelPropertySource implements IPropertySource {
 	@Override
 	public void resetPropertyValue(Object id) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.snapToGridProperty().set(GeometricModel.SNAP_TO_GRID_PROPERTY_DEFAULT);
+			getGridModel().snapToGridProperty()
+					.set(GridModel.SNAP_TO_GRID_DEFAULT);
 		} else if (GRID_CELL_WIDTH_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.gridCellWidthProperty().set(GeometricModel.GRID_CELL_WIDTH_PROPERTY_DEFAULT);
+			getGridModel().gridCellWidthProperty()
+					.set(GridModel.GRID_CELL_WIDTH_DEFAULT);
 		} else if (GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.gridCellHeightProperty().set(GeometricModel.GRID_CELL_HEIGHT_PROPERTY_DEFAULT);
+			getGridModel().gridCellHeightProperty()
+					.set(GridModel.GRID_CELL_HEIGHT_DEFAULT);
 		}
 	}
 
 	@Override
 	public void setPropertyValue(Object id, Object value) {
 		if (SNAP_TO_GRID_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.snapToGridProperty().set(value instanceof Integer && ((Integer) value) == 1);
+			getGridModel().snapToGridProperty()
+					.set(value instanceof Integer && ((Integer) value) == 1);
 		} else if (GRID_CELL_WIDTH_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.gridCellWidthProperty().set(Integer.parseInt((String) value));
+			getGridModel().gridCellWidthProperty()
+					.set(Double.parseDouble((String) value));
 		} else if (GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR.getId().equals(id)) {
-			model.gridCellHeightProperty().set(Integer.parseInt((String) value));
+			getGridModel().gridCellHeightProperty()
+					.set(Double.parseDouble((String) value));
 		}
 	}
 
