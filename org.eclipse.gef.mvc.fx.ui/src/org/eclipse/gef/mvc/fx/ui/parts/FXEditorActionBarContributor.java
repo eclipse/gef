@@ -11,30 +11,60 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.parts;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.gef.mvc.fx.ui.actions.DeleteAction;
+import org.eclipse.gef.mvc.fx.ui.actions.IViewerAction;
+import org.eclipse.gef.mvc.fx.ui.actions.SelectAllAction;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.services.IDisposable;
 
 /**
  * @author anyssen
  */
 public class FXEditorActionBarContributor extends EditorActionBarContributor {
 
-	private DeleteActionHandler deleteActionHandler = new DeleteActionHandler();
+	private List<IAction> globalActions = new ArrayList<>();
+
+	/**
+	 * Returns a list containing the global {@link IAction}s that are to be
+	 * registered by this {@link FXEditorActionBarContributor} as global action
+	 * handlers for their respective IDs.
+	 *
+	 * @return A list containing the global {@link IAction}s.
+	 */
+	protected List<? extends IAction> createGlobalActionHandlers() {
+		List<IAction> actions = new ArrayList<>();
+		actions.add(new DeleteAction());
+		actions.add(new SelectAllAction());
+		return actions;
+	}
 
 	@Override
 	public void dispose() {
+		for (IAction action : globalActions) {
+			if (action instanceof IDisposable) {
+				IDisposable iDisposable = (IDisposable) action;
+				iDisposable.dispose();
+			}
+		}
+		globalActions.clear();
 		super.dispose();
-		deleteActionHandler.init(null);
 	}
 
 	@Override
 	public void init(IActionBars actionBars) {
 		super.init(actionBars);
-		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
-				deleteActionHandler);
+		globalActions.addAll(createGlobalActionHandlers());
+		for (IAction action : globalActions) {
+			actionBars.setGlobalActionHandler(action.getId(), action);
+		}
 	}
 
 	/**
@@ -65,8 +95,13 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 		// org.eclipse.ui.internal.ErrorEditorPart when the opened resource is
 		// out of sync with the file system.
 		if (activeEditor instanceof AbstractFXEditor) {
-			deleteActionHandler
-					.init(((AbstractFXEditor) activeEditor).getContentViewer());
+			IViewer viewer = ((AbstractFXEditor) activeEditor)
+					.getContentViewer();
+			for (IAction action : globalActions) {
+				if (action instanceof IViewerAction) {
+					((IViewerAction) action).init(viewer);
+				}
+			}
 		}
 	}
 }

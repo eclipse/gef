@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.services.IDisposable;
@@ -65,14 +64,12 @@ public abstract class AbstractFXEditor extends EditorPart {
 	private IPropertySheetPageFactory propertySheetPageFactory;
 	private IPropertySheetPage propertySheetPage;
 
-	private UndoRedoActionGroup undoRedoActionGroup;
-
 	@Inject(optional = true)
 	private IDirtyStateProviderFactory dirtyStateProviderFactory;
 	private IDirtyStateProvider dirtyStateProvider;
 	private ChangeListener<Boolean> dirtyStateNotifier;
 
-	private DeleteActionHandler deleteAction;
+	private UndoRedoActionGroup undoRedoActionGroup;
 
 	/**
 	 * Constructs a new {@link AbstractFXEditor} and uses the given
@@ -100,17 +97,8 @@ public abstract class AbstractFXEditor extends EditorPart {
 	 *
 	 */
 	protected void createActions() {
-		IEditorSite site = getEditorSite();
 		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
 				(IUndoContext) getAdapter(IUndoContext.class), true);
-		if (undoRedoActionGroup != null) {
-			undoRedoActionGroup.fillActionBars(site.getActionBars());
-		}
-
-		deleteAction = new DeleteActionHandler();
-		deleteAction.init(getContentViewer());
-		site.getActionBars().setGlobalActionHandler(
-				ActionFactory.DELETE.getId(), deleteAction);
 	}
 
 	/**
@@ -223,10 +211,6 @@ public abstract class AbstractFXEditor extends EditorPart {
 			undoRedoActionGroup.dispose();
 			undoRedoActionGroup = null;
 		}
-		if (deleteAction != null) {
-			deleteAction.dispose();
-			deleteAction = null;
-		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -258,6 +242,10 @@ public abstract class AbstractFXEditor extends EditorPart {
 			if (domain instanceof HistoricizingDomain) {
 				return ((HistoricizingDomain) domain).getOperationHistory();
 			}
+		}
+		if (UndoRedoActionGroup.class.equals(key)) {
+			// used by action bar contributor
+			return undoRedoActionGroup;
 		}
 		return super.getAdapter(key);
 	}

@@ -17,6 +17,7 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.ui.actions.DeleteAction;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -60,7 +61,7 @@ public abstract class AbstractFXView extends ViewPart {
 	private IPropertySheetPage propertySheetPage;
 
 	private UndoRedoActionGroup undoRedoActionGroup;
-	private DeleteActionHandler deleteAction;
+	private DeleteAction deleteAction;
 
 	/**
 	 * Constructs a new {@link AbstractFXView} that uses the given
@@ -93,7 +94,7 @@ public abstract class AbstractFXView extends ViewPart {
 				(IUndoContext) getAdapter(IUndoContext.class), true);
 		undoRedoActionGroup.fillActionBars(site.getActionBars());
 
-		deleteAction = new DeleteActionHandler();
+		deleteAction = new DeleteAction();
 		deleteAction.init(getContentViewer());
 		site.getActionBars().setGlobalActionHandler(
 				ActionFactory.DELETE.getId(), deleteAction);

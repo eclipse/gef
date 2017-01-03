@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 itemis AG and others.
+ * Copyright (c) 2015, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,10 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - refactoring for Bugzilla #480959
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.ui.parts;
+package org.eclipse.gef.mvc.fx.ui.actions;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,6 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.services.IDisposable;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -45,17 +45,18 @@ import javafx.scene.Scene;
  * {@link Scene}, while a consumption of the mapping JavaFX event is not
  * propagated back.
  * <p>
- * Additionally, the JavaFX event handler (i.e. the {@link TypeTool}, in case
- * its registered at the {@link IDomain}) will be notified after the execution
+ * Additionally, the JavaFX event handler (i.e. the {@link TypeTool}, in case it
+ * is registered at the {@link IDomain}), will be notified after the execution
  * of the action handler, because {@link FXCanvasEx} wraps the event forwarding
- * in an {@link Platform#runLater(Runnable)} call.
+ * in a {@link Platform#runLater(Runnable)} call.
  *
  * @author anyssen
  *
  */
-public class DeleteActionHandler extends Action implements IDisposable {
+public class DeleteAction extends Action implements IViewerAction {
 
-	private IViewer viewer = null;
+	private IViewer viewer;
+
 	private ListChangeListener<IContentPart<? extends Node>> selectionListener = new ListChangeListener<IContentPart<? extends Node>>() {
 		@Override
 		public void onChanged(
@@ -65,40 +66,30 @@ public class DeleteActionHandler extends Action implements IDisposable {
 	};
 
 	/**
-	 * Creates a new {@link DeleteActionHandler}.
+	 * Creates a new {@link DeleteAction}.
 	 */
-	public DeleteActionHandler() {
+	public DeleteAction() {
 		super("Delete");
 		setId(ActionFactory.DELETE.getId());
 		setEnabled(false);
 	}
 
-	@Override
-	public void dispose() {
-		init(null);
-	}
-
-	private SelectionModel getSelectionModel() {
-		if (viewer == null) {
-			return null;
-		}
-		return viewer.getAdapter(SelectionModel.class);
-	}
-
 	/**
-	 * Binds this {@link DeleteActionHandler} to the given viewer.
+	 * Returns the {@link SelectionModel} for the currently bound
+	 * {@link IViewer} or <code>null</code> if this action handler is either not
+	 * bound or the viewer does not provide a {@link SelectionModel}.
 	 *
-	 * @param viewer
-	 *            The {@link IViewer} to bind this {@link Action} to. May be
-	 *            <code>null</code> to unbind this action.
+	 * @return The {@link SelectionModel} or <code>null</code>.
 	 */
+	protected SelectionModel getSelectionModel() {
+		return viewer == null ? null : viewer.getAdapter(SelectionModel.class);
+	}
+
+	@Override
 	public void init(IViewer viewer) {
 		SelectionModel oldSelectionModel = getSelectionModel();
-		SelectionModel newSelectionModel = null;
 		this.viewer = viewer;
-		if (viewer != null) {
-			newSelectionModel = viewer.getAdapter(SelectionModel.class);
-		}
+		SelectionModel newSelectionModel = getSelectionModel();
 		// register listeners to update enabled state
 		if (oldSelectionModel != null
 				&& oldSelectionModel != newSelectionModel) {
@@ -136,7 +127,7 @@ public class DeleteActionHandler extends Action implements IDisposable {
 				throw new RuntimeException(e);
 			}
 		}
-		// mark as been handled
+		// cancel further event processing
 		event.doit = false;
 	}
 
