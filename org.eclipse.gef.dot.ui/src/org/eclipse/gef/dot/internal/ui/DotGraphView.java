@@ -39,6 +39,8 @@ import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToSizeAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ResetViewportAction;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
@@ -111,6 +113,8 @@ public class DotGraphView extends ZestFxUiView {
 			}
 		}
 	};
+	private FitToSizeAction fitToSizeAction;
+	private ResetViewportAction resetViewportAction;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
@@ -141,6 +145,16 @@ public class DotGraphView extends ZestFxUiView {
 		currentDot = null;
 		currentFile = null;
 
+		if (fitToSizeAction != null) {
+			fitToSizeAction.dispose();
+			fitToSizeAction = null;
+		}
+
+		if (resetViewportAction != null) {
+			resetViewportAction.dispose();
+			resetViewportAction = null;
+		}
+
 		getContentViewer().contentsProperty().clear();
 
 		super.dispose();
@@ -148,16 +162,28 @@ public class DotGraphView extends ZestFxUiView {
 
 	@Override
 	public void createPartControl(final Composite parent) {
+		// actions
 		Action updateToggleAction = new UpdateToggle().action(this);
 		Action loadFileAction = new LoadFile().action(this);
 		add(updateToggleAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
+
+		fitToSizeAction = new FitToSizeAction();
+		fitToSizeAction.init(getContentViewer());
+		add(fitToSizeAction, ISharedImages.IMG_DEF_VIEW);
+
+		resetViewportAction = new ResetViewportAction();
+		resetViewportAction.init(getContentViewer());
+		add(resetViewportAction, ISharedImages.IMG_ELCL_COLLAPSEALL);
+
+		// controls
 		parent.setLayout(new GridLayout(1, true));
 		initResourceLabel(parent, loadFileAction, updateToggleAction);
 		super.createPartControl(parent);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		// scene
 		Scene scene = getContentViewer().getCanvas().getScene();
-		// specify stylesheet
 		scene.getStylesheets().add(STYLES_CSS_FILE);
 	}
 

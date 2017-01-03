@@ -752,14 +752,6 @@ public class InfiniteCanvas extends Region {
 			throw new IllegalStateException("Invalid zoom factor.");
 		}
 
-		// restrict zoom factor to [zoomMin, zoomMax] range
-		if (zf > zoomMax) {
-			zf = zoomMax;
-		}
-		if (zf < zoomMin) {
-			zf = zoomMin;
-		}
-
 		// compute content center
 		double cx = contentBounds.getMinX() + contentBounds.getWidth() / 2;
 		double cy = contentBounds.getMinY() + contentBounds.getHeight() / 2;
@@ -775,6 +767,17 @@ public class InfiniteCanvas extends Region {
 		// compute pivot point for zoom within content coordinates
 		Point2D pivot = getContentGroup().sceneToLocal(vx, vy);
 
+		// restrict zoom factor to [zoomMin, zoomMax] range
+		AffineTransform contentTransform = FX2Geometry
+				.toAffineTransform(getContentTransform());
+		double realZoomFactor = contentTransform.getScaleX() * zf;
+		if (realZoomFactor > zoomMax) {
+			zf = zoomMax / contentTransform.getScaleX();
+		}
+		if (realZoomFactor < zoomMin) {
+			zf = zoomMin / contentTransform.getScaleX();
+		}
+
 		// compute scale transformation (around visible center)
 		AffineTransform scaleTransform = new AffineTransform()
 				.translate(pivot.getX(), pivot.getY()).scale(zf, zf)
@@ -782,8 +785,7 @@ public class InfiniteCanvas extends Region {
 
 		// concatenate old transformation and scale transformation to yield the
 		// new transformation
-		AffineTransform newTransform = FX2Geometry
-				.toAffineTransform(getContentTransform())
+		AffineTransform newTransform = contentTransform
 				.concatenate(scaleTransform);
 		setContentTransform(Geometry2FX.toFXAffine(newTransform));
 	}
