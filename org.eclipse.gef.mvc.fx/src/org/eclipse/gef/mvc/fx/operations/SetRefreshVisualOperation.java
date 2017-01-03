@@ -30,11 +30,8 @@ import javafx.scene.Node;
  *
  * @author mwienand
  *
- * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public class SetRefreshVisualOperation<VR> extends AbstractOperation
+public class SetRefreshVisualOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private IVisualPart<? extends Node> part;

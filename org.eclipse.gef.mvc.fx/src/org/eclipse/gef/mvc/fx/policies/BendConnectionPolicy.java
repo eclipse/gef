@@ -140,7 +140,7 @@ public class BendConnectionPolicy extends AbstractTransactionPolicy {
 			ForwardUndoCompositeOperation composite = new ForwardUndoCompositeOperation(
 					"Bend Content");
 			composite.add(commitOperation);
-			BendContentOperation<Node> resizeOperation = new BendContentOperation<>(
+			BendContentOperation resizeOperation = new BendContentOperation(
 					getHost(), getInitialBendPoints(), getCurrentBendPoints());
 			composite.add(resizeOperation);
 

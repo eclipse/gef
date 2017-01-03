@@ -30,12 +30,8 @@ import javafx.scene.Node;
  *
  * @author anyssen
  *
- * @param <VR>
- *            The visual root node of the UI toolkit this
- *            {@link ITransformableContentPart} is used in, e.g.
- *            javafx.scene.Node in case of JavaFX.
  */
-public class TransformContentOperation<VR> extends AbstractOperation
+public class TransformContentOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final ITransformableContentPart<? extends Node> transformableContentPart;

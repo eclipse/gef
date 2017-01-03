@@ -234,7 +234,7 @@ public class MarqueeOnDragPolicy extends AbstractInteractionPolicy
 		// select the selectable parts contained within the marquee area
 		try {
 			root.getViewer().getDomain().execute(
-					new SelectOperation<>(root.getViewer(), parts),
+					new SelectOperation(root.getViewer(), parts),
 					new NullProgressMonitor());
 		} catch (ExecutionException e1) {
 			throw new IllegalStateException(e1);

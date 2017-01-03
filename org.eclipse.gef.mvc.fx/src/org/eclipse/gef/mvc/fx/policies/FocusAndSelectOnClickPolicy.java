@@ -88,7 +88,7 @@ public class FocusAndSelectOnClickPolicy extends AbstractInteractionPolicy
 			} else if (contentPart.isSelectable()) {
 				if (append) {
 					// prepend host to current selection (as new primary)
-					selectionChangeOperation = new SelectOperation<>(viewer,
+					selectionChangeOperation = new SelectOperation(viewer,
 							singletonHostList);
 				} else {
 					// clear old selection, host becomes the only selected

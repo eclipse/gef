@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
@@ -234,7 +233,7 @@ public class CreationPolicy extends AbstractTransactionPolicy {
 	 */
 	protected ITransactionalOperation createSelectOperation(
 			IContentPart<? extends Node> part) {
-		return new SelectOperation<>(part.getRoot().getViewer(),
+		return new SelectOperation(part.getRoot().getViewer(),
 				Collections.singletonList(part));
 	}
 

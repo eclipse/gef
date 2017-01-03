@@ -78,7 +78,7 @@ public class SelectFocusedOnTypePolicy extends AbstractInteractionPolicy
 					op = new DeselectOperation(viewer,
 							Collections.singletonList(contentPart));
 				} else {
-					op = new SelectOperation<>(viewer,
+					op = new SelectOperation(viewer,
 							Collections.singletonList(contentPart));
 				}
 			} else {

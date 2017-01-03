@@ -204,8 +204,7 @@ public class TransformPolicy extends AbstractTransactionPolicy {
 	 * @return The ITransactionalOperation to transform the content.
 	 */
 	protected ITransactionalOperation createTransformContentOperation() {
-		return new TransformContentOperation<>(
-				getHost(), getCurrentTransform());
+		return new TransformContentOperation(getHost(), getCurrentTransform());
 	}
 
 	/**

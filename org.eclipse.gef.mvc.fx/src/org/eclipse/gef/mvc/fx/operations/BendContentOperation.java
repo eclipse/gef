@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
-import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 
 import javafx.scene.Node;
 
@@ -31,12 +30,8 @@ import javafx.scene.Node;
  *
  * @author anyssen
  *
- * @param <VR>
- *            The visual root node of the UI toolkit this
- *            {@link ITransformableContentPart} is used in, e.g.
- *            javafx.scene.Node in case of JavaFX.
  */
-public class BendContentOperation<VR> extends AbstractOperation
+public class BendContentOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final IBendableContentPart<? extends Node> bendableContentPart;
