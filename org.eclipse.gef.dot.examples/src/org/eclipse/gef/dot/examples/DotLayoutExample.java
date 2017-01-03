@@ -94,7 +94,8 @@ public class DotLayoutExample extends AbstractZestExample {
 				System.err.println(dotResult[1]);
 			}
 			tmpFile.delete();
-			Graph layoutedDotGraph = new DotImport().importDot(dotResult[0]);
+			Graph layoutedDotGraph = new DotImport().importDot(dotResult[0])
+					.get(0);
 
 			// transfer the DOT provided position information back to the input
 			// Graph

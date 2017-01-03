@@ -18,6 +18,7 @@ package org.eclipse.gef.dot.internal.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -124,7 +125,8 @@ public class DotGraphView extends ZestFxUiView {
 	@Override
 	protected void activate() {
 		super.activate();
-		setGraph(new DotImport().importDot(currentDot));
+		List<Graph> importDot = new DotImport().importDot(currentDot);
+		setGraph(importDot.isEmpty() ? null : importDot.get(0));
 	}
 
 	@Override
@@ -237,7 +239,8 @@ public class DotGraphView extends ZestFxUiView {
 			public void run() {
 				if (!dot.trim().isEmpty()) {
 					try {
-						setGraph(new DotImport().importDot(dot));
+						List<Graph> importDot = new DotImport().importDot(dot);
+						setGraph(importDot.isEmpty() ? null : importDot.get(0));
 					} catch (Exception e) {
 						e.printStackTrace();
 						String message = String.format(

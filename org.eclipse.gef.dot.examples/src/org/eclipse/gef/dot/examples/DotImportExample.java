@@ -25,8 +25,8 @@ public final class DotImportExample {
 	public static void main(final String[] args) {
 		/* Create Graphs based on Graphviz Dot strings */
 		DotImport dotImport = new DotImport();
-		Graph graph = dotImport.importDot("graph { 1--2 ; 1--3 }");
-		Graph digraph = dotImport.importDot("digraph { 1->2 ; 1->3 }");
+		Graph graph = dotImport.importDot("graph { 1--2 ; 1--3 }").get(0);
+		Graph digraph = dotImport.importDot("digraph { 1->2 ; 1->3 }").get(0);
 
 		System.out.println(graph);
 		System.out.println(digraph);

@@ -40,6 +40,7 @@ import org.eclipse.gef.graph.Graph.Builder
 import org.eclipse.gef.graph.Node
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
+import org.eclipse.xtext.parser.IParser
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.
@@ -49,24 +50,28 @@ import static extension org.eclipse.gef.dot.internal.DotAttributes.*
  */
 class DotImport {
 
-	// fields are private by default 
 	@Inject
-	var static DotParser dotParser
+	var static IParser dotParser
+	
+	private static def IParser getDotParser() {
+		if (dotParser == null) {
+			// if we are not injected (standalone), create parser instance
+			dotParser = new DotStandaloneSetup().createInjectorAndDoEMFRegistration().getInstance(DotParser)
+		}
+		return dotParser
+	}
 
 	Builder graphBuilder
 	Map<String, ID> globalGraphAttributes = newHashMap
 	Map<String, ID> globalNodeAttributes = newHashMap
 	Map<String, ID> globalEdgeAttributes = newHashMap
 
-	// TODO: support a list of graphs
-	def Graph importDot(String dotString) {
-		if (dotParser == null) {
+	def List<Graph> importDot(File dotFile) {
+		importDot(DotFileUtils.read(dotFile))
+	}
 
-			// if we are not injected (standalone), create parser instance
-			dotParser = new DotStandaloneSetup().createInjectorAndDoEMFRegistration().getInstance(DotParser)
-		}
-
-		var parseResult = dotParser.parse(new StringReader(dotString))
+	def List<Graph> importDot(String dotString) {
+		var parseResult = getDotParser().parse(new StringReader(dotString))
 
 		if (parseResult.hasSyntaxErrors) {
 			throw new IllegalArgumentException(
@@ -75,23 +80,10 @@ class DotImport {
 		}
 
 		// TODO: use validator to semantically validate as well
-		// TODO: return list of graphs rather than only the first one
-		(parseResult.rootASTElement as DotAst).transformDotAst
-	}
-
-	// TODO: support a list of graphs
-	def Graph importDot(File dotFile) {
-		importDot(DotFileUtils.read(dotFile))
-	}
-
-	private def Graph transformDotAst(DotAst it) {
-
-		// TODO: return list of graphs rather than only the first one
-		graphs.map[transformDotGraph].head
+		(parseResult.rootASTElement as DotAst).graphs.map[transformDotGraph].filterNull.toList
 	}
 
 	private def Graph transformDotGraph(DotGraph it) {
-
 		// clear global attributes, which only hold for each respective graph
 		globalGraphAttributes.clear
 		globalNodeAttributes.clear
