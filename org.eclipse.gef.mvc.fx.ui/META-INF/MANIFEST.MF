@@ -7,7 +7,8 @@ Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.mvc.fx.ui,
  org.eclipse.gef.mvc.fx.ui.parts;uses:="com.google.inject",
- org.eclipse.gef.mvc.fx.ui.properties
+ org.eclipse.gef.mvc.fx.ui.properties,
+ org.eclipse.gef.mvc.fx.ui.actions
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.105.0,4.0.0)",
  org.eclipse.ui.views;bundle-version="[3.6.0,4.0.0)",

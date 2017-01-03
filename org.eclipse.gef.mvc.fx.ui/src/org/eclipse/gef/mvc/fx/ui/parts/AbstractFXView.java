@@ -18,6 +18,7 @@ import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.ui.actions.DeleteAction;
+import org.eclipse.gef.mvc.fx.ui.actions.SelectAllAction;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -62,6 +63,7 @@ public abstract class AbstractFXView extends ViewPart {
 
 	private UndoRedoActionGroup undoRedoActionGroup;
 	private DeleteAction deleteAction;
+	private SelectAllAction selectAllAction;
 
 	/**
 	 * Constructs a new {@link AbstractFXView} that uses the given
@@ -98,6 +100,11 @@ public abstract class AbstractFXView extends ViewPart {
 		deleteAction.init(getContentViewer());
 		site.getActionBars().setGlobalActionHandler(
 				ActionFactory.DELETE.getId(), deleteAction);
+
+		selectAllAction = new SelectAllAction();
+		selectAllAction.init(getContentViewer());
+		site.getActionBars().setGlobalActionHandler(
+				ActionFactory.SELECT_ALL.getId(), selectAllAction);
 	}
 
 	private FXCanvas createCanvas(final Composite parent) {
@@ -186,6 +193,11 @@ public abstract class AbstractFXView extends ViewPart {
 		if (deleteAction != null) {
 			deleteAction.dispose();
 			deleteAction = null;
+		}
+
+		if (selectAllAction != null) {
+			selectAllAction.dispose();
+			selectAllAction = null;
 		}
 	}
 
