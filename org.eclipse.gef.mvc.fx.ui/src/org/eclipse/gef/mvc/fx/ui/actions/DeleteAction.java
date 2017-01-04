@@ -14,8 +14,6 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
@@ -25,7 +23,6 @@ import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
 import org.eclipse.gef.mvc.fx.tools.TypeTool;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
 
 import javafx.application.Platform;
@@ -53,9 +50,7 @@ import javafx.scene.Scene;
  * @author anyssen
  *
  */
-public class DeleteAction extends Action implements IViewerAction {
-
-	private IViewer viewer;
+public class DeleteAction extends AbstractViewerAction {
 
 	private ListChangeListener<IContentPart<? extends Node>> selectionListener = new ListChangeListener<IContentPart<? extends Node>>() {
 		@Override
@@ -75,6 +70,31 @@ public class DeleteAction extends Action implements IViewerAction {
 	}
 
 	/**
+	 * Computes an {@link ITransactionalOperation} that performs the desired
+	 * changes, or <code>null</code> if no changes should be performed.
+	 *
+	 * @return An {@link ITransactionalOperation} that performs the desired
+	 *         changes.
+	 */
+	@Override
+	protected ITransactionalOperation createOperation() {
+		// delete selected parts
+		DeletionPolicy deletionPolicy = getViewer().getRootPart()
+				.getAdapter(DeletionPolicy.class);
+		if (deletionPolicy == null) {
+			throw new IllegalStateException(
+					"DeleteActionHandler requires a DeletionPolicy to be registered at the viewer's root part.");
+		}
+		deletionPolicy.init();
+		for (IContentPart<? extends Node> s : new ArrayList<>(
+				getSelectionModel().getSelectionUnmodifiable())) {
+			deletionPolicy.delete(s);
+		}
+		ITransactionalOperation deleteOperation = deletionPolicy.commit();
+		return deleteOperation;
+	}
+
+	/**
 	 * Returns the {@link SelectionModel} for the currently bound
 	 * {@link IViewer} or <code>null</code> if this action handler is either not
 	 * bound or the viewer does not provide a {@link SelectionModel}.
@@ -82,13 +102,14 @@ public class DeleteAction extends Action implements IViewerAction {
 	 * @return The {@link SelectionModel} or <code>null</code>.
 	 */
 	protected SelectionModel getSelectionModel() {
-		return viewer == null ? null : viewer.getAdapter(SelectionModel.class);
+		return getViewer() == null ? null
+				: getViewer().getAdapter(SelectionModel.class);
 	}
 
 	@Override
 	public void init(IViewer viewer) {
 		SelectionModel oldSelectionModel = getSelectionModel();
-		this.viewer = viewer;
+		super.init(viewer);
 		SelectionModel newSelectionModel = getSelectionModel();
 		// register listeners to update enabled state
 		if (oldSelectionModel != null
@@ -102,33 +123,6 @@ public class DeleteAction extends Action implements IViewerAction {
 					.addListener(selectionListener);
 		}
 		updateEnabledState(newSelectionModel);
-	}
-
-	@Override
-	public void runWithEvent(Event event) {
-		// delete selected parts
-		DeletionPolicy deletionPolicy = viewer.getRootPart()
-				.getAdapter(DeletionPolicy.class);
-		if (deletionPolicy == null) {
-			throw new IllegalStateException(
-					"DeleteActionHandler requires a DeletionPolicy to be registered at the viewer's root part.");
-		}
-		deletionPolicy.init();
-		for (IContentPart<? extends Node> s : new ArrayList<>(
-				getSelectionModel().getSelectionUnmodifiable())) {
-			deletionPolicy.delete(s);
-		}
-		ITransactionalOperation deleteOperation = deletionPolicy.commit();
-		if (deleteOperation != null) {
-			try {
-				viewer.getDomain().execute(deleteOperation,
-						new NullProgressMonitor());
-			} catch (ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		// cancel further event processing
-		event.doit = false;
 	}
 
 	/**

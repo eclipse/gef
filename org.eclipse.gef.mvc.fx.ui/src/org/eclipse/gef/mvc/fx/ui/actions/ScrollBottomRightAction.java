@@ -12,22 +12,26 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+
 /**
- * The {@link ResetViewportAction} is a {@link FitToSizeAction} that restricts
- * the zoom level to <code>1.0</code>.
  *
- * @author wienand
+ * @author mwienand
  *
  */
-public class ResetViewportAction extends FitToSizeAction {
+public class ScrollBottomRightAction extends AbstractViewerAction {
 
-	@Override
-	protected double getMaxZoom() {
-		return 1d;
+	/**
+	 *
+	 */
+	public ScrollBottomRightAction() {
+		super("Scroll to Bottom Right");
+		setEnabled(true);
 	}
 
 	@Override
-	protected double getMinZoom() {
-		return 1d;
+	protected ITransactionalOperation createOperation() {
+		return null;
 	}
+
 }

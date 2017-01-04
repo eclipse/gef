@@ -21,7 +21,7 @@ import org.eclipse.ui.services.IDisposable;
  * {@link IDisposable} and supports an {@link #init(IViewer)} method where the
  * active {@link IViewer} for the {@link IViewerAction} is provided.
  *
- * @author wienand
+ * @author mwienand
  *
  */
 public interface IViewerAction extends IAction, IDisposable {

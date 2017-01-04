@@ -13,9 +13,10 @@
 package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.jface.action.Action;
-import org.eclipse.swt.widgets.Event;
 
 import javafx.scene.Parent;
 
@@ -27,12 +28,38 @@ import javafx.scene.Parent;
  * 4.0, which can be customized via subclassing ({@link #getMinZoom()},
  * {@link #getMaxZoom()}).
  *
- * @author wienand
+ * @author mwienand
  *
  */
-public class FitToSizeAction extends Action implements IViewerAction {
+public class FitToSizeAction extends AbstractViewerAction {
 
-	private IViewer viewer;
+	/**
+	 * Creates a new {@link FitToSizeAction}.
+	 */
+	public FitToSizeAction() {
+		super("Fit-To-Size");
+		setEnabled(true);
+	}
+
+	@Override
+	protected ITransactionalOperation createOperation() {
+		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
+		if (infiniteCanvas == null) {
+			throw new IllegalStateException(
+					"Cannot perform FitToSizeAction, because no InfiniteCanvas can be determiend.");
+		}
+
+		ChangeViewportOperation viewportOperation = new ChangeViewportOperation(
+				infiniteCanvas);
+		infiniteCanvas.fitToSize(getMinZoom(), getMaxZoom());
+		viewportOperation.setNewContentTransform(FX2Geometry
+				.toAffineTransform(infiniteCanvas.getContentTransform()));
+		viewportOperation.setNewHorizontalScrollOffset(
+				infiniteCanvas.getHorizontalScrollOffset());
+		viewportOperation.setNewVerticalScrollOffset(
+				infiniteCanvas.getVerticalScrollOffset());
+		return viewportOperation;
+	}
 
 	/**
 	 * Returns the {@link InfiniteCanvas} of the viewer where this action is
@@ -41,7 +68,7 @@ public class FitToSizeAction extends Action implements IViewerAction {
 	 * @return The {@link InfiniteCanvas} of the viewer.
 	 */
 	protected InfiniteCanvas getInfiniteCanvas() {
-		Parent canvas = viewer.getCanvas();
+		Parent canvas = getViewer().getCanvas();
 		if (canvas instanceof InfiniteCanvas) {
 			return (InfiniteCanvas) canvas;
 		}
@@ -64,32 +91,5 @@ public class FitToSizeAction extends Action implements IViewerAction {
 	 */
 	protected double getMinZoom() {
 		return 0.25;
-	}
-
-	/**
-	 * Returns the {@link IViewer} for which this {@link IViewerAction} was
-	 * {@link #init(IViewer) initialized}, or <code>null</code>.
-	 *
-	 * @return The {@link IViewer} or <code>null</code>.
-	 */
-	protected IViewer getViewer() {
-		return viewer;
-	}
-
-	@Override
-	public void init(IViewer viewer) {
-		this.viewer = viewer;
-	}
-
-	@Override
-	public void runWithEvent(Event event) {
-		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
-		if (infiniteCanvas != null) {
-			infiniteCanvas.fitToSize(getMinZoom(), getMaxZoom());
-		} else {
-			throw new IllegalStateException(
-					"Cannot perform FitToSizeAction, because no InfiniteCanvas can be determined for the active viewer '" //$NON-NLS-1$
-							+ viewer + "'."); //$NON-NLS-1$
-		}
 	}
 }
