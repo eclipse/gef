@@ -56,7 +56,7 @@ public class DeleteAction extends AbstractViewerAction {
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends IContentPart<? extends Node>> c) {
-			updateEnabledState(getSelectionModel());
+			setEnabled(!c.getList().isEmpty());
 		}
 	};
 
@@ -109,9 +109,9 @@ public class DeleteAction extends AbstractViewerAction {
 	@Override
 	public void init(IViewer viewer) {
 		SelectionModel oldSelectionModel = getSelectionModel();
-		super.init(viewer);
+		super.init(viewer); // set viewer
 		SelectionModel newSelectionModel = getSelectionModel();
-		// register listeners to update enabled state
+
 		if (oldSelectionModel != null
 				&& oldSelectionModel != newSelectionModel) {
 			oldSelectionModel.getSelectionUnmodifiable()
@@ -122,21 +122,8 @@ public class DeleteAction extends AbstractViewerAction {
 			newSelectionModel.getSelectionUnmodifiable()
 					.addListener(selectionListener);
 		}
-		updateEnabledState(newSelectionModel);
-	}
 
-	/**
-	 * Updates the enabled state of this {@link Action} dependent on the
-	 * selection state of the {@link SelectionModel}.
-	 *
-	 * @param selectionModel
-	 *            The {@link SelectionModel} to obtain the selection from.
-	 */
-	protected void updateEnabledState(SelectionModel selectionModel) {
-		if (selectionModel == null) {
-			setEnabled(false);
-		} else {
-			setEnabled(!selectionModel.getSelectionUnmodifiable().isEmpty());
-		}
+		setEnabled(newSelectionModel != null
+				&& !newSelectionModel.getSelectionUnmodifiable().isEmpty());
 	}
 }

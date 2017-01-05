@@ -24,7 +24,9 @@ import org.eclipse.ui.actions.ActionFactory;
 import javafx.scene.Node;
 
 /**
- * The {@link SelectAllAction}
+ * The {@link SelectAllAction} is an {@link AbstractViewerAction} that executes
+ * a {@link SelectOperation} for selecting all
+ * {@link #getSelectableContentParts() selectable parts}.
  *
  * @author mwienand
  *

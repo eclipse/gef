@@ -14,6 +14,7 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
@@ -22,8 +23,10 @@ import org.eclipse.swt.widgets.Event;
 /**
  * The {@link AbstractViewerAction} provides an abstract implementation of
  * {@link IViewerAction}. It saves the {@link IViewer} for which the action is
- * initialized. Additionally, a mechanism is provided for creating an
- * {@link ITransactionalOperation}
+ * {@link #init(IViewer) initialized}. Additionally, a mechanism
+ * ({@link #createOperation()}) is provided for creating an
+ * {@link ITransactionalOperation} that is executed on the {@link IDomain} of
+ * the {@link IViewer}.
  *
  * @author mwienand
  *
@@ -86,5 +89,4 @@ public abstract class AbstractViewerAction extends Action
 			event.doit = false;
 		}
 	}
-
 }

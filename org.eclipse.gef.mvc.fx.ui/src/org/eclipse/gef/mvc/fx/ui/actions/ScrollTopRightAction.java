@@ -12,25 +12,30 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
-import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.geometry.planar.Point;
+
+import javafx.geometry.Bounds;
 
 /**
+ * The {@link ScrollTopRightAction} is an {@link AbstractScrollAction} that
+ * aligns the contents of the viewer with the top/right viewport position, i.e.
+ * the top/right corner of the contents will be at the top/right corner of the
+ * viewport after performing this action.
  *
  * @author mwienand
  *
  */
-public class ScrollTopRightAction extends AbstractViewerAction {
+public class ScrollTopRightAction extends AbstractScrollAction {
 
 	/**
 	 *
 	 */
 	public ScrollTopRightAction() {
-		super("Scroll to Top Right");
-		setEnabled(true);
+		super("Scroll Top/Right");
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
-		return null;
+	protected Point determinePivotPoint(Bounds bounds) {
+		return new Point(bounds.getMaxX(), bounds.getMinY());
 	}
 }

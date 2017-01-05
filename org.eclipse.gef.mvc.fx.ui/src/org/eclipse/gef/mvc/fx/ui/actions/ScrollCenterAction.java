@@ -12,69 +12,31 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
-import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
+import org.eclipse.gef.geometry.planar.Point;
 
-import javafx.geometry.Point2D;
-import javafx.scene.Parent;
+import javafx.geometry.Bounds;
 
 /**
- * The {@link ScrollCenterAction} is a {@link FitToSizeAction} that restricts
- * the zoom level to <code>1.0</code>.
+ * The {@link ScrollTopRightAction} is an {@link AbstractScrollAction} that
+ * aligns the contents of the viewer with the center of the viewport, i.e. the
+ * center of the contents will be at the center of the viewport after performing
+ * this action.
  *
  * @author mwienand
  *
  */
-public class ScrollCenterAction extends AbstractViewerAction {
+public class ScrollCenterAction extends AbstractScrollAction {
 
 	/**
 	 *
 	 */
 	public ScrollCenterAction() {
-		super("Scroll to Center");
-		setEnabled(true);
+		super("Scroll Center");
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
-		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
-		if (infiniteCanvas == null) {
-			throw new IllegalStateException(
-					"Cannot perform ResetZoomAction, because no InfiniteCanvas can be determiend.");
-		}
-
-		Point2D pivotInScene = infiniteCanvas.localToScene(
-				infiniteCanvas.getWidth() / 2, infiniteCanvas.getHeight() / 2);
-
-		ViewportPolicy viewportPolicy = getViewer().getRootPart()
-				.getAdapter(ViewportPolicy.class);
-		if (viewportPolicy == null) {
-			throw new IllegalStateException(
-					"Cannot perform ResetZoomAction, because no ViewportPolicy can be determined.");
-		}
-
-		viewportPolicy.init();
-		viewportPolicy.scroll(false,
-				-infiniteCanvas.getHorizontalScrollOffset()
-						- -pivotInScene.getX(),
-				-infiniteCanvas.getVerticalScrollOffset()
-						- -pivotInScene.getY());
-		ITransactionalOperation operation = viewportPolicy.commit();
-		return operation;
-	}
-
-	/**
-	 * Returns the {@link InfiniteCanvas} of the viewer where this action is
-	 * installed.
-	 *
-	 * @return The {@link InfiniteCanvas} of the viewer.
-	 */
-	protected InfiniteCanvas getInfiniteCanvas() {
-		Parent canvas = getViewer().getCanvas();
-		if (canvas instanceof InfiniteCanvas) {
-			return (InfiniteCanvas) canvas;
-		}
-		return null;
+	protected Point determinePivotPoint(Bounds bounds) {
+		return new Point(bounds.getMinX() + bounds.getWidth() / 2,
+				bounds.getMinY() + bounds.getHeight() / 2);
 	}
 }

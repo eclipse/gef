@@ -22,18 +22,23 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 
 /**
+ * The {@link AbstractZoomAction} is an {@link AbstractViewerAction} that alters
+ * the zoom level while preserving the center of the diagram. The new zoom level
+ * for the diagram is computed by {@link #determineZoomFactor(double)}.
  *
  * @author mwienand
  *
  */
-public class ResetZoomAction extends AbstractViewerAction {
+public abstract class AbstractZoomAction extends AbstractViewerAction {
 
 	/**
+	 * Creates a new {@link AbstractZoomAction}.
 	 *
+	 * @param text
+	 *            Text for the action.
 	 */
-	public ResetZoomAction() {
-		super("Reset Zoom");
-		setEnabled(true);
+	protected AbstractZoomAction(String text) {
+		super(text);
 	}
 
 	@Override
@@ -41,29 +46,42 @@ public class ResetZoomAction extends AbstractViewerAction {
 		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
 		if (infiniteCanvas == null) {
 			throw new IllegalStateException(
-					"Cannot perform ResetZoomAction, because no InfiniteCanvas can be determiend.");
+					"Cannot perform AbstractZoomAction, because no InfiniteCanvas can be determiend.");
 		}
 
+		// compute zoom factor
 		AffineTransform contentTransform = FX2Geometry
 				.toAffineTransform(infiniteCanvas.getContentTransform());
-		double sx = 1 / contentTransform.getScaleX();
+		double sx = determineZoomFactor(contentTransform.getScaleX());
 
+		// compute pivot point
 		Point2D pivotInScene = infiniteCanvas.localToScene(
 				infiniteCanvas.getWidth() / 2, infiniteCanvas.getHeight() / 2);
 
+		// determine viewport policy
 		ViewportPolicy viewportPolicy = getViewer().getRootPart()
 				.getAdapter(ViewportPolicy.class);
 		if (viewportPolicy == null) {
 			throw new IllegalStateException(
-					"Cannot perform ResetZoomAction, because no ViewportPolicy can be determined.");
+					"Cannot perform AbstractZoomAction, because no ViewportPolicy can be determined.");
 		}
 
+		// build zoom operation
 		viewportPolicy.init();
 		viewportPolicy.zoom(false, false, sx, pivotInScene.getX(),
 				pivotInScene.getY());
 		ITransactionalOperation operation = viewportPolicy.commit();
 		return operation;
 	}
+
+	/**
+	 * Returns the zoom factor that is applied when performing this action.
+	 *
+	 * @param currentZoomFactor
+	 *            The current zoom factor.
+	 * @return The zoom factor that is applied when performing this action.
+	 */
+	protected abstract double determineZoomFactor(double currentZoomFactor);
 
 	/**
 	 * Returns the {@link InfiniteCanvas} of the viewer where this action is

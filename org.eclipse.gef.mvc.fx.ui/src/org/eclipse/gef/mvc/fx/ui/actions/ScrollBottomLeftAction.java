@@ -12,26 +12,30 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
-import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.geometry.planar.Point;
+
+import javafx.geometry.Bounds;
 
 /**
+ * The {@link ScrollTopRightAction} is an {@link AbstractScrollAction} that
+ * aligns the contents of the viewer with the bottom/right viewport position,
+ * i.e. the bottom/right corner of the contents will be at the bottom/right
+ * corner of the viewport after performing this action.
  *
  * @author mwienand
  *
  */
-public class ScrollBottomLeftAction extends AbstractViewerAction {
+public class ScrollBottomLeftAction extends AbstractScrollAction {
 
 	/**
 	 *
 	 */
 	public ScrollBottomLeftAction() {
-		super("Scroll to Bottom Left");
-		setEnabled(true);
+		super("Scroll Bottom/Left");
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
-		return null;
+	protected Point determinePivotPoint(Bounds bounds) {
+		return new Point(bounds.getMinX(), bounds.getMaxY());
 	}
-
 }

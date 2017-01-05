@@ -41,8 +41,9 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToSizeAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ResetZoomAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomResetAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollCenterAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ScrollTopRightAction;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
@@ -116,8 +117,9 @@ public class DotGraphView extends ZestFxUiView {
 		}
 	};
 	private FitToSizeAction fitToSizeAction;
-	private ResetZoomAction resetViewportAction;
+	private ZoomResetAction resetViewportAction;
 	private ScrollCenterAction scrollCenterAction;
+	private ScrollTopRightAction scrollTopRightAction;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
@@ -159,6 +161,16 @@ public class DotGraphView extends ZestFxUiView {
 			resetViewportAction = null;
 		}
 
+		if (scrollCenterAction != null) {
+			scrollCenterAction.dispose();
+			scrollCenterAction = null;
+		}
+
+		if (scrollTopRightAction != null) {
+			scrollTopRightAction.dispose();
+			scrollTopRightAction = null;
+		}
+
 		getContentViewer().contentsProperty().clear();
 
 		super.dispose();
@@ -176,13 +188,17 @@ public class DotGraphView extends ZestFxUiView {
 		fitToSizeAction.init(getContentViewer());
 		add(fitToSizeAction, ISharedImages.IMG_DEF_VIEW);
 
-		resetViewportAction = new ResetZoomAction();
+		resetViewportAction = new ZoomResetAction();
 		resetViewportAction.init(getContentViewer());
 		add(resetViewportAction, ISharedImages.IMG_ELCL_COLLAPSEALL);
 
 		scrollCenterAction = new ScrollCenterAction();
 		scrollCenterAction.init(getContentViewer());
 		add(scrollCenterAction, ISharedImages.IMG_ELCL_STOP);
+
+		scrollTopRightAction = new ScrollTopRightAction();
+		scrollTopRightAction.init(getContentViewer());
+		add(scrollTopRightAction, null);
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));
@@ -232,8 +248,10 @@ public class DotGraphView extends ZestFxUiView {
 
 	private void add(Action action, String imageName) {
 		action.setId(action.getText());
-		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(imageName));
+		if (imageName != null) {
+			action.setImageDescriptor(PlatformUI.getWorkbench()
+					.getSharedImages().getImageDescriptor(imageName));
+		}
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(action);
 	}

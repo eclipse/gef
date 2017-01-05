@@ -12,81 +12,25 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
-import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.geometry.planar.AffineTransform;
-import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
-
-import javafx.geometry.Point2D;
-import javafx.scene.Parent;
-
 /**
+ * The {@link ZoomOutAction} is an {@link AbstractZoomAction} that decreases the
+ * zoom level by multiplying it with <code>0.8</code> while preserving the
+ * center of the diagram.
  *
  * @author mwienand
  *
  */
-public class ZoomOutAction extends AbstractViewerAction {
+public class ZoomOutAction extends AbstractZoomAction {
 
 	/**
 	 *
 	 */
 	public ZoomOutAction() {
 		super("Zoom Out");
-		setEnabled(true);
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
-		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
-		if (infiniteCanvas == null) {
-			throw new IllegalStateException(
-					"Cannot perform ResetZoomAction, because no InfiniteCanvas can be determiend.");
-		}
-
-		AffineTransform contentTransform = FX2Geometry
-				.toAffineTransform(infiniteCanvas.getContentTransform());
-		double sx = contentTransform.getScaleX() * getZoomFactor();
-
-		Point2D pivotInScene = infiniteCanvas.localToScene(
-				infiniteCanvas.getWidth() / 2, infiniteCanvas.getHeight() / 2);
-
-		ViewportPolicy viewportPolicy = getViewer().getRootPart()
-				.getAdapter(ViewportPolicy.class);
-		if (viewportPolicy == null) {
-			throw new IllegalStateException(
-					"Cannot perform ResetZoomAction, because no ViewportPolicy can be determined.");
-		}
-
-		viewportPolicy.init();
-		viewportPolicy.zoom(false, false, sx, pivotInScene.getX(),
-				pivotInScene.getY());
-		ITransactionalOperation operation = viewportPolicy.commit();
-		return operation;
-	}
-
-	/**
-	 * Returns the {@link InfiniteCanvas} of the viewer where this action is
-	 * installed.
-	 *
-	 * @return The {@link InfiniteCanvas} of the viewer.
-	 */
-	protected InfiniteCanvas getInfiniteCanvas() {
-		Parent canvas = getViewer().getCanvas();
-		if (canvas instanceof InfiniteCanvas) {
-			return (InfiniteCanvas) canvas;
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the relative zoom factor that is applied when performing this
-	 * action.
-	 *
-	 * @return The relative zoom factor that is applied when performing this
-	 *         action.
-	 */
-	protected double getZoomFactor() {
-		return 0.8;
+	protected double determineZoomFactor(double currentZoomFactor) {
+		return currentZoomFactor * 0.8;
 	}
 }
