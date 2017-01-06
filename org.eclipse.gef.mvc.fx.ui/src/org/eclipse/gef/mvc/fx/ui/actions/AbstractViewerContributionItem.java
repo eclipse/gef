@@ -12,33 +12,20 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.jface.action.Action;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.jface.action.ContributionItem;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
- * The {@link AbstractViewerAction} provides an abstract implementation of
- * {@link IViewerAction}. It saves the {@link IViewer} for which the action is
- * {@link #init(IViewer) initialized}. Additionally, a mechanism
- * ({@link #createOperation(Event)}) is provided for creating an
- * {@link ITransactionalOperation} that is executed on the {@link IDomain} of
- * the {@link IViewer}.
- *
  * @author mwienand
  *
  */
-public abstract class AbstractViewerAction extends Action
-		implements IViewerAction {
+public abstract class AbstractViewerContributionItem extends ContributionItem {
 
 	private IViewer viewer;
-	private boolean isActive;
+	private boolean isActive = false;
 	private ChangeListener<Boolean> activationListener = new ChangeListener<Boolean>() {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
@@ -52,40 +39,19 @@ public abstract class AbstractViewerAction extends Action
 	};
 
 	/**
-	 * Creates a new {@link IViewerAction}.
-	 *
-	 * @param text
-	 *            Text for the action.
+	 * Creates a new {@link AbstractViewerContributionItem}.
 	 */
-	protected AbstractViewerAction(String text) {
-		super(text);
+	protected AbstractViewerContributionItem() {
 	}
 
 	/**
 	 */
 	protected void activate() {
-		setEnabled(true);
 	}
-
-	/**
-	 * Returns an {@link ITransactionalOperation} that performs the desired
-	 * changes, or <code>null</code> if no changes should be performed. If
-	 * <code>null</code> is returned, then the "doit" flag of the initiating
-	 * {@link Event} is not altered. Otherwise, the "doit" flag is set to
-	 * <code>false</code> so that no further event processing is done by SWT.
-	 *
-	 * @param event
-	 *            The initiating {@link Event}.
-	 *
-	 * @return An {@link ITransactionalOperation} that performs the desired
-	 *         changes.
-	 */
-	protected abstract ITransactionalOperation createOperation(Event event);
 
 	/**
 	 */
 	protected void deactivate() {
-		setEnabled(false);
 	}
 
 	/**
@@ -99,7 +65,12 @@ public abstract class AbstractViewerAction extends Action
 		return viewer;
 	}
 
-	@Override
+	/**
+	 * Change {@link IViewer}.
+	 *
+	 * @param viewer
+	 *            a
+	 */
 	public void init(IViewer viewer) {
 		if (this.viewer == viewer) {
 			// nothing changed
@@ -130,31 +101,7 @@ public abstract class AbstractViewerAction extends Action
 		return isActive;
 	}
 
-	@Override
-	public void run() {
-		throw new UnsupportedOperationException(
-				"Only runWithEvent(Event) supported.");
-	}
-
-	@Override
-	public void runWithEvent(Event event) {
-		ITransactionalOperation operation = createOperation(event);
-		if (operation != null) {
-			try {
-				viewer.getDomain().execute(operation,
-						new NullProgressMonitor());
-			} catch (ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-			// cancel further event processing
-			if (event != null) {
-				event.doit = false;
-			}
-		}
-	}
-
 	/**
-	 *
 	 * @param isActive
 	 *            a
 	 */

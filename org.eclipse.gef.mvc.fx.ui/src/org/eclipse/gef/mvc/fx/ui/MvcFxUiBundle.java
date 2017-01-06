@@ -11,7 +11,16 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -27,6 +36,23 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 	 * The plug-in ID.
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.gef.mvc.fx.ui"; //$NON-NLS-1$
+
+	/**
+	 * Symbolic name of the zoom in icon.
+	 */
+	public static final String IMG_ICONS_ZOOM_IN = "IMG_ICONS_ZOOM_IN";
+
+	/**
+	 * Symbolic name of the zoom in icon.
+	 */
+	public static final String IMG_ICONS_ZOOM_OUT = "IMG_ICONS_ZOOM_OUT";
+
+	// IMAGES map contains symbolic names and image paths
+	private static final Map<String, String> IMAGES = new HashMap<>();
+	static {
+		IMAGES.put(IMG_ICONS_ZOOM_IN, "icons/zoomIn.png");
+		IMAGES.put(IMG_ICONS_ZOOM_OUT, "icons/zoomOut.png");
+	}
 
 	// The shared instance
 	private static MvcFxUiBundle plugin;
@@ -44,6 +70,16 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 	 * The constructor
 	 */
 	public MvcFxUiBundle() {
+	}
+
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		// put action images into the registry
+		Bundle bundle = getBundle();
+		for (Entry<String, String> e : IMAGES.entrySet()) {
+			reg.put(e.getKey(), ImageDescriptor.createFromURL(
+					FileLocator.find(bundle, new Path(e.getValue()), null)));
+		}
 	}
 
 	/*

@@ -17,12 +17,13 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.swt.widgets.Event;
 
 import javafx.scene.Parent;
 
 /**
- * The {@link FitToSizeAction} is an {@link IViewerAction} that will zoom and
- * scroll the {@link IViewer#getCanvas()} (provided that it is an
+ * The {@link FitToViewportAction} is an {@link IViewerAction} that will zoom
+ * and scroll the {@link IViewer#getCanvas()} (provided that it is an
  * {@link InfiniteCanvas}) so that its contents are centered and fill the
  * viewport. However, the zoom factor is restricted to the range from 0.25 to
  * 4.0, which can be customized via subclassing ({@link #getMinZoom()},
@@ -31,18 +32,18 @@ import javafx.scene.Parent;
  * @author mwienand
  *
  */
-public class FitToSizeAction extends AbstractViewerAction {
+public class FitToViewportAction extends AbstractViewerAction {
 
 	/**
-	 * Creates a new {@link FitToSizeAction}.
+	 * Creates a new {@link FitToViewportAction}.
 	 */
-	public FitToSizeAction() {
-		super("Fit-To-Size");
+	public FitToViewportAction() {
+		super("Fit-To-Viewport");
 		setEnabled(true);
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
+	protected ITransactionalOperation createOperation(Event event) {
 		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
 		if (infiniteCanvas == null) {
 			throw new IllegalStateException(

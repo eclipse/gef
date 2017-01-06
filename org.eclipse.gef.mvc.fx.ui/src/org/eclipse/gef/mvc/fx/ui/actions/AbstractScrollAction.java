@@ -18,6 +18,7 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.swt.widgets.Event;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
@@ -48,7 +49,7 @@ public abstract class AbstractScrollAction extends AbstractViewerAction {
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
+	protected ITransactionalOperation createOperation(Event event) {
 		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
 		if (infiniteCanvas == null) {
 			throw new IllegalStateException(

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
+import org.eclipse.swt.widgets.Event;
+
 /**
  * The {@link ZoomInAction} is an {@link AbstractZoomAction} that increases the
  * zoom level by multiplying it with <code>1.25</code> while preserving the
@@ -30,7 +32,7 @@ public class ZoomInAction extends AbstractZoomAction {
 	}
 
 	@Override
-	protected double determineZoomFactor(double currentZoomFactor) {
-		return currentZoomFactor * 1.25;
+	protected double determineZoomFactor(double currentZoomFactor, Event event) {
+		return 1.25;
 	}
 }

@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.SelectOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
 
 import javafx.scene.Node;
@@ -43,7 +44,7 @@ public class SelectAllAction extends AbstractViewerAction {
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
+	protected ITransactionalOperation createOperation(Event event) {
 		return new SelectOperation(getViewer(), getSelectableContentParts());
 	}
 

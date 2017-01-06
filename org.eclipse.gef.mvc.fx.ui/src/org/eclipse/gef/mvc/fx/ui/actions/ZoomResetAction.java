@@ -15,24 +15,23 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * The {@link ZoomOutAction} is an {@link AbstractZoomAction} that decreases the
- * zoom level by multiplying it with <code>0.8</code> while preserving the
- * center of the diagram.
+ * The {@link ZoomResetAction} is an {@link AbstractZoomAction} that resets the
+ * zoom level to <code>1.0</code> while preserving the center of the diagram.
  *
  * @author mwienand
  *
  */
-public class ZoomOutAction extends AbstractZoomAction {
+public class ZoomResetAction extends AbstractZoomAction {
 
 	/**
 	 *
 	 */
-	public ZoomOutAction() {
-		super("Zoom Out");
+	public ZoomResetAction() {
+		super("Reset Zoom");
 	}
 
 	@Override
 	protected double determineZoomFactor(double currentZoomFactor, Event event) {
-		return 0.8;
+		return 1d / currentZoomFactor;
 	}
 }

@@ -40,10 +40,13 @@ import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToSizeAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomResetAction;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollCenterAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollTopRightAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomComboContributionItem;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomInAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomOutAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomScaleContributionItem;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
@@ -116,8 +119,7 @@ public class DotGraphView extends ZestFxUiView {
 			}
 		}
 	};
-	private FitToSizeAction fitToSizeAction;
-	private ZoomResetAction resetViewportAction;
+	private FitToViewportAction fitToSizeAction;
 	private ScrollCenterAction scrollCenterAction;
 	private ScrollTopRightAction scrollTopRightAction;
 
@@ -156,11 +158,6 @@ public class DotGraphView extends ZestFxUiView {
 			fitToSizeAction = null;
 		}
 
-		if (resetViewportAction != null) {
-			resetViewportAction.dispose();
-			resetViewportAction = null;
-		}
-
 		if (scrollCenterAction != null) {
 			scrollCenterAction.dispose();
 			scrollCenterAction = null;
@@ -184,21 +181,35 @@ public class DotGraphView extends ZestFxUiView {
 		add(updateToggleAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
 
-		fitToSizeAction = new FitToSizeAction();
+		fitToSizeAction = new FitToViewportAction();
 		fitToSizeAction.init(getContentViewer());
-		add(fitToSizeAction, ISharedImages.IMG_DEF_VIEW);
-
-		resetViewportAction = new ZoomResetAction();
-		resetViewportAction.init(getContentViewer());
-		add(resetViewportAction, ISharedImages.IMG_ELCL_COLLAPSEALL);
+		add(fitToSizeAction, null);
 
 		scrollCenterAction = new ScrollCenterAction();
 		scrollCenterAction.init(getContentViewer());
-		add(scrollCenterAction, ISharedImages.IMG_ELCL_STOP);
+		add(scrollCenterAction, null);
 
 		scrollTopRightAction = new ScrollTopRightAction();
 		scrollTopRightAction.init(getContentViewer());
 		add(scrollTopRightAction, null);
+
+		ZoomComboContributionItem zoomContributionItem = new ZoomComboContributionItem(
+				new FitToViewportAction());
+		zoomContributionItem.init(getContentViewer());
+		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+		mgr.add(zoomContributionItem);
+
+		ZoomOutAction zoomOutAction = new ZoomOutAction();
+		zoomOutAction.init(getContentViewer());
+		add(zoomOutAction, null);
+
+		ZoomScaleContributionItem zoomScaleContributionItem = new ZoomScaleContributionItem();
+		zoomScaleContributionItem.init(getContentViewer());
+		mgr.add(zoomScaleContributionItem);
+
+		ZoomInAction zoomInAction = new ZoomInAction();
+		zoomInAction.init(getContentViewer());
+		add(zoomInAction, null);
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));

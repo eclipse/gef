@@ -17,6 +17,7 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
+import org.eclipse.swt.widgets.Event;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
@@ -24,7 +25,7 @@ import javafx.scene.Parent;
 /**
  * The {@link AbstractZoomAction} is an {@link AbstractViewerAction} that alters
  * the zoom level while preserving the center of the diagram. The new zoom level
- * for the diagram is computed by {@link #determineZoomFactor(double)}.
+ * for the diagram is computed by {@link #determineZoomFactor(double, Event)}.
  *
  * @author mwienand
  *
@@ -42,7 +43,7 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 	}
 
 	@Override
-	protected ITransactionalOperation createOperation() {
+	protected ITransactionalOperation createOperation(Event event) {
 		InfiniteCanvas infiniteCanvas = getInfiniteCanvas();
 		if (infiniteCanvas == null) {
 			throw new IllegalStateException(
@@ -52,7 +53,7 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 		// compute zoom factor
 		AffineTransform contentTransform = FX2Geometry
 				.toAffineTransform(infiniteCanvas.getContentTransform());
-		double sx = determineZoomFactor(contentTransform.getScaleX());
+		double sx = determineZoomFactor(contentTransform.getScaleX(), event);
 
 		// compute pivot point
 		Point2D pivotInScene = infiniteCanvas.localToScene(
@@ -79,9 +80,12 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 	 *
 	 * @param currentZoomFactor
 	 *            The current zoom factor.
+	 * @param event
+	 *            TODO
 	 * @return The zoom factor that is applied when performing this action.
 	 */
-	protected abstract double determineZoomFactor(double currentZoomFactor);
+	protected abstract double determineZoomFactor(double currentZoomFactor,
+			Event event);
 
 	/**
 	 * Returns the {@link InfiniteCanvas} of the viewer where this action is

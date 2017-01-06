@@ -23,6 +23,7 @@ import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
 import org.eclipse.gef.mvc.fx.tools.TypeTool;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
 
 import javafx.application.Platform;
@@ -69,6 +70,17 @@ public class DeleteAction extends AbstractViewerAction {
 		setEnabled(false);
 	}
 
+	@Override
+	protected void activate() {
+		SelectionModel newSelectionModel = getSelectionModel();
+		if (newSelectionModel != null) {
+			newSelectionModel.getSelectionUnmodifiable()
+					.addListener(selectionListener);
+		}
+		setEnabled(newSelectionModel != null
+				&& !newSelectionModel.getSelectionUnmodifiable().isEmpty());
+	}
+
 	/**
 	 * Computes an {@link ITransactionalOperation} that performs the desired
 	 * changes, or <code>null</code> if no changes should be performed.
@@ -77,7 +89,7 @@ public class DeleteAction extends AbstractViewerAction {
 	 *         changes.
 	 */
 	@Override
-	protected ITransactionalOperation createOperation() {
+	protected ITransactionalOperation createOperation(Event event) {
 		// delete selected parts
 		DeletionPolicy deletionPolicy = getViewer().getRootPart()
 				.getAdapter(DeletionPolicy.class);
@@ -94,6 +106,16 @@ public class DeleteAction extends AbstractViewerAction {
 		return deleteOperation;
 	}
 
+	@Override
+	protected void deactivate() {
+		setEnabled(false);
+		SelectionModel oldSelectionModel = getSelectionModel();
+		if (oldSelectionModel != null) {
+			oldSelectionModel.getSelectionUnmodifiable()
+					.removeListener(selectionListener);
+		}
+	}
+
 	/**
 	 * Returns the {@link SelectionModel} for the currently bound
 	 * {@link IViewer} or <code>null</code> if this action handler is either not
@@ -104,26 +126,5 @@ public class DeleteAction extends AbstractViewerAction {
 	protected SelectionModel getSelectionModel() {
 		return getViewer() == null ? null
 				: getViewer().getAdapter(SelectionModel.class);
-	}
-
-	@Override
-	public void init(IViewer viewer) {
-		SelectionModel oldSelectionModel = getSelectionModel();
-		super.init(viewer); // set viewer
-		SelectionModel newSelectionModel = getSelectionModel();
-
-		if (oldSelectionModel != null
-				&& oldSelectionModel != newSelectionModel) {
-			oldSelectionModel.getSelectionUnmodifiable()
-					.removeListener(selectionListener);
-		}
-		if (newSelectionModel != null
-				&& oldSelectionModel != newSelectionModel) {
-			newSelectionModel.getSelectionUnmodifiable()
-					.addListener(selectionListener);
-		}
-
-		setEnabled(newSelectionModel != null
-				&& !newSelectionModel.getSelectionUnmodifiable().isEmpty());
 	}
 }
