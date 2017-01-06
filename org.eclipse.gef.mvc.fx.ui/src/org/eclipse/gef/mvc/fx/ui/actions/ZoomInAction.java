@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
+import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.swt.widgets.Event;
 
 /**
@@ -29,10 +30,13 @@ public class ZoomInAction extends AbstractZoomAction {
 	 */
 	public ZoomInAction() {
 		super("Zoom In");
+		setImageDescriptor(MvcFxUiBundle.getDefault().getImageRegistry()
+				.getDescriptor(MvcFxUiBundle.IMG_ICONS_ZOOM_IN));
 	}
 
 	@Override
-	protected double determineZoomFactor(double currentZoomFactor, Event event) {
+	protected double determineZoomFactor(double currentZoomFactor,
+			Event event) {
 		return 1.25;
 	}
 }

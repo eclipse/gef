@@ -175,6 +175,8 @@ public class DotGraphView extends ZestFxUiView {
 
 	@Override
 	public void createPartControl(final Composite parent) {
+		super.createPartControl(parent);
+
 		// actions
 		Action updateToggleAction = new UpdateToggle().action(this);
 		Action loadFileAction = new LoadFile().action(this);
@@ -214,7 +216,6 @@ public class DotGraphView extends ZestFxUiView {
 		// controls
 		parent.setLayout(new GridLayout(1, true));
 		initResourceLabel(parent, loadFileAction, updateToggleAction);
-		super.createPartControl(parent);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// scene
