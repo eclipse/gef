@@ -126,6 +126,13 @@ public class DotGraphView extends ZestFxUiView {
 	private FitToViewportAction fitToSizeAction;
 	private ScrollCenterAction scrollCenterAction;
 	private ScrollTopRightAction scrollTopRightAction;
+	private ScrollTopLeftAction scrollTopLeftAction;
+	private ScrollBottomLeftAction scrollBottomLeftAction;
+	private ScrollBottomRightAction scrollBottomRightAction;
+	private ZoomInAction zoomInAction;
+	private ZoomOutAction zoomOutAction;
+	private ZoomScaleContributionItem zoomScaleContributionItem;
+	private ZoomComboContributionItem zoomComboContributionItem;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
@@ -162,14 +169,49 @@ public class DotGraphView extends ZestFxUiView {
 			fitToSizeAction = null;
 		}
 
+		if (zoomInAction != null) {
+			zoomInAction.dispose();
+			zoomInAction = null;
+		}
+
+		if (zoomOutAction != null) {
+			zoomOutAction.dispose();
+			zoomOutAction = null;
+		}
+
+		if (zoomComboContributionItem != null) {
+			zoomComboContributionItem.dispose();
+			zoomComboContributionItem = null;
+		}
+
+		if (zoomScaleContributionItem != null) {
+			zoomScaleContributionItem.dispose();
+			zoomScaleContributionItem = null;
+		}
+
 		if (scrollCenterAction != null) {
 			scrollCenterAction.dispose();
 			scrollCenterAction = null;
 		}
 
+		if (scrollTopLeftAction != null) {
+			scrollTopLeftAction.dispose();
+			scrollTopLeftAction = null;
+		}
+
 		if (scrollTopRightAction != null) {
 			scrollTopRightAction.dispose();
 			scrollTopRightAction = null;
+		}
+
+		if (scrollBottomRightAction != null) {
+			scrollBottomRightAction.dispose();
+			scrollBottomRightAction = null;
+		}
+
+		if (scrollBottomLeftAction != null) {
+			scrollBottomLeftAction.dispose();
+			scrollBottomLeftAction = null;
 		}
 
 		getContentViewer().contentsProperty().clear();
@@ -190,20 +232,20 @@ public class DotGraphView extends ZestFxUiView {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(new Separator());
 
-		ZoomComboContributionItem zoomContributionItem = new ZoomComboContributionItem(
+		zoomComboContributionItem = new ZoomComboContributionItem(
 				new FitToViewportAction());
-		zoomContributionItem.init(getContentViewer());
-		mgr.add(zoomContributionItem);
+		zoomComboContributionItem.init(getContentViewer());
+		mgr.add(zoomComboContributionItem);
 
-		ZoomOutAction zoomOutAction = new ZoomOutAction();
+		zoomOutAction = new ZoomOutAction();
 		zoomOutAction.init(getContentViewer());
 		add(zoomOutAction, null);
 
-		ZoomScaleContributionItem zoomScaleContributionItem = new ZoomScaleContributionItem();
+		zoomScaleContributionItem = new ZoomScaleContributionItem();
 		zoomScaleContributionItem.init(getContentViewer());
 		mgr.add(zoomScaleContributionItem);
 
-		ZoomInAction zoomInAction = new ZoomInAction();
+		zoomInAction = new ZoomInAction();
 		zoomInAction.init(getContentViewer());
 		add(zoomInAction, null);
 
@@ -217,21 +259,21 @@ public class DotGraphView extends ZestFxUiView {
 		scrollCenterAction.init(getContentViewer());
 		add(scrollCenterAction, null);
 
-		ScrollTopLeftAction scrollTopLeftAction = new ScrollTopLeftAction();
+		scrollTopLeftAction = new ScrollTopLeftAction();
 		scrollTopLeftAction.init(getContentViewer());
 		add(scrollTopLeftAction, null);
+
+		scrollBottomLeftAction = new ScrollBottomLeftAction();
+		scrollBottomLeftAction.init(getContentViewer());
+		add(scrollBottomLeftAction, null);
 
 		scrollTopRightAction = new ScrollTopRightAction();
 		scrollTopRightAction.init(getContentViewer());
 		add(scrollTopRightAction, null);
 
-		ScrollBottomRightAction scrollBottomRightAction = new ScrollBottomRightAction();
+		scrollBottomRightAction = new ScrollBottomRightAction();
 		scrollBottomRightAction.init(getContentViewer());
 		add(scrollBottomRightAction, null);
-
-		ScrollBottomLeftAction scrollBottomLeftAction = new ScrollBottomLeftAction();
-		scrollBottomLeftAction.init(getContentViewer());
-		add(scrollBottomLeftAction, null);
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));
