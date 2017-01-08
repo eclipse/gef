@@ -38,20 +38,51 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.gef.mvc.fx.ui"; //$NON-NLS-1$
 
 	/**
-	 * Symbolic name of the zoom in icon.
+	 * Symbolic name of the zoom-in icon image.
 	 */
 	public static final String IMG_ICONS_ZOOM_IN = "IMG_ICONS_ZOOM_IN";
 
 	/**
-	 * Symbolic name of the zoom in icon.
+	 * Symbolic name of the zoom-in icon image.
 	 */
 	public static final String IMG_ICONS_ZOOM_OUT = "IMG_ICONS_ZOOM_OUT";
+
+	/**
+	 * Symbolic name of the scroll-center icon image.
+	 */
+	public static final String IMG_ICONS_SCROLL_CENTER = "IMG_ICONS_SCROLL_CENTER";
+
+	/**
+	 * Symbolic name of the scroll-top-left icon image.
+	 */
+	public static final String IMG_ICONS_SCROLL_TOP_LEFT = "IMG_ICONS_SCROLL_TOP_LEFT";
+
+	/**
+	 * Symbolic name of the scroll-top-right icon image.
+	 */
+	public static final String IMG_ICONS_SCROLL_TOP_RIGHT = "IMG_ICONS_SCROLL_TOP_RIGHT";
+
+	/**
+	 * Symbolic name of the scroll-bottom-left icon image.
+	 */
+	public static final String IMG_ICONS_SCROLL_BOTTOM_LEFT = "IMG_ICONS_SCROLL_BOTTOM_LEFT";
+
+	/**
+	 * Symbolic name of the scroll-bottom-right icon image.
+	 */
+	public static final String IMG_ICONS_SCROLL_BOTTOM_RIGHT = "IMG_ICONS_SCROLL_BOTTOM_RIGHT";
 
 	// IMAGES map contains symbolic names and image paths
 	private static final Map<String, String> IMAGES = new HashMap<>();
 	static {
 		IMAGES.put(IMG_ICONS_ZOOM_IN, "icons/zoomIn.png");
 		IMAGES.put(IMG_ICONS_ZOOM_OUT, "icons/zoomOut.png");
+		IMAGES.put(IMG_ICONS_SCROLL_CENTER, "icons/scrollCenter.png");
+		IMAGES.put(IMG_ICONS_SCROLL_TOP_LEFT, "icons/scrollTopLeft.png");
+		IMAGES.put(IMG_ICONS_SCROLL_TOP_RIGHT, "icons/scrollTopRight.png");
+		IMAGES.put(IMG_ICONS_SCROLL_BOTTOM_RIGHT,
+				"icons/scrollBottomRight.png");
+		IMAGES.put(IMG_ICONS_SCROLL_BOTTOM_LEFT, "icons/scrollBottomLeft.png");
 	}
 
 	// The shared instance

@@ -13,6 +13,7 @@
 package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 
 import javafx.geometry.Bounds;
 
@@ -32,6 +33,8 @@ public class ScrollTopRightAction extends AbstractScrollAction {
 	 */
 	public ScrollTopRightAction() {
 		super("Scroll Top/Right");
+		setImageDescriptor(MvcFxUiBundle.getDefault().getImageRegistry()
+				.getDescriptor(MvcFxUiBundle.IMG_ICONS_SCROLL_TOP_RIGHT));
 	}
 
 	@Override
