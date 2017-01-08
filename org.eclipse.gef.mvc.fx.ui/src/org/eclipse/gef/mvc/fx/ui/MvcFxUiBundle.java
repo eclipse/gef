@@ -72,6 +72,11 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 	 */
 	public static final String IMG_ICONS_SCROLL_BOTTOM_RIGHT = "IMG_ICONS_SCROLL_BOTTOM_RIGHT";
 
+	/**
+	 * Symbolic name of the fit-to-viewport icon image.
+	 */
+	public static final String IMG_ICONS_FIT_TO_VIEWPORT = "IMG_ICONS_FIT_TO_VIEWPORT";
+
 	// IMAGES map contains symbolic names and image paths
 	private static final Map<String, String> IMAGES = new HashMap<>();
 	static {
@@ -83,6 +88,7 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 		IMAGES.put(IMG_ICONS_SCROLL_BOTTOM_RIGHT,
 				"icons/scrollBottomRight.png");
 		IMAGES.put(IMG_ICONS_SCROLL_BOTTOM_LEFT, "icons/scrollBottomLeft.png");
+		IMAGES.put(IMG_ICONS_FIT_TO_VIEWPORT, "icons/fitToViewport.png");
 	}
 
 	// The shared instance

@@ -123,7 +123,7 @@ public class DotGraphView extends ZestFxUiView {
 			}
 		}
 	};
-	private FitToViewportAction fitToSizeAction;
+	private FitToViewportAction fitToViewportAction;
 	private ScrollCenterAction scrollCenterAction;
 	private ScrollTopRightAction scrollTopRightAction;
 	private ScrollTopLeftAction scrollTopLeftAction;
@@ -164,9 +164,9 @@ public class DotGraphView extends ZestFxUiView {
 		currentDot = null;
 		currentFile = null;
 
-		if (fitToSizeAction != null) {
-			fitToSizeAction.dispose();
-			fitToSizeAction = null;
+		if (fitToViewportAction != null) {
+			fitToViewportAction.dispose();
+			fitToViewportAction = null;
 		}
 
 		if (zoomInAction != null) {
@@ -232,11 +232,6 @@ public class DotGraphView extends ZestFxUiView {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(new Separator());
 
-		zoomComboContributionItem = new ZoomComboContributionItem(
-				new FitToViewportAction());
-		zoomComboContributionItem.init(getContentViewer());
-		mgr.add(zoomComboContributionItem);
-
 		zoomOutAction = new ZoomOutAction();
 		zoomOutAction.init(getContentViewer());
 		add(zoomOutAction, null);
@@ -249,9 +244,14 @@ public class DotGraphView extends ZestFxUiView {
 		zoomInAction.init(getContentViewer());
 		add(zoomInAction, null);
 
-		fitToSizeAction = new FitToViewportAction();
-		fitToSizeAction.init(getContentViewer());
-		add(fitToSizeAction, null);
+		zoomComboContributionItem = new ZoomComboContributionItem(
+				new FitToViewportAction());
+		zoomComboContributionItem.init(getContentViewer());
+		mgr.add(zoomComboContributionItem);
+
+		fitToViewportAction = new FitToViewportAction();
+		fitToViewportAction.init(getContentViewer());
+		add(fitToViewportAction, null);
 
 		mgr.add(new Separator());
 

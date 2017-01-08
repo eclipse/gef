@@ -16,6 +16,7 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.swt.widgets.Event;
 
@@ -39,7 +40,8 @@ public class FitToViewportAction extends AbstractViewerAction {
 	 */
 	public FitToViewportAction() {
 		super("Fit-To-Viewport");
-		setEnabled(true);
+		setImageDescriptor(MvcFxUiBundle.getDefault().getImageRegistry()
+				.getDescriptor(MvcFxUiBundle.IMG_ICONS_FIT_TO_VIEWPORT));
 	}
 
 	@Override
