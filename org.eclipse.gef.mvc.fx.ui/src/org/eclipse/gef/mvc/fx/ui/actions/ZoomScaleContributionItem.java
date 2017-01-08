@@ -274,7 +274,7 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 		zoomScale.setMaximum(getMaximumScaleValue());
 		zoomScale.setSelection(getMaximumScaleValue() / 2);
 
-		zoomScale.setSize(150, 100);
+		zoomScale.setSize(75, 100);
 		toolItem.setWidth(zoomScale.getSize().x);
 		toolItem.setControl(zoomScale);
 
