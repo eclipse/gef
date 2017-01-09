@@ -157,6 +157,10 @@ public abstract class AbstractViewerAction extends Action
 
 	@Override
 	public void runWithEvent(Event event) {
+		if (!isActive()) {
+			return;
+		}
+
 		ITransactionalOperation operation = createOperation(event);
 		if (operation != null) {
 			try {

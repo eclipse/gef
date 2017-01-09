@@ -150,10 +150,9 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 		toolItem = new ToolItem(tb, SWT.SEPARATOR, index);
 
 		zoomCombo = new Combo(tb, SWT.DROP_DOWN);
-		zoomCombo.setItems(getZoomItems().toArray(new String[0]));
+		zoomCombo.setItems(getItems().toArray(new String[0]));
 		toolItem.setWidth(
 				zoomCombo.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		zoomCombo.setItems(getItems().toArray(new String[0]));
 		toolItem.setControl(zoomCombo);
 
 		zoomCombo.addKeyListener(new KeyAdapter() {
@@ -292,6 +291,18 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 
 	/**
 	 *
+	 * @param n
+	 *            a
+	 */
+	protected void showZoomFactor(Number n) {
+		if (zoomCombo != null) {
+			String text = toPercentText(n.doubleValue());
+			zoomCombo.setText(text);
+		}
+	}
+
+	/**
+	 *
 	 * @param zoomFactor
 	 *            a
 	 * @return a
@@ -328,22 +339,12 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	 *
 	 */
 	protected void updateComboText() {
-		Parent canvas = getViewer().getCanvas();
-		if (canvas instanceof InfiniteCanvas) {
-			InfiniteCanvas infiniteCanvas = (InfiniteCanvas) canvas;
-			showZoomFactor(infiniteCanvas.getContentTransform().getMxx());
-		}
-	}
-
-	/**
-	 *
-	 * @param n
-	 *            a
-	 */
-	protected void showZoomFactor(Number n) {
-		if (zoomCombo != null) {
-			String text = toPercentText(n.doubleValue());
-			zoomCombo.setText(text);
+		if (isActive()) {
+			Parent canvas = getViewer().getCanvas();
+			if (canvas instanceof InfiniteCanvas) {
+				InfiniteCanvas infiniteCanvas = (InfiniteCanvas) canvas;
+				showZoomFactor(infiniteCanvas.getContentTransform().getMxx());
+			}
 		}
 	}
 }

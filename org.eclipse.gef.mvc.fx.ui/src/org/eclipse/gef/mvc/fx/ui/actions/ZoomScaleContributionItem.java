@@ -183,9 +183,11 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 			}
 		});
 
-		double mxx = ((InfiniteCanvas) getViewer().getCanvas())
-				.getContentTransform().getMxx();
-		updateScaleValue(mxx);
+		if (isActive()) {
+			double mxx = ((InfiniteCanvas) getViewer().getCanvas())
+					.getContentTransform().getMxx();
+			updateScaleValue(mxx);
+		}
 	}
 
 	@Override

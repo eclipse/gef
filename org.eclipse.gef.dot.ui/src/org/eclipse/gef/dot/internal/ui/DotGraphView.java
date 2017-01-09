@@ -41,12 +41,15 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportLockAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollBottomLeftAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollBottomRightAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollCenterAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollTopLeftAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollTopRightAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomComboContributionItem;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomInAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomOutAction;
@@ -71,6 +74,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISharedImages;
@@ -243,63 +247,74 @@ public class DotGraphView extends ZestFxUiView {
 		add(updateToggleAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
 
-		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+		IActionBars actionBars = getViewSite().getActionBars();
+		IToolBarManager mgr = actionBars.getToolBarManager();
 		mgr.add(new Separator());
 
-		zoomOutAction = new ZoomOutAction();
-		zoomOutAction.init(getContentViewer());
-		add(zoomOutAction, null);
+		ZoomActionGroup zoomActionGroup = new ZoomActionGroup();
+		FitToViewportActionGroup fitToViewportActionGroup = new FitToViewportActionGroup();
+		ScrollActionGroup scrollActionGroup = new ScrollActionGroup();
 
-		zoomScaleContributionItem = new ZoomScaleContributionItem();
-		zoomScaleContributionItem.init(getContentViewer());
-		mgr.add(zoomScaleContributionItem);
-
-		zoomInAction = new ZoomInAction();
-		zoomInAction.init(getContentViewer());
-		add(zoomInAction, null);
-
-		zoomResetAction = new ZoomResetAction();
-		zoomResetAction.init(getContentViewer());
-		add(zoomResetAction, null);
-
-		zoomComboContributionItem = new ZoomComboContributionItem(
-				new FitToViewportAction());
-		zoomComboContributionItem.init(getContentViewer());
-		mgr.add(zoomComboContributionItem);
-
+		zoomActionGroup.fillActionBars(actionBars);
 		mgr.add(new Separator());
-
-		fitToViewportAction = new FitToViewportAction();
-		fitToViewportAction.init(getContentViewer());
-		add(fitToViewportAction, null);
-
-		fitToViewportLockAction = new FitToViewportLockAction();
-		fitToViewportLockAction.init(getContentViewer());
-		add(fitToViewportLockAction, null);
-
+		fitToViewportActionGroup.fillActionBars(actionBars);
 		mgr.add(new Separator());
+		scrollActionGroup.fillActionBars(actionBars);
 
-		// TODO: stack scroll actions (default: center; others: drop-down)
-
-		scrollCenterAction = new ScrollCenterAction();
-		scrollCenterAction.init(getContentViewer());
-		add(scrollCenterAction, null);
-
-		scrollTopLeftAction = new ScrollTopLeftAction();
-		scrollTopLeftAction.init(getContentViewer());
-		add(scrollTopLeftAction, null);
-
-		scrollBottomLeftAction = new ScrollBottomLeftAction();
-		scrollBottomLeftAction.init(getContentViewer());
-		add(scrollBottomLeftAction, null);
-
-		scrollTopRightAction = new ScrollTopRightAction();
-		scrollTopRightAction.init(getContentViewer());
-		add(scrollTopRightAction, null);
-
-		scrollBottomRightAction = new ScrollBottomRightAction();
-		scrollBottomRightAction.init(getContentViewer());
-		add(scrollBottomRightAction, null);
+		// zoomOutAction = new ZoomOutAction();
+		// zoomOutAction.init(getContentViewer());
+		// add(zoomOutAction, null);
+		//
+		// zoomScaleContributionItem = new ZoomScaleContributionItem();
+		// zoomScaleContributionItem.init(getContentViewer());
+		// mgr.add(zoomScaleContributionItem);
+		//
+		// zoomInAction = new ZoomInAction();
+		// zoomInAction.init(getContentViewer());
+		// add(zoomInAction, null);
+		//
+		// zoomResetAction = new ZoomResetAction();
+		// zoomResetAction.init(getContentViewer());
+		// add(zoomResetAction, null);
+		//
+		// zoomComboContributionItem = new ZoomComboContributionItem(
+		// new FitToViewportAction());
+		// zoomComboContributionItem.init(getContentViewer());
+		// mgr.add(zoomComboContributionItem);
+		//
+		// mgr.add(new Separator());
+		//
+		// fitToViewportAction = new FitToViewportAction();
+		// fitToViewportAction.init(getContentViewer());
+		// add(fitToViewportAction, null);
+		//
+		// fitToViewportLockAction = new FitToViewportLockAction();
+		// fitToViewportLockAction.init(getContentViewer());
+		// add(fitToViewportLockAction, null);
+		//
+		// mgr.add(new Separator());
+		//
+		// // TODO: stack scroll actions (default: center; others: drop-down)
+		//
+		// scrollCenterAction = new ScrollCenterAction();
+		// scrollCenterAction.init(getContentViewer());
+		// add(scrollCenterAction, null);
+		//
+		// scrollTopLeftAction = new ScrollTopLeftAction();
+		// scrollTopLeftAction.init(getContentViewer());
+		// add(scrollTopLeftAction, null);
+		//
+		// scrollBottomLeftAction = new ScrollBottomLeftAction();
+		// scrollBottomLeftAction.init(getContentViewer());
+		// add(scrollBottomLeftAction, null);
+		//
+		// scrollTopRightAction = new ScrollTopRightAction();
+		// scrollTopRightAction.init(getContentViewer());
+		// add(scrollTopRightAction, null);
+		//
+		// scrollBottomRightAction = new ScrollBottomRightAction();
+		// scrollBottomRightAction.init(getContentViewer());
+		// add(scrollBottomRightAction, null);
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));
