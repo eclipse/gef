@@ -41,26 +41,28 @@ public class FitToViewportAction extends AbstractViewerAction {
 	 * Creates a new {@link FitToViewportAction}.
 	 */
 	public FitToViewportAction() {
-		this(IAction.AS_PUSH_BUTTON);
-	}
-
-	/**
-	 * Creates a new {@link FitToViewportAction}.
-	 *
-	 * @param style
-	 *            The style for the action.
-	 */
-	public FitToViewportAction(int style) {
-		this("Fit-To-Viewport", style,
+		this("Fit-To-Viewport", IAction.AS_PUSH_BUTTON,
 				MvcFxUiBundle.getDefault().getImageRegistry().getDescriptor(
 						MvcFxUiBundle.IMG_ICONS_FIT_TO_VIEWPORT));
-		if (style == IAction.AS_CHECK_BOX) {
-			// TODO: set flag, register viewport listeners later
-		} else if (style != IAction.AS_PUSH_BUTTON) {
-			throw new IllegalArgumentException(
-					"Given style (" + style + ") is not supported.");
-		}
 	}
+
+	// /**
+	// * Creates a new {@link FitToViewportAction}.
+	// *
+	// * @param style
+	// * The style for the action.
+	// */
+	// public FitToViewportAction(int style) {
+	// this("Fit-To-Viewport", style,
+	// MvcFxUiBundle.getDefault().getImageRegistry().getDescriptor(
+	// MvcFxUiBundle.IMG_ICONS_FIT_TO_VIEWPORT));
+	// if (style == IAction.AS_CHECK_BOX) {
+	// // TODO: set flag, register viewport listeners later
+	// } else if (style != IAction.AS_PUSH_BUTTON) {
+	// throw new IllegalArgumentException(
+	// "Given style (" + style + ") is not supported.");
+	// }
+	// }
 
 	/**
 	 * Creates a new {@link FitToViewportAction} with the given text and style.
@@ -84,6 +86,10 @@ public class FitToViewportAction extends AbstractViewerAction {
 		if (infiniteCanvas == null) {
 			throw new IllegalStateException(
 					"Cannot perform FitToSizeAction, because no InfiniteCanvas can be determiend.");
+		}
+		if (infiniteCanvas.getContentBounds().isEmpty()) {
+			// nothing to do
+			return null;
 		}
 
 		ChangeViewportOperation viewportOperation = new ChangeViewportOperation(

@@ -38,47 +38,53 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.gef.mvc.fx.ui"; //$NON-NLS-1$
 
 	/**
-	 * Symbolic name of the zoom-in icon image.
+	 * Symbolic name for the zoom-in icon image.
 	 */
 	public static final String IMG_ICONS_ZOOM_IN = "IMG_ICONS_ZOOM_IN";
 
 	/**
-	 * Symbolic name of the zoom-in icon image.
+	 * Symbolic name for the zoom-out icon image.
 	 */
 	public static final String IMG_ICONS_ZOOM_OUT = "IMG_ICONS_ZOOM_OUT";
 
 	/**
-	 * Symbolic name of the scroll-center icon image.
+	 * Symbolic name for the scroll-center icon image.
 	 */
 	public static final String IMG_ICONS_SCROLL_CENTER = "IMG_ICONS_SCROLL_CENTER";
 
 	/**
-	 * Symbolic name of the scroll-top-left icon image.
+	 * Symbolic name for the scroll-top-left icon image.
 	 */
 	public static final String IMG_ICONS_SCROLL_TOP_LEFT = "IMG_ICONS_SCROLL_TOP_LEFT";
 
 	/**
-	 * Symbolic name of the scroll-top-right icon image.
+	 * Symbolic name for the scroll-top-right icon image.
 	 */
 	public static final String IMG_ICONS_SCROLL_TOP_RIGHT = "IMG_ICONS_SCROLL_TOP_RIGHT";
 
 	/**
-	 * Symbolic name of the scroll-bottom-left icon image.
+	 * Symbolic name for the scroll-bottom-left icon image.
 	 */
 	public static final String IMG_ICONS_SCROLL_BOTTOM_LEFT = "IMG_ICONS_SCROLL_BOTTOM_LEFT";
 
 	/**
-	 * Symbolic name of the scroll-bottom-right icon image.
+	 * Symbolic name for the scroll-bottom-right icon image.
 	 */
 	public static final String IMG_ICONS_SCROLL_BOTTOM_RIGHT = "IMG_ICONS_SCROLL_BOTTOM_RIGHT";
 
 	/**
-	 * Symbolic name of the fit-to-viewport icon image.
+	 * Symbolic name for the fit-to-viewport icon image.
 	 */
 	public static final String IMG_ICONS_FIT_TO_VIEWPORT = "IMG_ICONS_FIT_TO_VIEWPORT";
 
 	/**
-	 * Symbolic name of the reset-zoom icon image.
+	 * Symbolic name for the fit-to-viewport-lock (i.e. toggle-button/check-box)
+	 * icon image.
+	 */
+	public static final String IMG_ICONS_FIT_TO_VIEWPORT_LOCK = "IMG_ICONS_FIT_TO_VIEWPORT_LOCK";
+
+	/**
+	 * Symbolic name for the reset-zoom icon image.
 	 */
 	public static final String IMG_ICONS_ZOOM_RESET = "IMG_ICONS_ZOOM_RESET";
 
@@ -96,6 +102,8 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 				"icons/scrollBottomRight.png");
 		IMAGES.put(IMG_ICONS_SCROLL_BOTTOM_LEFT, "icons/scrollBottomLeft.png");
 		IMAGES.put(IMG_ICONS_FIT_TO_VIEWPORT, "icons/fitToViewport.png");
+		IMAGES.put(IMG_ICONS_FIT_TO_VIEWPORT_LOCK,
+				"icons/fitToViewportLock.png");
 	}
 
 	// The shared instance

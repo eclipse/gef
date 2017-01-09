@@ -41,6 +41,7 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportLockAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollBottomLeftAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollBottomRightAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollCenterAction;
@@ -135,6 +136,7 @@ public class DotGraphView extends ZestFxUiView {
 	private ZoomScaleContributionItem zoomScaleContributionItem;
 	private ZoomComboContributionItem zoomComboContributionItem;
 	private ZoomResetAction zoomResetAction;
+	private FitToViewportLockAction fitToViewportLockAction;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
@@ -169,6 +171,11 @@ public class DotGraphView extends ZestFxUiView {
 		if (fitToViewportAction != null) {
 			fitToViewportAction.dispose();
 			fitToViewportAction = null;
+		}
+
+		if (fitToViewportLockAction != null) {
+			fitToViewportLockAction.dispose();
+			fitToViewportLockAction = null;
 		}
 
 		if (zoomInAction != null) {
@@ -260,11 +267,19 @@ public class DotGraphView extends ZestFxUiView {
 		zoomComboContributionItem.init(getContentViewer());
 		mgr.add(zoomComboContributionItem);
 
+		mgr.add(new Separator());
+
 		fitToViewportAction = new FitToViewportAction();
 		fitToViewportAction.init(getContentViewer());
 		add(fitToViewportAction, null);
 
+		fitToViewportLockAction = new FitToViewportLockAction();
+		fitToViewportLockAction.init(getContentViewer());
+		add(fitToViewportLockAction, null);
+
 		mgr.add(new Separator());
+
+		// TODO: stack scroll actions (default: center; others: drop-down)
 
 		scrollCenterAction = new ScrollCenterAction();
 		scrollCenterAction.init(getContentViewer());
