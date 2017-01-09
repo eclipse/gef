@@ -177,8 +177,17 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	 */
 	public static final String ZOOM_SCALE_CONTRIBUTION_ITEM_ID = "ZoomScaleContributionItem";
 
+	private static final double coeffBase = 0.474357;
+	private static final double coeffExpo = 0.000421363;
+	// double zoomFactor = (coeffBase * (Math.e ** (coeffExpo * selection)))
+
+	private static final double invCoeffBase = 2373.25;
+	private static final double invCoeffExpo = 2.10812;
+	// int selection = Math.round(invCoeffBase * log(invCoeffExpo * zoomFactor))
+
 	// controls
 	private ToolItem toolItem;
+
 	private Scale zoomScale;
 
 	// listeners

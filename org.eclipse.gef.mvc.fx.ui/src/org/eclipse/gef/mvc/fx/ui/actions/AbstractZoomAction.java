@@ -17,6 +17,8 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
 import javafx.geometry.Point2D;
@@ -39,7 +41,23 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 	 *            Text for the action.
 	 */
 	protected AbstractZoomAction(String text) {
-		super(text);
+		this(text, IAction.AS_PUSH_BUTTON, null);
+	}
+
+	/**
+	 * Creates a new {@link AbstractZoomAction} with the given text and style.
+	 * Also sets the given {@link ImageDescriptor} for this action.
+	 *
+	 * @param text
+	 *            Text for the action.
+	 * @param style
+	 *            Style for the action, see {@link IAction} for details.
+	 * @param imageDescriptor
+	 *            {@link ImageDescriptor} specifying the icon for the action.
+	 */
+	protected AbstractZoomAction(String text, int style,
+			ImageDescriptor imageDescriptor) {
+		super(text, style, imageDescriptor);
 	}
 
 	@Override

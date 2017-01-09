@@ -19,6 +19,8 @@ import java.util.List;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.SelectOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -38,9 +40,24 @@ public class SelectAllAction extends AbstractViewerAction {
 	 * Creates a new {@link SelectAllAction}.
 	 */
 	public SelectAllAction() {
-		super("Select All");
+		this("Select All", IAction.AS_PUSH_BUTTON, null);
 		setId(ActionFactory.SELECT_ALL.getId());
-		setEnabled(true);
+	}
+
+	/**
+	 * Creates a new {@link SelectAllAction} with the given text and style. Also
+	 * sets the given {@link ImageDescriptor} for this action.
+	 *
+	 * @param text
+	 *            Text for the action.
+	 * @param style
+	 *            Style for the action, see {@link IAction} for details.
+	 * @param imageDescriptor
+	 *            {@link ImageDescriptor} specifying the icon for the action.
+	 */
+	protected SelectAllAction(String text, int style,
+			ImageDescriptor imageDescriptor) {
+		super(text, style, imageDescriptor);
 	}
 
 	@Override

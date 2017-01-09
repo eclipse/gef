@@ -13,6 +13,8 @@
 package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
 /**
@@ -28,9 +30,25 @@ public class ZoomResetAction extends AbstractZoomAction {
 	 * Creates a new {@link ZoomResetAction}.
 	 */
 	public ZoomResetAction() {
-		super("Reset Zoom");
-		setImageDescriptor(MvcFxUiBundle.getDefault().getImageRegistry()
-				.getDescriptor(MvcFxUiBundle.IMG_ICONS_ZOOM_RESET));
+		this("Reset Zoom", IAction.AS_PUSH_BUTTON,
+				MvcFxUiBundle.getDefault().getImageRegistry()
+						.getDescriptor(MvcFxUiBundle.IMG_ICONS_ZOOM_RESET));
+	}
+
+	/**
+	 * Creates a new {@link ZoomResetAction} with the given text and style. Also
+	 * sets the given {@link ImageDescriptor} for this action.
+	 *
+	 * @param text
+	 *            Text for the action.
+	 * @param style
+	 *            Style for the action, see {@link IAction} for details.
+	 * @param imageDescriptor
+	 *            {@link ImageDescriptor} specifying the icon for the action.
+	 */
+	protected ZoomResetAction(String text, int style,
+			ImageDescriptor imageDescriptor) {
+		super(text, style, imageDescriptor);
 	}
 
 	@Override

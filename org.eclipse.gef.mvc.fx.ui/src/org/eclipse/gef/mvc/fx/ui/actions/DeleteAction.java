@@ -23,6 +23,8 @@ import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
 import org.eclipse.gef.mvc.fx.tools.TypeTool;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -65,9 +67,25 @@ public class DeleteAction extends AbstractViewerAction {
 	 * Creates a new {@link DeleteAction}.
 	 */
 	public DeleteAction() {
-		super("Delete");
+		this("Delete", IAction.AS_PUSH_BUTTON, null);
 		setId(ActionFactory.DELETE.getId());
 		setEnabled(false);
+	}
+
+	/**
+	 * Creates a new {@link DeleteAction} with the given text and style. Also
+	 * sets the given {@link ImageDescriptor} for this action.
+	 *
+	 * @param text
+	 *            Text for the action.
+	 * @param style
+	 *            Style for the action, see {@link IAction} for details.
+	 * @param imageDescriptor
+	 *            {@link ImageDescriptor} specifying the icon for the action.
+	 */
+	protected DeleteAction(String text, int style,
+			ImageDescriptor imageDescriptor) {
+		super(text, style, imageDescriptor);
 	}
 
 	@Override

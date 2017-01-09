@@ -14,6 +14,8 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import javafx.geometry.Bounds;
 
@@ -32,9 +34,25 @@ public class ScrollBottomLeftAction extends AbstractScrollAction {
 	 *
 	 */
 	public ScrollBottomLeftAction() {
-		super("Scroll Bottom/Left");
-		setImageDescriptor(MvcFxUiBundle.getDefault().getImageRegistry()
-				.getDescriptor(MvcFxUiBundle.IMG_ICONS_SCROLL_BOTTOM_LEFT));
+		this("Scroll Bottom/Left", IAction.AS_PUSH_BUTTON,
+				MvcFxUiBundle.getDefault().getImageRegistry().getDescriptor(
+						MvcFxUiBundle.IMG_ICONS_SCROLL_BOTTOM_LEFT));
+	}
+
+	/**
+	 * Creates a new {@link ScrollBottomLeftAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
+	 *
+	 * @param text
+	 *            Text for the action.
+	 * @param style
+	 *            Style for the action, see {@link IAction} for details.
+	 * @param imageDescriptor
+	 *            {@link ImageDescriptor} specifying the icon for the action.
+	 */
+	protected ScrollBottomLeftAction(String text, int style,
+			ImageDescriptor imageDescriptor) {
+		super(text, style, imageDescriptor);
 	}
 
 	@Override

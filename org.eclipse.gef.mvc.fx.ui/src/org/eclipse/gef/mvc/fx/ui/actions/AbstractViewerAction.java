@@ -18,6 +18,8 @@ import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
 import javafx.beans.value.ChangeListener;
@@ -58,7 +60,24 @@ public abstract class AbstractViewerAction extends Action
 	 *            Text for the action.
 	 */
 	protected AbstractViewerAction(String text) {
-		super(text);
+		super(text, IAction.AS_PUSH_BUTTON);
+	}
+
+	/**
+	 * Creates a new {@link AbstractViewerAction} with the given text and style.
+	 * Also sets the given {@link ImageDescriptor} for this action.
+	 *
+	 * @param text
+	 *            Text for the action.
+	 * @param style
+	 *            Style for the action, see {@link IAction} for details.
+	 * @param imageDescriptor
+	 *            {@link ImageDescriptor} specifying the icon for the action.
+	 */
+	protected AbstractViewerAction(String text, int style,
+			ImageDescriptor imageDescriptor) {
+		super(text, style);
+		setImageDescriptor(imageDescriptor);
 	}
 
 	/**

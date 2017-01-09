@@ -18,6 +18,8 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
 import javafx.geometry.Bounds;
@@ -45,7 +47,23 @@ public abstract class AbstractScrollAction extends AbstractViewerAction {
 	 *            Text for the action.
 	 */
 	protected AbstractScrollAction(String text) {
-		super(text);
+		super(text, IAction.AS_PUSH_BUTTON, null);
+	}
+
+	/**
+	 * Creates a new {@link AbstractScrollAction} with the given text and style.
+	 * Also sets the given {@link ImageDescriptor} for this action.
+	 *
+	 * @param text
+	 *            Text for the action.
+	 * @param style
+	 *            Style for the action, see {@link IAction} for details.
+	 * @param imageDescriptor
+	 *            {@link ImageDescriptor} specifying the icon for the action.
+	 */
+	protected AbstractScrollAction(String text, int style,
+			ImageDescriptor imageDescriptor) {
+		super(text, style, imageDescriptor);
 	}
 
 	@Override
