@@ -77,11 +77,18 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 	 */
 	public static final String IMG_ICONS_FIT_TO_VIEWPORT = "IMG_ICONS_FIT_TO_VIEWPORT";
 
+	/**
+	 * Symbolic name of the reset-zoom icon image.
+	 */
+	public static final String IMG_ICONS_ZOOM_RESET = "IMG_ICONS_ZOOM_RESET";
+
 	// IMAGES map contains symbolic names and image paths
 	private static final Map<String, String> IMAGES = new HashMap<>();
+
 	static {
 		IMAGES.put(IMG_ICONS_ZOOM_IN, "icons/zoomIn.png");
 		IMAGES.put(IMG_ICONS_ZOOM_OUT, "icons/zoomOut.png");
+		IMAGES.put(IMG_ICONS_ZOOM_RESET, "icons/zoomReset.png");
 		IMAGES.put(IMG_ICONS_SCROLL_CENTER, "icons/scrollCenter.png");
 		IMAGES.put(IMG_ICONS_SCROLL_TOP_LEFT, "icons/scrollTopLeft.png");
 		IMAGES.put(IMG_ICONS_SCROLL_TOP_RIGHT, "icons/scrollTopRight.png");

@@ -49,6 +49,7 @@ import org.eclipse.gef.mvc.fx.ui.actions.ScrollTopRightAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomComboContributionItem;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomInAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomOutAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomResetAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomScaleContributionItem;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
@@ -133,6 +134,7 @@ public class DotGraphView extends ZestFxUiView {
 	private ZoomOutAction zoomOutAction;
 	private ZoomScaleContributionItem zoomScaleContributionItem;
 	private ZoomComboContributionItem zoomComboContributionItem;
+	private ZoomResetAction zoomResetAction;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
@@ -177,6 +179,11 @@ public class DotGraphView extends ZestFxUiView {
 		if (zoomOutAction != null) {
 			zoomOutAction.dispose();
 			zoomOutAction = null;
+		}
+
+		if (zoomResetAction != null) {
+			zoomResetAction.dispose();
+			zoomResetAction = null;
 		}
 
 		if (zoomComboContributionItem != null) {
@@ -243,6 +250,10 @@ public class DotGraphView extends ZestFxUiView {
 		zoomInAction = new ZoomInAction();
 		zoomInAction.init(getContentViewer());
 		add(zoomInAction, null);
+
+		zoomResetAction = new ZoomResetAction();
+		zoomResetAction.init(getContentViewer());
+		add(zoomResetAction, null);
 
 		zoomComboContributionItem = new ZoomComboContributionItem(
 				new FitToViewportAction());
