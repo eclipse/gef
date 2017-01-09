@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.text.AbstractDocument.AttributeContext;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
@@ -384,12 +382,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 	}
 
 	/**
-	 * Calculates the valid dot attribute names within a given
-	 * {@link AttributeContext}.
+	 * Calculates the valid dot attribute names within a given {@link Context}.
 	 * 
-	 * @return a map mapping the {@link AttributeContext} elements such as
-	 *         {@link AttributeContext#EDGE}, {@link AttributeContext#GRAPH},
-	 *         {@link AttributeContext#NODE} to the valid dot attribute names.
+	 * @return a map mapping the {@link Context} elements such as
+	 *         {@link Context#EDGE}, {@link Context#GRAPH}, {@link Context#NODE}
+	 *         to the valid dot attribute names.
 	 */
 	private Map<Context, List<String>> getDotAttributeNames() {
 		List<String> edgeAttributeNames = new ArrayList<>();
