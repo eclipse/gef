@@ -49,6 +49,8 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		super.activate();
 		if (isChecked()) {
 			lock();
+			// initial fit-to-viewport
+			runWithEvent(null);
 		}
 	}
 
@@ -75,6 +77,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	 *
 	 */
 	protected void onSizeChanged() {
+		// only called when locked
 		if (isEnabled()) {
 			runWithEvent(null);
 		}
