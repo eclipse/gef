@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.ui.actions.ActionGroup;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The {@link FitToViewportActionGroup} provides two actions --
@@ -24,32 +24,11 @@ import org.eclipse.ui.actions.ActionGroup;
  * @author mwienand
  *
  */
-public class FitToViewportActionGroup extends ActionGroup {
-
-	private FitToViewportAction fitToViewport = new FitToViewportAction();
-	private FitToViewportAction fitToViewportLock = new FitToViewportLockAction();
-
-	/**
-	 * Constructs a new {@link FitToViewportActionGroup}.
-	 */
-	public FitToViewportActionGroup() {
-	}
+public class FitToViewportActionGroup extends AbstractViewerActionGroup {
 
 	@Override
-	public void dispose() {
-		if (fitToViewport != null) {
-			fitToViewport.dispose();
-			fitToViewport = null;
-			fitToViewportLock.dispose();
-			fitToViewportLock = null;
-		}
-		super.dispose();
-	}
-
-	@Override
-	public void fillActionBars(org.eclipse.ui.IActionBars actionBars) {
-		IToolBarManager tbm = actionBars.getToolBarManager();
-		tbm.add(fitToViewport);
-		tbm.add(fitToViewportLock);
+	public List<IViewerDependent> createViewerDependents() {
+		return Arrays.asList(new FitToViewportAction(),
+				new FitToViewportLockAction());
 	}
 }

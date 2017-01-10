@@ -31,7 +31,7 @@ import javafx.geometry.Bounds;
 public class ScrollTopRightAction extends AbstractScrollAction {
 
 	/**
-	 *
+	 * Constructs a new {@link ScrollTopRightAction}.
 	 */
 	public ScrollTopRightAction() {
 		this("Scroll Top/Right", IAction.AS_PUSH_BUTTON,
@@ -40,8 +40,8 @@ public class ScrollTopRightAction extends AbstractScrollAction {
 	}
 
 	/**
-	 * Creates a new {@link ScrollTopRightAction} with the given text and style.
-	 * Also sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link ScrollTopRightAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.

@@ -12,21 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.ui.actions.ActionGroup;
 
 /**
  *
  * @author mwienand
  *
  */
-public class ZoomActionGroup extends ActionGroup {
+public class ZoomActionGroup extends AbstractViewerActionGroup {
 
-	private ZoomOutAction zoomOut = new ZoomOutAction();
-	private ZoomScaleContributionItem zoomScale = new ZoomScaleContributionItem();
-	private ZoomInAction zoomIn = new ZoomInAction();
-	private ZoomResetAction zoomReset = new ZoomResetAction();
 	private ZoomComboContributionItem zoomCombo;
 
 	/**
@@ -38,21 +36,13 @@ public class ZoomActionGroup extends ActionGroup {
 	}
 
 	@Override
-	public void dispose() {
-		if (zoomOut != null) {
-			zoomOut.dispose();
-			zoomOut = null;
+	public List<IViewerDependent> createViewerDependents() {
+		List<IViewerDependent> dependents = new ArrayList<>(Arrays.asList(
+				new ZoomOutAction(), new ZoomScaleContributionItem(),
+				new ZoomInAction(), new ZoomResetAction()));
+		if (zoomCombo != null) {
+			dependents.add(zoomCombo);
 		}
-		super.dispose();
-	}
-
-	@Override
-	public void fillActionBars(org.eclipse.ui.IActionBars actionBars) {
-		IToolBarManager tbm = actionBars.getToolBarManager();
-		tbm.add(zoomOut);
-		tbm.add(zoomScale);
-		tbm.add(zoomIn);
-		tbm.add(zoomReset);
-		tbm.add(zoomCombo);
+		return dependents;
 	}
 }

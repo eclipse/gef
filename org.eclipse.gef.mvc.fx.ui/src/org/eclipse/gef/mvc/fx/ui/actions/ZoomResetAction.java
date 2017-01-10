@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Event;
 public class ZoomResetAction extends AbstractZoomAction {
 
 	/**
-	 * Creates a new {@link ZoomResetAction}.
+	 * Constructs a new {@link ZoomResetAction}.
 	 */
 	public ZoomResetAction() {
 		this("Reset Zoom", IAction.AS_PUSH_BUTTON,
@@ -36,8 +36,8 @@ public class ZoomResetAction extends AbstractZoomAction {
 	}
 
 	/**
-	 * Creates a new {@link ZoomResetAction} with the given text and style. Also
-	 * sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link ZoomResetAction} with the given text and style.
+	 * Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.

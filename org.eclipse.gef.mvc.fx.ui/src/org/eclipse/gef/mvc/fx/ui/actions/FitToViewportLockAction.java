@@ -21,6 +21,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Parent;
 
 /**
+ * The {@link FitToViewportLockAction} is a specialized
+ * {@link FitToViewportAction} that implements toggle functionality, i.e. when
+ * checked, this action will perform fit-to-viewport for every viewport size
+ * change until it is unchecked again.
  *
  * @author mwienand
  *
@@ -36,7 +40,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	};
 
 	/**
-	 *
+	 * Constructs a new {@link FitToViewportLockAction}.
 	 */
 	public FitToViewportLockAction() {
 		super("Fit-To-Viewport Lock", IAction.AS_CHECK_BOX,
@@ -45,7 +49,8 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	}
 
 	/**
-	 *
+	 * This method is called when this action needs to observe the viewport size
+	 * in order to perform fit-to-viewport if the viewport size changes.
 	 */
 	protected void lock() {
 		// register viewport size listeners
@@ -58,7 +63,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	}
 
 	/**
-	 *
+	 * This method is called when the viewport size was changed.
 	 */
 	protected void onSizeChanged() {
 		// only called when locked
@@ -90,7 +95,9 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	}
 
 	/**
-	 *
+	 * This method is called when this action does no longer need to observe the
+	 * viewport size, because no further fit-to-viewport should be performed if
+	 * the viewport size changes.
 	 */
 	protected void unlock() {
 		// unregister viewport size listeners

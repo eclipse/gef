@@ -31,7 +31,7 @@ import javafx.geometry.Bounds;
 public class ScrollBottomRightAction extends AbstractScrollAction {
 
 	/**
-	 *
+	 * Constructs a new {@link ScrollBottomRightAction}.
 	 */
 	public ScrollBottomRightAction() {
 		this("Scroll Bottom/Right", IAction.AS_PUSH_BUTTON,
@@ -40,7 +40,7 @@ public class ScrollBottomRightAction extends AbstractScrollAction {
 	}
 
 	/**
-	 * Creates a new {@link ScrollBottomRightAction} with the given text and
+	 * Constructs a new {@link ScrollBottomRightAction} with the given text and
 	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text

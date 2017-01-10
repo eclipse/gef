@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Event;
 public class ZoomOutAction extends AbstractZoomAction {
 
 	/**
-	 *
+	 * Constructs a new {@link ZoomOutAction}.
 	 */
 	public ZoomOutAction() {
 		this("Zoom Out", IAction.AS_PUSH_BUTTON,
@@ -37,8 +37,8 @@ public class ZoomOutAction extends AbstractZoomAction {
 	}
 
 	/**
-	 * Creates a new {@link ZoomOutAction} with the given text and style. Also
-	 * sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link ZoomOutAction} with the given text and style.
+	 * Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.

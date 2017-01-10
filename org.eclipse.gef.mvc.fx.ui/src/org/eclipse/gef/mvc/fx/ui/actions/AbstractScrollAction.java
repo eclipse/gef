@@ -41,7 +41,7 @@ import javafx.scene.Parent;
 public abstract class AbstractScrollAction extends AbstractViewerAction {
 
 	/**
-	 * Creates a new {@link AbstractScrollAction}.
+	 * Constructs a new {@link AbstractScrollAction}.
 	 *
 	 * @param text
 	 *            Text for the action.
@@ -51,8 +51,8 @@ public abstract class AbstractScrollAction extends AbstractViewerAction {
 	}
 
 	/**
-	 * Creates a new {@link AbstractScrollAction} with the given text and style.
-	 * Also sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link AbstractScrollAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.

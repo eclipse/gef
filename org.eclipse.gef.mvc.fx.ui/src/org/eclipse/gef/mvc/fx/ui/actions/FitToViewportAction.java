@@ -38,7 +38,7 @@ import javafx.scene.Parent;
 public class FitToViewportAction extends AbstractViewerAction {
 
 	/**
-	 * Creates a new {@link FitToViewportAction}.
+	 * Constructs a new {@link FitToViewportAction}.
 	 */
 	public FitToViewportAction() {
 		this("Fit-To-Viewport", IAction.AS_PUSH_BUTTON,
@@ -47,8 +47,8 @@ public class FitToViewportAction extends AbstractViewerAction {
 	}
 
 	/**
-	 * Creates a new {@link FitToViewportAction} with the given text and style.
-	 * Also sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link FitToViewportAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.

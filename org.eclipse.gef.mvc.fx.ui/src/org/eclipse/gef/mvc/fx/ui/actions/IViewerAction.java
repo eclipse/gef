@@ -24,32 +24,32 @@ import org.eclipse.ui.services.IDisposable;
  * @author mwienand
  *
  */
-public interface IViewerAction extends IAction, IDisposable {
-
+public interface IViewerAction extends IAction, IViewerDependent {
 	// /**
 	// * @return checked property
 	// */
 	// public BooleanProperty checkedProperty();
-
-	@Override
-	default void dispose() {
-		init(null);
-	}
-
+	// @Override
+	// default boolean isChecked() {
+	// return checkedProperty().get();
+	// }
+	//
+	// @Override
+	// default void setChecked(boolean checked) {
+	// checkedProperty().set(checked);
+	// }
 	// /**
 	// * @return enabled property
 	// */
 	// public BooleanProperty enabledProperty();
-
-	/**
-	 * Binds this {@link IViewerAction} to the given {@link IViewer}, or unbinds
-	 * this {@link IViewerAction} if <code>null</code> is given.
-	 *
-	 * @param viewer
-	 *            The {@link IViewer} to bind this {@link IViewerAction} to. May
-	 *            be <code>null</code> to unbind this action.
-	 */
-	public void init(IViewer viewer);
-
+	// @Override
+	// default boolean isEnabled() {
+	// return enabledProperty().get();
+	// }
+	//
+	// @Override
+	// default void setEnabled(boolean enabled) {
+	// enabledProperty().set(enabled);
+	// }
 	// public ReadOnlyObjectProperty<IViewer> viewerProperty();
 }

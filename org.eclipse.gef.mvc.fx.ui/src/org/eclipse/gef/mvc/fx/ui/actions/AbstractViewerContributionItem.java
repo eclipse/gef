@@ -19,39 +19,32 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
+ * The {@link AbstractViewerContributionItem} is a specialization of
+ * {@link ContributionItem}
+ *
  * @author mwienand
  *
  */
-public abstract class AbstractViewerContributionItem extends ContributionItem {
+public abstract class AbstractViewerContributionItem extends ContributionItem
+		implements IViewerDependent {
 
 	private IViewer viewer;
-	private boolean isActive = false;
 	private ChangeListener<Boolean> activationListener = new ChangeListener<Boolean>() {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
 			if (newValue.booleanValue()) {
-				setActive(true);
+				register();
 			} else {
-				setActive(false);
+				unregister();
 			}
 		}
 	};
 
 	/**
-	 * Creates a new {@link AbstractViewerContributionItem}.
+	 * Constructs a new {@link AbstractViewerContributionItem}.
 	 */
 	protected AbstractViewerContributionItem() {
-	}
-
-	/**
-	 */
-	protected void activate() {
-	}
-
-	/**
-	 */
-	protected void deactivate() {
 	}
 
 	/**
@@ -65,12 +58,7 @@ public abstract class AbstractViewerContributionItem extends ContributionItem {
 		return viewer;
 	}
 
-	/**
-	 * Change {@link IViewer}.
-	 *
-	 * @param viewer
-	 *            a
-	 */
+	@Override
 	public void init(IViewer viewer) {
 		if (this.viewer == viewer) {
 			// nothing changed
@@ -80,7 +68,9 @@ public abstract class AbstractViewerContributionItem extends ContributionItem {
 		// unregister listeners and clean up for the old viewer
 		if (this.viewer != null) {
 			this.viewer.activeProperty().removeListener(activationListener);
-			setActive(false);
+			if (this.viewer.isActive()) {
+				unregister();
+			}
 		}
 
 		// save new viewer
@@ -89,32 +79,30 @@ public abstract class AbstractViewerContributionItem extends ContributionItem {
 		// register listeners and prepare for the new viewer
 		if (this.viewer != null) {
 			this.viewer.activeProperty().addListener(activationListener);
-			setActive(this.viewer.isActive());
+			if (this.viewer.isActive()) {
+				register();
+			}
 		}
 	}
 
-	/**
-	 *
-	 * @return a
-	 */
-	protected boolean isActive() {
-		return isActive;
+	@Override
+	public boolean isEnabled() {
+		return getViewer() != null && getViewer().isActive();
 	}
 
 	/**
-	 * @param isActive
-	 *            a
+	 * This method is called when this item obtains an {@link IViewer} which is
+	 * {@link IViewer#activeProperty() active} or when a previously obtained
+	 * viewer is activated.
 	 */
-	protected void setActive(boolean isActive) {
-		if (this.isActive == isActive) {
-			// nothing changed
-			return;
-		}
-		if (isActive) {
-			activate();
-		} else {
-			deactivate();
-		}
-		this.isActive = isActive;
+	protected void register() {
+	}
+
+	/**
+	 * This method is called when this item loses an {@link IViewer} which is
+	 * {@link IViewer#activeProperty() active} or when a previously obtained
+	 * viewer is deactivated.
+	 */
+	protected void unregister() {
 	}
 }

@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Event;
 public class ZoomInAction extends AbstractZoomAction {
 
 	/**
-	 *
+	 * Constructs a new {@link ZoomInAction}.
 	 */
 	public ZoomInAction() {
 		this("Zoom In", IAction.AS_PUSH_BUTTON,
@@ -37,7 +37,7 @@ public class ZoomInAction extends AbstractZoomAction {
 	}
 
 	/**
-	 * Creates a new {@link ZoomInAction} with the given text and style. Also
+	 * Constructs a new {@link ZoomInAction} with the given text and style. Also
 	 * sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text

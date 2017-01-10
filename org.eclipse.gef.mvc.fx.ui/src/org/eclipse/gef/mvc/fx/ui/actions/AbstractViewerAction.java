@@ -52,6 +52,12 @@ public abstract class AbstractViewerAction extends Action
 		}
 	};
 
+	// private ObjectProperty<IViewer> viewerProperty;
+	// private BooleanProperty checked = new BooleanProperty(false);
+	// private BooleanProperty enabled = new BooleanProperty(false);
+	// @Override public BooleanProperty enabledProperty() { return enabled; }
+	// @Override public BooleanProperty checkedProperty() { return checked; }
+
 	/**
 	 * Creates a new {@link IViewerAction}.
 	 *
@@ -59,12 +65,12 @@ public abstract class AbstractViewerAction extends Action
 	 *            Text for the action.
 	 */
 	protected AbstractViewerAction(String text) {
-		super(text, IAction.AS_PUSH_BUTTON);
+		this(text, IAction.AS_PUSH_BUTTON, null);
 	}
 
 	/**
-	 * Creates a new {@link AbstractViewerAction} with the given text and style.
-	 * Also sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link AbstractViewerAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.
@@ -77,6 +83,7 @@ public abstract class AbstractViewerAction extends Action
 			ImageDescriptor imageDescriptor) {
 		super(text, style);
 		setImageDescriptor(imageDescriptor);
+		setEnabled(false);
 	}
 
 	/**
@@ -115,7 +122,9 @@ public abstract class AbstractViewerAction extends Action
 		// unregister listeners and clean up for the old viewer
 		if (this.viewer != null) {
 			this.viewer.activeProperty().removeListener(activationListener);
-			unregister();
+			if (this.viewer.isActive()) {
+				unregister();
+			}
 		}
 
 		// save new viewer
@@ -131,6 +140,10 @@ public abstract class AbstractViewerAction extends Action
 	}
 
 	/**
+	 * This method is called when this action obtains an {@link IViewer} which
+	 * is {@link IViewer#activeProperty() active} or when a previously obtained
+	 * viewer is activated. Per default, this method {@link #setEnabled(boolean)
+	 * enables} this action.
 	 */
 	protected void register() {
 		setEnabled(true);
@@ -164,6 +177,9 @@ public abstract class AbstractViewerAction extends Action
 	}
 
 	/**
+	 * This method is called when this action loses its {@link IViewer} or when
+	 * its {@link #getViewer() viewer} is deactivated. Per default, this method
+	 * {@link #setEnabled(boolean) disables} this action.
 	 */
 	protected void unregister() {
 		setEnabled(false);

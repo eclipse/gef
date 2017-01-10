@@ -141,6 +141,9 @@ public class DotGraphView extends ZestFxUiView {
 	private ZoomComboContributionItem zoomComboContributionItem;
 	private ZoomResetAction zoomResetAction;
 	private FitToViewportLockAction fitToViewportLockAction;
+	private ZoomActionGroup zoomActionGroup;
+	private FitToViewportActionGroup fitToViewportActionGroup;
+	private ScrollActionGroup scrollActionGroup;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
@@ -172,64 +175,17 @@ public class DotGraphView extends ZestFxUiView {
 		currentDot = null;
 		currentFile = null;
 
-		if (fitToViewportAction != null) {
-			fitToViewportAction.dispose();
-			fitToViewportAction = null;
+		if (fitToViewportActionGroup != null) {
+			fitToViewportActionGroup.dispose();
+			fitToViewportActionGroup = null;
 		}
-
-		if (fitToViewportLockAction != null) {
-			fitToViewportLockAction.dispose();
-			fitToViewportLockAction = null;
+		if (zoomActionGroup != null) {
+			zoomActionGroup.dispose();
+			zoomActionGroup = null;
 		}
-
-		if (zoomInAction != null) {
-			zoomInAction.dispose();
-			zoomInAction = null;
-		}
-
-		if (zoomOutAction != null) {
-			zoomOutAction.dispose();
-			zoomOutAction = null;
-		}
-
-		if (zoomResetAction != null) {
-			zoomResetAction.dispose();
-			zoomResetAction = null;
-		}
-
-		if (zoomComboContributionItem != null) {
-			zoomComboContributionItem.dispose();
-			zoomComboContributionItem = null;
-		}
-
-		if (zoomScaleContributionItem != null) {
-			zoomScaleContributionItem.dispose();
-			zoomScaleContributionItem = null;
-		}
-
-		if (scrollCenterAction != null) {
-			scrollCenterAction.dispose();
-			scrollCenterAction = null;
-		}
-
-		if (scrollTopLeftAction != null) {
-			scrollTopLeftAction.dispose();
-			scrollTopLeftAction = null;
-		}
-
-		if (scrollTopRightAction != null) {
-			scrollTopRightAction.dispose();
-			scrollTopRightAction = null;
-		}
-
-		if (scrollBottomRightAction != null) {
-			scrollBottomRightAction.dispose();
-			scrollBottomRightAction = null;
-		}
-
-		if (scrollBottomLeftAction != null) {
-			scrollBottomLeftAction.dispose();
-			scrollBottomLeftAction = null;
+		if (scrollActionGroup != null) {
+			scrollActionGroup.dispose();
+			scrollActionGroup = null;
 		}
 
 		getContentViewer().contentsProperty().clear();
@@ -251,70 +207,18 @@ public class DotGraphView extends ZestFxUiView {
 		IToolBarManager mgr = actionBars.getToolBarManager();
 		mgr.add(new Separator());
 
-		ZoomActionGroup zoomActionGroup = new ZoomActionGroup();
-		FitToViewportActionGroup fitToViewportActionGroup = new FitToViewportActionGroup();
-		ScrollActionGroup scrollActionGroup = new ScrollActionGroup();
+		zoomActionGroup = new ZoomActionGroup();
+		zoomActionGroup.init(getContentViewer());
+		fitToViewportActionGroup = new FitToViewportActionGroup();
+		fitToViewportActionGroup.init(getContentViewer());
+		scrollActionGroup = new ScrollActionGroup();
+		scrollActionGroup.init(getContentViewer());
 
 		zoomActionGroup.fillActionBars(actionBars);
 		mgr.add(new Separator());
 		fitToViewportActionGroup.fillActionBars(actionBars);
 		mgr.add(new Separator());
 		scrollActionGroup.fillActionBars(actionBars);
-
-		// zoomOutAction = new ZoomOutAction();
-		// zoomOutAction.init(getContentViewer());
-		// add(zoomOutAction, null);
-		//
-		// zoomScaleContributionItem = new ZoomScaleContributionItem();
-		// zoomScaleContributionItem.init(getContentViewer());
-		// mgr.add(zoomScaleContributionItem);
-		//
-		// zoomInAction = new ZoomInAction();
-		// zoomInAction.init(getContentViewer());
-		// add(zoomInAction, null);
-		//
-		// zoomResetAction = new ZoomResetAction();
-		// zoomResetAction.init(getContentViewer());
-		// add(zoomResetAction, null);
-		//
-		// zoomComboContributionItem = new ZoomComboContributionItem(
-		// new FitToViewportAction());
-		// zoomComboContributionItem.init(getContentViewer());
-		// mgr.add(zoomComboContributionItem);
-		//
-		// mgr.add(new Separator());
-		//
-		// fitToViewportAction = new FitToViewportAction();
-		// fitToViewportAction.init(getContentViewer());
-		// add(fitToViewportAction, null);
-		//
-		// fitToViewportLockAction = new FitToViewportLockAction();
-		// fitToViewportLockAction.init(getContentViewer());
-		// add(fitToViewportLockAction, null);
-		//
-		// mgr.add(new Separator());
-		//
-		// // TODO: stack scroll actions (default: center; others: drop-down)
-		//
-		// scrollCenterAction = new ScrollCenterAction();
-		// scrollCenterAction.init(getContentViewer());
-		// add(scrollCenterAction, null);
-		//
-		// scrollTopLeftAction = new ScrollTopLeftAction();
-		// scrollTopLeftAction.init(getContentViewer());
-		// add(scrollTopLeftAction, null);
-		//
-		// scrollBottomLeftAction = new ScrollBottomLeftAction();
-		// scrollBottomLeftAction.init(getContentViewer());
-		// add(scrollBottomLeftAction, null);
-		//
-		// scrollTopRightAction = new ScrollTopRightAction();
-		// scrollTopRightAction.init(getContentViewer());
-		// add(scrollTopRightAction, null);
-		//
-		// scrollBottomRightAction = new ScrollBottomRightAction();
-		// scrollBottomRightAction.init(getContentViewer());
-		// add(scrollBottomRightAction, null);
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));

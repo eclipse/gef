@@ -64,16 +64,15 @@ public class DeleteAction extends AbstractViewerAction {
 	};
 
 	/**
-	 * Creates a new {@link DeleteAction}.
+	 * Constructs a new {@link DeleteAction}.
 	 */
 	public DeleteAction() {
 		this("Delete", IAction.AS_PUSH_BUTTON, null);
 		setId(ActionFactory.DELETE.getId());
-		setEnabled(false);
 	}
 
 	/**
-	 * Creates a new {@link DeleteAction} with the given text and style. Also
+	 * Constructs a new {@link DeleteAction} with the given text and style. Also
 	 * sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
@@ -86,17 +85,6 @@ public class DeleteAction extends AbstractViewerAction {
 	protected DeleteAction(String text, int style,
 			ImageDescriptor imageDescriptor) {
 		super(text, style, imageDescriptor);
-	}
-
-	@Override
-	protected void register() {
-		SelectionModel newSelectionModel = getSelectionModel();
-		if (newSelectionModel != null) {
-			newSelectionModel.getSelectionUnmodifiable()
-					.addListener(selectionListener);
-		}
-		setEnabled(newSelectionModel != null
-				&& !newSelectionModel.getSelectionUnmodifiable().isEmpty());
 	}
 
 	/**
@@ -124,16 +112,6 @@ public class DeleteAction extends AbstractViewerAction {
 		return deleteOperation;
 	}
 
-	@Override
-	protected void unregister() {
-		setEnabled(false);
-		SelectionModel oldSelectionModel = getSelectionModel();
-		if (oldSelectionModel != null) {
-			oldSelectionModel.getSelectionUnmodifiable()
-					.removeListener(selectionListener);
-		}
-	}
-
 	/**
 	 * Returns the {@link SelectionModel} for the currently bound
 	 * {@link IViewer} or <code>null</code> if this action handler is either not
@@ -144,5 +122,26 @@ public class DeleteAction extends AbstractViewerAction {
 	protected SelectionModel getSelectionModel() {
 		return getViewer() == null ? null
 				: getViewer().getAdapter(SelectionModel.class);
+	}
+
+	@Override
+	protected void register() {
+		SelectionModel newSelectionModel = getSelectionModel();
+		if (newSelectionModel != null) {
+			newSelectionModel.getSelectionUnmodifiable()
+					.addListener(selectionListener);
+		}
+		setEnabled(newSelectionModel != null
+				&& !newSelectionModel.getSelectionUnmodifiable().isEmpty());
+	}
+
+	@Override
+	protected void unregister() {
+		setEnabled(false);
+		SelectionModel oldSelectionModel = getSelectionModel();
+		if (oldSelectionModel != null) {
+			oldSelectionModel.getSelectionUnmodifiable()
+					.removeListener(selectionListener);
+		}
 	}
 }

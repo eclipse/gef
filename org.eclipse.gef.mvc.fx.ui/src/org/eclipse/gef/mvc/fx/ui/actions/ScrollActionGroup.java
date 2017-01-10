@@ -12,61 +12,45 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.actions.ActionGroup;
 
 /**
  *
  * @author mwienand
  *
  */
-public class ScrollActionGroup extends ActionGroup {
+public class ScrollActionGroup extends AbstractViewerActionGroup {
 
-	private ScrollCenterAction scrollCenter = new ScrollCenterAction();
-	private ScrollTopLeftAction scrollTopLeft = new ScrollTopLeftAction();
-	private ScrollTopRightAction scrollTopRight = new ScrollTopRightAction();
-	private ScrollBottomRightAction scrollBottomRight = new ScrollBottomRightAction();
-	private ScrollBottomLeftAction scrollBottomLeft = new ScrollBottomLeftAction();
-
-	/**
-	 *
-	 */
-	public ScrollActionGroup() {
-	}
+	private ScrollCenterAction scrollCenterDropDownAction = new ScrollCenterAction(
+			"Scroll Center", IAction.AS_DROP_DOWN_MENU,
+			MvcFxUiBundle.getDefault().getImageRegistry()
+					.getDescriptor(MvcFxUiBundle.IMG_ICONS_SCROLL_CENTER)) {
+	};
+	private ScrollTopLeftAction scrollTopLeftAction = new ScrollTopLeftAction();
+	private ScrollTopRightAction scrollTopRightAction = new ScrollTopRightAction();
+	private ScrollBottomRightAction scrollBottomRightAction = new ScrollBottomRightAction();
+	private ScrollBottomLeftAction scrollBottomLeftAction = new ScrollBottomLeftAction();
 
 	@Override
-	public void dispose() {
-		if (scrollCenter != null) {
-			scrollCenter.dispose();
-			scrollCenter = null;
-		}
-		if (scrollTopLeft != null) {
-			scrollTopLeft.dispose();
-			scrollTopLeft = null;
-		}
-		if (scrollTopRight != null) {
-			scrollTopRight.dispose();
-			scrollTopRight = null;
-		}
-		if (scrollBottomRight != null) {
-			scrollBottomRight.dispose();
-			scrollBottomRight = null;
-		}
-		if (scrollBottomLeft != null) {
-			scrollBottomLeft.dispose();
-			scrollBottomLeft = null;
-		}
-		super.dispose();
+	public List<IViewerDependent> createViewerDependents() {
+		return Arrays.asList(scrollCenterDropDownAction, scrollTopLeftAction,
+				scrollTopRightAction, scrollBottomRightAction,
+				scrollBottomLeftAction);
 	}
 
 	@Override
 	public void fillActionBars(org.eclipse.ui.IActionBars actionBars) {
 		IToolBarManager tbm = actionBars.getToolBarManager();
-		tbm.add(scrollCenter);
+		tbm.add(scrollCenterDropDownAction);
 		IMenuCreator menuCreator = new IMenuCreator() {
 			private Menu menu;
 			private ActionContributionItem topLeftItem;
@@ -91,13 +75,15 @@ public class ScrollActionGroup extends ActionGroup {
 			}
 
 			private void fillMenu(Menu menu) {
-				topLeftItem = new ActionContributionItem(scrollTopLeft);
+				topLeftItem = new ActionContributionItem(scrollTopLeftAction);
 				topLeftItem.fill(menu, -1);
-				topRightItem = new ActionContributionItem(scrollTopRight);
+				topRightItem = new ActionContributionItem(scrollTopRightAction);
 				topRightItem.fill(menu, -1);
-				bottomRightItem = new ActionContributionItem(scrollBottomRight);
+				bottomRightItem = new ActionContributionItem(
+						scrollBottomRightAction);
 				bottomRightItem.fill(menu, -1);
-				bottomLeftItem = new ActionContributionItem(scrollBottomLeft);
+				bottomLeftItem = new ActionContributionItem(
+						scrollBottomLeftAction);
 				bottomLeftItem.fill(menu, -1);
 			}
 
@@ -119,6 +105,6 @@ public class ScrollActionGroup extends ActionGroup {
 				return menu;
 			}
 		};
-		scrollCenter.setMenuCreator(menuCreator);
+		scrollCenterDropDownAction.setMenuCreator(menuCreator);
 	}
 }

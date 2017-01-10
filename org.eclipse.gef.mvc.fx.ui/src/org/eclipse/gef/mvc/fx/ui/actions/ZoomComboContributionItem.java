@@ -80,8 +80,11 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	private List<IAction> additionalActions = new ArrayList<>();
 
 	/**
+	 * Constructs a new {@link ZoomComboContributionItem}.
+	 *
 	 * @param additionalActions
-	 *            a
+	 *            Additional {@link IAction}s that should be shown in the
+	 *            {@link Combo}, e.g. {@link FitToViewportAction}.
 	 */
 	public ZoomComboContributionItem(IAction... additionalActions) {
 		setId(ZOOM_COMBO_CONTRIBUTION_ITEM_ID);
@@ -89,40 +92,8 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	}
 
 	@Override
-	protected void activate() {
-		if (zoomListener != null) {
-			throw new IllegalStateException(
-					"Zoom listener is already registered.");
-		}
-		Parent canvas = getViewer().getCanvas();
-		if (canvas instanceof InfiniteCanvas) {
-			InfiniteCanvas infiniteCanvas = (InfiniteCanvas) canvas;
-			zoomListener = (a, o, n) -> {
-				showZoomFactor(n);
-			};
-			infiniteCanvas.getContentTransform().mxxProperty()
-					.addListener(zoomListener);
-			showZoomFactor(infiniteCanvas.getContentTransform().getMxx());
-		}
-	}
-
-	@Override
-	protected void deactivate() {
-		if (zoomListener == null) {
-			throw new IllegalStateException(
-					"Zoom listener not yet registered.");
-		}
-		Parent canvas = getViewer().getCanvas();
-		if (canvas instanceof InfiniteCanvas) {
-			((InfiniteCanvas) canvas).getContentTransform().mxxProperty()
-					.removeListener(zoomListener);
-			zoomListener = null;
-		}
-	}
-
-	@Override
 	public void dispose() {
-		if (getViewer() != null && isActive()) {
+		if (getViewer() != null) {
 			init(null);
 		}
 		if (toolItem != null && !toolItem.isDisposed()) {
@@ -289,6 +260,24 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 		}
 	}
 
+	@Override
+	protected void register() {
+		if (zoomListener != null) {
+			throw new IllegalStateException(
+					"Zoom listener is already registered.");
+		}
+		Parent canvas = getViewer().getCanvas();
+		if (canvas instanceof InfiniteCanvas) {
+			InfiniteCanvas infiniteCanvas = (InfiniteCanvas) canvas;
+			zoomListener = (a, o, n) -> {
+				showZoomFactor(n);
+			};
+			infiniteCanvas.getContentTransform().mxxProperty()
+					.addListener(zoomListener);
+			showZoomFactor(infiniteCanvas.getContentTransform().getMxx());
+		}
+	}
+
 	/**
 	 *
 	 * @param n
@@ -335,11 +324,25 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 		return zoom;
 	}
 
+	@Override
+	protected void unregister() {
+		if (zoomListener == null) {
+			throw new IllegalStateException(
+					"Zoom listener not yet registered.");
+		}
+		Parent canvas = getViewer().getCanvas();
+		if (canvas instanceof InfiniteCanvas) {
+			((InfiniteCanvas) canvas).getContentTransform().mxxProperty()
+					.removeListener(zoomListener);
+			zoomListener = null;
+		}
+	}
+
 	/**
 	 *
 	 */
 	protected void updateComboText() {
-		if (isActive()) {
+		if (isEnabled()) {
 			Parent canvas = getViewer().getCanvas();
 			if (canvas instanceof InfiniteCanvas) {
 				InfiniteCanvas infiniteCanvas = (InfiniteCanvas) canvas;

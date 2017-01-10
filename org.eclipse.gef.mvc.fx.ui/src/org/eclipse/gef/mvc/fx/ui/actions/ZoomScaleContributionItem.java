@@ -35,7 +35,7 @@ import javafx.scene.Parent;
 public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 
 	/**
-	 *
+	 * Action ID
 	 */
 	public static final String ZOOM_SCALE_CONTRIBUTION_ITEM_ID = "ZoomScaleContributionItem";
 
@@ -63,28 +63,10 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	};
 
 	/**
+	 * Constructs a new {@link ZoomScaleContributionItem}.
 	 */
 	public ZoomScaleContributionItem() {
 		setId(ZOOM_SCALE_CONTRIBUTION_ITEM_ID);
-	}
-
-	@Override
-	protected void activate() {
-		if (zoomListener != null) {
-			throw new IllegalStateException(
-					"Zoom listener is already registered.");
-		}
-
-		Parent canvas = getViewer().getCanvas();
-		if (canvas instanceof InfiniteCanvas) {
-			InfiniteCanvas infiniteCanvas = (InfiniteCanvas) canvas;
-			zoomListener = (a, o, n) -> {
-				updateScaleValue(n.doubleValue());
-			};
-			infiniteCanvas.getContentTransform().mxxProperty()
-					.addListener(zoomListener);
-			updateScaleValue(infiniteCanvas.getContentTransform().getMxx());
-		}
 	}
 
 	/**
@@ -112,22 +94,8 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	}
 
 	@Override
-	protected void deactivate() {
-		if (zoomListener == null) {
-			throw new IllegalStateException(
-					"Zoom listener not yet registered.");
-		}
-		Parent canvas = getViewer().getCanvas();
-		if (canvas instanceof InfiniteCanvas) {
-			((InfiniteCanvas) canvas).getContentTransform().mxxProperty()
-					.removeListener(zoomListener);
-			zoomListener = null;
-		}
-	}
-
-	@Override
 	public void dispose() {
-		if (getViewer() != null && isActive()) {
+		if (getViewer() != null) {
 			init(null);
 		}
 		if (toolItem != null && !toolItem.isDisposed()) {
@@ -183,7 +151,7 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 			}
 		});
 
-		if (isActive()) {
+		if (isEnabled()) {
 			double mxx = ((InfiniteCanvas) getViewer().getCanvas())
 					.getContentTransform().getMxx();
 			updateScaleValue(mxx);
@@ -194,6 +162,39 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	public void init(IViewer viewer) {
 		super.init(viewer);
 		zoomAction.init(viewer);
+	}
+
+	@Override
+	protected void register() {
+		if (zoomListener != null) {
+			throw new IllegalStateException(
+					"Zoom listener is already registered.");
+		}
+
+		Parent canvas = getViewer().getCanvas();
+		if (canvas instanceof InfiniteCanvas) {
+			InfiniteCanvas infiniteCanvas = (InfiniteCanvas) canvas;
+			zoomListener = (a, o, n) -> {
+				updateScaleValue(n.doubleValue());
+			};
+			infiniteCanvas.getContentTransform().mxxProperty()
+					.addListener(zoomListener);
+			updateScaleValue(infiniteCanvas.getContentTransform().getMxx());
+		}
+	}
+
+	@Override
+	protected void unregister() {
+		if (zoomListener == null) {
+			throw new IllegalStateException(
+					"Zoom listener not yet registered.");
+		}
+		Parent canvas = getViewer().getCanvas();
+		if (canvas instanceof InfiniteCanvas) {
+			((InfiniteCanvas) canvas).getContentTransform().mxxProperty()
+					.removeListener(zoomListener);
+			zoomListener = null;
+		}
 	}
 
 	/**

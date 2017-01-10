@@ -31,7 +31,7 @@ import javafx.geometry.Bounds;
 public class ScrollTopLeftAction extends AbstractScrollAction {
 
 	/**
-	 *
+	 * Constructs a new {@link ScrollTopLeftAction}.
 	 */
 	public ScrollTopLeftAction() {
 		this("Scroll Top/Left", IAction.AS_PUSH_BUTTON,
@@ -40,8 +40,8 @@ public class ScrollTopLeftAction extends AbstractScrollAction {
 	}
 
 	/**
-	 * Creates a new {@link ScrollTopLeftAction} with the given text and style.
-	 * Also sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link ScrollTopLeftAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.

@@ -31,7 +31,7 @@ import javafx.geometry.Bounds;
 public class ScrollCenterAction extends AbstractScrollAction {
 
 	/**
-	 *
+	 * Constructs a new {@link ScrollCenterAction}.
 	 */
 	public ScrollCenterAction() {
 		this("Scroll Center", IAction.AS_PUSH_BUTTON,
@@ -40,8 +40,8 @@ public class ScrollCenterAction extends AbstractScrollAction {
 	}
 
 	/**
-	 * Creates a new {@link ScrollCenterAction} with the given text and style.
-	 * Also sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link ScrollCenterAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.

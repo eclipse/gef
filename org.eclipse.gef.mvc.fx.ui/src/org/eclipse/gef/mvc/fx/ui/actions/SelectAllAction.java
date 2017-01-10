@@ -37,7 +37,7 @@ import javafx.scene.Node;
 public class SelectAllAction extends AbstractViewerAction {
 
 	/**
-	 * Creates a new {@link SelectAllAction}.
+	 * Constructs a new {@link SelectAllAction}.
 	 */
 	public SelectAllAction() {
 		this("Select All", IAction.AS_PUSH_BUTTON, null);
@@ -45,8 +45,8 @@ public class SelectAllAction extends AbstractViewerAction {
 	}
 
 	/**
-	 * Creates a new {@link SelectAllAction} with the given text and style. Also
-	 * sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link SelectAllAction} with the given text and style.
+	 * Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.
