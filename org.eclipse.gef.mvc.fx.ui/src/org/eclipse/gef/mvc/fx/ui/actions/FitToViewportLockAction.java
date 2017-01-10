@@ -44,22 +44,6 @@ public class FitToViewportLockAction extends FitToViewportAction {
 						MvcFxUiBundle.IMG_ICONS_FIT_TO_VIEWPORT_LOCK));
 	}
 
-	@Override
-	protected void activate() {
-		super.activate();
-		if (isChecked()) {
-			lock();
-			// initial fit-to-viewport
-			runWithEvent(null);
-		}
-	}
-
-	@Override
-	protected void deactivate() {
-		unlock();
-		super.deactivate();
-	}
-
 	/**
 	 *
 	 */
@@ -84,8 +68,18 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	}
 
 	@Override
+	protected void register() {
+		super.register();
+		if (isChecked()) {
+			lock();
+			// initial fit-to-viewport
+			runWithEvent(null);
+		}
+	}
+
+	@Override
 	public void setChecked(boolean checked) {
-		if (isActive()) {
+		if (isEnabled()) {
 			if (isChecked() && !checked) {
 				unlock();
 			} else if (!isChecked() && checked) {
@@ -106,5 +100,11 @@ public class FitToViewportLockAction extends FitToViewportAction {
 			infiniteCanvas.widthProperty().removeListener(sizeChangeListener);
 			infiniteCanvas.heightProperty().removeListener(sizeChangeListener);
 		}
+	}
+
+	@Override
+	protected void unregister() {
+		unlock();
+		super.unregister();
 	}
 }

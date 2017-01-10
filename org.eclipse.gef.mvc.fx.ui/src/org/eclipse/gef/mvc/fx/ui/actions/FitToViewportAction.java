@@ -46,24 +46,6 @@ public class FitToViewportAction extends AbstractViewerAction {
 						MvcFxUiBundle.IMG_ICONS_FIT_TO_VIEWPORT));
 	}
 
-	// /**
-	// * Creates a new {@link FitToViewportAction}.
-	// *
-	// * @param style
-	// * The style for the action.
-	// */
-	// public FitToViewportAction(int style) {
-	// this("Fit-To-Viewport", style,
-	// MvcFxUiBundle.getDefault().getImageRegistry().getDescriptor(
-	// MvcFxUiBundle.IMG_ICONS_FIT_TO_VIEWPORT));
-	// if (style == IAction.AS_CHECK_BOX) {
-	// // TODO: set flag, register viewport listeners later
-	// } else if (style != IAction.AS_PUSH_BUTTON) {
-	// throw new IllegalArgumentException(
-	// "Given style (" + style + ") is not supported.");
-	// }
-	// }
-
 	/**
 	 * Creates a new {@link FitToViewportAction} with the given text and style.
 	 * Also sets the given {@link ImageDescriptor} for this action.

@@ -40,15 +40,14 @@ public abstract class AbstractViewerAction extends Action
 		implements IViewerAction {
 
 	private IViewer viewer;
-	private boolean isActive;
 	private ChangeListener<Boolean> activationListener = new ChangeListener<Boolean>() {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
 			if (newValue.booleanValue()) {
-				setActive(true);
+				register();
 			} else {
-				setActive(false);
+				unregister();
 			}
 		}
 	};
@@ -81,12 +80,6 @@ public abstract class AbstractViewerAction extends Action
 	}
 
 	/**
-	 */
-	protected void activate() {
-		setEnabled(true);
-	}
-
-	/**
 	 * Returns an {@link ITransactionalOperation} that performs the desired
 	 * changes, or <code>null</code> if no changes should be performed. If
 	 * <code>null</code> is returned, then the "doit" flag of the initiating
@@ -100,12 +93,6 @@ public abstract class AbstractViewerAction extends Action
 	 *         changes.
 	 */
 	protected abstract ITransactionalOperation createOperation(Event event);
-
-	/**
-	 */
-	protected void deactivate() {
-		setEnabled(false);
-	}
 
 	/**
 	 * Returns the {@link IViewer} for which this {@link IViewerAction} was
@@ -128,7 +115,7 @@ public abstract class AbstractViewerAction extends Action
 		// unregister listeners and clean up for the old viewer
 		if (this.viewer != null) {
 			this.viewer.activeProperty().removeListener(activationListener);
-			setActive(false);
+			unregister();
 		}
 
 		// save new viewer
@@ -137,16 +124,16 @@ public abstract class AbstractViewerAction extends Action
 		// register listeners and prepare for the new viewer
 		if (this.viewer != null) {
 			this.viewer.activeProperty().addListener(activationListener);
-			setActive(this.viewer.isActive());
+			if (this.viewer.isActive()) {
+				register();
+			}
 		}
 	}
 
 	/**
-	 *
-	 * @return a
 	 */
-	protected boolean isActive() {
-		return isActive;
+	protected void register() {
+		setEnabled(true);
 	}
 
 	@Override
@@ -157,7 +144,7 @@ public abstract class AbstractViewerAction extends Action
 
 	@Override
 	public void runWithEvent(Event event) {
-		if (!isActive()) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -177,20 +164,8 @@ public abstract class AbstractViewerAction extends Action
 	}
 
 	/**
-	 *
-	 * @param isActive
-	 *            a
 	 */
-	protected void setActive(boolean isActive) {
-		if (this.isActive == isActive) {
-			// nothing changed
-			return;
-		}
-		if (isActive) {
-			activate();
-		} else {
-			deactivate();
-		}
-		this.isActive = isActive;
+	protected void unregister() {
+		setEnabled(false);
 	}
 }

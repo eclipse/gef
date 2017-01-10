@@ -89,7 +89,7 @@ public class DeleteAction extends AbstractViewerAction {
 	}
 
 	@Override
-	protected void activate() {
+	protected void register() {
 		SelectionModel newSelectionModel = getSelectionModel();
 		if (newSelectionModel != null) {
 			newSelectionModel.getSelectionUnmodifiable()
@@ -125,7 +125,7 @@ public class DeleteAction extends AbstractViewerAction {
 	}
 
 	@Override
-	protected void deactivate() {
+	protected void unregister() {
 		setEnabled(false);
 		SelectionModel oldSelectionModel = getSelectionModel();
 		if (oldSelectionModel != null) {

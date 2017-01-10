@@ -26,10 +26,20 @@ import org.eclipse.ui.services.IDisposable;
  */
 public interface IViewerAction extends IAction, IDisposable {
 
+	// /**
+	// * @return checked property
+	// */
+	// public BooleanProperty checkedProperty();
+
 	@Override
 	default void dispose() {
 		init(null);
 	}
+
+	// /**
+	// * @return enabled property
+	// */
+	// public BooleanProperty enabledProperty();
 
 	/**
 	 * Binds this {@link IViewerAction} to the given {@link IViewer}, or unbinds
@@ -41,4 +51,5 @@ public interface IViewerAction extends IAction, IDisposable {
 	 */
 	public void init(IViewer viewer);
 
+	// public ReadOnlyObjectProperty<IViewer> viewerProperty();
 }
