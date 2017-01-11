@@ -63,7 +63,8 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	}
 
 	/**
-	 * This method is called when the viewport size was changed.
+	 * This method is called when the viewport size was changed. It performs
+	 * fit-to-viewport if this action is enabled.
 	 */
 	protected void onSizeChanged() {
 		// only called when locked

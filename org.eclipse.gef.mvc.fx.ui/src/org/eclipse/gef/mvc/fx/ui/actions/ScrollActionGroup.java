@@ -24,6 +24,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
 /**
+ * The {@link ScrollActionGroup} is an {@link AbstractViewerActionGroup} that
+ * combines the {@link ScrollCenterAction}, {@link ScrollTopLeftAction},
+ * {@link ScrollTopRightAction}, {@link ScrollBottomRightAction}, and
+ * {@link ScrollBottomLeftAction}. Only the {@link ScrollCenterAction} is
+ * inserted into the tool bar when this action group contributes to the UI. The
+ * other actions are put in a drop down menu that is rooted at the
+ * {@link ScrollCenterAction}.
  *
  * @author mwienand
  *
@@ -51,6 +58,7 @@ public class ScrollActionGroup extends AbstractViewerActionGroup {
 	public void fillActionBars(org.eclipse.ui.IActionBars actionBars) {
 		IToolBarManager tbm = actionBars.getToolBarManager();
 		tbm.add(scrollCenterDropDownAction);
+		// TODO: Review to ensure that disposal is correct.
 		IMenuCreator menuCreator = new IMenuCreator() {
 			private Menu menu;
 			private ActionContributionItem topLeftItem;

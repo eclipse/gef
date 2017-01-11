@@ -19,6 +19,12 @@ import java.util.List;
 import org.eclipse.jface.action.IAction;
 
 /**
+ * The {@link ZoomActionGroup} is an {@link AbstractViewerActionGroup} that
+ * combines {@link ZoomOutAction}, {@link ZoomScaleContributionItem},
+ * {@link ZoomInAction}, {@link ZoomResetAction}, and
+ * {@link ZoomComboContributionItem}. Upon construction, you can add additional
+ * actions that are put into the {@link ZoomComboContributionItem} (see
+ * {@link #ZoomActionGroup(IAction...)}.
  *
  * @author mwienand
  *
@@ -28,8 +34,13 @@ public class ZoomActionGroup extends AbstractViewerActionGroup {
 	private ZoomComboContributionItem zoomCombo;
 
 	/**
+	 * Constructs a new {@link ZoomActionGroup} and adds the given additional
+	 * actions to the {@link ZoomComboContributionItem} that is contained in
+	 * this action group.
+	 *
 	 * @param additionalComboItems
-	 *            a
+	 *            The additional actions for the
+	 *            {@link ZoomComboContributionItem}.
 	 */
 	public ZoomActionGroup(IAction... additionalComboItems) {
 		zoomCombo = new ZoomComboContributionItem(additionalComboItems);

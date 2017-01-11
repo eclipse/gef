@@ -40,21 +40,9 @@ import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.GraphCopier;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportLockAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollBottomLeftAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollBottomRightAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollCenterAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollTopLeftAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollTopRightAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomComboContributionItem;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomInAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomOutAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomResetAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomScaleContributionItem;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
@@ -119,7 +107,6 @@ public class DotGraphView extends ZestFxUiView {
 			dot2ZestAttributeCopier);
 
 	private IPropertyChangeListener preferenceChangeListener = new IPropertyChangeListener() {
-
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty()
@@ -129,18 +116,7 @@ public class DotGraphView extends ZestFxUiView {
 			}
 		}
 	};
-	private FitToViewportAction fitToViewportAction;
-	private ScrollCenterAction scrollCenterAction;
-	private ScrollTopRightAction scrollTopRightAction;
-	private ScrollTopLeftAction scrollTopLeftAction;
-	private ScrollBottomLeftAction scrollBottomLeftAction;
-	private ScrollBottomRightAction scrollBottomRightAction;
-	private ZoomInAction zoomInAction;
-	private ZoomOutAction zoomOutAction;
-	private ZoomScaleContributionItem zoomScaleContributionItem;
-	private ZoomComboContributionItem zoomComboContributionItem;
-	private ZoomResetAction zoomResetAction;
-	private FitToViewportLockAction fitToViewportLockAction;
+
 	private ZoomActionGroup zoomActionGroup;
 	private FitToViewportActionGroup fitToViewportActionGroup;
 	private ScrollActionGroup scrollActionGroup;

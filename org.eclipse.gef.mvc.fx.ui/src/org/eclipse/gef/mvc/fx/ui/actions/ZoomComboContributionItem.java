@@ -16,9 +16,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,13 +40,28 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.Parent;
 
 /**
- * @author wienand
+ * The {@link ZoomComboContributionItem} is an
+ * {@link AbstractViewerContributionItem} that contributes a zoom {@link Combo}
+ * to the tool bar. The zoom combo displays the current zoom level/factor in
+ * percent and provides a drop down menu that contains a number of predefined
+ * zoom factors (see {@link #getZoomFactors()}). Additionally, you can specify
+ * additional actions for which items should be added to the drop down menu when
+ * constructing a {@link ZoomComboContributionItem} (see
+ * {@link #ZoomComboContributionItem(IAction...)}).
+ * <p>
+ * If the user enters a custom value in the {@link Combo} and presses the return
+ * key, the string is converted to a zoom factor, which is then restricted to
+ * the range specified by {@link #getMinimumPermissibleZoomFactor()} and
+ * {@link #getMaximumPermissibleZoomFactor()} before it is applied.
+ *
+ * @author mwienand
  *
  */
 public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 
 	/**
-	 * ID
+	 * The ID (see {@link #setId(String)}) for this
+	 * {@link ZoomComboContributionItem}.
 	 */
 	public static final String ZOOM_COMBO_CONTRIBUTION_ITEM_ID = "ZoomComboContributionItem";
 
@@ -151,30 +164,21 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String text = zoomCombo.getText();
-
-				IAction action = null;
-				for (IAction a : additionalActions) {
-					if (a.getText().equals(text)) {
-						action = a;
-						break;
-					}
+				int selectionIndex = zoomCombo.getSelectionIndex();
+				if (selectionIndex < 0) {
+					// no selection => nothing to do
+					return;
 				}
-
-				if (action != null) {
-					action.runWithEvent(null);
+				List<Double> zoomFactors = getZoomFactors();
+				if (selectionIndex >= zoomFactors.size()) {
+					// additional action selected
+					additionalActions.get(selectionIndex - zoomFactors.size())
+							.runWithEvent(null);
 				} else {
-					double zoom = getItemToZoomFactorMap().containsKey(text)
-							? getItemToZoomFactorMap().get(text)
-							: toZoomFactor(text);
-					if (zoom > 0) {
-						Event event = new Event();
-						event.data = zoom;
-						zoomAction.runWithEvent(event);
-					} else {
-						throw new IllegalStateException(
-								"Illegal zoom factor for selected zoom item.");
-					}
+					// zoom factor selected
+					Event event = new Event();
+					event.data = zoomFactors.get(selectionIndex);
+					zoomAction.runWithEvent(event);
 				}
 			}
 		});
@@ -183,69 +187,55 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	}
 
 	/**
-	 * @return a
+	 * Returns a list of all strings that should be selectable in the
+	 * {@link Combo} drop down menu.
+	 *
+	 * @return A list of all {@link Combo} items.
 	 */
 	protected List<String> getItems() {
-		List<String> list = new ArrayList<>(getZoomItems());
+		List<String> items = new ArrayList<>();
+		// insert zoom factor items
+		for (Double zoomFactor : getZoomFactors()) {
+			items.add(toPercentText(zoomFactor));
+		}
+		// insert additional action items
 		for (IAction a : additionalActions) {
-			list.add(a.getText());
+			items.add(a.getText());
 		}
-		return list;
+		return items;
 	}
 
 	/**
-	 * @return a
-	 */
-	protected Map<String, Double> getItemToZoomFactorMap() {
-		List<String> zoomItems = getZoomItems();
-		List<Double> zoomFactors = getZoomFactors();
-		if (zoomItems.size() != zoomFactors.size()) {
-			throw new IllegalStateException(
-					"Number of zoom factors differs from number of zoom items.");
-		}
-		HashMap<String, Double> map = new HashMap<>();
-		for (int i = 0; i < zoomFactors.size(); i++) {
-			String item = zoomItems.get(i);
-			Double factor = zoomFactors.get(i);
-			map.put(item, factor);
-		}
-		return map;
-	}
-
-	/**
+	 * Returns the maximum zoom factor that is permissible when the user does
+	 * not select a predefined value, but enters a custom zoom factor instead.
 	 *
-	 * @return a
+	 * @return The maximum zoom factor for custom input.
 	 */
-	protected double getMinimumZoomFactor() {
-		return 0.001;
+	protected double getMaximumPermissibleZoomFactor() {
+		return 64d;
 	}
 
 	/**
+	 * Returns the minimum zoom factor that is permissible when the user does
+	 * not select a predefined value, but enters a custom zoom factor instead.
 	 *
-	 * @return a
+	 * @return The minimum zoom factor for custom input.
+	 */
+	protected double getMinimumPermissibleZoomFactor() {
+		return 0.001d;
+	}
+
+	/**
+	 * Returns a list containing all zoom factors in the order in which items
+	 * should be created for them in the {@link Combo}.
+	 *
+	 * @return A list containing the predefined zoom factors.
 	 */
 	protected List<Double> getZoomFactors() {
 		return Arrays.asList(0.125d, 0.25d, 1d / 3d, 0.5d, 2d / 3d, 0.75d, 1d,
 				1.25d, 1.5d, 2d, 3d, 4d, 8d);
 	}
 
-	/**
-	 *
-	 * @return a
-	 */
-	protected List<String> getZoomItems() {
-		List<String> items = new ArrayList<>();
-		for (Double zoomFactor : getZoomFactors()) {
-			items.add(toPercentText(zoomFactor));
-		}
-		return items;
-	}
-
-	/**
-	 *
-	 * @param viewer
-	 *            a
-	 */
 	@Override
 	public void init(IViewer viewer) {
 		super.init(viewer);
@@ -279,49 +269,68 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	}
 
 	/**
+	 * Updates the zoom factor that is displayed by the {@link Combo}. Converts
+	 * the given number to a percent text using {@link #toPercentText(double)}
+	 * and sets it as the combo's display text.
 	 *
-	 * @param n
-	 *            a
+	 * @param zoomFactor
+	 *            The number to display in the {@link Combo}.
 	 */
-	protected void showZoomFactor(Number n) {
+	protected void showZoomFactor(Number zoomFactor) {
 		if (zoomCombo != null) {
-			String text = toPercentText(n.doubleValue());
+			String text = toPercentText(zoomFactor.doubleValue());
 			zoomCombo.setText(text);
 		}
 	}
 
 	/**
+	 * Converts the given zoom factor to a corresponding percent text which can
+	 * be displayed in the {@link Combo}. The resulting percent text does
+	 * neither have fraction digits nor grouping delimiters and contains a
+	 * trailing <code>"%"</code>, e.g. the zoom factor <code>2.125</code> is
+	 * converted to the text <code>213%</code>.
 	 *
 	 * @param zoomFactor
-	 *            a
-	 * @return a
+	 *            The zoom factor for which to determine the corresponding
+	 *            percent text to display in the {@link Combo}.
+	 * @return The corresponding percent text.
 	 */
 	protected String toPercentText(double zoomFactor) {
 		return PERCENT_FORMAT.format(zoomFactor);
 	}
 
 	/**
+	 * Converts the given percent text to a corresponding zoom factor,
+	 * restricted to the range of permissible zoom factors that is specified by
+	 * {@link #getMinimumPermissibleZoomFactor()} and
+	 * {@link #getMaximumPermissibleZoomFactor()}.
+	 * <p>
+	 * This method is called to determine the zoom factor when the user does not
+	 * select a predefined item in the {@link Combo}, but enters custom input
+	 * instead.
 	 *
 	 * @param percentText
-	 *            a
-	 * @return a
+	 *            The percent text for which to determine the corresponding zoom
+	 *            factor.
+	 * @return The zoom factor corresponding to the given percent text,
+	 *         restricted to the permissible range.
 	 */
 	protected double toZoomFactor(String percentText) {
 		Matcher matcher = NUMBER_PATTERN.matcher(percentText);
-		double zoom = -1;
 		if (matcher.find()) {
+			// user input is valid
 			try {
-				zoom = PERCENT_FORMAT.parse(matcher.group(1)).doubleValue()
-						/ 100;
+				double zoom = PERCENT_FORMAT.parse(matcher.group(1))
+						.doubleValue() / 100;
+				// return restricted zoom level
+				return Math.min(getMaximumPermissibleZoomFactor(),
+						Math.max(getMinimumPermissibleZoomFactor(), zoom));
 			} catch (ParseException e) {
 				throw new IllegalStateException(e);
 			}
 		}
-		// minimum zoom level
-		if (zoom < getMinimumZoomFactor()) {
-			zoom = getMinimumZoomFactor();
-		}
-		return zoom;
+		// user input is invalid
+		return -1;
 	}
 
 	@Override
@@ -339,7 +348,10 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	}
 
 	/**
-	 *
+	 * Updates the zoom factor that is displayed in the {@link Combo}. The
+	 * current zoom factor is queried from the {@link #getViewer() viewer} and
+	 * set as the display text for the {@link Combo} using
+	 * {@link #showZoomFactor(Number)}.
 	 */
 	protected void updateComboText() {
 		if (isEnabled()) {

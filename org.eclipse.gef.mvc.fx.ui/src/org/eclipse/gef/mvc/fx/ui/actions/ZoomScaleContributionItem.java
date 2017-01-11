@@ -29,13 +29,20 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.Parent;
 
 /**
+ * The {@link ZoomScaleContributionItem} is an
+ * {@link AbstractViewerContributionItem} that contributes a zoom {@link Scale}
+ * to the tool bar. The zoom scale can be used to set the zoom factor by
+ * dragging its thumb. Per default, the minimal zoom factor is
+ * <code>3.125%</code>
+ *
  * @author mwienand
  *
  */
 public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 
 	/**
-	 * Action ID
+	 * The ID (see {@link #setId(String)}) for this
+	 * {@link ZoomScaleContributionItem}.
 	 */
 	public static final String ZOOM_SCALE_CONTRIBUTION_ITEM_ID = "ZoomScaleContributionItem";
 
@@ -70,11 +77,11 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	}
 
 	/**
-	 * a
+	 * Returns the scale value that corresponds to the given zoom factor.
 	 *
 	 * @param zoomFactor
-	 *            a
-	 * @return a
+	 *            The zoom factor that is converted.
+	 * @return The corresponding scale value.
 	 */
 	protected int computeScaleValue(double zoomFactor) {
 		return (int) Math.round(ZOOM_TO_SCALE_COEFF_BASE
@@ -82,11 +89,11 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	}
 
 	/**
-	 * a
+	 * Returns the zoom factor that corresponds to the given scale value.
 	 *
 	 * @param scaleValue
-	 *            a
-	 * @return a
+	 *            The scale value that is converted.
+	 * @return The corresponding zoom factor.
 	 */
 	protected double computeZoomFactor(int scaleValue) {
 		return SCALE_TO_ZOOM_COEFF_BASE
@@ -198,12 +205,15 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	}
 
 	/**
-	 * @param n
-	 *            a
+	 * Updates the scale value that is shown in the GUI so that it corresponds
+	 * to the given zoom factor.
+	 *
+	 * @param zoomFactor
+	 *            The zoom factor to show in the scale.
 	 */
-	protected void updateScaleValue(double n) {
+	protected void updateScaleValue(double zoomFactor) {
 		if (zoomScale != null) {
-			zoomScale.setSelection(computeScaleValue(n));
+			zoomScale.setSelection(computeScaleValue(zoomFactor));
 		}
 	}
 }

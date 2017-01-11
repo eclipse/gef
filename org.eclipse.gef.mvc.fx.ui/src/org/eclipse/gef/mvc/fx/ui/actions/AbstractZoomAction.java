@@ -35,7 +35,7 @@ import javafx.scene.Parent;
 public abstract class AbstractZoomAction extends AbstractViewerAction {
 
 	/**
-	 * Creates a new {@link AbstractZoomAction}.
+	 * Constructs a new {@link AbstractZoomAction}.
 	 *
 	 * @param text
 	 *            Text for the action.
@@ -45,8 +45,8 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 	}
 
 	/**
-	 * Creates a new {@link AbstractZoomAction} with the given text and style.
-	 * Also sets the given {@link ImageDescriptor} for this action.
+	 * Constructs a new {@link AbstractZoomAction} with the given text and
+	 * style. Also sets the given {@link ImageDescriptor} for this action.
 	 *
 	 * @param text
 	 *            Text for the action.
