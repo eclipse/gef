@@ -816,8 +816,7 @@ public abstract class AbstractBehavior implements IBehavior {
 			List<IHandlePart<? extends Node>> oldHandles;
 			List<IHandlePart<? extends Node>> currentHandleParts = getHandlesPerTargetSet()
 					.get(targetSet);
-
-			if (!currentHandleParts.isEmpty()) {
+			if (currentHandleParts != null && !currentHandleParts.isEmpty()) {
 				oldHandles = new ArrayList<>(currentHandleParts);
 				if (interactedWith != null) {
 					// remove interacted with handle from old handles so that it
