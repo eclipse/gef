@@ -38,11 +38,20 @@ import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportLockAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef.mvc.fx.ui.properties.SetPropertyValueOperation;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -99,6 +108,9 @@ public class MvcLogoExampleView extends AbstractFXView {
 	}
 
 	private UndoablePropertySheetEntry rootEntry;
+	private ZoomActionGroup zoomActionGroup;
+	private ScrollActionGroup scrollActionGroup;
+	private FitToViewportLockAction fitToViewportLockAction;
 
 	// TODO: create AbstractFXView via an executable extension factory
 	// (obtaining the injector via the bundle)
@@ -115,12 +127,45 @@ public class MvcLogoExampleView extends AbstractFXView {
 
 	@Override
 	public void dispose() {
-
 		// clear viewer contents
 		getContentViewer().contentsProperty().clear();
 		getPaletteViewer().contentsProperty().clear();
+		
+		// dispose actions
+		if (zoomActionGroup != null) {
+			zoomActionGroup.dispose();
+			zoomActionGroup = null;
+		}
+		if (scrollActionGroup != null) {
+			scrollActionGroup.dispose();
+			scrollActionGroup = null;
+		}
+		if (fitToViewportLockAction != null) {
+			fitToViewportLockAction.dispose();
+			fitToViewportLockAction = null;
+		}
 
 		super.dispose();
+	}
+	
+	@Override
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		// create actions
+		zoomActionGroup = new ZoomActionGroup(new FitToViewportAction());
+		zoomActionGroup.init(getContentViewer());
+		fitToViewportLockAction = new FitToViewportLockAction();
+		fitToViewportLockAction.init(getContentViewer());
+		scrollActionGroup = new ScrollActionGroup();
+		scrollActionGroup.init(getContentViewer());
+		// contribute to toolbar
+		IActionBars actionBars = getViewSite().getActionBars();
+		IToolBarManager mgr = actionBars.getToolBarManager();
+		zoomActionGroup.fillActionBars(actionBars);
+		mgr.add(new Separator());
+		mgr.add(fitToViewportLockAction);
+		mgr.add(new Separator());
+		scrollActionGroup.fillActionBars(actionBars);
 	}
 
 	/**
