@@ -15,6 +15,7 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.widgets.Event;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -80,6 +81,13 @@ public class FitToViewportLockAction extends FitToViewportAction {
 			lock();
 			// initial fit-to-viewport
 			runWithEvent(null);
+		}
+	}
+
+	@Override
+	public void runWithEvent(Event event) {
+		if (isChecked()) {
+			super.runWithEvent(event);
 		}
 	}
 
