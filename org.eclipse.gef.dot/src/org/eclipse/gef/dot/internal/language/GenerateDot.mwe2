@@ -5,15 +5,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- * 		Fabian Steeg    - initial implementation (bug #277380)
- * 		Alexander Nyßen - migration to Xtext 2.7.3 (bug #478562); 
- *                      - support for case insensitive keywords (bug #454626)
- *                      - integration of attribute grammars
- *                      - integration of custom lexers for DOT (bug #321775)
- *      Tamas Miklossy  - support for junit test plugin generation
- *                      - support for formatter API generation
- *                      - support for content assistant API generation
- *                      - integration of dot attribute sub-grammars (bug #461506)
+ *		Fabian Steeg	- initial implementation (bug #277380)
+ *		Alexander Nyßen	- migration to Xtext 2.7.3 (bug #478562); 
+ *						- support for case insensitive keywords (bug #454626)
+ *						- integration of attribute grammars
+ *						- integration of custom lexers for DOT (bug #321775)
+ *		Tamas Miklossy	- support for junit test plugin generation
+ *						- support for formatter API generation
+ *						- support for content assistant API generation
+ *						- integration of dot attribute sub-grammars (bug #461506)
  *******************************************************************************/
 module org.eclipse.gef.dot.internal.language.Dot
 
@@ -40,7 +40,7 @@ Workflow {
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}/model/generated"
 	}
-	
+
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}/emf-gen"
 	}
@@ -52,11 +52,11 @@ Workflow {
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}.tests/src-gen"
 	}
-	
+
 	component = org.eclipse.emf.mwe2.ecore.EcoreGenerator {
-        genModel = "platform:/resource/${projectName}/model/DotTerminals.genmodel"
-        srcPath = "platform:/resource/${projectName}/src"
-    }
+		genModel = "platform:/resource/${projectName}/model/DotTerminals.genmodel"
+		srcPath = "platform:/resource/${projectName}/src"
+	}
 
 	component = Generator {
 		pathRtProject = runtimeProject
@@ -94,22 +94,22 @@ Workflow {
 			 */
 			// The antlr parser generator fragment (for case-insensitive keywords)
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
-			    options = {
-			    	ignoreCase = true
-			        backtrack = false
-			        backtrackLexer = false
-			    }
+				options = {
+					ignoreCase = true
+					backtrack = false
+					backtrackLexer = false
+				}
 			}
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotLexer"
-			    runtime = true
-			    antlrParam = "-lib"
-			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer"
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotLexer"
+				runtime = true
+				antlrParam = "-lib"
+				// This is the folder where the lexer will be created
+				antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer"
 			}
-			
+
 			// Java-based validation API
 			fragment = validation.JavaValidatorFragment auto-inject {}
 
@@ -137,17 +137,17 @@ Workflow {
 			}
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
-			    contentAssist = true
-			    antlrParam = "-lib"
-			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
+				contentAssist = true
+				antlrParam = "-lib"
+				// This is the folder where the lexer will be created
+				antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
 			}
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
-			    highlighting = true
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
+				highlighting = true
 			}
 
 			// generates junit test support classes into Generator#pathTestProject
@@ -210,7 +210,7 @@ Workflow {
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-			
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
 
@@ -227,21 +227,21 @@ Workflow {
 			 */
 			// The antlr parser generator fragment
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
-			    options = {
-			        backtrack = false
-			        backtrackLexer = false
-			    }
+				options = {
+					backtrack = false
+					backtrackLexer = false
+				}
 			}
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorLexer"
-			    runtime = true
-			    antlrParam = "-lib"
-			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer"
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorLexer"
+				runtime = true
+				antlrParam = "-lib"
+				// This is the folder where the lexer will be created
+				antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer"
 			}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
@@ -251,20 +251,20 @@ Workflow {
 					ignoreCase = true
 				}
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorLexer"
-			    contentAssist = true
-			    antlrParam = "-lib"
-			    // This is the folder where the lexer will be created
-			    antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorLexer"
+				contentAssist = true
+				antlrParam = "-lib"
+				// This is the folder where the lexer will be created
+				antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
 			}
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-			    // A grammar file with .g will be expected in this package (should be stored in src folder)
-			    lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorLexer"
-			    highlighting = true
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorLexer"
+				highlighting = true
 			}
 
 			// generates junit test support classes into Generator#pathTestProject
@@ -411,7 +411,7 @@ Workflow {
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-						
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
 
@@ -422,7 +422,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
