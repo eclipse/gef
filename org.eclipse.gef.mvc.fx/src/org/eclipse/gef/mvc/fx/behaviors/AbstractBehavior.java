@@ -873,6 +873,10 @@ public abstract class AbstractBehavior implements IBehavior {
 						int compareTo = comparable.compareTo(newHandle);
 						if (compareTo == 0) {
 							existsAlready = true;
+							// refresh already existing handle so that it has
+							// the opportunity to adapt its appearance to its
+							// host (same index, different role)
+							oldHandle.refreshVisual();
 							break;
 						}
 					}
@@ -904,7 +908,6 @@ public abstract class AbstractBehavior implements IBehavior {
 			}
 			getHandlesPerTargetSet().get(targetSet).addAll(toBeAdded);
 		}
-
 		return replacementHandle;
 	}
 

@@ -39,7 +39,6 @@ import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportLockAction;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
@@ -130,7 +129,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 		// clear viewer contents
 		getContentViewer().contentsProperty().clear();
 		getPaletteViewer().contentsProperty().clear();
-		
+
 		// dispose actions
 		if (zoomActionGroup != null) {
 			zoomActionGroup.dispose();
@@ -147,7 +146,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 
 		super.dispose();
 	}
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -216,7 +215,6 @@ public class MvcLogoExampleView extends AbstractFXView {
 				throws ExecutionException {
 			return execute(monitor, info);
 		}
-
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -303,7 +301,6 @@ public class MvcLogoExampleView extends AbstractFXView {
 										"Change routing style");
 								c.add(changeRoutingStyleOperation);
 								c.add(clearWaypointsOperation);
-								// update selection handles
 								c.add(new UpdateSelectionHandlesOperation(
 										contentPart));
 								super.valueChanged(child, c);
