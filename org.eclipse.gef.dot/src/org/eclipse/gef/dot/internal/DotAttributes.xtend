@@ -12,13 +12,44 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
 
+import com.google.inject.Injector
+import java.io.StringReader
+import java.util.Arrays
+import java.util.Collections
+import java.util.Iterator
+import java.util.List
+import java.util.Map
+import java.util.TreeSet
+import org.eclipse.emf.common.util.BasicDiagnostic
 import org.eclipse.emf.common.util.Diagnostic
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.util.EcoreUtil
+import org.eclipse.gef.common.reflect.ReflectionUtils
+import org.eclipse.gef.dot.internal.DotAttributes.Context
+import org.eclipse.gef.dot.internal.DotAttributes.EnumParser
+import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueParser
+import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueSerializer
+import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueValidator
 import org.eclipse.gef.dot.internal.generator.DotAttribute
+import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotShapeStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotSplineTypeStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotStyleStandaloneSetup
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode
 import org.eclipse.gef.dot.internal.language.color.Color
+import org.eclipse.gef.dot.internal.language.color.DotColors
 import org.eclipse.gef.dot.internal.language.dir.DirType
+import org.eclipse.gef.dot.internal.language.dot.AttrStmt
+import org.eclipse.gef.dot.internal.language.dot.AttributeType
+import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
+import org.eclipse.gef.dot.internal.language.dot.EdgeStmtSubgraph
 import org.eclipse.gef.dot.internal.language.dot.GraphType
+import org.eclipse.gef.dot.internal.language.dot.NodeStmt
+import org.eclipse.gef.dot.internal.language.dot.Subgraph
 import org.eclipse.gef.dot.internal.language.layout.Layout
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir
@@ -29,48 +60,23 @@ import org.eclipse.gef.dot.internal.language.splines.Splines
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType
 import org.eclipse.gef.dot.internal.language.style.Style
 import org.eclipse.gef.dot.internal.language.terminals.ID
-import org.eclipse.gef.graph.Graph
-import org.eclipse.gef.graph.Node
-import java.util.List
-import java.util.Collections
-import org.eclipse.emf.common.util.BasicDiagnostic
-import com.google.inject.Injector
-import org.eclipse.xtext.parser.IParser
-import java.io.StringReader
-import org.eclipse.xtext.nodemodel.INode
-import org.eclipse.xtext.serializer.ISerializer
-import org.eclipse.emf.ecore.EObject
-import java.util.TreeSet
-import java.util.Arrays
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator
-import org.eclipse.xtext.validation.ValidationMessageAcceptor
-import java.util.Map
-import org.eclipse.xtext.validation.AbstractInjectableValidator
-import org.eclipse.gef.common.reflect.ReflectionUtils
-import org.eclipse.emf.ecore.EStructuralFeature
-import java.util.Iterator
-import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.gef.dot.internal.language.color.DotColors
-import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator
-import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
-import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup
-import org.eclipse.gef.dot.internal.language.DotShapeStandaloneSetup
-import org.eclipse.gef.dot.internal.language.DotSplineTypeStandaloneSetup
-import org.eclipse.gef.dot.internal.language.DotStyleStandaloneSetup
 import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator
+import org.eclipse.gef.graph.Graph
+import org.eclipse.gef.graph.Node
 import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
-import org.eclipse.gef.dot.internal.language.dot.EdgeStmtSubgraph
-import org.eclipse.gef.dot.internal.language.dot.AttrStmt
-import org.eclipse.gef.dot.internal.language.dot.AttributeType
-import org.eclipse.gef.dot.internal.language.dot.Subgraph
-import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.xtext.IGrammarAccess
+import org.eclipse.xtext.nodemodel.INode
+import org.eclipse.xtext.parser.IParseResult
+import org.eclipse.xtext.parser.IParser
+import org.eclipse.xtext.serializer.ISerializer
+import org.eclipse.xtext.validation.AbstractDeclarativeValidator
+import org.eclipse.xtext.validation.AbstractInjectableValidator
+import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -336,7 +342,7 @@ public class DotAttributes {
 	}
 
 	private static def checkAttributeRawValue(Context context, String attributeName, ID attributeValue) {
-		val diagnostics = org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(context, attributeName,
+		val diagnostics = DotAttributes.validateAttributeRawValue(context, attributeName,
 			attributeValue).filter[severity >= Diagnostic.ERROR]
 		if (!diagnostics.isEmpty()) {
 			throw new IllegalArgumentException(
@@ -364,87 +370,87 @@ public class DotAttributes {
 
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.FORCELABELS__G.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(BOOL_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(BOOL_PARSER, null,
 				attributeContext, DotAttributes.FORCELABELS__G, attributeValue);
 		} else if (DotAttributes.FIXEDSIZE__N.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(BOOL_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(BOOL_PARSER, null,
 				attributeContext, DotAttributes.FIXEDSIZE__N, attributeValue);
 		} else if (DotAttributes.CLUSTERRANK__G.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(CLUSTERMODE_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(CLUSTERMODE_PARSER, null,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.OUTPUTORDER__G.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(OUTPUTMODE_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(OUTPUTMODE_PARSER, null,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.PAGEDIR__G.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(PAGEDIR_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(PAGEDIR_PARSER, null,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.RANKDIR__G.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(RANKDIR_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(RANKDIR_PARSER, null,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.SPLINES__G.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(SPLINES_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(SPLINES_PARSER, null,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.LAYOUT__G.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(LAYOUT_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(LAYOUT_PARSER, null,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.DIR__E.equals(attributeName)) {
 
 			// dirType enum
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(DIRTYPE_PARSER, null,
+			return DotAttributes.validateAttributeRawValue(DIRTYPE_PARSER, null,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.ARROWHEAD__E.equals(attributeName) || DotAttributes.ARROWTAIL__E.equals(attributeName)) {
 
 			// validate arrowtype using delegate parser and validator
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(ARROWTYPE_PARSER,
+			return DotAttributes.validateAttributeRawValue(ARROWTYPE_PARSER,
 				ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.ARROWSIZE__E.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
 				ARROWSIZE_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.POS__NE.equals(attributeName)) {
 
 			// validate point (node) or splinetype (edge) using delegate parser
 			// and validator
 			if (Context.NODE.equals(attributeContext)) {
-				return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(POINT_PARSER,
+				return DotAttributes.validateAttributeRawValue(POINT_PARSER,
 					POINT_VALIDATOR, attributeContext, attributeName, attributeValue);
 			} else if (Context.EDGE.equals(attributeContext)) {
-				return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(SPLINETYPE_PARSER,
+				return DotAttributes.validateAttributeRawValue(SPLINETYPE_PARSER,
 					SPLINETYPE_VALIDATOR, attributeContext, attributeName, attributeValue);
 			}
 		} else if (DotAttributes.SHAPE__N.equals(attributeName)) {
 
 			// validate shape using delegate parser and validator
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(SHAPE_PARSER,
+			return DotAttributes.validateAttributeRawValue(SHAPE_PARSER,
 				SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.SIDES__N.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR,
+			return DotAttributes.validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR,
 				attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.SKEW__N.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
 				SKEW_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.DISTORTION__N.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
 				DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.WIDTH__N.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
 				WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.HEIGHT__N.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
 				HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.STYLE__GNE.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(STYLE_PARSER,
+			return DotAttributes.validateAttributeRawValue(STYLE_PARSER,
 				STYLE_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.HEAD_LP__E.equals(attributeName) || DotAttributes.LP__GE.equals(attributeName) ||
 			DotAttributes.TAIL_LP__E.equals(attributeName) || DotAttributes.XLP__NE.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(POINT_PARSER,
+			return DotAttributes.validateAttributeRawValue(POINT_PARSER,
 				POINT_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.BGCOLOR__G.equals(attributeName) || DotAttributes.COLOR__NE.equals(attributeName) ||
 			DotAttributes.FILLCOLOR__NE.equals(attributeName) || DotAttributes.FONTCOLOR__GNE.equals(attributeName) ||
 			DotAttributes.LABELFONTCOLOR__E.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(COLOR_PARSER,
+			return DotAttributes.validateAttributeRawValue(COLOR_PARSER,
 				COLOR_VALIDATOR, attributeContext, attributeName, attributeValue);
 		} else if (DotAttributes.COLORSCHEME__GNE.equals(attributeName)) {
-			return org.eclipse.gef.dot.internal.DotAttributes.validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,
+			return DotAttributes.validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,
 				attributeContext, attributeName, attributeValue);
 		}
 		return Collections.emptyList();
@@ -544,10 +550,10 @@ public class DotAttributes {
 
 		@SuppressWarnings("unchecked")
 		public def override ParseResult<T> parse(String attributeValue) {
-			val org.eclipse.xtext.parser.IParseResult xtextParseResult = parser.parse(new StringReader(attributeValue))
+			val IParseResult xtextParseResult = parser.parse(new StringReader(attributeValue))
 			if (xtextParseResult.hasSyntaxErrors()) {
 				val List<Diagnostic> syntaxProblems = newArrayList();
-				for (INode xtextSyntaxError : (xtextParseResult as org.eclipse.xtext.parser.IParseResult).
+				for (INode xtextSyntaxError : (xtextParseResult as IParseResult).
 					getSyntaxErrors()) {
 					syntaxProblems.add(
 						new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
