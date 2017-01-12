@@ -26,11 +26,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.gef.common.reflect.ReflectionUtils
-import org.eclipse.gef.dot.internal.DotAttributes.Context
-import org.eclipse.gef.dot.internal.DotAttributes.EnumParser
-import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueParser
-import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueSerializer
-import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueValidator
 import org.eclipse.gef.dot.internal.generator.DotAttribute
 import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
