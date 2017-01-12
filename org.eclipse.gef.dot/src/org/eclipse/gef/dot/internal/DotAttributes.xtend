@@ -487,16 +487,7 @@ public class DotAttributes {
 		}
 
 		private static def String getFormattedValues(Object[] values) {
-
-			// TODO: make this more elegant with Xtend
-			val StringBuilder sb = new StringBuilder
-			for (Object value : values) {
-				if (sb.length > 0) {
-					sb.append(", ")
-				}
-				sb.append("'" + value.toString + "'")
-			}
-			return sb.append(".").toString()
+			values.map["'"+it+"'"].join(", ")
 		}
 
 		override getParsedType() {
@@ -653,16 +644,7 @@ public class DotAttributes {
 		}
 
 		private def String getFormattedValues(Object[] values) {
-
-			// TODO: make this more elegant using Xtend
-			val StringBuilder sb = new StringBuilder
-			for (Object value : new TreeSet<Object>(Arrays.asList(values))) {
-				if (sb.length > 0) {
-					sb.append(", ")
-				}
-				sb.append("'" + value + "'")
-			}
-			return sb.toString
+			values.sortBy[toString].map["'"+it+"'"].join(", ")
 		}
 	}
 
