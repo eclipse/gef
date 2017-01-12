@@ -134,7 +134,7 @@ public class DotAttributes {
 
 		// global AttrStmt with AttributeType 'edge'
 		val AttrStmt attrStmt = EcoreUtil2.getContainerOfType(eObject, AttrStmt)
-		if (attrStmt != null && AttributeType.EDGE.equals(attrStmt.getType())) {
+		if (attrStmt != null && AttributeType.EDGE.equals(attrStmt.getType)) {
 			return Context.EDGE
 		}
 
@@ -144,14 +144,14 @@ public class DotAttributes {
 		}
 
 		// global AttrStmt with AttributeType 'node'
-		if (attrStmt != null && AttributeType.NODE.equals(attrStmt.getType())) {
+		if (attrStmt != null && AttributeType.NODE.equals(attrStmt.getType)) {
 			return Context.NODE
 		}
 
 		// attribute nested below Subgraph
 		val Subgraph subgraph = EcoreUtil2.getContainerOfType(eObject, Subgraph)
 		if (subgraph != null) {
-			if (subgraph.getName().toValue().startsWith("cluster")) {
+			if (subgraph.getName.toValue.startsWith("cluster")) {
 				return Context.CLUSTER
 			}
 			return Context.SUBGRAPH
@@ -197,7 +197,7 @@ public class DotAttributes {
 			private List<Diagnostic> syntaxErrors
 
 			private new(T parsedValue) {
-				this(parsedValue, Collections.<Diagnostic>emptyList())
+				this(parsedValue, Collections.<Diagnostic>emptyList)
 			}
 
 			private new(List<Diagnostic> syntaxErrors) {
@@ -218,7 +218,7 @@ public class DotAttributes {
 			}
 
 			public def boolean hasSyntaxErrors() {
-				return !syntaxErrors.isEmpty()
+				return !syntaxErrors.isEmpty
 			}
 		}
 
@@ -292,7 +292,7 @@ public class DotAttributes {
 		if (attributeValue == null) {
 			return null
 		}
-		return parser.parse(attributeValue).getParsedValue()
+		return parser.parse(attributeValue).getParsedValue
 	}
 
 	// TODO: separate validation from parsing
@@ -311,7 +311,7 @@ public class DotAttributes {
 		var T parsedValue = null
 		if (parser != null) {
 			val parseResult = parser.parse(attributeValue.toValue)
-			if (parseResult.hasSyntaxErrors()) {
+			if (parseResult.hasSyntaxErrors) {
 
 				// handle syntactical problems
 				return Collections.<Diagnostic>singletonList(
@@ -320,7 +320,7 @@ public class DotAttributes {
 							": " +
 							parseResult.syntaxErrors.map[message.toFirstUpper.replaceAll("\\.$", "")].join(". ") + ".", #[]))
 			}
-			parsedValue = parseResult.getParsedValue()
+			parsedValue = parseResult.getParsedValue
 		} else {
 
 			// for string values there is no parser
@@ -328,7 +328,7 @@ public class DotAttributes {
 		}
 
 		// handle semantical problems
-		val List<Diagnostic> diagnostics = newArrayList()
+		val List<Diagnostic> diagnostics = newArrayList
 		if (validator != null) {
 			val List<Diagnostic> validationResults = validator.validate(attributeContext, parsedValue)
 			for (Diagnostic r : validationResults) {
@@ -344,9 +344,9 @@ public class DotAttributes {
 	private static def checkAttributeRawValue(Context context, String attributeName, ID attributeValue) {
 		val diagnostics = DotAttributes.validateAttributeRawValue(context, attributeName,
 			attributeValue).filter[severity >= Diagnostic.ERROR]
-		if (!diagnostics.isEmpty()) {
+		if (!diagnostics.isEmpty) {
 			throw new IllegalArgumentException(
-				"Cannot set " + context.name().toLowerCase() + " attribute '" + attributeName + "' to '" +
+				"Cannot set " + context.name.toLowerCase + " attribute '" + attributeName + "' to '" +
 					attributeValue.toValue + "'. " + diagnostics.filter[!message.empty].map[message].join(" "))
 		}
 	}
@@ -453,7 +453,7 @@ public class DotAttributes {
 			return DotAttributes.validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,
 				attributeContext, attributeName, attributeValue)
 		}
-		return Collections.emptyList()
+		return Collections.emptyList
 	}
 
 	/**
@@ -480,26 +480,26 @@ public class DotAttributes {
 			if (attributeValue == null) {
 				return null
 			}
-			for (E value : definition.getEnumConstants()) {
-				if (value.toString().equals(attributeValue)) {
+			for (E value : definition.getEnumConstants) {
+				if (value.toString.equals(attributeValue)) {
 					return new ParseResult<E>(value)
 				}
 			}
 			return new ParseResult<E>(
 				Collections.<Diagnostic>singletonList(
 					new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
-						"Value has to be one of " + getFormattedValues(definition.getEnumConstants()), #[])))
+						"Value has to be one of " + getFormattedValues(definition.getEnumConstants), #[])))
 		}
 
 		private static def String getFormattedValues(Object[] values) {
 
 			// TODO: make this more elegant with Xtend
-			val StringBuilder sb = new StringBuilder()
+			val StringBuilder sb = new StringBuilder
 			for (Object value : values) {
-				if (sb.length() > 0) {
+				if (sb.length > 0) {
 					sb.append(", ")
 				}
-				sb.append("'" + value.toString() + "'")
+				sb.append("'" + value.toString + "'")
 			}
 			return sb.append(".").toString()
 		}
@@ -531,10 +531,10 @@ public class DotAttributes {
 		}
 
 		public def override String serialize(E value) {
-			if (!definition.isAssignableFrom(value.getClass())) {
+			if (!definition.isAssignableFrom(value.getClass)) {
 				throw new IllegalArgumentException("Value does not comply to definition " + definition)
 			}
-			return value.toString()
+			return value.toString
 		}
 	}
 
@@ -551,17 +551,17 @@ public class DotAttributes {
 		@SuppressWarnings("unchecked")
 		public def override ParseResult<T> parse(String attributeValue) {
 			val IParseResult xtextParseResult = parser.parse(new StringReader(attributeValue))
-			if (xtextParseResult.hasSyntaxErrors()) {
-				val List<Diagnostic> syntaxProblems = newArrayList()
+			if (xtextParseResult.hasSyntaxErrors) {
+				val List<Diagnostic> syntaxProblems = newArrayList
 				for (INode xtextSyntaxError : (xtextParseResult as IParseResult).
-					getSyntaxErrors()) {
+					getSyntaxErrors) {
 					syntaxProblems.add(
 						new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
-							xtextSyntaxError.getSyntaxErrorMessage().getMessage(), #[]))
+							xtextSyntaxError.getSyntaxErrorMessage.getMessage, #[]))
 				}
 				return new ParseResult<T>(syntaxProblems)
 			}
-			return new ParseResult<T>(xtextParseResult.getRootASTElement() as T)
+			return new ParseResult<T>(xtextParseResult.getRootASTElement as T)
 		}
 
 		protected def IParser getParser() {
@@ -590,7 +590,7 @@ public class DotAttributes {
 		}
 
 		public def override String serialize(T value) {
-			val ISerializer serializer = getSerializer()
+			val ISerializer serializer = getSerializer
 			return serializer.serialize(value)
 		}
 
@@ -611,12 +611,12 @@ public class DotAttributes {
 		}
 
 		public def override List<Diagnostic> validate(Context attributeContext, Double attributeValue) {
-			if (attributeValue.doubleValue() < minValue) {
+			if (attributeValue.doubleValue < minValue) {
 				return Collections.singletonList(
-					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString(), -1,
+					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString, -1,
 						"Value may not be smaller than " + minValue + ".", #[]))
 			}
-			return Collections.emptyList()
+			return Collections.emptyList
 		}
 	}
 
@@ -629,12 +629,12 @@ public class DotAttributes {
 		}
 
 		public def override List<Diagnostic> validate(Context attributeContext, Integer attributeValue) {
-			if (attributeValue.doubleValue() < minValue) {
+			if (attributeValue.doubleValue < minValue) {
 				return Collections.singletonList(
-					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString(), -1,
+					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString, -1,
 						"Value may not be smaller than " + minValue + ".", #[]))
 			}
-			return Collections.emptyList()
+			return Collections.emptyList
 		}
 	}
 
@@ -648,8 +648,8 @@ public class DotAttributes {
 
 		public def override List<Diagnostic> validate(Context attributeContext, String attributeValue) {
 			for (Object validValue : validValues) {
-				if (validValue.toString().equals(attributeValue)) {
-					return Collections.emptyList()
+				if (validValue.toString.equals(attributeValue)) {
+					return Collections.emptyList
 				}
 			}
 			return Collections.singletonList(
@@ -660,14 +660,14 @@ public class DotAttributes {
 		private def String getFormattedValues(Object[] values) {
 
 			// TODO: make this more elegant using Xtend
-			val StringBuilder sb = new StringBuilder()
+			val StringBuilder sb = new StringBuilder
 			for (Object value : new TreeSet<Object>(Arrays.asList(values))) {
-				if (sb.length() > 0) {
+				if (sb.length > 0) {
 					sb.append(", ")
 				}
 				sb.append("'" + value + "'")
 			}
-			return sb.toString()
+			return sb.toString
 		}
 	}
 
@@ -690,9 +690,9 @@ public class DotAttributes {
 		}
 
 		public def override List<Diagnostic> validate(Context attributeContext, T attributeValue) {
-			val AbstractDeclarativeValidator validator = getValidator()
+			val AbstractDeclarativeValidator validator = getValidator
 
-			val List<Diagnostic> diagnostics = newArrayList()
+			val List<Diagnostic> diagnostics = newArrayList
 
 			// validation is optional; if validator is provided, check for
 			// semantic problems using it
@@ -700,7 +700,7 @@ public class DotAttributes {
 
 				// we need a specific message acceptor
 				validator.setMessageAcceptor(
-					new ValidationMessageAcceptor() {
+					new ValidationMessageAcceptor {
 
 						public def override void acceptError(String message, EObject object,
 							EStructuralFeature feature, int index, String code, String... issueData) {
@@ -733,20 +733,20 @@ public class DotAttributes {
 						}
 					})
 
-				val Map<Object, Object> validationContext = newHashMap()
+				val Map<Object, Object> validationContext = newHashMap
 				validationContext.put(AbstractInjectableValidator.CURRENT_LANGUAGE_NAME,
 					ReflectionUtils.getPrivateFieldValue(validator, "languageName"))
 
 				// put attribute context information into validation context
-				validationContext.put(Context.getName(), attributeContext)
+				validationContext.put(Context.getName, attributeContext)
 
 				// validate the root element...
 				validator.validate(attributeValue, null/* diagnostic chain */, validationContext)
 
 				// ...and all its children
 				val Iterator<EObject> iterator = EcoreUtil.getAllProperContents(attributeValue, true)
-				while (iterator.hasNext()) {
-					validator.validate(iterator.next(), null/* diagnostic chain */, validationContext)
+				while (iterator.hasNext) {
+					validator.validate(iterator.next, null/* diagnostic chain */, validationContext)
 				}
 			}
 			return diagnostics
@@ -826,18 +826,18 @@ public class DotAttributes {
 			// options here and convert boolean expressions into respective
 			// splines
 			val ParseResult<Boolean> boolResult = BOOL_PARSER.parse(attributeValue)
-			if (!boolResult.hasSyntaxErrors()) {
-				return new ParseResult<Splines>(if(boolResult.getParsedValue()) Splines.TRUE else Splines.FALSE)
+			if (!boolResult.hasSyntaxErrors) {
+				return new ParseResult<Splines>(if(boolResult.getParsedValue) Splines.TRUE else Splines.FALSE)
 			}
 			val ParseResult<Splines> enumResult = enumParser.parse(attributeValue)
-			if (!enumResult.hasSyntaxErrors()) {
-				return new ParseResult<Splines>(enumResult.getParsedValue())
+			if (!enumResult.hasSyntaxErrors) {
+				return new ParseResult<Splines>(enumResult.getParsedValue)
 			}
 
 			// TODO: create a better, combined error message here
-			val List<Diagnostic> combinedFindings = newArrayList()
-			combinedFindings.addAll(boolResult.getSyntaxErrors())
-			combinedFindings.addAll(enumResult.getSyntaxErrors())
+			val List<Diagnostic> combinedFindings = newArrayList
+			combinedFindings.addAll(boolResult.getSyntaxErrors)
+			combinedFindings.addAll(enumResult.getSyntaxErrors)
 			return new ParseResult<Splines>(combinedFindings)
 		}
 
@@ -855,7 +855,7 @@ public class DotAttributes {
 	/**
 	 * A parser for bool values.
 	 */
-	private static val BOOL_PARSER = new IAttributeValueParser<Boolean>() {
+	private static val BOOL_PARSER = new IAttributeValueParser<Boolean> {
 
 		public def override ParseResult<Boolean> parse(String rawValue) {
 			if (rawValue == null) {
@@ -863,12 +863,12 @@ public class DotAttributes {
 			}
 
 			// case insensitive "true" or "yes"
-			if (Boolean.TRUE.toString().equalsIgnoreCase(rawValue) || "yes".equalsIgnoreCase(rawValue)) {
+			if (Boolean.TRUE.toString.equalsIgnoreCase(rawValue) || "yes".equalsIgnoreCase(rawValue)) {
 				return new ParseResult<Boolean>(Boolean.TRUE)
 			}
 
 			// case insensitive "false" or "no"
-			if (Boolean.FALSE.toString().equalsIgnoreCase(rawValue) || "no".equalsIgnoreCase(rawValue)) {
+			if (Boolean.FALSE.toString.equalsIgnoreCase(rawValue) || "no".equalsIgnoreCase(rawValue)) {
 				return new ParseResult<Boolean>(Boolean.FALSE)
 			}
 
@@ -895,7 +895,7 @@ public class DotAttributes {
 	/**
 	 * A serializer for bool values.
 	 */
-	private static val BOOL_SERIALIZER = new IAttributeValueSerializer<Boolean>() {
+	private static val BOOL_SERIALIZER = new IAttributeValueSerializer<Boolean> {
 
 		public def override String serialize(Boolean value) {
 			return Boolean.toString(value)
@@ -905,7 +905,7 @@ public class DotAttributes {
 	/**
 	 * A parser for double values.
 	 */
-	private static val DOUBLE_PARSER = new IAttributeValueParser<Double>() {
+	private static val DOUBLE_PARSER = new IAttributeValueParser<Double> {
 
 		public def override ParseResult<Double> parse(String rawValue) {
 			if (rawValue == null) {
@@ -919,7 +919,7 @@ public class DotAttributes {
 			} catch (NumberFormatException exception) {
 				return new ParseResult<Double>(
 					Collections.<Diagnostic>singletonList(
-						new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1, exception.getMessage(), #[])))
+						new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1, exception.getMessage, #[])))
 			}
 		}
 
@@ -932,7 +932,7 @@ public class DotAttributes {
 	/**
 	 * A serializer for double values.
 	 */
-	private static val DOUBLE_SERIALIZER = new IAttributeValueSerializer<Double>() {
+	private static val DOUBLE_SERIALIZER = new IAttributeValueSerializer<Double> {
 
 		public def override String serialize(Double value) {
 			return Double.toString(value)
@@ -942,7 +942,7 @@ public class DotAttributes {
 	/**
 	 * A parser used to parse DOT int values.
 	 */
-	private static val INT_PARSER = new IAttributeValueParser<Integer>() {
+	private static val INT_PARSER = new IAttributeValueParser<Integer> {
 
 		public def override ParseResult<Integer> parse(String rawValue) {
 			if (rawValue == null) {
@@ -954,7 +954,7 @@ public class DotAttributes {
 			} catch (NumberFormatException exception) {
 				return new ParseResult<Integer>(
 					Collections.<Diagnostic>singletonList(
-						new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1, exception.getMessage(), #[])))
+						new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1, exception.getMessage, #[])))
 			}
 		}
 
@@ -967,7 +967,7 @@ public class DotAttributes {
 	/**
 	 * A serializer for int values.
 	 */
-	private static val INT_SERIALIZER = new IAttributeValueSerializer<Integer>() {
+	private static val INT_SERIALIZER = new IAttributeValueSerializer<Integer> {
 
 		public def override String serialize(Integer value) {
 			return Integer.toString(value)
@@ -977,7 +977,7 @@ public class DotAttributes {
 	/**
 	 * A validator for colorscheme {@link String} attribute values.
 	 */
-	private static val COLORSCHEME_VALIDATOR = new StringValidator(DotColors.getColorSchemes().toArray())
+	private static val COLORSCHEME_VALIDATOR = new StringValidator(DotColors.getColorSchemes.toArray)
 
 	/**
 	 * A validator for skew {@link Double} attribute values.
@@ -1010,7 +1010,7 @@ public class DotAttributes {
 	private static val HEIGHT_VALIDATOR = new DoubleValidator(0.02)
 
 	private static final Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
-		createInjectorAndDoEMFRegistration()
+		createInjectorAndDoEMFRegistration
 
 	/**
 	 * The validator for arrowtype attribute values.
@@ -1029,7 +1029,7 @@ public class DotAttributes {
 	 */
 	private static final val ARROWTYPE_SERIALIZER = new EObjectSerializer<ArrowType>(arrowTypeInjector)
 
-	private static final Injector colorInjector = new DotColorStandaloneSetup().createInjectorAndDoEMFRegistration()
+	private static final Injector colorInjector = new DotColorStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for color attribute values.
@@ -1041,7 +1041,7 @@ public class DotAttributes {
 	 */
 	private static final val COLOR_SERIALIZER = new EObjectSerializer<Color>(colorInjector)
 
-	private static final Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration()
+	private static final Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for point attribute values.
@@ -1053,7 +1053,7 @@ public class DotAttributes {
 	 */
 	private static final val POINT_SERIALIZER = new EObjectSerializer<Point>(pointInjector)
 
-	private static final Injector shapeInjector = new DotShapeStandaloneSetup().createInjectorAndDoEMFRegistration()
+	private static final Injector shapeInjector = new DotShapeStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for shape attribute values.
@@ -1066,7 +1066,7 @@ public class DotAttributes {
 	private static final val SHAPE_SERIALIZER = new EObjectSerializer<Shape>(shapeInjector)
 
 	private static final Injector splineTypeInjector = new DotSplineTypeStandaloneSetup().
-		createInjectorAndDoEMFRegistration()
+		createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for splinetype attribute values.
@@ -1078,7 +1078,7 @@ public class DotAttributes {
 	 */
 	private static final val SPLINETYPE_SERIALIZER = new EObjectSerializer<SplineType>(splineTypeInjector)
 
-	private static final Injector styleInjector = new DotStyleStandaloneSetup().createInjectorAndDoEMFRegistration()
+	private static final Injector styleInjector = new DotStyleStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The serializer for style attribute values.
@@ -1139,7 +1139,7 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static def ID _getNameRaw(Graph graph) {
-		return graph.attributesProperty().get(_NAME__GNE) as ID
+		return graph.attributesProperty.get(_NAME__GNE) as ID
 	}
 
 	/**
@@ -1154,7 +1154,7 @@ public class DotAttributes {
 	 */
 	public static def String _getName(Graph graph) {
 		val ID _nameRaw = _getNameRaw(graph)
-		return if(_nameRaw != null) _nameRaw.toValue() else null
+		return if(_nameRaw != null) _nameRaw.toValue else null
 	}
 
 	/**
@@ -1168,7 +1168,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static def ID _getNameRaw(Node node) {
-		return node.attributesProperty().get(_NAME__GNE) as ID
+		return node.attributesProperty.get(_NAME__GNE) as ID
 	}
 
 	/**
@@ -1183,7 +1183,7 @@ public class DotAttributes {
 	 */
 	public static def String _getName(Node node) {
 		val ID _nameRaw = _getNameRaw(node)
-		return if(_nameRaw != null) _nameRaw.toValue() else null
+		return if(_nameRaw != null) _nameRaw.toValue else null
 	}
 
 	/**
@@ -1197,7 +1197,7 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static def GraphType _getType(Graph graph) {
-		return graph.attributesProperty().get(_TYPE__G) as GraphType
+		return graph.attributesProperty.get(_TYPE__G) as GraphType
 	}
 
 	/**
@@ -1211,7 +1211,7 @@ public class DotAttributes {
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
 	public static def void _setNameRaw(Graph graph, ID name) {
-		graph.attributesProperty().put(_NAME__GNE, name)
+		graph.attributesProperty.put(_NAME__GNE, name)
 	}
 
 	/**
@@ -1239,7 +1239,7 @@ public class DotAttributes {
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
 	public static def void _setNameRaw(Node node, ID name) {
-		node.attributesProperty().put(_NAME__GNE, name)
+		node.attributesProperty.put(_NAME__GNE, name)
 	}
 
 	/**
@@ -1269,7 +1269,7 @@ public class DotAttributes {
 	 *             when the given <i>type</i> value is not supported.
 	 */
 	public static def void _setType(Graph graph, GraphType type) {
-		graph.attributesProperty().put(_TYPE__G, type)
+		graph.attributesProperty.put(_TYPE__G, type)
 	}
 
 	@DotAttribute(rawType="STRING", parsedType=ArrowType)
