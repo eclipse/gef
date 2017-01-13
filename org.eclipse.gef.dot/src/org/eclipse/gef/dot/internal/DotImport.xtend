@@ -38,9 +38,9 @@ import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Graph.Builder
 import org.eclipse.gef.graph.Node
+import org.eclipse.xtext.parser.IParser
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
-import org.eclipse.xtext.parser.IParser
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.

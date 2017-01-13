@@ -15,12 +15,12 @@ import java.io.File
 import org.eclipse.gef.common.attributes.IAttributeStore
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 import org.eclipse.gef.dot.internal.language.dot.GraphType
+import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
-import org.eclipse.gef.dot.internal.language.terminals.ID
 
 /**
  * A serializer that creates a Graphviz DOT string or file from a {@link Graph} with {@link DotAttributes}.
