@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.providers;
 
+import java.util.List;
+
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
+import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -46,6 +49,20 @@ public class ResizableTransformableBoundsProvider
 		// determine x and y offset
 		double x, y;
 		if (part instanceof IBendableContentPart) {
+			// return null if there are no free bend points
+			boolean isEmpty = true;
+			List<BendPoint> bendPoints = ((IBendableContentPart<?>) part)
+					.getVisualBendPoints();
+			for (BendPoint bp : bendPoints) {
+				if (!bp.isAttached()) {
+					isEmpty = false;
+					break;
+				}
+			}
+			if (isEmpty) {
+				return null;
+			}
+
 			// TODO: generalize for ITransformableContentPart (transform corner
 			// points of local bounds to scene and take axis parallel bounds
 			// around that)

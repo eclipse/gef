@@ -186,17 +186,18 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 					for (IVisualPart<? extends Node> part : targets) {
 						ResizableTransformableBoundsProvider boundsProvider = new ResizableTransformableBoundsProvider();
 						boundsProvider.setAdaptable(part);
-						Rectangle boundsInLocal = boundsProvider.get()
-								.getBounds();
-
+						IGeometry boundsInLocal = boundsProvider.get();
 						// transform to scene
-						Rectangle boundsInScene = FX2Geometry
-								.toRectangle(part.getVisual().localToScene(
-										Geometry2FX.toFXBounds(boundsInLocal)));
-						if (bounds == null) {
-							bounds = boundsInScene;
-						} else {
-							bounds.union(boundsInScene);
+						if (boundsInLocal != null) {
+							Rectangle boundsInScene = FX2Geometry
+									.toRectangle(part.getVisual().localToScene(
+											Geometry2FX.toFXBounds(boundsInLocal
+													.getBounds())));
+							if (bounds == null) {
+								bounds = boundsInScene;
+							} else {
+								bounds.union(boundsInScene);
+							}
 						}
 					}
 					return bounds;

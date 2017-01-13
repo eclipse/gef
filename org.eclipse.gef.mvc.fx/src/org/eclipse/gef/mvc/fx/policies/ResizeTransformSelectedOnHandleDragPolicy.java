@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -21,6 +23,7 @@ import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.Dimension;
+import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
@@ -105,18 +108,18 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 	 */
 	private void computeRelatives(IContentPart<? extends Node> targetPart) {
 		Rectangle bounds = getVisualBounds(targetPart);
-
-		double left = bounds.getX() - selectionBounds.getX();
-		relX1.put(targetPart, left / selectionBounds.getWidth());
-
-		double right = left + bounds.getWidth();
-		relX2.put(targetPart, right / selectionBounds.getWidth());
-
-		double top = bounds.getY() - selectionBounds.getY();
-		relY1.put(targetPart, top / selectionBounds.getHeight());
-
-		double bottom = top + bounds.getHeight();
-		relY2.put(targetPart, bottom / selectionBounds.getHeight());
+		if (bounds != null) {
+			double left = bounds.getX() - selectionBounds.getX();
+			double right = left + bounds.getWidth();
+			double top = bounds.getY() - selectionBounds.getY();
+			double bottom = top + bounds.getHeight();
+			double selWidth = selectionBounds.getWidth();
+			double selHeight = selectionBounds.getHeight();
+			relX1.put(targetPart, left / selWidth);
+			relX2.put(targetPart, right / selWidth);
+			relY1.put(targetPart, top / selHeight);
+			relY2.put(targetPart, bottom / selHeight);
+		}
 	}
 
 	@Override
@@ -291,7 +294,11 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 				.listIterator(1);
 		while (iterator.hasNext()) {
 			IContentPart<? extends Node> cp = iterator.next();
-			bounds.union(getVisualBounds(cp));
+			if (bounds == null) {
+				bounds = getVisualBounds(cp);
+			} else {
+				bounds.union(getVisualBounds(cp));
+			}
 		}
 		return bounds;
 	}
@@ -305,8 +312,17 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 	 *         be scaled/relocated by this policy.
 	 */
 	protected List<IContentPart<? extends Node>> getTargetParts() {
-		return getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
-				.getSelectionUnmodifiable();
+		List<IContentPart<? extends Node>> selection = new ArrayList<>(
+				getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+						.getSelectionUnmodifiable());
+		// filter out parts without transformable-resizable bounds
+		Iterator<IContentPart<? extends Node>> it = selection.iterator();
+		while (it.hasNext()) {
+			if (getVisualBounds(it.next()) == null) {
+				it.remove();
+			}
+		}
+		return selection;
 	}
 
 	/**
@@ -344,11 +360,12 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 		// use provider to compute bounds
 		ResizableTransformableBoundsProvider boundsProvider = new ResizableTransformableBoundsProvider();
 		boundsProvider.setAdaptable(contentPart);
-		Rectangle boundsInLocal = boundsProvider.get().getBounds();
+		IGeometry boundsInLocal = boundsProvider.get();
 
 		// transform to scene
-		return FX2Geometry.toRectangle(contentPart.getVisual()
-				.localToScene(Geometry2FX.toFXBounds(boundsInLocal)));
+		return boundsInLocal == null ? null
+				: FX2Geometry.toRectangle(contentPart.getVisual().localToScene(
+						Geometry2FX.toFXBounds(boundsInLocal.getBounds())));
 	}
 
 	@Override
@@ -384,7 +401,10 @@ public class ResizeTransformSelectedOnHandleDragPolicy
 	 *         should trigger panning, otherwise <code>false</code>.
 	 */
 	protected boolean isResizeTransform(MouseEvent event) {
-		return targetParts.size() > 1 && !event.isControlDown();
+		return targetParts.size() > 0 && !event.isControlDown()
+				&& getHost().getRoot().getViewer()
+						.getAdapter(SelectionModel.class)
+						.getSelectionUnmodifiable().size() > 1;
 	}
 
 	@Override
