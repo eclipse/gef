@@ -14,12 +14,10 @@ package org.eclipse.gef.dot.internal
 
 import com.google.inject.Injector
 import java.io.StringReader
-import java.util.Arrays
 import java.util.Collections
 import java.util.Iterator
 import java.util.List
 import java.util.Map
-import java.util.TreeSet
 import org.eclipse.emf.common.util.BasicDiagnostic
 import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.ecore.EObject
