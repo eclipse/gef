@@ -52,9 +52,7 @@ import javafx.scene.Node;
 public abstract class AbstractBehavior implements IBehavior {
 
 	private ReadOnlyObjectWrapper<IVisualPart<? extends Node>> hostProperty = new ReadOnlyObjectWrapper<>();
-
 	private ActivatableSupport acs = new ActivatableSupport(this);
-
 	private Map<Set<IVisualPart<? extends Node>>, List<IFeedbackPart<? extends Node>>> feedbackPerTargetSet = new HashMap<>();
 	private Map<Set<IVisualPart<? extends Node>>, List<IHandlePart<? extends Node>>> handlesPerTargetSet = new HashMap<>();
 
@@ -774,6 +772,12 @@ public abstract class AbstractBehavior implements IBehavior {
 
 		// compute target set
 		Set<IVisualPart<? extends Node>> targetSet = createTargetSet(targets);
+
+		// recomputation of handles is only allowed if there already are
+		// handles for the targets
+		if (!hasHandles(targetSet)) {
+			return null;
+		}
 
 		// determine handle part factory for the target set
 		IRootPart<? extends Node> root = targets.get(0).getRoot();
