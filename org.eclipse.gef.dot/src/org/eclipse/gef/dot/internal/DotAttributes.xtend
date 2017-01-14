@@ -232,10 +232,10 @@ public class DotAttributes {
 	}
 
 	/**
-	 * A parser to parse a DOT primitive value type.
+	 * A serializer to serialize a DOT primitive value type.
 	 * 
 	 * @param <T>
-	 *            The java equivalent of the parsed DOT value.
+	 *            The java equivalent type to serialize.
 	 */
 	private interface IAttributeValueSerializer<T> {
 
