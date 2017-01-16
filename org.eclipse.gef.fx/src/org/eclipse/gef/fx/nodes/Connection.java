@@ -349,14 +349,16 @@ public class Connection extends Group {
 					// walk over all anchors to compute new points, transforming
 					// them using the curve's local to parent transform
 					for (int i = 0; i < points.size(); i++) {
-						Point position = getAnchor(i)
-								.getPosition(getAnchorKey(i));
-						// XXX: Here the same computation is used that is also
-						// used within #createPCL().
-						Point newPoint = FX2Geometry
-								.toPoint(getCurve().localToParent(
-										Geometry2FX.toFXPoint(position)));
-						points.set(i, newPoint);
+						if (isConnected(i)) {
+							Point position = getAnchor(i)
+									.getPosition(getAnchorKey(i));
+							// XXX: Here the same computation is used that is
+							// also used within #createPCL().
+							Point newPoint = FX2Geometry
+									.toPoint(getCurve().localToParent(
+											Geometry2FX.toFXPoint(position)));
+							points.set(i, newPoint);
+						}
 					}
 					inRefresh = wasRefresh;
 					refresh();
