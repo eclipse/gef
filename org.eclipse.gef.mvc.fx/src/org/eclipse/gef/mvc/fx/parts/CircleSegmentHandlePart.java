@@ -21,16 +21,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 
 /**
- * The {@link CircleSegmentHandlePart} is an
- * {@link AbstractSegmentHandlePart} that uses {@link Circle} for the
- * visualization.
+ * The {@link CircleSegmentHandlePart} is an {@link AbstractSegmentHandlePart}
+ * that uses {@link Circle} for the visualization.
  *
  * @author mwienand
  * @author anyssen
  *
  */
-public class CircleSegmentHandlePart
-		extends AbstractSegmentHandlePart<Circle> {
+public class CircleSegmentHandlePart extends AbstractSegmentHandlePart<Circle> {
 
 	/**
 	 * The default size for this part's visualization.
@@ -105,5 +103,4 @@ public class CircleSegmentHandlePart
 			}
 		}
 	}
-
 }

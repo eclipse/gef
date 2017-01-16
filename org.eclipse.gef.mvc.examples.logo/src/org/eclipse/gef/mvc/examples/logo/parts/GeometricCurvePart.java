@@ -459,5 +459,4 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 		refreshContentAnchorages();
 		getContent().setWayPoints(waypoints.toArray(new Point[] {}));
 	}
-
 }

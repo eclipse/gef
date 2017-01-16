@@ -344,6 +344,21 @@ public class Connection extends Group {
 				public void changed(
 						ObservableValue<? extends Transform> observable,
 						Transform oldValue, Transform newValue) {
+					boolean wasRefresh = inRefresh;
+					inRefresh = true;
+					// walk over all anchors to compute new points, transforming
+					// them using the curve's local to parent transform
+					for (int i = 0; i < points.size(); i++) {
+						Point position = getAnchor(i)
+								.getPosition(getAnchorKey(i));
+						// XXX: Here the same computation is used that is also
+						// used within #createPCL().
+						Point newPoint = FX2Geometry
+								.toPoint(getCurve().localToParent(
+										Geometry2FX.toFXPoint(position)));
+						points.set(i, newPoint);
+					}
+					inRefresh = wasRefresh;
 					refresh();
 				}
 			};
@@ -380,6 +395,7 @@ public class Connection extends Group {
 							.addListener(transformListener);
 					getChildren().add(newValue);
 				}
+
 				inRefresh = oldInRefresh;
 				refresh();
 			}
@@ -1158,6 +1174,7 @@ public class Connection extends Group {
 	 * </ol>
 	 */
 	protected void refresh() {
+
 		// guard against recomputing the curveProperty while recomputing the
 		// curveProperty
 		if (inRefresh) {
@@ -1291,7 +1308,6 @@ public class Connection extends Group {
 		anchors.remove(getAnchorIndex(anchorKey));
 
 		anchorsByKeys.remove(anchorKey);
-
 		anchor.detach(anchorKey);
 
 		if (!anchorKey.equals(startAnchorKey)
@@ -1411,7 +1427,6 @@ public class Connection extends Group {
 		if (!newPosition.equals(points.get(anchorIndex))) {
 			points.set(anchorIndex, newPosition);
 		}
-
 		registerPCL(anchorKey, anchor);
 		refresh();
 	}

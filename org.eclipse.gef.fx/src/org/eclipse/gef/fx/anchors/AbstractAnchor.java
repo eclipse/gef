@@ -168,7 +168,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	@Override
 	public ReadOnlyObjectProperty<Node> anchorageProperty() {
 		return anchorageProperty.getReadOnlyProperty();
-	};
+	}
 
 	@Override
 	public void attach(AnchorKey key) {
@@ -432,8 +432,6 @@ public abstract class AbstractAnchor implements IAnchor {
 					&& !Double.isInfinite(newPosition.x)
 					&& !Double.isNaN(newPosition.y)
 					&& !Double.isInfinite(newPosition.y)) {
-				// System.out.println(
-				// "Updated position for key " + key + ": " + newPosition);
 				positions.put(key, newPosition);
 			}
 		}

@@ -180,6 +180,7 @@ public abstract class AbstractInterpolator implements IConnectionInterpolator {
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
 		ICurve newGeometry = computeCurve(connection);
+
 		// XXX: we can only deal with geometry nodes so far
 		@SuppressWarnings("unchecked")
 		final GeometryNode<ICurve> curveNode = (GeometryNode<ICurve>) connection
