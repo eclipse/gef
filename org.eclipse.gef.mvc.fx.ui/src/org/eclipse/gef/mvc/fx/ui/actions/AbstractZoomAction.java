@@ -16,12 +16,14 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.policies.PanningSupport;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 
 /**
@@ -33,6 +35,8 @@ import javafx.scene.Parent;
  *
  */
 public abstract class AbstractZoomAction extends AbstractViewerAction {
+
+	private PanningSupport panningSupport = new PanningSupport();
 
 	/**
 	 * Constructs a new {@link AbstractZoomAction}.
@@ -87,8 +91,15 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 
 		// build zoom operation
 		viewportPolicy.init();
+		if (isContentRestricted()) {
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.TOP_LEFT, true);
+		}
 		viewportPolicy.zoom(false, false, sx, pivotInScene.getX(),
 				pivotInScene.getY());
+		if (isContentRestricted()) {
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.BOTTOM_RIGHT,
+					false);
+		}
 		return viewportPolicy.commit();
 	}
 

@@ -14,6 +14,7 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.policies.PanningSupport;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -21,6 +22,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 
 /**
@@ -35,6 +37,8 @@ import javafx.scene.Parent;
  *
  */
 public class FitToViewportAction extends AbstractViewerAction {
+
+	private PanningSupport panningSupport = new PanningSupport();
 
 	/**
 	 * Constructs a new {@link FitToViewportAction}.
@@ -81,7 +85,14 @@ public class FitToViewportAction extends AbstractViewerAction {
 		}
 
 		viewportPolicy.init();
+		if (isContentRestricted()) {
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.TOP_LEFT, true);
+		}
 		viewportPolicy.fitToSize(getMinZoom(), getMaxZoom());
+		if (isContentRestricted()) {
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.BOTTOM_RIGHT,
+					false);
+		}
 		return viewportPolicy.commit();
 	}
 

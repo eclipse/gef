@@ -17,12 +17,14 @@ import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.policies.PanningSupport;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 
 /**
@@ -39,6 +41,8 @@ import javafx.scene.Parent;
  *
  */
 public abstract class AbstractScrollAction extends AbstractViewerAction {
+
+	private PanningSupport panningSupport = new PanningSupport();
 
 	/**
 	 * Constructs a new {@link AbstractScrollAction}.
@@ -92,8 +96,15 @@ public abstract class AbstractScrollAction extends AbstractViewerAction {
 		}
 
 		viewportPolicy.init();
+		if (isContentRestricted()) {
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.TOP_LEFT, true);
+		}
 		viewportPolicy.scroll(false, viewportPivot.x - contentPivot.x,
 				viewportPivot.y - contentPivot.y);
+		if (isContentRestricted()) {
+			panningSupport.removeFreeSpace(viewportPolicy, Pos.BOTTOM_RIGHT,
+					false);
+		}
 		return viewportPolicy.commit();
 	}
 
