@@ -50,9 +50,9 @@ public class ScrollActionGroup extends AbstractViewerActionGroup {
 
 	@Override
 	public List<IViewerDependent> createViewerDependents() {
-		return Arrays.asList(scrollCenterDropDownAction, scrollTopLeftAction,
-				scrollTopRightAction, scrollBottomRightAction,
-				scrollBottomLeftAction);
+		return Arrays.asList(scrollCenterDropDownAction, scrollCenterAction,
+				scrollTopLeftAction, scrollTopRightAction,
+				scrollBottomRightAction, scrollBottomLeftAction);
 	}
 
 	@Override
