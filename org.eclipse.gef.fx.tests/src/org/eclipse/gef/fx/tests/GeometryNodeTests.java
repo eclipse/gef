@@ -84,7 +84,6 @@ public class GeometryNodeTests {
 		n.setGeometry(new Polyline(19.02538299560547, 30.438175201416016, 19.02538299560547, 108.58389282226562));
 		n.setStrokeWidth(3.5);
 		n.setStrokeType(StrokeType.CENTERED);
-		System.out.println(n.getGeometry().getBounds());
 	}
 
 	@Test
