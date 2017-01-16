@@ -16,8 +16,8 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
-import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
@@ -83,16 +83,18 @@ public abstract class AbstractScrollAction extends AbstractViewerAction {
 				infiniteCanvas.getWidth(), infiniteCanvas.getHeight()));
 		Point viewportPivot = determinePivotPoint(viewportBounds);
 
-		// build scroll operation
-		ChangeViewportOperation operation = new ChangeViewportOperation(
-				infiniteCanvas);
-		operation.setNewHorizontalScrollOffset(
-				infiniteCanvas.getHorizontalScrollOffset() + viewportPivot.x
-						- contentPivot.x);
-		operation.setNewVerticalScrollOffset(
-				infiniteCanvas.getVerticalScrollOffset() + viewportPivot.y
-						- contentPivot.y);
-		return operation;
+		// query ViewportPolicy
+		ViewportPolicy viewportPolicy = getViewer().getRootPart()
+				.getAdapter(ViewportPolicy.class);
+		if (viewportPolicy == null) {
+			throw new IllegalStateException(
+					"Cannot perform AbstractScrollAction, because no ViewportPolicy can be determined.");
+		}
+
+		viewportPolicy.init();
+		viewportPolicy.scroll(false, viewportPivot.x - contentPivot.x,
+				viewportPivot.y - contentPivot.y);
+		return viewportPolicy.commit();
 	}
 
 	/**
@@ -118,5 +120,4 @@ public abstract class AbstractScrollAction extends AbstractViewerAction {
 		}
 		return null;
 	}
-
 }
