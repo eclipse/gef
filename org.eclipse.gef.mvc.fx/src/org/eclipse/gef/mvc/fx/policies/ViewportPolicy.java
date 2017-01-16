@@ -80,6 +80,12 @@ public class ViewportPolicy extends AbstractTransactionPolicy {
 	public void fitToSize(double zoomMin, double zoomMax) {
 		ChangeViewportOperation viewportOperation = getChangeViewportOperation();
 		InfiniteCanvas canvas = viewportOperation.getInfiniteCanvas();
+
+		// fit-to-size only works if we have contents
+		if (canvas.getContentBounds().isEmpty()) {
+			return;
+		}
+
 		canvas.fitToSize(zoomMin, zoomMax);
 		viewportOperation.setNewContentTransform(
 				FX2Geometry.toAffineTransform(canvas.getContentTransform()));
