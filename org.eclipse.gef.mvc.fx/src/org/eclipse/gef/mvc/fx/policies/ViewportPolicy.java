@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 itemis AG and others.
+ * Copyright (c) 2015, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Matthias Wienand (itemis AG) - contribution for Bugzilla #476507
+ *     Matthias Wienand (itemis AG) - contribution for Bugzillas #476507, #510419
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
@@ -36,12 +36,57 @@ import javafx.geometry.Point2D;
  */
 public class ViewportPolicy extends AbstractTransactionPolicy {
 
+	private static final double DEFAULT_ZOOM_MIN = 0.0625;
+	private static final double DEFAULT_ZOOM_MAX = 16d;
+
 	@Override
 	protected ITransactionalOperation createOperation() {
 		InfiniteCanvas canvas = (InfiniteCanvas) getHost().getRoot().getViewer()
 				.getCanvas();
 		return new ChangeViewportOperation(canvas,
 				FX2Geometry.toAffineTransform(canvas.getContentTransform()));
+	}
+
+	/**
+	 * Centers the contents within the viewport and zooms the viewport so that
+	 * the contents are fully visible.
+	 */
+	public void fitToSize() {
+		fitToSize(DEFAULT_ZOOM_MIN, DEFAULT_ZOOM_MAX);
+	}
+
+	/**
+	 * Centers the contents within the viewport and zooms the viewport so that
+	 * the contents are fully visible (if possible given the specified zoom
+	 * factor range).
+	 *
+	 * @param zoomMin
+	 *            The minimum zoom factor.
+	 */
+	public void fitToSize(double zoomMin) {
+		fitToSize(zoomMin, DEFAULT_ZOOM_MAX);
+	}
+
+	/**
+	 * Centers the contents within the viewport and zooms the viewport so that
+	 * the contents are fully visible (if possible given the specified zoom
+	 * factor range).
+	 *
+	 * @param zoomMin
+	 *            The minimum zoom factor.
+	 * @param zoomMax
+	 *            The maximum zoom factor.
+	 */
+	public void fitToSize(double zoomMin, double zoomMax) {
+		ChangeViewportOperation viewportOperation = getChangeViewportOperation();
+		InfiniteCanvas canvas = viewportOperation.getInfiniteCanvas();
+		canvas.fitToSize(zoomMin, zoomMax);
+		viewportOperation.setNewContentTransform(
+				FX2Geometry.toAffineTransform(canvas.getContentTransform()));
+		viewportOperation.setNewHorizontalScrollOffset(
+				canvas.getHorizontalScrollOffset());
+		viewportOperation
+				.setNewVerticalScrollOffset(canvas.getVerticalScrollOffset());
 	}
 
 	/**
@@ -205,5 +250,4 @@ public class ViewportPolicy extends AbstractTransactionPolicy {
 
 		locallyExecuteOperation();
 	}
-
 }

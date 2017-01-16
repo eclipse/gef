@@ -13,9 +13,8 @@
 package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
+import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.IAction;
@@ -74,16 +73,16 @@ public class FitToViewportAction extends AbstractViewerAction {
 			return null;
 		}
 
-		ChangeViewportOperation viewportOperation = new ChangeViewportOperation(
-				infiniteCanvas);
-		infiniteCanvas.fitToSize(getMinZoom(), getMaxZoom());
-		viewportOperation.setNewContentTransform(FX2Geometry
-				.toAffineTransform(infiniteCanvas.getContentTransform()));
-		viewportOperation.setNewHorizontalScrollOffset(
-				infiniteCanvas.getHorizontalScrollOffset());
-		viewportOperation.setNewVerticalScrollOffset(
-				infiniteCanvas.getVerticalScrollOffset());
-		return viewportOperation;
+		ViewportPolicy viewportPolicy = getViewer().getRootPart()
+				.getAdapter(ViewportPolicy.class);
+		if (viewportPolicy == null) {
+			throw new IllegalStateException(
+					"Cannot perform FitToViewportAction, because no ViewportPolicy can be determined for the root part.");
+		}
+
+		viewportPolicy.init();
+		viewportPolicy.fitToSize(getMinZoom(), getMaxZoom());
+		return viewportPolicy.commit();
 	}
 
 	/**

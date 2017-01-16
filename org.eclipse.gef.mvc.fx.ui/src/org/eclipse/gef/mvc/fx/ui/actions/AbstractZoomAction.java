@@ -82,15 +82,14 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 				.getAdapter(ViewportPolicy.class);
 		if (viewportPolicy == null) {
 			throw new IllegalStateException(
-					"Cannot perform AbstractZoomAction, because no ViewportPolicy can be determined.");
+					"Cannot perform AbstractZoomAction, because no ViewportPolicy can be determined for the root part.");
 		}
 
 		// build zoom operation
 		viewportPolicy.init();
 		viewportPolicy.zoom(false, false, sx, pivotInScene.getX(),
 				pivotInScene.getY());
-		ITransactionalOperation operation = viewportPolicy.commit();
-		return operation;
+		return viewportPolicy.commit();
 	}
 
 	/**

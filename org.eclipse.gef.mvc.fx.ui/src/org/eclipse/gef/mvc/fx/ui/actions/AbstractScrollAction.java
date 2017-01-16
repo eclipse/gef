@@ -88,7 +88,7 @@ public abstract class AbstractScrollAction extends AbstractViewerAction {
 				.getAdapter(ViewportPolicy.class);
 		if (viewportPolicy == null) {
 			throw new IllegalStateException(
-					"Cannot perform AbstractScrollAction, because no ViewportPolicy can be determined.");
+					"Cannot perform AbstractScrollAction, because no ViewportPolicy can be determined for the root part.");
 		}
 
 		viewportPolicy.init();

@@ -111,5 +111,4 @@ public class PanningSupport {
 			viewportPolicy.scroll(true, deltaTx, deltaTy);
 		}
 	}
-
 }
