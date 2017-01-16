@@ -117,4 +117,22 @@ public abstract class AbstractZoomAction extends AbstractViewerAction {
 		}
 		return null;
 	}
+
+	/**
+	 * Returns <code>true</code> to signify that scrolling and zooming is
+	 * restricted to the content bounds, <code>false</code> otherwise.
+	 * <p>
+	 * When content-restricted, the policy behaves texteditor-like, i.e. the
+	 * pivot point for zooming is at the top of the viewport and at the left of
+	 * the contents, and free space is only allowed to the right and to the
+	 * bottom of the contents. Therefore, the action does not allow scrolling
+	 * and zooming if it would result in free space within the viewport at the
+	 * top or left sides of the contents.
+	 *
+	 * @return <code>true</code> to signify that scrolling and is restricted to
+	 *         the content bounds, <code>false</code> otherwise.
+	 */
+	protected boolean isContentRestricted() {
+		return false;
+	}
 }

@@ -83,13 +83,8 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	private ChangeListener<? super Number> zoomListener;
 
 	// actions
-	private AbstractZoomAction zoomAction = new AbstractZoomAction("Zoom") {
-		@Override
-		protected double determineZoomFactor(double currentZoomFactor,
-				Event event) {
-			return ((double) event.data) * 1d / currentZoomFactor;
-		}
-	};
+	private AbstractZoomAction zoomAction = createZoomAction();
+
 	private List<IAction> additionalActions = new ArrayList<>();
 
 	/**
@@ -102,6 +97,26 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	public ZoomComboContributionItem(IAction... additionalActions) {
 		setId(ZOOM_COMBO_CONTRIBUTION_ITEM_ID);
 		this.additionalActions.addAll(Arrays.asList(additionalActions));
+	}
+
+	/**
+	 * Returns an {@link AbstractZoomAction} that is used to carry out zooming
+	 * when one of the predefined zoom factors is selected by the user. The zoom
+	 * factor is passed on to the action using the {@link Event#data} field of
+	 * the {@link Event} that is given to
+	 * {@link AbstractZoomAction#determineZoomFactor(double, Event)}.
+	 *
+	 * @return The {@link AbstractZoomAction} that is used to apply predefined
+	 *         zoom factors.
+	 */
+	protected AbstractZoomAction createZoomAction() {
+		return new AbstractZoomAction("Zoom") {
+			@Override
+			protected double determineZoomFactor(double currentZoomFactor,
+					Event event) {
+				return ((double) event.data) * 1d / currentZoomFactor;
+			}
+		};
 	}
 
 	@Override

@@ -61,13 +61,7 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	private ChangeListener<? super Number> zoomListener;
 
 	// zoom action
-	private AbstractZoomAction zoomAction = new AbstractZoomAction("Zoom") {
-		@Override
-		protected double determineZoomFactor(double currentZoomFactor,
-				Event event) {
-			return ((double) event.data) * 1d / currentZoomFactor;
-		}
-	};
+	private AbstractZoomAction zoomAction = createZoomAction();
 
 	/**
 	 * Constructs a new {@link ZoomScaleContributionItem}.
@@ -98,6 +92,24 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	protected double computeZoomFactor(int scaleValue) {
 		return SCALE_TO_ZOOM_COEFF_BASE
 				* Math.pow(Math.E, SCALE_TO_ZOOM_COEFF_EXPO * scaleValue);
+	}
+
+	/**
+	 * Returns an {@link AbstractZoomAction} that is used to carry out zooming.
+	 * The zoom factor is passed on to the action using the {@link Event#data}
+	 * field of the {@link Event} that is given to
+	 * {@link AbstractZoomAction#determineZoomFactor(double, Event)}.
+	 *
+	 * @return The {@link AbstractZoomAction} that is used to carry out zooming.
+	 */
+	protected AbstractZoomAction createZoomAction() {
+		return new AbstractZoomAction("Zoom") {
+			@Override
+			protected double determineZoomFactor(double currentZoomFactor,
+					Event event) {
+				return ((double) event.data) * 1d / currentZoomFactor;
+			}
+		};
 	}
 
 	@Override
