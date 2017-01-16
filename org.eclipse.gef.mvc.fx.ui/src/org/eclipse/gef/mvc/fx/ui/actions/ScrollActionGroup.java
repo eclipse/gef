@@ -42,6 +42,7 @@ public class ScrollActionGroup extends AbstractViewerActionGroup {
 			MvcFxUiBundle.getDefault().getImageRegistry()
 					.getDescriptor(MvcFxUiBundle.IMG_ICONS_SCROLL_CENTER)) {
 	};
+	private ScrollCenterAction scrollCenterAction = new ScrollCenterAction();
 	private ScrollTopLeftAction scrollTopLeftAction = new ScrollTopLeftAction();
 	private ScrollTopRightAction scrollTopRightAction = new ScrollTopRightAction();
 	private ScrollBottomRightAction scrollBottomRightAction = new ScrollBottomRightAction();
@@ -61,6 +62,7 @@ public class ScrollActionGroup extends AbstractViewerActionGroup {
 		// TODO: Review to ensure that disposal is correct.
 		IMenuCreator menuCreator = new IMenuCreator() {
 			private Menu menu;
+			private ActionContributionItem centerItem;
 			private ActionContributionItem topLeftItem;
 			private ActionContributionItem topRightItem;
 			private ActionContributionItem bottomRightItem;
@@ -69,6 +71,8 @@ public class ScrollActionGroup extends AbstractViewerActionGroup {
 			@Override
 			public void dispose() {
 				if (menu != null) {
+					centerItem.dispose();
+					centerItem = null;
 					topLeftItem.dispose();
 					topLeftItem = null;
 					topRightItem.dispose();
@@ -83,6 +87,8 @@ public class ScrollActionGroup extends AbstractViewerActionGroup {
 			}
 
 			private void fillMenu(Menu menu) {
+				centerItem = new ActionContributionItem(scrollCenterAction);
+				centerItem.fill(menu, -1);
 				topLeftItem = new ActionContributionItem(scrollTopLeftAction);
 				topLeftItem.fill(menu, -1);
 				topRightItem = new ActionContributionItem(scrollTopRightAction);
