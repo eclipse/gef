@@ -22,7 +22,6 @@ import org.eclipse.emf.common.util.BasicDiagnostic
 import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.gef.common.reflect.ReflectionUtils
 import org.eclipse.gef.dot.internal.generator.DotAttribute
 import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup
@@ -61,7 +60,6 @@ import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidat
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
-import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.IGrammarAccess
 import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.xtext.parser.IParseResult
@@ -71,6 +69,7 @@ import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.AbstractInjectableValidator
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
+import static extension org.eclipse.xtext.EcoreUtil2.*
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
  * by {@link DotImport} and {@link DotExport}.
@@ -120,19 +119,20 @@ public class DotAttributes {
 	public static def Context getContext(EObject eObject) {
 
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
-		if (EcoreUtil2.getContainerOfType(eObject, EdgeStmtNode) != null || EcoreUtil2.
-			getContainerOfType(eObject, EdgeStmtSubgraph) != null) {
+		if (eObject.getContainerOfType(EdgeStmtNode) != null || 
+			eObject.getContainerOfType(EdgeStmtSubgraph) != null
+		) {
 			return Context.EDGE
 		}
 
 		// global AttrStmt with AttributeType 'edge'
-		val AttrStmt attrStmt = EcoreUtil2.getContainerOfType(eObject, AttrStmt)
+		val AttrStmt attrStmt = eObject.getContainerOfType(AttrStmt)
 		if (attrStmt != null && AttributeType.EDGE.equals(attrStmt.getType)) {
 			return Context.EDGE
 		}
 
 		// attribute nested below NodeStmt
-		if (EcoreUtil2.getContainerOfType(eObject, NodeStmt) != null) {
+		if (eObject.getContainerOfType(NodeStmt) != null) {
 			return Context.NODE
 		}
 
@@ -142,7 +142,7 @@ public class DotAttributes {
 		}
 
 		// attribute nested below Subgraph
-		val Subgraph subgraph = EcoreUtil2.getContainerOfType(eObject, Subgraph)
+		val Subgraph subgraph = eObject.getContainerOfType(Subgraph)
 		if (subgraph != null) {
 			if (subgraph.getName.toValue.startsWith("cluster")) {
 				return Context.CLUSTER
@@ -335,7 +335,7 @@ public class DotAttributes {
 	}
 
 	private static def checkAttributeRawValue(Context context, String attributeName, ID attributeValue) {
-		val diagnostics = DotAttributes.validateAttributeRawValue(context, attributeName,
+		val diagnostics = validateAttributeRawValue(context, attributeName,
 			attributeValue).filter[severity >= Diagnostic.ERROR]
 		if (!diagnostics.isEmpty) {
 			throw new IllegalArgumentException(
@@ -362,88 +362,84 @@ public class DotAttributes {
 		ID attributeValue) {
 
 		// use parser (and validator) for respective attribute type
-		if (DotAttributes.FORCELABELS__G.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(BOOL_PARSER, null,
-				attributeContext, DotAttributes.FORCELABELS__G, attributeValue)
-		} else if (DotAttributes.FIXEDSIZE__N.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(BOOL_PARSER, null,
-				attributeContext, DotAttributes.FIXEDSIZE__N, attributeValue)
-		} else if (DotAttributes.CLUSTERRANK__G.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(CLUSTERMODE_PARSER, null,
+		if (FORCELABELS__G.equals(attributeName)) {
+			return validateAttributeRawValue(BOOL_PARSER, null,
+				attributeContext, FORCELABELS__G, attributeValue)
+		} else if (FIXEDSIZE__N.equals(attributeName)) {
+			return validateAttributeRawValue(BOOL_PARSER, null,
+				attributeContext, FIXEDSIZE__N, attributeValue)
+		} else if (CLUSTERRANK__G.equals(attributeName)) {
+			return validateAttributeRawValue(CLUSTERMODE_PARSER, null,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.OUTPUTORDER__G.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(OUTPUTMODE_PARSER, null,
+		} else if (OUTPUTORDER__G.equals(attributeName)) {
+			return validateAttributeRawValue(OUTPUTMODE_PARSER, null,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.PAGEDIR__G.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(PAGEDIR_PARSER, null,
+		} else if (PAGEDIR__G.equals(attributeName)) {
+			return validateAttributeRawValue(PAGEDIR_PARSER, null,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.RANKDIR__G.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(RANKDIR_PARSER, null,
+		} else if (RANKDIR__G.equals(attributeName)) {
+			return validateAttributeRawValue(RANKDIR_PARSER, null,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.SPLINES__G.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(SPLINES_PARSER, null,
+		} else if (SPLINES__G.equals(attributeName)) {
+			return validateAttributeRawValue(SPLINES_PARSER, null,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.LAYOUT__G.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(LAYOUT_PARSER, null,
+		} else if (LAYOUT__G.equals(attributeName)) {
+			return validateAttributeRawValue(LAYOUT_PARSER, null,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.DIR__E.equals(attributeName)) {
-
-			// dirType enum
-			return DotAttributes.validateAttributeRawValue(DIRTYPE_PARSER, null,
+		} else if (DIR__E.equals(attributeName)) {
+			return validateAttributeRawValue(DIRTYPE_PARSER, null,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.ARROWHEAD__E.equals(attributeName) || DotAttributes.ARROWTAIL__E.equals(attributeName)) {
-
-			// validate arrowtype using delegate parser and validator
-			return DotAttributes.validateAttributeRawValue(ARROWTYPE_PARSER,
+		} else if (ARROWHEAD__E.equals(attributeName) || ARROWTAIL__E.equals(attributeName)) {
+			return validateAttributeRawValue(ARROWTYPE_PARSER,
 				ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.ARROWSIZE__E.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+		} else if (ARROWSIZE__E.equals(attributeName)) {
+			return validateAttributeRawValue(DOUBLE_PARSER,
 				ARROWSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.POS__NE.equals(attributeName)) {
+		} else if (POS__NE.equals(attributeName)) {
 
 			// validate point (node) or splinetype (edge) using delegate parser
 			// and validator
 			if (Context.NODE.equals(attributeContext)) {
-				return DotAttributes.validateAttributeRawValue(POINT_PARSER,
+				return validateAttributeRawValue(POINT_PARSER,
 					POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			} else if (Context.EDGE.equals(attributeContext)) {
-				return DotAttributes.validateAttributeRawValue(SPLINETYPE_PARSER,
+				return validateAttributeRawValue(SPLINETYPE_PARSER,
 					SPLINETYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			}
-		} else if (DotAttributes.SHAPE__N.equals(attributeName)) {
+		} else if (SHAPE__N.equals(attributeName)) {
 
 			// validate shape using delegate parser and validator
-			return DotAttributes.validateAttributeRawValue(SHAPE_PARSER,
+			return validateAttributeRawValue(SHAPE_PARSER,
 				SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.SIDES__N.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR,
+		} else if (SIDES__N.equals(attributeName)) {
+			return validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR,
 				attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.SKEW__N.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+		} else if (SKEW__N.equals(attributeName)) {
+			return validateAttributeRawValue(DOUBLE_PARSER,
 				SKEW_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.DISTORTION__N.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+		} else if (DISTORTION__N.equals(attributeName)) {
+			return validateAttributeRawValue(DOUBLE_PARSER,
 				DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.WIDTH__N.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+		} else if (WIDTH__N.equals(attributeName)) {
+			return validateAttributeRawValue(DOUBLE_PARSER,
 				WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.HEIGHT__N.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(DOUBLE_PARSER,
+		} else if (HEIGHT__N.equals(attributeName)) {
+			return validateAttributeRawValue(DOUBLE_PARSER,
 				HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.STYLE__GNE.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(STYLE_PARSER,
+		} else if (STYLE__GNE.equals(attributeName)) {
+			return validateAttributeRawValue(STYLE_PARSER,
 				STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.HEAD_LP__E.equals(attributeName) || DotAttributes.LP__GE.equals(attributeName) ||
-			DotAttributes.TAIL_LP__E.equals(attributeName) || DotAttributes.XLP__NE.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(POINT_PARSER,
+		} else if (HEAD_LP__E.equals(attributeName) || LP__GE.equals(attributeName) ||
+			TAIL_LP__E.equals(attributeName) || XLP__NE.equals(attributeName)) {
+			return validateAttributeRawValue(POINT_PARSER,
 				POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.BGCOLOR__G.equals(attributeName) || DotAttributes.COLOR__NE.equals(attributeName) ||
-			DotAttributes.FILLCOLOR__NE.equals(attributeName) || DotAttributes.FONTCOLOR__GNE.equals(attributeName) ||
-			DotAttributes.LABELFONTCOLOR__E.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(COLOR_PARSER,
+		} else if (BGCOLOR__G.equals(attributeName) || COLOR__NE.equals(attributeName) ||
+			FILLCOLOR__NE.equals(attributeName) || FONTCOLOR__GNE.equals(attributeName) ||
+			LABELFONTCOLOR__E.equals(attributeName)) {
+			return validateAttributeRawValue(COLOR_PARSER,
 				COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DotAttributes.COLORSCHEME__GNE.equals(attributeName)) {
-			return DotAttributes.validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,
+		} else if (COLORSCHEME__GNE.equals(attributeName)) {
+			return validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,
 				attributeContext, attributeName, attributeValue)
 		}
 		return Collections.emptyList
@@ -481,7 +477,7 @@ public class DotAttributes {
 			return new ParseResult<E>(
 				Collections.<Diagnostic>singletonList(
 					new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
-						"Value has to be one of " + getFormattedValues(definition.getEnumConstants), #[])))
+						"Value has to be one of " + definition.getEnumConstants.getFormattedValues, #[])))
 		}
 
 		private static def String getFormattedValues(Object[] values) {
@@ -638,7 +634,7 @@ public class DotAttributes {
 			}
 			return Collections.singletonList(
 				new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
-					"Value should be one of " + getFormattedValues(validValues) + ".", #[]))
+					"Value should be one of " + validValues.getFormattedValues + ".", #[]))
 		}
 
 		private def String getFormattedValues(Object[] values) {
@@ -719,7 +715,7 @@ public class DotAttributes {
 				validator.validate(attributeValue, null/* diagnostic chain */, validationContext)
 
 				// ...and all its children
-				val Iterator<EObject> iterator = EcoreUtil.getAllProperContents(attributeValue, true)
+				val Iterator<EObject> iterator = attributeValue.getAllProperContents(true)
 				while (iterator.hasNext) {
 					validator.validate(iterator.next, null/* diagnostic chain */, validationContext)
 				}
