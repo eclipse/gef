@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.fx.anchors;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -61,7 +62,6 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	public static class AnchorageReferenceGeometry
 			extends Parameter<IGeometry> {
-
 		/**
 		 * Creates a new {@link AnchorageReferenceGeometry} with no default
 		 * value.
@@ -88,7 +88,6 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * (anchorage) reference point.
 	 */
 	public static class AnchorageReferencePosition extends Parameter<Point> {
-
 		/**
 		 * Creates a new {@link AnchorageReferencePosition} without default
 		 * value.
@@ -115,7 +114,6 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * reference point.
 	 */
 	public static class AnchoredReferencePoint extends Parameter<Point> {
-
 		/**
 		 * Creates a new {@link AnchoredReferencePoint} with no default value.
 		 */
@@ -141,7 +139,6 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * orientation to be used for orthogonal projections.
 	 */
 	public static class PreferredOrientation extends Parameter<Orientation> {
-
 		/**
 		 * Creates a new {@link PreferredOrientation} without default value.
 		 */
@@ -196,7 +193,11 @@ public class DynamicAnchor extends AbstractAnchor {
 								public void changed(
 										ObservableValue<? extends Object> observable,
 										Object oldValue, Object newValue) {
+									// if (inUpdatePosition) {
+									// deferredUpdates.add(key);
+									// } else {
 									updatePosition(key);
+									// }
 								}
 							};
 							valueChangeListeners.put(key, l);
@@ -215,13 +216,13 @@ public class DynamicAnchor extends AbstractAnchor {
 			}
 		}
 	};
+
 	private IComputationStrategy computationStrategy;
+
 	private ObservableSet<IComputationStrategy.Parameter<?>> anchorageComputationParameters = FXCollections
 			.observableSet(new HashSet<IComputationStrategy.Parameter<?>>());
-
 	private ReadOnlySetWrapper<IComputationStrategy.Parameter<?>> anchorageComputationParametersProperty = new ReadOnlySetWrapperEx<>(
 			anchorageComputationParameters);
-
 	private ObservableSetMultimap<AnchorKey, IComputationStrategy.Parameter<?>> anchoredComputationParameters = CollectionUtils
 			.observableHashMultimap();
 
@@ -524,13 +525,16 @@ public class DynamicAnchor extends AbstractAnchor {
 			if (Kind.ANCHORED.equals(Parameter.getKind(paramType))) {
 				if (Parameter.get(parameters, paramType) == null) {
 					// parameter is not already contained
+					Parameter<?> p;
 					try {
-						Parameter<?> p = paramType.getDeclaredConstructor()
-								.newInstance();
+						p = paramType.getDeclaredConstructor().newInstance();
 						if (Kind.ANCHORED.equals(p.getKind())) {
 							anchoredComputationParameters.put(key, p);
 						}
-					} catch (Exception e) {
+					} catch (InstantiationException | IllegalAccessException
+							| IllegalArgumentException
+							| InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
 						throw new IllegalStateException(
 								"Could not create instance of parameter type "
 										+ paramType,
@@ -560,5 +564,4 @@ public class DynamicAnchor extends AbstractAnchor {
 			initAnchoredParameters(key);
 		}
 	}
-
 }
