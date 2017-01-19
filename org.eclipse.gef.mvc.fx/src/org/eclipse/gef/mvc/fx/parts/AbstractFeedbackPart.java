@@ -29,8 +29,7 @@ import javafx.scene.transform.Transform;
  * @author anyssen
  *
  * @param <V>
- *            The visual {@link Node} used by this
- *            {@link AbstractFeedbackPart}.
+ *            The visual {@link Node} used by this {@link AbstractFeedbackPart}.
  */
 abstract public class AbstractFeedbackPart<V extends Node>
 		extends AbstractVisualPart<V> implements IFeedbackPart<V> {
@@ -66,17 +65,26 @@ abstract public class AbstractFeedbackPart<V extends Node>
 
 		if (count == 0) {
 			Node anchorageVisual = anchorage.getVisual();
+			final boolean doIt[] = new boolean[] { true };
 			VisualChangeListener listener = new VisualChangeListener() {
 				@Override
 				protected void boundsInLocalChanged(Bounds oldBounds,
 						Bounds newBounds) {
-					refreshVisual();
+					if (doIt[0]) {
+						doIt[0] = false;
+						refreshVisual();
+						doIt[0] = true;
+					}
 				}
 
 				@Override
 				protected void localToParentTransformChanged(Node observed,
 						Transform oldTransform, Transform newTransform) {
-					refreshVisual();
+					if (doIt[0]) {
+						doIt[0] = false;
+						refreshVisual();
+						doIt[0] = true;
+					}
 				}
 			};
 			visualChangeListeners.put(anchorage, listener);

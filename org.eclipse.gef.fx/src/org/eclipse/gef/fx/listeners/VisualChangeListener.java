@@ -340,6 +340,30 @@ public abstract class VisualChangeListener {
 			localToParentTransformListeners.put(transformChangeListener, tmp);
 			tmp = tmp.getParent();
 		}
+
+		// add transform listeners
+		// FIXME: Duplicate code!
+		tmp = observer;
+		while (tmp != null && tmp != parent) {
+			final Node current = tmp;
+			ChangeListener<Transform> transformChangeListener = new ChangeListener<Transform>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Transform> observable,
+						Transform oldValue, Transform newValue) {
+					// only fire a visual change event if the new transform is
+					// valid
+					if (isValidTransform(newValue)) {
+						localToParentTransformChanged(current, oldValue,
+								newValue);
+					}
+				}
+			};
+			tmp.localToParentTransformProperty()
+					.addListener(transformChangeListener);
+			localToParentTransformListeners.put(transformChangeListener, tmp);
+			tmp = tmp.getParent();
+		}
 	}
 
 	/**
