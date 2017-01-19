@@ -256,13 +256,18 @@ public class MapListenerHelperEx<K, V> {
 	 */
 	protected void notifyMapChangeListeners(
 			Change<? extends K, ? extends V> change) {
-		if (mapChangeListeners != null) {
+		if (mapChangeListeners != null && !mapChangeListeners.isEmpty()) {
+			// if (lockMapChangeListeners) {
+			// throw new IllegalStateException("Re-entrant map change!");
+			// }
 			try {
 				lockMapChangeListeners = true;
 				for (MapChangeListener<? super K, ? super V> l : mapChangeListeners) {
 					try {
 						l.onChanged(change);
 					} catch (Exception e) {
+						// System.out.println("Exception in listener: " +
+						// e.getMessage() + ", cause=" + e.getCause());
 						Thread.currentThread().getUncaughtExceptionHandler()
 								.uncaughtException(Thread.currentThread(), e);
 					}
