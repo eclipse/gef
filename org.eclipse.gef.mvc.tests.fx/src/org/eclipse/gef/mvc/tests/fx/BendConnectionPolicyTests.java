@@ -42,6 +42,7 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.euclidean.Vector;
+import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
@@ -2059,6 +2060,118 @@ public class BendConnectionPolicyTests {
 	}
 
 	@Test
+	public void test_move_ortho_anchorages_horizontally() throws Throwable {
+		final List<Object> contents = TestModels.getAB_AB_simple();
+		final IViewer viewer = createViewer(contents);
+
+		// query bend policy for first connection
+		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
+				.get(contents.get(contents.size() - 1));
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				((DynamicAnchor) connection.getVisual().getStartAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				((DynamicAnchor) connection.getVisual().getEndAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				connection.getVisual().setRouter(new OrthogonalRouter());
+			}
+		});
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		final Point startPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		});
+		final Point endPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		});
+
+		// move start and end anchorage horizontally
+		AffineTransform translation = new AffineTransform().setToTranslation(50, 0);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				final AnchoragePart startAnchorage = (AnchoragePart) viewer.getContentPartMap().get(contents.get(0));
+				final AnchoragePart endAnchorage = (AnchoragePart) viewer.getContentPartMap().get(contents.get(1));
+				AffineTransform newStartTransform = FX2Geometry.toAffineTransform(startAnchorage.getVisualTransform())
+						.preConcatenate(translation);
+				AffineTransform newEndTransform = FX2Geometry.toAffineTransform(endAnchorage.getVisualTransform())
+						.preConcatenate(translation);
+				// XXX: Order is important! Move start first, so that end anchor
+				// computation does not yield a different result.
+				// System.out.println("TX START");
+				startAnchorage.setVisualTransform(Geometry2FX.toFXAffine(newStartTransform));
+				// System.out.println("TX END");
+				endAnchorage.setVisualTransform(Geometry2FX.toFXAffine(newEndTransform));
+			}
+		});
+
+		// ensure start and end point moved
+		final Point newStartPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		});
+		final Point newEndPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		});
+		assertEquals(startPoint.getTransformed(translation), newStartPoint);
+		assertEquals(endPoint.getTransformed(translation), newEndPoint);
+
+		// reattach anchors
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				IAnchor startAnchor = connection.getVisual().getStartAnchor();
+				IAnchor endAnchor = connection.getVisual().getEndAnchor();
+				connection.getVisual().setStartPoint(new Point());
+				// System.out.println("#########################");
+				// System.out.println("#########################");
+				connection.getVisual().setEndPoint(new Point());
+				// System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
+				// System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
+				connection.getVisual().setStartAnchor(startAnchor);
+				// System.out.println("#########################");
+				// System.out.println("#########################");
+				connection.getVisual().setEndAnchor(endAnchor);
+				// System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
+				// System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
+			}
+		});
+
+		// ensure start and end point did not move
+		final Point newStartPoint2 = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		});
+		final Point newEndPoint2 = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		});
+		assertEquals(newStartPoint, newStartPoint2);
+		assertEquals(newEndPoint, newEndPoint2);
+	}
+
+	@Test
 	public void test_move_segment_connected_overlay() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB_simple();
 		final IViewer viewer = createViewer(contents);
@@ -2117,7 +2230,9 @@ public class BendConnectionPolicyTests {
 		final int leftCopy = ctx.runAndWait(new RunnableWithResult<Integer>() {
 			@Override
 			public Integer run() {
-				return bendPolicy.createAfter(startHandle, getPosition(bendPolicy, startHandle));
+				Point position = getPosition(bendPolicy, startHandle);
+				Point localToScene = NodeUtils.localToScene(connection.getVisual(), position);
+				return bendPolicy.createAfter(startHandle, localToScene);
 			}
 		});
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
@@ -2629,6 +2744,7 @@ public class BendConnectionPolicyTests {
 				});
 			}
 		});
+		// System.out.println("\n\n\n\nSETUP COMPLETE\n\n\n\n");
 
 		// verify router inserted two control points
 		assertEquals(2, countExplicit(connection.getVisual()));
@@ -2658,8 +2774,14 @@ public class BendConnectionPolicyTests {
 			@Override
 			public void run() {
 				bendPolicy.init();
+				// copy start anchor and make 1st router anchor explicit
+				// System.out.println("\n\n\n\nPRE-SELECT\n\n\n\n\n");
 				bendPolicy.selectSegment(0);
+				// System.out.println("\n\n\n\nPRE-MOVE\n\n\n\n\n");
 				bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y));
+				// overlay removal should remove both router anchors, so that
+				// only the start anchor, its copy and the end anchor are
+				// remaining
 			}
 		});
 
@@ -2815,7 +2937,6 @@ public class BendConnectionPolicyTests {
 			public void run() {
 				ObservableList<IContentPart<? extends Node>> selectionUnmodifiable = viewer
 						.getAdapter(SelectionModel.class).getSelectionUnmodifiable();
-				System.out.println("selection initial: " + selectionUnmodifiable);
 				assertTrue(selectionUnmodifiable.isEmpty());
 			}
 		});
@@ -2831,7 +2952,6 @@ public class BendConnectionPolicyTests {
 			public void run() {
 				ObservableList<IContentPart<? extends Node>> selectionUnmodifiable = viewer
 						.getAdapter(SelectionModel.class).getSelectionUnmodifiable();
-				System.out.println("selection after first drag: " + selectionUnmodifiable);
 				assertTrue(selectionUnmodifiable.contains(firstConnectionPart));
 			}
 		});
@@ -2859,7 +2979,6 @@ public class BendConnectionPolicyTests {
 			public void run() {
 				ObservableList<IContentPart<? extends Node>> selectionUnmodifiable = viewer
 						.getAdapter(SelectionModel.class).getSelectionUnmodifiable();
-				System.out.println("selection after second drag: " + selectionUnmodifiable);
 				assertTrue(selectionUnmodifiable.contains(secondPart));
 			}
 		});
@@ -2951,9 +3070,10 @@ public class BendConnectionPolicyTests {
 			@Override
 			public void run() {
 				bendPolicy.init();
-				bendPolicy.selectSegment(0);
+				bendPolicy.selectSegment(0); // makes a router anchor explicit
 				bendPolicy.move(new Point(), new Point());
-				bendPolicy.commit();
+				// XXX: Empty move() should use overlay removal to get rid of
+				// the recently added anchor (the one made explicit).
 			}
 		});
 

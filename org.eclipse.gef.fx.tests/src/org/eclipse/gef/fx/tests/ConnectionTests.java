@@ -172,5 +172,4 @@ public class ConnectionTests {
 		assertEquals(wayPoint, points.get(1));
 		assertEquals(endPoint, points.get(2));
 	}
-
 }
