@@ -144,7 +144,6 @@ public class Connection extends Group {
 
 		private ReadOnlyBooleanProperty emptyProperty;
 		private ReadOnlyIntegerProperty sizeProperty;
-
 		private ObservableList<E> lazyValue = CollectionUtils
 				.observableArrayList();
 
@@ -152,7 +151,6 @@ public class Connection extends Group {
 			// lazy listener will forward changes of lazy value, which will be
 			// updated within fireValueChangeEvent()
 			lazyValue.addListener(new ListChangeListener<E>() {
-
 				@Override
 				public void onChanged(
 						ListChangeListener.Change<? extends E> c) {
@@ -246,7 +244,6 @@ public class Connection extends Group {
 	// mapping between anchor keys and anchor indexes.
 	private TreeMap<AnchorKey, IAnchor> anchorsByKeys = new TreeMap<>(
 			new Comparator<AnchorKey>() {
-
 				@Override
 				public int compare(AnchorKey o1, AnchorKey o2) {
 					if (o1.getId().equals(o2.getId())) {
@@ -271,22 +268,23 @@ public class Connection extends Group {
 					}
 				}
 			});
-	private Map<AnchorKey, Point> hintsByKeys = new HashMap<>();
 
+	private Map<AnchorKey, Point> hintsByKeys = new HashMap<>();
 	private ObservableList<IAnchor> anchors = CollectionUtils
 			.observableArrayList();
 	private ObservableList<Point> points = CollectionUtils
 			.observableArrayList();
 	private PointsUnmodifiableProperty pointsUnmodifiableProperty = null;
 	private AnchorsUnmodifiableProperty anchorsUnmodifiableProperty = null;
-
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorsPCL = new HashMap<>();
 	private ChangeListener<Node> decorationListener = new ChangeListener<Node>() {
-
 		final ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
 			@Override
 			public void changed(ObservableValue<? extends Bounds> observable,
 					Bounds oldValue, Bounds newValue) {
+				if (inRefresh) {
+					return;
+				}
 				// refresh decoration clip in case the layout bounds of
 				// the decorations have changed
 				refresh();
@@ -296,6 +294,9 @@ public class Connection extends Group {
 		@Override
 		public void changed(ObservableValue<? extends Node> observable,
 				Node oldValue, Node newValue) {
+			if (inRefresh) {
+				return;
+			}
 			if (oldValue != null) {
 				oldValue.layoutBoundsProperty()
 						.removeListener(decorationLayoutBoundsListener);
@@ -323,6 +324,9 @@ public class Connection extends Group {
 			public void changed(
 					ObservableValue<? extends IConnectionRouter> observable,
 					IConnectionRouter oldValue, IConnectionRouter newValue) {
+				if (inRefresh) {
+					return;
+				}
 				refresh();
 			}
 		});
@@ -334,6 +338,9 @@ public class Connection extends Group {
 							ObservableValue<? extends IConnectionInterpolator> observable,
 							IConnectionInterpolator oldValue,
 							IConnectionInterpolator newValue) {
+						if (inRefresh) {
+							return;
+						}
 						refresh();
 					}
 				});
@@ -344,33 +351,21 @@ public class Connection extends Group {
 				public void changed(
 						ObservableValue<? extends Transform> observable,
 						Transform oldValue, Transform newValue) {
-					boolean wasRefresh = inRefresh;
-					inRefresh = true;
-					// walk over all anchors to compute new points, transforming
-					// them using the curve's local to parent transform
-					for (int i = 0; i < points.size(); i++) {
-						if (isConnected(i)) {
-							Point position = getAnchor(i)
-									.getPosition(getAnchorKey(i));
-							// XXX: Here the same computation is used that is
-							// also used within #createPCL().
-							Point newPoint = FX2Geometry
-									.toPoint(getCurve().localToParent(
-											Geometry2FX.toFXPoint(position)));
-							points.set(i, newPoint);
-						}
+					if (inRefresh) {
+						return;
 					}
-					inRefresh = wasRefresh;
 					refresh();
 				}
 			};
 
 			private ChangeListener<Bounds> boundsListener = new ChangeListener<Bounds>() {
-
 				@Override
 				public void changed(
 						ObservableValue<? extends Bounds> observable,
 						Bounds oldValue, Bounds newValue) {
+					if (inRefresh) {
+						return;
+					}
 					refresh();
 				}
 			};
@@ -378,6 +373,10 @@ public class Connection extends Group {
 			@Override
 			public void changed(ObservableValue<? extends Node> observable,
 					Node oldValue, Node newValue) {
+				if (inRefresh) {
+					return;
+				}
+
 				boolean oldInRefresh = inRefresh;
 				inRefresh = true;
 
@@ -578,6 +577,9 @@ public class Connection extends Group {
 			@Override
 			public void onChanged(
 					MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+				if (inRefresh) {
+					return;
+				}
 				if (change.getKey().equals(anchorKey)) {
 					if (change.wasAdded() && change.wasRemoved()) {
 						Point newPoint = FX2Geometry
@@ -586,9 +588,11 @@ public class Connection extends Group {
 						if (!points.get(getAnchorIndex(anchorKey))
 								.equals(newPoint)) {
 							points.set(getAnchorIndex(anchorKey), newPoint);
+							if (!inRefresh) {
+								refresh();
+							}
 						}
 					}
-					refresh();
 				}
 			}
 		};
@@ -1176,36 +1180,71 @@ public class Connection extends Group {
 	 * </ol>
 	 */
 	protected void refresh() {
-
-		// guard against recomputing the curveProperty while recomputing the
-		// curveProperty
+		// guard against refreshing while refreshing
 		if (inRefresh) {
 			return;
 		}
 		inRefresh = true;
+		// System.out.println("+--- Refresh ---+");
+
+		// unregister PCLs
+		// TODO: Investigate if the fields need to be up-to-date or if the
+		// removal and addition of listeners can happen locally (i.e. without
+		// affecting anchorPCLs etc.)
+		for (AnchorKey ak : anchorsByKeys.keySet()) {
+			unregisterPCL(ak, anchorsByKeys.get(ak));
+		}
 
 		// clear visuals except for the curveProperty
 		getChildren().retainAll(getCurve());
 
+		// z-order: place decorations above curve
+		Node startDecoration = getStartDecoration();
+		if (startDecoration != null) {
+			getChildren().add(startDecoration);
+		}
+		Node endDecoration = getEndDecoration();
+		if (endDecoration != null) {
+			getChildren().add(endDecoration);
+		}
+
+		// Transform tx = getCurve().getLocalToParentTransform();
+		// System.out.println("| +--- Initial ---+");
+		// System.out.println("| | curve-t: " + tx.getTx() + "," + tx.getTy());
+		// System.out.println("| | points: " + points);
+		// System.out.println("| | anchors: " + anchors);
+
 		// update our anchorsByKeys/points
-		if (getRouter() != null) {
-			getRouter().route(this);
+		IConnectionRouter router = getRouter();
+		if (router != null) {
+			router.route(this); // triggers recomputation of anchor positions
+			refreshPoints();
+			router.route(this); // actually routes using recomputed positions
+			refreshPoints();
+
+			// tx = getCurve().getLocalToParentTransform();
+			// System.out.println("| +--- Routed ---+");
+			// System.out.println("| | curve-t: " + tx.getTx() + "," +
+			// tx.getTy());
+			// System.out.println("| | points: " + points);
+			// System.out.println("| | anchors: " + anchors);
 		} else {
 			throw new IllegalStateException(
 					"An IConnectionRouter is mandatory for a Connection.");
 		}
 
-		// z-order decorations above curveProperty
-		if (getStartDecoration() != null) {
-			getChildren().add(getStartDecoration());
-		}
-		if (getEndDecoration() != null) {
-			getChildren().add(getEndDecoration());
-		}
+		IConnectionInterpolator interpolator = getInterpolator();
+		if (interpolator != null) {
+			interpolator.interpolate(this);
+			// refreshPoints();
 
-		// update the curveProperty node, arrange and clip the decorations
-		if (getInterpolator() != null) {
-			getInterpolator().interpolate(this);
+			// tx = getCurve().getLocalToParentTransform();
+			// System.out.println("| +--- Interpolated ---+");
+			// System.out.println("| | curve-t: " + tx.getTx() + "," +
+			// tx.getTy());
+			// System.out.println("| | points: " + points);
+			// System.out.println("| | anchors: " + anchors);
+			// System.out.println();
 		} else {
 			throw new IllegalStateException(
 					"An IConnectionInterpolator is mandatory for a Connection.");
@@ -1219,7 +1258,43 @@ public class Connection extends Group {
 			pointsUnmodifiableProperty.fireValueChangedEvent();
 		}
 
+		// reregister PCLs
+		// TODO: Investigate if the fields need to be up-to-date or if the
+		// removal and addition of listeners can happen locally (i.e. without
+		// affecting anchorPCLs etc.)
+		for (AnchorKey ak : anchorsByKeys.keySet()) {
+			registerPCL(ak, anchorsByKeys.get(ak));
+		}
+
+		// react to events again
 		inRefresh = false;
+	}
+
+	/**
+	 * Refreshes the points of this {@link Connection} by querying the
+	 * individual anchor positions and transforming them from curve coordinates
+	 * to connection coordinates.
+	 *
+	 * @return <code>true</code> if any points were changed, <code>false</code>
+	 *         otherwise.
+	 */
+	private boolean refreshPoints() {
+		// walk over all anchors to compute new points,
+		// transforming them using the curve's local to parent
+		// transform
+		boolean changed = false;
+		for (int i = 0; i < points.size(); i++) {
+			Point position = getAnchor(i).getPosition(getAnchorKey(i));
+			// XXX: Here the same computation is used that
+			// is also used within #createPCL().
+			Point newPoint = FX2Geometry.toPoint(
+					getCurve().localToParent(Geometry2FX.toFXPoint(position)));
+			if (!points.get(i).equals(newPoint)) {
+				points.set(i, newPoint);
+				changed = true;
+			}
+		}
+		return changed;
 	}
 
 	private void registerPCL(AnchorKey anchorKey, IAnchor anchor) {

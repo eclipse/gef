@@ -19,11 +19,11 @@ import java.util.Map;
 
 import org.eclipse.gef.fx.anchors.AnchorKey;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
-import org.eclipse.gef.fx.anchors.IAnchor;
-import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.PreferredOrientation;
+import org.eclipse.gef.fx.anchors.IAnchor;
+import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.euclidean.Vector;
