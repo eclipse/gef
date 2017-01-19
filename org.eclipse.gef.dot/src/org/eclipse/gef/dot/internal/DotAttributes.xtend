@@ -220,7 +220,7 @@ public class DotAttributes {
 		 * 
 		 * @param attributeValue
 		 *            The raw value to parse.
-		 * @return An {@link ParseResult} indicating the parse result.
+		 * @return A {@link ParseResult} indicating the parse result.
 		 */
 		public def ParseResult<T> parse(String attributeValue)
 
@@ -244,7 +244,7 @@ public class DotAttributes {
 		 * 
 		 * @param value
 		 *            The value to serialize.
-		 * @return The string representations, to which the value was
+		 * @return The string representation to which the value was
 		 *         serialized.
 		 */
 		public def String serialize(T value)
@@ -259,7 +259,7 @@ public class DotAttributes {
 	 *            The {@link IAttributeValueSerializer} to use for serializing.
 	 * @param attributeValue
 	 *            The value to serialize.
-	 * @return The serialized value.
+	 * @return The serialized value, or <code>null</code> if the value could not be serialized.
 	 */
 	private static def <T> String serializeAttributeValue(IAttributeValueSerializer<T> serializer, T attributeValue) {
 		if (attributeValue == null) {
@@ -951,7 +951,7 @@ public class DotAttributes {
 	private static val COLORSCHEME_VALIDATOR = new StringValidator(DotColors.getColorSchemes.toArray)
 
 	/**
-	 * A validator for skew {@link Double} attribute values.
+	 * A validator for sides {@link Integer} attribute values.
 	 */
 	private static val SIDES_VALIDATOR = new IntValidator(0)
 
@@ -1236,8 +1236,6 @@ public class DotAttributes {
 	 *            {@link #_TYPE__G} attribute.
 	 * @param type
 	 *            The new value for the {@link #_TYPE__G} attribute.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>type</i> value is not supported.
 	 */
 	public static def void _setType(Graph graph, GraphType type) {
 		graph.attributesProperty.put(_TYPE__G, type)
