@@ -425,6 +425,10 @@ public abstract class AbstractAnchor implements IAnchor {
 		// compute new position to see if it has changed
 		Point oldPosition = getPosition(key);
 		Point newPosition = computePosition(key);
+
+		// System.out.print("[" + key.getId() + "] old = " + oldPosition
+		// + ", new = " + newPosition);
+
 		if (oldPosition == null || !oldPosition.equals(newPosition)) {
 			// TODO: we could enforce that computePosition may never return
 			// null or an invalid position
@@ -432,9 +436,12 @@ public abstract class AbstractAnchor implements IAnchor {
 					&& !Double.isInfinite(newPosition.x)
 					&& !Double.isNaN(newPosition.y)
 					&& !Double.isInfinite(newPosition.y)) {
+				// System.out.println(" !!!");
 				positions.put(key, newPosition);
+				// return;
 			}
 		}
+		// System.out.println();
 	}
 
 	/**
@@ -449,7 +456,8 @@ public abstract class AbstractAnchor implements IAnchor {
 	private void updatePositions(Node anchored) {
 		SetMultimap<Node, AnchorKey> keys = getKeysByNode();
 		if (keys.containsKey(anchored)) {
-			for (AnchorKey key : keys.get(anchored)) {
+			Set<AnchorKey> keysCopy = new HashSet<>(keys.get(anchored));
+			for (AnchorKey key : keysCopy) {
 				updatePosition(key);
 			}
 		}
