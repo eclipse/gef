@@ -362,87 +362,42 @@ public class DotAttributes {
 		ID attributeValue) {
 
 		// use parser (and validator) for respective attribute type
-		if (FORCELABELS__G.equals(attributeName)) {
-			return validateAttributeRawValue(BOOL_PARSER, null,
-				attributeContext, FORCELABELS__G, attributeValue)
-		} else if (FIXEDSIZE__N.equals(attributeName)) {
-			return validateAttributeRawValue(BOOL_PARSER, null,
-				attributeContext, FIXEDSIZE__N, attributeValue)
-		} else if (CLUSTERRANK__G.equals(attributeName)) {
-			return validateAttributeRawValue(CLUSTERMODE_PARSER, null,
-				attributeContext, attributeName, attributeValue)
-		} else if (OUTPUTORDER__G.equals(attributeName)) {
-			return validateAttributeRawValue(OUTPUTMODE_PARSER, null,
-				attributeContext, attributeName, attributeValue)
-		} else if (PAGEDIR__G.equals(attributeName)) {
-			return validateAttributeRawValue(PAGEDIR_PARSER, null,
-				attributeContext, attributeName, attributeValue)
-		} else if (RANKDIR__G.equals(attributeName)) {
-			return validateAttributeRawValue(RANKDIR_PARSER, null,
-				attributeContext, attributeName, attributeValue)
-		} else if (SPLINES__G.equals(attributeName)) {
-			return validateAttributeRawValue(SPLINES_PARSER, null,
-				attributeContext, attributeName, attributeValue)
-		} else if (LAYOUT__G.equals(attributeName)) {
-			return validateAttributeRawValue(LAYOUT_PARSER, null,
-				attributeContext, attributeName, attributeValue)
-		} else if (DIR__E.equals(attributeName)) {
-			return validateAttributeRawValue(DIRTYPE_PARSER, null,
-				attributeContext, attributeName, attributeValue)
-		} else if (ARROWHEAD__E.equals(attributeName) || ARROWTAIL__E.equals(attributeName)) {
-			return validateAttributeRawValue(ARROWTYPE_PARSER,
-				ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (ARROWSIZE__E.equals(attributeName)) {
-			return validateAttributeRawValue(DOUBLE_PARSER,
-				ARROWSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (POS__NE.equals(attributeName)) {
-
-			// validate point (node) or splinetype (edge) using delegate parser
-			// and validator
-			if (Context.NODE.equals(attributeContext)) {
-				return validateAttributeRawValue(POINT_PARSER,
-					POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
-			} else if (Context.EDGE.equals(attributeContext)) {
-				return validateAttributeRawValue(SPLINETYPE_PARSER,
-					SPLINETYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
+		return switch (attributeName) {
+			case ARROWHEAD__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case ARROWSIZE__E: validateAttributeRawValue(DOUBLE_PARSER,	ARROWSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case ARROWTAIL__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case BGCOLOR__G: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case CLUSTERRANK__G: validateAttributeRawValue(CLUSTERMODE_PARSER, null, attributeContext, attributeName, attributeValue)
+			case COLORSCHEME__GNE:  validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
+			case COLOR__NE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case DIR__E: validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
+			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FILLCOLOR__NE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FIXEDSIZE__N: validateAttributeRawValue(BOOL_PARSER, null,	attributeContext, FIXEDSIZE__N, attributeValue)
+			case FONTCOLOR__GNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
+			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case HEIGHT__N: validateAttributeRawValue(DOUBLE_PARSER, HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
+			case LP__GE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue) 
+			case PAGEDIR__G: validateAttributeRawValue(PAGEDIR_PARSER, null, attributeContext, attributeName, attributeValue)
+			case POS__NE: if (attributeContext == Context.NODE) validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+						  else if (attributeContext == Context.EDGE) validateAttributeRawValue(SPLINETYPE_PARSER, SPLINETYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
+            case RANKDIR__G: validateAttributeRawValue(RANKDIR_PARSER, null, attributeContext, attributeName, attributeValue)
+			case SHAPE__N: validateAttributeRawValue(SHAPE_PARSER, SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue) 
+			case SIDES__N: validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case SKEW__N: validateAttributeRawValue(DOUBLE_PARSER, SKEW_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case SPLINES__G: validateAttributeRawValue(SPLINES_PARSER, null, attributeContext, attributeName, attributeValue)
+			case STYLE__GNE: validateAttributeRawValue(STYLE_PARSER, STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case TAIL_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case WIDTH__N: validateAttributeRawValue(DOUBLE_PARSER, WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case XLP__NE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			default: {
+				Collections.emptyList
 			}
-		} else if (SHAPE__N.equals(attributeName)) {
-
-			// validate shape using delegate parser and validator
-			return validateAttributeRawValue(SHAPE_PARSER,
-				SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (SIDES__N.equals(attributeName)) {
-			return validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR,
-				attributeContext, attributeName, attributeValue)
-		} else if (SKEW__N.equals(attributeName)) {
-			return validateAttributeRawValue(DOUBLE_PARSER,
-				SKEW_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (DISTORTION__N.equals(attributeName)) {
-			return validateAttributeRawValue(DOUBLE_PARSER,
-				DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (WIDTH__N.equals(attributeName)) {
-			return validateAttributeRawValue(DOUBLE_PARSER,
-				WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (HEIGHT__N.equals(attributeName)) {
-			return validateAttributeRawValue(DOUBLE_PARSER,
-				HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (STYLE__GNE.equals(attributeName)) {
-			return validateAttributeRawValue(STYLE_PARSER,
-				STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (HEAD_LP__E.equals(attributeName) || LP__GE.equals(attributeName) ||
-			TAIL_LP__E.equals(attributeName) || XLP__NE.equals(attributeName)) {
-			return validateAttributeRawValue(POINT_PARSER,
-				POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (BGCOLOR__G.equals(attributeName) || COLOR__NE.equals(attributeName) ||
-			FILLCOLOR__NE.equals(attributeName) || FONTCOLOR__GNE.equals(attributeName) ||
-			LABELFONTCOLOR__E.equals(attributeName)) {
-			return validateAttributeRawValue(COLOR_PARSER,
-				COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
-		} else if (COLORSCHEME__GNE.equals(attributeName)) {
-			return validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,
-				attributeContext, attributeName, attributeValue)
 		}
-		return Collections.emptyList
 	}
 
 	/**
