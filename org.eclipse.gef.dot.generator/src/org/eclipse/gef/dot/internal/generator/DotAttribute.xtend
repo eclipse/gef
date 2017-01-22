@@ -101,6 +101,16 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 			]
 			// raw setter
 			field.declaringType.addMethod(field.rawSetterName) [
+				docComment = '''
+				Sets the (raw) value of the {@link #«field.simpleName»} attribute of the given {@link «c.paramTypeName»}
+				to the given <i>«attributeName»</i> value.
+				 @param «c.paramName»
+				            The {@link «c.paramTypeName»} for which to change the value of the
+				            {@link #«field.simpleName»} attribute.
+				 @param «attributeName»
+				            The new (raw) value of the {@link #«field.simpleName»} attribute.
+				 @throws IllegalArgumentException
+				            when the given <i>«attributeName»</i> value is not supported.'''
 				static = true
 				addParameter(c.paramName, c.paramType(context))
 				addParameter(attributeName, "org.eclipse.gef.dot.internal.language.terminals.ID".newTypeReference())
@@ -134,6 +144,16 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 			]
 			// setter
 			field.declaringType.addMethod(field.setterName) [
+				docComment = '''
+				Sets the value of the {@link #«field.simpleName»} attribute of the given {@link «c.paramTypeName»}
+				to the given <i>«attributeName»</i> value.
+				 @param «c.paramName»
+				            The {@link «c.paramTypeName»} for which to change the value of the
+				            {@link #«field.simpleName»} attribute.
+				 @param «attributeName»
+				            The new value of the {@link #«field.simpleName»} attribute.
+				 @throws IllegalArgumentException
+				            when the given <i>«attributeName»</i> value is not supported.'''
 				static = true
 				addParameter(c.paramName, c.paramType(context))
 				addParameter(attributeName, String.newTypeReference())
@@ -165,6 +185,16 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 			]
 			// parsed setter
 			field.declaringType.addMethod(field.parsedSetterName) [
+				docComment = '''
+				Sets the (parsed) value of the {@link #«field.simpleName»} attribute of the given {@link «c.paramTypeName»}
+				to the given <i>«attributeName»</i> value.
+					@param «c.paramName»
+					           The {@link «c.paramTypeName»} for which to change the value of the
+					           {@link #«field.simpleName»} attribute.
+					@param «attributeName»
+					           The new (parsed) value of the {@link #«field.simpleName»} attribute.
+					@throws IllegalArgumentException
+					        	when the given <i>«attributeName»</i> value is not supported.'''
 				static = true
 				addParameter(c.paramName, c.paramType(context))
 				addParameter(attributeName, attributeParsedType)
