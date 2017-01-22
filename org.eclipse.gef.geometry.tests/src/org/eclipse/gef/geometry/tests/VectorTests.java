@@ -250,7 +250,7 @@ public class VectorTests {
 				boolean thrown = false;
 				try {
 					a.getDivided(0);
-				} catch (ArithmeticException _) {
+				} catch (ArithmeticException e) {
 					thrown = true;
 				}
 				assertTrue(thrown);
