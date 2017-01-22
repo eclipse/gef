@@ -935,124 +935,124 @@ public class DotAttributes {
 	 */
 	private static val HEIGHT_VALIDATOR = new DoubleValidator(0.02)
 
-	private static final Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
+	private static val Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration
 
 	/**
 	 * The validator for arrowtype attribute values.
 	 */
 	// TODO: move to DotJavaValidator
-	private static final val ARROWTYPE_VALIDATOR = new EObjectValidator<ArrowType>(arrowTypeInjector,
+	private static val ARROWTYPE_VALIDATOR = new EObjectValidator<ArrowType>(arrowTypeInjector,
 		DotArrowTypeJavaValidator)
 
 	/**
 	 * The parser for arrowtype attribute values.
 	 */
-	private static final val ARROWTYPE_PARSER = new EObjectParser<ArrowType>(arrowTypeInjector)
+	private static val ARROWTYPE_PARSER = new EObjectParser<ArrowType>(arrowTypeInjector)
 
 	/**
 	 * The serializer for arrowtype attribute values.
 	 */
-	private static final val ARROWTYPE_SERIALIZER = new EObjectSerializer<ArrowType>(arrowTypeInjector)
+	private static val ARROWTYPE_SERIALIZER = new EObjectSerializer<ArrowType>(arrowTypeInjector)
 
-	private static final Injector colorInjector = new DotColorStandaloneSetup().createInjectorAndDoEMFRegistration
+	private static val Injector colorInjector = new DotColorStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for color attribute values.
 	 */
-	private static final val COLOR_PARSER = new EObjectParser<Color>(colorInjector)
+	private static val COLOR_PARSER = new EObjectParser<Color>(colorInjector)
 
 	/**
 	 * The serializer for color attribute values.
 	 */
-	private static final val COLOR_SERIALIZER = new EObjectSerializer<Color>(colorInjector)
+	private static val COLOR_SERIALIZER = new EObjectSerializer<Color>(colorInjector)
 
-	private static final Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
+	private static val Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for point attribute values.
 	 */
-	private static final val POINT_PARSER = new EObjectParser<Point>(pointInjector)
+	private static val POINT_PARSER = new EObjectParser<Point>(pointInjector)
 
 	/**
 	 * The serializer for point attribute values.
 	 */
-	private static final val POINT_SERIALIZER = new EObjectSerializer<Point>(pointInjector)
+	private static val POINT_SERIALIZER = new EObjectSerializer<Point>(pointInjector)
 
-	private static final Injector shapeInjector = new DotShapeStandaloneSetup().createInjectorAndDoEMFRegistration
+	private static val Injector shapeInjector = new DotShapeStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for shape attribute values.
 	 */
-	private static final val SHAPE_PARSER = new EObjectParser<Shape>(shapeInjector)
+	private static val SHAPE_PARSER = new EObjectParser<Shape>(shapeInjector)
 
 	/**
 	 * The serializer for shape attribute values.
 	 */
-	private static final val SHAPE_SERIALIZER = new EObjectSerializer<Shape>(shapeInjector)
+	private static val SHAPE_SERIALIZER = new EObjectSerializer<Shape>(shapeInjector)
 
-	private static final Injector splineTypeInjector = new DotSplineTypeStandaloneSetup().
+	private static val Injector splineTypeInjector = new DotSplineTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for splinetype attribute values.
 	 */
-	private static final val SPLINETYPE_PARSER = new EObjectParser<SplineType>(splineTypeInjector)
+	private static val SPLINETYPE_PARSER = new EObjectParser<SplineType>(splineTypeInjector)
 
 	/**
 	 * The serializer for splinetype attribute values.
 	 */
-	private static final val SPLINETYPE_SERIALIZER = new EObjectSerializer<SplineType>(splineTypeInjector)
+	private static val SPLINETYPE_SERIALIZER = new EObjectSerializer<SplineType>(splineTypeInjector)
 
-	private static final Injector styleInjector = new DotStyleStandaloneSetup().createInjectorAndDoEMFRegistration
+	private static val Injector styleInjector = new DotStyleStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The serializer for style attribute values.
 	 */
-	private static final val STYLE_SERIALIZER = new EObjectSerializer<Style>(styleInjector)
+	private static val STYLE_SERIALIZER = new EObjectSerializer<Style>(styleInjector)
 
 	/**
 	 * The parser for style attribute values.
 	 */
-	private static final val STYLE_PARSER = new EObjectParser<Style>(styleInjector)
+	private static val STYLE_PARSER = new EObjectParser<Style>(styleInjector)
 
 	/**
 	 * Validator for Color types.
 	 */
-	private static final val COLOR_VALIDATOR = new EObjectValidator<Color>(colorInjector, DotColorJavaValidator)
+	private static val COLOR_VALIDATOR = new EObjectValidator<Color>(colorInjector, DotColorJavaValidator)
 
 	/**
 	 * Validator for SplineType types.
 	 */
-	private static final val SPLINETYPE_VALIDATOR = new EObjectValidator<SplineType>(splineTypeInjector,
+	private static val SPLINETYPE_VALIDATOR = new EObjectValidator<SplineType>(splineTypeInjector,
 		DotSplineTypeJavaValidator)
 
 	/**
 	 * Validator for Point types.
 	 */
-	private static final val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointJavaValidator)
+	private static val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointJavaValidator)
 
 	/**
 	 * Validator for Shape types.
 	 */
-	private static final val SHAPE_VALIDATOR = new EObjectValidator<Shape>(shapeInjector, DotShapeJavaValidator)
+	private static val SHAPE_VALIDATOR = new EObjectValidator<Shape>(shapeInjector, DotShapeJavaValidator)
 
 	/**
 	 * Validator for Style types.
 	 */
-	private static final val STYLE_VALIDATOR = new EObjectValidator<Style>(styleInjector, DotStyleJavaValidator)
+	private static val STYLE_VALIDATOR = new EObjectValidator<Style>(styleInjector, DotStyleJavaValidator)
 
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as
 	 * retrieved through the graph, node_id, as well as edge_stmt and edgeRHS
 	 * grammar rules.
 	 */
-	public static final String _NAME__GNE = "_name"
+	public static val String _NAME__GNE = "_name"
 
 	/**
 	 * Specifies the graph type.
 	 */
-	public static final String _TYPE__G = "_type"
+	public static val String _TYPE__G = "_type"
 
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
@@ -1200,107 +1200,107 @@ public class DotAttributes {
 	public static val String ARROWHEAD__E = "arrowhead"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static final String ARROWSIZE__E = "arrowsize"
+	public static val String ARROWSIZE__E = "arrowsize"
 
 	@DotAttribute(rawType="STRING", parsedType=ArrowType)
-	public static final String ARROWTAIL__E = "arrowtail"
+	public static val String ARROWTAIL__E = "arrowtail"
 
 	@DotAttribute(parsedType=Color)
-	public static final String BGCOLOR__G = "bgcolor"
+	public static val String BGCOLOR__G = "bgcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=ClusterMode)
-	public static final String CLUSTERRANK__G = "clusterrank"
+	public static val String CLUSTERRANK__G = "clusterrank"
 
 	@DotAttribute(parsedType=Color)
-	public static final String COLOR__NE = "color"
+	public static val String COLOR__NE = "color"
 
 	@DotAttribute(parsedType=String)
-	public static final String COLORSCHEME__GNE = "colorscheme"
+	public static val String COLORSCHEME__GNE = "colorscheme"
 
 	@DotAttribute(rawType="STRING", parsedType=DirType)
-	public static final String DIR__E = "dir"
+	public static val String DIR__E = "dir"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static final String DISTORTION__N = "distortion"
+	public static val String DISTORTION__N = "distortion"
 
 	@DotAttribute(parsedType=Color)
-	public static final String FILLCOLOR__NE = "fillcolor"
+	public static val String FILLCOLOR__NE = "fillcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
-	public static final String FIXEDSIZE__N = "fixedsize"
+	public static val String FIXEDSIZE__N = "fixedsize"
 
 	@DotAttribute(parsedType=Color)
-	public static final String FONTCOLOR__GNE = "fontcolor"
+	public static val String FONTCOLOR__GNE = "fontcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
-	public static final String FORCELABELS__G = "forcelabels"
+	public static val String FORCELABELS__G = "forcelabels"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static final String HEAD_LP__E = "head_lp"
+	public static val String HEAD_LP__E = "head_lp"
 
 	@DotAttribute(parsedType=String)
-	public static final String HEADLABEL__E = "headlabel"
+	public static val String HEADLABEL__E = "headlabel"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static final String HEIGHT__N = "height"
+	public static val String HEIGHT__N = "height"
 
 	@DotAttribute(parsedType=String)
-	public static final String ID__GNE = "id"
+	public static val String ID__GNE = "id"
 
 	@DotAttribute(parsedType=String)
-	public static final String LABEL__GNE = "label"
+	public static val String LABEL__GNE = "label"
 
 	@DotAttribute(parsedType=Color)
-	public static final String LABELFONTCOLOR__E = "labelfontcolor"
+	public static val String LABELFONTCOLOR__E = "labelfontcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Layout)
-	public static final String LAYOUT__G = "layout"
+	public static val String LAYOUT__G = "layout"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static final String LP__GE = "lp"
+	public static val String LP__GE = "lp"
 
 	@DotAttribute(rawType="STRING", parsedType=OutputMode)
-	public static final String OUTPUTORDER__G = "outputorder"
+	public static val String OUTPUTORDER__G = "outputorder"
 
 	@DotAttribute(rawType="STRING", parsedType=Pagedir)
-	public static final String PAGEDIR__G = "pagedir"
+	public static val String PAGEDIR__G = "pagedir"
 
 	//XXX: pos is a special case, where different parsed values for Node and Edge attributes (Point, SplineType) and thus 
 	//     different parsers and serializers are required
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=#[Point, SplineType])
-	public static final String POS__NE = "pos"
+	public static val String POS__NE = "pos"
 
 	@DotAttribute(rawType="STRING", parsedType=Rankdir)
-	public static final String RANKDIR__G = "rankdir"
+	public static val String RANKDIR__G = "rankdir"
 
 	@DotAttribute(parsedType=Shape)
-	public static final String SHAPE__N = "shape"
+	public static val String SHAPE__N = "shape"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Integer)
-	public static final String SIDES__N = "sides"
+	public static val String SIDES__N = "sides"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static final String SKEW__N = "skew"
+	public static val String SKEW__N = "skew"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Splines)
-	public static final String SPLINES__G = "splines"
+	public static val String SPLINES__G = "splines"
 
 	@DotAttribute(parsedType=Style)
-	public static final String STYLE__GNE = "style"
+	public static val String STYLE__GNE = "style"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static final String TAIL_LP__E = "tail_lp"
+	public static val String TAIL_LP__E = "tail_lp"
 
 	@DotAttribute(parsedType=String)
-	public static final String TAILLABEL__E = "taillabel"
+	public static val String TAILLABEL__E = "taillabel"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static final String WIDTH__N = "width"
+	public static val String WIDTH__N = "width"
 
 	@DotAttribute(parsedType=String)
-	public static final String XLABEL__NE = "xlabel"
+	public static val String XLABEL__NE = "xlabel"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static final String XLP__NE = "xlp"
+	public static val String XLP__NE = "xlp"
 
 }
