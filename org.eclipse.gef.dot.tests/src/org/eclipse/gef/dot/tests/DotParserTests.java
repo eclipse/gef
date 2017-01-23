@@ -120,6 +120,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testHTMLLikeLabelsWithComments() {
+		testString(DotTestGraphs.HTML_LIKE_LABELS_01);
+	}
+
+	@Test
 	public void testArrowShapesDeprecated() {
 		testFile("arrowshapes_deprecated.dot");
 	}

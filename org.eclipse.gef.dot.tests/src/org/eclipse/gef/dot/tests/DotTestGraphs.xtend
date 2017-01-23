@@ -237,6 +237,16 @@ class DotTestGraphs {
 			n1--n2[label="edge 1"]
 		}
 	'''
+	
+	public static val HTML_LIKE_LABELS_01 = '''
+		graph {
+			1[label=<
+				<!-- This is a bold label -->
+				<B>Bold Label</B>
+			  >
+			]
+		}
+	'''
 
 /*
  ************************************************************************************************************
