@@ -84,9 +84,7 @@ public class FXCanvasEx extends FXCanvas {
 	private final class EventDispatcherEx implements EventDispatcher {
 
 		private static final int REDRAW_INTERVAL_MILLIS = 40; // i.e. 25 fps
-
 		private EventDispatcher delegate;
-
 		private long lastRedrawMillis = System.currentTimeMillis();
 
 		protected EventDispatcherEx(EventDispatcher delegate) {
@@ -132,7 +130,6 @@ public class FXCanvasEx extends FXCanvas {
 			long millisNow = System.currentTimeMillis();
 			if (millisNow - lastRedrawMillis > REDRAW_INTERVAL_MILLIS) {
 				redraw();
-				update();
 				lastRedrawMillis = millisNow;
 			}
 			// return dispatched event
@@ -156,7 +153,6 @@ public class FXCanvasEx extends FXCanvas {
 	 *
 	 */
 	private interface ISceneRunnable {
-
 		/**
 		 * Callback method that is called in a privileged runnable on the JavaFX
 		 * application thread.
