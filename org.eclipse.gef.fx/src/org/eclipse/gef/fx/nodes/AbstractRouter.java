@@ -280,8 +280,9 @@ public abstract class AbstractRouter implements IConnectionRouter {
 	}
 
 	/**
-	 * Retrieves the geometry of the anchorage at the given index, in case the
-	 * respective anchor is connected.
+	 * Retrieves the geometry of the anchorage at the given index within the
+	 * coordinate system of the {@link Connection}, in case the respective
+	 * anchor is connected.
 	 *
 	 * @param index
 	 *            The index of the anchor whose anchorage geometry is to be
@@ -310,15 +311,20 @@ public abstract class AbstractRouter implements IConnectionRouter {
 	}
 
 	/**
+	 * Returns the {@link AnchoredReferencePoint} parameter value (within the
+	 * coordinate system of the {@link Connection}) for the anchor specified by
+	 * the given index.
 	 *
 	 * @param points
-	 *            a
+	 *            The list of {@link Point}s from which the {@link Connection}
+	 *            is currently constituted.
 	 * @param index
-	 *            a
-	 * @return a
+	 *            The index of the {@link IAnchor} for which to compute the
+	 *            {@link AnchoredReferencePoint} parameter value.
+	 * @return The anchored reference {@link Point} for the specified anchor.
 	 */
-	protected abstract Point getAnchoredReferencePointInConnection(
-			List<Point> points, int index);
+	protected abstract Point getAnchoredReferencePoint(List<Point> points,
+			int index);
 
 	/**
 	 * Returns the {@link Connection} of the last {@link #route(Connection)}
@@ -479,8 +485,8 @@ public abstract class AbstractRouter implements IConnectionRouter {
 		// if we have a position hint for the anchor, we need to use this as the
 		// reference point
 		// Point newRef = getAnchoredReferencePoint(points, index);
-		Point2D newRefInConnection = Geometry2FX.toFXPoint(
-				getAnchoredReferencePointInConnection(points, index));
+		Point2D newRefInConnection = Geometry2FX
+				.toFXPoint(getAnchoredReferencePoint(points, index));
 		Point newRefInScene = FX2Geometry
 				.toPoint(getConnection().localToScene(newRefInConnection));
 		if (oldRefInScene == null || !newRefInScene.equals(oldRefInScene)) {

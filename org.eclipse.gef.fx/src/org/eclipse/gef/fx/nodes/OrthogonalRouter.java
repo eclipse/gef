@@ -90,7 +90,7 @@ public class OrthogonalRouter extends AbstractRouter {
 	 *         connection's curve.
 	 */
 	@Override
-	protected Point getAnchoredReferencePointInConnection(List<Point> points,
+	protected Point getAnchoredReferencePoint(List<Point> points,
 			int index) {
 		if (index < 0 || index >= points.size()) {
 			throw new IndexOutOfBoundsException();

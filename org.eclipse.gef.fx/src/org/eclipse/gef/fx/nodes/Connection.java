@@ -15,6 +15,7 @@ package org.eclipse.gef.fx.nodes;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,9 @@ import java.util.TreeMap;
 import org.eclipse.gef.common.beans.property.ReadOnlyListPropertyBaseEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.collections.ListListenerHelperEx;
+import org.eclipse.gef.fx.anchors.AbstractAnchor;
 import org.eclipse.gef.fx.anchors.AnchorKey;
+import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
@@ -1157,17 +1160,53 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Refreshes the visualization, i.e.
+	 * Refreshes the visualization in response to anchor, position,
+	 * transformation, etc. changes. This method is safe against reentrance,
+	 * i.e. changes performed by {@link #refresh()} are allowed to lead to
+	 * another {@link #refresh()} call. However, when this method is called
+	 * reentrant, it returns immediately.
+	 * <p>
+	 * The process of refreshing a {@link Connection} is somewhat complicated as
+	 * it involves transforming points according to a transformation change,
+	 * removing volatile anchors, computing new parameters for its anchors,
+	 * inserting volatile anchors, computing a curve geometry, and updating the
+	 * visualization to that geometry. In addition, the position change
+	 * listeners registered at the individual
+	 * {@link AbstractAnchor#positionsUnmodifiableProperty()} need to be
+	 * disabled during {@link #refresh()} to prevent
+	 * {@link ConcurrentModificationException}. The process can be described by
+	 * the following steps:
 	 * <ol>
-	 * <li>determines the {@link #getPointsUnmodifiable() points} constituting
-	 * this {@link Connection},</li>
-	 * <li>computes an {@link ICurve} geometry through those {@link Point}s
-	 * using the {@link IConnectionRouter} of this {@link Connection},</li>
-	 * <li>replaces the geometry of the {@link #getCurve() curveProperty node}
-	 * with that {@link ICurve},</li>
-	 * <li>arranges the {@link #getStartDecoration() start decoration} and
-	 * {@link #getEndDecoration() end decoration} of this {@link Connection}.
-	 * </li>
+	 * <li>The connection unregisters all position change listeners.
+	 * <li>The connection queries all points from its anchors and transforms
+	 * them from curve to connection coordinates (curve-to-connection-transform,
+	 * c2ctx).
+	 * <li>The router removes all (previously inserted) volatile anchors.
+	 * <li>=> The connection's points are refreshed in-place, because removal of
+	 * anchors calls {@link #removeAnchor(AnchorKey, IAnchor)}, which updates
+	 * the points straight away.
+	 * <li>The router queries the (updated, user-defined) points from the
+	 * connection and computes parameters for the anchors based on these points
+	 * (and other criteria).
+	 * <li>=> The router computes the {@link AnchoredReferencePoint} parameter
+	 * value within the coordinate system of the connection.
+	 * <li>=> The parameter is then bound to a binding that depends on the
+	 * c2ctx, which transforms the {@link Point} from the coordinate system of
+	 * the connection to the coordinate system of the {@link #getCurve()}.
+	 * <li>The anchors compute new positions for the {@link AnchorKey}s for
+	 * which new parameters were provided or parameter values changed.
+	 * <li>The router queries the positions from the anchors and transforms them
+	 * manually, because the connection did not yet update its points.
+	 * <li>The router inserts volatile anchors according to the routing
+	 * strategy.
+	 * <li>The connection refreshes its points manually, because the position
+	 * change listeners are disabled.
+	 * <li>The interpolator computes a new curve geometry and applies it to the
+	 * connection.
+	 * <li>=> The c2ctx changes, that's why the parameters are recomputed from
+	 * the bindings, which triggers a recomputation of the anchor positions.
+	 * <li>The connection refreshed its points manually again.
+	 * <li>The connection registers all position change listeners.
 	 * </ol>
 	 */
 	protected void refresh() {
