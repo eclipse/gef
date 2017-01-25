@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef.fx.anchors.AnchorKey;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
@@ -76,6 +77,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.beans.binding.ObjectBinding;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -145,7 +147,8 @@ public class BendConnectionPolicyTests {
 		public Point getWayPoint() {
 			final Point delta = anchorageEnd.getBounds().getCenter()
 					.getTranslated(anchorageStart.getBounds().getCenter().getNegated());
-			return anchorageStart.getBounds().getCenter().getTranslated(delta.getScaled(0.5));
+			Point wayPointInScene = anchorageStart.getBounds().getCenter().getTranslated(delta.getScaled(0.5));
+			return wayPointInScene;
 		}
 	}
 
@@ -2726,19 +2729,36 @@ public class BendConnectionPolicyTests {
 						.setComputationStrategy(new OrthogonalProjectionStrategy());
 				connection.getVisual().setRouter(new OrthogonalRouter() {
 					@Override
-					protected void updateComputationParameters(final Connection connection, final int index) {
+					protected void updateComputationParameters(List<Point> points, int index, DynamicAnchor anchor,
+							AnchorKey key) {
 						if (index == 0) {
-							getComputationParameter(connection, index, PreferredOrientation.class)
-									.set(Orientation.HORIZONTAL);
-							getComputationParameter(connection, index, AnchoredReferencePoint.class)
-									.set(NodeUtils.parentToLocal(connection.getCurve(), new Point(310, 40)));
-						} else if (index == connection.getPointsUnmodifiable().size() - 1) {
-							getComputationParameter(connection, index, PreferredOrientation.class)
-									.set(Orientation.HORIZONTAL);
-							getComputationParameter(connection, index, AnchoredReferencePoint.class)
-									.set(NodeUtils.parentToLocal(connection.getCurve(), new Point(50, 95)));
+							ObjectBinding<Point> refBinding = new ObjectBinding<Point>() {
+								{
+									bind(key.getAnchored().localToParentTransformProperty());
+								}
+
+								@Override
+								protected Point computeValue() {
+									return FX2Geometry.toPoint(key.getAnchored().parentToLocal(new Point2D(310, 40)));
+								}
+							};
+							anchor.getComputationParameter(key, PreferredOrientation.class).set(Orientation.HORIZONTAL);
+							anchor.getComputationParameter(key, AnchoredReferencePoint.class).bind(refBinding);
+						} else if (index == points.size() - 1) {
+							ObjectBinding<Point> refBinding = new ObjectBinding<Point>() {
+								{
+									bind(key.getAnchored().localToParentTransformProperty());
+								}
+
+								@Override
+								protected Point computeValue() {
+									return FX2Geometry.toPoint(key.getAnchored().parentToLocal(new Point2D(50, 95)));
+								}
+							};
+							anchor.getComputationParameter(key, PreferredOrientation.class).set(Orientation.HORIZONTAL);
+							anchor.getComputationParameter(key, AnchoredReferencePoint.class).bind(refBinding);
 						} else {
-							super.updateComputationParameters(connection, index);
+							super.updateComputationParameters(points, index, anchor, key);
 						}
 					}
 				});
@@ -2775,9 +2795,7 @@ public class BendConnectionPolicyTests {
 			public void run() {
 				bendPolicy.init();
 				// copy start anchor and make 1st router anchor explicit
-				// System.out.println("\n\n\n\nPRE-SELECT\n\n\n\n\n");
 				bendPolicy.selectSegment(0);
-				// System.out.println("\n\n\n\nPRE-MOVE\n\n\n\n\n");
 				bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y));
 				// overlay removal should remove both router anchors, so that
 				// only the start anchor, its copy and the end anchor are
@@ -2787,6 +2805,7 @@ public class BendConnectionPolicyTests {
 
 		assertEquals(3, countExplicit(connection.getVisual()));
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
+
 		equalsUnprecise(startPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
@@ -3882,12 +3901,14 @@ public class BendConnectionPolicyTests {
 				return getPosition(bendPolicy, endPointHandle);
 			}
 		}));
+
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
 				bendPolicy.move(new Point(), new Point(distance, 0));
 			}
 		});
+
 		assertEquals(wayPoint.getTranslated(distance, 0), ctx.runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {

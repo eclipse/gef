@@ -15,10 +15,8 @@ package org.eclipse.gef.fx.nodes;
 
 import java.util.List;
 
-import org.eclipse.gef.fx.anchors.AnchorKey;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.anchors.IAnchor;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
 
@@ -39,8 +37,6 @@ public class StraightRouter extends AbstractRouter {
 	/**
 	 * Returns the reference point for the anchor at the given index.
 	 *
-	 * @param connection
-	 *            The {@link Connection} that is currently routed.
 	 * @param index
 	 *            The index specifying the anchor for which to provide a
 	 *            reference point.
@@ -49,16 +45,16 @@ public class StraightRouter extends AbstractRouter {
 	 *         Connection's curve.
 	 */
 	@Override
-	protected Point getAnchoredReferencePoint(Connection connection,
+	protected Point getAnchoredReferencePointInConnection(List<Point> points,
 			int index) {
-		if (index < 0 || index >= connection.getPointsUnmodifiable().size()) {
+		if (index < 0 || index >= points.size()) {
 			throw new IndexOutOfBoundsException();
 		}
 
 		// compute new reference point
 		Point newRef = null;
-		Point pred = getPred(connection, index);
-		Point succ = getSucc(connection, index);
+		Point pred = getPred(points, index);
+		Point succ = getSucc(points, index);
 		if (pred == null && succ == null) {
 			/*
 			 * Neither predecessor nor successor can be identified. This can
@@ -79,22 +75,8 @@ public class StraightRouter extends AbstractRouter {
 		return newRef;
 	}
 
-	// TODO: move to utility && replace with safe algorithm
-	private Point getCenter(Connection connection, Node anchorageNode) {
-		Point center = FX2Geometry
-				.toRectangle(connection.getCurve()
-						.sceneToLocal(anchorageNode
-								.localToScene(anchorageNode.getLayoutBounds())))
-				.getCenter();
-		if (Double.isNaN(center.x) || Double.isNaN(center.y)) {
-			return null;
-		}
-		return center;
-	}
-
-	private Point getNeighbor(Connection connection, int anchorIndex,
-			int step) {
-		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
+	private Point getNeighbor(List<Point> points, int anchorIndex, int step) {
+		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
 		IAnchor anchor = anchors.get(anchorIndex);
 		if (!(anchor instanceof DynamicAnchor)) {
 			throw new IllegalStateException(
@@ -112,24 +94,20 @@ public class StraightRouter extends AbstractRouter {
 						"connection inconsistent (null anchor)");
 			}
 			Node predAnchorage = predAnchor.getAnchorage();
-			if (predAnchorage == null || predAnchorage == connection) {
+			if (predAnchorage == null || predAnchorage == getConnection()) {
 				// anchor is static
-				AnchorKey anchorKey = connection.getAnchorKey(i);
-				Point position = predAnchor.getPosition(anchorKey);
-				if (position == null) {
-					throw new IllegalStateException(
-							"connection inconsistent (null position)");
-				}
-				Point2D local = anchorage.sceneToLocal(anchorKey.getAnchored()
-						.localToScene(position.x, position.y));
-				// TODO: NPE maybe local is null?
+				Point position = points.get(i);
+				Point2D local = anchorage.sceneToLocal(
+						getConnection().localToScene(position.x, position.y));
 				if (!anchorage.contains(local)) {
 					return position;
 				}
 			} else {
 				// anchor position depends on anchorage
-				Point position = getCenter(connection, predAnchorage);
-				if (position == null) {
+				Point position = getAnchorageGeometry(i).getBounds()
+						.getCenter();
+				if (position == null || Double.isNaN(position.x)
+						|| Double.isNaN(position.y)) {
 					throw new IllegalStateException(
 							"cannot determine anchorage center");
 				}
@@ -141,33 +119,11 @@ public class StraightRouter extends AbstractRouter {
 		return null;
 	}
 
-	private Point getPred(Connection connection, int anchorIndex) {
-		return getNeighbor(connection, anchorIndex, -1);
+	private Point getPred(List<Point> points, int anchorIndex) {
+		return getNeighbor(points, anchorIndex, -1);
 	}
 
-	private Point getSucc(Connection connection, int anchorIndex) {
-		return getNeighbor(connection, anchorIndex, 1);
+	private Point getSucc(List<Point> points, int anchorIndex) {
+		return getNeighbor(points, anchorIndex, 1);
 	}
-
-	@Override
-	public void route(Connection connection) {
-		if (connection.getPointsUnmodifiable().size() < 2) {
-			return;
-		}
-		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
-		for (int i = 0; i < anchors.size(); i++) {
-			// we do not have to update the reference point for the
-			// given key, because the corresponding position just
-			// changed, so it was updated already
-			if (anchors.get(i) instanceof DynamicAnchor) {
-				updateComputationParameters(connection, i);
-			}
-		}
-	}
-
-	@Override
-	public boolean wasInserted(IAnchor anchor) {
-		return false;
-	}
-
 }

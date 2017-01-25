@@ -374,12 +374,10 @@ public class DynamicAnchor extends AbstractAnchor {
 		}
 
 		// only invoke strategy if all required parameters are provided
+		Point positionInScene = computationStrategy.computePositionInScene(
+				getAnchorage(), key.getAnchored(), parameters);
 		Point position = FX2Geometry.toPoint(key.getAnchored()
-				.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
-						.computePositionInScene(getAnchorage(),
-								key.getAnchored(), parameters))));
-		// System.out.println("Computed position " + position + " for key " +
-		// key);
+				.sceneToLocal(Geometry2FX.toFXPoint(positionInScene)));
 		return position;
 	}
 

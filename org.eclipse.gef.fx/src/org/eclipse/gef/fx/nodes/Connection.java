@@ -338,9 +338,6 @@ public class Connection extends Group {
 							ObservableValue<? extends IConnectionInterpolator> observable,
 							IConnectionInterpolator oldValue,
 							IConnectionInterpolator newValue) {
-						if (inRefresh) {
-							return;
-						}
 						refresh();
 					}
 				});
@@ -351,9 +348,6 @@ public class Connection extends Group {
 				public void changed(
 						ObservableValue<? extends Transform> observable,
 						Transform oldValue, Transform newValue) {
-					if (inRefresh) {
-						return;
-					}
 					refresh();
 				}
 			};
@@ -363,9 +357,6 @@ public class Connection extends Group {
 				public void changed(
 						ObservableValue<? extends Bounds> observable,
 						Bounds oldValue, Bounds newValue) {
-					if (inRefresh) {
-						return;
-					}
 					refresh();
 				}
 			};
@@ -374,10 +365,12 @@ public class Connection extends Group {
 			public void changed(ObservableValue<? extends Node> observable,
 					Node oldValue, Node newValue) {
 				if (inRefresh) {
-					return;
+					throw new IllegalStateException(
+							"Curve changed in refresh().");
 				}
 
-				boolean oldInRefresh = inRefresh;
+				// TODO: unregister listeners instead of setting refresh
+
 				inRefresh = true;
 
 				if (oldValue != null) {
@@ -397,7 +390,7 @@ public class Connection extends Group {
 					getChildren().add(newValue);
 				}
 
-				inRefresh = oldInRefresh;
+				inRefresh = false;
 				refresh();
 			}
 		});
@@ -577,9 +570,9 @@ public class Connection extends Group {
 			@Override
 			public void onChanged(
 					MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-				if (inRefresh) {
-					return;
-				}
+				// if (inRefresh) {
+				// return;
+				// }
 				if (change.getKey().equals(anchorKey)) {
 					if (change.wasAdded() && change.wasRemoved()) {
 						Point newPoint = FX2Geometry
@@ -588,9 +581,7 @@ public class Connection extends Group {
 						if (!points.get(getAnchorIndex(anchorKey))
 								.equals(newPoint)) {
 							points.set(getAnchorIndex(anchorKey), newPoint);
-							if (!inRefresh) {
-								refresh();
-							}
+							refresh();
 						}
 					}
 				}
@@ -1191,6 +1182,7 @@ public class Connection extends Group {
 		// TODO: Investigate if the fields need to be up-to-date or if the
 		// removal and addition of listeners can happen locally (i.e. without
 		// affecting anchorPCLs etc.)
+
 		for (AnchorKey ak : anchorsByKeys.keySet()) {
 			unregisterPCL(ak, anchorsByKeys.get(ak));
 		}
@@ -1217,9 +1209,17 @@ public class Connection extends Group {
 		// update our anchorsByKeys/points
 		IConnectionRouter router = getRouter();
 		if (router != null) {
-			router.route(this); // triggers recomputation of anchor positions
+			// we might need to apply a new transform to each of the points
+			// TODO: Do this when the transform changes!
 			refreshPoints();
-			router.route(this); // actually routes using recomputed positions
+
+			// compute parameters and insert volatile anchors
+			router.route(this);
+
+			// since PCLs are disabled (to prevent CME), points need to be
+			// refreshed again
+			// XXX: The Router performs the transformation internally after
+			// updating the parameters and before routing.
 			refreshPoints();
 
 			// tx = getCurve().getLocalToParentTransform();
@@ -1235,8 +1235,12 @@ public class Connection extends Group {
 
 		IConnectionInterpolator interpolator = getInterpolator();
 		if (interpolator != null) {
+			// apply new points to the visualization
 			interpolator.interpolate(this);
-			// refreshPoints();
+			// XXX: Changing the visualization changes the
+			// curve-to-connection-transform, and since the PCLs are disabled,
+			// the points need to be refreshed again, in order to be up-to-date.
+			refreshPoints();
 
 			// tx = getCurve().getLocalToParentTransform();
 			// System.out.println("| +--- Interpolated ---+");
@@ -1262,6 +1266,7 @@ public class Connection extends Group {
 		// TODO: Investigate if the fields need to be up-to-date or if the
 		// removal and addition of listeners can happen locally (i.e. without
 		// affecting anchorPCLs etc.)
+
 		for (AnchorKey ak : anchorsByKeys.keySet()) {
 			registerPCL(ak, anchorsByKeys.get(ak));
 		}

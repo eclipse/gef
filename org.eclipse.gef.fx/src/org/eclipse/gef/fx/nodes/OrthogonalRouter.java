@@ -12,18 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef.fx.nodes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef.fx.anchors.AnchorKey;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
-import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.PreferredOrientation;
-import org.eclipse.gef.fx.anchors.IAnchor;
-import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.euclidean.Vector;
@@ -33,7 +27,6 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.geometry.planar.Rectangle;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -49,180 +42,6 @@ import javafx.scene.Node;
  *
  */
 public class OrthogonalRouter extends AbstractRouter {
-
-	/**
-	 * A {@link ControlPointManipulator} can be used to record, perform, and
-	 * roll back control point changes during routing.
-	 */
-	protected static class ControlPointManipulator {
-		private Connection connection;
-		private Map<Integer, List<Point>> pointsToInsert = new HashMap<>();
-		private int index;
-		private Vector direction;
-		private Point point;
-		private List<IAnchor> initialControlAnchors;
-
-		/**
-		 * Constructs a new {@link ControlPointManipulator} for the given
-		 * {@link Connection}.
-		 *
-		 * @param c
-		 *            The {@link Connection} that is manipulated.
-		 */
-		public ControlPointManipulator(Connection c) {
-			this.connection = c;
-		}
-
-		/**
-		 * Performs the recorded changes.
-		 */
-		public void addPoints() {
-			int pointsInserted = 0;
-			for (int insertionIndex : pointsToInsert.keySet()) {
-				// XXX: We need to keep track of those way points we insert, so
-				// we can remove them in a succeeding routing pass; we use a
-				// special subclass of StaticAnchor for this purpose, so we can
-				// easily identify them through an instance check.
-				for (Point pointToInsert : pointsToInsert.get(insertionIndex)) {
-					initialControlAnchors.add(
-							insertionIndex + pointsInserted - 1,
-							new OrthogonalPolylineRouterAnchor(connection,
-									pointToInsert));
-					pointsInserted++;
-				}
-			}
-			// exchange the connection's points all at once
-			connection.setControlAnchors(initialControlAnchors);
-		}
-
-		/**
-		 * Records the specified change.
-		 *
-		 * @param index
-		 *            The index at which to insert a control point.
-		 * @param point
-		 *            The start coordinates for the change.
-		 * @param dx
-		 *            The horizontal component of the out direction.
-		 * @param dy
-		 *            The vertical component of the out direction.
-		 * @return A {@link Vector} specifying the out direction.
-		 */
-		public Vector addRoutingPoint(int index, Point point, double dx,
-				double dy) {
-			Point insertion = point.getTranslated(dx, dy);
-			if (!pointsToInsert.containsKey(index)) {
-				pointsToInsert.put(index, new ArrayList<Point>());
-			}
-			pointsToInsert.get(index).add(insertion);
-			return new Vector(dx, dy);
-		}
-
-		/**
-		 * Records the specified change.
-		 *
-		 * @param delta
-		 *            A {@link Vector} specifying the out direction.
-		 * @return A {@link Vector} specifying the out direction.
-		 */
-		public Vector addRoutingPoint(Vector delta) {
-			direction = direction.getSubtracted(
-					addRoutingPoint(index, point, delta.x, delta.y));
-			return direction;
-		}
-
-		/**
-		 * Records the given changes.
-		 *
-		 * @param index
-		 *            The start index for the changes.
-		 * @param point
-		 *            The start coordinates for the changes.
-		 * @param deltas
-		 *            The out directions for the new points.
-		 */
-		public void addRoutingPoints(int index, Point point, double... deltas) {
-			if (deltas == null) {
-				throw new IllegalArgumentException(
-						"Even number of routing point deltas required, but got <null>.");
-			}
-			if (deltas.length == 0) {
-				throw new IllegalArgumentException(
-						"Even number of routing point deltas required, but got 0.");
-			}
-			if (deltas.length % 2 != 0) {
-				throw new IllegalArgumentException(
-						"Even number of routing point deltas required, but got "
-								+ deltas.length + ".");
-			}
-
-			// create array list if needed
-			if (!pointsToInsert.containsKey(index)) {
-				pointsToInsert.put(index, new ArrayList<Point>());
-			}
-
-			// insert points
-			for (int i = 0; i < deltas.length; i += 2) {
-				Point insertion = point.getTranslated(deltas[i], deltas[i + 1]);
-				pointsToInsert.get(index).add(insertion);
-			}
-		}
-
-		/**
-		 * Rolls back the changes.
-		 */
-		public void clearPoints() {
-			// XXX: Route may be invoked multiple times until the anchor
-			// positions are property computed (because transforms change,
-			// etc.); we need to remove those points we have inserted in a
-			// preceding pass to guarantee that we only do 'minimal' routing; as
-			// we use a special subclass of StaticAnchor, we can easily sort
-			// them out through an instance check. However, we cannot remove the
-			// anchors one by one, because that will cause a refresh of the
-			// connection after each removed control point (leading to a
-			// re-entrance here).
-			initialControlAnchors = new ArrayList<>();
-			for (IAnchor a : connection.getControlAnchors()) {
-				if (!(a instanceof OrthogonalPolylineRouterAnchor)) {
-					initialControlAnchors.add(a);
-				}
-			}
-			connection.setControlAnchors(initialControlAnchors);
-		}
-
-		/**
-		 * Initializes this {@link ControlPointManipulator} for the recording of
-		 * changes.
-		 *
-		 * @param index
-		 *            The index of the control point after which points are to
-		 *            be added.
-		 * @param point
-		 *            The start coordinates for the changes.
-		 * @param direction
-		 *            The current direction.
-		 */
-		public void setRoutingData(int index, Point point, Vector direction) {
-			this.index = index;
-			this.point = point;
-			this.direction = direction;
-		}
-	}
-
-	// private sub-class to 'mark' those way-points that are added by the router
-	// (so they can be removed when re-routing)
-	private static class OrthogonalPolylineRouterAnchor extends StaticAnchor {
-		public OrthogonalPolylineRouterAnchor(Node anchorage,
-				Point referencePositionInAnchorageLocal) {
-			super(anchorage, referencePositionInAnchorageLocal);
-		}
-
-		@Override
-		public String toString() {
-			return "OrthogonalRouterAnchor[referencePosition="
-					+ getReferencePosition() + "]";
-		}
-	}
 
 	private static final double OFFSET = 15;
 
@@ -245,9 +64,8 @@ public class OrthogonalRouter extends AbstractRouter {
 	 * @return The index of the first point that is not contained within the
 	 *         anchorage geometry.
 	 */
-	private int findReferenceIndex(Connection connection, int anchorIndex,
+	private int findReferenceIndex(List<Point> points, int anchorIndex,
 			IGeometry anchorageGeometry, int step) {
-		ObservableList<Point> points = connection.getPointsUnmodifiable();
 		int startIndex = anchorIndex + step;
 		for (int i = startIndex; step < 0 ? i >= 0
 				: i < points.size(); i += step) {
@@ -260,44 +78,9 @@ public class OrthogonalRouter extends AbstractRouter {
 	}
 
 	/**
-	 * Retrieves the geometry of the anchorage at the given index, in case the
-	 * respective anchor is connected.
-	 *
-	 * @param connection
-	 *            The connection which is connected.
-	 * @param index
-	 *            The index of the anchor whose anchorage geometry is to be
-	 *            retrieved.
-	 * @return A geometry resembling the anchorage reference geometry of the
-	 *         anchor at the given index, or <code>null</code> if the anchor is
-	 *         not connected.
-	 */
-	private IGeometry getAnchorageGeometry(Connection connection, int index) {
-		IAnchor anchor = connection.getAnchor(index);
-		// TODO: use connection methods to detect whether anchors are connected,
-		// don't duplicate logic here
-		if (anchor != null && anchor.getAnchorage() != null
-				&& anchor.getAnchorage() != connection) {
-			Node anchorage = anchor.getAnchorage();
-			if (anchor instanceof DynamicAnchor) {
-				IGeometry geometry = ((DynamicAnchor) anchor)
-						.getComputationParameter(connection.getAnchorKey(index),
-								AnchorageReferenceGeometry.class)
-						.get();
-				return NodeUtils.sceneToLocal(connection,
-						NodeUtils.localToScene(anchorage, geometry));
-			}
-			// fall back to using the shape outline
-			return NodeUtils.sceneToLocal(connection, NodeUtils.localToScene(
-					anchorage, NodeUtils.getShapeOutline(anchorage)));
-		}
-		return null;
-	}
-
-	/**
 	 * Returns the reference point for the anchor at the given index.
 	 *
-	 * @param connection
+	 * @param points
 	 *            The {@link Connection} that is currently routed.
 	 * @param index
 	 *            The index specifying the anchor for which to provide a
@@ -307,16 +90,16 @@ public class OrthogonalRouter extends AbstractRouter {
 	 *         connection's curve.
 	 */
 	@Override
-	protected Point getAnchoredReferencePoint(Connection connection,
+	protected Point getAnchoredReferencePointInConnection(List<Point> points,
 			int index) {
-		if (index < 0 || index >= connection.getPointsUnmodifiable().size()) {
+		if (index < 0 || index >= points.size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		IGeometry geometry = getAnchorageGeometry(connection, index);
-		int referenceIndex = findReferenceIndex(connection, index, geometry,
-				index < connection.getPointsUnmodifiable().size() - 1 ? 1 : -1);
-		IGeometry referenceGeometry = getAnchorageGeometry(connection,
-				referenceIndex);
+		Connection connection = getConnection();
+		IGeometry geometry = getAnchorageGeometry(index);
+		int referenceIndex = findReferenceIndex(points, index, geometry,
+				index < points.size() - 1 ? 1 : -1);
+		IGeometry referenceGeometry = getAnchorageGeometry(referenceIndex);
 		if (referenceGeometry != null) {
 			if (geometry != null) {
 				// XXX: if a position hint is supplied for the current index,
@@ -324,15 +107,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				if (index == 0) {
 					Point startPointHint = connection.getStartPointHint();
 					if (startPointHint != null) {
-						return NodeUtils.parentToLocal(connection.getCurve(),
-								startPointHint);
+						return startPointHint;
 					}
-				} else if (index == connection.getPointsUnmodifiable().size()
-						- 1) {
+				} else if (index == points.size() - 1) {
 					Point endPointHint = connection.getEndPointHint();
 					if (endPointHint != null) {
-						return NodeUtils.parentToLocal(connection.getCurve(),
-								endPointHint);
+						return endPointHint;
 					}
 				}
 
@@ -348,14 +128,11 @@ public class OrthogonalRouter extends AbstractRouter {
 						refBounds.getX() + refBounds.getWidth());
 				if (x1 <= x2) {
 					// horizontal overlap => return vertically stable position
-					return NodeUtils.parentToLocal(connection.getCurve(),
-							new Point(x1 + (x2 - x1) / 2,
-									refBounds.getY() > bounds.getY()
-											+ bounds.getHeight()
-													? refBounds.getY()
-													: refBounds.getY()
-															+ refBounds
-																	.getHeight()));
+					return new Point(x1 + (x2 - x1) / 2,
+							refBounds.getY() > bounds.getY()
+									+ bounds.getHeight() ? refBounds.getY()
+											: refBounds.getY()
+													+ refBounds.getHeight());
 				}
 
 				double y1 = Math.max(bounds.getY(), refBounds.getY());
@@ -363,26 +140,20 @@ public class OrthogonalRouter extends AbstractRouter {
 						refBounds.getY() + refBounds.getHeight());
 				if (y1 <= y2) {
 					// vertical overlap => return horizontally stable position
-					return NodeUtils
-							.parentToLocal(connection.getCurve(),
-									new Point(refBounds.getX() > bounds.getX()
-											+ bounds.getWidth()
-													? refBounds.getX()
-													: refBounds.getX()
-															+ refBounds
-																	.getWidth(),
-											y1 + (y2 - y1) / 2));
+					return new Point(
+							refBounds.getX() > bounds.getX() + bounds.getWidth()
+									? refBounds.getX()
+									: refBounds.getX() + refBounds.getWidth(),
+							y1 + (y2 - y1) / 2);
 				}
 				// fallback to nearest bounds projection
 				// TODO: revise handling of this case -> we could optimize this
 				// by providing a desired direction
-				return NodeUtils.parentToLocal(connection.getCurve(),
-						getNearestBoundsProjection(referenceGeometry,
-								geometry.getBounds().getCenter()));
+				return getNearestBoundsProjection(referenceGeometry,
+						geometry.getBounds().getCenter());
 			}
 		}
-		return NodeUtils.parentToLocal(connection.getCurve(),
-				connection.getPoint(referenceIndex));
+		return points.get(referenceIndex);
 	}
 
 	private Point getNearestBoundsProjection(IGeometry g, Point p) {
@@ -468,75 +239,27 @@ public class OrthogonalRouter extends AbstractRouter {
 	}
 
 	@Override
-	public void route(Connection connection) {
-		if (connection.getPointsUnmodifiable().size() < 2) {
-			// we cannot route if the connection does not have at least start
-			// and end points.
-			return;
+	protected Vector route(ControlPointManipulator cpm, Vector inDirection,
+			Vector outDirection) {
+		if (Math.abs(outDirection.x) <= 0.05
+				&& Math.abs(outDirection.y) <= 0.05) {
+			// effectively 0 => do not insert point
+			// => use previous direction as current direction
+			return inDirection;
 		}
-
-		// XXX: Route may be invoked multiple times until the anchor
-		// positions are property computed (because transforms change,
-		// etc.); we need to remove those points we have inserted in a
-		// preceding pass to guarantee that we only do 'minimal' routing; as
-		// we use a special subclass of StaticAnchor, we can easily sort
-		// them out through an instance check.
-		ControlPointManipulator controlPointManipulator = new ControlPointManipulator(
-				connection);
-		controlPointManipulator.clearPoints();
-
-		// The router will respect the connection's anchors already provided
-		// and will add control anchors only where needed. It will proceed all
-		// anchors from start to end and compute the respective direction to the
-		// next anchor. For those anchors that are connected, reference points
-		// will be computed.
-		Vector inDirection = null;
-		Vector outDirection = null;
-		for (int i = 0; i < connection.getPointsUnmodifiable().size()
-				- 1; i++) {
-			IAnchor anchor = connection.getAnchor(i);
-			if (anchor instanceof DynamicAnchor) {
-				updateComputationParameters(connection, i);
-			}
-			Point currentPoint = connection.getPoint(i);
-
-			// direction between preceding way/control point and current one has
-			// been computed in previous iteration
-			inDirection = outDirection;
-			// compute the direction between the current way/control point and
-			// the succeeding one
-			IAnchor nextAnchor = connection.getAnchor(i + 1);
-			if (nextAnchor instanceof DynamicAnchor) {
-				updateComputationParameters(connection, i + 1);
-			}
-			outDirection = new Vector(connection.getPoint(i),
-					connection.getPoint(i + 1));
-
-			if (Math.abs(outDirection.x) <= 0.05
-					&& Math.abs(outDirection.y) <= 0.05) {
-				// effectively 0 => do not insert point
-				// => use previous direction as current direction
-				outDirection = inDirection;
-				continue;
-			}
-
-			// given the direction, determine if points have to be added
-			if (isSufficientlyHorizontal(outDirection)
-					|| isSufficientlyVertical(outDirection)) {
-				// XXX: We may have to adjust an already orthogonal segment in
-				// case it overlaps with an anchorage outline.
-				// currentDirection = routeOrthogonalSegment(connection,
-				// controlPointManipulator, currentDirection, i,
-				// currentPoint);
-			} else {
-				outDirection = routeNonOrthogonalSegment(connection,
-						controlPointManipulator, inDirection, outDirection, i,
-						currentPoint);
-			}
+		// given the direction, determine if points have to be added
+		if (isSufficientlyHorizontal(outDirection)
+				|| isSufficientlyVertical(outDirection)) {
+			// XXX: We may have to adjust an already orthogonal segment in
+			// case it overlaps with an anchorage outline.
+			// currentDirection = routeOrthogonalSegment(connection,
+			// controlPointManipulator, currentDirection, i,
+			// currentPoint);
+			return super.route(cpm, inDirection, outDirection);
+		} else {
+			return routeNonOrthogonalSegment(cpm.getConnection(), cpm,
+					inDirection, outDirection, cpm.getIndex(), cpm.getPoint());
 		}
-
-		// add all inserted points to the connection
-		controlPointManipulator.addPoints();
 	}
 
 	/**
@@ -810,25 +533,21 @@ public class OrthogonalRouter extends AbstractRouter {
 	}
 
 	@Override
-	protected void updateComputationParameters(Connection connection,
-			int index) {
+	protected void updateComputationParameters(List<Point> points, int index,
+			DynamicAnchor anchor, AnchorKey key) {
 		// set anchored reference point
-		super.updateComputationParameters(connection, index);
+		super.updateComputationParameters(points, index, anchor, key);
 
 		// set orientation hint for first and last anchor
-		AnchorKey anchorKey = connection.getAnchorKey(index);
-		IAnchor anchor = connection.getAnchor(index);
-		if (index == 0
-				|| index == connection.getPointsUnmodifiable().size() - 1) {
+		if (index == 0 || index == points.size() - 1) {
 			// update orientation hint
-			Point neighborPoint = connection
-					.getPoint(index == 0 ? index + 1 : index - 1);
+			Point neighborPoint = points
+					.get(index == 0 ? index + 1 : index - 1);
 			Point delta = neighborPoint
-					.getDifference(NodeUtils.sceneToLocal(connection,
-							NodeUtils.localToScene(anchorKey.getAnchored(),
-									((DynamicAnchor) anchor)
-											.getComputationParameter(anchorKey,
-													AnchoredReferencePoint.class)
+					.getDifference(NodeUtils.sceneToLocal(getConnection(),
+							NodeUtils.localToScene(key.getAnchored(),
+									anchor.getComputationParameter(key,
+											AnchoredReferencePoint.class)
 											.get())));
 			Orientation hint = null;
 			if (Math.abs(delta.x) < 5
@@ -841,14 +560,8 @@ public class OrthogonalRouter extends AbstractRouter {
 				hint = Orientation.HORIZONTAL;
 			}
 			// provide a hint to the anchor's computation strategy
-			((DynamicAnchor) anchor).getComputationParameter(anchorKey,
-					PreferredOrientation.class).set(hint);
+			anchor.getComputationParameter(key, PreferredOrientation.class)
+					.set(hint);
 		}
 	}
-
-	@Override
-	public boolean wasInserted(IAnchor anchor) {
-		return anchor instanceof OrthogonalPolylineRouterAnchor;
-	}
-
 }
