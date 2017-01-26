@@ -1180,15 +1180,15 @@ public class Connection extends Group {
 	 * them from curve to connection coordinates (curve-to-connection-transform,
 	 * c2ctx).
 	 * <li>The router removes all (previously inserted) volatile anchors.
-	 * <li>=> The connection's points are refreshed in-place, because removal of
-	 * anchors calls {@link #removeAnchor(AnchorKey, IAnchor)}, which updates
+	 * <li>=&gt; The connection's points are refreshed in-place, because removal
+	 * of anchors calls {@link #removeAnchor(AnchorKey, IAnchor)}, which updates
 	 * the points straight away.
 	 * <li>The router queries the (updated, user-defined) points from the
 	 * connection and computes parameters for the anchors based on these points
 	 * (and other criteria).
-	 * <li>=> The router computes the {@link AnchoredReferencePoint} parameter
-	 * value within the coordinate system of the connection.
-	 * <li>=> The parameter is then bound to a binding that depends on the
+	 * <li>=&gt; The router computes the {@link AnchoredReferencePoint}
+	 * parameter value within the coordinate system of the connection.
+	 * <li>=&gt; The parameter is then bound to a binding that depends on the
 	 * c2ctx, which transforms the {@link Point} from the coordinate system of
 	 * the connection to the coordinate system of the {@link #getCurve()}.
 	 * <li>The anchors compute new positions for the {@link AnchorKey}s for
@@ -1201,8 +1201,9 @@ public class Connection extends Group {
 	 * change listeners are disabled.
 	 * <li>The interpolator computes a new curve geometry and applies it to the
 	 * connection.
-	 * <li>=> The c2ctx changes, that's why the parameters are recomputed from
-	 * the bindings, which triggers a recomputation of the anchor positions.
+	 * <li>=&gt; The c2ctx changes, that's why the parameters are recomputed
+	 * from the bindings, which triggers a recomputation of the anchor
+	 * positions.
 	 * <li>The connection refreshed its points manually again.
 	 * <li>The connection registers all position change listeners.
 	 * </ol>
