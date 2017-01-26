@@ -367,13 +367,7 @@ public class Connection extends Group {
 			@Override
 			public void changed(ObservableValue<? extends Node> observable,
 					Node oldValue, Node newValue) {
-				if (inRefresh) {
-					throw new IllegalStateException(
-							"Curve changed in refresh().");
-				}
-
 				// TODO: unregister listeners instead of setting refresh
-
 				inRefresh = true;
 
 				if (oldValue != null) {
@@ -383,15 +377,19 @@ public class Connection extends Group {
 					oldValue.layoutBoundsProperty()
 							.removeListener(boundsListener);
 				}
-
-				reattachAnchorKeys(oldValue, newValue);
-
 				if (newValue != null) {
 					newValue.layoutBoundsProperty().addListener(boundsListener);
 					newValue.localToParentTransformProperty()
 							.addListener(transformListener);
 					getChildren().add(newValue);
 				}
+
+				// XXX: Can only reattach anchor keys if the new curve is part
+				// of the scene graph. Otherwise, visual changes do not lead to
+				// anchor position recomputations, because the necessary
+				// visual-change-listener cannot be registered if no common
+				// ancestor of the anchorage and anchored nodes can be found.
+				reattachAnchorKeys(oldValue, newValue);
 
 				inRefresh = false;
 				refresh();
