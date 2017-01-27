@@ -67,7 +67,9 @@ RULE_QUOTED_STRING : { !htmlMode }?=> '"' ('\\' '"'|~('"'))* '"';
 
 RULE_HTML_STRING : { !htmlMode }?=> '<' { htmlMode = true; } HTML_CONTENT* '>' { htmlMode = false; };
 
-fragment HTML_CONTENT : { htmlMode }?=> (HTML_TAG | HTML_PCDATA) ;
+fragment HTML_CONTENT : { htmlMode }?=> (HTML_TAG | HTML_PCDATA | HTML_COMMENT) ;
+
+fragment HTML_COMMENT : { htmlMode }?=> ('<!--' ~(('-'|'>'))* '-->');
 
 fragment HTML_TAG : { htmlMode }?=> HTML_TAG_START_OPEN HTML_TAG_DATA ( HTML_TAG_EMPTY_CLOSE | HTML_TAG_CLOSE (HTML_CONTENT)* HTML_TAG_END_OPEN HTML_TAG_DATA HTML_TAG_CLOSE);
 
@@ -79,7 +81,7 @@ fragment HTML_TAG_CLOSE : { htmlMode && tagMode }?=> '>' { tagMode = false; } ;
 
 fragment HTML_TAG_EMPTY_CLOSE : { htmlMode && tagMode }?=> '/''>' { tagMode = false; } ;
 
-fragment HTML_TAG_DATA : { htmlMode && tagMode }?=>  ~('/') ({ input.LA(1) != '>' && (input.LA(1) != '/' || input.LA(2) != '>')}?=> ~('>'))*;
+fragment HTML_TAG_DATA : { htmlMode && tagMode }?=>  ~('/'|'!') ({ input.LA(1) != '>' && (input.LA(1) != '/' || input.LA(2) != '>')}?=> ~('>'))*;
 
 fragment HTML_PCDATA : { htmlMode && !tagMode }?=> (~('<'|'>'))+ ;
 
