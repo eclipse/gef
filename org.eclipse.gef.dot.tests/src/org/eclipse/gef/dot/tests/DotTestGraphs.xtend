@@ -238,10 +238,50 @@ class DotTestGraphs {
 		}
 	'''
 	
-	public static val HTML_LIKE_LABELS_01 = '''
+	public static val HTML_LIKE_LABELS_WITH_COMMENT = '''
 		graph {
 			1[label=<
 				<!-- This is a bold label -->
+				<B>Bold Label</B>
+			  >
+			]
+		}
+	'''
+
+	public static val HTML_LIKE_LABELS_WITH_HYPHEN_IN_COMMENT = '''
+		graph {
+			1[label=<
+				<!-- This-is-a-bold-label -->
+				<B>Bold Label</B>
+			  >
+			]
+		}
+	'''
+
+	public static val HTML_LIKE_LABELS_WITH_NESTED_TAGS_IN_COMMENT = '''
+		graph {
+			1[label=<
+				<!-- <nested><tags/></nested><t> -->
+				<B>Bold Label</B>
+			  >
+			]
+		}
+	'''
+
+    public static val HTML_LIKE_LABELS_WITH_OPEN_TAGS_IN_COMMENT = '''
+		graph {
+			1[label=<
+				<!-- <tags> -->
+				<B>Bold Label</B>
+			  >
+			]
+		}
+	'''
+
+	public static val HTML_LIKE_LABELS_WITH_CLOSE_TAGS_IN_COMMENT = '''
+		graph {
+			1[label=<
+				<!-- </tags> -->
 				<B>Bold Label</B>
 			  >
 			]

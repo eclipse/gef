@@ -22,7 +22,7 @@ import org.eclipse.xtext.parser.antlr.Lexer;
 
 @members {
     boolean htmlMode = false;
-    boolean tagMode = false;
+    int htmlTags = 0;
 }
 
 Subgraph : { !htmlMode }?=>('S'|'s')('U'|'u')('B'|'b')('G'|'g')('R'|'r')('A'|'a')('P'|'p')('H'|'h');
@@ -65,25 +65,13 @@ RULE_STRING : { !htmlMode }?=> ('a'..'z'|'A'..'Z'|'\u0080'..'\u00FF'|'_') ('a'..
 
 RULE_QUOTED_STRING : { !htmlMode }?=> '"' ('\\' '"'|~('"'))* '"';
 
-RULE_HTML_STRING : { !htmlMode }?=> '<' { htmlMode = true; } HTML_CONTENT* '>' { htmlMode = false; };
+RULE_HTML_STRING : { !htmlMode }?=> '<' { htmlMode = true; } (HTML_TAG_OPEN | HTML_TAG_CLOSE | HTML_CHARS)* '>' { htmlMode = false; };
 
-fragment HTML_CONTENT : { htmlMode }?=> (HTML_TAG | HTML_PCDATA | HTML_COMMENT) ;
+fragment HTML_TAG_OPEN : { htmlMode }?=> '<' { htmlTags++; };
 
-fragment HTML_COMMENT : { htmlMode }?=> ('<!--' ~(('-'|'>'))* '-->');
+fragment HTML_TAG_CLOSE : { htmlMode && htmlTags > 0 }?=> '>' { htmlTags--; };
 
-fragment HTML_TAG : { htmlMode }?=> HTML_TAG_START_OPEN HTML_TAG_DATA ( HTML_TAG_EMPTY_CLOSE | HTML_TAG_CLOSE (HTML_CONTENT)* HTML_TAG_END_OPEN HTML_TAG_DATA HTML_TAG_CLOSE);
-
-fragment HTML_TAG_START_OPEN : { htmlMode && !tagMode }?=> '<' { tagMode = true; };
-
-fragment HTML_TAG_END_OPEN : { htmlMode && !tagMode }?=> '<''/' { tagMode = true; };
-
-fragment HTML_TAG_CLOSE : { htmlMode && tagMode }?=> '>' { tagMode = false; } ;
-
-fragment HTML_TAG_EMPTY_CLOSE : { htmlMode && tagMode }?=> '/''>' { tagMode = false; } ;
-
-fragment HTML_TAG_DATA : { htmlMode && tagMode }?=>  ~('/'|'!') ({ input.LA(1) != '>' && (input.LA(1) != '/' || input.LA(2) != '>')}?=> ~('>'))*;
-
-fragment HTML_PCDATA : { htmlMode && !tagMode }?=> (~('<'|'>'))+ ;
+fragment HTML_CHARS : { htmlMode }?=> (~('<'|'>'))+;
 
 RULE_ML_COMMENT : { !htmlMode }?=> '/*' ( options {greedy=false;} : . )* '*/';
 

@@ -120,8 +120,28 @@ public class DotParserTests {
 	}
 
 	@Test
-	public void testHTMLLikeLabelsWithComments() {
-		testString(DotTestGraphs.HTML_LIKE_LABELS_01);
+	public void testHTMLLikeLabelsWithComment() {
+		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_COMMENT);
+	}
+
+	@Test
+	public void testHTMLLikeLabelsWithHyphenInComment() {
+		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_HYPHEN_IN_COMMENT);
+	}
+
+	@Test
+	public void testHTMLLikeLabelsWithNestedTagsInComment() {
+		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_NESTED_TAGS_IN_COMMENT);
+	}
+
+	@Test
+	public void testHTMLLikeLabelsWithOpenTagsInComment() {
+		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_OPEN_TAGS_IN_COMMENT);
+	}
+
+	@Test
+	public void testHTMLLikeLabelsWithCloseTagsInComment() {
+		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_CLOSE_TAGS_IN_COMMENT);
 	}
 
 	@Test
