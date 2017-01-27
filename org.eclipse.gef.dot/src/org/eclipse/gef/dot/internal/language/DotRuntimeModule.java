@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
-import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.language.terminals.DotTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverterService;
@@ -36,7 +35,6 @@ public class DotRuntimeModule
 	@Override
 	public void configure(Binder binder) {
 		super.configure(binder);
-		binder.requestStaticInjection(DotAttributes.class);
 		binder.requestStaticInjection(DotImport.class);
 	}
 }
