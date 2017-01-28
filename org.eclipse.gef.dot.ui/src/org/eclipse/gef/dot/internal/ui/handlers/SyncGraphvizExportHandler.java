@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -204,7 +205,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 	private void checkActiveEditorAndExportGraph(IWorkbenchPart part) {
 		if (part instanceof XtextEditor) {
 			XtextEditor editor = (XtextEditor) part;
-			if ("org.eclipse.gef.dot.internal.language.Dot" //$NON-NLS-1$
+			if (DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
 					.equals(editor.getLanguageName())
 					&& editor.getEditorInput() instanceof FileEditorInput) {
 				IFile file = ((FileEditorInput) editor.getEditorInput())

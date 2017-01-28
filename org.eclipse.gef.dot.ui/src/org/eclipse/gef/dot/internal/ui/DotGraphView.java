@@ -517,7 +517,7 @@ public class DotGraphView extends ZestFxUiView {
 		private void checkActiveEditorAndUpdateGraph(IWorkbenchPart part) {
 			if (part instanceof XtextEditor) {
 				XtextEditor editor = (XtextEditor) part;
-				if ("org.eclipse.gef.dot.internal.language.Dot" //$NON-NLS-1$
+				if (DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
 						.equals(editor.getLanguageName())
 						&& editor.getEditorInput() instanceof FileEditorInput) {
 					try {
