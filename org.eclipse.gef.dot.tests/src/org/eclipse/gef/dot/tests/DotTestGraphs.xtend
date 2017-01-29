@@ -300,7 +300,7 @@ class DotTestGraphs {
 				graph name {
 					a;
 					b;
-					a->b
+					a--b
 				} 
 			and more 
 		*/
@@ -310,7 +310,7 @@ class DotTestGraphs {
 		graph name {
 					a;
 					b;
-					a->b
+					a--b
 				}
 	'''
 
@@ -319,7 +319,7 @@ class DotTestGraphs {
 		graph long_name {
 			a;
 			b;
-			a->b
+			a--b
 		} and more */
 	'''
 	
@@ -327,7 +327,7 @@ class DotTestGraphs {
 		graph long_name {
 			a;
 			b;
-			a->b
+			a--b
 		}
 	'''
 	
@@ -354,7 +354,7 @@ class DotTestGraphs {
 		graph {
 			a;
 			b;
-			a->b
+			a--b
 		} and more 
 	'''
 	
@@ -362,7 +362,7 @@ class DotTestGraphs {
 		graph {
 			a;
 			b;
-			a->b
+			a--b
 		}
 	'''
 	
@@ -371,7 +371,7 @@ class DotTestGraphs {
 			graph{
 				a
 				b
-				a->b
+				a--b
 			} and more 
 	'''
 	
@@ -379,7 +379,7 @@ class DotTestGraphs {
 		graph{
 				a
 				b
-				a->b
+				a--b
 			}
 	'''
 	
