@@ -10,11 +10,6 @@ import org.eclipse.gef.dot.internal.language.services.DotHtmlLabelGrammarAccess;
 
 /**
  * This class contains custom formatting declarations.
- * 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#formatting
- * on how and when to use it.
- * 
- * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  */
 public class DotHtmlLabelFormatter extends AbstractDeclarativeFormatter {
 	
