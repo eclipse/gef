@@ -3,17 +3,132 @@
  */
 package org.eclipse.gef.dot.internal.language.validation;
 
-/**
- * This class contains custom validation rules. 
- *
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
- */
-public class DotHtmlLabelJavaValidator extends org.eclipse.gef.dot.internal.language.validation.AbstractDotHtmlLabelJavaValidator {
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-//	@Check
-//	public void checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.getName().charAt(0))) {
-//			warning("Name should start with a capital", MyDslPackage.Literals.GREETING__NAME);
-//		}
-//	}
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage;
+import org.eclipse.xtext.validation.Check;
+
+/**
+ * This class contains custom validation rules.
+ *
+ * See
+ * https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
+ */
+public class DotHtmlLabelJavaValidator extends
+		org.eclipse.gef.dot.internal.language.validation.AbstractDotHtmlLabelJavaValidator {
+
+	private static final Set<String> ALL_TAGS = new HashSet<>();
+	private static final Map<String, Set<String>> validTags = new HashMap<>();
+	private static final Map<String, Set<String>> validAttributes = new HashMap<>();
+
+	static {
+		// specify allowed top-level tags
+		for (String t : new String[] { "BR", "FONT", "I", "B", "U", "O", "SUB",
+				"SUP", "S", "TABLE" }) {
+			validTags.put(t, new HashSet<>());
+		}
+		// add allowed nested tags
+		validTags.get("TABLE").addAll(Arrays.asList("HR", "TR"));
+		validTags.get("TR").addAll(Arrays.asList("VR", "TD"));
+		validTags.get("TD").addAll(Arrays.asList("IMG"));
+
+		// find all tags
+		for (String t : validTags.keySet()) {
+			ALL_TAGS.add(t);
+			for (String t2 : validTags.get(t)) {
+				ALL_TAGS.add(t2);
+			}
+		}
+
+		// specify tags that can have attributes
+		for (String t : new String[] { "TABLE", "TD", "FONT", "BR", "IMG" }) {
+			validAttributes.put(t, new HashSet<>());
+		}
+		// add allowed attributes
+		validAttributes.get("TABLE")
+				.addAll(Arrays.asList("ALIGN", "BGCOLOR", "BORDER",
+						"CELLBORDER", "CELLPADDING", "CELLSPACING", "COLOR",
+						"COLUMNS", "FIXEDSIZE", "GRADIENTANGLE", "HEIGHT",
+						"HREF", "ID", "PORT", "ROWS", "SIDES", "STYLE",
+						"TARGET", "TITLE", "TOOLTIP", "VALIGN", "WIDTH"));
+		validAttributes.get("TD")
+				.addAll(Arrays.asList("ALIGN", "BALIGN", "BGCOLOR", "BORDER",
+						"CELLPADDING", "CELLSPACING", "COLOR", "COLSPAN",
+						"FIXEDSIZE", "GRADIENTANGLE", "HEIGHT", "HREF", "ID",
+						"PORT", "ROWSPAN", "SIDES", "STYLE", "TARGET", "TITLE",
+						"TOOLTIP", "VALIGN", "WIDTH"));
+		validAttributes.get("FONT")
+				.addAll(Arrays.asList("COLOR", "FACE", "POINT"));
+		validAttributes.get("BR").addAll(Arrays.asList("ALIGN"));
+		validAttributes.get("IMG").addAll(Arrays.asList("SCALE", "SRC"));
+	}
+
+	/**
+	 * Checks if the given {@link HtmlTag} is valid w.r.t. its parent (not all
+	 * tags are allowed on all nesting levels). Generates warnings when the
+	 * given {@link HtmlTag} is not supported by Graphviz w.r.t. its parent.
+	 * 
+	 * @param tag
+	 *            The {@link HtmlTag} to check.
+	 */
+	@Check
+	public void checkTagNameIsValid(HtmlTag tag) {
+		String tagName = tag.getName().toUpperCase();
+		if (!ALL_TAGS.contains(tagName)) {
+			warning("The " + tagName + " tag is not supported.",
+					HtmllabelPackage.Literals.HTML_TAG__NAME);
+		} else {
+			EObject container = tag.eContainer();
+			HtmlTag parent = null;
+			if (container instanceof HtmlContent) {
+				HtmlContent htmlContent = (HtmlContent) container;
+				parent = htmlContent.getTag();
+			}
+			if (parent != null) {
+				String parentName = parent.getName().toUpperCase();
+				if (validTags.containsKey(parentName)) {
+					if (!validTags.get(parentName).contains(tagName)) {
+						warning("The " + tagName + " tag is not allowed inside "
+								+ parentName + ".",
+								HtmllabelPackage.Literals.HTML_TAG__NAME);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks if the given {@link HtmlAttr} is valid w.r.t. its tag (only
+	 * certain attributes are supported by the individual tags). Generates
+	 * warnings if the {@link HtmlAttr} is not supported by Graphviz w.r.t. its
+	 * tag.
+	 * 
+	 * @param attr
+	 *            The {@link HtmlAttr} to check.
+	 */
+	@Check
+	public void checkAttributeNameIsValid(HtmlAttr attr) {
+		String attrName = attr.getName();
+		EObject container = attr.eContainer();
+		if (container instanceof HtmlTag) {
+			HtmlTag tag = (HtmlTag) container;
+			if (tag != null) {
+				String tagName = tag.getName().toUpperCase();
+				if (!validAttributes.containsKey(tagName)
+						|| !validAttributes.get(tagName).contains(attrName)) {
+					warning("The " + attrName
+							+ " attribute is not allowed inside " + tagName
+							+ ".", HtmllabelPackage.Literals.HTML_ATTR__NAME);
+				}
+			}
+		}
+	}
 }
