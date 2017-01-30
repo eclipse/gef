@@ -112,7 +112,7 @@ terminal QUOTED_STRING:
 terminal HTML_STRING : '<' (HTML_TAG_OPEN | HTML_TAG_CLOSE | HTML_CHARS)* '>';
 terminal fragment HTML_TAG_OPEN : '<';
 terminal fragment HTML_TAG_CLOSE : '>';
-terminal fragment HTML_CHARS : (!('<'|'>'))+ ;
+terminal fragment HTML_CHARS : (!('<'|'>'))+;
 
 terminal ML_COMMENT:
 	'/*'->'*/';
