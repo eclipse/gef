@@ -63,11 +63,6 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	public void checkValidAttributeValue(final Attribute attribute) {
 		String attributeName = attribute.getName().toValue();
 		ID attributeValue = attribute.getValue();
-		if (attributeName.contains("label")) {
-			System.out.println("check validity of " + attributeName + "="
-					+ attributeValue.toValue() + " (" + attributeValue.getType()
-					+ ")");
-		}
 		List<Diagnostic> diagnostics = convertToFeatureBasedDiagnostic(
 				DotAttributes.validateAttributeRawValue(
 						DotAttributes.getContext(attribute), attributeName,

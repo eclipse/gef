@@ -46,5 +46,4 @@ public class CloneShapePolicy extends AbstractCloneContentPolicy {
 	public GeometricShapePart getHost() {
 		return (GeometricShapePart) super.getHost();
 	}
-
 }

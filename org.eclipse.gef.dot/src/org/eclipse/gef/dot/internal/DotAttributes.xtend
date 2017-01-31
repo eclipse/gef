@@ -386,20 +386,24 @@ public class DotAttributes {
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case HEIGHT__N: validateAttributeRawValue(DOUBLE_PARSER, HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LABEL__GNE:
-				if (attributeValue.type == ID.Type.HTML_STRING) {
+				if (attributeValue.type == ID.Type.HTML_STRING)
 					validateAttributeRawValue(HTML_LABEL_PARSER, HTML_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
-				} else if (attributeValue.type == ID.Type.QUOTED_STRING) {
+				else if (attributeValue.type == ID.Type.QUOTED_STRING)
 					validateAttributeRawValue(ESC_LABEL_PARSER, ESC_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
-				} else {
+				else
 					Collections.emptyList
-				}
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LP__GE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue) 
 			case PAGEDIR__G: validateAttributeRawValue(PAGEDIR_PARSER, null, attributeContext, attributeName, attributeValue)
-			case POS__NE: if (attributeContext == Context.NODE) validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
-						  else if (attributeContext == Context.EDGE) validateAttributeRawValue(SPLINETYPE_PARSER, SPLINETYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case POS__NE:
+				if (attributeContext == Context.NODE)
+					validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+				else if (attributeContext == Context.EDGE)
+					validateAttributeRawValue(SPLINETYPE_PARSER, SPLINETYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
+				else
+					Collections.emptyList
             case RANKDIR__G: validateAttributeRawValue(RANKDIR_PARSER, null, attributeContext, attributeName, attributeValue)
 			case SHAPE__N: validateAttributeRawValue(SHAPE_PARSER, SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue) 
 			case SIDES__N: validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR, attributeContext, attributeName, attributeValue)

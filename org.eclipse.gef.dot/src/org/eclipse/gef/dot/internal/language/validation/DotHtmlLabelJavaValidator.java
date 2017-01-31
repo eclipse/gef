@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
-import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage;
 import org.eclipse.xtext.validation.Check;
@@ -25,22 +24,37 @@ import org.eclipse.xtext.validation.Check;
 public class DotHtmlLabelJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotHtmlLabelJavaValidator {
 
+	private static final String ROOT_TAG_KEY = "root";
 	private static final Set<String> ALL_TAGS = new HashSet<>();
 	private static final Map<String, Set<String>> validTags = new HashMap<>();
+	private static final Map<String, Set<String>> allowedParents = new HashMap<>();
 	private static final Map<String, Set<String>> validAttributes = new HashMap<>();
 
 	static {
 		// specify allowed top-level tags
-		validTags.put("root", new HashSet<>(Arrays.asList(new String[] { "BR",
-				"FONT", "I", "B", "U", "O", "SUB", "SUP", "S", "TABLE" })));
+		validTags.put(ROOT_TAG_KEY,
+				new HashSet<>(Arrays.asList(new String[] { "BR", "FONT", "I",
+						"B", "U", "O", "SUB", "SUP", "S", "TABLE" })));
 		// add allowed nested tags
 		validTags.put("TABLE", new HashSet<>(Arrays.asList("HR", "TR")));
 		validTags.put("TR", new HashSet<>(Arrays.asList("VR", "TD")));
 		validTags.put("TD", new HashSet<>(Arrays.asList("IMG")));
+
 		// find all tags
 		for (Set<String> ts : validTags.values()) {
 			ALL_TAGS.addAll(ts);
 		}
+
+		// compute allowed parents for each tag
+		for (String tag : ALL_TAGS) {
+			allowedParents.put(tag, new HashSet<>());
+		}
+		for (String parent : validTags.keySet()) {
+			for (String tag : validTags.get(parent)) {
+				allowedParents.get(tag).add(parent);
+			}
+		}
+
 		// specify tags that can have attributes
 		for (String t : new String[] { "TABLE", "TD", "FONT", "BR", "IMG" }) {
 			validAttributes.put(t, new HashSet<>());
@@ -79,21 +93,25 @@ public class DotHtmlLabelJavaValidator extends
 			warning("The " + tagName + " tag is not supported.",
 					HtmllabelPackage.Literals.HTML_TAG__NAME);
 		} else {
-			EObject container = tag.eContainer();
+			// find parent tag
+			EObject container = tag.eContainer().eContainer();
 			HtmlTag parent = null;
-			if (container instanceof HtmlContent) {
-				HtmlContent htmlContent = (HtmlContent) container;
-				parent = htmlContent.getTag();
+			if (container instanceof HtmlTag) {
+				parent = (HtmlTag) container;
 			}
-			if (parent != null) {
-				String parentName = parent.getName().toUpperCase();
-				if (validTags.containsKey(parentName)) {
-					if (!validTags.get(parentName).contains(tagName)) {
-						warning("The " + tagName + " tag is not allowed inside "
-								+ parentName + ".",
-								HtmllabelPackage.Literals.HTML_TAG__NAME);
-					}
-				}
+
+			// check if tag allowed inside parent or "root" if we could not find
+			// a parent
+			String parentName = parent == null ? ROOT_TAG_KEY
+					: parent.getName().toUpperCase();
+			if (!validTags.containsKey(parentName)) {
+				throw new IllegalStateException("Parent tag is unknown.");
+			}
+			if (!validTags.get(parentName).contains(tagName)) {
+				warning("The " + tagName + " tag is not allowed inside "
+						+ parentName + ". It is only allowed inside "
+						+ allowedParents.get(tagName) + ".",
+						HtmllabelPackage.Literals.HTML_TAG__NAME);
 			}
 		}
 	}

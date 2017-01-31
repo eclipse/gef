@@ -25,7 +25,7 @@ HtmlLabel: (parts+=HtmlContent)*;
 HtmlContent: tag=HtmlTag | text=TEXT;
 
 HtmlTag: TAG_START WS? name=ID WS? (attributes+=HtmlAttr WS?)*
-	( selfClosing=TAG_END_CLOSE
+	( selfClosing?=TAG_END_CLOSE
 	| TAG_END (children+=HtmlContent)* TAG_START_CLOSE WS? closeTag=[HtmlTag] WS? TAG_END
 	);
 
