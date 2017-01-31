@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *    
  *******************************************************************************/
 lexer grammar CustomHighlightingInternalDotHtmlLabelLexer;
