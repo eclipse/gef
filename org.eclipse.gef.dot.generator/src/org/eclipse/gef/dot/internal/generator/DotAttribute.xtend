@@ -164,47 +164,50 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 				]
 				primarySourceElement = field
 			]
-			// parsed getter
-			field.declaringType.addMethod(field.parsedGetterName) [
-				field.markAsRead
-				docComment = '''
-				Returns the (parsed) value of the {@link #«field.simpleName»} attribute of the given {@link «c.paramTypeName»}.
-				 @param «c.paramName»
-				            The {@link «c.paramTypeName»} for which to return the value of the
-				            {@link #«field.simpleName»} attribute.
-				 @return The (parsed) value of the {@link #«field.simpleName»} attribute of the given
-				         {@link «c.paramTypeName»}.'''
-				static = true
-				addParameter(c.paramName, c.paramType(context))
-				returnType = attributeParsedType
-				body = [
-					'''
-						return «parsed(field.getterName + "(" + c.paramName + ")", attributeParsedType)»;
-					''']
-				primarySourceElement = field
-			]
-			// parsed setter
-			field.declaringType.addMethod(field.parsedSetterName) [
-				docComment = '''
-				Sets the (parsed) value of the {@link #«field.simpleName»} attribute of the given {@link «c.paramTypeName»}
-				to the given <i>«attributeName»</i> value.
-					@param «c.paramName»
-					           The {@link «c.paramTypeName»} for which to change the value of the
-					           {@link #«field.simpleName»} attribute.
-					@param «attributeName»
-					           The new (parsed) value of the {@link #«field.simpleName»} attribute.
-					@throws IllegalArgumentException
-					        	when the given <i>«attributeName»</i> value is not supported.'''
-				static = true
-				addParameter(c.paramName, c.paramType(context))
-				addParameter(attributeName, attributeParsedType)
-				body = [
-					'''
-						«field.setterName»(«c.paramName», «attributeName.serialized(attributeParsedType)»);
-					'''
+			// only generate parsed getters and setters if the parsed type does not equal String
+			if (String.newTypeReference() != attributeParsedType) {
+				// parsed getter
+				field.declaringType.addMethod(field.parsedGetterName) [
+					field.markAsRead
+					docComment = '''
+					Returns the (parsed) value of the {@link #«field.simpleName»} attribute of the given {@link «c.paramTypeName»}.
+					 @param «c.paramName»
+					            The {@link «c.paramTypeName»} for which to return the value of the
+					            {@link #«field.simpleName»} attribute.
+					 @return The (parsed) value of the {@link #«field.simpleName»} attribute of the given
+					         {@link «c.paramTypeName»}.'''
+					static = true
+					addParameter(c.paramName, c.paramType(context))
+					returnType = attributeParsedType
+					body = [
+						'''
+							return «parsed(field.getterName + "(" + c.paramName + ")", attributeParsedType)»;
+						''']
+					primarySourceElement = field
 				]
-				primarySourceElement = field
-			]
+				// parsed setter
+				field.declaringType.addMethod(field.parsedSetterName) [
+					docComment = '''
+					Sets the (parsed) value of the {@link #«field.simpleName»} attribute of the given {@link «c.paramTypeName»}
+					to the given <i>«attributeName»</i> value.
+						@param «c.paramName»
+						           The {@link «c.paramTypeName»} for which to change the value of the
+						           {@link #«field.simpleName»} attribute.
+						@param «attributeName»
+						           The new (parsed) value of the {@link #«field.simpleName»} attribute.
+						@throws IllegalArgumentException
+						        	when the given <i>«attributeName»</i> value is not supported.'''
+					static = true
+					addParameter(c.paramName, c.paramType(context))
+					addParameter(attributeName, attributeParsedType)
+					body = [
+						'''
+							«field.setterName»(«c.paramName», «attributeName.serialized(attributeParsedType)»);
+						'''
+					]
+					primarySourceElement = field
+				]
+			}
 		]
 
 		//XXX: Ensure the DotAttribute annotation is removed from the generated field, 
