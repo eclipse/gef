@@ -15,12 +15,10 @@ grammar org.eclipse.gef.dot.internal.language.DotEscString hidden()
 generate escstring "http://www.eclipse.org/gef/dot/internal/language/DotEscString"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
-EscString: (segments+=JustifiedText)*;
+EscString: (lines+=JustifiedText)*;
+JustifiedText: text=TEXT => justification=Justification? | justification=Justification;
 
-JustifiedText:
-	=> text=TEXT justification=Justification
-	| text=TEXT 
-	| justification=Justification;
+TEXT: CHAR => CHAR*;
 
 enum Justification: CENTERED="\\n" | LEFT="\\l" | RIGHT="\\r";
-terminal TEXT: ( (!("\\"))+ | ("\\" !("n"|"l"|"r")) )+;
+terminal CHAR: .;
