@@ -31,23 +31,16 @@ public class DotHtmlLabelJavaValidator extends
 
 	static {
 		// specify allowed top-level tags
-		for (String t : new String[] { "BR", "FONT", "I", "B", "U", "O", "SUB",
-				"SUP", "S", "TABLE" }) {
-			validTags.put(t, new HashSet<>());
-		}
+		validTags.put("root", new HashSet<>(Arrays.asList(new String[] { "BR",
+				"FONT", "I", "B", "U", "O", "SUB", "SUP", "S", "TABLE" })));
 		// add allowed nested tags
-		validTags.get("TABLE").addAll(Arrays.asList("HR", "TR"));
-		validTags.get("TR").addAll(Arrays.asList("VR", "TD"));
-		validTags.get("TD").addAll(Arrays.asList("IMG"));
-
+		validTags.put("TABLE", new HashSet<>(Arrays.asList("HR", "TR")));
+		validTags.put("TR", new HashSet<>(Arrays.asList("VR", "TD")));
+		validTags.put("TD", new HashSet<>(Arrays.asList("IMG")));
 		// find all tags
-		for (String t : validTags.keySet()) {
-			ALL_TAGS.add(t);
-			for (String t2 : validTags.get(t)) {
-				ALL_TAGS.add(t2);
-			}
+		for (Set<String> ts : validTags.values()) {
+			ALL_TAGS.addAll(ts);
 		}
-
 		// specify tags that can have attributes
 		for (String t : new String[] { "TABLE", "TD", "FONT", "BR", "IMG" }) {
 			validAttributes.put(t, new HashSet<>());

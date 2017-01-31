@@ -70,6 +70,13 @@ import org.eclipse.xtext.validation.AbstractInjectableValidator
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
+import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotEscStringStandaloneSetup
+import org.eclipse.gef.dot.internal.language.escstring.EscString
+import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
+
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
  * by {@link DotImport} and {@link DotExport}.
@@ -378,6 +385,14 @@ public class DotAttributes {
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case HEIGHT__N: validateAttributeRawValue(DOUBLE_PARSER, HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LABEL__GNE:
+				if (attributeValue.type == ID.Type.HTML_STRING) {
+					validateAttributeRawValue(HTML_LABEL_PARSER, HTML_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
+				} else if (attributeValue.type == ID.Type.QUOTED_STRING) {
+					validateAttributeRawValue(ESC_LABEL_PARSER, ESC_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
+				} else {
+					Collections.emptyList
+				}
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LP__GE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -966,6 +981,26 @@ public class DotAttributes {
 	 * The serializer for color attribute values.
 	 */
 	private static val COLOR_SERIALIZER = new EObjectSerializer<Color>(colorInjector)
+
+	private static val Injector htmlLabelInjector = new DotHtmlLabelStandaloneSetup().createInjectorAndDoEMFRegistration
+
+	/**
+	 * The parser for arrowtype attribute values.
+	 */
+	private static val HTML_LABEL_PARSER = new EObjectParser<HtmlLabel>(htmlLabelInjector)
+	
+	private static val HTML_LABEL_VALIDATOR = new EObjectValidator<HtmlLabel>(htmlLabelInjector,
+		DotHtmlLabelJavaValidator)
+	
+	private static val Injector escStringInjector = new DotEscStringStandaloneSetup().createInjectorAndDoEMFRegistration
+
+	/**
+	 * The parser for arrowtype attribute values.
+	 */
+	private static val ESC_LABEL_PARSER = new EObjectParser<EscString>(escStringInjector)
+	
+	private static val ESC_LABEL_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
+		DotEscStringJavaValidator)
 
 	private static val Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
 
