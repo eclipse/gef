@@ -177,7 +177,7 @@ cd ..
 if [ ! -d "eclipse" ];
 then
     echo "Failed to download an Eclipse SDK, being needed for provisioning."
-    exit
+    exit 1
 fi
 # Prepare Eclipse SDK to provide WTP releng tools (used to postprocess repository, i.e set p2.mirrorsURL property)
 echo "Installing WTP Releng tools"
