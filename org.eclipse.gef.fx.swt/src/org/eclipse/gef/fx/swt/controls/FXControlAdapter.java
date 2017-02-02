@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef.fx.swt.controls;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.gef.common.reflect.ReflectionUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -66,6 +68,9 @@ public class FXControlAdapter<T extends Control> extends Region {
 		public T createControl(Composite parent);
 
 	}
+
+	private static final boolean JAVA_8 = System.getProperty("java.version")
+			.startsWith("1.8.0");
 
 	private static final int[] FORWARD_SWT_EVENT_TYPES = new int[] {
 			SWT.HardKeyDown, SWT.HardKeyUp, SWT.KeyDown, SWT.KeyUp, SWT.Gesture,
@@ -246,11 +251,27 @@ public class FXControlAdapter<T extends Control> extends Region {
 		if (window != null) {
 			// Obtain FXCanvas by accessing outer class
 			// of FXCanvas$HostContainer
-			FXCanvas canvas = ReflectionUtils.getPrivateFieldValue(
-					ReflectionUtils.<Object> getPrivateFieldValue(window,
-							"host"),
-					"this$0");
-			return canvas;
+			if (JAVA_8) {
+				return ReflectionUtils.getPrivateFieldValue(ReflectionUtils
+						.<Object> getPrivateFieldValue(window, "host"),
+						"this$0");
+
+			} else {
+				// On J2SE-1.9, retrieve FXCanvas through
+				// FXCanvas.getFXCanvas(Scene), which was added for this
+				// purpose.
+				// TODO: Turn into an explicit call when dropping support for
+				// J2SE-1.8.
+				try {
+					Method m = FXCanvas.class.getDeclaredMethod("getFXCanvas",
+							Scene.class);
+					return (FXCanvas) m.invoke(null, window.getScene());
+
+				} catch (Exception e) {
+					throw new IllegalStateException(
+							"Failed to call FXCanvas.getFXCanvas(Scene)", e);
+				}
+			}
 		}
 		return null;
 	}
