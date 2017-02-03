@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 itemis AG and others.
+ * Copyright (c) 2014, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - minor refactorings
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
@@ -71,56 +72,55 @@ public class DotHighlightingConfiguration
 	}
 
 	public TextStyle graphIdTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		TextStyle textStyle = defaultTextStyle().copy(); // black
 		return textStyle;
 	}
 
 	public TextStyle nodeIdTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		TextStyle textStyle = defaultTextStyle().copy(); // black
 		return textStyle;
 	}
 
 	public TextStyle attributeIdTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		// dark blue
-		textStyle.setColor(new RGB(0, 76, 153));
+		textStyle.setColor(new RGB(0, 76, 153)); // dark blue
 		return textStyle;
 	}
 
 	public TextStyle portIdTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(0, 153, 76));
+		textStyle.setColor(new RGB(0, 153, 76)); // light green
 		return textStyle;
 	}
 
 	public TextStyle edgeOpTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(0, 153, 0));
+		textStyle.setColor(new RGB(0, 153, 0)); // light green
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle stringTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(153, 76, 0));
+		textStyle.setColor(new RGB(153, 76, 0)); // brown
 		return textStyle;
 	}
 
 	public TextStyle htmlStringTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(76, 153, 0));
+		textStyle.setColor(new RGB(76, 153, 0)); // light green
 		return textStyle;
 	}
 
 	public TextStyle quotedStringTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(255, 0, 0));
+		textStyle.setColor(new RGB(255, 0, 0)); // red
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle keywordTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		TextStyle textStyle = defaultTextStyle().copy(); // black
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
