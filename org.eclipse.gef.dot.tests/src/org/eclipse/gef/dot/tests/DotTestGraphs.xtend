@@ -29,6 +29,19 @@ class DotTestGraphs {
 	public static val EMPTY_STRICT_DIRECTED = '''
 		strict digraph {}
 	'''
+
+	public static val EMPTY_WITH_COMMENTS = '''
+		graph {
+			// This is a C++-style single line comment.
+			
+			/*
+			 * This is a C++-style
+			 * multi line comment.
+			 */
+			 
+			 # This is considered as a line output from C-preprocessor and discarded.
+		}
+	'''
 	
 	public static val ONE_NODE = '''
 		graph {
@@ -235,6 +248,25 @@ class DotTestGraphs {
 			n1[label="node 1"]
 			n2[label="node 2"]
 			n1--n2[label="edge 1"]
+		}
+	'''
+	
+	public static val KEYWORDS = '''
+		strict digraph {
+			graph[]
+			node[]
+			edge[]
+			
+			subgraph{
+				
+			}
+	}'''
+	
+	public static val PORTS = '''
+		graph {
+			1:portID
+			2:ne
+			3:portID2:_
 		}
 	'''
 	

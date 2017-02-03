@@ -21,8 +21,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ DotImportTests.class, DotExportTests.class,
 		DotExecutableUtilsTests.class, DotExtractorTests.class,
 		DotAttributesTests.class, DotParserTests.class, DotEscStringTests.class,
-		DotValidatorTests.class, DotContentAssistTests.class,
-		DotBSplineInterpolatorTests.class })
+		DotHighlightingTests.class, DotValidatorTests.class,
+		DotContentAssistTests.class, DotBSplineInterpolatorTests.class })
 public class AllUiTests {
 
 }
