@@ -26,6 +26,8 @@ import org.eclipse.gef.common.reflect.ReflectionUtils
 import org.eclipse.gef.dot.internal.generator.DotAttribute
 import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotEscStringStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotShapeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotSplineTypeStandaloneSetup
@@ -42,6 +44,8 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeStmtSubgraph
 import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.gef.dot.internal.language.dot.Subgraph
+import org.eclipse.gef.dot.internal.language.escstring.EscString
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
 import org.eclipse.gef.dot.internal.language.layout.Layout
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir
@@ -54,6 +58,8 @@ import org.eclipse.gef.dot.internal.language.style.Style
 import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
@@ -69,13 +75,8 @@ import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.AbstractInjectableValidator
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup
-import org.eclipse.gef.dot.internal.language.DotEscStringStandaloneSetup
-import org.eclipse.gef.dot.internal.language.escstring.EscString
-import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -404,7 +405,7 @@ public class DotAttributes {
 					validateAttributeRawValue(SPLINETYPE_PARSER, SPLINETYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else
 					Collections.emptyList
-            case RANKDIR__G: validateAttributeRawValue(RANKDIR_PARSER, null, attributeContext, attributeName, attributeValue)
+			case RANKDIR__G: validateAttributeRawValue(RANKDIR_PARSER, null, attributeContext, attributeName, attributeValue)
 			case SHAPE__N: validateAttributeRawValue(SHAPE_PARSER, SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue) 
 			case SIDES__N: validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case SKEW__N: validateAttributeRawValue(DOUBLE_PARSER, SKEW_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -989,7 +990,7 @@ public class DotAttributes {
 	private static val Injector htmlLabelInjector = new DotHtmlLabelStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
-	 * The parser for arrowtype attribute values.
+	 * The parser for (html) label attribute values.
 	 */
 	private static val HTML_LABEL_PARSER = new EObjectParser<HtmlLabel>(htmlLabelInjector)
 	
@@ -999,7 +1000,7 @@ public class DotAttributes {
 	private static val Injector escStringInjector = new DotEscStringStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
-	 * The parser for arrowtype attribute values.
+	 * The parser for (escString) label attribute values.
 	 */
 	private static val ESC_LABEL_PARSER = new EObjectParser<EscString>(escStringInjector)
 	
