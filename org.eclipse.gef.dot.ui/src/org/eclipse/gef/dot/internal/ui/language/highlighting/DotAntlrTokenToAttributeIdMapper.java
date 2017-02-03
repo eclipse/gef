@@ -15,7 +15,7 @@ package org.eclipse.gef.dot.internal.ui.language.highlighting;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper;
 
 /**
- * A semantic highlighter that takes care of handling DOT lexer tokens properly.
+ * A lexical highlighter that takes care of handling DOT lexer tokens properly.
  * 
  * @author anyssen
  *
