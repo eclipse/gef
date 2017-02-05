@@ -54,16 +54,13 @@ Please install *m2e - Maven Integration for Eclipse (includes Incubating compone
 #### Check out the code using EGit
 Having set up the Eclipse IDE, next is to [fork the repository](https://help.github.com/articles/fork-a-repo/) and to check out the sources into the local workspace. Using EGit, this can be performed as follows:
 
-1. Clone the forked repository:
-	* Copy the URI of your repository fork to your clipboard.
-	* Open the *Git Repository Exploring Perspective* (provided by EGit) within Eclipse, and from the toolbar of the *Git Repositories Browser* view select to *Clone a Git Repository and add the clone to this view*. 
-	* If you have copied the URL of your fork into the clipboard before, the upcoming *Clone Git Repository* dialog should already provide the necessary entries for *URI*, *Host*, and *Repository path*, so you may simple forward by pressing *Next >*.
-	* Select the branches you want to clone from remote. The *master* branch is the one used for the current development stream. Development in maintenance releases is performed in respective maintenance branches. After having selected all branches of interest, press *Next >* to continue.
-	* Choose a local directory to store the cloned repository (the default will be located under your home directory) and select the *Initial branch* to check out.
-2. Checkout the projects into your IDE's workspace:
-	* Right-click the *Working directory* entry, located under the repository within the *Git Repositories Browser* view and from the context menu select to *Import Projects...*.
-	* In the upcoming *Import Projects from Git Repository* dialog, select to *Import existing projects* and press *Next >*.
-	* Choose to import all projects and press *Finish* to conclude.
+* Copy the URI of your repository fork to your clipboard.
+* Open the *Git* perspective (provided by EGit) within Eclipse, and click on *Clone a Git repository*. 
+* Select *Clone URI* and press *Next >*.
+* If you have copied the URL of your fork into the clipboard before, the upcoming *Clone Git Repository* dialog should already provide the necessary entries for *URI*, *Host*, and *Repository path*, so you may simple forward by pressing *Next >*.
+* Select the branches you want to clone from remote. The *master* branch is the one used for the current development stream. Development in maintenance releases is performed in respective maintenance branches. After having selected all branches of interest, press *Next >* to continue.
+* Choose a local directory to store the cloned repository (the default will be located under your home directory), select the *Initial branch* to check out, and check the box to *Import all existing Eclipse projects after clone finishes*. Press *Finish*.
+* Switch back to the *Java* perspective.
 
 ### Set Target Platform
 Multiple target definition files are provided by the `org.eclipse.gef.target` project. To specify the target platform, simply open the respective target definition (e.g. *NEON.target*) within the *Target Editor*, let it fully resolve (i.e. wait until the *Resolving Target Definition* background task has finished and the installable units are listed under the respective *Locations*), then choose to *Set as Target Platform*).
