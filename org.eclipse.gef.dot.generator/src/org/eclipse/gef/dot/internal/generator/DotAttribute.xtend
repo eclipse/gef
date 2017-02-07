@@ -70,7 +70,7 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 
 		// field comment
 		field.docComment = '''The '«attributeName»' attribute, which is used by: «field.usedBy.map[
-			"{@link " + paramTypeName + "}"].join(", ")».'''
+			if(paramTypeName=='Cluster') paramTypeName else "{@link " + paramTypeName + "}"].join(", ")».'''
 
 		// XXX: Naming conventions is checked by usedBy extension
 		field.usedBy.uniqueGraphTypes.forEach [ c, i |
