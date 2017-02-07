@@ -128,12 +128,19 @@ public class EdgeLabelPart extends AbstractLabelPart {
 		return (Pair<Edge, String>) super.getContent();
 	}
 
-	private Point getEndPoint() {
-		// TODO: compute better label position
+	/**
+	 * Computes the end position for placing a label. The position is
+	 * interpreted in the parent coordinate system of this part's visual.
+	 *
+	 * @return The end position for placing a label.
+	 */
+	protected Point getEndPoint() {
 		Connection connection = getFirstAnchorage().getVisual();
 		Point endPoint = connection.getEndPoint();
-		Vector v = new Vector(endPoint, connection.getStartPoint()).getNormalized()
-				.getMultiplied(getText().getLayoutBounds().getHeight());
+		Vector v = new Vector(endPoint, connection.getStartPoint());
+		if (!v.isNull()) {
+			v = v.getNormalized().getMultiplied(getText().getLayoutBounds().getHeight());
+		}
 		return NodeUtils.sceneToLocal(getVisual().getParent(),
 				NodeUtils.localToScene(connection, endPoint.getTranslated(v.x, v.y)));
 	}
@@ -151,20 +158,32 @@ public class EdgeLabelPart extends AbstractLabelPart {
 				: (IContentPart<? extends Connection>) getAnchoragesUnmodifiable().keys().iterator().next();
 	}
 
-	private Point getMidPoint() {
+	/**
+	 * Computes the middle position for placing a label. The position is
+	 * interpreted in the parent coordinate system of this part's visual.
+	 *
+	 * @return The middle position for placing a label.
+	 */
+	protected Point getMidPoint() {
 		Connection connection = getFirstAnchorage().getVisual();
 		Point midPoint = connection.getCenter();
 		return NodeUtils.sceneToLocal(getVisual().getParent(), NodeUtils.localToScene(connection, midPoint));
 	}
 
-	private Point getStartPoint() {
-		// TODO: compute better label position
+	/**
+	 * Computes the start position for placing a label. The position is
+	 * interpreted in the parent coordinate system of this part's visual.
+	 *
+	 * @return The start position for placing a label.
+	 */
+	protected Point getStartPoint() {
 		Connection connection = getFirstAnchorage().getVisual();
 		Point startPoint = connection.getStartPoint();
-		Vector v = new Vector(startPoint, connection.getEndPoint()).getNormalized()
-				.getMultiplied(getText().getLayoutBounds().getHeight());
+		Vector v = new Vector(startPoint, connection.getEndPoint());
+		if (!v.isNull()) {
+			v = v.getNormalized().getMultiplied(getText().getLayoutBounds().getHeight());
+		}
 		return NodeUtils.sceneToLocal(getVisual().getParent(),
 				NodeUtils.localToScene(connection, startPoint.getTranslated(v.x, v.y)));
 	}
-
 }
