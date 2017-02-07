@@ -374,7 +374,7 @@ public class DotAttributes {
 			case ARROWHEAD__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case ARROWSIZE__E: validateAttributeRawValue(DOUBLE_PARSER,	ARROWSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case ARROWTAIL__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case BGCOLOR__G: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case BGCOLOR__GC: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case CLUSTERRANK__G: validateAttributeRawValue(CLUSTERMODE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case COLORSCHEME__GNE:  validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
 			case COLOR__NE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -382,11 +382,11 @@ public class DotAttributes {
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FILLCOLOR__NE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FIXEDSIZE__N: validateAttributeRawValue(BOOL_PARSER, null,	attributeContext, FIXEDSIZE__N, attributeValue)
-			case FONTCOLOR__GNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case HEIGHT__N: validateAttributeRawValue(DOUBLE_PARSER, HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case LABEL__GNE:
+			case LABEL__GCNE:
 				if (attributeValue.type == ID.Type.HTML_STRING)
 					validateAttributeRawValue(HTML_LABEL_PARSER, HTML_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else if (attributeValue.type == ID.Type.QUOTED_STRING)
@@ -1246,7 +1246,7 @@ public class DotAttributes {
 	public static val String ARROWTAIL__E = "arrowtail"
 
 	@DotAttribute(parsedType=Color)
-	public static val String BGCOLOR__G = "bgcolor"
+	public static val String BGCOLOR__GC = "bgcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=ClusterMode)
 	public static val String CLUSTERRANK__G = "clusterrank"
@@ -1270,7 +1270,7 @@ public class DotAttributes {
 	public static val String FIXEDSIZE__N = "fixedsize"
 
 	@DotAttribute(parsedType=Color)
-	public static val String FONTCOLOR__GNE = "fontcolor"
+	public static val String FONTCOLOR__GCNE = "fontcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
 	public static val String FORCELABELS__G = "forcelabels"
@@ -1288,7 +1288,7 @@ public class DotAttributes {
 	public static val String ID__GNE = "id"
 
 	@DotAttribute(parsedType=String)
-	public static val String LABEL__GNE = "label"
+	public static val String LABEL__GCNE = "label"
 
 	@DotAttribute(parsedType=Color)
 	public static val String LABELFONTCOLOR__E = "labelfontcolor"

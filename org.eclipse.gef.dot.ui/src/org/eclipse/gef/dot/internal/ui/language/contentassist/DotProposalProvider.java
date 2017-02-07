@@ -198,7 +198,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					break;
 				case DotAttributes.COLOR__NE:
 				case DotAttributes.FILLCOLOR__NE:
-				case DotAttributes.FONTCOLOR__GNE:
+				case DotAttributes.FONTCOLOR__GCNE:
 				case DotAttributes.LABELFONTCOLOR__E:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
@@ -232,8 +232,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				}
 			} else if (DotAttributes.getContext(attribute) == Context.GRAPH) {
 				switch (attribute.getName().toValue()) {
-				case DotAttributes.BGCOLOR__G:
-				case DotAttributes.FONTCOLOR__GNE:
+				case DotAttributes.BGCOLOR__GC:
+				case DotAttributes.FONTCOLOR__GCNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
 				case DotAttributes.CLUSTERRANK__G:
@@ -278,7 +278,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.COLOR__NE:
 				case DotAttributes.FILLCOLOR__NE:
-				case DotAttributes.FONTCOLOR__GNE:
+				case DotAttributes.FONTCOLOR__GCNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
 				case DotAttributes.COLORSCHEME__GNE:

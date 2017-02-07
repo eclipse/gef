@@ -221,7 +221,7 @@ public class DotValidatorTests {
 		DotAst dotAst = parserHelper.parse(text);
 
 		validationTestHelper.assertError(dotAst,
-				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__G,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__GC,
 				"The color value 'grsy' is not semantically correct: The 'grsy' color is not valid within the 'x11' color scheme.");
 
 		// verify that this is the only reported issues

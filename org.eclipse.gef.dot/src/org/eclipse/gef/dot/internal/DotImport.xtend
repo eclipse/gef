@@ -17,7 +17,6 @@ import com.google.inject.Inject
 import java.io.File
 import java.io.StringReader
 import java.util.List
-import java.util.Map
 import org.eclipse.gef.dot.internal.language.DotStandaloneSetup
 import org.eclipse.gef.dot.internal.language.dot.AttrList
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt
@@ -36,11 +35,11 @@ import org.eclipse.gef.dot.internal.language.parser.antlr.DotParser
 import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
-import org.eclipse.gef.graph.Graph.Builder
 import org.eclipse.gef.graph.Node
 import org.eclipse.xtext.parser.IParser
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
+import java.util.Map
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.
@@ -52,19 +51,15 @@ class DotImport {
 
 	@Inject
 	var static IParser dotParser
-	
+
 	private static def IParser getDotParser() {
 		if (dotParser == null) {
+
 			// if we are not injected (standalone), create parser instance
 			dotParser = new DotStandaloneSetup().createInjectorAndDoEMFRegistration().getInstance(DotParser)
 		}
 		return dotParser
 	}
-
-	Builder graphBuilder
-	Map<String, ID> globalGraphAttributes = newHashMap
-	Map<String, ID> globalNodeAttributes = newHashMap
-	Map<String, ID> globalEdgeAttributes = newHashMap
 
 	def List<Graph> importDot(File dotFile) {
 		importDot(DotFileUtils.read(dotFile))
@@ -82,15 +77,27 @@ class DotImport {
 		// TODO: use validator to semantically validate as well
 		(parseResult.rootASTElement as DotAst).graphs.map[transformDotGraph].filterNull.toList
 	}
+	
+	private def Map<String, ID> create newHashMap globalGraphAttributes(Graph.Builder context) {
+		
+	}
+	
+	private def Map<String, ID> create newHashMap globalNodeAttributes(Graph.Builder context) {
+		
+	}
+	
+	private def Map<String, ID> create newHashMap globalEdgeAttributes(Graph.Builder context) {
+		
+	}
 
 	private def Graph transformDotGraph(DotGraph it) {
 		// clear global attributes, which only hold for each respective graph
-		globalGraphAttributes.clear
-		globalNodeAttributes.clear
-		globalEdgeAttributes.clear
+		_createCache_globalGraphAttributes.clear
+		_createCache_globalNodeAttributes.clear
+		_createCache_globalEdgeAttributes.clear
 
 		// create a new graph builder and clear the nodes map
-		graphBuilder = new Graph.Builder
+		val graphBuilder = new Graph.Builder
 		_createCache_createNode.clear
 
 		// name (meta-attribute)
@@ -102,7 +109,7 @@ class DotImport {
 		graphBuilder.attr(_TYPE__G, type)
 
 		// process all statements except for graph attributes, they will be processed later
-		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt]
+		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt(graphBuilder)]
 
 		// process the graph last, so we can initialize attributes of the
 		// created graph object rather than using the builder we can thus
@@ -113,41 +120,45 @@ class DotImport {
 			val attributeValue = getAttributeValue(attributeName)
 			if (attributeValue != null) {
 				f.apply(graph, attributeValue)
-			} else if (globalGraphAttributes.containsKey(attributeName)) {
-				f.apply(graph, globalGraphAttributes.get(attributeName))
+			} else if (globalGraphAttributes(graphBuilder).containsKey(attributeName)) {
+				f.apply(graph, globalGraphAttributes(graphBuilder).get(attributeName))
 			}
 		]
-
-		setter.apply(BGCOLOR__G, [g, value|g.setBgcolorRaw(value)])
+		// graph attributes
+		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])
+		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
+		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterrankRaw(value)])
-		setter.apply(FONTCOLOR__GNE, [g, value|g.setFontcolorRaw(value)])
 		setter.apply(LAYOUT__G, [g, value|g.setLayoutRaw(value)])
 		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputorderRaw(value)])
 		setter.apply(PAGEDIR__G, [g, value|g.setPagedirRaw(value)])
 		setter.apply(RANKDIR__G, [g, value|g.setRankdirRaw(value)])
-		setter.apply(SPLINES__G, [g, value | g.setSplinesRaw(value)])
+		setter.apply(SPLINES__G, [g, value|g.setSplinesRaw(value)])
 		return graph
 	}
 
-	private def Node transformNodeId(NodeId it) {
-
+	private def Node transformNodeId(NodeId it, Graph.Builder graphBuilder) {
 		// create an empty attribute lists indicating no local node attribute definitions
-		transformNodeId(#[DotFactory.eINSTANCE.createAttrList])
+		transformNodeId(#[DotFactory.eINSTANCE.createAttrList], graphBuilder)
 	}
 
-	private def Node transformNodeId(NodeId it, List<AttrList> attrLists) {
-		val isExistingNode = _createCache_createNode.containsKey(CollectionLiterals.newArrayList(name))
+	private def Node transformNodeId(NodeId it, List<AttrList> attrLists, Graph.Builder graphBuilder) {
+		val isExistingNode = _createCache_createNode.containsKey(CollectionLiterals.newArrayList(name.toValue))
 
-		val node = name.createNode
+		val node = name.toValue.createNode()
+		if(!isExistingNode) {
+			_setNameRaw(node, name)
+			graphBuilder.nodes(node)
+		}
 
 		val setter = [ String attributeName, (Node, ID)=>void f |
 			val attributeValue = attrLists.getAttributeValue(attributeName)
 			if (attributeValue != null) {
 				f.apply(node, attributeValue)
-			} else if (!isExistingNode && globalNodeAttributes.containsKey(attributeName)) {
+			} else if (!isExistingNode && globalNodeAttributes(graphBuilder).containsKey(attributeName)) {
 
 				// consider the global nodes attributes only if the node has just been created
-				f.apply(node, globalNodeAttributes.get(attributeName))
+				f.apply(node, globalNodeAttributes(graphBuilder).get(attributeName))
 			}
 		]
 
@@ -156,10 +167,10 @@ class DotImport {
 		setter.apply(DISTORTION__N, [n, value|n.setDistortionRaw(value)])
 		setter.apply(FILLCOLOR__NE, [n, value|n.setFillcolorRaw(value)])
 		setter.apply(FIXEDSIZE__N, [n, value|n.setFixedsizeRaw(value)])
-		setter.apply(FONTCOLOR__GNE, [n, value|n.setFontcolorRaw(value)])
+		setter.apply(FONTCOLOR__GCNE, [n, value|n.setFontcolorRaw(value)])
 		setter.apply(HEIGHT__N, [n, value|n.setHeightRaw(value)])
 		setter.apply(ID__GNE, [n, value|n.setIdRaw(value)])
-		setter.apply(LABEL__GNE, [n, value|n.setLabelRaw(value)])
+		setter.apply(LABEL__GCNE, [n, value|n.setLabelRaw(value)])
 		setter.apply(POS__NE, [n, value|n.setPosRaw(value)])
 		setter.apply(SHAPE__N, [n, value|n.setShapeRaw(value)])
 		setter.apply(SIDES__N, [n, value|n.setSidesRaw(value)])
@@ -177,18 +188,18 @@ class DotImport {
 	*  dynamic dispatch methods 
 	********************************************************************************************************************************
 	*/
-	private def dispatch void transformStmt(Stmt it) {
+	private def dispatch void transformStmt(Stmt it, Graph.Builder graphBuilder) {
 		System.err.println("DotImport cannot transform Stmt: " + it);
 	}
 
-	private def dispatch void transformStmt(AttrStmt it) {
+	private def dispatch void transformStmt(AttrStmt it, Graph.Builder graphBuilder) {
 		switch type {
 			case GRAPH: {
 
 				// global graph attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalGraphAttributes.put(name.toValue, value)
+						globalGraphAttributes(graphBuilder).put(name.toValue, value)
 					]
 				]
 			}
@@ -197,7 +208,7 @@ class DotImport {
 				// global node attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalNodeAttributes.put(name.toValue, value)
+						globalNodeAttributes(graphBuilder).put(name.toValue, value)
 					]
 				]
 			}
@@ -206,24 +217,24 @@ class DotImport {
 				// global edge attributes
 				attrLists.forEach [
 					attributes.forEach [
-						globalEdgeAttributes.put(name.toValue, value)
+						globalEdgeAttributes(graphBuilder).put(name.toValue, value)
 					]
 				]
 			}
 		}
 	}
 
-	private def dispatch void transformStmt(NodeStmt it) {
-		node.transformNodeId(attrLists)
+	private def dispatch void transformStmt(NodeStmt it, Graph.Builder graphBuilder) {
+		node.transformNodeId(attrLists, graphBuilder)
 	}
 
-	private def dispatch void transformStmt(EdgeStmtNode it) {
-		var sourceNode = node.transformNodeId
+	private def dispatch void transformStmt(EdgeStmtNode it, Graph.Builder graphBuilder) {
+		var sourceNode = node.transformNodeId(graphBuilder)
 		for (EdgeRhs edgeRhs : edgeRHS) {
 			switch edgeRhs {
 				EdgeRhsNode: {
-					val targetNode = edgeRhs.node.transformNodeId
-					createEdge(sourceNode, edgeRhs.op.literal, targetNode, attrLists)
+					val targetNode = edgeRhs.node.transformNodeId(graphBuilder)
+					graphBuilder.edges(createEdge(sourceNode, edgeRhs.op.literal, targetNode, attrLists, graphBuilder))
 
 					// current target node may be source for next EdgeRHS
 					sourceNode = targetNode
@@ -235,26 +246,59 @@ class DotImport {
 		}
 	}
 
-	private def dispatch void transformStmt(Subgraph it) {
-
-		//FIXME: we ignore subgraphs for now, but transform nested statements
-		it.stmts.forEach[transformStmt]
+	private def dispatch void transformStmt(Subgraph it, Graph.Builder graphBuilder) {
+		val isExistingSubgraph = _createCache_createSubgraph.containsKey(CollectionLiterals.newArrayList(name.toValue))
+		val subgraphNode = name.toValue.createSubgraph
+		
+		val subgraphBuilder = new Graph.Builder
+		
+		if(name != null) {	
+			subgraphBuilder.attr(_NAME__GNE, name)
+		}
+		
+		// process all statements except for graph attributes, they will be processed later
+		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt(subgraphBuilder)]
+		
+		val subgraph = subgraphBuilder.build
+		if(!isExistingSubgraph) {
+			subgraphNode.nestedGraph = subgraph	
+			graphBuilder.nodes(subgraphNode)
+		}
+		else {
+			// TODO: handle merging of subgraphs properly (in case the subgraph exists)
+			System.err.println("Merging of clusters/subgraphs not yet supported.");
+		}
+		
+		val setter = [ String attributeName, (Graph, ID)=>void f |
+			val attributeValue = getAttributeValue(attributeName)
+			if (attributeValue != null) {
+				f.apply(subgraph, attributeValue)
+			} else if (globalGraphAttributes(subgraphBuilder).containsKey(attributeName)) {
+				f.apply(subgraph, globalGraphAttributes(subgraphBuilder).get(attributeName))
+			}
+		]
+		// cluster and subgraph attributes
+		setter.apply(LABEL__GCNE, [g, value| g.setLabelRaw(value)])
+		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
+		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
+		// TODO: RANK
 	}
 
-	private def create new Node.Builder().buildNode() createNode(ID nodeName) {
-		_setNameRaw(nodeName)
-		graphBuilder.nodes(it)
+	private def create new Node.Builder().buildNode() createSubgraph(String subgraphName) {
 	}
 
-	def private void createEdge(Node sourceNode, String edgeOp, Node targetNode, List<AttrList> attrLists) {
+	private def create new Node.Builder().buildNode() createNode(String nodeName) {
+	}
+
+	def private Edge createEdge(Node sourceNode, String edgeOp, Node targetNode, List<AttrList> attrLists, Graph.Builder graphBuilder) {
 		val edge = new Edge.Builder(sourceNode, targetNode).buildEdge()
 
 		val setter = [ String attributeName, (Edge, ID)=>void f |
 			val attributeValue = attrLists.getAttributeValue(attributeName)
 			if (attributeValue != null) {
 				f.apply(edge, attributeValue)
-			} else if (globalEdgeAttributes.containsKey(attributeName)) {
-				f.apply(edge, globalEdgeAttributes.get(attributeName))
+			} else if (globalEdgeAttributes(graphBuilder).containsKey(attributeName)) {
+				f.apply(edge, globalEdgeAttributes(graphBuilder).get(attributeName))
 			}
 		]
 
@@ -265,11 +309,11 @@ class DotImport {
 		setter.apply(COLORSCHEME__GNE, [e, value|e.setColorschemeRaw(value)])
 		setter.apply(DIR__E, [e, value|e.setDirRaw(value)])
 		setter.apply(FILLCOLOR__NE, [e, value|e.setFillcolorRaw(value)])
-		setter.apply(FONTCOLOR__GNE, [e, value|e.setFontcolorRaw(value)])
+		setter.apply(FONTCOLOR__GCNE, [e, value|e.setFontcolorRaw(value)])
 		setter.apply(HEAD_LP__E, [e, value|e.setHeadLpRaw(value)])
 		setter.apply(HEADLABEL__E, [e, value|e.setHeadlabelRaw(value)])
 		setter.apply(ID__GNE, [e, value|e.setIdRaw(value)])
-		setter.apply(LABEL__GNE, [e, value|e.setLabelRaw(value)])
+		setter.apply(LABEL__GCNE, [e, value|e.setLabelRaw(value)])
 		setter.apply(LABELFONTCOLOR__E, [e, value|e.setLabelfontcolorRaw(value)])
 		setter.apply(LP__GE, [e, value|e.setLpRaw(value)])
 		setter.apply(POS__NE, [e, value|e.setPosRaw(value)])
@@ -279,7 +323,21 @@ class DotImport {
 		setter.apply(XLABEL__NE, [e, value|e.setXlabelRaw(value)])
 		setter.apply(XLP__NE, [e, value|e.setXlpRaw(value)])
 
-		graphBuilder.edges(edge)
+		edge
+	}
+
+	def static ID getAttributeValue(Subgraph subgraph, String name) {
+		for (stmt : subgraph.stmts) {
+			var ID value = switch stmt {
+				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
+				Attribute:
+					stmt.getAttributeValue(name)
+			}
+			if (value != null) {
+				return value
+			}
+		}
+		null
 	}
 
 	def static ID getAttributeValue(DotGraph graph, String name) {

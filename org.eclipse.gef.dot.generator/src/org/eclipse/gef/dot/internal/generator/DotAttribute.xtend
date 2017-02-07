@@ -44,7 +44,7 @@ annotation DotAttribute {
 
 class DotAttributeProcessor extends AbstractFieldProcessor {
 
-	private static val NAMING_PATTERN = Pattern.compile("[_A-Z]*[A-Z]+__(G?)(N?)(E?)(S?)(C?)");
+	private static val NAMING_PATTERN = Pattern.compile("[_A-Z]*[A-Z]+__(G?)(S?)(C?)(N?)(E?)");
 	private static val CAMEL_CASE_REPLACEMENT_PATTERN = Pattern.compile("(_?[a-z]+)_([a-z]+)")
 
 	/**
@@ -73,7 +73,7 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 			"{@link " + paramTypeName + "}"].join(", ")».'''
 
 		// XXX: Naming conventions is checked by usedBy extension
-		field.usedBy.forEach [ c, i |
+		field.usedBy.uniqueGraphTypes.forEach [ c, i |
 			
 			// we may specify different values for each context (the order has to match)
 			val attributeRawType = if(attributeRawTypes.length > 1) attributeRawTypes.get(i) else attributeRawTypes.get(0)
@@ -252,13 +252,18 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 	}
 	
 	def List<Context> uniqueGraphTypes(List<Context> contexts) {
-		contexts.map [
-			switch (it) {
+		val uniqueContexts = newArrayList()
+		for(context : contexts) {
+			val c = switch (context) {
 				case Context.SUBGRAPH: Context.GRAPH
 				case Context.CLUSTER: Context.GRAPH
-				default: it
+				default: context
 			}
-		].toSet.sortBy[name].toList
+			if(!uniqueContexts.contains(c)) {
+				uniqueContexts.add(c)
+			}
+		}
+		return uniqueContexts
 	}
 
 	private def attributeName(MutableFieldDeclaration field) {
@@ -309,13 +314,13 @@ class DotAttributeProcessor extends AbstractFieldProcessor {
 		if (!matcher.group(1).empty)
 			applicableContexts += Context.GRAPH
 		if (!matcher.group(2).empty)
-			applicableContexts += Context.NODE
-		if (!matcher.group(3).empty)
-			applicableContexts += Context.EDGE
-		if (!matcher.group(4).empty)
 			applicableContexts += Context.SUBGRAPH
-		if (!matcher.group(5).empty)
+		if (!matcher.group(3).empty)
 			applicableContexts += Context.CLUSTER
+		if (!matcher.group(4).empty)
+			applicableContexts += Context.NODE
+		if (!matcher.group(5).empty)
+			applicableContexts += Context.EDGE
 		return applicableContexts
 	}
 

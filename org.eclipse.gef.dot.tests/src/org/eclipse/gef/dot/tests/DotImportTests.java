@@ -16,6 +16,7 @@ package org.eclipse.gef.dot.tests;
 
 import static org.eclipse.gef.dot.tests.DotTestUtils.RESOURCES_TESTS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.List;
@@ -1439,6 +1440,41 @@ public final class DotImportTests {
 				.attr(DotAttributes::setXlp, "-1.5,-1.6").buildNode();
 		Graph expected = graph.nodes(n1, n2).build();
 		testStringImport(expected, DotTestGraphs.NODE_XLP_LOCAL);
+	}
+
+	@Test
+	public void clusters() {
+		// test cluster subgraph
+		Graph graph = importString(DotTestGraphs.CLUSTERS);
+		assertNotNull(graph);
+		assertEquals(GraphType.DIGRAPH, DotAttributes._getType(graph));
+		// two clusters
+		assertEquals(2, graph.getNodes().size());
+		Node smallCluster = graph.getNodes().get(0);
+		assertNotNull(smallCluster.getNestedGraph());
+		assertEquals("small",
+				DotAttributes.getLabel(smallCluster.getNestedGraph()));
+		// two nested nodes and one nested edge (between these nodes) in small
+		// cluster
+		assertEquals(2, smallCluster.getNestedGraph().getNodes().size());
+		assertEquals(1, smallCluster.getNestedGraph().getEdges().size());
+
+		Node bigCluster = graph.getNodes().get(1);
+		assertNotNull(bigCluster.getNestedGraph());
+		assertEquals("big",
+				DotAttributes.getLabel(bigCluster.getNestedGraph()));
+		// five nested nodes and five nested edges (between these nodes) in big
+		// cluster
+		assertEquals(5, bigCluster.getNestedGraph().getNodes().size());
+		assertEquals(5, bigCluster.getNestedGraph().getEdges().size());
+
+		assertEquals(2, graph.getEdges().size());
+		Edge e1 = graph.getEdges().get(0);
+		assertEquals("b", DotAttributes._getName(e1.getSource()));
+		assertEquals("q", DotAttributes._getName(e1.getTarget()));
+		Edge e2 = graph.getEdges().get(1);
+		assertEquals("t", DotAttributes._getName(e2.getSource()));
+		assertEquals("a", DotAttributes._getName(e2.getTarget()));
 	}
 
 	private Node[] createNodes() {
