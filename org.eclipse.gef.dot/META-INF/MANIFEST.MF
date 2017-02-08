@@ -49,6 +49,7 @@ Export-Package: org.eclipse.gef.dot.internal;x-friends:="org.eclipse.gef.dot.tes
  org.eclipse.gef.dot.internal.language.point.impl;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.point.util;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.rankdir;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
+ org.eclipse.gef.dot.internal.language.ranktype;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.scoping;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.serializer;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.services;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",

@@ -77,6 +77,7 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.gef.dot.internal.language.ranktype.RankType
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -406,6 +407,7 @@ public class DotAttributes {
 				else
 					Collections.emptyList
 			case RANKDIR__G: validateAttributeRawValue(RANKDIR_PARSER, null, attributeContext, attributeName, attributeValue)
+			case RANK__S: validateAttributeRawValue(RANKTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case SHAPE__N: validateAttributeRawValue(SHAPE_PARSER, SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue) 
 			case SIDES__N: validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case SKEW__N: validateAttributeRawValue(DOUBLE_PARSER, SKEW_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -758,6 +760,16 @@ public class DotAttributes {
 	 * Serializes the given {@link Rankdir} value.
 	 */
 	private static val RANKDIR_SERIALIZER = new EnumSerializer<Rankdir>(Rankdir)
+
+/**
+	 * Parses the given value as a DOT rankType.
+	 */
+	private static val RANKTYPE_PARSER = new EnumParser<RankType>(RankType)
+
+	/**
+	 * A serializer for {@link RankType} values.
+	 */
+	private static val RANKTYPE_SERIALIZER = new EnumSerializer<RankType>(RankType)
 
 	/**
 	 * A parser used to parse DOT {@link Splines} values.
@@ -1342,5 +1354,8 @@ public class DotAttributes {
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
 	public static val String XLP__NE = "xlp"
+	
+	@DotAttribute(rawType="STRING", parsedType=RankType)
+	public static val String RANK__S = "rank"
 
 }

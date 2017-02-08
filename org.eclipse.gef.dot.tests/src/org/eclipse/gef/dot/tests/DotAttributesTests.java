@@ -40,6 +40,7 @@ import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.language.point.Point;
 import org.eclipse.gef.dot.internal.language.point.PointFactory;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
+import org.eclipse.gef.dot.internal.language.ranktype.RankType;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
@@ -2559,6 +2560,42 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set node attribute 'xlp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void subgraph_rank() {
+		Graph subgraph = new Graph.Builder().build();
+
+		// set valid string values
+		DotAttributes.setRank(subgraph, "same");
+		assertEquals("same", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.SAME, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRank(subgraph, "min");
+		assertEquals("min", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.MIN, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRank(subgraph, "source");
+		assertEquals("source", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.SOURCE, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRank(subgraph, "max");
+		assertEquals("max", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.MAX, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRank(subgraph, "sink");
+		assertEquals("sink", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.SINK, DotAttributes.getRankParsed(subgraph));
+
+		// set invalid string value
+		try {
+			DotAttributes.setRank(subgraph, "foo");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'rank' to 'foo'. The value 'foo' is not a syntactically correct rankType: Value has to be one of 'same', 'min', 'source', 'max', 'sink'.",
 					e.getMessage());
 		}
 	}

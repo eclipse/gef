@@ -283,7 +283,7 @@ class DotImport {
 		setter.apply(LABEL__GCNE, [g, value| g.setLabelRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
-		// TODO: RANK
+		setter.apply(RANK__S, [g, value|g.setRankRaw(value)])
 	}
 
 	private def create new Node.Builder().buildNode() createSubgraph(String subgraphName) {
