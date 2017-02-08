@@ -1477,6 +1477,20 @@ public final class DotImportTests {
 		assertEquals("a", DotAttributes._getName(e2.getTarget()));
 	}
 
+	@Test
+	public void clusterMerge() {
+		Graph graph = importString(DotTestGraphs.CLUSTER_MERGE);
+		assertNotNull(graph);
+		assertEquals(GraphType.DIGRAPH, DotAttributes._getType(graph));
+		// one (merged) cluster
+		assertEquals(1, graph.getNodes().size());
+		Node cluster1 = graph.getNodes().get(0);
+		assertNotNull(cluster1.getNestedGraph());
+		assertEquals(4, cluster1.getNestedGraph().getNodes().size());
+		assertEquals(2, cluster1.getNestedGraph().getEdges().size());
+		assertEquals(2, graph.getEdges().size());
+	}
+
 	private Node[] createNodes() {
 		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
 				.buildNode();

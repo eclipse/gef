@@ -1250,4 +1250,21 @@ class DotTestGraphs {
 			t -> a;
 		}
 	'''
+	
+	public static val CLUSTER_MERGE = '''
+		digraph {
+			subgraph cluster1 {
+				a; 
+				b;
+				a -> b;
+			}
+			subgraph cluster1 {
+				c;
+				d;
+				c -> d;
+			}
+			a -> c;
+			b -> d;
+		}
+	'''
 }

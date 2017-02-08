@@ -251,7 +251,6 @@ class DotImport {
 		val subgraphNode = name.toValue.createSubgraph
 		
 		val subgraphBuilder = new Graph.Builder
-		
 		if(name != null) {	
 			subgraphBuilder.attr(_NAME__GNE, name)
 		}
@@ -260,13 +259,16 @@ class DotImport {
 		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt(subgraphBuilder)]
 		
 		val subgraph = subgraphBuilder.build
+		
 		if(!isExistingSubgraph) {
 			subgraphNode.nestedGraph = subgraph	
 			graphBuilder.nodes(subgraphNode)
 		}
 		else {
-			// TODO: handle merging of subgraphs properly (in case the subgraph exists)
-			System.err.println("Merging of clusters/subgraphs not yet supported.");
+			// merge into existing subgraph
+			subgraphNode.nestedGraph.attributes.putAll(subgraph.attributes)
+			subgraphNode.nestedGraph.nodes.addAll(subgraph.nodes.filter[!subgraphNode.nestedGraph.nodes.contains(it)])
+			subgraphNode.nestedGraph.edges.addAll(subgraph.edges.filter[!subgraphNode.nestedGraph.nodes.contains(it)])
 		}
 		
 		val setter = [ String attributeName, (Graph, ID)=>void f |
