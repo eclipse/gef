@@ -345,5 +345,4 @@ public abstract class AbstractFXEditor extends EditorPart {
 	protected void unhookViewers() {
 		// TODO: What about taking the visuals out of the canvas?
 	}
-
 }

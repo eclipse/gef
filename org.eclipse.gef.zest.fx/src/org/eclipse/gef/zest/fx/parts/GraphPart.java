@@ -145,4 +145,9 @@ public class GraphPart extends AbstractContentPart<Group> {
 	public Graph getContent() {
 		return (Graph) super.getContent();
 	}
+
+	@Override
+	public boolean isSelectable() {
+		return false;
+	}
 }
