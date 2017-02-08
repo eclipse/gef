@@ -61,6 +61,11 @@ public class DotExportTests {
 		testDotExport(DotTestUtils.getStyledGraph(), "styled_graph.dot");
 	}
 
+	@Test
+	public void clusteredGraph() {
+		testDotExport(DotTestUtils.getClusteredGraph(), "clustered_graph.dot");
+	}
+
 	private void testDotExport(final Graph graph, String fileName) {
 		// test exporting the graph into a string
 		String dot = dotExport.exportDot(graph);

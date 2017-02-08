@@ -1229,24 +1229,21 @@ class DotTestGraphs {
 	
 	public static val CLUSTERS = '''
 		digraph {
-			node [label="\N", shape="box"];
-			subgraph cluster_small {
-				graph [label=small, lheight=0.19, width=0.42]; 
-				a  [id="A", height=0.5, width=0.75, xlabel="a_xlabel", label=a_label]; 
-				b  [height=0.5, width=0.75];
-				a -> b  [headlabel="head_label", taillabel="\"tail_label" label="\E", xlabel="a_b_external_Label"];
+			subgraph cluster1 {
+				a; 
+				b;
+				a -> b;
 			}
-			subgraph cluster_big {
-				graph ["label"=<big>, lheight=0.19, lwidth=0.25];
-				p [height=0.5, width=0.75];
-				q [height=0.6, width=0.75];
-				r [height=0.7, width=0.75]; 
-				s [height=0.8, width=0.75];
-				t [height=0.9, width=0.75];
+			subgraph cluster2 {
+				p;
+				q;
+				r; 
+				s;
+				t;
 				p -> q;
 				q -> r;
 				r -> s;
-				s -> "t";
+				s -> t;
 				t -> p; 
 			}
 			b -> q;

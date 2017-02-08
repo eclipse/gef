@@ -156,4 +156,42 @@ public final class DotTestUtils {
 		return graph.nodes(n1, n2, n3, n4, n5).edges(e1, e2, e3, e4, e5)
 				.build();
 	}
+
+	public static Graph getClusteredGraph() {
+		/*
+		 * digraph { subgraph cluster1 { a; b; a -> b; } subgraph cluster2 { p;
+		 * q; r; s; t; p -> q; q -> r; r -> s; s -> t; t -> p; } b -> q; t -> a;
+		 * }
+		 */
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+
+		/* Nodes: */
+		Node cluster1 = new Node.Builder().buildNode();
+		Node a = new Node.Builder().attr(DotAttributes::_setName, "a") //$NON-NLS-1$
+				.buildNode();
+		Node b = new Node.Builder().attr(DotAttributes::_setName, "b") //$NON-NLS-1$
+				.buildNode();
+		cluster1.setNestedGraph(
+				new Graph.Builder().attr(DotAttributes::_setName, "cluster1")
+						.nodes(a, b).edge(a, b).build());
+
+		Node cluster2 = new Node.Builder().buildNode();
+		Node p = new Node.Builder().attr(DotAttributes::_setName, "p") //$NON-NLS-1$
+				.buildNode();
+		Node q = new Node.Builder().attr(DotAttributes::_setName, "q") //$NON-NLS-1$
+				.buildNode();
+		Node r = new Node.Builder().attr(DotAttributes::_setName, "r") //$NON-NLS-1$
+				.buildNode();
+		Node s = new Node.Builder().attr(DotAttributes::_setName, "s") //$NON-NLS-1$
+				.buildNode();
+		Node t = new Node.Builder().attr(DotAttributes::_setName, "t") //$NON-NLS-1$
+				.buildNode();
+		cluster2.setNestedGraph(
+				new Graph.Builder().attr(DotAttributes::_setName, "cluster2")
+						.nodes(p, q, r, s, t).edge(p, q).edge(q, r).edge(r, s)
+						.edge(s, t).edge(t, p).build());
+
+		return graph.nodes(cluster1, cluster2).edge(b, q).edge(t, a).build();
+	}
 }

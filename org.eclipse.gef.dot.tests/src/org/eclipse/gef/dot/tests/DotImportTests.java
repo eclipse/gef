@@ -1450,23 +1450,23 @@ public final class DotImportTests {
 		assertEquals(GraphType.DIGRAPH, DotAttributes._getType(graph));
 		// two clusters
 		assertEquals(2, graph.getNodes().size());
-		Node smallCluster = graph.getNodes().get(0);
-		assertNotNull(smallCluster.getNestedGraph());
-		assertEquals("small",
-				DotAttributes.getLabel(smallCluster.getNestedGraph()));
+		Node cluster1 = graph.getNodes().get(0);
+		assertNotNull(cluster1.getNestedGraph());
+		assertEquals("cluster1",
+				DotAttributes._getName(cluster1.getNestedGraph()));
 		// two nested nodes and one nested edge (between these nodes) in small
 		// cluster
-		assertEquals(2, smallCluster.getNestedGraph().getNodes().size());
-		assertEquals(1, smallCluster.getNestedGraph().getEdges().size());
+		assertEquals(2, cluster1.getNestedGraph().getNodes().size());
+		assertEquals(1, cluster1.getNestedGraph().getEdges().size());
 
-		Node bigCluster = graph.getNodes().get(1);
-		assertNotNull(bigCluster.getNestedGraph());
-		assertEquals("big",
-				DotAttributes.getLabel(bigCluster.getNestedGraph()));
+		Node cluster2 = graph.getNodes().get(1);
+		assertNotNull(cluster2.getNestedGraph());
+		assertEquals("cluster2",
+				DotAttributes._getName(cluster2.getNestedGraph()));
 		// five nested nodes and five nested edges (between these nodes) in big
 		// cluster
-		assertEquals(5, bigCluster.getNestedGraph().getNodes().size());
-		assertEquals(5, bigCluster.getNestedGraph().getEdges().size());
+		assertEquals(5, cluster2.getNestedGraph().getNodes().size());
+		assertEquals(5, cluster2.getNestedGraph().getEdges().size());
 
 		assertEquals(2, graph.getEdges().size());
 		Edge e1 = graph.getEdges().get(0);

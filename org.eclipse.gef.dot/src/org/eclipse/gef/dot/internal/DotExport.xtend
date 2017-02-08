@@ -12,6 +12,7 @@
 package org.eclipse.gef.dot.internal
 
 import java.io.File
+import java.util.List
 import org.eclipse.gef.common.attributes.IAttributeStore
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 import org.eclipse.gef.dot.internal.language.dot.GraphType
@@ -30,24 +31,36 @@ import static extension org.eclipse.gef.dot.internal.DotAttributes.*
  */
 class DotExport {
 
-	// TODO: support a list of graphs
 	def String exportDot(Graph graph) {
-		// graph type is mandatory meta-attribute
-		if (graph.type == null ) {
-			throw new IllegalArgumentException(
-				"The " + _TYPE__G + " attribute has to be set on the input graph " + graph + ".");
-		}
-		// node name is mandatory meta-attribute
-		if (graph.nodes.exists[!hasName]) {
-			throw new IllegalArgumentException(
-				"The " + _NAME__GNE + " attribute has to be set for all nodes of the input graph " + graph + ".");
-		}
-		print(graph)
+		exportDot(newArrayList(graph))
 	}
 
-	// TODO: support a list of graphs
+	def String exportDot(List<Graph> graphs) {
+		val builder = new StringBuilder();
+		for (graph : graphs) {
+
+			// graph type is mandatory meta-attribute
+			if (graph.type == null) {
+				throw new IllegalArgumentException(
+					"The " + _TYPE__G + " attribute has to be set on the input graph " + graph + ".");
+			}
+
+			// node name is mandatory meta-attribute
+			if (graph.nodes.filter[nestedGraph == null].exists[!hasName]) {
+				throw new IllegalArgumentException(
+					"The " + _NAME__GNE + " attribute has to be set for all nodes of the input graph " + graph + ".");
+			}
+			builder.append(print(graph))
+		}
+		builder.toString
+	}
+
 	def File exportDot(Graph graph, String pathname) {
-		DotFileUtils.write(exportDot(graph), new File(pathname));
+		DotFileUtils.write(exportDot(newArrayList(graph)), new File(pathname));
+	}
+
+	def File exportDot(List<Graph> graphs, String pathname) {
+		DotFileUtils.write(exportDot(graphs), new File(pathname));
 	}
 
 	private def String print(Graph graph) '''
@@ -55,8 +68,8 @@ class DotExport {
 			«IF graph.hasNonMetaAttributes»
 				«graph.printNonMetaAttributes(";")»
 			«ENDIF»
-			«graph.nodes.sortBy[name].map[print].join("; ")»
-			«FOR edge : graph.edges.sortBy[name]»
+			«graph.nodes.map[print].join("; ")»
+			«FOR edge : graph.edges»
 				«edge.name»«IF edge.hasNonMetaAttributes» [«edge.printNonMetaAttributes(",")»]«ENDIF»
 			«ENDFOR»
 		}
@@ -70,14 +83,27 @@ class DotExport {
 		GraphType.DIGRAPH.equals(type)
 	}
 
-	private def print(Node node) {
-		node.name + if(node.hasNonMetaAttributes) " [" + node.printNonMetaAttributes(",") + "]" else ""
+	private def String print(Node node) {
+		if (node.nestedGraph != null) {
+			'''
+			subgraph «IF node.nestedGraph.hasName»«node.nestedGraph.name» «ENDIF»{
+				«IF node.nestedGraph.hasNonMetaAttributes»
+					«node.nestedGraph.printNonMetaAttributes(";")»
+				«ENDIF»
+				«node.nestedGraph.nodes.map[print].join("; ")»
+				«FOR edge : node.nestedGraph.edges»
+					«edge.name»«IF edge.hasNonMetaAttributes» [«edge.printNonMetaAttributes(",")»]«ENDIF»
+				«ENDFOR»
+			}'''
+		} else {
+			node.name + if(node.hasNonMetaAttributes) " [" + node.printNonMetaAttributes(",") + "]" else ""
+		}
 	}
 
 	private def hasName(IAttributeStore it) {
 		it.attributes.get(_NAME__GNE) != null
 	}
-	
+
 	private def GraphType type(Graph it) {
 		_getType
 	}
@@ -87,11 +113,20 @@ class DotExport {
 	}
 
 	private def dispatch String name(Edge edge) {
-		edge.source.name + (if(edge.graph.directed) EdgeOp.DIRECTED.literal else EdgeOp.UNDIRECTED.literal) +
+		edge.source.name + (if(edge.rootGraph.directed) EdgeOp.DIRECTED.literal else EdgeOp.UNDIRECTED.literal) +
 			edge.target.name
 	}
 
+	private def dispatch Graph rootGraph(Node node) {
+		if(node.graph.nestingNode == null) return node.graph else return node.graph.nestingNode.rootGraph
+	}
+	
+	private def dispatch Graph rootGraph(Edge edge) {
+		if(edge.graph.nestingNode == null) return edge.graph else return edge.graph.nestingNode.rootGraph
+	}
+
 	private def hasNonMetaAttributes(IAttributeStore store) {
+
 		// filter out properties that are prefixed with "_" as these do not match attributes
 		store.attributes.keySet.exists[!isMetaAttribute]
 	}
