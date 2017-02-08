@@ -102,6 +102,8 @@ public class FXCanvasEx extends FXCanvas {
 				if (event instanceof javafx.scene.input.KeyEvent) {
 					org.eclipse.swt.widgets.Event lastDownEvent = unprocessedKeyDownEvents
 							.peek();
+					// TODO: find out why lastDownEvent may be null
+					// FIXME: guard against NPE
 					if (event.getEventType()
 							.equals(javafx.scene.input.KeyEvent.KEY_PRESSED)
 							&& !lastDownEvent.doit) {
