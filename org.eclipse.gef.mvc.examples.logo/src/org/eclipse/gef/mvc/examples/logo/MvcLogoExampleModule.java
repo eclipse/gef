@@ -67,6 +67,7 @@ import org.eclipse.gef.mvc.fx.policies.ResizeTransformSelectedOnHandleDragPolicy
 import org.eclipse.gef.mvc.fx.policies.ResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnRotatePolicy;
+import org.eclipse.gef.mvc.fx.policies.SelectAllOnTypePolicy;
 import org.eclipse.gef.mvc.fx.policies.SelectFocusedOnTypePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
@@ -331,6 +332,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
 		// hover behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
+		// select-all on type
+		bindSelectAllOnTypePolicyAsContentViewerRootPartAdapter(adapterMapBinder);
 	}
 
 	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -424,6 +427,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
+	}
+
+	protected void bindSelectAllOnTypePolicyAsContentViewerRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectAllOnTypePolicy.class);
 	}
 
 	protected void bindSelectionFeedbackFactoryAsPaletteViewerAdapter(
