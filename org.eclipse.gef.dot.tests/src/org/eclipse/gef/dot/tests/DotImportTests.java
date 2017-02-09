@@ -1522,4 +1522,44 @@ public final class DotImportTests {
 		Assert.assertEquals("Expected one graph", 1, graphs.size()); //$NON-NLS-1$
 		Assert.assertEquals(expected.toString(), graphs.get(0).toString());
 	}
+
+	@Test
+	public void subraphScoping() {
+		// Input:
+		// node [shape="hexagon", style="filled", fillcolor="blue"];
+		// { node [shape="box"]; a; b; }
+		// { node [fillcolor="red"]; b; c; }
+		Graph graph = importString(DotTestGraphs.CLUSTER_SCOPE);
+
+		// Expected result:
+		// a [shape="box", style="filled", fillcolor="blue"];
+		// b [shape="box", style="filled", fillcolor="blue"];
+		// c [shape="hexagon", style="filled", fillcolor="red"];
+
+		assertEquals(2, graph.getNodes().size());
+		Node subgraph1 = graph.getNodes().get(0);
+		Node subgraph2 = graph.getNodes().get(1);
+
+		assertEquals(2, subgraph1.getNestedGraph().getNodes().size());
+		assertEquals(1, subgraph2.getNestedGraph().getNodes().size());
+
+		Node a = subgraph1.getNestedGraph().getNodes().get(0);
+		assertEquals("a", DotAttributes._getName(a));
+		assertEquals("box", DotAttributes.getShape(a));
+		assertEquals("filled", DotAttributes.getStyle(a));
+		assertEquals("blue", DotAttributes.getFillcolor(a));
+
+		// b is defined in first subgraph, so it should be contained there
+		Node b = subgraph1.getNestedGraph().getNodes().get(1);
+		assertEquals("b", DotAttributes._getName(b));
+		assertEquals("box", DotAttributes.getShape(b));
+		assertEquals("filled", DotAttributes.getStyle(b));
+		assertEquals("blue", DotAttributes.getFillcolor(b));
+
+		Node c = subgraph2.getNestedGraph().getNodes().get(0);
+		assertEquals("c", DotAttributes._getName(c));
+		assertEquals("hexagon", DotAttributes.getShape(c));
+		assertEquals("filled", DotAttributes.getStyle(c));
+		assertEquals("red", DotAttributes.getFillcolor(c));
+	}
 }

@@ -1267,4 +1267,12 @@ class DotTestGraphs {
 			b -> d;
 		}
 	'''
+
+	public static val CLUSTER_SCOPE = '''
+		graph {
+			node [shape="hexagon", style="filled", fillcolor="blue"];
+			{ node [shape="box"]; a; b; }
+			{ node [fillcolor="red"]; b; c; }
+		}
+	'''
 }
