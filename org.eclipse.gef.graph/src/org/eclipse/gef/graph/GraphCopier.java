@@ -150,6 +150,15 @@ public class GraphCopier {
 	}
 
 	/**
+	 * Returns the {@link IAttributeCopier} used by this {@link GraphCopier}.
+	 *
+	 * @return The {@link IAttributeCopier} used by this {@link GraphCopier}.
+	 */
+	public IAttributeCopier getAttributeCopier() {
+		return attributeCopier;
+	}
+
+	/**
 	 * Returns an (unmodifiable) {@link Map} from input {@link Edge}s to output
 	 * {@link Edge}s.
 	 *
