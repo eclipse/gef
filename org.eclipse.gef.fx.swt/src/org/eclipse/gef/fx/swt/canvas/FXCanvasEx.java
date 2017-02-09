@@ -102,23 +102,56 @@ public class FXCanvasEx extends FXCanvas {
 				if (event instanceof javafx.scene.input.KeyEvent) {
 					org.eclipse.swt.widgets.Event lastDownEvent = unprocessedKeyDownEvents
 							.peek();
-					// TODO: find out why lastDownEvent may be null
-					// FIXME: guard against NPE
-					if (event.getEventType()
+					/*
+					 * TODO: find out why lastDownEvent may be null:
+					 * Reproduceable: Hit Ctrl-A repeatedly while click-dragging
+					 * in the MVC Logo Example.
+					 */
+					if ((event.getEventType()
 							.equals(javafx.scene.input.KeyEvent.KEY_PRESSED)
-							&& !lastDownEvent.doit) {
-						event.consume();
-					} else if (event.getEventType()
-							.equals(javafx.scene.input.KeyEvent.KEY_TYPED)
-							&& !lastDownEvent.doit) {
-						event.consume();
-					} else if (event.getEventType()
-							.equals(javafx.scene.input.KeyEvent.KEY_RELEASED)) {
-						unprocessedKeyDownEvents.poll();
-						org.eclipse.swt.widgets.Event lastUpEvent = unprocessedKeyUpEvents
-								.poll();
-						if (!lastUpEvent.doit) {
-							event.consume();
+							|| event.getEventType()
+									.equals(javafx.scene.input.KeyEvent.KEY_TYPED))
+							&& lastDownEvent == null) {
+						System.out.println(
+								"WTF?! :::::: " + event.getEventType() + " "
+										+ ((javafx.scene.input.KeyEvent) event)
+												.getCode());
+					} else {
+						if (event.getEventType().equals(
+								javafx.scene.input.KeyEvent.KEY_PRESSED)) {
+
+							System.out.println("FX Press "
+									+ ((javafx.scene.input.KeyEvent) event)
+											.getCode());
+
+							if (!lastDownEvent.doit) {
+								event.consume();
+							}
+						} else if (event.getEventType().equals(
+								javafx.scene.input.KeyEvent.KEY_TYPED)) {
+
+							System.out.println("FX Type "
+									+ ((javafx.scene.input.KeyEvent) event)
+											.getCharacter());
+
+							if (!lastDownEvent.doit) {
+								event.consume();
+							}
+						} else if (event.getEventType().equals(
+								javafx.scene.input.KeyEvent.KEY_RELEASED)) {
+
+							System.out.println("FX Release "
+									+ ((javafx.scene.input.KeyEvent) event)
+											.getCode()
+									+ " :: pressed="
+									+ (unprocessedKeyDownEvents.size() - 1));
+
+							unprocessedKeyDownEvents.poll();
+							org.eclipse.swt.widgets.Event lastUpEvent = unprocessedKeyUpEvents
+									.poll();
+							if (!lastUpEvent.doit) {
+								event.consume();
+							}
 						}
 					}
 				}
@@ -131,6 +164,8 @@ public class FXCanvasEx extends FXCanvas {
 			// https://bugs.openjdk.java.net/browse/JDK-8161587)
 			long millisNow = System.currentTimeMillis();
 			if (millisNow - lastRedrawMillis > REDRAW_INTERVAL_MILLIS) {
+				// XXX: Do not call update() but only redraw() to prevent a loss
+				// of performance while keeping the UI up-to-date.
 				redraw();
 				lastRedrawMillis = millisNow;
 			}
@@ -686,19 +721,59 @@ public class FXCanvasEx extends FXCanvas {
 	private Listener keyListener = new Listener() {
 		@Override
 		public void handleEvent(org.eclipse.swt.widgets.Event e) {
-			if (e.type == SWT.KeyDown) {
+			if (allSwtKeyEvents.isEmpty()) {
+				throw new IllegalStateException(
+						"Handler called but filter did not record any events.");
+			}
+
+			// dispatch missing (interrupted) events
+			while (!sameEvent(allSwtKeyEvents.peek(), e)) {
+				org.eclipse.swt.widgets.Event preEvent = allSwtKeyEvents.poll();
+				preEvent.doit = true;
+
+				System.out.println("PRE " + preEvent);
+
+				if (SWT.KeyDown == preEvent.type) {
+					unprocessedKeyDownEvents.add(preEvent);
+					for (Listener l : new ArrayList<>(keyDownListeners)) {
+						l.handleEvent(preEvent);
+					}
+					superKeyListener.keyPressed(new KeyEvent(preEvent));
+				} else if (SWT.KeyUp == preEvent.type) {
+					unprocessedKeyUpEvents.add(preEvent);
+					for (Listener l : new ArrayList<>(keyUpListeners)) {
+						l.handleEvent(preEvent);
+					}
+					superKeyListener.keyReleased(new KeyEvent(preEvent));
+				}
+			}
+
+			allSwtKeyEvents.poll(); // remove e
+
+			System.out.println("HANDLER " + e);
+
+			if (SWT.KeyDown == e.type) {
 				unprocessedKeyDownEvents.add(e);
 				for (Listener l : new ArrayList<>(keyDownListeners)) {
 					l.handleEvent(e);
 				}
 				superKeyListener.keyPressed(new KeyEvent(e));
-			} else {
+			} else if (SWT.KeyUp == e.type) {
 				unprocessedKeyUpEvents.add(e);
 				for (Listener l : new ArrayList<>(keyUpListeners)) {
 					l.handleEvent(e);
 				}
 				superKeyListener.keyReleased(new KeyEvent(e));
 			}
+		}
+
+		private boolean sameEvent(org.eclipse.swt.widgets.Event e,
+				org.eclipse.swt.widgets.Event f) {
+			return e.display == f.display && e.widget == f.widget
+					&& e.time == f.time && e.data == f.data
+					&& e.character == f.character && e.keyCode == f.keyCode
+					&& e.keyLocation == f.keyLocation
+					&& e.stateMask == f.stateMask && e.doit == f.doit;
 		};
 	};
 	private KeyListener superKeyListener;
@@ -707,6 +782,65 @@ public class FXCanvasEx extends FXCanvas {
 	// keeps track of key events that need to be marked as consumed
 	private Queue<org.eclipse.swt.widgets.Event> unprocessedKeyDownEvents = new LinkedList<>();
 	private Queue<org.eclipse.swt.widgets.Event> unprocessedKeyUpEvents = new LinkedList<>();
+	private Queue<org.eclipse.swt.widgets.Event> allSwtKeyEvents = new LinkedList<>();
+
+	private Listener displayKeyFilter = new Listener() {
+		@Override
+		public void handleEvent(org.eclipse.swt.widgets.Event event) {
+			if (event.widget != FXCanvasEx.this) {
+				return;
+			}
+
+			System.out.println("SAVE " + event);
+			org.eclipse.swt.widgets.Event copy = new org.eclipse.swt.widgets.Event();
+
+			copy.display = event.display;
+			copy.widget = event.widget;
+			copy.time = event.time;
+			copy.data = event.data;
+
+			copy.type = event.type;
+
+			copy.character = event.character;
+			copy.keyCode = event.keyCode;
+			copy.keyLocation = event.keyLocation;
+			copy.stateMask = event.stateMask;
+			copy.doit = event.doit;
+
+			// copy.button = event.button;
+			// copy.character = event.character;
+			// copy.count = event.count;
+			// copy.data = event.data;
+			// copy.detail = event.detail;
+			// copy.display = event.display;
+			// copy.doit = event.doit;
+			// copy.end = event.end;
+			// copy.gc = event.gc;
+			// copy.height = event.height;
+			// copy.index = event.index;
+			// copy.item = event.item;
+			// copy.keyCode = event.keyCode;
+			// copy.keyLocation = event.keyLocation;
+			// copy.magnification = event.magnification;
+			// copy.rotation = event.rotation;
+			// copy.segments = event.segments;
+			// copy.segmentsChars = event.segmentsChars;
+			// copy.start = event.start;
+			// copy.stateMask = event.stateMask;
+			// copy.text = event.text;
+			// copy.time = event.time;
+			// copy.touches = event.touches;
+			// copy.type = event.type;
+			// copy.widget = event.widget;
+			// copy.width = event.width;
+			// copy.x = event.x;
+			// copy.xDirection = event.xDirection;
+			// copy.y = event.y;
+			// copy.yDirection = event.yDirection;
+
+			allSwtKeyEvents.add(copy);
+		}
+	};
 
 	/**
 	 * Creates a new {@link FXCanvasEx} for the given parent and with the given
@@ -723,6 +857,26 @@ public class FXCanvasEx extends FXCanvas {
 	public FXCanvasEx(Composite parent, int style) {
 		super(parent, style);
 
+		// extract original filters
+		Object filterTable = ReflectionUtils.getPrivateFieldValue(getDisplay(),
+				"filterTable");
+		int[] types = ReflectionUtils.getPrivateFieldValue(filterTable,
+				"types");
+		Listener[] listeners = ReflectionUtils.getPrivateFieldValue(filterTable,
+				"listeners");
+
+		// clear filters
+		ReflectionUtils.setPrivateFieldValue(getDisplay(), "filterTable", null);
+
+		// hook our own filter
+		getDisplay().addFilter(SWT.KeyDown, displayKeyFilter);
+		getDisplay().addFilter(SWT.KeyUp, displayKeyFilter);
+
+		// re-add original filters
+		for (int i = 0; i < types.length && types[i] != 0; i++) {
+			getDisplay().addFilter(types[i], listeners[i]);
+		}
+
 		// XXX: As FXCanvas uses a dispose listener, we have to use the same
 		// mechanism here
 		disposeListener = new DisposeListener() {
@@ -737,6 +891,10 @@ public class FXCanvasEx extends FXCanvas {
 				// class). The embedded scene (scenePeer) will be unset through
 				// the host container when unsetting the scene above;
 				setScene(null);
+
+				getDisplay().removeFilter(SWT.KeyDown, displayKeyFilter);
+				getDisplay().removeFilter(SWT.KeyUp, displayKeyFilter);
+				displayKeyFilter = null;
 
 				cursorChangeListener = null;
 
