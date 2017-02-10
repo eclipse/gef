@@ -13,17 +13,17 @@
 package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef.fx.gestures.AbstractPinchSpreadGesture;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.policies.IOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -48,73 +48,71 @@ public class PinchSpreadTool extends AbstractTool {
 	 */
 	public static final Class<IOnPinchSpreadPolicy> ON_PINCH_SPREAD_POLICY_KEY = IOnPinchSpreadPolicy.class;
 
-	private final Map<Scene, AbstractPinchSpreadGesture> gestures = new HashMap<>();
-	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
+	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
+	private Map<Scene, EventHandler<ZoomEvent>> zoomFilters = new IdentityHashMap<>();
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Creates a {@link ChangeListener} for the
+	 * {@link IViewer#viewerFocusedProperty() focused} property of the given
+	 * {@link IViewer}.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which to create a
+	 *            {@link ChangeListener} for its
+	 *            {@link IViewer#viewerFocusedProperty() focused} property.
+	 * @return The newly created {@link ChangeListener} for the
+	 *         {@link IViewer#viewerFocusedProperty() focused} property of the
+	 *         given {@link IViewer}.
+	 */
 	@Override
-	public List<? extends IOnPinchSpreadPolicy> getActivePolicies(
-			IViewer viewer) {
-		return (List<IOnPinchSpreadPolicy>) super.getActivePolicies(viewer);
-	}
-
-	@Override
-	protected void doActivate() {
-		super.doActivate();
-		for (final IViewer viewer : getDomain().getViewers().values()) {
-			// register a viewer focus change listener
-			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-				@Override
-				public void changed(
-						ObservableValue<? extends Boolean> observable,
-						Boolean oldValue, Boolean newValue) {
-					if (newValue == null || !newValue) {
-						// cancel target policies
-						for (IOnPinchSpreadPolicy policy : getActivePolicies(
-								viewer)) {
-							policy.abortZoom();
-						}
-						// clear active policies and close execution
-						// transaction
-						clearActivePolicies(viewer);
-						getDomain().closeExecutionTransaction(
-								PinchSpreadTool.this);
-					}
-
-				}
-			};
-			viewer.viewerFocusedProperty()
-					.addListener(viewerFocusChangeListener);
-			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
-
-			Scene scene = viewer.getRootPart().getVisual().getScene();
-			if (gestures.containsKey(scene)) {
-				continue;
-			}
-
-			AbstractPinchSpreadGesture gesture = new AbstractPinchSpreadGesture() {
-				@Override
-				protected void zoom(ZoomEvent e) {
-					// the start event might get lost, so we should open a
-					// transaction if one is not already open
+	protected ChangeListener<Boolean> createFocusChangeListener(
+			final IViewer viewer) {
+		ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if (newValue == null || !newValue) {
+					// cancel target policies
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
 							viewer)) {
-						policy.zoom(e);
+						policy.abortZoom();
 					}
-				}
-
-				@Override
-				protected void zoomFinished(ZoomEvent e) {
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
-							viewer)) {
-						policy.endZoom(e);
-					}
+					// clear active policies and close execution
+					// transaction
 					clearActivePolicies(viewer);
 					getDomain().closeExecutionTransaction(PinchSpreadTool.this);
 				}
 
-				@Override
-				protected void zoomStarted(ZoomEvent e) {
+			}
+		};
+		return viewerFocusChangeListener;
+	}
+
+	/**
+	 * Creates an {@link EventHandler} for {@link ZoomEvent}s that forwards the
+	 * events to the {@link IOnPinchSpreadPolicy} implementations that can be
+	 * determined for the individual events and the given {@link IViewer}.
+	 *
+	 * @param scene
+	 *            The {@link Scene} where the {@link EventHandler} will be
+	 *            registered.
+	 * @param viewer
+	 *            The {@link IViewer} to which events are forwarded.
+	 * @return The {@link EventHandler} that can be registered at the given
+	 *         {@link Scene}.
+	 */
+	protected EventHandler<ZoomEvent> createZoomFilter(Scene scene,
+			IViewer viewer) {
+		return new EventHandler<ZoomEvent>() {
+			@Override
+			public void handle(ZoomEvent event) {
+				if (ZoomEvent.ZOOM.equals(event.getEventType())) {
+					for (IOnPinchSpreadPolicy policy : getActivePolicies(
+							viewer)) {
+						policy.zoom(event);
+					}
+				} else if (ZoomEvent.ZOOM_STARTED
+						.equals(event.getEventType())) {
 					// zoom finish may not occur, so close any preceding
 					// transaction just in case
 					if (!getDomain()
@@ -128,7 +126,7 @@ public class PinchSpreadTool extends AbstractTool {
 					}
 
 					// determine target policies
-					EventTarget eventTarget = e.getTarget();
+					EventTarget eventTarget = event.getTarget();
 					setActivePolicies(viewer,
 							getTargetPolicyResolver().getTargetPolicies(
 									PinchSpreadTool.this,
@@ -139,19 +137,52 @@ public class PinchSpreadTool extends AbstractTool {
 					// send event to the policies
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
 							viewer)) {
-						policy.startZoom(e);
+						policy.startZoom(event);
 					}
+				} else if (ZoomEvent.ZOOM_FINISHED
+						.equals(event.getEventType())) {
+					for (IOnPinchSpreadPolicy policy : getActivePolicies(
+							viewer)) {
+						policy.endZoom(event);
+					}
+					clearActivePolicies(viewer);
+					getDomain().closeExecutionTransaction(PinchSpreadTool.this);
 				}
-			};
-			gesture.setScene(viewer.getCanvas().getScene());
-			gestures.put(scene, gesture);
+			}
+		};
+	}
+
+	@Override
+	protected void doActivate() {
+		super.doActivate();
+		for (final IViewer viewer : getDomain().getViewers().values()) {
+			// register a viewer focus change listener
+			ChangeListener<Boolean> viewerFocusChangeListener = createFocusChangeListener(
+					viewer);
+			viewer.viewerFocusedProperty()
+					.addListener(viewerFocusChangeListener);
+			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
+
+			// check if we already registered zoom listeners at the viewer's
+			// scene (in case two viewer's share a single scene)
+			Scene scene = viewer.getCanvas().getScene();
+			if (zoomFilters.containsKey(scene)) {
+				// we are already listening for events of this scene
+				continue;
+			}
+
+			// register zoom filter
+			EventHandler<ZoomEvent> zoomFilter = createZoomFilter(scene,
+					viewer);
+			scene.addEventFilter(ZoomEvent.ANY, zoomFilter);
+			zoomFilters.put(scene, zoomFilter);
 		}
 	}
 
 	@Override
 	protected void doDeactivate() {
-		for (Scene scene : new ArrayList<>(gestures.keySet())) {
-			gestures.remove(scene).setScene(null);
+		for (Scene scene : new ArrayList<>(zoomFilters.keySet())) {
+			scene.removeEventFilter(ZoomEvent.ANY, zoomFilters.remove(scene));
 		}
 		for (final IViewer viewer : new ArrayList<>(
 				viewerFocusChangeListeners.keySet())) {
@@ -161,4 +192,10 @@ public class PinchSpreadTool extends AbstractTool {
 		super.doDeactivate();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends IOnPinchSpreadPolicy> getActivePolicies(
+			IViewer viewer) {
+		return (List<IOnPinchSpreadPolicy>) super.getActivePolicies(viewer);
+	}
 }
