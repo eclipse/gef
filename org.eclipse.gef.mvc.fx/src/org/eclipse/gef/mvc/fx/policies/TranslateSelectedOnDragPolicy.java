@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -30,10 +31,11 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
 
 /**
- * The {@link TranslateSelectedOnDragPolicy} is an {@link IOnDragPolicy}
- * that relocates its {@link #getHost() host} when it is dragged with the mouse.
+ * The {@link TranslateSelectedOnDragPolicy} is an {@link IOnDragPolicy} that
+ * relocates its {@link #getHost() host} when it is dragged with the mouse.
  *
  * @author anyssen
  *
@@ -45,7 +47,7 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 	private SnapSupport snapSupport = new SnapSupport(this);
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<? extends Node>, Integer> translationIndices = new HashMap<>();
-	private List<IContentPart<? extends Node>> targetParts;
+	private List<Pair<IContentPart<? extends Node>, TransformPolicy>> targets;
 
 	// gesture validity
 	private boolean invalidGesture = false;
@@ -57,16 +59,15 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 		if (invalidGesture) {
 			return;
 		}
+
 		// roll back changes for all target parts
-		for (IContentPart<? extends Node> part : targetParts) {
-			TransformPolicy policy = getTransformPolicy(part);
-			if (policy != null) {
-				rollback(policy);
-				restoreRefreshVisuals(part);
-			}
+		for (Pair<IContentPart<? extends Node>, TransformPolicy> pair : targets) {
+			rollback(pair.getValue());
+			restoreRefreshVisuals(pair.getKey());
 		}
-		// reset target parts
-		targetParts = null;
+
+		// reset targets
+		targets = null;
 		// reset initial pointer location
 		setInitialMouseLocationInScene(null);
 		// reset translation indices
@@ -93,30 +94,28 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 			gridLocalVisual = snapSupport.getGridLocalVisual(viewer);
 		}
 		// apply changes to the target parts
-		for (IContentPart<? extends Node> part : targetParts) {
-			TransformPolicy policy = getTransformPolicy(part);
-			if (policy != null) {
-				// determine start and end position in scene coordinates
-				Point startInScene = boundsInScene.get(part).getTopLeft();
-				Point endInScene = startInScene.getTranslated(delta);
-				// snap to grid
-				Point newEndInScene = endInScene.getCopy();
-				if (gridLocalVisual != null) {
-					newEndInScene = snapSupport.snapToGrid(endInScene.x,
-							endInScene.y, gridModel, granularityX, granularityY,
-							gridLocalVisual);
-				}
-				// compute delta in parent coordinates
-				Point newEndInParent = NodeUtils.sceneToLocal(
-						part.getVisual().getParent(), newEndInScene);
-				Point startInParent = NodeUtils.sceneToLocal(
-						part.getVisual().getParent(), startInScene);
-				Point deltaInParent = newEndInParent
-						.getTranslated(startInParent.getNegated());
-				// update transformation
-				policy.setPostTranslate(translationIndices.get(part),
-						deltaInParent.x, deltaInParent.y);
+		for (Pair<IContentPart<? extends Node>, TransformPolicy> pair : targets) {
+			// determine start and end position in scene coordinates
+			Point startInScene = boundsInScene.get(pair.getKey()).getTopLeft();
+			Point endInScene = startInScene.getTranslated(delta);
+			// snap to grid
+			Point newEndInScene = endInScene.getCopy();
+			if (gridLocalVisual != null) {
+				newEndInScene = snapSupport.snapToGrid(endInScene.x,
+						endInScene.y, gridModel, granularityX, granularityY,
+						gridLocalVisual);
 			}
+			// compute delta in parent coordinates
+			Point newEndInParent = NodeUtils.sceneToLocal(
+					pair.getKey().getVisual().getParent(), newEndInScene);
+			Point startInParent = NodeUtils.sceneToLocal(
+					pair.getKey().getVisual().getParent(), startInScene);
+			Point deltaInParent = newEndInParent
+					.getTranslated(startInParent.getNegated());
+			// update transformation
+			pair.getValue().setPostTranslate(
+					translationIndices.get(pair.getKey()), deltaInParent.x,
+					deltaInParent.y);
 		}
 	}
 
@@ -128,16 +127,13 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 		}
 
 		// commit changes for all target parts
-		for (IContentPart<? extends Node> part : targetParts) {
-			TransformPolicy policy = getTransformPolicy(part);
-			if (policy != null) {
-				commit(policy);
-				restoreRefreshVisuals(part);
-			}
+		for (Pair<IContentPart<? extends Node>, TransformPolicy> pair : targets) {
+			commit(pair.getValue());
+			restoreRefreshVisuals(pair.getKey());
 		}
 
 		// reset target parts
-		targetParts = null;
+		targets = null;
 		// reset initial pointer location
 		setInitialMouseLocationInScene(null);
 		// reset translation indices
@@ -225,19 +221,19 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 		// do not translate the only selected part if an
 		// BendOnSegmentDragPolicy is registered for that part and the part is
 		// an orthogonal connection that is connected at source and/or target
-		if (targetParts.size() == 1 && targetParts.get(0)
+		if (targets.size() == 1 && targets.get(0).getKey()
 				.getAdapter(BendOnSegmentDragPolicy.class) != null) {
-			IContentPart<? extends Node> part = targetParts.get(0);
+			IContentPart<? extends Node> part = targets.get(0).getKey();
 			Node visual = part.getVisual();
 			if (visual instanceof Connection
 					&& ((Connection) visual)
 							.getRouter() instanceof OrthogonalRouter
 					&& (((Connection) visual).isStartConnected()
 							|| ((Connection) visual).isEndConnected())) {
-				targetParts = null;
+				targets = null;
 			}
 		}
-		if (targetParts == null || targetParts.isEmpty()) {
+		if (targets == null || targets.isEmpty()) {
 			// abort this policy if no target parts could be found
 			return false;
 		}
@@ -267,7 +263,8 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 	@Override
 	public void startDrag(MouseEvent e) {
 		// determine target parts
-		targetParts = getTargetParts();
+		List<IContentPart<? extends Node>> targetParts = getTargetParts();
+		targets = new ArrayList<>();
 
 		// decide whether to perform translation
 		invalidGesture = !isTranslate(e);
@@ -280,21 +277,23 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 
 		// initialize this policy for all determined target parts
 		for (IContentPart<? extends Node> part : targetParts) {
-			// init transaction policy
-			TransformPolicy policy = getTransformPolicy(part);
-			if (policy != null) {
-				storeAndDisableRefreshVisuals(part);
-				init(policy);
-				translationIndices.put(part, policy.createPostTransform());
-				// determine shape bounds
-				Rectangle shapeBounds = NodeUtils
-						.getShapeBounds(getHost().getVisual());
-				Rectangle shapeBoundsInScene = NodeUtils
-						.localToScene(getHost().getVisual(), shapeBounds)
-						.getBounds();
-				boundsInScene.put(part, shapeBoundsInScene);
+			TransformPolicy policy = part.getAdapter(TransformPolicy.class);
+			if (policy == null) {
+				continue;
 			}
+			targets.add(new Pair<>(part, policy));
+
+			// init transaction policy
+			storeAndDisableRefreshVisuals(part);
+			init(policy);
+			translationIndices.put(part, policy.createPostTransform());
+			// determine shape bounds
+			Rectangle shapeBounds = NodeUtils
+					.getShapeBounds(getHost().getVisual());
+			Rectangle shapeBoundsInScene = NodeUtils
+					.localToScene(getHost().getVisual(), shapeBounds)
+					.getBounds();
+			boundsInScene.put(part, shapeBoundsInScene);
 		}
 	}
-
 }
