@@ -64,7 +64,6 @@ public class PinchSpreadTool extends AbstractTool {
 	 *         {@link IViewer#viewerFocusedProperty() focused} property of the
 	 *         given {@link IViewer}.
 	 */
-	@Override
 	protected ChangeListener<Boolean> createFocusChangeListener(
 			final IViewer viewer) {
 		ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
