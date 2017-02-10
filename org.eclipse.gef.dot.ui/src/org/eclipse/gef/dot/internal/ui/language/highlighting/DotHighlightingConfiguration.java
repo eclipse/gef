@@ -109,7 +109,8 @@ public class DotHighlightingConfiguration
 
 	public TextStyle htmlStringTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(76, 153, 0)); // light green
+		textStyle.setColor(new RGB(153, 76, 0)); // brown
+		textStyle.setBackgroundColor(new RGB(220, 220, 220)); // light gray
 		return textStyle;
 	}
 
