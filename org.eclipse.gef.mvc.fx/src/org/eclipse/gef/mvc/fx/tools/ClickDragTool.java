@@ -13,7 +13,7 @@
 package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -77,18 +77,12 @@ public class ClickDragTool extends AbstractTool {
 	 */
 	public static final Class<IOnDragPolicy> ON_DRAG_POLICY_KEY = IOnDragPolicy.class;
 
-	private final Map<Scene, AbstractMouseDragGesture> gestures = new HashMap<>();
-	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
-	private final Map<Scene, EventHandler<MouseEvent>> cursorMouseMoveFilters = new HashMap<>();
-	private final Map<Scene, EventHandler<KeyEvent>> cursorKeyFilters = new HashMap<>();
+	private final Map<Scene, AbstractMouseDragGesture> gestures = new IdentityHashMap<>();
+	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
+	private final Map<Scene, EventHandler<MouseEvent>> cursorMouseMoveFilters = new IdentityHashMap<>();
+	private final Map<Scene, EventHandler<KeyEvent>> cursorKeyFilters = new IdentityHashMap<>();
 
 	private IViewer activeViewer;
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<IOnDragPolicy> getActivePolicies(IViewer viewer) {
-		return (List<IOnDragPolicy>) super.getActivePolicies(viewer);
-	}
 
 	@Override
 	protected void doActivate() {
@@ -385,4 +379,9 @@ public class ClickDragTool extends AbstractTool {
 		super.doDeactivate();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IOnDragPolicy> getActivePolicies(IViewer viewer) {
+		return (List<IOnDragPolicy>) super.getActivePolicies(viewer);
+	}
 }

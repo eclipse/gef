@@ -270,5 +270,4 @@ public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
 
 		return policies;
 	}
-
 }

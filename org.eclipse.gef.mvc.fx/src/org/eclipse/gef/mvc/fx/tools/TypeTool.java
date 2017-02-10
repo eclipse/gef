@@ -12,7 +12,6 @@
 package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -55,15 +54,9 @@ public class TypeTool extends AbstractTool {
 	private Map<Scene, EventHandler<? super KeyEvent>> pressedFilterMap = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<? super KeyEvent>> releasedFilterMap = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
-	private Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
+	private Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
 
 	private IViewer activeViewer;
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<? extends IOnStrokePolicy> getActivePolicies(IViewer viewer) {
-		return (List<IOnStrokePolicy>) super.getActivePolicies(viewer);
-	}
 
 	@Override
 	protected void doActivate() {
@@ -285,4 +278,9 @@ public class TypeTool extends AbstractTool {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends IOnStrokePolicy> getActivePolicies(IViewer viewer) {
+		return (List<IOnStrokePolicy>) super.getActivePolicies(viewer);
+	}
 }

@@ -12,7 +12,7 @@
 package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef.mvc.fx.policies.IOnHoverPolicy;
@@ -38,7 +38,7 @@ public class HoverTool extends AbstractTool {
 	 */
 	public static final Class<IOnHoverPolicy> ON_HOVER_POLICY_KEY = IOnHoverPolicy.class;
 
-	private final Map<Scene, EventHandler<MouseEvent>> hoverFilters = new HashMap<>();
+	private final Map<Scene, EventHandler<MouseEvent>> hoverFilters = new IdentityHashMap<>();
 
 	/**
 	 * Creates an {@link EventHandler} for hover {@link MouseEvent}s. The
@@ -106,5 +106,4 @@ public class HoverTool extends AbstractTool {
 		}
 		super.doDeactivate();
 	}
-
 }

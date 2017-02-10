@@ -12,7 +12,7 @@
 package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,14 +40,8 @@ public class ScrollTool extends AbstractTool {
 	 */
 	public static final Class<IOnScrollPolicy> ON_SCROLL_POLICY_KEY = IOnScrollPolicy.class;
 
-	private final Map<Scene, AbstractScrollGesture> gestures = new HashMap<>();
-	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<? extends IOnScrollPolicy> getActivePolicies(IViewer viewer) {
-		return (List<IOnScrollPolicy>) super.getActivePolicies(viewer);
-	}
+	private final Map<Scene, AbstractScrollGesture> gestures = new IdentityHashMap<>();
+	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
 
 	@Override
 	protected void doActivate() {
@@ -133,4 +127,9 @@ public class ScrollTool extends AbstractTool {
 		super.doDeactivate();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends IOnScrollPolicy> getActivePolicies(IViewer viewer) {
+		return (List<IOnScrollPolicy>) super.getActivePolicies(viewer);
+	}
 }
