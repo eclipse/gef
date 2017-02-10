@@ -86,6 +86,7 @@ public class FXCanvasEx extends FXCanvas {
 		private static final int REDRAW_INTERVAL_MILLIS = 40; // i.e. 25 fps
 		private EventDispatcher delegate;
 		private long lastRedrawMillis = System.currentTimeMillis();
+		private org.eclipse.swt.widgets.Event downEvent;
 
 		protected EventDispatcherEx(EventDispatcher delegate) {
 			this.delegate = delegate;
@@ -102,57 +103,47 @@ public class FXCanvasEx extends FXCanvas {
 				if (event instanceof javafx.scene.input.KeyEvent) {
 					org.eclipse.swt.widgets.Event lastDownEvent = unprocessedKeyDownEvents
 							.peek();
-					/*
-					 * TODO: find out why lastDownEvent may be null:
-					 * Reproduceable: Hit Ctrl-A repeatedly while click-dragging
-					 * in the MVC Logo Example.
-					 */
-					if ((event.getEventType()
-							.equals(javafx.scene.input.KeyEvent.KEY_PRESSED)
-							|| event.getEventType()
-									.equals(javafx.scene.input.KeyEvent.KEY_TYPED))
-							&& lastDownEvent == null) {
-						System.out.println(
-								"WTF?! :::::: " + event.getEventType() + " "
-										+ ((javafx.scene.input.KeyEvent) event)
-												.getCode());
-					} else {
-						if (event.getEventType().equals(
-								javafx.scene.input.KeyEvent.KEY_PRESSED)) {
-
-							System.out.println("FX Press "
-									+ ((javafx.scene.input.KeyEvent) event)
-											.getCode());
-
-							if (!lastDownEvent.doit) {
-								event.consume();
-							}
-						} else if (event.getEventType().equals(
-								javafx.scene.input.KeyEvent.KEY_TYPED)) {
-
-							System.out.println("FX Type "
-									+ ((javafx.scene.input.KeyEvent) event)
-											.getCharacter());
-
-							if (!lastDownEvent.doit) {
-								event.consume();
-							}
-						} else if (event.getEventType().equals(
-								javafx.scene.input.KeyEvent.KEY_RELEASED)) {
-
-							System.out.println("FX Release "
-									+ ((javafx.scene.input.KeyEvent) event)
-											.getCode()
-									+ " :: pressed="
-									+ (unprocessedKeyDownEvents.size() - 1));
-
-							unprocessedKeyDownEvents.poll();
-							org.eclipse.swt.widgets.Event lastUpEvent = unprocessedKeyUpEvents
-									.poll();
-							if (!lastUpEvent.doit) {
-								event.consume();
-							}
+					if (event.getEventType()
+							.equals(javafx.scene.input.KeyEvent.KEY_PRESSED)) {
+						if (!lastDownEvent.doit) {
+							event.consume();
 						}
+						// remove key down event and save it so that its doit
+						// flag can be checked in case a KEY_TYPED event is
+						// generated for it
+						downEvent = unprocessedKeyDownEvents.poll();
+						// System.out.println("pressed "
+						// + ((javafx.scene.input.KeyEvent) event)
+						// .getCode()
+						// + " :: " + "down="
+						// + unprocessedKeyDownEvents.size() + ", up="
+						// + unprocessedKeyUpEvents.size());
+					} else if (event.getEventType()
+							.equals(javafx.scene.input.KeyEvent.KEY_TYPED)) {
+						// consume event if last key down event was consumed
+						if (!downEvent.doit) {
+							event.consume();
+						}
+						// System.out.println("typed "
+						// + ((javafx.scene.input.KeyEvent) event)
+						// .getCharacter()
+						// + " :: " + "down="
+						// + unprocessedKeyDownEvents.size() + ", up="
+						// + unprocessedKeyUpEvents.size());
+					} else if (event.getEventType()
+							.equals(javafx.scene.input.KeyEvent.KEY_RELEASED)) {
+						// remove key up event
+						org.eclipse.swt.widgets.Event lastUpEvent = unprocessedKeyUpEvents
+								.poll();
+						if (!lastUpEvent.doit) {
+							event.consume();
+						}
+						// System.out.println("released "
+						// + ((javafx.scene.input.KeyEvent) event)
+						// .getCode()
+						// + " :: " + "down="
+						// + unprocessedKeyDownEvents.size() + ", up="
+						// + unprocessedKeyUpEvents.size());
 					}
 				}
 			}
@@ -726,32 +717,33 @@ public class FXCanvasEx extends FXCanvas {
 						"Handler called but filter did not record any events.");
 			}
 
-			// dispatch missing (interrupted) events
+			// dispatch previous events
 			while (!sameEvent(allSwtKeyEvents.peek(), e)) {
-				org.eclipse.swt.widgets.Event preEvent = allSwtKeyEvents.poll();
-				preEvent.doit = true;
+				org.eclipse.swt.widgets.Event previousEvent = allSwtKeyEvents
+						.poll();
+				// set doit to false to indicate that the event was already
+				// processed
+				previousEvent.doit = false;
 
-				System.out.println("PRE " + preEvent);
-
-				if (SWT.KeyDown == preEvent.type) {
-					unprocessedKeyDownEvents.add(preEvent);
+				if (SWT.KeyDown == previousEvent.type) {
+					unprocessedKeyDownEvents.add(previousEvent);
 					for (Listener l : new ArrayList<>(keyDownListeners)) {
-						l.handleEvent(preEvent);
+						l.handleEvent(previousEvent);
 					}
-					superKeyListener.keyPressed(new KeyEvent(preEvent));
-				} else if (SWT.KeyUp == preEvent.type) {
-					unprocessedKeyUpEvents.add(preEvent);
+					superKeyListener.keyPressed(new KeyEvent(previousEvent));
+				} else if (SWT.KeyUp == previousEvent.type) {
+					unprocessedKeyUpEvents.add(previousEvent);
 					for (Listener l : new ArrayList<>(keyUpListeners)) {
-						l.handleEvent(preEvent);
+						l.handleEvent(previousEvent);
 					}
-					superKeyListener.keyReleased(new KeyEvent(preEvent));
+					superKeyListener.keyReleased(new KeyEvent(previousEvent));
 				}
 			}
 
-			allSwtKeyEvents.poll(); // remove e
+			// remove e from allSwtKeyEvents
+			allSwtKeyEvents.poll();
 
-			System.out.println("HANDLER " + e);
-
+			// dispatch e
 			if (SWT.KeyDown == e.type) {
 				unprocessedKeyDownEvents.add(e);
 				for (Listener l : new ArrayList<>(keyDownListeners)) {
@@ -785,60 +777,58 @@ public class FXCanvasEx extends FXCanvas {
 	private Queue<org.eclipse.swt.widgets.Event> allSwtKeyEvents = new LinkedList<>();
 
 	private Listener displayKeyFilter = new Listener() {
-		@Override
-		public void handleEvent(org.eclipse.swt.widgets.Event event) {
-			if (event.widget != FXCanvasEx.this) {
-				return;
-			}
-
-			System.out.println("SAVE " + event);
+		private org.eclipse.swt.widgets.Event copy(
+				org.eclipse.swt.widgets.Event event) {
+			// create a new SWT Event
 			org.eclipse.swt.widgets.Event copy = new org.eclipse.swt.widgets.Event();
 
+			// transfer general attributes
 			copy.display = event.display;
 			copy.widget = event.widget;
 			copy.time = event.time;
-			copy.data = event.data;
-
 			copy.type = event.type;
-
+			copy.doit = event.doit;
+			copy.data = event.data;
+			// transfer keyboard attributes
 			copy.character = event.character;
 			copy.keyCode = event.keyCode;
 			copy.keyLocation = event.keyLocation;
 			copy.stateMask = event.stateMask;
-			copy.doit = event.doit;
 
+			// ignored attributes
 			// copy.button = event.button;
-			// copy.character = event.character;
 			// copy.count = event.count;
-			// copy.data = event.data;
 			// copy.detail = event.detail;
-			// copy.display = event.display;
-			// copy.doit = event.doit;
 			// copy.end = event.end;
 			// copy.gc = event.gc;
 			// copy.height = event.height;
 			// copy.index = event.index;
 			// copy.item = event.item;
-			// copy.keyCode = event.keyCode;
-			// copy.keyLocation = event.keyLocation;
 			// copy.magnification = event.magnification;
 			// copy.rotation = event.rotation;
 			// copy.segments = event.segments;
 			// copy.segmentsChars = event.segmentsChars;
 			// copy.start = event.start;
-			// copy.stateMask = event.stateMask;
 			// copy.text = event.text;
-			// copy.time = event.time;
 			// copy.touches = event.touches;
-			// copy.type = event.type;
-			// copy.widget = event.widget;
 			// copy.width = event.width;
 			// copy.x = event.x;
 			// copy.xDirection = event.xDirection;
 			// copy.y = event.y;
 			// copy.yDirection = event.yDirection;
 
-			allSwtKeyEvents.add(copy);
+			return copy;
+		}
+
+		@Override
+		public void handleEvent(org.eclipse.swt.widgets.Event event) {
+			// XXX: Only consider events which target this FXCanvasEx
+			if (event.widget != FXCanvasEx.this) {
+				return;
+			}
+			// XXX: Copy event so that the original event data is not
+			// compromised (e.g. "type" and "doit").
+			allSwtKeyEvents.add(copy(event));
 		}
 	};
 
