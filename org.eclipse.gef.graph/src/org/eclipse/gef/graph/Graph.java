@@ -428,6 +428,19 @@ public final class Graph implements IAttributeStore {
 	}
 
 	/**
+	 * Returns the root graph of this Graph.
+	 *
+	 * @return the root graph of this graph.
+	 */
+	public Graph getRootGraph() {
+		if (nestingNode == null) {
+			return this;
+		} else {
+			return nestingNode.getGraph().getRootGraph();
+		}
+	}
+
+	/**
 	 * Returns a read-only list property containing the {@link Node}s of this
 	 * {@link Graph}.
 	 *

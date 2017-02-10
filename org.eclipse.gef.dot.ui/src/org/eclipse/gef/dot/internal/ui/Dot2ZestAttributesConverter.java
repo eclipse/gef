@@ -126,8 +126,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotLabel != null && dotLabel.equals("\\E")) { //$NON-NLS-1$
 			// The edge default label '\E' is used to indicate that an edge's
 			// name or id becomes its label.
-			boolean directed = GraphType.DIGRAPH
-					.equals(DotAttributes._getType(dot.getGraph()));
+			boolean directed = GraphType.DIGRAPH.equals(
+					DotAttributes._getType(dot.getGraph().getRootGraph()));
 			String dotName = DotAttributes._getName(dot.getSource())
 					+ (directed ? EdgeOp.DIRECTED.toString()
 							: EdgeOp.UNDIRECTED.toString())
@@ -176,8 +176,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotDir == null) {
 			// use the default direction if no direction is specified for
 			// the edge
-			dotDir = GraphType.DIGRAPH
-					.equals(DotAttributes._getType(dot.getGraph()))
+			dotDir = GraphType.DIGRAPH.equals(
+					DotAttributes._getType(dot.getGraph().getRootGraph()))
 							? DirType.FORWARD : DirType.NONE;
 		}
 
@@ -230,8 +230,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotArrowHead == null) {
 			// use the default arrow head decoration in case the graph is
 			// directed
-			if (GraphType.DIGRAPH
-					.equals(DotAttributes._getType(dot.getGraph()))) {
+			if (GraphType.DIGRAPH.equals(DotAttributes
+					._getType(dot.getGraph().getRootGraph().getRootGraph()))) {
 				zestEdgeTargetDecoration = DotArrowShapeDecorations
 						.getDefault(arrowSize, true);
 			}
@@ -252,8 +252,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotArrowTail == null) {
 			// use the default arrow tail decoration in case the graph is
 			// directed
-			if (GraphType.DIGRAPH
-					.equals(DotAttributes._getType(dot.getGraph()))) {
+			if (GraphType.DIGRAPH.equals(DotAttributes
+					._getType(dot.getGraph().getRootGraph().getRootGraph()))) {
 				zestEdgeSourceDecoration = DotArrowShapeDecorations
 						.getDefault(arrowSize, true);
 			}
@@ -276,7 +276,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// will otherwise not match
 		if (!options().emulateLayout) {
 			// splines attribute defines connection type
-			String splines = DotAttributes.getSplines(dot.getGraph());
+			String splines = DotAttributes
+					.getSplines(dot.getGraph().getRootGraph());
 			if (Splines.EMPTY.toString().equals(splines)
 					|| Splines.NONE.toString().equals(splines)) {
 				// mark as invisible

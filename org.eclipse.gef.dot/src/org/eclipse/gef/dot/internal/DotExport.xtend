@@ -118,7 +118,7 @@ class DotExport {
 	}
 
 	private def dispatch Graph rootGraph(Node node) {
-		if(node.graph.nestingNode === null) node.graph else node.graph.nestingNode.rootGraph
+		node.graph.rootGraph
 	}
 	
 	private def dispatch Graph rootGraph(Edge edge) {
