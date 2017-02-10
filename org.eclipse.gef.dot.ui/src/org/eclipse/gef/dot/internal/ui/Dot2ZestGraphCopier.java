@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Alexander Nyßen (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
 
 import java.util.ArrayList;
@@ -21,7 +33,7 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 
 	public Graph copy(Graph graph) {
 		Graph copiedGraph = super.copy(graph);
-		// post-process graph to 'flatten' non-cluster subgraphs; inser
+		// post-process graph to 'flatten' non-cluster subgraphs; insert
 		// nested nodes at index of subgraph node
 		// FIXME: no longer flatten cluster subgraphs as soon as they can be
 		// properly rendered

@@ -1321,6 +1321,9 @@ public class DotAttributes {
 	//     different parsers and serializers are required
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=#[Point, SplineType])
 	public static val String POS__NE = "pos"
+	
+	@DotAttribute(rawType="STRING", parsedType=RankType)
+	public static val String RANK__S = "rank"
 
 	@DotAttribute(rawType="STRING", parsedType=Rankdir)
 	public static val String RANKDIR__G = "rankdir"
@@ -1354,8 +1357,4 @@ public class DotAttributes {
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
 	public static val String XLP__NE = "xlp"
-	
-	@DotAttribute(rawType="STRING", parsedType=RankType)
-	public static val String RANK__S = "rank"
-
 }

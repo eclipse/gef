@@ -46,7 +46,7 @@ import java.util.Map
  * The created {@link Graph} follows the structure of the DOT input very closely. 
  * Subgraphs (including clusters) are represented by a {@link Node} with a nested {@link Graph}, 
  * where the graph holds all attributes (like the name). If a node is used in multiple (sub-)graphs, 
- * it will be contained in the graph where it is defined (first occurence)
+ * it will be contained in the graph where it is defined (first occurrence).
  * 
  * @author anyssen
  * 
@@ -66,11 +66,11 @@ class DotImport {
 	}
 
 	def List<Graph> importDot(File dotFile) {
-		importDot(DotFileUtils.read(dotFile))
+		DotFileUtils.read(dotFile).importDot
 	}
 
 	def List<Graph> importDot(String dotString) {
-		var parseResult = getDotParser().parse(new StringReader(dotString))
+		var parseResult = getDotParser.parse(new StringReader(dotString))
 
 		if (parseResult.hasSyntaxErrors) {
 			throw new IllegalArgumentException(
@@ -138,19 +138,20 @@ class DotImport {
 		setter.apply(PAGEDIR__G, [g, value|g.setPagedirRaw(value)])
 		setter.apply(RANKDIR__G, [g, value|g.setRankdirRaw(value)])
 		setter.apply(SPLINES__G, [g, value|g.setSplinesRaw(value)])
-		return graph
+		
+		graph
 	}
 
 	private def Node transformNodeId(NodeId it, Graph.Builder graphBuilder) {
 
-		// create an empty attribute lists indicating no local node attribute definitions
+		// create an empty attribute list indicating no local node attribute definitions
 		transformNodeId(#[DotFactory.eINSTANCE.createAttrList], graphBuilder)
 	}
 
 	private def Node transformNodeId(NodeId it, List<AttrList> attrLists, Graph.Builder graphBuilder) {
 		val isExistingNode = _createCache_createNode.containsKey(CollectionLiterals.newArrayList(name.toValue))
 
-		val node = name.toValue.createNode()
+		val node = name.toValue.createNode
 		if (!isExistingNode) {
 			_setNameRaw(node, name)
 			graphBuilder.nodes(node)
@@ -234,7 +235,7 @@ class DotImport {
 
 	private def dispatch void transformStmt(EdgeStmtNode it, Graph.Builder graphBuilder) {
 		var sourceNode = node.transformNodeId(graphBuilder)
-		for (EdgeRhs edgeRhs : edgeRHS) {
+		for (edgeRhs : edgeRHS) {
 			switch edgeRhs {
 				EdgeRhsNode: {
 					val targetNode = edgeRhs.node.transformNodeId(graphBuilder)
@@ -261,7 +262,7 @@ class DotImport {
 		}
 
 		// We evaluate global attributes from 'outer' scopes, by transferring global graph (applicable to subgraph, cluster), 
-		// node, and edge attributes as initial global attributes of the nested graph process all statements
+		// node, and edge attributes as initial global attributes of the nested graph process all statements.
 		globalGraphAttributes(subgraphBuilder).putAll(globalGraphAttributes(graphBuilder))
 		globalNodeAttributes(subgraphBuilder).putAll(globalNodeAttributes(graphBuilder))
 		globalEdgeAttributes(subgraphBuilder).putAll(globalEdgeAttributes(graphBuilder))
@@ -293,9 +294,9 @@ class DotImport {
 		]
 
 		// cluster and subgraph attributes
-		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
+		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])
 		setter.apply(RANK__S, [g, value|g.setRankRaw(value)])
 	}
 
