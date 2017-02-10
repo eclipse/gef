@@ -41,5 +41,4 @@ public class SquareSegmentHandlePart
 		visual.setStrokeType(StrokeType.OUTSIDE);
 		return visual;
 	}
-
 }

@@ -23,8 +23,7 @@ import javafx.scene.image.Image;
  * {@link AbstractSegmentHandlePart} that displays an expansion image. By
  * default, the {@link ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy} is
  * installed for {@link ShowHiddenNeighborsHoverHandlePart}, so that the
- * corresponding {@link NodePart} can be expanded by a click on this
- * part.
+ * corresponding {@link NodePart} can be expanded by a click on this part.
  *
  * @author mwienand
  *
@@ -49,5 +48,4 @@ public class ShowHiddenNeighborsHoverHandlePart extends AbstractSegmentHandlePar
 		blendImageView.overlayImageProperty().set(new Image(IMG_SHOW_HIDDEN_NEIGHBORS));
 		return blendImageView;
 	}
-
 }

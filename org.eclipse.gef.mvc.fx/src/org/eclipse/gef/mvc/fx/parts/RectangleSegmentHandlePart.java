@@ -141,5 +141,4 @@ public class RectangleSegmentHandlePart
 		Angle angleCcw = xVector.getAngleCCW(directionVector);
 		visual.setRotate(angleCcw.deg());
 	}
-
 }

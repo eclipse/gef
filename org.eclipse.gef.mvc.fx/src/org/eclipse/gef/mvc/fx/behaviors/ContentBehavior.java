@@ -142,7 +142,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	};
 
 	private MapChangeListener<Object, IContentPart<? extends Node>> contentPartMapObserver = new MapChangeListener<Object, IContentPart<? extends Node>>() {
-
 		@Override
 		public void onChanged(
 				MapChangeListener.Change<? extends Object, ? extends IContentPart<? extends Node>> change) {
@@ -165,31 +164,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 	};
 
-	// private void addContentPartChildren(IVisualPart<? extends Node> parent,
-	// final List<? extends Object> contentChildren, int index) {
-	// // find all content parts for which no content element exists in
-	// // contentChildren, and therefore have to be removed
-	// for (Object contentChild : contentChildren) {
-	// IContentPart<? extends Node> contentPart = findOrCreatePartFor(
-	// contentChild);
-	// if (contentPart.getParent() != null) {
-	// // TODO: Up to now a model element may only be controlled by
-	// // a single content part; unless we differentiate content
-	// // elements by context (which is not covered by the current
-	// // content part map implementation) it is an illegal state
-	// // if we locate a content part, which is already bound to a
-	// // parent and whose content is equal to the one we are
-	// // processing here.
-	// throw new IllegalStateException(
-	// "Located a ContentPart which controls the same (or an equal) content
-	// element but is already bound to a parent. A content element may only be
-	// controlled by a single ContentPart.");
-	// }
-	// parent.addChild(contentPart,
-	// index + contentChildren.indexOf(contentChild));
-	// }
-	// }
-
 	@SuppressWarnings("unchecked")
 	private List<IContentPart<? extends Node>> addAll(
 			IVisualPart<? extends Node> parent,
@@ -211,8 +185,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		for (int i = 0; i < contentChildrenSize; i++) {
 			Object content = contentChildren.get(i);
 			// Do a quick check to see if the existing content part is at
-			// the
-			// correct location in the children list.
+			// the correct location in the children list.
 			if (i < childContentPartsSize
 					&& childContentParts.get(i).getContent() == content) {
 				continue;
@@ -225,13 +198,11 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				// Re-order the existing content part to its designated
 				// location in the children list.
 				// TODO: this is wrong, it has to take into consideration
-				// the
-				// visual parts in between
+				// the visual parts in between
 				parent.reorderChild(contentPart, i);
 			} else {
 				// A ContentPart for this model does not exist yet. Create
-				// and
-				// insert one.
+				// and insert one.
 				if (contentPart.getParent() != null) {
 					// TODO: Up to now a model element may only be
 					// controlled by a single content part; unless we
