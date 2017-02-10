@@ -29,9 +29,9 @@ import javafx.scene.paint.Color;
 /**
  * An {@link AbstractSegmentHandlePart} is bound to a segment of a poly-bezier
  * handle geometry, represented by an array of {@link BezierCurve}s. The
- * segmentIndex of the {@link AbstractSegmentHandlePart} identifies that
- * segment (0, 1, 2, ...). The segmentParameter specifies the position of this
- * handle part on the segment (0 = start, 0.5 = mid, 1 = end).
+ * segmentIndex of the {@link AbstractSegmentHandlePart} identifies that segment
+ * (0, 1, 2, ...). The segmentParameter specifies the position of this handle
+ * part on the segment (0 = start, 0.5 = mid, 1 = end).
  *
  * @author anyssen
  *
@@ -63,6 +63,14 @@ public abstract class AbstractSegmentHandlePart<N extends Node>
 
 	@Override
 	public void doRefreshVisual(N visual) {
+		// FIXME: Parts are not automatically removed from the viewer models
+		// upon deactivation or removal, therefore, we need to guard against
+		// refreshing here so that no
+		if (getAnchoragesUnmodifiable().isEmpty()
+				|| !getAnchoragesUnmodifiable().keySet().iterator().next()
+						.isActive()) {
+			return;
+		}
 		updateLocation(visual);
 	}
 
@@ -280,5 +288,4 @@ public abstract class AbstractSegmentHandlePart<N extends Node>
 					positionInParent.y + visual.getLayoutBounds().getMinY());
 		}
 	}
-
 }
