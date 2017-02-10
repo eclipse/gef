@@ -33,7 +33,7 @@ import org.eclipse.xtext.validation.Check;
 public class DotHtmlLabelJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotHtmlLabelJavaValidator {
 
-	private static final String ROOT_TAG_KEY = "root";
+	private static final String ROOT_TAG_KEY = "ROOT";
 	private static final Set<String> ALL_TAGS = new HashSet<>();
 	private static final Map<String, Set<String>> validTags = new HashMap<>();
 	private static final Map<String, Set<String>> allowedParents = new HashMap<>();
@@ -98,8 +98,8 @@ public class DotHtmlLabelJavaValidator extends
 	 */
 	@Check
 	public void checkTagNameIsValid(HtmlTag tag) {
-		String tagName = tag.getName().toUpperCase();
-		if (!ALL_TAGS.contains(tagName)) {
+		String tagName = tag.getName();
+		if (!ALL_TAGS.contains(tagName.toUpperCase())) {
 			warning("The " + tagName + " tag is not supported.",
 					HtmllabelPackage.Literals.HTML_TAG__NAME);
 		} else {
@@ -113,14 +113,15 @@ public class DotHtmlLabelJavaValidator extends
 			// check if tag allowed inside parent or "root" if we could not find
 			// a parent
 			String parentName = parent == null ? ROOT_TAG_KEY
-					: parent.getName().toUpperCase();
-			if (!validTags.containsKey(parentName)) {
+					: parent.getName();
+			if (!validTags.containsKey(parentName.toUpperCase())) {
 				throw new IllegalStateException("Parent tag is unknown.");
 			}
-			if (!validTags.get(parentName).contains(tagName)) {
+			if (!validTags.get(parentName.toUpperCase())
+					.contains(tagName.toUpperCase())) {
 				warning("The " + tagName + " tag is not allowed inside "
 						+ parentName + ". It is only allowed inside "
-						+ allowedParents.get(tagName) + ".",
+						+ allowedParents.get(tagName.toUpperCase()) + ".",
 						HtmllabelPackage.Literals.HTML_TAG__NAME);
 			}
 		}
@@ -142,9 +143,10 @@ public class DotHtmlLabelJavaValidator extends
 		if (container instanceof HtmlTag) {
 			HtmlTag tag = (HtmlTag) container;
 			if (tag != null) {
-				String tagName = tag.getName().toUpperCase();
-				if (!validAttributes.containsKey(tagName)
-						|| !validAttributes.get(tagName).contains(attrName)) {
+				String tagName = tag.getName();
+				if (!validAttributes.containsKey(tagName.toUpperCase())
+						|| !validAttributes.get(tagName.toUpperCase())
+								.contains(attrName.toUpperCase())) {
 					warning("The " + attrName
 							+ " attribute is not allowed inside " + tagName
 							+ ".", HtmllabelPackage.Literals.HTML_ATTR__NAME);
