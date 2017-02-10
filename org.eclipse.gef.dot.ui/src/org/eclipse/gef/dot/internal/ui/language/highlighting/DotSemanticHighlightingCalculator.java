@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 itemis AG and others.
+ * Copyright (c) 2014, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - minor refactorings
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
@@ -31,6 +32,12 @@ public class DotSemanticHighlightingCalculator
 	@Override
 	public void provideHighlightingFor(XtextResource resource,
 			IHighlightedPositionAcceptor acceptor) {
+
+		// the resource may be null in case of errors in the model
+		if (resource == null) {
+			return;
+		}
+
 		// It gets a node model.
 		INode root = resource.getParseResult().getRootNode();
 		for (INode node : root.getAsTreeIterable()) {

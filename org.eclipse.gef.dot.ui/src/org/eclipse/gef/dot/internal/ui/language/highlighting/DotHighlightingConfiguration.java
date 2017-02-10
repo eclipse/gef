@@ -32,6 +32,7 @@ public class DotHighlightingConfiguration
 	public static final String QUOTED_STRING_ID = "quoted_string"; //$NON-NLS-1$
 	public static final String NUMERAL_ID = "numeral"; //$NON-NLS-1$
 
+	@Override
 	public void configure(IHighlightingConfigurationAcceptor acceptor) {
 
 		// semantic highlighting
