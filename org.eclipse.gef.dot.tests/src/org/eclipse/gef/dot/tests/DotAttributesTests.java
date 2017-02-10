@@ -2589,6 +2589,27 @@ public class DotAttributesTests {
 		assertEquals("sink", DotAttributes.getRank(subgraph));
 		assertEquals(RankType.SINK, DotAttributes.getRankParsed(subgraph));
 
+		// set valid parsed values
+		DotAttributes.setRankParsed(subgraph, RankType.SAME);
+		assertEquals("same", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.SAME, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRankParsed(subgraph, RankType.MIN);
+		assertEquals("min", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.MIN, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRankParsed(subgraph, RankType.SOURCE);
+		assertEquals("source", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.SOURCE, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRankParsed(subgraph, RankType.MAX);
+		assertEquals("max", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.MAX, DotAttributes.getRankParsed(subgraph));
+
+		DotAttributes.setRankParsed(subgraph, RankType.SINK);
+		assertEquals("sink", DotAttributes.getRank(subgraph));
+		assertEquals(RankType.SINK, DotAttributes.getRankParsed(subgraph));
+
 		// set invalid string value
 		try {
 			DotAttributes.setRank(subgraph, "foo");
