@@ -213,27 +213,30 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 	 *
 	 * @param event
 	 *            The {@link MouseEvent} in question.
+	 * @param targetParts
+	 *            The list of (provisional) target {@link IContentPart}s.
 	 * @return <code>true</code> if the given {@link MouseEvent} should trigger
 	 *         translation, otherwise <code>false</code>.
 	 */
 	// TODO (bug #493418): This condition needs improvement
-	protected boolean isTranslate(MouseEvent event) {
-		// do not translate the only selected part if an
+	protected boolean isTranslate(MouseEvent event,
+			List<IContentPart<? extends Node>> targetParts) {
+		// do not translate the only selected part if a
 		// BendOnSegmentDragPolicy is registered for that part and the part is
 		// an orthogonal connection that is connected at source and/or target
-		if (targets.size() == 1 && targets.get(0).getKey()
+		if (targetParts.size() == 1 && targetParts.get(0)
 				.getAdapter(BendOnSegmentDragPolicy.class) != null) {
-			IContentPart<? extends Node> part = targets.get(0).getKey();
+			IContentPart<? extends Node> part = targetParts.get(0);
 			Node visual = part.getVisual();
 			if (visual instanceof Connection
 					&& ((Connection) visual)
 							.getRouter() instanceof OrthogonalRouter
 					&& (((Connection) visual).isStartConnected()
 							|| ((Connection) visual).isEndConnected())) {
-				targets = null;
+				targetParts = null;
 			}
 		}
-		if (targets == null || targets.isEmpty()) {
+		if (targetParts == null || targetParts.isEmpty()) {
 			// abort this policy if no target parts could be found
 			return false;
 		}
@@ -267,7 +270,7 @@ public class TranslateSelectedOnDragPolicy extends AbstractInteractionPolicy
 		targets = new ArrayList<>();
 
 		// decide whether to perform translation
-		invalidGesture = !isTranslate(e);
+		invalidGesture = !isTranslate(e, targetParts);
 		if (invalidGesture) {
 			return;
 		}

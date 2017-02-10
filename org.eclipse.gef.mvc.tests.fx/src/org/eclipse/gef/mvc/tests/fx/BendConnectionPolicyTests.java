@@ -380,7 +380,6 @@ public class BendConnectionPolicyTests {
 	}
 
 	public static class TestModule extends MvcFxModule {
-
 		@Override
 		protected void bindAbstractContentPartAdapters(final MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 			super.bindAbstractContentPartAdapters(adapterMapBinder);
@@ -2940,10 +2939,17 @@ public class BendConnectionPolicyTests {
 		final ConnectionPart firstConnectionPart = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 2));
 
-		final Point firstConnectionMid = ctx.runAndWait(new RunnableWithResult<Point>() {
+		final Point firstConnectionEnd = ctx.runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {
 				((GeometryNode<?>) firstConnectionPart.getVisual().getCurve()).setStrokeWidth(5);
+				return firstConnectionPart.getVisual().getEndPoint();
+			}
+		});
+
+		final Point firstConnectionMid = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
 				return firstConnectionPart.getVisual().getStartPoint().getTranslated(firstConnectionPart.getVisual()
 						.getStartPoint().getDifference(firstConnectionPart.getVisual().getPoint(1)).getScaled(0.5));
 			}
@@ -2960,9 +2966,8 @@ public class BendConnectionPolicyTests {
 			}
 		});
 
-		// drag connection down by 10px
+		// select connection
 		ctx.mousePress();
-		ctx.mouseDrag(firstConnectionMid.x, firstConnectionMid.y + 10);
 		ctx.mouseRelease();
 
 		// check the connection is selected
@@ -3002,7 +3007,15 @@ public class BendConnectionPolicyTests {
 			}
 		});
 
-		// check the second connection was moved too
+		// check first connection was moved
+		assertNotEquals(firstConnectionEnd, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return firstConnectionPart.getVisual().getStartPoint();
+			}
+		}));
+
+		// check second connection was moved
 		assertNotEquals(secondConnectionStart, ctx.runAndWait(new RunnableWithResult<Point>() {
 			@Override
 			public Point run() {

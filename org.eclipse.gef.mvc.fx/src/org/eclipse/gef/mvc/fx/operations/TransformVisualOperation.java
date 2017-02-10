@@ -151,5 +151,4 @@ public class TransformVisualOperation extends AbstractOperation
 		applyTransform(initialTransform);
 		return Status.OK_STATUS;
 	}
-
 }
