@@ -128,31 +128,31 @@ public class DotAttributes {
 	public static def Context getContext(EObject eObject) {
 
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
-		if (eObject.getContainerOfType(EdgeStmtNode) != null || 
-			eObject.getContainerOfType(EdgeStmtSubgraph) != null
+		if (eObject.getContainerOfType(EdgeStmtNode) !== null || 
+			eObject.getContainerOfType(EdgeStmtSubgraph) !== null
 		) {
 			return Context.EDGE
 		}
 
 		// global AttrStmt with AttributeType 'edge'
 		val AttrStmt attrStmt = eObject.getContainerOfType(AttrStmt)
-		if (attrStmt != null && AttributeType.EDGE.equals(attrStmt.getType)) {
+		if (attrStmt !== null && AttributeType.EDGE.equals(attrStmt.getType)) {
 			return Context.EDGE
 		}
 
 		// attribute nested below NodeStmt
-		if (eObject.getContainerOfType(NodeStmt) != null) {
+		if (eObject.getContainerOfType(NodeStmt) !== null) {
 			return Context.NODE
 		}
 
 		// global AttrStmt with AttributeType 'node'
-		if (attrStmt != null && AttributeType.NODE.equals(attrStmt.getType)) {
+		if (attrStmt !== null && AttributeType.NODE.equals(attrStmt.getType)) {
 			return Context.NODE
 		}
 
 		// attribute nested below Subgraph
 		val Subgraph subgraph = eObject.getContainerOfType(Subgraph)
-		if (subgraph != null) {
+		if (subgraph !== null) {
 			if (subgraph.getName.toValue.startsWith("cluster")) {
 				return Context.CLUSTER
 			}
@@ -271,7 +271,7 @@ public class DotAttributes {
 	 * @return The serialized value, or <code>null</code> if the value could not be serialized.
 	 */
 	private static def <T> String serializeAttributeValue(IAttributeValueSerializer<T> serializer, T attributeValue) {
-		if (attributeValue == null) {
+		if (attributeValue === null) {
 			return null
 		}
 		return serializer.serialize(attributeValue)
@@ -291,7 +291,7 @@ public class DotAttributes {
 	 *         parsed.
 	 */
 	private static def <T> T parseAttributeValue(IAttributeValueParser<T> parser, String attributeValue) {
-		if (attributeValue == null) {
+		if (attributeValue === null) {
 			return null
 		}
 		return parser.parse(attributeValue).getParsedValue
@@ -302,7 +302,7 @@ public class DotAttributes {
 		IAttributeValueValidator<T> validator, Context attributeContext, String attributeName, ID attributeValue) {
 
 		// determine dot attribute type name from parsed type
-		val attributeType = if(parser == null) String else parser.parsedType
+		val attributeType = if(parser === null) String else parser.parsedType
 		var String attributeTypeName = switch (attributeType) {
 			case Integer: "int"
 			case Boolean: "bool"
@@ -311,7 +311,7 @@ public class DotAttributes {
 
 		// parse value first (if a parser is given); otherwise take the (String) value
 		var T parsedValue = null
-		if (parser != null) {
+		if (parser !== null) {
 			val parseResult = parser.parse(attributeValue.toValue)
 			if (parseResult.hasSyntaxErrors) {
 
@@ -331,7 +331,7 @@ public class DotAttributes {
 
 		// handle semantical problems
 		val List<Diagnostic> diagnostics = newArrayList
-		if (validator != null) {
+		if (validator !== null) {
 			val List<Diagnostic> validationResults = validator.validate(attributeContext, parsedValue)
 			for (Diagnostic r : validationResults) {
 				diagnostics.add(
@@ -443,7 +443,7 @@ public class DotAttributes {
 		}
 
 		public def override ParseResult<E> parse(String attributeValue) {
-			if (attributeValue == null) {
+			if (attributeValue === null) {
 				return null
 			}
 			for (E value : definition.getEnumConstants) {
@@ -522,14 +522,14 @@ public class DotAttributes {
 		}
 
 		protected def IParser getParser() {
-			if (xtextParser == null) {
+			if (xtextParser === null) {
 				xtextParser = injector.getInstance(IParser)
 			}
 			return xtextParser
 		}
 
 		override getParsedType() {
-			if (parsedType == null) {
+			if (parsedType === null) {
 				val grammarAccess = injector.getInstance(IGrammarAccess)
 				parsedType = grammarAccess.grammar.rules.head.type.classifier.instanceClass as Class<T>
 			}
@@ -552,7 +552,7 @@ public class DotAttributes {
 		}
 
 		protected def ISerializer getSerializer() {
-			if (serializer == null) {
+			if (serializer === null) {
 				serializer = injector.getInstance(ISerializer)
 			}
 			return serializer
@@ -631,7 +631,7 @@ public class DotAttributes {
 		}
 
 		protected def AbstractDeclarativeValidator getValidator() {
-			if (validator == null) {
+			if (validator === null) {
 				validator = injector.getInstance(validatorClass)
 			}
 			return validator
@@ -644,7 +644,7 @@ public class DotAttributes {
 
 			// validation is optional; if validator is provided, check for
 			// semantic problems using it
-			if (validator != null) {
+			if (validator !== null) {
 
 				// we need a specific message acceptor
 				validator.setMessageAcceptor(
@@ -816,7 +816,7 @@ public class DotAttributes {
 	private static val BOOL_PARSER = new IAttributeValueParser<Boolean> {
 
 		public def override ParseResult<Boolean> parse(String rawValue) {
-			if (rawValue == null) {
+			if (rawValue === null) {
 				return null
 			}
 
@@ -866,7 +866,7 @@ public class DotAttributes {
 	private static val DOUBLE_PARSER = new IAttributeValueParser<Double> {
 
 		public def override ParseResult<Double> parse(String rawValue) {
-			if (rawValue == null) {
+			if (rawValue === null) {
 				return null
 			}
 			try {
@@ -903,7 +903,7 @@ public class DotAttributes {
 	private static val INT_PARSER = new IAttributeValueParser<Integer> {
 
 		public def override ParseResult<Integer> parse(String rawValue) {
-			if (rawValue == null) {
+			if (rawValue === null) {
 				return null
 			}
 			try {
@@ -1132,7 +1132,7 @@ public class DotAttributes {
 	 */
 	public static def String _getName(Graph graph) {
 		val ID _nameRaw = _getNameRaw(graph)
-		return if(_nameRaw != null) _nameRaw.toValue else null
+		return if(_nameRaw !== null) _nameRaw.toValue else null
 	}
 
 	/**
@@ -1161,7 +1161,7 @@ public class DotAttributes {
 	 */
 	public static def String _getName(Node node) {
 		val ID _nameRaw = _getNameRaw(node)
-		return if(_nameRaw != null) _nameRaw.toValue else null
+		return if(_nameRaw !== null) _nameRaw.toValue else null
 	}
 
 	/**

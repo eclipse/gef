@@ -40,13 +40,13 @@ class DotExport {
 		for (graph : graphs) {
 
 			// graph type is mandatory meta-attribute
-			if (graph.type == null) {
+			if (graph.type === null) {
 				throw new IllegalArgumentException(
 					"The " + _TYPE__G + " attribute has to be set on the input graph " + graph + ".");
 			}
 
 			// node name is mandatory meta-attribute
-			if (graph.nodes.filter[nestedGraph == null].exists[!hasName]) {
+			if (graph.nodes.filter[nestedGraph === null].exists[!hasName]) {
 				throw new IllegalArgumentException(
 					"The " + _NAME__GNE + " attribute has to be set for all nodes of the input graph " + graph + ".");
 			}
@@ -84,7 +84,7 @@ class DotExport {
 	}
 
 	private def String print(Node node) {
-		if (node.nestedGraph != null) {
+		if (node.nestedGraph !== null) {
 			'''
 			subgraph «IF node.nestedGraph.hasName»«node.nestedGraph.name» «ENDIF»{
 				«IF node.nestedGraph.hasNonMetaAttributes»
@@ -101,7 +101,7 @@ class DotExport {
 	}
 
 	private def hasName(IAttributeStore it) {
-		it.attributes.get(_NAME__GNE) != null
+		it.attributes.get(_NAME__GNE) !== null
 	}
 
 	private def GraphType type(Graph it) {
@@ -118,11 +118,11 @@ class DotExport {
 	}
 
 	private def dispatch Graph rootGraph(Node node) {
-		if(node.graph.nestingNode == null) return node.graph else return node.graph.nestingNode.rootGraph
+		if(node.graph.nestingNode === null) return node.graph else return node.graph.nestingNode.rootGraph
 	}
 	
 	private def dispatch Graph rootGraph(Edge edge) {
-		if(edge.graph.nestingNode == null) return edge.graph else return edge.graph.nestingNode.rootGraph
+		if(edge.graph.nestingNode === null) return edge.graph else return edge.graph.nestingNode.rootGraph
 	}
 
 	private def hasNonMetaAttributes(IAttributeStore store) {

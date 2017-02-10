@@ -57,7 +57,7 @@ class DotImport {
 	var static IParser dotParser
 	
 	private static def IParser getDotParser() {
-		if (dotParser == null) {
+		if (dotParser === null) {
 
 			// if we are not injected (standalone), create parser instance
 			dotParser = new DotStandaloneSetup().createInjectorAndDoEMFRegistration().getInstance(DotParser)
@@ -103,7 +103,7 @@ class DotImport {
 		_createCache_createNode.clear
 
 		// name (meta-attribute)
-		if (name != null) {
+		if (name !== null) {
 			graphBuilder.attr(_NAME__GNE, name)
 		}
 
@@ -121,7 +121,7 @@ class DotImport {
 		// apply all global graph attributes we have processed before
 		val setter = [ String attributeName, (Graph, ID)=>void f |
 			val attributeValue = getAttributeValue(attributeName)
-			if (attributeValue != null) {
+			if (attributeValue !== null) {
 				f.apply(graph, attributeValue)
 			} else if (globalGraphAttributes(graphBuilder).containsKey(attributeName)) {
 				f.apply(graph, globalGraphAttributes(graphBuilder).get(attributeName))
@@ -158,7 +158,7 @@ class DotImport {
 
 		val setter = [ String attributeName, (Node, ID)=>void f |
 			val attributeValue = attrLists.getAttributeValue(attributeName)
-			if (attributeValue != null) {
+			if (attributeValue !== null) {
 				f.apply(node, attributeValue)
 			} else if (!isExistingNode && globalNodeAttributes(graphBuilder).containsKey(attributeName)) {
 				//XXX:  consider the global nodes attributes only if the node has just been created
@@ -252,11 +252,11 @@ class DotImport {
 
 	private def dispatch void transformStmt(Subgraph it, Graph.Builder graphBuilder) {
 		// anonymous subgraphs cannot be 'merged', which is why we have to create a new subgraph for each
-		val isExistingSubgraph = name != null && _createCache_createSubgraph.containsKey(CollectionLiterals.newArrayList(name.toValue))
+		val isExistingSubgraph = name !== null && _createCache_createSubgraph.containsKey(CollectionLiterals.newArrayList(name.toValue))
 		val subgraphBuilder = new Graph.Builder
-		val subgraphNode = if(name == null) System::identityHashCode(subgraphBuilder).toString.createSubgraph else name.toValue.createSubgraph
+		val subgraphNode = if(name === null) System::identityHashCode(subgraphBuilder).toString.createSubgraph else name.toValue.createSubgraph
 
-		if (name != null) {
+		if (name !== null) {
 			subgraphBuilder.attr(_NAME__GNE, name)
 		}
 
@@ -285,7 +285,7 @@ class DotImport {
 		// apply all global cluster and subgraph attributes to subgraph
 		val setter = [ String attributeName, (Graph, ID)=>void f |
 			val attributeValue = getAttributeValue(attributeName)
-			if (attributeValue != null) {
+			if (attributeValue !== null) {
 				f.apply(subgraph, attributeValue)
 			} else if (globalGraphAttributes(subgraphBuilder).containsKey(attributeName)) {
 				f.apply(subgraph, globalGraphAttributes(subgraphBuilder).get(attributeName))
@@ -311,7 +311,7 @@ class DotImport {
 
 		val setter = [ String attributeName, (Edge, ID)=>void f |
 			val attributeValue = attrLists.getAttributeValue(attributeName)
-			if (attributeValue != null) {
+			if (attributeValue !== null) {
 				f.apply(edge, attributeValue)
 			} else if (globalEdgeAttributes(graphBuilder).containsKey(attributeName)) {
 				f.apply(edge, globalEdgeAttributes(graphBuilder).get(attributeName))
@@ -349,7 +349,7 @@ class DotImport {
 				Attribute:
 					stmt.getAttributeValue(name)
 			}
-			if (value != null) {
+			if (value !== null) {
 				return value
 			}
 		}
@@ -363,7 +363,7 @@ class DotImport {
 				Attribute:
 					stmt.getAttributeValue(name)
 			}
-			if (value != null) {
+			if (value !== null) {
 				return value
 			}
 		}
@@ -384,7 +384,7 @@ class DotImport {
 	def static ID getAttributeValue(List<AttrList> attrLists, String name) {
 		for (AttrList attrList : attrLists) {
 			val value = attrList.getAttributeValue(name)
-			if (value != null) {
+			if (value !== null) {
 				return value
 			}
 		}
