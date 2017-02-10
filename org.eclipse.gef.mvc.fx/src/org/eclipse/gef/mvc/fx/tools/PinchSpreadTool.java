@@ -103,29 +103,15 @@ public class PinchSpreadTool extends AbstractTool {
 	protected EventHandler<ZoomEvent> createZoomFilter(Scene scene,
 			IViewer viewer) {
 		return new EventHandler<ZoomEvent>() {
-			int state = 0;
-
 			@Override
 			public void handle(ZoomEvent event) {
 				if (ZoomEvent.ZOOM.equals(event.getEventType())) {
-					if (state != 1) {
-						System.err.println(
-								"ZOOM in wrong state! Need ZOOM_STARTED first!");
-					}
-					state = 2;
-
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
 							viewer)) {
 						policy.zoom(event);
 					}
 				} else if (ZoomEvent.ZOOM_STARTED
 						.equals(event.getEventType())) {
-					if (state != 0) {
-						System.err.println(
-								"ZOOM_STARTED in wrong state! Need ZOOM_FINISHED or no event first!");
-					}
-					state = 1;
-
 					// zoom finish may not occur, so close any preceding
 					// transaction just in case
 					if (!getDomain()
@@ -154,12 +140,6 @@ public class PinchSpreadTool extends AbstractTool {
 					}
 				} else if (ZoomEvent.ZOOM_FINISHED
 						.equals(event.getEventType())) {
-					if (state != 1 && state != 2) {
-						System.err.println(
-								"ZOOM_FINISHED in wrong state! Need ZOOM_STARTED or ZOOM first!");
-					}
-					state = 0;
-
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
 							viewer)) {
 						policy.endZoom(event);
