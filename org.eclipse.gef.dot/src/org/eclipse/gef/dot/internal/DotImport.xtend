@@ -17,6 +17,7 @@ import com.google.inject.Inject
 import java.io.File
 import java.io.StringReader
 import java.util.List
+import java.util.Map
 import org.eclipse.gef.dot.internal.language.DotStandaloneSetup
 import org.eclipse.gef.dot.internal.language.dot.AttrList
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt
@@ -24,7 +25,6 @@ import org.eclipse.gef.dot.internal.language.dot.Attribute
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.language.dot.DotFactory
 import org.eclipse.gef.dot.internal.language.dot.DotGraph
-import org.eclipse.gef.dot.internal.language.dot.EdgeRhs
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeId
@@ -39,7 +39,6 @@ import org.eclipse.gef.graph.Node
 import org.eclipse.xtext.parser.IParser
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
-import java.util.Map
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.
@@ -129,10 +128,10 @@ class DotImport {
 		]
 
 		// graph attributes
-		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])
-		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterrankRaw(value)])
+		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
+		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])
 		setter.apply(LAYOUT__G, [g, value|g.setLayoutRaw(value)])
 		setter.apply(OUTPUTORDER__G, [g, value|g.setOutputorderRaw(value)])
 		setter.apply(PAGEDIR__G, [g, value|g.setPagedirRaw(value)])
@@ -153,7 +152,7 @@ class DotImport {
 
 		val node = name.toValue.createNode
 		if (!isExistingNode) {
-			_setNameRaw(node, name)
+			node._setNameRaw(name)
 			graphBuilder.nodes(node)
 		}
 
