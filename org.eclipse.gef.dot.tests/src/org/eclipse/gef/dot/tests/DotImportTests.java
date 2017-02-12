@@ -1491,38 +1491,6 @@ public final class DotImportTests {
 		assertEquals(2, graph.getEdges().size());
 	}
 
-	private Node[] createNodes() {
-		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
-				.buildNode();
-		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2") //$NON-NLS-1$
-				.buildNode();
-		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "3") //$NON-NLS-1$
-				.buildNode();
-		Node n4 = new Node.Builder().attr(DotAttributes::_setName, "4") //$NON-NLS-1$
-				.buildNode();
-		return new Node[] { n1, n2, n3, n4 };
-	}
-
-	// TODO: Generalize to multiple graphs
-	private Graph importFile(final File dotFile) {
-		Assert.assertTrue("DOT input file must exist: " + dotFile, //$NON-NLS-1$
-				dotFile.exists());
-		List<Graph> graphs = dotImport.importDot(dotFile);
-		return graphs.isEmpty() ? null : graphs.get(0);
-	}
-
-	// TODO: Generalize to multiple graphs
-	private Graph importString(final String dotString) {
-		List<Graph> graphs = dotImport.importDot(dotString);
-		return graphs.isEmpty() ? null : graphs.get(0);
-	}
-
-	private void testStringImport(Graph expected, String dot) {
-		List<Graph> graphs = dotImport.importDot(dot);
-		Assert.assertEquals("Expected one graph", 1, graphs.size()); //$NON-NLS-1$
-		Assert.assertEquals(expected.toString(), graphs.get(0).toString());
-	}
-
 	@Test
 	public void subraphScoping() {
 		// Input:
@@ -1561,5 +1529,37 @@ public final class DotImportTests {
 		assertEquals("hexagon", DotAttributes.getShape(c));
 		assertEquals("filled", DotAttributes.getStyle(c));
 		assertEquals("red", DotAttributes.getFillcolor(c));
+	}
+
+	private Node[] createNodes() {
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
+				.buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2") //$NON-NLS-1$
+				.buildNode();
+		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "3") //$NON-NLS-1$
+				.buildNode();
+		Node n4 = new Node.Builder().attr(DotAttributes::_setName, "4") //$NON-NLS-1$
+				.buildNode();
+		return new Node[] { n1, n2, n3, n4 };
+	}
+
+	// TODO: Generalize to multiple graphs
+	private Graph importFile(final File dotFile) {
+		Assert.assertTrue("DOT input file must exist: " + dotFile, //$NON-NLS-1$
+				dotFile.exists());
+		List<Graph> graphs = dotImport.importDot(dotFile);
+		return graphs.isEmpty() ? null : graphs.get(0);
+	}
+
+	// TODO: Generalize to multiple graphs
+	private Graph importString(final String dotString) {
+		List<Graph> graphs = dotImport.importDot(dotString);
+		return graphs.isEmpty() ? null : graphs.get(0);
+	}
+
+	private void testStringImport(Graph expected, String dot) {
+		List<Graph> graphs = dotImport.importDot(dot);
+		Assert.assertEquals("Expected one graph", 1, graphs.size()); //$NON-NLS-1$
+		Assert.assertEquals(expected.toString(), graphs.get(0).toString());
 	}
 }

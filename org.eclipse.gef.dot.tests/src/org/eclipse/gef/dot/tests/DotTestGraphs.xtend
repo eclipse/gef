@@ -260,7 +260,8 @@ class DotTestGraphs {
 			subgraph{
 				
 			}
-	}'''
+		}
+	'''
 	
 	public static val PORTS = '''
 		graph {
