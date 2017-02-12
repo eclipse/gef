@@ -110,8 +110,8 @@ class DotImport {
 		// type (meta-attribute)
 		graphBuilder.attr(_TYPE__G, type)
 
-		// process all statements
-		stmts.forEach[transformStmt(graphBuilder)]
+		// process all statements except for graph attributes, they will be processed later
+		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt(graphBuilder)]
 
 		// process the graph last, so we can initialize attributes of the
 		// created graph object rather than using the builder we can thus
