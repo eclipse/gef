@@ -41,6 +41,14 @@ public class DotEscStringTests {
 	private ValidationTestHelper validationTestHelper;
 
 	@Test
+	public void test_empty() throws Throwable {
+		String text = "";
+		EscString ast = parse(text);
+		EList<JustifiedText> segments = ast.getLines();
+		assertEquals(0, segments.size());
+	}
+
+	@Test
 	public void test_text_with_escape_sequences() throws Throwable {
 		String text = "Some text containing \\arbitrary \\escape \\sequences.";
 		EscString ast = parse(text);
