@@ -34,6 +34,9 @@ import org.eclipse.gef.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef.mvc.examples.logo.ui.properties.GeometricCurvePropertySource;
 import org.eclipse.gef.mvc.examples.logo.ui.properties.MvcLogoExampleViewPropertySource;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
+import org.eclipse.gef.mvc.fx.models.FocusModel;
+import org.eclipse.gef.mvc.fx.models.HoverModel;
+import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
@@ -126,8 +129,14 @@ public class MvcLogoExampleView extends AbstractFXView {
 
 	@Override
 	public void dispose() {
-		// clear viewer contents
+		// clear viewer models
+		getContentViewer().getAdapter(SelectionModel.class).clearSelection();
+		getContentViewer().getAdapter(HoverModel.class).clearHover();
+		getContentViewer().getAdapter(FocusModel.class).setFocus(null);
 		getContentViewer().contentsProperty().clear();
+		getPaletteViewer().getAdapter(SelectionModel.class).clearSelection();
+		getPaletteViewer().getAdapter(HoverModel.class).clearHover();
+		getPaletteViewer().getAdapter(FocusModel.class).setFocus(null);
 		getPaletteViewer().contentsProperty().clear();
 
 		// dispose actions
