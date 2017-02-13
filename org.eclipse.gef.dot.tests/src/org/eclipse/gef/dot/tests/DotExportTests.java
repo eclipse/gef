@@ -67,32 +67,30 @@ public class DotExportTests {
 	}
 
 	private void testDotExport(final Graph graph, String fileName) {
-		// test exporting the graph into a string
-		String dot = dotExport.exportDot(graph);
-		String fileContents = DotFileUtils
+		String expected = DotFileUtils
 				.read(new File(RESOURCES_TESTS + fileName));
-		assertEquals(fileContents, dot);
 
-		/* verify that there is no blank lines in the exported dot string */
-		assertNoBlankLines(dot);
+		// test exporting the graph into a string
+		String actual = dotExport.exportDot(graph);
+		assertEquals(expected, actual);
+		assertNoBlankLines(actual);
 
 		// test exporting the graph into a file
-		File outputFile;
+		File outputFile = null;
 		try {
 			outputFile = outputFolder.newFile(fileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail("Cannot create temporary file " + fileName + " "
 					+ e.getMessage());
-			return;
 		}
 
 		dotExport.exportDot(graph, outputFile.getPath());
 		Assert.assertTrue("Generated file " + outputFile.getName() //$NON-NLS-1$
 				+ " must exist!", outputFile.exists());
-		String dotRead = DotFileUtils.read(outputFile);
+		actual = DotFileUtils.read(outputFile);
 		Assert.assertEquals("File output and String output should be equal;", //$NON-NLS-1$
-				dot, dotRead);
+				expected, actual);
 	}
 
 	private void assertNoBlankLines(final String dot) {
