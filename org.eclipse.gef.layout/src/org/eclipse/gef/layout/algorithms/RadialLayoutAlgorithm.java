@@ -46,7 +46,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 	public RadialLayoutAlgorithm() {
 	}
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		if (!clean)
 			return;
 		treeLayout.internalApplyLayout();
@@ -98,7 +98,8 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * Set the range the radial layout will use when
-	 * {@link #applyLayout(boolean)} is called. Both values must be in radians.
+	 * {@link #applyLayout(boolean, Object)} is called. Both values must be in
+	 * radians.
 	 * 
 	 * @param startDegree
 	 *            The start angle for this algorithm (in degree).

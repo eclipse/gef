@@ -41,7 +41,7 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 
 	private LayoutContext context;
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		if (!clean)
 			return;
 		ArrayList<List<Node>> rowsList = new ArrayList<>();

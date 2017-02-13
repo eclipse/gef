@@ -64,7 +64,7 @@ public class CustomLayoutExample extends AbstractZestExample {
 			private LayoutContext context;
 
 			@Override
-			public void applyLayout(boolean clean) {
+			public void applyLayout(boolean clean, Object extra) {
 				Node[] entitiesToLayout = context.getNodes();
 				int totalSteps = entitiesToLayout.length;
 				double distance = LayoutProperties.getBounds(context.getGraph())

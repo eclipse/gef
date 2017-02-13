@@ -41,9 +41,9 @@ public class CompositeLayoutAlgorithm implements ILayoutAlgorithm {
 		this.algorithms = algorithms;
 	}
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		for (int i = 0; i < algorithms.length; i++) {
-			algorithms[i].applyLayout(clean);
+			algorithms[i].applyLayout(clean, extra);
 		}
 	}
 

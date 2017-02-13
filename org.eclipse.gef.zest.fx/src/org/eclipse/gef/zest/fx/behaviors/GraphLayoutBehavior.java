@@ -148,7 +148,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		}
 
 		// apply layout (if no algorithm is set, will be a no-op)
-		layoutContext.applyLayout(true);
+		layoutContext.applyLayout(true, null);
 	}
 
 	/**

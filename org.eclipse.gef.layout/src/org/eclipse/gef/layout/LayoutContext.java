@@ -66,15 +66,17 @@ public class LayoutContext {
 	 * @param clear
 	 *            <code>true</code> to indicate that the algorithm has to fully
 	 *            re-compute the layout, otherwise <code>false</code>.
+	 * @param extra
+	 *            An extra {@link Object} parameter that can be used to pass-on
+	 *            additional information to
+	 *            {@link ILayoutAlgorithm#applyLayout(boolean, Object)}.
 	 */
-	public void applyLayout(boolean clear) {
-		// we should schedule
-
+	public void applyLayout(boolean clear, Object extra) {
 		ILayoutAlgorithm layoutAlgorithm = layoutAlgorithmProperty.get();
 		if (layoutAlgorithm != null) {
 			preLayout();
 			layoutAlgorithm.setLayoutContext(this);
-			layoutAlgorithm.applyLayout(clear);
+			layoutAlgorithm.applyLayout(clear, extra);
 			postLayout();
 		}
 	}
@@ -241,7 +243,7 @@ public class LayoutContext {
 	/**
 	 * Adds the given {@link Runnable} to the list of {@link Runnable}s which
 	 * are executed before applying a layout, i.e. before
-	 * {@link #applyLayout(boolean)}.
+	 * {@link #applyLayout(boolean, Object)}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} to add to the list of {@link Runnable}s
@@ -288,7 +290,7 @@ public class LayoutContext {
 	/**
 	 * Removes the given {@link Runnable} from the list of {@link Runnable}s
 	 * which are executed before applying a layout, i.e. before
-	 * {@link #applyLayout(boolean)}.
+	 * {@link #applyLayout(boolean, Object)}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} to remove from the list of
@@ -302,5 +304,4 @@ public class LayoutContext {
 			preLayoutPass.remove(runnable);
 		}
 	}
-
 }

@@ -924,7 +924,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					"Invalid direction: " + direction);
 	}
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
 		if (bounds.isEmpty()) {
 			return;

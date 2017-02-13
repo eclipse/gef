@@ -181,7 +181,7 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		return context;
 	}
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		if (!clean)
 			return;
 

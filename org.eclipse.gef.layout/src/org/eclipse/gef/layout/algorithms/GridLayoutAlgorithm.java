@@ -94,7 +94,7 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 		this.context = context;
 	}
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		if (!clean)
 			return;
 		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
@@ -106,9 +106,8 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 				if ((i * cols + j) < numChildren) {
 					Node node = context.getNodes()[index++];
 					if (resize && LayoutProperties.isResizable(node))
-						LayoutProperties.setSize(node,
-								new Dimension(Math.max(childrenWidth,
-										MIN_ENTITY_SIZE),
+						LayoutProperties.setSize(node, new Dimension(
+								Math.max(childrenWidth, MIN_ENTITY_SIZE),
 								Math.max(childrenHeight, MIN_ENTITY_SIZE)));
 					Dimension size = LayoutProperties.getSize(node);
 					double xmove = bounds.getX() + j * colWidth + offsetX

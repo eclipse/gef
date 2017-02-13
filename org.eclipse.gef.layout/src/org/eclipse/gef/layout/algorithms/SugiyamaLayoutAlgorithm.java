@@ -1340,7 +1340,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		return context;
 	}
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		if (!clean)
 			return;
 		layers.clear();

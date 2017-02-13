@@ -51,7 +51,7 @@ public class DotLayoutExample extends AbstractZestExample {
 		private LayoutContext context;
 
 		@Override
-		public void applyLayout(boolean clean) {
+		public void applyLayout(boolean clean, Object extra) {
 			// Convert a Graph with LayoutAttributes (input model to
 			// ILayoutAlgorithm) to a Graph with DotAttributes, which can be
 			// exported to a DOT string; transfer node names to be able to
@@ -150,5 +150,4 @@ public class DotLayoutExample extends AbstractZestExample {
 				.edge(spock, scissors).edge(spock, rock).edge(lizard, spock)
 				.edge(lizard, paper).build();
 	}
-
 }

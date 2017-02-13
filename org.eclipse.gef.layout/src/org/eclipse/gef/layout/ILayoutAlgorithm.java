@@ -52,7 +52,9 @@ public interface ILayoutAlgorithm {
 	 *            layout algorithm working in background can apply accumulated
 	 *            changes. Static layout algorithm can ignore this call entirely
 	 *            if clean is false.
+	 * @param extra
+	 *            An extra {@link Object} that can be used, for example, to
+	 *            implement a callback mechanism.
 	 */
-	public void applyLayout(boolean clean);
-
+	public void applyLayout(boolean clean, Object extra);
 }

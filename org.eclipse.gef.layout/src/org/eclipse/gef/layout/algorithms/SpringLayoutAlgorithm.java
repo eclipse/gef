@@ -144,7 +144,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private LayoutContext context;
 
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		initLayout();
 		if (!clean) {
 			return;
