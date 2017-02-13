@@ -87,14 +87,14 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	private ListChangeListener<IVisualPart<? extends Node>> childrenObserver = new ListChangeListener<IVisualPart<? extends Node>>() {
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends IVisualPart<? extends Node>> c) {
-			applyLayout(true);
+			applyLayout(true, null);
 		}
 	};
 
 	private SetChangeListener<org.eclipse.gef.graph.Node> hidingModelObserver = new SetChangeListener<org.eclipse.gef.graph.Node>() {
 		@Override
 		public void onChanged(SetChangeListener.Change<? extends org.eclipse.gef.graph.Node> change) {
-			applyLayout(true);
+			applyLayout(true, null);
 		}
 	};
 
@@ -106,9 +106,12 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 *
 	 * @param clean
 	 *            Whether to fully re-compute the layout or not.
+	 * @param extra
+	 *            An extra {@link Object} that is passed-on to the
+	 *            {@link ILayoutAlgorithm}.
 	 */
 	@SuppressWarnings("unchecked")
-	public void applyLayout(boolean clean) {
+	public void applyLayout(boolean clean, Object extra) {
 		// check child parts exist for all content children
 		if (getHost().getChildrenUnmodifiable().size() != getHost().getContentChildrenUnmodifiable().size()) {
 			return;
@@ -148,7 +151,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		}
 
 		// apply layout (if no algorithm is set, will be a no-op)
-		layoutContext.applyLayout(true, null);
+		layoutContext.applyLayout(true, extra);
 	}
 
 	/**
@@ -235,7 +238,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		skipNextLayout = savedViewport != null;
 		if (savedViewport == null || isNested || isViewportChanged) {
 			LayoutProperties.setBounds(getHost().getContent(), computeLayoutBounds());
-			applyLayout(true);
+			applyLayout(true, null);
 		}
 	}
 
@@ -324,7 +327,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		Rectangle oldBounds = LayoutProperties.getBounds(getHost().getContent());
 		if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
 			LayoutProperties.setBounds(getHost().getContent(), newBounds);
-			applyLayout(true);
+			applyLayout(true, null);
 		}
 	}
 }

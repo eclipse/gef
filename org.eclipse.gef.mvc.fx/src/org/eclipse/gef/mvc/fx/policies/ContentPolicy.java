@@ -156,5 +156,4 @@ public class ContentPolicy extends AbstractTransactionPolicy {
 		}
 		super.setAdaptable(adaptable);
 	}
-
 }
