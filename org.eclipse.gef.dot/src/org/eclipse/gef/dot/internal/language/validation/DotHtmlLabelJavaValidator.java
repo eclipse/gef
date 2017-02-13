@@ -97,10 +97,28 @@ public class DotHtmlLabelJavaValidator extends
 	 *            The {@link HtmlTag} to check.
 	 */
 	@Check
+	public void checkTagIsClosed(HtmlTag tag) {
+		if (!tag.getName().toUpperCase()
+				.equals(tag.getCloseName().toUpperCase())) {
+			error("Tag '<" + tag.getName() + ">' is not closed (expected '</"
+					+ tag.getName() + ">' but got '</" + tag.getCloseName()
+					+ ">').", HtmllabelPackage.Literals.HTML_TAG__CLOSE_NAME);
+		}
+	}
+
+	/**
+	 * Checks if the given {@link HtmlTag} is valid w.r.t. its parent (not all
+	 * tags are allowed on all nesting levels). Generates warnings when the
+	 * given {@link HtmlTag} is not supported by Graphviz w.r.t. its parent.
+	 * 
+	 * @param tag
+	 *            The {@link HtmlTag} to check.
+	 */
+	@Check
 	public void checkTagNameIsValid(HtmlTag tag) {
 		String tagName = tag.getName();
 		if (!ALL_TAGS.contains(tagName.toUpperCase())) {
-			warning("The " + tagName + " tag is not supported.",
+			warning("Tag '<" + tagName + ">' is not supported.",
 					HtmllabelPackage.Literals.HTML_TAG__NAME);
 		} else {
 			// find parent tag
@@ -119,10 +137,11 @@ public class DotHtmlLabelJavaValidator extends
 			}
 			if (!validTags.get(parentName.toUpperCase())
 					.contains(tagName.toUpperCase())) {
-				warning("The " + tagName + " tag is not allowed inside "
-						+ parentName + ". It is only allowed inside "
-						+ allowedParents.get(tagName.toUpperCase()) + ".",
-						HtmllabelPackage.Literals.HTML_TAG__NAME);
+				warning("Tag '<" + tagName + ">' is not allowed inside '<"
+						+ parentName + ">', but only inside '<"
+						+ String.join(">', '<",
+								allowedParents.get(tagName.toUpperCase()))
+						+ ">'.", HtmllabelPackage.Literals.HTML_TAG__NAME);
 			}
 		}
 	}
@@ -147,9 +166,9 @@ public class DotHtmlLabelJavaValidator extends
 				if (!validAttributes.containsKey(tagName.toUpperCase())
 						|| !validAttributes.get(tagName.toUpperCase())
 								.contains(attrName.toUpperCase())) {
-					warning("The " + attrName
-							+ " attribute is not allowed inside " + tagName
-							+ ".", HtmllabelPackage.Literals.HTML_ATTR__NAME);
+					warning("Attribute '" + attrName
+							+ "' is not allowed inside '<" + tagName + ">'.",
+							HtmllabelPackage.Literals.HTML_ATTR__NAME);
 				}
 			}
 		}

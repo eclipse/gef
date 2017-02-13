@@ -24,9 +24,13 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 HtmlLabel: (parts+=HtmlContent)*;
 HtmlContent: tag=HtmlTag | text=TEXT;
 
+/*
+ * FIXME: 'HtmlTag' should not support the 'closeName' feature. The closeName is only needed for
+ * validation to check if the tag is opened and closed with the same name.
+ */
 HtmlTag: TAG_START WS? name=ID WS? (attributes+=HtmlAttr WS?)*
 	( selfClosing?=TAG_END_CLOSE
-	| TAG_END (children+=HtmlContent)* TAG_START_CLOSE WS? closeTag=[HtmlTag] WS? TAG_END
+	| TAG_END (children+=HtmlContent)* TAG_START_CLOSE WS? closeName=ID WS? TAG_END
 	);
 
 HtmlAttr: name=ID WS? ASSIGN WS? value=ATTR_VALUE;

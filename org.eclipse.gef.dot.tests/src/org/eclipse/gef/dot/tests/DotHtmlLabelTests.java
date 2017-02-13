@@ -18,10 +18,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelInjectorProvider;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
@@ -48,12 +53,32 @@ public class DotHtmlLabelTests {
 		String text = "<table>\n" + "<tr><td>first</td></tr>\n"
 				+ "<tr><td><table><tr><td><b>second</b></td></tr></table></td></tr>\n"
 				+ "</table>";
-		List<Issue> errors = errors(text);
-		assertEquals(2, errors.size());
-		assertTrue(errors.get(0).getMessage()
-				.contains("Couldn't resolve reference to HtmlTag 'B'."));
-		assertTrue(errors.get(1).getMessage()
-				.contains("The test tag is not supported."));
+		HtmlLabel htmlLabel = parse(text);
+		EList<HtmlContent> parts = htmlLabel.getParts();
+		assertEquals(1, parts.size());
+		// check base table
+		HtmlTag baseTable = parts.get(0).getTag();
+		assertNotNull(baseTable);
+		EList<HtmlContent> baseTableChildren = baseTable.getChildren();
+		assertEquals(5, baseTableChildren.size());
+		HtmlTag baseTr1 = baseTableChildren.get(1).getTag();
+		assertNotNull(baseTr1);
+		assertEquals("tr", baseTr1.getName());
+		assertEquals(baseTable, baseTr1.eContainer().eContainer());
+		assertEquals("first", baseTr1.getChildren().get(0).getTag()
+				.getChildren().get(0).getText());
+		HtmlTag baseTr2 = baseTableChildren.get(3).getTag();
+		assertNotNull(baseTr2);
+		assertEquals("tr", baseTr2.getName());
+		assertEquals(baseTable, baseTr2.eContainer().eContainer());
+		// check nested table
+		HtmlTag nestedTable = baseTr2.getChildren().get(0).getTag()
+				.getChildren().get(0).getTag();
+		assertEquals("table", nestedTable.getName());
+		assertEquals("second",
+				nestedTable.getChildren().get(0).getTag().getChildren().get(0)
+						.getTag().getChildren().get(0).getTag().getChildren()
+						.get(0).getText());
 	}
 
 	@Test
@@ -62,14 +87,19 @@ public class DotHtmlLabelTests {
 		// parsing the string fails with one error and one warning:
 		// 1) </B> refers to missing tag <B>
 		// 2) <test> tag is not supported
-		List<Issue> errors = errors(text);
-		assertEquals(2, errors.size());
-		assertEquals(Severity.ERROR, errors.get(0).getSeverity());
-		assertTrue(errors.get(0).getMessage()
-				.contains("Couldn't resolve reference to HtmlTag 'B'."));
-		assertEquals(Severity.WARNING, errors.get(1).getSeverity());
-		assertTrue(errors.get(1).getMessage()
-				.contains("The test tag is not supported."));
+		List<Issue> issues = issues(text);
+		assertEquals(2, issues.size());
+		Map<Severity, Issue> severityToIssue = new IdentityHashMap<>();
+		for (Issue issue : issues) {
+			severityToIssue.put(issue.getSeverity(), issue);
+		}
+		assertEquals(2, severityToIssue.keySet().size());
+		assertTrue(severityToIssue.containsKey(Severity.ERROR));
+		assertTrue(severityToIssue.containsKey(Severity.WARNING));
+		assertTrue(severityToIssue.get(Severity.ERROR).getMessage().contains(
+				"Tag '<test>' is not closed (expected '</test>' but got '</B>')."));
+		assertTrue(severityToIssue.get(Severity.WARNING).getMessage()
+				.contains("Tag '<test>' is not supported."));
 	}
 
 	@Test
@@ -78,7 +108,7 @@ public class DotHtmlLabelTests {
 		parse(text);
 	}
 
-	private List<Issue> errors(String text) {
+	private List<Issue> issues(String text) {
 		try {
 			HtmlLabel ast = parseHelper.parse(text);
 			assertNotNull(ast);
