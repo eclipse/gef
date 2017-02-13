@@ -166,7 +166,13 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		} else {
 			// root graph uses infinite canvas bounds
 			InfiniteCanvas canvas = getInfiniteCanvas();
-			newBounds = new Rectangle(0, 0, canvas.getWidth(), canvas.getHeight());
+			// XXX: Use minimum of window size and canvas size, because the
+			// canvas size is invalid when its scene is changed.
+			double windowWidth = canvas.getScene().getWindow().getWidth();
+			double windowHeight = canvas.getScene().getWindow().getHeight();
+			newBounds = new Rectangle(0, 0,
+					Double.isFinite(windowWidth) ? Math.min(canvas.getWidth(), windowWidth) : canvas.getWidth(),
+					Double.isFinite(windowHeight) ? Math.min(canvas.getHeight(), windowHeight) : canvas.getHeight());
 		}
 		return newBounds;
 	}
