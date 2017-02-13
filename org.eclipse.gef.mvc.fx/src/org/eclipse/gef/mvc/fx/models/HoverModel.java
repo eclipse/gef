@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,7 +30,9 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class HoverModel implements IDisposable {
+public class HoverModel
+		extends org.eclipse.gef.common.adapt.IAdaptable.Bound.Impl<IViewer>
+		implements IDisposable {
 
 	/**
 	 * The {@link HoverModel} fires {@link PropertyChangeEvent}s when the
@@ -77,6 +80,19 @@ public class HoverModel implements IDisposable {
 		return hoverProperty;
 	}
 
+	@Override
+	public void setAdaptable(IViewer adaptable) {
+		// The viewer can only be changed when there are no parts in this model.
+		// Otherwise, the model was/is inconsistent.
+		if (getAdaptable() != adaptable) {
+			if (hoverProperty.get() != null) {
+				throw new IllegalStateException(
+						"Inconsistent HoverModel: IVisualPart present although the IViewer is changed.");
+			}
+		}
+		super.setAdaptable(adaptable);
+	}
+
 	/**
 	 * Sets the hovered {@link IVisualPart} to the given value. The given part
 	 * may be <code>null</code> in order to unhover.
@@ -89,5 +105,4 @@ public class HoverModel implements IDisposable {
 	public void setHover(IVisualPart<? extends Node> cp) {
 		hoverProperty.set(cp);
 	}
-
 }

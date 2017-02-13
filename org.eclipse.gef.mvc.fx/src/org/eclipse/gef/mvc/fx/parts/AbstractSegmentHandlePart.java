@@ -63,14 +63,6 @@ public abstract class AbstractSegmentHandlePart<N extends Node>
 
 	@Override
 	public void doRefreshVisual(N visual) {
-		// FIXME: Parts are not automatically removed from the viewer models
-		// upon deactivation or removal, therefore, we need to guard against
-		// refreshing here so that no
-		if (getAnchoragesUnmodifiable().isEmpty()
-				|| !getAnchoragesUnmodifiable().keySet().iterator().next()
-						.isActive()) {
-			return;
-		}
 		updateLocation(visual);
 	}
 

@@ -240,5 +240,4 @@ public class GridModel {
 	public BooleanProperty zoomGridProperty() {
 		return zoomGridProperty;
 	}
-
 }

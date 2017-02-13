@@ -18,6 +18,8 @@ import org.eclipse.gef.fx.listeners.VisualChangeListener;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -41,10 +43,20 @@ abstract public class AbstractFeedbackPart<V extends Node>
 	private final Map<IVisualPart<? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 
 	private ListChangeListener<Point> geometryListener = new ListChangeListener<Point>() {
-
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends Point> c) {
 			refreshVisual();
+		}
+	};
+
+	private ChangeListener<? super Boolean> anchorageActivationListener = new ChangeListener<Boolean>() {
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
+			if (!newValue.booleanValue()) {
+				throw new IllegalStateException(
+						"Inconsistent feedback: Anchorage is deactivated.");
+			}
 		}
 	};
 
@@ -96,6 +108,9 @@ abstract public class AbstractFeedbackPart<V extends Node>
 				connection.pointsUnmodifiableProperty()
 						.addListener(geometryListener);
 			}
+			// also register listener on the active property of the anchorage to
+			// deactivate this part once an anchorage is no longer active
+			anchorage.activeProperty().addListener(anchorageActivationListener);
 		}
 		anchorageLinkCount.put(anchorage, count + 1);
 	}
@@ -117,6 +132,9 @@ abstract public class AbstractFeedbackPart<V extends Node>
 				((Connection) anchorageVisual).pointsUnmodifiableProperty()
 						.removeListener(geometryListener);
 			}
+			// remove the listener from the activeProperty
+			anchorage.activeProperty()
+					.removeListener(anchorageActivationListener);
 		}
 
 		if (count > 1) {

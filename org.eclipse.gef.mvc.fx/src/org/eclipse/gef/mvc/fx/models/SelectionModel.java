@@ -23,6 +23,7 @@ import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
@@ -43,7 +44,9 @@ import javafx.scene.Node;
 // TODO: We could expose the selection as modifiable collection and modifiable
 // read-only property if we could use an ordered set. As we use a list, we have
 // to ensure it does not contain duplicates.
-public class SelectionModel implements IDisposable {
+public class SelectionModel
+		extends org.eclipse.gef.common.adapt.IAdaptable.Bound.Impl<IViewer>
+		implements IDisposable {
 
 	/**
 	 * Name of the {@link #selectionUnmodifiableProperty()}.
@@ -52,6 +55,7 @@ public class SelectionModel implements IDisposable {
 
 	private ObservableList<IContentPart<? extends Node>> selection = CollectionUtils
 			.observableArrayList();
+
 	private ObservableList<IContentPart<? extends Node>> selectionUnmodifiable = FXCollections
 			.unmodifiableObservableList(selection);
 	private ReadOnlyListWrapper<IContentPart<? extends Node>> selectionUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
@@ -247,6 +251,19 @@ public class SelectionModel implements IDisposable {
 		return selectionUnmodifiableProperty.getReadOnlyProperty();
 	}
 
+	@Override
+	public void setAdaptable(IViewer adaptable) {
+		// The viewer can only be changed when there are no parts in this model.
+		// Otherwise, the model was/is inconsistent.
+		if (getAdaptable() != adaptable) {
+			if (!selection.isEmpty()) {
+				throw new IllegalStateException(
+						"Inconsistent SelectionModel: IContentParts present although the IViewer is changed.");
+			}
+		}
+		super.setAdaptable(adaptable);
+	}
+
 	/**
 	 * Replaces the current selection with the given {@link IContentPart}.
 	 *
@@ -280,5 +297,4 @@ public class SelectionModel implements IDisposable {
 			this.selection.setAll(newSelection);
 		}
 	}
-
 }

@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,7 +30,9 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class FocusModel implements IDisposable {
+public class FocusModel
+		extends org.eclipse.gef.common.adapt.IAdaptable.Bound.Impl<IViewer>
+		implements IDisposable {
 
 	/**
 	 * The {@link FocusModel} fires {@link PropertyChangeEvent}s when the
@@ -79,6 +82,19 @@ public class FocusModel implements IDisposable {
 		return focusedProperty.get();
 	}
 
+	@Override
+	public void setAdaptable(IViewer adaptable) {
+		// The viewer can only be changed when there are no parts in this model.
+		// Otherwise, the model was/is inconsistent.
+		if (getAdaptable() != adaptable) {
+			if (focusedProperty.get() != null) {
+				throw new IllegalStateException(
+						"Inconsistent FocusModel: IContentPart present although the IViewer is changed.");
+			}
+		}
+		super.setAdaptable(adaptable);
+	}
+
 	/**
 	 * Selects the given IContentPart as the focus part. Note that setting the
 	 * focus part does not assign keyboard focus to the part.
@@ -90,5 +106,4 @@ public class FocusModel implements IDisposable {
 	public void setFocus(IContentPart<? extends Node> focusPart) {
 		focusedProperty.set(focusPart);
 	}
-
 }
