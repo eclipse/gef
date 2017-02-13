@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Tamas Miklossy   (itemis AG) - minor refactorings
  *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
@@ -89,9 +90,8 @@ public class DotHtmlLabelJavaValidator extends
 	}
 
 	/**
-	 * Checks if the given {@link HtmlTag} is valid w.r.t. its parent (not all
-	 * tags are allowed on all nesting levels). Generates warnings when the
-	 * given {@link HtmlTag} is not supported by Graphviz w.r.t. its parent.
+	 * Checks if the given {@link HtmlTag} is properly closed. Generates errors
+	 * if the html tag is not closed properly.
 	 * 
 	 * @param tag
 	 *            The {@link HtmlTag} to check.
