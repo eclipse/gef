@@ -391,7 +391,7 @@ public class DotAttributes {
 				if (attributeValue.type == ID.Type.HTML_STRING)
 					validateAttributeRawValue(HTML_LABEL_PARSER, HTML_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else if (attributeValue.type == ID.Type.QUOTED_STRING)
-					validateAttributeRawValue(ESC_LABEL_PARSER, ESC_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
+					validateAttributeRawValue(ESC_STRING_PARSER, ESC_STRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else
 					Collections.emptyList
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -1014,9 +1014,9 @@ public class DotAttributes {
 	/**
 	 * The parser for (escString) label attribute values.
 	 */
-	private static val ESC_LABEL_PARSER = new EObjectParser<EscString>(escStringInjector)
+	private static val ESC_STRING_PARSER = new EObjectParser<EscString>(escStringInjector)
 	
-	private static val ESC_LABEL_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
+	private static val ESC_STRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
 		DotEscStringJavaValidator)
 
 	private static val Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
