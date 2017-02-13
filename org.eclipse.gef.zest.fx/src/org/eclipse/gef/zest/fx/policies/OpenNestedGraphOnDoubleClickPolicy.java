@@ -42,6 +42,7 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 			if (nestedGraph != null) {
 				IViewer viewer = getHost().getRoot().getViewer();
 				try {
+					// navigate to nested graph
 					viewer.getDomain().execute(new NavigateOperation(viewer, nestedGraph, true),
 							new NullProgressMonitor());
 				} catch (ExecutionException e) {
@@ -55,5 +56,4 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 	public NodePart getHost() {
 		return (NodePart) super.getHost();
 	}
-
 }

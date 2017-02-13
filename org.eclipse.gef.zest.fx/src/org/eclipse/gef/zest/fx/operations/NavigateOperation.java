@@ -24,7 +24,11 @@ import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
+import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.operations.ChangeContentsOperation;
+import org.eclipse.gef.mvc.fx.operations.ChangeFocusOperation;
+import org.eclipse.gef.mvc.fx.operations.ChangeSelectionOperation;
 import org.eclipse.gef.mvc.fx.operations.ChangeViewportOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
@@ -123,6 +127,10 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 		// retrieve initial viewport state of source graph
 		navigationModel = viewer.getAdapter(NavigationModel.class);
 
+		// create operations to clear the selection and focus models
+		add(new ChangeSelectionOperation(viewer, Collections.emptyList()));
+		add(new ChangeFocusOperation(viewer, null));
+
 		// create sub-operations
 		changeContentsOperation = new ChangeContentsOperation(viewer, Collections.singletonList(sourceGraph));
 		changeViewportOperation = new ChangeViewportOperation(((InfiniteCanvasViewer) viewer).getCanvas());
@@ -155,6 +163,18 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	public NavigateOperation(IViewer viewer, Graph targetGraph, boolean isNestedGraph) {
 		this(viewer);
 		setFinalState(targetGraph, isNestedGraph);
+	}
+
+	@Override
+	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+		// XXX: HoverModel is not cleared via operation, because it is a
+		// lightweight model, i.e. its state is only relevant for user
+		// interaction
+		viewer.getAdapter(HoverModel.class).clearHover();
+		viewer.getRootPart().getAdapter(HoverBehavior.class).deactivate();
+		IStatus status = super.execute(monitor, info);
+		viewer.getRootPart().getAdapter(HoverBehavior.class).activate();
+		return status;
 	}
 
 	/**

@@ -49,6 +49,7 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 					: null;
 			if (nestingGraph != null) {
 				try {
+					// navigate to parent graph
 					viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false),
 							new NullProgressMonitor());
 				} catch (ExecutionException e) {
