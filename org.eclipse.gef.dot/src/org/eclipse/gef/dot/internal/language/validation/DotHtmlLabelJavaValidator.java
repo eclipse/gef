@@ -161,15 +161,13 @@ public class DotHtmlLabelJavaValidator extends
 		EObject container = attr.eContainer();
 		if (container instanceof HtmlTag) {
 			HtmlTag tag = (HtmlTag) container;
-			if (tag != null) {
-				String tagName = tag.getName();
-				if (!validAttributes.containsKey(tagName.toUpperCase())
-						|| !validAttributes.get(tagName.toUpperCase())
-								.contains(attrName.toUpperCase())) {
-					warning("Attribute '" + attrName
-							+ "' is not allowed inside '<" + tagName + ">'.",
-							HtmllabelPackage.Literals.HTML_ATTR__NAME);
-				}
+			String tagName = tag.getName();
+			if (!validAttributes.containsKey(tagName.toUpperCase())
+					|| !validAttributes.get(tagName.toUpperCase())
+							.contains(attrName.toUpperCase())) {
+				warning("Attribute '" + attrName + "' is not allowed inside '<"
+						+ tagName + ">'.",
+						HtmllabelPackage.Literals.HTML_ATTR__NAME);
 			}
 		}
 	}
