@@ -510,8 +510,7 @@ public class DotAttributes {
 			val IParseResult xtextParseResult = parser.parse(new StringReader(attributeValue))
 			if (xtextParseResult.hasSyntaxErrors) {
 				val List<Diagnostic> syntaxProblems = newArrayList
-				for (INode xtextSyntaxError : (xtextParseResult as IParseResult).
-					getSyntaxErrors) {
+				for (INode xtextSyntaxError : xtextParseResult.getSyntaxErrors) {
 					syntaxProblems.add(
 						new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
 							xtextSyntaxError.getSyntaxErrorMessage.getMessage, #[]))
