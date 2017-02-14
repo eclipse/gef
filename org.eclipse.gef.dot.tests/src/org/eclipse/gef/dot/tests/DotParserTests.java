@@ -145,6 +145,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testNodeGroups() {
+		testString(DotTestGraphs.NODE_GROUPS);
+	}
+
+	@Test
 	public void testArrowShapesDeprecated() {
 		testFile("arrowshapes_deprecated.dot");
 	}
@@ -170,68 +175,13 @@ public class DotParserTests {
 	}
 
 	@Test
-	public void testAttributesGraph() {
-		testFile("attributes_graph.dot");
-	}
-
-	@Test
-	public void testBasicDirectedGraph() {
-		testFile("basic_directed_graph.dot");
-	}
-
-	@Test
-	public void testGlobalEdgeGraph() {
-		testFile("global_edge_graph.dot");
-	}
-
-	@Test
-	public void testGlobalNodeGraph() {
-		testFile("global_node_graph.dot");
-	}
-
-	@Test
-	public void testIdMatchesKeyword() {
-		testFile("id_matches_keyword.dot");
-	}
-
-	@Test
 	public void testLabeledGraph() {
 		testFile("labeled_graph.dot");
 	}
 
 	@Test
-	public void testLayoutGridGraph() {
-		testFile("layout_grid_graph.dot");
-	}
-
-	@Test
-	public void testLayoutRadialGraph() {
-		testFile("layout_radial_graph.dot");
-	}
-
-	@Test
-	public void testLayoutSpringGraph() {
-		testFile("layout_spring_graph.dot");
-	}
-
-	@Test
-	public void testLayoutTreeGraph() {
-		testFile("layout_tree_graph.dot");
-	}
-
-	@Test
 	public void testNodeShapesPolygonBased() {
 		testFile("nodeshapes_polygon_based.dot");
-	}
-
-	@Test
-	public void testNodeGroups() {
-		testFile("node_groups.dot");
-	}
-
-	@Test
-	public void testSampleInput() {
-		testFile("sample_input.dot");
 	}
 
 	@Test

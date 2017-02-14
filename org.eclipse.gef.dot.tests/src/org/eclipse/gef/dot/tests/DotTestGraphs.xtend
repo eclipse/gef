@@ -243,11 +243,60 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val NODES_BEFORE_EDGES_WITH_ATTRIBUTES = '''
+		digraph AttributesGraph {
+			1;2;3;4
+			rankdir=LR
+			label="Left-to-Right"
+			1->2
+			1->3
+			2->4
+		}
+	'''
+	
+	public static val DIRECTED_STYLED_GRAPH = '''
+		digraph DirectedStyledGraph{
+			/* global attributes can be defined to affect all edges*/
+			edge[label="Edge" style=dashed]
+			1; 2; 3; 4
+			1->2
+			/* the global attributes can be overridden for a particular edge*/
+			2->3[label="Dotted" style=dotted]
+			2->4
+		}
+	'''
+	
+	public static val NODE_GROUPS='''
+		digraph {
+			1->2
+			1->3
+			node[shape=box]
+			edge[style="dashed, bold" arrowhead=odot]
+			foo->{ bar baz }
+		}
+	'''
+	
 	public static val QUOTED_LABELS = '''
 		graph {
 			n1[label="node 1"]
 			n2[label="node 2"]
 			n1--n2[label="edge 1"]
+		}
+	'''
+	
+	public static val QUOTED_LABELS2 = '''
+		graph {
+			// the label has to be quoted because otherwise it is recognized as a keyword
+			1[label="node" xlabel="Node"]
+			
+			// the label has to be quoted if it contains whitespaces
+			2[label="foo bar"]
+			
+			// the label does not need to be quoted, but can be
+			3[label=foo]
+			
+			// the label does not need to be quoted, but can be quoted
+			4[label="foo"]
 		}
 	'''
 	
@@ -268,6 +317,20 @@ class DotTestGraphs {
 			1:portID
 			2:ne
 			3:portID2:_
+		}
+	'''
+
+	public static val COMPASS_POINTS_AS_NODE_NAMES = '''
+		graph {
+			/*
+			 * The allowed compass point values are not keywords,
+			 * so these strings can be used elsewhere as ordinary
+			 * identifiers and, conversely, the parser will
+			 * actually accept any identifier.
+			 * 
+			 * http://www.graphviz.org/content/dot-language
+			 */
+			n ne e se s sw w nw c _
 		}
 	'''
 	
@@ -466,30 +529,34 @@ class DotTestGraphs {
  */
 
 	public static val GRAPH_LAYOUT_DOT = '''
-		graph {
+		digraph {
 			graph[layout=dot]
-			1
+			1;2;3;4;
+			1->2; 2->3; 2->4;
 		}
 	'''
 	
 	public static val GRAPH_LAYOUT_FDP = '''
-		graph {
+		digraph {
 			graph[layout=fdp]
-			1
+			1;2;3;4;
+			1->2; 2->3; 2->4;
 		}
 	'''	
 	
 	public static val GRAPH_LAYOUT_OSAGE = '''
-		graph {
+		digraph {
 			graph[layout=osage]
-			1
+			1;2;3;4;
+			1->2; 2->3; 2->4;
 		}
 	'''
 	
 	public static val GRAPH_LAYOUT_TWOPI = '''
-		graph {
+		digraph {
 			graph[layout=twopi]
-			1
+			1;2;3;4;
+			1->2; 2->3; 2->4;
 		}
 	''' 
 	
@@ -1082,16 +1149,16 @@ class DotTestGraphs {
 	
 	public static val NODE_LABEL_OVERRIDE = '''
 		graph {
-			node[label=Node3]
-			1[label=Node4]
+			node[label=Käse]
+			1[label=Gültig]
 			2
 		}
 	'''
 	
 	public static val NODE_LABEL_OVERRIDE2 = '''
 		graph {
-			node[label=Node3]
-			1[label=Node4]
+			node[label=Käse]
+			1[label=Gültig]
 			1--2
 		}
 	'''
@@ -1105,6 +1172,17 @@ class DotTestGraphs {
 			3
 			node[label=Node3]
 			3--4
+		}
+	'''
+	
+	public static val NODE_LABEL_OVERRIDE4 = '''
+		digraph {
+			node[label="Node"]
+			1; 2
+			3[label="Leaf"]
+			4
+			1->2
+			2->3
 		}
 	'''
 	

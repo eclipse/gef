@@ -1,9 +1,0 @@
-digraph g1 {
- n1[label="Node 1"]; n2[label="Node 2"]; 
- n1 -> n2[style=dotted label="A dotted edge"]
- n1 -> n4
- n2 -> n3
- n3 -> n5
- n4 -> n5
- foo -> { bar baz }
-}

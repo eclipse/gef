@@ -35,6 +35,7 @@ import org.eclipse.gef.graph.Node;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -75,44 +76,6 @@ public final class DotImportTests {
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotTestUtils.getStyledGraph().toString(),
 				graph.toString());
-
-		// test import succeeds without exceptions
-		graph = importFile(new File(RESOURCES_TESTS + "sample_input.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(
-				new File(RESOURCES_TESTS + "basic_directed_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(new File(RESOURCES_TESTS + "global_node_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(new File(RESOURCES_TESTS + "global_edge_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(new File(RESOURCES_TESTS + "attributes_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(new File(RESOURCES_TESTS + "node_groups.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(
-				new File(RESOURCES_TESTS + "id_matches_keyword.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(new File(RESOURCES_TESTS + "layout_tree_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(
-				new File(RESOURCES_TESTS + "layout_spring_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(
-				new File(RESOURCES_TESTS + "layout_radial_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-
-		graph = importFile(new File(RESOURCES_TESTS + "layout_grid_graph.dot")); //$NON-NLS-1$
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 	}
 
 	/**
@@ -165,39 +128,59 @@ public final class DotImportTests {
 	}
 
 	@Test
-	public void layoutSpring() {
-		Graph graph = importString(DotTestGraphs.GRAPH_LAYOUT_FDP);
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(Layout.FDP.toString(),
-				DotAttributes.getLayout(graph));
+	public void layoutDot() {
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH)
+				.attr(DotAttributes::setLayoutParsed, Layout.DOT);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1]).buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2]).buildEdge();
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3]).buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected, DotTestGraphs.GRAPH_LAYOUT_DOT);
 	}
 
 	@Test
-	public void layoutGrid() {
-		Graph graph = importString(DotTestGraphs.GRAPH_LAYOUT_OSAGE);
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(Layout.OSAGE.toString(),
-				DotAttributes.getLayout(graph));
+	public void layoutFdp() {
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH)
+				.attr(DotAttributes::setLayoutParsed, Layout.FDP);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1]).buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2]).buildEdge();
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3]).buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected, DotTestGraphs.GRAPH_LAYOUT_FDP);
 	}
 
 	@Test
-	public void layoutRadial() {
-		Graph graph = importString(DotTestGraphs.GRAPH_LAYOUT_TWOPI);
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(Layout.TWOPI.toString(),
-				DotAttributes.getLayout(graph));
+	public void layoutOsage() {
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH)
+				.attr(DotAttributes::setLayoutParsed, Layout.OSAGE);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1]).buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2]).buildEdge();
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3]).buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected, DotTestGraphs.GRAPH_LAYOUT_OSAGE);
 	}
 
 	@Test
-	public void layoutTree() {
-		Graph graph = importString(DotTestGraphs.GRAPH_LAYOUT_DOT);
-		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(Layout.DOT.toString(),
-				DotAttributes.getLayout(graph));
+	public void layoutTwopi() {
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH)
+				.attr(DotAttributes::setLayoutParsed, Layout.TWOPI);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1]).buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2]).buildEdge();
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3]).buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected, DotTestGraphs.GRAPH_LAYOUT_TWOPI);
 	}
 
 	@Test
-	public void layoutHorizontalTreeViaLayout() {
+	public void layoutDotHorizontal() {
 		Graph graph = importString(DotTestGraphs.GRAPH_LAYOUT_DOT_HORIZONTAL);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(Layout.DOT.toString(),
@@ -248,6 +231,45 @@ public final class DotImportTests {
 		Edge e3 = new Edge.Builder(nodes[1], nodes[3]).buildEdge();
 		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
 		testStringImport(expected, DotTestGraphs.NODES_BEFORE_EDGES);
+	}
+
+	@Test
+	public void nodesBeforeEdgesWithAttributes() {
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotAttributes::_setName, "AttributesGraph")
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH)
+				.attr(DotAttributes::setRankdirParsed, Rankdir.LR)
+				.attr(DotAttributes::setLabel, "Left-to-Right");
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1]).buildEdge();
+		Edge e2 = new Edge.Builder(nodes[0], nodes[2]).buildEdge();
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3]).buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected,
+				DotTestGraphs.NODES_BEFORE_EDGES_WITH_ATTRIBUTES);
+	}
+
+	@Test
+	public void directedStyledGraph() {
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotAttributes::_setName, "DirectedStyledGraph")
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setLabel, "Edge")
+				.attr(DotAttributes::setStyle, "dashed").buildEdge();
+		Edge e2 = new Edge.Builder(nodes[1], nodes[2])
+				.attr(DotAttributes::setStyle, "dotted").buildEdge();
+		// set the label attribute to the expected ID object (with value Dotted
+		// and type quoted string)
+		DotAttributes.setLabelRaw(e2,
+				ID.fromValue("Dotted", Type.QUOTED_STRING));
+
+		Edge e3 = new Edge.Builder(nodes[1], nodes[3])
+				.attr(DotAttributes::setLabel, "Edge")
+				.attr(DotAttributes::setStyle, "dashed").buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2, e3).build();
+		testStringImport(expected, DotTestGraphs.DIRECTED_STYLED_GRAPH);
 	}
 
 	@Test
@@ -327,6 +349,25 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void labelsWithQuotes2() {
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		DotAttributes.setLabel(nodes[0], "node");
+		DotAttributes.setXlabel(nodes[0], "Node");
+		DotAttributes.setLabel(nodes[1], "foo bar");
+		DotAttributes.setLabel(nodes[2], "foo");
+
+		// set the label attribute to the expected ID object (with value foo
+		// and type quoted string)
+		DotAttributes.setLabelRaw(nodes[3],
+				ID.fromValue("foo", Type.QUOTED_STRING));
+
+		Graph expected = graph.nodes(nodes).build();
+		testStringImport(expected, DotTestGraphs.QUOTED_LABELS2);
+	}
+
+	@Test
 	public void newLinesInLabels() {
 		Graph graph = importString(DotTestGraphs.NEW_LINES_IN_LABELS);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
@@ -374,6 +415,57 @@ public final class DotImportTests {
 		// test override attribute
 		testStringImport(expected,
 				DotTestGraphs.MULTI_EDGE_STATEMENTS_OVERRIDE);
+	}
+
+	@Test
+	public void compassPointsAsNodeNames() {
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "n") //$NON-NLS-1$
+				.buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "ne") //$NON-NLS-1$
+				.buildNode();
+		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "e") //$NON-NLS-1$
+				.buildNode();
+		Node n4 = new Node.Builder().attr(DotAttributes::_setName, "se") //$NON-NLS-1$
+				.buildNode();
+		Node n5 = new Node.Builder().attr(DotAttributes::_setName, "s") //$NON-NLS-1$
+				.buildNode();
+		Node n6 = new Node.Builder().attr(DotAttributes::_setName, "sw") //$NON-NLS-1$
+				.buildNode();
+		Node n7 = new Node.Builder().attr(DotAttributes::_setName, "w") //$NON-NLS-1$
+				.buildNode();
+		Node n8 = new Node.Builder().attr(DotAttributes::_setName, "nw") //$NON-NLS-1$
+				.buildNode();
+		Node n9 = new Node.Builder().attr(DotAttributes::_setName, "c") //$NON-NLS-1$
+				.buildNode();
+		Node n10 = new Node.Builder().attr(DotAttributes::_setName, "_") //$NON-NLS-1$
+				.buildNode();
+		Graph expected = graph.nodes(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)
+				.build();
+		testStringImport(expected, DotTestGraphs.COMPASS_POINTS_AS_NODE_NAMES);
+	}
+
+	@Ignore
+	@Test
+	public void nodeGroups() {
+		// TODO: implement as soon as the EdgeStmtNode is properly imported
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1") //$NON-NLS-1$
+				.buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2") //$NON-NLS-1$
+				.buildNode();
+		Node n3 = new Node.Builder().attr(DotAttributes::_setName, "3") //$NON-NLS-1$
+				.buildNode();
+		Node n4 = new Node.Builder().attr(DotAttributes::_setName, "foo") //$NON-NLS-1$
+				.attr(DotAttributes::setShape, "box").buildNode();
+		Node n5 = new Node.Builder().attr(DotAttributes::_setName, "bar") //$NON-NLS-1$
+				.attr(DotAttributes::setShape, "box").buildNode();
+		Node n6 = new Node.Builder().attr(DotAttributes::_setName, "baz") //$NON-NLS-1$
+				.attr(DotAttributes::setShape, "box").buildNode();
+		Graph expected = graph.nodes(n1, n2, n3, n4, n5, n6).build();
+		testStringImport(expected, DotTestGraphs.NODE_GROUPS);
 	}
 
 	@Test
@@ -1213,8 +1305,8 @@ public final class DotImportTests {
 		// test override attribute
 		graph = new Graph.Builder().attr(DotAttributes::_setType,
 				GraphType.GRAPH);
-		DotAttributes.setLabel(n1, "Node4");
-		DotAttributes.setLabel(n2, "Node3");
+		DotAttributes.setLabel(n1, "Gültig");
+		DotAttributes.setLabel(n2, "Käse");
 		expected = graph.nodes(n1, n2).build();
 		testStringImport(expected, DotTestGraphs.NODE_LABEL_OVERRIDE);
 
@@ -1236,6 +1328,24 @@ public final class DotImportTests {
 		Edge e2 = new Edge.Builder(nodes[2], nodes[3]).buildEdge();
 		expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.NODE_LABEL_OVERRIDE3);
+
+		// test override attribute4
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		nodes = createNodes();
+		DotAttributes.setLabel(nodes[0], "Node");
+		DotAttributes.setLabel(nodes[1], "Node");
+
+		// set the label attribute to the expected ID object (with value Leaf
+		// and type quoted string)
+		DotAttributes.setLabelRaw(nodes[2],
+				ID.fromValue("Leaf", Type.QUOTED_STRING));
+
+		DotAttributes.setLabel(nodes[3], "Node");
+		e1 = new Edge.Builder(nodes[0], nodes[1]).buildEdge();
+		e2 = new Edge.Builder(nodes[1], nodes[2]).buildEdge();
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.NODE_LABEL_OVERRIDE4);
 	}
 
 	@Test
