@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.viewer;
 
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -138,8 +139,12 @@ public class InfiniteCanvasViewer implements IViewer {
 
 	private AdaptableSupport<IViewer> ads = new AdaptableSupport<>(this);
 
+	// XXX: Use HashMap for contentPartMap so that equals() is used for
+	// containment tests, which is also used when working with lists. The
+	// implementation needs to match the implementation that is used within
+	// ContentBehavior.
 	private ObservableMap<Object, IContentPart<? extends Node>> contentPartMap = FXCollections
-			.observableMap(new IdentityHashMap<>());
+			.observableMap(new HashMap<>());
 	private ReadOnlyMapProperty<Object, IContentPart<? extends Node>> contentPartMapProperty;
 	private ObservableMap<Node, IVisualPart<? extends Node>> visualPartMap = FXCollections
 			.observableMap(new IdentityHashMap<>());
