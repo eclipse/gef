@@ -11,7 +11,7 @@
 package org.eclipse.gef.layout.tests;
 
 import org.eclipse.gef.layout.ILayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.TreeLayoutObserver;
+import org.eclipse.gef.layout.algorithms.TreeLayoutHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ import org.junit.Test;
 public class LayoutAlgorithmTests {
 
 	/* Use a private subclass to access protected members: */
-	private static class TestNode extends TreeLayoutObserver.TreeNode {
+	private static class TestNode extends TreeLayoutHelper.TreeNode {
 		protected TestNode() {
 			super(null, null);
 		}

@@ -49,10 +49,8 @@ public class DotLayoutExample extends AbstractZestExample {
 
 		private String dotExecutablePath = "/usr/local/bin/dot";
 
-		private LayoutContext context;
-
 		@Override
-		public void applyLayout(boolean clean, Object extra) {
+		public void applyLayout(LayoutContext layoutContext, boolean clean) {
 			// Convert a Graph with LayoutAttributes (input model to
 			// ILayoutAlgorithm) to a Graph with DotAttributes, which can be
 			// exported to a DOT string; transfer node names to be able to
@@ -79,7 +77,7 @@ public class DotLayoutExample extends AbstractZestExample {
 										.get(LABEL));
 					}
 				}
-			}).copy(context.getGraph());
+			}).copy(layoutContext.getGraph());
 
 			// set graph type and DOT layout algorithm
 			DotAttributes._setType(dotGraph, GraphType.DIGRAPH);
@@ -102,7 +100,7 @@ public class DotLayoutExample extends AbstractZestExample {
 			// Graph
 			for (Node source : layoutedDotGraph.getNodes()) {
 				String sourceName = DotAttributes._getName(source);
-				for (Node target : context.getGraph().getNodes()) {
+				for (Node target : layoutContext.getGraph().getNodes()) {
 					if (target.getAttributes().get(LABEL).equals(sourceName)) {
 						// transfer back (layouted location information)
 						org.eclipse.gef.dot.internal.language.point.Point posParsed = DotAttributes
@@ -113,16 +111,6 @@ public class DotLayoutExample extends AbstractZestExample {
 					}
 				}
 			}
-		}
-
-		@Override
-		public LayoutContext getLayoutContext() {
-			return context;
-		}
-
-		@Override
-		public void setLayoutContext(LayoutContext context) {
-			this.context = context;
 		}
 	}
 

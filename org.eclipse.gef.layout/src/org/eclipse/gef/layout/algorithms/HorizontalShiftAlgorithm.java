@@ -39,9 +39,7 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 
 	private static final double VSPACING = 16;
 
-	private LayoutContext context;
-
-	public void applyLayout(boolean clean, Object extra) {
+	public void applyLayout(LayoutContext context, boolean clean) {
 		if (!clean)
 			return;
 		ArrayList<List<Node>> rowsList = new ArrayList<>();
@@ -89,14 +87,6 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 				width += size.width;
 			}
 		}
-	}
-
-	public void setLayoutContext(LayoutContext context) {
-		this.context = context;
-	}
-
-	public LayoutContext getLayoutContext() {
-		return context;
 	}
 
 	private void addToRowList(Node entity, ArrayList<List<Node>> rowsList) {

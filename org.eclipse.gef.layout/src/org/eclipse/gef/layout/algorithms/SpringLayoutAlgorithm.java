@@ -123,29 +123,24 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	private boolean resize = false;
 
 	private int iteration;
-
 	private double[][] srcDestToSumOfWeights;
-
 	private Node[] entities;
-
 	private double[] forcesX, forcesY;
-
 	private double[] locationsX, locationsY;
-
 	private double[] sizeW, sizeH;
-
 	private Rectangle bounds;
-
 	private double boundsScaleX = 0.2;
 	private double boundsScaleY = 0.2;
+
+	// XXX: Needed by performNIteration(int), see below.
+	private LayoutContext layoutContext;
 
 	// TODO: expose field
 	private boolean fitWithinBounds = true;
 
-	private LayoutContext context;
-
-	public void applyLayout(boolean clean, Object extra) {
-		initLayout();
+	public void applyLayout(LayoutContext layoutContext, boolean clean) {
+		this.layoutContext = layoutContext;
+		initLayout(layoutContext);
 		if (!clean) {
 			return;
 		}
@@ -169,15 +164,6 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(LayoutContext context) {
-		this.context = context;
-		initLayout();
-	}
-
-	public LayoutContext getLayoutContext() {
-		return context;
-	}
-
 	/**
 	 * Performs the given number of iterations.
 	 * 
@@ -185,34 +171,35 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	 *            The number of iterations to perform.
 	 */
 	public void performNIteration(int n) {
-		context.preLayout();
+		layoutContext.preLayout();
 		if (iteration == 0) {
-			entities = context.getNodes();
+			entities = layoutContext.getNodes();
 			loadLocations();
-			initLayout();
+			initLayout(layoutContext);
 		}
-		bounds = LayoutProperties.getBounds(context.getGraph());
+		bounds = LayoutProperties.getBounds(layoutContext.getGraph());
 		for (int i = 0; i < n; i++) {
 			computeOneIteration();
 			saveLocations();
 		}
-		context.postLayout();
+		layoutContext.postLayout();
 	}
 
 	/**
 	 * Performs one single iteration.
+	 * 
 	 */
 	public void performOneIteration() {
-		context.preLayout();
+		layoutContext.preLayout();
 		if (iteration == 0) {
-			entities = context.getNodes();
+			entities = layoutContext.getNodes();
 			loadLocations();
-			initLayout();
+			initLayout(layoutContext);
 		}
-		bounds = LayoutProperties.getBounds(context.getGraph());
+		bounds = LayoutProperties.getBounds(layoutContext.getGraph());
 		computeOneIteration();
 		saveLocations();
-		context.postLayout();
+		layoutContext.postLayout();
 	}
 
 	/**
@@ -375,7 +362,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private long startTime = 0;
 
-	private void initLayout() {
+	private void initLayout(LayoutContext context) {
 		entities = context.getNodes();
 		bounds = LayoutProperties.getBounds(context.getGraph());
 		loadLocations();

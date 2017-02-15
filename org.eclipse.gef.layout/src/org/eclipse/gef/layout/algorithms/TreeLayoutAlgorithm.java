@@ -23,7 +23,7 @@ import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.ILayoutAlgorithm;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
-import org.eclipse.gef.layout.algorithms.TreeLayoutObserver.TreeNode;
+import org.eclipse.gef.layout.algorithms.TreeLayoutHelper.TreeNode;
 
 /**
  * The TreeLayoutAlgorithm class implements a simple algorithm to arrange graph
@@ -67,13 +67,11 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private boolean resize = false;
 
-	private LayoutContext context;
-
 	private Rectangle bounds;
 
 	private double leafSize, layerSize;
 
-	private TreeLayoutObserver treeObserver;
+	private TreeLayoutHelper treeObserver;
 
 	private Dimension nodeSpace;
 
@@ -167,27 +165,13 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		resize = resizing;
 	}
 
-	public void setLayoutContext(LayoutContext context) {
-		if (treeObserver != null) {
-			treeObserver.stop();
-		}
-		this.context = context;
-		if (context != null) {
-			treeObserver = new TreeLayoutObserver(context, null);
-		}
-	}
-
-	public LayoutContext getLayoutContext() {
-		return context;
-	}
-
-	public void applyLayout(boolean clean, Object extra) {
+	public void applyLayout(LayoutContext layoutContext, boolean clean) {
 		if (!clean)
 			return;
 
-		internalApplyLayout();
+		internalApplyLayout(layoutContext);
 
-		Node[] entities = context.getNodes();
+		Node[] entities = layoutContext.getNodes();
 		if (resize) {
 			AlgorithmHelper.maximizeSizes(entities);
 		}
@@ -209,8 +193,14 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 	/**
 	 * Performs a layout pass for the tree without scaling the entities to
 	 * maximum size / use the whole bounds.
+	 * 
+	 * @param context
+	 *            The {@link LayoutContext} to use.
 	 */
-	void internalApplyLayout() {
+	void internalApplyLayout(LayoutContext context) {
+		treeObserver = new TreeLayoutHelper(null);
+		treeObserver.computeTree(context.getNodes());
+
 		TreeNode superRoot = treeObserver.getSuperRoot();
 		bounds = LayoutProperties.getBounds(context.getGraph());
 		updateLeafAndLayerSizes();

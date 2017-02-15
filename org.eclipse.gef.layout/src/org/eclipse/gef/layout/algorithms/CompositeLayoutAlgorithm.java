@@ -26,7 +26,6 @@ import org.eclipse.gef.layout.LayoutContext;
  */
 public class CompositeLayoutAlgorithm implements ILayoutAlgorithm {
 
-	private LayoutContext context = null;
 	private ILayoutAlgorithm[] algorithms = null;
 
 	/**
@@ -41,21 +40,10 @@ public class CompositeLayoutAlgorithm implements ILayoutAlgorithm {
 		this.algorithms = algorithms;
 	}
 
-	public void applyLayout(boolean clean, Object extra) {
+	public void applyLayout(LayoutContext context, boolean clean) {
 		for (int i = 0; i < algorithms.length; i++) {
-			algorithms[i].applyLayout(clean, extra);
+			algorithms[i].applyLayout(context, clean);
 		}
-	}
-
-	public void setLayoutContext(LayoutContext context) {
-		this.context = context;
-		for (int i = 0; i < algorithms.length; i++) {
-			algorithms[i].setLayoutContext(context);
-		}
-	}
-
-	public LayoutContext getLayoutContext() {
-		return context;
 	}
 
 }

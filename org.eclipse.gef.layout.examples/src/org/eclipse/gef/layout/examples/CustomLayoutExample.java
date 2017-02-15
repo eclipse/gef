@@ -61,10 +61,9 @@ public class CustomLayoutExample extends AbstractZestExample {
 
 	private ILayoutAlgorithm createLayoutAlgorithm() {
 		ILayoutAlgorithm layoutAlgorithm = new ILayoutAlgorithm() {
-			private LayoutContext context;
 
 			@Override
-			public void applyLayout(boolean clean, Object extra) {
+			public void applyLayout(LayoutContext context, boolean clean) {
 				Node[] entitiesToLayout = context.getNodes();
 				int totalSteps = entitiesToLayout.length;
 				double distance = LayoutProperties.getBounds(context.getGraph())
@@ -80,16 +79,6 @@ public class CustomLayoutExample extends AbstractZestExample {
 							 */0));
 					xLocation += distance;
 				}
-			}
-
-			@Override
-			public LayoutContext getLayoutContext() {
-				return context;
-			}
-
-			@Override
-			public void setLayoutContext(LayoutContext context) {
-				this.context = context;
 			}
 		};
 		return layoutAlgorithm;

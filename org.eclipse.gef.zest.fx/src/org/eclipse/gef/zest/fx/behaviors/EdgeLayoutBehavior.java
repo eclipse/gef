@@ -52,5 +52,4 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 	@Override
 	protected void preLayout() {
 	}
-
 }

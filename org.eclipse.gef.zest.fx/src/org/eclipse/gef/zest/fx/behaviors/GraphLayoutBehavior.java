@@ -13,6 +13,7 @@
 package org.eclipse.gef.zest.fx.behaviors;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -151,7 +152,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		}
 
 		// apply layout (if no algorithm is set, will be a no-op)
-		layoutContext.applyLayout(true, extra);
+		layoutContext.applyLayout(true);
 	}
 
 	/**
@@ -208,8 +209,16 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
 		if (hidingModel != null) {
 			getLayoutContext().addLayoutFilter(new ILayoutFilter() {
+				Map<Object, IContentPart<? extends Node>> contentPartMap = getHost().getViewer().getContentPartMap();
+
 				@Override
 				public boolean isLayoutIrrelevant(Edge edge) {
+					if (!contentPartMap.containsKey(edge)) {
+						return true;
+					}
+					if (!contentPartMap.get(edge).isActive()) {
+						return true;
+					}
 					return Boolean.TRUE.equals(ZestProperties.getLayoutIrrelevant(edge))
 							|| isLayoutIrrelevant(edge.getSource()) || hidingModel.isHidden(edge.getSource())
 							|| isLayoutIrrelevant(edge.getTarget()) || hidingModel.isHidden(edge.getTarget());
@@ -217,6 +226,12 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 				@Override
 				public boolean isLayoutIrrelevant(org.eclipse.gef.graph.Node node) {
+					if (!contentPartMap.containsKey(node)) {
+						return true;
+					}
+					if (!contentPartMap.get(node).isActive()) {
+						return true;
+					}
 					return Boolean.TRUE.equals(ZestProperties.getLayoutIrrelevant(node)) || hidingModel.isHidden(node);
 				}
 			});
@@ -301,6 +316,11 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	protected void postLayout() {
 		// execute post-layout of all nodes and edges
 		for (IVisualPart<? extends Node> child : getHost().getChildrenUnmodifiable()) {
+			// FIXME: Layout should only be triggered when content-part-map
+			// is changed, not when the children are changed.
+			if (child.getViewer() == null) {
+				continue;
+			}
 			AbstractLayoutBehavior childLayoutBehavior = child.getAdapter(AbstractLayoutBehavior.class);
 			if (childLayoutBehavior != null) {
 				childLayoutBehavior.postLayout();
@@ -312,6 +332,11 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	protected void preLayout() {
 		// execute pre-layout of all nodes and edges
 		for (IVisualPart<? extends Node> child : getHost().getChildrenUnmodifiable()) {
+			// FIXME: Layout should only be triggered when content-part-map
+			// is changed, not when the children are changed.
+			if (child.getViewer() == null) {
+				continue;
+			}
 			AbstractLayoutBehavior childLayoutBehavior = child.getAdapter(AbstractLayoutBehavior.class);
 			if (childLayoutBehavior != null) {
 				childLayoutBehavior.preLayout();

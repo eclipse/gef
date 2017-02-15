@@ -35,7 +35,7 @@ import org.eclipse.gef.layout.LayoutContext;
  * @author Mateusz Matela
  * @author mwienand
  */
-public class TreeLayoutObserver {
+public class TreeLayoutHelper {
 
 	/**
 	 * <code>TreeLayoutObserver</code> uses instance of this class to create
@@ -46,17 +46,16 @@ public class TreeLayoutObserver {
 	public static class TreeNodeFactory {
 		/**
 		 * Creates a new {@link TreeNode} for the given {@link Node} and
-		 * {@link TreeLayoutObserver}.
+		 * {@link TreeLayoutHelper}.
 		 * 
 		 * @param nodeLayout
 		 *            The {@link Node} that is wrapped.
 		 * @param observer
-		 *            The {@link TreeLayoutObserver} that initiated the
-		 *            creation.
+		 *            The {@link TreeLayoutHelper} that initiated the creation.
 		 * @return The new {@link TreeNode}.
 		 */
 		public TreeNode createTreeNode(Node nodeLayout,
-				TreeLayoutObserver observer) {
+				TreeLayoutHelper observer) {
 			return new TreeNode(nodeLayout, observer);
 		}
 	}
@@ -71,9 +70,9 @@ public class TreeLayoutObserver {
 		 */
 		final protected Node node;
 		/**
-		 * The {@link TreeLayoutObserver} that controls this {@link TreeNode}.
+		 * The {@link TreeLayoutHelper} that controls this {@link TreeNode}.
 		 */
-		final protected TreeLayoutObserver owner;
+		final protected TreeLayoutHelper owner;
 		/**
 		 * The height of the node.
 		 */
@@ -116,7 +115,7 @@ public class TreeLayoutObserver {
 		/**
 		 * 
 		 * @return node layout related to this tree node (null for
-		 *         {@link TreeLayoutObserver#getSuperRoot() Super Root})
+		 *         {@link TreeLayoutHelper#getSuperRoot() Super Root})
 		 */
 		public Node getNode() {
 			return node;
@@ -126,7 +125,7 @@ public class TreeLayoutObserver {
 		 * 
 		 * @return <code>TreeLayoutObserver</code> owning this tree node
 		 */
-		public TreeLayoutObserver getOwner() {
+		public TreeLayoutHelper getOwner() {
 			return owner;
 		}
 
@@ -142,8 +141,8 @@ public class TreeLayoutObserver {
 		/**
 		 * 
 		 * @return depth of this node in the tree (distance from root, 0 for a
-		 *         root and -1 for {@link TreeLayoutObserver#getSuperRoot()
-		 *         Super Root}
+		 *         root and -1 for {@link TreeLayoutHelper#getSuperRoot() Super
+		 *         Root}
 		 */
 		public int getDepth() {
 			return depth;
@@ -169,8 +168,8 @@ public class TreeLayoutObserver {
 		/**
 		 * Returns order in which nodes are visited during Deep First Search.
 		 * Children are visited in the same order as they were added to their
-		 * layout context, unless {@link TreeLayoutObserver#recomputeTree()} was
-		 * called after the nodes were added. In that case the order is
+		 * layout context, unless {@link TreeLayoutHelper#computeTree(Node[])}
+		 * was called after the nodes were added. In that case the order is
 		 * determined by order of nodes returned by
 		 * {@link Node#getAllSuccessorNodes()}. Leaves are assigned successive
 		 * numbers starting from 0, other nodes have order equal to the smallest
@@ -224,7 +223,7 @@ public class TreeLayoutObserver {
 		 * @param owner
 		 *            <code>TreeLayoutObserver</code> owning created node
 		 */
-		protected TreeNode(Node node, TreeLayoutObserver owner) {
+		protected TreeNode(Node node, TreeLayoutHelper owner) {
 			this.node = node;
 			this.owner = owner;
 		}
@@ -245,9 +244,8 @@ public class TreeLayoutObserver {
 
 		/**
 		 * Performs a DFS on the tree structure and calculates all parameters of
-		 * its nodes. Should be called on
-		 * {@link TreeLayoutObserver#getSuperRoot() Super Root}. Uses recurrence
-		 * to go through all the nodes.
+		 * its nodes. Should be called on {@link TreeLayoutHelper#getSuperRoot()
+		 * Super Root}. Uses recurrence to go through all the nodes.
 		 */
 		protected void precomputeTree() {
 			if (children.isEmpty()) {
@@ -300,7 +298,7 @@ public class TreeLayoutObserver {
 		/**
 		 * Checks if a potential parent would be better for this node than its
 		 * current parent. A better parent has smaller depth (with exception to
-		 * {@link TreeLayoutObserver#getSuperRoot() Super Root}, which has depth
+		 * {@link TreeLayoutHelper#getSuperRoot() Super Root}, which has depth
 		 * equal to -1 but is never a better parent than any other node).
 		 * 
 		 * @param potentialParent
@@ -345,7 +343,7 @@ public class TreeLayoutObserver {
 		/**
 		 * Called when new node is added to the tree structure. The new node
 		 * will not have any connections, so it will be a child of
-		 * {@link TreeLayoutObserver#getSuperRoot() Super Root}
+		 * {@link TreeLayoutHelper#getSuperRoot() Super Root}
 		 * 
 		 * @param newNode
 		 *            the added node
@@ -391,47 +389,35 @@ public class TreeLayoutObserver {
 
 	private final HashMap<Object, TreeNode> layoutToTree = new HashMap<>();
 	private final TreeNodeFactory factory;
-	private final LayoutContext context;
 	private TreeNode superRoot;
-	private ArrayList<TreeListener> treeListeners = new ArrayList<>();
 
 	/**
-	 * Constructs a new {@link TreeLayoutObserver} for observing the given
+	 * Constructs a new {@link TreeLayoutHelper} for observing the given
 	 * {@link LayoutContext}. The given {@link TreeNodeFactory} will be used for
 	 * the construction of {@link TreeNode}s. If no factory is supplied, the
 	 * {@link TreeNodeFactory} will be used.
 	 * 
-	 * @param context
-	 *            The {@link LayoutContext} that is observed.
 	 * @param nodeFactory
 	 *            The {@link TreeNodeFactory} to use.
 	 */
-	public TreeLayoutObserver(LayoutContext context,
-			TreeNodeFactory nodeFactory) {
+	public TreeLayoutHelper(TreeNodeFactory nodeFactory) {
 		if (nodeFactory == null)
 			this.factory = new TreeNodeFactory();
 		else
 			this.factory = nodeFactory;
-		this.context = context;
-		recomputeTree();
 	}
 
 	/**
 	 * Recomputes all the information about the tree structure (the same effect
 	 * as creating new <code>TreeLayoutObserver</code>).
+	 * 
+	 * @param nodes
+	 *            nodes
 	 */
-	public void recomputeTree() {
+	public void computeTree(Node[] nodes) {
 		superRoot = factory.createTreeNode(null, this);
 		layoutToTree.put(null, superRoot);
-		createTrees(context.getNodes());
-	}
-
-	/**
-	 * Stops this observer from listening to changes in observed layout context.
-	 * After calling this method the information about tree structure can be
-	 * updated only when {@link #recomputeTree()} is called.
-	 */
-	public void stop() {
+		createTrees(nodes);
 	}
 
 	/**
@@ -440,7 +426,7 @@ public class TreeLayoutObserver {
 	 * 
 	 * @return Super Root
 	 */
-	public TreeNode getSuperRoot() {
+	protected TreeNode getSuperRoot() {
 		return superRoot;
 	}
 
@@ -455,34 +441,13 @@ public class TreeLayoutObserver {
 	 *         {@link Node} or a newly created one in case there was no related
 	 *         {@link TreeNode} before.
 	 */
-	public TreeNode getTreeNode(Node node) {
+	protected TreeNode getTreeNode(Node node) {
 		TreeNode treeNode = layoutToTree.get(node);
 		if (treeNode == null) {
 			treeNode = factory.createTreeNode(node, this);
 			layoutToTree.put(node, treeNode);
 		}
 		return treeNode;
-	}
-
-	/**
-	 * Adds a listener that will be informed about changes in tree structure.
-	 * 
-	 * @param listener
-	 *            listener to add
-	 */
-	public void addTreeListener(TreeListener listener) {
-		treeListeners.add(listener);
-	}
-
-	/**
-	 * Removes a listener from list of listener to be informed about changes in
-	 * tree structure.
-	 * 
-	 * @param listener
-	 *            listener to remove
-	 */
-	public void removeTreeListener(TreeListener listener) {
-		treeListeners.add(listener);
 	}
 
 	/**

@@ -1215,8 +1215,6 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 	private final Direction direction;
 	private final Dimension dimension;
 
-	private LayoutContext context;
-
 	// index of the last element in a layer after padding process
 	private int last;
 
@@ -1332,15 +1330,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		this(Direction.VERTICAL, null, null, null);
 	}
 
-	public void setLayoutContext(LayoutContext context) {
-		this.context = context;
-	}
-
-	public LayoutContext getLayoutContext() {
-		return context;
-	}
-
-	public void applyLayout(boolean clean, Object extra) {
+	public void applyLayout(LayoutContext layoutContext, boolean clean) {
 		if (!clean)
 			return;
 		layers.clear();
@@ -1348,7 +1338,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
 		ArrayList<Node> nodes = new ArrayList<>();
 		ArrayList<Node> nodes2 = new ArrayList<>();
-		for (Node node : context.getNodes()) {
+		for (Node node : layoutContext.getNodes()) {
 			nodes.add(node);
 			nodes2.add(node);
 		}
@@ -1362,10 +1352,10 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				map.put(nw.node, nw);
 			}
 		}
-		calculatePositions();
+		calculatePositions(layoutContext);
 	}
 
-	private void calculatePositions() {
+	private void calculatePositions(LayoutContext context) {
 		Rectangle boundary = LayoutProperties.getBounds(context.getGraph());
 		if (dimension != null)
 			boundary = new Rectangle(0, 0, dimension.getWidth(),

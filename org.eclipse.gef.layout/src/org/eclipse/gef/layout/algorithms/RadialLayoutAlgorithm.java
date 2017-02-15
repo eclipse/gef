@@ -34,10 +34,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 	private static final double MAX_DEGREES = Math.PI * 2;
 	private double startDegree = 0;
 	private double endDegree = MAX_DEGREES;
-
-	private LayoutContext context;
 	private boolean resize = false;
-
 	private TreeLayoutAlgorithm treeLayout = new TreeLayoutAlgorithm();
 
 	/**
@@ -46,12 +43,12 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 	public RadialLayoutAlgorithm() {
 	}
 
-	public void applyLayout(boolean clean, Object extra) {
+	public void applyLayout(LayoutContext layoutContext, boolean clean) {
 		if (!clean)
 			return;
-		treeLayout.internalApplyLayout();
-		Node[] entities = context.getNodes();
-		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
+		treeLayout.internalApplyLayout(layoutContext);
+		Node[] entities = layoutContext.getNodes();
+		Rectangle bounds = LayoutProperties.getBounds(layoutContext.getGraph());
 		computeRadialPositions(entities, bounds);
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
@@ -87,19 +84,10 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(LayoutContext context) {
-		this.context = context;
-		treeLayout.setLayoutContext(context);
-	}
-
-	public LayoutContext getLayoutContext() {
-		return context;
-	}
-
 	/**
 	 * Set the range the radial layout will use when
-	 * {@link #applyLayout(boolean, Object)} is called. Both values must be in
-	 * radians.
+	 * {@link #applyLayout(LayoutContext, boolean)} is called. Both values must
+	 * be in radians.
 	 * 
 	 * @param startDegree
 	 *            The start angle for this algorithm (in degree).

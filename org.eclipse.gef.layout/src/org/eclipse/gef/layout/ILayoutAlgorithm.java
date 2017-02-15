@@ -21,29 +21,12 @@ package org.eclipse.gef.layout;
 public interface ILayoutAlgorithm {
 
 	/**
-	 * Sets the layout context for this algorithm. The receiver will unregister
-	 * from its previous layout context and register to the new one
-	 * (registration means for example adding listeners). After a call to this
-	 * method, the receiving algorithm can compute and cache internal data
-	 * related to given context and perform an initial layout.
-	 * 
-	 * @param context
-	 *            a new layout context or null if this algorithm should not
-	 *            perform any layout
-	 */
-	public void setLayoutContext(LayoutContext context);
-
-	/**
-	 * Returns the previously set {@link LayoutContext}.
-	 * 
-	 * @return the previously set {@link LayoutContext}
-	 */
-	public LayoutContext getLayoutContext();
-
-	/**
 	 * Makes this algorithm perform layout computation and apply it to its
 	 * context.
 	 * 
+	 * @param layoutContext
+	 *            The {@link LayoutContext} that provides all relevant
+	 *            information about what to layout.
 	 * @param clean
 	 *            if true the receiver should assume that the layout context has
 	 *            changed significantly and recompute the whole layout even if
@@ -52,9 +35,6 @@ public interface ILayoutAlgorithm {
 	 *            layout algorithm working in background can apply accumulated
 	 *            changes. Static layout algorithm can ignore this call entirely
 	 *            if clean is false.
-	 * @param extra
-	 *            An extra {@link Object} that can be used, for example, to
-	 *            implement a callback mechanism.
 	 */
-	public void applyLayout(boolean clean, Object extra);
+	public void applyLayout(LayoutContext layoutContext, boolean clean);
 }

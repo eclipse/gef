@@ -62,6 +62,12 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 	protected void updateLabels() {
 		// iterate anchoreds
 		for (IVisualPart<? extends Node> anchored : getHost().getAnchoredsUnmodifiable().elementSet()) {
+			// FIXME: Layout should only be triggered when content-part-map
+			// is changed, not when the children are changed.
+			if (anchored.getViewer() == null) {
+				continue;
+			}
+
 			// filter for label parts
 			if (anchored instanceof AbstractLabelPart) {
 				AbstractLabelPart labelPart = (AbstractLabelPart) anchored;

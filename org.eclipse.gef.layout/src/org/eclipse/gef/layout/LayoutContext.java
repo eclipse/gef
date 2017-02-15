@@ -21,6 +21,7 @@ import org.eclipse.gef.graph.Node;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 
 /**
  * The {@link LayoutContext} provides the context in which to layout a
@@ -43,7 +44,6 @@ public class LayoutContext {
 			this, LAYOUT_ALGORITHM_PROPERTY);
 
 	private Graph graph;
-
 	private final List<Runnable> postLayoutPass = new ArrayList<>();
 	private final List<Runnable> preLayoutPass = new ArrayList<>();
 	private final List<ILayoutFilter> layoutFilters = new ArrayList<>();
@@ -66,17 +66,12 @@ public class LayoutContext {
 	 * @param clear
 	 *            <code>true</code> to indicate that the algorithm has to fully
 	 *            re-compute the layout, otherwise <code>false</code>.
-	 * @param extra
-	 *            An extra {@link Object} parameter that can be used to pass-on
-	 *            additional information to
-	 *            {@link ILayoutAlgorithm#applyLayout(boolean, Object)}.
 	 */
-	public void applyLayout(boolean clear, Object extra) {
+	public void applyLayout(boolean clear) {
 		ILayoutAlgorithm layoutAlgorithm = layoutAlgorithmProperty.get();
 		if (layoutAlgorithm != null) {
 			preLayout();
-			layoutAlgorithm.setLayoutContext(this);
-			layoutAlgorithm.applyLayout(clear, extra);
+			layoutAlgorithm.applyLayout(this, clear);
 			postLayout();
 		}
 	}
@@ -135,7 +130,14 @@ public class LayoutContext {
 	 */
 	// TODO: remove this (algorithms should use getGraph().getNodes())
 	public Node[] getNodes() {
-		return graph.getNodes().toArray(new Node[] {});
+		ObservableList<Node> nodes = graph.getNodes();
+		List<Node> layoutRelevantNodes = new ArrayList<>();
+		for (Node n : nodes) {
+			if (!isLayoutIrrelevant(n)) {
+				layoutRelevantNodes.add(n);
+			}
+		}
+		return layoutRelevantNodes.toArray(new Node[] {});
 	}
 
 	/**
@@ -144,9 +146,15 @@ public class LayoutContext {
 	 * 
 	 * @return array of connections between nodes
 	 */
-	// TODO: remove this (algorithms should use getGraph().getEdges())
 	public Edge[] getEdges() {
-		return graph.getEdges().toArray(new Edge[] {});
+		ObservableList<Edge> edges = graph.getEdges();
+		List<Edge> layoutRelevantEdges = new ArrayList<>();
+		for (Edge e : edges) {
+			if (!isLayoutIrrelevant(e)) {
+				layoutRelevantEdges.add(e);
+			}
+		}
+		return layoutRelevantEdges.toArray(new Edge[] {});
 	}
 
 	/**
@@ -243,7 +251,7 @@ public class LayoutContext {
 	/**
 	 * Adds the given {@link Runnable} to the list of {@link Runnable}s which
 	 * are executed before applying a layout, i.e. before
-	 * {@link #applyLayout(boolean, Object)}.
+	 * {@link #applyLayout(boolean)}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} to add to the list of {@link Runnable}s
@@ -290,7 +298,7 @@ public class LayoutContext {
 	/**
 	 * Removes the given {@link Runnable} from the list of {@link Runnable}s
 	 * which are executed before applying a layout, i.e. before
-	 * {@link #applyLayout(boolean, Object)}.
+	 * {@link #applyLayout(boolean)}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} to remove from the list of

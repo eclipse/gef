@@ -82,21 +82,16 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	 */
 	private double childrenWidth;
 
-	private LayoutContext context;
-
 	/**
 	 * Default constructor.
 	 */
 	public GridLayoutAlgorithm() {
 	}
 
-	public void setLayoutContext(LayoutContext context) {
-		this.context = context;
-	}
-
-	public void applyLayout(boolean clean, Object extra) {
+	public void applyLayout(LayoutContext context, boolean clean) {
 		if (!clean)
 			return;
+		numChildren = context.getNodes().length;
 		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
 		calculateGrid(bounds);
 
@@ -133,7 +128,6 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	// {@link #rows}, {@link #cols}, {@link #colWidth}, {@link #rowHeight},
 	// {@link #offsetX}, {@link #offsetY}
 	protected void calculateGrid(Rectangle bounds) {
-		numChildren = context.getNodes().length;
 		int[] result = calculateNumberOfRowsAndCols(numChildren, bounds.getX(),
 				bounds.getY(), bounds.getWidth(), bounds.getHeight());
 		cols = result[0];
@@ -327,10 +321,6 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	 */
 	public void setResizing(boolean resizing) {
 		resize = resizing;
-	}
-
-	public LayoutContext getLayoutContext() {
-		return context;
 	}
 
 }

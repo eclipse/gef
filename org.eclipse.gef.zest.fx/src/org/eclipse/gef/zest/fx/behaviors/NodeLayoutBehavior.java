@@ -94,6 +94,19 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		} else {
 			preLayoutSize = new Dimension(maxx - minx, maxy - miny);
 		}
+
+		// constrain to visual's min-size
+		{
+			double minWidth = visual.minWidth(-1);
+			double minHeight = visual.minHeight(-1);
+			if (preLayoutSize.width < minWidth) {
+				preLayoutSize.width = minWidth;
+			}
+			if (preLayoutSize.height < minHeight) {
+				preLayoutSize.height = minHeight;
+			}
+		}
+
 		// System.out.println("pre layout size of " + content + ": " +
 		// preLayoutSize);
 		LayoutProperties.setSize(content, preLayoutSize.getCopy());
@@ -112,5 +125,4 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		// additional information inferred from visual
 		LayoutProperties.setResizable(content, visual.isResizable());
 	}
-
 }

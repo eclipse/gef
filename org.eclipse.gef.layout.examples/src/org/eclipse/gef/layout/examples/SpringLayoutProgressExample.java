@@ -128,9 +128,9 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				viewer.getContentPartMap().get(graph)
-						.getAdapter(LayoutContext.class)
-						.applyLayout(true, null);
+				LayoutContext layoutContext = viewer.getContentPartMap()
+						.get(graph).getAdapter(LayoutContext.class);
+				layoutContext.applyLayout(true);
 				new AnimationTimer() {
 					private long last = 0;
 					private final long NANOS_PER_MILLI = 1000000;
