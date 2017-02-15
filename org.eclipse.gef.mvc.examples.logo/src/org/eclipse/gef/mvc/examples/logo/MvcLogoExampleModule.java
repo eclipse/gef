@@ -30,11 +30,11 @@ import org.eclipse.gef.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.ContentRestrictedChangeViewportPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CreateAndTranslateShapeOnDragPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CreationMenuOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.FXCloneOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.FXCreationMenuItemProvider;
-import org.eclipse.gef.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
+import org.eclipse.gef.mvc.examples.logo.policies.CloneOnClickPolicy;
+import org.eclipse.gef.mvc.examples.logo.policies.CreateCurveOnDragPolicy;
+import org.eclipse.gef.mvc.examples.logo.policies.CreationMenuItemProvider;
+import org.eclipse.gef.mvc.examples.logo.policies.DeleteFirstAnchorageOnClickPolicy;
+import org.eclipse.gef.mvc.examples.logo.policies.RelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
@@ -118,11 +118,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindCreateCurveHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCreateCurveOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateCurveOnDragPolicy.class);
 	}
 
 	protected void bindDeleteHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXDeleteFirstAnchorageOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DeleteFirstAnchorageOnClickPolicy.class);
 	}
 
 	protected void bindFocusFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -208,7 +208,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectionClickableAreaBehavior.class);
 
 		// clone on shift+click
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCloneOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickPolicy.class);
 	}
 
 	protected void bindGeometricShapePartAdapterInPaletteViewerContext(
@@ -267,7 +267,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// relocate on drag (including anchored elements, which are linked)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXRelocateLinkedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RelocateLinkedOnDragPolicy.class);
 
 		// clone
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneShapePolicy.class);
@@ -276,7 +276,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DefaultAnchorProvider.class);
 
 		// clone on shift+click
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCloneOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickPolicy.class);
 
 		// normalize connected on drag
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragPolicy.class);
@@ -321,7 +321,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		super.bindIRootPartAdaptersForContentViewer(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreationMenuOnClickPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.role(CreationMenuOnClickPolicy.MENU_ITEM_PROVIDER_ROLE))
-				.to(FXCreationMenuItemProvider.class);
+				.to(CreationMenuItemProvider.class);
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DeleteSelectedOnTypePolicy.class);
 		// interaction policy to rotate selected through rotate gesture

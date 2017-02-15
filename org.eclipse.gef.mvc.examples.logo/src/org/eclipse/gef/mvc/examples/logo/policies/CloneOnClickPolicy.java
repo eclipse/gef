@@ -35,7 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
-public class FXCloneOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
+public class CloneOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent event) {
@@ -50,8 +50,7 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy implements I
 		IRootPart<? extends Node> root = getHost().getRoot();
 		CreationPolicy creationPolicy = root.getAdapter(CreationPolicy.class);
 		init(creationPolicy);
-		IContentPart<? extends Node> clonedContentPart = creationPolicy.create(cloneContent,
-				(IContentPart<? extends Node>) getHost().getParent(),
+		IContentPart<? extends Node> clonedContentPart = creationPolicy.create(cloneContent, getHost().getParent(),
 				HashMultimap.<IContentPart<? extends Node>, String> create());
 		commit(creationPolicy);
 
@@ -94,5 +93,4 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy implements I
 	protected boolean isCloneModifierDown(MouseEvent e) {
 		return e.isAltDown() || e.isShiftDown();
 	}
-
 }

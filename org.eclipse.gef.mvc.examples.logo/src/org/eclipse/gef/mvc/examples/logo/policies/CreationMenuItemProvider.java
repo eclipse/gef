@@ -23,7 +23,7 @@ import com.google.inject.Provider;
 
 import javafx.scene.Node;
 
-public class FXCreationMenuItemProvider implements Provider<List<CreationMenuOnClickPolicy.ICreationMenuItem>> {
+public class CreationMenuItemProvider implements Provider<List<CreationMenuOnClickPolicy.ICreationMenuItem>> {
 
 	static class GeometricShapeItem implements CreationMenuOnClickPolicy.ICreationMenuItem {
 		private final GeometricShape template;
@@ -57,5 +57,4 @@ public class FXCreationMenuItemProvider implements Provider<List<CreationMenuOnC
 		}
 		return items;
 	}
-
 }

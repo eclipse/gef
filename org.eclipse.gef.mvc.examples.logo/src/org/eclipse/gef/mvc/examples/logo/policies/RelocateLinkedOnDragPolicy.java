@@ -21,7 +21,7 @@ import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 
 import javafx.scene.Node;
 
-public class FXRelocateLinkedOnDragPolicy extends TranslateSelectedOnDragPolicy {
+public class RelocateLinkedOnDragPolicy extends TranslateSelectedOnDragPolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -42,5 +42,4 @@ public class FXRelocateLinkedOnDragPolicy extends TranslateSelectedOnDragPolicy 
 
 		return linked;
 	}
-
 }

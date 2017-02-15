@@ -44,7 +44,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy implements IOnDragPolicy {
+public class CreateCurveOnDragPolicy extends AbstractInteractionPolicy implements IOnDragPolicy {
 
 	private CircleSegmentHandlePart bendTargetPart;
 	private Map<AdapterKey<? extends IOnDragPolicy>, IOnDragPolicy> dragPolicies;
@@ -192,5 +192,4 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy impleme
 			}
 		}
 	}
-
 }

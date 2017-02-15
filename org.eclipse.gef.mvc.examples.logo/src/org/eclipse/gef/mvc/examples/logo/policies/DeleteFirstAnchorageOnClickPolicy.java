@@ -22,7 +22,7 @@ import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
+public class DeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPolicy implements IOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
@@ -48,5 +48,4 @@ public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractInteractionPoli
 	protected IVisualPart<? extends Node> getTargetPart() {
 		return getHost().getAnchoragesUnmodifiable().keySet().iterator().next();
 	}
-
 }
