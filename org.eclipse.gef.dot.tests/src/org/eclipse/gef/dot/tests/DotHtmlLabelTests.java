@@ -33,6 +33,7 @@ import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
 import org.eclipse.xtext.validation.Issue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,6 +48,12 @@ public class DotHtmlLabelTests {
 
 	@Inject
 	private ValidationTestHelper validationTestHelper;
+
+	@Ignore
+	@Test(timeout = 2000)
+	public void testTagWithAttribute() {
+		parse("<BR ALIGN=\"LEFT\"/>");
+	}
 
 	@Test
 	public void test_nesting() throws Throwable {
