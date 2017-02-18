@@ -210,8 +210,8 @@ public class DotParserTests {
 	}
 
 	@Test
-	public void testHtmlLikeLabels() {
-		testFile("html_like_lables.dot");
+	public void testHtmlLikeLabels1() {
+		testFile("html_like_labels1.dot");
 	}
 
 	private void testFile(String fileName) {
