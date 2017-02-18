@@ -25,7 +25,6 @@ import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer;
 }
 
 RULE_HTML_COMMENT: { !tagMode }?=> ( '<!--' (~('-')|'-' ~('-')|'-' '-' ~('>'))* '-->' );
-RULE_TEXT: { !tagMode }?=> ( (~('<'))+ );
 
 RULE_TAG_START_CLOSE: { !tagMode }?=> ( '</' ) { tagMode = true; };
 RULE_TAG_START      : { !tagMode }?=> ( '<'  ) { tagMode = true; };
@@ -36,3 +35,5 @@ RULE_ASSIGN    : { tagMode }?=> ( '=' );
 RULE_ATTR_VALUE: { tagMode }?=> ( '"' ( options {greedy=false;} : . )* '"' );
 RULE_ID        : { tagMode }?=> ( ('_'|'a'..'z'|'A'..'Z') ('_'|'a'..'z'|'A'..'Z'|'0'..'9')* );
 RULE_WS        : { tagMode }?=> ( (' '|'\t'|'\n'|'\r'|'\f')+ );
+
+RULE_TEXT: { !tagMode }?=> ( (~('<'))+ );

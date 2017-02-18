@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *     Tamas Miklossy   (itemis AG) - initial API and implementation
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotHtmlLabel hidden(HTML_COMMENT)
 
@@ -36,7 +36,6 @@ HtmlTag: TAG_START WS? name=ID WS? (attributes+=HtmlAttr WS?)*
 HtmlAttr: name=ID WS? ASSIGN WS? value=ATTR_VALUE;
 
 terminal HTML_COMMENT: '<!--' (!('-') | '-' !('-') | '-' '-' !('>'))* '-->'; // if not tag-mode
-terminal TEXT: (!('<'))+; // if not tag-mode
 
 terminal TAG_START_CLOSE: '</'; // if not tag-mode: tag-mode=true
 terminal TAG_START      :  '<'; // if not tag-mode: tag-mode=true
@@ -47,3 +46,5 @@ terminal ASSIGN: '='; // if tag-mode
 terminal ATTR_VALUE: '"'->'"'; // if tag-mode
 terminal ID: ('_'|'a'..'z'|'A'..'Z') ('_'|'a'..'z'|'A'..'Z'|'0'..'9')*; // if tag-mode
 terminal WS: (' '|'\t'|'\n'|'\r'|'\f')+; // if tag-mode
+
+terminal TEXT: (!('<'))+; // if not tag-mode
