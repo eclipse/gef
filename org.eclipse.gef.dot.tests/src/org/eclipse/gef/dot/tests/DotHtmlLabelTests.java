@@ -15,25 +15,19 @@ package org.eclipse.gef.dot.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelInjectorProvider;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
-import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
-import org.eclipse.xtext.validation.Issue;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -93,43 +87,27 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test
-	public void test_tag_wrongly_closed() throws Throwable {
+	public void test_tag_wrongly_closed() throws Exception {
 		String text = "<test>string</B>";
-		// parsing the string fails with one error and one warning:
-		// 1) </B> refers to missing tag <B>
-		// 2) <test> tag is not supported
-		List<Issue> issues = issues(text);
-		assertEquals(2, issues.size());
-		Map<Severity, Issue> severityToIssue = new IdentityHashMap<>();
-		for (Issue issue : issues) {
-			severityToIssue.put(issue.getSeverity(), issue);
-		}
-		assertEquals(2, severityToIssue.keySet().size());
-		assertTrue(severityToIssue.containsKey(Severity.ERROR));
-		assertTrue(severityToIssue.containsKey(Severity.WARNING));
-		assertTrue(severityToIssue.get(Severity.ERROR).getMessage().contains(
-				"Tag '<test>' is not closed (expected '</test>' but got '</B>')."));
-		assertTrue(severityToIssue.get(Severity.WARNING).getMessage()
-				.contains("Tag '<test>' is not supported."));
+
+		HtmlLabel htmlLabel = parseHelper.parse(text);
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+				"Tag '<test>' is not closed (expected '</test>' but got '</B>').");
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+				"Tag '<test>' is not supported.");
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
 	}
 
 	@Test
 	public void test_tag_case_insensitivity() throws Throwable {
 		String text = "<b>string</B>";
 		parse(text);
-	}
-
-	private List<Issue> issues(String text) {
-		try {
-			HtmlLabel ast = parseHelper.parse(text);
-			assertNotNull(ast);
-			List<Issue> issues = validationTestHelper.validate(ast);
-			return issues;
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
-		}
-		return Collections.emptyList();
 	}
 
 	private HtmlLabel parse(String text) {

@@ -108,8 +108,8 @@ public class DotHtmlLabelJavaValidator extends
 
 	/**
 	 * Checks if the given {@link HtmlTag} is valid w.r.t. its parent (not all
-	 * tags are allowed on all nesting levels). Generates warnings when the
-	 * given {@link HtmlTag} is not supported by Graphviz w.r.t. its parent.
+	 * tags are allowed on all nesting levels). Generates errors when the given
+	 * {@link HtmlTag} is not supported by Graphviz w.r.t. its parent.
 	 * 
 	 * @param tag
 	 *            The {@link HtmlTag} to check.
@@ -118,7 +118,7 @@ public class DotHtmlLabelJavaValidator extends
 	public void checkTagNameIsValid(HtmlTag tag) {
 		String tagName = tag.getName();
 		if (!ALL_TAGS.contains(tagName.toUpperCase())) {
-			warning("Tag '<" + tagName + ">' is not supported.",
+			error("Tag '<" + tagName + ">' is not supported.",
 					HtmllabelPackage.Literals.HTML_TAG__NAME);
 		} else {
 			// find parent tag
@@ -137,7 +137,7 @@ public class DotHtmlLabelJavaValidator extends
 			}
 			if (!validTags.get(parentName.toUpperCase())
 					.contains(tagName.toUpperCase())) {
-				warning("Tag '<" + tagName + ">' is not allowed inside '<"
+				error("Tag '<" + tagName + ">' is not allowed inside '<"
 						+ parentName + ">', but only inside '<"
 						+ String.join(">', '<",
 								allowedParents.get(tagName.toUpperCase()))
@@ -149,7 +149,7 @@ public class DotHtmlLabelJavaValidator extends
 	/**
 	 * Checks if the given {@link HtmlAttr} is valid w.r.t. its tag (only
 	 * certain attributes are supported by the individual tags). Generates
-	 * warnings if the {@link HtmlAttr} is not supported by Graphviz w.r.t. its
+	 * errors if the {@link HtmlAttr} is not supported by Graphviz w.r.t. its
 	 * tag.
 	 * 
 	 * @param attr
@@ -165,7 +165,7 @@ public class DotHtmlLabelJavaValidator extends
 			if (!validAttributes.containsKey(tagName.toUpperCase())
 					|| !validAttributes.get(tagName.toUpperCase())
 							.contains(attrName.toUpperCase())) {
-				warning("Attribute '" + attrName + "' is not allowed inside '<"
+				error("Attribute '" + attrName + "' is not allowed inside '<"
 						+ tagName + ">'.",
 						HtmllabelPackage.Literals.HTML_ATTR__NAME);
 			}
