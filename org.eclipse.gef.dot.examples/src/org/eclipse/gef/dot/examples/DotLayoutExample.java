@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - minor refactorings
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.examples;
@@ -142,12 +143,21 @@ public class DotLayoutExample extends AbstractZestExample {
 		String lizard = "Lizard";
 		return new Graph.Builder()
 				.attr(ZestProperties.LAYOUT_ALGORITHM__G, new DotNativeLayout())
-				.node(paper).attr(LABEL, paper).node(rock).attr(LABEL, rock)
-				.node(scissors).attr(LABEL, scissors).node(spock)
-				.attr(LABEL, spock).node(lizard).attr(LABEL, lizard)
-				.edge(paper, spock).edge(paper, rock).edge(rock, scissors)
-				.edge(rock, lizard).edge(scissors, paper).edge(scissors, lizard)
-				.edge(spock, scissors).edge(spock, rock).edge(lizard, spock)
-				.edge(lizard, paper).build();
+				.node(paper).attr(LABEL, paper) //
+				.node(rock).attr(LABEL, rock) //
+				.node(scissors).attr(LABEL, scissors) //
+				.node(spock).attr(LABEL, spock) //
+				.node(lizard).attr(LABEL, lizard) //
+				.edge(paper, spock) //
+				.edge(paper, rock) //
+				.edge(rock, scissors) //
+				.edge(rock, lizard) //
+				.edge(scissors, paper) //
+				.edge(scissors, lizard) //
+				.edge(spock, scissors) //
+				.edge(spock, rock) //
+				.edge(lizard, spock) //
+				.edge(lizard, paper) //
+				.build();
 	}
 }
