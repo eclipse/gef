@@ -47,4 +47,4 @@ terminal ATTR_VALUE: '"'->'"'; // if tag-mode
 terminal ID: ('_'|'a'..'z'|'A'..'Z') ('_'|'a'..'z'|'A'..'Z'|'0'..'9')*; // if tag-mode
 terminal WS: (' '|'\t'|'\n'|'\r'|'\f')+; // if tag-mode
 
-terminal TEXT: (!('<'))+; // if not tag-mode
+terminal TEXT: (!('<'|'"'))+; // if not tag-mode

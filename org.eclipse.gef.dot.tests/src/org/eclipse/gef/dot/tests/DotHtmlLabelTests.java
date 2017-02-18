@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Tamas Miklossy   (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
@@ -33,7 +34,6 @@ import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
 import org.eclipse.xtext.validation.Issue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,9 +49,8 @@ public class DotHtmlLabelTests {
 	@Inject
 	private ValidationTestHelper validationTestHelper;
 
-	@Ignore
 	@Test(timeout = 2000)
-	public void testTagWithAttribute() {
+	public void test_tag_with_attribute() {
 		parse("<BR ALIGN=\"LEFT\"/>");
 	}
 

@@ -36,4 +36,4 @@ RULE_ATTR_VALUE: { tagMode }?=> ( '"' ( options {greedy=false;} : . )* '"' );
 RULE_ID        : { tagMode }?=> ( ('_'|'a'..'z'|'A'..'Z') ('_'|'a'..'z'|'A'..'Z'|'0'..'9')* );
 RULE_WS        : { tagMode }?=> ( (' '|'\t'|'\n'|'\r'|'\f')+ );
 
-RULE_TEXT: { !tagMode }?=> ( (~('<'))+ );
+RULE_TEXT: { !tagMode }?=> ( ~(('<'|'"'))+ );
