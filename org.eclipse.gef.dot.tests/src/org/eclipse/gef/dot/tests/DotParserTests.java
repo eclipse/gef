@@ -214,6 +214,21 @@ public class DotParserTests {
 		testFile("html_like_labels1.dot");
 	}
 
+	@Test
+	public void testHtmlLikeLabels2() {
+		testFile("html_like_labels2.dot");
+	}
+
+	@Test
+	public void testHtmlLikeLabels3() {
+		testFile("html_like_labels3.dot");
+	}
+
+	@Test
+	public void testHtmlLikeLabels4() {
+		testFile("html_like_labels4.dot");
+	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
