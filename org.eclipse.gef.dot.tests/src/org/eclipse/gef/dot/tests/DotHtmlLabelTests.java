@@ -55,6 +55,11 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test
+	public void test_font_tag_with_point_size_attribute() {
+		parse("<FONT POINT-SIZE=\"24.0\">line3</FONT>");
+	}
+
+	@Test
 	public void test_nesting() throws Throwable {
 		String text = "<table>\n" + "<tr><td>first</td></tr>\n"
 				+ "<tr><td><table><tr><td><b>second</b></td></tr></table></td></tr>\n"

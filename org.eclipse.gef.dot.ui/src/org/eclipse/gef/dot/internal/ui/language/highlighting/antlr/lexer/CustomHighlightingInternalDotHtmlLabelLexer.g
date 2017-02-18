@@ -33,7 +33,7 @@ RULE_TAG_END_CLOSE  : {  tagMode }?=> ( '/>' ) { tagMode = false; };
 
 RULE_ASSIGN    : { tagMode }?=> ( '=' );
 RULE_ATTR_VALUE: { tagMode }?=> ( '"' ( options {greedy=false;} : . )* '"' );
-RULE_ID        : { tagMode }?=> ( ('_'|'a'..'z'|'A'..'Z') ('_'|'a'..'z'|'A'..'Z'|'0'..'9')* );
+RULE_ID        : { tagMode }?=> ( ('_'|'a'..'z'|'A'..'Z') ('_'|'-'|'a'..'z'|'A'..'Z'|'0'..'9')* );
 RULE_WS        : { tagMode }?=> ( (' '|'\t'|'\n'|'\r'|'\f')+ );
 
 RULE_TEXT: { !tagMode }?=> ( ~(('<'|'"'))+ );

@@ -84,7 +84,7 @@ public class DotHtmlLabelJavaValidator extends
 						"PORT", "ROWSPAN", "SIDES", "STYLE", "TARGET", "TITLE",
 						"TOOLTIP", "VALIGN", "WIDTH"));
 		validAttributes.get("FONT")
-				.addAll(Arrays.asList("COLOR", "FACE", "POINT"));
+				.addAll(Arrays.asList("COLOR", "FACE", "POINT-SIZE"));
 		validAttributes.get("BR").addAll(Arrays.asList("ALIGN"));
 		validAttributes.get("IMG").addAll(Arrays.asList("SCALE", "SRC"));
 	}
