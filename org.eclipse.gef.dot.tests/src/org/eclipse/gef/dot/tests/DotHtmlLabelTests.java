@@ -43,27 +43,60 @@ public class DotHtmlLabelTests {
 	@Inject
 	private ValidationTestHelper validationTestHelper;
 
+	/*
+	 ************************************************************************************************************
+	 * Test cases for valid DOT Html like labels
+	 ************************************************************************************************************
+	 */
+	@Test
+	public void test_tag_case_insensitivity() throws Throwable {
+		parse(DotTestHtmlLabels.MIXED_LOWER_AND_UPPER_CASE);
+	}
+
+	@Test
+	public void test_comment() throws Throwable {
+		parse(DotTestHtmlLabels.COMMENT);
+	}
+
+	@Test
+	public void test_comment_with_hyphen() throws Throwable {
+		parse(DotTestHtmlLabels.COMMENT_WITH_HYPHEN);
+	}
+
+	@Test
+	public void test_comment_with_nested_tags() throws Throwable {
+		parse(DotTestHtmlLabels.COMMENT_WITH_NESTED_TAG);
+	}
+
+	@Test
+	public void test_comment_with_open_tag() throws Throwable {
+		parse(DotTestHtmlLabels.COMMENT_WITH_OPEN_TAG);
+	}
+
+	@Test
+	public void test_comment_with_close_tag() throws Throwable {
+		parse(DotTestHtmlLabels.COMMENT_WITH_CLOSE_TAG);
+	}
+
 	@Test(timeout = 2000)
 	public void test_tag_with_attribute() {
-		parse("<BR ALIGN=\"LEFT\"/>");
+		parse(DotTestHtmlLabels.TAG_WITH_ATTRIBUTE);
 	}
 
 	@Test
 	public void test_font_tag_with_point_size_attribute() {
-		parse("<FONT POINT-SIZE=\"24.0\">line3</FONT>");
+		parse(DotTestHtmlLabels.FONT_TAG_WITH_POINT_SIZE_ATTRIBUTE);
 	}
 
 	@Test
 	public void test_font_tag_contains_table_tag() {
-		parse("<font color=\"green\"><table><tr><td>text</td></tr></table></font>");
+		parse(DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG);
 	}
 
 	@Test
 	public void test_nesting() throws Throwable {
-		String text = "<table>\n" + "<tr><td>first</td></tr>\n"
-				+ "<tr><td><table><tr><td><b>second</b></td></tr></table></td></tr>\n"
-				+ "</table>";
-		HtmlLabel htmlLabel = parse(text);
+		HtmlLabel htmlLabel = parse(DotTestHtmlLabels.NESTED_TAGS);
+
 		EList<HtmlContent> parts = htmlLabel.getParts();
 		assertEquals(1, parts.size());
 		// check base table
@@ -90,6 +123,12 @@ public class DotHtmlLabelTests {
 						.getTag().getChildren().get(0).getTag().getChildren()
 						.get(0).getText());
 	}
+
+	/*
+	 ************************************************************************************************************
+	 * Test cases for invalid DOT Html like labels
+	 ************************************************************************************************************
+	 */
 
 	@Test
 	public void test_tag_wrongly_closed() throws Exception {
@@ -185,12 +224,6 @@ public class DotHtmlLabelTests {
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
-	}
-
-	@Test
-	public void test_tag_case_insensitivity() throws Throwable {
-		String text = "<b>string</B>";
-		parse(text);
 	}
 
 	private HtmlLabel parse(String text) {
