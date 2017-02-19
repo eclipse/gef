@@ -105,6 +105,20 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test
+	public void test_unknown_parent() throws Exception {
+		String text = "<foo><tr></tr></foo>";
+
+		HtmlLabel htmlLabel = parseHelper.parse(text);
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+				"Tag '<foo>' is not supported.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+	}
+
+	@Test
 	public void test_tag_case_insensitivity() throws Throwable {
 		String text = "<b>string</B>";
 		parse(text);

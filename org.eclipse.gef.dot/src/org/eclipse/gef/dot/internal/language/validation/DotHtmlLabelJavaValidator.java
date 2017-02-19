@@ -133,7 +133,9 @@ public class DotHtmlLabelJavaValidator extends
 			String parentName = parent == null ? ROOT_TAG_KEY
 					: parent.getName();
 			if (!validTags.containsKey(parentName.toUpperCase())) {
-				throw new IllegalStateException("Parent tag is unknown.");
+				// this case can be ignored since it is handled by an other
+				// validation rule
+				// throw new IllegalStateException("Parent tag is unknown.");
 			}
 			if (!validTags.get(parentName.toUpperCase())
 					.contains(tagName.toUpperCase())) {
