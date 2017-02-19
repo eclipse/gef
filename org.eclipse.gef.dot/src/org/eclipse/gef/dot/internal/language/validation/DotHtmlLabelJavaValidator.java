@@ -46,6 +46,7 @@ public class DotHtmlLabelJavaValidator extends
 				new HashSet<>(Arrays.asList(new String[] { "BR", "FONT", "I",
 						"B", "U", "O", "SUB", "SUP", "S", "TABLE" })));
 		// add allowed nested tags
+		validTags.put("FONT", new HashSet<>(Arrays.asList("TABLE")));
 		validTags.put("TABLE", new HashSet<>(Arrays.asList("HR", "TR")));
 		validTags.put("TR", new HashSet<>(Arrays.asList("VR", "TD")));
 		validTags.put("TD", new HashSet<>(Arrays.asList("IMG", "BR", "FONT",

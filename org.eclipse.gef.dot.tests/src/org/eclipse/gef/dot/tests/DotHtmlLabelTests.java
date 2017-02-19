@@ -54,6 +54,11 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test
+	public void test_font_tag_contains_table_tag() {
+		parse("<font color=\"green\"><table><tr><td>text</td></tr></table></font>");
+	}
+
+	@Test
 	public void test_nesting() throws Throwable {
 		String text = "<table>\n" + "<tr><td>first</td></tr>\n"
 				+ "<tr><td><table><tr><td><b>second</b></td></tr></table></td></tr>\n"
