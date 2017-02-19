@@ -119,6 +119,66 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test
+	public void test_invalid_parent1() throws Exception {
+		String text = "<tr></tr>";
+
+		HtmlLabel htmlLabel = parseHelper.parse(text);
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+				"Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+	}
+
+	@Test
+	public void test_invalid_parent2() throws Exception {
+		String text = "<table><U></U></table>";
+
+		HtmlLabel htmlLabel = parseHelper.parse(text);
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+				"Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<ROOT>'");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+	}
+
+	@Test
+	public void test_invalid_attribute_in_valid_tag() throws Exception {
+		String text = "<table foo=\"bar\"></table>";
+
+		HtmlLabel htmlLabel = parseHelper.parse(text);
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlAttr(), null,
+				"Attribute 'foo' is not allowed inside '<table>'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+	}
+
+	@Test
+	public void test_invalid_attribute_in_invalid_tag() throws Exception {
+		String text = "<foo bar=\"baz\"></foo>";
+
+		HtmlLabel htmlLabel = parseHelper.parse(text);
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+				"Tag '<foo>' is not supported.");
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlAttr(), null,
+				"Attribute 'bar' is not allowed inside '<foo>'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
+	}
+
+	@Test
 	public void test_tag_case_insensitivity() throws Throwable {
 		String text = "<b>string</B>";
 		parse(text);
