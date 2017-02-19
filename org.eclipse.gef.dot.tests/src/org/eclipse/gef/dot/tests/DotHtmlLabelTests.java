@@ -114,8 +114,12 @@ public class DotHtmlLabelTests {
 				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
 				"Tag '<foo>' is not supported.");
 
-		// verify that this is the only reported issue
-		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+				"Tag '<tr>' is not allowed inside '<foo>', but only inside '<TABLE>'.");
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
 	}
 
 	@Test

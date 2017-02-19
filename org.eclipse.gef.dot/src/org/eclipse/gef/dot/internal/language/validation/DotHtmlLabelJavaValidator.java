@@ -132,13 +132,9 @@ public class DotHtmlLabelJavaValidator extends
 			// a parent
 			String parentName = parent == null ? ROOT_TAG_KEY
 					: parent.getName();
-			if (!validTags.containsKey(parentName.toUpperCase())) {
-				// this case can be ignored since it is handled by an other
-				// validation rule
-				// throw new IllegalStateException("Parent tag is unknown.");
-			}
-			if (!validTags.get(parentName.toUpperCase())
-					.contains(tagName.toUpperCase())) {
+			if (!validTags.containsKey(parentName.toUpperCase())
+					|| !validTags.get(parentName.toUpperCase())
+							.contains(tagName.toUpperCase())) {
 				error("Tag '<" + tagName + ">' is not allowed inside '<"
 						+ parentName + ">', but only inside '<"
 						+ String.join(">', '<",
