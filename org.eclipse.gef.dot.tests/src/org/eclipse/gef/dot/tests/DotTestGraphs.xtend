@@ -333,56 +333,6 @@ class DotTestGraphs {
 			n ne e se s sw w nw c _
 		}
 	'''
-	
-	public static val HTML_LIKE_LABELS_WITH_COMMENT = '''
-		graph {
-			1[label=<
-				<!-- This is a bold label -->
-				<B>Bold Label</B>
-			  >
-			]
-		}
-	'''
-
-	public static val HTML_LIKE_LABELS_WITH_HYPHEN_IN_COMMENT = '''
-		graph {
-			1[label=<
-				<!-- This-is-a-bold-label -->
-				<B>Bold Label</B>
-			  >
-			]
-		}
-	'''
-
-	public static val HTML_LIKE_LABELS_WITH_NESTED_TAGS_IN_COMMENT = '''
-		graph {
-			1[label=<
-				<!-- <nested><tags/></nested><t> -->
-				<B>Bold Label</B>
-			  >
-			]
-		}
-	'''
-
-    public static val HTML_LIKE_LABELS_WITH_OPEN_TAGS_IN_COMMENT = '''
-		graph {
-			1[label=<
-				<!-- <tags> -->
-				<B>Bold Label</B>
-			  >
-			]
-		}
-	'''
-
-	public static val HTML_LIKE_LABELS_WITH_CLOSE_TAGS_IN_COMMENT = '''
-		graph {
-			1[label=<
-				<!-- </tags> -->
-				<B>Bold Label</B>
-			  >
-			]
-		}
-	'''
 
 /*
  ************************************************************************************************************
@@ -1384,6 +1334,16 @@ class DotTestGraphs {
 			node [shape="hexagon", style="filled", fillcolor="blue"];
 			{ node [shape="box"]; a; b; }
 			{ node [fillcolor="red"]; b; c; }
+		}
+	'''
+	
+	public static def NODE_LABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+			1[label=
+				<
+					«htmlLabel»
+				>
+			]
 		}
 	'''
 }

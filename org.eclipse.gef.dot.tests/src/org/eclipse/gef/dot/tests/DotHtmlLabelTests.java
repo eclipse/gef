@@ -50,7 +50,7 @@ public class DotHtmlLabelTests {
 	 */
 	@Test
 	public void test_tag_case_insensitivity() throws Throwable {
-		parse(DotTestHtmlLabels.MIXED_LOWER_AND_UPPER_CASE);
+		parse(DotTestHtmlLabels.MIXED_LOWER_CASE_AND_UPPER_CASE);
 	}
 
 	@Test

@@ -78,8 +78,8 @@ public class DotHighlightingTests extends AbstractEditorTest {
 
 	@Test
 	public void htmlString() {
-		test(DotTestGraphs.HTML_LIKE_LABELS_WITH_COMMENT, "<B>Bold Label</B>",
-				SWT.NORMAL, 153, 76, 0);
+		test(DotTestGraphs.NODE_LABEL_HTML_LIKE(DotTestHtmlLabels.COMMENT)
+				.toString(), "<B>Bold Label</B>", SWT.NORMAL, 153, 76, 0);
 	}
 
 	@Test

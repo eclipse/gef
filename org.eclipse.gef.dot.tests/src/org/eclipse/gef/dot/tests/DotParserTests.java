@@ -20,6 +20,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
@@ -120,28 +123,11 @@ public class DotParserTests {
 	}
 
 	@Test
-	public void testHTMLLikeLabelsWithComment() {
-		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_COMMENT);
-	}
-
-	@Test
-	public void testHTMLLikeLabelsWithHyphenInComment() {
-		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_HYPHEN_IN_COMMENT);
-	}
-
-	@Test
-	public void testHTMLLikeLabelsWithNestedTagsInComment() {
-		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_NESTED_TAGS_IN_COMMENT);
-	}
-
-	@Test
-	public void testHTMLLikeLabelsWithOpenTagsInComment() {
-		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_OPEN_TAGS_IN_COMMENT);
-	}
-
-	@Test
-	public void testHTMLLikeLabelsWithCloseTagsInComment() {
-		testString(DotTestGraphs.HTML_LIKE_LABELS_WITH_CLOSE_TAGS_IN_COMMENT);
+	public void testNodeLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : getDotTestHtmlLikeLabels()) {
+			testString(DotTestGraphs.NODE_LABEL_HTML_LIKE(testDotHtmlLikeLabel)
+					.toString());
+		}
 	}
 
 	@Test
@@ -244,5 +230,20 @@ public class DotParserTests {
 			e.printStackTrace();
 			fail();
 		}
+	}
+
+	private List<String> getDotTestHtmlLikeLabels() {
+		List<String> dotTestHtmlLikeLabels = new LinkedList<String>();
+		Field[] declaredFields = DotTestHtmlLabels.class.getDeclaredFields();
+		for (Field field : declaredFields) {
+			try {
+				String fieldValue = (String) field.get(null);
+				dotTestHtmlLikeLabels.add(fieldValue);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return dotTestHtmlLikeLabels;
 	}
 }

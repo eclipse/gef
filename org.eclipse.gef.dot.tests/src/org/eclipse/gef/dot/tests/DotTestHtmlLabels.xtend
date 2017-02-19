@@ -14,15 +14,14 @@ package org.eclipse.gef.dot.tests
 
 class DotTestHtmlLabels {
 	
-	public static val MIXED_LOWER_AND_UPPER_CASE = '''
-		<b>
-			string
-		</B>
-	'''
-	
 	public static val COMMENT = '''
 		<!-- This is a bold label -->
 			<B>Bold Label</B>
+	'''
+	
+	public static val COMMENT_WITH_CLOSE_TAG = '''
+		<!-- </tags> -->
+		<B>Bold Label</B>
 	'''
 	
 	public static val COMMENT_WITH_HYPHEN= '''
@@ -44,21 +43,6 @@ class DotTestHtmlLabels {
 		<B>Bold Label</B>
 	'''
 	
-	public static val COMMENT_WITH_CLOSE_TAG = '''
-		<!-- </tags> -->
-		<B>Bold Label</B>
-	'''
-	
-	public static val TAG_WITH_ATTRIBUTE = '''
-		<BR ALIGN="LEFT"/>
-	'''
-		
-	public static val FONT_TAG_WITH_POINT_SIZE_ATTRIBUTE = '''
-		<FONT POINT-SIZE="24.0">
-			line3
-		</FONT>
-	'''
-	
 	public static val FONT_TAG_CONTAINS_TABLE_TAG = '''
 		<font color="green">
 			<table>
@@ -69,10 +53,25 @@ class DotTestHtmlLabels {
 		</font>
 	'''
 	
+	public static val FONT_TAG_WITH_POINT_SIZE_ATTRIBUTE = '''
+		<FONT POINT-SIZE="24.0">
+			line3
+		</FONT>
+	'''	
+		
+	public static val MIXED_LOWER_CASE_AND_UPPER_CASE = '''
+		<b>
+			string
+		</B>
+	'''
+	
 	public static val NESTED_TAGS = '''
 		<table>
 			<tr><td>first</td></tr>
 			<tr><td><table><tr><td><b>second</b></td></tr></table></td></tr>
 		</table>'''
 	
+	public static val TAG_WITH_ATTRIBUTE = '''
+		<BR ALIGN="LEFT"/>
+	'''	
 }
