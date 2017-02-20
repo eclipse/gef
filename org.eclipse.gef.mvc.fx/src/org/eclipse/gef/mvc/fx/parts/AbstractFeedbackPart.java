@@ -54,8 +54,9 @@ abstract public class AbstractFeedbackPart<V extends Node>
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
 			if (!newValue.booleanValue()) {
-				throw new IllegalStateException(
-						"Inconsistent feedback: Anchorage is deactivated.");
+				throw new IllegalStateException("Inconsistent "
+						+ AbstractFeedbackPart.this.getClass().getSimpleName()
+						+ ": Anchorage is deactivated.");
 			}
 		}
 	};

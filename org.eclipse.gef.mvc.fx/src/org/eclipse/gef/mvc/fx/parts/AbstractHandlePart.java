@@ -54,8 +54,9 @@ abstract public class AbstractHandlePart<V extends Node>
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
 			if (!newValue.booleanValue()) {
-				throw new IllegalStateException(
-						"Inconsistent handle: Anchorage is deactivated.");
+				throw new IllegalStateException("Inconsistent "
+						+ AbstractHandlePart.this.getClass().getSimpleName()
+						+ ": Anchorage is deactivated.");
 			}
 		}
 	};
