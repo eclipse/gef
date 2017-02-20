@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 itemis AG and others.
+ * Copyright (c) 2015, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,9 +21,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ DotImportTests.class, DotExportTests.class,
 		DotExecutableUtilsTests.class, DotExtractorTests.class,
 		DotAttributesTests.class, DotParserTests.class, DotEscStringTests.class,
-		DotHighlightingTests.class, DotValidatorTests.class,
-		DotContentAssistTests.class, DotBSplineInterpolatorTests.class,
-		DotHtmlLabelTests.class })
+		DotHighlightingTests.class, DotHighlightingCalculatorTests.class,
+		DotValidatorTests.class, DotContentAssistTests.class,
+		DotBSplineInterpolatorTests.class, DotHtmlLabelTests.class })
 public class AllUiTests {
 
 }
