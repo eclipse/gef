@@ -216,6 +216,7 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 	 */
 	protected void restoreRefreshVisuals(IVisualPart<? extends Node> part) {
 		part.setRefreshVisual(initialRefreshVisual.remove(part));
+		part.refreshVisual();
 	}
 
 	/**
