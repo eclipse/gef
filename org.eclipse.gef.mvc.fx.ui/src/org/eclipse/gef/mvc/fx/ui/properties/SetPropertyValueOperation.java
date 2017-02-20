@@ -59,6 +59,8 @@ public class SetPropertyValueOperation extends AbstractOperation
 		return propertyDescriptor.getLabelProvider().getText(newValue);
 	}
 
+	/** content-relevant-property */
+	private boolean isContentRelevant = true;
 	/** the value to set for the property */
 	private Object newValue;
 	/** the old value of the property prior to executing this command */
@@ -201,7 +203,7 @@ public class SetPropertyValueOperation extends AbstractOperation
 
 	@Override
 	public boolean isContentRelevant() {
-		return false;
+		return isContentRelevant;
 	}
 
 	@Override
@@ -214,6 +216,17 @@ public class SetPropertyValueOperation extends AbstractOperation
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	/**
+	 * Sets the content-relevancy of this operation to the given value.
+	 *
+	 * @param isContentRelevant
+	 *            <code>true</code> if this operation is content-relevant,
+	 *            <code>false</code> otherwise.
+	 */
+	public void setContentRelevant(boolean isContentRelevant) {
+		this.isContentRelevant = isContentRelevant;
 	}
 
 	@Override
@@ -233,5 +246,4 @@ public class SetPropertyValueOperation extends AbstractOperation
 		}
 		return value;
 	}
-
 }
