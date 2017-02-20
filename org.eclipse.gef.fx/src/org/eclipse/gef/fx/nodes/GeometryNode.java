@@ -406,6 +406,17 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		return geometryProperty.get();
 	}
 
+	/**
+	 * Returns the JavaFX {@link Path} that is used to visualize the
+	 * {@link IGeometry} of this {@link GeometryNode}.
+	 *
+	 * @return The JavaFX {@link Path} that is used to visualize the
+	 *         {@link IGeometry}.
+	 */
+	public Path getPath() {
+		return geometricShape;
+	}
+
 	private PathElement[] getPathElements() {
 		return Geometry2Shape.toPathElements(geometryProperty.get()
 				.getTransformed(new AffineTransform()
