@@ -1336,13 +1336,88 @@ class DotTestGraphs {
 			{ node [fillcolor="red"]; b; c; }
 		}
 	'''
-	
-	public static def NODE_LABEL_HTML_LIKE(String htmlLabel)'''
+
+	static def CLUSTER_LABEL_HTML_LIKE(String htmlLabel)'''
 		graph {
-			1[label=
+			subgraph cluster {
+				label =
+					<
+						«htmlLabel»
+					>
+				1 2 3 4
+			}
+		}
+	'''
+
+	static def EDGE_HEADLABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+			1--2[
+				headlabel=
+					<
+						«htmlLabel»
+					>
+			]
+		}
+	'''	
+
+	static def EDGE_LABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+			1--2[
+				label=
+					<
+						«htmlLabel»
+					>
+			]
+		}
+	'''
+
+	static def EDGE_TAILLABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+			1--2[
+				taillabel=
+					<
+						«htmlLabel»
+					>
+			]
+		}
+	'''
+
+	static def EDGE_XLABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+			1--2[
+				xlabel=
+					<
+						«htmlLabel»
+					>
+			]
+		}
+	'''
+	
+	static def GRAPH_LABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+			label =
 				<
 					«htmlLabel»
 				>
+		}
+	'''
+	
+	static def NODE_LABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+				1[label =
+					<
+						«htmlLabel»
+					>
+			]
+		}
+	'''
+
+	static def NODE_XLABEL_HTML_LIKE(String htmlLabel)'''
+		graph {
+				1[xlabel =
+					<
+						«htmlLabel»
+					>
 			]
 		}
 	'''

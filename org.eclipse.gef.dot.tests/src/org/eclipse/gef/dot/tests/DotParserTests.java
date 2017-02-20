@@ -46,6 +46,21 @@ public class DotParserTests {
 	@Inject
 	private ValidationTestHelper validationTestHelper;
 
+	private static List<String> dotTestHtmlLikeLabels;
+
+	static {
+		dotTestHtmlLikeLabels = new LinkedList<String>();
+		Field[] declaredFields = DotTestHtmlLabels.class.getDeclaredFields();
+		for (Field field : declaredFields) {
+			try {
+				String dotTestHtmlLikeLabel = (String) field.get(null);
+				dotTestHtmlLikeLabels.add(dotTestHtmlLikeLabel);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@Test
 	public void testEmptyString() {
 		try {
@@ -123,9 +138,65 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testClusterLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
+			testString(DotTestGraphs
+					.CLUSTER_LABEL_HTML_LIKE(testDotHtmlLikeLabel).toString());
+		}
+	}
+
+	@Test
+	public void testEdgeHeadLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
+			testString(DotTestGraphs
+					.EDGE_HEADLABEL_HTML_LIKE(testDotHtmlLikeLabel).toString());
+		}
+	}
+
+	@Test
+	public void testEdgeLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
+			testString(DotTestGraphs.EDGE_LABEL_HTML_LIKE(testDotHtmlLikeLabel)
+					.toString());
+		}
+	}
+
+	@Test
+	public void testEdgeTailLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
+			testString(DotTestGraphs
+					.EDGE_TAILLABEL_HTML_LIKE(testDotHtmlLikeLabel).toString());
+		}
+	}
+
+	@Test
+	public void testEdgeXLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
+			testString(DotTestGraphs.EDGE_XLABEL_HTML_LIKE(testDotHtmlLikeLabel)
+					.toString());
+		}
+	}
+
+	@Test
+	public void testGraphLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
+			testString(DotTestGraphs.GRAPH_LABEL_HTML_LIKE(testDotHtmlLikeLabel)
+					.toString());
+		}
+	}
+
+	@Test
 	public void testNodeLabelHTMLLike() {
-		for (String testDotHtmlLikeLabel : getDotTestHtmlLikeLabels()) {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
 			testString(DotTestGraphs.NODE_LABEL_HTML_LIKE(testDotHtmlLikeLabel)
+					.toString());
+		}
+	}
+
+	@Test
+	public void testNodeXLabelHTMLLike() {
+		for (String testDotHtmlLikeLabel : dotTestHtmlLikeLabels) {
+			testString(DotTestGraphs.NODE_XLABEL_HTML_LIKE(testDotHtmlLikeLabel)
 					.toString());
 		}
 	}
@@ -230,20 +301,5 @@ public class DotParserTests {
 			e.printStackTrace();
 			fail();
 		}
-	}
-
-	private List<String> getDotTestHtmlLikeLabels() {
-		List<String> dotTestHtmlLikeLabels = new LinkedList<String>();
-		Field[] declaredFields = DotTestHtmlLabels.class.getDeclaredFields();
-		for (Field field : declaredFields) {
-			try {
-				String fieldValue = (String) field.get(null);
-				dotTestHtmlLikeLabels.add(fieldValue);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return dotTestHtmlLikeLabels;
 	}
 }
