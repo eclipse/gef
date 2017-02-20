@@ -35,12 +35,10 @@ import javafx.collections.SetChangeListener.Change;
 public abstract class AbstractHidingBehavior extends AbstractBehavior {
 
 	private SetChangeListener<org.eclipse.gef.graph.Node> hidingModelObserver = new SetChangeListener<org.eclipse.gef.graph.Node>() {
-
 		@Override
 		public void onChanged(SetChangeListener.Change<? extends org.eclipse.gef.graph.Node> change) {
 			onHidingModelChange(change);
 		}
-
 	};
 
 	private boolean isHidden;
