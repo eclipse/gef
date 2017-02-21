@@ -124,6 +124,16 @@ public class DotHtmlLabelTests {
 						.get(0).getText());
 	}
 
+	@Test
+	public void test_nesting2() {
+		parse(DotTestHtmlLabels.NESTED_TAGS2);
+	}
+
+	@Test
+	public void test_self_closing_tags() {
+		parse(DotTestHtmlLabels.SELF_CLOSING_TAGS);
+	}
+
 	/*
 	 ************************************************************************************************************
 	 * Test cases for invalid DOT Html like labels
@@ -174,7 +184,7 @@ public class DotHtmlLabelTests {
 
 		validationTestHelper.assertError(htmlLabel,
 				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'");
+				"Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.");
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
@@ -188,7 +198,7 @@ public class DotHtmlLabelTests {
 
 		validationTestHelper.assertError(htmlLabel,
 				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<ROOT>'");
+				"Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<SUB>', '<B>', '<S>', '<ROOT>', '<U>', '<I>', '<FONT>', '<O>', '<SUP>'.");
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
@@ -222,8 +232,88 @@ public class DotHtmlLabelTests {
 				HtmllabelPackage.eINSTANCE.getHtmlAttr(), null,
 				"Attribute 'bar' is not allowed inside '<foo>'.");
 
-		// verify that this is the only reported issue
+		// verify that these are the only reported issues
 		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
+	}
+
+	@Test
+	public void test_string_literal_is_not_allowed() {
+		// <BR>string</BR> is not allowed
+		testStringLiteral("<BR>string</BR>", "BR");
+
+		// <TABLE>string</TABLE> is not allowed
+		testStringLiteral("<TABLE>string</TABLE>", "TABLE");
+
+		// <HR>string</HR> is not allowed
+		testStringLiteral("<TABLE><HR>string</HR></TABLE>", "HR");
+
+		// <TR>string</TR> is not allowed
+		testStringLiteral("<TABLE><TR>string</TR></TABLE>", "TR");
+
+		// <VR>string</VR> is not allowed
+		testStringLiteral("<TABLE><TR><VR>string</VR></TR></TABLE>", "VR");
+
+		// <IMG>string</IMG> is not allowed
+		testStringLiteral("<TABLE><TR><TD><IMG>string</IMG></TD></TR></TABLE>",
+				"IMG");
+	}
+
+	@Test
+	public void test_self_closing_is_not_allowed() {
+		testSelfClosingTag("<FONT/>"); // <FONT/> is not allowed
+
+		testSelfClosingTag("<I/>"); // <I/> is not allowed
+
+		testSelfClosingTag("<B/>"); // <B/> is not allowed
+
+		testSelfClosingTag("<U/>"); // <U/> is not allowed
+
+		testSelfClosingTag("<O/>"); // <O/> is not allowed
+
+		testSelfClosingTag("<SUB/>"); // <SUB/> is not allowed
+
+		testSelfClosingTag("<SUP/>"); // <SUP/> is not allowed
+
+		testSelfClosingTag("<S/>"); // <S/> is not allowed
+
+		testSelfClosingTag("<TABLE/>"); // <TABLE/> is not allowed
+
+		// <TR/> is not allowed
+		testSelfClosingTag("<TABLE><TR/></TABLE>", "<TR/>");
+
+		// <TD/> is not allowed
+		testSelfClosingTag("<TABLE><TR><TD/></TR></TABLE>", "<TD/>");
+	}
+
+	private void testStringLiteral(String... text) {
+		String tagName = text.length > 1 ? text[1] : text[0];
+		verify(text[0],
+				"Tag '<" + tagName + ">' cannot contain a string literal.");
+	}
+
+	private void testSelfClosingTag(String... text) {
+		String tagName = text.length > 1 ? text[1] : text[0];
+		verify(text[0], "Tag '" + tagName + "' cannot be self closing.");
+	}
+
+	/*
+	 * Verify that parsing the given text raises a validation error with the
+	 * given message.
+	 */
+	private void verify(String text, String message) {
+		HtmlLabel htmlLabel = null;
+		try {
+			htmlLabel = parseHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+
+		validationTestHelper.assertError(htmlLabel,
+				HtmllabelPackage.eINSTANCE.getHtmlTag(), null, message);
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
 	}
 
 	private HtmlLabel parse(String text) {

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage;
 import org.eclipse.xtext.validation.Check;
@@ -41,16 +42,42 @@ public class DotHtmlLabelJavaValidator extends
 	private static final Map<String, Set<String>> validAttributes = new HashMap<>();
 
 	static {
-		// specify allowed top-level tags
-		validTags.put(ROOT_TAG_KEY,
-				new HashSet<>(Arrays.asList(new String[] { "BR", "FONT", "I",
-						"B", "U", "O", "SUB", "SUP", "S", "TABLE" })));
-		// add allowed nested tags
-		validTags.put("FONT", new HashSet<>(Arrays.asList("TABLE")));
-		validTags.put("TABLE", new HashSet<>(Arrays.asList("HR", "TR")));
-		validTags.put("TR", new HashSet<>(Arrays.asList("VR", "TD")));
-		validTags.put("TD", new HashSet<>(Arrays.asList("IMG", "BR", "FONT",
-				"I", "B", "U", "O", "SUB", "SUP", "S", "TABLE")));
+		validTags(ROOT_TAG_KEY, // allowed top-level tags
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S", "TABLE");
+
+		validTags("FONT", // allowed tags between <FONT> and </FONT>
+				"TABLE", "BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("I", // allowed tags between <I> and </I>
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("B", // allowed tags between <B> and </B>
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("U", // allowed tags between <U> and </U>
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("O", // allowed tags between <O> and </O>
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("SUB", // allowed tags between <SUB> and </SUB>
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("SUP", // allowed tags between <SUP> and </SUP>
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("S", // allowed tags between <S> and </S>
+				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+
+		validTags("TABLE", // allowed tags between <TABLE> and </TABLE>
+				"HR", "TR");
+
+		validTags("TR", // allowed tags between <TR> and </TR>
+				"VR", "TD");
+
+		validTags("TD", // allowed tags between <TD> and </TD>
+				"IMG", "BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S",
+				"TABLE");
 
 		// find all tags
 		for (Set<String> ts : validTags.values()) {
@@ -72,27 +99,55 @@ public class DotHtmlLabelJavaValidator extends
 			validAttributes.put(t, new HashSet<>());
 		}
 		// add allowed attributes
-		validAttributes.get("TABLE")
-				.addAll(Arrays.asList("ALIGN", "BGCOLOR", "BORDER",
-						"CELLBORDER", "CELLPADDING", "CELLSPACING", "COLOR",
-						"COLUMNS", "FIXEDSIZE", "GRADIENTANGLE", "HEIGHT",
-						"HREF", "ID", "PORT", "ROWS", "SIDES", "STYLE",
-						"TARGET", "TITLE", "TOOLTIP", "VALIGN", "WIDTH"));
-		validAttributes.get("TD")
-				.addAll(Arrays.asList("ALIGN", "BALIGN", "BGCOLOR", "BORDER",
-						"CELLPADDING", "CELLSPACING", "COLOR", "COLSPAN",
-						"FIXEDSIZE", "GRADIENTANGLE", "HEIGHT", "HREF", "ID",
-						"PORT", "ROWSPAN", "SIDES", "STYLE", "TARGET", "TITLE",
-						"TOOLTIP", "VALIGN", "WIDTH"));
-		validAttributes.get("FONT")
-				.addAll(Arrays.asList("COLOR", "FACE", "POINT-SIZE"));
-		validAttributes.get("BR").addAll(Arrays.asList("ALIGN"));
-		validAttributes.get("IMG").addAll(Arrays.asList("SCALE", "SRC"));
+		validAttributes("TABLE", // allowed <TABLE> tag attributes
+				"ALIGN", "BGCOLOR", "BORDER", "CELLBORDER", "CELLPADDING",
+				"CELLSPACING", "COLOR", "COLUMNS", "FIXEDSIZE", "GRADIENTANGLE",
+				"HEIGHT", "HREF", "ID", "PORT", "ROWS", "SIDES", "STYLE",
+				"TARGET", "TITLE", "TOOLTIP", "VALIGN", "WIDTH");
+
+		validAttributes("TD", // allowed <TD> tag attributes
+				"ALIGN", "BALIGN", "BGCOLOR", "BORDER", "CELLPADDING",
+				"CELLSPACING", "COLOR", "COLSPAN", "FIXEDSIZE", "GRADIENTANGLE",
+				"HEIGHT", "HREF", "ID", "PORT", "ROWSPAN", "SIDES", "STYLE",
+				"TARGET", "TITLE", "TOOLTIP", "VALIGN", "WIDTH");
+
+		validAttributes("FONT", // allowed <FONT> tag attributes
+				"COLOR", "FACE", "POINT-SIZE");
+
+		validAttributes("BR", // allowed <BR> tag attributes
+				"ALIGN");
+
+		validAttributes("IMG", // allowed <IMG> tag attributes
+				"SCALE", "SRC");
+	}
+
+	/**
+	 * Specify the valid child tags of a certain html tag.
+	 * 
+	 * @param tag
+	 *            the parent tag to which valid child tags should be specified.
+	 * @param childTags
+	 *            the list of child tags that are valid within the parent tag.
+	 */
+	private static void validTags(String tag, String... childTags) {
+		validTags.put(tag, new HashSet<String>(Arrays.asList(childTags)));
+	}
+
+	/**
+	 * Specify the valid attributes of a certain html tag.
+	 * 
+	 * @param tag
+	 *            the tag to which valid attributes should be specified.
+	 * @param attributes
+	 *            the list of attributes that are valid within the tag.
+	 */
+	private static void validAttributes(String tag, String... attributes) {
+		validAttributes.get(tag).addAll(Arrays.asList(attributes));
 	}
 
 	/**
 	 * Checks if the given {@link HtmlTag} is properly closed. Generates errors
-	 * if the html tag is not closed properly.
+	 * if the html's open tag does not correspond to its close tag.
 	 * 
 	 * @param tag
 	 *            The {@link HtmlTag} to check.
@@ -104,6 +159,59 @@ public class DotHtmlLabelJavaValidator extends
 			error("Tag '<" + tag.getName() + ">' is not closed (expected '</"
 					+ tag.getName() + ">' but got '</" + tag.getCloseName()
 					+ ">').", HtmllabelPackage.Literals.HTML_TAG__CLOSE_NAME);
+		}
+	}
+
+	/**
+	 * Checks if the given {@link HtmlTag} is properly closed. Generates errors
+	 * if the html tag is self-closed where self-closing is not allowed.
+	 * 
+	 * @param tag
+	 *            The {@link HtmlTag} to check.
+	 */
+	@Check
+	public void checkSelfClosingTagIsAllowed(HtmlTag tag) {
+
+		String[] selfClosingIsNotAllowed = { "B", "FONT", "I", "O", "S", "SUB",
+				"SUP", "TABLE", "TD", "TR", "U" };
+
+		String tagNameUpperCase = tag.getName().toUpperCase();
+
+		if (tag.isSelfClosing() && Arrays.binarySearch(selfClosingIsNotAllowed,
+				tagNameUpperCase) >= 0) {
+			error("Tag '<" + tag.getName() + "/>' cannot be self closing.",
+					HtmllabelPackage.Literals.HTML_TAG__NAME);
+		}
+	}
+
+	/**
+	 * Checks if a string literal is allowed in the given {@link HtmlTag}.
+	 * Generates errors if the html tag is not allowed to contain a string
+	 * literal.
+	 * 
+	 * @param tag
+	 *            The {@link HtmlTag} to check.
+	 */
+	@Check
+	public void checkStringLiteralIsAllowed(HtmlTag tag) {
+
+		String[] stringLiteralIsNotAllowed = { "BR", "HR", "IMG", "TABLE", "TR",
+				"VR" };
+
+		String tagNameUpperCase = tag.getName().toUpperCase();
+
+		if (Arrays.binarySearch(stringLiteralIsNotAllowed,
+				tagNameUpperCase) >= 0) {
+
+			for (HtmlContent child : tag.getChildren()) {
+				// TODO: verify why white spaces is stored as text
+				String text = child.getText();
+				if (text != null && !text.trim().isEmpty()) {
+					error("Tag '<" + tag.getName()
+							+ ">' cannot contain a string literal.",
+							HtmllabelPackage.Literals.HTML_TAG__NAME);
+				}
+			}
 		}
 	}
 
