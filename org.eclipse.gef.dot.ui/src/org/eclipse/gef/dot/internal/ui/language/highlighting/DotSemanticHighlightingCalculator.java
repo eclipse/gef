@@ -30,13 +30,8 @@ public class DotSemanticHighlightingCalculator
 		extends DefaultSemanticHighlightingCalculator {
 
 	@Override
-	public void provideHighlightingFor(XtextResource resource,
+	public void doProvideHighlightingFor(XtextResource resource,
 			IHighlightedPositionAcceptor acceptor) {
-
-		// the resource may be null in case of errors in the model
-		if (resource == null) {
-			return;
-		}
 
 		// It gets a node model.
 		INode root = resource.getParseResult().getRootNode();

@@ -67,6 +67,11 @@ public class DotHighlightingCalculatorTests
 
 	// semantic highlighting test cases
 	@Test
+	public void nullGuardTest() {
+		calculator.provideHighlightingFor(null, this);
+	}
+
+	@Test
 	public void graphName() {
 		test(DotTestGraphs.EXTRACTED_01, "name",
 				DotHighlightingConfiguration.GRAPH_NAME_ID);
