@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG)  - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - Add support for all dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -51,6 +52,7 @@ import org.eclipse.gef.dot.internal.language.outputmode.OutputMode
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir
 import org.eclipse.gef.dot.internal.language.point.Point
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir
+import org.eclipse.gef.dot.internal.language.ranktype.RankType
 import org.eclipse.gef.dot.internal.language.shape.Shape
 import org.eclipse.gef.dot.internal.language.splines.Splines
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType
@@ -77,7 +79,6 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import org.eclipse.gef.dot.internal.language.ranktype.RankType
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -85,7 +86,7 @@ import org.eclipse.gef.dot.internal.language.ranktype.RankType
  * 
  * @author anyssen
  */
-public class DotAttributes {
+class DotAttributes {
 
 	/**
 	 * Contexts by which attributes may be used.
@@ -125,7 +126,7 @@ public class DotAttributes {
 	 *            The {@link EObject} for which the context is to be determined.
 	 * @return the context in which the given {@link EObject} is used.
 	 */
-	public static def Context getContext(EObject eObject) {
+	static def Context getContext(EObject eObject) {
 
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
 		if (eObject.getContainerOfType(EdgeStmtNode) !== null || 
@@ -160,7 +161,7 @@ public class DotAttributes {
 		}
 
 		// attribute is neither edge nor node nor subgraph attribute
-		return Context.GRAPH
+		Context.GRAPH
 	}
 
 	/**
@@ -182,7 +183,7 @@ public class DotAttributes {
 		 * @return A list of {@link Diagnostic}s that represent the validation
 		 *         result.
 		 */
-		public def List<Diagnostic> validate(Context attributeContext, T attributeValue)
+		def List<Diagnostic> validate(Context attributeContext, T attributeValue)
 	}
 
 	/**
@@ -211,16 +212,16 @@ public class DotAttributes {
 				this.syntaxErrors = syntaxErrors
 			}
 
-			public def T getParsedValue() {
-				return parsedValue
+			def T getParsedValue() {
+				parsedValue
 			}
 
-			public def List<Diagnostic> getSyntaxErrors() {
-				return syntaxErrors
+			def List<Diagnostic> getSyntaxErrors() {
+				syntaxErrors
 			}
 
-			public def boolean hasSyntaxErrors() {
-				return !syntaxErrors.isEmpty
+			def boolean hasSyntaxErrors() {
+				!syntaxErrors.isEmpty
 			}
 		}
 
@@ -231,13 +232,13 @@ public class DotAttributes {
 		 *            The raw value to parse.
 		 * @return A {@link ParseResult} indicating the parse result.
 		 */
-		public def ParseResult<T> parse(String attributeValue)
+		def ParseResult<T> parse(String attributeValue)
 
 		/**
 		 * Returns the type parsed by this parser.
 		 * @return The parsed type.
 		 */
-		public def Class<T> getParsedType()
+		def Class<T> getParsedType()
 	}
 
 	/**
@@ -256,7 +257,7 @@ public class DotAttributes {
 		 * @return The string representation to which the value was
 		 *         serialized.
 		 */
-		public def String serialize(T value)
+		def String serialize(T value)
 	}
 
 	/**
@@ -271,10 +272,7 @@ public class DotAttributes {
 	 * @return The serialized value, or <code>null</code> if the value could not be serialized.
 	 */
 	private static def <T> String serializeAttributeValue(IAttributeValueSerializer<T> serializer, T attributeValue) {
-		if (attributeValue === null) {
-			return null
-		}
-		return serializer.serialize(attributeValue)
+		if (attributeValue === null) null else serializer.serialize(attributeValue)
 	}
 
 	/**
@@ -291,10 +289,7 @@ public class DotAttributes {
 	 *         parsed.
 	 */
 	private static def <T> T parseAttributeValue(IAttributeValueParser<T> parser, String attributeValue) {
-		if (attributeValue === null) {
-			return null
-		}
-		return parser.parse(attributeValue).getParsedValue
+		if (attributeValue === null) null else parser.parse(attributeValue).parsedValue
 	}
 
 	// TODO: separate validation from parsing
@@ -310,24 +305,23 @@ public class DotAttributes {
 		}
 
 		// parse value first (if a parser is given); otherwise take the (String) value
-		var T parsedValue = null
-		if (parser !== null) {
-			val parseResult = parser.parse(attributeValue.toValue)
-			if (parseResult.hasSyntaxErrors) {
-
-				// handle syntactical problems
-				return Collections.<Diagnostic>singletonList(
-					new BasicDiagnostic(Diagnostic.ERROR, null, -1,
-						"The value '" + attributeValue.toValue + "' is not a syntactically correct " + attributeTypeName +
-							": " +
-							parseResult.syntaxErrors.map[message.toFirstUpper.replaceAll("\\.$", "")].join(". ") + ".", #[]))
+		val T parsedValue = 
+			if (parser !== null) {
+				val parseResult = parser.parse(attributeValue.toValue)
+				if (parseResult.hasSyntaxErrors) {
+	
+					// handle syntactical problems
+					return Collections.<Diagnostic>singletonList(
+						new BasicDiagnostic(Diagnostic.ERROR, null, -1,
+							"The value '" + attributeValue.toValue + "' is not a syntactically correct " + attributeTypeName +
+								": " +
+								parseResult.syntaxErrors.map[message.toFirstUpper.replaceAll("\\.$", "")].join(". ") + ".", #[]))
+				}
+				parseResult.getParsedValue
+			} else {
+				// for string values there is no parser
+				attributeValue.toValue as Object as T
 			}
-			parsedValue = parseResult.getParsedValue
-		} else {
-
-			// for string values there is no parser
-			parsedValue = attributeValue.toValue as Object as T
-		}
 
 		// handle semantical problems
 		val List<Diagnostic> diagnostics = newArrayList
@@ -340,7 +334,8 @@ public class DotAttributes {
 							"' is not semantically correct: " + r.message, #[]))
 			}
 		}
-		return diagnostics
+		
+		diagnostics
 	}
 
 	private static def checkAttributeRawValue(Context context, String attributeName, ID attributeValue) {
@@ -367,7 +362,7 @@ public class DotAttributes {
 	 *         issues, or an empty list if no issues were found.
 	 */
 	// TODO: this can be generated, as well as the validators, parsers and serializers that are needed
-	public static def List<Diagnostic> validateAttributeRawValue(Context attributeContext, String attributeName,
+	static def List<Diagnostic> validateAttributeRawValue(Context attributeContext, String attributeName,
 		ID attributeValue) {
 
 		// use parser (and validator) for respective attribute type
@@ -438,15 +433,15 @@ public class DotAttributes {
 		 * @param attributeType
 		 *            The enumeration class.
 		 */
-		public new(Class<E> attributeType) {
+		new(Class<E> attributeType) {
 			this.definition = attributeType
 		}
 
-		public def override ParseResult<E> parse(String attributeValue) {
+		override ParseResult<E> parse(String attributeValue) {
 			if (attributeValue === null) {
 				return null
 			}
-			for (E value : definition.getEnumConstants) {
+			for (E value : definition.enumConstants) {
 				if (value.toString.equals(attributeValue)) {
 					return new ParseResult<E>(value)
 				}
@@ -483,41 +478,41 @@ public class DotAttributes {
 		 * @param definition
 		 *            The enumeration class.
 		 */
-		public new(Class<E> definition) {
+		new(Class<E> definition) {
 			this.definition = definition
 		}
 
-		public def override String serialize(E value) {
+		override serialize(E value) {
 			if (!definition.isAssignableFrom(value.getClass)) {
 				throw new IllegalArgumentException("Value does not comply to definition " + definition)
 			}
-			return value.toString
+			value.toString
 		}
 	}
 
 	private static class EObjectParser<T extends EObject> implements IAttributeValueParser<T> {
 
-		private val Injector injector
-		private var IParser xtextParser
-		private var Class<T> parsedType
+		val Injector injector
+		var IParser xtextParser
+		var Class<T> parsedType
 
-		public new(Injector injector) {
+		new(Injector injector) {
 			this.injector = injector
 		}
 
 		@SuppressWarnings("unchecked")
-		public def override ParseResult<T> parse(String attributeValue) {
+		override ParseResult<T> parse(String attributeValue) {
 			val IParseResult xtextParseResult = parser.parse(new StringReader(attributeValue))
 			if (xtextParseResult.hasSyntaxErrors) {
 				val List<Diagnostic> syntaxProblems = newArrayList
 				for (INode xtextSyntaxError : xtextParseResult.getSyntaxErrors) {
 					syntaxProblems.add(
 						new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
-							xtextSyntaxError.getSyntaxErrorMessage.getMessage, #[]))
+							xtextSyntaxError.syntaxErrorMessage.message, #[]))
 				}
 				return new ParseResult<T>(syntaxProblems)
 			}
-			return new ParseResult<T>(xtextParseResult.getRootASTElement as T)
+			return new ParseResult<T>(xtextParseResult.rootASTElement as T)
 		}
 
 		protected def IParser getParser() {
@@ -532,77 +527,81 @@ public class DotAttributes {
 				val grammarAccess = injector.getInstance(IGrammarAccess)
 				parsedType = grammarAccess.grammar.rules.head.type.classifier.instanceClass as Class<T>
 			}
-			return parsedType
+			
+			parsedType
 		}
 	}
 
 	private static class EObjectSerializer<T extends EObject> implements IAttributeValueSerializer<T> {
 
-		private val Injector injector
-		private var ISerializer serializer
+		val Injector injector
+		var ISerializer serializer
 
-		public new(Injector injector) {
+		new(Injector injector) {
 			this.injector = injector
 		}
 
-		public def override String serialize(T value) {
+		override String serialize(T value) {
 			val ISerializer serializer = getSerializer
-			return serializer.serialize(value)
+			serializer.serialize(value)
 		}
 
 		protected def ISerializer getSerializer() {
 			if (serializer === null) {
 				serializer = injector.getInstance(ISerializer)
 			}
-			return serializer
+			
+			serializer
 		}
 	}
 
 	private static class DoubleValidator implements IAttributeValueValidator<Double> {
 
-		private double minValue
+		double minValue
 
-		public new(double minValue) {
+		new(double minValue) {
 			this.minValue = minValue
 		}
 
-		public def override List<Diagnostic> validate(Context attributeContext, Double attributeValue) {
+		override List<Diagnostic> validate(Context attributeContext, Double attributeValue) {
 			if (attributeValue.doubleValue < minValue) {
 				return Collections.singletonList(
 					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString, -1,
 						"Value may not be smaller than " + minValue + ".", #[]))
 			}
-			return Collections.emptyList
+			
+			Collections.emptyList
 		}
 	}
 
 	private static class IntValidator implements IAttributeValueValidator<Integer> {
 
-		private int minValue
+		int minValue
 
-		public new(int minValue) {
+		new(int minValue) {
 			this.minValue = minValue
 		}
 
-		public def override List<Diagnostic> validate(Context attributeContext, Integer attributeValue) {
+		override List<Diagnostic> validate(Context attributeContext, Integer attributeValue) {
 			if (attributeValue.doubleValue < minValue) {
 				return Collections.singletonList(
 					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString, -1,
 						"Value may not be smaller than " + minValue + ".", #[]))
 			}
-			return Collections.emptyList
+			
+			Collections.emptyList
 		}
 	}
 
 	private static class StringValidator implements IAttributeValueValidator<String> {
 
-		private var Object[] validValues
+		var Object[] validValues
 
-		public new(Object[] validValues) {
+		new(Object[] validValues) {
 			this.validValues = validValues
 		}
 
-		public def override List<Diagnostic> validate(Context attributeContext, String attributeValue) {
+		override List<Diagnostic> validate(Context attributeContext, String attributeValue) {
 			for (Object validValue : validValues) {
 				if (validValue.toString.equals(attributeValue)) {
 					return Collections.emptyList
@@ -620,11 +619,11 @@ public class DotAttributes {
 
 	private static class EObjectValidator<T extends EObject> implements IAttributeValueValidator<T> {
 
-		private val Injector injector
-		private var Class<? extends AbstractDeclarativeValidator> validatorClass
-		private var AbstractDeclarativeValidator validator
+		val Injector injector
+		var Class<? extends AbstractDeclarativeValidator> validatorClass
+		var AbstractDeclarativeValidator validator
 
-		public new(Injector injector, Class<? extends AbstractDeclarativeValidator> validatorClass) {
+		new(Injector injector, Class<? extends AbstractDeclarativeValidator> validatorClass) {
 			this.injector = injector
 			this.validatorClass = validatorClass
 		}
@@ -633,10 +632,11 @@ public class DotAttributes {
 			if (validator === null) {
 				validator = injector.getInstance(validatorClass)
 			}
-			return validator
+			
+			validator
 		}
 
-		public def override List<Diagnostic> validate(Context attributeContext, T attributeValue) {
+		override List<Diagnostic> validate(Context attributeContext, T attributeValue) {
 			val AbstractDeclarativeValidator validator = getValidator
 
 			val List<Diagnostic> diagnostics = newArrayList
@@ -649,32 +649,32 @@ public class DotAttributes {
 				validator.setMessageAcceptor(
 					new ValidationMessageAcceptor {
 
-						public def override void acceptError(String message, EObject object,
+						override void acceptError(String message, EObject object,
 							EStructuralFeature feature, int index, String code, String... issueData) {
 							diagnostics.add(new BasicDiagnostic(Diagnostic.ERROR, null, -1, message, #[]))
 						}
 
-						public def override void acceptError(String message, EObject object, int offset, int length,
+						override void acceptError(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
 							diagnostics.add(new BasicDiagnostic(Diagnostic.ERROR, null, -1, message, #[]))
 						}
 
-						public def override void acceptInfo(String message, EObject object,
+						override void acceptInfo(String message, EObject object,
 							EStructuralFeature feature, int index, String code, String... issueData) {
 							diagnostics.add(new BasicDiagnostic(Diagnostic.INFO, null, -1, message, #[]))
 						}
 
-						public def override void acceptInfo(String message, EObject object, int offset, int length,
+						override void acceptInfo(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
 							diagnostics.add(new BasicDiagnostic(Diagnostic.INFO, null, -1, message, #[]))
 						}
 
-						public def override void acceptWarning(String message, EObject object,
+						override void acceptWarning(String message, EObject object,
 							EStructuralFeature feature, int index, String code, String... issueData) {
 							diagnostics.add(new BasicDiagnostic(Diagnostic.WARNING, null, -1, message, #[]))
 						}
 
-						public def override void acceptWarning(String message, EObject object, int offset, int length,
+						override void acceptWarning(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
 							diagnostics.add(new BasicDiagnostic(Diagnostic.WARNING, null, -1, message, #[]))
 						}
@@ -696,88 +696,89 @@ public class DotAttributes {
 					validator.validate(iterator.next, null/* diagnostic chain */, validationContext)
 				}
 			}
-			return diagnostics
+			
+			diagnostics
 		}
 	}
 
 	/**
 	 * Parses the given value as a DOT dirType.
 	 */
-	private static val DIRTYPE_PARSER = new EnumParser<DirType>(DirType)
+	static val DIRTYPE_PARSER = new EnumParser<DirType>(DirType)
 
 	/**
 	 * A serializer for {@link DirType} values.
 	 */
-	private static val DIRTYPE_SERIALIZER = new EnumSerializer<DirType>(DirType)
+	static val DIRTYPE_SERIALIZER = new EnumSerializer<DirType>(DirType)
 
 	/**
 	 * Parses the given value as a DOT dirType.
 	 */
-	private static val LAYOUT_PARSER = new EnumParser<Layout>(Layout)
+	static val LAYOUT_PARSER = new EnumParser<Layout>(Layout)
 
 	/**
 	 * A serializer for {@link DirType} values.
 	 */
-	private static val LAYOUT_SERIALIZER = new EnumSerializer<Layout>(Layout)
+	static val LAYOUT_SERIALIZER = new EnumSerializer<Layout>(Layout)
 
 	/**
 	 * Parses the given value as a {@link ClusterMode}.
 	 */
-	private static val CLUSTERMODE_PARSER = new EnumParser<ClusterMode>(ClusterMode)
+	static val CLUSTERMODE_PARSER = new EnumParser<ClusterMode>(ClusterMode)
 
 	/**
 	 * Serializes the given {@link ClusterMode} value.
 	 */
-	private static val CLUSTERMODE_SERIALIZER = new EnumSerializer<ClusterMode>(ClusterMode)
+	static val CLUSTERMODE_SERIALIZER = new EnumSerializer<ClusterMode>(ClusterMode)
 
 	/**
 	 * Parses the given value as a DOT outputMode.
 	 */
-	private static val OUTPUTMODE_PARSER = new EnumParser<OutputMode>(OutputMode)
-
+	static val OUTPUTMODE_PARSER = new EnumParser<OutputMode>(OutputMode)
+	
 	/**
 	 * Serializes the given {@link OutputMode} value.
 	 */
-	private static val OUTPUTMODE_SERIALIZER = new EnumSerializer<OutputMode>(OutputMode)
+	static val OUTPUTMODE_SERIALIZER = new EnumSerializer<OutputMode>(OutputMode)
 
 	/**
 	 * Parses the given value as a DOT pagedir.
 	 */
-	private static val PAGEDIR_PARSER = new EnumParser<Pagedir>(Pagedir)
+	static val PAGEDIR_PARSER = new EnumParser<Pagedir>(Pagedir)
 
 	/**
 	 * Serializes the given {@link Pagedir} value.
 	 */
-	private static val PAGEDIR_SERIALIZER = new EnumSerializer<Pagedir>(Pagedir)
+	static val PAGEDIR_SERIALIZER = new EnumSerializer<Pagedir>(Pagedir)
 
 	/**
 	 * A parser used to parse DOT rankdir values.
 	 */
-	private static val RANKDIR_PARSER = new EnumParser<Rankdir>(Rankdir)
+	static val RANKDIR_PARSER = new EnumParser<Rankdir>(Rankdir)
 
 	/**
 	 * Serializes the given {@link Rankdir} value.
 	 */
-	private static val RANKDIR_SERIALIZER = new EnumSerializer<Rankdir>(Rankdir)
+	static val RANKDIR_SERIALIZER = new EnumSerializer<Rankdir>(Rankdir)
 
-/**
+	/**
 	 * Parses the given value as a DOT rankType.
 	 */
-	private static val RANKTYPE_PARSER = new EnumParser<RankType>(RankType)
+	static val RANKTYPE_PARSER = new EnumParser<RankType>(RankType)
 
 	/**
 	 * A serializer for {@link RankType} values.
 	 */
-	private static val RANKTYPE_SERIALIZER = new EnumSerializer<RankType>(RankType)
+	static val RANKTYPE_SERIALIZER = new EnumSerializer<RankType>(RankType)
 
 	/**
 	 * A parser used to parse DOT {@link Splines} values.
 	 */
-	private static val SPLINES_PARSER = new IAttributeValueParser<Splines>() {
+	static val SPLINES_PARSER = new IAttributeValueParser<Splines>() {
 
-		private val enumParser = new EnumParser<Splines>(Splines)
+		val enumParser = new EnumParser<Splines>(Splines)
 
-		public def override ParseResult<Splines> parse(String attributeValue) {
+		override ParseResult<Splines> parse(String attributeValue) {
 
 			// XXX: splines can either be an enum or a bool value; we try both
 			// options here and convert boolean expressions into respective
@@ -793,13 +794,13 @@ public class DotAttributes {
 
 			// TODO: create a better, combined error message here
 			val List<Diagnostic> combinedFindings = newArrayList
-			combinedFindings.addAll(boolResult.getSyntaxErrors)
-			combinedFindings.addAll(enumResult.getSyntaxErrors)
+			combinedFindings.addAll(boolResult.syntaxErrors)
+			combinedFindings.addAll(enumResult.syntaxErrors)
 			return new ParseResult<Splines>(combinedFindings)
 		}
 
 		override getParsedType() {
-			return Splines
+			Splines
 		}
 
 	}
@@ -807,14 +808,14 @@ public class DotAttributes {
 	/**
 	 * Serializes the given {@link Splines} value.
 	 */
-	private static val SPLINES_SERIALIZER = new EnumSerializer<Splines>(Splines)
+	static val SPLINES_SERIALIZER = new EnumSerializer<Splines>(Splines)
 
 	/**
 	 * A parser for bool values.
 	 */
-	private static val BOOL_PARSER = new IAttributeValueParser<Boolean> {
+	static val BOOL_PARSER = new IAttributeValueParser<Boolean> {
 
-		public def override ParseResult<Boolean> parse(String rawValue) {
+		override ParseResult<Boolean> parse(String rawValue) {
 			if (rawValue === null) {
 				return null
 			}
@@ -844,7 +845,7 @@ public class DotAttributes {
 		}
 
 		override getParsedType() {
-			return Boolean
+			Boolean
 		}
 
 	}
@@ -852,9 +853,9 @@ public class DotAttributes {
 	/**
 	 * A serializer for bool values.
 	 */
-	private static val BOOL_SERIALIZER = new IAttributeValueSerializer<Boolean> {
+	static val BOOL_SERIALIZER = new IAttributeValueSerializer<Boolean> {
 
-		public def override String serialize(Boolean value) {
+		override String serialize(Boolean value) {
 			return Boolean.toString(value)
 		}
 	}
@@ -862,9 +863,9 @@ public class DotAttributes {
 	/**
 	 * A parser for double values.
 	 */
-	private static val DOUBLE_PARSER = new IAttributeValueParser<Double> {
+	static val DOUBLE_PARSER = new IAttributeValueParser<Double> {
 
-		public def override ParseResult<Double> parse(String rawValue) {
+		override ParseResult<Double> parse(String rawValue) {
 			if (rawValue === null) {
 				return null
 			}
@@ -881,7 +882,7 @@ public class DotAttributes {
 		}
 
 		override getParsedType() {
-			return Double
+			Double
 		}
 
 	}
@@ -889,19 +890,19 @@ public class DotAttributes {
 	/**
 	 * A serializer for double values.
 	 */
-	private static val DOUBLE_SERIALIZER = new IAttributeValueSerializer<Double> {
+	static val DOUBLE_SERIALIZER = new IAttributeValueSerializer<Double> {
 
-		public def override String serialize(Double value) {
-			return Double.toString(value)
+		override String serialize(Double value) {
+			Double.toString(value)
 		}
 	}
 
 	/**
 	 * A parser used to parse DOT int values.
 	 */
-	private static val INT_PARSER = new IAttributeValueParser<Integer> {
+	static val INT_PARSER = new IAttributeValueParser<Integer> {
 
-		public def override ParseResult<Integer> parse(String rawValue) {
+		override ParseResult<Integer> parse(String rawValue) {
 			if (rawValue === null) {
 				return null
 			}
@@ -916,7 +917,7 @@ public class DotAttributes {
 		}
 
 		override getParsedType() {
-			return Integer
+			Integer
 		}
 
 	}
@@ -924,9 +925,9 @@ public class DotAttributes {
 	/**
 	 * A serializer for int values.
 	 */
-	private static val INT_SERIALIZER = new IAttributeValueSerializer<Integer> {
+	static val INT_SERIALIZER = new IAttributeValueSerializer<Integer> {
 
-		public def override String serialize(Integer value) {
+		override String serialize(Integer value) {
 			return Integer.toString(value)
 		}
 	}
@@ -934,164 +935,164 @@ public class DotAttributes {
 	/**
 	 * A validator for colorscheme {@link String} attribute values.
 	 */
-	private static val COLORSCHEME_VALIDATOR = new StringValidator(DotColors.getColorSchemes.toArray)
+	static val COLORSCHEME_VALIDATOR = new StringValidator(DotColors.getColorSchemes.toArray)
 
 	/**
 	 * A validator for sides {@link Integer} attribute values.
 	 */
-	private static val SIDES_VALIDATOR = new IntValidator(0)
+	static val SIDES_VALIDATOR = new IntValidator(0)
 
 	/**
 	 * A validator for arrowsize {@link Double} attribute values.
 	 */
-	private static val ARROWSIZE_VALIDATOR = new DoubleValidator(0.0)
+	static val ARROWSIZE_VALIDATOR = new DoubleValidator(0.0)
 
 	/**
 	 * A validator for skew {@link Double} attribute values.
 	 */
-	private static val SKEW_VALIDATOR = new DoubleValidator(-100.0)
+	static val SKEW_VALIDATOR = new DoubleValidator(-100.0)
 
 	/**
 	 * A validator for distortion {@link Double} attribute values.
 	 */
-	private static val DISTORTION_VALIDATOR = new DoubleValidator(-100.0)
+	static val DISTORTION_VALIDATOR = new DoubleValidator(-100.0)
 
 	/**
 	 * A validator for width {@link Double} attribute values.
 	 */
-	private static val WIDTH_VALIDATOR = new DoubleValidator(0.01)
+	static val WIDTH_VALIDATOR = new DoubleValidator(0.01)
 
 	/**
 	 * A validator for height {@link Double} attribute values.
 	 */
-	private static val HEIGHT_VALIDATOR = new DoubleValidator(0.02)
+	static val HEIGHT_VALIDATOR = new DoubleValidator(0.02)
 
-	private static val Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
+	static val Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration
 
 	/**
 	 * The validator for arrowtype attribute values.
 	 */
 	// TODO: move to DotJavaValidator
-	private static val ARROWTYPE_VALIDATOR = new EObjectValidator<ArrowType>(arrowTypeInjector,
+	static val ARROWTYPE_VALIDATOR = new EObjectValidator<ArrowType>(arrowTypeInjector,
 		DotArrowTypeJavaValidator)
 
 	/**
 	 * The parser for arrowtype attribute values.
 	 */
-	private static val ARROWTYPE_PARSER = new EObjectParser<ArrowType>(arrowTypeInjector)
+	static val ARROWTYPE_PARSER = new EObjectParser<ArrowType>(arrowTypeInjector)
 
 	/**
 	 * The serializer for arrowtype attribute values.
 	 */
-	private static val ARROWTYPE_SERIALIZER = new EObjectSerializer<ArrowType>(arrowTypeInjector)
+	static val ARROWTYPE_SERIALIZER = new EObjectSerializer<ArrowType>(arrowTypeInjector)
 
-	private static val Injector colorInjector = new DotColorStandaloneSetup().createInjectorAndDoEMFRegistration
+	static val Injector colorInjector = new DotColorStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for color attribute values.
 	 */
-	private static val COLOR_PARSER = new EObjectParser<Color>(colorInjector)
+	static val COLOR_PARSER = new EObjectParser<Color>(colorInjector)
 
 	/**
 	 * The serializer for color attribute values.
 	 */
-	private static val COLOR_SERIALIZER = new EObjectSerializer<Color>(colorInjector)
+	static val COLOR_SERIALIZER = new EObjectSerializer<Color>(colorInjector)
 
-	private static val Injector htmlLabelInjector = new DotHtmlLabelStandaloneSetup().createInjectorAndDoEMFRegistration
+	static val Injector htmlLabelInjector = new DotHtmlLabelStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for (html) label attribute values.
 	 */
-	private static val HTML_LABEL_PARSER = new EObjectParser<HtmlLabel>(htmlLabelInjector)
+	static val HTML_LABEL_PARSER = new EObjectParser<HtmlLabel>(htmlLabelInjector)
 	
-	private static val HTML_LABEL_VALIDATOR = new EObjectValidator<HtmlLabel>(htmlLabelInjector,
+	static val HTML_LABEL_VALIDATOR = new EObjectValidator<HtmlLabel>(htmlLabelInjector,
 		DotHtmlLabelJavaValidator)
 	
-	private static val Injector escStringInjector = new DotEscStringStandaloneSetup().createInjectorAndDoEMFRegistration
+	static val Injector escStringInjector = new DotEscStringStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for (escString) label attribute values.
 	 */
-	private static val ESC_STRING_PARSER = new EObjectParser<EscString>(escStringInjector)
+	static val ESC_STRING_PARSER = new EObjectParser<EscString>(escStringInjector)
 	
-	private static val ESC_STRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
+	static val ESC_STRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
 		DotEscStringJavaValidator)
 
-	private static val Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
+	static val Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for point attribute values.
 	 */
-	private static val POINT_PARSER = new EObjectParser<Point>(pointInjector)
+	static val POINT_PARSER = new EObjectParser<Point>(pointInjector)
 
 	/**
 	 * The serializer for point attribute values.
 	 */
-	private static val POINT_SERIALIZER = new EObjectSerializer<Point>(pointInjector)
+	static val POINT_SERIALIZER = new EObjectSerializer<Point>(pointInjector)
 
-	private static val Injector shapeInjector = new DotShapeStandaloneSetup().createInjectorAndDoEMFRegistration
+	static val Injector shapeInjector = new DotShapeStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for shape attribute values.
 	 */
-	private static val SHAPE_PARSER = new EObjectParser<Shape>(shapeInjector)
+	static val SHAPE_PARSER = new EObjectParser<Shape>(shapeInjector)
 
 	/**
 	 * The serializer for shape attribute values.
 	 */
-	private static val SHAPE_SERIALIZER = new EObjectSerializer<Shape>(shapeInjector)
+	static val SHAPE_SERIALIZER = new EObjectSerializer<Shape>(shapeInjector)
 
-	private static val Injector splineTypeInjector = new DotSplineTypeStandaloneSetup().
+	static val Injector splineTypeInjector = new DotSplineTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for splinetype attribute values.
 	 */
-	private static val SPLINETYPE_PARSER = new EObjectParser<SplineType>(splineTypeInjector)
+	static val SPLINETYPE_PARSER = new EObjectParser<SplineType>(splineTypeInjector)
 
 	/**
 	 * The serializer for splinetype attribute values.
 	 */
-	private static val SPLINETYPE_SERIALIZER = new EObjectSerializer<SplineType>(splineTypeInjector)
+	static val SPLINETYPE_SERIALIZER = new EObjectSerializer<SplineType>(splineTypeInjector)
 
-	private static val Injector styleInjector = new DotStyleStandaloneSetup().createInjectorAndDoEMFRegistration
+	static val Injector styleInjector = new DotStyleStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The serializer for style attribute values.
 	 */
-	private static val STYLE_SERIALIZER = new EObjectSerializer<Style>(styleInjector)
+	static val STYLE_SERIALIZER = new EObjectSerializer<Style>(styleInjector)
 
 	/**
 	 * The parser for style attribute values.
 	 */
-	private static val STYLE_PARSER = new EObjectParser<Style>(styleInjector)
+	static val STYLE_PARSER = new EObjectParser<Style>(styleInjector)
 
 	/**
 	 * Validator for Color types.
 	 */
-	private static val COLOR_VALIDATOR = new EObjectValidator<Color>(colorInjector, DotColorJavaValidator)
+	static val COLOR_VALIDATOR = new EObjectValidator<Color>(colorInjector, DotColorJavaValidator)
 
 	/**
 	 * Validator for SplineType types.
 	 */
-	private static val SPLINETYPE_VALIDATOR = new EObjectValidator<SplineType>(splineTypeInjector,
+	static val SPLINETYPE_VALIDATOR = new EObjectValidator<SplineType>(splineTypeInjector,
 		DotSplineTypeJavaValidator)
 
 	/**
 	 * Validator for Point types.
 	 */
-	private static val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointJavaValidator)
+	static val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointJavaValidator)
 
 	/**
 	 * Validator for Shape types.
 	 */
-	private static val SHAPE_VALIDATOR = new EObjectValidator<Shape>(shapeInjector, DotShapeJavaValidator)
+	static val SHAPE_VALIDATOR = new EObjectValidator<Shape>(shapeInjector, DotShapeJavaValidator)
 
 	/**
 	 * Validator for Style types.
 	 */
-	private static val STYLE_VALIDATOR = new EObjectValidator<Style>(styleInjector, DotStyleJavaValidator)
+	static val STYLE_VALIDATOR = new EObjectValidator<Style>(styleInjector, DotStyleJavaValidator)
 
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as
@@ -1116,7 +1117,7 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static def ID _getNameRaw(Graph graph) {
-		return graph.attributesProperty.get(_NAME__GNE) as ID
+		graph.attributesProperty.get(_NAME__GNE) as ID
 	}
 
 	/**
@@ -1131,7 +1132,7 @@ public class DotAttributes {
 	 */
 	public static def String _getName(Graph graph) {
 		val ID _nameRaw = _getNameRaw(graph)
-		return if(_nameRaw !== null) _nameRaw.toValue else null
+		if(_nameRaw !== null) _nameRaw.toValue else null
 	}
 
 	/**
@@ -1145,7 +1146,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static def ID _getNameRaw(Node node) {
-		return node.attributesProperty.get(_NAME__GNE) as ID
+		node.attributesProperty.get(_NAME__GNE) as ID
 	}
 
 	/**
@@ -1160,7 +1161,7 @@ public class DotAttributes {
 	 */
 	public static def String _getName(Node node) {
 		val ID _nameRaw = _getNameRaw(node)
-		return if(_nameRaw !== null) _nameRaw.toValue else null
+		if(_nameRaw !== null) _nameRaw.toValue else null
 	}
 
 	/**
@@ -1174,7 +1175,7 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static def GraphType _getType(Graph graph) {
-		return graph.attributesProperty.get(_TYPE__G) as GraphType
+		graph.attributesProperty.get(_TYPE__G) as GraphType
 	}
 
 	/**
