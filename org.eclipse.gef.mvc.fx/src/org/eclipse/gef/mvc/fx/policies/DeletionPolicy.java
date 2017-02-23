@@ -154,6 +154,9 @@ public class DeletionPolicy extends AbstractTransactionPolicy {
 				}
 			}
 		}
+
+		// TODO: Hover feedback needs to be removed
+
 		locallyExecuteOperation();
 
 		// verify that all anchoreds were removed

@@ -21,7 +21,6 @@ import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 
 import javafx.scene.Node;
-import javafx.scene.layout.Region;
 
 /**
  * The {@link ResizePolicy} is an {@link AbstractTransactionPolicy} that handles
@@ -180,9 +179,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	protected double getMinimumHeight() {
 		Node visualToResize = getVisualToResize();
 		double computedMinHeight = -1;
-		if (visualToResize instanceof Region) {
-			computedMinHeight = ((Region) visualToResize).getMinHeight();
-		} else if (visualToResize.isResizable()) {
+		if (visualToResize.isResizable()) {
 			computedMinHeight = visualToResize.minHeight(-1);
 		}
 		return Math.max(computedMinHeight,
@@ -198,9 +195,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	protected double getMinimumWidth() {
 		Node visualToResize = getVisualToResize();
 		double computedMinWidth = -1;
-		if (visualToResize instanceof Region) {
-			computedMinWidth = ((Region) visualToResize).getMinWidth();
-		} else if (visualToResize.isResizable()) {
+		if (visualToResize.isResizable()) {
 			computedMinWidth = visualToResize.minWidth(-1);
 		}
 		return Math.max(computedMinWidth, SquareSegmentHandlePart.DEFAULT_SIZE);
@@ -215,7 +210,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 */
 	protected ResizeOperation getResizeOperation() {
 		return (ResizeOperation) getOperation();
-	};
+	}
 
 	/**
 	 * Returns the {@link Node} that should be resized. Per default, this is the

@@ -154,10 +154,7 @@ public class TransformPolicyTests {
 
 	@Before
 	public void setUp() {
-		if (transformPolicy == null) {
-			transformPolicy = createTransformPolicy();
-		}
-		// initialize (i.e. reset) transform policy
+		transformPolicy = createTransformPolicy();
 		transformPolicy.init();
 	}
 

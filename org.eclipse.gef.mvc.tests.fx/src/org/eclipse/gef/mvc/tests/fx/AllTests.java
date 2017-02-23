@@ -20,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ AbstractVisualPartTests.class, BendableTests.class, ContentSynchronizationTests.class,
 		FocusTraversalPolicyTests.class, SelectionModelTests.class, AbstractHandlePartTests.class,
 		BendConnectionPolicyTests.class, ClickDragToolTests.class, TypeToolTests.class, TransformPolicyTests.class,
-		FocusTraversalPolicyTests.class })
+		FocusTraversalPolicyTests.class, ResizePolicyTests.class })
 public class AllTests {
 
 }
