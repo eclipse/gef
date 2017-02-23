@@ -16,7 +16,6 @@ import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
-import org.eclipse.gef.mvc.fx.tools.ITool;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
@@ -61,23 +60,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
-			boolean transaction = false;
-			if (!boundsChanged) {
-				// determine if a transaction is running
-				for (ITool tool : getViewer().getDomain().getTools().values()) {
-					if (getViewer().getDomain()
-							.isExecutionTransactionOpen(tool)) {
-						transaction = true;
-						break;
-					}
-				}
-				if (transaction) {
-					boundsChanged = true;
-				} else {
-					// immediately fit-to-viewport if no transaction is running
-					onSizeChanged();
-				}
-			}
+			boundsChanged = true;
 		}
 	};
 	private ChangeListener<? super Number> scrollOffsetChangeListener = new ChangeListener<Number>() {
