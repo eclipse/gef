@@ -46,6 +46,8 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 
 	@Override
 	public ITransactionalOperation commit() {
+		// XXX: super.commit() nulls the operation
+		ResizeOperation resizeOperation = getResizeOperation();
 		ITransactionalOperation commitOperation = super.commit();
 		if (commitOperation != null && !commitOperation.isNoOp()
 				&& isContentResizable()) {
@@ -53,7 +55,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 			ForwardUndoCompositeOperation composite = new ForwardUndoCompositeOperation(
 					"Resize Content");
 			composite.add(commitOperation);
-			composite.add(createResizeContentOperation());
+			composite.add(createResizeContentOperation(resizeOperation));
 			commitOperation = composite;
 		}
 		return commitOperation;
@@ -93,14 +95,23 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	}
 
 	/**
-	 * Create an operation to resize the content.
+	 * Create an operation to resize the content according to the given
+	 * {@link ResizeOperation}.
 	 *
+	 * @param resizeOperation
+	 *            The {@link ResizeOperation} for which to create a
+	 *            {@link ResizeContentOperation}.
 	 * @return The operation to resize the content.
 	 */
-	protected ITransactionalOperation createResizeContentOperation() {
-		ResizeContentOperation<Node> resizeOperation = new ResizeContentOperation<>(
-				getHost(), getInitialSize(), getCurrentSize());
-		return resizeOperation;
+	protected ITransactionalOperation createResizeContentOperation(
+			ResizeOperation resizeOperation) {
+		Dimension initialSize = resizeOperation.getInitialSize();
+		Dimension finalSize = new Dimension(
+				initialSize.getWidth() + resizeOperation.getDw(),
+				initialSize.getHeight() + resizeOperation.getDh());
+		ResizeContentOperation<Node> resizeContentOperation = new ResizeContentOperation<>(
+				resizeOperation.getResizablePart(), initialSize, finalSize);
+		return resizeContentOperation;
 	}
 
 	/**
