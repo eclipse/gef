@@ -18,7 +18,6 @@ import org.eclipse.gef.mvc.fx.operations.ResizeContentOperation;
 import org.eclipse.gef.mvc.fx.operations.ResizeOperation;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 
 import javafx.scene.Node;
 
@@ -31,8 +30,6 @@ import javafx.scene.Node;
  */
 // TODO: respect max width and height
 public class ResizePolicy extends AbstractTransactionPolicy {
-
-	private Dimension initialSize;
 
 	/**
 	 * Apply the new size to the host.
@@ -59,10 +56,6 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 			composite.add(createResizeContentOperation());
 			commitOperation = composite;
 		}
-
-		// clear state
-		initialSize = null;
-
 		return commitOperation;
 	}
 
@@ -78,35 +71,20 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 *         given values.
 	 */
 	protected Dimension computeApplicableDelta(double dw, double dh) {
-		Node visual = getVisualToResize();
-		boolean resizable = visual.isResizable();
-		// TODO: remove boolean resizable, only use ResizePolicy for
-		// IResizableContentPart so that we can safely resize it
-		resizable = true;
-
-		// convert resize into relocate in case node is not resizable
-		double layoutDw = resizable ? dw : 0;
-		double layoutDh = resizable ? dh : 0;
-
-		if (resizable && (layoutDw != 0 || layoutDh != 0)) {
+		if (dw != 0 || dh != 0) {
 			// ensure visual is not resized below threshold
-			double minimumWidth = getMinimumWidth();
-			double minimumHeight = getMinimumHeight();
-			ResizeOperation resizeOperation = getResizeOperation();
-			if (resizeOperation.getInitialSize().width
-					+ layoutDw < minimumWidth) {
-				layoutDw = minimumWidth
-						- resizeOperation.getInitialSize().width;
+			Node visual = getHost().getVisual();
+			Dimension initialSize = getInitialSize();
+			double minimumWidth = visual.minWidth(initialSize.height + dh);
+			double minimumHeight = visual.minHeight(initialSize.width + dw);
+			if (initialSize.width + dw < minimumWidth) {
+				dw = minimumWidth - initialSize.width;
 			}
-			if (resizeOperation.getInitialSize().height
-					+ layoutDh < minimumHeight) {
-				layoutDh = minimumHeight
-						- resizeOperation.getInitialSize().height;
+			if (initialSize.height + dh < minimumHeight) {
+				dh = minimumHeight - initialSize.height;
 			}
 		}
-
-		Dimension applicable = new Dimension(layoutDw, layoutDh);
-		return applicable;
+		return new Dimension(dw, dh);
 	}
 
 	@Override
@@ -167,38 +145,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 * @return The initial size.
 	 */
 	protected Dimension getInitialSize() {
-		return initialSize;
-	}
-
-	/**
-	 * Returns the minimum height. The height of a {@link Node} cannot be
-	 * changed below this limit.
-	 *
-	 * @return The minimum height.
-	 */
-	protected double getMinimumHeight() {
-		Node visualToResize = getVisualToResize();
-		double computedMinHeight = -1;
-		if (visualToResize.isResizable()) {
-			computedMinHeight = visualToResize.minHeight(-1);
-		}
-		return Math.max(computedMinHeight,
-				SquareSegmentHandlePart.DEFAULT_SIZE);
-	}
-
-	/**
-	 * Returns the minimum width. The width of a {@link Node} cannot be changed
-	 * below this limit.
-	 *
-	 * @return The minimum width.
-	 */
-	protected double getMinimumWidth() {
-		Node visualToResize = getVisualToResize();
-		double computedMinWidth = -1;
-		if (visualToResize.isResizable()) {
-			computedMinWidth = visualToResize.minWidth(-1);
-		}
-		return Math.max(computedMinWidth, SquareSegmentHandlePart.DEFAULT_SIZE);
+		return getResizeOperation().getInitialSize();
 	}
 
 	/**
@@ -210,22 +157,6 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 */
 	protected ResizeOperation getResizeOperation() {
 		return (ResizeOperation) getOperation();
-	}
-
-	/**
-	 * Returns the {@link Node} that should be resized. Per default, this is the
-	 * {@link #getHost() host's} visual.
-	 *
-	 * @return The {@link Node} that should be resized.
-	 */
-	protected Node getVisualToResize() {
-		return getHost().getVisual();
-	}
-
-	@Override
-	public void init() {
-		super.init();
-		initialSize = getCurrentSize();
 	}
 
 	/**
@@ -252,26 +183,20 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	}
 
 	/**
-	 * Update the resize operation to the new final dh and dw values.
+	 * Computes the applicable delta width and height from the given intended
+	 * delta values and updates the operation accordingly.
 	 *
-	 * @param dw
-	 *            The new final width delta.
-	 * @param dh
-	 *            The new final height delta.
+	 * @param intendedDeltaWidth
+	 *            The intended width delta.
+	 * @param intendedDeltaHeight
+	 *            The intended height delta.
 	 */
-	protected void updateResizeOperation(double dw, double dh) {
-		Dimension adjusted = computeApplicableDelta(dw, dh);
-
-		// System.out.println(
-		// "want to resize by " + dw + ", " + dh + ", but applicable is "
-		// + adjusted.width + ", " + adjusted.height);
-
-		double layoutDw = adjusted.width;
-		double layoutDh = adjusted.height;
-		// update and locally execute operation
+	protected void updateResizeOperation(double intendedDeltaWidth,
+			double intendedDeltaHeight) {
+		Dimension applicableDelta = computeApplicableDelta(intendedDeltaWidth,
+				intendedDeltaHeight);
 		ResizeOperation op = getResizeOperation();
-		op.setDw(layoutDw);
-		op.setDh(layoutDh);
+		op.setDw(applicableDelta.width);
+		op.setDh(applicableDelta.height);
 	}
-
 }
