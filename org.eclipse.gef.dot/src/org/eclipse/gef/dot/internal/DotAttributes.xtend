@@ -526,6 +526,9 @@ class DotAttributes {
 			if (parsedType === null) {
 				val grammarAccess = injector.getInstance(IGrammarAccess)
 				parsedType = grammarAccess.grammar.rules.head.type.classifier.instanceClass as Class<T>
+				if(parsedType === null){
+					System.err.println("DotAttributes: parsedType cannot be determined for grammar: " + grammarAccess.grammar.name)
+				}
 			}
 			
 			parsedType

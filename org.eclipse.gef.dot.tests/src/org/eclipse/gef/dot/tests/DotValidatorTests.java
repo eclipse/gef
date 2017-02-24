@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
@@ -89,6 +90,9 @@ public class DotValidatorTests {
 
 	@Test
 	public void testArrowShapesInvalidModifiers() throws Exception {
+		// TODO: check why this extra EMF Package registration is necessary
+		registerEscStringPackage();
+
 		DotAst dotAst = parse("arrowshapes_invalid_modifiers.dot");
 
 		assertArrowTypeWarning(dotAst,
@@ -150,6 +154,9 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongArrowType() throws Exception {
+		// TODO: check why this extra EMF Package registration is necessary
+		registerArrowTypePackage();
+
 		String text = "digraph testGraph { 1->2[arrowhead=fooBar arrowtail=fooBar2] }";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -216,6 +223,9 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongGraphBackgroundColor() throws Exception {
+		// TODO: check why this extra EMF Package registration is necessary
+		registerColorPackage();
+
 		String text = "graph { bgcolor=grsy }";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -230,6 +240,9 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongNodeColor() throws Exception {
+		// TODO: check why this extra EMF Package registration is necessary
+		registerColorPackage();
+
 		String text = "graph { 1[color=\"#fffff\"]}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -415,5 +428,32 @@ public class DotValidatorTests {
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWHEAD__E,
 				warningMessage);
+	}
+
+	private void registerArrowTypePackage() {
+		if (!EPackage.Registry.INSTANCE.containsKey(
+				org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(
+					org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eNS_URI,
+					org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eINSTANCE);
+		}
+	}
+
+	private void registerColorPackage() {
+		if (!EPackage.Registry.INSTANCE.containsKey(
+				org.eclipse.gef.dot.internal.language.color.ColorPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(
+					org.eclipse.gef.dot.internal.language.color.ColorPackage.eNS_URI,
+					org.eclipse.gef.dot.internal.language.color.ColorPackage.eINSTANCE);
+		}
+	}
+
+	private void registerEscStringPackage() {
+		if (!EPackage.Registry.INSTANCE.containsKey(
+				org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(
+					org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eNS_URI,
+					org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eINSTANCE);
+		}
 	}
 }
