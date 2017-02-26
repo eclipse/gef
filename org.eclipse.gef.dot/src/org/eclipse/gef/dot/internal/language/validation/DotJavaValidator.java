@@ -113,7 +113,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	public void checkValidCombinationOfNodeShapeAndStyle(Attribute attribute) {
 		if (DotAttributes.getContext(attribute) == Context.NODE
 				&& attribute.getName().toValue()
-						.equals(DotAttributes.STYLE__GNE)
+						.equals(DotAttributes.STYLE__GCNE)
 				&& attribute.getValue().toValue()
 						.equals(NodeStyle.STRIPED.toString())) {
 			EList<AttrList> attributeList = null;

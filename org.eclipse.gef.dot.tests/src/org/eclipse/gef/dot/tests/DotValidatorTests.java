@@ -248,7 +248,7 @@ public class DotValidatorTests {
 		DotAst dotAst = parserHelper.parse(text);
 
 		validationTestHelper.assertError(dotAst,
-				DotPackage.eINSTANCE.getAttribute(), DotAttributes.COLOR__NE,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.COLOR__CNE,
 				"The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.");
 
 		// verify that this is the only reported issues

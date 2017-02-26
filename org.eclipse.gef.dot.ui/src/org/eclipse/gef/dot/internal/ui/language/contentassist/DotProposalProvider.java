@@ -196,13 +196,13 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTARROWTYPE,
 							context, acceptor);
 					break;
-				case DotAttributes.COLOR__NE:
-				case DotAttributes.FILLCOLOR__NE:
+				case DotAttributes.COLOR__CNE:
+				case DotAttributes.FILLCOLOR__CNE:
 				case DotAttributes.FONTCOLOR__GCNE:
 				case DotAttributes.LABELFONTCOLOR__E:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
-				case DotAttributes.COLORSCHEME__GNE:
+				case DotAttributes.COLORSCHEME__GCNE:
 					proposeAttributeValues(DotColors.getColorSchemes(), context,
 							acceptor);
 					break;
@@ -210,7 +210,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeAttributeValues(DirType.values(), context, acceptor);
 					break;
 				case DotAttributes.HEAD_LP__E:
-				case DotAttributes.LP__GE:
+				case DotAttributes.LP__GCE:
 				case DotAttributes.TAIL_LP__E:
 				case DotAttributes.XLP__NE:
 					proposeAttributeValues(
@@ -222,7 +222,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTSPLINETYPE,
 							context, acceptor);
 					break;
-				case DotAttributes.STYLE__GNE:
+				case DotAttributes.STYLE__GCNE:
 					proposeAttributeValues(EdgeStyle.VALUES, context, acceptor);
 					break;
 				default:
@@ -240,7 +240,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeAttributeValues(ClusterMode.values(), context,
 							acceptor);
 					break;
-				case DotAttributes.COLORSCHEME__GNE:
+				case DotAttributes.COLORSCHEME__GCNE:
 					proposeAttributeValues(DotColors.getColorSchemes(), context,
 							acceptor);
 					break;
@@ -251,7 +251,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				case DotAttributes.LAYOUT__G:
 					proposeAttributeValues(Layout.values(), context, acceptor);
 					break;
-				case DotAttributes.LP__GE:
+				case DotAttributes.LP__GCE:
 					proposeAttributeValues(
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTPOINT,
 							context, acceptor);
@@ -276,12 +276,12 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				}
 			} else if (DotAttributes.getContext(attribute) == Context.NODE) {
 				switch (attribute.getName().toValue()) {
-				case DotAttributes.COLOR__NE:
-				case DotAttributes.FILLCOLOR__NE:
+				case DotAttributes.COLOR__CNE:
+				case DotAttributes.FILLCOLOR__CNE:
 				case DotAttributes.FONTCOLOR__GCNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
-				case DotAttributes.COLORSCHEME__GNE:
+				case DotAttributes.COLORSCHEME__GCNE:
 					proposeAttributeValues(DotColors.getColorSchemes(), context,
 							acceptor);
 					break;
@@ -300,7 +300,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTSHAPE,
 							context, acceptor);
 					break;
-				case DotAttributes.STYLE__GNE:
+				case DotAttributes.STYLE__GCNE:
 					proposeAttributeValues(NodeStyle.VALUES, context, acceptor);
 					break;
 				default:
@@ -439,7 +439,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		if (container != null) {
 			ID colorScheme = DotImport.getAttributeValue(
 					((EdgeStmtNode) container).getAttrLists(),
-					DotAttributes.COLORSCHEME__GNE);
+					DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
 				return DotColors.getColorNames(colorScheme.toValue());
 			}
@@ -450,7 +450,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		if (container != null) {
 			ID colorScheme = DotImport.getAttributeValue(
 					((NodeStmt) container).getAttrLists(),
-					DotAttributes.COLORSCHEME__GNE);
+					DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
 				return DotColors.getColorNames(colorScheme.toValue());
 			}
@@ -460,7 +460,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		container = EcoreUtil2.getContainerOfType(attribute, DotGraph.class);
 		if (container != null) {
 			ID colorScheme = DotImport.getAttributeValue((DotGraph) container,
-					DotAttributes.COLORSCHEME__GNE);
+					DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
 				return DotColors.getColorNames(colorScheme.toValue());
 			}
@@ -471,7 +471,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				AttrStmt.class);
 		if (attrStmt != null) {
 			ID colorScheme = DotImport.getAttributeValue(
-					attrStmt.getAttrLists(), DotAttributes.COLORSCHEME__GNE);
+					attrStmt.getAttrLists(), DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
 				return DotColors.getColorNames(colorScheme.toValue());
 			}

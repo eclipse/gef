@@ -34,7 +34,7 @@ import org.eclipse.xtext.validation.Issue;
  */
 public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
-	@Fix(DotAttributes.STYLE__GNE)
+	@Fix(DotAttributes.STYLE__GCNE)
 	public void fixEdgeStyleAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {

@@ -114,7 +114,7 @@ class DotAttributes {
 		SUBGRAPH,
 
 		/**
-		 * Cluster context
+		 * Cluster subgraph context
 		 */
 		CLUSTER
 	}
@@ -372,11 +372,11 @@ class DotAttributes {
 			case ARROWTAIL__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case BGCOLOR__GC: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case CLUSTERRANK__G: validateAttributeRawValue(CLUSTERMODE_PARSER, null, attributeContext, attributeName, attributeValue)
-			case COLORSCHEME__GNE:  validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
-			case COLOR__NE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case COLORSCHEME__GCNE:  validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
+			case COLOR__CNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case DIR__E: validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case FILLCOLOR__NE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FILLCOLOR__CNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FIXEDSIZE__N: validateAttributeRawValue(BOOL_PARSER, null,	attributeContext, FIXEDSIZE__N, attributeValue)
 			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
@@ -391,7 +391,7 @@ class DotAttributes {
 					Collections.emptyList
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
-			case LP__GE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LP__GCE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue) 
 			case PAGEDIR__G: validateAttributeRawValue(PAGEDIR_PARSER, null, attributeContext, attributeName, attributeValue)
 			case POS__NE:
@@ -407,7 +407,7 @@ class DotAttributes {
 			case SIDES__N: validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case SKEW__N: validateAttributeRawValue(DOUBLE_PARSER, SKEW_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case SPLINES__G: validateAttributeRawValue(SPLINES_PARSER, null, attributeContext, attributeName, attributeValue)
-			case STYLE__GNE: validateAttributeRawValue(STYLE_PARSER, STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case STYLE__GCNE: validateAttributeRawValue(STYLE_PARSER, STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case TAIL_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case WIDTH__N: validateAttributeRawValue(DOUBLE_PARSER, WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case XLP__NE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -1267,10 +1267,10 @@ class DotAttributes {
 	public static val String CLUSTERRANK__G = "clusterrank"
 
 	@DotAttribute(parsedType=Color)
-	public static val String COLOR__NE = "color"
+	public static val String COLOR__CNE = "color"
 
 	@DotAttribute(parsedType=String)
-	public static val String COLORSCHEME__GNE = "colorscheme"
+	public static val String COLORSCHEME__GCNE = "colorscheme"
 
 	@DotAttribute(rawType="STRING", parsedType=DirType)
 	public static val String DIR__E = "dir"
@@ -1279,7 +1279,7 @@ class DotAttributes {
 	public static val String DISTORTION__N = "distortion"
 
 	@DotAttribute(parsedType=Color)
-	public static val String FILLCOLOR__NE = "fillcolor"
+	public static val String FILLCOLOR__CNE = "fillcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
 	public static val String FIXEDSIZE__N = "fixedsize"
@@ -1300,7 +1300,7 @@ class DotAttributes {
 	public static val String HEIGHT__N = "height"
 
 	@DotAttribute(parsedType=String)
-	public static val String ID__GNE = "id"
+	public static val String ID__GCNE = "id"
 
 	@DotAttribute(parsedType=String)
 	public static val String LABEL__GCNE = "label"
@@ -1312,7 +1312,7 @@ class DotAttributes {
 	public static val String LAYOUT__G = "layout"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static val String LP__GE = "lp"
+	public static val String LP__GCE = "lp"
 
 	@DotAttribute(rawType="STRING", parsedType=OutputMode)
 	public static val String OUTPUTORDER__G = "outputorder"
@@ -1344,7 +1344,7 @@ class DotAttributes {
 	public static val String SPLINES__G = "splines"
 
 	@DotAttribute(parsedType=Style)
-	public static val String STYLE__GNE = "style"
+	public static val String STYLE__GCNE = "style"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
 	public static val String TAIL_LP__E = "tail_lp"
