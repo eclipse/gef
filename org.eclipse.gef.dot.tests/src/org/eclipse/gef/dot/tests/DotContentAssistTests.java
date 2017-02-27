@@ -788,8 +788,8 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {graph[]}")
 				.assertTextAtCursorPosition(13, "]", "bgcolor", "clusterrank",
 						"colorscheme", "fontcolor", "forcelabels", "id",
-						"label", "layout", "lp", "outputorder", "pagedir",
-						"rankdir", "splines", "style")
+						"label", "layout", "lp", "nodesep", "outputorder",
+						"pagedir", "rankdir", "splines", "style")
 				.applyProposal(13, "forcelabels")
 				.expectContent("graph {graph[forcelabels]}");
 
@@ -798,8 +798,8 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(8, "bgcolor", "clusterrank",
 						"colorscheme", "fontcolor", "edge", "graph", "node",
 						"subgraph", "{", "}", "forcelabels", "id", "label",
-						"layout", "lp", "outputorder", "pagedir", "rankdir",
-						"splines", "style")
+						"layout", "lp", "nodesep", "outputorder", "pagedir",
+						"rankdir", "splines", "style")
 				.applyProposal(8, "rankdir").expectContent("graph { rankdir }");
 
 		// test local attribute names with prefix
@@ -952,8 +952,8 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(38, "1", "10", "11", ",", ";", "{",
 						"}", "bgcolor", "colorscheme", "clusterrank", "edge",
 						"fontcolor", "forcelabels", "graph", "id", "label",
-						"layout", "lp", "node", "outputorder", "pagedir",
-						"rankdir", "splines", "style", "subgraph")
+						"layout", "lp", "node", "nodesep", "outputorder",
+						"pagedir", "rankdir", "splines", "style", "subgraph")
 				.applyProposal(38, "10")
 				.expectContent("graph { colorscheme=brbg11 fontcolor=10 }");
 
