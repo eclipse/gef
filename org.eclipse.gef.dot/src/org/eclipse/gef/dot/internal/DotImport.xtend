@@ -273,6 +273,7 @@ class DotImport {
 
 		if (!isExistingSubgraph) {
 			subgraphNode.nestedGraph = subgraph
+			subgraph.nestingNode = subgraphNode
 			graphBuilder.nodes(subgraphNode)
 		} else {
 

@@ -1564,6 +1564,7 @@ public final class DotImportTests {
 		assertNotNull(cluster1.getNestedGraph());
 		assertEquals("cluster1",
 				DotAttributes._getName(cluster1.getNestedGraph()));
+		assertEquals(cluster1, cluster1.getNestedGraph().getNestingNode());
 		// two nested nodes and one nested edge (between these nodes) in small
 		// cluster
 		assertEquals(2, cluster1.getNestedGraph().getNodes().size());
