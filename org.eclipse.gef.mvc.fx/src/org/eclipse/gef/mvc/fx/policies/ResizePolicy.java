@@ -19,6 +19,7 @@ import org.eclipse.gef.mvc.fx.operations.ResizeOperation;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 
 /**
@@ -44,9 +45,19 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 		locallyExecuteOperation();
 	}
 
+	private double bounded(double min, double val, double max) {
+		if (max < min) {
+			double t = min;
+			min = max;
+			max = t;
+		}
+		return Math.max(min, Math.min(max, val));
+	}
+
 	@Override
 	public ITransactionalOperation commit() {
-		// XXX: super.commit() nulls the operation
+		// XXX: super.commit() nulls the operation so we cache it in order to
+		// pass it along to #createResizeContentOperation().
 		ResizeOperation resizeOperation = getResizeOperation();
 		ITransactionalOperation commitOperation = super.commit();
 		if (commitOperation != null && !commitOperation.isNoOp()
@@ -77,14 +88,32 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 			// ensure visual is not resized below threshold
 			Node visual = getHost().getVisual();
 			Dimension initialSize = getInitialSize();
-			double minimumWidth = visual.minWidth(initialSize.height + dh);
-			double minimumHeight = visual.minHeight(initialSize.width + dw);
-			if (initialSize.width + dw < minimumWidth) {
-				dw = minimumWidth - initialSize.width;
+			Dimension intendedSize = initialSize.getExpanded(dw, dh);
+
+			// determine final size based on content-bias, min-size, and
+			// max-size
+			Orientation contentBias = visual.getContentBias();
+			double w, h;
+			if (contentBias == null) {
+				w = bounded(visual.minWidth(-1), intendedSize.width,
+						visual.maxWidth(-1));
+				h = bounded(visual.minHeight(-1), intendedSize.height,
+						visual.maxHeight(-1));
+			} else if (contentBias == Orientation.HORIZONTAL) {
+				w = bounded(visual.minWidth(-1), intendedSize.width,
+						visual.maxWidth(-1));
+				h = bounded(visual.minHeight(w), intendedSize.height,
+						visual.maxHeight(w));
+			} else {
+				h = bounded(visual.minHeight(-1), intendedSize.height,
+						visual.maxHeight(-1));
+				w = bounded(visual.minWidth(h), intendedSize.width,
+						visual.maxWidth(h));
 			}
-			if (initialSize.height + dh < minimumHeight) {
-				dh = minimumHeight - initialSize.height;
-			}
+
+			// adjust deltas
+			dw = w - initialSize.width;
+			dh = h - initialSize.height;
 		}
 		return new Dimension(dw, dh);
 	}
