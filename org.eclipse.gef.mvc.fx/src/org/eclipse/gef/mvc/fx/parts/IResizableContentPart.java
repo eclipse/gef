@@ -16,6 +16,7 @@ import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
 
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 
 /**
  * An {@link IContentPart} that supports content related resize.
@@ -37,11 +38,11 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	public Dimension getContentSize();
 
 	/**
-	 * Returns the current size according to this
-	 * {@link IResizableContentPart}'s visual.
+	 * Returns the current size according to this {@link IResizableContentPart}
+	 * 's visual.
 	 *
-	 * @return The current size according to this
-	 *         {@link IResizableContentPart}'s visual.
+	 * @return The current size according to this {@link IResizableContentPart}
+	 *         's visual.
 	 */
 	public default Dimension getVisualSize() {
 		return NodeUtils.getShapeBounds(getVisual()).getSize();
@@ -63,7 +64,16 @@ public interface IResizableContentPart<V extends Node> extends IContentPart<V> {
 	 *            The new size for this {@link IResizableContentPart}'s visual.
 	 */
 	public default void setVisualSize(Dimension totalSize) {
-		getVisual().resize(totalSize.width, totalSize.height);
+		if (getVisual() instanceof Region) {
+			// A Region should not be resized directly. Instead, its size
+			// constraints should be adjusted so that it will be resized to the
+			// desired size during the next layout pass.
+			((Region) getVisual()).setPrefSize(totalSize.width,
+					totalSize.height);
+			((Region) getVisual()).autosize();
+		} else {
+			// resize manually
+			getVisual().resize(totalSize.width, totalSize.height);
+		}
 	}
-
 }
