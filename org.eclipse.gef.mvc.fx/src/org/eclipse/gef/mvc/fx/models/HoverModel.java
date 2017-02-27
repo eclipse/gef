@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.models;
 
-import java.beans.PropertyChangeEvent;
-
 import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -35,22 +33,36 @@ public class HoverModel
 		implements IDisposable {
 
 	/**
-	 * The {@link HoverModel} fires {@link PropertyChangeEvent}s when the
-	 * hovered part changes. This is the name of the property that is delivered
-	 * with the event.
+	 * This is the name of the property that stores the currently hovered
+	 * {@link IVisualPart}.
 	 */
 	final public static String HOVER_PROPERTY = "hover";
+
+	/**
+	 * This property stores the intended hovered
+	 */
+	// TODO: Pick the best name: deliberate, intentional, intended, wanted, etc.
+	final public static String INTENTIONAL_HOVER_PROPERTY = "intentionalHover";
 
 	private ObjectProperty<IVisualPart<? extends Node>> hoverProperty = new SimpleObjectProperty<>(
 			this, HOVER_PROPERTY);
 
+	// TODO: Pick the best name: deliberate, intentional, intended, wanted, etc.
+	private ObjectProperty<IVisualPart<? extends Node>> intentionalHoverProperty = new SimpleObjectProperty<>(
+			this, INTENTIONAL_HOVER_PROPERTY);
+
 	/**
 	 * Sets the hovered part to <code>null</code>.
-	 * <p>
-	 * Fires a {@link PropertyChangeEvent}.
 	 */
 	public void clearHover() {
 		setHover(null);
+	}
+
+	/**
+	 * Sets the intentionally hovered part to <code>null</code>.
+	 */
+	public void clearIntentionalHover() {
+		setIntentionalHover(null);
 	}
 
 	/**
@@ -58,17 +70,29 @@ public class HoverModel
 	 */
 	@Override
 	public void dispose() {
-		hoverProperty.set(null);
+		clearHover();
+		clearIntentionalHover();
 	}
 
 	/**
-	 * Returns the currently hovered {@link IContentPart} or <code>null</code>
-	 * if no visual part is hovered.
+	 * Returns the currently hovered {@link IVisualPart} or <code>null</code> if
+	 * no visual part is hovered.
 	 *
-	 * @return the currently hovered {@link IContentPart} or <code>null</code>
+	 * @return the currently hovered {@link IVisualPart} or <code>null</code>
 	 */
 	public IVisualPart<? extends Node> getHover() {
 		return hoverProperty.get();
+	}
+
+	/**
+	 * Returns the currently intentionally hovered {@link IContentPart} or
+	 * <code>null</code> if no content part is intentionally hovered.
+	 *
+	 * @return the currently intentionally hovered {@link IContentPart} or
+	 *         <code>null</code>
+	 */
+	public IVisualPart<? extends Node> getIntentionalHover() {
+		return intentionalHoverProperty.get();
 	}
 
 	/**
@@ -78,6 +102,16 @@ public class HoverModel
 	 */
 	public ObjectProperty<IVisualPart<? extends Node>> hoverProperty() {
 		return hoverProperty;
+	}
+
+	/**
+	 * Returns an object property representing the current intentionally hovered
+	 * part.
+	 *
+	 * @return A property named {@link #INTENTIONAL_HOVER_PROPERTY}.
+	 */
+	public ObjectProperty<IVisualPart<? extends Node>> intentionalHoverProperty() {
+		return intentionalHoverProperty;
 	}
 
 	@Override
@@ -96,13 +130,23 @@ public class HoverModel
 	/**
 	 * Sets the hovered {@link IVisualPart} to the given value. The given part
 	 * may be <code>null</code> in order to unhover.
-	 * <p>
-	 * Fires a {@link PropertyChangeEvent}.
 	 *
 	 * @param cp
 	 *            hovered {@link IVisualPart} or <code>null</code>
 	 */
 	public void setHover(IVisualPart<? extends Node> cp) {
 		hoverProperty.set(cp);
+	}
+
+	/**
+	 * Sets the intentionally hovered {@link IContentPart} to the given value.
+	 * The given part may be <code>null</code> in order to unhover.
+	 *
+	 * @param cp
+	 *            intentionally hovered {@link IContentPart} or
+	 *            <code>null</code>
+	 */
+	public void setIntentionalHover(IContentPart<? extends Node> cp) {
+		intentionalHoverProperty.set(cp);
 	}
 }
