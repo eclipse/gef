@@ -54,9 +54,15 @@ abstract public class AbstractFeedbackPart<V extends Node>
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
 			if (!newValue.booleanValue()) {
-				throw new IllegalStateException("Inconsistent "
+				System.err.println("Inconsistent "
 						+ AbstractFeedbackPart.this.getClass().getSimpleName()
 						+ ": Anchorage is deactivated.");
+				// FIXME: IntendedHoverModel (see Bugzilla #512715)
+				// FIXME: Remove syserr and throw exception when
+				// IntendedHoverModel is in use.
+				// throw new IllegalStateException("Inconsistent "
+				// + AbstractHandlePart.this.getClass().getSimpleName()
+				// + ": Anchorage is deactivated.");
 			}
 		}
 	};

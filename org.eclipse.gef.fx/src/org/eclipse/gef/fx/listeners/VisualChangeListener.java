@@ -22,6 +22,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.transform.Transform;
 
@@ -89,6 +90,8 @@ public abstract class VisualChangeListener {
 			}
 		}
 	};
+
+	private boolean needsLayoutListener = false;
 
 	/**
 	 * This method is called upon a bounds-in-local change.
@@ -238,12 +241,39 @@ public abstract class VisualChangeListener {
 	 * properties are changed.
 	 */
 	protected void onBoundsChanged() {
+		// boundsInLocalChanged(oldBoundsInLocal, observed.getBoundsInLocal());
 		if (layoutBoundsChanged && boundsInLocalChanged
 				&& boundsInParentChanged) {
-			boundsInLocalChanged(oldBoundsInLocal, newBoundsInLocal);
 			layoutBoundsChanged = false;
 			boundsInLocalChanged = false;
 			boundsInParentChanged = false;
+			if (observed instanceof Parent) {
+				if (((Parent) observed).isNeedsLayout()) {
+					if (!needsLayoutListener) {
+						needsLayoutListener = true;
+						((Parent) observed).needsLayoutProperty()
+								.addListener(new ChangeListener<Boolean>() {
+									@Override
+									public void changed(
+											ObservableValue<? extends Boolean> observable,
+											Boolean oldValue,
+											Boolean newValue) {
+										if (!newValue.booleanValue()) {
+											needsLayoutListener = false;
+											observable.removeListener(this);
+											boundsInLocalChanged(
+													oldBoundsInLocal,
+													newBoundsInLocal);
+										}
+									}
+								});
+					}
+				} else {
+					boundsInLocalChanged(oldBoundsInLocal, newBoundsInLocal);
+				}
+			} else {
+				boundsInLocalChanged(oldBoundsInLocal, newBoundsInLocal);
+			}
 		}
 	}
 
