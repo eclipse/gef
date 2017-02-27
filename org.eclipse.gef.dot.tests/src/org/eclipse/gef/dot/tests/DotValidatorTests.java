@@ -86,29 +86,31 @@ public class DotValidatorTests {
 	public void testDeprecatedStyle() throws Exception {
 		DotAst dotAst = parserHelper.parse(DotTestGraphs.DEPRECATED_STYLES);
 
+		int lineDelimiterLength = System.getProperty("line.separator").length();
+
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				122, 17,
+				112 + 5 * lineDelimiterLength, 17,
 				"The style value 'setlinewidth(1)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				151, 17,
+				139 + 6 * lineDelimiterLength, 17,
 				"The style value 'setlinewidth(2)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				183, 17,
+				169 + 7 * lineDelimiterLength, 17,
 				"The style value 'setlinewidth(3)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				233, 25,
+				213 + 10 * lineDelimiterLength, 25,
 				"The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				270, 25,
+				248 + 11 * lineDelimiterLength, 25,
 				"The style value 'setlinewidth(5), dotted' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		// verify that these are the only reported issues
