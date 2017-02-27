@@ -7,19 +7,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *       Tamas Miklossy  (itemis AG) - Initial text 
+ *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
  
 /* 
- * The StyledGraph2 directed graph represents the different node and egde styles. 
+ * The StyledGraph2 directed graph represents the different node and egde styles.
  */
 digraph StyledGraph2{
     rankdir=LR
     /* Nodes can have drawing styles: */
-     1[style=bold                        label="bold"                    ] 
+     1[style=bold                        label="bold"                    ]
      2[style=dashed                      label="dashed"                  ]
-     3[style=diagonals                   label="diagonals"               ] 
-     4[style=dotted                      label="dotted"                  ] 
+     3[style=diagonals                   label="diagonals"               ]
+     4[style=dotted                      label="dotted"                  ]
      5[style=filled                      label="filled"                  ]
      6[style=invis                       label="invis"                   ]
      7[style=radial                      label="radial"                  ]
@@ -27,10 +27,10 @@ digraph StyledGraph2{
      9[style=solid                       label="solid"                   ]
     10[style=striped                     label="striped"       shape=box ]
     11[style=wedged                      label="wedged"                  ]
-    12[style="bold, dashed"              label="bold, dashed"            ] 
+    12[style="bold, dashed"              label="bold, dashed"            ]
     13[style="dashed, bold"              label="dashed, bold"            ]
-    14[style="bold, dotted"              label="bold, dotted"            ] 
-    15[style="dotted, bold"              label="dotted, bold"            ] 
+    14[style="bold, dotted"              label="bold, dotted"            ]
+    15[style="dotted, bold"              label="dotted, bold"            ]
     16[style="filled, dashed"            label="filled, dashed"          ]
     17[style="dashed, filled"            label="dashed, filled"          ]
     18[style="bold, filled"              label="bold, filled"            ]
@@ -43,7 +43,8 @@ digraph StyledGraph2{
     25[style="filled, bold, diagonals"   label="filled, bold, diagonals" ]
     26[style=""                          label="default"                 ]
     27[                                  label="default"                 ]
-     
+    28[style="setlinewidth(4)"           label="setlinewidth(4)"         ]
+
     /* Edges can have drawing styles: */
      1->2[style=bold                     label="bold"                    ]
      3->4[style=dashed                   label="dashed"                  ]

@@ -333,6 +333,23 @@ class DotTestGraphs {
 			n ne e se s sw w nw c _
 		}
 	'''
+	
+	public static val DEPRECATED_STYLES = '''
+		/**
+		 * The use of setlinewidth is deprecated;
+		 * one should use the penwidth attribute instead.
+		 */
+		graph {
+			1[style="setlinewidth(1)"]
+			2[style="setlinewidth(2)"]
+			1--2[style="setlinewidth(3)"]
+		
+			subgraph cluster{
+				style="dashed, setlinewidth(4)"
+				3[style="setlinewidth(5), dotted"]
+			}
+		}
+	'''
 
 /*
  ************************************************************************************************************

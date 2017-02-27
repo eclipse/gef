@@ -38,6 +38,11 @@ public class DotStyleJavaValidator extends
 	 */
 	@Check
 	public void checkStyleItemConformsToContext(StyleItem styleItem) {
+		// The use of setlinewidth is deprecated, but still valid
+		if (styleItem.getName().equals("setlinewidth")) {
+			return;
+		}
+
 		Context attributeContext = getAttributeContext();
 		if (Context.NODE.equals(attributeContext)) {
 			for (Object validValue : NodeStyle.values()) {
@@ -59,6 +64,21 @@ public class DotStyleJavaValidator extends
 			error("Value should be one of "
 					+ getFormattedValues(EdgeStyle.values()) + ".",
 					StylePackage.Literals.STYLE__STYLE_ITEMS);
+		}
+	}
+
+	/**
+	 * Validates that the used {@link StyleItem}s are not deprecated. Generates
+	 * warnings in case of the usage of deprecated style items.
+	 *
+	 * @param styleItem
+	 *            The {@link StyleItem} to check.
+	 */
+	@Check
+	public void checkDeprecatedStyleItem(StyleItem styleItem) {
+		if (styleItem.getName().equals("setlinewidth")) {
+			warning("The usage of setlinewidth is deprecated, use the penwidth attribute instead.",
+					StylePackage.Literals.STYLE_ITEM__NAME);
 		}
 	}
 

@@ -83,6 +83,39 @@ public class DotValidatorTests {
 	}
 
 	@Test
+	public void testDeprecatedStyle() throws Exception {
+		DotAst dotAst = parserHelper.parse(DotTestGraphs.DEPRECATED_STYLES);
+
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
+				122, 17,
+				"The style value 'setlinewidth(1)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
+
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
+				151, 17,
+				"The style value 'setlinewidth(2)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
+
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
+				183, 17,
+				"The style value 'setlinewidth(3)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
+
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
+				233, 25,
+				"The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
+
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
+				270, 25,
+				"The style value 'setlinewidth(5), dotted' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(5, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
 	public void testArrowshapesDirectionBoth() {
 		DotAst dotAst = parse("arrowshapes_direction_both.dot");
 		validationTestHelper.assertNoIssues(dotAst);
