@@ -392,6 +392,7 @@ class DotAttributes {
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LP__GCE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case NODESEP__G: validateAttributeRawValue(DOUBLE_PARSER, NODESEP_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue) 
 			case PAGEDIR__G: validateAttributeRawValue(PAGEDIR_PARSER, null, attributeContext, attributeName, attributeValue)
 			case POS__NE:
@@ -970,6 +971,11 @@ class DotAttributes {
 	 */
 	static val HEIGHT_VALIDATOR = new DoubleValidator(0.02)
 
+	/**
+	 * A validator for nodesep {@link Double} attribute values.
+	 */
+	static val NODESEP_VALIDATOR = new DoubleValidator(0.02)
+
 	static val Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration
 
@@ -1313,6 +1319,9 @@ class DotAttributes {
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
 	public static val String LP__GCE = "lp"
+	
+	@DotAttribute(rawType="NUMERAL", parsedType=Double)
+	public static val String NODESEP__G = "nodesep"
 
 	@DotAttribute(rawType="STRING", parsedType=OutputMode)
 	public static val String OUTPUTORDER__G = "outputorder"
