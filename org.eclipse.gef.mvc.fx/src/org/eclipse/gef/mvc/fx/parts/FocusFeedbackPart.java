@@ -103,18 +103,19 @@ public class FocusFeedbackPart
 			return;
 		}
 
-		// update geometry
-		visual.setGeometry(feedbackGeometry);
-
 		// determine selection
 		IViewer viewer = root.getViewer();
 		List<IContentPart<? extends Node>> selected = viewer
 				.getAdapter(SelectionModel.class).getSelectionUnmodifiable();
 
+		// FIXME: Investigate why the StrokeType needs to be set before setting
+		// the geometry in order to prevent a vertical offset.
+
 		// adjust feedback depending on geometry
 		if (feedbackGeometry instanceof ICurve) {
 			// stroke centered
 			visual.setStrokeType(StrokeType.CENTERED);
+			// increase geometry size if selected
 			if (selected.contains(anchorage)) {
 				visual.setStrokeWidth(
 						SelectionFeedbackPart.DEFAULT_STROKE_WIDTH * 2);
@@ -124,7 +125,13 @@ public class FocusFeedbackPart
 		} else {
 			// stroke outside
 			visual.setStrokeType(StrokeType.OUTSIDE);
-			// TODO: adjust stroke width to get hair lines
+		}
+
+		// update geometry
+		visual.setGeometry(feedbackGeometry);
+
+		// adjust feedback depending on geometry
+		if (!(feedbackGeometry instanceof ICurve)) {
 			// increase geometry size if selected
 			if (selected.contains(anchorage)) {
 				Rectangle feedbackBounds = feedbackGeometry.getBounds();
@@ -180,5 +187,4 @@ public class FocusFeedbackPart
 			Provider<? extends IGeometry> geometryProvider) {
 		feedbackGeometryProvider = geometryProvider;
 	}
-
 }

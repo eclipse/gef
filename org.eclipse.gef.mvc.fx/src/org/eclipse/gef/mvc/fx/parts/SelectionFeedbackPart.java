@@ -83,8 +83,8 @@ public class SelectionFeedbackPart
 			return;
 		}
 
-		// update geometry
-		visual.setGeometry(feedbackGeometry);
+		// FIXME: Investigate why the StrokeType needs to be set before setting
+		// the geometry in order to prevent a vertical offset.
 
 		// update stroke type
 		if (feedbackGeometry instanceof ICurve) {
@@ -95,6 +95,9 @@ public class SelectionFeedbackPart
 			visual.setStrokeType(StrokeType.OUTSIDE);
 			// TODO: adjust stroke width to get hair lines
 		}
+
+		// update geometry
+		visual.setGeometry(feedbackGeometry);
 
 		// update color
 		List<IContentPart<? extends Node>> selected = viewer
@@ -163,5 +166,4 @@ public class SelectionFeedbackPart
 			Provider<? extends IGeometry> geometryProvider) {
 		feedbackGeometryProvider = geometryProvider;
 	}
-
 }

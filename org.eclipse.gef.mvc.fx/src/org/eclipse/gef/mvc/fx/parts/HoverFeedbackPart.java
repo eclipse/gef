@@ -70,7 +70,8 @@ public class HoverFeedbackPart
 			return;
 		}
 
-		visual.setGeometry(feedbackGeometry);
+		// FIXME: Investigate why the StrokeType needs to be set before setting
+		// the geometry in order to prevent a vertical offset.
 
 		if (feedbackGeometry instanceof ICurve) {
 			// stroke centered
@@ -79,6 +80,8 @@ public class HoverFeedbackPart
 			// stroke outside
 			visual.setStrokeType(StrokeType.OUTSIDE);
 		}
+
+		visual.setGeometry(feedbackGeometry);
 	}
 
 	/**
@@ -133,5 +136,4 @@ public class HoverFeedbackPart
 			Provider<? extends IGeometry> geometryProvider) {
 		feedbackGeometryProvider = geometryProvider;
 	}
-
 }
