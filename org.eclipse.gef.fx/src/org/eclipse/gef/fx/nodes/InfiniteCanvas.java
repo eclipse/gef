@@ -293,6 +293,28 @@ public class InfiniteCanvas extends Region {
 		}
 	};
 
+	private ChangeListener<Number> horizontalScrollBarValueChangeListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			if (horizontalScrollBar.isVisible()) {
+				getScrolledPane()
+						.setTranslateX(computeTx(newValue.doubleValue()));
+			}
+		}
+	};
+
+	private ChangeListener<Number> verticalScrollBarValueChangeListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			if (verticalScrollBar.isVisible()) {
+				getScrolledPane()
+						.setTranslateY(computeTy(newValue.doubleValue()));
+			}
+		}
+	};
+
 	/**
 	 * Constructs a new {@link InfiniteCanvas}.
 	 */
@@ -646,31 +668,10 @@ public class InfiniteCanvas extends Region {
 		registerFadeInOutTransitions(horizontalScrollBar);
 		registerFadeInOutTransitions(verticalScrollBar);
 
-		// translate on scroll
 		horizontalScrollBar.valueProperty()
-				.addListener(new ChangeListener<Number>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends Number> observable,
-							Number oldValue, Number newValue) {
-						if (horizontalScrollBar.isVisible()) {
-							getScrolledPane().setTranslateX(
-									computeTx(newValue.doubleValue()));
-						}
-					}
-				});
+				.addListener(horizontalScrollBarValueChangeListener);
 		verticalScrollBar.valueProperty()
-				.addListener(new ChangeListener<Number>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends Number> observable,
-							Number oldValue, Number newValue) {
-						if (verticalScrollBar.isVisible()) {
-							getScrolledPane().setTranslateY(
-									computeTy(newValue.doubleValue()));
-						}
-					}
-				});
+				.addListener(verticalScrollBarValueChangeListener);
 
 		return new Group(horizontalScrollBar, verticalScrollBar);
 	}
@@ -1626,10 +1627,22 @@ public class InfiniteCanvas extends Region {
 
 		// compute scrollbar values from canvas translation (in case the
 		// scrollbar values are incorrect)
+		// XXX: Remove scroll bar value listeners when adapting the values to
+		// prevent infinite recursion.
+		horizontalScrollBar.valueProperty()
+				.removeListener(horizontalScrollBarValueChangeListener);
+		verticalScrollBar.valueProperty()
+				.removeListener(verticalScrollBarValueChangeListener);
+
 		horizontalScrollBar
 				.setValue(computeHv(getScrolledPane().getTranslateX()));
 		verticalScrollBar
 				.setValue(computeVv(getScrolledPane().getTranslateY()));
+
+		horizontalScrollBar.valueProperty()
+				.addListener(horizontalScrollBarValueChangeListener);
+		verticalScrollBar.valueProperty()
+				.addListener(verticalScrollBarValueChangeListener);
 	}
 
 	/**
