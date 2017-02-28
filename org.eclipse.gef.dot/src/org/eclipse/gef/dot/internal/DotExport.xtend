@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - minor refactorings
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -78,10 +79,6 @@ class DotExport {
 		key.startsWith("_")
 	}
 
-	private def isDirected(Graph it) {
-		GraphType.DIGRAPH.equals(type)
-	}
-
 	private def String print(Node node) {
 		if (node.nestedGraph !== null) {
 			'''
@@ -113,14 +110,6 @@ class DotExport {
 
 	private def dispatch String name(Edge edge) {
 		edge._getName
-	}
-
-	private def dispatch Graph rootGraph(Node node) {
-		node.graph.rootGraph
-	}
-	
-	private def dispatch Graph rootGraph(Edge edge) {
-		if(edge.graph.nestingNode === null) edge.graph else edge.graph.nestingNode.rootGraph
 	}
 
 	private def hasNonMetaAttributes(IAttributeStore store) {
