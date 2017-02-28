@@ -251,7 +251,7 @@ public abstract class AbstractBehavior implements IBehavior {
 	protected void clearFeedback() {
 		Set<Set<IVisualPart<? extends Node>>> keys = getFeedbackPerTargetSet()
 				.keySet();
-		for (Set<IVisualPart<? extends Node>> key : keys) {
+		for (Set<IVisualPart<? extends Node>> key : new ArrayList<>(keys)) {
 			removeFeedback(key);
 		}
 	}
@@ -262,7 +262,7 @@ public abstract class AbstractBehavior implements IBehavior {
 	protected void clearHandles() {
 		Set<Set<IVisualPart<? extends Node>>> keys = getHandlesPerTargetSet()
 				.keySet();
-		for (Set<IVisualPart<? extends Node>> key : keys) {
+		for (Set<IVisualPart<? extends Node>> key : new ArrayList<>(keys)) {
 			removeHandles(key);
 		}
 	}
