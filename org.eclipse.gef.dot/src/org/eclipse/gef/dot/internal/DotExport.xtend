@@ -63,36 +63,36 @@ class DotExport {
 		DotFileUtils.write(graphs.exportDot, new File(pathname))
 	}
 
-	private def String print(Graph graph) '''
-		«graph.type» «IF graph.hasName»«graph.name» «ENDIF»{
-			«IF graph.hasNonMetaAttributes»
-				«graph.printNonMetaAttributes(";")»
+	private def String print(Graph it) '''
+		«type» «IF hasName»«name» «ENDIF»{
+			«IF hasNonMetaAttributes»
+				«printNonMetaAttributes(";")»
 			«ENDIF»
-			«graph.nodes.map[print].join("; ")»
-			«FOR edge : graph.edges»
+			«nodes.map[print].join("; ")»
+			«FOR edge : edges»
 				«edge.name»«IF edge.hasNonMetaAttributes» [«edge.printNonMetaAttributes(",")»]«ENDIF»
 			«ENDFOR»
 		}
 	'''
 
-	private def isMetaAttribute(String key) {
-		key.startsWith("_")
+	private def isMetaAttribute(String it) {
+		startsWith("_")
 	}
 
-	private def String print(Node node) {
-		if (node.nestedGraph !== null) {
+	private def String print(Node it) {
+		if (nestedGraph !== null) {
 			'''
-			subgraph «IF node.nestedGraph.hasName»«node.nestedGraph.name» «ENDIF»{
-				«IF node.nestedGraph.hasNonMetaAttributes»
-					«node.nestedGraph.printNonMetaAttributes(";")»
+			subgraph «IF nestedGraph.hasName»«nestedGraph.name» «ENDIF»{
+				«IF nestedGraph.hasNonMetaAttributes»
+					«nestedGraph.printNonMetaAttributes(";")»
 				«ENDIF»
-				«node.nestedGraph.nodes.map[print].join("; ")»
-				«FOR edge : node.nestedGraph.edges»
+				«nestedGraph.nodes.map[print].join("; ")»
+				«FOR edge : nestedGraph.edges»
 					«edge.name»«IF edge.hasNonMetaAttributes» [«edge.printNonMetaAttributes(",")»]«ENDIF»
 				«ENDFOR»
 			}'''
 		} else {
-			node.name + if(node.hasNonMetaAttributes) " [" + node.printNonMetaAttributes(",") + "]" else ""
+			name + if(hasNonMetaAttributes) " [" + printNonMetaAttributes(",") + "]" else ""
 		}
 	}
 
@@ -104,21 +104,21 @@ class DotExport {
 		_getType
 	}
 
-	private def dispatch String name(IAttributeStore store) {
-		(store.attributes.get(_NAME__GNE) as ID).toValue
+	private def dispatch String name(IAttributeStore it) {
+		(attributes.get(_NAME__GNE) as ID).toValue
 	}
 
-	private def dispatch String name(Edge edge) {
-		edge._getName
+	private def dispatch String name(Edge it) {
+		_getName
 	}
 
-	private def hasNonMetaAttributes(IAttributeStore store) {
+	private def hasNonMetaAttributes(IAttributeStore it) {
 
 		// filter out properties that are prefixed with "_" as these do not match attributes
-		store.attributes.keySet.exists[!isMetaAttribute]
+		attributes.keySet.exists[!isMetaAttribute]
 	}
 
-	private def printNonMetaAttributes(IAttributeStore store, String separator) {
-		store.attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + value.toString].sort.join(separator + " ")
+	private def printNonMetaAttributes(IAttributeStore it, String separator) {
+		attributes.entrySet.filter[!key.isMetaAttribute].map[key + '=' + value.toString].sort.join(separator + " ")
 	}
 }
