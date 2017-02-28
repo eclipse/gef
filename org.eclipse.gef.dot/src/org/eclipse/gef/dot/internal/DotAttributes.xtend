@@ -40,6 +40,7 @@ import org.eclipse.gef.dot.internal.language.color.DotColors
 import org.eclipse.gef.dot.internal.language.dir.DirType
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt
 import org.eclipse.gef.dot.internal.language.dot.AttributeType
+import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtSubgraph
 import org.eclipse.gef.dot.internal.language.dot.GraphType
@@ -66,6 +67,7 @@ import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator
+import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
 import org.eclipse.xtext.IGrammarAccess
@@ -79,8 +81,6 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import org.eclipse.gef.graph.Edge
-import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -1247,17 +1247,17 @@ class DotAttributes {
 	
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
-	 * {@link Node}.
+	 * {@link Edge}.
 	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
 	 *            {@link #_NAME__GNE} attribute.
 	 * @return The value of the {@link #_NAME__GNE} attribute of the given
-	 *         {@link Node}.
+	 *         {@link Edge}.
 	 */
 	public static def String _getName(Edge edge) {
-		_getName(edge.source) + (if(GraphType.DIGRAPH.equals(_getType(edge.graph.rootGraph))) EdgeOp.DIRECTED.literal else EdgeOp.UNDIRECTED.literal) +
-			_getName(edge.target)
+		edge.source._getName + (if(GraphType.DIGRAPH.equals(edge.graph.rootGraph._getType)) EdgeOp.DIRECTED.literal else EdgeOp.UNDIRECTED.literal) +
+			edge.target._getName
 	}
 
 	/**

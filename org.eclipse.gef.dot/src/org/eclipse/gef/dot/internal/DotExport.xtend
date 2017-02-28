@@ -14,7 +14,6 @@ package org.eclipse.gef.dot.internal
 import java.io.File
 import java.util.List
 import org.eclipse.gef.common.attributes.IAttributeStore
-import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.graph.Edge
@@ -113,7 +112,7 @@ class DotExport {
 	}
 
 	private def dispatch String name(Edge edge) {
-		DotAttributes._getName(edge)
+		edge._getName
 	}
 
 	private def dispatch Graph rootGraph(Node node) {
