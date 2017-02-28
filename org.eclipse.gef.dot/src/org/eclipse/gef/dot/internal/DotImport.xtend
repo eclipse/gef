@@ -97,9 +97,12 @@ class DotImport {
 		_createCache_globalNodeAttributes.clear
 		_createCache_globalEdgeAttributes.clear
 
-		// create a new graph builder and clear the nodes map
-		val graphBuilder = new Graph.Builder
+		// clear the nodes and subgraphs create caches
 		_createCache_createNode.clear
+		_createCache_createSubgraph.clear
+		
+		// create a new graph builder
+		val graphBuilder = new Graph.Builder
 
 		// name (meta-attribute)
 		if (name !== null) {

@@ -1586,6 +1586,10 @@ public final class DotImportTests {
 		Edge e2 = graph.getEdges().get(1);
 		assertEquals("t", DotAttributes._getName(e2.getSource()));
 		assertEquals("a", DotAttributes._getName(e2.getTarget()));
+
+		// ensure DotImport can be used multiple times in succession
+		graph = importString(DotTestGraphs.CLUSTERS);
+		assertEquals(2, graph.getNodes().size());
 	}
 
 	@Test
