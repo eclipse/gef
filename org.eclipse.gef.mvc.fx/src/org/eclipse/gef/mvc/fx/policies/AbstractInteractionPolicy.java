@@ -79,7 +79,7 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 	private static StackTraceElement[] getRelevantStackTrace() {
 		StackTraceElement[] trace = Thread.currentThread().getStackTrace();
 		// keep method calls until we find a Tool
-		int i = 2; // start at 2 so no abstract interaction bullshit
+		int i = 2; // start at 2 to dismiss local methods
 		for (; i < trace.length; i++) {
 			if (AbstractTool.class.isAssignableFrom(trace[i].getClass())) {
 				break;
@@ -133,6 +133,28 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 									+ policy + ".",
 							e);
 				}
+			}
+		}
+	}
+
+	/**
+	 * If the given {@link ITransactionalOperation} is not <code>null</code>,
+	 * executes it on the {@link IDomain} of the {@link #getHost() host's}
+	 * {@link IViewer}.
+	 *
+	 * @param operation
+	 *            The {@link ITransactionalOperation} to execute on the domain.
+	 */
+	protected void execute(ITransactionalOperation operation) {
+		if (operation != null && !operation.isNoOp()) {
+			try {
+				getHost().getViewer().getDomain().execute(operation,
+						new NullProgressMonitor());
+			} catch (ExecutionException e) {
+				throw new RuntimeException(
+						"An exception occured when executing operation "
+								+ operation + ".",
+						e);
 			}
 		}
 	}
