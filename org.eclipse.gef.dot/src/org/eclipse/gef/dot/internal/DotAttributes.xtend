@@ -79,6 +79,8 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.gef.graph.Edge
+import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -1241,6 +1243,21 @@ class DotAttributes {
 	 */
 	public static def void _setName(Node node, String name) {
 		_setNameRaw(node, ID.fromValue(name))
+	}
+	
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #_NAME__GNE} attribute.
+	 * @return The value of the {@link #_NAME__GNE} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static def String _getName(Edge edge) {
+		_getName(edge.source) + (if(GraphType.DIGRAPH.equals(_getType(edge.graph.rootGraph))) EdgeOp.DIRECTED.literal else EdgeOp.UNDIRECTED.literal) +
+			_getName(edge.target)
 	}
 
 	/**

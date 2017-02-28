@@ -113,8 +113,7 @@ class DotExport {
 	}
 
 	private def dispatch String name(Edge edge) {
-		edge.source.name + (if(edge.rootGraph.directed) EdgeOp.DIRECTED.literal else EdgeOp.UNDIRECTED.literal) +
-			edge.target.name
+		DotAttributes._getName(edge)
 	}
 
 	private def dispatch Graph rootGraph(Node node) {
