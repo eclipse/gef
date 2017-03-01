@@ -13,6 +13,7 @@ package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.mvc.fx.tools.HoverTool;
 
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -31,5 +32,16 @@ public interface IOnHoverPolicy extends IPolicy {
 	 *            The original {@link MouseEvent}.
 	 */
 	void hover(MouseEvent e);
+
+	/**
+	 * This callback method is invoked when the mouse is lingering over the
+	 * host.
+	 *
+	 * @param lingeringHover
+	 *            The {@link Node} that is lingering hovered.
+	 */
+	// TODO: Remove "default" modifier
+	default void lingeringHover(Node lingeringHover) {
+	}
 
 }

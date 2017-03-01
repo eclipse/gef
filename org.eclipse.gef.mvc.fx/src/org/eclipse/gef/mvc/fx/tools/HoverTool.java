@@ -34,6 +34,24 @@ import javafx.scene.input.MouseEvent;
 public class HoverTool extends AbstractTool {
 
 	/**
+	 * Time in milliseconds until the hover handles are removed when the host is
+	 * not hovered anymore.
+	 */
+	public static final int UNHOVER_LINGERING_MILLIS = 500;
+
+	/**
+	 * Time in milliseconds until the hover handles are created when the host is
+	 * hovered.
+	 */
+	public static final int HOVER_LINGERING_MILLIS = 250;
+
+	/**
+	 * Distance in pixels which the mouse is allowed to move so that it is
+	 * regarded to be stationary.
+	 */
+	public static final double LINGERING_MOUSE_MOVE_THRESHOLD = 4;
+
+	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IOnHoverPolicy> ON_HOVER_POLICY_KEY = IOnHoverPolicy.class;
@@ -58,6 +76,8 @@ public class HoverTool extends AbstractTool {
 		return new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				// TODO: lingering hover
+
 				if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
 						&& !event.getEventType()
 								.equals(MouseEvent.MOUSE_ENTERED_TARGET)
@@ -68,8 +88,6 @@ public class HoverTool extends AbstractTool {
 
 				EventTarget eventTarget = event.getTarget();
 				if (eventTarget instanceof Node) {
-					// FIXME: For some events, "The given target Node is not
-					// contained within an IViewer."
 					Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
 							.getTargetPolicies(HoverTool.this,
 									(Node) eventTarget, ON_HOVER_POLICY_KEY);
