@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Fabian Steeg and others.
+ * Copyright (c) 2009, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,13 +9,12 @@
  * Contributors:
  *     Fabian Steeg    - initial API and implementation (bug #277380)
  *     Tamas Miklossy  - usage of platform specific line separators (bug #490118)
+ *
  *******************************************************************************/
-
 package org.eclipse.gef.dot.internal;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -132,83 +130,5 @@ public final class DotFileUtils {
 		}
 		reader.close();
 		return builder.toString();
-	}
-
-	/**
-	 * @param closeable
-	 *            The closable to safely close
-	 */
-	public static void close(final Closeable closeable) {
-		if (closeable != null) {
-			try {
-				closeable.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Recursively copies the contents of the source folder to the destination
-	 * folder.
-	 * 
-	 * @param sourceRootFolder
-	 *            The source root folder
-	 * @param destinationRootFolder
-	 *            The destination root folder
-	 */
-	public static void copyAllFiles(final File sourceRootFolder,
-			final File destinationRootFolder) {
-		for (String name : sourceRootFolder.list()) {
-			File source = new File(sourceRootFolder, name);
-			if (source.isDirectory()) {
-				// Recursively create sub-directories:
-				File destinationFolder = new File(destinationRootFolder,
-						source.getName());
-				if (!destinationFolder.mkdirs()
-						&& !destinationFolder.exists()) {
-					throw new IllegalStateException("Could not create" + ": " //$NON-NLS-1$ //$NON-NLS-2$
-							+ destinationFolder);
-				}
-				copyAllFiles(source, destinationFolder);
-			} else {
-				// Copy individual files:
-				copySingleFile(destinationRootFolder, name, source);
-			}
-		}
-	}
-
-	/**
-	 * @param destinationFolder
-	 *            The destination folder
-	 * @param newFileName
-	 *            The name for the new file
-	 * @param sourceFile
-	 *            The source file to be copied into a new file in the
-	 *            destination folder, with the specified name
-	 * @return The newly created copy of the source file
-	 */
-	public static File copySingleFile(final File destinationFolder,
-			final String newFileName, final File sourceFile) {
-		File destinationFile = new File(destinationFolder, newFileName);
-		InputStream sourceStream = null;
-		FileOutputStream destinationStream = null;
-		try {
-			sourceStream = sourceFile.toURI().toURL().openStream();
-			destinationStream = new FileOutputStream(destinationFile);
-			byte[] buffer = new byte[4096];
-			int bytesRead;
-			while ((bytesRead = sourceStream.read(buffer)) != -1) {
-				destinationStream.write(buffer, 0, bytesRead);
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			close(sourceStream);
-			close(destinationStream);
-		}
-		return destinationFile;
 	}
 }
