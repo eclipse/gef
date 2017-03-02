@@ -41,13 +41,12 @@ public class HoverModel
 	/**
 	 * This property stores the intended hovered
 	 */
-	// TODO: Pick the best name: deliberate, intentional, intended, wanted, etc.
+	// TODO: Pick the best name: deliberate, intentional, intended, wanted,
+	// lingering, etc.
 	final public static String LINGERING_HOVER_PROPERTY = "intentionalHover";
 
 	private ObjectProperty<IVisualPart<? extends Node>> hoverProperty = new SimpleObjectProperty<>(
 			this, HOVER_PROPERTY);
-
-	// TODO: Pick the best name: deliberate, intentional, intended, wanted, etc.
 	private ObjectProperty<IContentPart<? extends Node>> lingeringHoverProperty = new SimpleObjectProperty<>(
 			this, LINGERING_HOVER_PROPERTY);
 
@@ -134,7 +133,9 @@ public class HoverModel
 	 *            hovered {@link IVisualPart} or <code>null</code>
 	 */
 	public void setHover(IVisualPart<? extends Node> cp) {
-		hoverProperty.set(cp);
+		if (cp != hoverProperty.get()) {
+			hoverProperty.set(cp);
+		}
 	}
 
 	/**
@@ -146,6 +147,8 @@ public class HoverModel
 	 *            <code>null</code>.
 	 */
 	public void setLingeringHover(IContentPart<? extends Node> cp) {
-		lingeringHoverProperty.set(cp);
+		if (cp != lingeringHoverProperty.get()) {
+			lingeringHoverProperty.set(cp);
+		}
 	}
 }

@@ -26,13 +26,13 @@ import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleHoverHandlePartFact
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteRootPart;
 import org.eclipse.gef.mvc.examples.logo.policies.CloneCurvePolicy;
+import org.eclipse.gef.mvc.examples.logo.policies.CloneOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.ContentRestrictedChangeViewportPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CreateAndTranslateShapeOnDragPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.CreationMenuOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.CloneOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CreateCurveOnDragPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CreationMenuItemProvider;
+import org.eclipse.gef.mvc.examples.logo.policies.CreationMenuOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.DeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.RelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
@@ -40,6 +40,7 @@ import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.LingeringHoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
@@ -48,7 +49,7 @@ import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.DefaultHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultLingeringHoverHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
@@ -250,7 +251,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 		// geometry provider for hover handles
-		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(DefaultLingeringHoverHandlePartFactory.LINGERING_HOVER_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 		// geometry provider for focus feedback
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
@@ -288,13 +291,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindHoverHandleFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
-				.to(DefaultHoverHandlePartFactory.class);
+		adapterMapBinder.addBinding(AdapterKey.role(LingeringHoverBehavior.LINGERING_HOVER_HANDLE_PART_FACTORY))
+				.to(DefaultLingeringHoverHandlePartFactory.class);
 	}
 
 	@Override
 	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(HoverBehavior.HOVER_HANDLE_PART_FACTORY))
+		adapterMapBinder.addBinding(AdapterKey.role(LingeringHoverBehavior.LINGERING_HOVER_HANDLE_PART_FACTORY))
 				.to(MvcLogoExampleHoverHandlePartFactory.class);
 	}
 
@@ -332,6 +335,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
 		// hover behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LingeringHoverBehavior.class);
 		// select-all on type
 		bindSelectAllOnTypePolicyAsContentViewerRootPartAdapter(adapterMapBinder);
 	}

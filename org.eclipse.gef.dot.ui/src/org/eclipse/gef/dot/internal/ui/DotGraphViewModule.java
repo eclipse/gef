@@ -135,5 +135,4 @@ public class DotGraphViewModule extends ZestFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(NormalizeConnectedOnDragPolicy.class);
 	}
-
 }

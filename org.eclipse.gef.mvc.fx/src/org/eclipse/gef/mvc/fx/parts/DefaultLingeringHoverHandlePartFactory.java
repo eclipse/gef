@@ -38,13 +38,14 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
+public class DefaultLingeringHoverHandlePartFactory
+		implements IHandlePartFactory {
 
 	/**
 	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
 	 * used to generate hover handles.
 	 */
-	public static final String HOVER_HANDLES_GEOMETRY_PROVIDER = "HOVER_HANDLES_GEOMETRY_PROVIDER";
+	public static final String LINGERING_HOVER_HANDLES_GEOMETRY_PROVIDER = "LINGERING_HOVER_HANDLES_GEOMETRY_PROVIDER";
 
 	@Inject
 	private Injector injector;
@@ -71,7 +72,7 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 		final Provider<? extends IGeometry> hoverHandlesGeometryInTargetLocalProvider = target
 				.getAdapter(AdapterKey
 						.get(new TypeToken<Provider<? extends IGeometry>>() {
-						}, HOVER_HANDLES_GEOMETRY_PROVIDER));
+						}, LINGERING_HOVER_HANDLES_GEOMETRY_PROVIDER));
 
 		// generate handles from selection handles geometry
 		IGeometry hoverHandlesGeometry = (hoverHandlesGeometryInTargetLocalProvider != null)
@@ -228,5 +229,4 @@ public class DefaultHoverHandlePartFactory implements IHandlePartFactory {
 			Provider<BezierCurve[]> segmentsProvider) {
 		return Collections.emptyList();
 	}
-
 }

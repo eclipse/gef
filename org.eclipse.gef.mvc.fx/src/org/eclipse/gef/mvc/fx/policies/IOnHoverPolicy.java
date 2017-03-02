@@ -40,8 +40,6 @@ public interface IOnHoverPolicy extends IPolicy {
 	 * @param lingeringHover
 	 *            The {@link Node} that is lingering hovered.
 	 */
-	// TODO: Remove "default" modifier
-	default void lingeringHover(Node lingeringHover) {
-	}
+	void lingeringHover(Node lingeringHover);
 
 }
