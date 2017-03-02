@@ -469,7 +469,7 @@ public class DotValidatorTests {
 		DotAst dotAst = parserHelper.parse(text);
 
 		String errorProneText = "<FONT/>";
-		String expectedErrorMessage = "Tag '<FONT/>' cannot be self closing.";
+		String expectedErrorMessage = "The htmlLabel value '<BR/><FONT/>' is not semantically correct: Tag '<FONT/>' cannot be self closing.";
 		int expectedOffset = text.indexOf(errorProneText);
 		int expectedLength = errorProneText.length();
 
