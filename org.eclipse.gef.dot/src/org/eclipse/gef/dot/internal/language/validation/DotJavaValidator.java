@@ -17,7 +17,6 @@
 
 package org.eclipse.gef.dot.internal.language.validation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.Diagnostic;
@@ -39,10 +38,9 @@ import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.xtext.validation.CheckType;
-import org.eclipse.xtext.validation.FeatureBasedDiagnostic;
-import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
 /**
  * Provides DOT-specific validation rules.
@@ -63,43 +61,79 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	public void checkValidAttributeValue(final Attribute attribute) {
 		String attributeName = attribute.getName().toValue();
 		ID attributeValue = attribute.getValue();
-		List<Diagnostic> diagnostics = convertToFeatureBasedDiagnostic(
-				DotAttributes.validateAttributeRawValue(
-						DotAttributes.getContext(attribute), attributeName,
-						attributeValue),
-				attributeName, attributeValue);
+
+		List<Diagnostic> diagnostics = DotAttributes.validateAttributeRawValue(
+				DotAttributes.getContext(attribute), attributeName,
+				attributeValue);
+
+		List<INode> nodes = NodeModelUtils.findNodesForFeature(attribute,
+				DotPackage.Literals.ATTRIBUTE__VALUE);
+		if (nodes.size() != 1) {
+			System.err.println(
+					"Exact 1 node is expected for the attribute value: "
+							+ attributeValue + ", but got " + nodes.size());
+			return;
+		}
+
+		INode node = nodes.get(0);
+		int attributeValueStartOffset = node.getOffset();
+		if (attributeValue.getType() == ID.Type.HTML_STRING) {
+			// +1 is needed because of the first < symbol indicating the
+			// beginning of a html-like label
+			attributeValueStartOffset++;
+		}
+
 		for (Diagnostic d : diagnostics) {
-			if (d.getSeverity() == Diagnostic.ERROR) {
-				getMessageAcceptor().acceptError(d.getMessage(), attribute,
-						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attributeName,
-						attributeValue.toValue());
-			} else if (d.getSeverity() == Diagnostic.WARNING) {
-				getMessageAcceptor().acceptWarning(d.getMessage(), attribute,
-						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attributeName,
-						attributeValue.toValue());
-			} else if (d.getSeverity() == Diagnostic.INFO) {
-				getMessageAcceptor().acceptInfo(d.getMessage(), attribute,
-						DotPackage.Literals.ATTRIBUTE__VALUE,
-						INSIGNIFICANT_INDEX, attributeName,
-						attributeValue.toValue());
+			if (d instanceof DotRangeBasedDiagnostic) {
+				DotRangeBasedDiagnostic rangeBasedDiagnostic = (DotRangeBasedDiagnostic) d;
+				String message = rangeBasedDiagnostic.getMessage();
+				int length = rangeBasedDiagnostic.getLength();
+				String code = rangeBasedDiagnostic.getIssueCode();
+				String[] issueData = rangeBasedDiagnostic.getIssueData();
+				int offset = rangeBasedDiagnostic.getOffset()
+						+ attributeValueStartOffset;
+				switch (d.getSeverity()) {
+				case Diagnostic.ERROR:
+					getMessageAcceptor().acceptError(message, attribute, offset,
+							length, code, issueData);
+					break;
+
+				case Diagnostic.WARNING:
+					getMessageAcceptor().acceptWarning(message, attribute,
+							offset, length, code, issueData);
+					break;
+
+				case Diagnostic.INFO:
+					getMessageAcceptor().acceptError(message, attribute, offset,
+							length, code, issueData);
+					break;
+
+				}
+			} else {
+				switch (d.getSeverity()) {
+				case Diagnostic.ERROR:
+					getMessageAcceptor().acceptError(d.getMessage(), attribute,
+							DotPackage.Literals.ATTRIBUTE__VALUE,
+							INSIGNIFICANT_INDEX, attributeName,
+							attributeValue.toValue());
+					break;
+
+				case Diagnostic.WARNING:
+					getMessageAcceptor().acceptWarning(d.getMessage(),
+							attribute, DotPackage.Literals.ATTRIBUTE__VALUE,
+							INSIGNIFICANT_INDEX, attributeName,
+							attributeValue.toValue());
+					break;
+				case Diagnostic.INFO:
+					getMessageAcceptor().acceptInfo(d.getMessage(), attribute,
+							DotPackage.Literals.ATTRIBUTE__VALUE,
+							INSIGNIFICANT_INDEX, attributeName,
+							attributeValue.toValue());
+					break;
+
+				}
 			}
 		}
-	}
-
-	private List<Diagnostic> convertToFeatureBasedDiagnostic(
-			List<Diagnostic> diagnostics, String attributeName,
-			ID attributeValue) {
-		List<Diagnostic> result = new ArrayList<>();
-		for (Diagnostic d : diagnostics) {
-			result.add(new FeatureBasedDiagnostic(d.getSeverity(),
-					d.getMessage(), null /* current object */,
-					DotPackage.Literals.ATTRIBUTE__VALUE,
-					ValidationMessageAcceptor.INSIGNIFICANT_INDEX,
-					CheckType.NORMAL, attributeName, attributeValue.toValue()));
-		}
-		return result;
 	}
 
 	/**

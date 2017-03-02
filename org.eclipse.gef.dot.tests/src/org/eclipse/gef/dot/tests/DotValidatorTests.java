@@ -441,6 +441,43 @@ public class DotValidatorTests {
 		// text = "graph {node[shape=ellipse] 1[style=striped]}";
 	}
 
+	@Test
+	public void testInvalidHtmlLikeLabelParserProblem() throws Exception {
+		registerHtmlLabelPackage();
+
+		String text = "graph {1[label = <<BR/><FONT>>]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		String errorProneText = "<<BR/><FONT>>";
+		int expectedOffset = text.indexOf(errorProneText);
+		int expectedLength = errorProneText.length();
+
+		String expectedErrorMessage = "The value '<BR/><FONT>' is not a syntactically correct htmlLabel: Mismatched input '<EOF>' expecting RULE_TAG_START_CLOSE.";
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.LABEL__GCNE,
+				expectedOffset, expectedLength, expectedErrorMessage);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabelValidationProblem() throws Exception {
+		registerHtmlLabelPackage();
+
+		String text = "graph {1[label = <<BR/><FONT/>>]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		String errorProneText = "<FONT/>";
+		String expectedErrorMessage = "Tag '<FONT/>' cannot be self closing.";
+		int expectedOffset = text.indexOf(errorProneText);
+		int expectedLength = errorProneText.length();
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.LABEL__GCNE,
+				expectedOffset, expectedLength, expectedErrorMessage);
+	}
+
 	private DotAst parse(String fileName) {
 		DotAst dotAst = null;
 		String fileContents = DotFileUtils
@@ -486,6 +523,15 @@ public class DotValidatorTests {
 			EPackage.Registry.INSTANCE.put(
 					org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eNS_URI,
 					org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eINSTANCE);
+		}
+	}
+
+	private void registerHtmlLabelPackage() {
+		if (!EPackage.Registry.INSTANCE.containsKey(
+				org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(
+					org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eNS_URI,
+					org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eINSTANCE);
 		}
 	}
 }

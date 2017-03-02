@@ -64,6 +64,7 @@ import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotRangeBasedDiagnostic
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator
@@ -77,6 +78,7 @@ import org.eclipse.xtext.parser.IParser
 import org.eclipse.xtext.serializer.ISerializer
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.AbstractInjectableValidator
+import org.eclipse.xtext.validation.CheckType
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
@@ -329,11 +331,18 @@ class DotAttributes {
 		val List<Diagnostic> diagnostics = newArrayList
 		if (validator !== null) {
 			val List<Diagnostic> validationResults = validator.validate(attributeContext, parsedValue)
+			val newMessagePrefix = "The " + attributeTypeName + " value '" + attributeValue.toValue + "' is not semantically correct: "
 			for (Diagnostic r : validationResults) {
+				val newMessage = newMessagePrefix + r.message
 				diagnostics.add(
-					new BasicDiagnostic(r.severity, null, -1,
-						"The " + attributeTypeName + " value '" + attributeValue.toValue +
-							"' is not semantically correct: " + r.message, #[]))
+					if(r instanceof DotRangeBasedDiagnostic){
+						val result = r as DotRangeBasedDiagnostic
+						new DotRangeBasedDiagnostic(result.severity, newMessage, null, result.offset, result.length, result.checkType, attributeName, result.issueData)
+					}
+					else{
+						new BasicDiagnostic(r.severity, null, -1, newMessage, #[])
+					}
+				)
 			}
 		}
 		
@@ -662,7 +671,9 @@ class DotAttributes {
 
 						override void acceptError(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new BasicDiagnostic(Diagnostic.ERROR, null, -1, message, #[]))
+							diagnostics.add(new DotRangeBasedDiagnostic(Diagnostic.ERROR, 
+								message, object, offset, length, CheckType.FAST, code, issueData
+							));
 						}
 
 						override void acceptInfo(String message, EObject object,
@@ -672,7 +683,9 @@ class DotAttributes {
 
 						override void acceptInfo(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new BasicDiagnostic(Diagnostic.INFO, null, -1, message, #[]))
+							diagnostics.add(new DotRangeBasedDiagnostic(Diagnostic.INFO, 
+								message, object, offset, length, CheckType.FAST, code, issueData
+							));
 						}
 
 						override void acceptWarning(String message, EObject object,
@@ -682,7 +695,9 @@ class DotAttributes {
 
 						override void acceptWarning(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new BasicDiagnostic(Diagnostic.WARNING, null, -1, message, #[]))
+							diagnostics.add(new DotRangeBasedDiagnostic(Diagnostic.WARNING, 
+								message, object, offset, length, CheckType.FAST, code, issueData
+							));
 						}
 					})
 

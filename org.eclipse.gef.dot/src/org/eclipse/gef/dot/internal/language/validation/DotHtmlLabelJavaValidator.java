@@ -24,6 +24,8 @@ import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage;
+import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Check;
 
 /**
@@ -179,8 +181,18 @@ public class DotHtmlLabelJavaValidator extends
 
 		if (tag.isSelfClosing() && Arrays.binarySearch(selfClosingIsNotAllowed,
 				tagNameUpperCase) >= 0) {
-			error("Tag '<" + tag.getName() + "/>' cannot be self closing.",
-					HtmllabelPackage.Literals.HTML_TAG__NAME);
+			String message = "Tag '<" + tag.getName()
+					+ "/>' cannot be self closing.";
+			EObject object = tag;
+
+			ICompositeNode node = NodeModelUtils.findActualNodeFor(tag);
+			int offset = node.getTotalOffset();
+			int length = node.getLength();
+
+			String code = null;
+			String[] issueData = null;
+			getMessageAcceptor().acceptError(message, object, offset, length,
+					code, issueData);
 		}
 	}
 
