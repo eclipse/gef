@@ -125,7 +125,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testArrowShapesInvalidModifiers() throws Exception {
-		// TODO: check why this extra EMF Package registration is necessary
 		registerEscStringPackage();
 
 		DotAst dotAst = parse("arrowshapes_invalid_modifiers.dot");
@@ -189,7 +188,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongArrowType() throws Exception {
-		// TODO: check why this extra EMF Package registration is necessary
 		registerArrowTypePackage();
 
 		String text = "digraph testGraph { 1->2[arrowhead=fooBar arrowtail=fooBar2] }";
@@ -258,7 +256,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongGraphBackgroundColor() throws Exception {
-		// TODO: check why this extra EMF Package registration is necessary
 		registerColorPackage();
 
 		String text = "graph { bgcolor=grsy }";
@@ -275,7 +272,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongNodeColor() throws Exception {
-		// TODO: check why this extra EMF Package registration is necessary
 		registerColorPackage();
 
 		String text = "graph { 1[color=\"#fffff\"]}";
@@ -465,6 +461,7 @@ public class DotValidatorTests {
 				warningMessage);
 	}
 
+	// TODO: check why these extra EMF Package registrations are necessary
 	private void registerArrowTypePackage() {
 		if (!EPackage.Registry.INSTANCE.containsKey(
 				org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eNS_URI)) {
