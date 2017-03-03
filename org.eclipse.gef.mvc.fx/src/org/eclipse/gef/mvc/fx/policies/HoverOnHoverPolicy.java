@@ -46,7 +46,6 @@ public class HoverOnHoverPolicy extends AbstractInteractionPolicy
 		if (!isHover(e)) {
 			return;
 		}
-
 		getHoverModel().setHover(getHost());
 	}
 
@@ -67,26 +66,30 @@ public class HoverOnHoverPolicy extends AbstractInteractionPolicy
 	}
 
 	@Override
-	public void lingeringHover(Node lingeringHover) {
-		if (lingeringHover != null && isRegistered(lingeringHover)
-				&& !isRegisteredForHost(lingeringHover)) {
+	public void hoverIntent(Node hoverIntent) {
+		if (hoverIntent != null && isRegistered(hoverIntent)
+				&& !isRegisteredForHost(hoverIntent)) {
+			return;
+		}
+		if (getHost() == null || getHost().getViewer() == null) {
+			// should not happen?
 			return;
 		}
 
 		HoverModel hoverModel = getHoverModel();
-		if (lingeringHover == null) {
-			hoverModel.setLingeringHover(null);
+		if (hoverIntent == null) {
+			hoverModel.setHoverIntent(null);
 		} else {
 			if (getHost() instanceof IHandlePart) {
 				if (!getHost().getAnchoragesUnmodifiable()
-						.containsKey(hoverModel.getLingeringHover())) {
-					hoverModel.setLingeringHover(null);
+						.containsKey(hoverModel.getHoverIntent())) {
+					hoverModel.setHoverIntent(null);
 				}
 			} else if (getHost() instanceof IContentPart) {
-				hoverModel.setLingeringHover(
+				hoverModel.setHoverIntent(
 						(IContentPart<? extends Node>) getHost());
 			} else {
-				hoverModel.setLingeringHover(null);
+				hoverModel.setHoverIntent(null);
 			}
 		}
 	}

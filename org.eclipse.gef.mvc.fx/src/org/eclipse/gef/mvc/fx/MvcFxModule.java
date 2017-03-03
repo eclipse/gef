@@ -25,7 +25,7 @@ import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.GridBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.LingeringHoverBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.RevealPrimarySelectionBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
@@ -40,7 +40,7 @@ import org.eclipse.gef.mvc.fx.parts.AbstractHandlePart;
 import org.eclipse.gef.mvc.fx.parts.AbstractVisualPart;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.DefaultLingeringHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverIntentHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
@@ -475,8 +475,8 @@ public class MvcFxModule extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(LingeringHoverBehavior.LINGERING_HOVER_HANDLE_PART_FACTORY))
-				.to(DefaultLingeringHoverHandlePartFactory.class);
+						.role(HoverIntentBehavior.HOVER_INTENT_HANDLE_PART_FACTORY))
+				.to(DefaultHoverIntentHandlePartFactory.class);
 	}
 
 	/**

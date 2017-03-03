@@ -34,12 +34,12 @@ public interface IOnHoverPolicy extends IPolicy {
 	void hover(MouseEvent e);
 
 	/**
-	 * This callback method is invoked when the mouse is lingering over the
+	 * This callback method is invoked when the mouse is stationary over the
 	 * host.
 	 *
-	 * @param lingeringHover
-	 *            The {@link Node} that is lingering hovered.
+	 * @param hoverIntent
+	 *            The {@link Node} that is hovered.
 	 */
-	void lingeringHover(Node lingeringHover);
+	void hoverIntent(Node hoverIntent);
 
 }

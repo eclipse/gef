@@ -88,6 +88,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			HoverModel hoverModel = viewer.getAdapter(HoverModel.class);
 			if (hoverModel != null) {
 				hoverModel.clearHover();
+				hoverModel.clearHoverIntent();
 			}
 		}
 	};

@@ -41,19 +41,19 @@ public class HoverTool extends AbstractTool {
 	 * Time in milliseconds until the hover handles are removed when the host is
 	 * not hovered anymore.
 	 */
-	public static final int UNHOVER_LINGERING_MILLIS = 600;
+	public static final int UNHOVER_INTENT_MILLIS = 500;
 
 	/**
 	 * Time in milliseconds until the hover handles are created when the host is
 	 * hovered.
 	 */
-	public static final int HOVER_LINGERING_MILLIS = 250;
+	public static final int HOVER_INTENT_MILLIS = 250;
 
 	/**
 	 * Distance in pixels which the mouse is allowed to move so that it is
 	 * regarded to be stationary.
 	 */
-	public static final double LINGERING_MOUSE_MOVE_THRESHOLD = 4;
+	public static final double HOVER_INTENT_MOUSE_MOVE_THRESHOLD = 4;
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
@@ -61,19 +61,20 @@ public class HoverTool extends AbstractTool {
 	public static final Class<IOnHoverPolicy> ON_HOVER_POLICY_KEY = IOnHoverPolicy.class;
 
 	private final Map<Scene, EventHandler<MouseEvent>> hoverFilters = new IdentityHashMap<>();
-	// TODO: Investigate if lingering hover works with multiple scenes, or if
+	// TODO: Investigate if hover intent works with multiple scenes, or if
 	// multiple scenes require special treatment.
-	private Point initialLingeringScreenPosition;
-	private PauseTransition lingeringDelay = new PauseTransition(
-			Duration.millis(HOVER_LINGERING_MILLIS));
-	private PauseTransition unlingeringDelay = new PauseTransition(
-			Duration.millis(UNHOVER_LINGERING_MILLIS));
-	private Node lingering;
-	private Node potentiallyLingering;
+	private Point initialHoverIntentScreenPosition;
+	private PauseTransition hoverIntentDelay = new PauseTransition(
+			Duration.millis(HOVER_INTENT_MILLIS));
+	private PauseTransition unhoverIntentDelay = new PauseTransition(
+			Duration.millis(UNHOVER_INTENT_MILLIS));
+	private Node hoverIntent;
+	private Node potentialHoverIntent;
 
 	{
-		lingeringDelay.setOnFinished((ae) -> onLingeringDelayFinished());
-		unlingeringDelay.setOnFinished((ae) -> onUnlingeringDelayFinished());
+		hoverIntentDelay.setOnFinished((ae) -> onHoverIntentDelayFinished());
+		unhoverIntentDelay
+				.setOnFinished((ae) -> onUnhoverIntentDelayFinished());
 	}
 
 	/**
@@ -95,17 +96,17 @@ public class HoverTool extends AbstractTool {
 
 			@Override
 			public void handle(MouseEvent event) {
-				// stop lingering delay if mouse moved
-				if (lingeringDelay.getStatus().equals(Status.RUNNING)) {
-					double dx = initialLingeringScreenPosition.x
+				// stop hover intent delay if mouse moved
+				if (hoverIntentDelay.getStatus().equals(Status.RUNNING)) {
+					double dx = initialHoverIntentScreenPosition.x
 							- event.getScreenX();
-					double dy = initialLingeringScreenPosition.y
+					double dy = initialHoverIntentScreenPosition.y
 							- event.getScreenY();
-					if (Math.abs(dx) > LINGERING_MOUSE_MOVE_THRESHOLD
-							|| Math.abs(dy) > LINGERING_MOUSE_MOVE_THRESHOLD) {
-						lingeringDelay.playFromStart();
-						initialLingeringScreenPosition.x = event.getScreenX();
-						initialLingeringScreenPosition.y = event.getScreenY();
+					if (Math.abs(dx) > HOVER_INTENT_MOUSE_MOVE_THRESHOLD || Math
+							.abs(dy) > HOVER_INTENT_MOUSE_MOVE_THRESHOLD) {
+						hoverIntentDelay.playFromStart();
+						initialHoverIntentScreenPosition.x = event.getScreenX();
+						initialHoverIntentScreenPosition.y = event.getScreenY();
 					}
 				}
 
@@ -133,23 +134,23 @@ public class HoverTool extends AbstractTool {
 					}
 					getDomain().closeExecutionTransaction(HoverTool.this);
 
-					if (eventTarget != lingering) {
-						potentiallyLingering = (Node) eventTarget;
-						initialLingeringScreenPosition = new Point(
+					if (eventTarget != hoverIntent) {
+						potentialHoverIntent = (Node) eventTarget;
+						initialHoverIntentScreenPosition = new Point(
 								event.getScreenX(), event.getScreenY());
-						lingeringDelay.playFromStart();
+						hoverIntentDelay.playFromStart();
 
-						if (lingering != null) {
-							if (!unlingeringDelay.getStatus()
+						if (hoverIntent != null) {
+							if (!unhoverIntentDelay.getStatus()
 									.equals(Status.RUNNING)) {
-								unlingeringDelay.playFromStart();
+								unhoverIntentDelay.playFromStart();
 							}
 						} else {
-							unlingeringDelay.stop();
+							unhoverIntentDelay.stop();
 						}
 					} else {
-						lingeringDelay.stop();
-						unlingeringDelay.stop();
+						hoverIntentDelay.stop();
+						unhoverIntentDelay.stop();
 					}
 				}
 			}
@@ -158,19 +159,19 @@ public class HoverTool extends AbstractTool {
 
 	/**
 	 *
-	 * @param lingering
-	 *            The lingering hover {@link Node}.
+	 * @param hoverIntent
+	 *            The hover intent {@link Node}.
 	 */
-	protected void delegateLingering(Node lingering) {
+	protected void delegateHoverIntent(Node hoverIntent) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.getTargetPolicies(HoverTool.this, this.lingering,
+				.getTargetPolicies(HoverTool.this, this.hoverIntent,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverTool.this);
 		// active policies are unnecessary because hover is not a
 		// gesture, just one event at one point in time
 		for (IOnHoverPolicy policy : policies) {
-			policy.lingeringHover(lingering);
+			policy.hoverIntent(hoverIntent);
 		}
 		getDomain().closeExecutionTransaction(HoverTool.this);
 	}
@@ -191,8 +192,8 @@ public class HoverTool extends AbstractTool {
 
 	@Override
 	protected void doDeactivate() {
-		lingeringDelay.stop();
-		unlingeringDelay.stop();
+		hoverIntentDelay.stop();
+		unhoverIntentDelay.stop();
 		for (Scene scene : hoverFilters.keySet()) {
 			scene.removeEventFilter(MouseEvent.ANY, hoverFilters.remove(scene));
 		}
@@ -203,19 +204,19 @@ public class HoverTool extends AbstractTool {
 	 * Callback method that is invoked when the mouse was stationary over a
 	 * visual for some amount of time.
 	 */
-	protected void onLingeringDelayFinished() {
-		unlingeringDelay.stop();
-		lingering = potentiallyLingering;
-		potentiallyLingering = null;
-		delegateLingering(lingering);
+	protected void onHoverIntentDelayFinished() {
+		unhoverIntentDelay.stop();
+		hoverIntent = potentialHoverIntent;
+		potentialHoverIntent = null;
+		delegateHoverIntent(hoverIntent);
 	}
 
 	/**
 	 * Callback method that is invoked when the mouse was not stationary and did
-	 * not move over the current lingering for some amount of time.
+	 * not move over the current hover intent for some amount of time.
 	 */
-	protected void onUnlingeringDelayFinished() {
-		delegateLingering(null);
-		lingering = null;
+	protected void onUnhoverIntentDelayFinished() {
+		delegateHoverIntent(null);
+		hoverIntent = null;
 	}
 }

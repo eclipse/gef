@@ -19,13 +19,13 @@ import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.LingeringHoverBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.DefaultLingeringHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverIntentHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
@@ -97,7 +97,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(DefaultLingeringHoverHandlePartFactory.LINGERING_HOVER_HANDLES_GEOMETRY_PROVIDER))
+						.role(DefaultHoverIntentHandlePartFactory.HOVER_INTENT_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
@@ -271,7 +271,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	@Override
 	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(LingeringHoverBehavior.LINGERING_HOVER_HANDLE_PART_FACTORY))
+		adapterMapBinder.addBinding(AdapterKey.role(HoverIntentBehavior.HOVER_INTENT_HANDLE_PART_FACTORY))
 				.to(ZestFxHoverHandlePartFactory.class);
 	}
 
@@ -297,7 +297,7 @@ public class ZestFxModule extends MvcFxModule {
 
 		// hover behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LingeringHoverBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverIntentBehavior.class);
 	}
 
 	@Override

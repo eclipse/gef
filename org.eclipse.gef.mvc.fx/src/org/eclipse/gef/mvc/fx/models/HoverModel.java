@@ -41,14 +41,12 @@ public class HoverModel
 	/**
 	 * This property stores the intended hovered
 	 */
-	// TODO: Pick the best name: deliberate, intentional, intended, wanted,
-	// lingering, etc.
-	final public static String LINGERING_HOVER_PROPERTY = "intentionalHover";
+	final public static String HOVER_INTENT_PROPERTY = "hoverIntent";
 
 	private ObjectProperty<IVisualPart<? extends Node>> hoverProperty = new SimpleObjectProperty<>(
 			this, HOVER_PROPERTY);
-	private ObjectProperty<IContentPart<? extends Node>> lingeringHoverProperty = new SimpleObjectProperty<>(
-			this, LINGERING_HOVER_PROPERTY);
+	private ObjectProperty<IContentPart<? extends Node>> hoverIntentProperty = new SimpleObjectProperty<>(
+			this, HOVER_INTENT_PROPERTY);
 
 	/**
 	 * Sets the hovered part to <code>null</code>.
@@ -60,8 +58,8 @@ public class HoverModel
 	/**
 	 * Sets the intentionally hovered part to <code>null</code>.
 	 */
-	public void clearIntentionalHover() {
-		setLingeringHover(null);
+	public void clearHoverIntent() {
+		setHoverIntent(null);
 	}
 
 	/**
@@ -70,7 +68,7 @@ public class HoverModel
 	@Override
 	public void dispose() {
 		clearHover();
-		clearIntentionalHover();
+		clearHoverIntent();
 	}
 
 	/**
@@ -84,14 +82,23 @@ public class HoverModel
 	}
 
 	/**
-	 * Returns the currently lingering hovered {@link IContentPart} or
+	 * Returns the current hover intent {@link IContentPart} or
 	 * <code>null</code> if no content part is intentionally hovered.
 	 *
-	 * @return the currently lingering hovered {@link IContentPart} or
+	 * @return The current hover intent {@link IContentPart} or
 	 *         <code>null</code>
 	 */
-	public IContentPart<? extends Node> getLingeringHover() {
-		return lingeringHoverProperty.get();
+	public IContentPart<? extends Node> getHoverIntent() {
+		return hoverIntentProperty.get();
+	}
+
+	/**
+	 * Returns an object property representing the hover intent part.
+	 *
+	 * @return A property named {@link #HOVER_INTENT_PROPERTY}.
+	 */
+	public ObjectProperty<IContentPart<? extends Node>> hoverIntentProperty() {
+		return hoverIntentProperty;
 	}
 
 	/**
@@ -101,15 +108,6 @@ public class HoverModel
 	 */
 	public ObjectProperty<IVisualPart<? extends Node>> hoverProperty() {
 		return hoverProperty;
-	}
-
-	/**
-	 * Returns an object property representing the lingering hovered part.
-	 *
-	 * @return A property named {@link #LINGERING_HOVER_PROPERTY}.
-	 */
-	public ObjectProperty<IContentPart<? extends Node>> lingeringHoverProperty() {
-		return lingeringHoverProperty;
 	}
 
 	@Override
@@ -139,16 +137,15 @@ public class HoverModel
 	}
 
 	/**
-	 * Sets the lingering hovered {@link IContentPart} to the given value. The
-	 * given part may be <code>null</code> to indicate unhovering.
+	 * Sets the hover intent {@link IContentPart} to the given value. The given
+	 * part may be <code>null</code> to indicate unhovering.
 	 *
 	 * @param cp
-	 *            The lingering hovered {@link IContentPart} or
-	 *            <code>null</code>.
+	 *            The hover intent {@link IContentPart} or <code>null</code>.
 	 */
-	public void setLingeringHover(IContentPart<? extends Node> cp) {
-		if (cp != lingeringHoverProperty.get()) {
-			lingeringHoverProperty.set(cp);
+	public void setHoverIntent(IContentPart<? extends Node> cp) {
+		if (cp != hoverIntentProperty.get()) {
+			hoverIntentProperty.set(cp);
 		}
 	}
 }

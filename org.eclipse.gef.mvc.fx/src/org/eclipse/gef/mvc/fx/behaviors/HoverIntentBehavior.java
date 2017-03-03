@@ -22,12 +22,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
- * The {@link LingeringHoverBehavior} complements the {@link HoverBehavior}
- * w.r.t. feedback and handle generation in response to {@link HoverModel}
- * changes. While {@link HoverBehavior} is responsible for generating feedback
- * and handles for the {@link HoverModel#hoverProperty()}, the
- * {@link LingeringHoverBehavior} is responsible for generating feedback and
- * handles for the {@link HoverModel#lingeringHoverProperty()}.
+ * The {@link HoverIntentBehavior} complements the {@link HoverBehavior} w.r.t.
+ * feedback and handle generation in response to {@link HoverModel} changes.
+ * While {@link HoverBehavior} is responsible for generating feedback and
+ * handles for the {@link HoverModel#hoverProperty()}, the
+ * {@link HoverIntentBehavior} is responsible for generating feedback and
+ * handles for the {@link HoverModel#hoverIntentProperty()}.
  *
  * @author wienand
  *
@@ -35,27 +35,27 @@ import javafx.scene.Node;
 // FIXME: Support multiple different feedback and handle contexts within
 // AbstractBehavior so that multiple factories can be used for feedback and
 // handle generation from a single Behavior.
-public class LingeringHoverBehavior extends AbstractBehavior {
+public class HoverIntentBehavior extends AbstractBehavior {
 
 	/**
 	 * The adapter role for the {@link IFeedbackPartFactory} that is used to
 	 * generate hover feedback parts.
 	 */
-	public static final String LINGERING_HOVER_FEEDBACK_PART_FACTORY = "LINGERING_HOVER_FEEDBACK_PART_FACTORY";
+	public static final String HOVER_INTENT_FEEDBACK_PART_FACTORY = "HOVER_INTENT_FEEDBACK_PART_FACTORY";
 
 	/**
 	 * The adapter role for the {@link IHandlePartFactory} that is used to
 	 * generate hover handle parts.
 	 */
-	public static final String LINGERING_HOVER_HANDLE_PART_FACTORY = "LINGERING_HOVER_HANDLE_PART_FACTORY";
+	public static final String HOVER_INTENT_HANDLE_PART_FACTORY = "HOVER_INTENT_HANDLE_PART_FACTORY";
 
-	private ChangeListener<IContentPart<? extends Node>> lingeringHoverObserver = new ChangeListener<IContentPart<? extends Node>>() {
+	private ChangeListener<IContentPart<? extends Node>> hoverIntentObserver = new ChangeListener<IContentPart<? extends Node>>() {
 		@Override
 		public void changed(
 				ObservableValue<? extends IContentPart<? extends Node>> observable,
 				IContentPart<? extends Node> oldValue,
 				IContentPart<? extends Node> newValue) {
-			onLingeringHoverChange(oldValue, newValue);
+			onHoverIntentChange(oldValue, newValue);
 		}
 	};
 
@@ -63,14 +63,13 @@ public class LingeringHoverBehavior extends AbstractBehavior {
 	protected void doActivate() {
 		// register
 		HoverModel hoverModel = getHoverModel();
-		hoverModel.lingeringHoverProperty().addListener(lingeringHoverObserver);
+		hoverModel.hoverIntentProperty().addListener(hoverIntentObserver);
 
-		// create feedback and handles for a part that is already lingering
-		// hovered, if any
-		IContentPart<? extends Node> lingeringHover = hoverModel
-				.getLingeringHover();
-		if (lingeringHover != null) {
-			onLingeringHoverChange(null, lingeringHover);
+		// create feedback and handles for a part that is already the hover
+		// intent
+		IContentPart<? extends Node> hoverIntent = hoverModel.getHoverIntent();
+		if (hoverIntent != null) {
+			onHoverIntentChange(null, hoverIntent);
 		}
 	}
 
@@ -78,15 +77,13 @@ public class LingeringHoverBehavior extends AbstractBehavior {
 	protected void doDeactivate() {
 		// remove any pending feedback and handles
 		HoverModel hoverModel = getHoverModel();
-		IContentPart<? extends Node> lingeringHover = hoverModel
-				.getLingeringHover();
-		if (lingeringHover != null) {
-			onLingeringHoverChange(lingeringHover, null);
+		IContentPart<? extends Node> hoverIntent = hoverModel.getHoverIntent();
+		if (hoverIntent != null) {
+			onHoverIntentChange(hoverIntent, null);
 		}
 
 		// unregister
-		hoverModel.lingeringHoverProperty()
-				.removeListener(lingeringHoverObserver);
+		hoverModel.hoverIntentProperty().removeListener(hoverIntentObserver);
 
 		// remove any pending feedback and handles
 		clearFeedback();
@@ -96,13 +93,12 @@ public class LingeringHoverBehavior extends AbstractBehavior {
 	@Override
 	protected IFeedbackPartFactory getFeedbackPartFactory(IViewer viewer) {
 		return getFeedbackPartFactory(viewer,
-				LINGERING_HOVER_FEEDBACK_PART_FACTORY);
+				HOVER_INTENT_FEEDBACK_PART_FACTORY);
 	}
 
 	@Override
 	protected IHandlePartFactory getHandlePartFactory(IViewer viewer) {
-		return getHandlePartFactory(viewer,
-				LINGERING_HOVER_HANDLE_PART_FACTORY);
+		return getHandlePartFactory(viewer, HOVER_INTENT_HANDLE_PART_FACTORY);
 	}
 
 	/**
@@ -120,32 +116,32 @@ public class LingeringHoverBehavior extends AbstractBehavior {
 
 	/**
 	 * Callback method that is invoked when the
-	 * {@link HoverModel#lingeringHoverProperty()} changes. Triggers
+	 * {@link HoverModel#hoverIntentProperty()} changes. Triggers
 	 * generation/removal of feedback and handles.
 	 *
-	 * @param oldLingeringHover
-	 *            The previous lingering hovered {@link IContentPart}.
-	 * @param newLingeringHover
-	 *            The new lingering hovered {@link IContentPart}.
+	 * @param oldHoverIntent
+	 *            The previous hover intent {@link IContentPart}.
+	 * @param newHoverIntent
+	 *            The new hover intent {@link IContentPart}.
 	 */
-	protected void onLingeringHoverChange(
-			IContentPart<? extends Node> oldLingeringHover,
-			IContentPart<? extends Node> newLingeringHover) {
+	protected void onHoverIntentChange(
+			IContentPart<? extends Node> oldHoverIntent,
+			IContentPart<? extends Node> newHoverIntent) {
 		// check if changed
-		if (oldLingeringHover == newLingeringHover) {
+		if (oldHoverIntent == newHoverIntent) {
 			return;
 		}
 
-		// remove feedback/handles from the old lingering hovered part
-		if (oldLingeringHover != null) {
-			removeHandles(oldLingeringHover);
-			removeFeedback(oldLingeringHover);
+		// remove feedback/handles from the old hover intent part
+		if (oldHoverIntent != null) {
+			removeHandles(oldHoverIntent);
+			removeFeedback(oldHoverIntent);
 		}
 
-		// add feedback/handles to the new lingering hovered part
-		if (newLingeringHover != null) {
-			addFeedback(newLingeringHover);
-			addHandles(newLingeringHover);
+		// add feedback/handles to the new hover intent part
+		if (newHoverIntent != null) {
+			addFeedback(newHoverIntent);
+			addHandles(newHoverIntent);
 		}
 	}
 }

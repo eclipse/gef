@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.planar.BezierCurve;
-import org.eclipse.gef.mvc.fx.parts.DefaultLingeringHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverIntentHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
@@ -26,7 +26,7 @@ import com.google.inject.Provider;
 
 import javafx.scene.Node;
 
-public class MvcLogoExampleHoverHandlePartFactory extends DefaultLingeringHoverHandlePartFactory {
+public class MvcLogoExampleHoverHandlePartFactory extends DefaultHoverIntentHandlePartFactory {
 
 	@Inject
 	private Injector injector;

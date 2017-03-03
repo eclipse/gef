@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.planar.BezierCurve;
-import org.eclipse.gef.mvc.fx.parts.DefaultLingeringHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverIntentHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.models.HidingModel;
@@ -30,13 +30,13 @@ import javafx.scene.Node;
 
 /**
  * The {@link ZestFxHoverHandlePartFactory} is a specialization of the
- * {@link DefaultLingeringHoverHandlePartFactory} that performs the generation
+ * {@link DefaultHoverIntentHandlePartFactory} that performs the generation
  * of "hide" and "show" hover handles.
  *
  * @author mwienand
  *
  */
-public class ZestFxHoverHandlePartFactory extends DefaultLingeringHoverHandlePartFactory {
+public class ZestFxHoverHandlePartFactory extends DefaultHoverIntentHandlePartFactory {
 
 	@Inject
 	private Injector injector;

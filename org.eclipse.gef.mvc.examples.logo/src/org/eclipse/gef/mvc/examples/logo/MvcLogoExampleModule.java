@@ -40,7 +40,7 @@ import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.LingeringHoverBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
@@ -49,7 +49,7 @@ import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
-import org.eclipse.gef.mvc.fx.parts.DefaultLingeringHoverHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultHoverIntentHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
@@ -253,7 +253,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// geometry provider for hover handles
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.role(DefaultLingeringHoverHandlePartFactory.LINGERING_HOVER_HANDLES_GEOMETRY_PROVIDER))
+						.role(DefaultHoverIntentHandlePartFactory.HOVER_INTENT_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 		// geometry provider for focus feedback
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
@@ -291,13 +291,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindHoverHandleFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(LingeringHoverBehavior.LINGERING_HOVER_HANDLE_PART_FACTORY))
-				.to(DefaultLingeringHoverHandlePartFactory.class);
+		adapterMapBinder.addBinding(AdapterKey.role(HoverIntentBehavior.HOVER_INTENT_HANDLE_PART_FACTORY))
+				.to(DefaultHoverIntentHandlePartFactory.class);
 	}
 
 	@Override
 	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(LingeringHoverBehavior.LINGERING_HOVER_HANDLE_PART_FACTORY))
+		adapterMapBinder.addBinding(AdapterKey.role(HoverIntentBehavior.HOVER_INTENT_HANDLE_PART_FACTORY))
 				.to(MvcLogoExampleHoverHandlePartFactory.class);
 	}
 
@@ -335,7 +335,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
 		// hover behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LingeringHoverBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverIntentBehavior.class);
 		// select-all on type
 		bindSelectAllOnTypePolicyAsContentViewerRootPartAdapter(adapterMapBinder);
 	}
