@@ -81,8 +81,6 @@ import org.eclipse.xtext.validation.CheckType
 import org.eclipse.xtext.validation.RangeBasedDiagnostic
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
-import static org.eclipse.gef.dot.internal.DotAttributes.*
-
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 
