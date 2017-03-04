@@ -11,13 +11,18 @@
 package org.eclipse.gef.dot.internal.language.validation;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.dot.internal.language.style.StylePackage;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Check;
 
 /**
@@ -51,9 +56,10 @@ public class DotStyleJavaValidator extends
 				}
 			}
 			// check each style item with the corresponding parser
-			error("Value should be one of "
-					+ getFormattedValues(NodeStyle.values()) + ".",
-					StylePackage.Literals.STYLE__STYLE_ITEMS);
+			reportRangeBaseError(
+					"Value should be one of "
+							+ getFormattedValues(NodeStyle.values()) + ".",
+					styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
 		} else if (Context.EDGE.equals(attributeContext)) {
 			for (Object validValue : EdgeStyle.values()) {
 				if (validValue.toString().equals(styleItem.getName())) {
@@ -61,9 +67,10 @@ public class DotStyleJavaValidator extends
 				}
 			}
 			// check each style item with the corresponding parser
-			error("Value should be one of "
-					+ getFormattedValues(EdgeStyle.values()) + ".",
-					StylePackage.Literals.STYLE__STYLE_ITEMS);
+			reportRangeBaseError(
+					"Value should be one of "
+							+ getFormattedValues(EdgeStyle.values()) + ".",
+					styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
 		}
 	}
 
@@ -77,9 +84,52 @@ public class DotStyleJavaValidator extends
 	@Check
 	public void checkDeprecatedStyleItem(StyleItem styleItem) {
 		if (styleItem.getName().equals("setlinewidth")) {
-			warning("The usage of setlinewidth is deprecated, use the penwidth attribute instead.",
-					StylePackage.Literals.STYLE_ITEM__NAME);
+			reportRangeBasedWarning(
+					"The usage of setlinewidth is deprecated, use the penwidth attribute instead.",
+					styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
 		}
+	}
+
+	private void reportRangeBasedWarning(String message, EObject object,
+			EStructuralFeature feature) {
+
+		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
+
+		if (nodes.size() != 1) {
+			throw new IllegalStateException(
+					"Exact 1 node is expected for the feature, but got "
+							+ nodes.size() + " node(s).");
+		}
+
+		INode node = nodes.get(0);
+		int offset = node.getTotalOffset();
+		int length = node.getLength();
+
+		String code = null;
+		String[] issueData = null;
+		getMessageAcceptor().acceptWarning(message, object, offset, length,
+				code, issueData);
+	}
+
+	private void reportRangeBaseError(String message, EObject object,
+			EStructuralFeature feature) {
+
+		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
+
+		if (nodes.size() != 1) {
+			throw new IllegalStateException(
+					"Exact 1 node is expected for the feature, but got "
+							+ nodes.size() + " node(s).");
+		}
+
+		INode node = nodes.get(0);
+		int offset = node.getTotalOffset();
+		int length = node.getLength();
+
+		String code = null;
+		String[] issueData = null;
+		getMessageAcceptor().acceptError(message, object, offset, length, code,
+				issueData);
 	}
 
 	private Context getAttributeContext() {

@@ -92,27 +92,27 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				112 + 5 * lineDelimiterLength, 17,
+				113 + 5 * lineDelimiterLength, 12,
 				"The style value 'setlinewidth(1)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				139 + 6 * lineDelimiterLength, 17,
+				140 + 6 * lineDelimiterLength, 12,
 				"The style value 'setlinewidth(2)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				169 + 7 * lineDelimiterLength, 17,
+				170 + 7 * lineDelimiterLength, 12,
 				"The style value 'setlinewidth(3)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				213 + 10 * lineDelimiterLength, 25,
+				222 + 10 * lineDelimiterLength, 12,
 				"The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
-				248 + 11 * lineDelimiterLength, 25,
+				249 + 11 * lineDelimiterLength, 12,
 				"The style value 'setlinewidth(5), dotted' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.");
 
 		// verify that these are the only reported issues
@@ -505,6 +505,32 @@ public class DotValidatorTests {
 		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
 	}
 
+	@Test
+	public void testInvalidNodeStyle() {
+		String text = "graph {1[style=\"dashed, setlinewidth(4)\"]}";
+		String errorProneText = "setlinewidth";
+		String message = "The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.";
+		assertStyleWarning(text, errorProneText, message);
+
+		text = "graph {1[style=\"dashed, foo\"]}";
+		errorProneText = "foo";
+		message = "The style value 'dashed, foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'diagonals', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped', 'wedged'.";
+		assertStyleError(text, errorProneText, message);
+	}
+
+	@Test
+	public void testInvalidEdgeStyle() throws Exception {
+		String text = "graph {1--2[style=\"dashed, setlinewidth(4)\"]}";
+		String errorProneText = "setlinewidth";
+		String message = "The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.";
+		assertStyleWarning(text, errorProneText, message);
+
+		text = "graph {1--2[style=\"dashed, foo\"]}";
+		errorProneText = "foo";
+		message = "The style value 'dashed, foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'invis', 'solid', 'tapered'.";
+		assertStyleError(text, errorProneText, message);
+	}
+
 	private DotAst parse(String fileName) {
 		DotAst dotAst = null;
 		String fileContents = DotFileUtils
@@ -547,6 +573,42 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.LABEL__GCNE,
+				offset, length, errorMessage);
+	}
+
+	private void assertStyleWarning(String text, String errorProneText,
+			String warningMessage) {
+		DotAst dotAst = null;
+		try {
+			dotAst = parserHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+		assertNotNull(dotAst);
+		int offset = text.indexOf(errorProneText);
+		int length = errorProneText.length();
+
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
+				offset, length, warningMessage);
+	}
+
+	private void assertStyleError(String text, String errorProneText,
+			String errorMessage) {
+		DotAst dotAst = null;
+		try {
+			dotAst = parserHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+		assertNotNull(dotAst);
+		int offset = text.indexOf(errorProneText);
+		int length = errorProneText.length();
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
 				offset, length, errorMessage);
 	}
 

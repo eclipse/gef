@@ -78,9 +78,11 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		INode node = nodes.get(0);
 		int attributeValueStartOffset = node.getOffset();
-		if (attributeValue.getType() == ID.Type.HTML_STRING) {
-			// +1 is needed because of the first < symbol indicating the
-			// beginning of a html-like label
+		if (attributeValue.getType() == ID.Type.HTML_STRING
+				|| attributeValue.getType() == ID.Type.QUOTED_STRING) {
+			// +1 is needed because of the < symbol (indicating the
+			// beginning of a html-like label) or " symbol (indicating the
+			// beginning of a quoted string)
 			attributeValueStartOffset++;
 		}
 
