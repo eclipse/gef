@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
@@ -90,10 +89,11 @@ public class DotStyleJavaValidator extends
 		}
 	}
 
-	private void reportRangeBasedWarning(String message, EObject object,
+	private void reportRangeBasedWarning(String message, StyleItem styleItem,
 			EStructuralFeature feature) {
 
-		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
+		List<INode> nodes = NodeModelUtils.findNodesForFeature(styleItem,
+				feature);
 
 		if (nodes.size() != 1) {
 			throw new IllegalStateException(
@@ -106,15 +106,17 @@ public class DotStyleJavaValidator extends
 		int length = node.getLength();
 
 		String code = null;
-		String[] issueData = null;
-		getMessageAcceptor().acceptWarning(message, object, offset, length,
+		// the issueData will be evaluated by the quickfixes
+		String[] issueData = { styleItem.getName() };
+		getMessageAcceptor().acceptWarning(message, styleItem, offset, length,
 				code, issueData);
 	}
 
-	private void reportRangeBaseError(String message, EObject object,
+	private void reportRangeBaseError(String message, StyleItem styleItem,
 			EStructuralFeature feature) {
 
-		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
+		List<INode> nodes = NodeModelUtils.findNodesForFeature(styleItem,
+				feature);
 
 		if (nodes.size() != 1) {
 			throw new IllegalStateException(
@@ -127,9 +129,10 @@ public class DotStyleJavaValidator extends
 		int length = node.getLength();
 
 		String code = null;
-		String[] issueData = null;
-		getMessageAcceptor().acceptError(message, object, offset, length, code,
-				issueData);
+		// the issueData will be evaluated by the quickfixes
+		String[] issueData = { styleItem.getName() };
+		getMessageAcceptor().acceptError(message, styleItem, offset, length,
+				code, issueData);
 	}
 
 	private Context getAttributeContext() {
