@@ -64,7 +64,6 @@ import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotRangeBasedDiagnostic
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator
@@ -79,7 +78,10 @@ import org.eclipse.xtext.serializer.ISerializer
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.AbstractInjectableValidator
 import org.eclipse.xtext.validation.CheckType
+import org.eclipse.xtext.validation.RangeBasedDiagnostic
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
+
+import static org.eclipse.gef.dot.internal.DotAttributes.*
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
@@ -122,6 +124,15 @@ class DotAttributes {
 		 */
 		CLUSTER
 	}
+	
+	private static class RangeBasedDiagnosticEx extends RangeBasedDiagnostic {
+		new(int severity, String message, EObject source,
+				int offset, int length, CheckType checkType, String issueCode,
+				String[] issueData) {
+			super(severity, message, source, offset, length, checkType, issueCode,
+					issueData);
+		}
+}
 
 	/**
 	 * Determine the context in which the given {@link EObject} is used.
@@ -335,9 +346,9 @@ class DotAttributes {
 			for (Diagnostic r : validationResults) {
 				val newMessage = newMessagePrefix + r.message
 				diagnostics.add(
-					if(r instanceof DotRangeBasedDiagnostic){
-						val result = r as DotRangeBasedDiagnostic
-						new DotRangeBasedDiagnostic(result.severity, newMessage, null, result.offset, result.length, result.checkType, attributeName, result.issueData)
+					if(r instanceof RangeBasedDiagnostic){
+						val result = r as RangeBasedDiagnostic
+						new RangeBasedDiagnosticEx(result.severity, newMessage, null, result.offset, result.length, result.checkType, attributeName, result.issueData)
 					}
 					else{
 						new BasicDiagnostic(r.severity, null, -1, newMessage, #[])
@@ -449,16 +460,16 @@ class DotAttributes {
 			this.definition = attributeType
 		}
 
-		override ParseResult<E> parse(String attributeValue) {
+		override IAttributeValueParser.ParseResult<E> parse(String attributeValue) {
 			if (attributeValue === null) {
 				return null
 			}
 			for (E value : definition.enumConstants) {
 				if (value.toString.equals(attributeValue)) {
-					return new ParseResult<E>(value)
+					return new IAttributeValueParser.ParseResult<E>(value)
 				}
 			}
-			return new ParseResult<E>(
+			return new IAttributeValueParser.ParseResult<E>(
 				Collections.<Diagnostic>singletonList(
 					new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
 						"Value has to be one of " + definition.getEnumConstants.getFormattedValues, #[])))
@@ -513,7 +524,7 @@ class DotAttributes {
 		}
 
 		@SuppressWarnings("unchecked")
-		override ParseResult<T> parse(String attributeValue) {
+		override IAttributeValueParser.ParseResult<T> parse(String attributeValue) {
 			val IParseResult xtextParseResult = parser.parse(new StringReader(attributeValue))
 			if (xtextParseResult.hasSyntaxErrors) {
 				val List<Diagnostic> syntaxProblems = newArrayList
@@ -522,9 +533,9 @@ class DotAttributes {
 						new BasicDiagnostic(Diagnostic.ERROR, attributeValue, -1,
 							xtextSyntaxError.syntaxErrorMessage.message, #[]))
 				}
-				return new ParseResult<T>(syntaxProblems)
+				return new IAttributeValueParser.ParseResult<T>(syntaxProblems)
 			}
-			return new ParseResult<T>(xtextParseResult.rootASTElement as T)
+			return new IAttributeValueParser.ParseResult<T>(xtextParseResult.rootASTElement as T)
 		}
 
 		protected def IParser getParser() {
@@ -671,7 +682,7 @@ class DotAttributes {
 
 						override void acceptError(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new DotRangeBasedDiagnostic(Diagnostic.ERROR, 
+							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.ERROR, 
 								message, object, offset, length, CheckType.FAST, code, issueData
 							));
 						}
@@ -683,7 +694,7 @@ class DotAttributes {
 
 						override void acceptInfo(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new DotRangeBasedDiagnostic(Diagnostic.INFO, 
+							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.INFO, 
 								message, object, offset, length, CheckType.FAST, code, issueData
 							));
 						}
@@ -695,7 +706,7 @@ class DotAttributes {
 
 						override void acceptWarning(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new DotRangeBasedDiagnostic(Diagnostic.WARNING, 
+							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.WARNING, 
 								message, object, offset, length, CheckType.FAST, code, issueData
 							));
 						}
@@ -799,25 +810,25 @@ class DotAttributes {
 
 		val enumParser = new EnumParser<Splines>(Splines)
 
-		override ParseResult<Splines> parse(String attributeValue) {
+		override IAttributeValueParser.ParseResult<Splines> parse(String attributeValue) {
 
 			// XXX: splines can either be an enum or a bool value; we try both
 			// options here and convert boolean expressions into respective
 			// splines
-			val ParseResult<Boolean> boolResult = BOOL_PARSER.parse(attributeValue)
+			val IAttributeValueParser.ParseResult<Boolean> boolResult = BOOL_PARSER.parse(attributeValue)
 			if (!boolResult.hasSyntaxErrors) {
-				return new ParseResult<Splines>(if(boolResult.getParsedValue) Splines.TRUE else Splines.FALSE)
+				return new IAttributeValueParser.ParseResult<Splines>(if(boolResult.getParsedValue) Splines.TRUE else Splines.FALSE)
 			}
-			val ParseResult<Splines> enumResult = enumParser.parse(attributeValue)
+			val IAttributeValueParser.ParseResult<Splines> enumResult = enumParser.parse(attributeValue)
 			if (!enumResult.hasSyntaxErrors) {
-				return new ParseResult<Splines>(enumResult.getParsedValue)
+				return new IAttributeValueParser.ParseResult<Splines>(enumResult.getParsedValue)
 			}
 
 			// TODO: create a better, combined error message here
 			val List<Diagnostic> combinedFindings = newArrayList
 			combinedFindings.addAll(boolResult.syntaxErrors)
 			combinedFindings.addAll(enumResult.syntaxErrors)
-			return new ParseResult<Splines>(combinedFindings)
+			return new IAttributeValueParser.ParseResult<Splines>(combinedFindings)
 		}
 
 		override getParsedType() {
@@ -836,27 +847,27 @@ class DotAttributes {
 	 */
 	static val BOOL_PARSER = new IAttributeValueParser<Boolean> {
 
-		override ParseResult<Boolean> parse(String rawValue) {
+		override IAttributeValueParser.ParseResult<Boolean> parse(String rawValue) {
 			if (rawValue === null) {
 				return null
 			}
 
 			// case insensitive "true" or "yes"
 			if (Boolean.TRUE.toString.equalsIgnoreCase(rawValue) || "yes".equalsIgnoreCase(rawValue)) {
-				return new ParseResult<Boolean>(Boolean.TRUE)
+				return new IAttributeValueParser.ParseResult<Boolean>(Boolean.TRUE)
 			}
 
 			// case insensitive "false" or "no"
 			if (Boolean.FALSE.toString.equalsIgnoreCase(rawValue) || "no".equalsIgnoreCase(rawValue)) {
-				return new ParseResult<Boolean>(Boolean.FALSE)
+				return new IAttributeValueParser.ParseResult<Boolean>(Boolean.FALSE)
 			}
 
 			// an integer value
 			try {
 				val int parsedValue = Integer.parseInt(rawValue)
-				return new ParseResult<Boolean>(if(parsedValue > 0) Boolean.TRUE else Boolean.FALSE)
+				return new IAttributeValueParser.ParseResult<Boolean>(if(parsedValue > 0) Boolean.TRUE else Boolean.FALSE)
 			} catch (NumberFormatException e) {
-				return new ParseResult<Boolean>(
+				return new IAttributeValueParser.ParseResult<Boolean>(
 					Collections.<Diagnostic>singletonList(
 						new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1,
 							"The given value '" + rawValue +
@@ -886,7 +897,7 @@ class DotAttributes {
 	 */
 	static val DOUBLE_PARSER = new IAttributeValueParser<Double> {
 
-		override ParseResult<Double> parse(String rawValue) {
+		override IAttributeValueParser.ParseResult<Double> parse(String rawValue) {
 			if (rawValue === null) {
 				return null
 			}
@@ -894,9 +905,9 @@ class DotAttributes {
 
 				// TODO: check that this resembles the DOT double interpretation
 				val double parsedValue = Double.parseDouble(rawValue)
-				return new ParseResult<Double>(new Double(parsedValue))
+				return new IAttributeValueParser.ParseResult<Double>(new Double(parsedValue))
 			} catch (NumberFormatException exception) {
-				return new ParseResult<Double>(
+				return new IAttributeValueParser.ParseResult<Double>(
 					Collections.<Diagnostic>singletonList(
 						new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1, exception.getMessage, #[])))
 			}
@@ -923,15 +934,15 @@ class DotAttributes {
 	 */
 	static val INT_PARSER = new IAttributeValueParser<Integer> {
 
-		override ParseResult<Integer> parse(String rawValue) {
+		override IAttributeValueParser.ParseResult<Integer> parse(String rawValue) {
 			if (rawValue === null) {
 				return null
 			}
 			try {
 				val int parsedValue = Integer.parseInt(rawValue)
-				return new ParseResult<Integer>(new Integer(parsedValue))
+				return new IAttributeValueParser.ParseResult<Integer>(new Integer(parsedValue))
 			} catch (NumberFormatException exception) {
-				return new ParseResult<Integer>(
+				return new IAttributeValueParser.ParseResult<Integer>(
 					Collections.<Diagnostic>singletonList(
 						new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1, exception.getMessage, #[])))
 			}

@@ -41,6 +41,7 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.RangeBasedDiagnostic;
 
 /**
  * Provides DOT-specific validation rules.
@@ -84,8 +85,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 
 		for (Diagnostic d : diagnostics) {
-			if (d instanceof DotRangeBasedDiagnostic) {
-				DotRangeBasedDiagnostic rangeBasedDiagnostic = (DotRangeBasedDiagnostic) d;
+			if (d instanceof RangeBasedDiagnostic) {
+				RangeBasedDiagnostic rangeBasedDiagnostic = (RangeBasedDiagnostic) d;
 				String message = rangeBasedDiagnostic.getMessage();
 				int length = rangeBasedDiagnostic.getLength();
 				String code = rangeBasedDiagnostic.getIssueCode();
