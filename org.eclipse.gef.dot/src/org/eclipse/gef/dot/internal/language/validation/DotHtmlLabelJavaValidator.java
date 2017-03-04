@@ -16,15 +16,17 @@ package org.eclipse.gef.dot.internal.language.validation;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage;
-import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Check;
 
@@ -158,9 +160,11 @@ public class DotHtmlLabelJavaValidator extends
 	public void checkTagIsClosed(HtmlTag tag) {
 		if (!tag.getName().toUpperCase()
 				.equals(tag.getCloseName().toUpperCase())) {
-			error("Tag '<" + tag.getName() + ">' is not closed (expected '</"
-					+ tag.getName() + ">' but got '</" + tag.getCloseName()
-					+ ">').", HtmllabelPackage.Literals.HTML_TAG__CLOSE_NAME);
+			reportRangeBasedError(
+					"Tag '<" + tag.getName() + ">' is not closed (expected '</"
+							+ tag.getName() + ">' but got '</"
+							+ tag.getCloseName() + ">').",
+					tag, HtmllabelPackage.Literals.HTML_TAG__CLOSE_NAME);
 		}
 	}
 
@@ -181,18 +185,9 @@ public class DotHtmlLabelJavaValidator extends
 
 		if (tag.isSelfClosing() && Arrays.binarySearch(selfClosingIsNotAllowed,
 				tagNameUpperCase) >= 0) {
-			String message = "Tag '<" + tag.getName()
-					+ "/>' cannot be self closing.";
-			EObject object = tag;
-
-			ICompositeNode node = NodeModelUtils.findActualNodeFor(tag);
-			int offset = node.getTotalOffset();
-			int length = node.getLength();
-
-			String code = null;
-			String[] issueData = null;
-			getMessageAcceptor().acceptError(message, object, offset, length,
-					code, issueData);
+			reportRangeBasedError(
+					"Tag '<" + tag.getName() + "/>' cannot be self closing.",
+					tag, HtmllabelPackage.Literals.HTML_TAG__NAME);
 		}
 	}
 
@@ -219,9 +214,10 @@ public class DotHtmlLabelJavaValidator extends
 				// TODO: verify why white spaces is stored as text
 				String text = child.getText();
 				if (text != null && !text.trim().isEmpty()) {
-					error("Tag '<" + tag.getName()
-							+ ">' cannot contain a string literal.",
-							HtmllabelPackage.Literals.HTML_TAG__NAME);
+					reportRangeBasedError(
+							"Tag '<" + tag.getName()
+									+ ">' cannot contain a string literal.",
+							tag, HtmllabelPackage.Literals.HTML_TAG__NAME);
 				}
 			}
 		}
@@ -239,8 +235,8 @@ public class DotHtmlLabelJavaValidator extends
 	public void checkTagNameIsValid(HtmlTag tag) {
 		String tagName = tag.getName();
 		if (!ALL_TAGS.contains(tagName.toUpperCase())) {
-			error("Tag '<" + tagName + ">' is not supported.",
-					HtmllabelPackage.Literals.HTML_TAG__NAME);
+			reportRangeBasedError("Tag '<" + tagName + ">' is not supported.",
+					tag, HtmllabelPackage.Literals.HTML_TAG__NAME);
 		} else {
 			// find parent tag
 			EObject container = tag.eContainer().eContainer();
@@ -256,11 +252,14 @@ public class DotHtmlLabelJavaValidator extends
 			if (!validTags.containsKey(parentName.toUpperCase())
 					|| !validTags.get(parentName.toUpperCase())
 							.contains(tagName.toUpperCase())) {
-				error("Tag '<" + tagName + ">' is not allowed inside '<"
-						+ parentName + ">', but only inside '<"
-						+ String.join(">', '<",
-								allowedParents.get(tagName.toUpperCase()))
-						+ ">'.", HtmllabelPackage.Literals.HTML_TAG__NAME);
+				reportRangeBasedError(
+						"Tag '<" + tagName + ">' is not allowed inside '<"
+								+ parentName + ">', but only inside '<"
+								+ String.join(">', '<",
+										allowedParents
+												.get(tagName.toUpperCase()))
+								+ ">'.",
+						tag, HtmllabelPackage.Literals.HTML_TAG__NAME);
 			}
 		}
 	}
@@ -284,10 +283,32 @@ public class DotHtmlLabelJavaValidator extends
 			if (!validAttributes.containsKey(tagName.toUpperCase())
 					|| !validAttributes.get(tagName.toUpperCase())
 							.contains(attrName.toUpperCase())) {
-				error("Attribute '" + attrName + "' is not allowed inside '<"
-						+ tagName + ">'.",
-						HtmllabelPackage.Literals.HTML_ATTR__NAME);
+				reportRangeBasedError(
+						"Attribute '" + attrName + "' is not allowed inside '<"
+								+ tagName + ">'.",
+						attr, HtmllabelPackage.Literals.HTML_ATTR__NAME);
 			}
 		}
+	}
+
+	private void reportRangeBasedError(String message, EObject object,
+			EStructuralFeature feature) {
+
+		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
+
+		if (nodes.size() != 1) {
+			throw new IllegalStateException(
+					"Exact 1 node is expected for the feature, but got "
+							+ nodes.size() + " node(s).");
+		}
+
+		INode node = nodes.get(0);
+		int offset = node.getTotalOffset();
+		int length = node.getLength();
+
+		String code = null;
+		String[] issueData = null;
+		getMessageAcceptor().acceptError(message, object, offset, length, code,
+				issueData);
 	}
 }

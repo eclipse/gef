@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -386,6 +386,9 @@ public class DotValidatorTests {
 
 	@Test
 	public void testInvalidCombinationOfNodeShapeAndStyle() throws Exception {
+		registerShapePackage();
+		registerStylePackage();
+
 		/*
 		 * The 'striped' node style is only supported with clusters and
 		 * rectangularly-shaped nodes('box', 'rect', 'rectangle' and 'square').
@@ -442,40 +445,62 @@ public class DotValidatorTests {
 	}
 
 	@Test
-	public void testInvalidHtmlLikeLabelParserProblem() throws Exception {
+	public void testInvalidHtmlLikeLabelParserProblem() {
 		registerHtmlLabelPackage();
 
 		String text = "graph {1[label = <<BR/><FONT>>]}";
-
-		DotAst dotAst = parserHelper.parse(text);
-
 		String errorProneText = "<<BR/><FONT>>";
-		int expectedOffset = text.indexOf(errorProneText);
-		int expectedLength = errorProneText.length();
-
-		String expectedErrorMessage = "The value '<BR/><FONT>' is not a syntactically correct htmlLabel: Mismatched input '<EOF>' expecting RULE_TAG_START_CLOSE.";
-
-		validationTestHelper.assertError(dotAst,
-				DotPackage.eINSTANCE.getAttribute(), DotAttributes.LABEL__GCNE,
-				expectedOffset, expectedLength, expectedErrorMessage);
+		String errorMessage = "The value '<BR/><FONT>' is not a syntactically correct htmlLabel: Mismatched input '<EOF>' expecting RULE_TAG_START_CLOSE.";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
 	}
 
 	@Test
-	public void testInvalidHtmlLikeLabelValidationProblem() throws Exception {
-		registerHtmlLabelPackage();
-
+	public void testInvalidHtmlLikeLabelTagIsNotClosedProperly() {
 		String text = "graph {1[label = <<BR/><FONT/>>]}";
+		String errorProneText = "FONT";
+		String errorMessage = "The htmlLabel value '<BR/><FONT/>' is not semantically correct: Tag '<FONT/>' cannot be self closing.";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
+	}
 
-		DotAst dotAst = parserHelper.parse(text);
+	@Test
+	public void testInvalidHtmlLikeLabelTagCannotBeSelfClosing() {
+		String text = "graph {1[label = <  <FONT></foo>  >]}";
+		String errorProneText = "foo";
+		String errorMessage = "The htmlLabel value '  <FONT></foo>  ' is not semantically correct: Tag '<FONT>' is not closed (expected '</FONT>' but got '</foo>').";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
+	}
 
-		String errorProneText = "<FONT/>";
-		String expectedErrorMessage = "The htmlLabel value '<BR/><FONT/>' is not semantically correct: Tag '<FONT/>' cannot be self closing.";
-		int expectedOffset = text.indexOf(errorProneText);
-		int expectedLength = errorProneText.length();
+	@Test
+	public void testInvalidHtmlLikeLabelStringLiteralIsNotAllowed()
+			throws Exception {
+		String text = "graph {1[label = <  <BR>string</BR>  >]}";
+		String errorProneText = "BR";
+		String errorMessage = "The htmlLabel value '  <BR>string</BR>  ' is not semantically correct: Tag '<BR>' cannot contain a string literal.";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
+	}
 
-		validationTestHelper.assertError(dotAst,
-				DotPackage.eINSTANCE.getAttribute(), DotAttributes.LABEL__GCNE,
-				expectedOffset, expectedLength, expectedErrorMessage);
+	@Test
+	public void testInvalidHtmlLikeLabelUnsupportedTag() {
+		String text = "graph {1[label = <  <test>string</test>  >]}";
+		String errorProneText = "test";
+		String errorMessage = "The htmlLabel value '  <test>string</test>  ' is not semantically correct: Tag '<test>' is not supported.";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabelInvalidParentTag() {
+		String text = "graph {1[label = <  <tr></tr>  >]}";
+		String errorProneText = "tr";
+		String errorMessage = "The htmlLabel value '  <tr></tr>  ' is not semantically correct: Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabelInvalidAttribute() {
+		String text = "graph {1[label = <  <table foo=\"bar\"></table>  >]}";
+		String errorProneText = "foo";
+		String errorMessage = "The htmlLabel value '  <table foo=\"bar\"></table>  ' is not semantically correct: Attribute 'foo' is not allowed inside '<table>'.";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
 	}
 
 	private DotAst parse(String fileName) {
@@ -496,6 +521,24 @@ public class DotValidatorTests {
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWHEAD__E,
 				warningMessage);
+	}
+
+	private void assertHtmlLikeLabelError(String text, String errorProneText,
+			String errorMessage) {
+		DotAst dotAst = null;
+		try {
+			dotAst = parserHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+		assertNotNull(dotAst);
+		int offset = text.indexOf(errorProneText);
+		int length = errorProneText.length();
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.LABEL__GCNE,
+				offset, length, errorMessage);
 	}
 
 	// TODO: check why these extra EMF Package registrations are necessary
@@ -532,6 +575,24 @@ public class DotValidatorTests {
 			EPackage.Registry.INSTANCE.put(
 					org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eNS_URI,
 					org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eINSTANCE);
+		}
+	}
+
+	private void registerShapePackage() {
+		if (!EPackage.Registry.INSTANCE.containsKey(
+				org.eclipse.gef.dot.internal.language.shape.ShapePackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(
+					org.eclipse.gef.dot.internal.language.shape.ShapePackage.eNS_URI,
+					org.eclipse.gef.dot.internal.language.shape.ShapePackage.eINSTANCE);
+		}
+	}
+
+	private void registerStylePackage() {
+		if (!EPackage.Registry.INSTANCE.containsKey(
+				org.eclipse.gef.dot.internal.language.style.StylePackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(
+					org.eclipse.gef.dot.internal.language.style.StylePackage.eNS_URI,
+					org.eclipse.gef.dot.internal.language.style.StylePackage.eINSTANCE);
 		}
 	}
 }
