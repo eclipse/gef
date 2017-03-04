@@ -17,12 +17,18 @@
  */
 package org.eclipse.gef.dot.internal.language.validation;
 
+import java.util.List;
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.dot.internal.language.arrowtype.AbstractArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage;
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.PrimitiveShape;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Check;
 
 /**
@@ -50,9 +56,10 @@ public class DotArrowTypeJavaValidator extends
 				|| PrimitiveShape.NONE.equals(shape)
 				|| PrimitiveShape.TEE.equals(shape)
 				|| PrimitiveShape.VEE.equals(shape))) {
-			warning("The open modifier 'o' may not be combined with primitive shape '"
-					+ shape + "'.",
-					ArrowtypePackage.Literals.ARROW_SHAPE__OPEN);
+			reportRangeBasedWarning(
+					"The open modifier 'o' may not be combined with primitive shape '"
+							+ shape + "'.",
+					arrowShape, ArrowtypePackage.Literals.ARROW_SHAPE__OPEN);
 		}
 	}
 
@@ -68,9 +75,11 @@ public class DotArrowTypeJavaValidator extends
 		PrimitiveShape shape = arrowShape.getShape();
 		if (arrowShape.getSide() != null && (PrimitiveShape.DOT.equals(shape)
 				|| PrimitiveShape.NONE.equals(shape))) {
-			warning("The side modifier '" + arrowShape.getSide()
-					+ "' may not be combined with primitive shape '" + shape
-					+ "'.", ArrowtypePackage.Literals.ARROW_SHAPE__SIDE);
+			reportRangeBasedWarning(
+					"The side modifier '" + arrowShape.getSide()
+							+ "' may not be combined with primitive shape '"
+							+ shape + "'.",
+					arrowShape, ArrowtypePackage.Literals.ARROW_SHAPE__SIDE);
 		}
 	}
 
@@ -82,7 +91,9 @@ public class DotArrowTypeJavaValidator extends
 	 */
 	@Check
 	public void checkDeprecatedArrowShape(DeprecatedArrowShape arrowShape) {
-		warning("The shape '" + arrowShape.getShape() + "' is deprecated.",
+		reportRangeBasedWarning(
+				"The shape '" + arrowShape.getShape() + "' is deprecated.",
+				arrowShape,
 				ArrowtypePackage.Literals.DEPRECATED_ARROW_SHAPE__SHAPE);
 	}
 
@@ -102,9 +113,30 @@ public class DotArrowTypeJavaValidator extends
 			if (lastShape instanceof ArrowShape && ((ArrowShape) lastShape)
 					.getShape() == PrimitiveShape.NONE) {
 				warning("The shape '" + PrimitiveShape.NONE
-						+ "' may not be the last shape.",
+						+ "' may not be the last shape.", lastShape,
 						ArrowtypePackage.Literals.ARROW_SHAPE__SHAPE);
 			}
 		}
+	}
+
+	private void reportRangeBasedWarning(String message, EObject object,
+			EStructuralFeature feature) {
+
+		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
+
+		if (nodes.size() != 1) {
+			throw new IllegalStateException(
+					"Exact 1 node is expected for the feature, but got "
+							+ nodes.size() + " node(s).");
+		}
+
+		INode node = nodes.get(0);
+		int offset = node.getTotalOffset();
+		int length = node.getLength();
+
+		String code = null;
+		String[] issueData = null;
+		getMessageAcceptor().acceptWarning(message, object, offset, length,
+				code, issueData);
 	}
 }

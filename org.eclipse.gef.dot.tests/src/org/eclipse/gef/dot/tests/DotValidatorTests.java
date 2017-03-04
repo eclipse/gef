@@ -75,7 +75,9 @@ public class DotValidatorTests {
 				"The arrowType value 'ediamondinvempty' is not semantically correct: The shape 'ediamond' is deprecated.");
 		assertArrowTypeWarning(dotAst,
 				"The arrowType value 'ediamondinvempty' is not semantically correct: The shape 'invempty' is deprecated.");
-		assertArrowTypeWarning(dotAst,
+
+		int lineDelimiterLength = System.getProperty("line.separator").length();
+		assertArrowTypeWarning(dotAst, 1311 + 28 * lineDelimiterLength, 4,
 				"The arrowType value 'openbox' is not semantically correct: The shape 'open' is deprecated.");
 
 		// verify that these are the only reported issues
@@ -521,6 +523,13 @@ public class DotValidatorTests {
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWHEAD__E,
 				warningMessage);
+	}
+
+	private void assertArrowTypeWarning(DotAst dotAst, int offset, int length,
+			String warningMessage) {
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWHEAD__E,
+				offset, length, warningMessage);
 	}
 
 	private void assertHtmlLikeLabelError(String text, String errorProneText,

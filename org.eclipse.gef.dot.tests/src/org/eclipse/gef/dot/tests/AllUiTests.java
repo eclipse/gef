@@ -18,12 +18,13 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ DotImportTests.class, DotExportTests.class,
-		DotExecutableUtilsTests.class, DotExtractorTests.class,
-		DotAttributesTests.class, DotParserTests.class, DotEscStringTests.class,
-		DotHighlightingTests.class, DotHighlightingCalculatorTests.class,
-		DotValidatorTests.class, DotContentAssistTests.class,
-		DotBSplineInterpolatorTests.class, DotHtmlLabelTests.class })
+@SuiteClasses({ DotArrowTypeTests.class, DotImportTests.class,
+		DotExportTests.class, DotExecutableUtilsTests.class,
+		DotExtractorTests.class, DotAttributesTests.class, DotParserTests.class,
+		DotEscStringTests.class, DotHighlightingTests.class,
+		DotHighlightingCalculatorTests.class, DotValidatorTests.class,
+		DotContentAssistTests.class, DotBSplineInterpolatorTests.class,
+		DotHtmlLabelTests.class })
 public class AllUiTests {
 
 }
