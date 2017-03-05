@@ -90,7 +90,7 @@ public class DotQuickfixTests {
 						"Use valid '\"tapered\"' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"tapered\"]}" } };
 
-		assertIssueResolutions(text, expectedQuickfixes);
+		assertQuickfixes(text, expectedQuickfixes);
 
 		// test quoted edge style
 		text = "graph{1--2[style=\"foo\"]}";
@@ -118,11 +118,11 @@ public class DotQuickfixTests {
 						"Use valid '\"tapered\"' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"tapered\"]}" } };
 
-		assertIssueResolutions(text, expectedQuickfixes);
+		assertQuickfixes(text, expectedQuickfixes);
 
 	}
 
-	private void assertIssueResolutions(String text, String[][] expected) {
+	private void assertQuickfixes(String text, String[][] expected) {
 		DotAst dotAst = null;
 		try {
 			dotAst = parseHelper.parse(text);
