@@ -58,7 +58,8 @@ public class DotStyleJavaValidator extends
 			reportRangeBaseError(
 					"Value should be one of "
 							+ getFormattedValues(NodeStyle.values()) + ".",
-					styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
+					styleItem, StylePackage.Literals.STYLE_ITEM__NAME,
+					attributeContext);
 		} else if (Context.EDGE.equals(attributeContext)) {
 			for (Object validValue : EdgeStyle.values()) {
 				if (validValue.toString().equals(styleItem.getName())) {
@@ -69,7 +70,8 @@ public class DotStyleJavaValidator extends
 			reportRangeBaseError(
 					"Value should be one of "
 							+ getFormattedValues(EdgeStyle.values()) + ".",
-					styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
+					styleItem, StylePackage.Literals.STYLE_ITEM__NAME,
+					attributeContext);
 		}
 	}
 
@@ -113,7 +115,7 @@ public class DotStyleJavaValidator extends
 	}
 
 	private void reportRangeBaseError(String message, StyleItem styleItem,
-			EStructuralFeature feature) {
+			EStructuralFeature feature, Context attributeContext) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(styleItem,
 				feature);
@@ -130,7 +132,8 @@ public class DotStyleJavaValidator extends
 
 		String code = null;
 		// the issueData will be evaluated by the quickfixes
-		String[] issueData = { styleItem.getName() };
+		String[] issueData = { styleItem.getName(),
+				attributeContext.toString() };
 		getMessageAcceptor().acceptError(message, styleItem, offset, length,
 				code, issueData);
 	}

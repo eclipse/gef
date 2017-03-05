@@ -136,6 +136,11 @@ public class DotArrowTypeJavaValidator extends
 
 		String code = null;
 		String[] issueData = null;
+		if (object instanceof DeprecatedArrowShape) {
+			DeprecatedArrowShape arrowShape = (DeprecatedArrowShape) object;
+			issueData = new String[] { arrowShape.getShape().toString() };
+		}
+
 		getMessageAcceptor().acceptWarning(message, object, offset, length,
 				code, issueData);
 	}
