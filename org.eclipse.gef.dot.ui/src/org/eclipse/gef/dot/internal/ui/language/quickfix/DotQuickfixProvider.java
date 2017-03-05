@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 itemis AG and others.
+ * Copyright (c) 2010, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -38,19 +38,22 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	public void fixEdgeStyleAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		for (EdgeStyle edgeStyle : EdgeStyle.VALUES) {
-			final ID validValue = ID.fromValue(edgeStyle.toString(),
-					Type.QUOTED_STRING);
 			acceptor.accept(issue,
-					"Replace '" + issue.getData()[0] + "' with '" + validValue //$NON-NLS-1$ //$NON-NLS-2$
+					"Replace '" + issue.getData()[0] + "' with '" + edgeStyle //$NON-NLS-1$ //$NON-NLS-2$
 							+ "'.", //$NON-NLS-1$
-					"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
+					"Use valid '" + edgeStyle + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
 							+ issue.getData()[0] + "' edge style.", //$NON-NLS-1$
 					null, new ISemanticModification() {
 
 						@Override
 						public void apply(EObject element,
-								IModificationContext context) throws Exception {
-							((Attribute) element).setValue(validValue);
+								IModificationContext context) {
+							Attribute attribute = (Attribute) element;
+							Type type = attribute.getValue().getType();
+							ID validValue = ID.fromValue(edgeStyle.toString(),
+									type);
+
+							attribute.setValue(validValue);
 						}
 					});
 		}

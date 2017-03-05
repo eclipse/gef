@@ -71,24 +71,24 @@ public class DotQuickfixTests {
 		// expectedQuickfixes[1]: expected quickfix description
 		// expectedQuickfixes[2]: expected text after quickfix application
 		String[][] expectedQuickfixes = {
-				{ "Replace 'foo' with '\"bold\"'.",
-						"Use valid '\"bold\"' instead of invalid 'foo' edge style.",
-						"graph{1--2[style=\"bold\"]}" },
-				{ "Replace 'foo' with '\"dashed\"'.",
-						"Use valid '\"dashed\"' instead of invalid 'foo' edge style.",
-						"graph{1--2[style=\"dashed\"]}" },
-				{ "Replace 'foo' with '\"dotted\"'.",
-						"Use valid '\"dotted\"' instead of invalid 'foo' edge style.",
-						"graph{1--2[style=\"dotted\"]}" },
-				{ "Replace 'foo' with '\"invis\"'.",
-						"Use valid '\"invis\"' instead of invalid 'foo' edge style.",
-						"graph{1--2[style=\"invis\"]}" },
-				{ "Replace 'foo' with '\"solid\"'.",
-						"Use valid '\"solid\"' instead of invalid 'foo' edge style.",
-						"graph{1--2[style=\"solid\"]}" },
-				{ "Replace 'foo' with '\"tapered\"'.",
-						"Use valid '\"tapered\"' instead of invalid 'foo' edge style.",
-						"graph{1--2[style=\"tapered\"]}" } };
+				{ "Replace 'foo' with 'bold'.",
+						"Use valid 'bold' instead of invalid 'foo' edge style.",
+						"graph{1--2[style=bold]}" },
+				{ "Replace 'foo' with 'dashed'.",
+						"Use valid 'dashed' instead of invalid 'foo' edge style.",
+						"graph{1--2[style=dashed]}" },
+				{ "Replace 'foo' with 'dotted'.",
+						"Use valid 'dotted' instead of invalid 'foo' edge style.",
+						"graph{1--2[style=dotted]}" },
+				{ "Replace 'foo' with 'invis'.",
+						"Use valid 'invis' instead of invalid 'foo' edge style.",
+						"graph{1--2[style=invis]}" },
+				{ "Replace 'foo' with 'solid'.",
+						"Use valid 'solid' instead of invalid 'foo' edge style.",
+						"graph{1--2[style=solid]}" },
+				{ "Replace 'foo' with 'tapered'.",
+						"Use valid 'tapered' instead of invalid 'foo' edge style.",
+						"graph{1--2[style=tapered]}" } };
 
 		assertQuickfixes(text, expectedQuickfixes);
 
@@ -99,23 +99,23 @@ public class DotQuickfixTests {
 		// expectedQuickfixes[1]: expected quickfix description
 		// expectedQuickfixes[2]: expected text after quickfix application
 		expectedQuickfixes = new String[][] {
-				{ "Replace 'foo' with '\"bold\"'.",
-						"Use valid '\"bold\"' instead of invalid 'foo' edge style.",
+				{ "Replace 'foo' with 'bold'.",
+						"Use valid 'bold' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"bold\"]}" },
-				{ "Replace 'foo' with '\"dashed\"'.",
-						"Use valid '\"dashed\"' instead of invalid 'foo' edge style.",
+				{ "Replace 'foo' with 'dashed'.",
+						"Use valid 'dashed' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"dashed\"]}" },
-				{ "Replace 'foo' with '\"dotted\"'.",
-						"Use valid '\"dotted\"' instead of invalid 'foo' edge style.",
+				{ "Replace 'foo' with 'dotted'.",
+						"Use valid 'dotted' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"dotted\"]}" },
-				{ "Replace 'foo' with '\"invis\"'.",
-						"Use valid '\"invis\"' instead of invalid 'foo' edge style.",
+				{ "Replace 'foo' with 'invis'.",
+						"Use valid 'invis' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"invis\"]}" },
-				{ "Replace 'foo' with '\"solid\"'.",
-						"Use valid '\"solid\"' instead of invalid 'foo' edge style.",
+				{ "Replace 'foo' with 'solid'.",
+						"Use valid 'solid' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"solid\"]}" },
-				{ "Replace 'foo' with '\"tapered\"'.",
-						"Use valid '\"tapered\"' instead of invalid 'foo' edge style.",
+				{ "Replace 'foo' with 'tapered'.",
+						"Use valid 'tapered' instead of invalid 'foo' edge style.",
 						"graph{1--2[style=\"tapered\"]}" } };
 
 		assertQuickfixes(text, expectedQuickfixes);
