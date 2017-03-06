@@ -18,6 +18,7 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 
 /**
@@ -47,6 +48,22 @@ public class HoverModel
 			this, HOVER_PROPERTY);
 	private ObjectProperty<IContentPart<? extends Node>> hoverIntentProperty = new SimpleObjectProperty<>(
 			this, HOVER_INTENT_PROPERTY);
+
+	private MapChangeListener<Node, IVisualPart<? extends Node>> visualPartMapListener = new MapChangeListener<Node, IVisualPart<? extends Node>>() {
+		@Override
+		public void onChanged(
+				javafx.collections.MapChangeListener.Change<? extends Node, ? extends IVisualPart<? extends Node>> change) {
+			// keep model in sync with part hierarchy
+			if (change.wasRemoved()) {
+				if (hoverProperty.get() == change.getValueRemoved()) {
+					setHover(null);
+				}
+				if (hoverIntentProperty.get() == change.getValueRemoved()) {
+					setHoverIntent(null);
+				}
+			}
+		}
+	};
 
 	/**
 	 * Sets the hovered part to <code>null</code>.
@@ -120,7 +137,17 @@ public class HoverModel
 						"Inconsistent HoverModel: IVisualPart present although the IViewer is changed.");
 			}
 		}
+		if (getAdaptable() != null) {
+			// unregister visual-part-map listener
+			getAdaptable().visualPartMapProperty()
+					.removeListener(visualPartMapListener);
+		}
 		super.setAdaptable(adaptable);
+		if (adaptable != null) {
+			// register for visual-part-map changes
+			adaptable.visualPartMapProperty()
+					.addListener(visualPartMapListener);
+		}
 	}
 
 	/**

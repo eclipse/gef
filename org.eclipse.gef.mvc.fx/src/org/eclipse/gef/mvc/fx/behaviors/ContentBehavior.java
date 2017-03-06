@@ -23,8 +23,6 @@ import java.util.Set;
 
 import org.eclipse.gef.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef.common.dispose.IDisposable;
-import org.eclipse.gef.mvc.fx.models.HoverModel;
-import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
@@ -76,20 +74,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			// }
 			// }
 			synchronizeContentPartChildren(getHost(), change.getList());
-
-			// TODO: Check if the flushing of the viewer models can be done in a
-			// more appropriate place.
-			IViewer viewer = getHost().getRoot().getViewer();
-			SelectionModel selectionModel = viewer
-					.getAdapter(SelectionModel.class);
-			if (selectionModel != null) {
-				selectionModel.clearSelection();
-			}
-			HoverModel hoverModel = viewer.getAdapter(HoverModel.class);
-			if (hoverModel != null) {
-				hoverModel.clearHover();
-				hoverModel.clearHoverIntent();
-			}
 		}
 	};
 

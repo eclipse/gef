@@ -23,11 +23,13 @@ import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
@@ -60,6 +62,19 @@ public class SelectionModel
 			.unmodifiableObservableList(selection);
 	private ReadOnlyListWrapper<IContentPart<? extends Node>> selectionUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
 			this, SELECTION_PROPERTY, selectionUnmodifiable);
+
+	private MapChangeListener<Node, IVisualPart<? extends Node>> visualPartMapListener = new MapChangeListener<Node, IVisualPart<? extends Node>>() {
+		@Override
+		public void onChanged(
+				javafx.collections.MapChangeListener.Change<? extends Node, ? extends IVisualPart<? extends Node>> change) {
+			// keep model in sync with part hierarchy
+			if (change.wasRemoved()) {
+				if (selection.contains(change.getValueRemoved())) {
+					selection.remove(change.getValueRemoved());
+				}
+			}
+		}
+	};
 
 	/**
 	 * Updates the current selection by adding the given {@link IContentPart} to
@@ -253,15 +268,25 @@ public class SelectionModel
 
 	@Override
 	public void setAdaptable(IViewer adaptable) {
-		// The viewer can only be changed when there are no parts in this model.
-		// Otherwise, the model was/is inconsistent.
 		if (getAdaptable() != adaptable) {
+			// The viewer can only be changed when there are no parts in this
+			// model. Otherwise, the model was/is inconsistent.
 			if (!selection.isEmpty()) {
 				throw new IllegalStateException(
 						"Inconsistent SelectionModel: IContentParts present although the IViewer is changed.");
 			}
 		}
+		if (getAdaptable() != null) {
+			// unregister visual-part-map listener
+			getAdaptable().visualPartMapProperty()
+					.removeListener(visualPartMapListener);
+		}
 		super.setAdaptable(adaptable);
+		if (adaptable != null) {
+			// register for visual-part-map changes
+			adaptable.visualPartMapProperty()
+					.addListener(visualPartMapListener);
+		}
 	}
 
 	/**

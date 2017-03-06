@@ -15,10 +15,12 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 
 /**
@@ -45,6 +47,19 @@ public class FocusModel
 
 	private ObjectProperty<IContentPart<? extends Node>> focusedProperty = new SimpleObjectProperty<>(
 			this, FOCUS_PROPERTY);
+
+	private MapChangeListener<Node, IVisualPart<? extends Node>> visualPartMapListener = new MapChangeListener<Node, IVisualPart<? extends Node>>() {
+		@Override
+		public void onChanged(
+				javafx.collections.MapChangeListener.Change<? extends Node, ? extends IVisualPart<? extends Node>> change) {
+			// keep model in sync with part hierarchy
+			if (change.wasRemoved()) {
+				if (focusedProperty.get() == change.getValueRemoved()) {
+					setFocus(null);
+				}
+			}
+		}
+	};
 
 	/**
 	 * Constructs a new {@link FocusModel}. The {@link #getFocus() focused}
@@ -92,7 +107,17 @@ public class FocusModel
 						"Inconsistent FocusModel: IContentPart present although the IViewer is changed.");
 			}
 		}
+		if (getAdaptable() != null) {
+			// unregister visual-part-map listener
+			getAdaptable().visualPartMapProperty()
+					.removeListener(visualPartMapListener);
+		}
 		super.setAdaptable(adaptable);
+		if (adaptable != null) {
+			// register for visual-part-map changes
+			adaptable.visualPartMapProperty()
+					.addListener(visualPartMapListener);
+		}
 	}
 
 	/**
