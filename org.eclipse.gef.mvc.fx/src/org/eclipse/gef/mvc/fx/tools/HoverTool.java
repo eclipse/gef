@@ -41,13 +41,13 @@ public class HoverTool extends AbstractTool {
 	 * Time in milliseconds until the hover handles are removed when the host is
 	 * not hovered anymore.
 	 */
-	public static final int UNHOVER_INTENT_MILLIS = 500;
+	public static final long UNHOVER_INTENT_MILLIS = 500;
 
 	/**
 	 * Time in milliseconds until the hover handles are created when the host is
 	 * hovered.
 	 */
-	public static final int HOVER_INTENT_MILLIS = 250;
+	public static final long HOVER_INTENT_MILLIS = 250;
 
 	/**
 	 * Distance in pixels which the mouse is allowed to move so that it is
@@ -61,16 +61,17 @@ public class HoverTool extends AbstractTool {
 	public static final Class<IOnHoverPolicy> ON_HOVER_POLICY_KEY = IOnHoverPolicy.class;
 
 	private final Map<Scene, EventHandler<MouseEvent>> hoverFilters = new IdentityHashMap<>();
+
 	// TODO: Investigate if hover intent works with multiple scenes, or if
 	// multiple scenes require special treatment.
 	private Point initialHoverIntentScreenPosition;
+
 	private PauseTransition hoverIntentDelay = new PauseTransition(
-			Duration.millis(HOVER_INTENT_MILLIS));
+			Duration.millis(getHoverIntentMillis()));
 	private PauseTransition unhoverIntentDelay = new PauseTransition(
-			Duration.millis(UNHOVER_INTENT_MILLIS));
+			Duration.millis(getUnhoverIntentMillis()));
 	private Node hoverIntent;
 	private Node potentialHoverIntent;
-
 	{
 		hoverIntentDelay.setOnFinished((ae) -> onHoverIntentDelayFinished());
 		unhoverIntentDelay
@@ -93,87 +94,19 @@ public class HoverTool extends AbstractTool {
 	 */
 	protected EventHandler<MouseEvent> createHoverFilter(final IViewer viewer) {
 		return new EventHandler<MouseEvent>() {
-
 			@Override
 			public void handle(MouseEvent event) {
-				// stop hover intent delay if mouse moved
-				if (hoverIntentDelay.getStatus().equals(Status.RUNNING)) {
-					double dx = initialHoverIntentScreenPosition.x
-							- event.getScreenX();
-					double dy = initialHoverIntentScreenPosition.y
-							- event.getScreenY();
-					if (Math.abs(dx) > HOVER_INTENT_MOUSE_MOVE_THRESHOLD || Math
-							.abs(dy) > HOVER_INTENT_MOUSE_MOVE_THRESHOLD) {
-						hoverIntentDelay.playFromStart();
-						initialHoverIntentScreenPosition.x = event.getScreenX();
-						initialHoverIntentScreenPosition.y = event.getScreenY();
-					}
-				}
-
-				// only handle events where the mouse target changes
-				if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
-						&& !event.getEventType()
-								.equals(MouseEvent.MOUSE_ENTERED_TARGET)
-						&& !event.getEventType()
-								.equals(MouseEvent.MOUSE_EXITED_TARGET)) {
+				updateHoverIntentPosition(event);
+				if (!isHoverEvent(event)) {
 					return;
 				}
-
-				// determine new target
 				EventTarget eventTarget = event.getTarget();
 				if (eventTarget instanceof Node) {
-					// determine hover policies
-					Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-							.getTargetPolicies(HoverTool.this,
-									(Node) eventTarget, ON_HOVER_POLICY_KEY);
-					getDomain().openExecutionTransaction(HoverTool.this);
-					// active policies are unnecessary because hover is not a
-					// gesture, just one event at one point in time
-					for (IOnHoverPolicy policy : policies) {
-						policy.hover(event);
-					}
-					getDomain().closeExecutionTransaction(HoverTool.this);
-
-					if (eventTarget != hoverIntent) {
-						potentialHoverIntent = (Node) eventTarget;
-						initialHoverIntentScreenPosition = new Point(
-								event.getScreenX(), event.getScreenY());
-						hoverIntentDelay.playFromStart();
-
-						if (hoverIntent != null) {
-							if (!unhoverIntentDelay.getStatus()
-									.equals(Status.RUNNING)) {
-								unhoverIntentDelay.playFromStart();
-							}
-						} else {
-							unhoverIntentDelay.stop();
-						}
-					} else {
-						hoverIntentDelay.stop();
-						unhoverIntentDelay.stop();
-					}
+					notifyHover(event, (Node) eventTarget);
+					updateHoverIntentDelays(event, (Node) eventTarget);
 				}
 			}
 		};
-	}
-
-	/**
-	 *
-	 * @param hoverIntent
-	 *            The hover intent {@link Node}.
-	 */
-	protected void delegateHoverIntent(Node hoverIntent) {
-		// determine hover policies
-		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.getTargetPolicies(HoverTool.this, this.hoverIntent,
-						ON_HOVER_POLICY_KEY);
-		getDomain().openExecutionTransaction(HoverTool.this);
-		// active policies are unnecessary because hover is not a
-		// gesture, just one event at one point in time
-		for (IOnHoverPolicy policy : policies) {
-			policy.hoverIntent(hoverIntent);
-		}
-		getDomain().closeExecutionTransaction(HoverTool.this);
 	}
 
 	@Override
@@ -201,6 +134,94 @@ public class HoverTool extends AbstractTool {
 	}
 
 	/**
+	 * Returns the duration (in millis) for which the mouse should be
+	 * stationarry to trigger hover intent.
+	 *
+	 * @return the duration (in millis) for which the mouse should be stationary
+	 *         to trigger hover intent.
+	 */
+	protected long getHoverIntentMillis() {
+		return HOVER_INTENT_MILLIS;
+	}
+
+	/**
+	 * Returns the number of pixels the mouse is allowed to move to be still
+	 * regarded as stationary.
+	 *
+	 * @return the number of pixels the mouse is allowed to move to be still
+	 *         regarded as stationary.
+	 */
+	protected double getHoverIntentMouseMoveThreshold() {
+		return HOVER_INTENT_MOUSE_MOVE_THRESHOLD;
+	}
+
+	/**
+	 * Returns the duration (in millis) for which the mouse should be moved to
+	 * trigger unhover intent.
+	 *
+	 * @return the duration (in millis) for which the mouse should be stationary
+	 *         to trigger unhover intent.
+	 */
+	protected long getUnhoverIntentMillis() {
+		return UNHOVER_INTENT_MILLIS;
+	}
+
+	/**
+	 * Returns <code>true</code> if the given {@link MouseEvent} should be
+	 * tested for changing the hover target.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent}.
+	 * @return <code>true</code> if the given {@link MouseEvent} should be
+	 *         tested for changing the hover target
+	 */
+	protected boolean isHoverEvent(MouseEvent event) {
+		return event.getEventType().equals(MouseEvent.MOUSE_MOVED)
+				|| event.getEventType().equals(MouseEvent.MOUSE_ENTERED_TARGET)
+				|| event.getEventType().equals(MouseEvent.MOUSE_EXITED_TARGET);
+	}
+
+	/**
+	 *
+	 * @param event
+	 *            The corresponding {@link MouseEvent}.
+	 * @param eventTarget
+	 *            The target {@link Node}.
+	 */
+	protected void notifyHover(MouseEvent event, Node eventTarget) {
+		// determine hover policies
+		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
+				.getTargetPolicies(HoverTool.this, eventTarget,
+						ON_HOVER_POLICY_KEY);
+		getDomain().openExecutionTransaction(HoverTool.this);
+		// active policies are unnecessary because hover is not a
+		// gesture, just one event at one point in time
+		for (IOnHoverPolicy policy : policies) {
+			policy.hover(event);
+		}
+		getDomain().closeExecutionTransaction(HoverTool.this);
+	}
+
+	/**
+	 *
+	 * @param hoverIntent
+	 *            The hover intent {@link Node}.
+	 */
+	protected void notifyHoverIntent(Node hoverIntent) {
+		// determine hover policies
+		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
+				.getTargetPolicies(HoverTool.this, this.hoverIntent,
+						ON_HOVER_POLICY_KEY);
+		getDomain().openExecutionTransaction(HoverTool.this);
+		// active policies are unnecessary because hover is not a
+		// gesture, just one event at one point in time
+		for (IOnHoverPolicy policy : policies) {
+			policy.hoverIntent(hoverIntent);
+		}
+		getDomain().closeExecutionTransaction(HoverTool.this);
+	}
+
+	/**
 	 * Callback method that is invoked when the mouse was stationary over a
 	 * visual for some amount of time.
 	 */
@@ -208,7 +229,7 @@ public class HoverTool extends AbstractTool {
 		unhoverIntentDelay.stop();
 		hoverIntent = potentialHoverIntent;
 		potentialHoverIntent = null;
-		delegateHoverIntent(hoverIntent);
+		notifyHoverIntent(hoverIntent);
 	}
 
 	/**
@@ -216,7 +237,56 @@ public class HoverTool extends AbstractTool {
 	 * not move over the current hover intent for some amount of time.
 	 */
 	protected void onUnhoverIntentDelayFinished() {
-		delegateHoverIntent(null);
+		notifyHoverIntent(null);
 		hoverIntent = null;
+	}
+
+	/**
+	 * Updates hover intent delays depending on the given event and hovered
+	 * node.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent}.
+	 * @param eventTarget
+	 *            The hovered {@link Node}.
+	 */
+	protected void updateHoverIntentDelays(MouseEvent event, Node eventTarget) {
+		if (eventTarget != hoverIntent) {
+			potentialHoverIntent = eventTarget;
+			initialHoverIntentScreenPosition = new Point(event.getScreenX(),
+					event.getScreenY());
+			hoverIntentDelay.playFromStart();
+
+			if (hoverIntent != null) {
+				if (!unhoverIntentDelay.getStatus().equals(Status.RUNNING)) {
+					unhoverIntentDelay.playFromStart();
+				}
+			} else {
+				unhoverIntentDelay.stop();
+			}
+		} else {
+			hoverIntentDelay.stop();
+			unhoverIntentDelay.stop();
+		}
+	}
+
+	/**
+	 * Updates the hover intent position (and restarts the hover intent delay)
+	 * if the mouse was moved too much.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent}.
+	 */
+	protected void updateHoverIntentPosition(MouseEvent event) {
+		if (hoverIntentDelay.getStatus().equals(Status.RUNNING)) {
+			double dx = initialHoverIntentScreenPosition.x - event.getScreenX();
+			double dy = initialHoverIntentScreenPosition.y - event.getScreenY();
+			double threshold = getHoverIntentMouseMoveThreshold();
+			if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+				hoverIntentDelay.playFromStart();
+				initialHoverIntentScreenPosition.x = event.getScreenX();
+				initialHoverIntentScreenPosition.y = event.getScreenY();
+			}
+		}
 	}
 }
