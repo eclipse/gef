@@ -18,8 +18,6 @@ import org.eclipse.gef.fx.listeners.VisualChangeListener;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -49,23 +47,13 @@ abstract public class AbstractFeedbackPart<V extends Node>
 		}
 	};
 
-	private ChangeListener<? super Boolean> anchorageActivationListener = new ChangeListener<Boolean>() {
-		@Override
-		public void changed(ObservableValue<? extends Boolean> observable,
-				Boolean oldValue, Boolean newValue) {
-			if (!newValue.booleanValue()) {
-				System.err.println("Inconsistent "
-						+ AbstractFeedbackPart.this.getClass().getSimpleName()
-						+ ": Anchorage is deactivated.");
-				// FIXME: IntendedHoverModel (see Bugzilla #512715)
-				// FIXME: Remove syserr and throw exception when
-				// IntendedHoverModel is in use.
-				// throw new IllegalStateException("Inconsistent "
-				// + AbstractHandlePart.this.getClass().getSimpleName()
-				// + ": Anchorage is deactivated.");
-			}
-		}
-	};
+	/**
+	 * Constructs a new {@link AbstractFeedbackPart} and disables refreshing of
+	 * visuals, which is enabled as soon as an anchorage is available.
+	 */
+	public AbstractFeedbackPart() {
+		setRefreshVisual(false);
+	}
 
 	@Override
 	protected void doAddChildVisual(IVisualPart<? extends Node> child,
@@ -77,6 +65,8 @@ abstract public class AbstractFeedbackPart<V extends Node>
 	@Override
 	protected void doAttachToAnchorageVisual(
 			IVisualPart<? extends Node> anchorage, String role) {
+		setRefreshVisual(true);
+
 		// we only add one visual change listener per anchorage, so we need to
 		// keep track of the number of links to an anchorage (roles)
 		int count = anchorageLinkCount.get(anchorage) == null ? 0
@@ -115,9 +105,6 @@ abstract public class AbstractFeedbackPart<V extends Node>
 				connection.pointsUnmodifiableProperty()
 						.addListener(geometryListener);
 			}
-			// also register listener on the active property of the anchorage to
-			// deactivate this part once an anchorage is no longer active
-			anchorage.activeProperty().addListener(anchorageActivationListener);
 		}
 		anchorageLinkCount.put(anchorage, count + 1);
 	}
@@ -139,15 +126,17 @@ abstract public class AbstractFeedbackPart<V extends Node>
 				((Connection) anchorageVisual).pointsUnmodifiableProperty()
 						.removeListener(geometryListener);
 			}
-			// remove the listener from the activeProperty
-			anchorage.activeProperty()
-					.removeListener(anchorageActivationListener);
 		}
 
 		if (count > 1) {
 			anchorageLinkCount.put(anchorage, count - 1);
 		} else {
 			anchorageLinkCount.remove(anchorage);
+		}
+
+		// disable visual refresh when no anchorage is available
+		if (anchorageLinkCount.isEmpty()) {
+			setRefreshVisual(false);
 		}
 	}
 
