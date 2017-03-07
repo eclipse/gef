@@ -55,11 +55,13 @@ public class HoverModel
 				javafx.collections.MapChangeListener.Change<? extends Node, ? extends IVisualPart<? extends Node>> change) {
 			// keep model in sync with part hierarchy
 			if (change.wasRemoved()) {
-				if (hoverProperty.get() == change.getValueRemoved()) {
-					setHover(null);
+				IVisualPart<? extends Node> valueRemoved = change
+						.getValueRemoved();
+				if (hoverProperty.get() == valueRemoved) {
+					clearHover();
 				}
-				if (hoverIntentProperty.get() == change.getValueRemoved()) {
-					setHoverIntent(null);
+				if (hoverIntentProperty.get() == valueRemoved) {
+					clearHoverIntent();
 				}
 			}
 		}
@@ -84,8 +86,7 @@ public class HoverModel
 	 */
 	@Override
 	public void dispose() {
-		clearHover();
-		clearHoverIntent();
+		// setAdaptable() already clears hover and hoverIntent
 	}
 
 	/**
@@ -129,14 +130,6 @@ public class HoverModel
 
 	@Override
 	public void setAdaptable(IViewer adaptable) {
-		// The viewer can only be changed when there are no parts in this model.
-		// Otherwise, the model was/is inconsistent.
-		if (getAdaptable() != adaptable) {
-			if (hoverProperty.get() != null) {
-				throw new IllegalStateException(
-						"Inconsistent HoverModel: IVisualPart present although the IViewer is changed.");
-			}
-		}
 		if (getAdaptable() != null) {
 			// unregister visual-part-map listener
 			getAdaptable().visualPartMapProperty()
@@ -148,6 +141,9 @@ public class HoverModel
 			adaptable.visualPartMapProperty()
 					.addListener(visualPartMapListener);
 		}
+		// start with a clean HoverModel
+		clearHover();
+		clearHoverIntent();
 	}
 
 	/**

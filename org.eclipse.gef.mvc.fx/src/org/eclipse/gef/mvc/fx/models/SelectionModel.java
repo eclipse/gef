@@ -69,8 +69,10 @@ public class SelectionModel
 				javafx.collections.MapChangeListener.Change<? extends Node, ? extends IVisualPart<? extends Node>> change) {
 			// keep model in sync with part hierarchy
 			if (change.wasRemoved()) {
-				if (selection.contains(change.getValueRemoved())) {
-					selection.remove(change.getValueRemoved());
+				IVisualPart<? extends Node> valueRemoved = change
+						.getValueRemoved();
+				if (selection.contains(valueRemoved)) {
+					selection.remove(valueRemoved);
 				}
 			}
 		}
@@ -140,7 +142,7 @@ public class SelectionModel
 	 */
 	@Override
 	public void dispose() {
-		selection.clear();
+		// setAdaptable() already clears the selection
 	}
 
 	/**
@@ -268,14 +270,6 @@ public class SelectionModel
 
 	@Override
 	public void setAdaptable(IViewer adaptable) {
-		if (getAdaptable() != adaptable) {
-			// The viewer can only be changed when there are no parts in this
-			// model. Otherwise, the model was/is inconsistent.
-			if (!selection.isEmpty()) {
-				throw new IllegalStateException(
-						"Inconsistent SelectionModel: IContentParts present although the IViewer is changed.");
-			}
-		}
 		if (getAdaptable() != null) {
 			// unregister visual-part-map listener
 			getAdaptable().visualPartMapProperty()
@@ -287,6 +281,8 @@ public class SelectionModel
 			adaptable.visualPartMapProperty()
 					.addListener(visualPartMapListener);
 		}
+		// start with a clean SelectionModel
+		clearSelection();
 	}
 
 	/**

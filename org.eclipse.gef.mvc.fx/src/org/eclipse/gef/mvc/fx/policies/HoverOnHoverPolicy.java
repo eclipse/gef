@@ -15,6 +15,7 @@ package org.eclipse.gef.mvc.fx.policies;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IHandlePart;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -49,6 +50,26 @@ public class HoverOnHoverPolicy extends AbstractInteractionPolicy
 		getHoverModel().setHover(getHost());
 	}
 
+	@Override
+	public void hoverIntent(Node hoverIntent) {
+		HoverModel hoverModel = getHoverModel();
+		if (!isRegistered(hoverIntent) && getHost() instanceof IRootPart) {
+			hoverModel.setHoverIntent(null);
+		} else if (isRegisteredForHost(hoverIntent)) {
+			if (getHost() instanceof IHandlePart) {
+				if (!getHost().getAnchoragesUnmodifiable()
+						.containsKey(hoverModel.getHoverIntent())) {
+					hoverModel.setHoverIntent(null);
+				}
+			} else if (getHost() instanceof IContentPart) {
+				hoverModel.setHoverIntent(
+						(IContentPart<? extends Node>) getHost());
+			} else if (getHost() instanceof IRootPart) {
+				hoverModel.setHoverIntent(null);
+			}
+		}
+	}
+
 	/**
 	 * Returns <code>true</code> if the given {@link MouseEvent} should trigger
 	 * hover. Otherwise returns <code>false</code>. Per default, returns
@@ -63,34 +84,5 @@ public class HoverOnHoverPolicy extends AbstractInteractionPolicy
 	protected boolean isHover(MouseEvent event) {
 		return !isRegistered(event.getTarget())
 				|| isRegisteredForHost(event.getTarget());
-	}
-
-	@Override
-	public void hoverIntent(Node hoverIntent) {
-		if (hoverIntent != null && isRegistered(hoverIntent)
-				&& !isRegisteredForHost(hoverIntent)) {
-			return;
-		}
-		if (getHost() == null || getHost().getViewer() == null) {
-			// should not happen?
-			return;
-		}
-
-		HoverModel hoverModel = getHoverModel();
-		if (hoverIntent == null) {
-			hoverModel.setHoverIntent(null);
-		} else {
-			if (getHost() instanceof IHandlePart) {
-				if (!getHost().getAnchoragesUnmodifiable()
-						.containsKey(hoverModel.getHoverIntent())) {
-					hoverModel.setHoverIntent(null);
-				}
-			} else if (getHost() instanceof IContentPart) {
-				hoverModel.setHoverIntent(
-						(IContentPart<? extends Node>) getHost());
-			} else {
-				hoverModel.setHoverIntent(null);
-			}
-		}
 	}
 }

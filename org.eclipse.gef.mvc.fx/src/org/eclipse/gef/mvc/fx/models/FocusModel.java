@@ -73,7 +73,7 @@ public class FocusModel
 	 */
 	@Override
 	public void dispose() {
-		focusedProperty.set(null);
+		// setAdaptable() already clears focus
 	}
 
 	/**
@@ -99,14 +99,6 @@ public class FocusModel
 
 	@Override
 	public void setAdaptable(IViewer adaptable) {
-		// The viewer can only be changed when there are no parts in this model.
-		// Otherwise, the model was/is inconsistent.
-		if (getAdaptable() != adaptable) {
-			if (focusedProperty.get() != null) {
-				throw new IllegalStateException(
-						"Inconsistent FocusModel: IContentPart present although the IViewer is changed.");
-			}
-		}
 		if (getAdaptable() != null) {
 			// unregister visual-part-map listener
 			getAdaptable().visualPartMapProperty()
@@ -118,6 +110,8 @@ public class FocusModel
 			adaptable.visualPartMapProperty()
 					.addListener(visualPartMapListener);
 		}
+		// start with a clean FocusModel
+		setFocus(null);
 	}
 
 	/**

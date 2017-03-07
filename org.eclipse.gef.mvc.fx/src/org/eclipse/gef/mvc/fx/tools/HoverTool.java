@@ -38,12 +38,6 @@ import javafx.util.Duration;
 public class HoverTool extends AbstractTool {
 
 	/**
-	 * Time in milliseconds until the hover handles are removed when the host is
-	 * not hovered anymore.
-	 */
-	public static final long UNHOVER_INTENT_MILLIS = 500;
-
-	/**
 	 * Time in milliseconds until the hover handles are created when the host is
 	 * hovered.
 	 */
@@ -64,18 +58,14 @@ public class HoverTool extends AbstractTool {
 
 	// TODO: Investigate if hover intent works with multiple scenes, or if
 	// multiple scenes require special treatment.
-	private Point initialHoverIntentScreenPosition;
-
+	private Point hoverIntentScreenPosition;
 	private PauseTransition hoverIntentDelay = new PauseTransition(
 			Duration.millis(getHoverIntentMillis()));
-	private PauseTransition unhoverIntentDelay = new PauseTransition(
-			Duration.millis(getUnhoverIntentMillis()));
 	private Node hoverIntent;
 	private Node potentialHoverIntent;
+
 	{
 		hoverIntentDelay.setOnFinished((ae) -> onHoverIntentDelayFinished());
-		unhoverIntentDelay
-				.setOnFinished((ae) -> onUnhoverIntentDelayFinished());
 	}
 
 	/**
@@ -103,7 +93,7 @@ public class HoverTool extends AbstractTool {
 				EventTarget eventTarget = event.getTarget();
 				if (eventTarget instanceof Node) {
 					notifyHover(event, (Node) eventTarget);
-					updateHoverIntentDelays(event, (Node) eventTarget);
+					updateHoverIntent(event, (Node) eventTarget);
 				}
 			}
 		};
@@ -126,7 +116,6 @@ public class HoverTool extends AbstractTool {
 	@Override
 	protected void doDeactivate() {
 		hoverIntentDelay.stop();
-		unhoverIntentDelay.stop();
 		for (Scene scene : hoverFilters.keySet()) {
 			scene.removeEventFilter(MouseEvent.ANY, hoverFilters.remove(scene));
 		}
@@ -153,17 +142,6 @@ public class HoverTool extends AbstractTool {
 	 */
 	protected double getHoverIntentMouseMoveThreshold() {
 		return HOVER_INTENT_MOUSE_MOVE_THRESHOLD;
-	}
-
-	/**
-	 * Returns the duration (in millis) for which the mouse should be moved to
-	 * trigger unhover intent.
-	 *
-	 * @return the duration (in millis) for which the mouse should be stationary
-	 *         to trigger unhover intent.
-	 */
-	protected long getUnhoverIntentMillis() {
-		return UNHOVER_INTENT_MILLIS;
 	}
 
 	/**
@@ -210,7 +188,7 @@ public class HoverTool extends AbstractTool {
 	protected void notifyHoverIntent(Node hoverIntent) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.getTargetPolicies(HoverTool.this, this.hoverIntent,
+				.getTargetPolicies(HoverTool.this, hoverIntent,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverTool.this);
 		// active policies are unnecessary because hover is not a
@@ -225,20 +203,10 @@ public class HoverTool extends AbstractTool {
 	 * Callback method that is invoked when the mouse was stationary over a
 	 * visual for some amount of time.
 	 */
-	protected void onHoverIntentDelayFinished() {
-		unhoverIntentDelay.stop();
+	private void onHoverIntentDelayFinished() {
 		hoverIntent = potentialHoverIntent;
 		potentialHoverIntent = null;
 		notifyHoverIntent(hoverIntent);
-	}
-
-	/**
-	 * Callback method that is invoked when the mouse was not stationary and did
-	 * not move over the current hover intent for some amount of time.
-	 */
-	protected void onUnhoverIntentDelayFinished() {
-		notifyHoverIntent(null);
-		hoverIntent = null;
 	}
 
 	/**
@@ -250,23 +218,14 @@ public class HoverTool extends AbstractTool {
 	 * @param eventTarget
 	 *            The hovered {@link Node}.
 	 */
-	protected void updateHoverIntentDelays(MouseEvent event, Node eventTarget) {
+	private void updateHoverIntent(MouseEvent event, Node eventTarget) {
 		if (eventTarget != hoverIntent) {
 			potentialHoverIntent = eventTarget;
-			initialHoverIntentScreenPosition = new Point(event.getScreenX(),
+			hoverIntentScreenPosition = new Point(event.getScreenX(),
 					event.getScreenY());
 			hoverIntentDelay.playFromStart();
-
-			if (hoverIntent != null) {
-				if (!unhoverIntentDelay.getStatus().equals(Status.RUNNING)) {
-					unhoverIntentDelay.playFromStart();
-				}
-			} else {
-				unhoverIntentDelay.stop();
-			}
 		} else {
 			hoverIntentDelay.stop();
-			unhoverIntentDelay.stop();
 		}
 	}
 
@@ -277,15 +236,15 @@ public class HoverTool extends AbstractTool {
 	 * @param event
 	 *            The {@link MouseEvent}.
 	 */
-	protected void updateHoverIntentPosition(MouseEvent event) {
+	private void updateHoverIntentPosition(MouseEvent event) {
 		if (hoverIntentDelay.getStatus().equals(Status.RUNNING)) {
-			double dx = initialHoverIntentScreenPosition.x - event.getScreenX();
-			double dy = initialHoverIntentScreenPosition.y - event.getScreenY();
+			double dx = hoverIntentScreenPosition.x - event.getScreenX();
+			double dy = hoverIntentScreenPosition.y - event.getScreenY();
 			double threshold = getHoverIntentMouseMoveThreshold();
 			if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
 				hoverIntentDelay.playFromStart();
-				initialHoverIntentScreenPosition.x = event.getScreenX();
-				initialHoverIntentScreenPosition.y = event.getScreenY();
+				hoverIntentScreenPosition.x = event.getScreenX();
+				hoverIntentScreenPosition.y = event.getScreenY();
 			}
 		}
 	}
