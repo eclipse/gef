@@ -158,6 +158,11 @@ public class MarqueeOnDragPolicy extends AbstractInteractionPolicy
 			removeFeedback();
 		}
 		feedback = new AbstractFeedbackPart<Rectangle>() {
+			@Override
+			protected void doActivate() {
+				super.doActivate();
+				setRefreshVisual(true);
+			}
 
 			@Override
 			protected Rectangle doCreateVisual() {
@@ -186,7 +191,6 @@ public class MarqueeOnDragPolicy extends AbstractInteractionPolicy
 				visual.setWidth(bbox[2] - bbox[0]);
 				visual.setHeight(bbox[3] - bbox[1]);
 			}
-
 		};
 		getHost().getRoot().addChild(feedback);
 	}
