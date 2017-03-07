@@ -167,7 +167,7 @@ class DotAttributes {
 		// attribute nested below Subgraph
 		val Subgraph subgraph = eObject.getContainerOfType(Subgraph)
 		if (subgraph !== null) {
-			if (subgraph.getName.toValue.startsWith("cluster")) {
+			if (subgraph.name!==null && subgraph.name.toValue.startsWith("cluster")) {
 				return Context.CLUSTER
 			}
 			return Context.SUBGRAPH

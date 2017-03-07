@@ -531,6 +531,20 @@ public class DotValidatorTests {
 		assertStyleError(text, errorProneText, message);
 	}
 
+	@Test
+	public void testInvalidSubgraphRankAttribute() throws Exception {
+		String text = "graph{subgraph{rank=foo}}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.RANK__S,
+				"The value 'foo' is not a syntactically correct rankType: Value has to be one of 'same', 'min', 'source', 'max', 'sink'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
 	private DotAst parse(String fileName) {
 		DotAst dotAst = null;
 		String fileContents = DotFileUtils
