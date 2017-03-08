@@ -28,6 +28,7 @@ import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
+import org.eclipse.gef.dot.internal.language.ranktype.RankType;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
@@ -114,6 +115,13 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	public void fixPagedirAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		provideQuickfixes(Pagedir.values(), "graph pagedir", issue, //$NON-NLS-1$
+				acceptor);
+	}
+
+	@Fix(DotAttributes.RANK__S)
+	public void fixRankAttributeValue(final Issue issue,
+			IssueResolutionAcceptor acceptor) {
+		provideQuickfixes(RankType.values(), "subgraph rankType", issue, //$NON-NLS-1$
 				acceptor);
 	}
 

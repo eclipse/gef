@@ -764,7 +764,55 @@ public class DotQuickfixTests {
 
 	@Test
 	public void subgraph_rank() {
-		// TODO: implement
+		// test unquoted attribute value
+		String text = "graph{subgraph{rank=foo}}";
+
+		// expectedQuickfixes[0]: expected quickfix label
+		// expectedQuickfixes[1]: expected quickfix description
+		// expectedQuickfixes[2]: expected text after quickfix application
+		String[][] expectedQuickfixes = {
+				{ "Replace 'foo' with 'same'.",
+						"Use valid 'same' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=same}}" },
+				{ "Replace 'foo' with 'min'.",
+						"Use valid 'min' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=min}}" },
+				{ "Replace 'foo' with 'source'.",
+						"Use valid 'source' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=source}}" },
+				{ "Replace 'foo' with 'max'.",
+						"Use valid 'max' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=max}}" },
+				{ "Replace 'foo' with 'sink'.",
+						"Use valid 'sink' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=sink}}" } };
+
+		assertQuickfixes(text, expectedQuickfixes);
+
+		// test quoted attribute value
+		text = "graph{subgraph{rank=\"foo\"}}";
+
+		// expectedQuickfixes[0]: expected quickfix label
+		// expectedQuickfixes[1]: expected quickfix description
+		// expectedQuickfixes[2]: expected text after quickfix application
+		expectedQuickfixes = new String[][] {
+				{ "Replace 'foo' with 'same'.",
+						"Use valid 'same' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=\"same\"}}" },
+				{ "Replace 'foo' with 'min'.",
+						"Use valid 'min' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=\"min\"}}" },
+				{ "Replace 'foo' with 'source'.",
+						"Use valid 'source' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=\"source\"}}" },
+				{ "Replace 'foo' with 'max'.",
+						"Use valid 'max' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=\"max\"}}" },
+				{ "Replace 'foo' with 'sink'.",
+						"Use valid 'sink' instead of invalid 'foo' subgraph rankType.",
+						"graph{subgraph{rank=\"sink\"}}" } };
+
+		assertQuickfixes(text, expectedQuickfixes);
 	}
 
 	private void assertQuickfixes(String text, String[][] expected) {
