@@ -35,6 +35,7 @@ import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
@@ -367,15 +368,38 @@ public final class Graph implements IAttributeStore {
 	 */
 	public Graph(Map<String, Object> attributes, Collection<? extends Node> nodes, Collection<? extends Edge> edges) {
 		this.attributesProperty.putAll(attributes);
+		this.nodesProperty.addListener(new ListChangeListener<Node>() {
+
+			@Override
+			public void onChanged(ListChangeListener.Change<? extends Node> c) {
+				while (c.next()) {
+					for (Node n : c.getAddedSubList()) {
+						n.setGraph(Graph.this);
+					}
+					for (Node n : c.getRemoved()) {
+						n.setGraph(null);
+					}
+				}
+
+			}
+		});
+		this.edgesProperty.addListener(new ListChangeListener<Edge>() {
+
+			@Override
+			public void onChanged(ListChangeListener.Change<? extends Edge> c) {
+				while (c.next()) {
+					for (Edge e : c.getAddedSubList()) {
+						e.setGraph(Graph.this);
+					}
+					for (Edge e : c.getRemoved()) {
+						e.setGraph(null);
+					}
+				}
+
+			}
+		});
 		this.nodesProperty.addAll(nodes);
 		this.edgesProperty.addAll(edges);
-		// set graph on nodes and edgesProperty
-		for (Node n : nodes) {
-			n.setGraph(this);
-		}
-		for (Edge e : edges) {
-			e.setGraph(this);
-		}
 	}
 
 	@Override

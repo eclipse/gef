@@ -452,7 +452,10 @@ public class Node implements IAttributeStore {
 	 * @param graph
 	 *            The new {@link Graph} for this {@link Node}.
 	 */
-	public void setGraph(Graph graph) {
+	void setGraph(Graph graph) {
+		if (!graph.getNodes().contains(this)) {
+			throw new IllegalArgumentException("Node is not contained in graph " + graph);
+		}
 		this.graph = graph;
 	}
 

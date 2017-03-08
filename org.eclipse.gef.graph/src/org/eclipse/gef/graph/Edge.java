@@ -296,7 +296,10 @@ public class Edge implements IAttributeStore {
 	 * @param graph
 	 *            The new {@link Graph} for this {@link Edge}.
 	 */
-	public void setGraph(Graph graph) {
+	void setGraph(Graph graph) {
+		if (!graph.getEdges().contains(this)) {
+			throw new IllegalArgumentException("Edge is not contained in graph " + graph);
+		}
 		this.graph = graph;
 	}
 

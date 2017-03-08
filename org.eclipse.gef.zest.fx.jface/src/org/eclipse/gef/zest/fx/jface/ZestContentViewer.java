@@ -356,7 +356,6 @@ public class ZestContentViewer extends ContentViewer {
 		for (Object node : contentNodes) {
 			Node graphNode = createNode(node, graphContentProvider, labelProvider);
 			graph.getNodes().add(graphNode);
-			graphNode.setGraph(graph);
 		}
 		// create edges
 		for (Object contentSourceNode : contentNodes) {
@@ -367,7 +366,6 @@ public class ZestContentViewer extends ContentViewer {
 					Node targetNode = contentNodeMap.get(contentTargetNode);
 					Edge edge = createEdge(labelProvider, contentSourceNode, sourceNode, contentTargetNode, targetNode);
 					graph.getEdges().add(edge);
-					edge.setGraph(graph);
 				}
 			}
 		}
