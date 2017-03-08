@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 
 /**
@@ -24,7 +23,6 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 
 	private ITransactionalOperation operation;
 	private boolean initialized;
-	private boolean isLocallyExecuteOperation = false;
 
 	/**
 	 * Checks whether this {@link AbstractTransactionPolicy} is initialized and
@@ -57,13 +55,19 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 		// the visuals and content reflect the target state of the operation.
 		// After this, we may safely omit the operation as commit operation in
 		// case its a no-op.
-		locallyExecuteOperation();
-		// after commit, we need to be re-initialized
-		initialized = false;
-		// clear operation and return current one (and formerly pushed
-		// operations)
-		ITransactionalOperation commit = getOperation();
-		operation = null;
+		ITransactionalOperation commit = null;
+		try {
+			locallyExecuteOperation();
+			// clear operation and return current one (and formerly pushed
+			// operations)
+			commit = getOperation();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			// after commit, we need to be re-initialized
+			initialized = false;
+			operation = null;
+		}
 		if (commit != null) {
 			if (!commit.isNoOp()) {
 				return commit;
@@ -82,25 +86,6 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 	 *         changes.
 	 */
 	protected abstract ITransactionalOperation createOperation();
-
-	/**
-	 * Locally executes the {@link ITransactionalOperation} that is updated by
-	 * this policy, i.e. not on the operation history. Maybe used in the "work"
-	 * operations of subclasses.
-	 */
-	protected void doLocallyExecuteOperation() {
-		try {
-			// XXX: We may not skip the local execution of the operation
-			// if it is a no-op, because the visual or content
-			// might already be in a state that is diverse from the initial
-			// state of the operation (so execute might have an actual affect).
-			if (operation != null) {
-				operation.execute(null, null);
-			}
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
-		}
-	}
 
 	/**
 	 * Returns the {@link ITransactionalOperation} that is used to encapsulate
@@ -123,7 +108,6 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 	public void init() {
 		checkUninitialized();
 		initialized = true;
-		setLocallyExecuteOperation(true);
 		operation = createOperation();
 	}
 
@@ -139,27 +123,24 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 	}
 
 	/**
-	 * Returns <code>true</code> if the local execution of operations is enabled
-	 * for this {@link AbstractTransactionPolicy}. Otherwise returns
-	 * <code>false</code>.
-	 *
-	 * @return <code>true</code> if the local execution of operations is enabled
-	 *         for this {@link AbstractTransactionPolicy}, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean isLocallyExecuteOperation() {
-		return isLocallyExecuteOperation;
-	}
-
-	/**
 	 * Locally executes the {@link ITransactionalOperation} that is updated by
 	 * this policy, i.e. not on the operation history. Maybe used in the "work"
 	 * operations of subclasses.
-	 *
 	 */
-	protected final void locallyExecuteOperation() {
-		if (isLocallyExecuteOperation()) {
-			doLocallyExecuteOperation();
+	protected void locallyExecuteOperation() {
+		try {
+			// XXX: We may not skip the local execution of the operation
+			// if it is a no-op, because the visual or content
+			// might already be in a state that is diverse from the initial
+			// state of the operation (so execute might have an actual affect).
+			if (operation != null) {
+				operation.execute(null, null);
+			}
+		} catch (Exception e) {
+			if (e instanceof RuntimeException) {
+				throw (RuntimeException) e;
+			}
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -168,9 +149,6 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 	 * this policy, i.e. not on the operation history.
 	 */
 	private void locallyUndoOperation() {
-		if (!isLocallyExecuteOperation()) {
-			return;
-		}
 		try {
 			// XXX: We may not skip undo in case the operation is a
 			// no-op when executing it locally, because the visual or content
@@ -179,8 +157,11 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 			if (operation != null) {
 				operation.undo(null, null);
 			}
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
+		} catch (Exception e) {
+			if (e instanceof RuntimeException) {
+				throw (RuntimeException) e;
+			}
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -194,21 +175,12 @@ public abstract class AbstractTransactionPolicy extends AbstractPolicy {
 		initialized = false;
 		// clear operation and return current one (and formerly pushed
 		// operations)
-		locallyUndoOperation();
-		operation = null;
+		try {
+			locallyUndoOperation();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			operation = null;
+		}
 	}
-
-	/**
-	 * Enables or disables the local execution of operations for this
-	 * {@link AbstractTransactionPolicy} depending on the given flag.
-	 *
-	 * @param isLocallyExecuteOperation
-	 *            <code>true</code> in order to enable the local execution of
-	 *            operations, <code>false</code> in order to disable the local
-	 *            execution of operations.
-	 */
-	public void setLocallyExecuteOperation(boolean isLocallyExecuteOperation) {
-		this.isLocallyExecuteOperation = isLocallyExecuteOperation;
-	}
-
 }
