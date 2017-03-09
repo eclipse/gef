@@ -110,6 +110,11 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 			@Override
 			public BezierCurve[] get() {
 				IGeometry geometry = geometryProvider.get();
+
+				if (geometry == null) {
+					return new BezierCurve[] {};
+				}
+
 				if (geometry instanceof IShape) {
 					List<BezierCurve> segments = new ArrayList<>();
 					for (ICurve os : ((IShape) geometry).getOutlineSegments()) {
@@ -190,9 +195,10 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 						// transform to scene
 						if (boundsInLocal != null) {
 							Rectangle boundsInScene = FX2Geometry
-									.toRectangle(part.getVisual().localToScene(
-											Geometry2FX.toFXBounds(boundsInLocal
-													.getBounds())));
+									.toRectangle(part.getVisual()
+											.localToScene(Geometry2FX
+													.toFXBounds(boundsInLocal
+															.getBounds())));
 							if (bounds == null) {
 								bounds = boundsInScene;
 							} else {
@@ -212,7 +218,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 
 		// check if provider is OK
 		int segments = segmentsProvider.get().length;
-		if (segments != 4) {
+		if (segments != 0 && segments != 4) {
 			throw new IllegalStateException(
 					"The multi selection handle geometry provider is expected to return bounds around the selection. However, instead of 4 segments, the provider provides "
 							+ segments + " segments.");
@@ -220,7 +226,7 @@ public class DefaultSelectionHandlePartFactory implements IHandlePartFactory {
 
 		// create a handle for each start point of the segments
 		List<IHandlePart<? extends Node>> handleParts = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < segments; i++) {
 			SquareSegmentHandlePart part = injector
 					.getInstance(SquareSegmentHandlePart.class);
 			part.setSegmentsProvider(segmentsProvider);
