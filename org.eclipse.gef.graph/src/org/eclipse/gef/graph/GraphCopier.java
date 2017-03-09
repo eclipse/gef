@@ -115,7 +115,6 @@ public class GraphCopier {
 			Node outputNode = copyNode(inputNode);
 			if (outputNode != null) {
 				inputToOutputNodes.put(inputNode, outputNode);
-				outputNode.setGraph(outputGraph);
 				outputGraph.getNodes().add(outputNode);
 			}
 		}
@@ -124,7 +123,6 @@ public class GraphCopier {
 			Edge outputEdge = copyEdge(inputEdge);
 			if (outputEdge != null) {
 				inputToOutputEdges.put(inputEdge, outputEdge);
-				outputEdge.setGraph(outputGraph);
 				outputGraph.getEdges().add(outputEdge);
 			}
 		}
