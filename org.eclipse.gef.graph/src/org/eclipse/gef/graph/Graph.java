@@ -311,20 +311,20 @@ public final class Graph implements IAttributeStore {
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
 	private final ReadOnlyListWrapper<Node> nodesProperty = new ReadOnlyListWrapperEx<>(this, NODES_PROPERTY,
-			CollectionUtils.<Node>observableArrayList());
+			CollectionUtils.<Node> observableArrayList());
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
 	private final ReadOnlyListWrapper<Edge> edgesProperty = new ReadOnlyListWrapperEx<>(this, EDGES_PROPERTY,
-			CollectionUtils.<Edge>observableArrayList());
+			CollectionUtils.<Edge> observableArrayList());
 
 	/**
 	 * Attributes of this {@link Graph}.
 	 */
 	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
-			ATTRIBUTES_PROPERTY, FXCollections.<String, Object>observableHashMap());
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 
 	/**
 	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>
@@ -369,7 +369,6 @@ public final class Graph implements IAttributeStore {
 	public Graph(Map<String, Object> attributes, Collection<? extends Node> nodes, Collection<? extends Edge> edges) {
 		this.attributesProperty.putAll(attributes);
 		this.nodesProperty.addListener(new ListChangeListener<Node>() {
-
 			@Override
 			public void onChanged(ListChangeListener.Change<? extends Node> c) {
 				while (c.next()) {
@@ -380,11 +379,9 @@ public final class Graph implements IAttributeStore {
 						n.setGraph(null);
 					}
 				}
-
 			}
 		});
 		this.edgesProperty.addListener(new ListChangeListener<Edge>() {
-
 			@Override
 			public void onChanged(ListChangeListener.Change<? extends Edge> c) {
 				while (c.next()) {
@@ -395,7 +392,6 @@ public final class Graph implements IAttributeStore {
 						e.setGraph(null);
 					}
 				}
-
 			}
 		});
 		this.nodesProperty.addAll(nodes);

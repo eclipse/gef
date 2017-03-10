@@ -317,6 +317,10 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 		Point endPoint = ZestProperties.getEndPoint(edge);
 		List<Point> controlPoints = ZestProperties.getControlPoints(edge);
 
+		if (startPoint == null || endPoint == null) {
+			return bendPoints;
+		}
+
 		// add start bend point
 		if (edge.getSource() == null) {
 			bendPoints.add(new BendPoint(startPoint));
