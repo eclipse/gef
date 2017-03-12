@@ -45,6 +45,9 @@ class DotTestHtmlLabels {
 	'''
 
 	public static val FONT_TAG_CONTAINS_TABLE_TAG = '''
+		<!--
+			Html label with custom font
+		-->
 		<font color="green">
 			<table>
 				<tr>

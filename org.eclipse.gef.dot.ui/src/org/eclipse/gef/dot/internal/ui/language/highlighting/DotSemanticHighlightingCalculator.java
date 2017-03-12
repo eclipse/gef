@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - minor refactorings
+ *     Tamas Miklossy  (itemis AG) - improve support for html-label highlighting
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
@@ -18,6 +18,7 @@ import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.NodeId;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.language.dot.Port;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.xtext.AbstractRule;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.RuleCall;
@@ -64,7 +65,37 @@ public class DotSemanticHighlightingCalculator
 					acceptor.addPosition(node.getOffset(), node.getLength(),
 							DotHighlightingConfiguration.EDGE_OP_ID);
 				}
+				if (r.getName().equals("HTML_STRING")) { //$NON-NLS-1$
+					provideHighlightingForHtmlString(node, acceptor);
+				}
 			}
 		}
+	}
+
+	private void provideHighlightingForHtmlString(INode node,
+			IHighlightedPositionAcceptor acceptor) {
+
+		// highlight the leading '<' symbol
+		int openingSymbolOffset = node.getOffset();
+		acceptor.addPosition(openingSymbolOffset, 1,
+				DotHighlightingConfiguration.HTML_TAG);
+
+		// highlight the trailing '>' symbol
+		int closingSymbolOffset = node.getOffset() + node.getText().length()
+				- 1;
+		acceptor.addPosition(closingSymbolOffset, 1,
+				DotHighlightingConfiguration.HTML_TAG);
+
+		// trim the leading '<' and trailing '>' symbols
+		String htmlString = node.getText().substring(1,
+				node.getText().length() - 1);
+
+		// delegate the highlighting of the the html-label substring to the
+		// corresponding sub-grammar highlighter
+		DotSubgrammarHighlighter htmlLabelHighlighter = new DotSubgrammarHighlighter(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
+		htmlLabelHighlighter.provideHightlightingFor(htmlString,
+				node.getOffset() + 1, acceptor);
+
 	}
 }

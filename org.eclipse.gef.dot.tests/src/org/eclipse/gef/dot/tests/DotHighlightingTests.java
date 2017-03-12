@@ -77,9 +77,39 @@ public class DotHighlightingTests extends AbstractEditorTest {
 	}
 
 	@Test
-	public void htmlString() {
-		test(DotTestGraphs.NODE_LABEL_HTML_LIKE(DotTestHtmlLabels.COMMENT)
-				.toString(), "<B>Bold Label</B>", SWT.NORMAL, 153, 76, 0);
+	public void htmlLabel() {
+		String text = DotTestGraphs
+				.NODE_LABEL_HTML_LIKE(
+						DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG)
+				.toString();
+
+		// test highlighting of Html tag
+		test(text, "<", SWT.NORMAL, 63, 127, 127);
+		test(text, "<font", SWT.NORMAL, 63, 127, 127);
+		test(text, "<table>", SWT.NORMAL, 63, 127, 127);
+		test(text, "<tr>", SWT.NORMAL, 63, 127, 127);
+		test(text, "<td>", SWT.NORMAL, 63, 127, 127);
+		test(text, "</td>", SWT.NORMAL, 63, 127, 127);
+		test(text, "</tr>", SWT.NORMAL, 63, 127, 127);
+		test(text, "</table>", SWT.NORMAL, 63, 127, 127);
+		test(text, "</font>", SWT.NORMAL, 63, 127, 127);
+
+		// test highlighting of Html attribute name
+		test(text, "color", SWT.NORMAL, 127, 0, 127);
+
+		// test highlighting of Html attribute equal sign
+		test(text, "=", SWT.NORMAL, 0, 0, 0);
+
+		// test highlighting of Html attribute value
+		test(text, "\"green\"", SWT.ITALIC, 42, 0, 255);
+
+		// test highlighting of Html content
+		test(text, "text", SWT.NORMAL, 0, 0, 0);
+
+		// test highlighting of Html comment
+		test(text, "<!--", SWT.NORMAL, 63, 95, 191);
+		test(text, "Html label with custom font", SWT.NORMAL, 63, 95, 191);
+		test(text, "<!--", SWT.NORMAL, 63, 95, 191);
 	}
 
 	@Test

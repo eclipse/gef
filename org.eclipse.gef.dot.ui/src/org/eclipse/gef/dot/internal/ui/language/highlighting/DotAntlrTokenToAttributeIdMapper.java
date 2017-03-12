@@ -35,8 +35,6 @@ public class DotAntlrTokenToAttributeIdMapper
 			return DotHighlightingConfiguration.NUMERAL_ID;
 		case "RULE_QUOTED_STRING": //$NON-NLS-1$
 			return DotHighlightingConfiguration.QUOTED_STRING_ID;
-		case "RULE_HTML_STRING": //$NON-NLS-1$
-			return DotHighlightingConfiguration.HTML_STRING_ID;
 		default:
 			return super.calculateId(tokenName, tokenType);
 		}

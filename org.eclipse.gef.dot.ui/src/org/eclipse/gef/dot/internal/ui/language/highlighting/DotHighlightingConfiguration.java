@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - minor refactorings
+ *     Tamas Miklossy  (itemis AG) - improve support for html-label highlighting
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
@@ -28,13 +28,18 @@ public class DotHighlightingConfiguration
 
 	public static final String EDGE_OP_ID = "edge_op"; //$NON-NLS-1$
 
-	public static final String HTML_STRING_ID = "html_string"; //$NON-NLS-1$
 	public static final String QUOTED_STRING_ID = "quoted_string"; //$NON-NLS-1$
 	public static final String NUMERAL_ID = "numeral"; //$NON-NLS-1$
 
+	public static final String HTML_TAG = "html_tag"; //$NON-NLS-1$
+	public static final String HTML_ATTRIBUTE_NAME = "html_attribute_name"; //$NON-NLS-1$
+	public static final String HTML_ATTRIBUTE_EQUAL_SIGN = "html_attribute_equal_sign"; //$NON-NLS-1$
+	public static final String HTML_ATTRIBUTE_VALUE = "html_attribute_value"; //$NON-NLS-1$
+	public static final String HTML_CONTENT = "html_content"; //$NON-NLS-1$
+	public static final String HTML_COMMENT = "html_comment"; //$NON-NLS-1$
+
 	@Override
 	public void configure(IHighlightingConfigurationAcceptor acceptor) {
-
 		// semantic highlighting
 		acceptor.acceptDefaultHighlighting(GRAPH_NAME_ID, "Graph Id", //$NON-NLS-1$
 				graphIdTextStyle());
@@ -59,9 +64,6 @@ public class DotHighlightingConfiguration
 				quotedStringTextStyle());
 		acceptor.acceptDefaultHighlighting(STRING_ID, "(Unquoted) String", //$NON-NLS-1$
 				stringTextStyle());
-		acceptor.acceptDefaultHighlighting(HTML_STRING_ID, "HTML String", //$NON-NLS-1$
-				htmlStringTextStyle());
-
 		acceptor.acceptDefaultHighlighting(COMMENT_ID, "Comment", //$NON-NLS-1$
 				commentTextStyle());
 
@@ -70,6 +72,23 @@ public class DotHighlightingConfiguration
 
 		acceptor.acceptDefaultHighlighting(INVALID_TOKEN_ID, "Invalid Symbol", //$NON-NLS-1$
 				errorTextStyle());
+
+		// html-like label sub-grammar highlighting
+		acceptor.acceptDefaultHighlighting(HTML_TAG, "Html Tag", //$NON-NLS-1$
+				htmlTagStyle());
+		acceptor.acceptDefaultHighlighting(HTML_ATTRIBUTE_NAME,
+				"Html Attribute Name", //$NON-NLS-1$
+				htmlAttributeNameStyle());
+		acceptor.acceptDefaultHighlighting(HTML_ATTRIBUTE_EQUAL_SIGN,
+				"Html Attribute Equal Sign", //$NON-NLS-1$
+				htmlAttributeEqualSignStyle());
+		acceptor.acceptDefaultHighlighting(HTML_ATTRIBUTE_VALUE,
+				"Html Attribute Value", //$NON-NLS-1$
+				htmlAttributeValueStyle());
+		acceptor.acceptDefaultHighlighting(HTML_CONTENT, "Html Content", //$NON-NLS-1$
+				htmlContentStyle());
+		acceptor.acceptDefaultHighlighting(HTML_COMMENT, "Html Comment", //$NON-NLS-1$
+				htmlCommentStyle());
 	}
 
 	public TextStyle graphIdTextStyle() {
@@ -107,13 +126,6 @@ public class DotHighlightingConfiguration
 		return textStyle;
 	}
 
-	public TextStyle htmlStringTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(153, 76, 0)); // brown
-		textStyle.setBackgroundColor(new RGB(220, 220, 220)); // light gray
-		return textStyle;
-	}
-
 	public TextStyle quotedStringTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(255, 0, 0)); // red
@@ -127,4 +139,40 @@ public class DotHighlightingConfiguration
 		return textStyle;
 	}
 
+	private TextStyle htmlTagStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(63, 127, 127)); // turquoise green
+		return textStyle;
+	}
+
+	private TextStyle htmlAttributeNameStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(127, 0, 127)); // purple
+		return textStyle;
+	}
+
+	private TextStyle htmlAttributeEqualSignStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(0, 0, 0)); // black
+		return textStyle;
+	}
+
+	private TextStyle htmlAttributeValueStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(42, 0, 255)); // blue
+		textStyle.setStyle(SWT.ITALIC);
+		return textStyle;
+	}
+
+	private TextStyle htmlContentStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(0, 0, 0)); // black
+		return textStyle;
+	}
+
+	private TextStyle htmlCommentStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(63, 95, 191)); // turquoise blue
+		return textStyle;
+	}
 }

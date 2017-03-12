@@ -109,14 +109,49 @@ public class DotHighlightingCalculatorTests
 				DotHighlightingConfiguration.EDGE_OP_ID);
 	}
 
-	private void test(String model, String subString,
-			String expectedHighlightID) {
-		expect(model.indexOf(subString), subString.length(),
-				expectedHighlightID);
-		highlight(model);
+	@Test
+	public void htmlLabel() {
+		String text = DotTestGraphs
+				.NODE_LABEL_HTML_LIKE(
+						DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG)
+				.toString();
+
+		// test highlighting of Html tag
+		expect(text, "<", DotHighlightingConfiguration.HTML_TAG);
+		expect(text, "table", DotHighlightingConfiguration.HTML_TAG);
+		expect(text, "tr", DotHighlightingConfiguration.HTML_TAG);
+		expect(text, "td", DotHighlightingConfiguration.HTML_TAG);
+		expect(text, "</", DotHighlightingConfiguration.HTML_TAG);
+
+		// test highlighting of Html attribute name
+		expect(text, "color", DotHighlightingConfiguration.HTML_ATTRIBUTE_NAME);
+
+		// test highlighting of Html attribute value
+		expect(text, "\"green\"",
+				DotHighlightingConfiguration.HTML_ATTRIBUTE_VALUE);
+
+		// test highlighting of Html content
+		expect(text, "text", DotHighlightingConfiguration.HTML_CONTENT);
+
+		// test highlighting of Html comment
+		expect(text,
+				"<!--" + System.lineSeparator()
+						+ "\t\t\t\t\tHtml label with custom font"
+						+ System.lineSeparator() + "\t\t\t\t-->",
+				DotHighlightingConfiguration.HTML_COMMENT);
+
+		highlight(text);
 	}
 
-	private void expect(int offset, int length, String highlightID) {
+	private void test(String text, String substring,
+			String expectedHighlightID) {
+		expect(text, substring, expectedHighlightID);
+		highlight(text);
+	}
+
+	private void expect(String text, String substring, String highlightID) {
+		int offset = text.indexOf(substring);
+		int length = substring.length();
 		expectedRegions.put(new TextRegion(offset, length), highlightID);
 	}
 
