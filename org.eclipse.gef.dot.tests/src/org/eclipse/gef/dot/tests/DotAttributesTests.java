@@ -34,6 +34,7 @@ import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
+import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
@@ -54,6 +55,8 @@ import org.eclipse.gef.dot.internal.language.splinetype.SplinetypeFactory;
 import org.eclipse.gef.dot.internal.language.style.Style;
 import org.eclipse.gef.dot.internal.language.style.StyleFactory;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
+import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
@@ -71,6 +74,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getArrowhead(edge));
 
 		// set valid string values
 		DotAttributes.setArrowhead(edge, "olbox");
@@ -132,6 +138,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getArrowsize(edge));
+
 		// set valid string values
 		String validEdgeArrowSize = "0.5";
 		DotAttributes.setArrowsize(edge, validEdgeArrowSize);
@@ -178,6 +187,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getArrowtail(edge));
 
 		// set valid string values
 		DotAttributes.setArrowtail(edge, "olbox");
@@ -238,6 +250,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getColor(edge));
 
 		// set valid string values - rgb format
 		DotAttributes.setColor(edge, "#ffffff");
@@ -320,6 +335,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getColorscheme(edge));
+
 		// set valid string values
 		final String validColorScheme = "x11";
 		DotAttributes.setColorscheme(edge, validColorScheme);
@@ -342,6 +360,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getDir(edge));
 
 		// set valid string values
 		String validEdgeDir = "forward";
@@ -401,6 +422,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no value explicit is set
+		assertNull(DotAttributes.getFillcolor(edge));
 
 		// set valid string values - rgb format
 		DotAttributes.setFillcolor(edge, "#000000");
@@ -483,6 +507,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getFontcolor(edge));
+
 		// set valid string values - rgb format
 		DotAttributes.setFontcolor(edge, "#ff0000");
 		assertEquals("#ff0000", DotAttributes.getFontcolor(edge));
@@ -564,6 +591,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getHeadlabel(edge));
+
 		// set valid string values
 		String validEdgeHeadLabel = "simpleEdgeLabel";
 		DotAttributes.setHeadlabel(edge, validEdgeHeadLabel);
@@ -575,6 +605,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getHeadLp(edge));
 
 		// set valid string values
 		String validEdgeHeadLp = "42,0.0";
@@ -610,6 +643,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getId(edge));
+
 		// set valid string values
 		final String validEdgeId = "edgeId";
 		DotAttributes.setId(edge, validEdgeId);
@@ -625,6 +661,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getLabel(edge));
+
 		// set valid string values
 		final String validEdgeLabel = "edgeLabel";
 		DotAttributes.setLabel(edge, validEdgeLabel);
@@ -636,6 +675,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getLabelfontcolor(edge));
 
 		// set valid string values - rgb format
 		DotAttributes.setLabelfontcolor(edge, "#40e0d0");
@@ -720,6 +762,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getLp(edge));
+
 		// set valid string values
 		String validEdgeLp = "0.0,1.1";
 		DotAttributes.setLp(edge, validEdgeLp);
@@ -745,10 +790,33 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void edge_name() {
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1")
+				.buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2")
+				.buildNode();
+		Edge e = new Edge.Builder(n1, n2).buildEdge();
+
+		// test edge name calculation on a directed graph
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		graph.nodes(n1, n2).edges(e).build();
+		assertEquals("1->2", DotAttributes._getName(e));
+
+		// test edge name calculation on an undirected graph
+		graph.attr(DotAttributes::_setType, GraphType.GRAPH);
+		graph.nodes(n1, n2).edges(e).build();
+		assertEquals("1--2", DotAttributes._getName(e));
+	}
+
+	@Test
 	public void edge_pos() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getPos(edge));
 
 		// set valid values
 		DotAttributes.setPos(edge,
@@ -878,6 +946,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getStyle(edge));
+
 		// set valid string values
 		String[] validEdgeStyleItems = { "bold", "dashed", "dotted", "invis",
 				"solid", "tapered" };
@@ -946,6 +1017,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getTaillabel(edge));
+
 		// set valid string values
 		String validEdgeTailLabel = "simpleEdgeLabel";
 		DotAttributes.setTaillabel(edge, validEdgeTailLabel);
@@ -957,6 +1031,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getTailLp(edge));
 
 		// set valid string values
 		String validEdgeTailLp = "42,0.0";
@@ -992,6 +1069,9 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getXlabel(edge));
+
 		// set valid string values
 		final String validEdgeXLabel = "edgeXLabel";
 		DotAttributes.setXlabel(edge, validEdgeXLabel);
@@ -1003,6 +1083,9 @@ public class DotAttributesTests {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getXlp(edge));
 
 		// set valid string values
 		DotAttributes.setXlp(edge, "47, 11");
@@ -1030,6 +1113,9 @@ public class DotAttributesTests {
 	@Test
 	public void graph_bgcolor() {
 		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getBgcolor(g));
 
 		// set valid string values - rgb format
 		DotAttributes.setBgcolor(g, "#a0522d");
@@ -1110,6 +1196,9 @@ public class DotAttributesTests {
 	public void graph_clusterrank() {
 		Graph g = new Graph.Builder().build();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getClusterrank(g));
+
 		// set valid string values
 		String validGraphClusterMode = "local";
 		DotAttributes.setClusterrank(g, validGraphClusterMode);
@@ -1160,8 +1249,87 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void graph_color() {
+		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getColor(g));
+
+		// set valid string values - rgb format
+		DotAttributes.setColor(g, "#ffffff");
+		assertEquals("#ffffff", DotAttributes.getColor(g));
+		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
+		rgbColor.setR("ff");
+		rgbColor.setG("ff");
+		rgbColor.setB("ff");
+		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+
+		// set valid string values - rgba format
+		DotAttributes.setColor(g, "#ffffff00");
+		assertEquals("#ffffff00", DotAttributes.getColor(g));
+		rgbColor.setA("00");
+		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+
+		// set valid string values - hsv format
+		DotAttributes.setColor(g, "0.000,0.000,1.000");
+		assertEquals("0.000,0.000,1.000", DotAttributes.getColor(g));
+		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
+		hsvColor.setH("0.000");
+		hsvColor.setS("0.000");
+		hsvColor.setV("1.000");
+		assertTrue(EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(g)));
+
+		// set valid string values - string format
+		DotAttributes.setColor(g, "//white");
+		assertEquals("//white", DotAttributes.getColor(g));
+		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
+		stringColor.setName("white");
+		assertTrue(
+				EcoreUtil.equals(stringColor, DotAttributes.getColorParsed(g)));
+
+		// set valid parsed values - rgb format
+		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
+		rgbColor.setR("ff");
+		rgbColor.setG("ff");
+		rgbColor.setB("ff");
+		DotAttributes.setColorParsed(g, rgbColor);
+		assertEquals("#ffffff", DotAttributes.getColor(g));
+		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+
+		// set valid parsed values - rgba format
+		rgbColor.setA("00");
+		DotAttributes.setColorParsed(g, rgbColor);
+		assertEquals("#ffffff00", DotAttributes.getColor(g));
+		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+
+		// set valid parsed values - hsv format
+		DotAttributes.setColorParsed(g, hsvColor);
+		assertEquals("0.000 0.000 1.000", DotAttributes.getColor(g));
+		assertTrue(EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(g)));
+
+		// set valid parsed values - string format
+		DotAttributes.setColorParsed(g, stringColor);
+		assertEquals("white", DotAttributes.getColor(g));
+		assertTrue(
+				EcoreUtil.equals(stringColor, DotAttributes.getColorParsed(g)));
+
+		// set invalid string values
+		try {
+			DotAttributes.setColor(g, "/white");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'color' to '/white'. The value '/white' is not a syntactically correct color: Mismatched input '<EOF>' expecting '/'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
 	public void graph_colorscheme() {
 		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getColorscheme(g));
 
 		// set valid string values
 		final String validColorScheme = "svg";
@@ -1179,8 +1347,94 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void graph_fillcolor() {
+		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getFillcolor(g));
+
+		// set valid string values - rgb format
+		DotAttributes.setFillcolor(g, "#00ff00");
+		assertEquals("#00ff00", DotAttributes.getFillcolor(g));
+		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
+		rgbColor.setR("00");
+		rgbColor.setG("ff");
+		rgbColor.setB("00");
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set valid string values - rgba format
+		DotAttributes.setFillcolor(g, "#00ff00ff");
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(g));
+		rgbColor.setA("ff");
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set valid string values - hsv format
+		DotAttributes.setFillcolor(g, "0.3 .8 .7");
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(g));
+		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
+		hsvColor.setH("0.3");
+		hsvColor.setS(".8");
+		hsvColor.setV(".7");
+		assertTrue(EcoreUtil.equals(hsvColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set valid string values - string format
+		DotAttributes.setFillcolor(g, "/bugn9/7");
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(g));
+		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
+		stringColor.setScheme("bugn9");
+		stringColor.setName("7");
+		assertTrue(EcoreUtil.equals(stringColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set valid parsed values - rgb format
+		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
+		rgbColor.setR("00");
+		rgbColor.setG("ff");
+		rgbColor.setB("00");
+		DotAttributes.setFillcolorParsed(g, rgbColor);
+		assertEquals("#00ff00", DotAttributes.getFillcolor(g));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set valid parsed values - rgba format
+		rgbColor.setA("ff");
+		DotAttributes.setFillcolorParsed(g, rgbColor);
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(g));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set valid parsed values - hsv format
+		DotAttributes.setFillcolorParsed(g, hsvColor);
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(g));
+		assertTrue(EcoreUtil.equals(hsvColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set valid parsed values - string format
+		DotAttributes.setFillcolorParsed(g, stringColor);
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(g));
+		assertTrue(EcoreUtil.equals(stringColor,
+				DotAttributes.getFillcolorParsed(g)));
+
+		// set invalid string values
+		try {
+			DotAttributes.setFillcolor(g, "//");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'fillcolor' to '//'. The value '//' is not a syntactically correct color: No viable alternative at input '<EOF>'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
 	public void graph_fontcolor() {
 		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getFontcolor(g));
 
 		// set valid string values - rgb format
 		DotAttributes.setFontcolor(g, "#ffffff");
@@ -1261,6 +1515,9 @@ public class DotAttributesTests {
 	public void graph_forcelabels() {
 		Graph g = new Graph.Builder().build();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getForcelabels(g));
+
 		// set valid string values
 		String validGraphForceLabels = "true";
 		DotAttributes.setForcelabels(g, validGraphForceLabels);
@@ -1296,6 +1553,9 @@ public class DotAttributesTests {
 	public void graph_id() {
 		Graph g = new Graph.Builder().build();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getId(g));
+
 		// set valid string values
 		final String validGraphId = "graphId";
 		DotAttributes.setId(g, validGraphId);
@@ -1309,6 +1569,9 @@ public class DotAttributesTests {
 	public void graph_label() {
 		Graph g = new Graph.Builder().build();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getLabel(g));
+
 		// set valid string values
 		final String validGraphLabel = "graphLabel";
 		DotAttributes.setLabel(g, validGraphLabel);
@@ -1318,6 +1581,9 @@ public class DotAttributesTests {
 	@Test
 	public void graph_layout() {
 		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getLayout(g));
 
 		// set valid string values
 		String validGraphLayout = "circo";
@@ -1419,6 +1685,9 @@ public class DotAttributesTests {
 	public void graph_lp() {
 		Graph g = new Graph.Builder().build();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getLp(g));
+
 		// set valid string values
 		String validGraphLp = "0.0,1.1";
 		DotAttributes.setLp(g, validGraphLp);
@@ -1445,8 +1714,83 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void graph_name() {
+		Graph graph = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes._getName(graph));
+		assertNull(DotAttributes._getNameRaw(graph));
+
+		DotAttributes._setName(graph, "TestGraph");
+		assertEquals("TestGraph", DotAttributes._getName(graph));
+		assertEquals(ID.fromString("TestGraph"),
+				DotAttributes._getNameRaw(graph));
+
+		ID graphName = ID.fromValue("Test Graph", Type.QUOTED_STRING);
+		DotAttributes._setNameRaw(graph, graphName);
+		assertEquals("Test Graph", DotAttributes._getName(graph));
+		assertEquals(ID.fromValue("Test Graph", Type.QUOTED_STRING),
+				DotAttributes._getNameRaw(graph));
+
+		DotAttributes._setName(graph, "\"Test Graph\"");
+		assertEquals("\"Test Graph\"", DotAttributes._getName(graph));
+		assertEquals("\"\\\"Test Graph\\\"\"",
+				DotAttributes._getNameRaw(graph).toString());
+	}
+
+	@Test
+	public void graph_nodesep() {
+		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getNodesep(g));
+
+		// set valid string values
+		String validNodesep = "0.5";
+		DotAttributes.setNodesep(g, validNodesep);
+		assertEquals(validNodesep, DotAttributes.getNodesep(g));
+
+		// set valid parsed values
+		Double validNodesepParsed = new Double(0.02);
+		DotAttributes.setNodesepParsed(g, validNodesepParsed);
+		assertEquals(validNodesepParsed, DotAttributes.getNodesepParsed(g));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setNodesep(g, "0,5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'nodesep' to '0,5'. The value '0,5' is not a syntactically correct double: For input string: \"0,5\".",
+					e.getMessage());
+		}
+
+		try {
+			DotAttributes.setNodesep(g, "foo");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'nodesep' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setNodesep(g, "0.0199");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'nodesep' to '0.0199'. The double value '0.0199' is not semantically correct: Value may not be smaller than 0.02.",
+					e.getMessage());
+		}
+	}
+
+	@Test
 	public void graph_outputorder() {
 		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getOutputorder(g));
 
 		// set valid string values
 		String validGraphOutputMode = "breadthfirst";
@@ -1503,6 +1847,9 @@ public class DotAttributesTests {
 	@Test
 	public void graph_pagedir() {
 		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getPagedir(g));
 
 		// set valid string values
 		String validGraphPagedir = "BL";
@@ -1617,6 +1964,9 @@ public class DotAttributesTests {
 	public void graph_rankdir() {
 		Graph g = new Graph.Builder().build();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getRankdir(g));
+
 		// set valid string values
 		String validGraphRankdir = "LR";
 		DotAttributes.setRankdir(g, validGraphRankdir);
@@ -1681,6 +2031,9 @@ public class DotAttributesTests {
 	@Test
 	public void graph_splines() {
 		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getSplines(g));
 
 		// set valid string values
 		String validGraphSplines = "compound";
@@ -1801,8 +2154,68 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void graph_style() {
+		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getStyle(g));
+
+		// set valid string values
+		String[] validGraphStyleItems = { "filled", "radial" };
+
+		for (String validGraphStyleItem : validGraphStyleItems) {
+			DotAttributes.setStyle(g, validGraphStyleItem);
+			assertEquals(validGraphStyleItem, DotAttributes.getStyle(g));
+
+			Style styleParsed = StyleFactory.eINSTANCE.createStyle();
+			StyleItem styleItem = StyleFactory.eINSTANCE.createStyleItem();
+			styleItem.setName(validGraphStyleItem);
+			styleParsed.getStyleItems().add(styleItem);
+			assertTrue(EcoreUtil.equals(styleParsed,
+					DotAttributes.getStyleParsed(g)));
+		}
+
+		// set valid parsed values
+		Style styleParsed = StyleFactory.eINSTANCE.createStyle();
+		StyleItem styleItem1 = StyleFactory.eINSTANCE.createStyleItem();
+		styleItem1.setName("filled");
+
+		styleParsed.getStyleItems().add(styleItem1);
+		DotAttributes.setStyleParsed(g, styleParsed);
+		assertEquals("filled", DotAttributes.getStyle(g));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setStyle(g, "filled, ");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'style' to 'filled, '. The value 'filled, ' is not a syntactically correct style: Mismatched input '<EOF>' expecting RULE_NAME.",
+					e.getMessage());
+		}
+
+		// TODO: set syntactically correct, but semantically invalid values
+	}
+
+	@Test
+	public void graph_type() {
+		// test directed graph
+		Graph graph = new Graph.Builder()
+				.attr(DotAttributes::_setType, GraphType.DIGRAPH).build();
+		assertEquals(GraphType.DIGRAPH, DotAttributes._getType(graph));
+
+		// test undirected graph
+		graph = new Graph.Builder()
+				.attr(DotAttributes::_setType, GraphType.GRAPH).build();
+		assertEquals(GraphType.GRAPH, DotAttributes._getType(graph));
+	}
+
+	@Test
 	public void node_color() {
 		Node n = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getColor(n));
 
 		// set valid string values - rgb format
 		DotAttributes.setColor(n, "#ffffff");
@@ -1887,6 +2300,9 @@ public class DotAttributesTests {
 	public void node_colorscheme() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getColorscheme(n));
+
 		// set valid string values
 		final String validColorScheme = "accent3";
 		DotAttributes.setColorscheme(n, validColorScheme);
@@ -1905,6 +2321,9 @@ public class DotAttributesTests {
 	@Test
 	public void node_distortion() {
 		Node n = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getDistortion(n));
 
 		// set valid string values
 		String validNodeDistortion = "5";
@@ -1957,6 +2376,9 @@ public class DotAttributesTests {
 	@Test
 	public void node_fillcolor() {
 		Node n = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getFillcolor(n));
 
 		// set valid string values - rgb format
 		DotAttributes.setFillcolor(n, "#00ff00");
@@ -2038,6 +2460,9 @@ public class DotAttributesTests {
 	public void node_fixedsize() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getFixedsize(n));
+
 		// set valid string values
 		String validNodeFixedSize = "true";
 		DotAttributes.setFixedsize(n, validNodeFixedSize);
@@ -2072,6 +2497,9 @@ public class DotAttributesTests {
 	@Test
 	public void node_fontcolor() {
 		Node n = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getFontcolor(n));
 
 		// set valid string values - rgb format
 		DotAttributes.setFontcolor(n, "#00ff00");
@@ -2153,6 +2581,9 @@ public class DotAttributesTests {
 	public void node_height() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getHeight(n));
+
 		// set valid string values
 		String validNodeHeight = "0.56";
 		DotAttributes.setHeight(n, validNodeHeight);
@@ -2197,6 +2628,9 @@ public class DotAttributesTests {
 	public void node_id() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getId(n));
+
 		// set valid string values
 		final String validNodeId = "nodeId";
 		DotAttributes.setId(n, validNodeId);
@@ -2210,6 +2644,9 @@ public class DotAttributesTests {
 	public void node_label() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getLabel(n));
+
 		// set valid string values
 		final String validNodeLabel = "nodeLabel";
 		DotAttributes.setLabel(n, validNodeLabel);
@@ -2217,8 +2654,23 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void node_name() {
+		Node node = new Node.Builder().buildNode();
+		assertNull(DotAttributes._getName(node));
+		assertNull(DotAttributes._getNameRaw(node));
+
+		DotAttributes._setName(node, "TestNode");
+		assertEquals("TestNode", DotAttributes._getName(node));
+		assertEquals(ID.fromString("TestNode"),
+				DotAttributes._getNameRaw(node));
+	}
+
+	@Test
 	public void node_pos() {
 		Node n = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getPos(n));
 
 		// set valid string values
 		DotAttributes.setPos(n, "47, 11");
@@ -2248,6 +2700,9 @@ public class DotAttributesTests {
 	@Test
 	public void node_shape() {
 		Node n = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getShape(n));
 
 		// set valid (polygon based) string values
 		String[] validPolygonBasedNodeShapes = { "assembly", "box", "box3d",
@@ -2319,6 +2774,9 @@ public class DotAttributesTests {
 	public void node_sides() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getSides(n));
+
 		// set valid string values
 		String validNodeSides = "5";
 		DotAttributes.setSides(n, validNodeSides);
@@ -2367,6 +2825,9 @@ public class DotAttributesTests {
 	public void node_skew() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getSkew(n));
+
 		// set valid string values
 		String validNodeSkew = "5";
 		DotAttributes.setSkew(n, validNodeSkew);
@@ -2414,6 +2875,9 @@ public class DotAttributesTests {
 	@Test
 	public void node_style() {
 		Node node = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getStyle(node));
 
 		// set valid string values
 		String[] validNodeStyleItems = { "bold", "dashed", "diagonals",
@@ -2482,6 +2946,9 @@ public class DotAttributesTests {
 	public void node_width() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getWidth(n));
+
 		// set valid string values
 		String validNodeWidth = "0.56";
 		DotAttributes.setWidth(n, validNodeWidth);
@@ -2530,6 +2997,9 @@ public class DotAttributesTests {
 	public void node_xlabel() {
 		Node n = new Node.Builder().buildNode();
 
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getXlabel(n));
+
 		// set valid string values
 		final String validNodeXLabel = "nodeXLabel";
 		DotAttributes.setXlabel(n, validNodeXLabel);
@@ -2539,6 +3009,9 @@ public class DotAttributesTests {
 	@Test
 	public void node_xlp() {
 		Node n = new Node.Builder().buildNode();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getXlp(n));
 
 		// set valid string values
 		DotAttributes.setXlp(n, "47, 11");
@@ -2567,6 +3040,9 @@ public class DotAttributesTests {
 	@Test
 	public void subgraph_rank() {
 		Graph subgraph = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getRank(subgraph));
 
 		// set valid string values
 		DotAttributes.setRank(subgraph, "same");
