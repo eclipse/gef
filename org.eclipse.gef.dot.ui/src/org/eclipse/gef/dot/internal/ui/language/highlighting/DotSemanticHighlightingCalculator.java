@@ -46,17 +46,18 @@ public class DotSemanticHighlightingCalculator
 				// handle ID elements specifically
 				if (r.getName().equals("ID") //$NON-NLS-1$
 						&& ((Assignment) c).getFeature().equals("name")) { //$NON-NLS-1$
-					if (node.getSemanticElement() instanceof DotGraph) {
+					EObject semanticElement = node.getSemanticElement();
+					if (semanticElement instanceof DotGraph) {
 						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.GRAPH_NAME_ID);
-					} else if (node.getSemanticElement() instanceof NodeStmt
-							|| node.getSemanticElement() instanceof NodeId) {
+					} else if (semanticElement instanceof NodeStmt
+							|| semanticElement instanceof NodeId) {
 						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.NODE_NAME_ID);
-					} else if (node.getSemanticElement() instanceof Attribute) {
+					} else if (semanticElement instanceof Attribute) {
 						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.ATTRIBUTE_NAME_ID);
-					} else if (node.getSemanticElement() instanceof Port) {
+					} else if (semanticElement instanceof Port) {
 						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.PORT_NAME_ID);
 					}
