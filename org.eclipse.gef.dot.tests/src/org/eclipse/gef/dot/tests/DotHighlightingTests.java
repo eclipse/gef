@@ -56,24 +56,31 @@ public class DotHighlightingTests extends AbstractEditorTest {
 	// lexical highlighting test cases
 	@Test
 	public void numbers() {
-		test(DotTestGraphs.EDGE_ARROWSIZE_GLOBAL, "1.5", SWT.NORMAL, 125, 125,
-				125);
+		String text = DotTestGraphs.EDGE_ARROWSIZE_GLOBAL;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "1.5", SWT.NORMAL, 125, 125, 125);
 	}
 
 	@Test
 	public void quotedAttributeValue() {
-		test(DotTestGraphs.QUOTED_LABELS, "node 1", SWT.NORMAL, 255, 0, 0);
+		String text = DotTestGraphs.QUOTED_LABELS;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "node 1", SWT.NORMAL, 255, 0, 0);
 	}
 
 	@Test
 	public void unquotedAttributeValue() {
-		test(DotTestGraphs.GRAPH_LAYOUT_DOT, "dot", SWT.NORMAL, 153, 76, 0);
+		String text = DotTestGraphs.GRAPH_LAYOUT_DOT;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "dot", SWT.NORMAL, 153, 76, 0);
 	}
 
 	@Test
 	public void compassPt() {
-		test(DotTestGraphs.PORTS, "ne", SWT.NORMAL, 153, 76, 0);
-		test(DotTestGraphs.PORTS, "_", SWT.NORMAL, 153, 76, 0);
+		String text = DotTestGraphs.PORTS;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "ne", SWT.NORMAL, 153, 76, 0);
+		test(textWidget, "_", SWT.NORMAL, 153, 76, 0);
 	}
 
 	@Test
@@ -82,97 +89,110 @@ public class DotHighlightingTests extends AbstractEditorTest {
 				.NODE_LABEL_HTML_LIKE(
 						DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG)
 				.toString();
+		StyledText textWidget = getTextWidget(text);
 
 		// test highlighting of Html tag
-		test(text, "<", SWT.NORMAL, 63, 127, 127);
-		test(text, "<font", SWT.NORMAL, 63, 127, 127);
-		test(text, "<table>", SWT.NORMAL, 63, 127, 127);
-		test(text, "<tr>", SWT.NORMAL, 63, 127, 127);
-		test(text, "<td>", SWT.NORMAL, 63, 127, 127);
-		test(text, "</td>", SWT.NORMAL, 63, 127, 127);
-		test(text, "</tr>", SWT.NORMAL, 63, 127, 127);
-		test(text, "</table>", SWT.NORMAL, 63, 127, 127);
-		test(text, "</font>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<font", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<table>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<tr>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<td>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</td>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</tr>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</table>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</font>", SWT.NORMAL, 63, 127, 127);
 
 		// test highlighting of Html attribute name
-		test(text, "color", SWT.NORMAL, 127, 0, 127);
+		test(textWidget, "color", SWT.NORMAL, 127, 0, 127);
 
 		// test highlighting of Html attribute equal sign
-		test(text, "=", SWT.NORMAL, 0, 0, 0);
+		test(textWidget, "=", SWT.NORMAL, 0, 0, 0);
 
 		// test highlighting of Html attribute value
-		test(text, "\"green\"", SWT.ITALIC, 42, 0, 255);
+		test(textWidget, "\"green\"", SWT.ITALIC, 42, 0, 255);
 
 		// test highlighting of Html content
-		test(text, "text", SWT.NORMAL, 0, 0, 0);
+		test(textWidget, "text", SWT.NORMAL, 0, 0, 0);
 
 		// test highlighting of Html comment
-		test(text, "<!--", SWT.NORMAL, 63, 95, 191);
-		test(text, "Html label with custom font", SWT.NORMAL, 63, 95, 191);
-		test(text, "<!--", SWT.NORMAL, 63, 95, 191);
+		test(textWidget, "<!--", SWT.NORMAL, 63, 95, 191);
+		test(textWidget, "Html label with custom font", SWT.NORMAL, 63, 95,
+				191);
+		test(textWidget, "<!--", SWT.NORMAL, 63, 95, 191);
 	}
 
 	@Test
 	public void comments() {
-		test(DotTestGraphs.EMPTY_WITH_COMMENTS,
-				"// This is a C++-style single line comment.", SWT.NORMAL, 63,
-				127, 95);
-		test(DotTestGraphs.EMPTY_WITH_COMMENTS, "/*", SWT.NORMAL, 63, 127, 95);
-		test(DotTestGraphs.EMPTY_WITH_COMMENTS, "* This is a C++-style",
+		String text = DotTestGraphs.EMPTY_WITH_COMMENTS;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "// This is a C++-style single line comment.",
 				SWT.NORMAL, 63, 127, 95);
-		test(DotTestGraphs.EMPTY_WITH_COMMENTS, "* multi line comment.",
-				SWT.NORMAL, 63, 127, 95);
-		test(DotTestGraphs.EMPTY_WITH_COMMENTS, "*/", SWT.NORMAL, 63, 127, 95);
-		test(DotTestGraphs.EMPTY_WITH_COMMENTS,
+		test(textWidget, "/*", SWT.NORMAL, 63, 127, 95);
+		test(textWidget, "* This is a C++-style", SWT.NORMAL, 63, 127, 95);
+		test(textWidget, "* multi line comment.", SWT.NORMAL, 63, 127, 95);
+		test(textWidget, "*/", SWT.NORMAL, 63, 127, 95);
+		test(textWidget,
 				"# This is considered as a line output from C-preprocessor and discarded.",
 				SWT.NORMAL, 63, 127, 95);
 	}
 
 	@Test
 	public void keywords() {
-		test(DotTestGraphs.KEYWORDS, "strict", SWT.BOLD, 0, 0, 0);
-		test(DotTestGraphs.KEYWORDS, "digraph", SWT.BOLD, 0, 0, 0);
-		test(DotTestGraphs.KEYWORDS, "\tgraph", SWT.BOLD, 0, 0, 0);
-		test(DotTestGraphs.KEYWORDS, "node", SWT.BOLD, 0, 0, 0);
-		test(DotTestGraphs.KEYWORDS, "edge", SWT.BOLD, 0, 0, 0);
-		test(DotTestGraphs.KEYWORDS, "subgraph", SWT.BOLD, 0, 0, 0);
+		String text = DotTestGraphs.KEYWORDS;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "strict", SWT.BOLD, 0, 0, 0);
+		test(textWidget, "digraph", SWT.BOLD, 0, 0, 0);
+		test(textWidget, "\tgraph", SWT.BOLD, 0, 0, 0);
+		test(textWidget, "node", SWT.BOLD, 0, 0, 0);
+		test(textWidget, "edge", SWT.BOLD, 0, 0, 0);
+		test(textWidget, "subgraph", SWT.BOLD, 0, 0, 0);
 	}
 
 	// semantic highlighting test cases
 	@Test
 	public void graphName() {
-		test(DotTestGraphs.EXTRACTED_01, "name", SWT.NORMAL, 0, 0, 0);
+		String text = DotTestGraphs.EXTRACTED_01;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "name", SWT.NORMAL, 0, 0, 0);
 	}
 
 	@Test
 	public void nodeName() {
-		test(DotTestGraphs.ONE_NODE, "1", SWT.NORMAL, 0, 0, 0);
+		String text = DotTestGraphs.ONE_NODE;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "1", SWT.NORMAL, 0, 0, 0);
 	}
 
 	@Test
 	public void port() {
-		test(DotTestGraphs.PORTS, "portID", SWT.NORMAL, 0, 153, 76);
-		test(DotTestGraphs.PORTS, "portID2", SWT.NORMAL, 0, 153, 76);
+		String text = DotTestGraphs.PORTS;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "portID", SWT.NORMAL, 0, 153, 76);
+		test(textWidget, "portID2", SWT.NORMAL, 0, 153, 76);
 	}
 
 	@Test
 	public void attributeName() {
-		test(DotTestGraphs.GRAPH_LAYOUT_DOT, "layout", SWT.NORMAL, 0, 76, 153);
+		String text = DotTestGraphs.GRAPH_LAYOUT_DOT;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "layout", SWT.NORMAL, 0, 76, 153);
 	}
 
 	@Test
 	public void edgeOperatorDirected() {
-		test(DotTestGraphs.ONE_DIRECTED_EDGE, "->", SWT.NORMAL, 0, 153, 0);
+		String text = DotTestGraphs.ONE_DIRECTED_EDGE;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "->", SWT.NORMAL, 0, 153, 0);
 	}
 
 	@Test
 	public void edgeOperatorUnDirected() {
-		test(DotTestGraphs.ONE_EDGE, "--", SWT.NORMAL, 0, 153, 0);
+		String text = DotTestGraphs.ONE_EDGE;
+		StyledText textWidget = getTextWidget(text);
+		test(textWidget, "--", SWT.NORMAL, 0, 153, 0);
 	}
 
-	private void test(String content, String subString, int expectedFontStyle,
-			int expectedR, int expectedG, int expectedB) {
-
+	private StyledText getTextWidget(String content) {
 		XtextEditor editor = null;
 		try {
 			editor = openEditor(createTestFile(content));
@@ -195,6 +215,14 @@ public class DotHighlightingTests extends AbstractEditorTest {
 		StyledText textWidget = editor.getInternalSourceViewer()
 				.getTextWidget();
 
+		return textWidget;
+	}
+
+	private void test(StyledText textWidget, String subString,
+			int expectedFontStyle, int expectedR, int expectedG,
+			int expectedB) {
+
+		String content = textWidget.getText();
 		int startPosition = content.indexOf(subString);
 		for (int i = 0; i < subString.length(); i++) {
 			int currentPosition = startPosition + i;
