@@ -53,8 +53,9 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(DotAttributes.ARROWHEAD__E)
 	public void fixArrowheadAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		if (issue.getData().length > 0) {
-			String deprecatedShapeString = issue.getData()[0];
+		String[] issueData = issue.getData();
+		if (issueData != null && issueData.length > 0) {
+			String deprecatedShapeString = issueData[0];
 			String validArrowShape = getValidArrowShape(deprecatedShapeString);
 			if (validArrowShape != null) {
 				provideQuickfix(validArrowShape, "edge arrowhead", issue, //$NON-NLS-1$
@@ -66,8 +67,9 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(DotAttributes.ARROWTAIL__E)
 	public void fixArrowtailAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		if (issue.getData().length > 0) {
-			String deprecatedShapeString = issue.getData()[0];
+		String[] issueData = issue.getData();
+		if (issueData != null && issueData.length > 0) {
+			String deprecatedShapeString = issueData[0];
 			String validArrowShape = getValidArrowShape(deprecatedShapeString);
 			if (validArrowShape != null) {
 				provideQuickfix(validArrowShape, "edge arrowtail", issue, //$NON-NLS-1$
