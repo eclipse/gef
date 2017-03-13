@@ -278,7 +278,7 @@ public class HistoricizingDomain implements IDomain {
 			operation = ((AbstractCompositeOperation) operation).unwrap(true);
 		}
 		// do not execute NoOps
-		if (operation.isNoOp()) {
+		if (operation == null || operation.isNoOp()) {
 			return;
 		}
 		// check if we can execute operation
