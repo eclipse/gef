@@ -118,7 +118,7 @@ public class DotHighlightingTests extends AbstractEditorTest {
 		test(textWidget, "<!--", SWT.NORMAL, 63, 95, 191);
 		test(textWidget, "Html label with custom font", SWT.NORMAL, 63, 95,
 				191);
-		test(textWidget, "<!--", SWT.NORMAL, 63, 95, 191);
+		test(textWidget, "-->", SWT.NORMAL, 63, 95, 191);
 	}
 
 	@Test
