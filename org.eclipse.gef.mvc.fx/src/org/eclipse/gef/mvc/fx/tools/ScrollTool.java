@@ -150,7 +150,9 @@ public class ScrollTool extends AbstractTool {
 		for (final IViewer viewer : new ArrayList<>(
 				viewerFocusChangeListeners.keySet())) {
 			abortPolicies(viewer);
-			finishDelayTransitions.remove(viewer).stop();
+			if (finishDelayTransitions.containsKey(viewer)) {
+				finishDelayTransitions.remove(viewer).stop();
+			}
 			EventHandler<ScrollEvent> filter = scrollFilters.remove(viewer);
 			scrollFilterScenes.remove(filter)
 					.removeEventFilter(ScrollEvent.SCROLL, filter);

@@ -118,6 +118,13 @@ public class CreateCurveOnDragPolicy extends AbstractInteractionPolicy implement
 	}
 
 	protected Point getLocation(MouseEvent e) {
+		// XXX: Viewer may be null if the host is removed in the same pass in
+		// which the event is forwarded.
+		if (getHost().getViewer() == null) {
+			return new Point(e.getSceneX(), e.getSceneY());
+		}
+		// FIXME: Prevent invocation of interaction policies when their host
+		// does not have a link to the viewer.
 		Point2D location = ((InfiniteCanvasViewer) getHost().getRoot().getViewer()).getCanvas().getContentGroup()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		return new Point(location.getX(), location.getY());
