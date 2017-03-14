@@ -47,7 +47,7 @@ import javafx.scene.Node;
  * target part have lowest precedence, i.e. they will be executed last.
  * </ol>
  * For details, take a look at the
- * {@link #getTargetPolicies(ITool, Node, Class)} method.
+ * {@link #getTargetPolicies(ITool, Node, IViewer, Class)} method.
  *
  * @author mwienand
  *
@@ -75,65 +75,6 @@ public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
 	 */
 	private final static AdapterKeyComparator ADAPTER_KEY_COMPARATOR = new AdapterKeyComparator(
 			true);
-
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * This strategy works in two stages:
-	 * <ol>
-	 * <li>Examining the active policies of other tools to find "multi-gesture"
-	 * policies that implement or extend the given target policy type. If any
-	 * "multi-gesture" policies are found, the target resolution finishes and
-	 * these are returned as the target policies. Otherwise, the target
-	 * resolution continues with the next stage.
-	 * <li>Examining the policies of the visual parts that are contained within
-	 * the root-to-target path in the visual part hierarchy. All policies that
-	 * implement or extend the given target policy type are returned as target
-	 * policies. The policies that are registered on the root part have highest
-	 * precedence, i.e. they will be executed first, and the policies that are
-	 * registered on the target part have lowest precedence, i.e. they will be
-	 * executed last.
-	 * </ol>
-	 * The second stage is structured in two parts:
-	 * <ol>
-	 * <li>Determination of the target part.
-	 * <li>Determination of the target policies based on the target part.
-	 * </ol>
-	 * The first {@link IVisualPart} that controls a {@link Node} within the
-	 * parent hierarchy of the given target {@link Node} is used as the target
-	 * part. If no target part can be found, the root part is used as the target
-	 * part.
-	 * <p>
-	 * Beginning at the root part, and walking down the visual part hierarchy,
-	 * all policies of the specified type are collected. The policies that are
-	 * registered on one part are (lexicographically) sorted by their role, so
-	 * that the target policy selection is deterministic.
-	 * <p>
-	 * For example, when you have 3 parts, the root part, an intermediate part,
-	 * and a leaf part, the target policy selection for a policy of type X could
-	 * yield the following results:
-	 * <ol>
-	 * <li>LayeredRootPart.X with role "0"
-	 * <li>LayeredRootPart.X with role "1"
-	 * <li>IntermediatePart.X with role "a"
-	 * <li>IntermediatePart.X with role "b"
-	 * <li>LeafPart.X with role "x"
-	 * <li>LeafPart.X with role "y"
-	 * </ol>
-	 * These policies would then all be executed/notified about an input event
-	 * by the calling tool.
-	 */
-	@Override
-	public <T extends IPolicy> List<? extends T> getTargetPolicies(
-			ITool contextTool, Node target, Class<T> policyClass) {
-		// determine viewer that contains the given target part
-		IViewer viewer = PartUtils.retrieveViewer(contextTool.getDomain(),
-				target);
-		if (viewer == null) {
-			return Collections.emptyList();
-		}
-		return getTargetPolicies(contextTool, target, viewer, policyClass);
-	}
 
 	/**
 	 * {@inheritDoc}

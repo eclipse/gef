@@ -106,6 +106,8 @@ public class TypeTool extends AbstractTool {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
+			// XXX: Input filters are only registered once per Scene. The
+			// IViewer is determined from the individual events.
 			Scene scene = viewer.getRootPart().getVisual().getScene();
 			if (pressedFilterMap.containsKey(scene)) {
 				continue;
@@ -158,7 +160,7 @@ public class TypeTool extends AbstractTool {
 						// determine target policies on first key press
 						setActivePolicies(activeViewer,
 								getTargetPolicyResolver().getTargetPolicies(
-										TypeTool.this, targetNode,
+										TypeTool.this, targetNode, activeViewer,
 										ON_STROKE_POLICY_KEY));
 					}
 
@@ -236,9 +238,11 @@ public class TypeTool extends AbstractTool {
 								"Unsupported event target: " + target);
 					}
 
+					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
+							targetNode);
 					Collection<? extends IOnTypePolicy> policies = getTargetPolicyResolver()
 							.getTargetPolicies(TypeTool.this, targetNode,
-									ON_TYPE_POLICY_KEY);
+									targetViewer, ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
 					for (IOnTypePolicy policy : policies) {

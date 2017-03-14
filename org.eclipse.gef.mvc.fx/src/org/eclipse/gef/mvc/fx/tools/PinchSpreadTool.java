@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.IOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -95,16 +96,21 @@ public class PinchSpreadTool extends AbstractTool {
 	 * @param scene
 	 *            The {@link Scene} where the {@link EventHandler} will be
 	 *            registered.
-	 * @param viewer
-	 *            The {@link IViewer} to which events are forwarded.
 	 * @return The {@link EventHandler} that can be registered at the given
 	 *         {@link Scene}.
 	 */
-	protected EventHandler<ZoomEvent> createZoomFilter(Scene scene,
-			IViewer viewer) {
+	protected EventHandler<ZoomEvent> createZoomFilter(Scene scene) {
 		return new EventHandler<ZoomEvent>() {
 			@Override
 			public void handle(ZoomEvent event) {
+				if (!(event.getTarget() instanceof Node)) {
+					return;
+				}
+				IViewer viewer = PartUtils.retrieveViewer(getDomain(),
+						(Node) event.getTarget());
+				if (viewer == null) {
+					return;
+				}
 				if (ZoomEvent.ZOOM.equals(event.getEventType())) {
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
 							viewer)) {
@@ -131,7 +137,7 @@ public class PinchSpreadTool extends AbstractTool {
 									PinchSpreadTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
-									ON_PINCH_SPREAD_POLICY_KEY));
+									viewer, ON_PINCH_SPREAD_POLICY_KEY));
 
 					// send event to the policies
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
@@ -171,8 +177,7 @@ public class PinchSpreadTool extends AbstractTool {
 			}
 
 			// register zoom filter
-			EventHandler<ZoomEvent> zoomFilter = createZoomFilter(scene,
-					viewer);
+			EventHandler<ZoomEvent> zoomFilter = createZoomFilter(scene);
 			scene.addEventFilter(ZoomEvent.ANY, zoomFilter);
 			zoomFilters.put(scene, zoomFilter);
 		}

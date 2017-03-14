@@ -113,7 +113,6 @@ public class CreateCurveOnDragPolicy extends AbstractInteractionPolicy implement
 				}
 			}
 		}
-
 		throw new IllegalStateException("Cannot find bend target part.");
 	}
 

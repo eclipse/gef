@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.IOnRotatePolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -92,16 +93,21 @@ public class RotateTool extends AbstractTool {
 	 * @param scene
 	 *            The {@link Scene} where the {@link EventHandler} will be
 	 *            registered.
-	 * @param viewer
-	 *            The {@link IViewer} to which events are forwarded.
 	 * @return The {@link EventHandler} that can be registered at the given
 	 *         {@link Scene}.
 	 */
-	protected EventHandler<RotateEvent> createRotateFilter(Scene scene,
-			IViewer viewer) {
+	protected EventHandler<RotateEvent> createRotateFilter(Scene scene) {
 		return new EventHandler<RotateEvent>() {
 			@Override
 			public void handle(RotateEvent event) {
+				if (!(event.getTarget() instanceof Node)) {
+					return;
+				}
+				IViewer viewer = PartUtils.retrieveViewer(getDomain(),
+						(Node) event.getTarget());
+				if (viewer == null) {
+					return;
+				}
 				if (RotateEvent.ROTATE.equals(event.getEventType())) {
 					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
 						policy.rotate(event);
@@ -126,7 +132,7 @@ public class RotateTool extends AbstractTool {
 									RotateTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
-									ON_ROTATE_POLICY_KEY));
+									viewer, ON_ROTATE_POLICY_KEY));
 
 					// send event to the policies
 					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
@@ -164,8 +170,7 @@ public class RotateTool extends AbstractTool {
 			}
 
 			// register zoom filter
-			EventHandler<RotateEvent> rotateFilter = createRotateFilter(scene,
-					viewer);
+			EventHandler<RotateEvent> rotateFilter = createRotateFilter(scene);
 			scene.addEventFilter(RotateEvent.ANY, rotateFilter);
 			rotateFilters.put(scene, rotateFilter);
 		}

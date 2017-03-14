@@ -122,6 +122,8 @@ public class ClickDragTool extends AbstractTool {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
+			// FIXME: Register listeners for all viewers. Otherwise, only the
+			// first viewer in the Scene will receive events.
 			Scene scene = viewer.getCanvas().getScene();
 			if (gestures.containsKey(scene)) {
 				// already registered for this scene
@@ -149,9 +151,11 @@ public class ClickDragTool extends AbstractTool {
 						// determine all drag policies that can be
 						// notified about events
 						Node target = (Node) eventTarget;
+						IViewer viewer = PartUtils.retrieveViewer(getDomain(),
+								target);
 						possibleDragPolicies[0] = new ArrayList<>(
 								getTargetPolicyResolver().getTargetPolicies(
-										ClickDragTool.this, target,
+										ClickDragTool.this, target, viewer,
 										ON_DRAG_POLICY_KEY));
 
 						// search drag policies in reverse order first,
@@ -225,6 +229,8 @@ public class ClickDragTool extends AbstractTool {
 
 				@Override
 				protected void press(Node target, MouseEvent e) {
+					IViewer viewer = PartUtils.retrieveViewer(getDomain(),
+							target);
 					if (viewer instanceof InfiniteCanvasViewer) {
 						InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer)
 								.getCanvas();
@@ -261,7 +267,7 @@ public class ClickDragTool extends AbstractTool {
 					boolean opened = false;
 					List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
 							.getTargetPolicies(ClickDragTool.this, target,
-									ON_CLICK_POLICY_KEY);
+									viewer, ON_CLICK_POLICY_KEY);
 
 					// process click first
 					if (clickPolicies != null && !clickPolicies.isEmpty()) {
@@ -323,7 +329,8 @@ public class ClickDragTool extends AbstractTool {
 						double dy) {
 					// enable indication cursor event filters outside of
 					// press-drag-release gesture
-					Scene scene = viewer.getRootPart().getVisual().getScene();
+					Scene scene = activeViewer.getRootPart().getVisual()
+							.getScene();
 					scene.addEventFilter(MouseEvent.MOUSE_MOVED,
 							indicationCursorMouseMoveFilter);
 					scene.addEventFilter(KeyEvent.ANY,

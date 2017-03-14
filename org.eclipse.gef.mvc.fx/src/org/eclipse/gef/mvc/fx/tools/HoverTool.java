@@ -16,6 +16,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.IOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -76,13 +77,10 @@ public class HoverTool extends AbstractTool {
 	 * If no target part can be identified, then the root part of the given
 	 * {@link IViewer} is used as the target part.
 	 *
-	 * @param viewer
-	 *            The {@link IViewer} for which to create the
-	 *            {@link EventHandler}.
 	 * @return The {@link EventHandler} that handles hover changes for the given
 	 *         {@link IViewer}.
 	 */
-	protected EventHandler<MouseEvent> createHoverFilter(final IViewer viewer) {
+	protected EventHandler<MouseEvent> createHoverFilter() {
 		return new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -92,7 +90,11 @@ public class HoverTool extends AbstractTool {
 				}
 				EventTarget eventTarget = event.getTarget();
 				if (eventTarget instanceof Node) {
-					notifyHover(event, (Node) eventTarget);
+					IViewer viewer = PartUtils.retrieveViewer(getDomain(),
+							(Node) eventTarget);
+					if (viewer != null) {
+						notifyHover(viewer, event, (Node) eventTarget);
+					}
 					updateHoverIntent(event, (Node) eventTarget);
 				}
 			}
@@ -103,10 +105,11 @@ public class HoverTool extends AbstractTool {
 	protected void doActivate() {
 		super.doActivate();
 		for (IViewer viewer : getDomain().getViewers().values()) {
+			// XXX: Filter is only registered once per scene. The IViewer is
+			// determined for each input event individually.
 			Scene scene = viewer.getCanvas().getScene();
 			if (!hoverFilters.containsKey(scene)) {
-				EventHandler<MouseEvent> hoverFilter = createHoverFilter(
-						viewer);
+				EventHandler<MouseEvent> hoverFilter = createHoverFilter();
 				scene.addEventFilter(MouseEvent.ANY, hoverFilter);
 				hoverFilters.put(scene, hoverFilter);
 			}
@@ -161,15 +164,18 @@ public class HoverTool extends AbstractTool {
 
 	/**
 	 *
+	 * @param viewer
+	 *            The {@link IViewer}.
 	 * @param event
 	 *            The corresponding {@link MouseEvent}.
 	 * @param eventTarget
 	 *            The target {@link Node}.
 	 */
-	protected void notifyHover(MouseEvent event, Node eventTarget) {
+	protected void notifyHover(IViewer viewer, MouseEvent event,
+			Node eventTarget) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.getTargetPolicies(HoverTool.this, eventTarget,
+				.getTargetPolicies(HoverTool.this, eventTarget, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverTool.this);
 		// active policies are unnecessary because hover is not a
@@ -182,13 +188,15 @@ public class HoverTool extends AbstractTool {
 
 	/**
 	 *
+	 * @param viewer
+	 *            The {@link IViewer}.
 	 * @param hoverIntent
 	 *            The hover intent {@link Node}.
 	 */
-	protected void notifyHoverIntent(Node hoverIntent) {
+	protected void notifyHoverIntent(IViewer viewer, Node hoverIntent) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.getTargetPolicies(HoverTool.this, hoverIntent,
+				.getTargetPolicies(HoverTool.this, hoverIntent, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverTool.this);
 		// active policies are unnecessary because hover is not a
@@ -206,7 +214,10 @@ public class HoverTool extends AbstractTool {
 	private void onHoverIntentDelayFinished() {
 		hoverIntent = potentialHoverIntent;
 		potentialHoverIntent = null;
-		notifyHoverIntent(hoverIntent);
+		IViewer viewer = PartUtils.retrieveViewer(getDomain(), hoverIntent);
+		if (viewer != null) {
+			notifyHoverIntent(viewer, hoverIntent);
+		}
 	}
 
 	/**
