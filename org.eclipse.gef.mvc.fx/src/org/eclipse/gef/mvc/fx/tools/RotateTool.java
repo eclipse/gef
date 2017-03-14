@@ -128,7 +128,7 @@ public class RotateTool extends AbstractTool {
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
 					setActivePolicies(viewer,
-							getTargetPolicyResolver().getTargetPolicies(
+							getTargetPolicyResolver().resolvePolicies(
 									RotateTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,

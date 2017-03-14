@@ -241,7 +241,7 @@ public class ScrollTool extends AbstractTool {
 		EventTarget eventTarget = event.getTarget();
 		getDomain().openExecutionTransaction(ScrollTool.this);
 		setActivePolicies(viewer,
-				getTargetPolicyResolver().getTargetPolicies(ScrollTool.this,
+				getTargetPolicyResolver().resolvePolicies(ScrollTool.this,
 						eventTarget instanceof Node ? (Node) eventTarget : null,
 						viewer, ON_SCROLL_POLICY_KEY));
 		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {

@@ -47,7 +47,7 @@ import javafx.scene.Node;
  * target part have lowest precedence, i.e. they will be executed last.
  * </ol>
  * For details, take a look at the
- * {@link #getTargetPolicies(ITool, Node, IViewer, Class)} method.
+ * {@link #resolvePolicies(ITool, Node, IViewer, Class)} method.
  *
  * @author mwienand
  *
@@ -125,7 +125,7 @@ public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
 	 */
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
-	public <T extends IPolicy> List<? extends T> getTargetPolicies(
+	public <T extends IPolicy> List<? extends T> resolvePolicies(
 			ITool contextTool, Node target, IViewer viewer,
 			Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");

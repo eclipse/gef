@@ -154,7 +154,7 @@ public class ClickDragTool extends AbstractTool {
 						IViewer viewer = PartUtils.retrieveViewer(getDomain(),
 								target);
 						possibleDragPolicies[0] = new ArrayList<>(
-								getTargetPolicyResolver().getTargetPolicies(
+								getTargetPolicyResolver().resolvePolicies(
 										ClickDragTool.this, target, viewer,
 										ON_DRAG_POLICY_KEY));
 
@@ -266,7 +266,7 @@ public class ClickDragTool extends AbstractTool {
 					// determine click policies
 					boolean opened = false;
 					List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
-							.getTargetPolicies(ClickDragTool.this, target,
+							.resolvePolicies(ClickDragTool.this, target,
 									viewer, ON_CLICK_POLICY_KEY);
 
 					// process click first
@@ -290,7 +290,7 @@ public class ClickDragTool extends AbstractTool {
 						// hierarchy so that the viewer cannot be determined for
 						// the target node anymore. If that is the case, no drag
 						// policies should be notified about the event.
-						policies = getTargetPolicyResolver().getTargetPolicies(
+						policies = getTargetPolicyResolver().resolvePolicies(
 								ClickDragTool.this, target, activeViewer,
 								ON_DRAG_POLICY_KEY);
 					}

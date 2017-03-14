@@ -159,7 +159,7 @@ public class TypeTool extends AbstractTool {
 
 						// determine target policies on first key press
 						setActivePolicies(activeViewer,
-								getTargetPolicyResolver().getTargetPolicies(
+								getTargetPolicyResolver().resolvePolicies(
 										TypeTool.this, targetNode, activeViewer,
 										ON_STROKE_POLICY_KEY));
 					}
@@ -241,7 +241,7 @@ public class TypeTool extends AbstractTool {
 					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
 							targetNode);
 					Collection<? extends IOnTypePolicy> policies = getTargetPolicyResolver()
-							.getTargetPolicies(TypeTool.this, targetNode,
+							.resolvePolicies(TypeTool.this, targetNode,
 									targetViewer, ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time

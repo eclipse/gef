@@ -175,7 +175,7 @@ public class HoverTool extends AbstractTool {
 			Node eventTarget) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.getTargetPolicies(HoverTool.this, eventTarget, viewer,
+				.resolvePolicies(HoverTool.this, eventTarget, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverTool.this);
 		// active policies are unnecessary because hover is not a
@@ -196,7 +196,7 @@ public class HoverTool extends AbstractTool {
 	protected void notifyHoverIntent(IViewer viewer, Node hoverIntent) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.getTargetPolicies(HoverTool.this, hoverIntent, viewer,
+				.resolvePolicies(HoverTool.this, hoverIntent, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverTool.this);
 		// active policies are unnecessary because hover is not a
