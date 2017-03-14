@@ -56,11 +56,11 @@ import javafx.scene.input.MouseEvent;
  * availability of a corresponding {@link IOnClickPolicy} or
  * {@link IOnDragPolicy}.
  * <p>
- * The {@link ClickDragInteraction} handles the opening and closing of an transaction
- * operation via the {@link IDomain}, to which it is adapted. It controls that a
- * single transaction operation is used for the complete interaction (including
- * the click and potential drag part), so all interaction results can be undone
- * in a single undo step.
+ * The {@link ClickDragInteraction} handles the opening and closing of an
+ * transaction operation via the {@link IDomain}, to which it is adapted. It
+ * controls that a single transaction operation is used for the complete
+ * interaction (including the click and potential drag part), so all interaction
+ * results can be undone in a single undo step.
  *
  * @author mwienand
  * @author anyssen
@@ -307,7 +307,7 @@ public class ClickDragInteraction extends AbstractInteraction {
 	protected void drag(Node target, MouseEvent event, double dx, double dy) {
 		// abort processing of this gesture if no policies could be
 		// found that can process it
-		if (getActivePolicies(activeViewer).isEmpty()) {
+		if (activeViewer == null || getActivePolicies(activeViewer).isEmpty()) {
 			return;
 		}
 
@@ -332,6 +332,9 @@ public class ClickDragInteraction extends AbstractInteraction {
 	 */
 	protected void press(Node target, MouseEvent event) {
 		IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
+		if (viewer == null) {
+			return;
+		}
 		if (viewer instanceof InfiniteCanvasViewer) {
 			InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer).getCanvas();
 			// if any node in the target hierarchy is a scrollbar,
@@ -355,7 +358,12 @@ public class ClickDragInteraction extends AbstractInteraction {
 
 		// disable indication cursor event filters within
 		// press-drag-release gesture
-		Scene scene = viewer.getRootPart().getVisual().getScene();
+		Scene scene = target.getScene();
+		if (scene == null) {
+			// FIXME: Should not happen.
+			System.err.println("Target part is not in Scene.");
+			return;
+		}
 		scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
 				indicationCursorMouseMoveFilter);
 		scene.removeEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
@@ -398,7 +406,8 @@ public class ClickDragInteraction extends AbstractInteraction {
 			// remove this tool from the domain's execution
 			// transaction if previously opened
 			if (opened) {
-				getDomain().closeExecutionTransaction(ClickDragInteraction.this);
+				getDomain()
+						.closeExecutionTransaction(ClickDragInteraction.this);
 			}
 			policies = null;
 			return;
@@ -436,9 +445,17 @@ public class ClickDragInteraction extends AbstractInteraction {
 	 */
 	protected void release(Node target, MouseEvent event, double dx,
 			double dy) {
+		if (activeViewer == null) {
+			return;
+		}
+
 		// enable indication cursor event filters outside of
 		// press-drag-release gesture
-		Scene scene = target.getScene();
+		Scene scene = activeViewer.getRootPart().getVisual().getScene();
+		if (scene == null) {
+			throw new IllegalStateException(
+					"Active viewer's root part visual is not in Scene.");
+		}
 		scene.addEventFilter(MouseEvent.MOUSE_MOVED,
 				indicationCursorMouseMoveFilter);
 		scene.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
