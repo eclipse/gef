@@ -44,7 +44,7 @@ public class CloneOnClickPolicy extends AbstractInteractionPolicy implements IOn
 		}
 
 		// clone content
-		Object cloneContent = getHost().getAdapter(AbstractCloneContentPolicy.class).cloneContent();
+		Object cloneContent = getHost().getAdapter(AbstractCloneContentSupport.class).cloneContent();
 
 		// create the clone content part
 		IRootPart<? extends Node> root = getHost().getRoot();

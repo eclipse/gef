@@ -17,36 +17,30 @@ import org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
 
-public class CloneCurvePolicy extends AbstractCloneContentPolicy {
+public class CloneCurveSupport extends AbstractCloneContentSupport {
 
 	@Override
 	public Object cloneContent() {
-		GeometricCurve original = getHost().getContent();
-		GeometricCurve clone = new GeometricCurve(
-				original.getWayPointsCopy().toArray(new Point[] {}),
-				original.getStroke(), original.getStrokeWidth(),
-				original.getDashes(), original.getEffect());
+		GeometricCurve original = getAdaptable().getContent();
+		GeometricCurve clone = new GeometricCurve(original.getWayPointsCopy().toArray(new Point[] {}),
+				original.getStroke(), original.getStrokeWidth(), original.getDashes(), original.getEffect());
 		clone.setGeometry((ICurve) original.getGeometry().getCopy());
 		clone.setSourceDecoration(original.getSourceDecoration());
 		clone.setTargetDecoration(original.getTargetDecoration());
 		clone.setTransform(original.getTransform());
 
 		// anchorages
-		for (AbstractGeometricElement<?> srcAnchorage : original
-				.getSourceAnchorages()) {
+		for (AbstractGeometricElement<?> srcAnchorage : original.getSourceAnchorages()) {
 			clone.addSourceAnchorage(srcAnchorage);
 		}
-		for (AbstractGeometricElement<?> dstAnchorage : original
-				.getTargetAnchorages()) {
+		for (AbstractGeometricElement<?> dstAnchorage : original.getTargetAnchorages()) {
 			clone.addTargetAnchorage(dstAnchorage);
 		}
-
 		return clone;
 	}
 
 	@Override
-	public GeometricCurvePart getHost() {
-		return (GeometricCurvePart) super.getHost();
+	public GeometricCurvePart getAdaptable() {
+		return (GeometricCurvePart) super.getAdaptable();
 	}
-
 }

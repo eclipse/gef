@@ -25,9 +25,9 @@ import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleContentPartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleHoverHandlePartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteRootPart;
-import org.eclipse.gef.mvc.examples.logo.policies.CloneCurvePolicy;
+import org.eclipse.gef.mvc.examples.logo.policies.CloneCurveSupport;
 import org.eclipse.gef.mvc.examples.logo.policies.CloneOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.CloneShapePolicy;
+import org.eclipse.gef.mvc.examples.logo.policies.CloneShapeSupport;
 import org.eclipse.gef.mvc.examples.logo.policies.ContentRestrictedChangeViewportPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CreateAndTranslateShapeOnDragPolicy;
 import org.eclipse.gef.mvc.examples.logo.policies.CreateCurveOnDragPolicy;
@@ -203,7 +203,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
 
 		// cloning
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneCurvePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneCurveSupport.class);
 
 		// clickable area resizing
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectionClickableAreaBehavior.class);
@@ -273,7 +273,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RelocateLinkedOnDragPolicy.class);
 
 		// clone
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneShapePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneShapeSupport.class);
 
 		// bind dynamic anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DefaultAnchorProvider.class);

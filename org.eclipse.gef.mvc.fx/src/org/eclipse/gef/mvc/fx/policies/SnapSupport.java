@@ -44,8 +44,8 @@ public class SnapSupport {
 	 * positions are at
 	 * <code>(n * grid-cell-width, m * grid-cell-height)</code>. Per default,
 	 * the content group of the {@link InfiniteCanvas} is returned for an
-	 * {@link InfiniteCanvasViewer}. For other {@link IViewer} implementations, the visual of
-	 * the root part is used.
+	 * {@link InfiniteCanvasViewer}. For other {@link IViewer} implementations,
+	 * the visual of the root part is used.
 	 *
 	 * @param viewer
 	 *            The {@link IViewer} for which to determine a grid-local
@@ -144,5 +144,4 @@ public class SnapSupport {
 		Point2D newPositionInScene = gridLocalVisual.localToScene(nx, ny);
 		return new Point(newPositionInScene.getX(), newPositionInScene.getY());
 	}
-
 }
