@@ -87,9 +87,14 @@ public class FXCanvasEx extends FXCanvas {
 		private EventDispatcher delegate;
 		private long lastRedrawMillis = System.currentTimeMillis();
 		private org.eclipse.swt.widgets.Event downEvent;
+		private boolean needUpdateCall = false;
 
 		protected EventDispatcherEx(EventDispatcher delegate) {
 			this.delegate = delegate;
+			String os = System.getProperty("os.name");
+			if (os != null) {
+				needUpdateCall = os.toUpperCase().contains("win");
+			}
 		}
 
 		@Override
@@ -155,9 +160,14 @@ public class FXCanvasEx extends FXCanvas {
 			// https://bugs.openjdk.java.net/browse/JDK-8161587)
 			long millisNow = System.currentTimeMillis();
 			if (millisNow - lastRedrawMillis > REDRAW_INTERVAL_MILLIS) {
-				// XXX: Do not call update() but only redraw() to prevent a loss
-				// of performance while keeping the UI up-to-date.
 				redraw();
+				if (needUpdateCall) {
+					// XXX: Only call update() on some platforms to prevent a
+					// loss of performance while keeping the UI up-to-date.
+					update();
+					// FIXME: Use different EventDispatcher for both scenarios
+					// for maximum performance.
+				}
 				lastRedrawMillis = millisNow;
 			}
 			// return dispatched event
