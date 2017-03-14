@@ -81,20 +81,17 @@ import javafx.stage.Window;
  */
 public class FXCanvasEx extends FXCanvas {
 
+	// FIXME: Use different EventDispatcher for different scenarios (Java 8 vs.
+	// Java 9, and Windows vs. other platforms) for maximum performance.
 	private final class EventDispatcherEx implements EventDispatcher {
 
 		private static final int REDRAW_INTERVAL_MILLIS = 40; // i.e. 25 fps
 		private EventDispatcher delegate;
 		private long lastRedrawMillis = System.currentTimeMillis();
 		private org.eclipse.swt.widgets.Event downEvent;
-		private boolean needUpdateCall = false;
 
 		protected EventDispatcherEx(EventDispatcher delegate) {
 			this.delegate = delegate;
-			String os = System.getProperty("os.name");
-			if (os != null) {
-				needUpdateCall = os.toUpperCase().contains("win");
-			}
 		}
 
 		@Override
@@ -161,12 +158,10 @@ public class FXCanvasEx extends FXCanvas {
 			long millisNow = System.currentTimeMillis();
 			if (millisNow - lastRedrawMillis > REDRAW_INTERVAL_MILLIS) {
 				redraw();
-				if (needUpdateCall) {
+				if (WIN32) {
 					// XXX: Only call update() on some platforms to prevent a
 					// loss of performance while keeping the UI up-to-date.
 					update();
-					// FIXME: Use different EventDispatcher for both scenarios
-					// for maximum performance.
 				}
 				lastRedrawMillis = millisNow;
 			}
@@ -338,6 +333,7 @@ public class FXCanvasEx extends FXCanvas {
 
 	private static final boolean JAVA_8 = System.getProperty("java.version")
 			.startsWith("1.8.0");
+	private static final boolean WIN32 = SWT.getPlatform().equals("win32");
 
 	// XXX: SWTCursors does not support image cursors up to JavaSE-1.9
 	// (https://bugs.openjdk.java.net/browse/JDK-8088147); this listener
