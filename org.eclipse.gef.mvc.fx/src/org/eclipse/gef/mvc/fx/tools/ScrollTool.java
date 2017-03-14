@@ -89,8 +89,8 @@ public class ScrollTool extends AbstractTool {
 		PauseTransition pauseTransition = new PauseTransition(
 				Duration.millis(getFinishDelayMillis()));
 		pauseTransition.setOnFinished((ae) -> {
-			inScroll.remove(viewer);
 			scrollFinished(viewer);
+			inScroll.remove(viewer);
 		});
 		return pauseTransition;
 	}
@@ -243,7 +243,7 @@ public class ScrollTool extends AbstractTool {
 		setActivePolicies(viewer,
 				getTargetPolicyResolver().getTargetPolicies(ScrollTool.this,
 						eventTarget instanceof Node ? (Node) eventTarget : null,
-						ON_SCROLL_POLICY_KEY));
+						viewer, ON_SCROLL_POLICY_KEY));
 		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {
 			policy.startScroll(event);
 		}

@@ -148,6 +148,12 @@ public abstract class AbstractTool implements ITool {
 			throw new IllegalArgumentException(
 					"The given activePolicies may not be null.");
 		}
+		for (IPolicy ap : activePolicies) {
+			if (ap.getHost().getViewer() != viewer) {
+				throw new IllegalArgumentException(
+						"Resolved policy is not hosted within viewer.");
+			}
+		}
 		clearActivePolicies(viewer);
 		this.activePolicies.put(viewer, new ArrayList<>(activePolicies));
 	}
