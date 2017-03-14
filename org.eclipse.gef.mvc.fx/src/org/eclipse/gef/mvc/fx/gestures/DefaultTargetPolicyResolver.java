@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +47,7 @@ import javafx.scene.Node;
  * target part have lowest precedence, i.e. they will be executed last.
  * </ol>
  * For details, take a look at the
- * {@link #resolvePolicies(IInteraction, Node, IViewer, Class)} method.
+ * {@link #resolvePolicies(IGesture, Node, IViewer, Class)} method.
  *
  * @author mwienand
  *
@@ -126,7 +126,7 @@ public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
 	public <T extends IPolicy> List<? extends T> resolvePolicies(
-			IInteraction contextTool, Node target, IViewer viewer,
+			IGesture contextTool, Node target, IViewer viewer,
 			Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");
 		// System.out.println("viewer = " + viewer);
@@ -137,10 +137,10 @@ public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
 		// other tools
 		// System.out.println("Outer target policies:");
 		List<T> outerTargetPolicies = new ArrayList<>();
-		Collection<IInteraction> tools = viewer.getDomain()
-				.getAdapters(new TypeToken<IInteraction>() {
+		Collection<IGesture> tools = viewer.getDomain()
+				.getAdapters(new TypeToken<IGesture>() {
 				}).values();
-		for (IInteraction tool : tools) {
+		for (IGesture tool : tools) {
 			// System.out.println("[find active policies of " + tool + "]");
 			if (tool != contextTool) {
 				for (IPolicy policy : tool.getActivePolicies(viewer)) {

@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,13 +34,13 @@ import javafx.scene.input.ScrollEvent;
 import javafx.util.Duration;
 
 /**
- * The {@link ScrollInteraction} is an {@link AbstractInteraction} that handles mouse scroll
+ * The {@link ScrollGesture} is an {@link AbstractGesture} that handles mouse scroll
  * events.
  *
  * @author mwienand
  *
  */
-public class ScrollInteraction extends AbstractInteraction {
+public class ScrollGesture extends AbstractGesture {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
@@ -76,7 +76,7 @@ public class ScrollInteraction extends AbstractInteraction {
 		// clear active policies and close execution
 		// transaction
 		clearActivePolicies(viewer);
-		getDomain().closeExecutionTransaction(ScrollInteraction.this);
+		getDomain().closeExecutionTransaction(ScrollGesture.this);
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class ScrollInteraction extends AbstractInteraction {
 			policy.endScroll();
 		}
 		clearActivePolicies(viewer);
-		getDomain().closeExecutionTransaction(ScrollInteraction.this);
+		getDomain().closeExecutionTransaction(ScrollGesture.this);
 	}
 
 	/**
@@ -245,9 +245,9 @@ public class ScrollInteraction extends AbstractInteraction {
 	 */
 	protected void scrollStarted(IViewer viewer, ScrollEvent event) {
 		EventTarget eventTarget = event.getTarget();
-		getDomain().openExecutionTransaction(ScrollInteraction.this);
+		getDomain().openExecutionTransaction(ScrollGesture.this);
 		setActivePolicies(viewer,
-				getTargetPolicyResolver().resolvePolicies(ScrollInteraction.this,
+				getTargetPolicyResolver().resolvePolicies(ScrollGesture.this,
 						eventTarget instanceof Node ? (Node) eventTarget : null,
 						viewer, ON_SCROLL_POLICY_KEY));
 		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {

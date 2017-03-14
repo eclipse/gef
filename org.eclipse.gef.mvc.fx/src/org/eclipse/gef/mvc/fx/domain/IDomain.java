@@ -24,18 +24,18 @@ import org.eclipse.gef.common.activate.IActivatable;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.common.dispose.IDisposable;
+import org.eclipse.gef.mvc.fx.gestures.IGesture;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
-import org.eclipse.gef.mvc.fx.tools.IInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
 /**
  * A domain represents the collective state of a MVC application. It brings
- * together a set of {@link IViewer}s and related {@link IInteraction}s to interact
+ * together a set of {@link IViewer}s and related {@link IGesture}s to interact
  * with these. It also holds a reference to the {@link IOperationHistory} and
- * {@link UndoContext} used by all {@link IInteraction} as well as {@link IPolicy}s (in
+ * {@link UndoContext} used by all {@link IGesture} as well as {@link IPolicy}s (in
  * the {@link IViewer}s) to execute {@link IUndoableOperation}s.
  *
  * @author anyssen
@@ -49,16 +49,16 @@ public interface IDomain extends IAdaptable, IActivatable, IDisposable {
 	public static final String CONTENT_VIEWER_ROLE = "contentViewer";
 
 	/**
-	 * Closes the active execution transaction, removes the given {@link IInteraction}
+	 * Closes the active execution transaction, removes the given {@link IGesture}
 	 * from the transaction context, and opens a new execution transaction if
 	 * there are any tools remaining in the context.
 	 *
 	 * @param tool
-	 *            The {@link IInteraction} that should be removed from the transaction
+	 *            The {@link IGesture} that should be removed from the transaction
 	 *            context.
-	 * @see #openExecutionTransaction(IInteraction)
+	 * @see #openExecutionTransaction(IGesture)
 	 */
-	public void closeExecutionTransaction(IInteraction tool);
+	public void closeExecutionTransaction(IGesture tool);
 
 	/**
 	 * Executes the given {@link IUndoableOperation}.
@@ -77,16 +77,16 @@ public interface IDomain extends IAdaptable, IActivatable, IDisposable {
 			IProgressMonitor monitor) throws ExecutionException;
 
 	/**
-	 * Returns the {@link IInteraction}s registered at this {@link IDomain} (via
+	 * Returns the {@link IGesture}s registered at this {@link IDomain} (via
 	 * {@link #setAdapter(TypeToken, Object)}) with the {@link AdapterKey}s used
 	 * for registration.
 	 *
-	 * @return A {@link Map} containing the registered {@link IInteraction}s mapped to
+	 * @return A {@link Map} containing the registered {@link IGesture}s mapped to
 	 *         their respective {@link AdapterKey}s.
 	 *
 	 * @see IAdaptable#setAdapter(TypeToken, Object)
 	 */
-	public Map<AdapterKey<? extends IInteraction>, IInteraction> getTools();
+	public Map<AdapterKey<? extends IGesture>, IGesture> getTools();
 
 	/**
 	 * Returns the {@link IViewer}s registered at this {@link IDomain} (via
@@ -101,27 +101,27 @@ public interface IDomain extends IAdaptable, IActivatable, IDisposable {
 	public Map<AdapterKey<? extends IViewer>, IViewer> getViewers();
 
 	/**
-	 * Returns <code>true</code> if the given {@link IInteraction} is taking part in
+	 * Returns <code>true</code> if the given {@link IGesture} is taking part in
 	 * the currently open execution transaction. Otherwise returns
 	 * <code>false</code>.
 	 *
 	 * @param tool
-	 *            The {@link IInteraction} that is checked.
-	 * @return <code>true</code> if the given {@link IInteraction} is taking part in
+	 *            The {@link IGesture} that is checked.
+	 * @return <code>true</code> if the given {@link IGesture} is taking part in
 	 *         the currently open execution transaction, otherwise
 	 *         <code>false</code>.
 	 */
-	public boolean isExecutionTransactionOpen(IInteraction tool);
+	public boolean isExecutionTransactionOpen(IGesture tool);
 
 	/**
-	 * Opens a new transaction or adds the given {@link IInteraction} to the currently
+	 * Opens a new transaction or adds the given {@link IGesture} to the currently
 	 * opened transaction for executing operations (via
 	 * {@link #execute(ITransactionalOperation, IProgressMonitor)}) on the
 	 * {@link IOperationHistory} used by this {@link IDomain}.
 	 *
 	 * @param tool
-	 *            The {@link IInteraction} starting/joining the transaction.
+	 *            The {@link IGesture} starting/joining the transaction.
 	 */
-	public void openExecutionTransaction(IInteraction tool);
+	public void openExecutionTransaction(IGesture tool);
 
 }

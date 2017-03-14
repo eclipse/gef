@@ -11,14 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.mvc.fx.tools.HoverInteraction;
+import org.eclipse.gef.mvc.fx.gestures.HoverGesture;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
  * An interaction policy that implements the {@link IOnHoverPolicy} interface
- * will be notified about mouse hover events by the {@link HoverInteraction}.
+ * will be notified about mouse hover events by the {@link HoverGesture}.
  *
  * @author mwienand
  *

@@ -18,10 +18,10 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.gestures.AbstractGesture;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.tools.AbstractInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.event.EventTarget;
@@ -81,7 +81,7 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 		// keep method calls until we find a Tool
 		int i = 2; // start at 2 to dismiss local methods
 		for (; i < trace.length; i++) {
-			if (AbstractInteraction.class.isAssignableFrom(trace[i].getClass())) {
+			if (AbstractGesture.class.isAssignableFrom(trace[i].getClass())) {
 				break;
 			}
 		}
@@ -276,5 +276,4 @@ public abstract class AbstractInteractionPolicy extends AbstractPolicy {
 		initialRefreshVisual.put(part, part.isRefreshVisual());
 		part.setRefreshVisual(false);
 	}
-
 }

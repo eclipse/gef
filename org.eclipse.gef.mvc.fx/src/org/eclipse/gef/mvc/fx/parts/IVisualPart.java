@@ -26,8 +26,8 @@ import org.eclipse.gef.common.collections.ObservableSetMultimap;
 import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.gestures.IGesture;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
-import org.eclipse.gef.mvc.fx.tools.IInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -60,7 +60,7 @@ import javafx.scene.transform.Affine;
  * adapters may indeed be registered as needed). {@link IPolicy}s are usually
  * required in case the {@link IVisualPart} is directly involved in user
  * interaction (e.g. the user clicks on its controlled visual). They may be
- * accessed type-safe by {@link IInteraction}s or other {@link IPolicy}s (
+ * accessed type-safe by {@link IGesture}s or other {@link IPolicy}s (
  * {@link IPolicy}s may delegate to other {@link IPolicy}s)). {@link IBehavior}s
  * are used to react to changes of the attached model (in case of an
  * {@link IContentPart}s), the viewer models, or others sources (e.g. adapters

@@ -11,14 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.mvc.fx.tools.ScrollInteraction;
+import org.eclipse.gef.mvc.fx.gestures.ScrollGesture;
 
 import javafx.scene.input.ScrollEvent;
 
 /**
  * An interaction policy that implements the {@link IOnScrollPolicy} interface
  * will be notified about scroll events (mouse wheel or touch) by the
- * {@link ScrollInteraction}.
+ * {@link ScrollGesture}.
  *
  * @author mwienand
  *

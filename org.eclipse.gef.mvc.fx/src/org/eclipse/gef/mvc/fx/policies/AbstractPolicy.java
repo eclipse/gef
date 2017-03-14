@@ -48,5 +48,4 @@ public abstract class AbstractPolicy implements IPolicy {
 	public void setAdaptable(IVisualPart<? extends Node> adaptable) {
 		this.hostProperty.set(adaptable);
 	}
-
 }

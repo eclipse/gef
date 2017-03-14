@@ -19,7 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ AbstractVisualPartTests.class, BendableTests.class, ContentSynchronizationTests.class,
 		FocusTraversalPolicyTests.class, SelectionModelTests.class, AbstractHandlePartTests.class,
-		BendConnectionPolicyTests.class, ClickDragToolTests.class, TypeToolTests.class, TransformPolicyTests.class,
+		BendConnectionPolicyTests.class, ClickDragGestureTests.class, TypeGestureTests.class, TransformPolicyTests.class,
 		FocusTraversalPolicyTests.class, ResizePolicyTests.class })
 public class AllTests {
 

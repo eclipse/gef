@@ -11,7 +11,7 @@
  * Note: Certain parts of this interface have been transferred from org.eclipse.gef.Tool.
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.List;
 
@@ -23,19 +23,19 @@ import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 /**
- * An {@link IInteraction} handles a certain aspect of user interaction. It may
+ * An {@link IGesture} handles a certain aspect of user interaction. It may
  * react to input mouse, keyboard, and gesture events, as well as to changes to
  * logical models (adapted to the {@link IViewer}), which keep track of
  * selection, hover, etc.
  *
- * As an reaction to input events, an {@link IInteraction} may manipulate the
+ * As an reaction to input events, an {@link IGesture} may manipulate the
  * {@link IViewer}'s logical models, or interact with the {@link IViewer}'s
  * {@link IVisualPart}s via their respective {@link IPolicy}s.
  *
  * @author anyssen
  *
  */
-public interface IInteraction extends IActivatable, IAdaptable.Bound<IDomain> {
+public interface IGesture extends IActivatable, IAdaptable.Bound<IDomain> {
 
 	/**
 	 * Returns an (unmodifiable) list containing the {@link IPolicy interaction
@@ -51,10 +51,10 @@ public interface IInteraction extends IActivatable, IAdaptable.Bound<IDomain> {
 	public List<? extends IPolicy> getActivePolicies(IViewer viewer);
 
 	/**
-	 * The {@link IDomain}, this {@link IInteraction} is adapted to.
+	 * The {@link IDomain}, this {@link IGesture} is adapted to.
 	 *
-	 * @return The {@link IDomain}, this {@link IInteraction} is adapted to, or
-	 *         <code>null</code> if this {@link IInteraction} is not adapted to any
+	 * @return The {@link IDomain}, this {@link IGesture} is adapted to, or
+	 *         <code>null</code> if this {@link IGesture} is not adapted to any
 	 *         {@link IDomain}.
 	 */
 	public IDomain getDomain();

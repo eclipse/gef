@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen (itemis AG) - refactorings
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - inline rotate gesture
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.IOnPinchSpreadPolicy;
+import org.eclipse.gef.mvc.fx.policies.IOnRotatePolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.value.ChangeListener;
@@ -28,29 +28,28 @@ import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.input.ZoomEvent;
+import javafx.scene.input.RotateEvent;
 
 /**
- * The {@link PinchSpreadInteraction} is an {@link AbstractInteraction} to handle pinch/spread
- * (zoom) interaction gestures.
+ * The {@link RotateGesture} is an {@link AbstractGesture} to handle rotate
+ * interaction gestures.
  * <p>
- * The {@link PinchSpreadInteraction} handles the opening and closing of an transaction
+ * The {@link RotateGesture} handles the opening and closing of an transaction
  * operation via the {@link IDomain}, to which it is adapted. It controls that a
- * single transaction operation is used for the complete interaction, so all
+ * single transaction operation is used for the complete interaction , so all
  * interaction results can be undone in a single undo step.
  *
- * @author mwienand
  * @author anyssen
  *
  */
-public class PinchSpreadInteraction extends AbstractInteraction {
+public class RotateGesture extends AbstractGesture {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	public static final Class<IOnPinchSpreadPolicy> ON_PINCH_SPREAD_POLICY_KEY = IOnPinchSpreadPolicy.class;
+	public static final Class<IOnRotatePolicy> ON_ROTATE_POLICY_KEY = IOnRotatePolicy.class;
 
 	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
-	private Map<Scene, EventHandler<ZoomEvent>> zoomFilters = new IdentityHashMap<>();
+	private Map<Scene, EventHandler<RotateEvent>> rotateFilters = new IdentityHashMap<>();
 
 	/**
 	 * Creates a {@link ChangeListener} for the
@@ -73,14 +72,13 @@ public class PinchSpreadInteraction extends AbstractInteraction {
 					Boolean oldValue, Boolean newValue) {
 				if (newValue == null || !newValue) {
 					// cancel target policies
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
-							viewer)) {
-						policy.abortZoom();
+					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+						policy.abortRotate();
 					}
 					// clear active policies and close execution
 					// transaction
 					clearActivePolicies(viewer);
-					getDomain().closeExecutionTransaction(PinchSpreadInteraction.this);
+					getDomain().closeExecutionTransaction(RotateGesture.this);
 				}
 			}
 		};
@@ -88,8 +86,8 @@ public class PinchSpreadInteraction extends AbstractInteraction {
 	}
 
 	/**
-	 * Creates an {@link EventHandler} for {@link ZoomEvent}s that forwards the
-	 * events to the {@link IOnPinchSpreadPolicy} implementations that can be
+	 * Creates an {@link EventHandler} for {@link RotateEvent}s that forwards
+	 * the events to the {@link IOnRotatePolicy} implementations that can be
 	 * determined for the individual events and the given {@link IViewer}.
 	 *
 	 * @param scene
@@ -98,69 +96,55 @@ public class PinchSpreadInteraction extends AbstractInteraction {
 	 * @return The {@link EventHandler} that can be registered at the given
 	 *         {@link Scene}.
 	 */
-	protected EventHandler<ZoomEvent> createZoomFilter(Scene scene) {
-		return new EventHandler<ZoomEvent>() {
-			private IViewer activeViewer;
-
+	protected EventHandler<RotateEvent> createRotateFilter(Scene scene) {
+		return new EventHandler<RotateEvent>() {
 			@Override
-			public void handle(ZoomEvent event) {
-				if (ZoomEvent.ZOOM.equals(event.getEventType())) {
-					if (activeViewer == null) {
-						return;
+			public void handle(RotateEvent event) {
+				if (!(event.getTarget() instanceof Node)) {
+					return;
+				}
+				IViewer viewer = PartUtils.retrieveViewer(getDomain(),
+						(Node) event.getTarget());
+				if (viewer == null) {
+					return;
+				}
+				if (RotateEvent.ROTATE.equals(event.getEventType())) {
+					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+						policy.rotate(event);
 					}
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
-							activeViewer)) {
-						policy.zoom(event);
-					}
-				} else if (ZoomEvent.ZOOM_STARTED
+				} else if (RotateEvent.ROTATION_STARTED
 						.equals(event.getEventType())) {
-					if (!(event.getTarget() instanceof Node)) {
-						return;
-					}
-					IViewer viewer = PartUtils.retrieveViewer(getDomain(),
-							(Node) event.getTarget());
-					if (viewer == null) {
-						return;
-					}
-					activeViewer = viewer;
-
 					// zoom finish may not occur, so close any preceding
 					// transaction just in case
 					if (!getDomain()
-							.isExecutionTransactionOpen(PinchSpreadInteraction.this)) {
+							.isExecutionTransactionOpen(RotateGesture.this)) {
 						// TODO: this case should already be handled by the
 						// underlying gesture
 						// finish event may not properly occur in all cases; we
 						// may continue to use the still open transaction
-						getDomain()
-								.openExecutionTransaction(PinchSpreadInteraction.this);
+						getDomain().openExecutionTransaction(RotateGesture.this);
 					}
 
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
-					setActivePolicies(activeViewer,
+					setActivePolicies(viewer,
 							getTargetPolicyResolver().resolvePolicies(
-									PinchSpreadInteraction.this,
+									RotateGesture.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
-									activeViewer, ON_PINCH_SPREAD_POLICY_KEY));
+									viewer, ON_ROTATE_POLICY_KEY));
 
 					// send event to the policies
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
-							viewer)) {
-						policy.startZoom(event);
+					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+						policy.startRotate(event);
 					}
-				} else if (ZoomEvent.ZOOM_FINISHED
+				} else if (RotateEvent.ROTATION_FINISHED
 						.equals(event.getEventType())) {
-					if (activeViewer == null) {
-						return;
+					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+						policy.endRotate(event);
 					}
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
-							activeViewer)) {
-						policy.endZoom(event);
-					}
-					clearActivePolicies(activeViewer);
-					getDomain().closeExecutionTransaction(PinchSpreadInteraction.this);
+					clearActivePolicies(viewer);
+					getDomain().closeExecutionTransaction(RotateGesture.this);
 				}
 			}
 		};
@@ -180,22 +164,23 @@ public class PinchSpreadInteraction extends AbstractInteraction {
 			// check if we already registered zoom listeners at the viewer's
 			// scene (in case two viewer's share a single scene)
 			Scene scene = viewer.getCanvas().getScene();
-			if (zoomFilters.containsKey(scene)) {
+			if (rotateFilters.containsKey(scene)) {
 				// we are already listening for events of this scene
 				continue;
 			}
 
 			// register zoom filter
-			EventHandler<ZoomEvent> zoomFilter = createZoomFilter(scene);
-			scene.addEventFilter(ZoomEvent.ANY, zoomFilter);
-			zoomFilters.put(scene, zoomFilter);
+			EventHandler<RotateEvent> rotateFilter = createRotateFilter(scene);
+			scene.addEventFilter(RotateEvent.ANY, rotateFilter);
+			rotateFilters.put(scene, rotateFilter);
 		}
 	}
 
 	@Override
 	protected void doDeactivate() {
-		for (Scene scene : new ArrayList<>(zoomFilters.keySet())) {
-			scene.removeEventFilter(ZoomEvent.ANY, zoomFilters.remove(scene));
+		for (Scene scene : new ArrayList<>(rotateFilters.keySet())) {
+			scene.removeEventFilter(RotateEvent.ANY,
+					rotateFilters.remove(scene));
 		}
 		for (final IViewer viewer : new ArrayList<>(
 				viewerFocusChangeListeners.keySet())) {
@@ -207,8 +192,7 @@ public class PinchSpreadInteraction extends AbstractInteraction {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends IOnPinchSpreadPolicy> getActivePolicies(
-			IViewer viewer) {
-		return (List<IOnPinchSpreadPolicy>) super.getActivePolicies(viewer);
+	public List<? extends IOnRotatePolicy> getActivePolicies(IViewer viewer) {
+		return (List<IOnRotatePolicy>) super.getActivePolicies(viewer);
 	}
 }

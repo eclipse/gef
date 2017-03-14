@@ -11,14 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.mvc.fx.tools.PinchSpreadInteraction;
+import org.eclipse.gef.mvc.fx.gestures.PinchSpreadGesture;
 
 import javafx.scene.input.ZoomEvent;
 
 /**
  * An interaction policy that implements the {@link IOnPinchSpreadPolicy}
  * interface will be notified about touch pinch/spread events by the
- * {@link PinchSpreadInteraction}.
+ * {@link PinchSpreadGesture}.
  *
  * @author mwienand
  *

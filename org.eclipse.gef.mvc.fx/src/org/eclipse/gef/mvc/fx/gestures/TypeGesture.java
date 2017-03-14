@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,12 +34,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link TypeInteraction} is an {@link AbstractInteraction} that handles keyboard input.
+ * The {@link TypeGesture} is an {@link AbstractGesture} that handles keyboard input.
  *
  * @author mwienand
  *
  */
-public class TypeInteraction extends AbstractInteraction {
+public class TypeGesture extends AbstractGesture {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
@@ -97,7 +97,7 @@ public class TypeInteraction extends AbstractInteraction {
 					clearActivePolicies(activeViewer);
 					activeViewer = null;
 					// close execution transaction
-					getDomain().closeExecutionTransaction(TypeInteraction.this);
+					getDomain().closeExecutionTransaction(TypeGesture.this);
 					// unset pressed keys
 					pressedKeys.clear();
 				}
@@ -154,13 +154,13 @@ public class TypeInteraction extends AbstractInteraction {
 						}
 
 						// open execution transaction
-						getDomain().openExecutionTransaction(TypeInteraction.this);
+						getDomain().openExecutionTransaction(TypeGesture.this);
 						isInitialPress = true;
 
 						// determine target policies on first key press
 						setActivePolicies(activeViewer,
 								getTargetPolicyResolver().resolvePolicies(
-										TypeInteraction.this, targetNode, activeViewer,
+										TypeGesture.this, targetNode, activeViewer,
 										ON_STROKE_POLICY_KEY));
 					}
 
@@ -202,7 +202,7 @@ public class TypeInteraction extends AbstractInteraction {
 						// only when the initially pressed key is released
 						clearActivePolicies(activeViewer);
 						activeViewer = null;
-						getDomain().closeExecutionTransaction(TypeInteraction.this);
+						getDomain().closeExecutionTransaction(TypeGesture.this);
 					}
 					pressedKeys.remove(event.getCode());
 				}
@@ -214,7 +214,7 @@ public class TypeInteraction extends AbstractInteraction {
 				public void handle(KeyEvent event) {
 					// System.out.println("typed " + event);
 					if (pressedKeys.isEmpty()) {
-						getDomain().openExecutionTransaction(TypeInteraction.this);
+						getDomain().openExecutionTransaction(TypeGesture.this);
 					}
 
 					// determine viewer that contains the given target part
@@ -241,7 +241,7 @@ public class TypeInteraction extends AbstractInteraction {
 					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
 							targetNode);
 					Collection<? extends IOnTypePolicy> policies = getTargetPolicyResolver()
-							.resolvePolicies(TypeInteraction.this, targetNode,
+							.resolvePolicies(TypeGesture.this, targetNode,
 									targetViewer, ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
@@ -249,7 +249,7 @@ public class TypeInteraction extends AbstractInteraction {
 						policy.type(event, pressedKeys);
 					}
 					if (pressedKeys.isEmpty()) {
-						getDomain().closeExecutionTransaction(TypeInteraction.this);
+						getDomain().closeExecutionTransaction(TypeGesture.this);
 					}
 				}
 			};

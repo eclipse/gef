@@ -16,16 +16,16 @@ import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.gestures.IGesture;
+import org.eclipse.gef.mvc.fx.gestures.TypeGesture;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
-import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
-import org.eclipse.gef.mvc.fx.tools.IInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
@@ -35,46 +35,47 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotResult;
+import javafx.scene.input.KeyCode;
+import javafx.util.Callback;
 
-public class ClickDragToolTests {
+public class TypeGestureTests {
 
 	private static class FXDomainDriver extends HistoricizingDomain {
 		protected int openedExecutionTransactions = 0;
 		protected int closedExecutionTransactions = 0;
 
 		@Override
-		public void closeExecutionTransaction(IInteraction tool) {
-			if (tool instanceof ClickDragInteraction) {
+		public void closeExecutionTransaction(IGesture tool) {
+			if (tool instanceof TypeGesture) {
 				closedExecutionTransactions++;
 			}
 			super.closeExecutionTransaction(tool);
 		}
 
 		@Override
-		public void openExecutionTransaction(IInteraction tool) {
+		public void openExecutionTransaction(IGesture tool) {
 			super.openExecutionTransaction(tool);
-			if (tool instanceof ClickDragInteraction) {
+			if (tool instanceof TypeGesture) {
 				openedExecutionTransactions++;
 			}
-		}
+		};
 	}
 
 	/**
-	 * Ensure all tests are executed on the JavaFX application thread (and the
-	 * JavaFX toolkit is properly initialized).
+	 * Ensure that the JavaFX toolkit is properly initialized.
 	 */
 	@Rule
 	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
 
 	/**
-	 * It is important that a single execution transaction (see
-	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef.mvc.fx.tools.IInteraction)}
-	 * ) is used for a complete click/drag interaction gesture, because
-	 * otherwise the transactional results of the gesture could not be undone in
-	 * a single step, as it would result in more than one operation within the
-	 * domain's {@link IOperationHistory}.
+	 * It is important that a (single) execution transaction (see
+	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef.mvc.fx.gestures.IGesture)}
+	 * ) is used for a complete press/drag interaction gesture, because
+	 * otherwise the transactional results of the gesture could not be undone.
 	 *
 	 * @throws Throwable
 	 */
@@ -86,7 +87,8 @@ public class ClickDragToolTests {
 			protected void bindIContentPartFactory() {
 				binder().bind(IContentPartFactory.class).toInstance(new IContentPartFactory() {
 					@Override
-					public IContentPart<? extends Node> createContentPart(Object content, Map<Object, Object> contextMap) {
+					public IContentPart<? extends Node> createContentPart(Object content,
+							Map<Object, Object> contextMap) {
 						return null;
 					}
 				});
@@ -94,8 +96,6 @@ public class ClickDragToolTests {
 
 			@Override
 			protected void bindIDomain() {
-				// stub the domain to be able to keep track of opened execution
-				// transactions
 				binder().bind(IDomain.class).to(FXDomainDriver.class);
 			}
 
@@ -122,6 +122,26 @@ public class ClickDragToolTests {
 			}
 		});
 
+		// repaint
+		ctx.getPanel().repaint();
+		ctx.waitForIdle();
+		final CountDownLatch latch = new CountDownLatch(1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				scene.getRoot().snapshot(new Callback<SnapshotResult, Void>() {
+					@Override
+					public Void call(SnapshotResult param) {
+						latch.countDown();
+						return null;
+					}
+				}, null, null);
+			}
+		});
+		latch.await();
+		ctx.getPanel().repaint();
+		ctx.waitForIdle();
+
 		// move mouse to viewer center
 		Point sceneCenter = ctx.runAndWait(new RunnableWithResult<Point>() {
 			@Override
@@ -131,43 +151,16 @@ public class ClickDragToolTests {
 				return new Point((int) (scene.getX() + scene.getWidth() / 2),
 						(int) (scene.getY() + scene.getHeight() / 2));
 			}
+
 		});
 		ctx.mouseMove(scene.getRoot(), sceneCenter.x, sceneCenter.y);
 
-		// simulate click gesture
+		// click into the viewer to gain keyboard focus
 		ctx.mousePress();
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				assertEquals("A single execution transaction should have been opened", 1,
-						domain.openedExecutionTransactions);
-				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-			}
-		});
 		ctx.mouseRelease();
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				assertEquals("A single execution transaction should have been opened", 1,
-						domain.openedExecutionTransactions);
-				assertEquals("A single execution transaction should have been closed", 1,
-						domain.closedExecutionTransactions);
-			}
-		});
 
-		// re-initialize
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				domain.openedExecutionTransactions = 0;
-				domain.closedExecutionTransactions = 0;
-				assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
-				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-			}
-		});
-
-		// simulate click/drag
-		ctx.mousePress();
+		// simulate press/release gesture
+		ctx.keyPress(scene.getRoot(), KeyCode.K);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -176,16 +169,7 @@ public class ClickDragToolTests {
 				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 			}
 		});
-		ctx.mouseDrag(20, 20);
-		ctx.runAndWait(new Runnable() {
-			@Override
-			public void run() {
-				assertEquals("A single execution transaction should have been opened", 1,
-						domain.openedExecutionTransactions);
-				assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-			}
-		});
-		ctx.mouseRelease();
+		ctx.keyRelease();
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -196,5 +180,4 @@ public class ClickDragToolTests {
 			}
 		});
 	}
-
 }

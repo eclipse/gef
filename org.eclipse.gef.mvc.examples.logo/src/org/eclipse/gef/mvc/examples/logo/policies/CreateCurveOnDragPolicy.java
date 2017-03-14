@@ -24,6 +24,7 @@ import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
+import org.eclipse.gef.mvc.fx.gestures.ClickDragGesture;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
@@ -32,7 +33,6 @@ import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
-import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.common.collect.HashMultimap;
@@ -182,7 +182,7 @@ public class CreateCurveOnDragPolicy extends AbstractInteractionPolicy implement
 		// find bend target part
 		bendTargetPart = findBendTargetPart(curvePart, event.getTarget());
 		if (bendTargetPart != null) {
-			dragPolicies = bendTargetPart.getAdapters(ClickDragInteraction.ON_DRAG_POLICY_KEY);
+			dragPolicies = bendTargetPart.getAdapters(ClickDragGesture.ON_DRAG_POLICY_KEY);
 		}
 		if (dragPolicies != null) {
 			MouseEvent dragEvent = new MouseEvent(event.getSource(), event.getTarget(), MouseEvent.MOUSE_DRAGGED,

@@ -23,6 +23,7 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.gestures.ClickDragGesture;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.DeselectOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -31,7 +32,6 @@ import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
-import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
@@ -166,7 +166,7 @@ public class CreateAndTranslateShapeOnDragPolicy extends AbstractInteractionPoli
 		}
 
 		// find drag target part
-		dragPolicies = createdShapePart.getAdapters(ClickDragInteraction.ON_DRAG_POLICY_KEY);
+		dragPolicies = createdShapePart.getAdapters(ClickDragGesture.ON_DRAG_POLICY_KEY);
 		if (dragPolicies != null) {
 			for (IOnDragPolicy dragPolicy : dragPolicies.values()) {
 				dragPolicy.startDrag(event);

@@ -16,11 +16,11 @@ import java.util.ArrayList;
 
 import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.gestures.TypeGesture;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
-import org.eclipse.gef.mvc.fx.tools.TypeInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -45,7 +45,7 @@ import javafx.scene.Scene;
  * {@link Scene}, while a consumption of the mapping JavaFX event is not
  * propagated back.
  * <p>
- * Additionally, the JavaFX event handler (i.e. the {@link TypeInteraction}, in case it
+ * Additionally, the JavaFX event handler (i.e. the {@link TypeGesture}, in case it
  * is registered at the {@link IDomain}), will be notified after the execution
  * of the action handler, because {@link FXCanvasEx} wraps the event forwarding
  * in a {@link Platform#runLater(Runnable)} call.

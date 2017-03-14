@@ -8,12 +8,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.mvc.fx;uses:="com.google.inject.multibindings",
  org.eclipse.gef.mvc.fx.behaviors,
  org.eclipse.gef.mvc.fx.domain,
+ org.eclipse.gef.mvc.fx.gestures,
  org.eclipse.gef.mvc.fx.models,
  org.eclipse.gef.mvc.fx.operations,
  org.eclipse.gef.mvc.fx.parts;uses:="com.google.inject",
  org.eclipse.gef.mvc.fx.policies,
  org.eclipse.gef.mvc.fx.providers;uses:="com.google.inject",
- org.eclipse.gef.mvc.fx.tools,
  org.eclipse.gef.mvc.fx.viewer
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)",

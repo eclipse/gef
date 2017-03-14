@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,14 +28,14 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
- * The {@link AbstractInteraction} can be used as a base class for {@link IInteraction}
+ * The {@link AbstractGesture} can be used as a base class for {@link IGesture}
  * implementations.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public abstract class AbstractInteraction implements IInteraction {
+public abstract class AbstractGesture implements IGesture {
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
 	private ReadOnlyObjectWrapper<IDomain> domainProperty = new ReadOnlyObjectWrapper<>();

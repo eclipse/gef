@@ -10,7 +10,7 @@
  *     Alexander Nyßen (itemis AG) - refactorings
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * An {@link IInteraction} to handle click/drag interaction gestures.
+ * An {@link IGesture} to handle click/drag interaction gestures.
  * <p>
  * As click and drag are 'overlapping' gestures (a click is part of each drag,
  * which is composed out of click, drag, and release), these are handled
@@ -56,7 +56,7 @@ import javafx.scene.input.MouseEvent;
  * availability of a corresponding {@link IOnClickPolicy} or
  * {@link IOnDragPolicy}.
  * <p>
- * The {@link ClickDragInteraction} handles the opening and closing of an
+ * The {@link ClickDragGesture} handles the opening and closing of an
  * transaction operation via the {@link IDomain}, to which it is adapted. It
  * controls that a single transaction operation is used for the complete
  * interaction (including the click and potential drag part), so all interaction
@@ -66,7 +66,7 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class ClickDragInteraction extends AbstractInteraction {
+public class ClickDragGesture extends AbstractGesture {
 
 	/**
 	 * The typeKey used to retrieve those policies that are able to handle the
@@ -170,7 +170,7 @@ public class ClickDragInteraction extends AbstractInteraction {
 			clearActivePolicies(activeViewer);
 			activeViewer = null;
 			// close execution transaction
-			getDomain().closeExecutionTransaction(ClickDragInteraction.this);
+			getDomain().closeExecutionTransaction(ClickDragGesture.this);
 		}
 	};
 
@@ -197,7 +197,7 @@ public class ClickDragInteraction extends AbstractInteraction {
 				if (viewer != null) {
 					possibleDragPolicies[0] = new ArrayList<>(
 							getTargetPolicyResolver().resolvePolicies(
-									ClickDragInteraction.this, target, viewer,
+									ClickDragGesture.this, target, viewer,
 									ON_DRAG_POLICY_KEY));
 				} else {
 					possibleDragPolicies[0] = new ArrayList<>();
@@ -373,12 +373,12 @@ public class ClickDragInteraction extends AbstractInteraction {
 		// determine click policies
 		boolean opened = false;
 		List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
-				.resolvePolicies(ClickDragInteraction.this, target, viewer,
+				.resolvePolicies(ClickDragGesture.this, target, viewer,
 						ON_CLICK_POLICY_KEY);
 		// process click first
 		if (clickPolicies != null && !clickPolicies.isEmpty()) {
 			opened = true;
-			getDomain().openExecutionTransaction(ClickDragInteraction.this);
+			getDomain().openExecutionTransaction(ClickDragGesture.this);
 			for (IOnClickPolicy clickPolicy : clickPolicies) {
 				clickPolicy.click(event);
 			}
@@ -396,7 +396,7 @@ public class ClickDragInteraction extends AbstractInteraction {
 			// the target node anymore. If that is the case, no drag
 			// policies should be notified about the event.
 			policies = getTargetPolicyResolver().resolvePolicies(
-					ClickDragInteraction.this, target, activeViewer,
+					ClickDragGesture.this, target, activeViewer,
 					ON_DRAG_POLICY_KEY);
 		}
 
@@ -407,7 +407,7 @@ public class ClickDragInteraction extends AbstractInteraction {
 			// transaction if previously opened
 			if (opened) {
 				getDomain()
-						.closeExecutionTransaction(ClickDragInteraction.this);
+						.closeExecutionTransaction(ClickDragGesture.this);
 			}
 			policies = null;
 			return;
@@ -416,7 +416,7 @@ public class ClickDragInteraction extends AbstractInteraction {
 		// add this tool to the execution transaction of the domain
 		// if not yet opened
 		if (!opened) {
-			getDomain().openExecutionTransaction(ClickDragInteraction.this);
+			getDomain().openExecutionTransaction(ClickDragGesture.this);
 		}
 
 		// mark the drag policies as active
@@ -477,7 +477,7 @@ public class ClickDragInteraction extends AbstractInteraction {
 		activeViewer = null;
 
 		// remove this tool from the domain's execution transaction
-		getDomain().closeExecutionTransaction(ClickDragInteraction.this);
+		getDomain().closeExecutionTransaction(ClickDragGesture.this);
 
 		// hide indication cursor
 		if (indicationCursorPolicy[0] != null) {

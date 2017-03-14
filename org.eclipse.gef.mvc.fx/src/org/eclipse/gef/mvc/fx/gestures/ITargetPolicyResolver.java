@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.tools;
+package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import javafx.scene.Node;
 /**
  * The {@link ITargetPolicyResolver} provides a mechanism to determine and
  * prioritize all policies that are to be notified about certain input events
- * (see {@link #resolvePolicies(IInteraction, Node, IViewer, Class)} for details).
+ * (see {@link #resolvePolicies(IGesture, Node, IViewer, Class)} for details).
  *
  * @author mwienand
  *
@@ -39,7 +39,7 @@ public interface ITargetPolicyResolver extends IAdaptable.Bound<IDomain> {
 	 *            Type parameter specifying the type of policy that is
 	 *            collected.
 	 * @param contextTool
-	 *            The {@link IInteraction} for which to determine target policies.
+	 *            The {@link IGesture} for which to determine target policies.
 	 * @param target
 	 *            The target {@link Node} that received an input event.
 	 * @param viewer
@@ -51,6 +51,6 @@ public interface ITargetPolicyResolver extends IAdaptable.Bound<IDomain> {
 	 *         the target part.
 	 */
 	public <T extends IPolicy> List<? extends T> resolvePolicies(
-			IInteraction contextTool, Node target, IViewer viewer,
+			IGesture contextTool, Node target, IViewer viewer,
 			Class<T> policyClass);
 }

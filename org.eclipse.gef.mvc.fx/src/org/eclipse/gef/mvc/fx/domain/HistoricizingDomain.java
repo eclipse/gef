@@ -31,11 +31,11 @@ import org.eclipse.gef.common.activate.IActivatable;
 import org.eclipse.gef.common.adapt.AdaptableSupport;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.InjectAdapters;
+import org.eclipse.gef.mvc.fx.gestures.IGesture;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef.mvc.fx.tools.IInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -75,14 +75,14 @@ public class HistoricizingDomain implements IDomain {
 	private IUndoContext undoContext;
 
 	private AbstractCompositeOperation transaction;
-	private Set<IInteraction> transactionContext = new HashSet<>();
+	private Set<IGesture> transactionContext = new HashSet<>();
 	private IOperationHistoryListener transactionListener = new IOperationHistoryListener() {
 		@Override
 		public void historyNotification(OperationHistoryEvent event) {
 			if (event.getEventType() == OperationHistoryEvent.ABOUT_TO_UNDO) {
 				if (!transactionContext.isEmpty() && transaction != null) {
 					if (transaction.getOperations().isEmpty()) {
-						for (IInteraction tool : transactionContext) {
+						for (IGesture tool : transactionContext) {
 							closeExecutionTransaction(tool);
 						}
 					} else {
@@ -147,7 +147,7 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public void closeExecutionTransaction(IInteraction tool) {
+	public void closeExecutionTransaction(IGesture tool) {
 		// if (!transactionContext.contains(tool)) {
 		// throw new IllegalStateException(
 		// "No transaction active for tool " + tool + ".");
@@ -262,8 +262,8 @@ public class HistoricizingDomain implements IDomain {
 	 * {@inheritDoc}
 	 *
 	 * In case an execution transaction is currently open (see
-	 * {@link #openExecutionTransaction(IInteraction)},
-	 * {@link #closeExecutionTransaction(IInteraction)}) the enclosing transaction will
+	 * {@link #openExecutionTransaction(IGesture)},
+	 * {@link #closeExecutionTransaction(IGesture)}) the enclosing transaction will
 	 * refer to the {@link IUndoContext} used by this {@link IDomain}) (so that
 	 * no specific {@link IUndoContext} is set on the passed in
 	 * {@link IUndoableOperation}). If no transaction is currently open, the
@@ -344,8 +344,8 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public Map<AdapterKey<? extends IInteraction>, IInteraction> getTools() {
-		return ads.getAdapters(IInteraction.class);
+	public Map<AdapterKey<? extends IGesture>, IGesture> getTools() {
+		return ads.getAdapters(IGesture.class);
 	}
 
 	/**
@@ -380,12 +380,12 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public boolean isExecutionTransactionOpen(IInteraction tool) {
+	public boolean isExecutionTransactionOpen(IGesture tool) {
 		return transactionContext.contains(tool);
 	}
 
 	@Override
-	public void openExecutionTransaction(IInteraction tool) {
+	public void openExecutionTransaction(IGesture tool) {
 		// if (transactionContext.contains(tool)) {
 		// throw new IllegalStateException(
 		// "A transaction is already active for tool " + tool + ".");
