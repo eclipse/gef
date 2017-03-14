@@ -13,12 +13,12 @@
 package org.eclipse.gef.mvc.fx.tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.gef.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
@@ -32,8 +32,11 @@ import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
+import javafx.event.EventType;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -77,320 +80,392 @@ public class ClickDragTool extends AbstractTool {
 	 */
 	public static final Class<IOnDragPolicy> ON_DRAG_POLICY_KEY = IOnDragPolicy.class;
 
-	private final Map<Scene, AbstractMouseDragGesture> gestures = new IdentityHashMap<>();
-	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
-	private final Map<Scene, EventHandler<MouseEvent>> cursorMouseMoveFilters = new IdentityHashMap<>();
-	private final Map<Scene, EventHandler<KeyEvent>> cursorKeyFilters = new IdentityHashMap<>();
-
+	private final Set<Scene> scenes = Collections
+			.newSetFromMap(new IdentityHashMap<>());
+	// TODO: Provide activeViewer in AbstractTool.
 	private IViewer activeViewer;
+	private Node pressed;
+	private Point2D startMousePosition;
+
+	/**
+	 * This {@link EventHandler} is registered as an event filter on the
+	 * {@link Scene} to handle drag and release events.
+	 */
+	private EventHandler<? super MouseEvent> mouseFilter = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent event) {
+			// determine pressed/dragged/released state
+			EventType<? extends Event> type = event.getEventType();
+			if (pressed == null && type.equals(MouseEvent.MOUSE_PRESSED)) {
+				EventTarget target = event.getTarget();
+				if (target instanceof Node) {
+					// initialize the gesture
+					pressed = (Node) target;
+					startMousePosition = new Point2D(event.getSceneX(),
+							event.getSceneY());
+					press(pressed, event);
+				}
+				return;
+			} else if (pressed == null) {
+				// not initialized yet
+				return;
+			}
+			if (type.equals(MouseEvent.MOUSE_EXITED_TARGET)
+					|| type.equals(MouseEvent.MOUSE_ENTERED_TARGET)) {
+				// ignore mouse exited target events here (they may result from
+				// visual changes that are caused by a preceding press)
+				return;
+			}
+			boolean dragged = type.equals(MouseEvent.MOUSE_DRAGGED);
+			boolean released = false;
+			if (!dragged) {
+				released = type.equals(MouseEvent.MOUSE_RELEASED);
+				if (!released) {
+					// account for missing RELEASE events
+					if (!event.isPrimaryButtonDown()
+							&& !event.isSecondaryButtonDown()
+							&& !event.isMiddleButtonDown()) {
+						// no button down
+						released = true;
+					}
+				}
+			}
+			if (dragged || released) {
+				double x = event.getSceneX();
+				double dx = x - startMousePosition.getX();
+				double y = event.getSceneY();
+				double dy = y - startMousePosition.getY();
+				if (dragged) {
+					drag(pressed, event, dx, dy);
+				} else {
+					release(pressed, event, dx, dy);
+					pressed = null;
+				}
+			}
+		}
+	};
+
+	private ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
+			// cannot abort if no activeViewer
+			if (activeViewer == null) {
+				return;
+			}
+			// check if any viewer is focused
+			for (IViewer v : getDomain().getViewers().values()) {
+				if (v.isViewerFocused()) {
+					return;
+				}
+			}
+			// no viewer is focused => abort
+			// cancel target policies
+			for (IPolicy policy : getActivePolicies(activeViewer)) {
+				if (policy instanceof IOnDragPolicy) {
+					((IOnDragPolicy) policy).abortDrag();
+				}
+			}
+			// clear active policies
+			clearActivePolicies(activeViewer);
+			activeViewer = null;
+			// close execution transaction
+			getDomain().closeExecutionTransaction(ClickDragTool.this);
+		}
+	};
+
+	private final IOnDragPolicy indicationCursorPolicy[] = new IOnDragPolicy[] {
+			null };
+	@SuppressWarnings("unchecked")
+	private final List<IOnDragPolicy> possibleDragPolicies[] = new ArrayList[] {
+			null };
+
+	private EventHandler<MouseEvent> indicationCursorMouseMoveFilter = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent event) {
+			if (indicationCursorPolicy[0] != null) {
+				indicationCursorPolicy[0].hideIndicationCursor();
+				indicationCursorPolicy[0] = null;
+			}
+
+			EventTarget eventTarget = event.getTarget();
+			if (eventTarget instanceof Node) {
+				// determine all drag policies that can be
+				// notified about events
+				Node target = (Node) eventTarget;
+				IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
+				if (viewer != null) {
+					possibleDragPolicies[0] = new ArrayList<>(
+							getTargetPolicyResolver().resolvePolicies(
+									ClickDragTool.this, target, viewer,
+									ON_DRAG_POLICY_KEY));
+				} else {
+					possibleDragPolicies[0] = new ArrayList<>();
+				}
+
+				// search drag policies in reverse order first,
+				// so that the policy closest to the target part
+				// is the first policy to provide an indication
+				// cursor
+				ListIterator<? extends IOnDragPolicy> dragIterator = possibleDragPolicies[0]
+						.listIterator(possibleDragPolicies[0].size());
+				while (dragIterator.hasPrevious()) {
+					IOnDragPolicy policy = dragIterator.previous();
+					if (policy.showIndicationCursor(event)) {
+						indicationCursorPolicy[0] = policy;
+						break;
+					}
+				}
+			}
+		}
+	};
+
+	private EventHandler<KeyEvent> indicationCursorKeyFilter = new EventHandler<KeyEvent>() {
+		@Override
+		public void handle(KeyEvent event) {
+			if (indicationCursorPolicy[0] != null) {
+				indicationCursorPolicy[0].hideIndicationCursor();
+				indicationCursorPolicy[0] = null;
+			}
+
+			if (possibleDragPolicies[0] == null
+					|| possibleDragPolicies[0].isEmpty()) {
+				return;
+			}
+
+			// search drag policies in reverse order first,
+			// so that the policy closest to the target part
+			// is the first policy to provide an indication
+			// cursor
+			ListIterator<? extends IOnDragPolicy> dragIterator = possibleDragPolicies[0]
+					.listIterator(possibleDragPolicies[0].size());
+			while (dragIterator.hasPrevious()) {
+				IOnDragPolicy policy = dragIterator.previous();
+				if (policy.showIndicationCursor(event)) {
+					indicationCursorPolicy[0] = policy;
+					break;
+				}
+			}
+		}
+	};
 
 	@Override
 	protected void doActivate() {
 		super.doActivate();
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
-			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-				@Override
-				public void changed(
-						ObservableValue<? extends Boolean> observable,
-						Boolean oldValue, Boolean newValue) {
-					// cannot abort if no activeViewer
-					if (activeViewer == null) {
-						return;
-					}
-					// check if any viewer is focused
-					for (IViewer v : getDomain().getViewers().values()) {
-						if (v.isViewerFocused()) {
-							return;
-						}
-					}
-					// no viewer is focused => abort
-					// cancel target policies
-					for (IPolicy policy : getActivePolicies(activeViewer)) {
-						if (policy instanceof IOnDragPolicy) {
-							((IOnDragPolicy) policy).abortDrag();
-						}
-					}
-					// clear active policies
-					clearActivePolicies(activeViewer);
-					activeViewer = null;
-					// close execution transaction
-					getDomain().closeExecutionTransaction(ClickDragTool.this);
-				}
-			};
 			viewer.viewerFocusedProperty()
 					.addListener(viewerFocusChangeListener);
-			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
 			Scene scene = viewer.getCanvas().getScene();
-			if (gestures.containsKey(scene)) {
+			if (scenes.contains(scene)) {
 				// already registered for this scene
 				continue;
 			}
 
-			final IOnDragPolicy indicationCursorPolicy[] = new IOnDragPolicy[] {
-					null };
-			@SuppressWarnings("unchecked")
-			final List<IOnDragPolicy> possibleDragPolicies[] = new ArrayList[] {
-					null };
-
 			// register mouse move filter for forwarding events to drag policies
 			// that can show a mouse cursor to indicate their action
-			final EventHandler<MouseEvent> indicationCursorMouseMoveFilter = new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					if (indicationCursorPolicy[0] != null) {
-						indicationCursorPolicy[0].hideIndicationCursor();
-						indicationCursorPolicy[0] = null;
-					}
-
-					EventTarget eventTarget = event.getTarget();
-					if (eventTarget instanceof Node) {
-						// determine all drag policies that can be
-						// notified about events
-						Node target = (Node) eventTarget;
-						IViewer viewer = PartUtils.retrieveViewer(getDomain(),
-								target);
-						if (viewer != null) {
-							possibleDragPolicies[0] = new ArrayList<>(
-									getTargetPolicyResolver().resolvePolicies(
-											ClickDragTool.this, target, viewer,
-											ON_DRAG_POLICY_KEY));
-						} else {
-							possibleDragPolicies[0] = new ArrayList<>();
-						}
-
-						// search drag policies in reverse order first,
-						// so that the policy closest to the target part
-						// is the first policy to provide an indication
-						// cursor
-						ListIterator<? extends IOnDragPolicy> dragIterator = possibleDragPolicies[0]
-								.listIterator(possibleDragPolicies[0].size());
-						while (dragIterator.hasPrevious()) {
-							IOnDragPolicy policy = dragIterator.previous();
-							if (policy.showIndicationCursor(event)) {
-								indicationCursorPolicy[0] = policy;
-								break;
-							}
-						}
-					}
-				}
-			};
 			scene.addEventFilter(MouseEvent.MOUSE_MOVED,
 					indicationCursorMouseMoveFilter);
-			cursorMouseMoveFilters.put(scene, indicationCursorMouseMoveFilter);
-
 			// register key event filter for forwarding events to drag policies
 			// that can show a mouse cursor to indicate their action
-			final EventHandler<KeyEvent> indicationCursorKeyFilter = new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent event) {
-					if (indicationCursorPolicy[0] != null) {
-						indicationCursorPolicy[0].hideIndicationCursor();
-						indicationCursorPolicy[0] = null;
-					}
-
-					if (possibleDragPolicies[0] == null
-							|| possibleDragPolicies[0].isEmpty()) {
-						return;
-					}
-
-					// search drag policies in reverse order first,
-					// so that the policy closest to the target part
-					// is the first policy to provide an indication
-					// cursor
-					ListIterator<? extends IOnDragPolicy> dragIterator = possibleDragPolicies[0]
-							.listIterator(possibleDragPolicies[0].size());
-					while (dragIterator.hasPrevious()) {
-						IOnDragPolicy policy = dragIterator.previous();
-						if (policy.showIndicationCursor(event)) {
-							indicationCursorPolicy[0] = policy;
-							break;
-						}
-					}
-				}
-			};
 			scene.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
-			cursorKeyFilters.put(scene, indicationCursorKeyFilter);
-
-			AbstractMouseDragGesture gesture = new AbstractMouseDragGesture() {
-				@Override
-				protected void drag(Node target, MouseEvent e, double dx,
-						double dy) {
-					// abort processing of this gesture if no policies could be
-					// found that can process it
-					if (getActivePolicies(activeViewer).isEmpty()) {
-						return;
-					}
-
-					for (IOnDragPolicy policy : getActivePolicies(
-							activeViewer)) {
-						policy.drag(e, new Dimension(dx, dy));
-					}
-				}
-
-				@Override
-				protected void press(Node target, MouseEvent e) {
-					if (viewer instanceof InfiniteCanvasViewer) {
-						InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer)
-								.getCanvas();
-						// if any node in the target hierarchy is a scrollbar,
-						// do not process the event
-						if (e.getTarget() instanceof Node) {
-							Node targetNode = (Node) e.getTarget();
-							while (targetNode != null) {
-								if (targetNode == canvas
-										.getHorizontalScrollBar()
-										|| targetNode == canvas
-												.getVerticalScrollBar()) {
-									return;
-								}
-								targetNode = targetNode.getParent();
-							}
-						}
-					}
-
-					// show indication cursor on press so that the indication
-					// cursor is shown even when no mouse move event was
-					// previously fired
-					indicationCursorMouseMoveFilter.handle(e);
-
-					// disable indication cursor event filters within
-					// press-drag-release gesture
-					Scene scene = viewer.getRootPart().getVisual().getScene();
-					scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
-							indicationCursorMouseMoveFilter);
-					scene.removeEventFilter(KeyEvent.ANY,
-							indicationCursorKeyFilter);
-
-					// determine viewer that contains the given target part
-					IViewer viewer = PartUtils.retrieveViewer(getDomain(),
-							target);
-					// determine click policies
-					boolean opened = false;
-					List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
-							.resolvePolicies(ClickDragTool.this, target, viewer,
-									ON_CLICK_POLICY_KEY);
-					// process click first
-					if (clickPolicies != null && !clickPolicies.isEmpty()) {
-						opened = true;
-						getDomain()
-								.openExecutionTransaction(ClickDragTool.this);
-						for (IOnClickPolicy clickPolicy : clickPolicies) {
-							clickPolicy.click(e);
-						}
-					}
-
-					// determine viewer that contains the given target part
-					// again, now that the click policies have been executed
-					activeViewer = PartUtils.retrieveViewer(getDomain(),
-							target);
-
-					// determine drag policies
-					List<? extends IOnDragPolicy> policies = null;
-					if (activeViewer != null) {
-						// XXX: A click policy could have changed the visual
-						// hierarchy so that the viewer cannot be determined for
-						// the target node anymore. If that is the case, no drag
-						// policies should be notified about the event.
-						policies = getTargetPolicyResolver().resolvePolicies(
-								ClickDragTool.this, target, activeViewer,
-								ON_DRAG_POLICY_KEY);
-					}
-
-					// abort processing of this gesture if no drag policies
-					// could be found
-					if (policies == null || policies.isEmpty()) {
-						// remove this tool from the domain's execution
-						// transaction if previously opened
-						if (opened) {
-							getDomain().closeExecutionTransaction(
-									ClickDragTool.this);
-						}
-						policies = null;
-						return;
-					}
-
-					// add this tool to the execution transaction of the domain
-					// if not yet opened
-					if (!opened) {
-						getDomain()
-								.openExecutionTransaction(ClickDragTool.this);
-					}
-
-					// mark the drag policies as active
-					setActivePolicies(activeViewer, policies);
-
-					// send press() to all drag policies
-					for (IOnDragPolicy policy : policies) {
-						policy.startDrag(e);
-					}
-				}
-
-				@Override
-				protected void release(Node target, MouseEvent e, double dx,
-						double dy) {
-					// enable indication cursor event filters outside of
-					// press-drag-release gesture
-					Scene scene = viewer.getRootPart().getVisual().getScene();
-					scene.addEventFilter(MouseEvent.MOUSE_MOVED,
-							indicationCursorMouseMoveFilter);
-					scene.addEventFilter(KeyEvent.ANY,
-							indicationCursorKeyFilter);
-
-					// abort processing of this gesture if no policies could be
-					// found that can process it
-					if (getActivePolicies(activeViewer).isEmpty()) {
-						activeViewer = null;
-						return;
-					}
-
-					// send release() to all drag policies
-					for (IOnDragPolicy policy : getActivePolicies(
-							activeViewer)) {
-						policy.endDrag(e, new Dimension(dx, dy));
-					}
-
-					// clear active policies before processing release
-					clearActivePolicies(activeViewer);
-					activeViewer = null;
-
-					// remove this tool from the domain's execution transaction
-					getDomain().closeExecutionTransaction(ClickDragTool.this);
-
-					// hide indication cursor
-					if (indicationCursorPolicy[0] != null) {
-						indicationCursorPolicy[0].hideIndicationCursor();
-						indicationCursorPolicy[0] = null;
-					}
-				}
-			};
-
-			gesture.setScene(scene);
-			gestures.put(scene, gesture);
+			// register mouse filter for forwarding press, drag, and release
+			// events
+			scene.addEventFilter(MouseEvent.ANY, mouseFilter);
+			scenes.add(scene);
 		}
 	}
 
 	@Override
 	protected void doDeactivate() {
-		for (Scene scene : new ArrayList<>(gestures.keySet())) {
-			gestures.remove(scene).setScene(null);
+		for (Scene scene : new ArrayList<>(scenes)) {
+			scene.removeEventFilter(MouseEvent.ANY, mouseFilter);
 			scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
-					cursorMouseMoveFilters.remove(scene));
-			scene.removeEventFilter(KeyEvent.ANY,
-					cursorKeyFilters.remove(scene));
+					indicationCursorMouseMoveFilter);
+			scene.removeEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
 		}
-		for (IViewer viewer : new ArrayList<>(
-				viewerFocusChangeListeners.keySet())) {
+		for (final IViewer viewer : getDomain().getViewers().values()) {
 			viewer.viewerFocusedProperty()
-					.removeListener(viewerFocusChangeListeners.remove(viewer));
+					.removeListener(viewerFocusChangeListener);
 		}
 		super.doDeactivate();
+	}
+
+	/**
+	 * This method is called upon {@link MouseEvent#MOUSE_DRAGGED} events.
+	 *
+	 * @param target
+	 *            The event target.
+	 * @param event
+	 *            The corresponding {@link MouseEvent}.
+	 * @param dx
+	 *            The horizontal displacement from the mouse press location.
+	 * @param dy
+	 *            The vertical displacement from the mouse press location.
+	 */
+	protected void drag(Node target, MouseEvent event, double dx, double dy) {
+		// abort processing of this gesture if no policies could be
+		// found that can process it
+		if (getActivePolicies(activeViewer).isEmpty()) {
+			return;
+		}
+
+		for (IOnDragPolicy policy : getActivePolicies(activeViewer)) {
+			policy.drag(event, new Dimension(dx, dy));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IOnDragPolicy> getActivePolicies(IViewer viewer) {
 		return (List<IOnDragPolicy>) super.getActivePolicies(viewer);
+	}
+
+	/**
+	 * This method is called upon {@link MouseEvent#MOUSE_PRESSED} events.
+	 *
+	 * @param target
+	 *            The event target.
+	 * @param event
+	 *            The corresponding {@link MouseEvent}.
+	 */
+	protected void press(Node target, MouseEvent event) {
+		IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
+		if (viewer instanceof InfiniteCanvasViewer) {
+			InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer).getCanvas();
+			// if any node in the target hierarchy is a scrollbar,
+			// do not process the event
+			if (event.getTarget() instanceof Node) {
+				Node targetNode = (Node) event.getTarget();
+				while (targetNode != null) {
+					if (targetNode == canvas.getHorizontalScrollBar()
+							|| targetNode == canvas.getVerticalScrollBar()) {
+						return;
+					}
+					targetNode = targetNode.getParent();
+				}
+			}
+		}
+
+		// show indication cursor on press so that the indication
+		// cursor is shown even when no mouse move event was
+		// previously fired
+		indicationCursorMouseMoveFilter.handle(event);
+
+		// disable indication cursor event filters within
+		// press-drag-release gesture
+		Scene scene = viewer.getRootPart().getVisual().getScene();
+		scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
+				indicationCursorMouseMoveFilter);
+		scene.removeEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
+
+		// determine viewer that contains the given target part
+		viewer = PartUtils.retrieveViewer(getDomain(), target);
+		// determine click policies
+		boolean opened = false;
+		List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
+				.resolvePolicies(ClickDragTool.this, target, viewer,
+						ON_CLICK_POLICY_KEY);
+		// process click first
+		if (clickPolicies != null && !clickPolicies.isEmpty()) {
+			opened = true;
+			getDomain().openExecutionTransaction(ClickDragTool.this);
+			for (IOnClickPolicy clickPolicy : clickPolicies) {
+				clickPolicy.click(event);
+			}
+		}
+
+		// determine viewer that contains the given target part
+		// again, now that the click policies have been executed
+		activeViewer = PartUtils.retrieveViewer(getDomain(), target);
+
+		// determine drag policies
+		List<? extends IOnDragPolicy> policies = null;
+		if (activeViewer != null) {
+			// XXX: A click policy could have changed the visual
+			// hierarchy so that the viewer cannot be determined for
+			// the target node anymore. If that is the case, no drag
+			// policies should be notified about the event.
+			policies = getTargetPolicyResolver().resolvePolicies(
+					ClickDragTool.this, target, activeViewer,
+					ON_DRAG_POLICY_KEY);
+		}
+
+		// abort processing of this gesture if no drag policies
+		// could be found
+		if (policies == null || policies.isEmpty()) {
+			// remove this tool from the domain's execution
+			// transaction if previously opened
+			if (opened) {
+				getDomain().closeExecutionTransaction(ClickDragTool.this);
+			}
+			policies = null;
+			return;
+		}
+
+		// add this tool to the execution transaction of the domain
+		// if not yet opened
+		if (!opened) {
+			getDomain().openExecutionTransaction(ClickDragTool.this);
+		}
+
+		// mark the drag policies as active
+		setActivePolicies(activeViewer, policies);
+
+		// send press() to all drag policies
+		for (IOnDragPolicy policy : policies) {
+			policy.startDrag(event);
+		}
+	}
+
+	/**
+	 * This method is called upon {@link MouseEvent#MOUSE_RELEASED} events. This
+	 * method is also called for other mouse events, when a mouse release event
+	 * was not fired, but was detected otherwise (probably only possible when
+	 * using the JavaFX/SWT integration).
+	 *
+	 * @param target
+	 *            The event target.
+	 * @param event
+	 *            The corresponding {@link MouseEvent}.
+	 * @param dx
+	 *            The horizontal displacement from the mouse press location.
+	 * @param dy
+	 *            The vertical displacement from the mouse press location.
+	 */
+	protected void release(Node target, MouseEvent event, double dx,
+			double dy) {
+		// enable indication cursor event filters outside of
+		// press-drag-release gesture
+		Scene scene = target.getScene();
+		scene.addEventFilter(MouseEvent.MOUSE_MOVED,
+				indicationCursorMouseMoveFilter);
+		scene.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
+
+		// abort processing of this gesture if no policies could be
+		// found that can process it
+		if (getActivePolicies(activeViewer).isEmpty()) {
+			activeViewer = null;
+			return;
+		}
+
+		// send release() to all drag policies
+		for (IOnDragPolicy policy : getActivePolicies(activeViewer)) {
+			policy.endDrag(event, new Dimension(dx, dy));
+		}
+
+		// clear active policies before processing release
+		clearActivePolicies(activeViewer);
+		activeViewer = null;
+
+		// remove this tool from the domain's execution transaction
+		getDomain().closeExecutionTransaction(ClickDragTool.this);
+
+		// hide indication cursor
+		if (indicationCursorPolicy[0] != null) {
+			indicationCursorPolicy[0].hideIndicationCursor();
+			indicationCursorPolicy[0] = null;
+		}
 	}
 }

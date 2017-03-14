@@ -7,7 +7,6 @@ Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.fx,
  org.eclipse.gef.fx.anchors;uses:="com.google.common.collect",
- org.eclipse.gef.fx.gestures,
  org.eclipse.gef.fx.listeners,
  org.eclipse.gef.fx.nodes,
  org.eclipse.gef.fx.utils
