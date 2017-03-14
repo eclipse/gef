@@ -43,7 +43,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * An {@link ITool} to handle click/drag interaction gestures.
+ * An {@link IInteraction} to handle click/drag interaction gestures.
  * <p>
  * As click and drag are 'overlapping' gestures (a click is part of each drag,
  * which is composed out of click, drag, and release), these are handled
@@ -56,7 +56,7 @@ import javafx.scene.input.MouseEvent;
  * availability of a corresponding {@link IOnClickPolicy} or
  * {@link IOnDragPolicy}.
  * <p>
- * The {@link ClickDragTool} handles the opening and closing of an transaction
+ * The {@link ClickDragInteraction} handles the opening and closing of an transaction
  * operation via the {@link IDomain}, to which it is adapted. It controls that a
  * single transaction operation is used for the complete interaction (including
  * the click and potential drag part), so all interaction results can be undone
@@ -66,7 +66,7 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class ClickDragTool extends AbstractTool {
+public class ClickDragInteraction extends AbstractInteraction {
 
 	/**
 	 * The typeKey used to retrieve those policies that are able to handle the
@@ -170,7 +170,7 @@ public class ClickDragTool extends AbstractTool {
 			clearActivePolicies(activeViewer);
 			activeViewer = null;
 			// close execution transaction
-			getDomain().closeExecutionTransaction(ClickDragTool.this);
+			getDomain().closeExecutionTransaction(ClickDragInteraction.this);
 		}
 	};
 
@@ -197,7 +197,7 @@ public class ClickDragTool extends AbstractTool {
 				if (viewer != null) {
 					possibleDragPolicies[0] = new ArrayList<>(
 							getTargetPolicyResolver().resolvePolicies(
-									ClickDragTool.this, target, viewer,
+									ClickDragInteraction.this, target, viewer,
 									ON_DRAG_POLICY_KEY));
 				} else {
 					possibleDragPolicies[0] = new ArrayList<>();
@@ -365,12 +365,12 @@ public class ClickDragTool extends AbstractTool {
 		// determine click policies
 		boolean opened = false;
 		List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
-				.resolvePolicies(ClickDragTool.this, target, viewer,
+				.resolvePolicies(ClickDragInteraction.this, target, viewer,
 						ON_CLICK_POLICY_KEY);
 		// process click first
 		if (clickPolicies != null && !clickPolicies.isEmpty()) {
 			opened = true;
-			getDomain().openExecutionTransaction(ClickDragTool.this);
+			getDomain().openExecutionTransaction(ClickDragInteraction.this);
 			for (IOnClickPolicy clickPolicy : clickPolicies) {
 				clickPolicy.click(event);
 			}
@@ -388,7 +388,7 @@ public class ClickDragTool extends AbstractTool {
 			// the target node anymore. If that is the case, no drag
 			// policies should be notified about the event.
 			policies = getTargetPolicyResolver().resolvePolicies(
-					ClickDragTool.this, target, activeViewer,
+					ClickDragInteraction.this, target, activeViewer,
 					ON_DRAG_POLICY_KEY);
 		}
 
@@ -398,7 +398,7 @@ public class ClickDragTool extends AbstractTool {
 			// remove this tool from the domain's execution
 			// transaction if previously opened
 			if (opened) {
-				getDomain().closeExecutionTransaction(ClickDragTool.this);
+				getDomain().closeExecutionTransaction(ClickDragInteraction.this);
 			}
 			policies = null;
 			return;
@@ -407,7 +407,7 @@ public class ClickDragTool extends AbstractTool {
 		// add this tool to the execution transaction of the domain
 		// if not yet opened
 		if (!opened) {
-			getDomain().openExecutionTransaction(ClickDragTool.this);
+			getDomain().openExecutionTransaction(ClickDragInteraction.this);
 		}
 
 		// mark the drag policies as active
@@ -460,7 +460,7 @@ public class ClickDragTool extends AbstractTool {
 		activeViewer = null;
 
 		// remove this tool from the domain's execution transaction
-		getDomain().closeExecutionTransaction(ClickDragTool.this);
+		getDomain().closeExecutionTransaction(ClickDragInteraction.this);
 
 		// hide indication cursor
 		if (indicationCursorPolicy[0] != null) {

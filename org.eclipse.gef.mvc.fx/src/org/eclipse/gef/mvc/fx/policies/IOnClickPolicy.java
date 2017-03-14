@@ -11,13 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 
 import javafx.scene.input.MouseEvent;
 
 /**
  * An interaction policy that implements the {@link IOnClickPolicy} interface
- * will be notified about mouse click events by the {@link ClickDragTool}.
+ * will be notified about mouse click events by the {@link ClickDragInteraction}.
  *
  * @author mwienand
  *

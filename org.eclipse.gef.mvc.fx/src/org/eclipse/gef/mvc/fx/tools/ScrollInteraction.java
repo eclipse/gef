@@ -34,13 +34,13 @@ import javafx.scene.input.ScrollEvent;
 import javafx.util.Duration;
 
 /**
- * The {@link ScrollTool} is an {@link AbstractTool} that handles mouse scroll
+ * The {@link ScrollInteraction} is an {@link AbstractInteraction} that handles mouse scroll
  * events.
  *
  * @author mwienand
  *
  */
-public class ScrollTool extends AbstractTool {
+public class ScrollInteraction extends AbstractInteraction {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
@@ -76,7 +76,7 @@ public class ScrollTool extends AbstractTool {
 		// clear active policies and close execution
 		// transaction
 		clearActivePolicies(viewer);
-		getDomain().closeExecutionTransaction(ScrollTool.this);
+		getDomain().closeExecutionTransaction(ScrollInteraction.this);
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class ScrollTool extends AbstractTool {
 			policy.endScroll();
 		}
 		clearActivePolicies(viewer);
-		getDomain().closeExecutionTransaction(ScrollTool.this);
+		getDomain().closeExecutionTransaction(ScrollInteraction.this);
 	}
 
 	/**
@@ -245,9 +245,9 @@ public class ScrollTool extends AbstractTool {
 	 */
 	protected void scrollStarted(IViewer viewer, ScrollEvent event) {
 		EventTarget eventTarget = event.getTarget();
-		getDomain().openExecutionTransaction(ScrollTool.this);
+		getDomain().openExecutionTransaction(ScrollInteraction.this);
 		setActivePolicies(viewer,
-				getTargetPolicyResolver().resolvePolicies(ScrollTool.this,
+				getTargetPolicyResolver().resolvePolicies(ScrollInteraction.this,
 						eventTarget instanceof Node ? (Node) eventTarget : null,
 						viewer, ON_SCROLL_POLICY_KEY));
 		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {

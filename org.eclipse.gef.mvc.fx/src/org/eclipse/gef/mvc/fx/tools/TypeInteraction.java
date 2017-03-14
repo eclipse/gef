@@ -34,12 +34,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link TypeTool} is an {@link AbstractTool} that handles keyboard input.
+ * The {@link TypeInteraction} is an {@link AbstractInteraction} that handles keyboard input.
  *
  * @author mwienand
  *
  */
-public class TypeTool extends AbstractTool {
+public class TypeInteraction extends AbstractInteraction {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
@@ -97,7 +97,7 @@ public class TypeTool extends AbstractTool {
 					clearActivePolicies(activeViewer);
 					activeViewer = null;
 					// close execution transaction
-					getDomain().closeExecutionTransaction(TypeTool.this);
+					getDomain().closeExecutionTransaction(TypeInteraction.this);
 					// unset pressed keys
 					pressedKeys.clear();
 				}
@@ -154,13 +154,13 @@ public class TypeTool extends AbstractTool {
 						}
 
 						// open execution transaction
-						getDomain().openExecutionTransaction(TypeTool.this);
+						getDomain().openExecutionTransaction(TypeInteraction.this);
 						isInitialPress = true;
 
 						// determine target policies on first key press
 						setActivePolicies(activeViewer,
 								getTargetPolicyResolver().resolvePolicies(
-										TypeTool.this, targetNode, activeViewer,
+										TypeInteraction.this, targetNode, activeViewer,
 										ON_STROKE_POLICY_KEY));
 					}
 
@@ -202,7 +202,7 @@ public class TypeTool extends AbstractTool {
 						// only when the initially pressed key is released
 						clearActivePolicies(activeViewer);
 						activeViewer = null;
-						getDomain().closeExecutionTransaction(TypeTool.this);
+						getDomain().closeExecutionTransaction(TypeInteraction.this);
 					}
 					pressedKeys.remove(event.getCode());
 				}
@@ -214,7 +214,7 @@ public class TypeTool extends AbstractTool {
 				public void handle(KeyEvent event) {
 					// System.out.println("typed " + event);
 					if (pressedKeys.isEmpty()) {
-						getDomain().openExecutionTransaction(TypeTool.this);
+						getDomain().openExecutionTransaction(TypeInteraction.this);
 					}
 
 					// determine viewer that contains the given target part
@@ -241,7 +241,7 @@ public class TypeTool extends AbstractTool {
 					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
 							targetNode);
 					Collection<? extends IOnTypePolicy> policies = getTargetPolicyResolver()
-							.resolvePolicies(TypeTool.this, targetNode,
+							.resolvePolicies(TypeInteraction.this, targetNode,
 									targetViewer, ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
@@ -249,7 +249,7 @@ public class TypeTool extends AbstractTool {
 						policy.type(event, pressedKeys);
 					}
 					if (pressedKeys.isEmpty()) {
-						getDomain().closeExecutionTransaction(TypeTool.this);
+						getDomain().closeExecutionTransaction(TypeInteraction.this);
 					}
 				}
 			};

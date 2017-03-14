@@ -61,14 +61,14 @@ import org.eclipse.gef.mvc.fx.policies.PanOrZoomOnScrollPolicy;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.policies.ZoomOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.providers.TransformProvider;
-import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 import org.eclipse.gef.mvc.fx.tools.DefaultTargetPolicyResolver;
-import org.eclipse.gef.mvc.fx.tools.HoverTool;
+import org.eclipse.gef.mvc.fx.tools.HoverInteraction;
 import org.eclipse.gef.mvc.fx.tools.ITargetPolicyResolver;
-import org.eclipse.gef.mvc.fx.tools.PinchSpreadTool;
-import org.eclipse.gef.mvc.fx.tools.RotateTool;
-import org.eclipse.gef.mvc.fx.tools.ScrollTool;
-import org.eclipse.gef.mvc.fx.tools.TypeTool;
+import org.eclipse.gef.mvc.fx.tools.PinchSpreadInteraction;
+import org.eclipse.gef.mvc.fx.tools.RotateInteraction;
+import org.eclipse.gef.mvc.fx.tools.ScrollInteraction;
+import org.eclipse.gef.mvc.fx.tools.TypeInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
@@ -202,15 +202,15 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link ClickDragTool} to the {@link IDomain} adaptable scope.
+	 * Binds {@link ClickDragInteraction} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindClickDragTool() {
-		binder().bind(ClickDragTool.class)
+		binder().bind(ClickDragInteraction.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
-	 * Adds a binding for {@link ClickDragTool} to the adapter map binder for
+	 * Adds a binding for {@link ClickDragInteraction} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -224,7 +224,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindClickDragToolAsDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ClickDragTool.class);
+				.to(ClickDragInteraction.class);
 	}
 
 	/**
@@ -534,14 +534,14 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link HoverTool} to the {@link IDomain} adaptable scope.
+	 * Binds {@link HoverInteraction} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindHoverTool() {
-		binder().bind(HoverTool.class);
+		binder().bind(HoverInteraction.class);
 	}
 
 	/**
-	 * Adds a binding for {@link HoverTool} to the adapter map binder for
+	 * Adds a binding for {@link HoverInteraction} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -555,7 +555,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindHoverToolAsDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverTool.class);
+				.to(HoverInteraction.class);
 	}
 
 	/**
@@ -783,15 +783,15 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link PinchSpreadTool} to the {@link IDomain} adaptable scope.
+	 * Binds {@link PinchSpreadInteraction} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindPinchSpreadTool() {
-		binder().bind(PinchSpreadTool.class)
+		binder().bind(PinchSpreadInteraction.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
-	 * Adds a binding for {@link PinchSpreadTool} to the adapter map binder for
+	 * Adds a binding for {@link PinchSpreadInteraction} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -805,7 +805,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindPinchSpreadToolAsIDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(PinchSpreadTool.class);
+				.to(PinchSpreadInteraction.class);
 	}
 
 	/**
@@ -845,15 +845,15 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link RotateTool} to the {@link IDomain} adaptable scope.
+	 * Binds {@link RotateInteraction} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindRotateTool() {
-		binder().bind(RotateTool.class)
+		binder().bind(RotateInteraction.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
-	 * Adds a binding for {@link RotateTool} to the adapter map binder for
+	 * Adds a binding for {@link RotateInteraction} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -867,19 +867,19 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindRotateToolAsDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(RotateTool.class);
+				.to(RotateInteraction.class);
 	}
 
 	/**
-	 * Binds {@link ScrollTool} to the {@link IDomain} adaptable scope.
+	 * Binds {@link ScrollInteraction} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindScrollTool() {
-		binder().bind(ScrollTool.class)
+		binder().bind(ScrollInteraction.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
-	 * Adds a binding for {@link ScrollTool} to the adapter map binder for
+	 * Adds a binding for {@link ScrollInteraction} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -893,7 +893,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindScrollToolAsDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ScrollTool.class);
+				.to(ScrollInteraction.class);
 	}
 
 	/**
@@ -985,14 +985,14 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link TypeTool} to the {@link IDomain} adaptable scope.
+	 * Binds {@link TypeInteraction} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindTypeTool() {
-		binder().bind(TypeTool.class).in(AdaptableScopes.typed(IDomain.class));
+		binder().bind(TypeInteraction.class).in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
-	 * Adds a binding for {@link TypeTool} to the adapter map binder for
+	 * Adds a binding for {@link TypeInteraction} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -1006,7 +1006,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindTypeToolAsDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(TypeTool.class);
+				.to(TypeInteraction.class);
 	}
 
 	/**

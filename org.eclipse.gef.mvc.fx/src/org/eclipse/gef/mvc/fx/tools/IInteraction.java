@@ -23,19 +23,19 @@ import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 /**
- * An {@link ITool} handles a certain aspect of user interaction. It may react
- * to input mouse, keyboard, and gesture events, as well as to changes to
+ * An {@link IInteraction} handles a certain aspect of user interaction. It may
+ * react to input mouse, keyboard, and gesture events, as well as to changes to
  * logical models (adapted to the {@link IViewer}), which keep track of
  * selection, hover, etc.
  *
- * As an reaction to input events, an {@link ITool} may manipulate the
+ * As an reaction to input events, an {@link IInteraction} may manipulate the
  * {@link IViewer}'s logical models, or interact with the {@link IViewer}'s
  * {@link IVisualPart}s via their respective {@link IPolicy}s.
  *
  * @author anyssen
  *
  */
-public interface ITool extends IActivatable, IAdaptable.Bound<IDomain> {
+public interface IInteraction extends IActivatable, IAdaptable.Bound<IDomain> {
 
 	/**
 	 * Returns an (unmodifiable) list containing the {@link IPolicy interaction
@@ -51,12 +51,11 @@ public interface ITool extends IActivatable, IAdaptable.Bound<IDomain> {
 	public List<? extends IPolicy> getActivePolicies(IViewer viewer);
 
 	/**
-	 * The {@link IDomain}, this {@link ITool} is adapted to.
+	 * The {@link IDomain}, this {@link IInteraction} is adapted to.
 	 *
-	 * @return The {@link IDomain}, this {@link ITool} is adapted to, or
-	 *         <code>null</code> if this {@link ITool} is not adapted to any
+	 * @return The {@link IDomain}, this {@link IInteraction} is adapted to, or
+	 *         <code>null</code> if this {@link IInteraction} is not adapted to any
 	 *         {@link IDomain}.
 	 */
 	public IDomain getDomain();
-
 }

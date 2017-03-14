@@ -24,8 +24,8 @@ import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
-import org.eclipse.gef.mvc.fx.tools.ITool;
-import org.eclipse.gef.mvc.fx.tools.TypeTool;
+import org.eclipse.gef.mvc.fx.tools.IInteraction;
+import org.eclipse.gef.mvc.fx.tools.TypeInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
@@ -49,17 +49,17 @@ public class TypeToolTests {
 		protected int closedExecutionTransactions = 0;
 
 		@Override
-		public void closeExecutionTransaction(ITool tool) {
-			if (tool instanceof TypeTool) {
+		public void closeExecutionTransaction(IInteraction tool) {
+			if (tool instanceof TypeInteraction) {
 				closedExecutionTransactions++;
 			}
 			super.closeExecutionTransaction(tool);
 		}
 
 		@Override
-		public void openExecutionTransaction(ITool tool) {
+		public void openExecutionTransaction(IInteraction tool) {
 			super.openExecutionTransaction(tool);
-			if (tool instanceof TypeTool) {
+			if (tool instanceof TypeInteraction) {
 				openedExecutionTransactions++;
 			}
 		};
@@ -73,7 +73,7 @@ public class TypeToolTests {
 
 	/**
 	 * It is important that a (single) execution transaction (see
-	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef.mvc.fx.tools.ITool)}
+	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef.mvc.fx.tools.IInteraction)}
 	 * ) is used for a complete press/drag interaction gesture, because
 	 * otherwise the transactional results of the gesture could not be undone.
 	 *

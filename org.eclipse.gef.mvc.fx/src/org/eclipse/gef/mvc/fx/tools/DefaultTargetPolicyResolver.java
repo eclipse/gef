@@ -47,7 +47,7 @@ import javafx.scene.Node;
  * target part have lowest precedence, i.e. they will be executed last.
  * </ol>
  * For details, take a look at the
- * {@link #resolvePolicies(ITool, Node, IViewer, Class)} method.
+ * {@link #resolvePolicies(IInteraction, Node, IViewer, Class)} method.
  *
  * @author mwienand
  *
@@ -126,7 +126,7 @@ public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
 	public <T extends IPolicy> List<? extends T> resolvePolicies(
-			ITool contextTool, Node target, IViewer viewer,
+			IInteraction contextTool, Node target, IViewer viewer,
 			Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");
 		// System.out.println("viewer = " + viewer);
@@ -137,10 +137,10 @@ public class DefaultTargetPolicyResolver extends IAdaptable.Bound.Impl<IDomain>
 		// other tools
 		// System.out.println("Outer target policies:");
 		List<T> outerTargetPolicies = new ArrayList<>();
-		Collection<ITool> tools = viewer.getDomain()
-				.getAdapters(new TypeToken<ITool>() {
+		Collection<IInteraction> tools = viewer.getDomain()
+				.getAdapters(new TypeToken<IInteraction>() {
 				}).values();
-		for (ITool tool : tools) {
+		for (IInteraction tool : tools) {
 			// System.out.println("[find active policies of " + tool + "]");
 			if (tool != contextTool) {
 				for (IPolicy policy : tool.getActivePolicies(viewer)) {

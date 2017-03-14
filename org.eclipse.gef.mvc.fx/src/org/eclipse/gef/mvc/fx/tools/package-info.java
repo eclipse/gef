@@ -11,7 +11,7 @@
  *******************************************************************************/
 /**
  * This package contains JavaFX-specific
- * {@link org.eclipse.gef.mvc.fx.tools.ITool} implementations for different
+ * {@link org.eclipse.gef.mvc.fx.tools.IInteraction} implementations for different
  * interactions (e.g. mouse drag).
  */
 package org.eclipse.gef.mvc.fx.tools;

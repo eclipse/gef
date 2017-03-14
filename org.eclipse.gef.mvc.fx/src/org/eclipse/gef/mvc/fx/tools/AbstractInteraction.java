@@ -28,14 +28,14 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
- * The {@link AbstractTool} can be used as a base class for {@link ITool}
+ * The {@link AbstractInteraction} can be used as a base class for {@link IInteraction}
  * implementations.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public abstract class AbstractTool implements ITool {
+public abstract class AbstractInteraction implements IInteraction {
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
 	private ReadOnlyObjectWrapper<IDomain> domainProperty = new ReadOnlyObjectWrapper<>();

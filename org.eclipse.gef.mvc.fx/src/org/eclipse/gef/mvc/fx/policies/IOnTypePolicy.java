@@ -13,14 +13,14 @@ package org.eclipse.gef.mvc.fx.policies;
 
 import java.util.Set;
 
-import org.eclipse.gef.mvc.fx.tools.TypeTool;
+import org.eclipse.gef.mvc.fx.tools.TypeInteraction;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
  * An interaction policy that implements the {@link IOnTypePolicy} interface
- * will be notified about keyboard events by the {@link TypeTool}.
+ * will be notified about keyboard events by the {@link TypeInteraction}.
  *
  * @author mwienand
  *

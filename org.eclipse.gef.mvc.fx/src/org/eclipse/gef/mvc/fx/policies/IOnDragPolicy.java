@@ -12,7 +12,7 @@
 package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -20,7 +20,7 @@ import javafx.scene.input.MouseEvent;
 /**
  * An interaction policy that implements the {@link IOnDragPolicy} interface
  * will be notified about mouse press-drag-release events by the
- * {@link ClickDragTool} .
+ * {@link ClickDragInteraction} .
  *
  * @author mwienand
  *

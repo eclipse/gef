@@ -30,13 +30,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 /**
- * The {@link HoverTool} is an {@link AbstractTool} that handles mouse hover
+ * The {@link HoverInteraction} is an {@link AbstractInteraction} that handles mouse hover
  * changes.
  *
  * @author mwienand
  *
  */
-public class HoverTool extends AbstractTool {
+public class HoverInteraction extends AbstractInteraction {
 
 	/**
 	 * Time in milliseconds until the hover handles are created when the host is
@@ -175,15 +175,15 @@ public class HoverTool extends AbstractTool {
 			Node eventTarget) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.resolvePolicies(HoverTool.this, eventTarget, viewer,
+				.resolvePolicies(HoverInteraction.this, eventTarget, viewer,
 						ON_HOVER_POLICY_KEY);
-		getDomain().openExecutionTransaction(HoverTool.this);
+		getDomain().openExecutionTransaction(HoverInteraction.this);
 		// active policies are unnecessary because hover is not a
 		// gesture, just one event at one point in time
 		for (IOnHoverPolicy policy : policies) {
 			policy.hover(event);
 		}
-		getDomain().closeExecutionTransaction(HoverTool.this);
+		getDomain().closeExecutionTransaction(HoverInteraction.this);
 	}
 
 	/**
@@ -196,15 +196,15 @@ public class HoverTool extends AbstractTool {
 	protected void notifyHoverIntent(IViewer viewer, Node hoverIntent) {
 		// determine hover policies
 		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.resolvePolicies(HoverTool.this, hoverIntent, viewer,
+				.resolvePolicies(HoverInteraction.this, hoverIntent, viewer,
 						ON_HOVER_POLICY_KEY);
-		getDomain().openExecutionTransaction(HoverTool.this);
+		getDomain().openExecutionTransaction(HoverInteraction.this);
 		// active policies are unnecessary because hover is not a
 		// gesture, just one event at one point in time
 		for (IOnHoverPolicy policy : policies) {
 			policy.hoverIntent(hoverIntent);
 		}
-		getDomain().closeExecutionTransaction(HoverTool.this);
+		getDomain().closeExecutionTransaction(HoverInteraction.this);
 	}
 
 	/**

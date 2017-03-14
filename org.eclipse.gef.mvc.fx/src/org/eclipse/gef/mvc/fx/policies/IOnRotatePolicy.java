@@ -11,13 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.policies;
 
-import org.eclipse.gef.mvc.fx.tools.RotateTool;
+import org.eclipse.gef.mvc.fx.tools.RotateInteraction;
 
 import javafx.scene.input.RotateEvent;
 
 /**
  * An interaction policy that implements the {@link IOnRotatePolicy} interface
- * will be notified about touch rotate events by the {@link RotateTool}.
+ * will be notified about touch rotate events by the {@link RotateInteraction}.
  *
  * @author mwienand
  *

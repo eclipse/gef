@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
-import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.scene.Node;
@@ -85,8 +85,8 @@ public class DeleteSelectedOnTypePolicy extends AbstractInteractionPolicy
 		}
 
 		// prevent deletion when other drag policies are running
-		ClickDragTool tool = getHost().getRoot().getViewer().getDomain()
-				.getAdapter(ClickDragTool.class);
+		ClickDragInteraction tool = getHost().getRoot().getViewer().getDomain()
+				.getAdapter(ClickDragInteraction.class);
 		if (tool != null && getHost().getRoot().getViewer().getDomain()
 				.isExecutionTransactionOpen(tool)) {
 			return false;

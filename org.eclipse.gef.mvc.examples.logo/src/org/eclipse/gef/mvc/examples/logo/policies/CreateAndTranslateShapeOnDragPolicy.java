@@ -31,7 +31,7 @@ import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
-import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
@@ -166,7 +166,7 @@ public class CreateAndTranslateShapeOnDragPolicy extends AbstractInteractionPoli
 		}
 
 		// find drag target part
-		dragPolicies = createdShapePart.getAdapters(ClickDragTool.ON_DRAG_POLICY_KEY);
+		dragPolicies = createdShapePart.getAdapters(ClickDragInteraction.ON_DRAG_POLICY_KEY);
 		if (dragPolicies != null) {
 			for (IOnDragPolicy dragPolicy : dragPolicies.values()) {
 				dragPolicy.startDrag(event);

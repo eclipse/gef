@@ -32,7 +32,7 @@ import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.AbstractInteractionPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
-import org.eclipse.gef.mvc.fx.tools.ClickDragTool;
+import org.eclipse.gef.mvc.fx.tools.ClickDragInteraction;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
 import com.google.common.collect.HashMultimap;
@@ -182,7 +182,7 @@ public class CreateCurveOnDragPolicy extends AbstractInteractionPolicy implement
 		// find bend target part
 		bendTargetPart = findBendTargetPart(curvePart, event.getTarget());
 		if (bendTargetPart != null) {
-			dragPolicies = bendTargetPart.getAdapters(ClickDragTool.ON_DRAG_POLICY_KEY);
+			dragPolicies = bendTargetPart.getAdapters(ClickDragInteraction.ON_DRAG_POLICY_KEY);
 		}
 		if (dragPolicies != null) {
 			MouseEvent dragEvent = new MouseEvent(event.getSource(), event.getTarget(), MouseEvent.MOUSE_DRAGGED,
