@@ -51,7 +51,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class ContentPolicy extends AbstractTransactionPolicy {
+public class ContentPolicy extends AbstractPolicy {
 
 	/**
 	 * Creates and records operations to add the given <i>contentChild</i> to

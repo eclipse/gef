@@ -34,6 +34,7 @@ import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.collections.ObservableMultiset;
 import org.eclipse.gef.common.collections.ObservableSetMultimap;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
+import org.eclipse.gef.mvc.fx.handlers.IHandler;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -572,6 +573,11 @@ public abstract class AbstractVisualPart<V extends Node>
 					.unmodifiableObservableList(children);
 		}
 		return childrenUnmodifiable;
+	}
+
+	@Override
+	public Map<AdapterKey<? extends IHandler>, IHandler> getHandlers() {
+		return ads.getAdapters(IHandler.class);
 	}
 
 	@Override

@@ -117,5 +117,4 @@ public class ZestGraphExample extends AbstractZestExample {
 	protected Module createModule() {
 		return new ZestGraphExampleModule();
 	}
-
 }

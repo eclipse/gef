@@ -35,7 +35,7 @@ import com.google.common.collect.SetMultimap;
 import javafx.scene.Node;
 
 /**
- * The {@link CreationPolicy} is an {@link AbstractTransactionPolicy} that
+ * The {@link CreationPolicy} is an {@link AbstractPolicy} that
  * handles the creation of content.
  * <p>
  * It handles the creation by initiating the adding of a content child to the
@@ -51,7 +51,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class CreationPolicy extends AbstractTransactionPolicy {
+public class CreationPolicy extends AbstractPolicy {
 
 	/**
 	 * Creates an {@link IContentPart} for the given content {@link Object} and

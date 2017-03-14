@@ -27,6 +27,7 @@ import org.eclipse.gef.common.dispose.IDisposable;
 import org.eclipse.gef.mvc.fx.behaviors.IBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.gestures.IGesture;
+import org.eclipse.gef.mvc.fx.handlers.IHandler;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -332,6 +333,15 @@ public interface IVisualPart<V extends Node> extends IAdaptable,
 	 * @return A {@link ObservableList} of this part's children.
 	 */
 	public ObservableList<IVisualPart<? extends Node>> getChildrenUnmodifiable();
+
+	/**
+	 * Returns a {@link Map} of this part's handlers and their corresponding
+	 * {@link AdapterKey}s.
+	 *
+	 * @return A {@link Map} of this part's handlers and their corresponding
+	 *         {@link AdapterKey}s.
+	 */
+	public Map<AdapterKey<? extends IHandler>, IHandler> getHandlers();
 
 	/**
 	 * Returns the parent of this part.

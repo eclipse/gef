@@ -7,6 +7,7 @@ Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.mvc.examples.logo;x-friends:="org.eclipse.gef.mvc.examples.logo.ui,org.eclipse.gef.mvc.examples.logo.web",
  org.eclipse.gef.mvc.examples.logo.behaviors;x-friends:="org.eclipse.gef.mvc.examples.logo.ui,org.eclipse.gef.mvc.examples.logo.web",
+ org.eclipse.gef.mvc.examples.logo.handlers;x-friends:="org.eclipse.gef.mvc.examples.logo.ui,org.eclipse.gef.mvc.examples.logo.web",
  org.eclipse.gef.mvc.examples.logo.model;x-friends:="org.eclipse.gef.mvc.examples.logo.ui,org.eclipse.gef.mvc.examples.logo.web",
  org.eclipse.gef.mvc.examples.logo.parts;x-friends:="org.eclipse.gef.mvc.examples.logo.ui,org.eclipse.gef.mvc.examples.logo.web",
  org.eclipse.gef.mvc.examples.logo.policies;x-friends:="org.eclipse.gef.mvc.examples.logo.ui,org.eclipse.gef.mvc.examples.logo.web"

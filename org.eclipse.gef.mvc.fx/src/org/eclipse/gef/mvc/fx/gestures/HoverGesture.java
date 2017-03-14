@@ -16,8 +16,8 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef.geometry.planar.Point;
+import org.eclipse.gef.mvc.fx.handlers.IOnHoverHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.IOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.animation.Animation.Status;
@@ -53,7 +53,7 @@ public class HoverGesture extends AbstractGesture {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	public static final Class<IOnHoverPolicy> ON_HOVER_POLICY_KEY = IOnHoverPolicy.class;
+	public static final Class<IOnHoverHandler> ON_HOVER_POLICY_KEY = IOnHoverHandler.class;
 
 	private final Map<Scene, EventHandler<MouseEvent>> hoverFilters = new IdentityHashMap<>();
 
@@ -174,13 +174,13 @@ public class HoverGesture extends AbstractGesture {
 	protected void notifyHover(IViewer viewer, MouseEvent event,
 			Node eventTarget) {
 		// determine hover policies
-		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.resolvePolicies(HoverGesture.this, eventTarget, viewer,
+		Collection<? extends IOnHoverHandler> policies = getTargetPolicyResolver()
+				.resolve(HoverGesture.this, eventTarget, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverGesture.this);
 		// active policies are unnecessary because hover is not a
 		// gesture, just one event at one point in time
-		for (IOnHoverPolicy policy : policies) {
+		for (IOnHoverHandler policy : policies) {
 			policy.hover(event);
 		}
 		getDomain().closeExecutionTransaction(HoverGesture.this);
@@ -195,13 +195,13 @@ public class HoverGesture extends AbstractGesture {
 	 */
 	protected void notifyHoverIntent(IViewer viewer, Node hoverIntent) {
 		// determine hover policies
-		Collection<? extends IOnHoverPolicy> policies = getTargetPolicyResolver()
-				.resolvePolicies(HoverGesture.this, hoverIntent, viewer,
+		Collection<? extends IOnHoverHandler> policies = getTargetPolicyResolver()
+				.resolve(HoverGesture.this, hoverIntent, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverGesture.this);
 		// active policies are unnecessary because hover is not a
 		// gesture, just one event at one point in time
-		for (IOnHoverPolicy policy : policies) {
+		for (IOnHoverHandler policy : policies) {
 			policy.hoverIntent(hoverIntent);
 		}
 		getDomain().closeExecutionTransaction(HoverGesture.this);

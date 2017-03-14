@@ -23,14 +23,14 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 
 /**
- * The {@link ResizePolicy} is an {@link AbstractTransactionPolicy} that handles
+ * The {@link ResizePolicy} is an {@link AbstractPolicy} that handles
  * the resize of an {@link IVisualPart}.
  *
  * @author mwienand
  *
  */
 // TODO: respect max width and height
-public class ResizePolicy extends AbstractTransactionPolicy {
+public class ResizePolicy extends AbstractPolicy {
 
 	/**
 	 * Apply the new size to the host.
@@ -193,7 +193,7 @@ public class ResizePolicy extends AbstractTransactionPolicy {
 	 * {@link ResizePolicy}.
 	 *
 	 * @return The {@link ResizeOperation} used by this
-	 *         {@link AbstractTransactionPolicy}.
+	 *         {@link AbstractPolicy}.
 	 */
 	protected ResizeOperation getResizeOperation() {
 		return (ResizeOperation) getOperation();

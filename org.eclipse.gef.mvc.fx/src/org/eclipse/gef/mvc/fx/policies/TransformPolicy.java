@@ -28,7 +28,7 @@ import javafx.scene.Node;
 
 /**
  * The {@link TransformPolicy} is a JavaFX-specific
- * {@link AbstractTransactionPolicy} that handles the transformation of its
+ * {@link AbstractPolicy} that handles the transformation of its
  * {@link #getHost() host}.
  * <p>
  * When working with transformations, the order in which the individual
@@ -83,7 +83,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class TransformPolicy extends AbstractTransactionPolicy {
+public class TransformPolicy extends AbstractPolicy {
 
 	/**
 	 * The initial node transformation of the manipulated part.

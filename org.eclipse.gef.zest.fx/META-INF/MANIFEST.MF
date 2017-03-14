@@ -7,6 +7,7 @@ Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.zest.fx;uses:="com.google.inject,com.google.inject.multibindings",
  org.eclipse.gef.zest.fx.behaviors,
+ org.eclipse.gef.zest.fx.handlers,
  org.eclipse.gef.zest.fx.models,
  org.eclipse.gef.zest.fx.operations,
  org.eclipse.gef.zest.fx.parts;uses:="com.google.inject,com.google.common.collect",

@@ -50,6 +50,8 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
+import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
@@ -58,9 +60,7 @@ import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
-import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
-import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -384,21 +384,21 @@ public class BendConnectionPolicyTests {
 		protected void bindAbstractContentPartAdapters(final MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 			super.bindAbstractContentPartAdapters(adapterMapBinder);
 			// focus and select on click
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickPolicy.class);
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickHandler.class);
 		}
 
 		protected void bindAnchorageAdapters(final MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 			// transform policy
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
 			// relocate on drag
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 			// bind dynamic anchor provider
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TestAnchorProvider.class);
 		}
 
 		protected void bindConnectionAdapters(final MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 			// relocate on drag
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 			// bend
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
 		}
@@ -425,7 +425,7 @@ public class BendConnectionPolicyTests {
 			// transform policy
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
 			// relocate on drag
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 			// bind dynamic anchor provider
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TestAnchorProviderWithStaticAnchor.class);
 		}

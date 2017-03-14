@@ -18,14 +18,14 @@ import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
+import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
+import org.eclipse.gef.mvc.fx.handlers.SelectFocusedOnTypeHandler;
+import org.eclipse.gef.mvc.fx.handlers.TraverseFocusOnTypeHandler;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
-import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
-import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
-import org.eclipse.gef.mvc.fx.policies.SelectFocusedOnTypePolicy;
-import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -47,9 +47,9 @@ public class DotGraphViewModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FocusAndSelectOnClickPolicy.class);
+				.to(FocusAndSelectOnClickHandler.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(SelectFocusedOnTypePolicy.class);
+				.to(SelectFocusedOnTypeHandler.class);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class DotGraphViewModule extends MvcFxModule {
 
 		// hover on-hover policy
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverOnHoverPolicy.class);
+				.to(HoverOnHoverHandler.class);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class DotGraphViewModule extends MvcFxModule {
 
 		// hover on-hover policy
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverOnHoverPolicy.class);
+				.to(HoverOnHoverHandler.class);
 	}
 
 	/**
@@ -154,11 +154,11 @@ public class DotGraphViewModule extends MvcFxModule {
 
 		// keyboard focus traversal
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(TraverseFocusOnTypePolicy.class);
+				.to(TraverseFocusOnTypeHandler.class);
 
 		// select focused on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(SelectFocusedOnTypePolicy.class);
+				.to(SelectFocusedOnTypeHandler.class);
 
 		// hover behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -200,7 +200,7 @@ public class DotGraphViewModule extends MvcFxModule {
 
 		// hover on-hover policy
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverOnHoverPolicy.class);
+				.to(HoverOnHoverHandler.class);
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class DotGraphViewModule extends MvcFxModule {
 
 		// hover on-hover
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverOnHoverPolicy.class);
+				.to(HoverOnHoverHandler.class);
 	}
 
 	@Override

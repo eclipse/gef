@@ -13,8 +13,8 @@
 package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef.mvc.fx.handlers.PanningSupport;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.fx.policies.PanningSupport;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;

@@ -35,8 +35,8 @@ import com.google.common.collect.HashMultiset;
 import javafx.scene.Node;
 
 /**
- * The {@link DeletionPolicy} is an {@link AbstractTransactionPolicy} that
- * handles the deletion of content.
+ * The {@link DeletionPolicy} is an {@link AbstractPolicy} that handles the
+ * deletion of content.
  * <p>
  * It handles the deletion of a {@link IContentPart}'s content by initiating the
  * removal from the content parent via the {@link ContentPolicy} of the parent
@@ -52,7 +52,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class DeletionPolicy extends AbstractTransactionPolicy {
+public class DeletionPolicy extends AbstractPolicy {
 
 	@Override
 	protected ITransactionalOperation createOperation() {

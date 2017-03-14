@@ -13,10 +13,9 @@
  * This package provides policy implementations to support hiding/unhiding of
  * nodes and related edges (
  * {@link org.eclipse.gef.zest.fx.policies.HidePolicy},
- * {@link org.eclipse.gef.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy}),
- * navigating nested graphs via double-click (
- * {@link org.eclipse.gef.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy},
- * {@link org.eclipse.gef.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy}
- * ).
+ * {@link org.eclipse.gef.zest.fx.policies.ShowHiddenNeighborsPolicy}), as well
+ * as semantic zooming (
+ * {@link org.eclipse.gef.zest.fx.policies.SemanticZoomPolicy}), and label
+ * transformation.
  */
 package org.eclipse.gef.zest.fx.policies;

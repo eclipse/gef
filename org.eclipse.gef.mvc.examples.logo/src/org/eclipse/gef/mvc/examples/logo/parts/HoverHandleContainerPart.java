@@ -13,9 +13,9 @@ package org.eclipse.gef.mvc.examples.logo.parts;
 
 import java.util.Map.Entry;
 
+import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
 import org.eclipse.gef.mvc.fx.parts.AbstractHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
@@ -30,7 +30,7 @@ import javafx.scene.layout.VBox;
 public class HoverHandleContainerPart extends AbstractHandlePart<VBox> {
 
 	public HoverHandleContainerPart() {
-		setAdapter(new HoverOnHoverPolicy() {
+		setAdapter(new HoverOnHoverHandler() {
 			@Override
 			public void hover(MouseEvent e) {
 				// XXX: deactivate hover for this part

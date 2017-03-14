@@ -14,14 +14,14 @@ package org.eclipse.gef.zest.fx.parts;
 
 import org.eclipse.gef.fx.nodes.HoverOverlayImageView;
 import org.eclipse.gef.mvc.fx.parts.AbstractSegmentHandlePart;
-import org.eclipse.gef.zest.fx.policies.ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy;
+import org.eclipse.gef.zest.fx.handlers.ShowHiddenNeighborsOfFirstAnchorageOnClickHandler;
 
 import javafx.scene.image.Image;
 
 /**
  * The {@link ShowHiddenNeighborsHoverHandlePart} is an
  * {@link AbstractSegmentHandlePart} that displays an expansion image. By
- * default, the {@link ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy} is
+ * default, the {@link ShowHiddenNeighborsOfFirstAnchorageOnClickHandler} is
  * installed for {@link ShowHiddenNeighborsHoverHandlePart}, so that the
  * corresponding {@link NodePart} can be expanded by a click on this part.
  *

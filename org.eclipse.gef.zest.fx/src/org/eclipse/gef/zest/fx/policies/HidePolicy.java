@@ -31,7 +31,7 @@ import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.policies.AbstractTransactionPolicy;
+import org.eclipse.gef.mvc.fx.policies.AbstractPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.operations.HideOperation;
@@ -49,7 +49,7 @@ import javafx.scene.Node;
  *
  */
 // TODO: only applicable for NodePart (override #getHost)
-public class HidePolicy extends AbstractTransactionPolicy {
+public class HidePolicy extends AbstractPolicy {
 
 	/**
 	 * Clears the hover handles for the given part upon execution of this

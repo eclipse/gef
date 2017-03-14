@@ -22,6 +22,14 @@ import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
+import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
+import org.eclipse.gef.mvc.fx.handlers.NormalizeConnectedOnDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.ResizeTranslateFirstAnchorageOnHandleDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnHandleDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.SelectFocusedOnTypeHandler;
+import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.TraverseFocusOnTypeHandler;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
@@ -31,16 +39,8 @@ import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
-import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
-import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
-import org.eclipse.gef.mvc.fx.policies.NormalizeConnectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
-import org.eclipse.gef.mvc.fx.policies.ResizeTranslateFirstAnchorageOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.SelectFocusedOnTypePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
-import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -50,6 +50,14 @@ import org.eclipse.gef.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef.zest.fx.behaviors.GraphLayoutBehavior;
 import org.eclipse.gef.zest.fx.behaviors.NodeHidingBehavior;
 import org.eclipse.gef.zest.fx.behaviors.NodeLayoutBehavior;
+import org.eclipse.gef.zest.fx.handlers.BendFirstAnchorageAndRelocateLabelsOnDragHandler;
+import org.eclipse.gef.zest.fx.handlers.HideFirstAnchorageOnClickHandler;
+import org.eclipse.gef.zest.fx.handlers.HideOnTypeHandler;
+import org.eclipse.gef.zest.fx.handlers.OpenNestedGraphOnDoubleClickHandler;
+import org.eclipse.gef.zest.fx.handlers.OpenParentGraphOnDoubleClickHandler;
+import org.eclipse.gef.zest.fx.handlers.ShowHiddenNeighborsOfFirstAnchorageOnClickHandler;
+import org.eclipse.gef.zest.fx.handlers.ShowHiddenNeighborsOnTypeHandler;
+import org.eclipse.gef.zest.fx.handlers.TranslateSelectedAndRelocateLabelsOnDragHandler;
 import org.eclipse.gef.zest.fx.models.HidingModel;
 import org.eclipse.gef.zest.fx.models.NavigationModel;
 import org.eclipse.gef.zest.fx.parts.EdgeLabelPart;
@@ -63,18 +71,10 @@ import org.eclipse.gef.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef.zest.fx.parts.ZestFxHoverHandlePartFactory;
 import org.eclipse.gef.zest.fx.parts.ZestFxRootPart;
 import org.eclipse.gef.zest.fx.parts.ZestFxSelectionHandlePartFactory;
-import org.eclipse.gef.zest.fx.policies.BendFirstAnchorageAndRelocateLabelsOnDrag;
-import org.eclipse.gef.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
-import org.eclipse.gef.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef.zest.fx.policies.HidePolicy;
-import org.eclipse.gef.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
-import org.eclipse.gef.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
 import org.eclipse.gef.zest.fx.policies.SemanticZoomPolicy;
-import org.eclipse.gef.zest.fx.policies.ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy;
-import org.eclipse.gef.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy;
 import org.eclipse.gef.zest.fx.policies.ShowHiddenNeighborsPolicy;
 import org.eclipse.gef.zest.fx.policies.TransformLabelPolicy;
-import org.eclipse.gef.zest.fx.policies.TranslateSelectedAndRelocateLabelsOnDragPolicy;
 import org.eclipse.gef.zest.fx.providers.NodePartAnchorProvider;
 
 import com.google.inject.Binder;
@@ -93,11 +93,10 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypeHandler.class);
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultHoverIntentHandlePartFactory.HOVER_INTENT_HANDLES_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey.role(DefaultHoverIntentHandlePartFactory.HOVER_INTENT_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
@@ -144,10 +143,10 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLabelHidingBehavior.class);
 
 		// hover on-hover policy
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
 
 		// translate on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 	}
 
 	/**
@@ -197,10 +196,10 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectionClickableAreaBehavior.class);
 
 		// translate selected on-drag policy
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndRelocateLabelsOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndRelocateLabelsOnDragHandler.class);
 
 		// hover on-hover policy
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
 	}
@@ -216,7 +215,7 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindFXCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		AdapterMaps.getAdapterMapBinder(binder(), CircleSegmentHandlePart.class).addBinding(AdapterKey.defaultRole())
-				.to(BendFirstAnchorageAndRelocateLabelsOnDrag.class);
+				.to(BendFirstAnchorageAndRelocateLabelsOnDragHandler.class);
 	}
 
 	/**
@@ -230,8 +229,8 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("resize-relocate-first-anchorage"))
-				.to(ResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(RotateSelectedOnHandleDragPolicy.class);
+				.to(ResizeTranslateFirstAnchorageOnHandleDragHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(RotateSelectedOnHandleDragHandler.class);
 	}
 
 	/**
@@ -266,7 +265,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindHidingHoverHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideFirstAnchorageOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideFirstAnchorageOnClickHandler.class);
 	}
 
 	@Override
@@ -287,13 +286,13 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindIRootPartAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindIRootPartAdaptersForContentViewer(adapterMapBinder);
 
-		adapterMapBinder.addBinding(AdapterKey.role("open-parent-graph")).to(OpenParentGraphOnDoubleClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("open-parent-graph")).to(OpenParentGraphOnDoubleClickHandler.class);
 
 		// keyboard focus traversal
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypeHandler.class);
 
 		// select focused on type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypeHandler.class);
 
 		// hover behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
@@ -351,10 +350,10 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformLabelPolicy.class);
 
 		// hover on-hover policy
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
 
 		// translate on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 
 	}
 
@@ -380,15 +379,16 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeHidingBehavior.class);
 
 		// translate on-drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndRelocateLabelsOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndRelocateLabelsOnDragHandler.class);
 
 		// show hidden neighbors on-type
-		adapterMapBinder.addBinding(AdapterKey.role("show-hidden-neighbors")).to(ShowHiddenNeighborsOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("show-hidden-neighbors"))
+				.to(ShowHiddenNeighborsOnTypeHandler.class);
 
 		// hide on-type
-		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideOnTypeHandler.class);
 
-		adapterMapBinder.addBinding(AdapterKey.role("open-nested-graph")).to(OpenNestedGraphOnDoubleClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("open-nested-graph")).to(OpenNestedGraphOnDoubleClickHandler.class);
 
 		// transform policy for relocation
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
@@ -444,10 +444,10 @@ public class ZestFxModule extends MvcFxModule {
 				});
 
 		// hover on-hover
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
 
 		// normalize on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragHandler.class);
 	}
 
 	@Override
@@ -477,23 +477,23 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindShowHiddenNeighborsHoverHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		bindShowHiddenNeighborsOfFirstAnchorageOnClickPolicyAsShowHiddenNeighborsHoverHandlePartAdapter(
+		bindShowHiddenNeighborsOfFirstAnchorageOnClickHandlerAsShowHiddenNeighborsHoverHandlePartAdapter(
 				adapterMapBinder);
 	}
 
 	/**
 	 * Adds a binding for
-	 * {@link ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy} to the given
+	 * {@link ShowHiddenNeighborsOfFirstAnchorageOnClickHandler} to the given
 	 * adapter map binder that will insert the bindings into
 	 * {@link ShowHiddenNeighborsHoverHandlePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
 	 */
-	protected void bindShowHiddenNeighborsOfFirstAnchorageOnClickPolicyAsShowHiddenNeighborsHoverHandlePartAdapter(
+	protected void bindShowHiddenNeighborsOfFirstAnchorageOnClickHandlerAsShowHiddenNeighborsHoverHandlePartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("showHiddenNeighbors"))
-				.to(ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy.class);
+				.to(ShowHiddenNeighborsOfFirstAnchorageOnClickHandler.class);
 	}
 
 	@Override
@@ -515,5 +515,4 @@ public class ZestFxModule extends MvcFxModule {
 		bindShowHiddenNeighborsHoverHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), ShowHiddenNeighborsHoverHandlePart.class));
 	}
-
 }

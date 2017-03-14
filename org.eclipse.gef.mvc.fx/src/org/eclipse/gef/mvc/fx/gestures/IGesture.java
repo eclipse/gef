@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.gef.common.activate.IActivatable;
 import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.IHandler;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -38,17 +39,17 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 public interface IGesture extends IActivatable, IAdaptable.Bound<IDomain> {
 
 	/**
-	 * Returns an (unmodifiable) list containing the {@link IPolicy interaction
-	 * policies} that are currently active within this tool for the given
+	 * Returns an (unmodifiable) list containing the {@link IHandler interaction
+	 * handlers} that are currently active within this tool for the given
 	 * {@link IViewer}, i.e. the target policies of this tool that get notified
 	 * about events within the given {@link IViewer}.
 	 *
 	 * @param viewer
 	 *            The {@link IViewer} for which to return the active policies.
-	 * @return An (unmodifiable) list containing the {@link IPolicy interaction
-	 *         policies} that are currently active within this tool.
+	 * @return An (unmodifiable) list containing the {@link IHandler interaction
+	 *         handlers} that are currently active within this gesture.
 	 */
-	public List<? extends IPolicy> getActivePolicies(IViewer viewer);
+	public List<? extends IHandler> getActiveHandlers(IViewer viewer);
 
 	/**
 	 * The {@link IDomain}, this {@link IGesture} is adapted to.

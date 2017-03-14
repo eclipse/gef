@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.IOnRotateHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.IOnRotatePolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.value.ChangeListener;
@@ -46,7 +46,7 @@ public class RotateGesture extends AbstractGesture {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	public static final Class<IOnRotatePolicy> ON_ROTATE_POLICY_KEY = IOnRotatePolicy.class;
+	public static final Class<IOnRotateHandler> ON_ROTATE_POLICY_KEY = IOnRotateHandler.class;
 
 	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<RotateEvent>> rotateFilters = new IdentityHashMap<>();
@@ -72,12 +72,12 @@ public class RotateGesture extends AbstractGesture {
 					Boolean oldValue, Boolean newValue) {
 				if (newValue == null || !newValue) {
 					// cancel target policies
-					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+					for (IOnRotateHandler policy : getActiveHandlers(viewer)) {
 						policy.abortRotate();
 					}
 					// clear active policies and close execution
 					// transaction
-					clearActivePolicies(viewer);
+					clearActiveHandlers(viewer);
 					getDomain().closeExecutionTransaction(RotateGesture.this);
 				}
 			}
@@ -87,7 +87,7 @@ public class RotateGesture extends AbstractGesture {
 
 	/**
 	 * Creates an {@link EventHandler} for {@link RotateEvent}s that forwards
-	 * the events to the {@link IOnRotatePolicy} implementations that can be
+	 * the events to the {@link IOnRotateHandler} implementations that can be
 	 * determined for the individual events and the given {@link IViewer}.
 	 *
 	 * @param scene
@@ -109,7 +109,7 @@ public class RotateGesture extends AbstractGesture {
 					return;
 				}
 				if (RotateEvent.ROTATE.equals(event.getEventType())) {
-					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+					for (IOnRotateHandler policy : getActiveHandlers(viewer)) {
 						policy.rotate(event);
 					}
 				} else if (RotateEvent.ROTATION_STARTED
@@ -127,23 +127,23 @@ public class RotateGesture extends AbstractGesture {
 
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
-					setActivePolicies(viewer,
-							getTargetPolicyResolver().resolvePolicies(
+					setActiveHandlers(viewer,
+							getTargetPolicyResolver().resolve(
 									RotateGesture.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									viewer, ON_ROTATE_POLICY_KEY));
 
 					// send event to the policies
-					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+					for (IOnRotateHandler policy : getActiveHandlers(viewer)) {
 						policy.startRotate(event);
 					}
 				} else if (RotateEvent.ROTATION_FINISHED
 						.equals(event.getEventType())) {
-					for (IOnRotatePolicy policy : getActivePolicies(viewer)) {
+					for (IOnRotateHandler policy : getActiveHandlers(viewer)) {
 						policy.endRotate(event);
 					}
-					clearActivePolicies(viewer);
+					clearActiveHandlers(viewer);
 					getDomain().closeExecutionTransaction(RotateGesture.this);
 				}
 			}
@@ -192,7 +192,7 @@ public class RotateGesture extends AbstractGesture {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends IOnRotatePolicy> getActivePolicies(IViewer viewer) {
-		return (List<IOnRotatePolicy>) super.getActivePolicies(viewer);
+	public List<? extends IOnRotateHandler> getActiveHandlers(IViewer viewer) {
+		return (List<IOnRotateHandler>) super.getActiveHandlers(viewer);
 	}
 }

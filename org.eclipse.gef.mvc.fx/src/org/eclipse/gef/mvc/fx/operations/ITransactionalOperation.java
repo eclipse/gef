@@ -15,7 +15,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.gef.mvc.fx.policies.AbstractTransactionPolicy;
+import org.eclipse.gef.mvc.fx.policies.AbstractPolicy;
 
 /**
  * An {@link ITransactionalOperation} is an {@link IUndoableOperation} that
@@ -25,11 +25,11 @@ import org.eclipse.gef.mvc.fx.policies.AbstractTransactionPolicy;
  * to check whether it has an overall effect ({@link #isNoOp()}) compared to the
  * initial state upon construction.
  * <p>
- * It is used by {@link AbstractTransactionPolicy transaction policies} to
- * encapsulate their applied changes. The {@link AbstractTransactionPolicy
+ * It is used by {@link AbstractPolicy transaction policies} to
+ * encapsulate their applied changes. The {@link AbstractPolicy
  * transaction policy} will potentially execute the operation locally (to
  * realize "live-feedback") before returning it in its
- * {@link AbstractTransactionPolicy#commit()} method. It will then be executed
+ * {@link AbstractPolicy#commit()} method. It will then be executed
  * on the {@link IOperationHistory}, but only if it has an overall effect that
  * needs to be undoable.
  *

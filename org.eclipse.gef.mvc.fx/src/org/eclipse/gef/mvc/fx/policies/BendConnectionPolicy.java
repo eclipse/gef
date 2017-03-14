@@ -65,7 +65,7 @@ import javafx.scene.Node;
  * @author mwienand
  * @author anyssen
  */
-public class BendConnectionPolicy extends AbstractTransactionPolicy {
+public class BendConnectionPolicy extends AbstractPolicy {
 
 	/**
 	 * An {@link ImplicitGroup} stores an {@link AnchorHandle} and a number of
@@ -444,11 +444,10 @@ public class BendConnectionPolicy extends AbstractTransactionPolicy {
 		// compensate the movement of the local coordinate system w.r.t. the
 		// scene coordinate system (the scene coordinate system stays consistent
 		// w.r.t. mouse movement)
-		Point deltaInLocal = mouseInLocal
-				.getTranslated(FX2Geometry
-						.toPoint(getConnection().sceneToLocal(Geometry2FX
-								.toFXPoint(initialMousePositionInScene)))
-						.getNegated());
+		Point deltaInLocal = mouseInLocal.getTranslated(FX2Geometry
+				.toPoint(getConnection().sceneToLocal(
+						Geometry2FX.toFXPoint(initialMousePositionInScene)))
+				.getNegated());
 		return deltaInLocal;
 	}
 

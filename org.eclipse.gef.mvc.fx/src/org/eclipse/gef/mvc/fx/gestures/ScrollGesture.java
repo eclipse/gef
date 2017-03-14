@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef.mvc.fx.handlers.IOnScrollHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.IOnScrollPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.animation.PauseTransition;
@@ -45,7 +45,7 @@ public class ScrollGesture extends AbstractGesture {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	public static final Class<IOnScrollPolicy> ON_SCROLL_POLICY_KEY = IOnScrollPolicy.class;
+	public static final Class<IOnScrollHandler> ON_SCROLL_POLICY_KEY = IOnScrollHandler.class;
 
 	/**
 	 * The default duration in milliseconds that has to pass without receiving a
@@ -70,12 +70,12 @@ public class ScrollGesture extends AbstractGesture {
 	protected void abortPolicies(final IViewer viewer) {
 		inScroll.remove(viewer);
 		// cancel target policies
-		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {
+		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {
 			policy.abortScroll();
 		}
 		// clear active policies and close execution
 		// transaction
-		clearActivePolicies(viewer);
+		clearActiveHandlers(viewer);
 		getDomain().closeExecutionTransaction(ScrollGesture.this);
 	}
 
@@ -170,8 +170,8 @@ public class ScrollGesture extends AbstractGesture {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends IOnScrollPolicy> getActivePolicies(IViewer viewer) {
-		return (List<IOnScrollPolicy>) super.getActivePolicies(viewer);
+	public List<? extends IOnScrollHandler> getActiveHandlers(IViewer viewer) {
+		return (List<IOnScrollHandler>) super.getActiveHandlers(viewer);
 	}
 
 	/**
@@ -213,7 +213,7 @@ public class ScrollGesture extends AbstractGesture {
 	 *            The corresponding {@link ScrollEvent}.
 	 */
 	protected void scroll(IViewer viewer, ScrollEvent event) {
-		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {
+		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {
 			policy.scroll(event);
 		}
 	}
@@ -227,10 +227,10 @@ public class ScrollGesture extends AbstractGesture {
 	 *            The {@link IViewer}.
 	 */
 	protected void scrollFinished(IViewer viewer) {
-		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {
+		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {
 			policy.endScroll();
 		}
-		clearActivePolicies(viewer);
+		clearActiveHandlers(viewer);
 		getDomain().closeExecutionTransaction(ScrollGesture.this);
 	}
 
@@ -246,11 +246,11 @@ public class ScrollGesture extends AbstractGesture {
 	protected void scrollStarted(IViewer viewer, ScrollEvent event) {
 		EventTarget eventTarget = event.getTarget();
 		getDomain().openExecutionTransaction(ScrollGesture.this);
-		setActivePolicies(viewer,
-				getTargetPolicyResolver().resolvePolicies(ScrollGesture.this,
+		setActiveHandlers(viewer,
+				getTargetPolicyResolver().resolve(ScrollGesture.this,
 						eventTarget instanceof Node ? (Node) eventTarget : null,
 						viewer, ON_SCROLL_POLICY_KEY));
-		for (IOnScrollPolicy policy : getActivePolicies(viewer)) {
+		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {
 			policy.startScroll(event);
 		}
 	}

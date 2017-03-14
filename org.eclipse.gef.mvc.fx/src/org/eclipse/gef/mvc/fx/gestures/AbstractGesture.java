@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.eclipse.gef.common.activate.ActivatableSupport;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.policies.IPolicy;
+import org.eclipse.gef.mvc.fx.handlers.IHandler;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -39,7 +39,7 @@ public abstract class AbstractGesture implements IGesture {
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
 	private ReadOnlyObjectWrapper<IDomain> domainProperty = new ReadOnlyObjectWrapper<>();
-	private Map<IViewer, List<IPolicy>> activePolicies = new IdentityHashMap<>();
+	private Map<IViewer, List<IHandler>> activeHandlers = new IdentityHashMap<>();
 
 	@Override
 	public final void activate() {
@@ -57,20 +57,20 @@ public abstract class AbstractGesture implements IGesture {
 	}
 
 	/**
-	 * Clears the list of active policies of this tool for the given viewer.
+	 * Clears the list of active handlers of this gesture for the given viewer.
 	 *
 	 * @param viewer
-	 *            The {@link IViewer} for which to clear the active policies of
-	 *            this tool.
-	 * @see #getActivePolicies(IViewer)
-	 * @see #setActivePolicies(IViewer, Collection)
+	 *            The {@link IViewer} for which to clear the active handlers of
+	 *            this gesture.
+	 * @see #getActiveHandlers(IViewer)
+	 * @see #setActiveHandlers(IViewer, Collection)
 	 */
-	protected void clearActivePolicies(IViewer viewer) {
+	protected void clearActiveHandlers(IViewer viewer) {
 		if (viewer == null) {
 			throw new IllegalArgumentException(
 					"The given viewer may not be null.");
 		}
-		activePolicies.remove(viewer);
+		activeHandlers.remove(viewer);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public abstract class AbstractGesture implements IGesture {
 
 	/**
 	 * This method is called when a valid {@link IDomain} is attached to this
-	 * tool so that you can register event listeners for various inputs
+	 * gesture so that you can register event listeners for various inputs
 	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
 	 */
 	protected void doActivate() {
@@ -95,9 +95,9 @@ public abstract class AbstractGesture implements IGesture {
 	}
 
 	@Override
-	public List<? extends IPolicy> getActivePolicies(IViewer viewer) {
-		if (activePolicies.containsKey(viewer)) {
-			return Collections.unmodifiableList(activePolicies.get(viewer));
+	public List<? extends IHandler> getActiveHandlers(IViewer viewer) {
+		if (activeHandlers.containsKey(viewer)) {
+			return Collections.unmodifiableList(activeHandlers.get(viewer));
 		} else {
 			return Collections.emptyList();
 		}
@@ -114,12 +114,12 @@ public abstract class AbstractGesture implements IGesture {
 	}
 
 	/**
-	 * Returns the {@link ITargetPolicyResolver} of the {@link IDomain}.
+	 * Returns the {@link IHandlerResolver} of the {@link IDomain}.
 	 *
-	 * @return the {@link ITargetPolicyResolver} of the {@link IDomain}.
+	 * @return the {@link IHandlerResolver} of the {@link IDomain}.
 	 */
-	protected ITargetPolicyResolver getTargetPolicyResolver() {
-		return getDomain().getAdapter(ITargetPolicyResolver.class);
+	protected IHandlerResolver getTargetPolicyResolver() {
+		return getDomain().getAdapter(IHandlerResolver.class);
 	}
 
 	@Override
@@ -128,43 +128,42 @@ public abstract class AbstractGesture implements IGesture {
 	}
 
 	/**
-	 * Set the active policies of this tool to the given policies.
+	 * Set the active handlers of this gesture to the given handlers.
 	 *
 	 * @param viewer
-	 *            The {@link IViewer} for which to store the active policies of
-	 *            this tool.
-	 * @param activePolicies
-	 *            The active policies of this tool.
-	 * @see #clearActivePolicies(IViewer)
-	 * @see #getActivePolicies(IViewer)
+	 *            The {@link IViewer} for which to store the active handlers of
+	 *            this gesture.
+	 * @param activeHandlers
+	 *            The active handlers of this gesture.
+	 * @see #clearActiveHandlers(IViewer)
+	 * @see #getActiveHandlers(IViewer)
 	 */
-	protected void setActivePolicies(IViewer viewer,
-			Collection<? extends IPolicy> activePolicies) {
+	protected void setActiveHandlers(IViewer viewer,
+			Collection<? extends IHandler> activeHandlers) {
 		if (viewer == null) {
 			throw new IllegalArgumentException(
 					"The given viewer may not be null.");
 		}
-		if (activePolicies == null) {
+		if (activeHandlers == null) {
 			throw new IllegalArgumentException(
 					"The given activePolicies may not be null.");
 		}
-		for (IPolicy ap : activePolicies) {
+		for (IHandler ap : activeHandlers) {
 			if (ap.getHost().getViewer() != viewer) {
 				throw new IllegalArgumentException(
-						"Resolved policy is not hosted within viewer.");
+						"Resolved handler is not hosted within viewer.");
 			}
 		}
-		clearActivePolicies(viewer);
-		this.activePolicies.put(viewer, new ArrayList<>(activePolicies));
+		clearActiveHandlers(viewer);
+		this.activeHandlers.put(viewer, new ArrayList<>(activeHandlers));
 	}
 
 	@Override
 	public void setAdaptable(IDomain adaptable) {
 		if (isActive()) {
 			throw new IllegalStateException(
-					"The reference to the IDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
+					"The reference to the IDomain may not be changed while the gesture is active. Please deactivate the gesture before setting the IEditDomain and re-activate it afterwards.");
 		}
 		domainProperty.set(adaptable);
 	}
-
 }

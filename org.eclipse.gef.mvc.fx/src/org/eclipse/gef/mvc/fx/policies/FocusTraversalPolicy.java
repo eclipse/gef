@@ -33,7 +33,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class FocusTraversalPolicy extends AbstractTransactionPolicy {
+public class FocusTraversalPolicy extends AbstractPolicy {
 
 	private IViewer viewer;
 	private FocusModel focusModel;

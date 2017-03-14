@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.IOnPinchSpreadHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.IOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.value.ChangeListener;
@@ -31,13 +31,13 @@ import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 
 /**
- * The {@link PinchSpreadGesture} is an {@link AbstractGesture} to handle pinch/spread
- * (zoom) interaction gestures.
+ * The {@link PinchSpreadGesture} is an {@link AbstractGesture} to handle
+ * pinch/spread (zoom) interaction gestures.
  * <p>
- * The {@link PinchSpreadGesture} handles the opening and closing of an transaction
- * operation via the {@link IDomain}, to which it is adapted. It controls that a
- * single transaction operation is used for the complete interaction, so all
- * interaction results can be undone in a single undo step.
+ * The {@link PinchSpreadGesture} handles the opening and closing of an
+ * transaction operation via the {@link IDomain}, to which it is adapted. It
+ * controls that a single transaction operation is used for the complete
+ * interaction, so all interaction results can be undone in a single undo step.
  *
  * @author mwienand
  * @author anyssen
@@ -47,7 +47,7 @@ public class PinchSpreadGesture extends AbstractGesture {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	public static final Class<IOnPinchSpreadPolicy> ON_PINCH_SPREAD_POLICY_KEY = IOnPinchSpreadPolicy.class;
+	public static final Class<IOnPinchSpreadHandler> ON_PINCH_SPREAD_POLICY_KEY = IOnPinchSpreadHandler.class;
 
 	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<ZoomEvent>> zoomFilters = new IdentityHashMap<>();
@@ -73,14 +73,15 @@ public class PinchSpreadGesture extends AbstractGesture {
 					Boolean oldValue, Boolean newValue) {
 				if (newValue == null || !newValue) {
 					// cancel target policies
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
+					for (IOnPinchSpreadHandler policy : getActiveHandlers(
 							viewer)) {
 						policy.abortZoom();
 					}
 					// clear active policies and close execution
 					// transaction
-					clearActivePolicies(viewer);
-					getDomain().closeExecutionTransaction(PinchSpreadGesture.this);
+					clearActiveHandlers(viewer);
+					getDomain()
+							.closeExecutionTransaction(PinchSpreadGesture.this);
 				}
 			}
 		};
@@ -89,7 +90,7 @@ public class PinchSpreadGesture extends AbstractGesture {
 
 	/**
 	 * Creates an {@link EventHandler} for {@link ZoomEvent}s that forwards the
-	 * events to the {@link IOnPinchSpreadPolicy} implementations that can be
+	 * events to the {@link IOnPinchSpreadHandler} implementations that can be
 	 * determined for the individual events and the given {@link IViewer}.
 	 *
 	 * @param scene
@@ -108,7 +109,7 @@ public class PinchSpreadGesture extends AbstractGesture {
 					if (activeViewer == null) {
 						return;
 					}
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
+					for (IOnPinchSpreadHandler policy : getActiveHandlers(
 							activeViewer)) {
 						policy.zoom(event);
 					}
@@ -126,27 +127,27 @@ public class PinchSpreadGesture extends AbstractGesture {
 
 					// zoom finish may not occur, so close any preceding
 					// transaction just in case
-					if (!getDomain()
-							.isExecutionTransactionOpen(PinchSpreadGesture.this)) {
+					if (!getDomain().isExecutionTransactionOpen(
+							PinchSpreadGesture.this)) {
 						// TODO: this case should already be handled by the
 						// underlying gesture
 						// finish event may not properly occur in all cases; we
 						// may continue to use the still open transaction
-						getDomain()
-								.openExecutionTransaction(PinchSpreadGesture.this);
+						getDomain().openExecutionTransaction(
+								PinchSpreadGesture.this);
 					}
 
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
-					setActivePolicies(activeViewer,
-							getTargetPolicyResolver().resolvePolicies(
+					setActiveHandlers(activeViewer,
+							getTargetPolicyResolver().resolve(
 									PinchSpreadGesture.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									activeViewer, ON_PINCH_SPREAD_POLICY_KEY));
 
 					// send event to the policies
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
+					for (IOnPinchSpreadHandler policy : getActiveHandlers(
 							viewer)) {
 						policy.startZoom(event);
 					}
@@ -155,12 +156,13 @@ public class PinchSpreadGesture extends AbstractGesture {
 					if (activeViewer == null) {
 						return;
 					}
-					for (IOnPinchSpreadPolicy policy : getActivePolicies(
+					for (IOnPinchSpreadHandler policy : getActiveHandlers(
 							activeViewer)) {
 						policy.endZoom(event);
 					}
-					clearActivePolicies(activeViewer);
-					getDomain().closeExecutionTransaction(PinchSpreadGesture.this);
+					clearActiveHandlers(activeViewer);
+					getDomain()
+							.closeExecutionTransaction(PinchSpreadGesture.this);
 				}
 			}
 		};
@@ -207,8 +209,8 @@ public class PinchSpreadGesture extends AbstractGesture {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends IOnPinchSpreadPolicy> getActivePolicies(
+	public List<? extends IOnPinchSpreadHandler> getActiveHandlers(
 			IViewer viewer) {
-		return (List<IOnPinchSpreadPolicy>) super.getActivePolicies(viewer);
+		return (List<IOnPinchSpreadHandler>) super.getActiveHandlers(viewer);
 	}
 }

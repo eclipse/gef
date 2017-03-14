@@ -14,6 +14,7 @@
 package org.eclipse.gef.mvc.fx.policies;
 
 import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import javafx.scene.Node;
@@ -26,8 +27,18 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-// TODO: change generic parameter to specify IVisualPart<VR> rather than VR
 public interface IPolicy extends IAdaptable.Bound<IVisualPart<? extends Node>> {
+
+	/**
+	 * Returns an {@link ITransactionalOperation} that performs all
+	 * manipulations applied by the policy since the previous {@link #init()}
+	 * call.
+	 *
+	 * @return An {@link ITransactionalOperation} that performs all
+	 *         manipulations applied by the policy since the last
+	 *         {@link #init()} call.
+	 */
+	public ITransactionalOperation commit();
 
 	/**
 	 * Returns the host of this {@link IPolicy}, i.e. the {@link IVisualPart}
@@ -35,6 +46,22 @@ public interface IPolicy extends IAdaptable.Bound<IVisualPart<? extends Node>> {
 	 *
 	 * @return The host of this {@link IPolicy}.
 	 */
-	public IVisualPart<? extends Node> getHost();
+	public default IVisualPart<? extends Node> getHost() {
+		return getAdaptable();
+	}
 
+	/**
+	 * Initializes the policy, so that the policy's "work" methods can be used.
+	 * Calling a "work" method while the policy is not initialized will result
+	 * in an {@link IllegalStateException}, as well as re-initializing before
+	 * committing or rolling back.
+	 */
+	public void init();
+
+	/**
+	 * Puts back this policy into an uninitialized state, reverting any changes
+	 * that have been applied via the policy's work methods since the preceding
+	 * {@link #init()} call.
+	 */
+	public void rollback();
 }

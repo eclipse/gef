@@ -27,14 +27,14 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import javafx.geometry.Point2D;
 
 /**
- * A transactional {@link IPolicy} to change the viewport of an {@link IViewer}
- * via its {@link InfiniteCanvas}.
+ * An {@link IPolicy} to change the viewport of an {@link IViewer} via its
+ * {@link InfiniteCanvas}.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public class ViewportPolicy extends AbstractTransactionPolicy {
+public class ViewportPolicy extends AbstractPolicy {
 
 	private static final double DEFAULT_ZOOM_MIN = 0.0625;
 	private static final double DEFAULT_ZOOM_MAX = 16d;

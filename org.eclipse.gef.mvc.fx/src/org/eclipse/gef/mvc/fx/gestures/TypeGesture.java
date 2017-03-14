@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef.mvc.fx.handlers.IOnStrokeHandler;
+import org.eclipse.gef.mvc.fx.handlers.IOnTypeHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.IOnStrokePolicy;
-import org.eclipse.gef.mvc.fx.policies.IOnTypePolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.value.ChangeListener;
@@ -44,12 +44,12 @@ public class TypeGesture extends AbstractGesture {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	public static final Class<IOnTypePolicy> ON_TYPE_POLICY_KEY = IOnTypePolicy.class;
+	public static final Class<IOnTypeHandler> ON_TYPE_POLICY_KEY = IOnTypeHandler.class;
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	public static final Class<IOnStrokePolicy> ON_STROKE_POLICY_KEY = IOnStrokePolicy.class;
+	public static final Class<IOnStrokeHandler> ON_STROKE_POLICY_KEY = IOnStrokeHandler.class;
 
 	private Map<Scene, EventHandler<? super KeyEvent>> pressedFilterMap = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<? super KeyEvent>> releasedFilterMap = new IdentityHashMap<>();
@@ -89,12 +89,12 @@ public class TypeGesture extends AbstractGesture {
 						}
 					}
 					// cancel target policies
-					for (IOnStrokePolicy policy : getActivePolicies(
+					for (IOnStrokeHandler policy : getActiveHandlers(
 							activeViewer)) {
 						policy.abortPress();
 					}
 					// clear active policies
-					clearActivePolicies(activeViewer);
+					clearActiveHandlers(activeViewer);
 					activeViewer = null;
 					// close execution transaction
 					getDomain().closeExecutionTransaction(TypeGesture.this);
@@ -158,8 +158,8 @@ public class TypeGesture extends AbstractGesture {
 						isInitialPress = true;
 
 						// determine target policies on first key press
-						setActivePolicies(activeViewer,
-								getTargetPolicyResolver().resolvePolicies(
+						setActiveHandlers(activeViewer,
+								getTargetPolicyResolver().resolve(
 										TypeGesture.this, targetNode, activeViewer,
 										ON_STROKE_POLICY_KEY));
 					}
@@ -168,7 +168,7 @@ public class TypeGesture extends AbstractGesture {
 					pressedKeys.add(event.getCode());
 
 					// notify target policies
-					for (IOnStrokePolicy policy : getActivePolicies(
+					for (IOnStrokeHandler policy : getActiveHandlers(
 							activeViewer)) {
 						if (isInitialPress) {
 							policy.initialPress(event);
@@ -187,7 +187,7 @@ public class TypeGesture extends AbstractGesture {
 							&& pressedKeys.contains(event.getCode());
 
 					// notify target policies
-					for (IOnStrokePolicy policy : getActivePolicies(
+					for (IOnStrokeHandler policy : getActiveHandlers(
 							activeViewer)) {
 						if (isFinalRelease) {
 							policy.finalRelease(event);
@@ -200,7 +200,7 @@ public class TypeGesture extends AbstractGesture {
 					if (isFinalRelease) {
 						// clear active policies and close execution transaction
 						// only when the initially pressed key is released
-						clearActivePolicies(activeViewer);
+						clearActiveHandlers(activeViewer);
 						activeViewer = null;
 						getDomain().closeExecutionTransaction(TypeGesture.this);
 					}
@@ -240,12 +240,12 @@ public class TypeGesture extends AbstractGesture {
 
 					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
 							targetNode);
-					Collection<? extends IOnTypePolicy> policies = getTargetPolicyResolver()
-							.resolvePolicies(TypeGesture.this, targetNode,
+					Collection<? extends IOnTypeHandler> policies = getTargetPolicyResolver()
+							.resolve(TypeGesture.this, targetNode,
 									targetViewer, ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
-					for (IOnTypePolicy policy : policies) {
+					for (IOnTypeHandler policy : policies) {
 						policy.type(event, pressedKeys);
 					}
 					if (pressedKeys.isEmpty()) {
@@ -284,7 +284,7 @@ public class TypeGesture extends AbstractGesture {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends IOnStrokePolicy> getActivePolicies(IViewer viewer) {
-		return (List<IOnStrokePolicy>) super.getActivePolicies(viewer);
+	public List<? extends IOnStrokeHandler> getActiveHandlers(IViewer viewer) {
+		return (List<IOnStrokeHandler>) super.getActiveHandlers(viewer);
 	}
 }

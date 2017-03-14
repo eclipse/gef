@@ -22,5 +22,4 @@ public class ZestGraphExampleModule extends ZestFxModule {
 	protected void enableAdapterMapInjection() {
 		install(new AdapterInjectionSupport(LoggingMode.PRODUCTION));
 	}
-
 }

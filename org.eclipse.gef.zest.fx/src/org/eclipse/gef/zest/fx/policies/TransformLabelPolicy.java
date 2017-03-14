@@ -126,7 +126,7 @@ public class TransformLabelPolicy extends TransformPolicy {
 	 *
 	 * @return Whether the position was adjusted or not.
 	 */
-	protected boolean preserveLabelOffset() {
+	public boolean preserveLabelOffset() {
 		if (initialOffset == null) {
 			return false;
 		}
@@ -139,5 +139,4 @@ public class TransformLabelPolicy extends TransformPolicy {
 		locallyExecuteOperation();
 		return true;
 	}
-
 }

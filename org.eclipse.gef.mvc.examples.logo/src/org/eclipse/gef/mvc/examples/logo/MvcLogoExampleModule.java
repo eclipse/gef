@@ -17,6 +17,15 @@ import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.mvc.examples.logo.behaviors.PaletteFocusBehavior;
+import org.eclipse.gef.mvc.examples.logo.handlers.CloneCurveSupport;
+import org.eclipse.gef.mvc.examples.logo.handlers.CloneOnClickHandler;
+import org.eclipse.gef.mvc.examples.logo.handlers.CloneShapeSupport;
+import org.eclipse.gef.mvc.examples.logo.handlers.CreateAndTranslateShapeOnDragHandler;
+import org.eclipse.gef.mvc.examples.logo.handlers.CreateCurveOnDragHandler;
+import org.eclipse.gef.mvc.examples.logo.handlers.CreationMenuItemProvider;
+import org.eclipse.gef.mvc.examples.logo.handlers.CreationMenuOnClickHandler;
+import org.eclipse.gef.mvc.examples.logo.handlers.DeleteFirstAnchorageOnClickHandler;
+import org.eclipse.gef.mvc.examples.logo.handlers.RelocateLinkedOnDragHandler;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurveCreationHoverHandlePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricElementDeletionHandlePart;
@@ -25,16 +34,7 @@ import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleContentPartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleHoverHandlePartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteRootPart;
-import org.eclipse.gef.mvc.examples.logo.policies.CloneCurveSupport;
-import org.eclipse.gef.mvc.examples.logo.policies.CloneOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.CloneShapeSupport;
 import org.eclipse.gef.mvc.examples.logo.policies.ContentRestrictedChangeViewportPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.CreateAndTranslateShapeOnDragPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.CreateCurveOnDragPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.CreationMenuItemProvider;
-import org.eclipse.gef.mvc.examples.logo.policies.CreationMenuOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.DeleteFirstAnchorageOnClickPolicy;
-import org.eclipse.gef.mvc.examples.logo.policies.RelocateLinkedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
@@ -43,6 +43,20 @@ import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.BendFirstAnchorageOnSegmentHandleDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.BendOnSegmentDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.DeleteSelectedOnTypeHandler;
+import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
+import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
+import org.eclipse.gef.mvc.fx.handlers.NormalizeConnectedOnDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.ResizeTransformSelectedOnHandleDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.ResizeTranslateFirstAnchorageOnHandleDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnHandleDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnRotateHandler;
+import org.eclipse.gef.mvc.fx.handlers.SelectAllOnTypeHandler;
+import org.eclipse.gef.mvc.fx.handlers.SelectFocusedOnTypeHandler;
+import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.TraverseFocusOnTypeHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
@@ -57,22 +71,8 @@ import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.RectangleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
-import org.eclipse.gef.mvc.fx.policies.BendFirstAnchorageOnSegmentHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.BendOnSegmentDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.DeleteSelectedOnTypePolicy;
-import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
-import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
-import org.eclipse.gef.mvc.fx.policies.NormalizeConnectedOnDragPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
-import org.eclipse.gef.mvc.fx.policies.ResizeTransformSelectedOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.ResizeTranslateFirstAnchorageOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnHandleDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.RotateSelectedOnRotatePolicy;
-import org.eclipse.gef.mvc.fx.policies.SelectAllOnTypePolicy;
-import org.eclipse.gef.mvc.fx.policies.SelectFocusedOnTypePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
-import org.eclipse.gef.mvc.fx.policies.TranslateSelectedOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.TraverseFocusOnTypePolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
@@ -92,13 +92,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
 		// select on click
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FocusAndSelectOnClickHandler.class);
 		// select on type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypeHandler.class);
 	}
 
 	protected void bindCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandler.class);
 	}
 
 	protected void bindContentPartPoolAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -119,11 +119,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindCreateCurveHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateCurveOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateCurveOnDragHandler.class);
 	}
 
 	protected void bindDeleteHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DeleteFirstAnchorageOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DeleteFirstAnchorageOnClickHandler.class);
 	}
 
 	protected void bindFocusFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -152,23 +152,24 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandler.class);
 	}
 
 	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(ResizeTranslateFirstAnchorageOnHandleDragHandler.class);
 		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnHandleDragHandler.class);
 
 		// multi selection: scale relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTransformSelectedOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTransformSelectedOnHandleDragHandler.class);
 	}
 
 	protected void bindGeometricCurvePartAdaptersInContentViewerContext(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hover on hover
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
 
 		// geometry provider for selection feedback
 		adapterMapBinder
@@ -194,11 +195,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
 
-		// interaction policy to relocate on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
+		// interaction handler to relocate on drag
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 
 		// drag individual segments
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendOnSegmentDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendOnSegmentDragHandler.class);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
 
@@ -209,13 +210,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectionClickableAreaBehavior.class);
 
 		// clone on shift+click
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickHandler.class);
 	}
 
 	protected void bindGeometricShapePartAdapterInPaletteViewerContext(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateAndTranslateShapeOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreateAndTranslateShapeOnDragHandler.class);
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 	}
@@ -223,7 +224,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindGeometricShapePartAdaptersInContentViewerContext(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hover on hover
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
 
 		// geometry provider for selection feedback
 		adapterMapBinder
@@ -252,8 +253,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(ShapeBoundsProvider.class);
 		// geometry provider for hover handles
 		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultHoverIntentHandlePartFactory.HOVER_INTENT_HANDLES_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey.role(DefaultHoverIntentHandlePartFactory.HOVER_INTENT_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 		// geometry provider for focus feedback
 		adapterMapBinder.addBinding(AdapterKey.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
@@ -269,8 +269,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizePolicy.class);
 
 		// relocate on drag (including anchored elements, which are linked)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RelocateLinkedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RelocateLinkedOnDragHandler.class);
 
 		// clone
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneShapeSupport.class);
@@ -279,10 +279,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DefaultAnchorProvider.class);
 
 		// clone on shift+click
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickHandler.class);
 
 		// normalize connected on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragHandler.class);
 	}
 
 	protected void bindHoverFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -322,22 +322,22 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	@Override
 	protected void bindIRootPartAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindIRootPartAdaptersForContentViewer(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreationMenuOnClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role(CreationMenuOnClickPolicy.MENU_ITEM_PROVIDER_ROLE))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CreationMenuOnClickHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.role(CreationMenuOnClickHandler.MENU_ITEM_PROVIDER_ROLE))
 				.to(CreationMenuItemProvider.class);
-		// interaction policy to delete on key type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DeleteSelectedOnTypePolicy.class);
-		// interaction policy to rotate selected through rotate gesture
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnRotatePolicy.class);
+		// interaction handler to delete on key type
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DeleteSelectedOnTypeHandler.class);
+		// interaction handler to rotate selected through rotate gesture
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnRotateHandler.class);
 		// keyboard focus traversal through key navigation
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypeHandler.class);
 		// select on type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypeHandler.class);
 		// hover behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverIntentBehavior.class);
 		// select-all on type
-		bindSelectAllOnTypePolicyAsContentViewerRootPartAdapter(adapterMapBinder);
+		bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(adapterMapBinder);
 	}
 
 	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -349,9 +349,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
-		bindHoverOnHoverPolicyAsIRootPartAdapter(adapterMapBinder);
-		bindPanOrZoomOnScrollPolicyAsIRootPartAdapter(adapterMapBinder);
-		bindPanOnTypePolicyAsIRootPartAdapter(adapterMapBinder);
+		bindHoverOnHoverHandlerAsIRootPartAdapter(adapterMapBinder);
+		bindPanOrZoomOnScrollHandlerAsIRootPartAdapter(adapterMapBinder);
+		bindPanOnTypeHandlerAsIRootPartAdapter(adapterMapBinder);
 		// register change viewport policy
 		bindContentRestrictedChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register default behaviors
@@ -430,12 +430,12 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandler.class);
 	}
 
-	protected void bindSelectAllOnTypePolicyAsContentViewerRootPartAdapter(
+	protected void bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectAllOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectAllOnTypeHandler.class);
 	}
 
 	protected void bindSelectionFeedbackFactoryAsPaletteViewerAdapter(
@@ -462,12 +462,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(ResizeTranslateFirstAnchorageOnHandleDragHandler.class);
 		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnHandleDragHandler.class);
 
 		// multi selection: scale relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTransformSelectedOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTransformSelectedOnHandleDragHandler.class);
 	}
 
 	@Override

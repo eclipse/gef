@@ -31,13 +31,19 @@ import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.gestures.ClickDragGesture;
-import org.eclipse.gef.mvc.fx.gestures.DefaultTargetPolicyResolver;
+import org.eclipse.gef.mvc.fx.gestures.DefaultHandlerResolver;
 import org.eclipse.gef.mvc.fx.gestures.HoverGesture;
-import org.eclipse.gef.mvc.fx.gestures.ITargetPolicyResolver;
+import org.eclipse.gef.mvc.fx.gestures.IHandlerResolver;
 import org.eclipse.gef.mvc.fx.gestures.PinchSpreadGesture;
 import org.eclipse.gef.mvc.fx.gestures.RotateGesture;
 import org.eclipse.gef.mvc.fx.gestures.ScrollGesture;
 import org.eclipse.gef.mvc.fx.gestures.TypeGesture;
+import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
+import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
+import org.eclipse.gef.mvc.fx.handlers.MarqueeOnDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.PanOnStrokeHandler;
+import org.eclipse.gef.mvc.fx.handlers.PanOrZoomOnScrollHandler;
+import org.eclipse.gef.mvc.fx.handlers.ZoomOnPinchSpreadHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
@@ -60,14 +66,8 @@ import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.ContentPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
 import org.eclipse.gef.mvc.fx.policies.DeletionPolicy;
-import org.eclipse.gef.mvc.fx.policies.FocusAndSelectOnClickPolicy;
 import org.eclipse.gef.mvc.fx.policies.FocusTraversalPolicy;
-import org.eclipse.gef.mvc.fx.policies.HoverOnHoverPolicy;
-import org.eclipse.gef.mvc.fx.policies.MarqueeOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.PanOnStrokePolicy;
-import org.eclipse.gef.mvc.fx.policies.PanOrZoomOnScrollPolicy;
 import org.eclipse.gef.mvc.fx.policies.ViewportPolicy;
-import org.eclipse.gef.mvc.fx.policies.ZoomOnPinchSpreadPolicy;
 import org.eclipse.gef.mvc.fx.providers.TransformProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
@@ -162,7 +162,7 @@ public class MvcFxModule extends AbstractModule {
 	 */
 	protected void bindAbstractHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		bindHoverOnHoverPolicyAsAbstractHandlePartAdapter(adapterMapBinder);
+		bindHoverOnHoverHandlerAsAbstractHandlePartAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -332,8 +332,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FocusAndSelectOnClickPolicy} to the adapter map
-	 * binder for {@link IRootPart}.
+	 * Adds a binding for {@link FocusAndSelectOnClickHandler} to the adapter
+	 * map binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -343,10 +343,10 @@ public class MvcFxModule extends AbstractModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindFocusAndSelectOnClickPolicyAsIRootPartAdapter(
+	protected void bindFocusAndSelectOnClickHandlerAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FocusAndSelectOnClickPolicy.class);
+				.to(FocusAndSelectOnClickHandler.class);
 	}
 
 	/**
@@ -523,7 +523,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link HoverOnHoverPolicy} to the adapter map binder
+	 * Adds a binding for {@link HoverOnHoverHandler} to the adapter map binder
 	 * for {@link AbstractHandlePart}.
 	 *
 	 * @param adapterMapBinder
@@ -534,14 +534,14 @@ public class MvcFxModule extends AbstractModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindHoverOnHoverPolicyAsAbstractHandlePartAdapter(
+	protected void bindHoverOnHoverHandlerAsAbstractHandlePartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverOnHoverPolicy.class);
+				.to(HoverOnHoverHandler.class);
 	}
 
 	/**
-	 * Adds a binding for {@link HoverOnHoverPolicy} to the adapter map binder
+	 * Adds a binding for {@link HoverOnHoverHandler} to the adapter map binder
 	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
@@ -552,10 +552,10 @@ public class MvcFxModule extends AbstractModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindHoverOnHoverPolicyAsIRootPartAdapter(
+	protected void bindHoverOnHoverHandlerAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverOnHoverPolicy.class);
+				.to(HoverOnHoverHandler.class);
 	}
 
 	/**
@@ -636,12 +636,12 @@ public class MvcFxModule extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
-		bindFocusAndSelectOnClickPolicyAsIRootPartAdapter(adapterMapBinder);
-		bindMarqueeOnDragPolicyAsIRootPartAdapter(adapterMapBinder);
-		bindHoverOnHoverPolicyAsIRootPartAdapter(adapterMapBinder);
-		bindPanOrZoomOnScrollPolicyAsIRootPartAdapter(adapterMapBinder);
-		bindZoomOnPinchSpreadPolicyAsIRootPartAdapter(adapterMapBinder);
-		bindPanOnTypePolicyAsIRootPartAdapter(adapterMapBinder);
+		bindFocusAndSelectOnClickHandlerAsIRootPartAdapter(adapterMapBinder);
+		bindMarqueeOnDragHandlerAsIRootPartAdapter(adapterMapBinder);
+		bindHoverOnHoverHandlerAsIRootPartAdapter(adapterMapBinder);
+		bindPanOrZoomOnScrollHandlerAsIRootPartAdapter(adapterMapBinder);
+		bindZoomOnPinchSpreadHandlerAsIRootPartAdapter(adapterMapBinder);
+		bindPanOnTypeHandlerAsIRootPartAdapter(adapterMapBinder);
 		// register change viewport policy
 		bindChangeViewportPolicyAsIRootPartAdapter(adapterMapBinder);
 		// register default behaviors
@@ -658,17 +658,17 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link DefaultTargetPolicyResolver} to
-	 * {@link ITargetPolicyResolver} in adaptable scope of {@link IDomain}.
+	 * Binds {@link DefaultHandlerResolver} to
+	 * {@link IHandlerResolver} in adaptable scope of {@link IDomain}.
 	 */
 	protected void bindITargetPolicyResolver() {
-		binder().bind(ITargetPolicyResolver.class)
-				.to(DefaultTargetPolicyResolver.class)
+		binder().bind(IHandlerResolver.class)
+				.to(DefaultHandlerResolver.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
-	 * Binds {@link DefaultTargetPolicyResolver} as a domain adapter.
+	 * Binds {@link DefaultHandlerResolver} as a domain adapter.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} that is used to add the binding.
@@ -678,7 +678,7 @@ public class MvcFxModule extends AbstractModule {
 		// TODO: verify binding or use two level bindings (interface and
 		// implementation)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(DefaultTargetPolicyResolver.class);
+				.to(DefaultHandlerResolver.class);
 	}
 
 	/**
@@ -729,7 +729,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link MarqueeOnDragPolicy} to the adapter map binder
+	 * Adds a binding for {@link MarqueeOnDragHandler} to the adapter map binder
 	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
@@ -740,14 +740,14 @@ public class MvcFxModule extends AbstractModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindMarqueeOnDragPolicyAsIRootPartAdapter(
+	protected void bindMarqueeOnDragHandlerAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
-				.to(MarqueeOnDragPolicy.class);
+				.to(MarqueeOnDragHandler.class);
 	}
 
 	/**
-	 * Adds a binding for {@link PanOnStrokePolicy} to the adapter map binder
+	 * Adds a binding for {@link PanOnStrokeHandler} to the adapter map binder
 	 * for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
@@ -758,14 +758,14 @@ public class MvcFxModule extends AbstractModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindPanOnTypePolicyAsIRootPartAdapter(
+	protected void bindPanOnTypeHandlerAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(PanOnStrokePolicy.class);
+				.to(PanOnStrokeHandler.class);
 	}
 
 	/**
-	 * Adds a binding for {@link PanOrZoomOnScrollPolicy} to the adapter map
+	 * Adds a binding for {@link PanOrZoomOnScrollHandler} to the adapter map
 	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
@@ -776,10 +776,10 @@ public class MvcFxModule extends AbstractModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindPanOrZoomOnScrollPolicyAsIRootPartAdapter(
+	protected void bindPanOrZoomOnScrollHandlerAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("panOnScroll"))
-				.to(PanOrZoomOnScrollPolicy.class);
+				.to(PanOrZoomOnScrollHandler.class);
 	}
 
 	/**
@@ -1011,7 +1011,7 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ZoomOnPinchSpreadPolicy} to the adapter map
+	 * Adds a binding for {@link ZoomOnPinchSpreadHandler} to the adapter map
 	 * binder for {@link IRootPart}.
 	 *
 	 * @param adapterMapBinder
@@ -1022,10 +1022,10 @@ public class MvcFxModule extends AbstractModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindZoomOnPinchSpreadPolicyAsIRootPartAdapter(
+	protected void bindZoomOnPinchSpreadHandlerAsIRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ZoomOnPinchSpreadPolicy.class);
+				.to(ZoomOnPinchSpreadHandler.class);
 	}
 
 	@Override

@@ -22,11 +22,11 @@ import java.util.Set;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.handlers.IHandler;
+import org.eclipse.gef.mvc.fx.handlers.IOnClickHandler;
+import org.eclipse.gef.mvc.fx.handlers.IOnDragHandler;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
-import org.eclipse.gef.mvc.fx.policies.IOnClickPolicy;
-import org.eclipse.gef.mvc.fx.policies.IOnDragPolicy;
-import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
@@ -53,8 +53,8 @@ import javafx.scene.input.MouseEvent;
  * During each click/drag interaction, the tool identifies respective
  * {@link IVisualPart}s that serve as interaction targets for click and drag
  * respectively. They are identified via hit-testing on the visuals and the
- * availability of a corresponding {@link IOnClickPolicy} or
- * {@link IOnDragPolicy}.
+ * availability of a corresponding {@link IOnClickHandler} or
+ * {@link IOnDragHandler}.
  * <p>
  * The {@link ClickDragGesture} handles the opening and closing of an
  * transaction operation via the {@link IDomain}, to which it is adapted. It
@@ -72,13 +72,13 @@ public class ClickDragGesture extends AbstractGesture {
 	 * The typeKey used to retrieve those policies that are able to handle the
 	 * click part of the click/drag interaction gesture.
 	 */
-	public static final Class<IOnClickPolicy> ON_CLICK_POLICY_KEY = IOnClickPolicy.class;
+	public static final Class<IOnClickHandler> ON_CLICK_POLICY_KEY = IOnClickHandler.class;
 
 	/**
 	 * The typeKey used to retrieve those policies that are able to handle the
 	 * drag part of the click/drag interaction gesture.
 	 */
-	public static final Class<IOnDragPolicy> ON_DRAG_POLICY_KEY = IOnDragPolicy.class;
+	public static final Class<IOnDragHandler> ON_DRAG_POLICY_KEY = IOnDragHandler.class;
 
 	private final Set<Scene> scenes = Collections
 			.newSetFromMap(new IdentityHashMap<>());
@@ -161,23 +161,23 @@ public class ClickDragGesture extends AbstractGesture {
 			}
 			// no viewer is focused => abort
 			// cancel target policies
-			for (IPolicy policy : getActivePolicies(activeViewer)) {
-				if (policy instanceof IOnDragPolicy) {
-					((IOnDragPolicy) policy).abortDrag();
+			for (IHandler handler : getActiveHandlers(activeViewer)) {
+				if (handler instanceof IOnDragHandler) {
+					((IOnDragHandler) handler).abortDrag();
 				}
 			}
 			// clear active policies
-			clearActivePolicies(activeViewer);
+			clearActiveHandlers(activeViewer);
 			activeViewer = null;
 			// close execution transaction
 			getDomain().closeExecutionTransaction(ClickDragGesture.this);
 		}
 	};
 
-	private final IOnDragPolicy indicationCursorPolicy[] = new IOnDragPolicy[] {
+	private final IOnDragHandler indicationCursorPolicy[] = new IOnDragHandler[] {
 			null };
 	@SuppressWarnings("unchecked")
-	private final List<IOnDragPolicy> possibleDragPolicies[] = new ArrayList[] {
+	private final List<IOnDragHandler> possibleDragPolicies[] = new ArrayList[] {
 			null };
 
 	private EventHandler<MouseEvent> indicationCursorMouseMoveFilter = new EventHandler<MouseEvent>() {
@@ -196,7 +196,7 @@ public class ClickDragGesture extends AbstractGesture {
 				IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
 				if (viewer != null) {
 					possibleDragPolicies[0] = new ArrayList<>(
-							getTargetPolicyResolver().resolvePolicies(
+							getTargetPolicyResolver().resolve(
 									ClickDragGesture.this, target, viewer,
 									ON_DRAG_POLICY_KEY));
 				} else {
@@ -207,10 +207,10 @@ public class ClickDragGesture extends AbstractGesture {
 				// so that the policy closest to the target part
 				// is the first policy to provide an indication
 				// cursor
-				ListIterator<? extends IOnDragPolicy> dragIterator = possibleDragPolicies[0]
+				ListIterator<? extends IOnDragHandler> dragIterator = possibleDragPolicies[0]
 						.listIterator(possibleDragPolicies[0].size());
 				while (dragIterator.hasPrevious()) {
-					IOnDragPolicy policy = dragIterator.previous();
+					IOnDragHandler policy = dragIterator.previous();
 					if (policy.showIndicationCursor(event)) {
 						indicationCursorPolicy[0] = policy;
 						break;
@@ -237,10 +237,10 @@ public class ClickDragGesture extends AbstractGesture {
 			// so that the policy closest to the target part
 			// is the first policy to provide an indication
 			// cursor
-			ListIterator<? extends IOnDragPolicy> dragIterator = possibleDragPolicies[0]
+			ListIterator<? extends IOnDragHandler> dragIterator = possibleDragPolicies[0]
 					.listIterator(possibleDragPolicies[0].size());
 			while (dragIterator.hasPrevious()) {
-				IOnDragPolicy policy = dragIterator.previous();
+				IOnDragHandler policy = dragIterator.previous();
 				if (policy.showIndicationCursor(event)) {
 					indicationCursorPolicy[0] = policy;
 					break;
@@ -307,19 +307,19 @@ public class ClickDragGesture extends AbstractGesture {
 	protected void drag(Node target, MouseEvent event, double dx, double dy) {
 		// abort processing of this gesture if no policies could be
 		// found that can process it
-		if (activeViewer == null || getActivePolicies(activeViewer).isEmpty()) {
+		if (activeViewer == null || getActiveHandlers(activeViewer).isEmpty()) {
 			return;
 		}
 
-		for (IOnDragPolicy policy : getActivePolicies(activeViewer)) {
+		for (IOnDragHandler policy : getActiveHandlers(activeViewer)) {
 			policy.drag(event, new Dimension(dx, dy));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IOnDragPolicy> getActivePolicies(IViewer viewer) {
-		return (List<IOnDragPolicy>) super.getActivePolicies(viewer);
+	public List<IOnDragHandler> getActiveHandlers(IViewer viewer) {
+		return (List<IOnDragHandler>) super.getActiveHandlers(viewer);
 	}
 
 	/**
@@ -372,14 +372,14 @@ public class ClickDragGesture extends AbstractGesture {
 		viewer = PartUtils.retrieveViewer(getDomain(), target);
 		// determine click policies
 		boolean opened = false;
-		List<? extends IOnClickPolicy> clickPolicies = getTargetPolicyResolver()
-				.resolvePolicies(ClickDragGesture.this, target, viewer,
+		List<? extends IOnClickHandler> clickPolicies = getTargetPolicyResolver()
+				.resolve(ClickDragGesture.this, target, viewer,
 						ON_CLICK_POLICY_KEY);
 		// process click first
 		if (clickPolicies != null && !clickPolicies.isEmpty()) {
 			opened = true;
 			getDomain().openExecutionTransaction(ClickDragGesture.this);
-			for (IOnClickPolicy clickPolicy : clickPolicies) {
+			for (IOnClickHandler clickPolicy : clickPolicies) {
 				clickPolicy.click(event);
 			}
 		}
@@ -389,13 +389,13 @@ public class ClickDragGesture extends AbstractGesture {
 		activeViewer = PartUtils.retrieveViewer(getDomain(), target);
 
 		// determine drag policies
-		List<? extends IOnDragPolicy> policies = null;
+		List<? extends IOnDragHandler> policies = null;
 		if (activeViewer != null) {
 			// XXX: A click policy could have changed the visual
 			// hierarchy so that the viewer cannot be determined for
 			// the target node anymore. If that is the case, no drag
 			// policies should be notified about the event.
-			policies = getTargetPolicyResolver().resolvePolicies(
+			policies = getTargetPolicyResolver().resolve(
 					ClickDragGesture.this, target, activeViewer,
 					ON_DRAG_POLICY_KEY);
 		}
@@ -406,8 +406,7 @@ public class ClickDragGesture extends AbstractGesture {
 			// remove this tool from the domain's execution
 			// transaction if previously opened
 			if (opened) {
-				getDomain()
-						.closeExecutionTransaction(ClickDragGesture.this);
+				getDomain().closeExecutionTransaction(ClickDragGesture.this);
 			}
 			policies = null;
 			return;
@@ -420,10 +419,10 @@ public class ClickDragGesture extends AbstractGesture {
 		}
 
 		// mark the drag policies as active
-		setActivePolicies(activeViewer, policies);
+		setActiveHandlers(activeViewer, policies);
 
 		// send press() to all drag policies
-		for (IOnDragPolicy policy : policies) {
+		for (IOnDragHandler policy : policies) {
 			policy.startDrag(event);
 		}
 	}
@@ -462,18 +461,18 @@ public class ClickDragGesture extends AbstractGesture {
 
 		// abort processing of this gesture if no policies could be
 		// found that can process it
-		if (getActivePolicies(activeViewer).isEmpty()) {
+		if (getActiveHandlers(activeViewer).isEmpty()) {
 			activeViewer = null;
 			return;
 		}
 
 		// send release() to all drag policies
-		for (IOnDragPolicy policy : getActivePolicies(activeViewer)) {
+		for (IOnDragHandler policy : getActiveHandlers(activeViewer)) {
 			policy.endDrag(event, new Dimension(dx, dy));
 		}
 
 		// clear active policies before processing release
-		clearActivePolicies(activeViewer);
+		clearActiveHandlers(activeViewer);
 		activeViewer = null;
 
 		// remove this tool from the domain's execution transaction
