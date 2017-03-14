@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.policies.IOnScrollPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -106,6 +107,11 @@ public class ScrollTool extends AbstractTool {
 		return new EventHandler<ScrollEvent>() {
 			@Override
 			public void handle(ScrollEvent event) {
+				if (!(event.getTarget() instanceof Node)
+						|| PartUtils.retrieveViewer(getDomain(),
+								(Node) event.getTarget()) != viewer) {
+					return;
+				}
 				playFinishDelayTransition(viewer);
 				if (!inScroll.contains(viewer)) {
 					inScroll.add(viewer);

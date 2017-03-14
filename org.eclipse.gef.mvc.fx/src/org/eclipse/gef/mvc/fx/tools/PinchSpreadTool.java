@@ -82,7 +82,6 @@ public class PinchSpreadTool extends AbstractTool {
 					clearActivePolicies(viewer);
 					getDomain().closeExecutionTransaction(PinchSpreadTool.this);
 				}
-
 			}
 		};
 		return viewerFocusChangeListener;
@@ -101,23 +100,30 @@ public class PinchSpreadTool extends AbstractTool {
 	 */
 	protected EventHandler<ZoomEvent> createZoomFilter(Scene scene) {
 		return new EventHandler<ZoomEvent>() {
+			private IViewer activeViewer;
+
 			@Override
 			public void handle(ZoomEvent event) {
-				if (!(event.getTarget() instanceof Node)) {
-					return;
-				}
-				IViewer viewer = PartUtils.retrieveViewer(getDomain(),
-						(Node) event.getTarget());
-				if (viewer == null) {
-					return;
-				}
 				if (ZoomEvent.ZOOM.equals(event.getEventType())) {
+					if (activeViewer == null) {
+						return;
+					}
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
-							viewer)) {
+							activeViewer)) {
 						policy.zoom(event);
 					}
 				} else if (ZoomEvent.ZOOM_STARTED
 						.equals(event.getEventType())) {
+					if (!(event.getTarget() instanceof Node)) {
+						return;
+					}
+					IViewer viewer = PartUtils.retrieveViewer(getDomain(),
+							(Node) event.getTarget());
+					if (viewer == null) {
+						return;
+					}
+					activeViewer = viewer;
+
 					// zoom finish may not occur, so close any preceding
 					// transaction just in case
 					if (!getDomain()
@@ -132,12 +138,12 @@ public class PinchSpreadTool extends AbstractTool {
 
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
-					setActivePolicies(viewer,
+					setActivePolicies(activeViewer,
 							getTargetPolicyResolver().resolvePolicies(
 									PinchSpreadTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
-									viewer, ON_PINCH_SPREAD_POLICY_KEY));
+									activeViewer, ON_PINCH_SPREAD_POLICY_KEY));
 
 					// send event to the policies
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
@@ -146,11 +152,14 @@ public class PinchSpreadTool extends AbstractTool {
 					}
 				} else if (ZoomEvent.ZOOM_FINISHED
 						.equals(event.getEventType())) {
+					if (activeViewer == null) {
+						return;
+					}
 					for (IOnPinchSpreadPolicy policy : getActivePolicies(
-							viewer)) {
+							activeViewer)) {
 						policy.endZoom(event);
 					}
-					clearActivePolicies(viewer);
+					clearActivePolicies(activeViewer);
 					getDomain().closeExecutionTransaction(PinchSpreadTool.this);
 				}
 			}
