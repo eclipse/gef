@@ -235,8 +235,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 					return Boolean.TRUE.equals(ZestProperties.getLayoutIrrelevant(node)) || hidingModel.isHidden(node);
 				}
 			});
+			hidingModel.hiddenProperty().addListener(hidingModelObserver);
 		}
-		hidingModel.hiddenProperty().addListener(hidingModelObserver);
 
 		// initially apply layout if no viewport state is saved for this graph,
 		// or we are nested inside a node, or the saved viewport is outdated
@@ -262,7 +262,9 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		getHost().getChildrenUnmodifiable().removeListener(childrenObserver);
 
 		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
-		hidingModel.hiddenProperty().removeListener(hidingModelObserver);
+		if (hidingModel != null) {
+			hidingModel.hiddenProperty().removeListener(hidingModelObserver);
+		}
 
 		LayoutContext layoutContext = getLayoutContext();
 		layoutContext.unschedulePreLayoutPass(preLayout);

@@ -14,6 +14,7 @@ package org.eclipse.gef.dot.internal.ui;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
@@ -29,8 +30,12 @@ import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.gef.zest.fx.behaviors.EdgeLayoutBehavior;
+import org.eclipse.gef.zest.fx.behaviors.GraphLayoutBehavior;
+import org.eclipse.gef.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef.zest.fx.parts.EdgePart;
+import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.parts.NodeLabelPart;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 import org.eclipse.gef.zest.fx.parts.ZestFxContentPartFactory;
@@ -105,6 +110,10 @@ public class DotGraphViewModule extends MvcFxModule {
 	 */
 	protected void bindEdgePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// layout behavior
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(EdgeLayoutBehavior.class);
+
 		// selection link feedback provider
 		adapterMapBinder
 				.addBinding(AdapterKey
@@ -204,6 +213,27 @@ public class DotGraphViewModule extends MvcFxModule {
 	}
 
 	/**
+	 * Adds (default) adapter map bindings for {@link GraphPart} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link GraphPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindGraphPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(LayoutContext.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(GraphLayoutBehavior.class);
+	}
+
+	/**
 	 * Adds (default) adapter map bindings for {@link NodePart} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
@@ -218,6 +248,10 @@ public class DotGraphViewModule extends MvcFxModule {
 	 */
 	protected void bindNodePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// layout
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(NodeLayoutBehavior.class);
+
 		// anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(DotAnchorProvider.class);
@@ -281,6 +315,8 @@ public class DotGraphViewModule extends MvcFxModule {
 
 		bindIContentPartFactory();
 
+		bindGraphPartAdapters(
+				AdapterMaps.getAdapterMapBinder(binder(), GraphPart.class));
 		bindNodePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), NodePart.class));
 		bindEdgePartAdapters(
