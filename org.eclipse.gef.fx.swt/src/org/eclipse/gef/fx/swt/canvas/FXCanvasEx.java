@@ -335,6 +335,49 @@ public class FXCanvasEx extends FXCanvas {
 			.startsWith("1.8.0");
 	private static final boolean WIN32 = SWT.getPlatform().equals("win32");
 
+	/**
+	 * Returns the {@link FXCanvas} which contains the given {@link Scene}.
+	 * Therefore, it is only valid to call this method for a {@link Scene} which
+	 * is embedded into an SWT application via {@link FXCanvas}.
+	 *
+	 * @param scene
+	 *            The {@link Scene} for which to determine the surrounding
+	 *            {@link FXCanvas}.
+	 * @return The {@link FXCanvas} which contains the given {@link Scene}.
+	 */
+	public static FXCanvas getFXCanvas(Scene scene) {
+		if (scene == null) {
+			return null;
+		}
+		if (JAVA_8) {
+			// Obtain FXCanvas by accessing outer class
+			// of FXCanvas$HostContainer
+			// TODO: Remove this when dropping support for J2SE-1.8
+			Window window = scene.getWindow();
+			if (window != null) {
+				return ReflectionUtils.getPrivateFieldValue(ReflectionUtils
+						.<Object> getPrivateFieldValue(window, "host"),
+						"this$0");
+			}
+			return null;
+		} else {
+			// On J2SE-1.9, retrieve FXCanvas through
+			// FXCanvas.getFXCanvas(Scene), which was added for this
+			// purpose.
+			// TODO: Turn into an explicit call when dropping support
+			// for J2SE-1.8.
+			try {
+				Method m = FXCanvas.class.getDeclaredMethod("getFXCanvas",
+						Scene.class);
+				return (FXCanvas) m.invoke(null, scene);
+
+			} catch (Exception e) {
+				throw new IllegalStateException(
+						"Failed to call FXCanvas.getFXCanvas(Scene)", e);
+			}
+		}
+	}
+
 	// XXX: SWTCursors does not support image cursors up to JavaSE-1.9
 	// (https://bugs.openjdk.java.net/browse/JDK-8088147); this listener
 	// provides a workaround for J2SE-1.8. It relies on JDK internals and may
@@ -377,7 +420,6 @@ public class FXCanvasEx extends FXCanvas {
 			}
 		}
 	};
-
 	private Listener mouseWheelListener = new Listener() {
 
 		@Override
@@ -415,11 +457,11 @@ public class FXCanvasEx extends FXCanvas {
 			});
 		}
 	};
-
 	// including inertia events)
 	private boolean gestureActive = false;
 	// true while inertia events of a pan gesture might be processed
 	private boolean panGestureInertiaActive = false;
+
 	// the last gesture event that was received (may also be an inertia event)
 	private GestureEvent lastGestureEvent;
 	private GestureListener gestureListener = new GestureListener() {
@@ -702,7 +744,6 @@ public class FXCanvasEx extends FXCanvas {
 			});
 		}
 	};
-
 	private TraverseListener traverseListener = null;
 	private DisposeListener disposeListener;
 	// XXX: JavaFX does not forward the consumption state of key events to the
@@ -779,7 +820,9 @@ public class FXCanvasEx extends FXCanvas {
 	private List<Listener> keyDownListeners = new ArrayList<>();
 	// keeps track of key events that need to be marked as consumed
 	private Queue<org.eclipse.swt.widgets.Event> unprocessedKeyDownEvents = new LinkedList<>();
+
 	private Queue<org.eclipse.swt.widgets.Event> unprocessedKeyUpEvents = new LinkedList<>();
+
 	private Queue<org.eclipse.swt.widgets.Event> allSwtKeyEvents = new LinkedList<>();
 
 	private Listener displayKeyFilter = new Listener() {

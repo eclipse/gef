@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.fx.swt.controls;
 
-import java.lang.reflect.Method;
-
-import org.eclipse.gef.common.reflect.ReflectionUtils;
+import org.eclipse.gef.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -68,9 +66,6 @@ public class FXControlAdapter<T extends Control> extends Region {
 		public T createControl(Composite parent);
 
 	}
-
-	private static final boolean JAVA_8 = System.getProperty("java.version")
-			.startsWith("1.8.0");
 
 	private static final int[] FORWARD_SWT_EVENT_TYPES = new int[] {
 			SWT.HardKeyDown, SWT.HardKeyUp, SWT.KeyDown, SWT.KeyUp, SWT.Gesture,
@@ -224,56 +219,7 @@ public class FXControlAdapter<T extends Control> extends Region {
 		if (node == null) {
 			return null;
 		}
-		return getFXCanvas(node.getScene());
-	}
-
-	/**
-	 * Returns the {@link FXCanvas} which contains the given {@link Scene}.
-	 * Therefore, it is only valid to call this method for a {@link Scene} which
-	 * is embedded into an SWT application via {@link FXCanvas}.
-	 *
-	 * @param scene
-	 *            The {@link Scene} for which to determine the surrounding
-	 *            {@link FXCanvas}.
-	 * @return The {@link FXCanvas} which contains the given {@link Scene}.
-	 */
-	protected FXCanvas getFXCanvas(Scene scene) {
-		if (scene != null) {
-			// TODO: When dropping support for JavaSE-1.8, we may switch to use
-			// FXCanvas.getFXCanvas(Scene), which was added in JavaSE-1.9 to
-			// retrieve the enclosing canvas for an embedded scene.
-			return getFXCanvas(scene.getWindow());
-		}
-		return null;
-	}
-
-	private FXCanvas getFXCanvas(Window window) {
-		if (window != null) {
-			// Obtain FXCanvas by accessing outer class
-			// of FXCanvas$HostContainer
-			if (JAVA_8) {
-				return ReflectionUtils.getPrivateFieldValue(ReflectionUtils
-						.<Object> getPrivateFieldValue(window, "host"),
-						"this$0");
-
-			} else {
-				// On J2SE-1.9, retrieve FXCanvas through
-				// FXCanvas.getFXCanvas(Scene), which was added for this
-				// purpose.
-				// TODO: Turn into an explicit call when dropping support for
-				// J2SE-1.8.
-				try {
-					Method m = FXCanvas.class.getDeclaredMethod("getFXCanvas",
-							Scene.class);
-					return (FXCanvas) m.invoke(null, window.getScene());
-
-				} catch (Exception e) {
-					throw new IllegalStateException(
-							"Failed to call FXCanvas.getFXCanvas(Scene)", e);
-				}
-			}
-		}
-		return null;
+		return FXCanvasEx.getFXCanvas(node.getScene());
 	}
 
 	/**
@@ -341,10 +287,10 @@ public class FXControlAdapter<T extends Control> extends Region {
 			public void changed(ObservableValue<? extends Scene> observable,
 					Scene oldValue, Scene newValue) {
 
-				// if the scene changed, see if we can obtain an SwtFXCanvas
-				setCanvas(getFXCanvas(newValue));
+				// if the scene changed, see if we can obtain an FXCanvasEx
+				setCanvas(FXCanvasEx.getFXCanvas(newValue));
 
-				// register/unregister listener to detect SwtFXCanvas changes of
+				// register/unregister listener to detect FXCanvasEx changes of
 				// new scene
 				if (oldValue != null) {
 					oldValue.windowProperty()
@@ -353,12 +299,15 @@ public class FXControlAdapter<T extends Control> extends Region {
 				}
 				if (newValue != null) {
 					sceneWindowChangeListener = new ChangeListener<Window>() {
-
 						@Override
 						public void changed(
 								ObservableValue<? extends Window> observable,
 								Window oldValue, Window newValue) {
-							setCanvas(getFXCanvas(newValue));
+							setCanvas(
+									newValue != null
+											? FXCanvasEx.getFXCanvas(
+													newValue.getScene())
+											: null);
 						}
 					};
 					newValue.windowProperty()
