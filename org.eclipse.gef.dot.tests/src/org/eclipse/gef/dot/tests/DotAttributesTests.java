@@ -75,8 +75,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getArrowheadRaw(edge));
 		assertNull(DotAttributes.getArrowhead(edge));
+		assertNull(DotAttributes.getArrowheadParsed(edge));
 
 		// set valid string values
 		DotAttributes.setArrowhead(edge, "olbox");
@@ -138,8 +140,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getArrowsizeRaw(edge));
 		assertNull(DotAttributes.getArrowsize(edge));
+		assertNull(DotAttributes.getArrowsizeParsed(edge));
 
 		// set valid string values
 		String validEdgeArrowSize = "0.5";
@@ -188,8 +192,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getArrowtailRaw(edge));
 		assertNull(DotAttributes.getArrowtail(edge));
+		assertNull(DotAttributes.getArrowtailParsed(edge));
 
 		// set valid string values
 		DotAttributes.setArrowtail(edge, "olbox");
@@ -251,8 +257,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getColorRaw(edge));
 		assertNull(DotAttributes.getColor(edge));
+		assertNull(DotAttributes.getColorParsed(edge));
 
 		// set valid string values - rgb format
 		DotAttributes.setColor(edge, "#ffffff");
@@ -335,7 +343,8 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getColorschemeRaw(edge));
 		assertNull(DotAttributes.getColorscheme(edge));
 
 		// set valid string values
@@ -361,8 +370,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getDirRaw(edge));
 		assertNull(DotAttributes.getDir(edge));
+		assertNull(DotAttributes.getDirParsed(edge));
 
 		// set valid string values
 		String validEdgeDir = "forward";
@@ -424,7 +435,9 @@ public class DotAttributesTests {
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
 		// test getter if no value explicit is set
+		assertNull(DotAttributes.getFillcolorRaw(edge));
 		assertNull(DotAttributes.getFillcolor(edge));
+		assertNull(DotAttributes.getFillcolorParsed(edge));
 
 		// set valid string values - rgb format
 		DotAttributes.setFillcolor(edge, "#000000");
@@ -507,8 +520,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontcolorRaw(edge));
 		assertNull(DotAttributes.getFontcolor(edge));
+		assertNull(DotAttributes.getFontcolorParsed(edge));
 
 		// set valid string values - rgb format
 		DotAttributes.setFontcolor(edge, "#ff0000");
@@ -591,7 +606,8 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getHeadlabelRaw(edge));
 		assertNull(DotAttributes.getHeadlabel(edge));
 
 		// set valid string values
@@ -606,8 +622,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getHeadLpRaw(edge));
 		assertNull(DotAttributes.getHeadLp(edge));
+		assertNull(DotAttributes.getHeadLpParsed(edge));
 
 		// set valid string values
 		String validEdgeHeadLp = "42,0.0";
@@ -643,7 +661,8 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getIdRaw(edge));
 		assertNull(DotAttributes.getId(edge));
 
 		// set valid string values
@@ -661,7 +680,8 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLabelRaw(edge));
 		assertNull(DotAttributes.getLabel(edge));
 
 		// set valid string values
@@ -676,8 +696,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLabelfontcolorRaw(edge));
 		assertNull(DotAttributes.getLabelfontcolor(edge));
+		assertNull(DotAttributes.getLabelfontcolorParsed(edge));
 
 		// set valid string values - rgb format
 		DotAttributes.setLabelfontcolor(edge, "#40e0d0");
@@ -762,8 +784,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLpRaw(edge));
 		assertNull(DotAttributes.getLp(edge));
+		assertNull(DotAttributes.getLpParsed(edge));
 
 		// set valid string values
 		String validEdgeLp = "0.0,1.1";
@@ -815,8 +839,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getPosRaw(edge));
 		assertNull(DotAttributes.getPos(edge));
+		assertNull(DotAttributes.getPosParsed(edge));
 
 		// set valid values
 		DotAttributes.setPos(edge,
@@ -946,8 +972,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getStyleRaw(edge));
 		assertNull(DotAttributes.getStyle(edge));
+		assertNull(DotAttributes.getStyleParsed(edge));
 
 		// set valid string values
 		String[] validEdgeStyleItems = { "bold", "dashed", "dotted", "invis",
@@ -1017,7 +1045,8 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getTaillabelRaw(edge));
 		assertNull(DotAttributes.getTaillabel(edge));
 
 		// set valid string values
@@ -1032,8 +1061,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getTailLpRaw(edge));
 		assertNull(DotAttributes.getTailLp(edge));
+		assertNull(DotAttributes.getTailLpParsed(edge));
 
 		// set valid string values
 		String validEdgeTailLp = "42,0.0";
@@ -1069,7 +1100,8 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getXlabelRaw(edge));
 		assertNull(DotAttributes.getXlabel(edge));
 
 		// set valid string values
@@ -1084,8 +1116,10 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getXlpRaw(edge));
 		assertNull(DotAttributes.getXlp(edge));
+		assertNull(DotAttributes.getXlpParsed(edge));
 
 		// set valid string values
 		DotAttributes.setXlp(edge, "47, 11");
@@ -1114,8 +1148,10 @@ public class DotAttributesTests {
 	public void graph_bgcolor() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getBgcolorRaw(g));
 		assertNull(DotAttributes.getBgcolor(g));
+		assertNull(DotAttributes.getBgcolorParsed(g));
 
 		// set valid string values - rgb format
 		DotAttributes.setBgcolor(g, "#a0522d");
@@ -1196,8 +1232,10 @@ public class DotAttributesTests {
 	public void graph_clusterrank() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getClusterrankRaw(g));
 		assertNull(DotAttributes.getClusterrank(g));
+		assertNull(DotAttributes.getClusterrankParsed(g));
 
 		// set valid string values
 		String validGraphClusterMode = "local";
@@ -1252,8 +1290,10 @@ public class DotAttributesTests {
 	public void graph_color() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getColorRaw(g));
 		assertNull(DotAttributes.getColor(g));
+		assertNull(DotAttributes.getColorParsed(g));
 
 		// set valid string values - rgb format
 		DotAttributes.setColor(g, "#ffffff");
@@ -1328,7 +1368,8 @@ public class DotAttributesTests {
 	public void graph_colorscheme() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getColorschemeRaw(g));
 		assertNull(DotAttributes.getColorscheme(g));
 
 		// set valid string values
@@ -1350,8 +1391,10 @@ public class DotAttributesTests {
 	public void graph_fillcolor() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFillcolorRaw(g));
 		assertNull(DotAttributes.getFillcolor(g));
+		assertNull(DotAttributes.getFillcolorParsed(g));
 
 		// set valid string values - rgb format
 		DotAttributes.setFillcolor(g, "#00ff00");
@@ -1433,8 +1476,10 @@ public class DotAttributesTests {
 	public void graph_fontcolor() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontcolorRaw(g));
 		assertNull(DotAttributes.getFontcolor(g));
+		assertNull(DotAttributes.getFontcolorParsed(g));
 
 		// set valid string values - rgb format
 		DotAttributes.setFontcolor(g, "#ffffff");
@@ -1515,8 +1560,10 @@ public class DotAttributesTests {
 	public void graph_forcelabels() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getForcelabelsRaw(g));
 		assertNull(DotAttributes.getForcelabels(g));
+		assertNull(DotAttributes.getForcelabelsParsed(g));
 
 		// set valid string values
 		String validGraphForceLabels = "true";
@@ -1553,7 +1600,8 @@ public class DotAttributesTests {
 	public void graph_id() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getIdRaw(g));
 		assertNull(DotAttributes.getId(g));
 
 		// set valid string values
@@ -1569,7 +1617,8 @@ public class DotAttributesTests {
 	public void graph_label() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLabelRaw(g));
 		assertNull(DotAttributes.getLabel(g));
 
 		// set valid string values
@@ -1582,8 +1631,10 @@ public class DotAttributesTests {
 	public void graph_layout() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLayoutRaw(g));
 		assertNull(DotAttributes.getLayout(g));
+		assertNull(DotAttributes.getLayoutParsed(g));
 
 		// set valid string values
 		String validGraphLayout = "circo";
@@ -1685,8 +1736,10 @@ public class DotAttributesTests {
 	public void graph_lp() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLpRaw(g));
 		assertNull(DotAttributes.getLp(g));
+		assertNull(DotAttributes.getLpParsed(g));
 
 		// set valid string values
 		String validGraphLp = "0.0,1.1";
@@ -1717,7 +1770,7 @@ public class DotAttributesTests {
 	public void graph_name() {
 		Graph graph = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
 		assertNull(DotAttributes._getName(graph));
 		assertNull(DotAttributes._getNameRaw(graph));
 
@@ -1742,8 +1795,10 @@ public class DotAttributesTests {
 	public void graph_nodesep() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getNodesepRaw(g));
 		assertNull(DotAttributes.getNodesep(g));
+		assertNull(DotAttributes.getNodesepParsed(g));
 
 		// set valid string values
 		String validNodesep = "0.5";
@@ -1789,8 +1844,10 @@ public class DotAttributesTests {
 	public void graph_outputorder() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getOutputorderRaw(g));
 		assertNull(DotAttributes.getOutputorder(g));
+		assertNull(DotAttributes.getOutputorderParsed(g));
 
 		// set valid string values
 		String validGraphOutputMode = "breadthfirst";
@@ -1848,8 +1905,10 @@ public class DotAttributesTests {
 	public void graph_pagedir() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getPagedirRaw(g));
 		assertNull(DotAttributes.getPagedir(g));
+		assertNull(DotAttributes.getPagedirParsed(g));
 
 		// set valid string values
 		String validGraphPagedir = "BL";
@@ -1964,8 +2023,10 @@ public class DotAttributesTests {
 	public void graph_rankdir() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getRankdirRaw(g));
 		assertNull(DotAttributes.getRankdir(g));
+		assertNull(DotAttributes.getRankdirParsed(g));
 
 		// set valid string values
 		String validGraphRankdir = "LR";
@@ -2032,8 +2093,10 @@ public class DotAttributesTests {
 	public void graph_splines() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getSplinesRaw(g));
 		assertNull(DotAttributes.getSplines(g));
+		assertNull(DotAttributes.getSplinesParsed(g));
 
 		// set valid string values
 		String validGraphSplines = "compound";
@@ -2157,8 +2220,10 @@ public class DotAttributesTests {
 	public void graph_style() {
 		Graph g = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getStyleRaw(g));
 		assertNull(DotAttributes.getStyle(g));
+		assertNull(DotAttributes.getStyleParsed(g));
 
 		// set valid string values
 		String[] validGraphStyleItems = { "filled", "radial" };
@@ -2214,8 +2279,10 @@ public class DotAttributesTests {
 	public void node_color() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getColorRaw(n));
 		assertNull(DotAttributes.getColor(n));
+		assertNull(DotAttributes.getColorParsed(n));
 
 		// set valid string values - rgb format
 		DotAttributes.setColor(n, "#ffffff");
@@ -2300,7 +2367,8 @@ public class DotAttributesTests {
 	public void node_colorscheme() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getColorschemeRaw(n));
 		assertNull(DotAttributes.getColorscheme(n));
 
 		// set valid string values
@@ -2322,8 +2390,10 @@ public class DotAttributesTests {
 	public void node_distortion() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getDistortionRaw(n));
 		assertNull(DotAttributes.getDistortion(n));
+		assertNull(DotAttributes.getDistortionParsed(n));
 
 		// set valid string values
 		String validNodeDistortion = "5";
@@ -2377,8 +2447,10 @@ public class DotAttributesTests {
 	public void node_fillcolor() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFillcolorRaw(n));
 		assertNull(DotAttributes.getFillcolor(n));
+		assertNull(DotAttributes.getFillcolorParsed(n));
 
 		// set valid string values - rgb format
 		DotAttributes.setFillcolor(n, "#00ff00");
@@ -2460,8 +2532,10 @@ public class DotAttributesTests {
 	public void node_fixedsize() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFixedsizeRaw(n));
 		assertNull(DotAttributes.getFixedsize(n));
+		assertNull(DotAttributes.getFixedsizeParsed(n));
 
 		// set valid string values
 		String validNodeFixedSize = "true";
@@ -2498,8 +2572,10 @@ public class DotAttributesTests {
 	public void node_fontcolor() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontcolorRaw(n));
 		assertNull(DotAttributes.getFontcolor(n));
+		assertNull(DotAttributes.getFontcolorParsed(n));
 
 		// set valid string values - rgb format
 		DotAttributes.setFontcolor(n, "#00ff00");
@@ -2581,8 +2657,10 @@ public class DotAttributesTests {
 	public void node_height() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getHeightRaw(n));
 		assertNull(DotAttributes.getHeight(n));
+		assertNull(DotAttributes.getHeightParsed(n));
 
 		// set valid string values
 		String validNodeHeight = "0.56";
@@ -2628,7 +2706,8 @@ public class DotAttributesTests {
 	public void node_id() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getIdRaw(n));
 		assertNull(DotAttributes.getId(n));
 
 		// set valid string values
@@ -2644,7 +2723,8 @@ public class DotAttributesTests {
 	public void node_label() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLabelRaw(n));
 		assertNull(DotAttributes.getLabel(n));
 
 		// set valid string values
@@ -2669,8 +2749,10 @@ public class DotAttributesTests {
 	public void node_pos() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getPosRaw(n));
 		assertNull(DotAttributes.getPos(n));
+		assertNull(DotAttributes.getPosParsed(n));
 
 		// set valid string values
 		DotAttributes.setPos(n, "47, 11");
@@ -2701,8 +2783,10 @@ public class DotAttributesTests {
 	public void node_shape() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getShapeRaw(n));
 		assertNull(DotAttributes.getShape(n));
+		assertNull(DotAttributes.getShapeParsed(n));
 
 		// set valid (polygon based) string values
 		String[] validPolygonBasedNodeShapes = { "assembly", "box", "box3d",
@@ -2774,8 +2858,10 @@ public class DotAttributesTests {
 	public void node_sides() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getSidesRaw(n));
 		assertNull(DotAttributes.getSides(n));
+		assertNull(DotAttributes.getSidesParsed(n));
 
 		// set valid string values
 		String validNodeSides = "5";
@@ -2825,8 +2911,10 @@ public class DotAttributesTests {
 	public void node_skew() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getSkewRaw(n));
 		assertNull(DotAttributes.getSkew(n));
+		assertNull(DotAttributes.getSkewParsed(n));
 
 		// set valid string values
 		String validNodeSkew = "5";
@@ -2876,8 +2964,10 @@ public class DotAttributesTests {
 	public void node_style() {
 		Node node = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getStyleRaw(node));
 		assertNull(DotAttributes.getStyle(node));
+		assertNull(DotAttributes.getStyleParsed(node));
 
 		// set valid string values
 		String[] validNodeStyleItems = { "bold", "dashed", "diagonals",
@@ -2946,8 +3036,10 @@ public class DotAttributesTests {
 	public void node_width() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getWidthRaw(n));
 		assertNull(DotAttributes.getWidth(n));
+		assertNull(DotAttributes.getWidthParsed(n));
 
 		// set valid string values
 		String validNodeWidth = "0.56";
@@ -2997,7 +3089,8 @@ public class DotAttributesTests {
 	public void node_xlabel() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getXlabelRaw(n));
 		assertNull(DotAttributes.getXlabel(n));
 
 		// set valid string values
@@ -3010,8 +3103,10 @@ public class DotAttributesTests {
 	public void node_xlp() {
 		Node n = new Node.Builder().buildNode();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getXlpRaw(n));
 		assertNull(DotAttributes.getXlp(n));
+		assertNull(DotAttributes.getXlpParsed(n));
 
 		// set valid string values
 		DotAttributes.setXlp(n, "47, 11");
@@ -3041,7 +3136,7 @@ public class DotAttributesTests {
 	public void subgraph_rank() {
 		Graph subgraph = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
+		// test getters if no explicit value is set
 		assertNull(DotAttributes.getRank(subgraph));
 
 		// set valid string values
