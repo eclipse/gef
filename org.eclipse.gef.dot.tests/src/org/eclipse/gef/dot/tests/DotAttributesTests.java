@@ -1146,80 +1146,80 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_bgcolor() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getBgcolorRaw(g));
-		assertNull(DotAttributes.getBgcolor(g));
-		assertNull(DotAttributes.getBgcolorParsed(g));
+		assertNull(DotAttributes.getBgcolorRaw(graph));
+		assertNull(DotAttributes.getBgcolor(graph));
+		assertNull(DotAttributes.getBgcolorParsed(graph));
 
 		// set valid string values - rgb format
-		DotAttributes.setBgcolor(g, "#a0522d");
-		assertEquals("#a0522d", DotAttributes.getBgcolor(g));
+		DotAttributes.setBgcolor(graph, "#a0522d");
+		assertEquals("#a0522d", DotAttributes.getBgcolor(graph));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("a0");
 		rgbColor.setG("52");
 		rgbColor.setB("2d");
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid string values - rgba format
-		DotAttributes.setBgcolor(g, "#a0522dcc");
-		assertEquals("#a0522dcc", DotAttributes.getBgcolor(g));
+		DotAttributes.setBgcolor(graph, "#a0522dcc");
+		assertEquals("#a0522dcc", DotAttributes.getBgcolor(graph));
 		rgbColor.setA("cc");
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid string values - hsv format
-		DotAttributes.setBgcolor(g, ".051 .718 .627");
-		assertEquals(".051 .718 .627", DotAttributes.getBgcolor(g));
+		DotAttributes.setBgcolor(graph, ".051 .718 .627");
+		assertEquals(".051 .718 .627", DotAttributes.getBgcolor(graph));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH(".051");
 		hsvColor.setS(".718");
 		hsvColor.setV(".627");
-		assertTrue(
-				EcoreUtil.equals(hsvColor, DotAttributes.getBgcolorParsed(g)));
+		assertTrue(EcoreUtil.equals(hsvColor,
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid string values - string format
-		DotAttributes.setBgcolor(g, "sienna");
-		assertEquals("sienna", DotAttributes.getBgcolor(g));
+		DotAttributes.setBgcolor(graph, "sienna");
+		assertEquals("sienna", DotAttributes.getBgcolor(graph));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("sienna");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getBgcolorParsed(g)));
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("a0");
 		rgbColor.setG("52");
 		rgbColor.setB("2d");
-		DotAttributes.setBgcolorParsed(g, rgbColor);
-		assertEquals("#a0522d", DotAttributes.getBgcolor(g));
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
+		DotAttributes.setBgcolorParsed(graph, rgbColor);
+		assertEquals("#a0522d", DotAttributes.getBgcolor(graph));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("cc");
-		DotAttributes.setBgcolorParsed(g, rgbColor);
-		assertEquals("#a0522dcc", DotAttributes.getBgcolor(g));
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getBgcolorParsed(g)));
+		DotAttributes.setBgcolorParsed(graph, rgbColor);
+		assertEquals("#a0522dcc", DotAttributes.getBgcolor(graph));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setBgcolorParsed(g, hsvColor);
-		assertEquals(".051 .718 .627", DotAttributes.getBgcolor(g));
-		assertTrue(
-				EcoreUtil.equals(hsvColor, DotAttributes.getBgcolorParsed(g)));
+		DotAttributes.setBgcolorParsed(graph, hsvColor);
+		assertEquals(".051 .718 .627", DotAttributes.getBgcolor(graph));
+		assertTrue(EcoreUtil.equals(hsvColor,
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - string format
-		DotAttributes.setBgcolorParsed(g, stringColor);
-		assertEquals("sienna", DotAttributes.getBgcolor(g));
+		DotAttributes.setBgcolorParsed(graph, stringColor);
+		assertEquals("sienna", DotAttributes.getBgcolor(graph));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getBgcolorParsed(g)));
+				DotAttributes.getBgcolorParsed(graph)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setBgcolor(g, "#gggggg");
+			DotAttributes.setBgcolor(graph, "#gggggg");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1230,54 +1230,60 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_clusterrank() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getClusterrankRaw(g));
-		assertNull(DotAttributes.getClusterrank(g));
-		assertNull(DotAttributes.getClusterrankParsed(g));
+		assertNull(DotAttributes.getClusterrankRaw(graph));
+		assertNull(DotAttributes.getClusterrank(graph));
+		assertNull(DotAttributes.getClusterrankParsed(graph));
 
 		// set valid string values
 		String validGraphClusterMode = "local";
-		DotAttributes.setClusterrank(g, validGraphClusterMode);
-		assertEquals(validGraphClusterMode, DotAttributes.getClusterrank(g));
-		assertEquals(ClusterMode.LOCAL, DotAttributes.getClusterrankParsed(g));
+		DotAttributes.setClusterrank(graph, validGraphClusterMode);
+		assertEquals(validGraphClusterMode,
+				DotAttributes.getClusterrank(graph));
+		assertEquals(ClusterMode.LOCAL,
+				DotAttributes.getClusterrankParsed(graph));
 
 		validGraphClusterMode = "global";
-		DotAttributes.setClusterrank(g, validGraphClusterMode);
-		assertEquals(validGraphClusterMode, DotAttributes.getClusterrank(g));
-		assertEquals(ClusterMode.GLOBAL, DotAttributes.getClusterrankParsed(g));
+		DotAttributes.setClusterrank(graph, validGraphClusterMode);
+		assertEquals(validGraphClusterMode,
+				DotAttributes.getClusterrank(graph));
+		assertEquals(ClusterMode.GLOBAL,
+				DotAttributes.getClusterrankParsed(graph));
 
 		validGraphClusterMode = "none";
-		DotAttributes.setClusterrank(g, validGraphClusterMode);
-		assertEquals(validGraphClusterMode, DotAttributes.getClusterrank(g));
-		assertEquals(ClusterMode.NONE, DotAttributes.getClusterrankParsed(g));
+		DotAttributes.setClusterrank(graph, validGraphClusterMode);
+		assertEquals(validGraphClusterMode,
+				DotAttributes.getClusterrank(graph));
+		assertEquals(ClusterMode.NONE,
+				DotAttributes.getClusterrankParsed(graph));
 
 		// set valid parsed values
 		ClusterMode validGraphClusterModeParsed = ClusterMode.LOCAL;
-		DotAttributes.setClusterrankParsed(g, validGraphClusterModeParsed);
+		DotAttributes.setClusterrankParsed(graph, validGraphClusterModeParsed);
 		assertEquals(validGraphClusterModeParsed.toString(),
-				DotAttributes.getClusterrank(g));
+				DotAttributes.getClusterrank(graph));
 		assertEquals(validGraphClusterModeParsed,
-				DotAttributes.getClusterrankParsed(g));
+				DotAttributes.getClusterrankParsed(graph));
 
 		validGraphClusterModeParsed = ClusterMode.GLOBAL;
-		DotAttributes.setClusterrankParsed(g, validGraphClusterModeParsed);
+		DotAttributes.setClusterrankParsed(graph, validGraphClusterModeParsed);
 		assertEquals(validGraphClusterModeParsed.toString(),
-				DotAttributes.getClusterrank(g));
+				DotAttributes.getClusterrank(graph));
 		assertEquals(validGraphClusterModeParsed,
-				DotAttributes.getClusterrankParsed(g));
+				DotAttributes.getClusterrankParsed(graph));
 
 		validGraphClusterModeParsed = ClusterMode.NONE;
-		DotAttributes.setClusterrankParsed(g, validGraphClusterModeParsed);
+		DotAttributes.setClusterrankParsed(graph, validGraphClusterModeParsed);
 		assertEquals(validGraphClusterModeParsed.toString(),
-				DotAttributes.getClusterrank(g));
+				DotAttributes.getClusterrank(graph));
 		assertEquals(validGraphClusterModeParsed,
-				DotAttributes.getClusterrankParsed(g));
+				DotAttributes.getClusterrankParsed(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setClusterrank(g, "foo");
+			DotAttributes.setClusterrank(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1288,74 +1294,80 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_color() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getColorRaw(g));
-		assertNull(DotAttributes.getColor(g));
-		assertNull(DotAttributes.getColorParsed(g));
+		assertNull(DotAttributes.getColorRaw(graph));
+		assertNull(DotAttributes.getColor(graph));
+		assertNull(DotAttributes.getColorParsed(graph));
 
 		// set valid string values - rgb format
-		DotAttributes.setColor(g, "#ffffff");
-		assertEquals("#ffffff", DotAttributes.getColor(g));
+		DotAttributes.setColor(graph, "#ffffff");
+		assertEquals("#ffffff", DotAttributes.getColor(graph));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set valid string values - rgba format
-		DotAttributes.setColor(g, "#ffffff00");
-		assertEquals("#ffffff00", DotAttributes.getColor(g));
+		DotAttributes.setColor(graph, "#ffffff00");
+		assertEquals("#ffffff00", DotAttributes.getColor(graph));
 		rgbColor.setA("00");
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set valid string values - hsv format
-		DotAttributes.setColor(g, "0.000,0.000,1.000");
-		assertEquals("0.000,0.000,1.000", DotAttributes.getColor(g));
+		DotAttributes.setColor(graph, "0.000,0.000,1.000");
+		assertEquals("0.000,0.000,1.000", DotAttributes.getColor(graph));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.000");
 		hsvColor.setS("0.000");
 		hsvColor.setV("1.000");
-		assertTrue(EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(g)));
+		assertTrue(EcoreUtil.equals(hsvColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set valid string values - string format
-		DotAttributes.setColor(g, "//white");
-		assertEquals("//white", DotAttributes.getColor(g));
+		DotAttributes.setColor(graph, "//white");
+		assertEquals("//white", DotAttributes.getColor(graph));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("white");
-		assertTrue(
-				EcoreUtil.equals(stringColor, DotAttributes.getColorParsed(g)));
+		assertTrue(EcoreUtil.equals(stringColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
-		DotAttributes.setColorParsed(g, rgbColor);
-		assertEquals("#ffffff", DotAttributes.getColor(g));
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+		DotAttributes.setColorParsed(graph, rgbColor);
+		assertEquals("#ffffff", DotAttributes.getColor(graph));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("00");
-		DotAttributes.setColorParsed(g, rgbColor);
-		assertEquals("#ffffff00", DotAttributes.getColor(g));
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(g)));
+		DotAttributes.setColorParsed(graph, rgbColor);
+		assertEquals("#ffffff00", DotAttributes.getColor(graph));
+		assertTrue(EcoreUtil.equals(rgbColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setColorParsed(g, hsvColor);
-		assertEquals("0.000 0.000 1.000", DotAttributes.getColor(g));
-		assertTrue(EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(g)));
+		DotAttributes.setColorParsed(graph, hsvColor);
+		assertEquals("0.000 0.000 1.000", DotAttributes.getColor(graph));
+		assertTrue(EcoreUtil.equals(hsvColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set valid parsed values - string format
-		DotAttributes.setColorParsed(g, stringColor);
-		assertEquals("white", DotAttributes.getColor(g));
-		assertTrue(
-				EcoreUtil.equals(stringColor, DotAttributes.getColorParsed(g)));
+		DotAttributes.setColorParsed(graph, stringColor);
+		assertEquals("white", DotAttributes.getColor(graph));
+		assertTrue(EcoreUtil.equals(stringColor,
+				DotAttributes.getColorParsed(graph)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setColor(g, "/white");
+			DotAttributes.setColor(graph, "/white");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1366,19 +1378,19 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_colorscheme() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getColorschemeRaw(g));
-		assertNull(DotAttributes.getColorscheme(g));
+		assertNull(DotAttributes.getColorschemeRaw(graph));
+		assertNull(DotAttributes.getColorscheme(graph));
 
 		// set valid string values
 		final String validColorScheme = "svg";
-		DotAttributes.setColorscheme(g, validColorScheme);
-		assertEquals(validColorScheme, DotAttributes.getColorscheme(g));
+		DotAttributes.setColorscheme(graph, validColorScheme);
+		assertEquals(validColorScheme, DotAttributes.getColorscheme(graph));
 
 		try {
-			DotAttributes.setColorscheme(g, "foo");
+			DotAttributes.setColorscheme(graph, "foo");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1389,81 +1401,81 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_fillcolor() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getFillcolorRaw(g));
-		assertNull(DotAttributes.getFillcolor(g));
-		assertNull(DotAttributes.getFillcolorParsed(g));
+		assertNull(DotAttributes.getFillcolorRaw(graph));
+		assertNull(DotAttributes.getFillcolor(graph));
+		assertNull(DotAttributes.getFillcolorParsed(graph));
 
 		// set valid string values - rgb format
-		DotAttributes.setFillcolor(g, "#00ff00");
-		assertEquals("#00ff00", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolor(graph, "#00ff00");
+		assertEquals("#00ff00", DotAttributes.getFillcolor(graph));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFillcolor(g, "#00ff00ff");
-		assertEquals("#00ff00ff", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolor(graph, "#00ff00ff");
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(graph));
 		rgbColor.setA("ff");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFillcolor(g, "0.3 .8 .7");
-		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolor(graph, "0.3 .8 .7");
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(graph));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.3");
 		hsvColor.setS(".8");
 		hsvColor.setV(".7");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid string values - string format
-		DotAttributes.setFillcolor(g, "/bugn9/7");
-		assertEquals("/bugn9/7", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolor(graph, "/bugn9/7");
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(graph));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("bugn9");
 		stringColor.setName("7");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		DotAttributes.setFillcolorParsed(g, rgbColor);
-		assertEquals("#00ff00", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolorParsed(graph, rgbColor);
+		assertEquals("#00ff00", DotAttributes.getFillcolor(graph));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("ff");
-		DotAttributes.setFillcolorParsed(g, rgbColor);
-		assertEquals("#00ff00ff", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolorParsed(graph, rgbColor);
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(graph));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFillcolorParsed(g, hsvColor);
-		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolorParsed(graph, hsvColor);
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(graph));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFillcolorParsed(g, stringColor);
-		assertEquals("/bugn9/7", DotAttributes.getFillcolor(g));
+		DotAttributes.setFillcolorParsed(graph, stringColor);
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(graph));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillcolorParsed(g)));
+				DotAttributes.getFillcolorParsed(graph)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFillcolor(g, "//");
+			DotAttributes.setFillcolor(graph, "//");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1474,80 +1486,80 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_fontcolor() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getFontcolorRaw(g));
-		assertNull(DotAttributes.getFontcolor(g));
-		assertNull(DotAttributes.getFontcolorParsed(g));
+		assertNull(DotAttributes.getFontcolorRaw(graph));
+		assertNull(DotAttributes.getFontcolor(graph));
+		assertNull(DotAttributes.getFontcolorParsed(graph));
 
 		// set valid string values - rgb format
-		DotAttributes.setFontcolor(g, "#ffffff");
-		assertEquals("#ffffff", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolor(graph, "#ffffff");
+		assertEquals("#ffffff", DotAttributes.getFontcolor(graph));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFontcolor(g, "#ffffff00");
-		assertEquals("#ffffff00", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolor(graph, "#ffffff00");
+		assertEquals("#ffffff00", DotAttributes.getFontcolor(graph));
 		rgbColor.setA("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFontcolor(g, "0.000,0.000,1.000");
-		assertEquals("0.000,0.000,1.000", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolor(graph, "0.000,0.000,1.000");
+		assertEquals("0.000,0.000,1.000", DotAttributes.getFontcolor(graph));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.000");
 		hsvColor.setS("0.000");
 		hsvColor.setV("1.000");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set valid string values - string format
-		DotAttributes.setFontcolor(g, "//white");
-		assertEquals("//white", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolor(graph, "//white");
+		assertEquals("//white", DotAttributes.getFontcolor(graph));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("white");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
-		DotAttributes.setFontcolorParsed(g, rgbColor);
-		assertEquals("#ffffff", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolorParsed(graph, rgbColor);
+		assertEquals("#ffffff", DotAttributes.getFontcolor(graph));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("00");
-		DotAttributes.setFontcolorParsed(g, rgbColor);
-		assertEquals("#ffffff00", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolorParsed(graph, rgbColor);
+		assertEquals("#ffffff00", DotAttributes.getFontcolor(graph));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFontcolorParsed(g, hsvColor);
-		assertEquals("0.000 0.000 1.000", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolorParsed(graph, hsvColor);
+		assertEquals("0.000 0.000 1.000", DotAttributes.getFontcolor(graph));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFontcolorParsed(g, stringColor);
-		assertEquals("white", DotAttributes.getFontcolor(g));
+		DotAttributes.setFontcolorParsed(graph, stringColor);
+		assertEquals("white", DotAttributes.getFontcolor(graph));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontcolorParsed(g)));
+				DotAttributes.getFontcolorParsed(graph)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFontcolor(g, "/white");
+			DotAttributes.setFontcolor(graph, "/white");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1558,36 +1570,38 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_forcelabels() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getForcelabelsRaw(g));
-		assertNull(DotAttributes.getForcelabels(g));
-		assertNull(DotAttributes.getForcelabelsParsed(g));
+		assertNull(DotAttributes.getForcelabelsRaw(graph));
+		assertNull(DotAttributes.getForcelabels(graph));
+		assertNull(DotAttributes.getForcelabelsParsed(graph));
 
 		// set valid string values
 		String validGraphForceLabels = "true";
-		DotAttributes.setForcelabels(g, validGraphForceLabels);
-		assertEquals(validGraphForceLabels, DotAttributes.getForcelabels(g));
+		DotAttributes.setForcelabels(graph, validGraphForceLabels);
+		assertEquals(validGraphForceLabels,
+				DotAttributes.getForcelabels(graph));
 
 		validGraphForceLabels = "false";
-		DotAttributes.setForcelabels(g, validGraphForceLabels);
-		assertEquals(validGraphForceLabels, DotAttributes.getForcelabels(g));
+		DotAttributes.setForcelabels(graph, validGraphForceLabels);
+		assertEquals(validGraphForceLabels,
+				DotAttributes.getForcelabels(graph));
 
 		// set valid parsed values
 		boolean validGraphForceLabelsParsed = true;
-		DotAttributes.setForcelabelsParsed(g, validGraphForceLabelsParsed);
+		DotAttributes.setForcelabelsParsed(graph, validGraphForceLabelsParsed);
 		assertEquals(validGraphForceLabelsParsed,
-				DotAttributes.getForcelabelsParsed(g));
+				DotAttributes.getForcelabelsParsed(graph));
 
 		validGraphForceLabelsParsed = false;
-		DotAttributes.setForcelabelsParsed(g, validGraphForceLabelsParsed);
+		DotAttributes.setForcelabelsParsed(graph, validGraphForceLabelsParsed);
 		assertEquals(validGraphForceLabelsParsed,
-				DotAttributes.getForcelabelsParsed(g));
+				DotAttributes.getForcelabelsParsed(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setForcelabels(g, "foo");
+			DotAttributes.setForcelabels(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1598,16 +1612,16 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_id() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getIdRaw(g));
-		assertNull(DotAttributes.getId(g));
+		assertNull(DotAttributes.getIdRaw(graph));
+		assertNull(DotAttributes.getId(graph));
 
 		// set valid string values
 		final String validGraphId = "graphId";
-		DotAttributes.setId(g, validGraphId);
-		assertEquals(validGraphId, DotAttributes.getId(g));
+		DotAttributes.setId(graph, validGraphId);
+		assertEquals(validGraphId, DotAttributes.getId(graph));
 
 		// TODO: add test cases for setting invalid graph id (e.g. a not unique
 		// id)
@@ -1615,115 +1629,123 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_label() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getLabelRaw(g));
-		assertNull(DotAttributes.getLabel(g));
+		assertNull(DotAttributes.getLabelRaw(graph));
+		assertNull(DotAttributes.getLabel(graph));
 
 		// set valid string values
 		final String validGraphLabel = "graphLabel";
-		DotAttributes.setLabel(g, validGraphLabel);
-		assertEquals(validGraphLabel, DotAttributes.getLabel(g));
+		DotAttributes.setLabel(graph, validGraphLabel);
+		assertEquals(validGraphLabel, DotAttributes.getLabel(graph));
 	}
 
 	@Test
 	public void graph_layout() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getLayoutRaw(g));
-		assertNull(DotAttributes.getLayout(g));
-		assertNull(DotAttributes.getLayoutParsed(g));
+		assertNull(DotAttributes.getLayoutRaw(graph));
+		assertNull(DotAttributes.getLayout(graph));
+		assertNull(DotAttributes.getLayoutParsed(graph));
 
 		// set valid string values
 		String validGraphLayout = "circo";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.CIRCO, DotAttributes.getLayoutParsed(g));
+		DotAttributes.setLayout(graph, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(graph));
+		assertEquals(Layout.CIRCO, DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayout = "dot";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.DOT, DotAttributes.getLayoutParsed(g));
+		DotAttributes.setLayout(graph, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(graph));
+		assertEquals(Layout.DOT, DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayout = "fdp";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.FDP, DotAttributes.getLayoutParsed(g));
+		DotAttributes.setLayout(graph, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(graph));
+		assertEquals(Layout.FDP, DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayout = "neato";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.NEATO, DotAttributes.getLayoutParsed(g));
+		DotAttributes.setLayout(graph, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(graph));
+		assertEquals(Layout.NEATO, DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayout = "osage";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.OSAGE, DotAttributes.getLayoutParsed(g));
+		DotAttributes.setLayout(graph, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(graph));
+		assertEquals(Layout.OSAGE, DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayout = "sfdp";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.SFDP, DotAttributes.getLayoutParsed(g));
+		DotAttributes.setLayout(graph, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(graph));
+		assertEquals(Layout.SFDP, DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayout = "twopi";
-		DotAttributes.setLayout(g, validGraphLayout);
-		assertEquals(validGraphLayout, DotAttributes.getLayout(g));
-		assertEquals(Layout.TWOPI, DotAttributes.getLayoutParsed(g));
+		DotAttributes.setLayout(graph, validGraphLayout);
+		assertEquals(validGraphLayout, DotAttributes.getLayout(graph));
+		assertEquals(Layout.TWOPI, DotAttributes.getLayoutParsed(graph));
 
 		// set valid parsed values
 		Layout validGraphLayoutParsed = Layout.CIRCO;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayoutParsed = Layout.DOT;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayoutParsed = Layout.CIRCO;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayoutParsed = Layout.FDP;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayoutParsed = Layout.NEATO;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayoutParsed = Layout.OSAGE;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayoutParsed = Layout.SFDP;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		validGraphLayoutParsed = Layout.TWOPI;
-		DotAttributes.setLayoutParsed(g, validGraphLayoutParsed);
+		DotAttributes.setLayoutParsed(graph, validGraphLayoutParsed);
 		assertEquals(validGraphLayoutParsed.toString(),
-				DotAttributes.getLayout(g));
-		assertEquals(validGraphLayoutParsed, DotAttributes.getLayoutParsed(g));
+				DotAttributes.getLayout(graph));
+		assertEquals(validGraphLayoutParsed,
+				DotAttributes.getLayoutParsed(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setLayout(g, "foo");
+			DotAttributes.setLayout(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1734,30 +1756,30 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_lp() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getLpRaw(g));
-		assertNull(DotAttributes.getLp(g));
-		assertNull(DotAttributes.getLpParsed(g));
+		assertNull(DotAttributes.getLpRaw(graph));
+		assertNull(DotAttributes.getLp(graph));
+		assertNull(DotAttributes.getLpParsed(graph));
 
 		// set valid string values
 		String validGraphLp = "0.0,1.1";
-		DotAttributes.setLp(g, validGraphLp);
-		assertEquals(validGraphLp, DotAttributes.getLp(g));
+		DotAttributes.setLp(graph, validGraphLp);
+		assertEquals(validGraphLp, DotAttributes.getLp(graph));
 
 		// set valid parsed values
 		Point validGraphLpParsed = PointFactory.eINSTANCE.createPoint();
 		validGraphLpParsed.setX(2.2);
 		validGraphLpParsed.setY(3.3);
-		DotAttributes.setLpParsed(g, validGraphLpParsed);
+		DotAttributes.setLpParsed(graph, validGraphLpParsed);
 		assertTrue(EcoreUtil.equals(validGraphLpParsed,
-				DotAttributes.getLpParsed(g)));
-		assertEquals("2.2, 3.3", DotAttributes.getLp(g));
+				DotAttributes.getLpParsed(graph)));
+		assertEquals("2.2, 3.3", DotAttributes.getLp(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setLp(g, "foo");
+			DotAttributes.setLp(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1793,26 +1815,26 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_nodesep() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getNodesepRaw(g));
-		assertNull(DotAttributes.getNodesep(g));
-		assertNull(DotAttributes.getNodesepParsed(g));
+		assertNull(DotAttributes.getNodesepRaw(graph));
+		assertNull(DotAttributes.getNodesep(graph));
+		assertNull(DotAttributes.getNodesepParsed(graph));
 
 		// set valid string values
 		String validNodesep = "0.5";
-		DotAttributes.setNodesep(g, validNodesep);
-		assertEquals(validNodesep, DotAttributes.getNodesep(g));
+		DotAttributes.setNodesep(graph, validNodesep);
+		assertEquals(validNodesep, DotAttributes.getNodesep(graph));
 
 		// set valid parsed values
 		Double validNodesepParsed = new Double(0.02);
-		DotAttributes.setNodesepParsed(g, validNodesepParsed);
-		assertEquals(validNodesepParsed, DotAttributes.getNodesepParsed(g));
+		DotAttributes.setNodesepParsed(graph, validNodesepParsed);
+		assertEquals(validNodesepParsed, DotAttributes.getNodesepParsed(graph));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setNodesep(g, "0,5");
+			DotAttributes.setNodesep(graph, "0,5");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1821,7 +1843,7 @@ public class DotAttributesTests {
 		}
 
 		try {
-			DotAttributes.setNodesep(g, "foo");
+			DotAttributes.setNodesep(graph, "foo");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1831,7 +1853,7 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setNodesep(g, "0.0199");
+			DotAttributes.setNodesep(graph, "0.0199");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1842,57 +1864,57 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_outputorder() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getOutputorderRaw(g));
-		assertNull(DotAttributes.getOutputorder(g));
-		assertNull(DotAttributes.getOutputorderParsed(g));
+		assertNull(DotAttributes.getOutputorderRaw(graph));
+		assertNull(DotAttributes.getOutputorder(graph));
+		assertNull(DotAttributes.getOutputorderParsed(graph));
 
 		// set valid string values
 		String validGraphOutputMode = "breadthfirst";
-		DotAttributes.setOutputorder(g, validGraphOutputMode);
-		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(g));
+		DotAttributes.setOutputorder(graph, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(graph));
 		assertEquals(OutputMode.BREADTHFIRST,
-				DotAttributes.getOutputorderParsed(g));
+				DotAttributes.getOutputorderParsed(graph));
 
 		validGraphOutputMode = "nodesfirst";
-		DotAttributes.setOutputorder(g, validGraphOutputMode);
-		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(g));
+		DotAttributes.setOutputorder(graph, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(graph));
 		assertEquals(OutputMode.NODESFIRST,
-				DotAttributes.getOutputorderParsed(g));
+				DotAttributes.getOutputorderParsed(graph));
 
 		validGraphOutputMode = "edgesfirst";
-		DotAttributes.setOutputorder(g, validGraphOutputMode);
-		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(g));
+		DotAttributes.setOutputorder(graph, validGraphOutputMode);
+		assertEquals(validGraphOutputMode, DotAttributes.getOutputorder(graph));
 		assertEquals(OutputMode.EDGEFIRST,
-				DotAttributes.getOutputorderParsed(g));
+				DotAttributes.getOutputorderParsed(graph));
 
 		// set valid parsed values
 		OutputMode validGraphOutputModeParsed = OutputMode.BREADTHFIRST;
-		DotAttributes.setOutputorderParsed(g, validGraphOutputModeParsed);
+		DotAttributes.setOutputorderParsed(graph, validGraphOutputModeParsed);
 		assertEquals(validGraphOutputModeParsed.toString(),
-				DotAttributes.getOutputorder(g));
+				DotAttributes.getOutputorder(graph));
 		assertEquals(validGraphOutputModeParsed,
-				DotAttributes.getOutputorderParsed(g));
+				DotAttributes.getOutputorderParsed(graph));
 
 		validGraphOutputModeParsed = OutputMode.NODESFIRST;
-		DotAttributes.setOutputorderParsed(g, validGraphOutputModeParsed);
+		DotAttributes.setOutputorderParsed(graph, validGraphOutputModeParsed);
 		assertEquals(validGraphOutputModeParsed.toString(),
-				DotAttributes.getOutputorder(g));
+				DotAttributes.getOutputorder(graph));
 		assertEquals(validGraphOutputModeParsed,
-				DotAttributes.getOutputorderParsed(g));
+				DotAttributes.getOutputorderParsed(graph));
 
 		validGraphOutputModeParsed = OutputMode.EDGEFIRST;
-		DotAttributes.setOutputorderParsed(g, validGraphOutputModeParsed);
+		DotAttributes.setOutputorderParsed(graph, validGraphOutputModeParsed);
 		assertEquals(validGraphOutputModeParsed.toString(),
-				DotAttributes.getOutputorder(g));
+				DotAttributes.getOutputorder(graph));
 		assertEquals(validGraphOutputModeParsed,
-				DotAttributes.getOutputorderParsed(g));
+				DotAttributes.getOutputorderParsed(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setOutputorder(g, "foo");
+			DotAttributes.setOutputorder(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -1903,114 +1925,114 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_pagedir() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getPagedirRaw(g));
-		assertNull(DotAttributes.getPagedir(g));
-		assertNull(DotAttributes.getPagedirParsed(g));
+		assertNull(DotAttributes.getPagedirRaw(graph));
+		assertNull(DotAttributes.getPagedir(graph));
+		assertNull(DotAttributes.getPagedirParsed(graph));
 
 		// set valid string values
 		String validGraphPagedir = "BL";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.BL, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.BL, DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedir = "BR";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.BR, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.BR, DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedir = "TL";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.TL, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.TL, DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedir = "TR";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.TR, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.TR, DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedir = "RB";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.RB, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.RB, DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedir = "RT";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.RT, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.RT, DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedir = "LB";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.LB, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.LB, DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedir = "LT";
-		DotAttributes.setPagedir(g, validGraphPagedir);
-		assertEquals(validGraphPagedir, DotAttributes.getPagedir(g));
-		assertEquals(Pagedir.LT, DotAttributes.getPagedirParsed(g));
+		DotAttributes.setPagedir(graph, validGraphPagedir);
+		assertEquals(validGraphPagedir, DotAttributes.getPagedir(graph));
+		assertEquals(Pagedir.LT, DotAttributes.getPagedirParsed(graph));
 
 		// set valid parsed values
 		Pagedir validGraphPagedirParsed = Pagedir.BL;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedirParsed = Pagedir.BR;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedirParsed = Pagedir.TL;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedirParsed = Pagedir.TR;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedirParsed = Pagedir.RB;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedirParsed = Pagedir.RT;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedirParsed = Pagedir.LB;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		validGraphPagedirParsed = Pagedir.LT;
-		DotAttributes.setPagedirParsed(g, validGraphPagedirParsed);
+		DotAttributes.setPagedirParsed(graph, validGraphPagedirParsed);
 		assertEquals(validGraphPagedirParsed.toString(),
-				DotAttributes.getPagedir(g));
+				DotAttributes.getPagedir(graph));
 		assertEquals(validGraphPagedirParsed,
-				DotAttributes.getPagedirParsed(g));
+				DotAttributes.getPagedirParsed(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setPagedir(g, "foo");
+			DotAttributes.setPagedir(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2021,66 +2043,66 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_rankdir() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getRankdirRaw(g));
-		assertNull(DotAttributes.getRankdir(g));
-		assertNull(DotAttributes.getRankdirParsed(g));
+		assertNull(DotAttributes.getRankdirRaw(graph));
+		assertNull(DotAttributes.getRankdir(graph));
+		assertNull(DotAttributes.getRankdirParsed(graph));
 
 		// set valid string values
 		String validGraphRankdir = "LR";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(g));
+		DotAttributes.setRankdir(graph, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(graph));
+		assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(graph));
 
 		validGraphRankdir = "RL";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.RL, DotAttributes.getRankdirParsed(g));
+		DotAttributes.setRankdir(graph, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(graph));
+		assertEquals(Rankdir.RL, DotAttributes.getRankdirParsed(graph));
 
 		validGraphRankdir = "TB";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.TB, DotAttributes.getRankdirParsed(g));
+		DotAttributes.setRankdir(graph, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(graph));
+		assertEquals(Rankdir.TB, DotAttributes.getRankdirParsed(graph));
 
 		validGraphRankdir = "BT";
-		DotAttributes.setRankdir(g, validGraphRankdir);
-		assertEquals(validGraphRankdir, DotAttributes.getRankdir(g));
-		assertEquals(Rankdir.BT, DotAttributes.getRankdirParsed(g));
+		DotAttributes.setRankdir(graph, validGraphRankdir);
+		assertEquals(validGraphRankdir, DotAttributes.getRankdir(graph));
+		assertEquals(Rankdir.BT, DotAttributes.getRankdirParsed(graph));
 
 		// set valid parsed values
 		Rankdir validGraphRankdirParsed = Rankdir.LR;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		DotAttributes.setRankdirParsed(graph, validGraphRankdirParsed);
 		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
+				DotAttributes.getRankdir(graph));
 		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
+				DotAttributes.getRankdirParsed(graph));
 
 		validGraphRankdirParsed = Rankdir.RL;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		DotAttributes.setRankdirParsed(graph, validGraphRankdirParsed);
 		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
+				DotAttributes.getRankdir(graph));
 		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
+				DotAttributes.getRankdirParsed(graph));
 
 		validGraphRankdirParsed = Rankdir.TB;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		DotAttributes.setRankdirParsed(graph, validGraphRankdirParsed);
 		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
+				DotAttributes.getRankdir(graph));
 		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
+				DotAttributes.getRankdirParsed(graph));
 
 		validGraphRankdirParsed = Rankdir.BT;
-		DotAttributes.setRankdirParsed(g, validGraphRankdirParsed);
+		DotAttributes.setRankdirParsed(graph, validGraphRankdirParsed);
 		assertEquals(validGraphRankdirParsed.toString(),
-				DotAttributes.getRankdir(g));
+				DotAttributes.getRankdir(graph));
 		assertEquals(validGraphRankdirParsed,
-				DotAttributes.getRankdirParsed(g));
+				DotAttributes.getRankdirParsed(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setRankdir(g, "foo");
+			DotAttributes.setRankdir(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2091,123 +2113,123 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_splines() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getSplinesRaw(g));
-		assertNull(DotAttributes.getSplines(g));
-		assertNull(DotAttributes.getSplinesParsed(g));
+		assertNull(DotAttributes.getSplinesRaw(graph));
+		assertNull(DotAttributes.getSplines(graph));
+		assertNull(DotAttributes.getSplinesParsed(graph));
 
 		// set valid string values
 		String validGraphSplines = "compound";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "curved";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "false";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "line";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "none";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "spline";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "polyline";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "ortho";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplines = "true";
-		DotAttributes.setSplines(g, validGraphSplines);
-		assertEquals(validGraphSplines, DotAttributes.getSplines(g));
-		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
+		DotAttributes.setSplines(graph, validGraphSplines);
+		assertEquals(validGraphSplines, DotAttributes.getSplines(graph));
+		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(graph));
 
 		// set valid parsed values
 		Splines validGraphSplinesParsed = Splines.COMPOUND;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.COMPOUND, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.CURVED;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.CURVED, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.EMPTY;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.EMPTY, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.EMPTY, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.FALSE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.FALSE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.LINE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.LINE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.NONE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.NONE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.ORTHO;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.ORTHO, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.POLYLINE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.POLYLINE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.SPLINE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.SPLINE, DotAttributes.getSplinesParsed(graph));
 
 		validGraphSplinesParsed = Splines.TRUE;
-		DotAttributes.setSplinesParsed(g, validGraphSplinesParsed);
+		DotAttributes.setSplinesParsed(graph, validGraphSplinesParsed);
 		assertEquals(validGraphSplinesParsed.toString(),
-				DotAttributes.getSplines(g));
-		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(g));
+				DotAttributes.getSplines(graph));
+		assertEquals(Splines.TRUE, DotAttributes.getSplinesParsed(graph));
 
 		// set invalid string values
 		try {
-			DotAttributes.setSplines(g, "foo");
+			DotAttributes.setSplines(graph, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2218,26 +2240,26 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_style() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getStyleRaw(g));
-		assertNull(DotAttributes.getStyle(g));
-		assertNull(DotAttributes.getStyleParsed(g));
+		assertNull(DotAttributes.getStyleRaw(graph));
+		assertNull(DotAttributes.getStyle(graph));
+		assertNull(DotAttributes.getStyleParsed(graph));
 
 		// set valid string values
 		String[] validGraphStyleItems = { "filled", "radial" };
 
 		for (String validGraphStyleItem : validGraphStyleItems) {
-			DotAttributes.setStyle(g, validGraphStyleItem);
-			assertEquals(validGraphStyleItem, DotAttributes.getStyle(g));
+			DotAttributes.setStyle(graph, validGraphStyleItem);
+			assertEquals(validGraphStyleItem, DotAttributes.getStyle(graph));
 
 			Style styleParsed = StyleFactory.eINSTANCE.createStyle();
 			StyleItem styleItem = StyleFactory.eINSTANCE.createStyleItem();
 			styleItem.setName(validGraphStyleItem);
 			styleParsed.getStyleItems().add(styleItem);
 			assertTrue(EcoreUtil.equals(styleParsed,
-					DotAttributes.getStyleParsed(g)));
+					DotAttributes.getStyleParsed(graph)));
 		}
 
 		// set valid parsed values
@@ -2246,12 +2268,12 @@ public class DotAttributesTests {
 		styleItem1.setName("filled");
 
 		styleParsed.getStyleItems().add(styleItem1);
-		DotAttributes.setStyleParsed(g, styleParsed);
-		assertEquals("filled", DotAttributes.getStyle(g));
+		DotAttributes.setStyleParsed(graph, styleParsed);
+		assertEquals("filled", DotAttributes.getStyle(graph));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setStyle(g, "filled, ");
+			DotAttributes.setStyle(graph, "filled, ");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2277,75 +2299,81 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_color() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getColorRaw(n));
-		assertNull(DotAttributes.getColor(n));
-		assertNull(DotAttributes.getColorParsed(n));
+		assertNull(DotAttributes.getColorRaw(node));
+		assertNull(DotAttributes.getColor(node));
+		assertNull(DotAttributes.getColorParsed(node));
 
 		// set valid string values - rgb format
-		DotAttributes.setColor(n, "#ffffff");
-		assertEquals("#ffffff", DotAttributes.getColor(n));
+		DotAttributes.setColor(node, "#ffffff");
+		assertEquals("#ffffff", DotAttributes.getColor(node));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(n)));
+		assertTrue(
+				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(node)));
 
 		// set valid string values - rgba format
-		DotAttributes.setColor(n, "#ffffff00");
-		assertEquals("#ffffff00", DotAttributes.getColor(n));
+		DotAttributes.setColor(node, "#ffffff00");
+		assertEquals("#ffffff00", DotAttributes.getColor(node));
 		rgbColor.setA("00");
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(n)));
+		assertTrue(
+				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(node)));
 
 		// set valid string values - hsv format
-		DotAttributes.setColor(n, "0.000, 0.000, 1.000");
-		assertEquals("0.000, 0.000, 1.000", DotAttributes.getColor(n));
+		DotAttributes.setColor(node, "0.000, 0.000, 1.000");
+		assertEquals("0.000, 0.000, 1.000", DotAttributes.getColor(node));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.000");
 		hsvColor.setS("0.000");
 		hsvColor.setV("1.000");
-		assertTrue(EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(n)));
+		assertTrue(
+				EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(node)));
 
 		// set valid string values - string format
-		DotAttributes.setColor(n, "/svg/white");
-		assertEquals("/svg/white", DotAttributes.getColor(n));
+		DotAttributes.setColor(node, "/svg/white");
+		assertEquals("/svg/white", DotAttributes.getColor(node));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("svg");
 		stringColor.setName("white");
-		assertTrue(
-				EcoreUtil.equals(stringColor, DotAttributes.getColorParsed(n)));
+		assertTrue(EcoreUtil.equals(stringColor,
+				DotAttributes.getColorParsed(node)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
-		DotAttributes.setColorParsed(n, rgbColor);
-		assertEquals("#ffffff", DotAttributes.getColor(n));
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(n)));
+		DotAttributes.setColorParsed(node, rgbColor);
+		assertEquals("#ffffff", DotAttributes.getColor(node));
+		assertTrue(
+				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(node)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("00");
-		DotAttributes.setColorParsed(n, rgbColor);
-		assertEquals("#ffffff00", DotAttributes.getColor(n));
-		assertTrue(EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(n)));
+		DotAttributes.setColorParsed(node, rgbColor);
+		assertEquals("#ffffff00", DotAttributes.getColor(node));
+		assertTrue(
+				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(node)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setColorParsed(n, hsvColor);
-		assertEquals("0.000 0.000 1.000", DotAttributes.getColor(n));
-		assertTrue(EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(n)));
+		DotAttributes.setColorParsed(node, hsvColor);
+		assertEquals("0.000 0.000 1.000", DotAttributes.getColor(node));
+		assertTrue(
+				EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(node)));
 
 		// set valid parsed values - string format
-		DotAttributes.setColorParsed(n, stringColor);
-		assertEquals("/svg/white", DotAttributes.getColor(n));
-		assertTrue(
-				EcoreUtil.equals(stringColor, DotAttributes.getColorParsed(n)));
+		DotAttributes.setColorParsed(node, stringColor);
+		assertEquals("/svg/white", DotAttributes.getColor(node));
+		assertTrue(EcoreUtil.equals(stringColor,
+				DotAttributes.getColorParsed(node)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setColor(n, "/foo/antiquewhite1");
+			DotAttributes.setColor(node, "/foo/antiquewhite1");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2354,7 +2382,7 @@ public class DotAttributesTests {
 		}
 
 		try {
-			DotAttributes.setColor(n, "/svg/antiquewhite1");
+			DotAttributes.setColor(node, "/svg/antiquewhite1");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2365,19 +2393,19 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_colorscheme() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getColorschemeRaw(n));
-		assertNull(DotAttributes.getColorscheme(n));
+		assertNull(DotAttributes.getColorschemeRaw(node));
+		assertNull(DotAttributes.getColorscheme(node));
 
 		// set valid string values
 		final String validColorScheme = "accent3";
-		DotAttributes.setColorscheme(n, validColorScheme);
-		assertEquals(validColorScheme, DotAttributes.getColorscheme(n));
+		DotAttributes.setColorscheme(node, validColorScheme);
+		assertEquals(validColorScheme, DotAttributes.getColorscheme(node));
 
 		try {
-			DotAttributes.setColorscheme(n, "1");
+			DotAttributes.setColorscheme(node, "1");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2388,43 +2416,43 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_distortion() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getDistortionRaw(n));
-		assertNull(DotAttributes.getDistortion(n));
-		assertNull(DotAttributes.getDistortionParsed(n));
+		assertNull(DotAttributes.getDistortionRaw(node));
+		assertNull(DotAttributes.getDistortion(node));
+		assertNull(DotAttributes.getDistortionParsed(node));
 
 		// set valid string values
 		String validNodeDistortion = "5";
-		DotAttributes.setDistortion(n, validNodeDistortion);
-		assertEquals(validNodeDistortion, DotAttributes.getDistortion(n));
-		assertEquals(5.0, DotAttributes.getDistortionParsed(n).doubleValue(),
+		DotAttributes.setDistortion(node, validNodeDistortion);
+		assertEquals(validNodeDistortion, DotAttributes.getDistortion(node));
+		assertEquals(5.0, DotAttributes.getDistortionParsed(node).doubleValue(),
 				0.0);
 
 		// set the minimum valid value
 		validNodeDistortion = "-100.0";
-		DotAttributes.setDistortion(n, validNodeDistortion);
-		assertEquals(validNodeDistortion, DotAttributes.getDistortion(n));
-		assertEquals(-100.0, DotAttributes.getDistortionParsed(n).doubleValue(),
-				0.0);
+		DotAttributes.setDistortion(node, validNodeDistortion);
+		assertEquals(validNodeDistortion, DotAttributes.getDistortion(node));
+		assertEquals(-100.0,
+				DotAttributes.getDistortionParsed(node).doubleValue(), 0.0);
 
 		// set valid parsed values
 		Double validNodeDistortionParsed = 10.0;
-		DotAttributes.setDistortionParsed(n, validNodeDistortionParsed);
-		assertEquals("10.0", DotAttributes.getDistortion(n));
+		DotAttributes.setDistortionParsed(node, validNodeDistortionParsed);
+		assertEquals("10.0", DotAttributes.getDistortion(node));
 		assertEquals(validNodeDistortionParsed,
-				DotAttributes.getDistortionParsed(n));
+				DotAttributes.getDistortionParsed(node));
 
 		validNodeDistortionParsed = 9.9;
-		DotAttributes.setDistortionParsed(n, validNodeDistortionParsed);
-		assertEquals("9.9", DotAttributes.getDistortion(n));
+		DotAttributes.setDistortionParsed(node, validNodeDistortionParsed);
+		assertEquals("9.9", DotAttributes.getDistortion(node));
 		assertEquals(validNodeDistortionParsed,
-				DotAttributes.getDistortionParsed(n));
+				DotAttributes.getDistortionParsed(node));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setDistortion(n, "42x");
+			DotAttributes.setDistortion(node, "42x");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2434,7 +2462,7 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setDistortion(n, "-100.01");
+			DotAttributes.setDistortion(node, "-100.01");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2445,81 +2473,81 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_fillcolor() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getFillcolorRaw(n));
-		assertNull(DotAttributes.getFillcolor(n));
-		assertNull(DotAttributes.getFillcolorParsed(n));
+		assertNull(DotAttributes.getFillcolorRaw(node));
+		assertNull(DotAttributes.getFillcolor(node));
+		assertNull(DotAttributes.getFillcolorParsed(node));
 
 		// set valid string values - rgb format
-		DotAttributes.setFillcolor(n, "#00ff00");
-		assertEquals("#00ff00", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolor(node, "#00ff00");
+		assertEquals("#00ff00", DotAttributes.getFillcolor(node));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFillcolor(n, "#00ff00ff");
-		assertEquals("#00ff00ff", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolor(node, "#00ff00ff");
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(node));
 		rgbColor.setA("ff");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFillcolor(n, "0.3 .8 .7");
-		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolor(node, "0.3 .8 .7");
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(node));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.3");
 		hsvColor.setS(".8");
 		hsvColor.setV(".7");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid string values - string format
-		DotAttributes.setFillcolor(n, "/bugn9/7");
-		assertEquals("/bugn9/7", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolor(node, "/bugn9/7");
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(node));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("bugn9");
 		stringColor.setName("7");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		DotAttributes.setFillcolorParsed(n, rgbColor);
-		assertEquals("#00ff00", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolorParsed(node, rgbColor);
+		assertEquals("#00ff00", DotAttributes.getFillcolor(node));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("ff");
-		DotAttributes.setFillcolorParsed(n, rgbColor);
-		assertEquals("#00ff00ff", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolorParsed(node, rgbColor);
+		assertEquals("#00ff00ff", DotAttributes.getFillcolor(node));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFillcolorParsed(n, hsvColor);
-		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolorParsed(node, hsvColor);
+		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(node));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFillcolorParsed(n, stringColor);
-		assertEquals("/bugn9/7", DotAttributes.getFillcolor(n));
+		DotAttributes.setFillcolorParsed(node, stringColor);
+		assertEquals("/bugn9/7", DotAttributes.getFillcolor(node));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFillcolorParsed(n)));
+				DotAttributes.getFillcolorParsed(node)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFillcolor(n, "//");
+			DotAttributes.setFillcolor(node, "//");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2530,36 +2558,36 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_fixedsize() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getFixedsizeRaw(n));
-		assertNull(DotAttributes.getFixedsize(n));
-		assertNull(DotAttributes.getFixedsizeParsed(n));
+		assertNull(DotAttributes.getFixedsizeRaw(node));
+		assertNull(DotAttributes.getFixedsize(node));
+		assertNull(DotAttributes.getFixedsizeParsed(node));
 
 		// set valid string values
 		String validNodeFixedSize = "true";
-		DotAttributes.setFixedsize(n, validNodeFixedSize);
-		assertEquals(validNodeFixedSize, DotAttributes.getFixedsize(n));
+		DotAttributes.setFixedsize(node, validNodeFixedSize);
+		assertEquals(validNodeFixedSize, DotAttributes.getFixedsize(node));
 
 		validNodeFixedSize = "false";
-		DotAttributes.setFixedsize(n, validNodeFixedSize);
-		assertEquals(validNodeFixedSize, DotAttributes.getFixedsize(n));
+		DotAttributes.setFixedsize(node, validNodeFixedSize);
+		assertEquals(validNodeFixedSize, DotAttributes.getFixedsize(node));
 
 		// set valid parsed values
 		boolean validNodeFixedsizeParsed = true;
-		DotAttributes.setFixedsizeParsed(n, validNodeFixedsizeParsed);
+		DotAttributes.setFixedsizeParsed(node, validNodeFixedsizeParsed);
 		assertEquals(validNodeFixedsizeParsed,
-				DotAttributes.getFixedsizeParsed(n));
+				DotAttributes.getFixedsizeParsed(node));
 
 		validNodeFixedsizeParsed = false;
-		DotAttributes.setFixedsizeParsed(n, validNodeFixedsizeParsed);
+		DotAttributes.setFixedsizeParsed(node, validNodeFixedsizeParsed);
 		assertEquals(validNodeFixedsizeParsed,
-				DotAttributes.getFixedsizeParsed(n));
+				DotAttributes.getFixedsizeParsed(node));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFixedsize(n, "foo");
+			DotAttributes.setFixedsize(node, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2570,81 +2598,81 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_fontcolor() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getFontcolorRaw(n));
-		assertNull(DotAttributes.getFontcolor(n));
-		assertNull(DotAttributes.getFontcolorParsed(n));
+		assertNull(DotAttributes.getFontcolorRaw(node));
+		assertNull(DotAttributes.getFontcolor(node));
+		assertNull(DotAttributes.getFontcolorParsed(node));
 
 		// set valid string values - rgb format
-		DotAttributes.setFontcolor(n, "#00ff00");
-		assertEquals("#00ff00", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolor(node, "#00ff00");
+		assertEquals("#00ff00", DotAttributes.getFontcolor(node));
 		RGBColor rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set valid string values - rgba format
-		DotAttributes.setFontcolor(n, "#00ff00ff");
-		assertEquals("#00ff00ff", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolor(node, "#00ff00ff");
+		assertEquals("#00ff00ff", DotAttributes.getFontcolor(node));
 		rgbColor.setA("ff");
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set valid string values - hsv format
-		DotAttributes.setFontcolor(n, "0.3, .8, .7");
-		assertEquals("0.3, .8, .7", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolor(node, "0.3, .8, .7");
+		assertEquals("0.3, .8, .7", DotAttributes.getFontcolor(node));
 		HSVColor hsvColor = ColorFactory.eINSTANCE.createHSVColor();
 		hsvColor.setH("0.3");
 		hsvColor.setS(".8");
 		hsvColor.setV(".7");
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set valid string values - string format
-		DotAttributes.setFontcolor(n, "/brbg11/10");
-		assertEquals("/brbg11/10", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolor(node, "/brbg11/10");
+		assertEquals("/brbg11/10", DotAttributes.getFontcolor(node));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("brbg11");
 		stringColor.setName("10");
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set valid parsed values - rgb format
 		rgbColor = ColorFactory.eINSTANCE.createRGBColor();
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		DotAttributes.setFontcolorParsed(n, rgbColor);
-		assertEquals("#00ff00", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolorParsed(node, rgbColor);
+		assertEquals("#00ff00", DotAttributes.getFontcolor(node));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("ff");
-		DotAttributes.setFontcolorParsed(n, rgbColor);
-		assertEquals("#00ff00ff", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolorParsed(node, rgbColor);
+		assertEquals("#00ff00ff", DotAttributes.getFontcolor(node));
 		assertTrue(EcoreUtil.equals(rgbColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFontcolorParsed(n, hsvColor);
-		assertEquals("0.3 .8 .7", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolorParsed(node, hsvColor);
+		assertEquals("0.3 .8 .7", DotAttributes.getFontcolor(node));
 		assertTrue(EcoreUtil.equals(hsvColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFontcolorParsed(n, stringColor);
-		assertEquals("/brbg11/10", DotAttributes.getFontcolor(n));
+		DotAttributes.setFontcolorParsed(node, stringColor);
+		assertEquals("/brbg11/10", DotAttributes.getFontcolor(node));
 		assertTrue(EcoreUtil.equals(stringColor,
-				DotAttributes.getFontcolorParsed(n)));
+				DotAttributes.getFontcolorParsed(node)));
 
 		// set invalid string values
 		try {
-			DotAttributes.setFontcolor(n, "///");
+			DotAttributes.setFontcolor(node, "///");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2655,35 +2683,37 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_height() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getHeightRaw(n));
-		assertNull(DotAttributes.getHeight(n));
-		assertNull(DotAttributes.getHeightParsed(n));
+		assertNull(DotAttributes.getHeightRaw(node));
+		assertNull(DotAttributes.getHeight(node));
+		assertNull(DotAttributes.getHeightParsed(node));
 
 		// set valid string values
 		String validNodeHeight = "0.56";
-		DotAttributes.setHeight(n, validNodeHeight);
-		assertEquals(validNodeHeight, DotAttributes.getHeight(n));
+		DotAttributes.setHeight(node, validNodeHeight);
+		assertEquals(validNodeHeight, DotAttributes.getHeight(node));
 
 		// set the minimum valid value
 		validNodeHeight = "0.02";
-		DotAttributes.setHeight(n, validNodeHeight);
-		assertEquals(validNodeHeight, DotAttributes.getHeight(n));
+		DotAttributes.setHeight(node, validNodeHeight);
+		assertEquals(validNodeHeight, DotAttributes.getHeight(node));
 
 		// set valid parsed values
 		Double validNodeHeightParsed = 0.1;
-		DotAttributes.setHeightParsed(n, validNodeHeightParsed);
-		assertEquals(validNodeHeightParsed, DotAttributes.getHeightParsed(n));
+		DotAttributes.setHeightParsed(node, validNodeHeightParsed);
+		assertEquals(validNodeHeightParsed,
+				DotAttributes.getHeightParsed(node));
 
 		validNodeHeightParsed = 9.9;
-		DotAttributes.setHeightParsed(n, validNodeHeightParsed);
-		assertEquals(validNodeHeightParsed, DotAttributes.getHeightParsed(n));
+		DotAttributes.setHeightParsed(node, validNodeHeightParsed);
+		assertEquals(validNodeHeightParsed,
+				DotAttributes.getHeightParsed(node));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setHeight(n, "47x, 11");
+			DotAttributes.setHeight(node, "47x, 11");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2693,7 +2723,7 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setHeight(n, "0.01");
+			DotAttributes.setHeight(node, "0.01");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2704,16 +2734,16 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_id() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getIdRaw(n));
-		assertNull(DotAttributes.getId(n));
+		assertNull(DotAttributes.getIdRaw(node));
+		assertNull(DotAttributes.getId(node));
 
 		// set valid string values
 		final String validNodeId = "nodeId";
-		DotAttributes.setId(n, validNodeId);
-		assertEquals(validNodeId, DotAttributes.getId(n));
+		DotAttributes.setId(node, validNodeId);
+		assertEquals(validNodeId, DotAttributes.getId(node));
 
 		// TODO: add test cases for setting invalid node id (e.g. a not unique
 		// id)
@@ -2721,16 +2751,16 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_label() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getLabelRaw(n));
-		assertNull(DotAttributes.getLabel(n));
+		assertNull(DotAttributes.getLabelRaw(node));
+		assertNull(DotAttributes.getLabel(node));
 
 		// set valid string values
 		final String validNodeLabel = "nodeLabel";
-		DotAttributes.setLabel(n, validNodeLabel);
-		assertEquals(validNodeLabel, DotAttributes.getLabel(n));
+		DotAttributes.setLabel(node, validNodeLabel);
+		assertEquals(validNodeLabel, DotAttributes.getLabel(node));
 	}
 
 	@Test
@@ -2747,30 +2777,30 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_pos() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getPosRaw(n));
-		assertNull(DotAttributes.getPos(n));
-		assertNull(DotAttributes.getPosParsed(n));
+		assertNull(DotAttributes.getPosRaw(node));
+		assertNull(DotAttributes.getPos(node));
+		assertNull(DotAttributes.getPosParsed(node));
 
 		// set valid string values
-		DotAttributes.setPos(n, "47, 11");
-		DotAttributes.setPos(n, "34.5, 45.3!");
-		DotAttributes.setPos(n, "-221.31,936.82");
+		DotAttributes.setPos(node, "47, 11");
+		DotAttributes.setPos(node, "34.5, 45.3!");
+		DotAttributes.setPos(node, "-221.31,936.82");
 
 		// set valid parsed values
 		Point pos = PointFactory.eINSTANCE.createPoint();
 		pos.setX(33);
 		pos.setY(54.6);
 		pos.setInputOnly(true);
-		DotAttributes.setPosParsed(n, pos);
-		assertEquals("33.0, 54.6!", DotAttributes.getPos(n));
-		assertTrue(EcoreUtil.equals(DotAttributes.getPosParsed(n), pos));
+		DotAttributes.setPosParsed(node, pos);
+		assertEquals("33.0, 54.6!", DotAttributes.getPos(node));
+		assertTrue(EcoreUtil.equals(DotAttributes.getPosParsed(node), pos));
 
 		// set invalid string values
 		try {
-			DotAttributes.setPos(n, "47x, 11");
+			DotAttributes.setPos(node, "47x, 11");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2781,12 +2811,12 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_shape() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getShapeRaw(n));
-		assertNull(DotAttributes.getShape(n));
-		assertNull(DotAttributes.getShapeParsed(n));
+		assertNull(DotAttributes.getShapeRaw(node));
+		assertNull(DotAttributes.getShape(node));
+		assertNull(DotAttributes.getShapeParsed(node));
 
 		// set valid (polygon based) string values
 		String[] validPolygonBasedNodeShapes = { "assembly", "box", "box3d",
@@ -2804,8 +2834,9 @@ public class DotAttributesTests {
 				"tripleoctagon", "underline", "utr" };
 
 		for (String validPolygonBasedNodeShape : validPolygonBasedNodeShapes) {
-			DotAttributes.setShape(n, validPolygonBasedNodeShape);
-			assertEquals(validPolygonBasedNodeShape, DotAttributes.getShape(n));
+			DotAttributes.setShape(node, validPolygonBasedNodeShape);
+			assertEquals(validPolygonBasedNodeShape,
+					DotAttributes.getShape(node));
 
 			Shape shapeParsed = ShapeFactory.eINSTANCE.createShape();
 			PolygonBasedShape polygonBasedShape = ShapeFactory.eINSTANCE
@@ -2814,15 +2845,16 @@ public class DotAttributesTests {
 					PolygonBasedNodeShape.get(validPolygonBasedNodeShape));
 			shapeParsed.setShape(polygonBasedShape);
 			assertTrue(EcoreUtil.equals(shapeParsed,
-					DotAttributes.getShapeParsed(n)));
+					DotAttributes.getShapeParsed(node)));
 		}
 
 		// set valid (record based) string values
 		String[] validRecordBasedNodeShapes = { "record", "Mrecord" };
 
 		for (String validRecordBasedNodeShape : validRecordBasedNodeShapes) {
-			DotAttributes.setShape(n, validRecordBasedNodeShape);
-			assertEquals(validRecordBasedNodeShape, DotAttributes.getShape(n));
+			DotAttributes.setShape(node, validRecordBasedNodeShape);
+			assertEquals(validRecordBasedNodeShape,
+					DotAttributes.getShape(node));
 
 			Shape shapeParsed = ShapeFactory.eINSTANCE.createShape();
 			RecordBasedShape recordBasedShape = ShapeFactory.eINSTANCE
@@ -2831,7 +2863,7 @@ public class DotAttributesTests {
 					RecordBasedNodeShape.get(validRecordBasedNodeShape));
 			shapeParsed.setShape(recordBasedShape);
 			assertTrue(EcoreUtil.equals(shapeParsed,
-					DotAttributes.getShapeParsed(n)));
+					DotAttributes.getShapeParsed(node)));
 		}
 
 		// set valid parsed values
@@ -2840,12 +2872,12 @@ public class DotAttributesTests {
 				.createPolygonBasedShape();
 		polygonBasedShape.setShape(PolygonBasedNodeShape.BOX);
 		validNodeShapeParsed.setShape(polygonBasedShape);
-		DotAttributes.setShapeParsed(n, validNodeShapeParsed);
-		assertEquals("box", DotAttributes.getShape(n));
+		DotAttributes.setShapeParsed(node, validNodeShapeParsed);
+		assertEquals("box", DotAttributes.getShape(node));
 
 		// set invalid string values
 		try {
-			DotAttributes.setShape(n, "foo");
+			DotAttributes.setShape(node, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2856,39 +2888,39 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_sides() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getSidesRaw(n));
-		assertNull(DotAttributes.getSides(n));
-		assertNull(DotAttributes.getSidesParsed(n));
+		assertNull(DotAttributes.getSidesRaw(node));
+		assertNull(DotAttributes.getSides(node));
+		assertNull(DotAttributes.getSidesParsed(node));
 
 		// set valid string values
 		String validNodeSides = "5";
-		DotAttributes.setSides(n, validNodeSides);
-		assertEquals(validNodeSides, DotAttributes.getSides(n));
-		assertEquals(5, DotAttributes.getSidesParsed(n).intValue());
+		DotAttributes.setSides(node, validNodeSides);
+		assertEquals(validNodeSides, DotAttributes.getSides(node));
+		assertEquals(5, DotAttributes.getSidesParsed(node).intValue());
 
 		// set the minimum valid value
 		validNodeSides = "0";
-		DotAttributes.setSides(n, validNodeSides);
-		assertEquals(validNodeSides, DotAttributes.getSides(n));
-		assertEquals(0, DotAttributes.getSidesParsed(n).intValue());
+		DotAttributes.setSides(node, validNodeSides);
+		assertEquals(validNodeSides, DotAttributes.getSides(node));
+		assertEquals(0, DotAttributes.getSidesParsed(node).intValue());
 
 		// set valid parsed values
 		Integer validNodeSidesParsed = 3;
-		DotAttributes.setSidesParsed(n, validNodeSidesParsed);
-		assertEquals("3", DotAttributes.getSides(n));
-		assertEquals(validNodeSidesParsed, DotAttributes.getSidesParsed(n));
+		DotAttributes.setSidesParsed(node, validNodeSidesParsed);
+		assertEquals("3", DotAttributes.getSides(node));
+		assertEquals(validNodeSidesParsed, DotAttributes.getSidesParsed(node));
 
 		validNodeSidesParsed = 42;
-		DotAttributes.setSidesParsed(n, validNodeSidesParsed);
-		assertEquals("42", DotAttributes.getSides(n));
-		assertEquals(validNodeSidesParsed, DotAttributes.getSidesParsed(n));
+		DotAttributes.setSidesParsed(node, validNodeSidesParsed);
+		assertEquals("42", DotAttributes.getSides(node));
+		assertEquals(validNodeSidesParsed, DotAttributes.getSidesParsed(node));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setSides(n, "42x");
+			DotAttributes.setSides(node, "42x");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2898,7 +2930,7 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setSides(n, "-1");
+			DotAttributes.setSides(node, "-1");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2909,39 +2941,40 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_skew() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getSkewRaw(n));
-		assertNull(DotAttributes.getSkew(n));
-		assertNull(DotAttributes.getSkewParsed(n));
+		assertNull(DotAttributes.getSkewRaw(node));
+		assertNull(DotAttributes.getSkew(node));
+		assertNull(DotAttributes.getSkewParsed(node));
 
 		// set valid string values
 		String validNodeSkew = "5";
-		DotAttributes.setSkew(n, validNodeSkew);
-		assertEquals(validNodeSkew, DotAttributes.getSkew(n));
-		assertEquals(5.0, DotAttributes.getSkewParsed(n).doubleValue(), 0.0);
+		DotAttributes.setSkew(node, validNodeSkew);
+		assertEquals(validNodeSkew, DotAttributes.getSkew(node));
+		assertEquals(5.0, DotAttributes.getSkewParsed(node).doubleValue(), 0.0);
 
 		// set the minimum valid value
 		validNodeSkew = "-100.0";
-		DotAttributes.setSkew(n, validNodeSkew);
-		assertEquals(validNodeSkew, DotAttributes.getSkew(n));
-		assertEquals(-100.0, DotAttributes.getSkewParsed(n).doubleValue(), 0.0);
+		DotAttributes.setSkew(node, validNodeSkew);
+		assertEquals(validNodeSkew, DotAttributes.getSkew(node));
+		assertEquals(-100.0, DotAttributes.getSkewParsed(node).doubleValue(),
+				0.0);
 
 		// set valid parsed values
 		Double validNodeSkewParsed = 10.0;
-		DotAttributes.setSkewParsed(n, validNodeSkewParsed);
-		assertEquals("10.0", DotAttributes.getSkew(n));
-		assertEquals(validNodeSkewParsed, DotAttributes.getSkewParsed(n));
+		DotAttributes.setSkewParsed(node, validNodeSkewParsed);
+		assertEquals("10.0", DotAttributes.getSkew(node));
+		assertEquals(validNodeSkewParsed, DotAttributes.getSkewParsed(node));
 
 		validNodeSkewParsed = 9.9;
-		DotAttributes.setSkewParsed(n, validNodeSkewParsed);
-		assertEquals("9.9", DotAttributes.getSkew(n));
-		assertEquals(validNodeSkewParsed, DotAttributes.getSkewParsed(n));
+		DotAttributes.setSkewParsed(node, validNodeSkewParsed);
+		assertEquals("9.9", DotAttributes.getSkew(node));
+		assertEquals(validNodeSkewParsed, DotAttributes.getSkewParsed(node));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setSkew(n, "42x");
+			DotAttributes.setSkew(node, "42x");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -2951,7 +2984,7 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setSkew(n, "-100.01");
+			DotAttributes.setSkew(node, "-100.01");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -3034,39 +3067,39 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_width() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getWidthRaw(n));
-		assertNull(DotAttributes.getWidth(n));
-		assertNull(DotAttributes.getWidthParsed(n));
+		assertNull(DotAttributes.getWidthRaw(node));
+		assertNull(DotAttributes.getWidth(node));
+		assertNull(DotAttributes.getWidthParsed(node));
 
 		// set valid string values
 		String validNodeWidth = "0.56";
-		DotAttributes.setWidth(n, validNodeWidth);
-		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
+		DotAttributes.setWidth(node, validNodeWidth);
+		assertEquals(validNodeWidth, DotAttributes.getWidth(node));
 
 		validNodeWidth = "76";
-		DotAttributes.setWidth(n, validNodeWidth);
-		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
+		DotAttributes.setWidth(node, validNodeWidth);
+		assertEquals(validNodeWidth, DotAttributes.getWidth(node));
 
 		// set the minimum valid value
 		validNodeWidth = "0.01";
-		DotAttributes.setWidth(n, validNodeWidth);
-		assertEquals(validNodeWidth, DotAttributes.getWidth(n));
+		DotAttributes.setWidth(node, validNodeWidth);
+		assertEquals(validNodeWidth, DotAttributes.getWidth(node));
 
 		// set valid parsed values
 		Double validNodeWidthParsed = 0.1;
-		DotAttributes.setWidthParsed(n, validNodeWidthParsed);
-		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(n));
+		DotAttributes.setWidthParsed(node, validNodeWidthParsed);
+		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(node));
 
 		validNodeWidthParsed = 9.9;
-		DotAttributes.setWidthParsed(n, validNodeWidthParsed);
-		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(n));
+		DotAttributes.setWidthParsed(node, validNodeWidthParsed);
+		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(node));
 
 		// set syntactically invalid values
 		try {
-			DotAttributes.setWidth(n, "47x, 11");
+			DotAttributes.setWidth(node, "47x, 11");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -3076,7 +3109,7 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setWidth(n, "0.009");
+			DotAttributes.setWidth(node, "0.009");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -3087,43 +3120,43 @@ public class DotAttributesTests {
 
 	@Test
 	public void node_xlabel() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getXlabelRaw(n));
-		assertNull(DotAttributes.getXlabel(n));
+		assertNull(DotAttributes.getXlabelRaw(node));
+		assertNull(DotAttributes.getXlabel(node));
 
 		// set valid string values
 		final String validNodeXLabel = "nodeXLabel";
-		DotAttributes.setXlabel(n, validNodeXLabel);
-		assertEquals(validNodeXLabel, DotAttributes.getXlabel(n));
+		DotAttributes.setXlabel(node, validNodeXLabel);
+		assertEquals(validNodeXLabel, DotAttributes.getXlabel(node));
 	}
 
 	@Test
 	public void node_xlp() {
-		Node n = new Node.Builder().buildNode();
+		Node node = new Node.Builder().buildNode();
 
 		// test getters if no explicit value is set
-		assertNull(DotAttributes.getXlpRaw(n));
-		assertNull(DotAttributes.getXlp(n));
-		assertNull(DotAttributes.getXlpParsed(n));
+		assertNull(DotAttributes.getXlpRaw(node));
+		assertNull(DotAttributes.getXlp(node));
+		assertNull(DotAttributes.getXlpParsed(node));
 
 		// set valid string values
-		DotAttributes.setXlp(n, "47, 11");
-		DotAttributes.setXlp(n, "34.5, 45.3!");
+		DotAttributes.setXlp(node, "47, 11");
+		DotAttributes.setXlp(node, "34.5, 45.3!");
 
 		// set valid parsed values
 		Point xlp = PointFactory.eINSTANCE.createPoint();
 		xlp.setX(33);
 		xlp.setY(54.6);
 		xlp.setInputOnly(true);
-		DotAttributes.setXlpParsed(n, xlp);
-		assertEquals("33.0, 54.6!", DotAttributes.getXlp(n));
-		assertTrue(EcoreUtil.equals(DotAttributes.getXlpParsed(n), xlp));
+		DotAttributes.setXlpParsed(node, xlp);
+		assertEquals("33.0, 54.6!", DotAttributes.getXlp(node));
+		assertTrue(EcoreUtil.equals(DotAttributes.getXlpParsed(node), xlp));
 
 		// set invalid string values
 		try {
-			DotAttributes.setXlp(n, "foo");
+			DotAttributes.setXlp(node, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
