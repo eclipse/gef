@@ -311,20 +311,20 @@ public final class Graph implements IAttributeStore {
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
 	private final ReadOnlyListWrapper<Node> nodesProperty = new ReadOnlyListWrapperEx<>(this, NODES_PROPERTY,
-			CollectionUtils.<Node> observableArrayList());
+			CollectionUtils.<Node>observableArrayList());
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
 	private final ReadOnlyListWrapper<Edge> edgesProperty = new ReadOnlyListWrapperEx<>(this, EDGES_PROPERTY,
-			CollectionUtils.<Edge> observableArrayList());
+			CollectionUtils.<Edge>observableArrayList());
 
 	/**
 	 * Attributes of this {@link Graph}.
 	 */
 	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
-			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object>observableHashMap());
 
 	/**
 	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>
@@ -477,8 +477,12 @@ public final class Graph implements IAttributeStore {
 	 *            The new {@link Node} in which this {@link Graph} is nested.
 	 */
 	public void setNestingNode(Node nestingNode) {
+		Node oldNestingNode = this.nestingNode;
 		this.nestingNode = nestingNode;
-		if (nestingNode.getNestedGraph() != this) {
+		if (oldNestingNode != null && oldNestingNode != nestingNode) {
+			oldNestingNode.setNestedGraph(null);
+		}
+		if (nestingNode != null && oldNestingNode != nestingNode) {
 			nestingNode.setNestedGraph(this);
 		}
 	}

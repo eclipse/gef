@@ -108,8 +108,8 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		vcl.register(anchorage.getVisual(), getVisual());
 
-		// re-initialize label position (if not already set)
-		setLabelPosition(computeLabelPosition());
+		// (re-)initialize label position
+		recomputeLabelPosition();
 	}
 
 	@Override
@@ -144,6 +144,20 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	}
 
 	/**
+	 * Retrieves the stored position for the label.
+	 *
+	 * @return The label position stored in the attributes.
+	 */
+	public Point getLabelPosition() {
+		String key = getLabelPositionAttributeKey();
+		ObservableMap<String, Object> attributes = getContent().getKey().getAttributes();
+		if (!attributes.containsKey(key)) {
+			return null;
+		}
+		return (Point) attributes.get(key);
+	}
+
+	/**
 	 * Retrieves the position attribute key for the given label role.
 	 *
 	 * @return The key via which to retrieve the position attribute for the
@@ -165,20 +179,6 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 			throw new IllegalArgumentException("Unsupported content element.");
 		}
 		return attributeKey;
-	}
-
-	/**
-	 * Retrieves the stored position for the label.
-	 *
-	 * @return The label position stored in the attributes.
-	 */
-	public Point getLabelPosition() {
-		String key = getLabelPositionAttributeKey();
-		ObservableMap<String, Object> attributes = getContent().getKey().getAttributes();
-		if (!attributes.containsKey(key)) {
-			return null;
-		}
-		return (Point) attributes.get(key);
 	}
 
 	/**
@@ -224,6 +224,13 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 */
 	public void setLabelPosition(Point computedPosition) {
 		getContent().getKey().getAttributes().put(getLabelPositionAttributeKey(), computedPosition);
+	}
+
+	/**
+	 * Recomputes the label position.
+	 */
+	public void recomputeLabelPosition() {
+		setLabelPosition(computeLabelPosition());
 	}
 
 }

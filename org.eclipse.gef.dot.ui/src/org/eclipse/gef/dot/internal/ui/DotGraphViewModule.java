@@ -38,7 +38,6 @@ import org.eclipse.gef.zest.fx.parts.EdgePart;
 import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.parts.NodeLabelPart;
 import org.eclipse.gef.zest.fx.parts.NodePart;
-import org.eclipse.gef.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef.zest.fx.parts.ZestFxRootPart;
 
 import com.google.inject.Binder;
@@ -148,11 +147,10 @@ public class DotGraphViewModule extends MvcFxModule {
 	}
 
 	/**
-	 * Binds {@link IContentPartFactory} to {@link ZestFxContentPartFactory}.
+	 * Binds {@link IContentPartFactory} to {@link DotContentPartFactory}.
 	 */
 	protected void bindIContentPartFactory() {
-		binder().bind(IContentPartFactory.class)
-				.to(ZestFxContentPartFactory.class)
+		binder().bind(IContentPartFactory.class).to(DotContentPartFactory.class)
 				.in(AdaptableScopes.typed(IViewer.class));
 	}
 

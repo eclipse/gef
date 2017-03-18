@@ -42,6 +42,7 @@ import org.eclipse.gef.dot.internal.language.point.Point;
 import org.eclipse.gef.dot.internal.language.point.PointFactory;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.ranktype.RankType;
+import org.eclipse.gef.dot.internal.language.rect.Rect;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
@@ -1140,6 +1141,34 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set edge attribute 'xlp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void graph_bb() {
+		Graph g = new Graph.Builder().build();
+
+		// test getter if no explicit value is set
+		assertNull(DotAttributes.getBb(g));
+
+		DotAttributes.setBb(g, "39.631,558,111.63,398");
+		assertEquals("39.631,558,111.63,398", DotAttributes.getBb(g));
+
+		Rect r = DotAttributes.getBbParsed(g);
+		assertNotNull(r);
+		assertEquals(r.getLlx(), 39.631d, 0d);
+		assertEquals(r.getLly(), 558d, 0d);
+		assertEquals(r.getUrx(), 111.63d, 0d);
+		assertEquals(r.getUry(), 398d, 0d);
+
+		// set invalid string values
+		try {
+			DotAttributes.setBb(g, "39.631,558,111.63");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'bb' to '39.631,558,111.63'. The value '39.631,558,111.63' is not a syntactically correct rect: Mismatched input '<EOF>' expecting ','.",
 					e.getMessage());
 		}
 	}

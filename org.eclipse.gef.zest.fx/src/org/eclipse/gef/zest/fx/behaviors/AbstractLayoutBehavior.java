@@ -56,8 +56,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 	protected abstract void preLayout();
 
 	/**
-	 * Called before a layout pass. Should be used to transfer layout
-	 * information from the visualization over to the layout model.
+	 * Called after a layout pass to adjust label positions.
 	 */
 	protected void updateLabels() {
 		// iterate anchoreds
@@ -72,7 +71,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 			if (anchored instanceof AbstractLabelPart) {
 				AbstractLabelPart labelPart = (AbstractLabelPart) anchored;
 				// compute label position
-				labelPart.setLabelPosition(labelPart.computeLabelPosition());
+				labelPart.recomputeLabelPosition();
 			}
 		}
 	}

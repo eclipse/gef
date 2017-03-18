@@ -30,6 +30,7 @@ import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotEscStringStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotRectStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotShapeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotSplineTypeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotStyleStandaloneSetup
@@ -54,6 +55,7 @@ import org.eclipse.gef.dot.internal.language.pagedir.Pagedir
 import org.eclipse.gef.dot.internal.language.point.Point
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir
 import org.eclipse.gef.dot.internal.language.ranktype.RankType
+import org.eclipse.gef.dot.internal.language.rect.Rect
 import org.eclipse.gef.dot.internal.language.shape.Shape
 import org.eclipse.gef.dot.internal.language.splines.Splines
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType
@@ -81,8 +83,11 @@ import org.eclipse.xtext.validation.CheckType
 import org.eclipse.xtext.validation.RangeBasedDiagnostic
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
+import static org.eclipse.gef.dot.internal.DotAttributes.*
+
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.gef.dot.internal.language.validation.DotRectJavaValidator
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -131,6 +136,13 @@ class DotAttributes {
 					issueData);
 		}
 }
+	static def boolean isCluster(Node node) {
+		if(node.nestedGraph == null) {
+			return false
+		}
+		val name =  node.nestedGraph._getName
+		return name != null && name.startsWith("cluster")
+	}
 
 	/**
 	 * Determine the context in which the given {@link EObject} is used.
@@ -390,6 +402,7 @@ class DotAttributes {
 			case ARROWHEAD__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case ARROWSIZE__E: validateAttributeRawValue(DOUBLE_PARSER,	ARROWSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case ARROWTAIL__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case BB__GC: validateAttributeRawValue(RECT_PARSER, RECT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case BGCOLOR__GC: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case CLUSTERRANK__G: validateAttributeRawValue(CLUSTERMODE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case COLORSCHEME__GCNE:  validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
@@ -1054,6 +1067,18 @@ class DotAttributes {
 	static val ESC_STRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
 		DotEscStringJavaValidator)
 
+	static val Injector rectInjector = new DotRectStandaloneSetup().createInjectorAndDoEMFRegistration
+
+	/**
+	 * The parser for point attribute values.
+	 */
+	static val RECT_PARSER = new EObjectParser<Rect>(rectInjector)
+
+	/**
+	 * The serializer for point attribute values.
+	 */
+	static val RECT_SERIALIZER = new EObjectSerializer<Rect>(rectInjector)
+	
 	static val Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
@@ -1118,6 +1143,11 @@ class DotAttributes {
 	 * Validator for Point types.
 	 */
 	static val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointJavaValidator)
+	
+	/**
+	 * Validator for Rect types.
+	 */
+	static val RECT_VALIDATOR = new EObjectValidator<Rect>(rectInjector, DotRectJavaValidator)
 
 	/**
 	 * Validator for Shape types.
@@ -1306,6 +1336,9 @@ class DotAttributes {
 
 	@DotAttribute(rawType="STRING", parsedType=ArrowType)
 	public static val String ARROWTAIL__E = "arrowtail"
+
+	@DotAttribute(parsedType=Rect)
+	public static val String BB__GC = "bb"
 
 	@DotAttribute(parsedType=Color)
 	public static val String BGCOLOR__GC = "bgcolor"

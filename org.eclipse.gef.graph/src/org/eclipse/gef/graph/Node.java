@@ -467,8 +467,12 @@ public class Node implements IAttributeStore {
 	 *            The new nested {@link Graph} for this {@link Node}.
 	 */
 	public void setNestedGraph(Graph nestedGraph) {
+		Graph oldNestedGraph = this.nestedGraph;
 		this.nestedGraph = nestedGraph;
-		if (nestedGraph.getNestingNode() != this) {
+		if (oldNestedGraph != null && oldNestedGraph != nestedGraph) {
+			oldNestedGraph.setNestingNode(null);
+		}
+		if (nestedGraph != null && oldNestedGraph != nestedGraph) {
 			nestedGraph.setNestingNode(this);
 		}
 	}

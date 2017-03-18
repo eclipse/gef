@@ -743,16 +743,16 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	public void graph_attributes() throws Exception {
 		// test global attribute names
 		newBuilder().append("graph {graph[]}")
-				.assertTextAtCursorPosition(13, "]", "bgcolor", "clusterrank",
-						"colorscheme", "fontcolor", "forcelabels", "id",
-						"label", "layout", "lp", "nodesep", "outputorder",
-						"pagedir", "rankdir", "splines", "style")
+				.assertTextAtCursorPosition(13, "]", "bb", "bgcolor",
+						"clusterrank", "colorscheme", "fontcolor",
+						"forcelabels", "id", "label", "layout", "lp", "nodesep",
+						"outputorder", "pagedir", "rankdir", "splines", "style")
 				.applyProposal(13, "forcelabels")
 				.expectContent("graph {graph[forcelabels]}");
 
 		// test local attribute names
 		newBuilder().append("graph {  }")
-				.assertTextAtCursorPosition(8, "bgcolor", "clusterrank",
+				.assertTextAtCursorPosition(8, "bb", "bgcolor", "clusterrank",
 						"colorscheme", "fontcolor", "edge", "graph", "node",
 						"subgraph", "{", "}", "forcelabels", "id", "label",
 						"layout", "lp", "nodesep", "outputorder", "pagedir",
@@ -908,10 +908,11 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values with prefix
 		newBuilder().append("graph { colorscheme=brbg11 fontcolor=1 }")
 				.assertTextAtCursorPosition(38, "1", "10", "11", ",", ";", "{",
-						"}", "bgcolor", "colorscheme", "clusterrank", "edge",
-						"fontcolor", "forcelabels", "graph", "id", "label",
-						"layout", "lp", "node", "nodesep", "outputorder",
-						"pagedir", "rankdir", "splines", "style", "subgraph")
+						"}", "bb", "bgcolor", "colorscheme", "clusterrank",
+						"edge", "fontcolor", "forcelabels", "graph", "id",
+						"label", "layout", "lp", "node", "nodesep",
+						"outputorder", "pagedir", "rankdir", "splines", "style",
+						"subgraph")
 				.applyProposal(38, "10")
 				.expectContent("graph { colorscheme=brbg11 fontcolor=10 }");
 

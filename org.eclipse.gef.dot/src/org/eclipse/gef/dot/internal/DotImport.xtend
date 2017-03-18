@@ -131,6 +131,7 @@ class DotImport {
 		]
 
 		// graph attributes
+		setter.apply(BB__GC, [g, value|g.setBbRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterrankRaw(value)])
 		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
@@ -297,6 +298,7 @@ class DotImport {
 		]
 
 		// cluster and subgraph attributes
+		setter.apply(BB__GC, [g, value|g.setBbRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
 		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])

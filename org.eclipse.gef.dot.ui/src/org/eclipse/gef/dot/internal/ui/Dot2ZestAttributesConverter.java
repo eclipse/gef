@@ -534,6 +534,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// default height is 0.5 inches
 		double zestHeight = (dotHeight == null ? 0.5
 				: Double.parseDouble(dotHeight)) * 72;
+
 		if (options().emulateLayout && !Boolean.TRUE
 				.equals(DotAttributes.getFixedsizeParsed(dot))) {
 			// if we are to emulate dot and fixedsize=true is not given, we have
@@ -549,8 +550,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		String dotPos = DotAttributes.getPos(dot);
 		if (dotPos != null && !options().ignorePositions) {
 			// node position is interpreted as center of node in Dot,
-			// and
-			// top-left in Zest
+			// and top-left in Zest
 			org.eclipse.gef.dot.internal.language.point.Point dotPosParsed = DotAttributes
 					.getPosParsed(dot);
 			ZestProperties.setPosition(zest,
@@ -625,7 +625,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				labelSize.getHeight());
 	}
 
-	private Dimension computeZestLabelSize(String labelText) {
+	static Dimension computeZestLabelSize(String labelText) {
 		// TODO: respect font settings (font name and size)
 		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
 		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());

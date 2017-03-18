@@ -1,0 +1,59 @@
+package org.eclipse.gef.dot.internal.ui;
+
+import java.util.Map;
+
+import org.eclipse.gef.graph.Edge;
+import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
+import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
+import org.eclipse.gef.zest.fx.ZestProperties;
+import org.eclipse.gef.zest.fx.parts.EdgePart;
+import org.eclipse.gef.zest.fx.parts.GraphPart;
+import org.eclipse.gef.zest.fx.parts.NodePart;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
+import javafx.scene.Node;
+import javafx.util.Pair;
+
+public class DotContentPartFactory implements IContentPartFactory {
+
+	@Inject
+	private Injector injector;
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IContentPart<? extends Node> createContentPart(Object content,
+			Map<Object, Object> contextMap) {
+		IContentPart<? extends Node> part = null;
+		if (content instanceof Graph) {
+			part = new GraphPart();
+		} else if (content instanceof org.eclipse.gef.graph.Node) {
+			part = new NodePart();
+		} else if (content instanceof Edge) {
+			part = new EdgePart();
+		} else if (content instanceof Pair
+				&& ((Pair) content).getKey() instanceof Edge
+				&& (ZestProperties.LABEL__NE.equals(((Pair) content).getValue())
+						|| ZestProperties.EXTERNAL_LABEL__NE
+								.equals(((Pair) content).getValue())
+						|| ZestProperties.SOURCE_LABEL__E
+								.equals(((Pair) content).getValue())
+						|| ZestProperties.TARGET_LABEL__E
+								.equals(((Pair) content).getValue()))) {
+			part = new DotEdgeLabelPart();
+		} else if (content instanceof Pair
+				&& ((Pair) content)
+						.getKey() instanceof org.eclipse.gef.graph.Node
+				&& ZestProperties.EXTERNAL_LABEL__NE
+						.equals(((Pair) content).getValue())) {
+			part = new DotNodeLabelPart();
+		}
+		if (part != null) {
+			injector.injectMembers(part);
+		}
+		return part;
+	}
+
+}
