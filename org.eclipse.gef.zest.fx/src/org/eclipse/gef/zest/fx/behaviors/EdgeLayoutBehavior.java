@@ -46,7 +46,7 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 		getHost().refreshVisual();
 
 		// update label positions, which are not computed by layout itself
-		updateLabels();
+		layoutLabels();
 	}
 
 	@Override

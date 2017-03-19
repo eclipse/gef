@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.behaviors;
 
+import org.eclipse.gef.common.collections.MultisetChangeListener;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.behaviors.AbstractBehavior;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -31,6 +32,27 @@ import javafx.scene.Node;
  *
  */
 public abstract class AbstractLayoutBehavior extends AbstractBehavior {
+
+	private MultisetChangeListener<IVisualPart<? extends Node>> anchoredsChangeListener = new MultisetChangeListener<IVisualPart<? extends Node>>() {
+
+		@Override
+		public void onChanged(
+				org.eclipse.gef.common.collections.MultisetChangeListener.Change<? extends IVisualPart<? extends Node>> change) {
+			layoutLabels();
+		}
+	};
+
+	@Override
+	protected void doActivate() {
+		super.doActivate();
+		getHost().getAnchoredsUnmodifiable().addListener(anchoredsChangeListener);
+	}
+
+	@Override
+	protected void doDeactivate() {
+		getHost().getAnchoredsUnmodifiable().removeListener(anchoredsChangeListener);
+		super.doDeactivate();
+	}
 
 	/**
 	 * Returns the {@link LayoutContext} for which {@link #preLayout()} and
@@ -58,7 +80,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 	/**
 	 * Called after a layout pass to adjust label positions.
 	 */
-	protected void updateLabels() {
+	protected void layoutLabels() {
 		// iterate anchoreds
 		for (IVisualPart<? extends Node> anchored : getHost().getAnchoredsUnmodifiable().elementSet()) {
 			// FIXME: Layout should only be triggered when content-part-map

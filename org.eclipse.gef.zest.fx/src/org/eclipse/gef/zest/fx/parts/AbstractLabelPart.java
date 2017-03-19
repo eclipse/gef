@@ -107,9 +107,6 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	@Override
 	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		vcl.register(anchorage.getVisual(), getVisual());
-
-		// (re-)initialize label position
-		recomputeLabelPosition();
 	}
 
 	@Override
@@ -191,6 +188,13 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	}
 
 	/**
+	 * Recomputes the label position.
+	 */
+	public void recomputeLabelPosition() {
+		setLabelPosition(computeLabelPosition());
+	}
+
+	/**
 	 * Adjusts the label's position to fit the given {@link Point}.
 	 *
 	 * @param visual
@@ -224,13 +228,6 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 */
 	public void setLabelPosition(Point computedPosition) {
 		getContent().getKey().getAttributes().put(getLabelPositionAttributeKey(), computedPosition);
-	}
-
-	/**
-	 * Recomputes the label position.
-	 */
-	public void recomputeLabelPosition() {
-		setLabelPosition(computeLabelPosition());
 	}
 
 }

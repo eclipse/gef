@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,19 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
 
-import org.eclipse.gef.zest.fx.parts.NodeLabelPart;
+import org.eclipse.gef.zest.fx.behaviors.NodeLayoutBehavior;
 
-public class DotNodeLabelPart extends NodeLabelPart {
+public class DotNodeLayoutBehavior extends NodeLayoutBehavior {
 
 	@Override
-	public void recomputeLabelPosition() {
-		// only compute label positions in emulated mode
-		// TODO: make native mode available within viewer
+	protected void layoutLabels() {
+		// labels only have to be positioned in emulated mode; in native mode,
+		// label positions are calculated by dot already
 		if (!GraphvizPreferencePage.isGraphvizConfigured()) {
-			super.recomputeLabelPosition();
+			super.layoutLabels();
 		}
 	}
-
 }

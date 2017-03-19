@@ -72,7 +72,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 		// update label positions (from visual locations) as they are not
 		// provided by layout
-		updateLabels();
+		layoutLabels();
 	}
 
 	@Override

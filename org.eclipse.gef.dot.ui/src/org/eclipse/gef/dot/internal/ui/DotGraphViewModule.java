@@ -30,14 +30,13 @@ import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef.zest.fx.behaviors.GraphLayoutBehavior;
-import org.eclipse.gef.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef.zest.fx.parts.EdgePart;
 import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.parts.NodeLabelPart;
 import org.eclipse.gef.zest.fx.parts.NodePart;
+import org.eclipse.gef.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef.zest.fx.parts.ZestFxRootPart;
 
 import com.google.inject.Binder;
@@ -111,7 +110,7 @@ public class DotGraphViewModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(EdgeLayoutBehavior.class);
+				.to(DotEdgeLayoutBehavior.class);
 
 		// selection link feedback provider
 		adapterMapBinder
@@ -150,7 +149,8 @@ public class DotGraphViewModule extends MvcFxModule {
 	 * Binds {@link IContentPartFactory} to {@link DotContentPartFactory}.
 	 */
 	protected void bindIContentPartFactory() {
-		binder().bind(IContentPartFactory.class).to(DotContentPartFactory.class)
+		binder().bind(IContentPartFactory.class)
+				.to(ZestFxContentPartFactory.class)
 				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
@@ -248,7 +248,7 @@ public class DotGraphViewModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(NodeLayoutBehavior.class);
+				.to(DotNodeLayoutBehavior.class);
 
 		// anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
