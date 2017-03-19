@@ -50,6 +50,9 @@ Export-Package: org.eclipse.gef.dot.internal;x-friends:="org.eclipse.gef.dot.tes
  org.eclipse.gef.dot.internal.language.point.util;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.rankdir;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.ranktype;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
+ org.eclipse.gef.dot.internal.language.rect;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
+ org.eclipse.gef.dot.internal.language.rect.impl;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
+ org.eclipse.gef.dot.internal.language.rect.util;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.scoping;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.serializer;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.services;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
@@ -64,8 +67,5 @@ Export-Package: org.eclipse.gef.dot.internal;x-friends:="org.eclipse.gef.dot.tes
  org.eclipse.gef.dot.internal.language.style.impl;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.style.util;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
  org.eclipse.gef.dot.internal.language.terminals;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
- org.eclipse.gef.dot.internal.language.validation;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui",
- org.eclipse.gef.dot.internal.language.rect,
- org.eclipse.gef.dot.internal.language.rect.impl,
- org.eclipse.gef.dot.internal.language.rect.util
+ org.eclipse.gef.dot.internal.language.validation;x-friends:="org.eclipse.gef.dot.tests,org.eclipse.gef.dot.ui"
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"

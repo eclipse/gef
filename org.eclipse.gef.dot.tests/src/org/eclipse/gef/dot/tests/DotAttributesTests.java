@@ -1147,15 +1147,17 @@ public class DotAttributesTests {
 
 	@Test
 	public void graph_bb() {
-		Graph g = new Graph.Builder().build();
+		Graph graph = new Graph.Builder().build();
 
-		// test getter if no explicit value is set
-		assertNull(DotAttributes.getBb(g));
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getBbRaw(graph));
+		assertNull(DotAttributes.getBb(graph));
+		assertNull(DotAttributes.getBbParsed(graph));
 
-		DotAttributes.setBb(g, "39.631,558,111.63,398");
-		assertEquals("39.631,558,111.63,398", DotAttributes.getBb(g));
+		DotAttributes.setBb(graph, "39.631,558,111.63,398");
+		assertEquals("39.631,558,111.63,398", DotAttributes.getBb(graph));
 
-		Rect r = DotAttributes.getBbParsed(g);
+		Rect r = DotAttributes.getBbParsed(graph);
 		assertNotNull(r);
 		assertEquals(r.getLlx(), 39.631d, 0d);
 		assertEquals(r.getLly(), 558d, 0d);
@@ -1164,7 +1166,7 @@ public class DotAttributesTests {
 
 		// set invalid string values
 		try {
-			DotAttributes.setBb(g, "39.631,558,111.63");
+			DotAttributes.setBb(graph, "39.631,558,111.63");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(

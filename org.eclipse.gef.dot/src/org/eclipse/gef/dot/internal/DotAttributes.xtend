@@ -66,6 +66,7 @@ import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotRectJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator
@@ -83,11 +84,8 @@ import org.eclipse.xtext.validation.CheckType
 import org.eclipse.xtext.validation.RangeBasedDiagnostic
 import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
-import static org.eclipse.gef.dot.internal.DotAttributes.*
-
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import org.eclipse.gef.dot.internal.language.validation.DotRectJavaValidator
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -137,11 +135,11 @@ class DotAttributes {
 		}
 }
 	static def boolean isCluster(Node node) {
-		if(node.nestedGraph == null) {
+		if(node.nestedGraph === null) {
 			return false
 		}
 		val name =  node.nestedGraph._getName
-		return name != null && name.startsWith("cluster")
+		return name !== null && name.startsWith("cluster")
 	}
 
 	/**
@@ -1070,12 +1068,12 @@ class DotAttributes {
 	static val Injector rectInjector = new DotRectStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
-	 * The parser for point attribute values.
+	 * The parser for rect attribute values.
 	 */
 	static val RECT_PARSER = new EObjectParser<Rect>(rectInjector)
 
 	/**
-	 * The serializer for point attribute values.
+	 * The serializer for rect attribute values.
 	 */
 	static val RECT_SERIALIZER = new EObjectSerializer<Rect>(rectInjector)
 	
