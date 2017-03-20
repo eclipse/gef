@@ -146,7 +146,7 @@ public class DotGraphViewModule extends MvcFxModule {
 	}
 
 	/**
-	 * Binds {@link IContentPartFactory} to {@link DotContentPartFactory}.
+	 * Binds {@link IContentPartFactory} to {@link ZestFxContentPartFactory}.
 	 */
 	protected void bindIContentPartFactory() {
 		binder().bind(IContentPartFactory.class)
