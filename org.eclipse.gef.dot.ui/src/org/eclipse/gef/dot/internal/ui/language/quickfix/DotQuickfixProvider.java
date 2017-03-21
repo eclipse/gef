@@ -173,6 +173,9 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	private String getValidArrowShape(String deprecatedShapeString) {
 		DeprecatedShape deprecatedShape = DeprecatedShape
 				.get(deprecatedShapeString);
+		if (deprecatedShape == null) {
+			return null;
+		}
 		switch (deprecatedShape) {
 		case EDIAMOND:
 			return "odiamond"; //$NON-NLS-1$
