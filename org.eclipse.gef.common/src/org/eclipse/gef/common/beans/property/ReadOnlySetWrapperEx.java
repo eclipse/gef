@@ -233,6 +233,14 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 	}
 
 	@Override
+	public ReadOnlySetProperty<E> getReadOnlyProperty() {
+		if (readOnlyProperty == null) {
+			readOnlyProperty = new ReadOnlyPropertyImpl();
+		}
+		return readOnlyProperty;
+	}
+
+	@Override
 	public int hashCode() {
 		// XXX: As we rely on equality to remove a binding again, we have to
 		// ensure the hash code is the same for a pair of given properties.

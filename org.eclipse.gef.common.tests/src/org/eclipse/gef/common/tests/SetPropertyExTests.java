@@ -33,6 +33,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.inject.Provider;
 
+import javafx.beans.property.ReadOnlySetProperty;
 import javafx.beans.property.SetProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -390,6 +391,28 @@ public class SetPropertyExTests {
 		invalidationListener.check();
 		setChangeListener.check();
 		changeListener.check();
+	}
+
+	@Test
+	public void readOnlyWrapperChangeNotifications() {
+		ReadOnlySetWrapperEx<Integer> setWrapper = new ReadOnlySetWrapperEx<>(
+				FXCollections.observableSet());
+		ReadOnlySetProperty<Integer> roProperty = setWrapper
+				.getReadOnlyProperty();
+		SetChangeExpector<Integer> setChangeListener = new SetChangeExpector<>(
+				roProperty);
+		setChangeListener.addExpectation(null, 1);
+		roProperty.add(1);
+		setChangeListener.check();
+		setChangeListener.addExpectation(null, 2);
+		roProperty.add(2);
+		setChangeListener.check();
+		setChangeListener.addExpectation(1, null);
+		roProperty.remove(1);
+		setChangeListener.check();
+		setChangeListener.addExpectation(2, null);
+		roProperty.remove(2);
+		setChangeListener.check();
 	}
 
 }
