@@ -272,7 +272,7 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 			helper.removeListener(listener);
 		}
 	}
-	
+
 	// TODO: overwrite sort(Comparator) and replaceAll(UnaryOperator) as well,
 	// as soon as we drop JavaSE-1.7 support.
 }
