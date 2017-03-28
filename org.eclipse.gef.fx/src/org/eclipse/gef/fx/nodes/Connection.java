@@ -238,9 +238,9 @@ public class Connection extends Group {
 	private ObjectProperty<Node> curveProperty = new SimpleObjectProperty<>();
 	private ObjectProperty<Node> startDecorationProperty = null;
 	private ObjectProperty<Node> endDecorationProperty = null;
-	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
+	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<>(
 			new StraightRouter());
-	private ObjectProperty<IConnectionInterpolator> interpolatorProperty = new SimpleObjectProperty<IConnectionInterpolator>(
+	private ObjectProperty<IConnectionInterpolator> interpolatorProperty = new SimpleObjectProperty<>(
 			new PolylineInterpolator());
 
 	// XXX: Maintain anchors in a sorted map, so we can use it to determine the
