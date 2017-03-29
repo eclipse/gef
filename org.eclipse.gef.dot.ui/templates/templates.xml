@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<templates>
+	<template id="HtmlLabelTemplate" autoinsert="false" context="org.eclipse.gef.dot.internal.language.Dot.ID" deleted="false" description="Insert a template" enabled="true" name="HTMLLabel">&lt;&#13;
+	${cursor}&#13;
+&gt;
+	</template>
+</templates>

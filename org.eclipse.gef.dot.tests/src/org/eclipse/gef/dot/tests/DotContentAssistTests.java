@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -551,6 +551,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void edge_headlabel() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {edge[ headlabel= ]}")
+				.assertTextAtCursorPosition(23,
+						"HTMLLabel - Insert a template");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ headlabel= ]}")
+				.assertTextAtCursorPosition(25,
+						"HTMLLabel - Insert a template");
+	}
+
+	@Test
 	public void edge_headlp() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {edge[ head_lp= ]}")
@@ -561,6 +574,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(21);
 
 		// no use to test local attribute values with prefix
+	}
+
+	@Test
+	public void edge_label() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {edge[ label= ]}")
+				.assertTextAtCursorPosition(19,
+						"HTMLLabel - Insert a template");
+
+		// test local attribute values
+		newBuilder().append("graph {1--2[ label= ]}")
+				.assertTextAtCursorPosition(19,
+						"HTMLLabel - Insert a template");
 	}
 
 	@Test
@@ -714,6 +740,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void edge_taillabel() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {edge[ taillabel= ]}")
+				.assertTextAtCursorPosition(23,
+						"HTMLLabel - Insert a template");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ taillabel= ]}")
+				.assertTextAtCursorPosition(25,
+						"HTMLLabel - Insert a template");
+	}
+
+	@Test
 	public void edge_taillp() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {edge[ tail_lp= ]}")
@@ -724,6 +763,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(21);
 
 		// no use to test local attribute values with prefix
+	}
+
+	@Test
+	public void edge_xlabel() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {edge[ xlabel= ]}")
+				.assertTextAtCursorPosition(20,
+						"HTMLLabel - Insert a template");
+
+		// test local attribute values
+		newBuilder().append("digraph {1->2[ xlabel= ]}")
+				.assertTextAtCursorPosition(22,
+						"HTMLLabel - Insert a template");
 	}
 
 	@Test
@@ -954,6 +1006,18 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(22, "false")
 				.applyProposal(22, "false")
 				.expectContent("graph { forcelabels=\"false\" }");
+	}
+
+	@Test
+	public void graph_label() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {graph[ label= ]}")
+				.assertTextAtCursorPosition(20,
+						"HTMLLabel - Insert a template");
+
+		// test local attribute values
+		newBuilder().append("graph {headlabel= }").assertTextAtCursorPosition(
+				17, "HTMLLabel - Insert a template");
 	}
 
 	@Test
@@ -1373,6 +1437,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void node_label() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {node[ label= ]}")
+				.assertTextAtCursorPosition(19,
+						"HTMLLabel - Insert a template");
+
+		// test local attribute values
+		newBuilder().append("graph {1[ label= ]}")
+				.assertTextAtCursorPosition(16, "HTMLLabel - Insert a template")
+				.applyProposal(16, "HTMLLabel - Insert a template");
+	}
+
+	@Test
 	public void node_pos() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {node[ lp= ]}")
@@ -1499,6 +1576,18 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void node_xlabel() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {node[ xlabel= ]}")
+				.assertTextAtCursorPosition(20,
+						"HTMLLabel - Insert a template");
+
+		// test local attribute values
+		newBuilder().append("graph {1[ xlabel= ]}").assertTextAtCursorPosition(
+				17, "HTMLLabel - Insert a template");
+	}
+
+	@Test
 	public void node_xlp() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {node[ xlp= ]}")
@@ -1508,6 +1597,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {1[ xlp= ]}").assertTextAtCursorPosition(14);
 
 		// no use to test local attribute values with prefix
+	}
+
+	@Test
+	public void subgraph_label() throws Exception {
+		newBuilder().append("graph{subgraph cluster{label = }}")
+				.assertTextAtCursorPosition(30,
+						"HTMLLabel - Insert a template");
 	}
 
 	private String[] combine(String[] array1, String... array2) {
