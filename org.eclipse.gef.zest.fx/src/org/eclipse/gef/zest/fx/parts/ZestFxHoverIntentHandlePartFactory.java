@@ -29,14 +29,14 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
- * The {@link ZestFxHoverHandlePartFactory} is a specialization of the
+ * The {@link ZestFxHoverIntentHandlePartFactory} is a specialization of the
  * {@link DefaultHoverIntentHandlePartFactory} that performs the generation
  * of "hide" and "show" hover handles.
  *
  * @author mwienand
  *
  */
-public class ZestFxHoverHandlePartFactory extends DefaultHoverIntentHandlePartFactory {
+public class ZestFxHoverIntentHandlePartFactory extends DefaultHoverIntentHandlePartFactory {
 
 	@Inject
 	private Injector injector;

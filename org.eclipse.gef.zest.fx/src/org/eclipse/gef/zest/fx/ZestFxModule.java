@@ -68,8 +68,9 @@ import org.eclipse.gef.zest.fx.parts.NodeLabelPart;
 import org.eclipse.gef.zest.fx.parts.NodePart;
 import org.eclipse.gef.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
 import org.eclipse.gef.zest.fx.parts.ZestFxContentPartFactory;
-import org.eclipse.gef.zest.fx.parts.ZestFxHoverHandlePartFactory;
+import org.eclipse.gef.zest.fx.parts.ZestFxHoverIntentHandlePartFactory;
 import org.eclipse.gef.zest.fx.parts.ZestFxRootPart;
+import org.eclipse.gef.zest.fx.parts.ZestFxSelectionFeedbackPartFactory;
 import org.eclipse.gef.zest.fx.parts.ZestFxSelectionHandlePartFactory;
 import org.eclipse.gef.zest.fx.policies.HidePolicy;
 import org.eclipse.gef.zest.fx.policies.SemanticZoomPolicy;
@@ -271,7 +272,7 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindHoverHandlePartFactoryAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(HoverIntentBehavior.HOVER_INTENT_HANDLE_PART_FACTORY))
-				.to(ZestFxHoverHandlePartFactory.class);
+				.to(ZestFxHoverIntentHandlePartFactory.class);
 	}
 
 	/**
@@ -454,6 +455,13 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindRootPartAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(IDomain.CONTENT_VIEWER_ROLE)).to(ZestFxRootPart.class)
 				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	@Override
+	protected void bindSelectionFeedbackPartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(SelectionBehavior.SELECTION_FEEDBACK_PART_FACTORY))
+				.to(ZestFxSelectionFeedbackPartFactory.class);
 	}
 
 	@Override
