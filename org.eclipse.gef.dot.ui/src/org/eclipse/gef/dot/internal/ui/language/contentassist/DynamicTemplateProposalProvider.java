@@ -40,6 +40,9 @@ public class DynamicTemplateProposalProvider
 			ContentAssistContext context, ITemplateAcceptor acceptor) {
 
 		EObject currentModel = context.getCurrentModel();
+		if (currentModel == null) {
+			super.createTemplates(templateContext, context, acceptor);
+		}
 		if (currentModel instanceof Attribute) {
 			ID attributeNameID = ((Attribute) currentModel).getName();
 			if (attributeNameID != null) {

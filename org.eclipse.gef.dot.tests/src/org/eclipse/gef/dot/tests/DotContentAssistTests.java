@@ -206,7 +206,8 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 	@Test
 	public void empty() throws Exception {
-		newBuilder().assertText("strict", "graph", "digraph")
+		newBuilder().assertText("strict", "graph", "digraph",
+				"graph - Insert a template", "digraph - Insert a template")
 				.applyProposal("strict").expectContent("strict");
 	}
 
