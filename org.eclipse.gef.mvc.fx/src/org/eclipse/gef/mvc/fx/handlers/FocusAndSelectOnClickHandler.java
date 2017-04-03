@@ -191,7 +191,7 @@ public class FocusAndSelectOnClickHandler extends AbstractHandler
 	 *         be replaced.
 	 */
 	protected boolean isAppend(MouseEvent e) {
-		return e.isControlDown();
+		return e.isShortcutDown();
 	}
 
 	/**
