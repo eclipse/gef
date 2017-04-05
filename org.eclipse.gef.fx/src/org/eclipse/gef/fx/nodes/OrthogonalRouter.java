@@ -90,8 +90,7 @@ public class OrthogonalRouter extends AbstractRouter {
 	 *         connection's curve.
 	 */
 	@Override
-	protected Point getAnchoredReferencePoint(List<Point> points,
-			int index) {
+	protected Point getAnchoredReferencePoint(List<Point> points, int index) {
 		if (index < 0 || index >= points.size()) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -102,6 +101,14 @@ public class OrthogonalRouter extends AbstractRouter {
 		IGeometry referenceGeometry = getAnchorageGeometry(referenceIndex);
 		if (referenceGeometry != null) {
 			if (geometry != null) {
+				// find opposite reference index
+				int oppositeReferenceIndex = findReferenceIndex(points,
+						index == 0 ? points.size() - 1 : 0, geometry,
+						index < points.size() - 1 ? -1 : 1);
+				if (getAnchorageGeometry(oppositeReferenceIndex) == null) {
+					return points.get(oppositeReferenceIndex);
+				}
+
 				// XXX: if a position hint is supplied for the current index,
 				// return that hint as the reference point.
 				if (index == 0) {
@@ -543,12 +550,13 @@ public class OrthogonalRouter extends AbstractRouter {
 			// update orientation hint
 			Point neighborPoint = points
 					.get(index == 0 ? index + 1 : index - 1);
-			Point delta = neighborPoint
-					.getDifference(NodeUtils.sceneToLocal(getConnection(),
+			Point refPoint = NodeUtils
+					.sceneToLocal(getConnection(),
 							NodeUtils.localToScene(key.getAnchored(),
 									anchor.getComputationParameter(key,
 											AnchoredReferencePoint.class)
-											.get())));
+											.get()));
+			Point delta = neighborPoint.getDifference(refPoint);
 			Orientation hint = null;
 			if (Math.abs(delta.x) < 5
 					&& Math.abs(delta.x) < Math.abs(delta.y)) {

@@ -3113,6 +3113,113 @@ public class BendConnectionPolicyTests {
 	}
 
 	@Test
+	public void test_snap_reuse_ref_point() throws Throwable {
+		final List<Object> contents = TestModels.getAB_AB();
+		// manipulate contents so that second anchorage starts below the first
+		// anchorage
+		((org.eclipse.gef.geometry.planar.Rectangle) contents.get(1)).setY(20);
+
+		final IViewer viewer = createViewer(contents);
+
+		// query connection part
+		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
+				.get(contents.get(contents.size() - 1));
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
+
+		// query bend policy for the connection
+		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				((DynamicAnchor) connection.getVisual().getStartAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				((DynamicAnchor) connection.getVisual().getEndAnchor())
+						.setComputationStrategy(new OrthogonalProjectionStrategy());
+				connection.getVisual().setRouter(new OrthogonalRouter());
+			}
+		});
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		final Point startPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		});
+		final Point endPoint = ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		});
+
+		// select first segment for manipulation
+		// and move down so that there are three segments
+		double moveDown = 15;
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.init();
+				// double mid point
+				int midHandle = bendPolicy.getExplicitIndexAtOrBefore(1);
+				bendPolicy.createAfter(midHandle, connection.getVisual().getPoint(1));
+				bendPolicy.selectSegment(0);
+				bendPolicy.move(new Point(), new Point(0, moveDown));
+			}
+		});
+		assertEquals(4, countExplicit(connection.getVisual()));
+		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
+		equalsUnprecise(startPoint.getTranslated(0, moveDown), ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getStartPoint();
+			}
+		}));
+		equalsUnprecise(endPoint, ctx.runAndWait(new RunnableWithResult<Point>() {
+			@Override
+			public Point run() {
+				return connection.getVisual().getEndPoint();
+			}
+		}));
+		equalsUnprecise(new Point(0.5 * startPoint.x + 0.5 * endPoint.x, startPoint.y + moveDown),
+				connection.getVisual().getPoint(1));
+		equalsUnprecise(new Point(0.5 * startPoint.x + 0.5 * endPoint.x, endPoint.y),
+				connection.getVisual().getPoint(2));
+
+		// drag segment upwards so that it snaps back to a single segment
+		double moveUp = 5;
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.move(new Point(), new Point(0, moveUp));
+			}
+		});
+		// 3 points but only 1 segment, because the copied start point is at the
+		// same position as the start point
+		assertEquals(3, countExplicit(connection.getVisual()));
+		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
+		assertEquals(startPoint, connection.getVisual().getPoint(1));
+		assertEquals(startPoint, connection.getVisual().getStartPoint());
+		assertEquals(endPoint, connection.getVisual().getEndPoint());
+
+		// commit bending to normalize the edge
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				bendPolicy.commit();
+			}
+		});
+		assertEquals(2, countExplicit(connection.getVisual()));
+		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
+		assertEquals(startPoint, connection.getVisual().getStartPoint());
+		assertEquals(endPoint, connection.getVisual().getEndPoint());
+	}
+
+	@Test
 	public void test_start_overlays_way_restore() throws Throwable {
 		final List<Object> contents = TestModels.getAB_AB();
 		final IViewer viewer = createViewer(contents);
