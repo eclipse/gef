@@ -459,7 +459,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	@Override
 	public Rectangle getBounds() {
 		List<ICurve> outlines = getOutlines();
-		if (outlines == null || outlines.size() > 0) {
+		if (outlines.size() > 0) {
 			Rectangle outlineBounds = outlines.get(0).getBounds();
 			for (int i = 1; i < outlines.size(); i++) {
 				outlineBounds.union(outlines.get(i).getBounds());
