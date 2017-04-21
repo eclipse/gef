@@ -1,4 +1,4 @@
-#Eclipse Graphical Editing Framework (GEF)
+# Eclipse Graphical Editing Framework (GEF)
 
 <div>
  <img align="left" src="/gef_eclipse_logo_360.png" width="180px">
