@@ -492,7 +492,15 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				}
 			}
 
+			int maxCount = nodeList.size() * 100;
+			int totalCount = 0;
 			for (int i = 0; i < nodeList.size(); i++) {
+				// Stop this cycle if no result can be found
+			    // Possible cause: lack of space to lay out nodes without overlapping
+			    totalCount++;
+				if (totalCount > maxCount) {
+					break;
+				}
 				SpaceTreeNode node = (SpaceTreeNode) nodeList.get(i);
 				double desiredPosition = startPosition + desiredPositions[i];
 				moveNode(node, desiredPosition);
