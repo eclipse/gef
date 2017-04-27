@@ -75,7 +75,7 @@ public class TransformLabelPolicy extends TransformPolicy {
 	 * @return The reference position in scene coordinates.
 	 */
 	// TODO: make reference position configurable via Zest properties
-	private Point getLabelReferencePointInScene(String labelRole) {
+	protected Point getLabelReferencePointInScene(String labelRole) {
 		IAttributeStore contentElement = getHost().getContent().getKey();
 		if (ZestProperties.EXTERNAL_LABEL__NE.equals(labelRole)) {
 			if (contentElement instanceof Node) {

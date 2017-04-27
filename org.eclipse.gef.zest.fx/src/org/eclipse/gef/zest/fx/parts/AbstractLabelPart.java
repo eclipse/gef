@@ -160,7 +160,7 @@ public abstract class AbstractLabelPart extends AbstractContentPart<Group> imple
 	 * @return The key via which to retrieve the position attribute for the
 	 *         label.
 	 */
-	private String getLabelPositionAttributeKey() {
+	protected String getLabelPositionAttributeKey() {
 		String labelRole = getContent().getValue();
 		String attributeKey = null;
 		if (ZestProperties.EXTERNAL_LABEL__NE.equals(labelRole)) {
