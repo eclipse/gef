@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 itemis AG and others.
+ * Copyright (c) 2012, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import org.eclipse.gef.geometry.convert.awt.AWT2Geometry;
 import org.eclipse.gef.geometry.convert.awt.Geometry2AWT;
+import org.eclipse.gef.geometry.euclidean.Vector;
 import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef.geometry.planar.BezierCurve;
 import org.eclipse.gef.geometry.planar.CubicCurve;
@@ -260,6 +261,54 @@ public class BezierCurveTests {
 		Ellipse e = new Ellipse(126.0, 90.0, 378.0, 270.0);
 		Point[] inters = e.getIntersections(r.getOutline());
 		assertEquals(4, inters.length);
+	}
+
+	@Test
+	public void test_getOffsetUnprocessed_cubic() {
+		BezierCurve c = new BezierCurve(10, 10, 10, 50, 100, 50, 100, 10);
+		double dist = 5;
+		PolyBezier offsetUnprocessed = c.getOffsetUnprocessed(dist);
+		assertTrue(offsetUnprocessed.toBezier().length < 30);
+		BezierCurve d = c.getDerivative();
+		for (double t : new double[] { 0, 0.25, 0.5, 0.75, 1 }) {
+			Point realOffsetPoint = c.get(t)
+					.getTranslated(new Vector(d.get(t))
+							.getOrthogonalComplement().getNormalized()
+							.getMultiplied(dist).toPoint());
+			Point op = offsetUnprocessed.getProjection(realOffsetPoint);
+			assertTrue(Math.abs(op.getDistance(c.get(t)) - dist) < 1d);
+		}
+	}
+
+	@Test
+	public void test_getOffsetUnprocessed_line() {
+		BezierCurve c = new BezierCurve(10, 10, 50, 50);
+		double dist = 5;
+		PolyBezier offsetUnprocessed = c.getOffsetUnprocessed(dist);
+		assertEquals(1, offsetUnprocessed.toBezier().length);
+		BezierCurve d = c.getDerivative();
+		for (double t : new double[] { 0, 0.5, 1 }) {
+			assertEquals(
+					c.get(t).getTranslated(new Vector(d.get(t))
+							.getOrthogonalComplement().getNormalized()
+							.getMultiplied(dist).toPoint()),
+					offsetUnprocessed.toBezier()[0].get(t));
+		}
+	}
+
+	@Test
+	public void test_getOffsetUnprocessed_quad() {
+		BezierCurve c = new BezierCurve(10, 10, 50, 50, 100, 10);
+		double dist = 5;
+		PolyBezier offsetUnprocessed = c.getOffsetUnprocessed(dist);
+		assertTrue(offsetUnprocessed.toBezier().length < 20);
+		BezierCurve d = c.getDerivative();
+		for (double t : new double[] { 0, 0.5, 1 }) {
+			assertTrue(offsetUnprocessed.contains(c.get(t)
+					.getTranslated(new Vector(d.get(t))
+							.getOrthogonalComplement().getNormalized()
+							.getMultiplied(dist).toPoint())));
+		}
 	}
 
 	@Test

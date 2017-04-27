@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 itemis AG and others.
+ * Copyright (c) 2011, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,12 +17,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.gef.geometry.euclidean.Angle;
+import org.eclipse.gef.geometry.euclidean.Straight;
 import org.eclipse.gef.geometry.euclidean.Vector;
 import org.eclipse.gef.geometry.internal.utils.PointListUtils;
 import org.eclipse.gef.geometry.internal.utils.PrecisionUtils;
@@ -43,6 +47,611 @@ import org.eclipse.gef.geometry.projective.Vector3D;
 public class BezierCurve extends AbstractGeometry
 		implements ICurve, ITranslatable<BezierCurve>, IScalable<BezierCurve>,
 		IRotatable<BezierCurve> {
+
+	private static class CuspAwareOffsetApproximator {
+
+		private static class Cusp extends PartialCurve {
+			public Cusp(BezierCurve c, double t0, double t1) {
+				super(c, t0, t1);
+			}
+		}
+
+		private static interface ICurveSimplifier {
+			public List<PartialCurve> simplify(BezierCurve curve);
+		}
+
+		private static interface ICuspSplitter {
+			public List<PartialCurve> splitAtCusps(BezierCurve curve);
+		}
+
+		private static interface IOffsetAlgorithm {
+			public static class PartialOffset {
+				public BezierCurve offset;
+				public double curveStart;
+				public double curveEnd;
+
+				public PartialOffset(BezierCurve offset, double t0, double t1) {
+					curveStart = t0;
+					curveEnd = t1;
+					this.offset = offset;
+				}
+
+				public PartialOffset(PartialCurve pc, BezierCurve offset) {
+					this(offset, pc.start, pc.end);
+				}
+			}
+
+			public List<PartialOffset> computeOffset(BezierCurve curve,
+					double distance);
+		}
+
+		private static class LasserCurveSimplifier implements ICurveSimplifier {
+			private static final int DEFAULT_MAX_DEPTH = 16;
+
+			private int maxDepth;
+
+			public LasserCurveSimplifier() {
+				this(DEFAULT_MAX_DEPTH);
+			}
+
+			public LasserCurveSimplifier(int maxDepth) {
+				this.maxDepth = maxDepth;
+			}
+
+			private double computeAngleSum(BezierCurve curve) {
+				double angleSum = 0d;
+				Point[] points = curve.getPoints();
+				for (int i = 0; i < points.length - 2; i++) {
+					Vector first = new Vector(points[i], points[i + 1]);
+					Vector second = new Vector(points[i + 1], points[i + 2]);
+					if (first.getLength() * second.getLength() > 0) {
+						Angle angle = first.getAngle(second);
+						angleSum += angle.rad();
+					}
+				}
+				return angleSum;
+			}
+
+			private List<PartialCurve> computeLasserWithParams(
+					PartialCurve partialCurve, int currentDepth) {
+				BezierCurve curve = partialCurve.curve
+						.getClipped(partialCurve.start, partialCurve.end);
+				double angleSum = computeAngleSum(curve);
+				List<PartialCurve> spline = new ArrayList<>();
+				if (currentDepth < maxDepth && angleSum > Math.PI) {
+					PartialCurve[] split = partialCurve.split();
+					List<PartialCurve> left = computeLasserWithParams(split[0],
+							currentDepth + 1);
+					List<PartialCurve> right = computeLasserWithParams(split[1],
+							currentDepth + 1);
+					spline.addAll(left);
+					spline.addAll(right);
+				} else {
+					spline.add(partialCurve);
+				}
+				return spline;
+			}
+
+			@Override
+			public List<PartialCurve> simplify(BezierCurve curve) {
+				return computeLasserWithParams(new PartialCurve(curve, 0, 1),
+						0);
+			}
+		}
+
+		private static class PartialCurve {
+			public BezierCurve curve;
+			public double start;
+			public double end;
+
+			public PartialCurve(BezierCurve c, double t0, double t1) {
+				curve = c;
+				start = t0;
+				end = t1;
+			}
+
+			public PartialCurve[] split() {
+				double mid = start + 0.5 * (end - start);
+				return new PartialCurve[] { new PartialCurve(curve, start, mid),
+						new PartialCurve(curve, mid, end) };
+			}
+		}
+
+		private static class SamplingCuspSplitter implements ICuspSplitter {
+			private static final int DEFAULT_MAX_DEPTH = 4;
+			private static final int DEFAULT_SAMPLE_COUNT = 128;
+			private static final double DEFAULT_MIN_ANGLE_RAD = Angle
+					.fromDeg(10).rad();
+
+			private int sampleCount;
+			private double minAngleRad;
+			private int maxDepth;
+			private BezierCurve curve;
+
+			public SamplingCuspSplitter() {
+				this(DEFAULT_SAMPLE_COUNT, DEFAULT_MIN_ANGLE_RAD,
+						DEFAULT_MAX_DEPTH);
+			}
+
+			public SamplingCuspSplitter(int sampleCount, double minAngle,
+					int maxDepth) {
+				if (sampleCount < 2) {
+					throw new IllegalArgumentException("sampleCount < 2");
+				}
+				this.sampleCount = sampleCount;
+				this.minAngleRad = minAngle;
+				this.maxDepth = maxDepth;
+			}
+
+			private List<Cusp> getCusps() {
+				List<Cusp> cusps = new ArrayList<>();
+				BezierCurve hodograph = curve.getDerivative();
+				Point lastDirection = null;
+				double lastT = 0;
+				for (int i = 0; i < sampleCount; i++) {
+					double t = i / (double) (sampleCount - 1);
+					Point direction = hodograph.get(t);
+					if (lastDirection != null && !direction.equals(0, 0)) {
+						Angle angle = new Vector(direction)
+								.getAngle(new Vector(lastDirection));
+						if (angle.rad() > minAngleRad) {
+							cusps.add(refineCusp(lastT, t, 0));
+						}
+					}
+					if (!direction.equals(0, 0)) {
+						lastDirection = direction;
+						lastT = t;
+					}
+				}
+				if (cusps.size() > 1) {
+					// filter out same cusps
+					Cusp lastCusp = cusps.get(cusps.size() - 1);
+					for (int i = cusps.size() - 2; i >= 0; i--) {
+						Cusp c = cusps.get(i);
+						if (curve.get(c.start)
+								.getDistance(curve.get(lastCusp.start)) < 1) {
+							// advance cusp parameters
+							if (lastCusp.start > c.start) {
+								lastCusp.start = c.start;
+							}
+							if (lastCusp.end < c.end) {
+								lastCusp.end = c.end;
+							}
+							// remove same cusp
+							cusps.remove(i);
+						} else {
+							lastCusp = c;
+						}
+					}
+				}
+				return cusps;
+			}
+
+			private Cusp refineCusp(double t0, double t1, int depth) {
+				// do not refine further if the cusp is already precise
+				Point pa = curve.get(t0);
+				Point pb = curve.get(t1);
+				if (pa.getDistance(pb) < 0.2) {
+					return new Cusp(curve, t0, t1);
+				}
+				BezierCurve hodograph = curve.getDerivative();
+				Double maxRad = null;
+				Point lastDirection = null;
+				double lastT = 0;
+				double maxA = t0, maxB = t1;
+				for (int i = 0; i < sampleCount; i++) {
+					double t = t0 + (t1 - t0) * i / (sampleCount - 1);
+					Point direction = hodograph.get(t);
+					if (lastDirection != null && !direction.equals(0, 0)) {
+						Angle angle = new Vector(direction)
+								.getAngle(new Vector(lastDirection));
+						if (maxRad == null || angle.rad() > maxRad) {
+							maxRad = angle.rad();
+							maxA = lastT;
+							maxB = t;
+						}
+					}
+					if (!direction.equals(0, 0)) {
+						lastDirection = direction;
+						lastT = t;
+					}
+				}
+				if (depth < maxDepth) {
+					return refineCusp(maxA, maxB, depth + 1);
+				} else {
+					return new Cusp(curve, maxA, maxB);
+				}
+			}
+
+			@Override
+			public List<PartialCurve> splitAtCusps(BezierCurve curve) {
+				this.curve = curve;
+				List<Cusp> cusps = getCusps();
+				List<PartialCurve> cc = new ArrayList<>();
+				if (cusps.isEmpty()) {
+					cc.add(new PartialCurve(curve, 0, 1));
+					return cc;
+				}
+				// add initial curve
+				cc.add(new PartialCurve(curve.split(cusps.get(0).start)[0], 0,
+						1));
+				// and initial cusp
+				cc.add(cusps.get(0));
+				for (int i = 1; i < cusps.size(); i++) {
+					// add curve from previous end to current start
+					cc.add(new PartialCurve(curve.getClipped(
+							cusps.get(i - 1).end, cusps.get(i).start), 0, 1));
+					// add cusp
+					cc.add(cusps.get(i));
+				}
+				// add final curve
+				cc.add(new PartialCurve(
+						curve.split(cusps.get(cusps.size() - 1).end)[1], 0, 1));
+				return cc;
+			}
+		}
+
+		public static class TillerHansonOffsetAlgorithm
+				implements IOffsetAlgorithm {
+			private static class ControlLeg {
+				public ControlVertex start;
+				public ControlVertex end;
+
+				public ControlLeg(ControlVertex start, ControlVertex end) {
+					this.start = new ControlVertex(start.position,
+							start.multiplicity);
+					this.end = new ControlVertex(end.position,
+							end.multiplicity);
+				}
+			}
+
+			private static class ControlVertex {
+				public Point position;
+				public int multiplicity;
+
+				public ControlVertex(Point pos) {
+					this.position = pos.getCopy();
+					this.multiplicity = 1;
+				}
+
+				public ControlVertex(Point pos, int mult) {
+					this.position = pos.getCopy();
+					this.multiplicity = mult;
+				}
+			}
+
+			private static final double DEFAULT_ACCEPTABLE_ERROR = 0.1;
+			private static final int DEFAULT_MAX_DEPTH = 32;
+
+			private double acceptableError;
+			private int maxDepth;
+			private double distance;
+
+			public TillerHansonOffsetAlgorithm() {
+				this(DEFAULT_ACCEPTABLE_ERROR, DEFAULT_MAX_DEPTH);
+			}
+
+			public TillerHansonOffsetAlgorithm(double acceptableError,
+					int maxDepth) {
+				this.acceptableError = acceptableError;
+				this.maxDepth = maxDepth;
+			}
+
+			private BezierCurve approximateOffset(BezierCurve curve) {
+				// collect ControlVertex objects for all unique subsequent
+				// points
+				// of the curve
+				Point[] curvePoints = curve.getPoints();
+				List<ControlVertex> curveVertices = new ArrayList<>();
+				curveVertices.add(new ControlVertex(curvePoints[0]));
+				for (int i = 1; i < curvePoints.length; i++) {
+					Point p = curvePoints[i];
+					ControlVertex lastVertex = curveVertices
+							.get(curveVertices.size() - 1);
+					if (lastVertex.position.equals(p)) {
+						lastVertex.multiplicity++;
+					} else {
+						curveVertices.add(new ControlVertex(p));
+					}
+				}
+
+				// we need at least two vertices to be able to approximate an
+				// offset
+				if (curveVertices.size() < 2) {
+					return curve.getCopy();
+				}
+
+				// build ControlLeg objects for the ControlVertex objects
+				List<ControlLeg> legs = new ArrayList<>();
+				for (int i = 0; i < curveVertices.size() - 1; i++) {
+					ControlVertex start = curveVertices.get(i);
+					ControlVertex end = curveVertices.get(i + 1);
+					legs.add(new ControlLeg(start, end));
+				}
+
+				// compute offset control legs
+				List<ControlLeg> offsetLegs = new ArrayList<>();
+				for (ControlLeg leg : legs) {
+					Vector direction = new Vector(leg.start.position,
+							leg.end.position);
+					if (direction.isNull()) {
+						// should not be possible since we eliminated all
+						// subsequent
+						// equal points using ControlVertex
+						throw new IllegalStateException(
+								"[ERROR] Leg direction cannot be computed because start and end position are the same.");
+					} else {
+						Point translation = direction.getOrthogonalComplement()
+								.getNormalized().getMultiplied(distance)
+								.toPoint();
+						ControlVertex offsetStart = new ControlVertex(
+								leg.start.position.getTranslated(translation));
+						ControlVertex offsetEnd = new ControlVertex(
+								leg.end.position.getTranslated(translation));
+						offsetLegs.add(new ControlLeg(offsetStart, offsetEnd));
+					}
+				}
+
+				// compute intersections between offset ControlLeg objects
+				List<ControlVertex> offsetVertices = new ArrayList<>();
+				offsetVertices.add(offsetLegs.get(0).start);
+				for (int i = 1; i < offsetLegs.size(); i++) {
+					// find intersection with previous leg
+					ControlLeg previousLeg = offsetLegs.get(i - 1);
+					ControlLeg currentLeg = offsetLegs.get(i);
+					Straight s1 = new Straight(previousLeg.start.position,
+							previousLeg.end.position);
+					Straight s2 = new Straight(currentLeg.start.position,
+							currentLeg.end.position);
+					Vector intersection = s1.getIntersection(s2);
+					if (intersection == null) {
+						// use mid of legs' endpoints as the intersection
+						Point p1 = previousLeg.end.position;
+						Point p2 = currentLeg.start.position;
+						Point mid = new Point(p1.x + p2.x, p1.y + p2.y)
+								.getScaled(0.5);
+						intersection = new Vector(mid);
+					}
+					offsetVertices.add(new ControlVertex(intersection.toPoint(),
+							currentLeg.start.multiplicity));
+				}
+				offsetVertices.add(offsetLegs.get(offsetLegs.size() - 1).end);
+
+				// collect offset points, respecting multiplicity of vertices
+				List<Point> offsetPoints = new ArrayList<>();
+				for (ControlVertex vertex : offsetVertices) {
+					for (int i = 0; i < vertex.multiplicity; i++) {
+						offsetPoints.add(vertex.position.getCopy());
+					}
+				}
+
+				// construct bezier curve from approx offset points
+				return new BezierCurve(offsetPoints.toArray(new Point[0]));
+			}
+
+			@Override
+			public List<PartialOffset> computeOffset(BezierCurve curve,
+					double distance) {
+				this.distance = distance;
+				return computeTillerHansonWithParams(
+						new PartialCurve(curve, 0, 1), 0);
+			}
+
+			private double computeOffsetError(BezierCurve curve,
+					BezierCurve hodograph, BezierCurve approx) {
+				Double error = null;
+				int N = curve.getPoints().length * 4;
+				for (int i = 0; i < N; i++) {
+					double t = i / (double) (N - 1);
+					// evaluate offset
+					Point position = curve.get(t);
+					Point derivative = hodograph.get(t);
+					Vector tangent = new Vector(derivative);
+					if (tangent.getLength() > 0) {
+						Point direction = tangent.getNormalized()
+								.getOrthogonalComplement()
+								.getMultiplied(distance).toPoint();
+						Point offset = position.getTranslated(direction);
+						double delta = approx.get(t).getDistance(offset);
+						if (error == null || delta > error) {
+							error = delta;
+						}
+					}
+				}
+				return error == null ? -1 : error.doubleValue();
+			}
+
+			private List<PartialOffset> computeTillerHansonWithParams(
+					PartialCurve partialCurve, int currentDepth) {
+				BezierCurve curve = partialCurve.curve
+						.getClipped(partialCurve.start, partialCurve.end);
+				BezierCurve approx = approximateOffset(curve);
+				double error = computeOffsetError(curve, curve.getDerivative(),
+						approx);
+				List<PartialOffset> sapprox = new ArrayList<>();
+				if (currentDepth < maxDepth && error >= acceptableError) {
+					PartialCurve[] s = partialCurve.split();
+					List<PartialOffset> l = computeTillerHansonWithParams(s[0],
+							currentDepth + 1);
+					List<PartialOffset> r = computeTillerHansonWithParams(s[1],
+							currentDepth + 1);
+					sapprox.addAll(l);
+					sapprox.addAll(r);
+				} else if (error >= 0) {
+					sapprox.add(new PartialOffset(partialCurve, approx));
+				}
+				return sapprox;
+			}
+		}
+
+		private ICurveSimplifier curveSimplifier;
+		private IOffsetAlgorithm offsetAlgorithm;
+		private ICuspSplitter cuspSplitter;
+
+		public CuspAwareOffsetApproximator() {
+			this(new LasserCurveSimplifier(), new TillerHansonOffsetAlgorithm(),
+					new SamplingCuspSplitter());
+		}
+
+		public CuspAwareOffsetApproximator(ICurveSimplifier curveSimplifier,
+				IOffsetAlgorithm offsetAlgorithm, ICuspSplitter cuspSplitter) {
+			this.curveSimplifier = curveSimplifier;
+			this.offsetAlgorithm = offsetAlgorithm;
+			this.cuspSplitter = cuspSplitter;
+		}
+
+		public OffsetApproximation approximateOffset(BezierCurve curve,
+				double distance) {
+			List<BezierCurve> simpleCurve = new ArrayList<>();
+			List<BezierCurve> approxOffsetCurve = new ArrayList<>();
+			Map<Integer, Integer> approx2simple = new HashMap<>();
+			Map<Integer, Double> a2sParamStart = new HashMap<>();
+			Map<Integer, Double> a2sParamEnd = new HashMap<>();
+
+			List<PartialCurve> cuspsExtracted = cuspSplitter
+					.splitAtCusps(curve);
+			for (PartialCurve cc : cuspsExtracted) {
+				if (!(cc instanceof Cusp)) {
+					// remove self intersections
+					List<PartialCurve> simplified = curveSimplifier
+							.simplify(cc.curve);
+					List<BezierCurve> simplifiedCurves = new ArrayList<>(
+							simplified.size());
+					for (PartialCurve pc : simplified) {
+						simplifiedCurves
+								.add(pc.curve.getClipped(pc.start, pc.end));
+					}
+					int simpleSize = simpleCurve.size();
+					simpleCurve.addAll(simplifiedCurves);
+					for (int j = 0; j < simplifiedCurves.size(); j++) {
+						BezierCurve simple = simplifiedCurves.get(j);
+						List<IOffsetAlgorithm.PartialOffset> parts = offsetAlgorithm
+								.computeOffset(simple, distance);
+						for (IOffsetAlgorithm.PartialOffset part : parts) {
+							List<PartialCurve> splitApprox = curveSimplifier
+									.simplify(part.offset);
+							int approxSize = approxOffsetCurve.size();
+							for (PartialCurve pc : splitApprox) {
+								approxOffsetCurve.add(
+										pc.curve.getClipped(pc.start, pc.end));
+							}
+							for (int i = 0; i < splitApprox.size(); i++) {
+								approx2simple.put(approxSize + i,
+										simpleSize + j);
+								PartialCurve pca = splitApprox.get(i);
+								double width = part.curveEnd - part.curveStart;
+								double c0 = part.curveStart + pca.start * width;
+								double c1 = part.curveStart + pca.end * width;
+								a2sParamStart.put(approxSize + i, c0);
+								a2sParamEnd.put(approxSize + i, c1);
+							}
+						}
+					}
+				} else {
+					// the point of the arc serves as the center of the arc
+					Point center = curve.get(cc.start / 2 + cc.end / 2);
+
+					// compute start and end normals
+					Point startDirection = curve.getDerivative().get(cc.start);
+					while (startDirection.equals(0, 0) && cc.start > 0) {
+						cc.start -= 0.0001;
+						if (cc.start < 0) {
+							cc.start = 0;
+						}
+						startDirection = curve.getDerivative().get(cc.start);
+					}
+					Point endDirection = curve.getDerivative().get(cc.end);
+					while (endDirection.equals(0, 0) && cc.end < 1) {
+						cc.end += 0.0001;
+						if (cc.end > 1) {
+							cc.end = 1;
+						}
+						endDirection = curve.getDerivative().get(cc.end);
+					}
+					if (startDirection.equals(0, 0)) {
+						startDirection.setLocation(endDirection);
+					}
+					if (endDirection.equals(0, 0)) {
+						endDirection.setLocation(startDirection);
+					}
+					if (startDirection.equals(0, 0)
+							|| endDirection.equals(0, 0)) {
+						System.out.println("ERROR");
+						Point baselineDirection = new Vector(cc.curve.get(0),
+								cc.curve.get(1)).toPoint();
+						startDirection.setLocation(baselineDirection);
+						endDirection.setLocation(baselineDirection);
+					}
+
+					Vector startNormal = new Vector(startDirection)
+							.getNormalized().getOrthogonalComplement();
+					Vector endNormal = new Vector(endDirection).getNormalized()
+							.getOrthogonalComplement();
+
+					// compute angle between start and end normals
+					Angle angleCCW = startNormal.getAngleCCW(endNormal);
+					Angle angleCW = startNormal.getAngleCW(endNormal);
+
+					// compute start start angle and length angle for the
+					// arc
+					Angle arcStartAngle;
+					Angle arcLengthAngle;
+					if (angleCCW.rad() < angleCW.rad()) {
+						arcStartAngle = new Vector(1, 0)
+								.getAngleCCW(startNormal);
+						arcLengthAngle = angleCCW;
+					} else {
+						arcStartAngle = new Vector(1, 0).getAngleCCW(endNormal);
+						arcLengthAngle = angleCW;
+					}
+
+					// compute arc approximation
+					double absDistance = Math.abs(distance);
+					PolyBezier arc = new Arc(center.x - absDistance,
+							center.y - absDistance, 2 * absDistance,
+							2 * absDistance, arcStartAngle,
+							arcLengthAngle).getRotatedCCW(
+									Angle.fromDeg(distance < 0 ? 180 : 0));
+					List<BezierCurve> arcBezier = Arrays.asList(arc.toBezier());
+
+					// ensure arc beziers are in the correct order
+					Point lastOffsetPoint = curve.get(cc.start).getTranslated(
+							startNormal.getMultiplied(distance).toPoint());
+					if (lastOffsetPoint.getDistance(
+							arcBezier.get(0).getP1()) > lastOffsetPoint
+									.getDistance(
+											arcBezier.get(arcBezier.size() - 1)
+													.getP2())) {
+						// reverse curves
+						Collections.reverse(arcBezier);
+						for (int i = 0; i < arcBezier.size(); i++) {
+							BezierCurve c = arcBezier.get(i);
+							List<Point> pts = Arrays.asList(c.getPoints());
+							Collections.reverse(pts);
+							arcBezier.set(i, new BezierCurve(
+									pts.toArray(new Point[] {})));
+						}
+					}
+
+					// add arc and map to simple curve
+					int approxSize = approxOffsetCurve.size();
+					int simpleSize = simpleCurve.size();
+					int i = 0;
+					for (BezierCurve c : arcBezier) {
+						approxOffsetCurve.add(c);
+						approx2simple.put(approxSize + i, simpleSize - 1);
+						a2sParamStart.put(approxSize + i, 1d);
+						a2sParamEnd.put(approxSize + i, 1d);
+						i++;
+					}
+				}
+			}
+
+			return new OffsetApproximation(curve, distance, simpleCurve,
+					approxOffsetCurve, approx2simple, a2sParamStart,
+					a2sParamEnd);
+		}
+	}
 
 	/**
 	 * <p>
@@ -290,6 +899,10 @@ public class BezierCurve extends AbstractGeometry
 
 	}
 
+	// TODO: use constants that limit the number of iterations for the
+	// different iterative/recursive algorithms:
+	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
+
 	/**
 	 * An {@link IntervalPair} combines two {@link BezierCurve}s and their
 	 * corresponding parameter ranges.
@@ -508,7 +1121,6 @@ public class BezierCurve extends AbstractGeometry
 		public boolean isPLonger() {
 			return (pi.b - pi.a) > (qi.b - qi.a);
 		}
-
 	}
 
 	/**
@@ -527,13 +1139,454 @@ public class BezierCurve extends AbstractGeometry
 		public boolean pIsBetterThanQ(Point p, Point q);
 	}
 
+	private static class LocalIntersectionOffsetRefiner {
+
+		private static interface ICurveIntersector {
+			public List<Point> getIntersections(BezierCurve cp, BezierCurve cq);
+		}
+
+		private static interface IGlobalIntersectionDetector {
+			public boolean isGlobalIntersection(OffsetApproximation oa,
+					int fstApproxIndex, int sndApproxIndex);
+		}
+
+		private static class Intersection {
+			public int ai;
+			public double ap;
+			public int bi;
+			public double bp;
+
+			public Intersection(int ai, double ap, int bi, double bp) {
+				this.ai = ai;
+				this.ap = ap;
+				this.bi = bi;
+				this.bp = bp;
+			}
+
+			@Override
+			public String toString() {
+				return ai + "," + ap + " : " + bi + "," + bp;
+			}
+		}
+
+		private static class LineSimilarityCurveIntersector
+				implements ICurveIntersector {
+			private static final double DEFAULT_LINE_SIMILARITY_THRESHOLD = 0.2d;
+			private static final int DEFAULT_MAX_DEPTH = 32;
+
+			private double lineSimilarityThreshold;
+			private int maxDepth;
+
+			public LineSimilarityCurveIntersector() {
+				this(DEFAULT_LINE_SIMILARITY_THRESHOLD, DEFAULT_MAX_DEPTH);
+			}
+
+			public LineSimilarityCurveIntersector(
+					double lineSimilarityThreshold, int maxDepth) {
+				this.lineSimilarityThreshold = lineSimilarityThreshold;
+				this.maxDepth = maxDepth;
+			}
+
+			@Override
+			public List<Point> getIntersections(BezierCurve cp,
+					BezierCurve cq) {
+				return getIntersections(cp, cq, 0);
+			}
+
+			private List<Point> getIntersections(BezierCurve cp, BezierCurve cq,
+					int currentDepth) {
+				// throw away curves where the control bounds are separate
+				if (!cp.getControlBounds().touches(cq.getControlBounds())) {
+					return Collections.emptyList();
+				}
+				// line intersection approximation
+				double lineSimilarityP = LineSimilarity(cp);
+				if (lineSimilarityP < lineSimilarityThreshold) {
+					double lineSimilarityQ = LineSimilarity(cq);
+					if (lineSimilarityQ < lineSimilarityThreshold) {
+						// compute line intersection
+						Point baselineIntersection = cp.toLine()
+								.getIntersection(cq.toLine());
+						if (baselineIntersection == null) {
+							return Collections.emptyList();
+						}
+						if (baselineIntersection != null) {
+							// project onto both curves
+							Point p = cp.getProjection(baselineIntersection);
+							Point q = cq.getProjection(baselineIntersection);
+							// return middle of projections as intersection
+							Point approxIntersection = new Rectangle(p, q)
+									.getCenter();
+							ArrayList<Point> intersections = new ArrayList<>();
+							intersections.add(approxIntersection);
+							return intersections;
+						}
+					}
+				}
+				// subdivision
+				ArrayList<Point> intersections = new ArrayList<>();
+				if (currentDepth < maxDepth) {
+					BezierCurve[] pSplit = cp.split(0.5);
+					BezierCurve[] qSplit = cq.split(0.5);
+					intersections.addAll(getIntersections(pSplit[0], qSplit[0],
+							currentDepth + 1));
+					intersections.addAll(getIntersections(pSplit[0], qSplit[1],
+							currentDepth + 1));
+					intersections.addAll(getIntersections(pSplit[1], qSplit[0],
+							currentDepth + 1));
+					intersections.addAll(getIntersections(pSplit[1], qSplit[1],
+							currentDepth + 1));
+				}
+				return intersections;
+			}
+		}
+
+		private static class WindingGlobalIntersectionDetector
+				implements IGlobalIntersectionDetector {
+			private static final double DEFAULT_SAMPLE_DISTANCE = 2d;
+			private static final int DEFAULT_SAMPLE_COUNT = 36;
+
+			private int sampleCount;
+			private double sampleDistance;
+
+			public WindingGlobalIntersectionDetector() {
+				this(DEFAULT_SAMPLE_COUNT, DEFAULT_SAMPLE_DISTANCE);
+			}
+
+			public WindingGlobalIntersectionDetector(int sampleCount,
+					double sampleDistance) {
+				this.sampleCount = sampleCount;
+				this.sampleDistance = sampleDistance;
+			}
+
+			private double determineAngle(List<BezierCurve> inputCurves) {
+				// sample input segments with minimum distance
+				List<Point> samples = new ArrayList<>();
+				for (BezierCurve c : inputCurves) {
+					samples.addAll(sample(c));
+				}
+				// compute signed angle from the samples
+				double signedAngleSum = 0d;
+				for (int s = 0; s < samples.size() - 3; s++) {
+					Point p = samples.get(s);
+					Point q = samples.get(s + 1);
+					Point r = samples.get(s + 2);
+					Vector u = new Vector(p, q);
+					Vector v = new Vector(q, r);
+					if (u.getLength() * v.getLength() > 0) {
+						double ccw = u.getAngleCCW(v).rad();
+						double cw = u.getAngleCW(v).rad();
+						if (ccw < cw) {
+							signedAngleSum += ccw;
+						} else {
+							signedAngleSum -= cw;
+						}
+					}
+				}
+				return signedAngleSum;
+			}
+
+			@Override
+			public boolean isGlobalIntersection(OffsetApproximation oa,
+					int fstApproxIndex, int sndApproxIndex) {
+				// extract indices of the simplified input curve
+				Integer simpleI = oa.getInputIndex(fstApproxIndex);
+				Integer simpleJ = oa.getInputIndex(sndApproxIndex);
+				if (simpleI == null || simpleJ == null) {
+					throw new IllegalStateException(
+							"OffsetApproximator does not map all offset approximation segments to the simplified input curve segments.");
+				}
+
+				// query the simplified input curve
+				List<BezierCurve> simpleCurve = oa.getSimplifiedInputCurve();
+
+				// query parameters for the simplified input curve
+				Double ips = oa.getInputStartParam(fstApproxIndex);
+				Double jpe = oa.getInputEndParam(sndApproxIndex);
+
+				// construct input curve segments corresponding to
+				// this part of the offset
+				List<BezierCurve> inputCurves = new ArrayList<>();
+				if (simpleJ > simpleI) {
+					BezierCurve sl = simpleCurve.get(simpleI).split(ips)[1];
+					inputCurves.add(sl);
+					for (int n = simpleI + 1; n < simpleJ; n++) {
+						inputCurves.add(simpleCurve.get(n));
+					}
+					BezierCurve sr = simpleCurve.get(simpleJ).split(jpe)[0];
+					inputCurves.add(sr);
+				} else {
+					inputCurves
+							.add(simpleCurve.get(simpleI).getClipped(ips, jpe));
+				}
+
+				return Math.abs(determineAngle(inputCurves)) >= Math.PI;
+			}
+
+			private List<Point> sample(BezierCurve curve) {
+				List<Point> pts = new ArrayList<>();
+				for (int i = -1; i < sampleCount; i++) {
+					double t = (i + 1) / (double) sampleCount;
+					if (pts.isEmpty()) {
+						pts.add(curve.get(t));
+					} else {
+						Point pt = curve.get(t);
+						if (pts.get(pts.size() - 1)
+								.getDistance(pt) >= sampleDistance) {
+							pts.add(pt);
+						}
+					}
+				}
+				return pts;
+			}
+		}
+
+		private static final double DEFAULT_END_PARAM_PERCENTAGE = 0.02;
+		// XXX: the containment epsilon has to be greater than the acceptable
+		// offset error (see
+		// TillerHansonOffsetAlgorithm#DEFAULT_ACCEPTABLE_ERROR)
+		private static final double DEFAULT_CONTAINMENT_EPSILON = 0.02;
+
+		private double endParamPercentage;
+		private double containmentEpsilon;
+		private ICurveIntersector curveIntersector;
+		private IGlobalIntersectionDetector globalIntersectionDetector;
+
+		public LocalIntersectionOffsetRefiner() {
+			this(new LineSimilarityCurveIntersector(),
+					new WindingGlobalIntersectionDetector(),
+					DEFAULT_END_PARAM_PERCENTAGE, DEFAULT_CONTAINMENT_EPSILON);
+		}
+
+		public LocalIntersectionOffsetRefiner(
+				ICurveIntersector curveIntersector,
+				IGlobalIntersectionDetector globalIntersectionDetector,
+				double endParamPercentage, double containmentEpsilon) {
+			this.curveIntersector = curveIntersector;
+			this.globalIntersectionDetector = globalIntersectionDetector;
+			this.endParamPercentage = endParamPercentage;
+			this.containmentEpsilon = containmentEpsilon;
+		}
+
+		public PolyBezier refine(OffsetApproximation oa) {
+			// record intersections in the offset that need to be removed
+			List<BezierCurve> approxOffset = oa.getApproximatedOffsetCurve();
+			List<Intersection> offsetIntersections = new ArrayList<>();
+			for (int i = 0; i < approxOffset.size() - 1; i++) {
+				BezierCurve a = approxOffset.get(i);
+				for (int j = i + 1; j < approxOffset.size(); j++) {
+					BezierCurve b = approxOffset.get(j);
+					Point[] intersections = curveIntersector
+							.getIntersections(a, b).toArray(new Point[0]);
+					if (intersections.length > 0) {
+						// compute intersection clip parameters
+						double minA = 1, maxB = 0;
+						for (int k = 0; k < intersections.length; k++) {
+							double ta = a.getParameterAt(
+									a.getProjection(intersections[k]));
+							double tb = b.getParameterAt(
+									b.getProjection(intersections[k]));
+							if (ta < minA) {
+								minA = ta;
+							}
+							if (tb > maxB) {
+								maxB = tb;
+							}
+						}
+
+						// disregard start/end intersections
+						if (j == i + 1 && intersections.length == 1
+								&& minA > (1 - endParamPercentage)
+								&& maxB < endParamPercentage) {
+							continue;
+						}
+						// disregard global intersections
+						if (globalIntersectionDetector.isGlobalIntersection(oa,
+								i, j)) {
+							continue;
+						}
+
+						offsetIntersections
+								.add(new Intersection(i, minA, j, maxB));
+					}
+				}
+			}
+
+			// sort intersections by nesting
+			List<Intersection> toRemove = new ArrayList<>();
+			if (offsetIntersections.size() > 1) {
+				for (int i = 0; i < offsetIntersections.size(); i++) {
+					Intersection fst = offsetIntersections.get(i);
+					boolean nesting = false;
+					List<Integer> nested = new ArrayList<>();
+					for (int j = i + 1; j < offsetIntersections.size(); j++) {
+						Intersection snd = offsetIntersections.get(j);
+						boolean lo = fst.ai < snd.ai
+								|| fst.ai == snd.ai && fst.ap <= snd.ap;
+						boolean hi = fst.bi > snd.bi
+								|| fst.bi == snd.bi && fst.bp <= snd.bp;
+						if (lo && hi) {
+							nesting = true;
+							nested.add(j);
+						}
+					}
+					if (nesting) {
+						Collections.reverse(nested);
+						for (int j : nested) {
+							offsetIntersections.remove(j);
+						}
+					}
+					toRemove.add(fst);
+				}
+			} else if (offsetIntersections.size() == 1) {
+				toRemove.add(offsetIntersections.get(0));
+			}
+
+			// clip offset at intersections and record indices of offset
+			// segments that need to be removed completely
+			List<Integer> indicesToRemove = new ArrayList<>();
+			for (int i = toRemove.size() - 1; i >= 0; i--) {
+				Intersection inter = toRemove.get(i);
+				BezierCurve a = approxOffset.get(inter.ai);
+				BezierCurve b = approxOffset.get(inter.bi);
+				BezierCurve[] asplit = a.split(inter.ap);
+				BezierCurve[] bananaSplit = b.split(inter.bp);
+				// replace a and b with clipped versions
+				approxOffset.set(inter.ai, asplit[0]);
+				approxOffset.set(inter.bi, bananaSplit[1]);
+				// remove all curves between a and b (if any)
+				for (int k = inter.bi - 1; k > inter.ai; k--) {
+					if (!indicesToRemove.contains(k)) {
+						indicesToRemove.add(k);
+					}
+				}
+			}
+
+			// sort indices to remove descendingly so that we can iterate over
+			// them and remove them without having to adjust the index
+			Collections.sort(indicesToRemove, new Comparator<Integer>() {
+				@Override
+				public int compare(Integer o1, Integer o2) {
+					return o1 == o2 ? 0 : o1 < o1 ? -1 : +1;
+				}
+			});
+			for (int k : indicesToRemove) {
+				approxOffset.remove(k);
+			}
+
+			// find indices of fully contained offset curves
+			List<Integer> fullyContainedOffsetIndices = new ArrayList<>();
+			BezierCurve input = oa.getInputCurve();
+			double dMin = Math.abs(oa.getOffsetDistance()) - containmentEpsilon;
+			for (int i = approxOffset.size() - 1; i >= 0; i--) {
+				BezierCurve oi = approxOffset.get(i);
+				boolean fullyContained = true;
+				for (Point p : oi.getBounds().getPoints()) {
+					double dp = input.getProjection(p).getDistance(p);
+					if (dp > dMin) {
+						fullyContained = false;
+					}
+				}
+				if (fullyContained) {
+					fullyContainedOffsetIndices.add(i);
+				}
+			}
+
+			if (fullyContainedOffsetIndices.size() > 0) {
+				// search for fully contained start segments
+				List<Integer> startRemove = new ArrayList<>();
+				for (int i = 0; i < approxOffset.size()
+						&& fullyContainedOffsetIndices.contains(i); i++) {
+					startRemove.add(i);
+				}
+				Collections.reverse(startRemove);
+
+				// search for fully contained end segments
+				List<Integer> endRemove = new ArrayList<>();
+				for (int i = approxOffset.size() - 1; i >= 0
+						&& fullyContainedOffsetIndices.contains(i); i--) {
+					endRemove.add(i);
+				}
+
+				// check if startRemove and endRemove overlap
+				if (startRemove.size() > 0 && endRemove.size() > 0
+						&& startRemove.get(0) >= endRemove
+								.get(endRemove.size() - 1)) {
+					// remove whole curve
+					approxOffset.clear();
+				} else {
+					// remove the fully contained start/end segments
+					// XXX: to prevent index adjustment, end is removed first
+					for (int i : endRemove) {
+						approxOffset.remove(i);
+					}
+					for (int i : startRemove) {
+						approxOffset.remove(i);
+					}
+				}
+			}
+
+			// merge the curves to yield a valid PolyBezier
+			return mergeCurves(approxOffset);
+		}
+	}
+
+	private static class OffsetApproximation {
+		private List<BezierCurve> simpleCurve = new ArrayList<>();
+		private List<BezierCurve> approxOffsetCurve = new ArrayList<>();
+		private Map<Integer, Integer> approx2simple = new HashMap<>();
+		private Map<Integer, Double> a2sParamStart = new HashMap<>();
+		private Map<Integer, Double> a2sParamEnd = new HashMap<>();
+		private BezierCurve inputCurve;
+		private double offsetDistance;
+
+		public OffsetApproximation(BezierCurve inputCurve,
+				double offsetDistance, List<BezierCurve> simpleCurve,
+				List<BezierCurve> approxOffsetCurve,
+				Map<Integer, Integer> approx2simple,
+				Map<Integer, Double> a2sParamStart,
+				Map<Integer, Double> a2sParamEnd) {
+			this.inputCurve = inputCurve;
+			this.offsetDistance = offsetDistance;
+			this.simpleCurve = simpleCurve;
+			this.approxOffsetCurve = approxOffsetCurve;
+			this.approx2simple = approx2simple;
+			this.a2sParamStart = a2sParamStart;
+			this.a2sParamEnd = a2sParamEnd;
+		}
+
+		public List<BezierCurve> getApproximatedOffsetCurve() {
+			return approxOffsetCurve;
+		}
+
+		public BezierCurve getInputCurve() {
+			return inputCurve;
+		}
+
+		public double getInputEndParam(int i) {
+			return a2sParamEnd.get(i);
+		}
+
+		public int getInputIndex(int i) {
+			return approx2simple.get(i);
+		}
+
+		public double getInputStartParam(int i) {
+			return a2sParamStart.get(i);
+		}
+
+		public double getOffsetDistance() {
+			return offsetDistance;
+		}
+
+		public List<BezierCurve> getSimplifiedInputCurve() {
+			return simpleCurve;
+		}
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	private static final int CHUNK_SHIFT = -3;
-
-	// TODO: use constants that limit the number of iterations for the
-	// different iterative/recursive algorithms:
-	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
 
 	private static final boolean ORTHOGONAL = true;
 
@@ -902,6 +1955,48 @@ public class BezierCurve extends AbstractGeometry
 	 */
 	private static boolean isNextTo(IntervalPair a, IntervalPair b, int shift) {
 		return isNextTo(a.pi, b.pi, shift) && isNextTo(a.qi, b.qi, shift);
+	}
+
+	private static double LineSimilarity(BezierCurve cp) {
+		double max = 0d;
+		Line baseline = cp.toLine();
+		int N = cp.getPoints().length;
+		for (int i = 0; i < N; i++) {
+			Point p = cp.get(i / (double) (N - 1));
+			double distance = p.getDistance(baseline.getProjection(p));
+			if (distance > max) {
+				max = distance;
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * Merges the given List of {@link BezierCurve}s by setting the end/start
+	 * point of two consecutive segments to the middle point between the two.
+	 * Reteurns a {@link PolyBezier} that is constructed from the adjusted
+	 * curves.
+	 *
+	 * @param curves
+	 * @return A {@link PolyBezier} constructed from the merged curves.
+	 */
+	private static PolyBezier mergeCurves(List<BezierCurve> curves) {
+		if (curves.size() > 1) {
+			// adjust start/end points within the curves so that they are
+			// continuous
+			for (int i = 1; i < curves.size(); i++) {
+				Point last = curves.get(i - 1).getP2();
+				Point next = curves.get(i).getP1();
+				if (!next.equals(last)) {
+					Point mid = new Rectangle(last, next).getCenter();
+					curves.get(i - 1).setP2(mid);
+					curves.get(i).setP1(mid);
+				}
+			}
+		}
+
+		// save the refined offset as a PolyBezier
+		return new PolyBezier(curves.toArray(new BezierCurve[] {}));
 	}
 
 	/**
@@ -1868,6 +2963,45 @@ public class BezierCurve extends AbstractGeometry
 		}
 
 		return intersections.toArray(new Point[] {});
+	}
+
+	/**
+	 * Returns a {@link PolyBezier} that represents an approximation of the
+	 * refined offset of this {@link BezierCurve} where cusps in the input curve
+	 * are approximated by arc segments in the offset and local
+	 * self-intersections in the offset are removed while global
+	 * self-intersections and other singularities in the offset remain
+	 * unprocessed.
+	 *
+	 * @param distance
+	 *            The signed distance for which to compute a refined offset
+	 *            approximation.
+	 * @return A {@link PolyBezier} representing the refined offset of this
+	 *         {@link BezierCurve} for the given distance.
+	 */
+	public PolyBezier getOffsetRefined(double distance) {
+		return new LocalIntersectionOffsetRefiner()
+				.refine(new CuspAwareOffsetApproximator()
+						.approximateOffset(this, distance));
+	}
+
+	/**
+	 * Returns a {@link PolyBezier} that represents an approximation of the
+	 * offset of this {@link BezierCurve} where cusps in the input curve are
+	 * approximated by arc segments in the offset but any singularities remain
+	 * unprocessed.
+	 *
+	 * @param distance
+	 *            The signed distance for which to compute an offset
+	 *            approximation.
+	 * @return A {@link PolyBezier} representing the (unprocessed) offset of
+	 *         this {@link BezierCurve} for the given distance.
+	 */
+	public PolyBezier getOffsetUnprocessed(double distance) {
+		// merge the curves to yield a valid PolyBezier
+		return mergeCurves(new CuspAwareOffsetApproximator()
+				.approximateOffset(this, distance)
+				.getApproximatedOffsetCurve());
 	}
 
 	/**
