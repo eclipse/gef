@@ -50,7 +50,7 @@ import javafx.scene.Node;
  */
 public class ContentBehavior extends AbstractBehavior implements IDisposable {
 
-	private ListChangeListener<Object> contentModelObserver = new ListChangeListener<Object>() {
+	private ListChangeListener<Object> contentObserver = new ListChangeListener<Object>() {
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends Object> change) {
@@ -235,7 +235,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	public void dispose() {
 		// the content part pool is shared by all content behaviors of a viewer,
 		// so the viewer disposes it.
-		contentModelObserver = null;
+		contentObserver = null;
 		contentChildrenObserver = null;
 		contentAnchoragesObserver = null;
 	}
@@ -268,14 +268,14 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		IViewer viewer = host.getRoot().getViewer();
 		viewer.contentPartMapProperty().addListener(contentPartMapObserver);
 		synchronizeContentPartChildren(getHost(), viewer.getContents());
-		viewer.getContents().addListener(contentModelObserver);
+		viewer.getContents().addListener(contentObserver);
 	}
 
 	@Override
 	protected void doDeactivate() {
 		IVisualPart<? extends Node> host = getHost();
 		IViewer viewer = host.getRoot().getViewer();
-		viewer.getContents().removeListener(contentModelObserver);
+		viewer.getContents().removeListener(contentObserver);
 		synchronizeContentPartChildren(getHost(), Collections.emptyList());
 		viewer.contentPartMapProperty().removeListener(contentPartMapObserver);
 	}
