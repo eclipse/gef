@@ -196,7 +196,7 @@ public class ClickDragGesture extends AbstractGesture {
 				IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
 				if (viewer != null) {
 					possibleDragPolicies[0] = new ArrayList<>(
-							getTargetPolicyResolver().resolve(
+							getHandlerResolver().resolve(
 									ClickDragGesture.this, target, viewer,
 									ON_DRAG_POLICY_KEY));
 				} else {
@@ -372,7 +372,7 @@ public class ClickDragGesture extends AbstractGesture {
 		viewer = PartUtils.retrieveViewer(getDomain(), target);
 		// determine click policies
 		boolean opened = false;
-		List<? extends IOnClickHandler> clickPolicies = getTargetPolicyResolver()
+		List<? extends IOnClickHandler> clickPolicies = getHandlerResolver()
 				.resolve(ClickDragGesture.this, target, viewer,
 						ON_CLICK_POLICY_KEY);
 		// process click first
@@ -395,7 +395,7 @@ public class ClickDragGesture extends AbstractGesture {
 			// hierarchy so that the viewer cannot be determined for
 			// the target node anymore. If that is the case, no drag
 			// policies should be notified about the event.
-			policies = getTargetPolicyResolver().resolve(
+			policies = getHandlerResolver().resolve(
 					ClickDragGesture.this, target, activeViewer,
 					ON_DRAG_POLICY_KEY);
 		}

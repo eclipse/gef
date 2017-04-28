@@ -140,7 +140,7 @@ public class PinchSpreadGesture extends AbstractGesture {
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
 					setActiveHandlers(activeViewer,
-							getTargetPolicyResolver().resolve(
+							getHandlerResolver().resolve(
 									PinchSpreadGesture.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,

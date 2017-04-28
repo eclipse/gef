@@ -247,7 +247,7 @@ public class ScrollGesture extends AbstractGesture {
 		EventTarget eventTarget = event.getTarget();
 		getDomain().openExecutionTransaction(ScrollGesture.this);
 		setActiveHandlers(viewer,
-				getTargetPolicyResolver().resolve(ScrollGesture.this,
+				getHandlerResolver().resolve(ScrollGesture.this,
 						eventTarget instanceof Node ? (Node) eventTarget : null,
 						viewer, ON_SCROLL_POLICY_KEY));
 		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {

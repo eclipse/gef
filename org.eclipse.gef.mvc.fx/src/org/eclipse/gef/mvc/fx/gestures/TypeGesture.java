@@ -159,7 +159,7 @@ public class TypeGesture extends AbstractGesture {
 
 						// determine target policies on first key press
 						setActiveHandlers(activeViewer,
-								getTargetPolicyResolver().resolve(
+								getHandlerResolver().resolve(
 										TypeGesture.this, targetNode, activeViewer,
 										ON_STROKE_POLICY_KEY));
 					}
@@ -240,7 +240,7 @@ public class TypeGesture extends AbstractGesture {
 
 					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
 							targetNode);
-					Collection<? extends IOnTypeHandler> policies = getTargetPolicyResolver()
+					Collection<? extends IOnTypeHandler> policies = getHandlerResolver()
 							.resolve(TypeGesture.this, targetNode,
 									targetViewer, ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a

@@ -118,7 +118,7 @@ public abstract class AbstractGesture implements IGesture {
 	 *
 	 * @return the {@link IHandlerResolver} of the {@link IDomain}.
 	 */
-	protected IHandlerResolver getTargetPolicyResolver() {
+	protected IHandlerResolver getHandlerResolver() {
 		return getDomain().getAdapter(IHandlerResolver.class);
 	}
 

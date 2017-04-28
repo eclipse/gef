@@ -174,7 +174,7 @@ public class HoverGesture extends AbstractGesture {
 	protected void notifyHover(IViewer viewer, MouseEvent event,
 			Node eventTarget) {
 		// determine hover policies
-		Collection<? extends IOnHoverHandler> policies = getTargetPolicyResolver()
+		Collection<? extends IOnHoverHandler> policies = getHandlerResolver()
 				.resolve(HoverGesture.this, eventTarget, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverGesture.this);
@@ -195,7 +195,7 @@ public class HoverGesture extends AbstractGesture {
 	 */
 	protected void notifyHoverIntent(IViewer viewer, Node hoverIntent) {
 		// determine hover policies
-		Collection<? extends IOnHoverHandler> policies = getTargetPolicyResolver()
+		Collection<? extends IOnHoverHandler> policies = getHandlerResolver()
 				.resolve(HoverGesture.this, hoverIntent, viewer,
 						ON_HOVER_POLICY_KEY);
 		getDomain().openExecutionTransaction(HoverGesture.this);

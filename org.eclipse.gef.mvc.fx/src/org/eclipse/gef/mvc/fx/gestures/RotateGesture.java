@@ -128,7 +128,7 @@ public class RotateGesture extends AbstractGesture {
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
 					setActiveHandlers(viewer,
-							getTargetPolicyResolver().resolve(
+							getHandlerResolver().resolve(
 									RotateGesture.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
