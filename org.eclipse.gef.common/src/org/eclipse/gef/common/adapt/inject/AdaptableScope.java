@@ -88,6 +88,8 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 		if (!scopedInstances.containsKey(instance)) {
 			scopedInstances.put(instance, new HashMap<Key<?>, Object>());
 		}
+		// System.out.println(
+		// "Entering " + this + " of " + type + " for " + instance + ".");
 		this.adaptable = instance;
 	}
 
@@ -104,6 +106,8 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 	 *            {@link AdaptableScope} for.
 	 */
 	public void leave(A instance) {
+		// System.out.println(
+		// "Leaving " + this + " of " + type + " for " + instance + ".");
 		this.adaptable = null;
 	}
 
@@ -114,6 +118,9 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 			@Override
 			public T get() {
 				if (adaptable == null) {
+					// System.err.println("Scope " + AdaptableScope.this + " of
+					// "
+					// + type + " was not entered");
 					throw new IllegalStateException(key
 							+ " is scoped to adaptable '" + type
 							+ "', for which no scope has been activated. You can only scope adapters in a scope of a transitive adaptable.");
