@@ -600,7 +600,28 @@ public class MvcFxModule extends AbstractModule {
 		bindPinchSpreadGestureAsIDomainAdapter(adapterMapBinder);
 		bindScrollGestureAsDomainAdapter(adapterMapBinder);
 		bindContentIViewerAsIDomainAdapter(adapterMapBinder);
-		bindITargetPolicyResolverAsIDomainAdapter(adapterMapBinder);
+		bindIHandlerResolverAsIDomainAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Binds {@link DefaultHandlerResolver} to {@link IHandlerResolver} in
+	 * adaptable scope of {@link IDomain}.
+	 */
+	protected void bindIHandlerResolver() {
+		binder().bind(IHandlerResolver.class).to(DefaultHandlerResolver.class);
+	}
+
+	/**
+	 * Binds {@link DefaultHandlerResolver} as a domain adapter.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to add the binding.
+	 */
+	protected void bindIHandlerResolverAsIDomainAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(IHandlerResolver.class)
+				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
@@ -655,30 +676,6 @@ public class MvcFxModule extends AbstractModule {
 		bindDeletionPolicyAsIRootPartAdapter(adapterMapBinder);
 		// bind focus traversal policy
 		bindFocusTraversalPolicyAsIRootPartAdapter(adapterMapBinder);
-	}
-
-	/**
-	 * Binds {@link DefaultHandlerResolver} to
-	 * {@link IHandlerResolver} in adaptable scope of {@link IDomain}.
-	 */
-	protected void bindITargetPolicyResolver() {
-		binder().bind(IHandlerResolver.class)
-				.to(DefaultHandlerResolver.class)
-				.in(AdaptableScopes.typed(IDomain.class));
-	}
-
-	/**
-	 * Binds {@link DefaultHandlerResolver} as a domain adapter.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} that is used to add the binding.
-	 */
-	protected void bindITargetPolicyResolverAsIDomainAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// TODO: verify binding or use two level bindings (interface and
-		// implementation)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(DefaultHandlerResolver.class);
 	}
 
 	/**
@@ -1066,7 +1063,7 @@ public class MvcFxModule extends AbstractModule {
 				AbstractHandlePart.class));
 
 		// bind default target policy resolver for the gestures
-		bindITargetPolicyResolver();
+		bindIHandlerResolver();
 
 		// bind gestures
 		bindClickDragGesture();
