@@ -357,7 +357,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			}
 			if (contextRole.equals(
 					nextChainElement.getAdapterKey(chainElement).getRole())
-					&& contextType.isAssignableFrom(chainElement.getClass())) {
+					&& Types.isAssignable(contextType,
+							TypeToken.of(chainElement.getClass()))) {
 				contextIndex++;
 				if (contextIndex == injectionContext.length) {
 					return true;

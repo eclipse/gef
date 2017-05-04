@@ -17,7 +17,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Base64;
 
 import com.google.common.reflect.TypeToken;
@@ -30,27 +31,7 @@ import com.google.common.reflect.TypeToken;
  */
 public class Types {
 
-	/**
-	 * Constructs a new {@link TypeToken} for an actual parameter type, which is
-	 * inferred from a given context class.
-	 *
-	 * @param <T>
-	 *            The parameter type to use.
-	 * @param contextClass
-	 *            A class that can be used to infer the actual parameter type of
-	 *            the parameterized type.
-	 * @return A new TypeToken representing the parameterized type.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> TypeToken<T> argumentOf(Class<?> contextClass) {
-		while (contextClass != null && !(contextClass
-				.getGenericSuperclass() instanceof ParameterizedType)) {
-			contextClass = contextClass.getSuperclass();
-		}
-		return (TypeToken<T>) TypeToken
-				.of(((ParameterizedType) contextClass.getGenericSuperclass())
-						.getActualTypeArguments()[0]);
-	}
+	private static Method isTypeTokenAssignableMethod;
 
 	/**
 	 * Deserializes the given {@link String}-representation in Base64 encoding
@@ -77,6 +58,63 @@ public class Types {
 		} catch (IOException e2) {
 			throw new IllegalArgumentException(
 					"Could not deserialize TypeToken.");
+		}
+	}
+
+	/**
+	 * Returns whether the given 'candidate' superType is a super type of the
+	 * given 'candidate' subtype.
+	 *
+	 * This is replacement for TypeToken.isAssignableFrom(TypeToken), which has
+	 * been deprecated and replaced by TypeToken.isSuperTypeOf(TypeToken) in
+	 * Google Guava 19.0.0. As we want to support various Google Guava versions
+	 * from 15.0.0 onwards, this methods delegates to the appropriate
+	 * implementation using reflection.
+	 *
+	 * @param superType
+	 *            The 'candidate' superType.
+	 * @param subType
+	 *            The 'candidate' subType.
+	 * @return <code>true</code> when the given 'candidate' superType is indeed
+	 *         a super type of the given 'candidate' subType, <code>false</code>
+	 *         otherwise.
+	 */
+	public static final boolean isAssignable(TypeToken<?> superType,
+			TypeToken<?> subType) {
+		// TypeToken.isAssignableFrom(TypeToken) has been deprecated in Guava
+		// 19, where TypeToken.isSuperTypeOf(TypeToken) has been introduced as a
+		// workaround. As we want to support a broad range of Guava versions, we
+		// have use reflection here to access the respective functionality.
+		// XXX: Replace this with direct calls to
+		// TypeToken.isSuperTypeOf(TypeToken) when removing support for Guava <
+		// 19.
+		if (isTypeTokenAssignableMethod == null) {
+			try {
+				isTypeTokenAssignableMethod = TypeToken.class
+						.getDeclaredMethod("isSupertypeOf", TypeToken.class);
+			} catch (NoSuchMethodException e) {
+				// e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+			if (isTypeTokenAssignableMethod == null) {
+				try {
+					isTypeTokenAssignableMethod = TypeToken.class
+							.getDeclaredMethod("isAssignableFrom",
+									TypeToken.class);
+				} catch (NoSuchMethodException e) {
+					throw new IllegalArgumentException(
+							"Neither TypeToken.isAssignableFrom(TypeToken), nor TypeToken.isSuperTypeOf(TypeToken) seems to be supported by the given Guava version.");
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		try {
+			return (boolean) isTypeTokenAssignableMethod.invoke(superType,
+					subType);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 

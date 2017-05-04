@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.common.adapt;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.google.common.reflect.TypeToken;
@@ -148,8 +147,7 @@ public interface IAdaptable {
 	 * An adapter 'matching' the {@link AdapterKey} is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose {@link TypeToken} key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
-	 * given {@link AdapterKey}'s {@link TypeToken} key (@see
-	 * {@link TypeToken#isAssignableFrom(TypeToken)} and whose role (
+	 * given {@link AdapterKey}'s {@link TypeToken} key and whose role (
 	 * {@link AdapterKey#getRole()})) equals the role of the given
 	 * {@link AdapterKey}'s role.
 	 * <p>
@@ -177,7 +175,7 @@ public interface IAdaptable {
 	 * An adapter 'matching' the {@link Class} key is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
-	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
+	 * given {@link Class} key.
 	 * <p>
 	 * If there is more than one adapter that 'matches' the given {@link Class}
 	 * key, it will return the single adapter that is registered for the default
@@ -203,7 +201,7 @@ public interface IAdaptable {
 	 * An adapter 'matching' the {@link TypeToken} key is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
-	 * given type key (see {@link TypeToken#isAssignableFrom(TypeToken)} .
+	 * given type key.
 	 * <p>
 	 * If there is more than one adapter that 'matches' the given
 	 * {@link TypeToken} key, it will return the single adapter that is
@@ -247,7 +245,7 @@ public interface IAdaptable {
 	 * Returns all adapters 'matching' the given {@link Class} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
-	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)} ).
+	 * given {@link Class} key.
 	 *
 	 * @param <T>
 	 *            The adapter type.
@@ -268,8 +266,7 @@ public interface IAdaptable {
 	 * Returns all adapters 'matching' the given {@link TypeToken} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type or of the
-	 * given {@link TypeToken} key (see
-	 * {@link TypeToken#isAssignableFrom(TypeToken)}).
+	 * given {@link TypeToken} key.
 	 *
 	 * @param <T>
 	 *            The adapter type.

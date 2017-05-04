@@ -12,7 +12,6 @@
 package org.eclipse.gef.common.adapt;
 
 import java.beans.PropertyChangeSupport;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +20,7 @@ import java.util.TreeMap;
 
 import org.eclipse.gef.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef.common.dispose.IDisposable;
+import org.eclipse.gef.common.reflect.Types;
 
 import com.google.common.reflect.TypeToken;
 
@@ -244,7 +244,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * Returns all adapters 'matching' the given {@link Class} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
-	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
+	 * given {@link Class} key.
 	 *
 	 * @param <T>
 	 *            The adapter type.
@@ -267,8 +267,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * Returns all adapters 'matching' the given {@link TypeToken} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type or of the
-	 * given {@link TypeToken} key (see
-	 * {@link TypeToken#isAssignableFrom(TypeToken)}).
+	 * given {@link TypeToken} key.
 	 *
 	 * @param <T>
 	 *            The adapter type.
@@ -290,7 +289,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new TreeMap<>();
 		for (AdapterKey<?> k : adapters.keySet()) {
-			if (key.isAssignableFrom(k.getKey())) {
+			if (Types.isAssignable(key, k.getKey())) {
 				// check type compliance...
 				typeSafeAdapters.put((AdapterKey<? extends T>) k,
 						(T) adapters.get(k));
@@ -314,7 +313,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			if (role == null || k.getRole().equals(role)) {
 				// return all adapters assignable to the given type
 				// key
-				if (typeKey.isAssignableFrom(k.getKey())) {
+				if (Types.isAssignable(typeKey, k.getKey())) {
 					typeSafeAdapters.put((AdapterKey<? extends T>) k,
 							(T) adapters.get(k));
 

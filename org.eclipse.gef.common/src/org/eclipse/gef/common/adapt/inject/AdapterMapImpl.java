@@ -48,9 +48,9 @@ class AdapterMapImpl implements AdapterMap, Serializable {
 		 */
 		public BoundAdapterImpl(String adapterType) {
 			TypeToken<?> type = Types.deserialize(adapterType);
-			if (!TypeToken.of(IAdaptable.class).isAssignableFrom(type)
-					|| !TypeToken.of(IAdaptable.Bound.class)
-							.isAssignableFrom(type)) {
+			if (!Types.isAssignable(TypeToken.of(IAdaptable.class), type)
+					|| !Types.isAssignable(TypeToken.of(IAdaptable.Bound.class),
+							type)) {
 				throw new IllegalArgumentException(
 						"Context element has to be IAdaptable and IAdaptable.Bound, which does not hold for "
 								+ type.toString());
