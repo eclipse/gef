@@ -18,41 +18,4 @@
 	<artifactId>org.eclipse.gef.dot.generator</artifactId>
 	<version>5.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>${maven-clean-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>gen-clean</id>
-						<phase>clean</phase>
-						<configuration>
-							<filesets combine.children="append">
-								<fileset>
-									<directory>${basedir}/xtend-gen/</directory>
-								</fileset>
-							</filesets>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.xtend</groupId>
-				<artifactId>xtend-maven-plugin</artifactId>
-				<version>${xtext.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<outputDirectory>xtend-gen</outputDirectory>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
