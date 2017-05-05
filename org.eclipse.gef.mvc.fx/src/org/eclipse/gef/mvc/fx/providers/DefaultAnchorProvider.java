@@ -153,16 +153,16 @@ public class DefaultAnchorProvider
 											Node oldValue, Node newValue) {
 										if (oldValue != null) {
 											unbind(oldValue
-													.layoutBoundsProperty());
+													.boundsInLocalProperty());
 										}
 										if (newValue != null) {
 											bind(newValue
-													.layoutBoundsProperty());
+													.boundsInLocalProperty());
 										}
 										invalidate();
 									}
 								});
-						bind(anchor.getAnchorage().layoutBoundsProperty());
+						bind(anchor.getAnchorage().boundsInLocalProperty());
 					}
 
 					@Override
@@ -171,5 +171,4 @@ public class DefaultAnchorProvider
 					}
 				});
 	}
-
 }
