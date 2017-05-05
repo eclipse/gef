@@ -286,11 +286,15 @@ public class DynamicAnchor extends AbstractAnchor {
 	public DynamicAnchor(final Node anchorage,
 			IComputationStrategy computationStrategy) {
 		super(anchorage);
-		setComputationStrategy(computationStrategy);
 		anchorageComputationParameters
 				.addListener(anchorageComputationParametersChangeListener);
 		anchoredComputationParameters
 				.addListener(anchoredComputationParametersChangeListener);
+		// XXX: Set computation strategy after adding parameter change
+		// listeners, because setting the computation strategy does initialize
+		// some parameters, for which otherwise no change listeners would be
+		// registered.
+		setComputationStrategy(computationStrategy);
 
 		// add default binding for the anchorage reference geometry (if required
 		// by the given computation strategy)
