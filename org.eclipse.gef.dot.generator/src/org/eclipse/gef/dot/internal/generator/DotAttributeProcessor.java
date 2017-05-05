@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.xtend.lib.macro.AbstractFieldProcessor;
 import org.eclipse.xtend.lib.macro.TransformationContext;
@@ -61,13 +62,13 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 				field, context, "parsedType");
 
 		// field comment
-		field.setDocComment("The " + attributeName
-				+ " attribute, which is used by: "
+		field.setDocComment("The '" + attributeName
+				+ "' attribute, which is used by: "
 				+ usedBy(field).stream()
 						.map((f) -> "Cluster".contentEquals(paramTypeName(f))
 								? paramTypeName(f)
 								: "{@link " + paramTypeName(f) + "}")
-						.reduce("", (a, b) -> a + ", " + b)
+						.collect(Collectors.joining(", "))
 				+ ".");
 
 		// XXX: Naming conventions is checked by usedBy extension
@@ -209,7 +210,7 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 			field.getDeclaringType().addMethod(setterName(field),
 					(MutableMethodDeclaration method) -> {
 						StringBuilder docComment = new StringBuilder();
-						docComment.append("// Sets the value of the {@link #"
+						docComment.append("Sets the value of the {@link #"
 								+ field.getSimpleName()
 								+ "} attribute of the given {@link "
 								+ paramTypeName(c) + "} to the given <i>"
@@ -301,12 +302,12 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 
 							StringBuilder docComment = new StringBuilder();
 							docComment
-									.append("Sets the(parsed)value of the {@link #"
+									.append("Sets the (parsed) value of the {@link #"
 											+ field.getSimpleName()
-											+ "} attribute of the given{@link "
+											+ "} attribute of the given {@link "
 											+ paramTypeName(c)
-											+ "} to the given<i>"
-											+ attributeName + "</i>value.\n");
+											+ "} to the given <i>"
+											+ attributeName + "</i> value.\n");
 							docComment.append(
 									"    @param " + paramName(c) + "\n");
 							docComment.append("               The {@link "
@@ -316,14 +317,15 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 							docComment.append(
 									"    @param " + attributeName + "\n");
 							docComment
-									.append("               The new(parsed)value of the{@link #"
+									.append("               The new (parsed) value of the {@link #"
 											+ field.getSimpleName()
-											+ "}attribute.\n");
+											+ "} attribute.\n");
 							docComment.append(
 									"    @throws IllegalArgumentException\n");
-							docComment.append("               when the given<i>"
-									+ attributeName
-									+ "</i>value is not supported.\n");
+							docComment
+									.append("               when the given <i>"
+											+ attributeName
+											+ "</i> value is not supported.\n");
 							method.setDocComment(docComment.toString());
 
 							method.setStatic(true);
