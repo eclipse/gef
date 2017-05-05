@@ -21,21 +21,21 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 /**
- * The {@link SnapSupport} can be used within an {@link IHandler} implementation
+ * The {@link SnapToGridSupport} can be used within an {@link IHandler} implementation
  * for snapping scene coordinates to grid points.
  */
-public class SnapSupport {
+public class SnapToGridSupport {
 
 	private IHandler handler;
 
 	/**
-	 * Constructs a new {@link SnapSupport} for the given host {@link IHandler},
+	 * Constructs a new {@link SnapToGridSupport} for the given host {@link IHandler},
 	 * which gives access to the application's {@link IViewer} and scenegraph.
 	 *
 	 * @param handler
-	 *            The host {@link IHandler} for this {@link SnapSupport}.
+	 *            The host {@link IHandler} for this {@link SnapToGridSupport}.
 	 */
-	public SnapSupport(IHandler handler) {
+	public SnapToGridSupport(IHandler handler) {
 		this.handler = handler;
 	}
 

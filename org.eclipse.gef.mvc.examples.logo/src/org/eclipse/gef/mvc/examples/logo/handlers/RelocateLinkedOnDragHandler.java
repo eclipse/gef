@@ -39,7 +39,7 @@ public class RelocateLinkedOnDragHandler extends TranslateSelectedOnDragHandler 
 		// via the TranslateSelectedOnDragPolicy) already
 		SelectionModel selectionModel = getHost().getRoot().getViewer().getAdapter(SelectionModel.class);
 		linked.removeAll(selectionModel.getSelectionUnmodifiable());
-
+		linked.addAll(selected);
 		return linked;
 	}
 }

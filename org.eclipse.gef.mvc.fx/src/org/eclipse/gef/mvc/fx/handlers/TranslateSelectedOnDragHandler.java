@@ -20,6 +20,8 @@ import java.util.Map;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.utils.NodeUtils;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -45,15 +47,17 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapSupport snapSupport = new SnapSupport(this);
+	private SnapToGridSupport snapToGridSupport = new SnapToGridSupport(this);
+	private SnapToGeometrySupport snapToGeometrySupport;
+
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<? extends Node>, Integer> translationIndices = new HashMap<>();
 	private List<Pair<IContentPart<? extends Node>, TransformPolicy>> targets;
 
 	// gesture validity
 	private boolean invalidGesture = false;
-
 	private Map<IContentPart<? extends Node>, Rectangle> boundsInScene = new IdentityHashMap<>();
+	private Rectangle initialLayoutBoundsInScene;
 
 	@Override
 	public void abortDrag() {
@@ -67,6 +71,11 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			restoreRefreshVisuals(pair.getKey());
 		}
 
+		// clear snapping locations
+		if (snapToGeometrySupport != null) {
+			snapToGeometrySupport.stopSnapping();
+			snapToGeometrySupport = null;
+		}
 		// reset targets
 		targets = null;
 		// reset initial pointer location
@@ -88,21 +97,29 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		GridModel gridModel = null;
 		double granularityX = 0d;
 		double granularityY = 0d;
-		if (!isPrecise(e)) {
-			granularityX = snapSupport.getSnapToGridGranularityX();
-			granularityY = snapSupport.getSnapToGridGranularityY();
+		boolean performSnapping = !isPrecise(e);
+		if (performSnapping) {
+			granularityX = snapToGridSupport.getSnapToGridGranularityX();
+			granularityY = snapToGridSupport.getSnapToGridGranularityY();
 			gridModel = viewer.getAdapter(GridModel.class);
-			gridLocalVisual = snapSupport.getGridLocalVisual(viewer);
+			gridLocalVisual = snapToGridSupport.getGridLocalVisual(viewer);
 		}
 		// apply changes to the target parts
 		for (Pair<IContentPart<? extends Node>, TransformPolicy> pair : targets) {
 			// determine start and end position in scene coordinates
 			Point startInScene = boundsInScene.get(pair.getKey()).getTopLeft();
 			Point endInScene = startInScene.getTranslated(delta);
+			// snap to location
+			if (performSnapping && snapToGeometrySupport != null) {
+				Dimension snapDimension = snapToGeometrySupport.snapToLocation(
+						Geometry2FX.toFXBounds(initialLayoutBoundsInScene
+								.getTranslated(delta.width, delta.height)));
+				endInScene.translate(snapDimension);
+			}
 			// snap to grid
 			Point newEndInScene = endInScene.getCopy();
 			if (gridLocalVisual != null) {
-				newEndInScene = snapSupport.snapToGrid(endInScene.x,
+				newEndInScene = snapToGridSupport.snapToGrid(endInScene.x,
 						endInScene.y, gridModel, granularityX, granularityY,
 						gridLocalVisual);
 			}
@@ -133,6 +150,11 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			restoreRefreshVisuals(pair.getKey());
 		}
 
+		// clear snapping locations
+		if (snapToGeometrySupport != null) {
+			snapToGeometrySupport.stopSnapping();
+			snapToGeometrySupport = null;
+		}
 		// reset target parts
 		targets = null;
 		// reset initial pointer location
@@ -298,6 +320,25 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 					.localToScene(getHost().getVisual(), shapeBounds)
 					.getBounds();
 			boundsInScene.put(part, shapeBoundsInScene);
+		}
+
+		// snapping for single selection
+		if (getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+				.getSelectionUnmodifiable().size() == 1
+				&& getHost().getRoot().getViewer()
+						.getAdapter(SelectionModel.class)
+						.getSelectionUnmodifiable().contains(getHost())) {
+			snapToGeometrySupport = getHost().getRoot()
+					.getAdapter(SnapToGeometrySupport.class);
+			if (snapToGeometrySupport != null) {
+				snapToGeometrySupport.startSnapping(
+						(IContentPart<? extends Node>) getHost());
+				initialLayoutBoundsInScene = FX2Geometry
+						.toRectangle(getHost().getVisual().localToScene(
+								getHost().getVisual().getLayoutBounds()));
+			}
+		} else {
+			snapToGeometrySupport = null;
 		}
 	}
 }

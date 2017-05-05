@@ -55,7 +55,7 @@ public class ResizeTransformSelectedOnHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapSupport snapSupport = new SnapSupport(this);
+	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
 	private Map<IContentPart<? extends Node>, Double> relX1 = null;

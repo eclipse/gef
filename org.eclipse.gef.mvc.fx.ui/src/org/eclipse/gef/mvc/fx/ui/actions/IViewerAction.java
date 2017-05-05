@@ -25,31 +25,4 @@ import org.eclipse.ui.services.IDisposable;
  *
  */
 public interface IViewerAction extends IAction, IViewerDependent {
-	// /**
-	// * @return checked property
-	// */
-	// public BooleanProperty checkedProperty();
-	// @Override
-	// default boolean isChecked() {
-	// return checkedProperty().get();
-	// }
-	//
-	// @Override
-	// default void setChecked(boolean checked) {
-	// checkedProperty().set(checked);
-	// }
-	// /**
-	// * @return enabled property
-	// */
-	// public BooleanProperty enabledProperty();
-	// @Override
-	// default boolean isEnabled() {
-	// return enabledProperty().get();
-	// }
-	//
-	// @Override
-	// default void setEnabled(boolean enabled) {
-	// enabledProperty().set(enabled);
-	// }
-	// public ReadOnlyObjectProperty<IViewer> viewerProperty();
 }

@@ -37,7 +37,7 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapSupport snapSupport = new SnapSupport(this);
+	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
 	private boolean isPrepared;
@@ -262,5 +262,4 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		getHost().getRoot().getAdapter(SelectionBehavior.class)
 				.updateHandles(getHost(), null, null);
 	}
-
 }

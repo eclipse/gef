@@ -40,7 +40,7 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapSupport snapSupport = new SnapSupport(this);
+	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
 	private int translationIndex;
@@ -304,5 +304,4 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 					initialBoundsInScene.getMaxY());
 		}
 	}
-
 }

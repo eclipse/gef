@@ -42,6 +42,7 @@ import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.SnappingBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.handlers.BendFirstAnchorageOnSegmentHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.BendOnSegmentDragHandler;
@@ -55,11 +56,13 @@ import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnRotateHandler;
 import org.eclipse.gef.mvc.fx.handlers.SelectAllOnTypeHandler;
 import org.eclipse.gef.mvc.fx.handlers.SelectFocusedOnTypeHandler;
+import org.eclipse.gef.mvc.fx.handlers.SnapToGeometrySupport;
 import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.TraverseFocusOnTypeHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.models.SnappingModel;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
@@ -69,6 +72,7 @@ import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.RectangleSegmentHandlePart;
+import org.eclipse.gef.mvc.fx.parts.SnappingFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
@@ -269,7 +273,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizePolicy.class);
 
 		// relocate on drag (including anchored elements, which are linked)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
+		// adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RelocateLinkedOnDragHandler.class);
 
 		// clone
@@ -338,6 +342,17 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverIntentBehavior.class);
 		// select-all on type
 		bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(adapterMapBinder);
+
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SnapToGeometrySupport.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SnappingBehavior.class);
+	}
+
+	@Override
+	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SnappingModel.class);
+		adapterMapBinder.addBinding(AdapterKey.role(SnappingBehavior.SNAPPING_FEEDBACK_PART_FACTORY))
+				.to(SnappingFeedbackPartFactory.class);
 	}
 
 	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {

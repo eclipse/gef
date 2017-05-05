@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.utils.NodeUtils;
@@ -50,13 +51,31 @@ public class PartUtils {
 	 *            The type of returned elements.
 	 * @return A list of all elements of the specified type.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T extends IVisualPart<? extends Node>> List<T> filterParts(
 			Collection<? extends IVisualPart<? extends Node>> parts,
 			Class<T> type) {
+		return filterParts(parts, (p) -> type.isInstance(p));
+	}
+
+	/**
+	 * Searches the given collection of {@link IVisualPart}s for elements of the
+	 * specified type.
+	 *
+	 * @param <T>
+	 *            The type of returned elements.
+	 * @param parts
+	 *            The collection of parts which is filtered.
+	 * @param filter
+	 *            The type of returned elements.
+	 * @return A list of all elements of the specified type.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends IVisualPart<? extends Node>> List<T> filterParts(
+			Collection<? extends IVisualPart<? extends Node>> parts,
+			Predicate<? super IVisualPart<? extends Node>> filter) {
 		List<T> filtered = new ArrayList<>();
 		for (IVisualPart<? extends Node> c : parts) {
-			if (type.isInstance(c)) {
+			if (filter.test(c)) {
 				filtered.add((T) c);
 			}
 		}

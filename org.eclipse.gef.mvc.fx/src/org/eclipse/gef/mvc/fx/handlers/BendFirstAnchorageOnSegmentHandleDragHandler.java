@@ -56,7 +56,7 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapSupport snapSupport = new SnapSupport(this);
+	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private IVisualPart<? extends Connection> targetPart;
 	private boolean isSegmentDragged;
 	private Point initialMouseInScene;
@@ -459,5 +459,4 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 			}
 		}
 	}
-
 }
