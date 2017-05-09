@@ -319,7 +319,7 @@ Workflow {
 		}
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotHtmlLabel.xtext"// Java API to access grammar elements (required by several other fragments)
-			fileExtensions = "dothtml"
+			fileExtensions = "dothtmllabel"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// a custom ResourceFactory for use with EMF
