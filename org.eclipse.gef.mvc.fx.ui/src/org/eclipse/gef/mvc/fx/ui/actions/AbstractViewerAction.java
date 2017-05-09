@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -51,6 +52,7 @@ public abstract class AbstractViewerAction extends Action
 			}
 		}
 	};
+	private ReadOnlyBooleanProperty viewerActiveProperty;
 
 	// private ObjectProperty<IViewer> viewerProperty;
 	// private BooleanProperty checked = new BooleanProperty(false);
@@ -121,8 +123,8 @@ public abstract class AbstractViewerAction extends Action
 
 		// unregister listeners and clean up for the old viewer
 		if (this.viewer != null) {
-			this.viewer.activeProperty().removeListener(activationListener);
-			if (this.viewer.isActive()) {
+			viewerActiveProperty.removeListener(activationListener);
+			if (viewerActiveProperty.get()) {
 				unregister();
 			}
 		}
@@ -132,8 +134,9 @@ public abstract class AbstractViewerAction extends Action
 
 		// register listeners and prepare for the new viewer
 		if (this.viewer != null) {
-			this.viewer.activeProperty().addListener(activationListener);
-			if (this.viewer.isActive()) {
+			viewerActiveProperty = this.viewer.activeProperty();
+			viewerActiveProperty.addListener(activationListener);
+			if (viewerActiveProperty.get()) {
 				register();
 			}
 		}

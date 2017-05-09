@@ -26,9 +26,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link SelectAllOnTypeHandler} is an {@link AbstractHandler}
- * that selects all {@link #getSelectableContentParts() selectable parts} within
- * the {@link #getHost() host's} {@link IViewer} when Ctrl-A is pressed.
+ * The {@link SelectAllOnTypeHandler} is an {@link AbstractHandler} that selects
+ * all {@link #getSelectableContentParts() selectable parts} within the
+ * {@link #getHost() host's} {@link IViewer} when Ctrl-A is pressed.
  *
  * @author wienand
  *
