@@ -45,6 +45,7 @@ Having accomplished that, you might want to browse our [developer documentation]
 	<locations>
 	  <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 	    <unit id="org.eclipse.xtext.sdk.feature.group" version="2.10.0.v201605250459"/>
+	    <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.4.0.201605100504"/>
 	    <unit id="org.eclipse.emf.sdk.feature.group" version="2.12.0.v20160526-0356"/>
 	    <unit id="org.eclipse.sdk.ide" version="4.6.0.I20160606-1100"/>
 	    <repository location="http://download.eclipse.org/releases/neon"/>
