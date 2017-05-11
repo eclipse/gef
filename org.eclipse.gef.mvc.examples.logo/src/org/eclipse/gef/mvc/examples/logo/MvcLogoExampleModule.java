@@ -337,8 +337,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypeHandler.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypeHandler.class);
-		// hover behavior
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
+		// hover intent behavior
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverIntentBehavior.class);
 		// select-all on type
 		bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(adapterMapBinder);
@@ -371,7 +370,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindContentRestrictedChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register default behaviors
 		bindContentBehaviorAsIRootPartAdapter(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverBehavior.class);
+		bindHoverBehaviorAsIRootPartAdapter(adapterMapBinder);
 		// XXX: PaletteFocusBehavior only changes the viewer focus and default
 		// styles.
 		bindPaletteFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);

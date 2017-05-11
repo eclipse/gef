@@ -17,7 +17,6 @@ import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
 import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
@@ -166,10 +165,6 @@ public class DotGraphViewModule extends MvcFxModule {
 		// select focused on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(SelectFocusedOnTypeHandler.class);
-
-		// hover behavior
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(HoverBehavior.class);
 	}
 
 	/**
