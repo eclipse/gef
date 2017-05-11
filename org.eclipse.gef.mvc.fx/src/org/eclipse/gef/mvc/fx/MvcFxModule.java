@@ -523,6 +523,24 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
+	 * Adds a binding for {@link HoverIntentBehavior}, parameterized by
+	 * {@link Node}, to the adapter map binder for {@link IRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link IRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindHoverIntentBehaviorAsIRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(HoverIntentBehavior.class);
+	}
+
+	/**
 	 * Adds a binding for {@link HoverModel}, parameterized by {@link Node}, to
 	 * the adapter map binder for {@link IViewer}.
 	 *
@@ -686,6 +704,7 @@ public class MvcFxModule extends AbstractModule {
 		// register default behaviors
 		bindContentBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindHoverBehaviorAsIRootPartAdapter(adapterMapBinder);
+		bindHoverIntentBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindSelectionBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindRevealPrimarySelectionBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindGridBehaviorAsIRootPartAdapter(adapterMapBinder);

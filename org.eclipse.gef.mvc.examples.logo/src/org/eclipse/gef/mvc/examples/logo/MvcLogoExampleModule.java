@@ -337,8 +337,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TraverseFocusOnTypeHandler.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypeHandler.class);
-		// hover intent behavior
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverIntentBehavior.class);
 		// select-all on type
 		bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(adapterMapBinder);
 
