@@ -20,9 +20,11 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 
@@ -51,8 +53,20 @@ public class DotHtmlLabelProposalProvider extends
 			String proposal = calculateProposalString(tagName);
 			String displayString = proposal;
 			Image image = null;
-			acceptor.accept(createCompletionProposal(proposal, displayString,
-					image, context));
+
+			ICompletionProposal completionProposal = createCompletionProposal(
+					proposal, displayString, image, context);
+
+			// place the cursor between the opening and the closing html tag
+			// after the proposal has been applied
+			if (completionProposal instanceof ConfigurableCompletionProposal) {
+				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+				int cursorPosition = calculateCursorPosition(displayString);
+				configurableCompletionProposal
+						.setCursorPosition(cursorPosition);
+				acceptor.accept(configurableCompletionProposal);
+			}
+
 		}
 	}
 
@@ -105,6 +119,27 @@ public class DotHtmlLabelProposalProvider extends
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Calculates the cursor position where the cursor has to be placed after
+	 * the given proposal has been applied.
+	 * 
+	 * @param htmlTagText
+	 *            the htmlTagText representing the proposal
+	 * @return the proper cursor position
+	 */
+	private int calculateCursorPosition(String htmlTagText) {
+		// in case of a self-closing tag, place the cursor immediately before
+		// the "/>" symbol
+		if (htmlTagText.contains("/>")) { //$NON-NLS-1$
+			return htmlTagText.indexOf("/>"); //$NON-NLS-1$
+
+			// in case of a non self-closing tag, place the cursor between the
+			// ">" and "<" symbols
+		} else {
+			return htmlTagText.indexOf("><") + 1; //$NON-NLS-1$
+		}
 	}
 
 	private static final String ROOT_TAG_KEY = "ROOT";
