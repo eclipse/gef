@@ -28,9 +28,9 @@ HtmlContent: tag=HtmlTag | text=TEXT;
  * FIXME: 'HtmlTag' should not support the 'closeName' feature. The closeName is only needed for
  * validation to check if the tag is opened and closed with the same name.
  */
-HtmlTag: TAG_START WS? name=ID WS? (attributes+=HtmlAttr WS?)*
+HtmlTag hidden(WS): TAG_START name=ID (attributes+=HtmlAttr)*
 	( selfClosing?=TAG_END_CLOSE
-	| TAG_END (children+=HtmlContent)* TAG_START_CLOSE WS? closeName=ID WS? TAG_END
+	| TAG_END (children+=HtmlContent)* TAG_START_CLOSE closeName=ID TAG_END
 	);
 
 HtmlAttr: name=ID WS? ASSIGN WS? value=ATTR_VALUE;
