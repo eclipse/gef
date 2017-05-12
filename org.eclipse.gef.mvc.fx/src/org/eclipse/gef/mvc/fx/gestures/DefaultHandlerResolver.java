@@ -31,8 +31,8 @@ import com.google.common.reflect.TypeToken;
 import javafx.scene.Node;
 
 /**
- * The {@link DefaultHandlerResolver} is an {@link IHandlerResolver}
- * that works in two stages:
+ * The {@link DefaultHandlerResolver} is an {@link IHandlerResolver} that works
+ * in two stages:
  * <ol>
  * <li>Examining the active policies of other tools to find "multi-gesture"
  * policies that implement or extend the given target policy type. If any
@@ -136,13 +136,13 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 		// other tools
 		// System.out.println("Outer target policies:");
 		List<T> outerTargetHandlers = new ArrayList<>();
-		Collection<IGesture> tools = viewer.getDomain()
+		Collection<IGesture> gestures = viewer.getDomain()
 				.getAdapters(new TypeToken<IGesture>() {
 				}).values();
-		for (IGesture tool : tools) {
+		for (IGesture g : gestures) {
 			// System.out.println("[find active policies of " + tool + "]");
-			if (tool != gesture) {
-				for (IHandler policy : tool.getActiveHandlers(viewer)) {
+			if (g != gesture) {
+				for (IHandler policy : g.getActiveHandlers(viewer)) {
 					if (policy.getClass().isAssignableFrom(handlerClass)) {
 						// System.out.println("add active policy " + policy);
 						try {
