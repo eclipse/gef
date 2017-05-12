@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 itemis AG and others.
+ * Copyright (c) 2010, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -217,6 +217,13 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTPOINT,
 							context, acceptor);
 					break;
+				case DotAttributes.HEADLABEL__E:
+				case DotAttributes.LABEL__GCNE:
+				case DotAttributes.TAILLABEL__E:
+				case DotAttributes.XLABEL__NE:
+					proposeHtmlLabelAttributeValues(attribute, context,
+							acceptor);
+					break;
 				case DotAttributes.POS__NE:
 					proposeAttributeValues(
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTSPLINETYPE,
@@ -247,6 +254,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				case DotAttributes.FORCELABELS__G:
 					proposeAttributeValues(booleanAttributeValuesProposals,
 							context, acceptor);
+					break;
+				case DotAttributes.LABEL__GCNE:
+					proposeHtmlLabelAttributeValues(attribute, context,
+							acceptor);
 					break;
 				case DotAttributes.LAYOUT__G:
 					proposeAttributeValues(Layout.values(), context, acceptor);
@@ -289,6 +300,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeAttributeValues(booleanAttributeValuesProposals,
 							context, acceptor);
 					break;
+				case DotAttributes.LABEL__GCNE:
+				case DotAttributes.XLABEL__NE:
+					proposeHtmlLabelAttributeValues(attribute, context,
+							acceptor);
+					break;
 				case DotAttributes.POS__NE:
 				case DotAttributes.XLP__NE:
 					proposeAttributeValues(
@@ -306,7 +322,18 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				default:
 					break;
 				}
-			} else {
+			} else if (DotAttributes.getContext(attribute) == Context.CLUSTER
+					|| DotAttributes
+							.getContext(attribute) == Context.SUBGRAPH) {
+				switch (attribute.getName().toValue()) {
+				case DotAttributes.LABEL__GCNE:
+					proposeHtmlLabelAttributeValues(attribute, context,
+							acceptor);
+					break;
+				}
+			}
+
+			else {
 				super.completeAttribute_Value(model, assignment, context,
 						acceptor);
 			}
@@ -333,6 +360,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		String text = context.getPrefix();
 		if (text.startsWith("\"")) { //$NON-NLS-1$
 			text = ID.fromString(text, Type.QUOTED_STRING).toValue();
+			context = context.copy().setPrefix(text).toContext();
+		}
+
+		if (text.startsWith("<")) { //$NON-NLS-1$
+			text = ID.fromString(text, Type.HTML_STRING).toValue();
 			context = context.copy().setPrefix(text).toContext();
 		}
 
@@ -379,6 +411,17 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		// propose color values based on the current color scheme
 		List<String> validColorNames = getColorNames(attribute);
 		proposeAttributeValues(validColorNames, context, acceptor);
+	}
+
+	private void proposeHtmlLabelAttributeValues(Attribute attribute,
+			ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		if (attribute.getValue() != null
+				&& attribute.getValue().getType() == Type.HTML_STRING) {
+			proposeAttributeValues(
+					DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL,
+					context, acceptor);
+		}
 	}
 
 	/**

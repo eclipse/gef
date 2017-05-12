@@ -562,6 +562,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("digraph {1->2[ headlabel= ]}")
 				.assertTextAtCursorPosition(25,
 						"HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("digraph {1->2[ headlabel=<  >]}")
+				.assertTextAtCursorPosition(27, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
 	}
 
 	@Test
@@ -588,6 +595,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {1--2[ label= ]}")
 				.assertTextAtCursorPosition(19,
 						"HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("graph {1--2[ label=<  >]}")
+				.assertTextAtCursorPosition(21, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
 	}
 
 	@Test
@@ -751,6 +765,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("digraph {1->2[ taillabel= ]}")
 				.assertTextAtCursorPosition(25,
 						"HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("digraph {1->2[ taillabel=<  >]}")
+				.assertTextAtCursorPosition(27, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
 	}
 
 	@Test
@@ -777,6 +798,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("digraph {1->2[ xlabel= ]}")
 				.assertTextAtCursorPosition(22,
 						"HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("digraph {1->2[ xlabel=<  >]}")
+				.assertTextAtCursorPosition(24, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
 	}
 
 	@Test
@@ -1019,6 +1047,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values
 		newBuilder().append("graph {headlabel= }").assertTextAtCursorPosition(
 				17, "HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("graph { label = <  > }")
+				.assertTextAtCursorPosition(18, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
 	}
 
 	@Test
@@ -1448,6 +1483,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {1[ label= ]}")
 				.assertTextAtCursorPosition(16, "HTMLLabel - Insert a template")
 				.applyProposal(16, "HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("graph {1[ label=<  >]}")
+				.assertTextAtCursorPosition(18, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
 	}
 
 	@Test
@@ -1586,6 +1628,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values
 		newBuilder().append("graph {1[ xlabel= ]}").assertTextAtCursorPosition(
 				17, "HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("graph {1[ xlabel=<  >]}")
+				.assertTextAtCursorPosition(19, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
 	}
 
 	@Test
@@ -1605,6 +1654,14 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph{subgraph cluster{label = }}")
 				.assertTextAtCursorPosition(30,
 						"HTMLLabel - Insert a template");
+
+		// test html-like label attribute
+		newBuilder().append("graph{subgraph cluster{label = <  >}}")
+				.assertTextAtCursorPosition(33, "<B></B>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
+						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
+						"<U></U>");
+
 	}
 
 	private String[] combine(String[] array1, String... array2) {
