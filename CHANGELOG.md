@@ -174,12 +174,6 @@ Minor release providing minor revisions (0.2.0) of the preliminary GEF4 componen
 
 Please note that some minor adjustments have been applied to the provisional API of GEF4. The list of added and removed classes can be found at [https://www.eclipse.org/gef/project-info/GEF4-0.1.0-0.2.0-Provisional-API-Diff.html]. The most notable API changes are outlined below.
 
-### GEF4 FX 0.2.0
-
-* [#469583](https://bugs.eclipse.org/bugs/show_bug.cgi?id=469583) Renamed the <code>FXMouseDragGesture</code>, <code>FXPinchSpreadGesture</code>, and <code>FXRotateGesture</code> abstract base implementations to consistently use the 'Abstract' prefix.
-
-* [#470029](https://bugs.eclipse.org/bugs/show_bug.cgi?id=470029) Compensated a major JavaFX 8 regression which lead to a broken chop box anchor position computation.
-
 ### GEF4 MVC 0.2.0
 
 * [#472649](https://bugs.eclipse.org/bugs/show_bug.cgi?id=472649), [#472650](https://bugs.eclipse.org/bugs/show_bug.cgi?id=472650) Removed <code>getContents()</code> callback from <code>FXView</code> and <code>FXEditor</code>, so that population of viewers is now completely left to subclasses. Modularized <code>createPartControl()</code> and <code>dispose</code> methods so clients can easily overwrite and adopt individual aspects. In detail, introduced <code>hookViewers()</code>, <code>unhookViewers()</code>, <code>activate()</code>, and <code>deactivate()</code> hook methods.
@@ -208,7 +202,6 @@ sp.getItems().addAll(viewer1.getScrollPane(), viewer2.getScrollPane());
 sp.setDividerPositions(0.5f);
 primaryStage.setScene(new Scene(sp));
 ~~~
-
 The now obsolete <code>org.eclipse.gef4.mvc.fx.viewer.ISceneContainer</code> abstraction and the related <code>org.eclipse.gef4.mvc.fx.FXStageSceneContainer</code>, and <code>org.eclipse.gef4.mvc.fx.ui.FXCanvasSceneContainer</code> implementations were removed. 
 
 * [#472650](https://bugs.eclipse.org/bugs/show_bug.cgi?id=472650) Enabled that multiple viewers can easily be used with an <code>FXView</code> or <code>FXEditor</code> by factoring out <code>hookViewers()</code> and <code>populateViewers()</code> hook methods from <code>createPartControl()</code>, with a default implementation that is based on a single default viewer, which can easily be overwritten by subclasses to hook/populate multiple viewers.
@@ -216,8 +209,6 @@ The now obsolete <code>org.eclipse.gef4.mvc.fx.viewer.ISceneContainer</code> abs
 * [#471031](https://bugs.eclipse.org/bugs/show_bug.cgi?id=471031) Enhanced customizing of the default resize mechanism by allowing to overwrite the identification of the to-be-resized visual (only the part's "main" visual was allowed before) as well as the initial size (the visual's layout-bounds were used before).
 
 * [#470612](https://bugs.eclipse.org/bugs/show_bug.cgi?id=470612) Added checks to determine the dirty state of an <code>FXEditor</code> based on the undo-history.
-
-* [#466616](https://bugs.eclipse.org/bugs/show_bug.cgi?id=466616) Fixed a bug where the way points of a connection were "jumping"/changing position.
 
 * [#469491](https://bugs.eclipse.org/bugs/show_bug.cgi?id=469491) Added a widget for creating/manipulating multi-stop linear gradients:
 
@@ -230,3 +221,6 @@ The now obsolete <code>org.eclipse.gef4.mvc.fx.viewer.ISceneContainer</code> abs
 ### GEF4 Cloudio 0.2.0
 
 * [#473695](https://bugs.eclipse.org/bugs/show_bug.cgi?id=473695) Made <code>IEditableCloudLabelProvider</code> and <code>CloudOptionsComposite</code> internal by moving them to an internal package.
+
+# [GEF 3.10.0 (Mars)](https://projects.eclipse.org/projects/tools.gef/releases/3.10.0-mars)
+Release providing first (preliminary) snapshot (0.1.0) of the new GEF4 components.
