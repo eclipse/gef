@@ -1,14 +1,14 @@
 # [GEF 5.0.0 (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen)
 
-Major release providing revisions (5.0.0) of all production components, which have been adopted to the original project namespace ([GEF4 + 1 = GEF 5](http://nyssen.blogspot.de/2017/02/gef4-1-gef-5.html)).
+Annual release providing major revisions (5.0.0) of all GEF4 production components, which have been adopted to the original project namespace ([GEF4 + 1 = GEF 5](http://nyssen.blogspot.de/2017/02/gef4-1-gef-5.html)) and are now consistently referred to as GEF components.
 
 # [GEF 4.1.0 (Neon.1)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1)
 
-Bugfix release providing minor (1.1.0) respectively micro (1.0.1) revisions of all GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio). All API extensions are motivated by bugfixing, the API is fully backwards compatible to that of the previous GEF 4.0.0 (Neon) release.
+Update release providing minor (1.1.0) respectively micro (1.0.1) revisions of all GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio). All API extensions are motivated by bugfixing, the API is fully backwards compatible to that of the previous GEF 4.0.0 (Neon) release.
 
 # [GEF 4.0.0 (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon)
 
-Graduation release providing major revisision (1.0.0) of the previously only preliminary published GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio).
+Annual release providing first graduation revisions (1.0.0) of the previously only preliminary published GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio).
 
 *As declared in the [4.0.0 (Neon) project plan](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon/plan), the decision about contributing GEF4 in version 1.0.0 (instead of 0.3.0) and an overall 4.0.0 release (instead of 3.11.0) was postponed up to M5. That is, Bugzilla entries commented before Neon M6 will refer to a 3.11.0 release and milestone contributions (including M5) include GEF4 components in version 0.3.0.*
 
@@ -170,7 +170,7 @@ The DOT component has been completely revised and has made significant progress 
 <img src="/.changelog/DOT_Editor_errors.png" width="550">
 
 # [GEF 3.10.1 (Mars.1)](https://projects.eclipse.org/projects/tools.gef/releases/3.10.1-mars.1)
-Minor release providing minor revisions (0.2.0) of the preliminary GEF4 components.
+Update release providing minor revisions (0.2.0) of the preliminary GEF4 components.
 
 Please note that some minor adjustments have been applied to the provisional API of GEF4. The list of added and removed classes can be found at [https://www.eclipse.org/gef/project-info/GEF4-0.1.0-0.2.0-Provisional-API-Diff.html]. The most notable API changes are outlined below.
 
@@ -223,4 +223,4 @@ The now obsolete <code>org.eclipse.gef4.mvc.fx.viewer.ISceneContainer</code> abs
 * [#473695](https://bugs.eclipse.org/bugs/show_bug.cgi?id=473695) Made <code>IEditableCloudLabelProvider</code> and <code>CloudOptionsComposite</code> internal by moving them to an internal package.
 
 # [GEF 3.10.0 (Mars)](https://projects.eclipse.org/projects/tools.gef/releases/3.10.0-mars)
-Release providing first (preliminary) snapshot (0.1.0) of the new GEF4 components.
+Annual release providing first (preliminary) snapshot (0.1.0) of the new GEF4 components.
