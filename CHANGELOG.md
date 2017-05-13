@@ -45,7 +45,7 @@ bindContentViewerRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXRo
 
 * [#488356](https://bugs.eclipse.org/bugs/show_bug.cgi?id=488356) Introduced support for orthogonal routing of a Connection, including support for start and end poin hints. While doing so, separated routing (manipulation of control points) from interpolating (visual appearance), so that routers (straight, orthogonal) and interpolators (poly-line, poly-bezier) can be freely mixed.
 
-<img src="/.changelog/Connection_Snippet.png" width="300">
+<img src="/.changelog/Connection_Snippet.png" width="200">
 
 * Revised DynamicAnchor and its IComputationStrategy to be comparable to a JavaFX binding, where the resulting position value is based on observable computation parameters that might depend on the anchorage (static) or anchored visual (dynamic). This allows to determine the values of computation parameters via JavaFX bindings.
 
@@ -76,7 +76,8 @@ return NodeUtils.getShapeOutline(anchorage);
 
 * [#488358](https://bugs.eclipse.org/bugs/show_bug.cgi?id=488358) In addition to straight routing based on circle handles, FXBendFirstAnchorageOnSegmentHandleDragPolicy and FXBendConnectionPolicy now support orthogonal routing based on rectangle handles. Analogously to the way point based case, non-filled handle can be used to create new segments, whereas solid handles are used to move segments. Overlay of segments and 'normalization' (i.e. removal of overlaid segments) are performed during interaction.
 
-![Straight Routing - PolyBezier Interpolator](/.changelog/Straight_Routing_PolyBezier_Interpolator.png)![Orthogonal Routing - Polyline Interpolator](/.changelog/Orthogonal_Routing_Polyline_Interpolator.png)
+<img src="/.changelog/Straight_Routing_PolyBezier_Interpolator.png" width="250">
+<img src="/.changelog/Orthogonal_Routing_Polyline_Interpolator.png" width="250">
 
 * [#493553](https://bugs.eclipse.org/bugs/show_bug.cgi?id=493553) IDomain now accepts only ITransactionalOperations to execute. This allows to filter non content-related operations (like selection of focus change) in case only content-relevant changes should be undoable. 
 
@@ -154,7 +155,7 @@ The DOT component has been completely revised and has made significant progress 
 
 * The DOT Graph view will now use the native dot executable (if specified via the preferences) for layout (native mode), while it will otherwise use a comparable Layout algorithm (emulated mode).
 
-<img src="/.changelog/Sync_Graphviz_Export.png" width="400">
+<img src="/.changelog/DOT_Graph_view_native.png" width="400">
 <img src="/.changelog/DOT_Graph_view_emulated.png" width="400">
 
 * [#477980](https://bugs.eclipse.org/bugs/show_bug.cgi?id=477980) The DOT Graph view now also provides additional rendering capabilities, including edge decorations, splines, as well as all available kind of labels (for edges and nodes). 
