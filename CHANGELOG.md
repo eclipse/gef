@@ -4,13 +4,13 @@ Major release containing revisions (5.0.0) of all production components, which h
 
 # [GEF 4.1.0 (Neon.1)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1)
 
-Bugfix release containing minor (1.1.0) respectively micro (1.0.1) revisions of all GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio). All API extensions are motivated by bugfixing, the API is fully backwards compatible to that of the previous [GEF 4.0.0 (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon) release.
+Bugfix release containing minor (1.1.0) respectively micro (1.0.1) revisions of all GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio). All API extensions are motivated by bugfixing, the API is fully backwards compatible to that of the previous GEF 4.0.0 (Neon) release.
 
 # [GEF 4.0.0 (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon)
 
 Graduation release containing the previously only preliminary published GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio) in version 1.0.0.
 
-''As declared in the [4.0.0 (Neon) project plan](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon/plan), the decision about contributing GEF4 in version 1.0.0 (instead of 0.3.0) and an overall 4.0.0 release (instead of 3.11.0) was postponed up to M5. That is, Bugzilla entries commented before Neon M6 will refer to a 3.11.0 release and milestone contributions (including M5) include GEF4 components in version 0.3.0.''
+*As declared in the [4.0.0 (Neon) project plan](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon/plan), the decision about contributing GEF4 in version 1.0.0 (instead of 0.3.0) and an overall 4.0.0 release (instead of 3.11.0) was postponed up to M5. That is, Bugzilla entries commented before Neon M6 will refer to a 3.11.0 release and milestone contributions (including M5) include GEF4 components in version 0.3.0.*
 
 Please note that several incompatible changes to the (up to 0.2.0 provisional) API of GEF4 were made. The list of added and removed classes is documented in the [https://www.eclipse.org/gef/project-info/GEF4-0.2.0-1.0.0-API-Diff.html GEF4 0.2.0-1.0.0 API Diff]. The most notable API changes are outlined below.
 
