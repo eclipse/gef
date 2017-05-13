@@ -174,7 +174,7 @@ Minor release providing minor revisions (0.2.0) of the preliminary GEF4 componen
 
 Please note that some minor adjustments have been applied to the provisional API of GEF4. The list of added and removed classes can be found at [https://www.eclipse.org/gef/project-info/GEF4-0.1.0-0.2.0-Provisional-API-Diff.html]. The most notable API changes are outlined below.
 
-### GEF4 MVC 0.2.0
+### GEF4 MVC (0.2.0)
 
 * [#472649](https://bugs.eclipse.org/bugs/show_bug.cgi?id=472649), [#472650](https://bugs.eclipse.org/bugs/show_bug.cgi?id=472650) Removed <code>getContents()</code> callback from <code>FXView</code> and <code>FXEditor</code>, so that population of viewers is now completely left to subclasses. Modularized <code>createPartControl()</code> and <code>dispose</code> methods so clients can easily overwrite and adopt individual aspects. In detail, introduced <code>hookViewers()</code>, <code>unhookViewers()</code>, <code>activate()</code>, and <code>deactivate()</code> hook methods.
 
@@ -214,11 +214,11 @@ The now obsolete <code>org.eclipse.gef4.mvc.fx.viewer.ISceneContainer</code> abs
 
 <img src="/.changelog/FXFillSelectionDialog.png">
 
-### GEF4 Zest 0.2.0
+### GEF4 Zest (0.2.0)
 
 * [#466815](https://bugs.eclipse.org/bugs/show_bug.cgi?id=466815) Renamed <code>org.eclipse.gef4.zest.fx.models.ViewportStackModel</code> to <code>org.eclipse.gef4.zest.fx.models.NavigationModel</code> and refactored it basically. Introduced <code>org.eclipse.gef4.zest.fx.policies.NavigationPolicy</code>, refactoring those parts of the semantic zooming that depended on the ViewportStackModel directly to use the new NavigationPolicy instead.
 
-### GEF4 Cloudio 0.2.0
+### GEF4 Cloudio (0.2.0)
 
 * [#473695](https://bugs.eclipse.org/bugs/show_bug.cgi?id=473695) Made <code>IEditableCloudLabelProvider</code> and <code>CloudOptionsComposite</code> internal by moving them to an internal package.
 
