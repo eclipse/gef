@@ -22,14 +22,14 @@ Please note that several incompatible changes to the (up to 0.2.0 provisional) A
 
 * [#481677](https://bugs.eclipse.org/bugs/show_bug.cgi?id=481677) Adapter map bindings can now be restricted to an adaptable of a certain role. Thereby, different bindings can e.g. be provided for a 'content' FXViewer and a 'palette' FXViewer.
 
-<source lang="java" style="border-style:solid;border-color:#f2f2f2;border-width:1px;padding:10px;margin-bottom:10px">
+~~~java
 @Override
 protected void configure() {
-// bind adapters for FXRootPart of role 'FXDomain.CONTENT_VIEWER_ROLE'
-bindContentViewerRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class, FXDomain.CONTENT_VIEWER_ROLE));
-... 
+  // bind adapters for FXRootPart of role 'FXDomain.CONTENT_VIEWER_ROLE'
+  bindContentViewerRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class, FXDomain.CONTENT_VIEWER_ROLE));
+  ... 
 }
-</source>
+~~~
 
 ### GEF4 FX (1.0.0)
 
@@ -49,18 +49,18 @@ bindContentViewerRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), FXRo
 
 * Revised DynamicAnchor and its IComputationStrategy to be comparable to a JavaFX binding, where the resulting position value is based on observable computation parameters that might depend on the anchorage (static) or anchored visual (dynamic). This allows to determine the values of computation parameters via JavaFX bindings.
 
-<source lang="java" style="border-style:solid;border-color:#f2f2f2;border-width:1px;padding:10px;margin-bottom:10px">
+~~~java
 getComputationParameter(AnchorageReferenceGeometry.class).bind(new ObjectBinding<IGeometry>() {
-{
-bind(anchorage.layoutBoundsProperty());
-}
+  {
+    bind(anchorage.layoutBoundsProperty());
+  }
 
-@Override
-protected IGeometry computeValue() {
-return NodeUtils.getShapeOutline(anchorage);
-}
+  @Override
+  protected IGeometry computeValue() {
+    return NodeUtils.getShapeOutline(anchorage);
+  }
 });
-</source>
+~~~
 
 * [#443954](https://bugs.eclipse.org/bugs/show_bug.cgi?id=443954) GeometryNode has been revised to extend Region instead of Parent, so it no longer relies on overriding the impl_computeLayoutBounds() method that is deprecated and announced to be removed in future JavaFX releases. The API of GeometryNode was enhanced so that it does now allow to use relocate(double, double) and resize(double, double) to update the layout bounds (including layoutX and layoutY) while relocateGeometry(double, double) and resizeGeometry(double, double) can be used to update the geometric bounds. The layout bounds (and layoutX, layoutY) resemble the geometric bounds, expanded by a stroke offset (dependent on stroke width and type) and border insets.
 
@@ -93,18 +93,18 @@ return NodeUtils.getShapeOutline(anchorage);
 
 * [#491097](https://bugs.eclipse.org/bugs/show_bug.cgi?id=491097) The LayoutContext and ILayoutAlgorithm now use a Graph data model as input and output model for layout calculations instead of its own layout interface abstractions.
 
-<source lang="java" style="border-style:solid;border-color:#f2f2f2;border-width:1px;padding:10px;margin-bottom:10px">
+~~~java
 Graph graph = ...
 layoutContext.setGraph(graph);  
 layoutContext.setLayoutAlgorithm(layoutAlgorithm);
 layoutContext.applyLayout(true);
-</source>
+~~~
 
 ### GEF4 Graph (1.0.0)
 
 * [#480293](https://bugs.eclipse.org/bugs/show_bug.cgi?id=480293) Enhanced the builder API so that graph-, node-, and edge-builders can be chained appropriately. Node-builders can now be provided with an Object-key, that can be referred to by edge-builders.
 
-<source lang="java" style="border-style:solid;border-color:#f2f2f2;border-width:1px;padding:10px;margin-bottom:10px">
+~~~java
 Graph g1 = new Graph.Builder()
 .attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)//
 .node("n1")//
@@ -119,7 +119,7 @@ Graph g1 = new Graph.Builder()
 .edge("n1", "n2")//
 .edge("n1", "n3")//
 .build();
-</source>
+~~~
 
 * [#484774](https://bugs.eclipse.org/bugs/show_bug.cgi?id=484774) All relevant properties are now exposed as JavaFX observable collections/properties.
 
@@ -129,19 +129,19 @@ Graph g1 = new Graph.Builder()
 
 * [#478944](https://bugs.eclipse.org/bugs/show_bug.cgi?id=478944) Removed IEdgeDecorationProvider from Zest.FX.JFace. Respective ZestProperties.EDGE_SOURCE_DECORATION and ZestProperties.EDGE_TARGET_DECORATION attributes may be provided via IGraphNodeLabelProvider#getEdgeAttributes() instead.
 
-<source lang="java" style="border-style:solid;border-color:#f2f2f2;border-width:1px;padding:10px;margin-bottom:10px">
+~~~java
 class MyLabelProvider extends LabelProvider  implements IGraphAttributesProvider {	
-@Override
-public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
-Map<String, Object> edgeAttributes = new HashMap<>();
-edgeAttributes.put(ZestProperties.SOURCE_DECORATION__E, new CircleHead());
-edgeAttributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
-edgeAttributes.put(ZestProperties.CURVE_CSS_STYLE__E, "-fx-stroke: red;");
-return edgeAttributes;
+  @Override
+  public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
+    Map<String, Object> edgeAttributes = new HashMap<>();
+    edgeAttributes.put(ZestProperties.SOURCE_DECORATION__E, new CircleHead());
+    edgeAttributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
+    edgeAttributes.put(ZestProperties.CURVE_CSS_STYLE__E, "-fx-stroke: red;");
+    return edgeAttributes;
+  }
+  ...
 }
-...
-}
-</source>
+~~~
 
 ### GEF4 DOT (1.0.0)
 
