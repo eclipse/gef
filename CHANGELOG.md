@@ -149,7 +149,7 @@ The DOT component has been completely revised and has made significant progress 
 
 * [#446639](https://bugs.eclipse.org/bugs/show_bug.cgi?id=446639) A Graphviz preference page has been added, via which the path to the native dot executable and a Graphviz export format can be specified.
 
-<img src="/.changelog/Graphviz_Preference_Page.png" width="400">
+<img src="/.changelog/DOT_Graphviz_preference_page.png" width="400">
 
 * [#337644](https://bugs.eclipse.org/bugs/show_bug.cgi?id=337644) A 'Sync Graphviz Export' toggle has been added as a DOT editor action to the main toolbar (it was previously located in the DOT Graph view). If enabled, it will export the persisted state of a currently edited DOT file in the format specified in the Graphviz preferences.
 
@@ -223,4 +223,101 @@ The now obsolete <code>org.eclipse.gef4.mvc.fx.viewer.ISceneContainer</code> abs
 * [#473695](https://bugs.eclipse.org/bugs/show_bug.cgi?id=473695) Made <code>IEditableCloudLabelProvider</code> and <code>CloudOptionsComposite</code> internal by moving them to an internal package.
 
 # [GEF 3.10.0 (Mars)](https://projects.eclipse.org/projects/tools.gef/releases/3.10.0-mars)
-Annual release providing first (preliminary) snapshot (0.1.0) of the new GEF4 components.
+Annual release providing first (preliminary) snapshot (0.1.0) of the new GEF4 components. The most significant changes, implemented during the Mars release timeframe, is depicted per component in the following.
+
+### GEF4 Common (0.1.0)
+
+The Common component has been created by extracting generic abstractions (e.g. <code>IActivatable</code> or <code>IAdaptable</code>) and supporting classes from the FX and MVC components. It provides functionality that is (potentially) used by all other components and was basically written from scratch.
+
+* To combine the <code>IAdaptable</code>-mechanism with Google Guice-based dependency injection, a specific map-binding was introduced, which allows to inject adapters into an <code>IAdaptable</code> (see ['IAdaptable - GEF4's interpretation of a classic'](http://nyssen.blogspot.de/2014/11/iadaptable-gef4s-interpretation-of.html) for details). 
+
+* [#453119](https://bugs.eclipse.org/bugs/show_bug.cgi?id=453119) Augmented <code>IAdaptable</code> to enable registration and retrieval of adapters based on <code>TypeToken</code> keys. This way, registration of adapters can not only be performed based on raw types (e.g. <code>Provider.class</code>) but also using parameterized types (e.g. <code>Provider<IGeometry></code> or <code>Provider<IFXAnchor></code>) (see [http://nyssen.blogspot.de/2014/11/iadaptable-gef4s-interpretation-of.html 'IAdaptable - GEF4's interpretation of a classic'] for details). 
+
+* [#458320](https://bugs.eclipse.org/bugs/show_bug.cgi?id=458320) Implemented a specific Guice <code>Scope</code> (<code>AdaptableScope</code>) that allows to (transitively) scope instances to <code>IAdaptable</code>s.
+
+### GEF4 Geometry (0.1.0)
+
+The Geometry component had been written from scratch to provide a decent double-based geometry API before the Mars release timeframe. It was only marginally extended within.
+
+* Extended the <code>ICurve</code> interface with a method (<code>getNearestIntersection(ICurve, Point)</code>) that allows to compute the intersection point with another <code>ICurve</code> nearest to some reference point. This is e.g. quite handy when computing anchor position within <code>FXChopBoxAnchor</code>.
+
+### GEF4 Graph (0.1.0)
+
+The Graph component has been factored out of the former [Zest2](https://wiki.eclipse.org/Tree_Views_for_Zest) code base (DOT4Zest).
+
+* Changed that a constructed <code>Graph</code> is immmutable. The limitation of read-only access had prevented use cases of Zest and DOT, where a constructed <code>Graph</code> had to be modified after its initial construction.
+
+* Added support for nested graphs, so that a <code>Node</code> can now refer to a nested <code>Graph</code>. The node containing the nested graph is referred to as the 'nesting node'.
+
+* The <code>GraphCopier</code> that was initially bundled with the DOT component as <code>ZestGraphImport</code> was moved to Graph, as it provides generic capabilities to copy <code>Graph</code> instances and is not bound to Zest or DOT.
+
+### GEF4 Layout (0.1.0)
+
+The Layout component has been factored out of the former [Zest2](https://wiki.eclipse.org/Tree_Views_for_Zest) code base (<code>org.eclipse.gef4.zest.layouts</code>), which was initially created by forking [Zest 1.x](https://www.eclipse.org/gef/zest) (<code>org.eclipse.zest.layouts</code>). It has been significantly refactored within this process.
+
+* Moved the Sugiyama-specific abstractions (<code>LayerProvider</code>, <code>NodeWrapper</code>, <code>CrossingReducer</code>) into the <code>SugiyamaLayoutAlgorithm</code> as nested classes. Removed the <code>ExpandCollapseManager</code> from the <code>LayoutContext</code>, as it is specific to the <code>SpaceTreeLayoutAlgorithm</code>.
+
+### GEF4 FX (0.1.0)
+
+The FX component has been written from scratch to replace the [Draw2d](https://eclipse.org/gef/draw2d/index.php) legacy component. It uses JavaFX for visualization and provides support for integrating JavaFX into SWT. A lightweight rendering support for SWT (as provided by Draw2d is not part of this component). 
+
+* [#441463](https://bugs.eclipse.org/bugs/show_bug.cgi?id=441463) Removed the need for specific SwtFXScene implementation by ensuring that <code>FXControlAdapter</code> (formerly <code>SwtFXControlAdapter</code>) can work with an arbitrary JavaFX <code>Scene</code>.
+
+* [#442971](https://bugs.eclipse.org/bugs/show_bug.cgi?id=442971), [#444009](https://bugs.eclipse.org/bugs/show_bug.cgi?id=444009) Revised anchor abstraction so that <code>IFXAnchor#attach()</code> and <code>IFXAnchor#detach()</code> now take an additional <code>IAdaptable</code> argument, which may be used to provide additional information to the specific anchor. In case of an <code>FXChopBoxAnchor</code>, this mechanism is used to pass in a <code>FXChopBoxAnchor$ReferencePointProvider</code>, thereby replicating the old <code>FXChopBoxHelper</code> mechanism which involved direct coupling. Furthermore, an <code>FXChopBoxAnchor$ComputationStrategy</code> interface has been extracted from the <code>FXChopBoxAnchor</code> (an implementation can be passed in via its constructor), so the strategy, which is used to compute anchor positions, can be replaced.
+
+* [#443781](https://bugs.eclipse.org/bugs/show_bug.cgi?id=443781) An <code>IFXConnectionRouter</code> interface has been extracted from <code>FXConnection</code>. It can be passed in via <code>FXConnection#setRouter()</code> and is responsible of computing a curve geometry from the passed in (manually provided) waypoints of the connection.
+
+* Introduced ScrollPaneEx, which is an alternative to JavaFX's ScrollPane. The ScrollPaneEx provides a set-up which is suitable for graphical viewers/editors, i.e. an "infinite" canvas with viewport transformation, <code>reveal(Node)</code> functionality, fully controllable behavior, etc.
+
+### GEF4 MVC (0.1.0)
+
+The MVC component has been written from scratch to replace the [GEF (MVC) 3.x](https://eclipse.org/gef/gef_mvc/index.php) legacy component. While some proven concepts have been adopted, the component is a complete re-design.
+
+ * Added grid layer and implemented snap-to-grid support. The new grid layer is created as an underlying layer by default. Visibility of the layer can be controlled via a <code>GridModel</code>, which is to be registered as an <code>IViewer</code> adapter. The <code>GridModel</code> allows to select the grid cell height and width and whether the grid is to be zoomed with the contents layer or not. It can also be used to enable/disable snap-to-grid, which is respected by the <code>FXResizeRelocatePolicy</code> and <code>FXBendPoliy</code>.
+
+<img src="/.changelog/MVC_Grid.png" width="250">
+
+* To enable that handles are only displayed during mouse hover (and a short delay after), <code>FXHoverBehavior</code> and the <code>FXDefaultHandlePartFactory</code> now support the creation (and automatic removal) of hover handles. 
+
+<img src="/.changelog/MVC_Hover_Handles.png" width="250">
+
+* The <code>IDomain</code> now allows to open/close transactions, executing a set of related <code>IUndoableOperation</code> as an atomic (composite) operation. This way, several (transaction) policies can independently execute operations during an interaction, while undo/redo is performed for the overall transaction.
+
+* Introduced <code>ContentPolicy</code> to formalize that parts of the interaction that affects the content (i.e. the to be visualized model). The content <code>ContentPolicy</code> provides undoable operations to add child content to a parent, to anchor content on other content, etc. All these operations delegate to the respective host <code>IContentPart</code>. As the respective content parts have to be implemented by adopters anyway, the model visualization and model manipulation related code can be kept in a single place (namely within the <code>IContentPart</code>). Furthermore, the <code>ContentPolicy</code> is generic and can be re-used independently.
+
+* [#449129](https://bugs.eclipse.org/bugs/show_bug.cgi?id=449129), [#462787](https://bugs.eclipse.org/bugs/show_bug.cgi?id=462787) Added support for touch gesture-based interactions. The MVC logo example demonstrates gesture-based panning/scrolling, zooming, and rotating.
+
+### GEF4 Zest (0.1.0)
+
+The Zest component has been basically re-written from scratch to replace the [Zest 1.x](https://www.eclipse.org/gef/zest) legacy component, as well as the intermediary replacement in the form of the [Zest2](https://wiki.eclipse.org/Tree_Views_for_Zest) code base (<code>org.eclipse.gef4.zest.core</code> and <code>org.eclipse.gef4.zest.jface</code>), which was created by forking [Zest 1.x](https://www.eclipse.org/gef/zest) (<code>org.eclipse.zest.core</code>). It is now based on the Graph and Layout components, which were factored out of the same code base, and uses MVC as the underlying model-view-controller framework.
+
+* [#438734](https://bugs.eclipse.org/bugs/show_bug.cgi?id=438734) Re-implemented the functionality of zest.core within ZEST.FX and Zest.FX.UI.
+
+* [#441131](https://bugs.eclipse.org/bugs/show_bug.cgi?id=441131) Created a replacement API for zest.jface in terms of the  <code>ZestContentViewer</code>. While custom content and "label" providers are defined within <code>org.eclipse.gef4.zest.fx.ui.jface</code>, the JFace <code>ILabelProvider</code>, <code>IColorProvider</code>, <code>IFontProvider</code>, and <code>IToolTipProvider</code> are also accepted.
+
+* Nodes can now be hidden using the '-' hover handle on the node. Sibling nodes, connected to the hidden node will indicate the number of hidden nodes, connected to them, by means of a (red circle) decoration. Using the '+' hover handle on any such sibling node, will make the hidden nodes visible again.
+
+* Implemented inline-rendering of nested graphs. Nesting nodes will now render their nested nodes at a certain zoom threshold. Zooming can be performed with the mouse wheel and 'Alt' or 'Ctrl' key, or by using a pinch-spread gesture (on devices which support touch gestures).
+
+<img src="/.changelog/Zest_Inline_Rendering_Nested_Graphs.png" width="400">
+
+* Implemented navigating to/from nested graphs. Only one level of a hierarchy is rendered as once, but you can open a nested graph by double clicking the corresponding node. Navigating is further supported by using zoom. When zooming a nesting node further, from a certain zoom threshold onwards, the viewer contents will be switched to render only the nested graph. Zooming out will return to the above graph level.
+
+### GEF4 DOT (0.1.0)
+
+The DOT component has been factored out of the [Zest2](https://wiki.eclipse.org/Tree_Views_for_Zest) code base (DOT4Zest) and has been completely revised to be internally  based on the new Zest component.
+
+* [#441129](https://bugs.eclipse.org/bugs/show_bug.cgi?id=441129) Replacing the former Zest2 code within <code>org.eclipse.gef4.zest.ui</code> that still depended on [Draw2d](https://eclipse.org/gef/draw2d/index.php), a new DOT <code>Graph</code> view was introduced, which is based on Zest and thus uses JavaFX for visualization purposes.
+
+<img src="/.changelog/DOT_Graph_View_initial.png" width="400">
+
+* [#451097](https://bugs.eclipse.org/bugs/show_bug.cgi?id=451097) Refactored grammar definition and fixed several parsing issues within DOT editor.
+
+* [#450448](https://bugs.eclipse.org/bugs/show_bug.cgi?id=450448) Add proper support for lexical and semantic syntax coloring within DOT editor.
+
+* [#452650](https://bugs.eclipse.org/bugs/show_bug.cgi?id=452650) Implemented a proper outline view for the DOT editor.
+<img src="/.changelog/DOT_Editor_initial.png" width="500">
+
+### GEF4 Cloudio (0.1.0)
+
+The Cloudio component has been factored out of the [Zest2](https://wiki.eclipse.org/Tree_Views_for_Zest) code base (Cloudio) into a standalone component. It does not rely on other GEF4 components and was not yet migrated to use JavaFX for rendering.
