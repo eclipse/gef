@@ -1,14 +1,14 @@
 # [GEF 5.0.0 (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen)
 
-Annual release providing major revisions (5.0.0) of all GEF4 production components, which have been adopted to the original project namespace ([GEF4 + 1 = GEF 5](http://nyssen.blogspot.de/2017/02/gef4-1-gef-5.html)) and are now consistently referred to as GEF components.
+Annual release providing major revisions (5.0.0) of all production components, which have been adopted to the original project namespace (['GEF4 + 1 = GEF 5'](http://nyssen.blogspot.de/2017/02/gef4-1-gef-5.html)) and are now consistently referred to as GEF components.
 
 # [GEF 4.1.0 (Neon.1)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1)
 
-Update release providing minor (1.1.0) respectively micro (1.0.1) revisions of all GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio). All API extensions are motivated by bugfixing, the API is fully backwards compatible to that of the previous GEF 4.0.0 (Neon) release.
+Update release providing minor (1.1.0) respectively micro (1.0.1) revisions of all GEF4 components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio). All API extensions are motivated by bugfixing, the API is fully backwards compatible to that of the previous GEF 4.0.0 (Neon) release.
 
 # [GEF 4.0.0 (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon)
 
-Annual release providing first graduation revisions (1.0.0) of the previously only preliminary published GEF4 production components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio).
+Annual release providing first graduation revisions (1.0.0) of the previously only preliminary published GEF4 components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio).
 
 *As declared in the [4.0.0 (Neon) project plan](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon/plan), the decision about contributing GEF4 in version 1.0.0 (instead of 0.3.0) and an overall 4.0.0 release (instead of 3.11.0) was postponed up to M5. That is, Bugzilla entries commented before Neon M6 will refer to a 3.11.0 release and milestone contributions (including M5) include GEF4 components in version 0.3.0.*
 
