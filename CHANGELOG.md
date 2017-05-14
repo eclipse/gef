@@ -12,7 +12,7 @@ Annual release providing first graduation revisions (1.0.0) of the previously on
 
 *As declared in the [4.0.0 (Neon) project plan](https://projects.eclipse.org/projects/tools.gef/releases/4.0.0-neon/plan), the decision about contributing GEF4 in version 1.0.0 (instead of 0.3.0) and an overall 4.0.0 release (instead of 3.11.0) was postponed up to M5. That is, Bugzilla entries commented before Neon M6 will refer to a 3.11.0 release and milestone contributions (including M5) include GEF4 components in version 0.3.0.*
 
-Please note that several incompatible changes to the (up to 0.2.0 provisional) API of GEF4 were made. The list of added and removed classes is documented in the [https://www.eclipse.org/gef/project-info/GEF4-0.2.0-1.0.0-API-Diff.html GEF4 0.2.0-1.0.0 API Diff]. The most notable API changes are outlined below.
+Please note that several incompatible changes to the (up to 0.2.0 provisional) API of GEF4 were made. The list of added and removed classes is documented in the [GEF4 0.2.0-1.0.0 API Diff](https://www.eclipse.org/gef/project-info/GEF4-0.2.0-1.0.0-API-Diff.html). The most notable API changes are outlined below.
 
 ### GEF4 Common (1.0.0)
 
@@ -172,7 +172,7 @@ The DOT component has been completely revised and has made significant progress 
 # [GEF 3.10.1 (Mars.1)](https://projects.eclipse.org/projects/tools.gef/releases/3.10.1-mars.1)
 Update release providing minor revisions (0.2.0) of the preliminary GEF4 components.
 
-Please note that some minor adjustments have been applied to the provisional API of GEF4. The list of added and removed classes can be found at [https://www.eclipse.org/gef/project-info/GEF4-0.1.0-0.2.0-Provisional-API-Diff.html]. The most notable API changes are outlined below.
+Please note that some minor adjustments have been applied to the provisional API of GEF4. The list of added and removed classes can be found at [GEF4 0.1.0-0.2.0 API Diff](https://www.eclipse.org/gef/project-info/GEF4-0.1.0-0.2.0-Provisional-API-Diff.html). The most notable API changes are outlined below.
 
 ### GEF4 MVC (0.2.0)
 
@@ -231,7 +231,7 @@ The Common component has been created by extracting generic abstractions (e.g. <
 
 * To combine the <code>IAdaptable</code>-mechanism with Google Guice-based dependency injection, a specific map-binding was introduced, which allows to inject adapters into an <code>IAdaptable</code> (see ['IAdaptable - GEF4's interpretation of a classic'](http://nyssen.blogspot.de/2014/11/iadaptable-gef4s-interpretation-of.html) for details). 
 
-* [#453119](https://bugs.eclipse.org/bugs/show_bug.cgi?id=453119) Augmented <code>IAdaptable</code> to enable registration and retrieval of adapters based on <code>TypeToken</code> keys. This way, registration of adapters can not only be performed based on raw types (e.g. <code>Provider.class</code>) but also using parameterized types (e.g. <code>Provider<IGeometry></code> or <code>Provider<IFXAnchor></code>) (see [http://nyssen.blogspot.de/2014/11/iadaptable-gef4s-interpretation-of.html 'IAdaptable - GEF4's interpretation of a classic'] for details). 
+* [#453119](https://bugs.eclipse.org/bugs/show_bug.cgi?id=453119) Augmented <code>IAdaptable</code> to enable registration and retrieval of adapters based on <code>TypeToken</code> keys. This way, registration of adapters can not only be performed based on raw types (e.g. <code>Provider.class</code>) but also using parameterized types (e.g. <code>Provider<IGeometry></code> or <code>Provider<IFXAnchor></code>) (see ['IAdaptable - GEF4's interpretation of a classic'](http://nyssen.blogspot.de/2014/11/iadaptable-gef4s-interpretation-of.html) for details). 
 
 * [#458320](https://bugs.eclipse.org/bugs/show_bug.cgi?id=458320) Implemented a specific Guice <code>Scope</code> (<code>AdaptableScope</code>) that allows to (transitively) scope instances to <code>IAdaptable</code>s.
 
@@ -259,7 +259,7 @@ The Layout component has been factored out of the former [Zest2](https://wiki.ec
 
 ### GEF4 FX (0.1.0)
 
-The FX component has been written from scratch to replace the [Draw2d](https://eclipse.org/gef/draw2d/index.php) legacy component. It uses JavaFX for visualization and provides support for integrating JavaFX into SWT. A lightweight rendering support for SWT (as provided by Draw2d is not part of this component). 
+The FX component has been written from scratch to replace the [Draw2d 3.x](https://eclipse.org/gef/draw2d/index.php) legacy component. It uses JavaFX for visualization and provides support for integrating JavaFX into SWT. A lightweight rendering support for SWT (as provided by Draw2d is not part of this component). 
 
 * [#441463](https://bugs.eclipse.org/bugs/show_bug.cgi?id=441463) Removed the need for specific SwtFXScene implementation by ensuring that <code>FXControlAdapter</code> (formerly <code>SwtFXControlAdapter</code>) can work with an arbitrary JavaFX <code>Scene</code>.
 
@@ -307,7 +307,7 @@ The Zest component has been basically re-written from scratch to replace the [Ze
 
 The DOT component has been factored out of the [Zest2](https://wiki.eclipse.org/Tree_Views_for_Zest) code base (DOT4Zest) and has been completely revised to be internally  based on the new Zest component.
 
-* [#441129](https://bugs.eclipse.org/bugs/show_bug.cgi?id=441129) Replacing the former Zest2 code within <code>org.eclipse.gef4.zest.ui</code> that still depended on [Draw2d](https://eclipse.org/gef/draw2d/index.php), a new DOT <code>Graph</code> view was introduced, which is based on Zest and thus uses JavaFX for visualization purposes.
+* [#441129](https://bugs.eclipse.org/bugs/show_bug.cgi?id=441129) Replacing the former Zest2 code within <code>org.eclipse.gef4.zest.ui</code> that still depended on [Draw2d 3.x](https://eclipse.org/gef/draw2d/index.php), a new DOT <code>Graph</code> view was introduced, which is based on Zest and thus uses JavaFX for visualization purposes.
 
 <img src="/.changelog/DOT_Graph_View_initial.png" width="400">
 
