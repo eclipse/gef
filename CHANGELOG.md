@@ -30,7 +30,9 @@ Annual release providing major revisions (5.0.0) of all production components, w
 
 * [#506331](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506331) Ensured that <code>IContentPart</code>, <code>IFeedbackPart</code>, and <code>IHandlePart</code> are now adapted to the viewer (<code>IAdaptable.Bound</code>) so that role-based adapter map binding can now be used for them. This enables that the same visual parts can be re-used in content and palette viewers, but with different behavior and policy bindings.
 
-* [#482139](https://bugs.eclipse.org/bugs/show_bug.cgi?id=482139) Provided several action implementations related to zooming and scrolling of the viewport.
+* [#482139](https://bugs.eclipse.org/bugs/show_bug.cgi?id=482139) Provided several action implementations related to zooming and scrolling of the viewport:
+
+<img src="/.changelog/MVC_Viewport_Actions.png" width="400">
 
 * [#503342](https://bugs.eclipse.org/bugs/show_bug.cgi?id=503342) Replaced <code>ContentModel</code> with a dedicated contents property within <code>IViewer</code>, as its a first-level concept.
 
