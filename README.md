@@ -102,5 +102,4 @@ All further project information (forum, mailing list, issue tracker, update-site
 
 If you want to contribute, please consult the [contributor guide](https://github.com/eclipse/gef/blob/master/CONTRIBUTING.md).
 
-<sub><sup>6)</sup> The developer documentation for the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1) maintenance stream is still maintained online in the [GEF4 Wiki](https://wiki.eclipse.org/GEF/GEF4#Developer_Documentation). It will be removed there (so only the deployed versions at [help.eclipse.org](http://help.eclipse.org/) will still be available online) after the final [4.1.0 (Neon.1)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1) release of this stream has been published.</sub>
-
+<sub><sup>6)</sup> The developer documentation for the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1)  stream is still available in its deployed form at [help.eclipse.org](http://help.eclipse.org/neon/index.jsp). The related online sources in the GEF4 wiki have been removed after the final [4.1.0 (Neon.1)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1) release of this stream had been published.</sub>
