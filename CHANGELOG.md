@@ -20,7 +20,7 @@ Annual release providing major revisions (5.0.0) of all production components, w
 
 ### GEF MVC (5.0.0)
 
-* [#496248](https://bugs.eclipse.org/bugs/show_bug.cgi?id=496248) Merged MVC with MVC.FX and MVC.UI with MVC.FX.UI to remove JavaFX indepent abstractions. 
+* [#496248](https://bugs.eclipse.org/bugs/show_bug.cgi?id=496248) As motivated in ['GEF4 + 1 = GEF 5'](http://nyssen.blogspot.de/2017/02/gef4-1-gef-5.html), MVC was merged with MVC.FX and MVC.UI with MVC.FX.UI to remove JavaFX indepent abstractions. While being bound to JavaFX, the code base is now much more slim and easier to use.
 
 * [#510415](https://bugs.eclipse.org/bugs/show_bug.cgi?id=510415) Renamed 'Tool' into 'Gesture', 'InteractionPolicy' into 'Handler', and 'TransactionPolicy' into 'Policy', so concepts are more concisely named (and better distinguishable).
 
