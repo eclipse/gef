@@ -50,7 +50,12 @@ On the other hand, no segments are removed from the unprocessed offset. Therefor
 
 * [#504480](https://bugs.eclipse.org/bugs/show_bug.cgi?id=504480) Revised <code>IBendableContentPart</code> and introduced  <code>ITransformableContentPart</code> and <code>IResizableContentPart</code> abstractions to provide support for basic graphical operations through callbacks within <code>IContentPart</code> (as in case of content related operations).
 
-* Separated hover concept into 'transient' and 'intended' hover. 
+* Separated hover concept into 'transient' and 'intended' hover.
+
+<video width="400" height="200" autoplay>
+  <source src="/.changelog/MVC_Hover_Intent.mvk">
+  Demo video showing intended hover: <a href="/.changelog/MVC_Hover_Intent.mvk">MVC_Hover_Intent.mvk</a>
+</video>
 
 * [#506331](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506331) Ensured that <code>IContentPart</code>, <code>IFeedbackPart</code>, and <code>IHandlePart</code> are now adapted to the viewer (<code>IAdaptable.Bound</code>) so that role-based adapter map binding can now be used for them. This enables that the same visual parts can be re-used in content and palette viewers, but with different behavior and policy bindings.
 
