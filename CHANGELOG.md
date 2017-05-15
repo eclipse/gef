@@ -5,8 +5,22 @@ Annual release providing major revisions (5.0.0) of all production components, w
 ### GEF Common (5.0.0)
 
 * [#506816](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506816) Ensured <code>AdaptableSupport</code> and <code>ActivatableSupport</code> do not interleave. Both are now side-effect free, i.e. <code>AdaptableSupport</code> no longer deals with activating/deactivating of adapters, while <code>ActivatableSupport</code> now ignores registered adapters. 
-* [#516080](https://bugs.eclipse.org/bugs/show_bug.cgi?id=516080) Fixed several issues related to scoping of adapters. 
-* [#506330](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506330) Added support for transitive role-based adapter bindings. In case an adapter map binding is bound to a (potentially transitive) role, its injection is now deferred until the complete adaptable-adapter chain has been established. Revised adapter injection to properly follow Guice API.
+* [#516080](https://bugs.eclipse.org/bugs/show_bug.cgi?id=516080) Fixed several issues related to scoping of adapters. Revised adapter injection to properly follow Guice API.
+* [#506330](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506330) Added support for transitive role-based adapter bindings. This can be used to inject different types of adapters dependent on the adaptable-'position' within the adaptable-adapter chain. In case an adapter map binding is bound to a (potentially transitive) role, its injection is now deferred until the complete adaptable-adapter chain has been established. A potential use case is to bind different behaviors and policies for visual parts within respective viewers:
+
+~~~java
+  // bindings related to GeometricShapePart within content viewer
+  bindGeometricShapePartAdaptersInContentViewerContext(AdapterMaps.getAdapterMapBinder(
+    binder(), 
+    GeometricShapePart.class,
+    AdapterKey.get(IViewer.class, CONTENT_VIEWER_ROLE)));
+    
+  // bindings related to GeometricShapePart within palette viewer  
+  bindGeometricShapePartAdapterInPaletteViewerContext(AdapterMaps.getAdapterMapBinder(
+    binder(), 
+    GeometricShapePart.class, 
+    AdapterKey.get(IViewer.class, PALETTE_VIEWER_ROLE)));
+~~~
 
 ### GEF Geometry (5.0.0)
 
