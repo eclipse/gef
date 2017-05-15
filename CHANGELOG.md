@@ -34,14 +34,27 @@ Annual release providing major revisions (5.0.0) of all production components, w
 
 * [#503342](https://bugs.eclipse.org/bugs/show_bug.cgi?id=503342) Replaced <code>ContentModel</code> with a dedicated contents property within <code>IViewer</code>, as its a first-level concept.
 
-### Graph (5.0.0)
+### GEF Graph (5.0.0)
 
-### Layout (5.0.0)
+* [#508822](https://bugs.eclipse.org/bugs/show_bug.cgi?id=508822), [#509077](https://bugs.eclipse.org/bugs/show_bug.cgi?id=509077) Made several improvement to graph, node, and edge builders.
 
-### Zest (5.0.0)
+* [#497662](https://bugs.eclipse.org/bugs/show_bug.cgi?id=497662), [#509078](https://bugs.eclipse.org/bugs/show_bug.cgi?id=509078) Fixed several issues related to <code>GraphCopier</code>.
 
-### DOT (5.0.0)
+### GEF Layout (5.0.0)
 
+* Changed that <code>ILayoutAlgorithm</code> no longer has to keep a reference to the <code>LayoutContext</code>, which is now passed in on layout calls. Revised implementations of algorithms to remove code that was unused because it dealt with 'dynamic' layout.
+
+### GEF DOT (5.0.0)
+ 
+* [#491261](https://bugs.eclipse.org/bugs/show_bug.cgi?id=491261) Provide a consistent API for importing and exporting of DOT. Re-implemented <code>DotImport</code> using Xtend, merging <code>DotInterpreter</code> into it.
+ 
+* Added support for HTML IDs in the DOT host grammar as well as support for parsing and serializing HTML-like labels within DOT editor.
+
+* [#511843](https://bugs.eclipse.org/bugs/show_bug.cgi?id=511843) Added support for Subgraphs/Clusters within <code>DotImport</code>, </code>DotExport</code>, DOT editor and DOT Graph view.
+
+* Added support for further DOT attributes.
+
+* [#498324](https://bugs.eclipse.org/bugs/show_bug.cgi?id=498324) Add proper content support for DOT attributes.
 
 # [GEF 4.1.0 (Neon.1)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1)
 
