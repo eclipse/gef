@@ -70,7 +70,7 @@ Annual release providing major revisions (5.0.0) of all production components, w
 
 <img src="/.changelog/DOT_editor_html_labels.png" width="400">
 
-* [#511843](https://bugs.eclipse.org/bugs/show_bug.cgi?id=511843) Added support for Subgraphs/Clusters within <code>DotImport</code>, </code>DotExport</code>, DOT editor and DOT Graph view.
+* [#511843](https://bugs.eclipse.org/bugs/show_bug.cgi?id=511843) Added support for Subgraphs/Clusters within <code>DotImport</code>, <code>DotExport</code>, DOT editor and DOT Graph view.
 
 <img src="/.changelog/DOT_clusters.png" width="600">
 
