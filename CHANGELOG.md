@@ -53,8 +53,8 @@ On the other hand, no segments are removed from the unprocessed offset. Therefor
 * Separated hover concept into 'transient' and 'intended' hover.
 
 <video width="400" height="200" autoplay>
-  <source src="/.changelog/MVC_Hover_Intent.mkv">
-  <a href="/.changelog/MVC_Hover_Intent.mkv"><img src="/.changelog/MVC_Hover_Intent.png" width="400"/></a>
+  <source src="/.changelog/MVC_Hover_Intent.mp4">
+  <a href="/.changelog/MVC_Hover_Intent.mp4"><img src="/.changelog/MVC_Hover_Intent.png" width="400"/></a>
 </video>
 
 * [#506331](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506331) Ensured that <code>IContentPart</code>, <code>IFeedbackPart</code>, and <code>IHandlePart</code> are now adapted to the viewer (<code>IAdaptable.Bound</code>) so that role-based adapter map binding can now be used for them. This enables that the same visual parts can be re-used in content and palette viewers, but with different behavior and policy bindings.
