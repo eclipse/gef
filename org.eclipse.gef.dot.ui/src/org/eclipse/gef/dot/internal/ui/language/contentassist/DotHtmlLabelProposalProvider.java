@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
@@ -61,8 +62,12 @@ public class DotHtmlLabelProposalProvider extends
 			if (completionProposal instanceof ConfigurableCompletionProposal) {
 				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
 				int cursorPosition = calculateCursorPosition(displayString);
+				String tagDescription = DotHtmlLabelHelper
+						.getTagDescription(tagName);
 				configurableCompletionProposal
 						.setCursorPosition(cursorPosition);
+				configurableCompletionProposal
+						.setAdditionalProposalInfo(tagDescription);
 				acceptor.accept(configurableCompletionProposal);
 			}
 
@@ -84,10 +89,167 @@ public class DotHtmlLabelProposalProvider extends
 				Set<String> validAttributeNames = validAttributes
 						.get(htmlTagName);
 				for (String validAttributeName : validAttributeNames) {
-					acceptor.accept(createCompletionProposal(validAttributeName,
-							context));
+					ICompletionProposal completionProposal = createCompletionProposal(
+							validAttributeName, context);
+
+					// insert the ="" symbols after the html attribute name and
+					// place the cursor between the two "" symbols
+					if (completionProposal instanceof ConfigurableCompletionProposal) {
+						ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+						String replacementString = validAttributeName + "=\"\""; //$NON-NLS-1$
+						configurableCompletionProposal
+								.setReplacementString(replacementString);
+						configurableCompletionProposal.setCursorPosition(
+								replacementString.length() - 1);
+						acceptor.accept(configurableCompletionProposal);
+					}
+
 				}
 			}
+		}
+	}
+
+	@Override
+	public void completeHtmlAttr_Value(EObject model, Assignment assignment,
+			ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		super.completeHtmlAttr_Value(model, assignment, context, acceptor);
+		if (model instanceof HtmlAttr) {
+			HtmlAttr htmlAttr = (HtmlAttr) model;
+			HtmlTag htmlTag = (HtmlTag) htmlAttr.eContainer();
+			proposeHtmlAttributeValues(htmlTag.getName(), htmlAttr.getName(),
+					context, acceptor);
+		}
+	}
+
+	@Override
+	protected boolean isValidProposal(String proposal, String prefix,
+			ContentAssistContext context) {
+		if (prefix == null) {
+			return false;
+		}
+		// consider a double quote as a valid prefix for the attribute values
+		if (context.getCurrentModel() instanceof HtmlAttr
+				&& prefix.startsWith("\"")) { //$NON-NLS-1$
+			prefix = prefix.substring(1);
+			if (!context.getMatcher().isCandidateMatchingPrefix(proposal,
+					prefix)) {
+				return false;
+			} else {
+				/**
+				 * Skip the proposal validation check through the
+				 * conflictHelper, otherwise it will report a conflict. The
+				 * conflictHelper cannot differentiate between the different
+				 * states of the custom lexer (tagMode is on or off).
+				 */
+				return true;
+			}
+		}
+
+		return super.isValidProposal(proposal, prefix, context);
+	}
+
+	private void proposeHtmlAttributeValues(String htmlTagName,
+			String htmlAttributeName, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		if ("BR".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "ALIGN": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "CENTER", "LEFT", //$NON-NLS-1$ //$NON-NLS-2$
+						"RIGHT"); //$NON-NLS-1$
+				break;
+			default:
+				break;
+			}
+		}
+
+		if ("IMG".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "SCALE": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "FALSE", "TRUE", //$NON-NLS-1$ //$NON-NLS-2$
+						"WIDTH", "HEIGHT", "BOTH"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				break;
+			default:
+				break;
+			}
+		}
+
+		if ("TABLE".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "ALIGN": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "CENTER", "LEFT", //$NON-NLS-1$ //$NON-NLS-2$
+						"RIGHT"); //$NON-NLS-1$
+				break;
+			case "FIXEDSIZE": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "FALSE", "TRUE"); //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+			case "COLUMNS": //$NON-NLS-1$
+			case "ROWS": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "*"); //$NON-NLS-1$
+				break;
+			case "SIDES": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "L", "T", "R", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						"B", "LT", "LR", "LB", "TR", "TB", "RB", "LTR", "TRB", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+						"LRB", "LTB", "LTRB"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				break;
+			case "VALIGN": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "MIDDLE", //$NON-NLS-1$
+						"BOTTOM", "TOP"); //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+			default:
+				break;
+			}
+		}
+
+		if ("TD".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "ALIGN": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "CENTER", "LEFT", //$NON-NLS-1$ //$NON-NLS-2$
+						"RIGHT", "TEXT"); //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+			case "BALIGN": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "CENTER", "LEFT", //$NON-NLS-1$ //$NON-NLS-2$
+						"RIGHT"); //$NON-NLS-1$
+				break;
+			case "FIXEDSIZE": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "FALSE", "TRUE"); //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+			case "SIDES": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "L", "T", "R", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						"B", "LT", "LR", "LB", "TR", "TB", "RB", "LTR", "TRB", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+						"LRB", "LTB", "LTRB"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				break;
+			case "VALIGN": //$NON-NLS-1$
+				proposeHtmlAttributeValues(context, acceptor, "MIDDLE", //$NON-NLS-1$
+						"BOTTOM", "TOP"); //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	private void proposeHtmlAttributeValues(ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor, String... proposals) {
+		for (String proposal : proposals) {
+			ICompletionProposal completionProposal = createCompletionProposal(
+					proposal, context);
+			if (context.getCurrentNode().getText().startsWith("\"") //$NON-NLS-1$
+					&& completionProposal instanceof ConfigurableCompletionProposal) {
+				// ensure that the double quote at the beginning of an attribute
+				// value is not overridden when applying the proposal
+				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+				configurableCompletionProposal.setReplacementOffset(
+						configurableCompletionProposal.getReplacementOffset()
+								+ 1);
+				configurableCompletionProposal.setReplacementLength(
+						configurableCompletionProposal.getReplacementLength()
+								- 1);
+				configurableCompletionProposal.setReplaceContextLength(
+						configurableCompletionProposal.getReplaceContextLength()
+								- 1);
+			}
+			acceptor.accept(completionProposal);
 		}
 	}
 

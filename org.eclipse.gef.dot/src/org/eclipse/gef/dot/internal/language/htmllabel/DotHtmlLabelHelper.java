@@ -214,4 +214,48 @@ public class DotHtmlLabelHelper {
 		return validAttributes;
 	}
 
+	/**
+	 * Returns the description of a particular html tag.
+	 * 
+	 * @param tagName
+	 *            The tag for which the description should be determined.
+	 * @return The description of the given html tag.
+	 */
+	@SuppressWarnings("nls")
+	public static String getTagDescription(String tagName) {
+		switch (tagName) {
+		case "TABLE":
+			return "Table element";
+		case "TR":
+			return "Table row";
+		case "TD":
+			return "Table cell";
+		case "FONT":
+			return "Font specification";
+		case "BR":
+			return "Line break";
+		case "IMG":
+			return "Image inclusion";
+		case "I":
+			return "Italic style";
+		case "B":
+			return "Bold style";
+		case "U":
+			return "Underline text";
+		case "O":
+			return "Overline text";
+		case "SUB":
+			return "Subscript text";
+		case "SUP":
+			return "Superscript text";
+		case "S":
+			return "Strike-through text";
+		case "HR":
+			return "Horizontal rule";
+		case "VR":
+			return "Vertical rule";
+		default:
+			return "";
+		}
+	}
 }

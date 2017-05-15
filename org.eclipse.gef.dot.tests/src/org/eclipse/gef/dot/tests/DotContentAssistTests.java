@@ -1054,6 +1054,12 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
 						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
 						"<U></U>");
+
+		// test html-like label attribute value
+		newBuilder().append("graph { label = < <TABLE ROWS=\"\"></TABLE> > }")
+				.assertTextAtCursorPosition(31, "*").applyProposal(31, "*")
+				.expectContent(
+						"graph { label = < <TABLE ROWS=\"*\"></TABLE> > }");
 	}
 
 	@Test
@@ -1490,6 +1496,12 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
 						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
 						"<U></U>");
+		
+		// test html-like label attribute value
+		newBuilder().append("graph {1[ label=< <BR ALIGN=\"\" /> >]}")
+				.assertTextAtCursorPosition(29, "CENTER", "LEFT", "RIGHT")
+				.applyProposal(29, "CENTER")
+				.expectContent("graph {1[ label=< <BR ALIGN=\"CENTER\" /> >]}");
 	}
 
 	@Test
