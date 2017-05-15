@@ -74,7 +74,7 @@ Annual release providing major revisions (5.0.0) of all production components, w
 
 <img src="/.changelog/DOT_clusters.png" width="600">
 
-* Added support for further DOT attributes.
+* Augmented support for DOT attributes, which now covers: ARROWHEAD__E, ARROWSIZE__E, ARROWTAIL__E, BB__GC, BGCOLOR__GC, CLUSTERRANK__G, COLORSCHEME__GCNE, COLOR__CNE, DIR__E, DISTORTION__N, FILLCOLOR__CNE, FIXEDSIZE__N, FONTCOLOR__GCNE, FORCELABELS__G, HEAD_LP__E, HEIGHT__N, LABEL__GCNE, LABELFONTCOLOR__E, LAYOUT__G, LP__GCE, NODESEP__G, OUTPUTORDER__G, PAGEDIR__G, POS__NE, RANKDIR__G, RANK__S, SHAPE__N, SIDES__N, SKEW__N, SPLINES__G, STYLE__GCNE, TAIL_LP__E, WIDTH__N, XLP__NE.
 
 * [#498324](https://bugs.eclipse.org/bugs/show_bug.cgi?id=498324) Add proper content support for DOT attributes.
 
