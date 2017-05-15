@@ -26,7 +26,15 @@ Annual release providing major revisions (5.0.0) of all production components, w
 
 ### GEF Geometry (5.0.0)
 
-* Added support for computing Bezier offset approximation. TODO: link image.
+* Added support for computing Bezier offset approximation.
+
+<img src="/.changelog/Geometry_Offset_Cusp_Refined.png" width="400">
+
+For a given BezierCurve, the offset at a given (signed) distance can be computed via the new <code>#getOffsetRefined()</code> and <code>#getOffsetUnprocessed()</code> methods. The offset is an approximation consisting of multiple continuous <code>BezierCurve</code> objects, so that it can be represented by a <code>PolyBezier</code>. During refinement, segments are removed from the unprocessed offset approximation that do not contribute to the offset outline, i.e. local self-intersections and start/end segments covered by other offset outlines. Most global self-intersections should be preserved. However, in some cases the algorithm might cut them out, which needs to be addressed in a later version.
+
+<img src="/.changelog/Geometry_Offset_Cusp_Unprocessed.png" width="400">
+
+On the other hand, no segments are removed from the unprocessed offset. Therefore, you can see segments containing cusps, which are contained within the offset, and do not contribute to its outline. The refinement process is meant to remove as many segments, not contributing to the offset outline, from the unprocessed offset, as possible, so that it is still a continuous curve, which can be represented as a <code>PolyBezier</code>.
 
 ### GEF FX (5.0.0)
 
