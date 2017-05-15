@@ -2,6 +2,47 @@
 
 Annual release providing major revisions (5.0.0) of all production components, which have been adopted to the original project namespace (['GEF4 + 1 = GEF 5'](http://nyssen.blogspot.de/2017/02/gef4-1-gef-5.html)) and are now consistently referred to as GEF components.
 
+### GEF Common (5.0.0)
+
+* [#506816](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506816) Ensured <code>AdaptableSupport</code> and <code>ActivatableSupport</code> do not interleave. Both are now side-effect free, i.e. <code>AdaptableSupport</code> no longer deals with activating/deactivating of adapters, while <code>ActivatableSupport</code> now ignores registered adapters. 
+* [#516080](https://bugs.eclipse.org/bugs/show_bug.cgi?id=516080) Fixed several issues related to scoping of adapters. 
+* [#506330](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506330) Added support for transitive role-based adapter bindings. In case an adapter map binding is bound to a (potentially transitive) role, its injection is now deferred until the complete adaptable-adapter chain has been established. Revised adapter injection to properly follow Guice API.
+
+### GEF Geometry (5.0.0)
+
+* Added support for computing Bezier offset approximation
+
+### GEF FX (5.0.0)
+
+* [#501056](https://bugs.eclipse.org/bugs/show_bug.cgi?id=501056), [#495469](https://bugs.eclipse.org/bugs/show_bug.cgi?id=495469), [#499676](https://bugs.eclipse.org/bugs/show_bug.cgi?id=499676), [#510946](https://bugs.eclipse.org/bugs/show_bug.cgi?id=510946), [#511983](https://bugs.eclipse.org/bugs/show_bug.cgi?id=511983), [#511601](https://bugs.eclipse.org/bugs/show_bug.cgi?id=511601) Reimplemented event forwarding within FXCanvasEx, so it can now be transparently used in a Java 8 and 9 environment. Complemented functionality by adding a workaround for [JDK-8159227](https://bugs.openjdk.java.net/browse/JDK-8159227).
+
+* [#501329](https://bugs.eclipse.org/bugs/show_bug.cgi?id=501329) Reimplemented grid by using a tile-based JavaFX background within InfiniteCanvas, increasing performance significantly and removing overflow caused restrictions of zoom and scroll.
+
+### GEF MVC (5.0.0)
+
+* [#496248](https://bugs.eclipse.org/bugs/show_bug.cgi?id=496248) Merged MVC with MVC.FX and MVC.UI with MVC.FX.UI to remove JavaFX indepent abstractions. 
+
+* [#510415](https://bugs.eclipse.org/bugs/show_bug.cgi?id=510415) Renamed 'Tool' into 'Gesture', 'InteractionPolicy' into 'Handler', and 'TransactionPolicy' into 'Policy', so concepts are more concisely named (and better distinguishable).
+
+* [#504480](https://bugs.eclipse.org/bugs/show_bug.cgi?id=504480) Revised <code>IBendableContentPart</code> and introduced  <code>ITransformableContentPart</code> and <code>IResizableContentPart</code> abstractions to provide support for basic graphical operations through callbacks within <code>IContentPart</code> (as in case of content related operations).
+
+* Separated hover concept into 'transient' and 'intended' hover. 
+
+* [#506331](https://bugs.eclipse.org/bugs/show_bug.cgi?id=506331) Ensured that <code>IContentPart</code>, <code>IFeedbackPart</code>, and <code>IHandlePart</code> are now adapted to the viewer (<code>IAdaptable.Bound</code>) so that role-based adapter map binding can now be used for them. This enables that the same visual parts can be re-used in content and palette viewers, but with different behavior and policy bindings.
+
+* [#482139](https://bugs.eclipse.org/bugs/show_bug.cgi?id=482139) Provided several action implementations related to zooming and scrolling of the viewport.
+
+* [#503342](https://bugs.eclipse.org/bugs/show_bug.cgi?id=503342) Replaced <code>ContentModel</code> with a dedicated contents property within <code>IViewer</code>, as its a first-level concept.
+
+### Graph (5.0.0)
+
+### Layout (5.0.0)
+
+### Zest (5.0.0)
+
+### DOT (5.0.0)
+
+
 # [GEF 4.1.0 (Neon.1)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1)
 
 Update release providing minor (1.1.0) respectively micro (1.0.1) revisions of all GEF4 components (Common, Geometry, FX, MVC, Graph, Layout, Zest, DOT, and Cloudio). All API extensions are motivated by bugfixing, the API is fully backwards compatible to that of the previous GEF 4.0.0 (Neon) release.
