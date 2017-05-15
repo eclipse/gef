@@ -52,7 +52,11 @@ Annual release providing major revisions (5.0.0) of all production components, w
  
 * [#321775](https://bugs.eclipse.org/bugs/show_bug.cgi?id=321775) Added support for HTML IDs in the DOT host grammar as well as support for parsing and serializing HTML-like labels within DOT editor.
 
+<img src="/.changelog/DOT_editor_html_labels.png" width="400">
+
 * [#511843](https://bugs.eclipse.org/bugs/show_bug.cgi?id=511843) Added support for Subgraphs/Clusters within <code>DotImport</code>, </code>DotExport</code>, DOT editor and DOT Graph view.
+
+<img src="/.changelog/DOT_clusters.png" width="600">
 
 * Added support for further DOT attributes.
 
