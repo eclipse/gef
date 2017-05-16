@@ -37,7 +37,7 @@ import org.eclipse.gef.mvc.fx.gestures.IHandlerResolver;
 import org.eclipse.gef.mvc.fx.gestures.PinchSpreadGesture;
 import org.eclipse.gef.mvc.fx.gestures.RotateGesture;
 import org.eclipse.gef.mvc.fx.gestures.ScrollGesture;
-import org.eclipse.gef.mvc.fx.gestures.TypeGesture;
+import org.eclipse.gef.mvc.fx.gestures.TypeStrokeGesture;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
 import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
 import org.eclipse.gef.mvc.fx.handlers.MarqueeOnDragHandler;
@@ -1020,15 +1020,15 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Binds {@link TypeGesture} to the {@link IDomain} adaptable scope.
+	 * Binds {@link TypeStrokeGesture} to the {@link IDomain} adaptable scope.
 	 */
 	protected void bindTypeGesture() {
-		binder().bind(TypeGesture.class)
+		binder().bind(TypeStrokeGesture.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	/**
-	 * Adds a binding for {@link TypeGesture} to the adapter map binder for
+	 * Adds a binding for {@link TypeStrokeGesture} to the adapter map binder for
 	 * {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
@@ -1042,7 +1042,7 @@ public class MvcFxModule extends AbstractModule {
 	protected void bindTypeGestureAsDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(TypeGesture.class);
+				.to(TypeStrokeGesture.class);
 	}
 
 	/**

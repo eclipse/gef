@@ -23,7 +23,7 @@ import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.gestures.IGesture;
-import org.eclipse.gef.mvc.fx.gestures.TypeGesture;
+import org.eclipse.gef.mvc.fx.gestures.TypeStrokeGesture;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -42,7 +42,7 @@ import javafx.scene.SnapshotResult;
 import javafx.scene.input.KeyCode;
 import javafx.util.Callback;
 
-public class TypeGestureTests {
+public class TypeStrokeGestureTests {
 
 	private static class FXDomainDriver extends HistoricizingDomain {
 		protected int openedExecutionTransactions = 0;
@@ -50,7 +50,7 @@ public class TypeGestureTests {
 
 		@Override
 		public void closeExecutionTransaction(IGesture tool) {
-			if (tool instanceof TypeGesture) {
+			if (tool instanceof TypeStrokeGesture) {
 				closedExecutionTransactions++;
 			}
 			super.closeExecutionTransaction(tool);
@@ -59,7 +59,7 @@ public class TypeGestureTests {
 		@Override
 		public void openExecutionTransaction(IGesture tool) {
 			super.openExecutionTransaction(tool);
-			if (tool instanceof TypeGesture) {
+			if (tool instanceof TypeStrokeGesture) {
 				openedExecutionTransactions++;
 			}
 		};

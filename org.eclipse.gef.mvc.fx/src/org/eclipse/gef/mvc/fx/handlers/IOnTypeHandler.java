@@ -13,14 +13,14 @@ package org.eclipse.gef.mvc.fx.handlers;
 
 import java.util.Set;
 
-import org.eclipse.gef.mvc.fx.gestures.TypeGesture;
+import org.eclipse.gef.mvc.fx.gestures.TypeStrokeGesture;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
  * An interaction handler that implements the {@link IOnTypeHandler} interface
- * will be notified about keyboard events by the {@link TypeGesture}.
+ * will be notified about keyboard events by the {@link TypeStrokeGesture}.
  *
  * @author mwienand
  *

@@ -34,12 +34,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link TypeGesture} is an {@link AbstractGesture} that handles keyboard input.
+ * The {@link TypeStrokeGesture} is an {@link AbstractGesture} that handles keyboard input.
  *
  * @author mwienand
  *
  */
-public class TypeGesture extends AbstractGesture {
+public class TypeStrokeGesture extends AbstractGesture {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
@@ -97,7 +97,7 @@ public class TypeGesture extends AbstractGesture {
 					clearActiveHandlers(activeViewer);
 					activeViewer = null;
 					// close execution transaction
-					getDomain().closeExecutionTransaction(TypeGesture.this);
+					getDomain().closeExecutionTransaction(TypeStrokeGesture.this);
 					// unset pressed keys
 					pressedKeys.clear();
 				}
@@ -154,13 +154,13 @@ public class TypeGesture extends AbstractGesture {
 						}
 
 						// open execution transaction
-						getDomain().openExecutionTransaction(TypeGesture.this);
+						getDomain().openExecutionTransaction(TypeStrokeGesture.this);
 						isInitialPress = true;
 
 						// determine target policies on first key press
 						setActiveHandlers(activeViewer,
 								getHandlerResolver().resolve(
-										TypeGesture.this, targetNode, activeViewer,
+										TypeStrokeGesture.this, targetNode, activeViewer,
 										ON_STROKE_POLICY_KEY));
 					}
 
@@ -202,7 +202,7 @@ public class TypeGesture extends AbstractGesture {
 						// only when the initially pressed key is released
 						clearActiveHandlers(activeViewer);
 						activeViewer = null;
-						getDomain().closeExecutionTransaction(TypeGesture.this);
+						getDomain().closeExecutionTransaction(TypeStrokeGesture.this);
 					}
 					pressedKeys.remove(event.getCode());
 				}
@@ -214,7 +214,7 @@ public class TypeGesture extends AbstractGesture {
 				public void handle(KeyEvent event) {
 					// System.out.println("typed " + event);
 					if (pressedKeys.isEmpty()) {
-						getDomain().openExecutionTransaction(TypeGesture.this);
+						getDomain().openExecutionTransaction(TypeStrokeGesture.this);
 					}
 
 					// determine viewer that contains the given target part
@@ -241,7 +241,7 @@ public class TypeGesture extends AbstractGesture {
 					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
 							targetNode);
 					Collection<? extends IOnTypeHandler> policies = getHandlerResolver()
-							.resolve(TypeGesture.this, targetNode,
+							.resolve(TypeStrokeGesture.this, targetNode,
 									targetViewer, ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
@@ -249,7 +249,7 @@ public class TypeGesture extends AbstractGesture {
 						policy.type(event, pressedKeys);
 					}
 					if (pressedKeys.isEmpty()) {
-						getDomain().closeExecutionTransaction(TypeGesture.this);
+						getDomain().closeExecutionTransaction(TypeStrokeGesture.this);
 					}
 				}
 			};
