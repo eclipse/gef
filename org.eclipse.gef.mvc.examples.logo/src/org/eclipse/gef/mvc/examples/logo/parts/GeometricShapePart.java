@@ -26,7 +26,6 @@ import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.fx.parts.IResizableContentPart;
-import org.eclipse.gef.mvc.fx.parts.ISnappablePart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
@@ -45,8 +44,7 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
 public class GeometricShapePart extends AbstractGeometricElementPart<GeometryNode<IShape>>
-		implements ITransformableContentPart<GeometryNode<IShape>>, IResizableContentPart<GeometryNode<IShape>>,
-		ISnappablePart<GeometryNode<IShape>> {
+		implements ITransformableContentPart<GeometryNode<IShape>>, IResizableContentPart<GeometryNode<IShape>> {
 
 	private final ChangeListener<? super Paint> fillObserver = new ChangeListener<Paint>() {
 		@Override

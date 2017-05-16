@@ -39,11 +39,6 @@ public class GridModel {
 	public static final boolean SHOW_GRID_DEFAULT = true;
 
 	/**
-	 * The default value for {@link #isSnapToGrid()}.
-	 */
-	public static final boolean SNAP_TO_GRID_DEFAULT = false;
-
-	/**
 	 * The default grid cell height.
 	 */
 	public static final double GRID_CELL_HEIGHT_DEFAULT = 10;
@@ -73,19 +68,12 @@ public class GridModel {
 	 */
 	public static final String ZOOM_GRID_PROPERTY = "zoomGrid";
 
-	/**
-	 * Name of the "snap to grid" property.
-	 */
-	public static final String SNAP_TO_GRID_PROPERTY = "snapToGrid";
-
 	private DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
 			this, GRID_CELL_WIDTH_PROPERTY, GRID_CELL_WIDTH_DEFAULT);
 	private DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
 			this, GRID_CELL_HEIGHT_PROPERTY, GRID_CELL_HEIGHT_DEFAULT);
 	private BooleanProperty showGridProperty = new SimpleBooleanProperty(this,
 			SHOW_GRID_PROPERTY, SHOW_GRID_DEFAULT);
-	private BooleanProperty snapToGridProperty = new SimpleBooleanProperty(this,
-			SNAP_TO_GRID_PROPERTY, SNAP_TO_GRID_DEFAULT);
 	private BooleanProperty zoomGridProperty = new SimpleBooleanProperty(this,
 			ZOOM_GRID_PROPERTY, ZOOM_GRID_DEFAULT);
 
@@ -137,17 +125,6 @@ public class GridModel {
 	}
 
 	/**
-	 * Returns <code>true</code> if snap to grid is enabled, otherwise
-	 * <code>false</code>.
-	 *
-	 * @return <code>true</code> if snap to grid is enabled, otherwise
-	 *         <code>false</code>.
-	 */
-	public boolean isSnapToGrid() {
-		return snapToGridProperty.get();
-	}
-
-	/**
 	 * Returns <code>true</code> if the grid is zooming with the contents,
 	 * otherwise <code>false</code>.
 	 *
@@ -190,17 +167,6 @@ public class GridModel {
 	}
 
 	/**
-	 * Enables/Disables snap to grid depending on the given value.
-	 *
-	 * @param snapToGrid
-	 *            <code>true</code> in order to enable snap-to-grid, or
-	 *            <code>false</code> in order to disable it.
-	 */
-	public void setSnapToGrid(boolean snapToGrid) {
-		snapToGridProperty.set(snapToGrid);
-	}
-
-	/**
 	 * Enables/Disables grid zooming depending on the given value.
 	 *
 	 * @param zoomGrid
@@ -219,16 +185,6 @@ public class GridModel {
 	 */
 	public BooleanProperty showGridProperty() {
 		return showGridProperty;
-	}
-
-	/**
-	 * Returns a boolean property whose value indicates whether snap-to-grid is
-	 * enabled.
-	 *
-	 * @return A boolean property named {@link #SNAP_TO_GRID_PROPERTY}.
-	 */
-	public BooleanProperty snapToGridProperty() {
-		return snapToGridProperty;
 	}
 
 	/**

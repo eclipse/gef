@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,31 +12,32 @@
 package org.eclipse.gef.mvc.fx.handlers;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.models.GridModel;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 /**
- * The {@link SnapToGridSupport} can be used within an {@link IHandler} implementation
- * for snapping scene coordinates to grid points.
+ * The {@link SnapToGrid} is an {@link ISnapToStrategy} implementation that
+ * snaps to grid locations according to the {@link GridModel}.
  */
-public class SnapToGridSupport {
-
-	private IHandler handler;
+public class SnapToGrid extends AbstractSnapTo implements ISnapToStrategy {
 
 	/**
-	 * Constructs a new {@link SnapToGridSupport} for the given host {@link IHandler},
-	 * which gives access to the application's {@link IViewer} and scenegraph.
-	 *
-	 * @param handler
-	 *            The host {@link IHandler} for this {@link SnapToGridSupport}.
+	 * The role for the adapter that provides snapping locations for relevant
+	 * parts.
 	 */
-	public SnapToGridSupport(IHandler handler) {
-		this.handler = handler;
+	public static final String SOURCE_SNAPPING_LOCATION_PROVIDER = "SnapToGridSourceSnappingLocationProvider";
+
+	@Override
+	protected double determineMaximumSnappingDistance() {
+		return Double.MAX_VALUE;
 	}
 
 	/**
@@ -56,6 +57,11 @@ public class SnapToGridSupport {
 		return viewer instanceof InfiniteCanvasViewer
 				? ((InfiniteCanvasViewer) viewer).getCanvas().getContentGroup()
 				: viewer.getRootPart().getVisual();
+	}
+
+	@Override
+	protected String getSnappingLocationProviderRole() {
+		return null;
 	}
 
 	/**
@@ -78,22 +84,34 @@ public class SnapToGridSupport {
 		return 1;
 	}
 
-	/**
-	 * Snaps the given position (in scene coordinates) to a grid position (in
-	 * scene coordinates).
-	 *
-	 * @param sceneX
-	 *            Original position's x-coordinate.
-	 * @param sceneY
-	 *            Original position's y-coordinate.
-	 * @return The snapped position in scene coordinates.
-	 */
-	public Point snapToGrid(double sceneX, double sceneY) {
-		IViewer viewer = handler.getHost().getRoot().getViewer();
-		return snapToGrid(sceneX, sceneY,
+	@Override
+	public String getSourceLocationProviderRole() {
+		return SOURCE_SNAPPING_LOCATION_PROVIDER;
+	}
+
+	@Override
+	protected boolean isRelevant(IContentPart<? extends Node> part) {
+		// TODO: prevent part iteration
+		return false;
+	}
+
+	@Override
+	public Dimension snap(Orientation orientation, double positionInScene) {
+		if (orientation != Orientation.HORIZONTAL
+				&& orientation != Orientation.VERTICAL) {
+			throw new IllegalArgumentException(
+					"The given Orientation is neither HORIZONTAL nor VERTICAL.");
+		}
+		IViewer viewer = getSnappedPart().getViewer();
+		Point snapped = snapToGrid(positionInScene, positionInScene,
 				viewer.<GridModel> getAdapter(GridModel.class),
 				getSnapToGridGranularityX(), getSnapToGridGranularityY(),
 				getGridLocalVisual(viewer));
+		if (orientation == Orientation.HORIZONTAL) {
+			return new Dimension(snapped.x - positionInScene, 0);
+		} else {
+			return new Dimension(0, snapped.y - positionInScene);
+		}
 	}
 
 	/**
@@ -120,13 +138,9 @@ public class SnapToGridSupport {
 	 *            at <code>(n * grid-cell-width, m * grid-cell-height)</code>.
 	 * @return The resulting snapped position in scene coordinates.
 	 */
-	public Point snapToGrid(final double sceneX, final double sceneY,
+	protected Point snapToGrid(final double sceneX, final double sceneY,
 			GridModel gridModel, final double gridCellWidthFraction,
 			final double gridCellHeightFraction, Node gridLocalVisual) {
-		// do nothing if snap to grid is disabled
-		if (!gridModel.isSnapToGrid()) {
-			return new Point(sceneX, sceneY);
-		}
 		// transform to grid local coordinates
 		Point2D gridLocalPosition = gridLocalVisual.sceneToLocal(sceneX,
 				sceneY);

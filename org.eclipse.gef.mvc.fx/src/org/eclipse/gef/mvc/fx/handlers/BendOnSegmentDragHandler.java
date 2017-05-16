@@ -37,7 +37,6 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
 	private boolean isPrepared;
@@ -85,10 +84,11 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		// 4. snap selected-position-in-scene unless precise
 		// 5. call move(initial-position-in-scene, snapped-position-in-scene)
 
+		// TODO
 		// snap to grid
 		Point newEndPointInScene = isPrecise(e)
 				? new Point(e.getSceneX(), e.getSceneY())
-				: snapSupport.snapToGrid(e.getSceneX(), e.getSceneY());
+				: new Point(e.getSceneX(), e.getSceneY());
 
 		// perform changes
 		bendPolicy.move(initialMouseInScene, newEndPointInScene);

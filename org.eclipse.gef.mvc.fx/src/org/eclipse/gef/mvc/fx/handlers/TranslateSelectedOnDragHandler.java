@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - bug fixing and snapping
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.handlers;
@@ -20,16 +21,12 @@ import java.util.Map;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.utils.NodeUtils;
-import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
-import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
-import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -47,9 +44,7 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapToGridSupport snapToGridSupport = new SnapToGridSupport(this);
-	private SnapToGeometrySupport snapToGeometrySupport;
-
+	private SnapToSupport snapToSupport = null;
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<? extends Node>, Integer> translationIndices = new HashMap<>();
 	private List<Pair<IContentPart<? extends Node>, TransformPolicy>> targets;
@@ -57,7 +52,6 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 	// gesture validity
 	private boolean invalidGesture = false;
 	private Map<IContentPart<? extends Node>, Rectangle> boundsInScene = new IdentityHashMap<>();
-	private Rectangle initialLayoutBoundsInScene;
 
 	@Override
 	public void abortDrag() {
@@ -72,9 +66,8 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		}
 
 		// clear snapping locations
-		if (snapToGeometrySupport != null) {
-			snapToGeometrySupport.stopSnapping();
-			snapToGeometrySupport = null;
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
 		}
 		// reset targets
 		targets = null;
@@ -90,39 +83,20 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		if (invalidGesture) {
 			return;
 		}
-		// determine viewer
-		IViewer viewer = getHost().getRoot().getViewer();
-		// prepare data for snap-to-grid
-		Node gridLocalVisual = null;
-		GridModel gridModel = null;
-		double granularityX = 0d;
-		double granularityY = 0d;
+		// determine if snapping is performed
 		boolean performSnapping = !isPrecise(e);
-		if (performSnapping) {
-			granularityX = snapToGridSupport.getSnapToGridGranularityX();
-			granularityY = snapToGridSupport.getSnapToGridGranularityY();
-			gridModel = viewer.getAdapter(GridModel.class);
-			gridLocalVisual = snapToGridSupport.getGridLocalVisual(viewer);
-		}
 		// apply changes to the target parts
 		for (Pair<IContentPart<? extends Node>, TransformPolicy> pair : targets) {
 			// determine start and end position in scene coordinates
 			Point startInScene = boundsInScene.get(pair.getKey()).getTopLeft();
 			Point endInScene = startInScene.getTranslated(delta);
-			// snap to location
-			if (performSnapping && snapToGeometrySupport != null) {
-				Dimension snapDimension = snapToGeometrySupport.snapToLocation(
-						Geometry2FX.toFXBounds(initialLayoutBoundsInScene
-								.getTranslated(delta.width, delta.height)));
-				endInScene.translate(snapDimension);
+
+			// snap to
+			if (performSnapping && snapToSupport != null) {
+				endInScene.translate(snapToSupport.snap(delta));
 			}
-			// snap to grid
 			Point newEndInScene = endInScene.getCopy();
-			if (gridLocalVisual != null) {
-				newEndInScene = snapToGridSupport.snapToGrid(endInScene.x,
-						endInScene.y, gridModel, granularityX, granularityY,
-						gridLocalVisual);
-			}
+
 			// compute delta in parent coordinates
 			Point newEndInParent = NodeUtils.sceneToLocal(
 					pair.getKey().getVisual().getParent(), newEndInScene);
@@ -130,6 +104,7 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 					pair.getKey().getVisual().getParent(), startInScene);
 			Point deltaInParent = newEndInParent
 					.getTranslated(startInParent.getNegated());
+
 			// update transformation
 			pair.getValue().setPostTranslate(
 					translationIndices.get(pair.getKey()), deltaInParent.x,
@@ -151,9 +126,8 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		}
 
 		// clear snapping locations
-		if (snapToGeometrySupport != null) {
-			snapToGeometrySupport.stopSnapping();
-			snapToGeometrySupport = null;
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
 		}
 		// reset target parts
 		targets = null;
@@ -322,23 +296,18 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			boundsInScene.put(part, shapeBoundsInScene);
 		}
 
-		// snapping for single selection
-		if (getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+		// snapping only for single selection
+		snapToSupport = null;
+		if (getHost().getViewer().getAdapter(SelectionModel.class)
 				.getSelectionUnmodifiable().size() == 1
-				&& getHost().getRoot().getViewer()
-						.getAdapter(SelectionModel.class)
+				&& getHost().getViewer().getAdapter(SelectionModel.class)
 						.getSelectionUnmodifiable().contains(getHost())) {
-			snapToGeometrySupport = getHost().getRoot()
-					.getAdapter(SnapToGeometrySupport.class);
-			if (snapToGeometrySupport != null) {
-				snapToGeometrySupport.startSnapping(
+			snapToSupport = getHost().getViewer()
+					.getAdapter(SnapToSupport.class);
+			if (snapToSupport != null) {
+				snapToSupport.startSnapping(
 						(IContentPart<? extends Node>) getHost());
-				initialLayoutBoundsInScene = FX2Geometry
-						.toRectangle(getHost().getVisual().localToScene(
-								getHost().getVisual().getLayoutBounds()));
 			}
-		} else {
-			snapToGeometrySupport = null;
 		}
 	}
 }

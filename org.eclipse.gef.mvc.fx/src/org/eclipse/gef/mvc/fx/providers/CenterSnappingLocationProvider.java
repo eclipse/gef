@@ -9,36 +9,33 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.mvc.fx.parts;
+package org.eclipse.gef.mvc.fx.providers;
 
 import java.util.List;
 
 import org.eclipse.gef.mvc.fx.models.SnappingModel.SnappingLocation;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 
 /**
- * The {@link ICenterSnappablePart} is an {@link ISnappablePart} that provides
- * its center position as the horizontal and vertical snapping locations, per
- * default.
- *
- * @param <V>
- *            The visual type parameter.
+ * The {@link CenterSnappingLocationProvider} is a specialization of
+ * {@link BoundsSnappingLocationProvider} that returns the center of the bounds
+ * as the only {@link SnappingLocation}s.
  */
-public interface ICenterSnappablePart<V extends Node>
-		extends ISnappablePart<V> {
+public class CenterSnappingLocationProvider
+		extends BoundsSnappingLocationProvider {
 
 	@Override
-	default List<SnappingLocation> getHorizontalSnappingLocations() {
-		return SnappingUtil.computeSnappingLocations(this,
-				Orientation.HORIZONTAL, 0.5d);
+	public List<SnappingLocation> getHorizontalSnappingLocations(
+			IContentPart<? extends Node> part) {
+		return getSnappingLocations(part, Orientation.HORIZONTAL, 0.5d);
 	}
 
 	@Override
-	public default java.util.List<SnappingLocation> getVerticalSnappingLocations() {
-		return SnappingUtil.computeSnappingLocations(this, Orientation.VERTICAL,
-				0.5d);
+	public List<SnappingLocation> getVerticalSnappingLocations(
+			IContentPart<? extends Node> part) {
+		return getSnappingLocations(part, Orientation.VERTICAL, 0.5d);
 	}
-
 }

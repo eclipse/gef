@@ -43,6 +43,7 @@ import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
 import org.eclipse.gef.mvc.fx.handlers.MarqueeOnDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.PanOnStrokeHandler;
 import org.eclipse.gef.mvc.fx.handlers.PanOrZoomOnScrollHandler;
+import org.eclipse.gef.mvc.fx.handlers.SnapToSupport;
 import org.eclipse.gef.mvc.fx.handlers.ZoomOnPinchSpreadHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.GridModel;
@@ -761,6 +762,8 @@ public class MvcFxModule extends AbstractModule {
 				adapterMapBinder);
 		bindHoverHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
 		bindSelectionHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
+
+		bindSnapToSupportAsContentViewerAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -996,6 +999,17 @@ public class MvcFxModule extends AbstractModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(SelectionModel.class)
 				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	/**
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to register adapter
+	 *            bindings.
+	 */
+	protected void bindSnapToSupportAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(SnapToSupport.class);
 	}
 
 	/**

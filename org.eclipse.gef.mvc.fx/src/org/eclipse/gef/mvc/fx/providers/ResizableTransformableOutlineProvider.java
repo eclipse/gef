@@ -30,5 +30,4 @@ public class ResizableTransformableOutlineProvider
 	public IGeometry get() {
 		return super.get().getBounds().getOutline();
 	}
-
 }

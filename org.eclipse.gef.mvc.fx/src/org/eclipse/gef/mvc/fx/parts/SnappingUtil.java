@@ -26,28 +26,26 @@ import javafx.scene.Node;
 
 /**
  * The {@link SnappingUtil} class is a collection of utility methods that can be
- * used to provide {@link SnappingLocation}s for an {@link ISnappablePart}.
+ * used to provide {@link SnappingLocation}s for an {@link IContentPart}.
  *
  * In general, the snapping locations can be provided for ratios which are
- * applied to the width/height of the {@link ISnappablePart}'s visual:
- * {@link #computeSnappingLocations(ISnappablePart, Orientation, double...)}.
+ * applied to the width/height of the {@link IContentPart}'s visual:
+ * {@link #computeSnappingLocations(IContentPart, Orientation, double...)}.
  *
  * Additionally, there is a dedicated method for determining the
  * {@link SnappingLocation}s for a part that uses a {@link Connection} for its
- * visualization:
- * {@link #computeSnappingLocations(ISnappablePart, Orientation)}.
+ * visualization: {@link #computeSnappingLocations(IContentPart, Orientation)}.
  */
 public class SnappingUtil {
 
 	/**
 	 * Returns the {@link SnappingLocation}s for the individual start/end points
-	 * of the {@link Connection} that visualizes the given
-	 * {@link ISnappablePart}. Depending on the given {@link Orientation},
-	 * either the horizontal or vertical coordinates are evaluated for the
-	 * {@link SnappingLocation}s.
+	 * of the {@link Connection} that visualizes the given {@link IContentPart}.
+	 * Depending on the given {@link Orientation}, either the horizontal or
+	 * vertical coordinates are evaluated for the {@link SnappingLocation}s.
 	 *
 	 * @param part
-	 *            The {@link ISnappablePart} for which to determine the
+	 *            The {@link IContentPart} for which to determine the
 	 *            {@link SnappingLocation}s.
 	 * @param orientation
 	 *            The {@link Orientation} for the {@link SnappingLocation}s.
@@ -55,8 +53,7 @@ public class SnappingUtil {
 	 *         {@link SnappingLocation}s according to the given parameters.
 	 */
 	public static List<SnappingLocation> computeSnappingLocations(
-			ISnappablePart<? extends Connection> part,
-			Orientation orientation) {
+			IContentPart<? extends Connection> part, Orientation orientation) {
 		List<SnappingLocation> locations = new ArrayList<>();
 		// consider all segments of the connection
 		ObservableList<Point> points = part.getVisual().getPointsUnmodifiable();
@@ -82,15 +79,15 @@ public class SnappingUtil {
 	}
 
 	/**
-	 * Returns the {@link SnappingLocation}s for the given
-	 * {@link ISnappablePart}, {@link Orientation}, and size ratios. The size
-	 * ratios are applied to the width or height of the {@link ISnappablePart}'s
-	 * visual in order to determine the actual {@link SnappingLocation}s. The
-	 * given {@link Orientation} determines if horizontal or vertical
+	 * Returns the {@link SnappingLocation}s for the given {@link IContentPart},
+	 * {@link Orientation}, and size ratios. The size ratios are applied to the
+	 * width or height of the {@link IContentPart}'s visual in order to
+	 * determine the actual {@link SnappingLocation}s. The given
+	 * {@link Orientation} determines if horizontal or vertical
 	 * {@link SnappingLocation}s are determined.
 	 *
 	 * @param part
-	 *            The {@link ISnappablePart} for which to determine the
+	 *            The {@link IContentPart} for which to determine the
 	 *            {@link SnappingLocation}s.
 	 * @param orientation
 	 *            The {@link Orientation} for the {@link SnappingLocation}s.
@@ -100,7 +97,7 @@ public class SnappingUtil {
 	 *         {@link SnappingLocation}s according to the given parameters.
 	 */
 	public static List<SnappingLocation> computeSnappingLocations(
-			ISnappablePart<? extends Node> part, Orientation orientation,
+			IContentPart<? extends Node> part, Orientation orientation,
 			double... ratios) {
 		Bounds boundsInScene = part.getVisual()
 				.localToScene(part.getVisual().getLayoutBounds());
@@ -108,11 +105,11 @@ public class SnappingUtil {
 		for (int i = 0; i < ratios.length; i++) {
 			double min, size;
 			if (orientation == Orientation.VERTICAL) {
-				min = boundsInScene.getMinX();
-				size = boundsInScene.getWidth();
-			} else {
 				min = boundsInScene.getMinY();
 				size = boundsInScene.getHeight();
+			} else {
+				min = boundsInScene.getMinX();
+				size = boundsInScene.getWidth();
 			}
 			double location = min + size * ratios[i];
 			locations.add(new SnappingLocation(part, orientation, location));

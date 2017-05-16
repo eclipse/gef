@@ -196,7 +196,7 @@ public class SnappingModel {
 	/**
 	 * Name of the {@link #snappingLocationsProperty()}.
 	 */
-	public static final String SNAPPING_LOCATIONS_PROPERTY = "snappingLocation";
+	public static final String SNAPPING_LOCATIONS_PROPERTY = "snappingLocations";
 
 	private ObservableList<SnappingLocation> snappingLocations = CollectionUtils
 			.observableArrayList();

@@ -40,7 +40,6 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
 	private int translationIndex;
@@ -88,7 +87,8 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		// snap the moved vertex (unless isPrecise(e))
 		Point snappedVertex = newVertex;
 		if (!isPrecise(e)) {
-			snappedVertex = snapSupport.snapToGrid(newVertex.x, newVertex.y);
+			// TODO
+			// snappedVertex = snapSupport.snapToGrid(newVertex.x, newVertex.y);
 		}
 
 		// compute delta between initial and snapped vertex

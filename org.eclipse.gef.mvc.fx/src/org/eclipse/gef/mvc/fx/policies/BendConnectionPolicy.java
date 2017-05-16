@@ -461,17 +461,10 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 * @return The overlay threshold.
 	 */
 	protected double getOverlayThreshold() {
+		// TODO: respect snapping (grid cell size, snapping distances, etc.)
 		if (getConnection().getRouter() instanceof OrthogonalRouter
 				&& selectedExplicitAnchorIndices.size() == 2) {
-			// TODO: grid cell size
 			return DEFAULT_SEGMENT_OVERLAY_THRESHOLD;
-		}
-		// depending grid cell size
-		GridModel model = getHost().getRoot().getViewer()
-				.getAdapter(GridModel.class);
-		if (model != null && model.isSnapToGrid()) {
-			return Math.min(model.getGridCellWidth(), model.getGridCellHeight())
-					/ 4;
 		}
 		// fallback to default
 		return DEFAULT_OVERLAY_THRESHOLD;

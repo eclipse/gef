@@ -51,11 +51,10 @@ import javafx.scene.input.ScrollEvent;
  * @author mwienand
  *
  */
-public class ResizeTransformSelectedOnHandleDragHandler
-		extends AbstractHandler implements IOnDragHandler {
+public class ResizeTransformSelectedOnHandleDragHandler extends AbstractHandler
+		implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
 	private Map<IContentPart<? extends Node>, Double> relX1 = null;
@@ -139,9 +138,11 @@ public class ResizeTransformSelectedOnHandleDragHandler
 		// snap to grid
 		// FIXME: apply resize-transform first, then snap the moved vertex to
 		// the next grid position and update the values
+
+		// TODO
 		Point newEndPointInScene = isPrecise(e)
 				? new Point(e.getSceneX(), e.getSceneY())
-				: snapSupport.snapToGrid(e.getSceneX(), e.getSceneY());
+				: new Point(e.getSceneX(), e.getSceneY());
 
 		// update selection bounds
 		Rectangle sel = updateSelectionBounds(newEndPointInScene);

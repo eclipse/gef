@@ -56,7 +56,8 @@ import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnRotateHandler;
 import org.eclipse.gef.mvc.fx.handlers.SelectAllOnTypeHandler;
 import org.eclipse.gef.mvc.fx.handlers.SelectFocusedOnTypeHandler;
-import org.eclipse.gef.mvc.fx.handlers.SnapToGeometrySupport;
+import org.eclipse.gef.mvc.fx.handlers.SnapToGeometry;
+import org.eclipse.gef.mvc.fx.handlers.SnapToGrid;
 import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.TraverseFocusOnTypeHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
@@ -77,9 +78,12 @@ import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
+import org.eclipse.gef.mvc.fx.providers.BoundsSnappingLocationProvider;
+import org.eclipse.gef.mvc.fx.providers.CenterSnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
+import org.eclipse.gef.mvc.fx.providers.TopLeftSnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Binder;
@@ -273,7 +277,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizePolicy.class);
 
 		// relocate on drag (including anchored elements, which are linked)
-		// adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RelocateLinkedOnDragHandler.class);
 
 		// clone
@@ -287,6 +290,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// normalize connected on drag
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragHandler.class);
+
+		adapterMapBinder.addBinding(AdapterKey.role(SnapToGrid.SOURCE_SNAPPING_LOCATION_PROVIDER))
+				.to(TopLeftSnappingLocationProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.role(SnapToGeometry.SOURCE_SNAPPING_LOCATION_PROVIDER))
+				.to(CenterSnappingLocationProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.role(SnapToGeometry.TARGET_SNAPPING_LOCATION_PROVIDER))
+				.to(BoundsSnappingLocationProvider.class);
 	}
 
 	protected void bindHoverFeedbackFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -340,7 +350,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// select-all on type
 		bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(adapterMapBinder);
 
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SnapToGeometrySupport.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SnappingBehavior.class);
 	}
 

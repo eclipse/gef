@@ -56,7 +56,6 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
-	private SnapToGridSupport snapSupport = new SnapToGridSupport(this);
 	private IVisualPart<? extends Connection> targetPart;
 	private boolean isSegmentDragged;
 	private Point initialMouseInScene;
@@ -150,10 +149,10 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		// apply mouse-delta to selected-position-in-scene
 		Point endPositionInScene = startPositionInScene.getTranslated(delta);
 
+		// TODO
 		// snap to grid
 		endPositionInScene = isPrecise(e) ? endPositionInScene
-				: snapSupport.snapToGrid(endPositionInScene.x,
-						endPositionInScene.y);
+				: endPositionInScene;
 
 		// perform changes
 		bendPolicy.move(startPositionInScene, endPositionInScene);

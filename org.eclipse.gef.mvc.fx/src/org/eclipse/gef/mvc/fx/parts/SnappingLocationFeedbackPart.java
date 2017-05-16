@@ -139,7 +139,7 @@ public class SnappingLocationFeedbackPart extends AbstractFeedbackPart<Line> {
 		canvas.heightProperty().addListener(viewportSizeObserver);
 
 		// update visual
-		if (getSnappingLocation().getOrientation() == Orientation.VERTICAL) {
+		if (getSnappingLocation().getOrientation() == Orientation.HORIZONTAL) {
 			// x location saved in snapping location
 			double xInScene = getSnappingLocation().getPositionInScene();
 
