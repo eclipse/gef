@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 itemis AG and others.
+ * Copyright (c) 2014, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) -
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx;
@@ -38,11 +39,13 @@ import org.eclipse.gef.mvc.fx.gestures.PinchSpreadGesture;
 import org.eclipse.gef.mvc.fx.gestures.RotateGesture;
 import org.eclipse.gef.mvc.fx.gestures.ScrollGesture;
 import org.eclipse.gef.mvc.fx.gestures.TypeStrokeGesture;
+import org.eclipse.gef.mvc.fx.handlers.CursorSupport;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
 import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
 import org.eclipse.gef.mvc.fx.handlers.MarqueeOnDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.PanOnStrokeHandler;
 import org.eclipse.gef.mvc.fx.handlers.PanOrZoomOnScrollHandler;
+import org.eclipse.gef.mvc.fx.handlers.PanningSupport;
 import org.eclipse.gef.mvc.fx.handlers.SnapToSupport;
 import org.eclipse.gef.mvc.fx.handlers.ZoomOnPinchSpreadHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
@@ -312,6 +315,17 @@ public class MvcFxModule extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(CreationPolicy.class);
+	}
+
+	/**
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to register adapter
+	 *            bindings.
+	 */
+	protected void bindCursorSupportAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(CursorSupport.class);
 	}
 
 	/**
@@ -763,6 +777,8 @@ public class MvcFxModule extends AbstractModule {
 		bindHoverHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
 		bindSelectionHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
 
+		bindCursorSupportAsContentViewerAdapter(adapterMapBinder);
+		bindPanningSupportAsContentViewerAdapter(adapterMapBinder);
 		bindSnapToSupportAsContentViewerAdapter(adapterMapBinder);
 	}
 
@@ -782,6 +798,17 @@ public class MvcFxModule extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(MarqueeOnDragHandler.class);
+	}
+
+	/**
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to register adapter
+	 *            bindings.
+	 */
+	protected void bindPanningSupportAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(PanningSupport.class);
 	}
 
 	/**
@@ -1042,8 +1069,8 @@ public class MvcFxModule extends AbstractModule {
 	}
 
 	/**
-	 * Adds a binding for {@link TypeStrokeGesture} to the adapter map binder for
-	 * {@link IDomain}.
+	 * Adds a binding for {@link TypeStrokeGesture} to the adapter map binder
+	 * for {@link IDomain}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.

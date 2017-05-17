@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.handlers;
+
+import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -22,12 +25,7 @@ import javafx.scene.Scene;
  * @author mwienand
  *
  */
-public class CursorSupport {
-
-	/**
-	 * The interaction handler that is supported.
-	 */
-	private IHandler handler;
+public class CursorSupport extends IAdaptable.Bound.Impl<IViewer> {
 
 	/**
 	 * The original mouse {@link Cursor}.
@@ -48,7 +46,6 @@ public class CursorSupport {
 	 *            The {@link IHandler} that is supported.
 	 */
 	public CursorSupport(IHandler handler) {
-		this.handler = handler;
 	}
 
 	/**
@@ -96,7 +93,7 @@ public class CursorSupport {
 	 * @see #restoreCursor()
 	 */
 	public void setCursor(Cursor cursor) {
-		Scene scene = handler.getHost().getVisual().getScene();
+		Scene scene = getAdaptable().getRootPart().getVisual().getScene();
 		if (cursor != scene.getCursor()) {
 			scene.setCursor(cursor);
 		}
@@ -114,7 +111,7 @@ public class CursorSupport {
 	 */
 	public void storeAndReplaceCursor(Cursor cursor) {
 		if (!isCursorChanged) {
-			originalCursor = handler.getHost().getVisual().getScene()
+			originalCursor = getAdaptable().getRootPart().getVisual().getScene()
 					.getCursor();
 			isCursorChanged = true;
 		}
