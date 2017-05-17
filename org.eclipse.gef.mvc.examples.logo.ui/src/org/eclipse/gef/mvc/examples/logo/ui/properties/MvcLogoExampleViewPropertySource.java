@@ -17,8 +17,8 @@ import org.eclipse.gef.mvc.examples.logo.ui.view.MvcLogoExampleView;
 import org.eclipse.gef.mvc.fx.handlers.ISnapToStrategy;
 import org.eclipse.gef.mvc.fx.handlers.SnapToGeometry;
 import org.eclipse.gef.mvc.fx.handlers.SnapToGrid;
-import org.eclipse.gef.mvc.fx.handlers.SnapToSupport;
 import org.eclipse.gef.mvc.fx.models.GridModel;
+import org.eclipse.gef.mvc.fx.models.SnappingModel;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -28,9 +28,15 @@ import javafx.collections.ObservableList;
 
 public class MvcLogoExampleViewPropertySource implements IPropertySource {
 
+	// snap-to strategies
+	private static final SnapToGrid SNAP_TO_GRID_STRATEGY = new SnapToGrid();
+	private static final SnapToGeometry SNAP_TO_GEOMETRY_STRATEGY = new SnapToGeometry();
+	
+	// IDs for snap-to-strategy properties
 	private static final String SNAP_TO_GRID_ID = "SNAP_TO_GRID";
 	private static final String SNAP_TO_GEOMETRY_ID = "SNAP_TO_GEOMETRY";
 
+	// descriptors
 	private static final IPropertyDescriptor SNAP_TO_GEOMETRY_PROPERTY_DESCRIPTOR = new ComboBoxPropertyDescriptor(
 			SNAP_TO_GEOMETRY_ID, "Snap To Geometry",
 			new String[] { Boolean.FALSE.toString(), Boolean.TRUE.toString() });
@@ -42,6 +48,7 @@ public class MvcLogoExampleViewPropertySource implements IPropertySource {
 	private static final IPropertyDescriptor GRID_CELL_HEIGHT_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(
 			GridModel.GRID_CELL_HEIGHT_PROPERTY, "Grid Cell Height");
 
+	// reference to the view
 	private MvcLogoExampleView view;
 
 	public MvcLogoExampleViewPropertySource(MvcLogoExampleView view) {
@@ -65,8 +72,8 @@ public class MvcLogoExampleViewPropertySource implements IPropertySource {
 	}
 
 	private ObservableList<ISnapToStrategy> getSupportedSnapToStrategies() {
-		return view.getContentViewer().getAdapter(SnapToSupport.class)
-				.getSupportedStrategies();
+		return view.getContentViewer().getAdapter(SnappingModel.class)
+				.snapToStrategiesProperty();
 	}
 
 	@Override
@@ -144,7 +151,7 @@ public class MvcLogoExampleViewPropertySource implements IPropertySource {
 
 	private void addSnapToGrid() {
 		if(getSnapToGrid() == null) {
-			getSupportedSnapToStrategies().add(SnapToSupport.SNAP_TO_GRID_STRATEGY);
+			getSupportedSnapToStrategies().add(SNAP_TO_GRID_STRATEGY);
 		}
 	}
 
@@ -177,7 +184,7 @@ public class MvcLogoExampleViewPropertySource implements IPropertySource {
 
 	private void addSnapToGeometry() {
 		if(getSnapToGeometry() == null) {
-			getSupportedSnapToStrategies().add(SnapToSupport.SNAP_TO_GEOMETRY_STRATEGY);
+			getSupportedSnapToStrategies().add(SNAP_TO_GEOMETRY_STRATEGY);
 		}
 	}
 

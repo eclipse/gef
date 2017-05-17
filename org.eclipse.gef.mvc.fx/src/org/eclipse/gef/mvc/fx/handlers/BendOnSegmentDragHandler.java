@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapToSupport snapToSupport = null;
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
 	private boolean isPrepared;
@@ -51,6 +52,10 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		restoreRefreshVisuals(getHost());
 		updateHandles();
 		bendPolicy = null;
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
+			snapToSupport = null;
+		}
 	}
 
 	/**
@@ -84,11 +89,10 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		// 4. snap selected-position-in-scene unless precise
 		// 5. call move(initial-position-in-scene, snapped-position-in-scene)
 
-		// TODO
-		// snap to grid
-		Point newEndPointInScene = isPrecise(e)
-				? new Point(e.getSceneX(), e.getSceneY())
-				: new Point(e.getSceneX(), e.getSceneY());
+		Point newEndPointInScene = new Point(e.getSceneX(), e.getSceneY());
+		if (!isPrecise(e)) {
+			newEndPointInScene.translate(snapToSupport.snap(delta));
+		}
 
 		// perform changes
 		bendPolicy.move(initialMouseInScene, newEndPointInScene);
@@ -104,6 +108,10 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		restoreRefreshVisuals(getHost());
 		updateHandles();
 		bendPolicy = null;
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
+			snapToSupport = null;
+		}
 	}
 
 	/**
@@ -253,6 +261,14 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		bendPolicy = determineBendPolicy();
 		init(bendPolicy);
 		updateHandles();
+
+		snapToSupport = getHost() instanceof IContentPart
+				? getHost().getViewer().getAdapter(SnapToSupport.class) : null;
+		if (snapToSupport != null) {
+			snapToSupport.startSnapping(
+					(IContentPart<? extends Connection>) getHost(),
+					initialMouseInScene);
+		}
 	}
 
 	/**

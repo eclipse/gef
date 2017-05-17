@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
+import org.eclipse.gef.mvc.fx.handlers.ISnapToStrategy;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 
 import javafx.beans.property.ReadOnlyListProperty;
@@ -190,7 +191,6 @@ public class SnappingModel {
 					+ getOrientation() + ", position=" + getPositionInScene()
 					+ "]";
 		}
-
 	}
 
 	/**
@@ -198,11 +198,20 @@ public class SnappingModel {
 	 */
 	public static final String SNAPPING_LOCATIONS_PROPERTY = "snappingLocations";
 
+	/**
+	 * Name of the property storing supported strategies.
+	 */
+	public static final String SNAP_TO_STRATEGIES_PROPERTY = "snapToStrategies";
+
 	private ObservableList<SnappingLocation> snappingLocations = CollectionUtils
 			.observableArrayList();
-
 	private ReadOnlyListWrapper<SnappingLocation> snappingLocationsProperty = new ReadOnlyListWrapperEx<>(
 			this, SNAPPING_LOCATIONS_PROPERTY, snappingLocations);
+
+	private ObservableList<ISnapToStrategy> snapToStrategies = CollectionUtils
+			.observableArrayList();
+	private ReadOnlyListWrapper<ISnapToStrategy> snapToStrategiesProperty = new ReadOnlyListWrapperEx<>(
+			this, SNAP_TO_STRATEGIES_PROPERTY, snapToStrategies);
 
 	/**
 	 * Returns a {@link List} containing the {@link SnappingLocation}s currently
@@ -260,5 +269,16 @@ public class SnappingModel {
 	 */
 	public ReadOnlyListProperty<SnappingLocation> snappingLocationsProperty() {
 		return snappingLocationsProperty.getReadOnlyProperty();
+	}
+
+	/**
+	 * A read-only property containing the current {@link ISnapToStrategy
+	 * ISnapToStrategies}.
+	 *
+	 * @return A read-only list property named
+	 *         {@link #SNAP_TO_STRATEGIES_PROPERTY}.
+	 */
+	public ReadOnlyListProperty<ISnapToStrategy> snapToStrategiesProperty() {
+		return snapToStrategiesProperty.getReadOnlyProperty();
 	}
 }

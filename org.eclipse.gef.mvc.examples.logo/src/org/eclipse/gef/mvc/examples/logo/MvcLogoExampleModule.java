@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo;
 
+import java.util.Arrays;
+
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
@@ -82,6 +84,7 @@ import org.eclipse.gef.mvc.fx.providers.BoundsSnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.providers.CenterSnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.GeometricOutlineProvider;
+import org.eclipse.gef.mvc.fx.providers.ISnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef.mvc.fx.providers.TopLeftSnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -294,7 +297,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.role(SnapToGrid.SOURCE_SNAPPING_LOCATION_PROVIDER))
 				.to(TopLeftSnappingLocationProvider.class);
 		adapterMapBinder.addBinding(AdapterKey.role(SnapToGeometry.SOURCE_SNAPPING_LOCATION_PROVIDER))
-				.to(CenterSnappingLocationProvider.class);
+				.toInstance(ISnappingLocationProvider.union(
+						Arrays.asList(new CenterSnappingLocationProvider(), new BoundsSnappingLocationProvider())));
 		adapterMapBinder.addBinding(AdapterKey.role(SnapToGeometry.TARGET_SNAPPING_LOCATION_PROVIDER))
 				.to(BoundsSnappingLocationProvider.class);
 	}

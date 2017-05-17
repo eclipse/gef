@@ -58,7 +58,7 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	 */
 	protected Collection<? extends SnappingLocation> determineHorizontalTargetLocations(
 			IContentPart<? extends Node> rp) {
-		ISnappingLocationProvider snappingLocationProvider = getSnappingLocationProvider(
+		ISnappingLocationProvider snappingLocationProvider = getTargetLocationProvider(
 				rp);
 		if (snappingLocationProvider == null) {
 			return Collections.emptyList();
@@ -81,7 +81,7 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	 */
 	protected Collection<? extends SnappingLocation> determineVerticalTargetLocations(
 			IContentPart<? extends Node> rp) {
-		ISnappingLocationProvider snappingLocationProvider = getSnappingLocationProvider(
+		ISnappingLocationProvider snappingLocationProvider = getTargetLocationProvider(
 				rp);
 		if (snappingLocationProvider == null) {
 			return Collections.emptyList();
@@ -104,7 +104,7 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 		return snappedPart;
 	}
 
-	private ISnappingLocationProvider getSnappingLocationProvider(
+	private ISnappingLocationProvider getTargetLocationProvider(
 			IContentPart<? extends Node> part) {
 		String role = getTargetLocationProviderRole();
 		IVisualPart<? extends Node> current = part;

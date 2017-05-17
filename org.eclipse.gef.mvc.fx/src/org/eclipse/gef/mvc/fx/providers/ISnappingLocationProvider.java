@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.providers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.mvc.fx.models.SnappingModel.SnappingLocation;
@@ -23,6 +24,36 @@ import javafx.scene.Node;
  * {@link SnappingLocation}s for an {@link IContentPart}.
  */
 public interface ISnappingLocationProvider {
+
+	/**
+	 * @param providers
+	 *            p
+	 * @return h
+	 */
+	public static ISnappingLocationProvider union(
+			List<ISnappingLocationProvider> providers) {
+		return new ISnappingLocationProvider() {
+			@Override
+			public List<SnappingLocation> getHorizontalSnappingLocations(
+					IContentPart<? extends Node> part) {
+				List<SnappingLocation> hsls = new ArrayList<>();
+				for (ISnappingLocationProvider p : providers) {
+					hsls.addAll(p.getHorizontalSnappingLocations(part));
+				}
+				return hsls;
+			}
+
+			@Override
+			public List<SnappingLocation> getVerticalSnappingLocations(
+					IContentPart<? extends Node> part) {
+				List<SnappingLocation> vsls = new ArrayList<>();
+				for (ISnappingLocationProvider p : providers) {
+					vsls.addAll(p.getVerticalSnappingLocations(part));
+				}
+				return vsls;
+			}
+		};
+	}
 
 	/**
 	 * Returns the horizontal {@link SnappingLocation}s for the given

@@ -21,7 +21,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
-import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.behaviors.SnappingBehavior;
@@ -31,8 +30,6 @@ import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.providers.ISnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import javafx.beans.property.ReadOnlyListProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 
@@ -51,50 +48,16 @@ import javafx.scene.Node;
  */
 public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 
-	/**
-	 * Globally stores the {@link SnapToGrid} strategy.
-	 */
-	public static final SnapToGrid SNAP_TO_GRID_STRATEGY = new SnapToGrid();
-
-	/**
-	 * Globally stores the {@link SnapToGeometry} strategy.
-	 */
-	public static final SnapToGeometry SNAP_TO_GEOMETRY_STRATEGY = new SnapToGeometry();
-
-	private ObservableList<ISnapToStrategy> supportedStrategies = CollectionUtils
-			.observableArrayList();
-
-	// /**
-	// * Name of the property storing supported strategies.
-	// */
-	// public static final String SUPPORTED_STRATEGIES_PROPERTY =
-	// "supportedSnapToStrategies";
-	// private ObservableList<ISnapToStrategy> supportedStrategiesUnmodifiable =
-	// FXCollections
-	// .unmodifiableObservableList(supportedStrategies);
-	// private ReadOnlyListWrapper<ISnapToStrategy> supportedStrategiesProperty
-	// = new ReadOnlyListWrapperEx<>(
-	// this, SUPPORTED_STRATEGIES_PROPERTY,
-	// supportedStrategiesUnmodifiable);
-
 	private IContentPart<? extends Node> snappedPart;
+	private List<ISnapToStrategy> supportedSnapToStrategies = new ArrayList<>();
 	private List<ISnapToStrategy> applicableSnapToStrategies = new ArrayList<>();
 	private Map<ISnapToStrategy, List<SnappingLocation>> hSourceLocations = new IdentityHashMap<>();
 	private Map<ISnapToStrategy, List<SnappingLocation>> vSourceLocations = new IdentityHashMap<>();
 
 	/**
-	 *
+	 * Constructs a new {@link SnapToSupport}.
 	 */
 	public SnapToSupport() {
-	}
-
-	/**
-	 * @param snapTos
-	 *            The {@link ISnapToStrategy ISnapToStrategies} for this
-	 *            {@link SnapToSupport}.
-	 */
-	public SnapToSupport(ISnapToStrategy... snapTos) {
-		supportedStrategies.addAll(Arrays.asList(snapTos));
 	}
 
 	private Dimension determineMinimum(ISnapToStrategy snapper,
@@ -120,15 +83,8 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		return min;
 	}
 
-	/**
-	 * Returns a {@link ReadOnlyListProperty} of supported
-	 * {@link ISnapToStrategy}.
-	 *
-	 * @return A {@link ReadOnlyListProperty} of supported
-	 *         {@link ISnapToStrategy}.
-	 */
-	public ObservableList<ISnapToStrategy> getSupportedStrategies() {
-		return supportedStrategies;
+	private SnappingModel getSnappingModel() {
+		return getAdaptable().getAdapter(SnappingModel.class);
 	}
 
 	private List<SnappingLocation> getTranslated(
@@ -149,15 +105,61 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		return translated;
 	}
 
+	private void initializeLocations(
+			Map<ISnapToStrategy, List<SnappingLocation>> horizontalSourceSnappingLocations,
+			Map<ISnapToStrategy, List<SnappingLocation>> verticalSourceSnappingLocations) {
+		// clear state
+		applicableSnapToStrategies.clear();
+		hSourceLocations.clear();
+		vSourceLocations.clear();
+
+		// compute applicable strategies and corresponding source locations
+		for (ISnapToStrategy strategy : supportedSnapToStrategies) {
+			if (horizontalSourceSnappingLocations.containsKey(strategy)
+					|| verticalSourceSnappingLocations.containsKey(strategy)) {
+				applicableSnapToStrategies.add(strategy);
+				strategy.setSnappedPart(snappedPart);
+				hSourceLocations.put(strategy, new ArrayList<>(
+						horizontalSourceSnappingLocations.get(strategy)));
+				vSourceLocations.put(strategy, new ArrayList<>(
+						verticalSourceSnappingLocations.get(strategy)));
+			}
+		}
+
+		// clear snapping model
+		// XXX: SnappingModel is only altered during interaction, therefore, we
+		// do not need to carry these changes out via operations.
+		SnappingModel snappingModel = snappedPart.getViewer()
+				.getAdapter(SnappingModel.class);
+		snappingModel.setSnappingLocations(
+				Collections.<SnappingLocation> emptyList());
+	}
+
+	private void initializePartAndStrategies(
+			IContentPart<? extends Node> snappedPart) {
+		// check that snapped part is given
+		if (snappedPart == null) {
+			throw new IllegalArgumentException("snappedPart may not be null");
+		}
+
+		// save snapped part
+		this.snappedPart = snappedPart;
+
+		// save snap-to strategies
+		supportedSnapToStrategies.clear();
+		supportedSnapToStrategies
+				.addAll(getSnappingModel().snapToStrategiesProperty());
+	}
+
 	/**
 	 * <ol>
-	 * <li>Iterate applicable snappers.
-	 * <li>Iterate snapped locations.
-	 * <li>Snap SL + Delta => S-Delta.
-	 * <li>Record SL with min. S-Delta.
+	 * <li>Iterate only the applicable strategies.
+	 * <li>Iterate source locations.
+	 * <li>Snap source location + Delta to get the snap-delta.
+	 * <li>Record location with minimal snap-delta.
 	 * <li>Translate snapped locations.
-	 * <li>Iterate all snappers.
-	 * <li>Find matching snapper SLs.
+	 * <li>Iterate all (i.e. supported) strategies.
+	 * <li>Find matching snapping locations.
 	 * <li>Update SnappingModel.
 	 * <li>Compute composite delta.
 	 * </ol>
@@ -212,7 +214,7 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		// 6. iterate all snappers
 		List<SnappingLocation> matchingHSLs = new ArrayList<>();
 		List<SnappingLocation> matchingVSLs = new ArrayList<>();
-		for (ISnapToStrategy snapper : supportedStrategies) {
+		for (ISnapToStrategy snapper : supportedSnapToStrategies) {
 			List<SnappingLocation> horizontalSnappingLocations = snapper
 					.getHorizontalTargetLocations();
 			List<SnappingLocation> verticalSnappingLocations = snapper
@@ -236,6 +238,8 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		}
 
 		// 8. update SnappingModel
+		// XXX: SnappingModel is only altered during interaction, therefore,
+		// we do not need to carry these changes out via operations.
 		SnappingModel snappingModel = snappedPart.getViewer()
 				.getAdapter(SnappingModel.class);
 		List<SnappingLocation> feedbackLocs = new ArrayList<>();
@@ -255,85 +259,92 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 	}
 
 	/**
-	 * Initializes
+	 * Initializes this {@link SnapToSupport} for performing snapping of the
+	 * given {@link IContentPart}. The source snapping locations for the
+	 * individual {@link ISnapToStrategy ISnapToStrategies} are determined by
+	 * corresponding {@link ISnappingLocationProvider}s that are registered as
+	 * adapters at the given snapped part.
 	 *
 	 * @param snappedPart
 	 *            The {@link IContentPart} that might be snapped.
 	 */
 	public void startSnapping(IContentPart<? extends Node> snappedPart) {
-		if (snappedPart == null) {
-			throw new IllegalArgumentException("snappedPart may not be null");
-		}
+		initializePartAndStrategies(snappedPart);
 
-		this.snappedPart = snappedPart;
-
-		// determine providers for strategies
-		applicableSnapToStrategies.clear();
-		hSourceLocations.clear();
-		vSourceLocations.clear();
-
-		for (ISnapToStrategy strategy : supportedStrategies) {
+		// collect source locations using providers
+		Map<ISnapToStrategy, List<SnappingLocation>> hsrc = new IdentityHashMap<>();
+		Map<ISnapToStrategy, List<SnappingLocation>> vsrc = new IdentityHashMap<>();
+		for (ISnapToStrategy strategy : supportedSnapToStrategies) {
 			ISnappingLocationProvider slocProvider = snappedPart
 					.getAdapter(AdapterKey.get(ISnappingLocationProvider.class,
 							strategy.getSourceLocationProviderRole()));
 			if (slocProvider != null) {
-				applicableSnapToStrategies.add(strategy);
-				strategy.setSnappedPart(snappedPart);
-				List<SnappingLocation> hsls = slocProvider
+				List<SnappingLocation> hssls = slocProvider
 						.getHorizontalSnappingLocations(snappedPart);
-				hSourceLocations.put(strategy, new ArrayList<>(hsls));
-				List<SnappingLocation> vsls = slocProvider
+				List<SnappingLocation> vssls = slocProvider
 						.getVerticalSnappingLocations(snappedPart);
-				vSourceLocations.put(strategy, new ArrayList<>(vsls));
-			} else {
-				strategy.setSnappedPart(null);
+				hsrc.put(strategy, new ArrayList<>(hssls));
+				vsrc.put(strategy, new ArrayList<>(vssls));
 			}
 		}
 
-		SnappingModel snappingModel = snappedPart.getViewer()
-				.getAdapter(SnappingModel.class);
-		snappingModel.setSnappingLocations(
-				Collections.<SnappingLocation> emptyList());
+		initializeLocations(hsrc, vsrc);
 	}
 
 	/**
+	 * Initializes this {@link SnapToSupport} for performing snapping of the
+	 * given {@link IContentPart}, considering only the supplied horizontal and
+	 * vertical {@link SnappingLocation}s.
 	 *
 	 * @param snappedPart
-	 *            The snapped {@link IContentPart}
-	 * @param snappableLocationInScene
-	 *            The location that is manipulated
+	 *            The {@link IContentPart} that might be snapped.
+	 * @param horizontalSourceSnappingLocations
+	 *            Maps from {@link ISnapToStrategy} to horizontal source
+	 *            {@link SnappingLocation}s.
+	 * @param verticalSourceSnappingLocations
+	 *            Maps from {@link ISnapToStrategy} to vertical source
+	 *            {@link SnappingLocation}s.
 	 */
 	public void startSnapping(IContentPart<? extends Node> snappedPart,
-			Point snappableLocationInScene) {
-		if (snappedPart == null) {
-			throw new IllegalArgumentException("snappedPart may not be null");
+			Map<ISnapToStrategy, List<SnappingLocation>> horizontalSourceSnappingLocations,
+			Map<ISnapToStrategy, List<SnappingLocation>> verticalSourceSnappingLocations) {
+		initializePartAndStrategies(snappedPart);
+		initializeLocations(horizontalSourceSnappingLocations,
+				verticalSourceSnappingLocations);
+	}
+
+	/**
+	 * Initializes this {@link SnapToSupport} for performing snapping of the
+	 * location specified by the given {@link IContentPart} and {@link Point}.
+	 * One horizontal {@link SnappingLocation} and one vertical
+	 * {@link SnappingLocation} are computed from the part and the position.
+	 *
+	 * @param snappedPart
+	 *            The snapped {@link IContentPart}.
+	 * @param snappablePositionInScene
+	 *            The position from which the source {@link SnappingLocation}s
+	 *            are computed.
+	 */
+	public void startSnapping(IContentPart<? extends Node> snappedPart,
+			Point snappablePositionInScene) {
+		initializePartAndStrategies(snappedPart);
+
+		// create snapping locations for the given position
+		SnappingLocation hssl = new SnappingLocation(snappedPart,
+				Orientation.HORIZONTAL, snappablePositionInScene.x);
+		SnappingLocation vssl = new SnappingLocation(snappedPart,
+				Orientation.VERTICAL, snappablePositionInScene.y);
+
+		// build source snapping location configuration for all supported
+		// strategies
+		Map<ISnapToStrategy, List<SnappingLocation>> hsrc = new IdentityHashMap<>();
+		Map<ISnapToStrategy, List<SnappingLocation>> vsrc = new IdentityHashMap<>();
+		for (ISnapToStrategy strategy : supportedSnapToStrategies) {
+			hsrc.put(strategy, new ArrayList<>(Arrays.asList(hssl)));
+			vsrc.put(strategy, new ArrayList<>(Arrays.asList(vssl)));
 		}
 
-		this.snappedPart = snappedPart;
-
-		// determine providers for strategies
-		applicableSnapToStrategies.clear();
-		hSourceLocations.clear();
-		vSourceLocations.clear();
-
-		SnappingLocation sourceH = new SnappingLocation(snappedPart,
-				Orientation.HORIZONTAL, snappableLocationInScene.x);
-		SnappingLocation sourceV = new SnappingLocation(snappedPart,
-				Orientation.VERTICAL, snappableLocationInScene.y);
-
-		for (ISnapToStrategy strategy : supportedStrategies) {
-			applicableSnapToStrategies.add(strategy);
-			strategy.setSnappedPart(snappedPart);
-			hSourceLocations.put(strategy,
-					new ArrayList<>(Arrays.asList(sourceH)));
-			vSourceLocations.put(strategy,
-					new ArrayList<>(Arrays.asList(sourceV)));
-		}
-
-		SnappingModel snappingModel = snappedPart.getViewer()
-				.getAdapter(SnappingModel.class);
-		snappingModel.setSnappingLocations(
-				Collections.<SnappingLocation> emptyList());
+		initializeLocations(hsrc, vsrc);
 	}
 
 	/**
@@ -341,12 +352,15 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 	 */
 	public void stopSnapping() {
 		if (snappedPart != null) {
+			// XXX: SnappingModel is only altered during interaction, therefore,
+			// we do not need to carry these changes out via operations.
 			SnappingModel snappingModel = snappedPart.getViewer()
 					.getAdapter(SnappingModel.class);
 			snappingModel.setSnappingLocations(
 					Collections.<SnappingLocation> emptyList());
 			snappedPart = null;
 		}
+		supportedSnapToStrategies.clear();
 		applicableSnapToStrategies.clear();
 		hSourceLocations.clear();
 		vSourceLocations.clear();
