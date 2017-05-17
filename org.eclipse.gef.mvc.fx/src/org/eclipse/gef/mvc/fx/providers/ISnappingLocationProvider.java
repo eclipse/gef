@@ -26,9 +26,14 @@ import javafx.scene.Node;
 public interface ISnappingLocationProvider {
 
 	/**
+	 * Combines the given {@link ISnappingLocationProvider}s by wrapping them in
+	 * a new {@link ISnappingLocationProvider} that returns a combination of all
+	 * {@link SnappingLocation}s that are returned by the individual providers.
+	 *
 	 * @param providers
-	 *            p
-	 * @return h
+	 *            The {@link ISnappingLocationProvider}s to combine.
+	 * @return A new {@link ISnappingLocationProvider} that represents the
+	 *         combination of the given providers.
 	 */
 	public static ISnappingLocationProvider union(
 			List<ISnappingLocationProvider> providers) {
