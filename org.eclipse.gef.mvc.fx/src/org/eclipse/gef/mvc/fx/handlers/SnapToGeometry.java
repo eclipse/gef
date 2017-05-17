@@ -73,7 +73,7 @@ public class SnapToGeometry extends AbstractSnapTo implements ISnapToStrategy {
 	};
 
 	@Override
-	protected String getSnappingLocationProviderRole() {
+	protected String getTargetLocationProviderRole() {
 		return TARGET_SNAPPING_LOCATION_PROVIDER;
 	}
 
@@ -97,8 +97,8 @@ public class SnapToGeometry extends AbstractSnapTo implements ISnapToStrategy {
 		}
 		boolean horizontal = orientation == Orientation.HORIZONTAL;
 		List<SnappingLocation> testLocations = horizontal
-				? getHorizontalSnappingLocations()
-				: getVerticalSnappingLocations();
+				? getHorizontalTargetLocations()
+				: getVerticalTargetLocations();
 		// TODO: binary search
 		for (SnappingLocation sl : testLocations) {
 			double location = sl.getPositionInScene();

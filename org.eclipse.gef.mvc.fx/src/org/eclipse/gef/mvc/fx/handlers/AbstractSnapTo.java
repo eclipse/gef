@@ -39,7 +39,6 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	 */
 	public static final double MAX_SNAPPING_DISTANCE_DEFAULT = 15d;
 
-	private double maxSnappingDistance = MAX_SNAPPING_DISTANCE_DEFAULT;
 	private IContentPart<? extends Node> snappedPart;
 	private List<SnappingLocation> xLocations = new ArrayList<>();
 	private List<SnappingLocation> yLocations = new ArrayList<>();
@@ -57,7 +56,7 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	 * @return The horizontal {@link SnappingLocation}s for the given
 	 *         {@link IContentPart}.
 	 */
-	protected Collection<? extends SnappingLocation> determineHorizontalSnappingLocations(
+	protected Collection<? extends SnappingLocation> determineHorizontalTargetLocations(
 			IContentPart<? extends Node> rp) {
 		ISnappingLocationProvider snappingLocationProvider = getSnappingLocationProvider(
 				rp);
@@ -65,17 +64,6 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 			return Collections.emptyList();
 		}
 		return snappingLocationProvider.getHorizontalSnappingLocations(rp);
-	}
-
-	/**
-	 * Returns the default maximum snapping distance for this
-	 * {@link ISnapToStrategy}.
-	 *
-	 * @return The default maximum snapping distance for this
-	 *         {@link ISnapToStrategy}.
-	 */
-	protected double determineMaximumSnappingDistance() {
-		return MAX_SNAPPING_DISTANCE_DEFAULT;
 	}
 
 	/**
@@ -91,7 +79,7 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	 * @return The vertical {@link SnappingLocation}s for the given
 	 *         {@link IContentPart}.
 	 */
-	protected Collection<? extends SnappingLocation> determineVerticalSnappingLocations(
+	protected Collection<? extends SnappingLocation> determineVerticalTargetLocations(
 			IContentPart<? extends Node> rp) {
 		ISnappingLocationProvider snappingLocationProvider = getSnappingLocationProvider(
 				rp);
@@ -102,13 +90,13 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	}
 
 	@Override
-	public List<SnappingLocation> getHorizontalSnappingLocations() {
+	public List<SnappingLocation> getHorizontalTargetLocations() {
 		return xLocations;
 	}
 
 	@Override
 	public double getMaximumSnappingDistance() {
-		return maxSnappingDistance;
+		return MAX_SNAPPING_DISTANCE_DEFAULT;
 	}
 
 	@Override
@@ -118,7 +106,7 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 
 	private ISnappingLocationProvider getSnappingLocationProvider(
 			IContentPart<? extends Node> part) {
-		String role = getSnappingLocationProviderRole();
+		String role = getTargetLocationProviderRole();
 		IVisualPart<? extends Node> current = part;
 		ISnappingLocationProvider slp = null;
 		if (role != null) {
@@ -139,10 +127,10 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	 *         {@link ISnappingLocationProvider} for this
 	 *         {@link ISnapToStrategy}.
 	 */
-	protected abstract String getSnappingLocationProviderRole();
+	protected abstract String getTargetLocationProviderRole();
 
 	@Override
-	public List<SnappingLocation> getVerticalSnappingLocations() {
+	public List<SnappingLocation> getVerticalTargetLocations() {
 		return yLocations;
 	}
 
@@ -166,11 +154,6 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 	}
 
 	@Override
-	public void setMaximumSnappingDistance(double distance) {
-		maxSnappingDistance = distance;
-	}
-
-	@Override
 	public void setSnappedPart(IContentPart<? extends Node> snappedPart) {
 		this.snappedPart = snappedPart;
 		xLocations.clear();
@@ -184,10 +167,9 @@ public abstract class AbstractSnapTo implements ISnapToStrategy {
 									&& isRelevant(
 											(IContentPart<? extends Node>) p));
 			for (IContentPart<? extends Node> rp : relevantParts) {
-				xLocations.addAll(determineHorizontalSnappingLocations(rp));
-				yLocations.addAll(determineVerticalSnappingLocations(rp));
+				xLocations.addAll(determineHorizontalTargetLocations(rp));
+				yLocations.addAll(determineVerticalTargetLocations(rp));
 			}
-			setMaximumSnappingDistance(determineMaximumSnappingDistance());
 		}
 	}
 }

@@ -25,6 +25,7 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.models.SnappingModel.SnappingLocation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 
@@ -153,6 +154,16 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 	 */
 	protected Point getInitialMouseLocationInScene() {
 		return initialMouseLocationInScene;
+	}
+
+	/**
+	 * @return null
+	 */
+	protected Map<ISnapToStrategy, List<SnappingLocation>> getSnappingConfiguration() {
+		Map<ISnapToStrategy, List<SnappingLocation>> cfg = new HashMap<>();
+		// cfg.put(SnapToSupport.SNAP_TO_GRID_STRATEGY, Arrays.asList());
+		// cfg.put(SnapToSupport.SNAP_TO_GEOMETRY_STRATEGY, Arrays.asList());
+		return cfg;
 	}
 
 	/**
@@ -310,4 +321,9 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			}
 		}
 	}
+
+	// getSnappingConfiguration() {
+	// Entry(SnapToSupport.SNAP_TO_GRID_STRATEGY, List(SnappingLocation)),
+	// Entry(SnapToSupport.SNAP_TO_GEOMETRY_STRATEGY, List(SnappingLocation))
+	// }
 }

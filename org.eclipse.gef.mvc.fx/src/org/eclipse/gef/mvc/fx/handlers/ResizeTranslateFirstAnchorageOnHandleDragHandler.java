@@ -40,6 +40,8 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapToSupport snapToSupport;
+
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
 	private int translationIndex;
@@ -50,6 +52,9 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 	public void abortDrag() {
 		if (invalidGesture) {
 			return;
+		}
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
 		}
 		restoreRefreshVisuals(getTargetPart());
 		commit(getResizePolicy());
@@ -87,8 +92,8 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		// snap the moved vertex (unless isPrecise(e))
 		Point snappedVertex = newVertex;
 		if (!isPrecise(e)) {
-			// TODO
-			// snappedVertex = snapSupport.snapToGrid(newVertex.x, newVertex.y);
+			snappedVertex.translate(snapToSupport
+					.snap(new Dimension(deltaInScene.x, deltaInScene.y)));
 		}
 
 		// compute delta between initial and snapped vertex
@@ -158,6 +163,9 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		if (invalidGesture) {
 			invalidGesture = false;
 			return;
+		}
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
 		}
 		restoreRefreshVisuals(getTargetPart());
 		commit(getResizePolicy());
@@ -279,14 +287,15 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		if (invalidGesture) {
 			return;
 		}
-		storeAndDisableRefreshVisuals(getTargetPart());
+		ITransformableContentPart<? extends Node> targetPart = getTargetPart();
+		storeAndDisableRefreshVisuals(targetPart);
 		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
 		init(getResizePolicy());
 		init(getTransformPolicy());
 		translationIndex = getTransformPolicy().createPreTransform();
 		// determine initial bounds in scene
-		Bounds layoutBounds = getTargetPart().getVisual().getLayoutBounds();
-		Bounds initialBoundsInScene = getTargetPart().getVisual()
+		Bounds layoutBounds = targetPart.getVisual().getLayoutBounds();
+		Bounds initialBoundsInScene = targetPart.getVisual()
 				.localToScene(layoutBounds);
 		// save moved vertex
 		int segment = getHost().getSegmentIndex();
@@ -302,6 +311,11 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		} else if (segment == 3) {
 			initialVertex = new Point(initialBoundsInScene.getMinX(),
 					initialBoundsInScene.getMaxY());
+		}
+
+		snapToSupport = targetPart.getViewer().getAdapter(SnapToSupport.class);
+		if (snapToSupport != null) {
+			snapToSupport.startSnapping(targetPart, initialVertex);
 		}
 	}
 }

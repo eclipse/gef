@@ -21,9 +21,9 @@ import java.util.Map.Entry;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
-import org.eclipse.gef.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.geometry.planar.Dimension;
+import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.behaviors.SnappingBehavior;
 import org.eclipse.gef.mvc.fx.models.SnappingModel;
 import org.eclipse.gef.mvc.fx.models.SnappingModel.SnappingLocation;
@@ -32,8 +32,6 @@ import org.eclipse.gef.mvc.fx.providers.ISnappingLocationProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyListProperty;
-import javafx.beans.property.ReadOnlyListWrapper;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -63,19 +61,21 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 	 */
 	public static final SnapToGeometry SNAP_TO_GEOMETRY_STRATEGY = new SnapToGeometry();
 
-	/**
-	 * Name of the {@link #supportedStrategiesProperty()}.
-	 */
-	public static final String SUPPORTED_STRATEGIES_PROPERTY = "supportedSnapToStrategies";
-
 	private ObservableList<ISnapToStrategy> supportedStrategies = CollectionUtils
 			.observableArrayList();
 
-	private ObservableList<ISnapToStrategy> supportedStrategiesUnmodifiable = FXCollections
-			.unmodifiableObservableList(supportedStrategies);
-	private ReadOnlyListWrapper<ISnapToStrategy> supportedStrategiesProperty = new ReadOnlyListWrapperEx<>(
-			this, SUPPORTED_STRATEGIES_PROPERTY,
-			supportedStrategiesUnmodifiable);
+	// /**
+	// * Name of the property storing supported strategies.
+	// */
+	// public static final String SUPPORTED_STRATEGIES_PROPERTY =
+	// "supportedSnapToStrategies";
+	// private ObservableList<ISnapToStrategy> supportedStrategiesUnmodifiable =
+	// FXCollections
+	// .unmodifiableObservableList(supportedStrategies);
+	// private ReadOnlyListWrapper<ISnapToStrategy> supportedStrategiesProperty
+	// = new ReadOnlyListWrapperEx<>(
+	// this, SUPPORTED_STRATEGIES_PROPERTY,
+	// supportedStrategiesUnmodifiable);
 
 	private IContentPart<? extends Node> snappedPart;
 	private List<ISnapToStrategy> applicableSnapToStrategies = new ArrayList<>();
@@ -150,23 +150,6 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 	}
 
 	/**
-	 * Returns <code>true</code> if the given {@link ISnapToStrategy} should
-	 * always be used when the given {@link IContentPart} is snapped. Otherwise
-	 * returns <code>false</code>.
-	 *
-	 * @param snapper
-	 *            The {@link ISnapToStrategy} that is tested.
-	 * @param snappedPart
-	 *            The {@link IContentPart} that is snapped.
-	 * @return <code>true</code> if the {@link ISnapToStrategy} should always be
-	 *         used, <code>false</code> otherwise.
-	 */
-	protected boolean isAlwaysActive(ISnapToStrategy snapper,
-			IContentPart<? extends Node> snappedPart) {
-		return snapper instanceof SnapToGrid;
-	}
-
-	/**
 	 * <ol>
 	 * <li>Iterate applicable snappers.
 	 * <li>Iterate snapped locations.
@@ -231,9 +214,9 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		List<SnappingLocation> matchingVSLs = new ArrayList<>();
 		for (ISnapToStrategy snapper : supportedStrategies) {
 			List<SnappingLocation> horizontalSnappingLocations = snapper
-					.getHorizontalSnappingLocations();
+					.getHorizontalTargetLocations();
 			List<SnappingLocation> verticalSnappingLocations = snapper
-					.getVerticalSnappingLocations();
+					.getVerticalTargetLocations();
 
 			// 7. find matching SLs for translated source SLs
 			for (SnappingLocation mySL : hTranslated) {
@@ -272,8 +255,7 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 	}
 
 	/**
-	 * Identifies and stores all possible snapping locations for the given
-	 * target part.
+	 * Initializes
 	 *
 	 * @param snappedPart
 	 *            The {@link IContentPart} that might be snapped.
@@ -315,6 +297,46 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 	}
 
 	/**
+	 *
+	 * @param snappedPart
+	 *            The snapped {@link IContentPart}
+	 * @param snappableLocationInScene
+	 *            The location that is manipulated
+	 */
+	public void startSnapping(IContentPart<? extends Node> snappedPart,
+			Point snappableLocationInScene) {
+		if (snappedPart == null) {
+			throw new IllegalArgumentException("snappedPart may not be null");
+		}
+
+		this.snappedPart = snappedPart;
+
+		// determine providers for strategies
+		applicableSnapToStrategies.clear();
+		hSourceLocations.clear();
+		vSourceLocations.clear();
+
+		SnappingLocation sourceH = new SnappingLocation(snappedPart,
+				Orientation.HORIZONTAL, snappableLocationInScene.x);
+		SnappingLocation sourceV = new SnappingLocation(snappedPart,
+				Orientation.VERTICAL, snappableLocationInScene.y);
+
+		for (ISnapToStrategy strategy : supportedStrategies) {
+			applicableSnapToStrategies.add(strategy);
+			strategy.setSnappedPart(snappedPart);
+			hSourceLocations.put(strategy,
+					new ArrayList<>(Arrays.asList(sourceH)));
+			vSourceLocations.put(strategy,
+					new ArrayList<>(Arrays.asList(sourceV)));
+		}
+
+		SnappingModel snappingModel = snappedPart.getViewer()
+				.getAdapter(SnappingModel.class);
+		snappingModel.setSnappingLocations(
+				Collections.<SnappingLocation> emptyList());
+	}
+
+	/**
 	 * Clears the snapping locations and the SnapToLocationModel.
 	 */
 	public void stopSnapping() {
@@ -328,16 +350,5 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		applicableSnapToStrategies.clear();
 		hSourceLocations.clear();
 		vSourceLocations.clear();
-	}
-
-	/**
-	 * Returns a {@link ReadOnlyListProperty} of supported
-	 * {@link ISnapToStrategy}.
-	 *
-	 * @return A {@link ReadOnlyListProperty} of supported
-	 *         {@link ISnapToStrategy}.
-	 */
-	public ReadOnlyListProperty<ISnapToStrategy> supportedStrategiesProperty() {
-		return supportedStrategiesProperty.getReadOnlyProperty();
 	}
 }

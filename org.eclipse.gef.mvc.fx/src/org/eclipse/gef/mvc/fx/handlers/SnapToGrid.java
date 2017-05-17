@@ -35,11 +35,6 @@ public class SnapToGrid extends AbstractSnapTo implements ISnapToStrategy {
 	 */
 	public static final String SOURCE_SNAPPING_LOCATION_PROVIDER = "SnapToGridSourceSnappingLocationProvider";
 
-	@Override
-	protected double determineMaximumSnappingDistance() {
-		return Double.MAX_VALUE;
-	}
-
 	/**
 	 * Determines a visual within the given {@link IViewer} in which grid
 	 * positions are at
@@ -60,7 +55,12 @@ public class SnapToGrid extends AbstractSnapTo implements ISnapToStrategy {
 	}
 
 	@Override
-	protected String getSnappingLocationProviderRole() {
+	public double getMaximumSnappingDistance() {
+		return Double.MAX_VALUE;
+	}
+
+	@Override
+	protected String getTargetLocationProviderRole() {
 		return null;
 	}
 

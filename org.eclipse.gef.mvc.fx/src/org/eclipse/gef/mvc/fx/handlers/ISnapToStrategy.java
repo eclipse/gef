@@ -45,7 +45,7 @@ public interface ISnapToStrategy {
 	 * @return The horizontal {@link SnappingLocation}s for the currently
 	 *         snapped part.
 	 */
-	public List<SnappingLocation> getHorizontalSnappingLocations();
+	public List<SnappingLocation> getHorizontalTargetLocations();
 
 	/**
 	 * Returns the maximum snapping distance for this {@link ISnapToStrategy}.
@@ -81,16 +81,7 @@ public interface ISnapToStrategy {
 	 * @return The vertical {@link SnappingLocation}s for the currently snapped
 	 *         part.
 	 */
-	public List<SnappingLocation> getVerticalSnappingLocations();
-
-	/**
-	 * Sets the maximum snapping distance for this {@link ISnapToStrategy}.
-	 *
-	 * @param distance
-	 *            The maximum snapping distance for this
-	 *            {@link ISnapToStrategy}.
-	 */
-	public void setMaximumSnappingDistance(double distance);
+	public List<SnappingLocation> getVerticalTargetLocations();
 
 	/**
 	 * Initiates snapping of the given {@link IContentPart}.

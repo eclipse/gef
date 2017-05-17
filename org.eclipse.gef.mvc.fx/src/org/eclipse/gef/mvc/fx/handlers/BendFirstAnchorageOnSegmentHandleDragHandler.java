@@ -56,6 +56,7 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
+	private SnapToSupport snapToSupport = null;
 	private IVisualPart<? extends Connection> targetPart;
 	private boolean isSegmentDragged;
 	private Point initialMouseInScene;
@@ -91,6 +92,10 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		updateHandles();
 		bendPolicy = null;
 		targetPart = null;
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
+			snapToSupport = null;
+		}
 	}
 
 	/**
@@ -149,10 +154,10 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		// apply mouse-delta to selected-position-in-scene
 		Point endPositionInScene = startPositionInScene.getTranslated(delta);
 
-		// TODO
 		// snap to grid
-		endPositionInScene = isPrecise(e) ? endPositionInScene
-				: endPositionInScene;
+		if (!isPrecise(e)) {
+			endPositionInScene.translate(snapToSupport.snap(delta));
+		}
 
 		// perform changes
 		bendPolicy.move(startPositionInScene, endPositionInScene);
@@ -183,6 +188,10 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		updateHandles();
 		bendPolicy = null;
 		targetPart = null;
+		if (snapToSupport != null) {
+			snapToSupport.stopSnapping();
+			snapToSupport = null;
+		}
 	}
 
 	/**
@@ -420,6 +429,14 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 
 		bendPolicy = determineBendPolicy();
 		init(bendPolicy);
+
+		snapToSupport = targetPart instanceof IContentPart
+				? targetPart.getViewer().getAdapter(SnapToSupport.class) : null;
+		if (snapToSupport != null) {
+			snapToSupport.startSnapping(
+					(IContentPart<? extends Connection>) targetPart,
+					initialMouseInScene);
+		}
 
 		updateHandles();
 	}
