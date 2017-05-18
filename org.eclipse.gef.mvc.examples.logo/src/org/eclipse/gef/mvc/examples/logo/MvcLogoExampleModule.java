@@ -65,7 +65,6 @@ import org.eclipse.gef.mvc.fx.handlers.TraverseFocusOnTypeHandler;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
-import org.eclipse.gef.mvc.fx.models.SnappingModel;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.DefaultFocusFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
@@ -360,7 +359,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	@Override
 	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SnappingModel.class);
 		adapterMapBinder.addBinding(AdapterKey.role(SnappingBehavior.SNAPPING_FEEDBACK_PART_FACTORY))
 				.to(SnappingFeedbackPartFactory.class);
 	}
@@ -371,7 +369,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindPaletteRootPartAdaptersInPaletteViewerContext(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
 		bindHoverOnHoverHandlerAsIRootPartAdapter(adapterMapBinder);

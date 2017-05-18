@@ -52,6 +52,7 @@ import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.models.SnappingModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.AbstractFeedbackPart;
 import org.eclipse.gef.mvc.fx.parts.AbstractHandlePart;
@@ -769,7 +770,10 @@ public class MvcFxModule extends AbstractModule {
 		bindFocusModelAsContentViewerAdapter(adapterMapBinder);
 		bindHoverModelAsContentViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsContentViewerAdapter(adapterMapBinder);
+		bindSnappingModelAsContentViewerAdapter(adapterMapBinder);
+
 		bindRootPartAsContentViewerAdapter(adapterMapBinder);
+
 		bindFocusFeedbackPartFactoryAsContentViewerAdapter(adapterMapBinder);
 		bindHoverFeedbackPartFactoryAsContentViewerAdapter(adapterMapBinder);
 		bindSelectionFeedbackPartFactoryAsContentViewerAdapter(
@@ -1026,6 +1030,17 @@ public class MvcFxModule extends AbstractModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(SelectionModel.class)
 				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	/**
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} that is used to register adapter
+	 *            bindings.
+	 */
+	protected void bindSnappingModelAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(SnappingModel.class);
 	}
 
 	/**
