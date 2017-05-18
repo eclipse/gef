@@ -34,7 +34,7 @@ import javafx.scene.Node;
  * The {@link DefaultHandlerResolver} is an {@link IHandlerResolver} that works
  * in two stages:
  * <ol>
- * <li>Examining the active handlers of other tools to find "multi-gesture"
+ * <li>Examining the active handlers of other gestures to find "multi-gesture"
  * handlers that implement or extend the given target handler type. If any
  * "multi-gesture" handlers are found, the target resolution finishes and these
  * are returned as the target handlers. Otherwise, the target resolution
@@ -121,7 +121,7 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 	 * <li>LeafPart.X with role "y"
 	 * </ol>
 	 * These handlers would then all be executed/notified about an input event
-	 * by the calling tool.
+	 * by the calling gesture.
 	 */
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
@@ -133,14 +133,14 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 		// System.out.println("handler type = " + handlerType);
 
 		// determine outer targets, i.e. already running/active handlers of
-		// other tools
+		// other gestures
 		// System.out.println("Outer target handlers:");
 		List<T> outerTargetHandlers = new ArrayList<>();
 		Collection<IGesture> gestures = viewer.getDomain()
 				.getAdapters(new TypeToken<IGesture>() {
 				}).values();
 		for (IGesture g : gestures) {
-			// System.out.println("[find active handlers of " + tool + "]");
+			// System.out.println("[find active handlers of " + gesture + "]");
 			if (g != gesture) {
 				for (IHandler handler : g.getActiveHandlers(viewer)) {
 					if (handler.getClass().isAssignableFrom(handlerType)) {
