@@ -44,8 +44,7 @@ import javafx.collections.ObservableMap;
  */
 public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 
-	// XXX: We keep a sorted map of adapters (so activation/deactivation is in
-	// deterministic order)
+	// XXX: We keep a sorted map of adapters to have a deterministic order
 	private ObservableMap<AdapterKey<?>, Object> adapters = FXCollections
 			.observableMap(new TreeMap<AdapterKey<?>, Object>());
 	private ObservableMap<AdapterKey<?>, Object> adaptersUnmodifiable;
