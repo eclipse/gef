@@ -44,6 +44,7 @@ import javafx.util.Pair;
 public class TranslateSelectedOnDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
+	private NormalizeConnectedSupport normalizeConnectedSupport;
 	private SnapToSupport snapToSupport = null;
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<? extends Node>, Integer> translationIndices = new HashMap<>();
@@ -68,6 +69,12 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		// clear snapping locations
 		if (snapToSupport != null) {
 			snapToSupport.stopSnapping();
+			snapToSupport = null;
+		}
+		// clear normalization
+		if (normalizeConnectedSupport != null) {
+			normalizeConnectedSupport.abortNormalization();
+			normalizeConnectedSupport = null;
 		}
 		// reset targets
 		targets = null;
@@ -110,6 +117,10 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 					translationIndices.get(pair.getKey()), deltaInParent.x,
 					deltaInParent.y);
 		}
+		// normalize connected
+		if (normalizeConnectedSupport != null) {
+			normalizeConnectedSupport.normalizeAnchoreds();
+		}
 	}
 
 	@Override
@@ -128,6 +139,12 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		// clear snapping locations
 		if (snapToSupport != null) {
 			snapToSupport.stopSnapping();
+			snapToSupport = null;
+		}
+		// clear normalization
+		if (normalizeConnectedSupport != null) {
+			normalizeConnectedSupport.commitNormalization();
+			normalizeConnectedSupport = null;
 		}
 		// reset target parts
 		targets = null;
@@ -307,6 +324,13 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 				snapToSupport.startSnapping(
 						(IContentPart<? extends Node>) getHost());
 			}
+		}
+
+		normalizeConnectedSupport = getHost().getViewer()
+				.getAdapter(NormalizeConnectedSupport.class);
+		if (normalizeConnectedSupport != null) {
+			normalizeConnectedSupport
+					.initNormalizationForAnchoredsOf(targetParts);
 		}
 	}
 }

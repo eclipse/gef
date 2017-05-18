@@ -51,7 +51,7 @@ import org.eclipse.gef.mvc.fx.handlers.BendOnSegmentDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.DeleteSelectedOnTypeHandler;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
 import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
-import org.eclipse.gef.mvc.fx.handlers.NormalizeConnectedOnDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.NormalizeConnectedSupport;
 import org.eclipse.gef.mvc.fx.handlers.ResizeTransformSelectedOnHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.ResizeTranslateFirstAnchorageOnHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnHandleDragHandler;
@@ -291,7 +291,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickHandler.class);
 
 		// normalize connected on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedOnDragHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedSupport.class);
 
 		adapterMapBinder.addBinding(AdapterKey.role(SnapToGrid.SOURCE_SNAPPING_LOCATION_PROVIDER))
 				.to(TopLeftSnappingLocationProvider.class);
