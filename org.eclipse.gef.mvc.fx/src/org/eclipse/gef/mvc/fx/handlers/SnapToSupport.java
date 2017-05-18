@@ -129,10 +129,11 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		// clear snapping model
 		// XXX: SnappingModel is only altered during interaction, therefore, we
 		// do not need to carry these changes out via operations.
-		SnappingModel snappingModel = snappedPart.getViewer()
-				.getAdapter(SnappingModel.class);
-		snappingModel.setSnappingLocations(
-				Collections.<SnappingLocation> emptyList());
+		SnappingModel snappingModel = getSnappingModel();
+		if (snappingModel != null) {
+			snappingModel.setSnappingLocations(
+					Collections.<SnappingLocation> emptyList());
+		}
 	}
 
 	private void initializePartAndStrategies(
@@ -147,8 +148,11 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 
 		// save snap-to strategies
 		supportedSnapToStrategies.clear();
-		supportedSnapToStrategies
-				.addAll(getSnappingModel().snapToStrategiesProperty());
+		SnappingModel snappingModel = getSnappingModel();
+		if (snappingModel != null) {
+			supportedSnapToStrategies
+					.addAll(snappingModel.snapToStrategiesProperty());
+		}
 	}
 
 	/**
@@ -240,12 +244,13 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		// 8. update SnappingModel
 		// XXX: SnappingModel is only altered during interaction, therefore,
 		// we do not need to carry these changes out via operations.
-		SnappingModel snappingModel = snappedPart.getViewer()
-				.getAdapter(SnappingModel.class);
-		List<SnappingLocation> feedbackLocs = new ArrayList<>();
-		feedbackLocs.addAll(matchingHSLs);
-		feedbackLocs.addAll(matchingVSLs);
-		snappingModel.setSnappingLocations(feedbackLocs);
+		SnappingModel snappingModel = getSnappingModel();
+		if (snappingModel != null) {
+			List<SnappingLocation> feedbackLocs = new ArrayList<>();
+			feedbackLocs.addAll(matchingHSLs);
+			feedbackLocs.addAll(matchingVSLs);
+			snappingModel.setSnappingLocations(feedbackLocs);
+		}
 
 		// 9. compute composite delta
 		Dimension composite = new Dimension(0, 0);
@@ -354,10 +359,11 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 		if (snappedPart != null) {
 			// XXX: SnappingModel is only altered during interaction, therefore,
 			// we do not need to carry these changes out via operations.
-			SnappingModel snappingModel = snappedPart.getViewer()
-					.getAdapter(SnappingModel.class);
-			snappingModel.setSnappingLocations(
-					Collections.<SnappingLocation> emptyList());
+			SnappingModel snappingModel = getSnappingModel();
+			if (snappingModel != null) {
+				snappingModel.setSnappingLocations(
+						Collections.<SnappingLocation> emptyList());
+			}
 			snappedPart = null;
 		}
 		supportedSnapToStrategies.clear();
