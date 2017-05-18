@@ -266,7 +266,7 @@ public class Line extends BezierCurve {
 	}
 
 	@Override
-	protected Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
+	Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
 			Set<Point> intersections) {
 		if (other instanceof Line) {
 			return getIntersectionIntervalPairs((Line) other, intersections);
@@ -287,7 +287,7 @@ public class Line extends BezierCurve {
 	 * @return see
 	 *         {@link BezierCurve#getIntersectionIntervalPairs(BezierCurve, Set)}
 	 */
-	protected Set<IntervalPair> getIntersectionIntervalPairs(Line other,
+	Set<IntervalPair> getIntersectionIntervalPairs(Line other,
 			Set<Point> intersections) {
 		HashSet<IntervalPair> intervalPairs = new HashSet<>();
 		Straight s1 = new Straight(this);
