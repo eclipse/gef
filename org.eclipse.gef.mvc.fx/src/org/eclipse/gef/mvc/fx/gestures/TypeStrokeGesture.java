@@ -168,12 +168,12 @@ public class TypeStrokeGesture extends AbstractGesture {
 					pressedKeys.add(event.getCode());
 
 					// notify target policies
-					for (IOnStrokeHandler policy : getActiveHandlers(
+					for (IOnStrokeHandler handler : getActiveHandlers(
 							activeViewer)) {
 						if (isInitialPress) {
-							policy.initialPress(event);
+							handler.initialPress(event);
 						} else {
-							policy.press(event);
+							handler.press(event);
 						}
 					}
 				}

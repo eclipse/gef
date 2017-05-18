@@ -34,16 +34,16 @@ import javafx.scene.Node;
  * The {@link DefaultHandlerResolver} is an {@link IHandlerResolver} that works
  * in two stages:
  * <ol>
- * <li>Examining the active policies of other tools to find "multi-gesture"
- * policies that implement or extend the given target policy type. If any
- * "multi-gesture" policies are found, the target resolution finishes and these
- * are returned as the target policies. Otherwise, the target resolution
+ * <li>Examining the active handlers of other tools to find "multi-gesture"
+ * handlers that implement or extend the given target handler type. If any
+ * "multi-gesture" handlers are found, the target resolution finishes and these
+ * are returned as the target handlers. Otherwise, the target resolution
  * continues with the next stage.
- * <li>Examining the policies of the visual parts that are contained within the
- * root-to-target path in the visual part hierarchy. All policies that implement
- * or extend the given target policy type are returned as target policies. The
- * policies that are registered on the root part have highest precedence, i.e.
- * they will be executed first, and the policies that are registered on the
+ * <li>Examining the handlers of the visual parts that are contained within the
+ * root-to-target path in the visual part hierarchy. All handlers that implement
+ * or extend the given target handler type are returned as target handlers. The
+ * handlers that are registered on the root part have highest precedence, i.e.
+ * they will be executed first, and the handlers that are registered on the
  * target part have lowest precedence, i.e. they will be executed last.
  * </ol>
  * For details, take a look at the
@@ -81,23 +81,23 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 	 * <p>
 	 * This strategy works in two stages:
 	 * <ol>
-	 * <li>Examining the active policies of other tools to find "multi-gesture"
-	 * policies that implement or extend the given target policy type. If any
-	 * "multi-gesture" policies are found, the target resolution finishes and
-	 * these are returned as the target policies. Otherwise, the target
+	 * <li>Examining the active handlers of other gestures to find
+	 * "multi-gesture" handlers that implement or extend the given target type.
+	 * If any "multi-gesture" handlers are found, the target resolution finishes
+	 * and these are returned as the target handlers. Otherwise, the target
 	 * resolution continues with the next stage.
-	 * <li>Examining the policies of the visual parts that are contained within
-	 * the root-to-target path in the visual part hierarchy. All policies that
-	 * implement or extend the given target policy type are returned as target
-	 * policies. The policies that are registered on the root part have highest
-	 * precedence, i.e. they will be executed first, and the policies that are
+	 * <li>Examining the handlers of the visual parts that are contained within
+	 * the root-to-target path in the visual part hierarchy. All handlers that
+	 * implement or extend the given target handler type are returned as target
+	 * handlers. The handlers that are registered on the root part have highest
+	 * precedence, i.e. they will be executed first, and the handlers that are
 	 * registered on the target part have lowest precedence, i.e. they will be
 	 * executed last.
 	 * </ol>
 	 * The second stage is structured in two parts:
 	 * <ol>
 	 * <li>Determination of the target part.
-	 * <li>Determination of the target policies based on the target part.
+	 * <li>Determination of the target handler based on the target part.
 	 * </ol>
 	 * The first {@link IVisualPart} that controls a {@link Node} within the
 	 * parent hierarchy of the given target {@link Node} is used as the target
@@ -105,13 +105,13 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 	 * part.
 	 * <p>
 	 * Beginning at the root part, and walking down the visual part hierarchy,
-	 * all policies of the specified type are collected. The policies that are
+	 * all handlers of the specified type are collected. The handlers that are
 	 * registered on one part are (lexicographically) sorted by their role, so
-	 * that the target policy selection is deterministic.
+	 * that the target handler selection is deterministic.
 	 * <p>
 	 * For example, when you have 3 parts, the root part, an intermediate part,
-	 * and a leaf part, the target policy selection for a policy of type X could
-	 * yield the following results:
+	 * and a leaf part, the target handler selection for a handler of type X
+	 * could yield the following results:
 	 * <ol>
 	 * <li>LayeredRootPart.X with role "0"
 	 * <li>LayeredRootPart.X with role "1"
@@ -120,35 +120,35 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 	 * <li>LeafPart.X with role "x"
 	 * <li>LeafPart.X with role "y"
 	 * </ol>
-	 * These policies would then all be executed/notified about an input event
+	 * These handlers would then all be executed/notified about an input event
 	 * by the calling tool.
 	 */
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
 	public <T extends IHandler> List<? extends T> resolve(IGesture gesture,
-			Node target, IViewer viewer, Class<T> handlerClass) {
-		// System.out.println("\n=== determine target policies ===");
+			Node target, IViewer viewer, Class<T> handlerType) {
+		// System.out.println("\n=== determine target handlers ===");
 		// System.out.println("viewer = " + viewer);
 		// System.out.println("raw target node = " + target);
-		// System.out.println("policy class = " + policyClass);
+		// System.out.println("handler type = " + handlerType);
 
-		// determine outer targets, i.e. already running/active policies of
+		// determine outer targets, i.e. already running/active handlers of
 		// other tools
-		// System.out.println("Outer target policies:");
+		// System.out.println("Outer target handlers:");
 		List<T> outerTargetHandlers = new ArrayList<>();
 		Collection<IGesture> gestures = viewer.getDomain()
 				.getAdapters(new TypeToken<IGesture>() {
 				}).values();
 		for (IGesture g : gestures) {
-			// System.out.println("[find active policies of " + tool + "]");
+			// System.out.println("[find active handlers of " + tool + "]");
 			if (g != gesture) {
-				for (IHandler policy : g.getActiveHandlers(viewer)) {
-					if (policy.getClass().isAssignableFrom(handlerClass)) {
-						// System.out.println("add active policy " + policy);
+				for (IHandler handler : g.getActiveHandlers(viewer)) {
+					if (handler.getClass().isAssignableFrom(handlerType)) {
+						// System.out.println("add active handler " + handler);
 						try {
-							outerTargetHandlers.add((T) policy);
+							outerTargetHandlers.add((T) handler);
 						} catch (ClassCastException e) {
-							// ignore target policy if type parameter is not
+							// ignore target handler if type parameter is not
 							// appropriate
 						}
 					}
@@ -156,11 +156,11 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 			}
 		}
 
-		// already active policies that can process the events take precedence
-		// over scene graph related target policies
+		// already active handlers that can process the events take precedence
+		// over scene graph related target handlers
 		if (!outerTargetHandlers.isEmpty()) {
-			// System.out.println("RETURN outer target policies:");
-			// for (T p : outerTargetPolicies) {
+			// System.out.println("RETURN outer target handlers:");
+			// for (T p : outerTargetHandlers) {
 			// System.out.println(p.getHost() + " -> " + p);
 			// }
 			return outerTargetHandlers;
@@ -168,30 +168,30 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 
 		// determine target part as the part that controls the first node in the
 		// scene graph hierarchy of the given target node
-		// System.out.println("Inner target policies:");
+		// System.out.println("Inner target handlers:");
 		IVisualPart<? extends Node> targetPart = PartUtils
 				.retrieveVisualPart(viewer, target);
 
 		// System.out.println("target part = " + targetPart);
 
-		// collect all on-drag-policies on the way from the target part to the
+		// collect all handlers on the way from the target part to the
 		// root part
 		IVisualPart<? extends Node> part = targetPart;
 		List<T> handlers = new ArrayList<>();
 		while (part != null) {
-			// System.out.println("[find policies for " + part + "]");
-			// determine on-drag-policies
+			// System.out.println("[find handlers for " + part + "]");
+			// determine on-drag-handlers
 			Map<AdapterKey<? extends T>, T> partHandlers = part
-					.<T> getAdapters(handlerClass);
+					.<T> getAdapters(handlerType);
 
 			// sort descending by role (converted to integer)
 			List<AdapterKey<? extends T>> descendinglySortedKeys = new ArrayList<>(
 					partHandlers.keySet());
 			Collections.sort(descendinglySortedKeys, ADAPTER_KEY_COMPARATOR);
 
-			// add to the list of policies
+			// add to the list of handlers
 			for (AdapterKey<? extends T> key : descendinglySortedKeys) {
-				// System.out.println("add policy " + key);
+				// System.out.println("add handler " + key);
 				handlers.add(partHandlers.get(key));
 			}
 
@@ -199,12 +199,12 @@ public class DefaultHandlerResolver extends IAdaptable.Bound.Impl<IDomain>
 			part = part.getParent();
 		}
 
-		// reverse order in which policies are returned so that parent policies
-		// are called before child policies
+		// reverse order in which handlers are returned so that parent handlers
+		// are called before child handlers
 		Collections.reverse(handlers);
 
 		// System.out.println("RETURN in reverse order:");
-		// for (T p : policies) {
+		// for (T p : handlers) {
 		// System.out.println(p.getHost() + " -> " + p);
 		// }
 

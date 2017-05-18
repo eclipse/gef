@@ -21,9 +21,9 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import javafx.scene.Node;
 
 /**
- * The {@link IHandlerResolver} provides a mechanism to determine and
- * prioritize all policies that are to be notified about certain input events
- * (see {@link #resolve(IGesture, Node, IViewer, Class)} for details).
+ * The {@link IHandlerResolver} provides a mechanism to determine and prioritize
+ * all {@link IHandler handlers} that are to be notified about certain input
+ * events (see {@link #resolve(IGesture, Node, IViewer, Class)} for details).
  *
  * @author mwienand
  *
@@ -31,26 +31,26 @@ import javafx.scene.Node;
 public interface IHandlerResolver extends IAdaptable.Bound<IDomain> {
 
 	/**
-	 * Determines and prioritizes all policies of the specified type for the
-	 * given {@link IViewer} and target {@link Node} that are to be notified
-	 * about an input event that was directed at the {@link Node}.
+	 * Determines and prioritizes all {@link IHandler handlers} of the specified
+	 * type for the given {@link IViewer} and target {@link Node} that are to be
+	 * notified about an input event that was directed at the {@link Node}.
 	 *
 	 * @param <T>
-	 *            Type parameter specifying the type of policy that is
+	 *            Type parameter specifying the type of handler that is
 	 *            collected.
-	 * @param contextTool
-	 *            The {@link IGesture} for which to determine target policies.
+	 * @param contextGesture
+	 *            The {@link IGesture} for which to determine target handlers.
 	 * @param target
 	 *            The target {@link Node} that received an input event.
 	 * @param viewer
 	 *            The {@link IViewer} that contains the given target
 	 *            {@link Node}.
-	 * @param policyClass
-	 *            The type of the policies to return.
+	 * @param handlerType
+	 *            The type of the handlers to return.
 	 * @return All matching policies within the hierarchy from the root part to
 	 *         the target part.
 	 */
 	public <T extends IHandler> List<? extends T> resolve(
-			IGesture contextTool, Node target, IViewer viewer,
-			Class<T> policyClass);
+			IGesture contextGesture, Node target, IViewer viewer,
+			Class<T> handlerType);
 }
