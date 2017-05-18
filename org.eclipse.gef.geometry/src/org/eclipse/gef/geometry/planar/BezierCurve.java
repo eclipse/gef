@@ -2876,7 +2876,7 @@ public class BezierCurve extends AbstractGeometry
 	 *         intersection. For an infinite number of intersection
 	 *         {@link Point}s, an empty {@link Set} is returned.
 	 */
-	protected Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
+	Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
 			Set<Point> intersections) {
 		Set<IntervalPair> intervalPairs = new HashSet<>();
 		Set<IntervalPair> endPointIntervalPairs = new HashSet<>();
