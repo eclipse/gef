@@ -54,7 +54,6 @@ import javafx.scene.input.ScrollEvent;
 public class ResizeTransformSelectedOnHandleDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
-	private CursorSupport cursorSupport = new CursorSupport(this);
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
 	private Map<IContentPart<? extends Node>, Double> relX1 = null;
@@ -246,15 +245,6 @@ public class ResizeTransformSelectedOnHandleDragHandler extends AbstractHandler
 		return new BoundingBox(x1, y1, x2 - x1, y2 - y1);
 	}
 
-	/**
-	 * Returns the {@link CursorSupport} of this policy.
-	 *
-	 * @return The {@link CursorSupport} of this policy.
-	 */
-	protected CursorSupport getCursorSupport() {
-		return cursorSupport;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public AbstractSegmentHandlePart<Node> getHost() {
@@ -373,7 +363,6 @@ public class ResizeTransformSelectedOnHandleDragHandler extends AbstractHandler
 
 	@Override
 	public void hideIndicationCursor() {
-		getCursorSupport().restoreCursor();
 	}
 
 	/**

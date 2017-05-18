@@ -130,8 +130,6 @@ public class MarqueeOnDragHandler extends AbstractHandler
 		return containedNodes;
 	}
 
-	private CursorSupport cursorSupport = new CursorSupport(this);
-
 	// stores upon press() if the press-drag-release gesture is invalid
 	private boolean invalidGesture = false;
 
@@ -247,15 +245,6 @@ public class MarqueeOnDragHandler extends AbstractHandler
 	}
 
 	/**
-	 * Returns the {@link CursorSupport} of this policy.
-	 *
-	 * @return The {@link CursorSupport} of this policy.
-	 */
-	protected CursorSupport getCursorSupport() {
-		return cursorSupport;
-	}
-
-	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that are
 	 * corresponding to the given {@link List} of {@link Node}s.
 	 *
@@ -296,7 +285,6 @@ public class MarqueeOnDragHandler extends AbstractHandler
 
 	@Override
 	public void hideIndicationCursor() {
-		getCursorSupport().restoreCursor();
 	}
 
 	/**

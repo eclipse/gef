@@ -36,7 +36,6 @@ import javafx.scene.input.MouseEvent;
 public class BendOnSegmentDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
-	private CursorSupport cursorSupport = new CursorSupport(this);
 	private SnapToSupport snapToSupport = null;
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
@@ -123,15 +122,6 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		return bendPolicy;
 	}
 
-	/**
-	 * Returns the {@link CursorSupport} of this policy.
-	 *
-	 * @return The {@link CursorSupport} of this policy.
-	 */
-	protected CursorSupport getCursorSupport() {
-		return cursorSupport;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public IVisualPart<Connection> getHost() {
@@ -140,7 +130,6 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 
 	@Override
 	public void hideIndicationCursor() {
-		cursorSupport.restoreCursor();
 	}
 
 	/**

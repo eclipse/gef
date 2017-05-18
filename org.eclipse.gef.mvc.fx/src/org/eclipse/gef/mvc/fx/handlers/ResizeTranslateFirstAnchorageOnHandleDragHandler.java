@@ -39,9 +39,7 @@ import javafx.scene.input.MouseEvent;
 public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		extends AbstractHandler implements IOnDragHandler {
 
-	private CursorSupport cursorSupport = new CursorSupport(this);
 	private SnapToSupport snapToSupport;
-
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
 	private int translationIndex;
@@ -172,15 +170,6 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 		commit(getTransformPolicy());
 	}
 
-	/**
-	 * Returns the {@link CursorSupport} of this policy.
-	 *
-	 * @return The {@link CursorSupport} of this policy.
-	 */
-	protected CursorSupport getCursorSupport() {
-		return cursorSupport;
-	}
-
 	@Override
 	public AbstractSegmentHandlePart<? extends Node> getHost() {
 		return (AbstractSegmentHandlePart<? extends Node>) super.getHost();
@@ -219,7 +208,6 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 
 	@Override
 	public void hideIndicationCursor() {
-		getCursorSupport().restoreCursor();
 	}
 
 	private boolean isMultiSelection() {

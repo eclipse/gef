@@ -40,12 +40,9 @@ public class CursorSupport extends IAdaptable.Bound.Impl<IViewer> {
 
 	/**
 	 * Creates a new {@link CursorSupport} that can be used to change and keep
-	 * track of the mouse cursor for the given {@link IHandler}.
-	 *
-	 * @param handler
-	 *            The {@link IHandler} that is supported.
+	 * track of the mouse cursor.
 	 */
-	public CursorSupport(IHandler handler) {
+	public CursorSupport() {
 	}
 
 	/**

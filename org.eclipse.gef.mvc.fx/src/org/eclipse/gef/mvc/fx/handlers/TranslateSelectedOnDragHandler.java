@@ -44,7 +44,6 @@ import javafx.util.Pair;
 public class TranslateSelectedOnDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
-	private CursorSupport cursorSupport = new CursorSupport(this);
 	private SnapToSupport snapToSupport = null;
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<? extends Node>, Integer> translationIndices = new HashMap<>();
@@ -139,15 +138,6 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 	}
 
 	/**
-	 * Returns the {@link CursorSupport} of this policy.
-	 *
-	 * @return The {@link CursorSupport} of this policy.
-	 */
-	protected CursorSupport getCursorSupport() {
-		return cursorSupport;
-	}
-
-	/**
 	 * Returns the initial mouse location in scene coordinates.
 	 *
 	 * @return The initial mouse location in scene coordinates.
@@ -194,7 +184,6 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 
 	@Override
 	public void hideIndicationCursor() {
-		getCursorSupport().restoreCursor();
 	}
 
 	/**

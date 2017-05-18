@@ -23,9 +23,6 @@ import javafx.geometry.VPos;
 /**
  * The {@link PanningSupport} can be used to compute panning translations that
  * align the contents with the viewport.
- *
- * @author wienand
- *
  */
 public class PanningSupport {
 

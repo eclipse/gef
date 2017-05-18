@@ -43,11 +43,11 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class RotateSelectedOnHandleDragHandler
-		extends AbstractHandler implements IOnDragHandler {
+public class RotateSelectedOnHandleDragHandler extends AbstractHandler
+		implements IOnDragHandler {
 
 	// indication cursor
-	private CursorSupport cursorSupport = new CursorSupport(this);
+	private CursorSupport cursorSupport;
 	private ImageCursor rotateCursor;
 
 	// gesture validity
@@ -101,9 +101,8 @@ public class RotateSelectedOnHandleDragHandler
 	 *         will perform a rotation.
 	 */
 	protected ImageCursor createRotateCursor() {
-		return new ImageCursor(
-				new Image(RotateSelectedOnHandleDragHandler.class
-						.getResource("/rotate_obj.gif").toExternalForm()));
+		return new ImageCursor(new Image(RotateSelectedOnHandleDragHandler.class
+				.getResource("/rotate_obj.gif").toExternalForm()));
 	}
 
 	/**
@@ -154,6 +153,10 @@ public class RotateSelectedOnHandleDragHandler
 	 * @return The {@link CursorSupport} of this policy.
 	 */
 	protected CursorSupport getCursorSupport() {
+		if (cursorSupport == null) {
+			cursorSupport = getHost().getViewer()
+					.getAdapter(CursorSupport.class);
+		}
 		return cursorSupport;
 	}
 
