@@ -1888,6 +1888,256 @@ public class BezierCurve extends AbstractGeometry
 	}
 
 	/**
+	 * Checks all end {@link Point}s of the two passed-in {@link BezierCurve}s
+	 * if they are {@link Point}s of intersection.
+	 *
+	 * @param ip
+	 *            the {@link IntervalPair} describing both curves
+	 * @param endPointIntervalPairs
+	 *            the set of {@link IntervalPair}s to store the results
+	 * @param intersections
+	 *            the set of {@link Point}s to additionally store the associated
+	 *            intersection {@link Point}s
+	 */
+	private static void findEndPointIntersections(IntervalPair ip,
+			Set<IntervalPair> endPointIntervalPairs, Set<Point> intersections) {
+		final double CHUNK_SHIFT_EPSILON = PrecisionUtils
+				.calculateFraction(CHUNK_SHIFT);
+
+		Point poi = ip.p.points[0].toPoint();
+		double[] interval = new double[] { 0, 1 };
+		if (containmentParameter(ip.q, interval, poi)) {
+			ip.pi.a = CHUNK_SHIFT_EPSILON;
+			interval[0] = (interval[0] + interval[1]) / 2;
+			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
+			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(0, ip.pi.a), ip.q, new Interval(interval)));
+			intersections.add(poi);
+		}
+
+		poi = ip.p.points[ip.p.points.length - 1].toPoint();
+		interval[0] = 0;
+		interval[1] = 1;
+		if (containmentParameter(ip.q, interval, poi)) {
+			ip.pi.b = 1 - CHUNK_SHIFT_EPSILON;
+			interval[0] = (interval[0] + interval[1]) / 2;
+			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
+			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(ip.pi.b, 1), ip.q, new Interval(interval)));
+			intersections.add(poi);
+		}
+
+		poi = ip.q.points[0].toPoint();
+		interval[0] = 0;
+		interval[1] = 1;
+		if (containmentParameter(ip.p, interval, poi)) {
+			ip.qi.a = CHUNK_SHIFT_EPSILON;
+			interval[0] = (interval[0] + interval[1]) / 2;
+			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
+			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(interval), ip.q, new Interval(0, ip.qi.a)));
+			intersections.add(poi);
+		}
+
+		poi = ip.q.points[ip.q.points.length - 1].toPoint();
+		interval[0] = 0;
+		interval[1] = 1;
+		if (containmentParameter(ip.p, interval, poi)) {
+			ip.qi.b = 1 - CHUNK_SHIFT_EPSILON;
+			interval[0] = (interval[0] + interval[1]) / 2;
+			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
+			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(interval), ip.q, new Interval(ip.qi.b, 1)));
+			intersections.add(poi);
+		}
+	}
+
+	/**
+	 * <p>
+	 * Find intersection {@link IntervalPair} chunks. The chunks are not very
+	 * precise. We will refine them later.
+	 * </p>
+	 * <p>
+	 * Searches for (imprecise) intersection {@link IntervalPair}s using the
+	 * Bezier clipping algorithm. Every recorded {@link IntervalPair} limits the
+	 * parameter {@link Interval} for a possible intersection on both
+	 * {@link BezierCurve}s.
+	 * </p>
+	 *
+	 * @param ip
+	 *            the {@link IntervalPair} that is currently processed
+	 * @param intervalPairs
+	 *            the set of {@link IntervalPair}s to store the results
+	 * @param intersections
+	 *            the set of intersection {@link Point}s to store those in case
+	 *            of a degenerated {@link BezierCurve} (or a degenerated
+	 *            sub-curve)
+	 */
+	private static void findIntersectionChunks(IntervalPair ip,
+			Set<IntervalPair> intervalPairs, Set<Point> intersections) {
+		if (ip.converges(CHUNK_SHIFT)) {
+			intervalPairs.add(ip.getCopy());
+			return;
+		}
+
+		BezierCurve pClipped = ip.getPClipped();
+		BezierCurve qClipped = ip.getQClipped();
+
+		// construct "parallel" and "orthogonal" fat lines
+		FatLine L1 = FatLine.from(qClipped, PARALLEL);
+		FatLine L2 = FatLine.from(qClipped, ORTHOGONAL);
+
+		// curve implosion check
+		if (L1 == null || L2 == null) {
+			// q is degenerated
+			Point poi = ip.q.getHC(ip.qi.getMid()).toPoint();
+			double[] interval = new double[] { 0, 1 };
+			if (poi != null && containmentParameter(ip.p, interval, poi)) {
+				intersections.add(poi);
+			}
+			return;
+		}
+
+		// clip to the fat lines
+		Interval interval = new Interval(pClipped.clipTo(L1));
+		Interval intervalOrtho = new Interval(pClipped.clipTo(L2));
+
+		// pick smaller interval range
+		interval = Interval.min(interval, intervalOrtho);
+
+		// re-calculate s and e from the clipped interval
+		double ratio = ip.pi.scaleTo(interval);
+
+		if (ratio < 0) {
+			// no more intersections
+			return;
+		} else if (ratio > 0.8) {
+			/*
+			 * Split longer curve and find intersections for both halves. Add an
+			 * unrecognizable fraction to the beginning of the second parameter
+			 * interval, so that only one of the getIntersection() calls can
+			 * converge in the middle.
+			 */
+			if (ip.isPLonger()) {
+				IntervalPair[] nip = ip.getPSplit();
+				findIntersectionChunks(nip[0], intervalPairs, intersections);
+				findIntersectionChunks(nip[1], intervalPairs, intersections);
+			} else {
+				IntervalPair[] nip = ip.getQSplit();
+				findIntersectionChunks(nip[0], intervalPairs, intersections);
+				findIntersectionChunks(nip[1], intervalPairs, intersections);
+			}
+
+			return;
+		} else {
+			findIntersectionChunks(ip.getSwapped(), intervalPairs,
+					intersections);
+		}
+	}
+
+	/**
+	 * This routine is only called for an interval that has been detected to
+	 * contain a single {@link Point} of intersection. We do now try to find it.
+	 *
+	 * @param ipIO
+	 *            the {@link IntervalPair} that specifies a single {@link Point}
+	 *            of intersection on two {@link BezierCurve}s
+	 */
+	private static Point findSinglePreciseIntersection(IntervalPair ipIO) {
+		Stack<IntervalPair> partStack = new Stack<>();
+		partStack.push(ipIO);
+
+		while (!partStack.isEmpty()) {
+			IntervalPair ip = partStack.pop();
+
+			// quick check if intersections can be found
+			BezierCurve pClipped = ip.getPClipped();
+			BezierCurve qClipped = ip.getQClipped();
+			if (!pClipped.getControlBounds()
+					.touches(qClipped.getControlBounds())) {
+				continue;
+			}
+
+			if (ip.convergesP()) {
+				Point p = ip.p.getHC(ip.pi.a).toPoint();
+				if (ip.q.contains(p)) {
+					return p;
+				}
+			}
+
+			if (ip.convergesQ()) {
+				Point q = ip.q.getHC(ip.qi.a).toPoint();
+				if (ip.p.contains(q)) {
+					return q;
+				}
+			}
+
+			if (ip.converges()) {
+				// TODO: do another clipping algorithm here. the one that
+				// uses control bounds.
+				for (Point pp : ip.p.toPoints(ip.pi)) {
+					for (Point qp : ip.q.toPoints(ip.qi)) {
+						if (pp.equals(qp)) {
+							copyIntervalPair(ipIO, ip);
+							return pp;
+						}
+					}
+				}
+				continue;
+			}
+
+			// construct "parallel" and "orthogonal" fat lines
+			FatLine L1 = FatLine.from(qClipped, PARALLEL);
+			FatLine L2 = FatLine.from(qClipped, ORTHOGONAL);
+
+			// curve implosion check
+			if (L1 == null || L2 == null) {
+				// q is degenerated
+				Point poi = ip.q.getHC(ip.qi.getMid()).toPoint();
+				if (ip.p.contains(poi)) {
+					copyIntervalPair(ipIO, ip);
+					return poi;
+				}
+				continue;
+			}
+
+			// clip to the fat lines
+			Interval interval = new Interval(pClipped.clipTo(L1));
+			Interval intervalOrtho = new Interval(pClipped.clipTo(L2));
+
+			// pick smaller interval range
+			interval = Interval.min(interval, intervalOrtho);
+
+			// re-calculate s and e from the clipped interval
+			double ratio = ip.pi.scaleTo(interval);
+
+			if (ratio < 0) {
+				// no more intersections
+				continue;
+			} else if (ratio > 0.8) {
+				/*
+				 * Split longer curve and find intersections for both halves.
+				 * Add an unrecognizable fraction to the beginning of the second
+				 * parameter interval, so that only one of the getIntersection()
+				 * calls can converge in the middle.
+				 */
+				IntervalPair[] nip = ip.isPLonger() ? ip.getPSplit()
+						: ip.getQSplit();
+				partStack.push(nip[1]);
+				partStack.push(nip[0]);
+			} else {
+				partStack.push(ip.getSwapped());
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Computes the intersection of the line from {@link Point} p to
 	 * {@link Point} q with the x-axis-parallel line f(x) = y.
 	 *
@@ -1997,6 +2247,32 @@ public class BezierCurve extends AbstractGeometry
 
 		// save the refined offset as a PolyBezier
 		return new PolyBezier(curves.toArray(new BezierCurve[] {}));
+	}
+
+	/**
+	 * Moves the {@link Interval}'s start and end values. The start value is set
+	 * to <i>x</i> if <i>x</i> is smaller than the start value. The end value is
+	 * set to <i>x</i> if <i>x</i> is greater than the end value.
+	 *
+	 * @param interval
+	 *            the {@link Interval} to modify
+	 * @param x
+	 *            the modification value
+	 */
+	private static void moveInterval(double[] interval, double x) {
+		// assure that 0 <= x <= 1 to prevent invalid parameter values
+		if (x < 0) {
+			x = 0;
+		} else if (x > 1) {
+			x = 1;
+		}
+
+		if (interval[0] > x) {
+			interval[0] = x;
+		}
+		if (interval[1] < x) {
+			interval[1] = x;
+		}
 	}
 
 	/**
@@ -2360,75 +2636,6 @@ public class BezierCurve extends AbstractGeometry
 	}
 
 	/**
-	 * Checks all end {@link Point}s of the two passed-in {@link BezierCurve}s
-	 * if they are {@link Point}s of intersection.
-	 *
-	 * @param ip
-	 *            the {@link IntervalPair} describing both curves
-	 * @param endPointIntervalPairs
-	 *            the set of {@link IntervalPair}s to store the results
-	 * @param intersections
-	 *            the set of {@link Point}s to additionally store the associated
-	 *            intersection {@link Point}s
-	 */
-	private void findEndPointIntersections(IntervalPair ip,
-			Set<IntervalPair> endPointIntervalPairs, Set<Point> intersections) {
-		final double CHUNK_SHIFT_EPSILON = PrecisionUtils
-				.calculateFraction(CHUNK_SHIFT);
-
-		Point poi = ip.p.points[0].toPoint();
-		double[] interval = new double[] { 0, 1 };
-		if (containmentParameter(ip.q, interval, poi)) {
-			ip.pi.a = CHUNK_SHIFT_EPSILON;
-			interval[0] = (interval[0] + interval[1]) / 2;
-			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
-			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p,
-					new Interval(0, ip.pi.a), ip.q, new Interval(interval)));
-			intersections.add(poi);
-		}
-
-		poi = ip.p.points[ip.p.points.length - 1].toPoint();
-		interval[0] = 0;
-		interval[1] = 1;
-		if (containmentParameter(ip.q, interval, poi)) {
-			ip.pi.b = 1 - CHUNK_SHIFT_EPSILON;
-			interval[0] = (interval[0] + interval[1]) / 2;
-			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
-			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p,
-					new Interval(ip.pi.b, 1), ip.q, new Interval(interval)));
-			intersections.add(poi);
-		}
-
-		poi = ip.q.points[0].toPoint();
-		interval[0] = 0;
-		interval[1] = 1;
-		if (containmentParameter(ip.p, interval, poi)) {
-			ip.qi.a = CHUNK_SHIFT_EPSILON;
-			interval[0] = (interval[0] + interval[1]) / 2;
-			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
-			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p,
-					new Interval(interval), ip.q, new Interval(0, ip.qi.a)));
-			intersections.add(poi);
-		}
-
-		poi = ip.q.points[ip.q.points.length - 1].toPoint();
-		interval[0] = 0;
-		interval[1] = 1;
-		if (containmentParameter(ip.p, interval, poi)) {
-			ip.qi.b = 1 - CHUNK_SHIFT_EPSILON;
-			interval[0] = (interval[0] + interval[1]) / 2;
-			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
-			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p,
-					new Interval(interval), ip.q, new Interval(ip.qi.b, 1)));
-			intersections.add(poi);
-		}
-	}
-
-	/**
 	 * Searches for the specified extreme on this {@link BezierCurve}.
 	 *
 	 * @param cmp
@@ -2488,187 +2695,6 @@ public class BezierCurve extends AbstractGeometry
 		}
 
 		return xtreme;
-	}
-
-	/**
-	 * <p>
-	 * Find intersection {@link IntervalPair} chunks. The chunks are not very
-	 * precise. We will refine them later.
-	 * </p>
-	 * <p>
-	 * Searches for (imprecise) intersection {@link IntervalPair}s using the
-	 * Bezier clipping algorithm. Every recorded {@link IntervalPair} limits the
-	 * parameter {@link Interval} for a possible intersection on both
-	 * {@link BezierCurve}s.
-	 * </p>
-	 *
-	 * @param ip
-	 *            the {@link IntervalPair} that is currently processed
-	 * @param intervalPairs
-	 *            the set of {@link IntervalPair}s to store the results
-	 * @param intersections
-	 *            the set of intersection {@link Point}s to store those in case
-	 *            of a degenerated {@link BezierCurve} (or a degenerated
-	 *            sub-curve)
-	 */
-	private void findIntersectionChunks(IntervalPair ip,
-			Set<IntervalPair> intervalPairs, Set<Point> intersections) {
-		if (ip.converges(CHUNK_SHIFT)) {
-			intervalPairs.add(ip.getCopy());
-			return;
-		}
-
-		BezierCurve pClipped = ip.getPClipped();
-		BezierCurve qClipped = ip.getQClipped();
-
-		// construct "parallel" and "orthogonal" fat lines
-		FatLine L1 = FatLine.from(qClipped, PARALLEL);
-		FatLine L2 = FatLine.from(qClipped, ORTHOGONAL);
-
-		// curve implosion check
-		if (L1 == null || L2 == null) {
-			// q is degenerated
-			Point poi = ip.q.getHC(ip.qi.getMid()).toPoint();
-			double[] interval = new double[] { 0, 1 };
-			if (poi != null && containmentParameter(ip.p, interval, poi)) {
-				intersections.add(poi);
-			}
-			return;
-		}
-
-		// clip to the fat lines
-		Interval interval = new Interval(pClipped.clipTo(L1));
-		Interval intervalOrtho = new Interval(pClipped.clipTo(L2));
-
-		// pick smaller interval range
-		interval = Interval.min(interval, intervalOrtho);
-
-		// re-calculate s and e from the clipped interval
-		double ratio = ip.pi.scaleTo(interval);
-
-		if (ratio < 0) {
-			// no more intersections
-			return;
-		} else if (ratio > 0.8) {
-			/*
-			 * Split longer curve and find intersections for both halves. Add an
-			 * unrecognizable fraction to the beginning of the second parameter
-			 * interval, so that only one of the getIntersection() calls can
-			 * converge in the middle.
-			 */
-			if (ip.isPLonger()) {
-				IntervalPair[] nip = ip.getPSplit();
-				findIntersectionChunks(nip[0], intervalPairs, intersections);
-				findIntersectionChunks(nip[1], intervalPairs, intersections);
-			} else {
-				IntervalPair[] nip = ip.getQSplit();
-				findIntersectionChunks(nip[0], intervalPairs, intersections);
-				findIntersectionChunks(nip[1], intervalPairs, intersections);
-			}
-
-			return;
-		} else {
-			findIntersectionChunks(ip.getSwapped(), intervalPairs,
-					intersections);
-		}
-	}
-
-	/**
-	 * This routine is only called for an interval that has been detected to
-	 * contain a single {@link Point} of intersection. We do now try to find it.
-	 *
-	 * @param ipIO
-	 *            the {@link IntervalPair} that specifies a single {@link Point}
-	 *            of intersection on two {@link BezierCurve}s
-	 */
-	private Point findSinglePreciseIntersection(IntervalPair ipIO) {
-		Stack<IntervalPair> partStack = new Stack<>();
-		partStack.push(ipIO);
-
-		while (!partStack.isEmpty()) {
-			IntervalPair ip = partStack.pop();
-
-			// quick check if intersections can be found
-			BezierCurve pClipped = ip.getPClipped();
-			BezierCurve qClipped = ip.getQClipped();
-			if (!pClipped.getControlBounds()
-					.touches(qClipped.getControlBounds())) {
-				continue;
-			}
-
-			if (ip.convergesP()) {
-				Point p = ip.p.getHC(ip.pi.a).toPoint();
-				if (ip.q.contains(p)) {
-					return p;
-				}
-			}
-
-			if (ip.convergesQ()) {
-				Point q = ip.q.getHC(ip.qi.a).toPoint();
-				if (ip.p.contains(q)) {
-					return q;
-				}
-			}
-
-			if (ip.converges()) {
-				// TODO: do another clipping algorithm here. the one that
-				// uses control bounds.
-				for (Point pp : ip.p.toPoints(ip.pi)) {
-					for (Point qp : ip.q.toPoints(ip.qi)) {
-						if (pp.equals(qp)) {
-							copyIntervalPair(ipIO, ip);
-							return pp;
-						}
-					}
-				}
-				continue;
-			}
-
-			// construct "parallel" and "orthogonal" fat lines
-			FatLine L1 = FatLine.from(qClipped, PARALLEL);
-			FatLine L2 = FatLine.from(qClipped, ORTHOGONAL);
-
-			// curve implosion check
-			if (L1 == null || L2 == null) {
-				// q is degenerated
-				Point poi = ip.q.getHC(ip.qi.getMid()).toPoint();
-				if (ip.p.contains(poi)) {
-					copyIntervalPair(ipIO, ip);
-					return poi;
-				}
-				continue;
-			}
-
-			// clip to the fat lines
-			Interval interval = new Interval(pClipped.clipTo(L1));
-			Interval intervalOrtho = new Interval(pClipped.clipTo(L2));
-
-			// pick smaller interval range
-			interval = Interval.min(interval, intervalOrtho);
-
-			// re-calculate s and e from the clipped interval
-			double ratio = ip.pi.scaleTo(interval);
-
-			if (ratio < 0) {
-				// no more intersections
-				continue;
-			} else if (ratio > 0.8) {
-				/*
-				 * Split longer curve and find intersections for both halves.
-				 * Add an unrecognizable fraction to the beginning of the second
-				 * parameter interval, so that only one of the getIntersection()
-				 * calls can converge in the middle.
-				 */
-				IntervalPair[] nip = ip.isPLonger() ? ip.getPSplit()
-						: ip.getQSplit();
-				partStack.push(nip[1]);
-				partStack.push(nip[0]);
-			} else {
-				partStack.push(ip.getSwapped());
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -3298,32 +3324,6 @@ public class BezierCurve extends AbstractGeometry
 	@Override
 	public boolean intersects(ICurve c) {
 		return getIntersections(c).length > 0;
-	}
-
-	/**
-	 * Moves the {@link Interval}'s start and end values. The start value is set
-	 * to <i>x</i> if <i>x</i> is smaller than the start value. The end value is
-	 * set to <i>x</i> if <i>x</i> is greater than the end value.
-	 *
-	 * @param interval
-	 *            the {@link Interval} to modify
-	 * @param x
-	 *            the modification value
-	 */
-	private void moveInterval(double[] interval, double x) {
-		// assure that 0 <= x <= 1 to prevent invalid parameter values
-		if (x < 0) {
-			x = 0;
-		} else if (x > 1) {
-			x = 1;
-		}
-
-		if (interval[0] > x) {
-			interval[0] = x;
-		}
-		if (interval[1] < x) {
-			interval[1] = x;
-		}
 	}
 
 	/**
