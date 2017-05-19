@@ -2565,6 +2565,7 @@ public class BezierCurve extends AbstractGeometry
 		return interval;
 	}
 
+	// TODO: inline this logic. Its only used in a single place
 	private Point[] constructLUT(double start, double end, int size) {
 		Point[] lut = new Point[size];
 		for (int i = 0; i < size; i++) {
@@ -3003,7 +3004,7 @@ public class BezierCurve extends AbstractGeometry
 	 * @return A {@link PolyBezier} representing the refined offset of this
 	 *         {@link BezierCurve} for the given distance.
 	 */
-	public PolyBezier getOffsetRefined(double distance) {
+	public PolyBezier getOffset(double distance) {
 		return new LocalIntersectionOffsetRefiner()
 				.refine(new CuspAwareOffsetApproximator()
 						.approximateOffset(this, distance));
@@ -3021,7 +3022,7 @@ public class BezierCurve extends AbstractGeometry
 	 * @return A {@link PolyBezier} representing the (unprocessed) offset of
 	 *         this {@link BezierCurve} for the given distance.
 	 */
-	public PolyBezier getOffsetUnprocessed(double distance) {
+	PolyBezier getOffsetRaw(double distance) {
 		// merge the curves to yield a valid PolyBezier
 		return mergeCurves(new CuspAwareOffsetApproximator()
 				.approximateOffset(this, distance)

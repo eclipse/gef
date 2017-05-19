@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.CubicCurve2D;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.eclipse.gef.geometry.convert.awt.AWT2Geometry;
@@ -53,6 +54,17 @@ public class BezierCurveTests {
 
 		for (int i = 0; i < points.length; i++) {
 			assertEquals(points[i], c.getPoint(i));
+		}
+	}
+
+	private PolyBezier getOffsetRaw(BezierCurve c, double dist) {
+		try {
+			Method m = BezierCurve.class.getDeclaredMethod("getOffsetRaw",
+					double.class);
+			m.setAccessible(true);
+			return (PolyBezier) m.invoke(c, dist);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -264,10 +276,10 @@ public class BezierCurveTests {
 	}
 
 	@Test
-	public void test_getOffsetUnprocessed_cubic() {
+	public void test_getOffsetRaw_cubic() {
 		BezierCurve c = new BezierCurve(10, 10, 10, 50, 100, 50, 100, 10);
 		double dist = 5;
-		PolyBezier offsetUnprocessed = c.getOffsetUnprocessed(dist);
+		PolyBezier offsetUnprocessed = getOffsetRaw(c, dist);
 		assertTrue(offsetUnprocessed.toBezier().length < 30);
 		BezierCurve d = c.getDerivative();
 		for (double t : new double[] { 0, 0.25, 0.5, 0.75, 1 }) {
@@ -281,10 +293,10 @@ public class BezierCurveTests {
 	}
 
 	@Test
-	public void test_getOffsetUnprocessed_line() {
+	public void test_getOffsetRaw_line() {
 		BezierCurve c = new BezierCurve(10, 10, 50, 50);
 		double dist = 5;
-		PolyBezier offsetUnprocessed = c.getOffsetUnprocessed(dist);
+		PolyBezier offsetUnprocessed = getOffsetRaw(c, dist);
 		assertEquals(1, offsetUnprocessed.toBezier().length);
 		BezierCurve d = c.getDerivative();
 		for (double t : new double[] { 0, 0.5, 1 }) {
@@ -297,10 +309,10 @@ public class BezierCurveTests {
 	}
 
 	@Test
-	public void test_getOffsetUnprocessed_quad() {
+	public void test_getOffsetRaw_quad() {
 		BezierCurve c = new BezierCurve(10, 10, 50, 50, 100, 10);
 		double dist = 5;
-		PolyBezier offsetUnprocessed = c.getOffsetUnprocessed(dist);
+		PolyBezier offsetUnprocessed = getOffsetRaw(c, dist);
 		assertTrue(offsetUnprocessed.toBezier().length < 20);
 		BezierCurve d = c.getDerivative();
 		for (double t : new double[] { 0, 0.5, 1 }) {
