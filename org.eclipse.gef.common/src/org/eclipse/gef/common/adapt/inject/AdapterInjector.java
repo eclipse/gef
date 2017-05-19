@@ -355,8 +355,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				throw new IllegalStateException(
 						"Adapter injection seems to have been performed while the adaptable chain is not complete yet. The adapter is not yet set.");
 			}
-			if (contextRole.equals(
-					nextChainElement.getAdapterKey(chainElement).getRole())
+			if (contextRole
+					.equals(nextChainElement.getAdapterKey(chainElement)
+							.getRole())
 					&& Types.isAssignable(contextType,
 							TypeToken.of(chainElement.getClass()))) {
 				contextIndex++;
@@ -463,12 +464,12 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						method.setAccessible(true);
 						method.invoke(adaptable, new Object[] { adapterType,
 								adapter, adapterKey.getRole() });
-					} catch (final IllegalArgumentException e) {
-						e.printStackTrace();
 					} catch (final IllegalAccessException e) {
-						e.printStackTrace();
+						throw new IllegalStateException(e);
 					} catch (final InvocationTargetException e) {
-						e.printStackTrace();
+						issues.add("*** ERROR: Cannot inject binding "
+								+ adapterBinding.getValue().getSource() + ": "
+								+ e.getCause().getMessage());
 					}
 				}
 			}
@@ -523,20 +524,23 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 					// a key type is given and equals the inferred type;
 					// issue a warning because of the superfluous
 					// information
-					issues.add("*** INFO: The actual type of adapter " + adapter
-							+ " could already be inferred as "
-							+ bindingInferredType + " from the binding at "
-							+ binding.getSource() + ".\n"
-							+ "          The redundant type key "
-							+ bindingKeyType
-							+ " may be omitted in the adapter key of the binding, using "
-							+ (AdapterKey.DEFAULT_ROLE
-									.equals(adapterKey.getRole())
-											? "AdapterKey.defaultRole()"
-											: " AdapterKey.role("
-													+ adapterKey.getRole()
-													+ ")")
-							+ " instead.");
+					issues.add(
+							"*** INFO: The actual type of adapter " + adapter
+									+ " could already be inferred as "
+									+ bindingInferredType
+									+ " from the binding at "
+									+ binding.getSource() + ".\n"
+									+ "          The redundant type key "
+									+ bindingKeyType
+									+ " may be omitted in the adapter key of the binding, using "
+									+ (AdapterKey.DEFAULT_ROLE
+											.equals(adapterKey.getRole())
+													? "AdapterKey.defaultRole()"
+													: " AdapterKey.role("
+															+ adapterKey
+																	.getRole()
+															+ ")")
+									+ " instead.");
 				} else {
 					if (bindingInferredType
 							.getType() instanceof ParameterizedType) {
@@ -582,10 +586,11 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						+ TypeToken.of(adapter.getClass())
 						+ ", which is the actual type inferred from the instance.\n"
 						+ "             You should probably adjust your binding to provide a type key using "
-						+ (AdapterKey.DEFAULT_ROLE.equals(adapterKey.getRole())
-								? "AdapterKey.get(<type>)"
-								: "AdapterKey.get(<type>, "
-										+ adapterKey.getRole() + ")")
+						+ (AdapterKey.DEFAULT_ROLE
+								.equals(adapterKey.getRole())
+										? "AdapterKey.get(<type>)"
+										: "AdapterKey.get(<type>, "
+												+ adapterKey.getRole() + ")")
 						+ ".");
 			} else {
 				// check that at least key raw type and the type inferred
