@@ -2214,7 +2214,7 @@ public class BezierCurve extends AbstractGeometry
 	/**
 	 * Merges the given List of {@link BezierCurve}s by setting the end/start
 	 * point of two consecutive segments to the middle point between the two.
-	 * Reteurns a {@link PolyBezier} that is constructed from the adjusted
+	 * Returns a {@link PolyBezier} that is constructed from the adjusted
 	 * curves.
 	 *
 	 * @param curves
