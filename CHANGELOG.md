@@ -65,6 +65,10 @@ On the other hand, no segments are removed from the unprocessed offset. Therefor
 
 * [#503342](https://bugs.eclipse.org/bugs/show_bug.cgi?id=503342) Replaced <code>ContentModel</code> with a dedicated contents property within <code>IViewer</code>, as its a first-level concept.
 
+* [#501716](https://bugs.eclipse.org/bugs/show_bug.cgi?id=501716) Refactored snapping support and added support for snap-to-geometry.
+
+<img src="/.changelog/MVC_Snap-To.Geometry.png" width="400">
+
 ### GEF Graph (5.0.0)
 
 * [#508822](https://bugs.eclipse.org/bugs/show_bug.cgi?id=508822), [#509077](https://bugs.eclipse.org/bugs/show_bug.cgi?id=509077) Made several improvement to graph, node, and edge builders.
