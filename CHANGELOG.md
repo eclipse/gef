@@ -67,7 +67,7 @@ On the other hand, no segments are removed from the unprocessed offset. Therefor
 
 * [#501716](https://bugs.eclipse.org/bugs/show_bug.cgi?id=501716) Refactored snapping support and added support for snap-to-geometry.
 
-<img src="/.changelog/MVC_Snap-To.Geometry.png" width="400">
+<img src="/.changelog/MVC_Snap-To-Geometry.png" width="400">
 
 ### GEF Graph (5.0.0)
 
