@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.BiFunction;
 
 import org.eclipse.gef.geometry.euclidean.Angle;
 import org.eclipse.gef.geometry.euclidean.Straight;
@@ -910,6 +911,23 @@ public class BezierCurve extends AbstractGeometry
 	static final class IntervalPair {
 
 		/**
+		 * Overwrites the attribute values of {@link IntervalPair} <i>dst</i>
+		 * with the respective attribute values of {@link IntervalPair}
+		 * <i>src</i>.
+		 *
+		 * @param dst
+		 *            the destination {@link IntervalPair}
+		 * @param src
+		 *            the source {@link IntervalPair}
+		 */
+		public static void copy(IntervalPair dst, IntervalPair src) {
+			dst.p = src.p;
+			dst.q = src.q;
+			dst.pi = src.pi;
+			dst.qi = src.qi;
+		}
+
+		/**
 		 * The first {@link BezierCurve}.
 		 */
 		public BezierCurve p;
@@ -1121,22 +1139,6 @@ public class BezierCurve extends AbstractGeometry
 		public boolean isPLonger() {
 			return (pi.b - pi.a) > (qi.b - qi.a);
 		}
-	}
-
-	/**
-	 * <p>
-	 * The {@link IPointCmp} interface specifies a method to determine which of
-	 * two given {@link Point}s "is better than" the other.
-	 * </p>
-	 * <p>
-	 * It is used to identify the bounding box of an arbitrary
-	 * {@link BezierCurve} by searching for the minimal and maximal x and y
-	 * coordinates while sub-dividing the {@link BezierCurve} until all of its
-	 * control {@link Point}s are not "better than" the one selected.
-	 * </p>
-	 */
-	private interface IPointCmp {
-		public boolean pIsBetterThanQ(Point p, Point q);
 	}
 
 	private static class LocalIntersectionOffsetRefiner {
@@ -1596,47 +1598,51 @@ public class BezierCurve extends AbstractGeometry
 			.calculateFraction(0) / 10;
 
 	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal x coordinate in a list of {@link Point}s.
+	 * A criteria {@link BiFunction} to find the {@link Point} with the minimal
+	 * x coordinate in a list of {@link Point}s.
+	 *
+	 * @see #findExtreme(BiFunction)
+	 * @see #findExtreme(BiFunction, Interval)
 	 */
-	private static final IPointCmp xminCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.x, q.x);
-		}
+	private static final BiFunction<Point, Point, Boolean> xminCriteria = (p,
+			q) -> {
+		return PrecisionUtils.smallerEqual(p.x, q.x);
 	};
 
 	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal x coordinate in a list of {@link Point}s.
+	 * A criteria {@link BiFunction} to find the {@link Point} with the maximal
+	 * x coordinate in a list of {@link Point}s.
+	 *
+	 * @see #findExtreme(BiFunction)
+	 * @see #findExtreme(BiFunction, Interval)
 	 */
-	private static final IPointCmp xmaxCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.x, q.x);
-		}
+	private static final BiFunction<Point, Point, Boolean> xmaxCriteria = (p,
+			q) -> {
+		return PrecisionUtils.greaterEqual(p.x, q.x);
 	};
 
 	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal y coordinate in a list of {@link Point}s.
+	 * A criteria {@link BiFunction} to find the {@link Point} with the minimal
+	 * y coordinate in a list of {@link Point}s.
+	 *
+	 * @see #findExtreme(BiFunction)
+	 * @see #findExtreme(BiFunction, Interval)
 	 */
-	private static final IPointCmp yminCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.y, q.y);
-		}
+	private static final BiFunction<Point, Point, Boolean> yminCriteria = (p,
+			q) -> {
+		return PrecisionUtils.smallerEqual(p.y, q.y);
 	};
 
 	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal y coordinate in a list of {@link Point}s.
+	 * A criteria {@link BiFunction} to find the {@link Point} with the maximal
+	 * y coordinate in a list of {@link Point}s.
+	 *
+	 * @see #findExtreme(BiFunction)
+	 * @see #findExtreme(BiFunction, Interval)
 	 */
-	private static final IPointCmp ymaxCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.y, q.y);
-		}
+	private static final BiFunction<Point, Point, Boolean> ymaxCriteria = (p,
+			q) -> {
+		return PrecisionUtils.greaterEqual(p.y, q.y);
 	};
 
 	/**
@@ -1760,22 +1766,6 @@ public class BezierCurve extends AbstractGeometry
 			}
 		}
 		return PrecisionUtils.equal(interval[0], interval[1], 1);
-	}
-
-	/**
-	 * Overwrites the attribute values of {@link IntervalPair} <i>dst</i> with
-	 * the respective attribute values of {@link IntervalPair} <i>src</i>.
-	 *
-	 * @param dst
-	 *            the destination {@link IntervalPair}
-	 * @param src
-	 *            the source {@link IntervalPair}
-	 */
-	private static void copyIntervalPair(IntervalPair dst, IntervalPair src) {
-		dst.p = src.p;
-		dst.q = src.q;
-		dst.pi = src.pi;
-		dst.qi = src.qi;
 	}
 
 	/**
@@ -2082,7 +2072,7 @@ public class BezierCurve extends AbstractGeometry
 				for (Point pp : ip.p.toPoints(ip.pi)) {
 					for (Point qp : ip.q.toPoints(ip.qi)) {
 						if (pp.equals(qp)) {
-							copyIntervalPair(ipIO, ip);
+							IntervalPair.copy(ipIO, ip);
 							return pp;
 						}
 					}
@@ -2099,7 +2089,7 @@ public class BezierCurve extends AbstractGeometry
 				// q is degenerated
 				Point poi = ip.q.getHC(ip.qi.getMid()).toPoint();
 				if (ip.p.contains(poi)) {
-					copyIntervalPair(ipIO, ip);
+					IntervalPair.copy(ipIO, ip);
 					return poi;
 				}
 				continue;
@@ -2638,12 +2628,14 @@ public class BezierCurve extends AbstractGeometry
 	/**
 	 * Searches for the specified extreme on this {@link BezierCurve}.
 	 *
-	 * @param cmp
-	 *            the {@link IPointCmp} that specifies the extreme to search for
-	 * @return the extreme {@link Point} that can be identified
+	 * @param criteria
+	 *            Specifies the criteria to use for finding the extreme. As long
+	 *            as it returns <code>true</code> for a given pair of points,
+	 *            search is continued.
+	 * @return The extreme {@link Point} that can be identified
 	 */
-	private Point findExtreme(IPointCmp cmp) {
-		return findExtreme(cmp, Interval.getFull());
+	private Point findExtreme(BiFunction<Point, Point, Boolean> criteria) {
+		return findExtreme(criteria, Interval.getFull());
 	}
 
 	/**
@@ -2651,15 +2643,17 @@ public class BezierCurve extends AbstractGeometry
 	 * Searches for an extreme {@link Point} on this {@link BezierCurve}.
 	 * </p>
 	 *
-	 * @param cmp
-	 *            the {@link IPointCmp} that is used to find the extreme
-	 *            {@link Point}
+	 * @param criteria
+	 *            Specifies the criteria to use for finding the extreme. As long
+	 *            as it returns <code>true</code> for a given pair of points,
+	 *            search is continued.
 	 * @param iStart
 	 *            the start {@link Interval} on this {@link BezierCurve} in
 	 *            which the extreme {@link Point} is searched for
-	 * @return the extreme {@link Point} that could be found
+	 * @return The extreme {@link Point} that could be found
 	 */
-	private Point findExtreme(IPointCmp cmp, Interval iStart) {
+	private Point findExtreme(BiFunction<Point, Point, Boolean> criteria,
+			Interval iStart) {
 		Stack<Interval> parts = new Stack<>();
 		parts.push(iStart);
 
@@ -2670,13 +2664,13 @@ public class BezierCurve extends AbstractGeometry
 			BezierCurve clipped = getClipped(i.a, i.b);
 
 			Point sp = clipped.points[0].toPoint();
-			xtreme = cmp.pIsBetterThanQ(sp, xtreme) ? sp : xtreme;
+			xtreme = criteria.apply(sp, xtreme) ? sp : xtreme;
 			Point ep = clipped.points[clipped.points.length - 1].toPoint();
-			xtreme = cmp.pIsBetterThanQ(ep, xtreme) ? ep : xtreme;
+			xtreme = criteria.apply(ep, xtreme) ? ep : xtreme;
 
 			boolean everythingWorse = true;
 			for (int j = 1; j < clipped.points.length - 1; j++) {
-				if (!cmp.pIsBetterThanQ(xtreme, clipped.points[j].toPoint())) {
+				if (!criteria.apply(xtreme, clipped.points[j].toPoint())) {
 					everythingWorse = false;
 					break;
 				}
@@ -2741,10 +2735,11 @@ public class BezierCurve extends AbstractGeometry
 
 	@Override
 	public Rectangle getBounds() {
-		double xmin = findExtreme(xminCmp).x;
-		double xmax = findExtreme(xmaxCmp).x;
-		double ymin = findExtreme(yminCmp).y;
-		double ymax = findExtreme(ymaxCmp).y;
+		// TODO: check costs of 'inlining' lambdas here
+		double xmin = findExtreme(xminCriteria).x;
+		double xmax = findExtreme(xmaxCriteria).x;
+		double ymin = findExtreme(yminCriteria).y;
+		double ymax = findExtreme(ymaxCriteria).y;
 		return new Rectangle(new Point(xmin, ymin), new Point(xmax, ymax));
 	}
 
