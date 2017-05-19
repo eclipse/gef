@@ -927,6 +927,14 @@ public class BezierCurve extends AbstractGeometry
 			dst.qi = src.qi;
 		}
 
+		private static boolean equals(Vector3D v1, Vector3D v2,
+				int precisionShift) {
+			return PrecisionUtils.equal(v1.x / v1.z, v2.x / v2.z,
+					precisionShift)
+					&& PrecisionUtils.equal(v1.y / v1.z, v2.y / v2.z,
+							precisionShift);
+		}
+
 		/**
 		 * The first {@link BezierCurve}.
 		 */
@@ -993,11 +1001,10 @@ public class BezierCurve extends AbstractGeometry
 		 *         converge, otherwise <code>false</code>
 		 */
 		public boolean converges(int shift) {
-			return (pi.converges(shift) || pointsEquals(p.getHC(pi.a).toPoint(),
-					p.getHC(pi.b).toPoint(), shift))
+			return (pi.converges(shift)
+					|| equals(p.getHC(pi.a), p.getHC(pi.b), shift))
 					&& (qi.converges(shift)
-							|| pointsEquals(q.getHC(qi.a).toPoint(),
-									q.getHC(qi.b).toPoint(), shift));
+							|| equals(q.getHC(qi.a), q.getHC(qi.b), shift));
 		}
 
 		/**
@@ -1008,8 +1015,7 @@ public class BezierCurve extends AbstractGeometry
 		 *         point, otherwise <code>false</code>.
 		 */
 		public boolean convergesP() {
-			return pointsEquals(p.getHC(pi.a).toPoint(),
-					p.getHC(pi.b).toPoint(), 0);
+			return equals(p.getHC(pi.a), p.getHC(pi.b), 0);
 		}
 
 		/**
@@ -1020,8 +1026,7 @@ public class BezierCurve extends AbstractGeometry
 		 *         single point, otherwise <code>false</code>.
 		 */
 		public boolean convergesQ() {
-			return pointsEquals(q.getHC(qi.a).toPoint(),
-					q.getHC(qi.b).toPoint(), 0);
+			return equals(q.getHC(qi.a), q.getHC(qi.b), 0);
 		}
 
 		/**
@@ -2297,13 +2302,6 @@ public class BezierCurve extends AbstractGeometry
 		}
 	}
 
-	// TODO: this could go to Point (maybe a package-visible equal that can take
-	// a shift)
-	private static boolean pointsEquals(Point p1, Point p2, int shift) {
-		return PrecisionUtils.equal(p1.x, p2.x, shift)
-				&& PrecisionUtils.equal(p1.y, p2.y, shift);
-	}
-
 	/**
 	 * Binary search from the {@link IntervalPair}'s {@link Interval}s' limits
 	 * to the {@link Interval} s' inner values to refine the overlap represented
@@ -2405,7 +2403,7 @@ public class BezierCurve extends AbstractGeometry
 
 	/**
 	 * An array of {@link Vector3D}s which represent the control points of this
-	 * {@link BezierCurve}.
+	 * {@link BezierCurve} in homogenous coordinates.
 	 */
 	private final Vector3D[] points;
 
@@ -2849,7 +2847,8 @@ public class BezierCurve extends AbstractGeometry
 	 * @param t
 	 *            the parameter value for which this {@link BezierCurve} is
 	 *            evaluated
-	 * @return the {@link Vector3D} at the given parameter value
+	 * @return The point at the given parameter value, represented in
+	 *         homogeneous coordinates as a {@link Vector3D}.
 	 */
 	private Vector3D getHC(double t) {
 		if (t < 0 || t > 1) {
