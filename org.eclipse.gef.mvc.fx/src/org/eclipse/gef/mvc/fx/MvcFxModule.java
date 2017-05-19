@@ -29,6 +29,7 @@ import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.RevealPrimarySelectionBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.SnappingBehavior;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.gestures.ClickDragGesture;
@@ -726,6 +727,7 @@ public class MvcFxModule extends AbstractModule {
 		bindRevealPrimarySelectionBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindGridBehaviorAsIRootPartAdapter(adapterMapBinder);
 		bindFocusBehaviorAsIRootPartAdapter(adapterMapBinder);
+		bindSnappingBehaviorAsIRootPartAdapter(adapterMapBinder);
 		// creation and deletion policy
 		bindCreationPolicyAsIRootPartAdapter(adapterMapBinder);
 		bindDeletionPolicyAsIRootPartAdapter(adapterMapBinder);
@@ -781,6 +783,7 @@ public class MvcFxModule extends AbstractModule {
 				adapterMapBinder);
 		bindHoverHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
 		bindSelectionHandlePartFactoryAsContentViewerAdapter(adapterMapBinder);
+		bindSnappingFeedbackPartFactoryAsContentViewerAdapter(adapterMapBinder);
 
 		bindCursorSupportAsContentViewerAdapter(adapterMapBinder);
 		bindPanningSupportAsContentViewerAdapter(adapterMapBinder);
@@ -1043,6 +1046,25 @@ public class MvcFxModule extends AbstractModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(SelectionModel.class)
 				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	/**
+	 * Adds a binding for the {@link SnappingBehavior} to the given adapter map
+	 * binder.
+	 *
+	 * @param adapterMapBinder
+	 *            An adapter map binder for {@link IRootPart}.
+	 */
+	protected void bindSnappingBehaviorAsIRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(SnappingBehavior.class);
+	}
+
+	private void bindSnappingFeedbackPartFactoryAsContentViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**

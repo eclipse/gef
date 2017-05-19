@@ -25,12 +25,12 @@ import com.google.inject.Injector;
 import javafx.scene.Node;
 
 /**
- * The {@link SnappingFeedbackPartFactory} is an {@link IFeedbackPartFactory}
+ * The {@link DefaultSnappingFeedbackPartFactory} is an {@link IFeedbackPartFactory}
  * that is used by the {@link SnappingBehavior} to generate
  * {@link SnappingLocationFeedbackPart}s for the {@link SnappingLocation}s that
  * are stored in the {@link SnappingModel}.
  */
-public class SnappingFeedbackPartFactory implements IFeedbackPartFactory {
+public class DefaultSnappingFeedbackPartFactory implements IFeedbackPartFactory {
 
 	@Inject
 	private Injector injector;

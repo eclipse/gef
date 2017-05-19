@@ -74,7 +74,7 @@ import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.RectangleSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.parts.SnappingFeedbackPartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultSnappingFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
@@ -360,7 +360,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.role(SnappingBehavior.SNAPPING_FEEDBACK_PART_FACTORY))
-				.to(SnappingFeedbackPartFactory.class);
+				.to(DefaultSnappingFeedbackPartFactory.class);
 	}
 
 	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
