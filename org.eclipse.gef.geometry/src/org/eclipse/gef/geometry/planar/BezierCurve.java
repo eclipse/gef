@@ -2256,6 +2256,8 @@ public class BezierCurve extends AbstractGeometry
 	 * @param x
 	 *            the modification value
 	 */
+	// TODO: Migrate into a member function of Internal (and use it instead of
+	// double[])
 	private static void moveInterval(double[] interval, double x) {
 		// assure that 0 <= x <= 1 to prevent invalid parameter values
 		if (x < 0) {
@@ -2514,6 +2516,7 @@ public class BezierCurve extends AbstractGeometry
 	 *            the {@link FatLine} to clip this {@link BezierCurve} to
 	 * @return the new parameter {@link Interval} for this {@link BezierCurve}
 	 */
+	// TODO: return Interval
 	private double[] clipTo(FatLine L) {
 		double[] interval = new double[] { 1, 0 };
 
@@ -2563,15 +2566,6 @@ public class BezierCurve extends AbstractGeometry
 		}
 
 		return interval;
-	}
-
-	// TODO: inline this logic. Its only used in a single place
-	private Point[] constructLUT(double start, double end, int size) {
-		Point[] lut = new Point[size];
-		for (int i = 0; i < size; i++) {
-			lut[i] = get(start + i * (end - start) / (size - 1));
-		}
-		return lut;
 	}
 
 	/**
@@ -3160,26 +3154,28 @@ public class BezierCurve extends AbstractGeometry
 
 	@Override
 	public Point getProjection(final Point reference) {
-		// construct look up table (LUT)
-		int size = 100;
-		Point[] lut = constructLUT(0, 1, size);
+		// find nearest to reference within 100 samples
+		int numSamples = 100;
 
-		// find nearest LUT entry
-		int nearestLut = 0;
-		double distance = reference.getDistance(lut[0]);
-		for (int i = 1; i < lut.length; i++) {
-			double dist = reference.getDistance(lut[i]);
-			if (dist < distance) {
-				distance = dist;
-				nearestLut = i;
+		double nearestParam = 0;
+		Point nearest = get(nearestParam);
+		double distance = reference.getDistance(nearest);
+		for (int i = 1; i < numSamples; i++) {
+			double t = i / (numSamples - 1.0);
+			Point candidate = get(t);
+			double d = reference.getDistance(candidate);
+			if (d < distance) {
+				nearestParam = t;
+				nearest = candidate;
+				distance = d;
 			}
 		}
-		Point nearest = lut[nearestLut];
 
-		// compute interval based on LUT
+		// compute interval
 		Interval interval = new Interval(
-				nearestLut / (double) (size - 1) - 1 / (double) (size - 1),
-				nearestLut / (double) (size - 1) + 1 / (double) (size - 1));
+				nearestParam / (numSamples - 1) - 1 / (double) (numSamples - 1),
+				nearestParam / (numSamples - 1)
+						+ 1 / (double) (numSamples - 1));
 		// ensure interval is valid
 		interval.a = Math.min(1, Math.max(0, interval.a));
 		interval.b = Math.min(1, Math.max(0, interval.b));
