@@ -20,38 +20,15 @@ import java.lang.reflect.Field;
  *
  * @author Jan Koehnlein
  * @author mwienand
- * 
+ *
  */
 public class ReflectionUtils {
-
-	/**
-	 * Returns the value of the specified private field for the given
-	 * <i>owner</i>.
-	 * 
-	 * @param <T>
-	 *            The type of the field value.
-	 * 
-	 * @param owner
-	 *            {@link Object} from which the field is read.
-	 * @param fieldName
-	 *            Name of the field to read.
-	 * @return The value of the specified field for the given <i>owner</i>.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getPrivateFieldValue(Object owner, String fieldName) {
-		Field field = getPrivateField(owner, fieldName);
-		try {
-			return (T) field.get(owner);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	/**
 	 * Tries to find the field specified by <i>fieldName</i> in the class
 	 * hierarchy of the given <i>owner</i>. If the field can be found, it is
 	 * made accessible, so that its value can be read and written.
-	 * 
+	 *
 	 * @param owner
 	 *            {@link Object} from which the {@link Field} should be
 	 *            extracted.
@@ -59,7 +36,8 @@ public class ReflectionUtils {
 	 *            The name of the field.
 	 * @return {@link Field} if it can be found, otherwise <code>null</code>.
 	 */
-	public static Field getPrivateField(Object owner, String fieldName) {
+	// TODO: Rename to getField()
+	private static Field getField(Object owner, String fieldName) {
 		Class<? extends Object> currentClass = owner.getClass();
 		Field field = null;
 		do {
@@ -77,12 +55,36 @@ public class ReflectionUtils {
 	}
 
 	/**
-	 * Sets the value of the specified private field for the given <i>owner</i>
-	 * to the given <i>value</i>.
-	 * 
+	 * Returns the value of the specified private field for the given
+	 * <i>owner</i>.
+	 *
 	 * @param <T>
 	 *            The type of the field value.
-	 * 
+	 *
+	 * @param owner
+	 *            {@link Object} from which the field is read.
+	 * @param fieldName
+	 *            Name of the field to read.
+	 * @return The value of the specified field for the given <i>owner</i>.
+	 */
+	// TODO: rename to get()
+	@SuppressWarnings("unchecked")
+	public static <T> T getPrivateFieldValue(Object owner, String fieldName) {
+		Field field = getField(owner, fieldName);
+		try {
+			return (T) field.get(owner);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Sets the value of the specified private field for the given <i>owner</i>
+	 * to the given <i>value</i>.
+	 *
+	 * @param <T>
+	 *            The type of the field value.
+	 *
 	 * @param owner
 	 *            {@link Object} for which the field is set.
 	 * @param fieldName
@@ -90,9 +92,10 @@ public class ReflectionUtils {
 	 * @param value
 	 *            New value for the field.
 	 */
+	// TODO: rename to set()
 	public static <T> void setPrivateFieldValue(Object owner, String fieldName,
 			T value) {
-		Field field = getPrivateField(owner, fieldName);
+		Field field = getField(owner, fieldName);
 		try {
 			field.set(owner, value);
 		} catch (IllegalAccessException e) {
