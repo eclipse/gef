@@ -1176,7 +1176,23 @@ public class BezierCurve extends AbstractGeometry
 			private static final double DEFAULT_LINE_SIMILARITY_THRESHOLD = 0.2d;
 			private static final int DEFAULT_MAX_DEPTH = 32;
 
+			// TODO: find a proper name
+			private static double getLineSimilarity(BezierCurve cp) {
+				double max = 0d;
+				Line baseline = cp.toLine();
+				int N = cp.getPoints().length;
+				for (int i = 0; i < N; i++) {
+					Point p = cp.get(i / (double) (N - 1));
+					double distance = p.getDistance(baseline.getProjection(p));
+					if (distance > max) {
+						max = distance;
+					}
+				}
+				return max;
+			}
+
 			private double lineSimilarityThreshold;
+
 			private int maxDepth;
 
 			public LineSimilarityCurveIntersector() {
@@ -1202,9 +1218,9 @@ public class BezierCurve extends AbstractGeometry
 					return Collections.emptyList();
 				}
 				// line intersection approximation
-				double lineSimilarityP = LineSimilarity(cp);
+				double lineSimilarityP = getLineSimilarity(cp);
 				if (lineSimilarityP < lineSimilarityThreshold) {
-					double lineSimilarityQ = LineSimilarity(cq);
+					double lineSimilarityQ = getLineSimilarity(cq);
 					if (lineSimilarityQ < lineSimilarityThreshold) {
 						// compute line intersection
 						Point baselineIntersection = cp.toLine()
@@ -2197,20 +2213,6 @@ public class BezierCurve extends AbstractGeometry
 		return isNextTo(a.pi, b.pi, shift) && isNextTo(a.qi, b.qi, shift);
 	}
 
-	private static double LineSimilarity(BezierCurve cp) {
-		double max = 0d;
-		Line baseline = cp.toLine();
-		int N = cp.getPoints().length;
-		for (int i = 0; i < N; i++) {
-			Point p = cp.get(i / (double) (N - 1));
-			double distance = p.getDistance(baseline.getProjection(p));
-			if (distance > max) {
-				max = distance;
-			}
-		}
-		return max;
-	}
-
 	/**
 	 * Merges the given List of {@link BezierCurve}s by setting the end/start
 	 * point of two consecutive segments to the middle point between the two.
@@ -2295,6 +2297,8 @@ public class BezierCurve extends AbstractGeometry
 		}
 	}
 
+	// TODO: this could go to Point (maybe a package-visible equal that can take
+	// a shift)
 	private static boolean pointsEquals(Point p1, Point p2, int shift) {
 		return PrecisionUtils.equal(p1.x, p2.x, shift)
 				&& PrecisionUtils.equal(p1.y, p2.y, shift);
