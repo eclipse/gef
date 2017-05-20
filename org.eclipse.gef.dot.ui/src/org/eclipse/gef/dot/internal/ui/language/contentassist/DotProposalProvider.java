@@ -26,7 +26,7 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
-import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.language.DotAstHelper;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
@@ -480,7 +480,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		EObject container = EcoreUtil2.getContainerOfType(attribute,
 				EdgeStmtNode.class);
 		if (container != null) {
-			ID colorScheme = DotImport.getAttributeValue(
+			ID colorScheme = DotAstHelper.getAttributeValue(
 					((EdgeStmtNode) container).getAttrLists(),
 					DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
@@ -491,7 +491,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		// attribute nested below NodeStmt
 		container = EcoreUtil2.getContainerOfType(attribute, NodeStmt.class);
 		if (container != null) {
-			ID colorScheme = DotImport.getAttributeValue(
+			ID colorScheme = DotAstHelper.getAttributeValue(
 					((NodeStmt) container).getAttrLists(),
 					DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
@@ -502,8 +502,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		// attribute nested below Graph
 		container = EcoreUtil2.getContainerOfType(attribute, DotGraph.class);
 		if (container != null) {
-			ID colorScheme = DotImport.getAttributeValue((DotGraph) container,
-					DotAttributes.COLORSCHEME__GCNE);
+			ID colorScheme = DotAstHelper.getAttributeValue(
+					(DotGraph) container, DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
 				return DotColors.getColorNames(colorScheme.toValue());
 			}
@@ -513,7 +513,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
 				AttrStmt.class);
 		if (attrStmt != null) {
-			ID colorScheme = DotImport.getAttributeValue(
+			ID colorScheme = DotAstHelper.getAttributeValue(
 					attrStmt.getAttrLists(), DotAttributes.COLORSCHEME__GCNE);
 			if (colorScheme != null) {
 				return DotColors.getColorNames(colorScheme.toValue());

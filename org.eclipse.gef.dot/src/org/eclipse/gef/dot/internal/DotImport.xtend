@@ -39,6 +39,7 @@ import org.eclipse.gef.graph.Node
 import org.eclipse.xtext.parser.IParser
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
+import static extension org.eclipse.gef.dot.internal.language.DotAstHelper.*
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.
@@ -348,63 +349,4 @@ class DotImport {
 		edge
 	}
 
-	def static ID getAttributeValue(Subgraph subgraph, String name) {
-		for (stmt : subgraph.stmts) {
-			var ID value = switch stmt {
-				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
-				Attribute:
-					stmt.getAttributeValue(name)
-			}
-			if (value !== null) {
-				return value
-			}
-		}
-		null
-	}
-
-	def static ID getAttributeValue(DotGraph graph, String name) {
-		for (stmt : graph.stmts) {
-			var ID value = switch stmt {
-				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
-				Attribute:
-					stmt.getAttributeValue(name)
-			}
-			if (value !== null) {
-				return value
-			}
-		}
-		null
-	}
-
-	/**
-	 * Returns the value of the first attribute with the give name or
-	 * <code>null</code> if no attribute could be found.
-	 * 
-	 * @param attrLists
-	 *            The {@link AttrList}s to search.
-	 * @param name
-	 *            The name of the attribute whose value is to be retrieved.
-	 * @return The attribute value or <code>null</code> in case the attribute
-	 *         could not be found.
-	 */
-	def static ID getAttributeValue(List<AttrList> attrLists, String name) {
-		for (AttrList attrList : attrLists) {
-			val value = attrList.getAttributeValue(name)
-			if (value !== null) {
-				return value
-			}
-		}
-		null
-	}
-
-	def private static ID getAttributeValue(AttrList attrList, String name) {
-		attrList.attributes.findFirst[it.name.toValue == name]?.value
-	}
-
-	def private static ID getAttributeValue(Attribute attribute, String name) {
-		if (attribute.name.toValue.equals(name)) {
-			return attribute.value
-		}
-		null
-	}
 }

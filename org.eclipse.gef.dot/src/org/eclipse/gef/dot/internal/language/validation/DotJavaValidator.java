@@ -23,7 +23,7 @@ import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
-import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.language.DotAstHelper;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
@@ -167,8 +167,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			}
 
 			if (attributeList != null) {
-				// TODO: DotImport should not be referenced here
-				ID shapeValue = DotImport.getAttributeValue(attributeList,
+				ID shapeValue = DotAstHelper.getAttributeValue(attributeList,
 						DotAttributes.SHAPE__N);
 				// if the shape value is not explicitly set, use the default
 				// shape value for evaluation
