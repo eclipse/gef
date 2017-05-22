@@ -31,15 +31,11 @@ import org.eclipse.gef.mvc.fx.handlers.IHandler;
 import org.eclipse.gef.mvc.fx.policies.IPolicy;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.transform.Affine;
 
 /**
  * An {@link IVisualPart} plays the controller role in the model-view-controller
@@ -115,23 +111,6 @@ public interface IVisualPart<V extends Node> extends IAdaptable,
 	 * Name of the property storing the refresh visual boolean property.
 	 */
 	public static final String REFRESH_VISUAL_PROPERTY = "refreshVisual";
-
-	/**
-	 * The role for the adapter key of the <code>Provider&lt;Affine&gt;</code>
-	 * that will be used to obtain the part's {@link Affine} transformation.
-	 */
-	// TODO: replace with a read-only object (Affine) property instead of using
-	// a provider, inserting the Affine within #getVisual()
-	String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
-
-	/**
-	 * The adapter key for the <code>Provider&lt;Affine&gt;</code> that will be
-	 * used to obtain the host's {@link Affine} transformation.
-	 */
-	@SuppressWarnings("serial")
-	AdapterKey<Provider<? extends Affine>> TRANSFORM_PROVIDER_KEY = AdapterKey
-			.get(new TypeToken<Provider<? extends Affine>>() {
-			}, IVisualPart.TRANSFORMATION_PROVIDER_ROLE);
 
 	/**
 	 * Adds the given child to the list of this part's children.

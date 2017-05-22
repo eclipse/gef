@@ -23,7 +23,7 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
-import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
@@ -67,7 +67,7 @@ public class NodeLayoutBehaviorTests {
 						{
 							setAdapter(new ResizePolicy());
 							TransformProvider transformProvider = new TransformProvider();
-							setAdapter(transformProvider, IVisualPart.TRANSFORM_PROVIDER_KEY.getRole());
+							setAdapter(transformProvider, ITransformableContentPart.TRANSFORM_PROVIDER_KEY.getRole());
 							setAdapter(new TransformPolicy());
 							Affine affine = transformProvider.get();
 							affine.setTx(location.x);

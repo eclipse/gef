@@ -12,8 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.parts;
 
+import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.utils.NodeUtils;
 import org.eclipse.gef.geometry.planar.AffineTransform;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -32,6 +36,23 @@ public interface ITransformableContentPart<V extends Node>
 		extends IContentPart<V> {
 
 	/**
+	 * The role for the adapter key of the <code>Provider&lt;Affine&gt;</code>
+	 * that will be used to obtain the part's {@link Affine} transformation.
+	 */
+	// TODO: replace with a read-only object (Affine) property instead of using
+	// a provider, inserting the Affine within #getVisual()
+	String TRANSFORM_PROVIDER_ROLE = "transformProvider";
+
+	/**
+	 * The adapter key for the <code>Provider&lt;Affine&gt;</code> that will be
+	 * used to obtain the host's {@link Affine} transformation.
+	 */
+	@SuppressWarnings("serial")
+	AdapterKey<Provider<? extends Affine>> TRANSFORM_PROVIDER_KEY = AdapterKey
+			.get(new TypeToken<Provider<? extends Affine>>() {
+			}, TRANSFORM_PROVIDER_ROLE);
+
+	/**
 	 * Returns the current {@link Affine} according to this
 	 * {@link ITransformableContentPart}'s content.
 	 *
@@ -48,7 +69,7 @@ public interface ITransformableContentPart<V extends Node>
 	 *         {@link ITransformableContentPart}'s visual.
 	 */
 	public default Affine getVisualTransform() {
-		return getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get();
+		return getAdapter(TRANSFORM_PROVIDER_KEY).get();
 	}
 
 	/**
@@ -70,8 +91,7 @@ public interface ITransformableContentPart<V extends Node>
 	 *            {@link ITransformableContentPart}.
 	 */
 	public default void setVisualTransform(Affine totalTransform) {
-		NodeUtils.setAffine(
-				getAdapter(IVisualPart.TRANSFORM_PROVIDER_KEY).get(),
+		NodeUtils.setAffine(getAdapter(TRANSFORM_PROVIDER_KEY).get(),
 				totalTransform);
 	}
 

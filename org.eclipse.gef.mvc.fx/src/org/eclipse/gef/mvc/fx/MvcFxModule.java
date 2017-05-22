@@ -69,7 +69,7 @@ import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
-import org.eclipse.gef.mvc.fx.parts.IVisualPart;
+import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.policies.ContentPolicy;
 import org.eclipse.gef.mvc.fx.policies.CreationPolicy;
@@ -1102,7 +1102,7 @@ public class MvcFxModule extends AbstractModule {
 	/**
 	 * Adds a binding for {@link TransformProvider} to the adapter map binder
 	 * for {@link AbstractContentPart}, using the
-	 * {@link IVisualPart#TRANSFORM_PROVIDER_KEY}.
+	 * {@link ITransformableContentPart#TRANSFORM_PROVIDER_KEY}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -1114,9 +1114,8 @@ public class MvcFxModule extends AbstractModule {
 	 */
 	protected void bindTransformProviderAsAbstractContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(IVisualPart.TRANSFORM_PROVIDER_KEY.getRole()))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				ITransformableContentPart.TRANSFORM_PROVIDER_KEY.getRole()))
 				.to(TransformProvider.class);
 	}
 
