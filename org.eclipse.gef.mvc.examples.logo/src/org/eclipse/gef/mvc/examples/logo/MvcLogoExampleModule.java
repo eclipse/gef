@@ -321,7 +321,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindIContentPartFactory() {
-		binder().bind(IContentPartFactory.class).toInstance(new MvcLogoExampleContentPartFactory());
+		binder().bind(IContentPartFactory.class).to(MvcLogoExampleContentPartFactory.class);
 	}
 
 	protected void bindIContentPartFactoryAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
