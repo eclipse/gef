@@ -14,6 +14,9 @@ package org.eclipse.gef.mvc.fx.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
@@ -78,7 +81,16 @@ public class NormalizeConnectedSupport {
 	public void commitNormalization() {
 		if (parts != null) {
 			for (int i = 0; i < parts.length; i++) {
-				policies[i].commit();
+				policies[i].normalize();
+				ITransactionalOperation operation = policies[i].commit();
+				if (operation != null) {
+					try {
+						parts[i].getViewer().getDomain().execute(operation,
+								new NullProgressMonitor());
+					} catch (ExecutionException e) {
+						e.printStackTrace();
+					}
+				}
 				parts[i].setRefreshVisual(wasRefresh[i]);
 			}
 		}
@@ -133,8 +145,10 @@ public class NormalizeConnectedSupport {
 	 * {@link BendConnectionPolicy#normalize()} for each target part.
 	 */
 	public void normalizeAnchoreds() {
-		for (IVisualPart<? extends Node> part : parts) {
-			part.getAdapter(BendConnectionPolicy.class).normalize();
+		if (parts != null) {
+			for (int i = 0; i < parts.length; i++) {
+				policies[i].normalize();
+			}
 		}
 	}
 }
