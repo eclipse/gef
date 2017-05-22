@@ -64,6 +64,7 @@ import org.eclipse.gef.mvc.fx.parts.DefaultHoverFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultHoverIntentHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
+import org.eclipse.gef.mvc.fx.parts.DefaultSnappingFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IHandlePartFactory;
@@ -1061,10 +1062,19 @@ public class MvcFxModule extends AbstractModule {
 				.to(SnappingBehavior.class);
 	}
 
-	private void bindSnappingFeedbackPartFactoryAsContentViewerAdapter(
+	/**
+	 * Binds the {@link IFeedbackPartFactory} that is used to generate snapping
+	 * feedback.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} for content viewer adapters.
+	 */
+	protected void bindSnappingFeedbackPartFactoryAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// TODO Auto-generated method stub
-
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(SnappingBehavior.SNAPPING_FEEDBACK_PART_FACTORY))
+				.to(DefaultSnappingFeedbackPartFactory.class);
 	}
 
 	/**

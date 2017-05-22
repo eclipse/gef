@@ -44,7 +44,6 @@ import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
-import org.eclipse.gef.mvc.fx.behaviors.SnappingBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.handlers.BendFirstAnchorageOnSegmentHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.BendOnSegmentDragHandler;
@@ -74,7 +73,6 @@ import org.eclipse.gef.mvc.fx.parts.DefaultSelectionHandlePartFactory;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.RectangleSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.parts.DefaultSnappingFeedbackPartFactory;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
@@ -352,15 +350,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SelectFocusedOnTypeHandler.class);
 		// select-all on type
 		bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(adapterMapBinder);
-
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SnappingBehavior.class);
-	}
-
-	@Override
-	protected void bindIViewerAdaptersForContentViewer(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.role(SnappingBehavior.SNAPPING_FEEDBACK_PART_FACTORY))
-				.to(DefaultSnappingFeedbackPartFactory.class);
 	}
 
 	protected void bindPaletteFocusBehaviorAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
