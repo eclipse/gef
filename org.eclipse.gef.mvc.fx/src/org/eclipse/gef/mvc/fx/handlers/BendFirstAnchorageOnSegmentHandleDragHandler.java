@@ -418,23 +418,26 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		snapToSupport = targetPart instanceof IContentPart
 				? targetPart.getViewer().getAdapter(SnapToSupport.class) : null;
 		if (snapToSupport != null) {
-			// FIXME: Do not use the mouse location as the snapping location,
-			// because it is not a real location on the connection. Instead,
-			// query the real location for the dragged handle and use that for
-			// snapping.
-
 			// Only report HSL or VSL depending on segment orientation
-			SnappingLocation sl = bendPolicy.isSelectionHorizontal()
-					? new SnappingLocation(
-							(IContentPart<? extends Connection>) targetPart,
-							Orientation.VERTICAL, initialMouseInScene.y)
-					: new SnappingLocation(
-							(IContentPart<? extends Connection>) targetPart,
-							Orientation.HORIZONTAL, initialMouseInScene.x);
-
-			snapToSupport.startSnapping(
+			SnappingLocation vssl = new SnappingLocation(
 					(IContentPart<? extends Connection>) targetPart,
-					Arrays.asList(sl));
+					Orientation.VERTICAL, startPositionInScene.y);
+			SnappingLocation hssl = new SnappingLocation(
+					(IContentPart<? extends Connection>) targetPart,
+					Orientation.HORIZONTAL, startPositionInScene.x);
+			if (bendPolicy.getSelectedInitialPositions().size() == 2
+					&& targetPart.getVisual()
+							.getRouter() instanceof OrthogonalRouter) {
+				SnappingLocation sl = bendPolicy.isSelectionHorizontal() ? vssl
+						: hssl;
+				snapToSupport.startSnapping(
+						(IContentPart<? extends Connection>) targetPart,
+						Arrays.asList(sl));
+			} else {
+				snapToSupport.startSnapping(
+						(IContentPart<? extends Connection>) targetPart,
+						Arrays.asList(hssl, vssl));
+			}
 		}
 
 		updateHandles();

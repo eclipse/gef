@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.handlers;
 
+import java.util.Arrays;
+
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.models.SnappingModel.SnappingLocation;
 import org.eclipse.gef.mvc.fx.parts.AbstractSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
@@ -21,6 +24,7 @@ import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -303,7 +307,11 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 
 		snapToSupport = targetPart.getViewer().getAdapter(SnapToSupport.class);
 		if (snapToSupport != null) {
-			snapToSupport.startSnapping(targetPart, initialVertex);
+			SnappingLocation hssl = new SnappingLocation(targetPart,
+					Orientation.HORIZONTAL, initialVertex.x);
+			SnappingLocation vssl = new SnappingLocation(targetPart,
+					Orientation.VERTICAL, initialVertex.y);
+			snapToSupport.startSnapping(targetPart, Arrays.asList(hssl, vssl));
 		}
 	}
 }

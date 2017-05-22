@@ -12,10 +12,12 @@
 package org.eclipse.gef.mvc.fx.handlers;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.utils.NodeUtils;
+import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
@@ -247,30 +249,29 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		init(bendPolicy);
 		updateHandles();
 
-		if (bendPolicy != null) {
-			prepareBend(bendPolicy);
-			// move initially so that the initial positions for the selected
-			// points are computed
-			bendPolicy.move(initialMouseInScene, initialMouseInScene);
-		}
+		prepareBend(bendPolicy);
+		// move initially so that the initial positions for the selected
+		// points are computed
+		bendPolicy.move(initialMouseInScene, initialMouseInScene);
+
+		// query selected position
+		List<Point> initialPositions = bendPolicy.getSelectedInitialPositions();
+		Point startPositionInConnectionLocal = initialPositions.get(0);
+		Point startPositionInScene = FX2Geometry.toPoint(getHost().getVisual()
+				.localToScene(startPositionInConnectionLocal.x,
+						startPositionInConnectionLocal.y));
 
 		snapToSupport = getHost() instanceof IContentPart
 				? getHost().getViewer().getAdapter(SnapToSupport.class) : null;
 		if (snapToSupport != null) {
-			// FIXME: Do not use the mouse location as the snapping location,
-			// because it is not the real location of the dragged segment.
-			// Instead, query the real location of the dragged segment and use
-			// that for snapping.
-
 			// Only report HSL or VSL depending on segment orientation
 			SnappingLocation sl = bendPolicy.isSelectionHorizontal()
 					? new SnappingLocation(
 							(IContentPart<? extends Connection>) getHost(),
-							Orientation.VERTICAL, initialMouseInScene.y)
+							Orientation.VERTICAL, startPositionInScene.y)
 					: new SnappingLocation(
 							(IContentPart<? extends Connection>) getHost(),
-							Orientation.HORIZONTAL, initialMouseInScene.x);
-
+							Orientation.HORIZONTAL, startPositionInScene.x);
 			snapToSupport.startSnapping(
 					(IContentPart<? extends Connection>) getHost(),
 					Arrays.asList(sl));
