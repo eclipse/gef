@@ -140,8 +140,12 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		Point endPositionInScene = startPositionInScene.getTranslated(delta);
 
 		// snap to grid
-		if (!isPrecise(e)) {
-			endPositionInScene.translate(snapToSupport.snap(delta));
+		if (snapToSupport != null) {
+			if (!isPrecise(e)) {
+				endPositionInScene.translate(snapToSupport.snap(delta));
+			} else {
+				snapToSupport.clearSnappingFeedback();
+			}
 		}
 
 		// perform changes

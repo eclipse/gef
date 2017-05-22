@@ -93,9 +93,13 @@ public class ResizeTranslateFirstAnchorageOnHandleDragHandler
 
 		// snap the moved vertex (unless isPrecise(e))
 		Point snappedVertex = newVertex;
-		if (!isPrecise(e)) {
-			snappedVertex.translate(snapToSupport
-					.snap(new Dimension(deltaInScene.x, deltaInScene.y)));
+		if (snapToSupport != null) {
+			if (!isPrecise(e)) {
+				snappedVertex.translate(snapToSupport
+						.snap(new Dimension(deltaInScene.x, deltaInScene.y)));
+			} else {
+				snapToSupport.clearSnappingFeedback();
+			}
 		}
 
 		// compute delta between initial and snapped vertex

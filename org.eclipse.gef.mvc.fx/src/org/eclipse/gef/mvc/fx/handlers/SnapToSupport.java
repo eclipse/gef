@@ -58,6 +58,19 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 	public SnapToSupport() {
 	}
 
+	/**
+	 * Clear snapping feedback.
+	 */
+	public void clearSnappingFeedback() {
+		// XXX: SnappingModel is only altered during interaction, therefore,
+		// we do not need to carry these changes out via operations.
+		SnappingModel snappingModel = getSnappingModel();
+		if (snappingModel != null) {
+			snappingModel.setSnappingLocations(
+					Collections.<SnappingLocation> emptyList());
+		}
+	}
+
 	private Dimension determineMinimum(ISnapToStrategy snapper,
 			List<SnappingLocation> locs, Dimension delta) {
 		Dimension min = null;

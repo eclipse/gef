@@ -78,8 +78,12 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		}
 
 		Point newEndPointInScene = new Point(e.getSceneX(), e.getSceneY());
-		if (!isPrecise(e)) {
-			newEndPointInScene.translate(snapToSupport.snap(delta));
+		if (snapToSupport != null) {
+			if (!isPrecise(e)) {
+				newEndPointInScene.translate(snapToSupport.snap(delta));
+			} else {
+				snapToSupport.clearSnappingFeedback();
+			}
 		}
 
 		// perform changes

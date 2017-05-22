@@ -99,8 +99,12 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			Point endInScene = startInScene.getTranslated(delta);
 
 			// snap to
-			if (performSnapping && snapToSupport != null) {
-				endInScene.translate(snapToSupport.snap(delta));
+			if (snapToSupport != null) {
+				if (performSnapping) {
+					endInScene.translate(snapToSupport.snap(delta));
+				} else {
+					snapToSupport.clearSnappingFeedback();
+				}
 			}
 			Point newEndInScene = endInScene.getCopy();
 
