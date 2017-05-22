@@ -30,11 +30,11 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 
 /**
- * The {@link SnappingLocationFeedbackPart} visualizes a
+ * The {@link SnappingFeedbackPart} visualizes a
  * {@link SnappingLocation} by drawing a red line at the
  * {@link SnappingLocation} through the whole viewport.
  */
-public class SnappingLocationFeedbackPart extends AbstractFeedbackPart<Line> {
+public class SnappingFeedbackPart extends AbstractFeedbackPart<Line> {
 
 	private SnappingLocation snappingLocation = null;
 
@@ -211,10 +211,10 @@ public class SnappingLocationFeedbackPart extends AbstractFeedbackPart<Line> {
 
 	/**
 	 * Returns the {@link SnappingLocation} for which feedback is visualized by
-	 * this {@link SnappingLocationFeedbackPart}.
+	 * this {@link SnappingFeedbackPart}.
 	 *
 	 * @return The {@link SnappingLocation} for which feedback is visualized by
-	 *         this {@link SnappingLocationFeedbackPart}.
+	 *         this {@link SnappingFeedbackPart}.
 	 */
 	public SnappingLocation getSnappingLocation() {
 		return snappingLocation;

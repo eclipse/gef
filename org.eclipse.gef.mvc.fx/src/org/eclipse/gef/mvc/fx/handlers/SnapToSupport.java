@@ -119,10 +119,16 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 					|| verticalSourceSnappingLocations.containsKey(strategy)) {
 				applicableSnapToStrategies.add(strategy);
 				strategy.setSnappedPart(snappedPart);
-				hSourceLocations.put(strategy, new ArrayList<>(
-						horizontalSourceSnappingLocations.get(strategy)));
-				vSourceLocations.put(strategy, new ArrayList<>(
-						verticalSourceSnappingLocations.get(strategy)));
+				List<SnappingLocation> hssls = horizontalSourceSnappingLocations
+						.get(strategy);
+				if (hssls != null && !hssls.isEmpty()) {
+					hSourceLocations.put(strategy, new ArrayList<>(hssls));
+				}
+				List<SnappingLocation> vssls = verticalSourceSnappingLocations
+						.get(strategy);
+				if (vssls != null && !vssls.isEmpty()) {
+					vSourceLocations.put(strategy, new ArrayList<>(vssls));
+				}
 			}
 		}
 

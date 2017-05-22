@@ -164,6 +164,18 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 	}
 
 	/**
+	 * Returns the {@link NormalizeConnectedSupport} that is used by this
+	 * {@link TranslateSelectedOnDragHandler} to normalize the anchoreds of
+	 * ddragged elements.
+	 *
+	 * @return The {@link NormalizeConnectedSupport} that is used by this
+	 *         {@link TranslateSelectedOnDragHandler}.
+	 */
+	protected NormalizeConnectedSupport getNormalizeConnectedSupport() {
+		return normalizeConnectedSupport;
+	}
+
+	/**
 	 * Returns the {@link SnapToSupport} of this policy.
 	 *
 	 * @return The {@link SnapToSupport} of this policy.

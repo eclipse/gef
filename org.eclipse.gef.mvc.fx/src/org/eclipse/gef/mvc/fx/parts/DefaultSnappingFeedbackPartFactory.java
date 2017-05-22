@@ -27,7 +27,7 @@ import javafx.scene.Node;
 /**
  * The {@link DefaultSnappingFeedbackPartFactory} is an {@link IFeedbackPartFactory}
  * that is used by the {@link SnappingBehavior} to generate
- * {@link SnappingLocationFeedbackPart}s for the {@link SnappingLocation}s that
+ * {@link SnappingFeedbackPart}s for the {@link SnappingLocation}s that
  * are stored in the {@link SnappingModel}.
  */
 public class DefaultSnappingFeedbackPartFactory implements IFeedbackPartFactory {
@@ -62,8 +62,8 @@ public class DefaultSnappingFeedbackPartFactory implements IFeedbackPartFactory 
 		// for each snapping location
 		for (SnappingLocation snappingLocation : snappingLocations) {
 			// create a feedback part
-			SnappingLocationFeedbackPart fb = injector
-					.getInstance(SnappingLocationFeedbackPart.class);
+			SnappingFeedbackPart fb = injector
+					.getInstance(SnappingFeedbackPart.class);
 			fb.setSnappingLocation(snappingLocation);
 			feedback.add(fb);
 		}
