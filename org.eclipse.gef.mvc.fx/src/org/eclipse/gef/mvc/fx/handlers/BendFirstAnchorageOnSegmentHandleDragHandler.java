@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.handlers;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
+import org.eclipse.gef.mvc.fx.models.SnappingModel.SnappingLocation;
 import org.eclipse.gef.mvc.fx.parts.AbstractSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.CircleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -33,6 +35,7 @@ import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -63,7 +66,6 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 	private int initialSegmentIndex;
 	private double initialSegmentParameter;
 	private boolean isInvalid = false;
-	private boolean isPrepared;
 	private BendConnectionPolicy bendPolicy;
 	private Point startPositionInScene;
 
@@ -125,22 +127,6 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 	public void drag(MouseEvent e, Dimension delta) {
 		if (isInvalid) {
 			return;
-		}
-
-		// prepare upon first drag
-		if (!isPrepared) {
-			isPrepared = true;
-			prepareBend(e.isShiftDown(), bendPolicy);
-			// move initially so that the initial positions for the selected
-			// points are computed
-			bendPolicy.move(initialMouseInScene, initialMouseInScene);
-			// query selected position
-			List<Point> initialPositions = bendPolicy
-					.getSelectedInitialPositions();
-			Point startPositionInConnectionLocal = initialPositions.get(0);
-			startPositionInScene = FX2Geometry.toPoint(targetPart.getVisual()
-					.localToScene(startPositionInConnectionLocal.x,
-							startPositionInConnectionLocal.y));
 		}
 
 		// determine constraints
@@ -403,7 +389,6 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 			return;
 		}
 
-		isPrepared = false;
 		isSegmentDragged = false;
 
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
@@ -419,12 +404,37 @@ public class BendFirstAnchorageOnSegmentHandleDragHandler
 		bendPolicy = determineBendPolicy();
 		init(bendPolicy);
 
+		prepareBend(e.isShiftDown(), bendPolicy);
+		// move initially so that the initial positions for the selected
+		// points are computed
+		bendPolicy.move(initialMouseInScene, initialMouseInScene);
+		// query selected position
+		List<Point> initialPositions = bendPolicy.getSelectedInitialPositions();
+		Point startPositionInConnectionLocal = initialPositions.get(0);
+		startPositionInScene = FX2Geometry.toPoint(targetPart.getVisual()
+				.localToScene(startPositionInConnectionLocal.x,
+						startPositionInConnectionLocal.y));
+
 		snapToSupport = targetPart instanceof IContentPart
 				? targetPart.getViewer().getAdapter(SnapToSupport.class) : null;
 		if (snapToSupport != null) {
+			// FIXME: Do not use the mouse location as the snapping location,
+			// because it is not a real location on the connection. Instead,
+			// query the real location for the dragged handle and use that for
+			// snapping.
+
+			// Only report HSL or VSL depending on segment orientation
+			SnappingLocation sl = bendPolicy.isSelectionHorizontal()
+					? new SnappingLocation(
+							(IContentPart<? extends Connection>) targetPart,
+							Orientation.VERTICAL, initialMouseInScene.y)
+					: new SnappingLocation(
+							(IContentPart<? extends Connection>) targetPart,
+							Orientation.HORIZONTAL, initialMouseInScene.x);
+
 			snapToSupport.startSnapping(
 					(IContentPart<? extends Connection>) targetPart,
-					initialMouseInScene);
+					Arrays.asList(sl));
 		}
 
 		updateHandles();

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.handlers;
 
+import java.util.Arrays;
+
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.utils.NodeUtils;
@@ -20,11 +22,13 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Polyline;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
+import org.eclipse.gef.mvc.fx.models.SnappingModel.SnappingLocation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +43,6 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 	private SnapToSupport snapToSupport = null;
 	private Point initialMouseInScene;
 	private boolean isInvalid = false;
-	private boolean isPrepared;
 	private BendConnectionPolicy bendPolicy;
 
 	@Override
@@ -71,22 +74,6 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		if (isInvalid) {
 			return;
 		}
-
-		// prepare for manipulation upon first drag
-		if (!isPrepared) {
-			isPrepared = true;
-			prepareBend(bendPolicy);
-			// move initially so that the initial positions for the selected
-			// points are computed
-			bendPolicy.move(initialMouseInScene, initialMouseInScene);
-			// TODO: investigate why the following seems unnecessary:
-			// 1. query selected position
-			// 2. transform selected position to scene
-		}
-		// TODO: investigate why the following seems unnecessary:
-		// 3. apply mouse-delta to selected-position-in-scene
-		// 4. snap selected-position-in-scene unless precise
-		// 5. call move(initial-position-in-scene, snapped-position-in-scene)
 
 		Point newEndPointInScene = new Point(e.getSceneX(), e.getSceneY());
 		if (!isPrecise(e)) {
@@ -126,6 +113,17 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 	@Override
 	public IVisualPart<Connection> getHost() {
 		return (IVisualPart<Connection>) super.getHost();
+	}
+
+	/**
+	 * Returns the {@link SnapToSupport} that is used by this
+	 * {@link BendOnSegmentDragHandler} to snap the dragged segment.
+	 *
+	 * @return The {@link SnapToSupport} that is used by this
+	 *         {@link BendOnSegmentDragHandler}.
+	 */
+	protected SnapToSupport getSnapToSupport() {
+		return snapToSupport;
 	}
 
 	@Override
@@ -239,8 +237,6 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 			return;
 		}
 
-		isPrepared = false;
-
 		// save initial mouse position in scene coordinates
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
 
@@ -251,12 +247,33 @@ public class BendOnSegmentDragHandler extends AbstractHandler
 		init(bendPolicy);
 		updateHandles();
 
+		if (bendPolicy != null) {
+			prepareBend(bendPolicy);
+			// move initially so that the initial positions for the selected
+			// points are computed
+			bendPolicy.move(initialMouseInScene, initialMouseInScene);
+		}
+
 		snapToSupport = getHost() instanceof IContentPart
 				? getHost().getViewer().getAdapter(SnapToSupport.class) : null;
 		if (snapToSupport != null) {
+			// FIXME: Do not use the mouse location as the snapping location,
+			// because it is not the real location of the dragged segment.
+			// Instead, query the real location of the dragged segment and use
+			// that for snapping.
+
+			// Only report HSL or VSL depending on segment orientation
+			SnappingLocation sl = bendPolicy.isSelectionHorizontal()
+					? new SnappingLocation(
+							(IContentPart<? extends Connection>) getHost(),
+							Orientation.VERTICAL, initialMouseInScene.y)
+					: new SnappingLocation(
+							(IContentPart<? extends Connection>) getHost(),
+							Orientation.HORIZONTAL, initialMouseInScene.x);
+
 			snapToSupport.startSnapping(
 					(IContentPart<? extends Connection>) getHost(),
-					initialMouseInScene);
+					Arrays.asList(sl));
 		}
 	}
 

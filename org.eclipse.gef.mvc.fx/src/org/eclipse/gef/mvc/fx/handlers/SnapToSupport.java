@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.behaviors.SnappingBehavior;
@@ -267,6 +268,43 @@ public class SnapToSupport extends IAdaptable.Bound.Impl<IViewer> {
 			composite.setHeight(totalVMin.height);
 		}
 		return composite;
+	}
+
+	/**
+	 * Initializes this {@link SnapToSupport} for performing snapping of the
+	 * given {@link IContentPart}. The given snapping locations are used for all
+	 * {@link ISnapToStrategy ISnapToStrategies}.
+	 *
+	 * @param snappedPart
+	 *            The snapped part.
+	 * @param snappingLocations
+	 *            The snapping locations for the part.
+	 */
+	public void startSnapping(IContentPart<? extends Connection> snappedPart,
+			List<SnappingLocation> snappingLocations) {
+		initializePartAndStrategies(snappedPart);
+
+		// build source snapping location configuration for all supported
+		// strategies
+		Map<ISnapToStrategy, List<SnappingLocation>> hsrc = new IdentityHashMap<>();
+		Map<ISnapToStrategy, List<SnappingLocation>> vsrc = new IdentityHashMap<>();
+
+		List<SnappingLocation> hssls = new ArrayList<>();
+		List<SnappingLocation> vssls = new ArrayList<>();
+		for (SnappingLocation sl : snappingLocations) {
+			if (sl.getOrientation() == Orientation.HORIZONTAL) {
+				hssls.add(sl);
+			} else {
+				vssls.add(sl);
+			}
+		}
+
+		for (ISnapToStrategy strategy : supportedSnapToStrategies) {
+			hsrc.put(strategy, new ArrayList<>(hssls));
+			vsrc.put(strategy, new ArrayList<>(vssls));
+		}
+
+		initializeLocations(hsrc, vsrc);
 	}
 
 	/**
