@@ -25,18 +25,6 @@ public interface IAnchorProvider {
 
 	/**
 	 * Returns an {@link IAnchor} that should be used to provide a position for
-	 * the given anchored {@link IVisualPart}.
-	 *
-	 * @param anchoredPart
-	 *            The anchored {@link IVisualPart} which the returned
-	 *            {@link IAnchor} should provide a position for.
-	 * @return An {@link IAnchor} that should be used to provide a position for
-	 *         the given anchored {@link IVisualPart}.
-	 */
-	public IAnchor get(IVisualPart<? extends Node> anchoredPart);
-
-	/**
-	 * Returns an {@link IAnchor} that should be used to provide a position for
 	 * the given anchored {@link IVisualPart} and the given role.
 	 *
 	 * @param anchoredPart

@@ -250,7 +250,7 @@ public class BendConnectionPolicyTests {
 		private IAnchor staticAnchor;
 
 		@Override
-		public IAnchor get(IVisualPart<? extends Node> anchoredPart) {
+		public IAnchor get(IVisualPart<? extends Node> anchoredPart, String role) {
 			if (staticAnchor == null) {
 				staticAnchor = new StaticAnchor(getAdaptable().getVisual(), new Point());
 			}
@@ -3342,9 +3342,10 @@ public class BendConnectionPolicyTests {
 				// FIXME: anchorage visuals do not have correct size, therefore,
 				// the start and end position is not computed but manually
 				// specified here
-				StaticAnchor anchor = (StaticAnchor) startAnchorage.getAdapter(IAnchorProvider.class).get(connection);
+				StaticAnchor anchor = (StaticAnchor) startAnchorage.getAdapter(IAnchorProvider.class).get(connection,
+						"bp_0");
 				anchor.setReferencePosition(new Point());
-				anchor = (StaticAnchor) endAnchorage.getAdapter(IAnchorProvider.class).get(connection);
+				anchor = (StaticAnchor) endAnchorage.getAdapter(IAnchorProvider.class).get(connection, "bp_1");
 				anchor.setReferencePosition(new Point(500, 0));
 			}
 		});

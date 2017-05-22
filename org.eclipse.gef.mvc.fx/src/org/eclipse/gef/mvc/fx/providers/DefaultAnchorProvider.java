@@ -83,7 +83,8 @@ public class DefaultAnchorProvider
 	}
 
 	@Override
-	public IAnchor get(IVisualPart<? extends Node> anchoredPart) {
+	public IAnchor get(IVisualPart<? extends Node> anchoredPart, String role) {
+		// TODO: role is ignored by default
 		Node anchoredVisual = anchoredPart.getVisual();
 		// check if orthogonal anchor should be used
 		if (anchoredVisual instanceof Connection) {
@@ -94,11 +95,6 @@ public class DefaultAnchorProvider
 		}
 		// fallback to default anchor
 		return getDefaultAnchor();
-	}
-
-	@Override
-	public IAnchor get(IVisualPart<? extends Node> anchoredPart, String role) {
-		return get(anchoredPart);
 	}
 
 	/**

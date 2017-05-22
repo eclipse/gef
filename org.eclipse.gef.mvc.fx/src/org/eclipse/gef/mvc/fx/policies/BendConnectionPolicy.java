@@ -257,6 +257,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 * Otherwise an (unconnected) anchor is create using
 	 * {@link #createUnconnectedAnchor(Point)} .
 	 *
+	 * @param explicitAnchorIndex
+	 *            The explicit anchor index for which to determine the anchor.
 	 * @param positionInLocal
 	 *            A position in local coordinates of the connection.
 	 * @param canConnect
@@ -265,8 +267,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 * @return The {@link IAnchor} that replaces the anchor of the currently
 	 *         modified point.
 	 */
-	protected IAnchor findOrCreateAnchor(Point positionInLocal,
-			boolean canConnect) {
+	private IAnchor findOrCreateAnchor(int explicitAnchorIndex,
+			Point positionInLocal, boolean canConnect) {
 		IAnchor anchor = null;
 		// try to find an anchor that is provided from an underlying node
 		if (canConnect) {
@@ -277,7 +279,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 					getHost().getRoot().getVisual(),
 					selectedPointCurrentPositionInScene.x,
 					selectedPointCurrentPositionInScene.y);
-			anchor = getCompatibleAnchor(getParts(pickedNodes));
+			anchor = getCompatibleAnchor(explicitAnchorIndex,
+					getParts(pickedNodes));
 		}
 		if (anchor == null) {
 			anchor = createUnconnectedAnchor(positionInLocal);
@@ -297,7 +300,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 				.getOperations().get(0);
 	}
 
-	private IAnchor getCompatibleAnchor(
+	private IAnchor getCompatibleAnchor(int explicitAnchorIndex,
 			List<IContentPart<? extends Node>> partsUnderMouse) {
 		for (IContentPart<? extends Node> part : partsUnderMouse) {
 			if (part == getHost()) {
@@ -306,7 +309,10 @@ public class BendConnectionPolicy extends AbstractPolicy {
 			IAnchorProvider anchorProvider = part
 					.getAdapter(IAnchorProvider.class);
 			if (anchorProvider != null) {
-				IAnchor anchor = anchorProvider.get(getHost());
+				// FIXME: the role prefix is implicitly defined in
+				// IBendableContentPart
+				IAnchor anchor = anchorProvider.get(getHost(),
+						"bp_" + explicitAnchorIndex);
 				if (anchor != null) {
 					return anchor;
 				}
@@ -756,8 +762,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 
 			// update anchor
 			getBendOperation().getNewAnchors().set(explicitAnchorIndex,
-					findOrCreateAnchor(selectedPointCurrentPositionInLocal,
-							canConnect));
+					findOrCreateAnchor(explicitAnchorIndex,
+							selectedPointCurrentPositionInLocal, canConnect));
 		}
 		locallyExecuteOperation();
 		// showAnchors("After Move:");

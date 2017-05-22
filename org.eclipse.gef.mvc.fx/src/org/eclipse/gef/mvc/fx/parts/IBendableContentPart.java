@@ -509,7 +509,8 @@ public interface IBendableContentPart<V extends Node>
 					throw new IllegalStateException(
 							"Anchorage does not provide anchor!");
 				}
-				IAnchor anchor = anchorProvider.get(this);
+				// TODO: the role needs to be properly defined
+				IAnchor anchor = anchorProvider.get(this, "bp_" + i);
 				if (anchor == null) {
 					throw new IllegalStateException(
 							"AnchorProvider does not provide anchor!");
