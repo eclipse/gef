@@ -14,9 +14,9 @@ package org.eclipse.gef.mvc.fx.parts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.listeners.VisualChangeListener;
 import org.eclipse.gef.fx.nodes.Connection;
-import org.eclipse.gef.geometry.planar.Point;
 
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
@@ -40,9 +40,9 @@ abstract public class AbstractHandlePart<V extends Node>
 	// one for each anchorage
 	private final Map<IVisualPart<? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 
-	private ListChangeListener<Point> geometryListener = new ListChangeListener<Point>() {
+	private ListChangeListener<IAnchor> geometryListener = new ListChangeListener<IAnchor>() {
 		@Override
-		public void onChanged(ListChangeListener.Change<? extends Point> c) {
+		public void onChanged(ListChangeListener.Change<? extends IAnchor> c) {
 			refreshVisual();
 		}
 	};
@@ -103,7 +103,7 @@ abstract public class AbstractHandlePart<V extends Node>
 			// connection's geometry changes, too
 			if (anchorageVisual instanceof Connection) {
 				Connection connection = (Connection) anchorageVisual;
-				connection.pointsUnmodifiableProperty()
+				connection.anchorsUnmodifiableProperty()
 						.addListener(geometryListener);
 			}
 		}
@@ -124,7 +124,7 @@ abstract public class AbstractHandlePart<V extends Node>
 			visualChangeListeners.remove(anchorage).unregister();
 			Node anchorageVisual = anchorage.getVisual();
 			if (anchorageVisual instanceof Connection) {
-				((Connection) anchorageVisual).pointsUnmodifiableProperty()
+				((Connection) anchorageVisual).anchorsUnmodifiableProperty()
 						.removeListener(geometryListener);
 			}
 		}
