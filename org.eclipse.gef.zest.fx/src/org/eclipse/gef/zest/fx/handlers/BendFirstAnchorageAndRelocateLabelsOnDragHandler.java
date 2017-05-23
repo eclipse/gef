@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2017 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - unify with TSARLODH API
+ *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.handlers;
 
@@ -37,13 +39,7 @@ import javafx.scene.input.MouseEvent;
  */
 public class BendFirstAnchorageAndRelocateLabelsOnDragHandler extends BendFirstAnchorageOnSegmentHandleDragHandler {
 
-	@Override
-	public void drag(MouseEvent e, Dimension delta) {
-		super.drag(e, delta);
-		for (AbstractLabelPart lp : getLabelParts()) {
-			lp.getAdapter(TransformLabelPolicy.class).preserveLabelOffset();
-		}
-	}
+	private List<AbstractLabelPart> labelParts;
 
 	@Override
 	public void abortDrag() {
@@ -52,22 +48,18 @@ public class BendFirstAnchorageAndRelocateLabelsOnDragHandler extends BendFirstA
 			restoreRefreshVisuals(lp);
 		}
 		super.abortDrag();
+		labelParts = null;
 	}
 
-	private List<AbstractLabelPart> getEdgeLabelParts(EdgePart edgePart) {
-		List<AbstractLabelPart> linked = new ArrayList<>();
-		linked.addAll(new ArrayList<>(PartUtils
-				.filterParts(PartUtils.getAnchoreds(edgePart, ZestProperties.LABEL__NE), AbstractLabelPart.class)));
-		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.EXTERNAL_LABEL__NE), AbstractLabelPart.class)));
-		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.SOURCE_LABEL__E), AbstractLabelPart.class)));
-		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.TARGET_LABEL__E), AbstractLabelPart.class)));
-		return linked;
-	}
-
-	private List<AbstractLabelPart> getLabelParts() {
+	/**
+	 * Computes the {@link AbstractLabelPart}s that are anchored to the
+	 * {@link #getHost()} of this policy and need to be relocated together with
+	 * the host.
+	 *
+	 * @return The {@link AbstractLabelPart}s that should be relocated together
+	 *         with the host.
+	 */
+	protected List<AbstractLabelPart> computeLabelParts() {
 		Set<AbstractLabelPart> labelParts = Collections
 				.newSetFromMap(new IdentityHashMap<AbstractLabelPart, Boolean>());
 		// ensure that linked parts are moved with us during dragging
@@ -83,12 +75,10 @@ public class BendFirstAnchorageAndRelocateLabelsOnDragHandler extends BendFirstA
 	}
 
 	@Override
-	public void startDrag(MouseEvent e) {
-		super.startDrag(e);
-		// init label transform policies
+	public void drag(MouseEvent e, Dimension delta) {
+		super.drag(e, delta);
 		for (AbstractLabelPart lp : getLabelParts()) {
-			storeAndDisableRefreshVisuals(lp);
-			init(lp.getAdapter(TransformLabelPolicy.class));
+			lp.getAdapter(TransformLabelPolicy.class).preserveLabelOffset();
 		}
 	}
 
@@ -99,6 +89,41 @@ public class BendFirstAnchorageAndRelocateLabelsOnDragHandler extends BendFirstA
 			restoreRefreshVisuals(lp);
 		}
 		super.endDrag(e, delta);
+		labelParts = null;
 	}
 
+	private List<AbstractLabelPart> getEdgeLabelParts(EdgePart edgePart) {
+		List<AbstractLabelPart> linked = new ArrayList<>();
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(PartUtils.getAnchoreds(edgePart, ZestProperties.LABEL__NE),
+				AbstractLabelPart.class)));
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(
+				PartUtils.getAnchoreds(edgePart, ZestProperties.EXTERNAL_LABEL__NE), AbstractLabelPart.class)));
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(
+				PartUtils.getAnchoreds(edgePart, ZestProperties.SOURCE_LABEL__E), AbstractLabelPart.class)));
+		linked.addAll(new ArrayList<>(PartUtils.filterParts(
+				PartUtils.getAnchoreds(edgePart, ZestProperties.TARGET_LABEL__E), AbstractLabelPart.class)));
+		return linked;
+	}
+
+	/**
+	 * Returns the {@link AbstractLabelPart}s that are relocated while bending.
+	 *
+	 * @return The {@link AbstractLabelPart}s that are relocated while bending.
+	 */
+	protected List<AbstractLabelPart> getLabelParts() {
+		if (labelParts == null) {
+			labelParts = computeLabelParts();
+		}
+		return labelParts;
+	}
+
+	@Override
+	public void startDrag(MouseEvent e) {
+		super.startDrag(e);
+		// init label transform policies
+		for (AbstractLabelPart lp : getLabelParts()) {
+			storeAndDisableRefreshVisuals(lp);
+			init(lp.getAdapter(TransformLabelPolicy.class));
+		}
+	}
 }

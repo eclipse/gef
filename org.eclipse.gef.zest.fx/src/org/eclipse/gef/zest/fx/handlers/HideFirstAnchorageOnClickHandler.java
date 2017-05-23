@@ -43,5 +43,4 @@ public class HideFirstAnchorageOnClickHandler extends AbstractHandler implements
 		hideNodePolicy.hide();
 		commit(hideNodePolicy);
 	}
-
 }

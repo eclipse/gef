@@ -61,5 +61,4 @@ public class ShowHiddenNeighborsOnTypeHandler extends AbstractHandler implements
 	@Override
 	public void release(KeyEvent event) {
 	}
-
 }

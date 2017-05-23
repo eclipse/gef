@@ -141,5 +141,4 @@ public class TranslateSelectedAndRelocateLabelsOnDragHandler extends TranslateSe
 			init(lp.getAdapter(TransformLabelPolicy.class));
 		}
 	}
-
 }

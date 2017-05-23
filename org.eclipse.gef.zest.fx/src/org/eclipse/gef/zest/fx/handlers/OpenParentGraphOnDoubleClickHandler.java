@@ -63,5 +63,4 @@ public class OpenParentGraphOnDoubleClickHandler extends AbstractHandler impleme
 	public ZestFxRootPart getHost() {
 		return (ZestFxRootPart) super.getHost();
 	}
-
 }

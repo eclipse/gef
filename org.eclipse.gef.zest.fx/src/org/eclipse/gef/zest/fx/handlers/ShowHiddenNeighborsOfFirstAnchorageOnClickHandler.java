@@ -31,8 +31,7 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class ShowHiddenNeighborsOfFirstAnchorageOnClickHandler extends AbstractHandler
-		implements IOnClickHandler {
+public class ShowHiddenNeighborsOfFirstAnchorageOnClickHandler extends AbstractHandler implements IOnClickHandler {
 
 	@Override
 	public void click(MouseEvent e) {
@@ -46,5 +45,4 @@ public class ShowHiddenNeighborsOfFirstAnchorageOnClickHandler extends AbstractH
 		hiddenNeighborsPolicy.showHiddenNeighbors();
 		commit(hiddenNeighborsPolicy);
 	}
-
 }

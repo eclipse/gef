@@ -62,5 +62,4 @@ public class HideOnTypeHandler extends AbstractHandler implements IOnStrokeHandl
 	@Override
 	public void release(KeyEvent event) {
 	}
-
 }
