@@ -106,6 +106,7 @@ public class DeletionPolicy extends AbstractPolicy {
 		locallyExecuteOperation();
 
 		// detach all content anchoreds
+		// XXX: copy iterated to prevent CME
 		for (IVisualPart<? extends Node> anchored : HashMultiset
 				.create(contentPartToDelete.getAnchoredsUnmodifiable())) {
 			if (anchored instanceof IContentPart) {
@@ -113,8 +114,9 @@ public class DeletionPolicy extends AbstractPolicy {
 						.getAdapter(ContentPolicy.class);
 				if (anchoredContentPolicy != null) {
 					anchoredContentPolicy.init();
-					for (String role : anchored.getAnchoragesUnmodifiable()
-							.get(contentPartToDelete)) {
+					for (String role : new ArrayList<>(
+							anchored.getAnchoragesUnmodifiable()
+									.get(contentPartToDelete))) {
 						anchoredContentPolicy.detachFromContentAnchorage(
 								contentPartToDelete.getContent(), role);
 					}
@@ -154,8 +156,6 @@ public class DeletionPolicy extends AbstractPolicy {
 				}
 			}
 		}
-
-		// TODO: Hover feedback needs to be removed
 
 		locallyExecuteOperation();
 
