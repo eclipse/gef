@@ -7,24 +7,27 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Matthias Wienand (itemis AG) - extract PreserveLabelOffsetsSupport
+ *     Matthias Wienand (itemis AG) - unify with TSARLODH API
  *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.handlers;
 
+import java.util.Collections;
+
 import org.eclipse.gef.geometry.planar.Dimension;
-import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
+import org.eclipse.gef.mvc.fx.handlers.BendFirstAnchorageOnSegmentHandleDragHandler;
+import org.eclipse.gef.zest.fx.parts.EdgeLabelPart;
 
 import javafx.scene.input.MouseEvent;
 
 /**
- * A specific {@link TranslateSelectedOnDragHandler} that includes dragging of
- * unselected label parts.
+ * An {@link BendFirstAnchorageOnSegmentHandleDragHandler} that also takes care
+ * of relocating related {@link EdgeLabelPart}s.
  *
  * @author anyssen
  *
  */
-public class TranslateSelectedAndRelocateLabelsOnDragHandler extends TranslateSelectedOnDragHandler {
+public class BendFirstAnchorageAndRelocateLabelsOnSegmentHandleDragHandler extends BendFirstAnchorageOnSegmentHandleDragHandler {
 
 	private LabelOffsetSupport labelOffsetsSupport;
 
@@ -59,7 +62,7 @@ public class TranslateSelectedAndRelocateLabelsOnDragHandler extends TranslateSe
 		super.startDrag(e);
 		labelOffsetsSupport = getHost().getViewer().getAdapter(LabelOffsetSupport.class);
 		if (labelOffsetsSupport != null) {
-			labelOffsetsSupport.init(getTargetParts());
+			labelOffsetsSupport.init(Collections.singletonList(getTargetPart()));
 		}
 	}
 }

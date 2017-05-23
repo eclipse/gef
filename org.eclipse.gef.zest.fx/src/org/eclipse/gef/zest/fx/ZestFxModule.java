@@ -49,9 +49,10 @@ import org.eclipse.gef.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef.zest.fx.behaviors.GraphLayoutBehavior;
 import org.eclipse.gef.zest.fx.behaviors.NodeHidingBehavior;
 import org.eclipse.gef.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef.zest.fx.handlers.BendFirstAnchorageAndRelocateLabelsOnDragHandler;
+import org.eclipse.gef.zest.fx.handlers.BendFirstAnchorageAndRelocateLabelsOnSegmentHandleDragHandler;
 import org.eclipse.gef.zest.fx.handlers.HideFirstAnchorageOnClickHandler;
 import org.eclipse.gef.zest.fx.handlers.HideOnTypeHandler;
+import org.eclipse.gef.zest.fx.handlers.LabelOffsetSupport;
 import org.eclipse.gef.zest.fx.handlers.OpenNestedGraphOnDoubleClickHandler;
 import org.eclipse.gef.zest.fx.handlers.OpenParentGraphOnDoubleClickHandler;
 import org.eclipse.gef.zest.fx.handlers.ShowHiddenNeighborsOfFirstAnchorageOnClickHandler;
@@ -215,7 +216,7 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindFXCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		AdapterMaps.getAdapterMapBinder(binder(), CircleSegmentHandlePart.class).addBinding(AdapterKey.defaultRole())
-				.to(BendFirstAnchorageAndRelocateLabelsOnDragHandler.class);
+				.to(BendFirstAnchorageAndRelocateLabelsOnSegmentHandleDragHandler.class);
 	}
 
 	/**
@@ -300,6 +301,7 @@ public class ZestFxModule extends MvcFxModule {
 		super.bindIViewerAdaptersForContentViewer(adapterMapBinder);
 		bindNavigationModelAsContentViewerAdapter(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LabelOffsetSupport.class);
 	}
 
 	/**

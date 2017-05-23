@@ -38,7 +38,6 @@ import javafx.util.Pair;
  * @author mwienand
  *
  */
-// TODO: most of the listeners should probably be moved to GraphLayoutBehavior
 public class GraphPart extends AbstractContentPart<Group> {
 
 	private ListChangeListener<Object> graphChildrenObserver = new ListChangeListener<Object>() {

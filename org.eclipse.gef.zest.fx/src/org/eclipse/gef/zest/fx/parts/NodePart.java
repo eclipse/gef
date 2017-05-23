@@ -633,5 +633,4 @@ public class NodePart extends AbstractContentPart<Group>
 			getNestedContentStackPane().getChildren().add(nestedGraphIcon);
 		}
 	}
-
 }

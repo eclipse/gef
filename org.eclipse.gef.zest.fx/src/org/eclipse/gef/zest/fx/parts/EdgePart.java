@@ -441,5 +441,4 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 		setRefreshVisual(wasRefreshVisual);
 		refreshVisual();
 	}
-
 }

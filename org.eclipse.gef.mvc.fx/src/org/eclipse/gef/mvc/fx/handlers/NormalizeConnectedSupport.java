@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
@@ -61,7 +59,7 @@ public class NormalizeConnectedSupport {
 	 * {@link BendConnectionPolicy#rollback()} and restores refreshing of
 	 * visuals for each target part.
 	 */
-	public void abortNormalization() {
+	public void abort() {
 		if (parts != null) {
 			for (int i = 0; i < parts.length; i++) {
 				policies[i].rollback();
@@ -78,18 +76,15 @@ public class NormalizeConnectedSupport {
 	 * {@link BendConnectionPolicy#commit()} and restores refreshing of visuals
 	 * for each target part.
 	 */
-	public void commitNormalization() {
+	public void commit() {
 		if (parts != null) {
 			for (int i = 0; i < parts.length; i++) {
 				policies[i].normalize();
-				ITransactionalOperation operation = policies[i].commit();
-				if (operation != null) {
-					try {
-						parts[i].getViewer().getDomain().execute(operation,
-								new NullProgressMonitor());
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					}
+				try {
+					parts[i].getViewer().getDomain()
+							.execute(policies[i].commit(), null);
+				} catch (ExecutionException e) {
+					e.printStackTrace();
 				}
 				parts[i].setRefreshVisual(wasRefresh[i]);
 			}
@@ -106,8 +101,7 @@ public class NormalizeConnectedSupport {
 	 * @param anchorages
 	 *            anchorages
 	 */
-	public void initNormalizationForAnchoredsOf(
-			List<? extends IVisualPart<? extends Node>> anchorages) {
+	public void init(List<? extends IVisualPart<? extends Node>> anchorages) {
 		List<IVisualPart<? extends Node>> targetParts = new ArrayList<>();
 		for (IVisualPart<? extends Node> anchorage : anchorages) {
 			for (IVisualPart<? extends Node> anchored : anchorage
@@ -144,7 +138,7 @@ public class NormalizeConnectedSupport {
 	 * Normalizes the target parts, i.e. calls
 	 * {@link BendConnectionPolicy#normalize()} for each target part.
 	 */
-	public void normalizeAnchoreds() {
+	public void normalizeConnected() {
 		if (parts != null) {
 			for (int i = 0; i < parts.length; i++) {
 				policies[i].normalize();

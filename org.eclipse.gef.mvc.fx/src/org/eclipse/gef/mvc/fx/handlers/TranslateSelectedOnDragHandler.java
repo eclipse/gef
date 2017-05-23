@@ -73,7 +73,7 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		}
 		// clear normalization
 		if (normalizeConnectedSupport != null) {
-			normalizeConnectedSupport.abortNormalization();
+			normalizeConnectedSupport.abort();
 			normalizeConnectedSupport = null;
 		}
 		// reset targets
@@ -123,7 +123,7 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		}
 		// normalize connected
 		if (normalizeConnectedSupport != null) {
-			normalizeConnectedSupport.normalizeAnchoreds();
+			normalizeConnectedSupport.normalizeConnected();
 		}
 	}
 
@@ -147,7 +147,7 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 		}
 		// clear normalization
 		if (normalizeConnectedSupport != null) {
-			normalizeConnectedSupport.commitNormalization();
+			normalizeConnectedSupport.commit();
 			normalizeConnectedSupport = null;
 		}
 		// reset target parts
@@ -346,7 +346,7 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 				.getAdapter(NormalizeConnectedSupport.class);
 		if (normalizeConnectedSupport != null) {
 			normalizeConnectedSupport
-					.initNormalizationForAnchoredsOf(targetParts);
+					.init(targetParts);
 		}
 	}
 }
