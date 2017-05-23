@@ -109,7 +109,8 @@ public class LabelOffsetSupport extends IAdaptable.Bound.Impl<IViewer> {
 
 	/**
 	 * Computes the {@link AbstractLabelPart}s that are attached to the targets
-	 * of this {@link LabelOffsetSupport}.
+	 * of this {@link LabelOffsetSupport}. Ingores label parts that are already
+	 * contained in the targets.
 	 *
 	 * @param targets
 	 *            {@link List} of target {@link IVisualPart}s.
@@ -141,6 +142,7 @@ public class LabelOffsetSupport extends IAdaptable.Bound.Impl<IViewer> {
 			}
 		}
 
+		labelParts.removeAll(targets);
 		return new ArrayList<>(labelParts);
 	}
 
