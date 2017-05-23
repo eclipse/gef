@@ -404,7 +404,7 @@ public class BendConnectionPolicyTests {
 		}
 
 		protected void bindIContentPartFactory() {
-			binder().bind(IContentPartFactory.class).toInstance(new TestContentPartFactory());
+			binder().bind(IContentPartFactory.class).to(TestContentPartFactory.class);
 		}
 
 		@Override

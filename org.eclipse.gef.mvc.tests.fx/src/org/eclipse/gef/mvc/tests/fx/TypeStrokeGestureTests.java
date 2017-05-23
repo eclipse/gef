@@ -15,7 +15,6 @@ package org.eclipse.gef.mvc.tests.fx;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -24,11 +23,11 @@ import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.gestures.IGesture;
 import org.eclipse.gef.mvc.fx.gestures.TypeStrokeGesture;
-import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
+import org.eclipse.gef.mvc.tests.fx.stubs.NullContentPartFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -36,7 +35,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotResult;
 import javafx.scene.input.KeyCode;
@@ -85,13 +83,7 @@ public class TypeStrokeGestureTests {
 		Injector injector = Guice.createInjector(new MvcFxModule() {
 
 			protected void bindIContentPartFactory() {
-				binder().bind(IContentPartFactory.class).toInstance(new IContentPartFactory() {
-					@Override
-					public IContentPart<? extends Node> createContentPart(Object content,
-							Map<Object, Object> contextMap) {
-						return null;
-					}
-				});
+				binder().bind(IContentPartFactory.class).to(NullContentPartFactory.class);
 			}
 
 			@Override

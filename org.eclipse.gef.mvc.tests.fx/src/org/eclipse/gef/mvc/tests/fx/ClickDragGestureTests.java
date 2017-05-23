@@ -15,7 +15,6 @@ package org.eclipse.gef.mvc.tests.fx;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
-import java.util.Map;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef.common.adapt.AdapterKey;
@@ -24,18 +23,17 @@ import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.gestures.ClickDragGesture;
 import org.eclipse.gef.mvc.fx.gestures.IGesture;
-import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule.RunnableWithResult;
+import org.eclipse.gef.mvc.tests.fx.stubs.NullContentPartFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 
 public class ClickDragGestureTests {
@@ -66,7 +64,7 @@ public class ClickDragGestureTests {
 	 * JavaFX toolkit is properly initialized).
 	 */
 	@Rule
-	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
+	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();;
 
 	/**
 	 * It is important that a single execution transaction (see
@@ -82,14 +80,8 @@ public class ClickDragGestureTests {
 	public void singleExecutionTransactionUsedForInteraction() throws Throwable {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
-
 			protected void bindIContentPartFactory() {
-				binder().bind(IContentPartFactory.class).toInstance(new IContentPartFactory() {
-					@Override
-					public IContentPart<? extends Node> createContentPart(Object content, Map<Object, Object> contextMap) {
-						return null;
-					}
-				});
+				binder().bind(IContentPartFactory.class).to(NullContentPartFactory.class);
 			}
 
 			@Override
