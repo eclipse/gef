@@ -44,7 +44,7 @@ import javafx.util.Pair;
 public class TranslateSelectedOnDragHandler extends AbstractHandler
 		implements IOnDragHandler {
 
-	private NormalizeConnectedSupport normalizeConnectedSupport;
+	private ConnectedSupport connectedSupport;
 	private SnapToSupport snapToSupport = null;
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<? extends Node>, Integer> translationIndices = new HashMap<>();
@@ -72,9 +72,9 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			snapToSupport = null;
 		}
 		// clear normalization
-		if (normalizeConnectedSupport != null) {
-			normalizeConnectedSupport.abort();
-			normalizeConnectedSupport = null;
+		if (connectedSupport != null) {
+			connectedSupport.abort();
+			connectedSupport = null;
 		}
 		// reset targets
 		targets = null;
@@ -122,8 +122,9 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 					deltaInParent.y);
 		}
 		// normalize connected
-		if (normalizeConnectedSupport != null) {
-			normalizeConnectedSupport.normalizeConnected();
+		if (connectedSupport != null) {
+			connectedSupport.normalizeConnected();
+			connectedSupport.relocateHints(delta);
 		}
 	}
 
@@ -146,9 +147,9 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			snapToSupport = null;
 		}
 		// clear normalization
-		if (normalizeConnectedSupport != null) {
-			normalizeConnectedSupport.commit();
-			normalizeConnectedSupport = null;
+		if (connectedSupport != null) {
+			connectedSupport.commit();
+			connectedSupport = null;
 		}
 		// reset target parts
 		targets = null;
@@ -159,24 +160,24 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 	}
 
 	/**
+	 * Returns the {@link ConnectedSupport} that is used by this
+	 * {@link TranslateSelectedOnDragHandler} to normalize the anchoreds of
+	 * ddragged elements.
+	 *
+	 * @return The {@link ConnectedSupport} that is used by this
+	 *         {@link TranslateSelectedOnDragHandler}.
+	 */
+	protected ConnectedSupport getConnectedSupport() {
+		return connectedSupport;
+	}
+
+	/**
 	 * Returns the initial mouse location in scene coordinates.
 	 *
 	 * @return The initial mouse location in scene coordinates.
 	 */
 	protected Point getInitialMouseLocationInScene() {
 		return initialMouseLocationInScene;
-	}
-
-	/**
-	 * Returns the {@link NormalizeConnectedSupport} that is used by this
-	 * {@link TranslateSelectedOnDragHandler} to normalize the anchoreds of
-	 * ddragged elements.
-	 *
-	 * @return The {@link NormalizeConnectedSupport} that is used by this
-	 *         {@link TranslateSelectedOnDragHandler}.
-	 */
-	protected NormalizeConnectedSupport getNormalizeConnectedSupport() {
-		return normalizeConnectedSupport;
 	}
 
 	/**
@@ -342,11 +343,10 @@ public class TranslateSelectedOnDragHandler extends AbstractHandler
 			}
 		}
 
-		normalizeConnectedSupport = getHost().getViewer()
-				.getAdapter(NormalizeConnectedSupport.class);
-		if (normalizeConnectedSupport != null) {
-			normalizeConnectedSupport
-					.init(targetParts);
+		connectedSupport = getHost().getViewer()
+				.getAdapter(ConnectedSupport.class);
+		if (connectedSupport != null) {
+			connectedSupport.init(targetParts);
 		}
 	}
 }

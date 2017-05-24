@@ -23,7 +23,7 @@ import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
 import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
-import org.eclipse.gef.mvc.fx.handlers.NormalizeConnectedSupport;
+import org.eclipse.gef.mvc.fx.handlers.ConnectedSupport;
 import org.eclipse.gef.mvc.fx.handlers.ResizeTranslateFirstAnchorageOnHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.RotateSelectedOnHandleDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.SelectFocusedOnTypeHandler;
@@ -445,7 +445,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HoverOnHoverHandler.class);
 
 		// normalize on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NormalizeConnectedSupport.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectedSupport.class);
 	}
 
 	@Override

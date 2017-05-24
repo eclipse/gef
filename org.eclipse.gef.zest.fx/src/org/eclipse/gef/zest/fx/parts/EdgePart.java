@@ -46,16 +46,6 @@ import javafx.scene.Node;
 public class EdgePart extends AbstractContentPart<Connection> implements IBendableContentPart<Connection> {
 
 	/**
-	 * The role used for attaching to the source node.
-	 */
-	protected static final String SOURCE_ROLE = "SOURCE";
-
-	/**
-	 * The role used for attaching to the target node.
-	 */
-	protected static final String TARGET_ROLE = "TARGET";
-
-	/**
 	 * The CSS class that is assigned to the visual of this {@link EdgePart}.
 	 */
 	public static final String CSS_CLASS = "edge";
@@ -105,9 +95,9 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 	@Override
 	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
-		if (role.equals(SOURCE_ROLE)) {
+		if (SOURCE_ROLE.equals(role)) {
 			getVisual().setStartAnchor(anchor);
-		} else if (role.equals(TARGET_ROLE)) {
+		} else if (TARGET_ROLE.equals(role)) {
 			getVisual().setEndAnchor(anchor);
 		} else {
 			throw new IllegalArgumentException("Cannot attach to anchor with role <" + role + ">.");
@@ -390,6 +380,9 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 				} else if (oldSource != null) {
 					attachedSource = true;
 				}
+				if (attachedSource) {
+					getVisual().setStartPointHint(bp.getPosition());
+				}
 			}
 			if (i == bendPoints.size() - 1) {
 				// update target
@@ -406,6 +399,9 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 					}
 				} else if (oldTarget != null) {
 					attachedTarget = true;
+				}
+				if (attachedTarget) {
+					getVisual().setEndPointHint(bp.getPosition());
 				}
 			}
 			if (!bp.isAttached()) {

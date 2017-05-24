@@ -309,10 +309,14 @@ public class BendConnectionPolicy extends AbstractPolicy {
 			IAnchorProvider anchorProvider = part
 					.getAdapter(IAnchorProvider.class);
 			if (anchorProvider != null) {
-				// FIXME: the role prefix is implicitly defined in
-				// IBendableContentPart
+				// FIXME
+				int size = preMoveExplicitAnchors.size();
+				List<BendPoint> list = new ArrayList<>(size);
+				for (int i = 0; i < size; i++) {
+					list.add(new BendPoint(new Point()));
+				}
 				IAnchor anchor = anchorProvider.get(getHost(),
-						"bp_" + explicitAnchorIndex);
+						getHost().getRole(list, explicitAnchorIndex));
 				if (anchor != null) {
 					return anchor;
 				}

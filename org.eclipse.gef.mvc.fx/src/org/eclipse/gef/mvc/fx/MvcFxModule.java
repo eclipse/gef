@@ -44,7 +44,7 @@ import org.eclipse.gef.mvc.fx.handlers.CursorSupport;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
 import org.eclipse.gef.mvc.fx.handlers.HoverOnHoverHandler;
 import org.eclipse.gef.mvc.fx.handlers.MarqueeOnDragHandler;
-import org.eclipse.gef.mvc.fx.handlers.NormalizeConnectedSupport;
+import org.eclipse.gef.mvc.fx.handlers.ConnectedSupport;
 import org.eclipse.gef.mvc.fx.handlers.PanOnStrokeHandler;
 import org.eclipse.gef.mvc.fx.handlers.PanOrZoomOnScrollHandler;
 import org.eclipse.gef.mvc.fx.handlers.PanningSupport;
@@ -789,7 +789,7 @@ public class MvcFxModule extends AbstractModule {
 		bindCursorSupportAsContentViewerAdapter(adapterMapBinder);
 		bindPanningSupportAsContentViewerAdapter(adapterMapBinder);
 		bindSnapToSupportAsContentViewerAdapter(adapterMapBinder);
-		bindNormalizeConnectedSupportAsContentViewerAdapter(adapterMapBinder);
+		bindConnectedSupportAsContentViewerAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -815,10 +815,10 @@ public class MvcFxModule extends AbstractModule {
 	 *            The {@link MapBinder} that is used to register adapter
 	 *            bindings.
 	 */
-	protected void bindNormalizeConnectedSupportAsContentViewerAdapter(
+	protected void bindConnectedSupportAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(NormalizeConnectedSupport.class);
+				.to(ConnectedSupport.class);
 	}
 
 	/**

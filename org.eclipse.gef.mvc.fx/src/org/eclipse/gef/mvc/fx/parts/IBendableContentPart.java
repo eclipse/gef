@@ -376,6 +376,21 @@ public interface IBendableContentPart<V extends Node>
 	}
 
 	/**
+	 * Default role for the first {@link BendPoint}.
+	 */
+	public static final String SOURCE_ROLE = "source";
+
+	/**
+	 * Default role for the last {@link BendPoint}.
+	 */
+	public static final String TARGET_ROLE = "target";
+
+	/**
+	 * Default role prefix for intermediary {@link BendPoint}s.
+	 */
+	public static final String CONTROL_ROLE_PREFIX = "bp_";
+
+	/**
 	 * Returns the visual to bend.
 	 *
 	 * @return The visual to bend.
@@ -401,6 +416,32 @@ public interface IBendableContentPart<V extends Node>
 	@Override
 	public default Affine getContentTransform() {
 		return BendPoint.computeTranslation(getContentBendPoints());
+	}
+
+	/**
+	 * Returns the role that is used to determine the {@link IAnchor} for the
+	 * {@link BendPoint} at the given index of the given {@link List} of
+	 * {@link BendPoint}s.
+	 *
+	 * @param bendPoints
+	 *            The {@link List} of {@link BendPoint}s.
+	 * @param index
+	 *            The index specifying the {@link BendPoint} for which to
+	 *            determine the role.
+	 * @return The role that is used to determine the {@link IAnchor} for the
+	 *         specified {@link BendPoint}.
+	 */
+	public default String getRole(List<BendPoint> bendPoints, int index) {
+		if (index == 0) {
+			return SOURCE_ROLE;
+		} else if (index == bendPoints.size() - 1) {
+			return TARGET_ROLE;
+		} else {
+			StringBuilder sb = new StringBuilder();
+			sb.append(CONTROL_ROLE_PREFIX);
+			sb.append(index);
+			return sb.toString();
+		}
 	}
 
 	/**
@@ -510,7 +551,8 @@ public interface IBendableContentPart<V extends Node>
 							"Anchorage does not provide anchor!");
 				}
 				// TODO: the role needs to be properly defined
-				IAnchor anchor = anchorProvider.get(this, "bp_" + i);
+				IAnchor anchor = anchorProvider.get(this,
+						getRole(bendPoints, i));
 				if (anchor == null) {
 					throw new IllegalStateException(
 							"AnchorProvider does not provide anchor!");
@@ -556,5 +598,4 @@ public interface IBendableContentPart<V extends Node>
 		setVisualBendPoints(BendPoint.transform(getVisualBendPoints(),
 				getVisualTransform(), totalTransform));
 	}
-
 }

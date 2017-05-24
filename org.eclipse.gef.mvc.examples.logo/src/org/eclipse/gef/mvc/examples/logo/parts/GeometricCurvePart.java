@@ -68,14 +68,8 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 		}
 	}
 
-	private static final String END_ROLE = "END";
-
-	private static final String START_ROLE = "START";
-
 	private final CircleHead START_CIRCLE_HEAD = new CircleHead();
-
 	private final CircleHead END_CIRCLE_HEAD = new CircleHead();
-
 	private final ArrowHead START_ARROW_HEAD = new ArrowHead();
 	private final ArrowHead END_ARROW_HEAD = new ArrowHead();
 	private GeometricCurve previousContent;
@@ -128,10 +122,10 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 	@Override
 	protected void doAttachToAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		IAnchor anchor = anchorage.getAdapter(IAnchorProvider.class).get(this, role);
-		if (role.equals(START_ROLE)) {
+		if (role.equals(SOURCE_ROLE)) {
 			getVisual().setStartAnchor(anchor);
 			getContent().setWayPoint(0, getVisual().getStartPoint());
-		} else if (role.equals(END_ROLE)) {
+		} else if (role.equals(TARGET_ROLE)) {
 			getVisual().setEndAnchor(anchor);
 			getContent().setWayPoint(getContent().getWayPoints().size() - 1, getVisual().getEndPoint());
 		} else {
@@ -145,9 +139,9 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 			throw new IllegalArgumentException("Inappropriate content anchorage: wrong type.");
 		}
 		AbstractGeometricElement<?> geom = (AbstractGeometricElement<?>) contentAnchorage;
-		if (START_ROLE.equals(role)) {
+		if (SOURCE_ROLE.equals(role)) {
 			getContent().getSourceAnchorages().add(geom);
-		} else if (END_ROLE.equals(role)) {
+		} else if (TARGET_ROLE.equals(role)) {
 			getContent().getTargetAnchorages().add(geom);
 		}
 	}
@@ -162,10 +156,10 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 
 	@Override
 	protected void doDetachFromAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
-		if (role.equals(START_ROLE)) {
+		if (role.equals(SOURCE_ROLE)) {
 			getVisual().setStartPoint(getVisual().getStartPoint());
 			getContent().setWayPoint(0, getVisual().getStartPoint());
-		} else if (role.equals(END_ROLE)) {
+		} else if (role.equals(TARGET_ROLE)) {
 			getVisual().setEndPoint(getVisual().getEndPoint());
 			getContent().setWayPoint(getContent().getWayPoints().size() - 1, getVisual().getEndPoint());
 		} else {
@@ -175,9 +169,9 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 
 	@Override
 	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
-		if (START_ROLE.equals(role)) {
+		if (SOURCE_ROLE.equals(role)) {
 			getContent().getSourceAnchorages().remove(contentAnchorage);
-		} else if (END_ROLE.equals(role)) {
+		} else if (TARGET_ROLE.equals(role)) {
 			getContent().getTargetAnchorages().remove(contentAnchorage);
 		}
 	}
@@ -188,11 +182,11 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 
 		Set<AbstractGeometricElement<? extends IGeometry>> sourceAnchorages = getContent().getSourceAnchorages();
 		for (Object src : sourceAnchorages) {
-			anchorages.put(src, START_ROLE);
+			anchorages.put(src, SOURCE_ROLE);
 		}
 		Set<AbstractGeometricElement<? extends IGeometry>> targetAnchorages = getContent().getTargetAnchorages();
 		for (Object dst : targetAnchorages) {
-			anchorages.put(dst, END_ROLE);
+			anchorages.put(dst, TARGET_ROLE);
 		}
 		return anchorages;
 	}
@@ -222,13 +216,13 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 			}
 		}
 
-		if (!getContentAnchoragesUnmodifiable().containsValue(START_ROLE)) {
+		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
 			visual.setStartPoint(wayPoints.remove(0));
 		} else {
 			visual.setStartPointHint(wayPoints.remove(0));
 		}
 
-		if (!getContentAnchoragesUnmodifiable().containsValue(END_ROLE)) {
+		if (!getContentAnchoragesUnmodifiable().containsValue(TARGET_ROLE)) {
 			visual.setEndPoint(wayPoints.remove(wayPoints.size() - 1));
 		} else {
 			visual.setEndPointHint(wayPoints.remove(wayPoints.size() - 1));
@@ -317,10 +311,10 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
-				doDetachFromAnchorageVisual(anchorage, START_ROLE);
+				doDetachFromAnchorageVisual(anchorage, SOURCE_ROLE);
 				if (anchorage != this) {
 					// connected to anchorage
-					doAttachToAnchorageVisual(anchorage, START_ROLE);
+					doAttachToAnchorageVisual(anchorage, SOURCE_ROLE);
 				}
 			}
 			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
@@ -328,10 +322,10 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getEndAnchor().getAnchorage());
-				doDetachFromAnchorageVisual(anchorage, END_ROLE);
+				doDetachFromAnchorageVisual(anchorage, TARGET_ROLE);
 				if (anchorage != this) {
 					// connected to anchorage
-					doAttachToAnchorageVisual(anchorage, END_ROLE);
+					doAttachToAnchorageVisual(anchorage, TARGET_ROLE);
 				}
 			}
 			if (!(visual.getInterpolator() instanceof PolylineInterpolator)) {
@@ -348,16 +342,16 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
 				IVisualPart<? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
-				doDetachFromAnchorageVisual(anchorage, START_ROLE);
-				doAttachToAnchorageVisual(anchorage, START_ROLE);
+				doDetachFromAnchorageVisual(anchorage, SOURCE_ROLE);
+				doAttachToAnchorageVisual(anchorage, SOURCE_ROLE);
 			}
 			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
 					&& ((DynamicAnchor) getVisual().getEndAnchor())
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
 				IVisualPart<? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getEndAnchor().getAnchorage());
-				doDetachFromAnchorageVisual(anchorage, END_ROLE);
-				doAttachToAnchorageVisual(anchorage, END_ROLE);
+				doDetachFromAnchorageVisual(anchorage, TARGET_ROLE);
+				doAttachToAnchorageVisual(anchorage, TARGET_ROLE);
 			}
 			if (!(visual.getInterpolator() instanceof PolyBezierInterpolator)) {
 				visual.setInterpolator(new PolyBezierInterpolator());
