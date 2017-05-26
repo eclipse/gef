@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.anchors.IAnchor;
-import org.eclipse.gef.fx.anchors.StaticAnchor;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.IConnectionRouter;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
@@ -28,8 +27,8 @@ import org.eclipse.gef.geometry.euclidean.Vector;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
-import org.eclipse.gef.mvc.fx.operations.BendConnectionOperation;
 import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
+import org.eclipse.gef.mvc.fx.operations.BendOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.UpdateAnchorHintsOperation;
@@ -43,13 +42,14 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.inject.Provider;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
 /**
  * The {@link BendConnectionPolicy} can be used to manipulate the points
  * constituting an {@link Connection}, i.e. its start, way, and end points. Each
- * point is realized though an {@link IAnchor}, which may either be local to the
- * {@link Connection} (i.e. the anchor refers to the {@link Connection} as
+ * point is realized though an {@link BendPoint}, which may either be local to
+ * the {@link Connection} (i.e. the anchor refers to the {@link Connection} as
  * anchorage), or it may be provided by another {@link IVisualPart} (i.e. the
  * anchor is provided by a {@link Provider} adapted to the part), to which the
  * connection is being connected.
@@ -95,9 +95,9 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	protected static final double DEFAULT_SEGMENT_OVERLAY_THRESHOLD = 6;
 
-	private List<Integer> selectedExplicitAnchorIndices = new ArrayList<>();
+	// private List<Integer> selectedIndices = new ArrayList<>();
 	private List<Point> selectedInitialPositions = new ArrayList<>();
-	private List<IAnchor> preMoveExplicitAnchors = new ArrayList<>();
+	// private List<BendPoint> preMoveBendPoints = new ArrayList<>();
 	private Point preMoveStartHint = null;
 	private Point preMoveEndHint = null;
 	private boolean isSelectionHorizontal = false;
@@ -105,7 +105,9 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	private boolean usePreMoveHints = false;
 	private boolean isNormalizationNeeded = false;
 
-	private List<BendPoint> initialBendPoints;
+	private List<BendPoint> initialBendPoints = new ArrayList<>();
+	private List<BendPoint> preMoveBendPoints = new ArrayList<>();
+	private List<Integer> selectedIndices = new ArrayList<>();
 
 	/**
 	 * Determines if the anchor at the given explicit index can be replaced with
@@ -120,8 +122,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	protected boolean canConnect(int explicitAnchorIndex) {
 		return explicitAnchorIndex == 0
-				|| explicitAnchorIndex == getBendOperation().getNewAnchors()
-						.size() - 1;
+				|| explicitAnchorIndex == getBendOperation()
+						.getFinalBendPoints().size() - 1;
 	}
 
 	@Override
@@ -230,31 +232,17 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	protected ITransactionalOperation createOperation() {
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
 				"BendPlusHints");
-		fwdOp.add(new BendConnectionOperation(getConnection()));
+		fwdOp.add(new BendOperation(getHost()));
 		fwdOp.add(new UpdateAnchorHintsOperation(getConnection()));
 		return fwdOp;
 	}
 
 	/**
-	 * Creates an (unconnected) anchor (i.e. one anchored on the
-	 * {@link Connection}) for the given position (in scene coordinates).
-	 *
-	 * @param selectedPointCurrentPositionInLocal
-	 *            The location in local coordinates of the connection
-	 * @return An {@link IAnchor} that yields the given position.
-	 */
-	protected IAnchor createUnconnectedAnchor(
-			Point selectedPointCurrentPositionInLocal) {
-		return new StaticAnchor(getConnection(),
-				selectedPointCurrentPositionInLocal);
-	}
-
-	/**
-	 * Determines the {@link IAnchor} that should replace the anchor of the
+	 * Determines the {@link BendPoint} that should replace the anchor of the
 	 * currently selected point. If the point can connect, the
 	 * {@link IVisualPart} at the mouse position is queried for an
-	 * {@link IAnchor} via a {@link Provider}&lt;{@link IAnchor}&gt; adapter.
-	 * Otherwise an (unconnected) anchor is create using
+	 * {@link BendPoint} via a {@link Provider}&lt;{@link BendPoint}&gt;
+	 * adapter. Otherwise an (unconnected) anchor is create using
 	 * {@link #createUnconnectedAnchor(Point)} .
 	 *
 	 * @param explicitAnchorIndex
@@ -264,12 +252,12 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 * @param canConnect
 	 *            <code>true</code> if the point can be attached to an
 	 *            underlying {@link IVisualPart}, otherwise <code>false</code>.
-	 * @return The {@link IAnchor} that replaces the anchor of the currently
+	 * @return The {@link BendPoint} that replaces the anchor of the currently
 	 *         modified point.
 	 */
-	private IAnchor findOrCreateAnchor(int explicitAnchorIndex,
+	private BendPoint findOrCreateAnchor(int explicitAnchorIndex,
 			Point positionInLocal, boolean canConnect) {
-		IAnchor anchor = null;
+		BendPoint anchor = null;
 		// try to find an anchor that is provided from an underlying node
 		if (canConnect) {
 			Point selectedPointCurrentPositionInScene = FX2Geometry
@@ -280,28 +268,29 @@ public class BendConnectionPolicy extends AbstractPolicy {
 					selectedPointCurrentPositionInScene.x,
 					selectedPointCurrentPositionInScene.y);
 			anchor = getCompatibleAnchor(explicitAnchorIndex,
-					getParts(pickedNodes));
+					getParts(pickedNodes), selectedPointCurrentPositionInScene);
 		}
 		if (anchor == null) {
-			anchor = createUnconnectedAnchor(positionInLocal);
+			anchor = new BendPoint(positionInLocal);
 		}
 		return anchor;
 	}
 
 	/**
-	 * Returns an {@link BendConnectionOperation} that is extracted from the
-	 * operation created by {@link #createOperation()}.
+	 * Returns an {@link BendOperation} that is extracted from the operation
+	 * created by {@link #createOperation()}.
 	 *
-	 * @return an {@link BendConnectionOperation} that is extracted from the
-	 *         operation created by {@link #createOperation()}.
+	 * @return an {@link BendOperation} that is extracted from the operation
+	 *         created by {@link #createOperation()}.
 	 */
-	protected BendConnectionOperation getBendOperation() {
-		return (BendConnectionOperation) ((AbstractCompositeOperation) super.getOperation())
+	protected BendOperation getBendOperation() {
+		return (BendOperation) ((AbstractCompositeOperation) super.getOperation())
 				.getOperations().get(0);
 	}
 
-	private IAnchor getCompatibleAnchor(int explicitAnchorIndex,
-			List<IContentPart<? extends Node>> partsUnderMouse) {
+	private BendPoint getCompatibleAnchor(int explicitAnchorIndex,
+			List<IContentPart<? extends Node>> partsUnderMouse,
+			Point positionInScene) {
 		for (IContentPart<? extends Node> part : partsUnderMouse) {
 			if (part == getHost()) {
 				continue;
@@ -309,17 +298,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 			IAnchorProvider anchorProvider = part
 					.getAdapter(IAnchorProvider.class);
 			if (anchorProvider != null) {
-				// FIXME
-				int size = preMoveExplicitAnchors.size();
-				List<BendPoint> list = new ArrayList<>(size);
-				for (int i = 0; i < size; i++) {
-					list.add(new BendPoint(new Point()));
-				}
-				IAnchor anchor = anchorProvider.get(getHost(),
-						getHost().getRole(list, explicitAnchorIndex));
-				if (anchor != null) {
-					return anchor;
-				}
+				return new BendPoint(part.getContent(), positionInScene);
 			}
 		}
 		return null;
@@ -332,6 +311,22 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	protected Connection getConnection() {
 		return getHost().getVisual();
+	}
+
+	private int getConnectionIndex(Integer bendPointIndex) {
+		Connection connection = getHost().getVisual();
+		IConnectionRouter router = connection.getRouter();
+		ObservableList<IAnchor> anchors = connection.getAnchorsUnmodifiable();
+		for (int ci = 0, bi = 0; ci < anchors.size(); ci++) {
+			if (!router.wasInserted(anchors.get(ci))) {
+				if (bi == bendPointIndex) {
+					return ci;
+				}
+				bi++;
+			}
+		}
+		throw new IllegalStateException(
+				"Cannot find connection index for BendPoint index.");
 	}
 
 	/**
@@ -358,30 +353,38 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 *         the given index.
 	 */
 	protected int getExplicitIndex(int startConnectionIndex, int step) {
+		List<BendPoint> bpoints = getHost().getVisualBendPoints();
 		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
 		IConnectionRouter router = getConnection().getRouter();
-		for (int i = startConnectionIndex; i >= 0
-				&& i < anchors.size(); i += step) {
-			IAnchor anchor = anchors.get(i);
-			if (!router.wasInserted(anchor)) {
-				// found an explicit anchor => iterate explicit anchors to find
-				// the one with matching connection index
-				List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-				for (int j = 0; j < newAnchors.size(); j++) {
-					if (getBendOperation().getConnectionIndex(j) == i) {
-						return j;
-					}
-				}
-				throw new IllegalStateException(
-						"The explicit anchors of the connection are out of sync with the explicit anchors of the policy.");
+
+		// first find explicit index at or after
+		// then decrement if needed
+		int atOrBeforeBi = -1;
+		for (int ci = 0, bi = -1; ci < anchors.size()
+				&& bi < bpoints.size(); ci++) {
+			if (!router.wasInserted(anchors.get(ci))) {
+				bi++;
+			}
+			if (ci >= startConnectionIndex) {
+				atOrBeforeBi = bi;
+				break;
 			}
 		}
 
-		// start and end need to be explicit, therefore, we should always be
-		// able to find an explicit anchor, regardless of the passed-in
-		// connection index
-		throw new IllegalStateException(
-				"The start and end anchor of a Connection need to be explicit.");
+		if (atOrBeforeBi == -1) {
+			throw new IllegalStateException(
+					"Start of connection is implicit, i.e. inserted by the router.");
+		}
+
+		if (step < 0) {
+			return atOrBeforeBi;
+		} else {
+			if (router.wasInserted(anchors.get(startConnectionIndex))) {
+				return atOrBeforeBi + 1;
+			} else {
+				return atOrBeforeBi;
+			}
+		}
 	}
 
 	/**
@@ -473,7 +476,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	protected double getOverlayThreshold() {
 		// TODO: respect snapping (grid cell size, snapping distances, etc.)
 		if (getConnection().getRouter() instanceof OrthogonalRouter
-				&& selectedExplicitAnchorIndices.size() == 2) {
+				&& selectedIndices.size() == 2) {
 			return DEFAULT_SEGMENT_OVERLAY_THRESHOLD;
 		}
 		// fallback to default
@@ -496,14 +499,17 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	}
 
 	/**
-	 * Returns the current position for the given explicit anchor index.
+	 * Returns the current position for the given explicit anchor index, within
+	 * the local coordinate system of the {@link Connection}.
 	 *
 	 * @param explicitAnchorIndex
-	 * @return
+	 *            The index
+	 * @return The {@link Point} in local {@link Connection} coordinates.
 	 */
 	private Point getPoint(int explicitAnchorIndex) {
-		return getConnection().getPoint(
-				getBendOperation().getConnectionIndex(explicitAnchorIndex));
+		Connection connection = getHost().getVisual();
+		int ci = getConnectionIndex(explicitAnchorIndex);
+		return connection.getPoint(ci);
 	}
 
 	/**
@@ -525,9 +531,9 @@ public class BendConnectionPolicy extends AbstractPolicy {
 
 	@Override
 	public void init() {
-		selectedExplicitAnchorIndices.clear();
+		selectedIndices.clear();
 		selectedInitialPositions.clear();
-		preMoveExplicitAnchors.clear();
+		preMoveBendPoints.clear();
 		usePreMoveHints = true;
 		isNormalizationNeeded = false;
 		super.init();
@@ -551,8 +557,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		// convert position to local coordinates
 		Point mouseInLocal = FX2Geometry.toPoint(getConnection()
 				.sceneToLocal(Geometry2FX.toFXPoint(mouseInScene)));
-		getBendOperation().getNewAnchors().add(insertionIndex,
-				createUnconnectedAnchor(mouseInLocal));
+		getBendOperation().getFinalBendPoints().add(insertionIndex,
+				new BendPoint(mouseInLocal));
 		locallyExecuteOperation();
 	}
 
@@ -708,22 +714,22 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		// showAnchors("Before Restore:");
 
 		// determine selection status
-		int numPoints = selectedExplicitAnchorIndices.size();
+		int numPoints = selectedIndices.size();
 		boolean isOrtho = numPoints == 2
 				&& getConnection().getRouter() instanceof OrthogonalRouter;
 
 		// save/restore explicit anchors
-		if (preMoveExplicitAnchors.isEmpty()) {
+		if (preMoveBendPoints.isEmpty()) {
 			// first move => we need to normalize upon commit now
 			isNormalizationNeeded = true;
 			usePreMoveHints = false;
 			// save initial selected positions
-			for (int i = 0; i < selectedExplicitAnchorIndices.size(); i++) {
+			for (int i = 0; i < selectedIndices.size(); i++) {
 				selectedInitialPositions.add(i,
-						getPoint(selectedExplicitAnchorIndices.get(i)));
+						getPoint(selectedIndices.get(i)));
 			}
 			// save initial pre-move explicit anchors
-			preMoveExplicitAnchors.addAll(getBendOperation().getNewAnchors());
+			preMoveBendPoints.addAll(getBendOperation().getFinalBendPoints());
 			// determine selection segment orientation
 			if (isOrtho) {
 				double y0 = selectedInitialPositions.get(0).y;
@@ -735,7 +741,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 			preMoveEndHint = computeEndHint();
 		} else {
 			// restore initial pre-move explicit anchors
-			getBendOperation().setNewAnchors(preMoveExplicitAnchors);
+			getBendOperation().setFinalBendPoints(preMoveBendPoints);
 			// restore initial pre-move hints
 			getUpdateHintsOperation().setNewHints(preMoveStartHint,
 					preMoveEndHint);
@@ -757,15 +763,15 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		}
 
 		// update positions
-		for (int i = 0; i < selectedExplicitAnchorIndices.size(); i++) {
+		for (int i = 0; i < selectedIndices.size(); i++) {
 			Point selectedPointCurrentPositionInLocal = selectedInitialPositions
 					.get(i).getTranslated(mouseDeltaInLocal);
 
-			int explicitAnchorIndex = selectedExplicitAnchorIndices.get(i);
+			int explicitAnchorIndex = selectedIndices.get(i);
 			boolean canConnect = canConnect(explicitAnchorIndex);
 
 			// update anchor
-			getBendOperation().getNewAnchors().set(explicitAnchorIndex,
+			getBendOperation().getFinalBendPoints().set(explicitAnchorIndex,
 					findOrCreateAnchor(explicitAnchorIndex,
 							selectedPointCurrentPositionInLocal, canConnect));
 		}
@@ -840,7 +846,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 						explicitIndex++;
 					}
 					// remove current point as it is unnecessary
-					getBendOperation().getNewAnchors().remove(explicitIndex);
+					getBendOperation().getFinalBendPoints()
+							.remove(explicitIndex);
 					// start a new normalization
 					removed = true;
 					break;
@@ -855,7 +862,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 
 	private void removeOverlain() {
 		if (getConnection().getRouter() instanceof OrthogonalRouter
-				&& selectedExplicitAnchorIndices.size() == 2) {
+				&& selectedIndices.size() == 2) {
 			// segment overlay removal for orthogonal connection
 			removeOverlainSegments();
 		} else {
@@ -865,10 +872,11 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	}
 
 	private void removeOverlainPoints() {
-		int explicitAnchorsSize = getBendOperation().getNewAnchors().size();
-		for (int i = selectedExplicitAnchorIndices.size() - 1; i >= 0
+		int explicitAnchorsSize = getBendOperation().getFinalBendPoints()
+				.size();
+		for (int i = selectedIndices.size() - 1; i >= 0
 				&& explicitAnchorsSize > 2; i--) {
-			int index = selectedExplicitAnchorIndices.get(i);
+			int index = selectedIndices.get(i);
 			// XXX: If an overlay is recognized, the overlaying anchor is
 			// removed and practically replaced by the overlain anchor. This
 			// might seem unintuitive, however, it enables the user to
@@ -881,13 +889,13 @@ public class BendConnectionPolicy extends AbstractPolicy {
 
 			if (isLeftOverlain || isRightOverlain) {
 				int overlainIndex = isLeftOverlain ? index - 1 : index + 1;
-				if (selectedExplicitAnchorIndices.contains(overlainIndex)) {
+				if (selectedIndices.contains(overlainIndex)) {
 					// selected overlays other selected
 					// => skip this overlay
 					continue;
 				}
 				// remove from connection
-				getBendOperation().getNewAnchors().remove(index);
+				getBendOperation().getFinalBendPoints().remove(index);
 				// apply changes by executing the operation
 				locallyExecuteOperation();
 			}
@@ -934,8 +942,33 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	public void select(int explicitAnchorIndex) {
 		checkInitialized();
 		// save selected anchor handles
-		selectedExplicitAnchorIndices.add(explicitAnchorIndex);
+		selectedIndices.add(explicitAnchorIndex);
 	}
+
+	// private void showAnchors(String message) {
+	// List<BendPoint> newAnchors = getBendOperation().getFinalBendPoints();
+	// String anchorsString = "";
+	// for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
+	// .size(); i++) {
+	// BendPoint anchor = getConnection().getAnchor(i);
+	// if (getConnection().getRouter().wasInserted(anchor)) {
+	// anchorsString = anchorsString + " - "
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + "],\n";
+	// } else {
+	// anchorsString = anchorsString
+	// + (selectedIndices.contains(j) ? "(*)"
+	// : " * ")
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + " :: "
+	// + NodeUtils.localToScene(getConnection(),
+	// getConnection().getPoint(i))
+	// + "]" + " (" + newAnchors.get(j) + "),\n";
+	// j++;
+	// }
+	// }
+	// System.out.println(message + "\n" + anchorsString);
+	// }
 
 	/**
 	 * Selects the end points of the connection segment specified by the given
@@ -987,31 +1020,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		select(secondAnchorHandle);
 	}
 
-	// private void showAnchors(String message) {
-	// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-	// String anchorsString = "";
-	// for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
-	// .size(); i++) {
-	// IAnchor anchor = getConnection().getAnchor(i);
-	// if (getConnection().getRouter().wasInserted(anchor)) {
-	// anchorsString = anchorsString + " - "
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + "],\n";
-	// } else {
-	// anchorsString = anchorsString
-	// + (selectedExplicitAnchorIndices.contains(j) ? "(*)"
-	// : " * ")
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + " :: "
-	// + NodeUtils.localToScene(getConnection(),
-	// getConnection().getPoint(i))
-	// + "]" + " (" + newAnchors.get(j) + "),\n";
-	// j++;
-	// }
-	// }
-	// System.out.println(message + "\n" + anchorsString);
-	// }
-
 	/**
 	 * Tests if the current selection complies to the overlay specified by the
 	 * given parameters. The <i>overlainPointIndicesRelativeToSelection</i> is
@@ -1044,8 +1052,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		int firstIndex = overlainPointIndicesRelativeToSelection[0];
 		int lastIndex = overlainPointIndicesRelativeToSelection[overlainPointIndicesRelativeToSelection.length
 				- 1];
-		int selectionStartIndexInConnection = getBendOperation()
-				.getConnectionIndex(selectedExplicitAnchorIndices.get(0));
+		int selectionStartIndexInConnection = getConnectionIndex(
+				selectedIndices.get(0));
 		if (selectionStartIndexInConnection + firstIndex < 0
 				|| selectionStartIndexInConnection + firstIndex >= points
 						.size()) {
@@ -1105,7 +1113,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		}
 
 		// System.out.println("=== Segment Overlay ===");
-		// System.out.println("selection: " + selectedExplicitAnchorIndices);
+		// System.out.println("selection: " + selectedIndices);
 		// System.out.println(
 		// "overlain: " + toList(overlainPointIndicesRelativeToSelection));
 		// System.out.println("overlain points: " + overlainPoints);
@@ -1151,7 +1159,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		// remove the selection and the other overlain anchors
 		int removedCount = 0;
 		for (int i = explicit.size() - 2; i >= 1; i--) {
-			getBendOperation().getNewAnchors().remove((int) explicit.get(i));
+			getBendOperation().getFinalBendPoints()
+					.remove((int) explicit.get(i));
 			removedCount++;
 		}
 
@@ -1159,27 +1168,25 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		// anchor for the adjusted result position if the respective anchor is
 		// currently unconnected and neither the start nor the end point
 		Integer resultStartIndex = explicit.get(0);
-		IAnchor resultStartAnchor = getBendOperation().getNewAnchors()
+		BendPoint resultStartAnchor = getBendOperation().getFinalBendPoints()
 				.get(resultStartIndex);
-		Connection connection = getBendOperation().getConnection();
-		if (resultStartIndex > 0
-				&& !connection.isConnected(resultStartAnchor)) {
+		if (resultStartIndex > 0 && !resultStartAnchor.isAttached()) {
 			// System.out.println(
 			// "Insert unconnected result start at " + resultStartIndex);
-			getBendOperation().getNewAnchors().set(resultStartIndex,
-					createUnconnectedAnchor(resultStart));
+			getBendOperation().getFinalBendPoints().set(resultStartIndex,
+					new BendPoint(resultStart));
 		}
 
 		Integer resultEndIndex = explicit.get(explicit.size() - 1)
 				- removedCount;
-		IAnchor resultEndAnchor = getBendOperation().getNewAnchors()
+		BendPoint resultEndAnchor = getBendOperation().getFinalBendPoints()
 				.get(resultEndIndex);
-		if (resultEndIndex < getBendOperation().getNewAnchors().size() - 1
-				&& !connection.isConnected(resultEndAnchor)) {
+		if (resultEndIndex < getBendOperation().getFinalBendPoints().size() - 1
+				&& !resultEndAnchor.isAttached()) {
 			// System.out.println(
 			// "Insert unconnected result end at " + resultEndIndex);
-			getBendOperation().getNewAnchors().set(resultEndIndex,
-					createUnconnectedAnchor(resultEnd));
+			getBendOperation().getFinalBendPoints().set(resultEndIndex,
+					new BendPoint(resultEnd));
 		}
 
 		return true;
