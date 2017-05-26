@@ -23,7 +23,7 @@ import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
-import org.eclipse.gef.mvc.fx.operations.BendOperation;
+import org.eclipse.gef.mvc.fx.operations.BendVisualOperation;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -40,7 +40,7 @@ import javafx.scene.Node;
  */
 public class ConnectedSupport extends IAdaptable.Bound.Impl<IViewer> {
 
-	private List<BendOperation> operations = new ArrayList<>();
+	private List<BendVisualOperation> operations = new ArrayList<>();
 
 	private IVisualPart<?>[] parts;
 	private BendConnectionPolicy[] policies;
@@ -67,7 +67,7 @@ public class ConnectedSupport extends IAdaptable.Bound.Impl<IViewer> {
 
 	private void abortHints() {
 		try {
-			for (BendOperation op : operations) {
+			for (BendVisualOperation op : operations) {
 				op.undo(null, null);
 			}
 		} catch (ExecutionException e) {
@@ -101,7 +101,7 @@ public class ConnectedSupport extends IAdaptable.Bound.Impl<IViewer> {
 	}
 
 	private void commitHints() {
-		for (BendOperation op : operations) {
+		for (BendVisualOperation op : operations) {
 			try {
 				getAdaptable().getDomain().execute(op, null);
 			} catch (ExecutionException e) {
@@ -212,7 +212,7 @@ public class ConnectedSupport extends IAdaptable.Bound.Impl<IViewer> {
 			Collection<? extends IBendableContentPart<? extends Node>> hintsMovable) {
 		this.operations.clear();
 		for (IBendableContentPart<? extends Node> p : hintsMovable) {
-			this.operations.add(new BendOperation(p));
+			this.operations.add(new BendVisualOperation(p));
 		}
 	}
 
@@ -235,7 +235,7 @@ public class ConnectedSupport extends IAdaptable.Bound.Impl<IViewer> {
 	 *            a
 	 */
 	public void relocateHints(Dimension delta) {
-		for (BendOperation op : operations) {
+		for (BendVisualOperation op : operations) {
 			List<BendPoint> relocatedBendPoints = new ArrayList<>();
 			for (BendPoint bp : op.getInitialBendPoints()) {
 				if (bp.isAttached()) {

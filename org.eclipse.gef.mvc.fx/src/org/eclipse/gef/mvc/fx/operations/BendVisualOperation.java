@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef.mvc.fx.operations;
 
 import java.util.ArrayList;
@@ -14,8 +25,11 @@ import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
 import javafx.scene.Node;
 
 /**
+ * The {@link BendVisualOperation} is an {@link ITransactionalOperation} that
+ * can be used to manipulate the visual bend points of an
+ * {@link IBendableContentPart}.
  */
-public class BendOperation extends AbstractOperation
+public class BendVisualOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private IBendableContentPart<? extends Node> part;
@@ -27,7 +41,7 @@ public class BendOperation extends AbstractOperation
 	 * @param part
 	 *            a
 	 */
-	public BendOperation(IBendableContentPart<? extends Node> part) {
+	public BendVisualOperation(IBendableContentPart<? extends Node> part) {
 		super("Bend");
 		this.part = part;
 		initialBendPoints.addAll(part.getVisualBendPoints());

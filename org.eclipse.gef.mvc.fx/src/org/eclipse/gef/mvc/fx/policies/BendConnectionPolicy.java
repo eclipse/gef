@@ -28,7 +28,7 @@ import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
-import org.eclipse.gef.mvc.fx.operations.BendOperation;
+import org.eclipse.gef.mvc.fx.operations.BendVisualOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.operations.UpdateAnchorHintsOperation;
@@ -232,7 +232,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	protected ITransactionalOperation createOperation() {
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
 				"BendPlusHints");
-		fwdOp.add(new BendOperation(getHost()));
+		fwdOp.add(new BendVisualOperation(getHost()));
 		fwdOp.add(new UpdateAnchorHintsOperation(getConnection()));
 		return fwdOp;
 	}
@@ -277,14 +277,14 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	}
 
 	/**
-	 * Returns an {@link BendOperation} that is extracted from the operation
+	 * Returns an {@link BendVisualOperation} that is extracted from the operation
 	 * created by {@link #createOperation()}.
 	 *
-	 * @return an {@link BendOperation} that is extracted from the operation
+	 * @return an {@link BendVisualOperation} that is extracted from the operation
 	 *         created by {@link #createOperation()}.
 	 */
-	protected BendOperation getBendOperation() {
-		return (BendOperation) ((AbstractCompositeOperation) super.getOperation())
+	protected BendVisualOperation getBendOperation() {
+		return (BendVisualOperation) ((AbstractCompositeOperation) super.getOperation())
 				.getOperations().get(0);
 	}
 
