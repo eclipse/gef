@@ -15,6 +15,7 @@ package org.eclipse.gef.zest.fx.behaviors;
 import org.eclipse.gef.common.collections.MultisetChangeListener;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.behaviors.AbstractBehavior;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.zest.fx.parts.AbstractLabelPart;
 
@@ -38,13 +39,23 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 		@Override
 		public void onChanged(
 				org.eclipse.gef.common.collections.MultisetChangeListener.Change<? extends IVisualPart<? extends Node>> change) {
-			layoutLabels();
+			boolean isRelevantChange = false;
+			while (change.next()) {
+				if (change.getElement() instanceof IContentPart) {
+					isRelevantChange = true;
+					break;
+				}
+			}
+			if (isRelevantChange) {
+				layoutLabels();
+			}
 		}
 	};
 
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+		IContentPart<? extends Node> cp = (IContentPart<? extends Node>) getHost();
 		getHost().getAnchoredsUnmodifiable().addListener(anchoredsChangeListener);
 	}
 
@@ -66,18 +77,6 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 	protected abstract LayoutContext getLayoutContext();
 
 	/**
-	 * Called after a layout pass. Should be used to transfer layout information
-	 * from the layout model.
-	 */
-	protected abstract void postLayout();
-
-	/**
-	 * Called before a layout pass. Should be used to transfer layout
-	 * information to the layout model.
-	 */
-	protected abstract void preLayout();
-
-	/**
 	 * Called after a layout pass to adjust label positions.
 	 */
 	protected void layoutLabels() {
@@ -97,5 +96,17 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 			}
 		}
 	}
+
+	/**
+	 * Called after a layout pass. Should be used to transfer layout information
+	 * from the layout model.
+	 */
+	protected abstract void postLayout();
+
+	/**
+	 * Called before a layout pass. Should be used to transfer layout
+	 * information to the layout model.
+	 */
+	protected abstract void preLayout();
 
 }
