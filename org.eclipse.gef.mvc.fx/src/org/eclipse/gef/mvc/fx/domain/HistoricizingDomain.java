@@ -12,6 +12,7 @@
 package org.eclipse.gef.mvc.fx.domain;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -82,10 +83,16 @@ public class HistoricizingDomain implements IDomain {
 			if (event.getEventType() == OperationHistoryEvent.ABOUT_TO_UNDO) {
 				if (!transactionContext.isEmpty() && transaction != null) {
 					if (transaction.getOperations().isEmpty()) {
-						for (IGesture tool : transactionContext) {
+						// XXX: Copy transaction context to prevent CME when an
+						// interaction is started while performing undo.
+						for (IGesture tool : new ArrayList<>(
+								transactionContext)) {
 							closeExecutionTransaction(tool);
 						}
 					} else {
+						// XXX: Need a test case. I think it might be fine to
+						// perform undo even though a handler already
+						// contributed an operation.
 						throw new IllegalStateException(
 								"Cannot perform UNDO while a currently open execution transaction contains operations.");
 					}
@@ -263,9 +270,9 @@ public class HistoricizingDomain implements IDomain {
 	 *
 	 * In case an execution transaction is currently open (see
 	 * {@link #openExecutionTransaction(IGesture)},
-	 * {@link #closeExecutionTransaction(IGesture)}) the enclosing transaction will
-	 * refer to the {@link IUndoContext} used by this {@link IDomain}) (so that
-	 * no specific {@link IUndoContext} is set on the passed in
+	 * {@link #closeExecutionTransaction(IGesture)}) the enclosing transaction
+	 * will refer to the {@link IUndoContext} used by this {@link IDomain}) (so
+	 * that no specific {@link IUndoContext} is set on the passed in
 	 * {@link IUndoableOperation}). If no transaction is currently open, the
 	 * {@link IUndoContext} of this {@link IDomain} will be set on the passed in
 	 * {@link IUndoableOperation}.
