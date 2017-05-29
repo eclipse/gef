@@ -23,8 +23,8 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 
 /**
- * The {@link ResizePolicy} is an {@link AbstractPolicy} that handles
- * the resize of an {@link IVisualPart}.
+ * The {@link ResizePolicy} is an {@link AbstractPolicy} that handles the resize
+ * of an {@link IVisualPart}.
  *
  * @author mwienand
  *
@@ -192,8 +192,7 @@ public class ResizePolicy extends AbstractPolicy {
 	 * Returns the {@link ResizeOperation} that is used by this
 	 * {@link ResizePolicy}.
 	 *
-	 * @return The {@link ResizeOperation} used by this
-	 *         {@link AbstractPolicy}.
+	 * @return The {@link ResizeOperation} used by this {@link AbstractPolicy}.
 	 */
 	protected ResizeOperation getResizeOperation() {
 		return (ResizeOperation) getOperation();

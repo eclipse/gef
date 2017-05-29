@@ -1079,6 +1079,26 @@ public class Connection extends Group {
 		return isConnected(getStartAnchor());
 	}
 
+	@Override
+	public double maxHeight(double width) {
+		return Double.MAX_VALUE;
+	}
+
+	@Override
+	public double maxWidth(double height) {
+		return Double.MAX_VALUE;
+	}
+
+	@Override
+	public double minHeight(double width) {
+		return 0d;
+	}
+
+	@Override
+	public double minWidth(double height) {
+		return 0d;
+	}
+
 	/**
 	 * Returns an unmodifiable read-only list property, which contains the
 	 * points (start, control, end) that constitute this connection.

@@ -158,7 +158,6 @@ public interface IBendableContentPart<V extends Node>
 		static List<BendPoint> resize(List<BendPoint> bendPoints,
 				double currentX, double currentY, Dimension currentSize,
 				Dimension finalSize) {
-
 			// System.out.println(
 			// "Resize from " + currentSize + " to " + finalSize + ".");
 
@@ -198,8 +197,7 @@ public interface IBendableContentPart<V extends Node>
 					bp.getPosition().x += relX[pointIndex] * dw;
 					bp.getPosition().y += relY[pointIndex] * dh;
 					// XXX: increase point index only after an unattached
-					// bend-point
-					// was processed
+					// bend-point was processed
 					pointIndex++;
 				}
 			}
@@ -583,6 +581,7 @@ public interface IBendableContentPart<V extends Node>
 	@Override
 	default void setVisualSize(Dimension totalSize) {
 		// determine visual offset
+		// FIXME: optimize: getVisualTransform() calls getVisualBendPoints()
 		Affine visualTransform = getVisualTransform();
 		double currentX = visualTransform.getTx();
 		double currentY = visualTransform.getTy();
