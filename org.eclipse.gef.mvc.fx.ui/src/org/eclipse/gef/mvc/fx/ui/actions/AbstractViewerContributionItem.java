@@ -12,23 +12,27 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
+import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.ContributionItem;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
- * The {@link AbstractViewerContributionItem} is a specialization of
- * {@link ContributionItem}
+ * The {@link AbstractViewerContributionItem} {@link ContributionItem} that is
+ * bound to an {@link IViewer}.
  *
  * @author mwienand
  *
  */
 public abstract class AbstractViewerContributionItem extends ContributionItem
-		implements IViewerDependent {
+		implements IAdaptable.Bound<IViewer> {
 
-	private IViewer viewer;
+	private ReadOnlyObjectWrapper<IViewer> viewerProperty = new ReadOnlyObjectWrapper<>();
+
 	private ChangeListener<Boolean> activationListener = new ChangeListener<Boolean>() {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
@@ -47,42 +51,25 @@ public abstract class AbstractViewerContributionItem extends ContributionItem
 	protected AbstractViewerContributionItem() {
 	}
 
-	/**
-	 * Returns the {@link IViewer} for which this {@link IViewerAction} was
-	 * {@link #init(IViewer) initialized}.
-	 *
-	 * @return The {@link IViewer} for which this {@link IViewerAction} was
-	 *         {@link #init(IViewer) initialized}.
-	 */
-	protected IViewer getViewer() {
-		return viewer;
+	@Override
+	public ReadOnlyObjectProperty<IViewer> adaptableProperty() {
+		return viewerProperty;
 	}
 
 	@Override
-	public void init(IViewer viewer) {
-		if (this.viewer == viewer) {
-			// nothing changed
-			return;
-		}
+	public IViewer getAdaptable() {
+		return viewerProperty.get();
+	}
 
-		// unregister listeners and clean up for the old viewer
-		if (this.viewer != null) {
-			this.viewer.activeProperty().removeListener(activationListener);
-			if (this.viewer.isActive()) {
-				unregister();
-			}
-		}
-
-		// save new viewer
-		this.viewer = viewer;
-
-		// register listeners and prepare for the new viewer
-		if (this.viewer != null) {
-			this.viewer.activeProperty().addListener(activationListener);
-			if (this.viewer.isActive()) {
-				register();
-			}
-		}
+	/**
+	 * Returns the {@link IViewer} to which this
+	 * {@link AbstractViewerContributionItem} is bound.
+	 *
+	 * @return The {@link IViewer} to which this
+	 *         {@link AbstractViewerContributionItem} is bound.
+	 */
+	protected IViewer getViewer() {
+		return getAdaptable();
 	}
 
 	@Override
@@ -96,6 +83,35 @@ public abstract class AbstractViewerContributionItem extends ContributionItem
 	 * viewer is activated.
 	 */
 	protected void register() {
+	}
+
+	@Override
+	public void setAdaptable(IViewer viewer) {
+		if (this.viewerProperty.get() == viewer) {
+			// nothing changed
+			return;
+		}
+
+		// unregister listeners and clean up for the old viewer
+		if (this.viewerProperty.get() != null) {
+			this.viewerProperty.get().activeProperty()
+					.removeListener(activationListener);
+			if (this.viewerProperty.get().isActive()) {
+				unregister();
+			}
+		}
+
+		// save new viewer
+		this.viewerProperty.set(viewer);
+
+		// register listeners and prepare for the new viewer
+		if (this.viewerProperty.get() != null) {
+			this.viewerProperty.get().activeProperty()
+					.addListener(activationListener);
+			if (this.viewerProperty.get().isActive()) {
+				register();
+			}
+		}
 	}
 
 	/**

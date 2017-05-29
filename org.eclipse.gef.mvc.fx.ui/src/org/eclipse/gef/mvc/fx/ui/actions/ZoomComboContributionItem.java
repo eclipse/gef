@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.IAction;
@@ -121,9 +122,6 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 
 	@Override
 	public void dispose() {
-		if (getViewer() != null) {
-			init(null);
-		}
 		if (toolItem != null && !toolItem.isDisposed()) {
 			toolItem.dispose();
 		}
@@ -252,20 +250,6 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 	}
 
 	@Override
-	public void init(IViewer viewer) {
-		super.init(viewer);
-		// initialize delegate actions
-		if (zoomAction instanceof IViewerAction) {
-			((IViewerAction) zoomAction).init(viewer);
-		}
-		for (IAction a : additionalActions) {
-			if (a instanceof IViewerAction) {
-				((IViewerAction) a).init(viewer);
-			}
-		}
-	}
-
-	@Override
 	protected void register() {
 		if (zoomListener != null) {
 			throw new IllegalStateException(
@@ -280,6 +264,18 @@ public class ZoomComboContributionItem extends AbstractViewerContributionItem {
 			infiniteCanvas.getContentTransform().mxxProperty()
 					.addListener(zoomListener);
 			showZoomFactor(infiniteCanvas.getContentTransform().getMxx());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setAdaptable(IViewer viewer) {
+		super.setAdaptable(viewer);
+		zoomAction.setAdaptable(viewer);
+		for (IAction a : additionalActions) {
+			if (a instanceof IAdaptable.Bound) {
+				((IAdaptable.Bound<IViewer>) a).setAdaptable(viewer);
+			}
 		}
 	}
 

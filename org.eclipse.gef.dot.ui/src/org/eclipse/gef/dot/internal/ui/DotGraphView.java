@@ -149,14 +149,17 @@ public class DotGraphView extends ZestFxUiView {
 		currentFile = null;
 
 		if (fitToViewportActionGroup != null) {
+			getContentViewer().unsetAdapter(fitToViewportActionGroup);
 			fitToViewportActionGroup.dispose();
 			fitToViewportActionGroup = null;
 		}
 		if (zoomActionGroup != null) {
+			getContentViewer().unsetAdapter(zoomActionGroup);
 			zoomActionGroup.dispose();
 			zoomActionGroup = null;
 		}
 		if (scrollActionGroup != null) {
+			getContentViewer().unsetAdapter(scrollActionGroup);
 			scrollActionGroup.dispose();
 			scrollActionGroup = null;
 		}
@@ -181,11 +184,11 @@ public class DotGraphView extends ZestFxUiView {
 		mgr.add(new Separator());
 
 		zoomActionGroup = new ZoomActionGroup();
-		zoomActionGroup.init(getContentViewer());
+		getContentViewer().setAdapter(zoomActionGroup);
 		fitToViewportActionGroup = new FitToViewportActionGroup();
-		fitToViewportActionGroup.init(getContentViewer());
+		getContentViewer().setAdapter(fitToViewportActionGroup);
 		scrollActionGroup = new ScrollActionGroup();
-		scrollActionGroup.init(getContentViewer());
+		getContentViewer().setAdapter(scrollActionGroup);
 
 		zoomActionGroup.fillActionBars(actionBars);
 		mgr.add(new Separator());

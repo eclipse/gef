@@ -97,12 +97,12 @@ public abstract class AbstractFXView extends ViewPart {
 		undoRedoActionGroup.fillActionBars(site.getActionBars());
 
 		deleteAction = new DeleteAction();
-		deleteAction.init(getContentViewer());
+		getContentViewer().setAdapter(deleteAction);
 		site.getActionBars().setGlobalActionHandler(
 				ActionFactory.DELETE.getId(), deleteAction);
 
 		selectAllAction = new SelectAllAction();
-		selectAllAction.init(getContentViewer());
+		getContentViewer().setAdapter(selectAllAction);
 		site.getActionBars().setGlobalActionHandler(
 				ActionFactory.SELECT_ALL.getId(), selectAllAction);
 	}
@@ -191,12 +191,12 @@ public abstract class AbstractFXView extends ViewPart {
 		}
 
 		if (deleteAction != null) {
-			deleteAction.dispose();
+			getContentViewer().unsetAdapter(deleteAction);
 			deleteAction = null;
 		}
 
 		if (selectAllAction != null) {
-			selectAllAction.dispose();
+			getContentViewer().unsetAdapter(selectAllAction);
 			selectAllAction = null;
 		}
 	}

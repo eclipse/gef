@@ -44,11 +44,12 @@ public class ZestGraphExampleView extends ZestFxUiView {
 		super.createPartControl(parent);
 		// create actions
 		zoomActionGroup = new ZoomActionGroup(new FitToViewportAction());
-		zoomActionGroup.init(getContentViewer());
+		getContentViewer().setAdapter(zoomActionGroup);
 		fitToViewportActionGroup = new FitToViewportActionGroup();
-		fitToViewportActionGroup.init(getContentViewer());
+		getContentViewer().setAdapter(fitToViewportActionGroup);
 		scrollActionGroup = new ScrollActionGroup();
-		scrollActionGroup.init(getContentViewer());
+		getContentViewer().setAdapter(scrollActionGroup);
+
 		// contribute to toolbar
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager mgr = actionBars.getToolBarManager();
@@ -63,14 +64,17 @@ public class ZestGraphExampleView extends ZestFxUiView {
 	public void dispose() {
 		// dispose actions
 		if (zoomActionGroup != null) {
+			getContentViewer().unsetAdapter(zoomActionGroup);
 			zoomActionGroup.dispose();
 			zoomActionGroup = null;
 		}
 		if (scrollActionGroup != null) {
+			getContentViewer().unsetAdapter(scrollActionGroup);
 			scrollActionGroup.dispose();
 			scrollActionGroup = null;
 		}
 		if (fitToViewportActionGroup != null) {
+			getContentViewer().unsetAdapter(fitToViewportActionGroup);
 			fitToViewportActionGroup.dispose();
 			fitToViewportActionGroup = null;
 		}

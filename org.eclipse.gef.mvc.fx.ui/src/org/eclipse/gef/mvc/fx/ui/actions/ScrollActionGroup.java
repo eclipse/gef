@@ -15,7 +15,9 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -49,7 +51,7 @@ public class ScrollActionGroup extends AbstractViewerActionGroup {
 	private ScrollBottomLeftAction scrollBottomLeftAction = new ScrollBottomLeftAction();
 
 	@Override
-	public List<IViewerDependent> createViewerDependents() {
+	public List<IAdaptable.Bound<IViewer>> createContributions() {
 		return Arrays.asList(scrollCenterDropDownAction, scrollCenterAction,
 				scrollTopLeftAction, scrollTopRightAction,
 				scrollBottomRightAction, scrollBottomLeftAction);

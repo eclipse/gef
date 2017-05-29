@@ -11,61 +11,18 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.parts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.gef.mvc.fx.ui.actions.DeleteAction;
-import org.eclipse.gef.mvc.fx.ui.actions.IViewerAction;
 import org.eclipse.gef.mvc.fx.ui.actions.SelectAllAction;
-import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.services.IDisposable;
 
 /**
  * @author anyssen
  */
 public class FXEditorActionBarContributor extends EditorActionBarContributor {
-
-	private List<IAction> globalActions = new ArrayList<>();
-
-	/**
-	 * Returns a list containing the global {@link IAction}s that are to be
-	 * registered by this {@link FXEditorActionBarContributor} as global action
-	 * handlers for their respective IDs.
-	 *
-	 * @return A list containing the global {@link IAction}s.
-	 */
-	protected List<? extends IAction> createGlobalActionHandlers() {
-		List<IAction> actions = new ArrayList<>();
-		actions.add(new DeleteAction());
-		actions.add(new SelectAllAction());
-		return actions;
-	}
-
-	@Override
-	public void dispose() {
-		for (IAction action : globalActions) {
-			if (action instanceof IDisposable) {
-				IDisposable iDisposable = (IDisposable) action;
-				iDisposable.dispose();
-			}
-		}
-		globalActions.clear();
-		super.dispose();
-	}
-
-	@Override
-	public void init(IActionBars actionBars) {
-		super.init(actionBars);
-		globalActions.addAll(createGlobalActionHandlers());
-		for (IAction action : globalActions) {
-			actionBars.setGlobalActionHandler(action.getId(), action);
-		}
-	}
 
 	/**
 	 * Registers undo and redo action handlers for the given target editor. The
@@ -88,19 +45,26 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 
 	@Override
 	public void setActiveEditor(final IEditorPart activeEditor) {
-		registerUndoRedoActions(activeEditor);
 		// XXX: We need to perform instance-of check here, even if
 		// FXEditorActionBarContributor is bound to AbstractFXEditor alone.
 		// This is because activeEditor may for instance also be of type
 		// org.eclipse.ui.internal.ErrorEditorPart when the opened resource is
 		// out of sync with the file system.
 		if (activeEditor instanceof AbstractFXEditor) {
-			IViewer viewer = ((AbstractFXEditor) activeEditor)
-					.getContentViewer();
-			for (IAction action : globalActions) {
-				if (action instanceof IViewerAction) {
-					((IViewerAction) action).init(viewer);
-				}
+			registerUndoRedoActions(activeEditor);
+
+			DeleteAction deleteAction = (DeleteAction) activeEditor
+					.getAdapter(DeleteAction.class);
+			if (deleteAction != null) {
+				getActionBars().setGlobalActionHandler(
+						ActionFactory.DELETE.getId(), deleteAction);
+			}
+
+			IAction selectAllAction = (IAction) activeEditor
+					.getAdapter(SelectAllAction.class);
+			if (selectAllAction != null) {
+				getActionBars().setGlobalActionHandler(
+						ActionFactory.SELECT_ALL.getId(), selectAllAction);
 			}
 		}
 	}

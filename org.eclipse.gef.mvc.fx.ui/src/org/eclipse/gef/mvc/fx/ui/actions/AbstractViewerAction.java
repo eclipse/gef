@@ -14,6 +14,7 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
@@ -22,14 +23,14 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
- * The {@link AbstractViewerAction} provides an abstract implementation of
- * {@link IViewerAction}. It saves the {@link IViewer} for which the action is
- * {@link #init(IViewer) initialized}. Additionally, a mechanism
+ * The {@link AbstractViewerAction} provides an extension to {@link Action} that
+ * is bound to an {@link IViewer}. Additionally, a mechanism
  * ({@link #createOperation(Event)}) is provided for creating an
  * {@link ITransactionalOperation} that is executed on the {@link IDomain} of
  * the {@link IViewer}.
@@ -38,9 +39,10 @@ import javafx.beans.value.ObservableValue;
  *
  */
 public abstract class AbstractViewerAction extends Action
-		implements IViewerAction {
+		implements IAdaptable.Bound<IViewer> {
 
-	private IViewer viewer;
+	private ReadOnlyObjectWrapper<IViewer> viewerProperty = new ReadOnlyObjectWrapper<>();
+
 	private ChangeListener<Boolean> activationListener = new ChangeListener<Boolean>() {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
@@ -52,7 +54,6 @@ public abstract class AbstractViewerAction extends Action
 			}
 		}
 	};
-	private ReadOnlyBooleanProperty viewerActiveProperty;
 
 	// private ObjectProperty<IViewer> viewerProperty;
 	// private BooleanProperty checked = new BooleanProperty(false);
@@ -61,7 +62,7 @@ public abstract class AbstractViewerAction extends Action
 	// @Override public BooleanProperty checkedProperty() { return checked; }
 
 	/**
-	 * Creates a new {@link IViewerAction}.
+	 * Creates a new {@link AbstractViewerAction}.
 	 *
 	 * @param text
 	 *            Text for the action.
@@ -88,6 +89,11 @@ public abstract class AbstractViewerAction extends Action
 		setEnabled(false);
 	}
 
+	@Override
+	public ReadOnlyObjectProperty<IViewer> adaptableProperty() {
+		return viewerProperty;
+	}
+
 	/**
 	 * Returns an {@link ITransactionalOperation} that performs the desired
 	 * changes, or <code>null</code> if no changes should be performed. If
@@ -103,43 +109,20 @@ public abstract class AbstractViewerAction extends Action
 	 */
 	protected abstract ITransactionalOperation createOperation(Event event);
 
-	/**
-	 * Returns the {@link IViewer} for which this {@link IViewerAction} was
-	 * {@link #init(IViewer) initialized}.
-	 *
-	 * @return The {@link IViewer} for which this {@link IViewerAction} was
-	 *         {@link #init(IViewer) initialized}.
-	 */
-	protected IViewer getViewer() {
-		return viewer;
+	@Override
+	public IViewer getAdaptable() {
+		return viewerProperty.get();
 	}
 
-	@Override
-	public void init(IViewer viewer) {
-		if (this.viewer == viewer) {
-			// nothing changed
-			return;
-		}
-
-		// unregister listeners and clean up for the old viewer
-		if (this.viewer != null) {
-			viewerActiveProperty.removeListener(activationListener);
-			if (viewerActiveProperty.get()) {
-				unregister();
-			}
-		}
-
-		// save new viewer
-		this.viewer = viewer;
-
-		// register listeners and prepare for the new viewer
-		if (this.viewer != null) {
-			viewerActiveProperty = this.viewer.activeProperty();
-			viewerActiveProperty.addListener(activationListener);
-			if (viewerActiveProperty.get()) {
-				register();
-			}
-		}
+	/**
+	 * Returns the {@link IViewer} for which this {@link AbstractViewerAction}
+	 * is bound.
+	 *
+	 * @return The {@link IViewer} to which this {@link AbstractViewerAction} is
+	 *         bound.
+	 */
+	protected IViewer getViewer() {
+		return getAdaptable();
 	}
 
 	/**
@@ -167,7 +150,7 @@ public abstract class AbstractViewerAction extends Action
 		ITransactionalOperation operation = createOperation(event);
 		if (operation != null) {
 			try {
-				viewer.getDomain().execute(operation,
+				getViewer().getDomain().execute(operation,
 						new NullProgressMonitor());
 			} catch (ExecutionException e) {
 				throw new RuntimeException(e);
@@ -175,6 +158,35 @@ public abstract class AbstractViewerAction extends Action
 			// cancel further event processing
 			if (event != null) {
 				event.doit = false;
+			}
+		}
+	}
+
+	@Override
+	public void setAdaptable(IViewer viewer) {
+		if (this.viewerProperty.get() == viewer) {
+			// nothing changed
+			return;
+		}
+
+		// unregister listeners and clean up for the old viewer
+		if (this.viewerProperty.get() != null) {
+			this.viewerProperty.get().activeProperty()
+					.removeListener(activationListener);
+			if (this.viewerProperty.get().isActive()) {
+				unregister();
+			}
+		}
+
+		// save new viewer
+		this.viewerProperty.set(viewer);
+
+		// register listeners and prepare for the new viewer
+		if (this.viewerProperty.get() != null) {
+			this.viewerProperty.get().activeProperty()
+					.addListener(activationListener);
+			if (this.viewerProperty.get().isActive()) {
+				register();
 			}
 		}
 	}

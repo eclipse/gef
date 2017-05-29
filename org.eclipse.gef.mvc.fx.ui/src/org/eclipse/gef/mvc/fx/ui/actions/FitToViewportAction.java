@@ -26,8 +26,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 
 /**
- * The {@link FitToViewportAction} is an {@link IViewerAction} that will zoom
- * and scroll the {@link IViewer#getCanvas()} (provided that it is an
+ * The {@link FitToViewportAction} is an {@link AbstractViewerAction} that will
+ * zoom and scroll the {@link IViewer#getCanvas()} (provided that it is an
  * {@link InfiniteCanvas}) so that its contents are centered and fill the
  * viewport. However, the zoom factor is restricted to the range from 0.25 to
  * 4.0, which can be customized via subclassing ({@link #getMinZoom()},

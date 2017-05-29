@@ -18,6 +18,8 @@ import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.ui.actions.DeleteAction;
+import org.eclipse.gef.mvc.fx.ui.actions.SelectAllAction;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -71,6 +73,10 @@ public abstract class AbstractFXEditor extends EditorPart {
 
 	private UndoRedoActionGroup undoRedoActionGroup;
 
+	private DeleteAction deleteAction;
+
+	private SelectAllAction selectAllAction;
+
 	/**
 	 * Constructs a new {@link AbstractFXEditor} and uses the given
 	 * {@link Injector} to inject its members.
@@ -99,6 +105,12 @@ public abstract class AbstractFXEditor extends EditorPart {
 	protected void createActions() {
 		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
 				(IUndoContext) getAdapter(IUndoContext.class), true);
+
+		deleteAction = new DeleteAction();
+		getContentViewer().setAdapter(deleteAction);
+
+		selectAllAction = new SelectAllAction();
+		getContentViewer().setAdapter(selectAllAction);
 	}
 
 	/**
@@ -211,6 +223,16 @@ public abstract class AbstractFXEditor extends EditorPart {
 			undoRedoActionGroup.dispose();
 			undoRedoActionGroup = null;
 		}
+
+		if (deleteAction != null) {
+			getContentViewer().unsetAdapter(deleteAction);
+			deleteAction = null;
+		}
+
+		if (selectAllAction != null) {
+			getContentViewer().unsetAdapter(selectAllAction);
+			selectAllAction = null;
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -246,6 +268,14 @@ public abstract class AbstractFXEditor extends EditorPart {
 		if (UndoRedoActionGroup.class.equals(key)) {
 			// used by action bar contributor
 			return undoRedoActionGroup;
+		}
+		if (DeleteAction.class.equals(key)) {
+			// used by action bar contributor
+			return deleteAction;
+		}
+		if (SelectAllAction.class.equals(key)) {
+			// used by action bar contributor
+			return selectAllAction;
 		}
 		return super.getAdapter(key);
 	}

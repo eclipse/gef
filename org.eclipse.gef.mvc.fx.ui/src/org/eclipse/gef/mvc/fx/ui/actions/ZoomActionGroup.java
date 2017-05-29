@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.IAction;
 
 /**
@@ -47,10 +49,10 @@ public class ZoomActionGroup extends AbstractViewerActionGroup {
 	}
 
 	@Override
-	public List<IViewerDependent> createViewerDependents() {
-		List<IViewerDependent> dependents = new ArrayList<>(Arrays.asList(
-				new ZoomOutAction(), new ZoomScaleContributionItem(),
-				new ZoomInAction(), new ZoomResetAction()));
+	public List<IAdaptable.Bound<IViewer>> createContributions() {
+		List<IAdaptable.Bound<IViewer>> dependents = new ArrayList<>(Arrays
+				.asList(new ZoomOutAction(), new ZoomScaleContributionItem(),
+						new ZoomInAction(), new ZoomResetAction()));
 		if (zoomCombo != null) {
 			dependents.add(zoomCombo);
 		}

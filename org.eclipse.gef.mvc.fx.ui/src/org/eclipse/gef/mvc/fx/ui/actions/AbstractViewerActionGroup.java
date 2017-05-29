@@ -14,6 +14,7 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 
 import java.util.List;
 
+import org.eclipse.gef.common.adapt.IAdaptable;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -21,42 +22,42 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+
 /**
- * The {@link AbstractViewerActionGroup} is an {@link ActionGroup} that knows
- * which {@link IViewerAction viewer-actions} it contributes (see
- * {@link #createViewerDependents()}). Additionally, it can be initialized with an
- * {@link IViewer}, and will subsequently {@link IViewerAction#init(IViewer)
- * initialize} the contained {@link IViewerAction viewer-actions}. Also, it will
- * {@link IViewerAction#dispose() dispose} its {@link IViewerAction}s when
- * {@link #dispose() disposed}.
+ * The {@link AbstractViewerActionGroup} is is a specialization of
+ * {@link ActionGroup} that is bound to an {@link IViewer}.
  *
  * @author mwienand
  *
  */
-public abstract class AbstractViewerActionGroup extends ActionGroup {
+public abstract class AbstractViewerActionGroup extends ActionGroup
+		implements IAdaptable.Bound<IViewer> {
 
-	private List<IViewerDependent> viewerDependents = null;
+	private ReadOnlyObjectWrapper<IViewer> viewerProperty = new ReadOnlyObjectWrapper<>();
 
-	/**
-	 * Returns a list containing all {@link IViewerAction}s contributed by this
-	 * {@link AbstractViewerActionGroup}.
-	 *
-	 * @return The {@link IViewerAction}s.
-	 */
-	public abstract List<IViewerDependent> createViewerDependents();
+	private List<IAdaptable.Bound<IViewer>> contributions = null;
 
 	@Override
-	public void dispose() {
-		for (IViewerDependent va : getViewerDependents()) {
-			va.dispose();
-		}
-		super.dispose();
+	public ReadOnlyObjectProperty<IViewer> adaptableProperty() {
+		return viewerProperty;
 	}
+
+	/**
+	 * Returns a list containing all {@link AbstractViewerAction}s or
+	 * {@link AbstractViewerContributionItem}s contributed by this
+	 * {@link AbstractViewerActionGroup}.
+	 *
+	 * @return The {@link AbstractViewerAction}s and
+	 *         {@link AbstractViewerContributionItem}s.
+	 */
+	public abstract List<IAdaptable.Bound<IViewer>> createContributions();
 
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		IToolBarManager tbm = actionBars.getToolBarManager();
-		for (IViewerDependent va : getViewerDependents()) {
+		for (IAdaptable.Bound<IViewer> va : getContributions()) {
 			if (va instanceof IAction) {
 				tbm.add((IAction) va);
 			} else if (va instanceof IContributionItem) {
@@ -65,32 +66,30 @@ public abstract class AbstractViewerActionGroup extends ActionGroup {
 		}
 	}
 
-	/**
-	 * Returns a list containing all {@link IViewerAction}s contributed by this
-	 * {@link AbstractViewerActionGroup}.
-	 *
-	 * @return The {@link IViewerAction}s.
-	 */
-	public final List<IViewerDependent> getViewerDependents() {
-		if (viewerDependents == null) {
-			viewerDependents = createViewerDependents();
-		}
-		return viewerDependents;
+	@Override
+	public IViewer getAdaptable() {
+		return viewerProperty.get();
 	}
 
 	/**
-	 * Initializes this {@link AbstractViewerActionGroup} with the given
-	 * {@link IViewer}. Passes on the given {@link IViewer} to the contained
-	 * {@link #getViewerDependents()}, i.e. calls
-	 * {@link IViewerAction#init(IViewer)}.
+	 * Returns a list containing all {@link AbstractViewerAction}s contributed
+	 * by this {@link AbstractViewerActionGroup}.
 	 *
-	 * @param viewer
-	 *            The {@link IViewer} for this
-	 *            {@link AbstractViewerActionGroup}, or <code>null</code>.
+	 * @return The {@link AbstractViewerAction}s.
 	 */
-	public void init(IViewer viewer) {
-		for (IViewerDependent va : getViewerDependents()) {
-			va.init(viewer);
+	public final List<IAdaptable.Bound<IViewer>> getContributions() {
+		if (contributions == null) {
+			contributions = createContributions();
+		}
+		return contributions;
+	}
+
+	@Override
+	public void setAdaptable(IViewer adaptable) {
+		this.viewerProperty.set(adaptable);
+		for (IAdaptable.Bound<IViewer> va : getContributions()) {
+			va.setAdaptable(adaptable);
 		}
 	}
+
 }

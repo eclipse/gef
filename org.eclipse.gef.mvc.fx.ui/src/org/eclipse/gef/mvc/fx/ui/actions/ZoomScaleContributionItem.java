@@ -114,9 +114,6 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 
 	@Override
 	public void dispose() {
-		if (getViewer() != null) {
-			init(null);
-		}
 		if (toolItem != null && !toolItem.isDisposed()) {
 			toolItem.dispose();
 		}
@@ -178,12 +175,6 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	}
 
 	@Override
-	public void init(IViewer viewer) {
-		super.init(viewer);
-		zoomAction.init(viewer);
-	}
-
-	@Override
 	protected void register() {
 		if (zoomListener != null) {
 			throw new IllegalStateException(
@@ -200,6 +191,12 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 					.addListener(zoomListener);
 			updateScaleValue(infiniteCanvas.getContentTransform().getMxx());
 		}
+	}
+
+	@Override
+	public void setAdaptable(IViewer viewer) {
+		super.setAdaptable(viewer);
+		zoomAction.setAdaptable(viewer);
 	}
 
 	@Override

@@ -15,6 +15,9 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.gef.common.adapt.IAdaptable;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+
 /**
  * The {@link FitToViewportActionGroup} provides two actions --
  * {@link FitToViewportAction} and {@link FitToViewportLockAction} -- which are
@@ -27,7 +30,7 @@ import java.util.List;
 public class FitToViewportActionGroup extends AbstractViewerActionGroup {
 
 	@Override
-	public List<IViewerDependent> createViewerDependents() {
+	public List<IAdaptable.Bound<IViewer>> createContributions() {
 		return Arrays.asList(new FitToViewportAction(),
 				new FitToViewportLockAction());
 	}
