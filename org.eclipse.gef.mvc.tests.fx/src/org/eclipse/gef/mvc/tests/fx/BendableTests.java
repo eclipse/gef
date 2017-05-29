@@ -68,6 +68,7 @@ public class BendableTests {
 
 		private List<BendPoint> contentBendPoints;
 
+		@SuppressWarnings("unused")
 		public Bendable() {
 		}
 

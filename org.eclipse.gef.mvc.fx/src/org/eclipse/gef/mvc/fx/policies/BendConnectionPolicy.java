@@ -31,7 +31,6 @@ import org.eclipse.gef.mvc.fx.operations.BendContentOperation;
 import org.eclipse.gef.mvc.fx.operations.BendVisualOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
-import org.eclipse.gef.mvc.fx.operations.UpdateAnchorHintsOperation;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
@@ -95,9 +94,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	protected static final double DEFAULT_SEGMENT_OVERLAY_THRESHOLD = 6;
 
-	// private List<Integer> selectedIndices = new ArrayList<>();
 	private List<Point> selectedInitialPositions = new ArrayList<>();
-	// private List<BendPoint> preMoveBendPoints = new ArrayList<>();
 	private Point preMoveStartHint = null;
 	private Point preMoveEndHint = null;
 	private boolean isSelectionHorizontal = false;
@@ -233,7 +230,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
 				"BendPlusHints");
 		fwdOp.add(new BendVisualOperation(getHost()));
-		fwdOp.add(new UpdateAnchorHintsOperation(getConnection()));
 		return fwdOp;
 	}
 
@@ -277,11 +273,11 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	}
 
 	/**
-	 * Returns an {@link BendVisualOperation} that is extracted from the operation
-	 * created by {@link #createOperation()}.
+	 * Returns an {@link BendVisualOperation} that is extracted from the
+	 * operation created by {@link #createOperation()}.
 	 *
-	 * @return an {@link BendVisualOperation} that is extracted from the operation
-	 *         created by {@link #createOperation()}.
+	 * @return an {@link BendVisualOperation} that is extracted from the
+	 *         operation created by {@link #createOperation()}.
 	 */
 	protected BendVisualOperation getBendOperation() {
 		return (BendVisualOperation) ((AbstractCompositeOperation) super.getOperation())
@@ -437,34 +433,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	}
 
 	/**
-	 * Computes the mouse movement delta (w.r.t. to the initial mouse position)
-	 * in local coordinates .
-	 *
-	 * @param initialMousePositionInScene
-	 *            The initial mouse position in scene coordinates.
-	 *
-	 * @param currentMousePositionInScene
-	 *            The current mouse position in scene coordinates.
-	 * @return The movement delta, translated into local coordinates of the
-	 *         connection
-	 *
-	 */
-	// TODO: extract to somewhere else (this is used in several places)
-	protected Point getMouseDeltaInLocal(Point initialMousePositionInScene,
-			Point currentMousePositionInScene) {
-		Point mouseInLocal = FX2Geometry.toPoint(getConnection().sceneToLocal(
-				Geometry2FX.toFXPoint(currentMousePositionInScene)));
-		// compensate the movement of the local coordinate system w.r.t. the
-		// scene coordinate system (the scene coordinate system stays consistent
-		// w.r.t. mouse movement)
-		Point deltaInLocal = mouseInLocal.getTranslated(FX2Geometry
-				.toPoint(getConnection().sceneToLocal(
-						Geometry2FX.toFXPoint(initialMousePositionInScene)))
-				.getNegated());
-		return deltaInLocal;
-	}
-
-	/**
 	 * Removes the overlay threshold, i.e. the distance between two points, so
 	 * that they are regarded as overlaying. When the background grid is enables
 	 * ( {@link GridModel#isShowGrid()}, then the grid cell size is used to
@@ -522,11 +490,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	public List<Point> getSelectedInitialPositions() {
 		return selectedInitialPositions;
-	}
-
-	private UpdateAnchorHintsOperation getUpdateHintsOperation() {
-		return (UpdateAnchorHintsOperation) ((AbstractCompositeOperation) super.getOperation())
-				.getOperations().get(1);
 	}
 
 	@Override
@@ -615,16 +578,15 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		}
 		// apply hints
 		if (usePreMoveHints) {
-			getUpdateHintsOperation().setNewHints(preMoveStartHint,
-					preMoveEndHint);
+			setNewHints(preMoveStartHint, preMoveEndHint);
 		} else {
 			Point newStartHint = computeStartHint();
 			Point newEndHint = computeEndHint();
-			getUpdateHintsOperation().setNewHints(newStartHint, newEndHint);
+			setNewHints(newStartHint, newEndHint);
 		}
 		// locally execute hints operation
 		try {
-			getUpdateHintsOperation().execute(null, null);
+			getBendOperation().execute(null, null);
 		} catch (Exception x) {
 			throw new IllegalStateException(x);
 		}
@@ -743,17 +705,25 @@ public class BendConnectionPolicy extends AbstractPolicy {
 			// restore initial pre-move explicit anchors
 			getBendOperation().setFinalBendPoints(preMoveBendPoints);
 			// restore initial pre-move hints
-			getUpdateHintsOperation().setNewHints(preMoveStartHint,
-					preMoveEndHint);
+			setNewHints(preMoveStartHint, preMoveEndHint);
 			usePreMoveHints = true;
 			locallyExecuteOperation();
 			usePreMoveHints = false;
 		}
 		// showAnchors("After Restore:");
 
+		// compensate the movement of the local coordinate system w.r.t. the
+		// scene coordinate system (the scene coordinate system stays consistent
+		// w.r.t. mouse movement)
+		Point mouseDeltaInLocal = FX2Geometry
+				.toPoint(getConnection().sceneToLocal(
+						Geometry2FX.toFXPoint(currentMouseInScene)))
+				.getTranslated(FX2Geometry
+						.toPoint(getConnection().sceneToLocal(
+								Geometry2FX.toFXPoint(initialMouseInScene)))
+						.getNegated());
+
 		// constrain movement in one direction for segment based connections
-		Point mouseDeltaInLocal = getMouseDeltaInLocal(initialMouseInScene,
-				currentMouseInScene);
 		if (isOrtho) {
 			if (isSelectionHorizontal) {
 				mouseDeltaInLocal.x = 0;
@@ -945,31 +915,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		selectedIndices.add(explicitAnchorIndex);
 	}
 
-	// private void showAnchors(String message) {
-	// List<BendPoint> newAnchors = getBendOperation().getFinalBendPoints();
-	// String anchorsString = "";
-	// for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
-	// .size(); i++) {
-	// BendPoint anchor = getConnection().getAnchor(i);
-	// if (getConnection().getRouter().wasInserted(anchor)) {
-	// anchorsString = anchorsString + " - "
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + "],\n";
-	// } else {
-	// anchorsString = anchorsString
-	// + (selectedIndices.contains(j) ? "(*)"
-	// : " * ")
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + " :: "
-	// + NodeUtils.localToScene(getConnection(),
-	// getConnection().getPoint(i))
-	// + "]" + " (" + newAnchors.get(j) + "),\n";
-	// j++;
-	// }
-	// }
-	// System.out.println(message + "\n" + anchorsString);
-	// }
-
 	/**
 	 * Selects the end points of the connection segment specified by the given
 	 * index. Makes the corresponding anchors explicit first and copies them if
@@ -1018,6 +963,54 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		// select the end anchors for manipulation
 		select(firstAnchorHandle);
 		select(secondAnchorHandle);
+	}
+
+	// private void showAnchors(String message) {
+	// List<BendPoint> newAnchors = getBendOperation().getFinalBendPoints();
+	// String anchorsString = "";
+	// for (int i = 0, j = 0; i < getConnection().getAnchorsUnmodifiable()
+	// .size(); i++) {
+	// BendPoint anchor = getConnection().getAnchor(i);
+	// if (getConnection().getRouter().wasInserted(anchor)) {
+	// anchorsString = anchorsString + " - "
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + "],\n";
+	// } else {
+	// anchorsString = anchorsString
+	// + (selectedIndices.contains(j) ? "(*)"
+	// : " * ")
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + " :: "
+	// + NodeUtils.localToScene(getConnection(),
+	// getConnection().getPoint(i))
+	// + "]" + " (" + newAnchors.get(j) + "),\n";
+	// j++;
+	// }
+	// }
+	// System.out.println(message + "\n" + anchorsString);
+	// }
+
+	/**
+	 * Updates the positions (hints) for attached bend points.
+	 *
+	 * @param startHint
+	 *            The new start point hint.
+	 * @param endHint
+	 *            The new end point hint.
+	 */
+	protected void setNewHints(Point startHint, Point endHint) {
+		List<BendPoint> finalBendPoints = getBendOperation()
+				.getFinalBendPoints();
+		BendPoint bendPoint = finalBendPoints.get(0);
+		if (bendPoint.isAttached() && startHint != null) {
+			finalBendPoints.set(0,
+					new BendPoint(bendPoint.getContentAnchorage(), startHint));
+		}
+		bendPoint = finalBendPoints.get(finalBendPoints.size() - 1);
+		if (bendPoint.isAttached() && endHint != null) {
+			finalBendPoints.set(finalBendPoints.size() - 1,
+					new BendPoint(bendPoint.getContentAnchorage(), endHint));
+		}
 	}
 
 	/**
