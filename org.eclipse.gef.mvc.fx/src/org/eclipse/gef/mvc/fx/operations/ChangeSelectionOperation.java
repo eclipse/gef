@@ -144,5 +144,4 @@ public class ChangeSelectionOperation extends AbstractOperation
 
 		return Status.OK_STATUS;
 	}
-
 }

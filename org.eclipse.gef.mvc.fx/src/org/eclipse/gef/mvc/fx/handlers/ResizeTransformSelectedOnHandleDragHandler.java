@@ -488,5 +488,4 @@ public class ResizeTransformSelectedOnHandleDragHandler extends AbstractHandler
 
 		return sel;
 	}
-
 }

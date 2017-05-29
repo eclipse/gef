@@ -163,17 +163,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandler.class);
 	}
 
-	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// single selection: resize relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ResizeTranslateFirstAnchorageOnHandleDragHandler.class);
-		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(RotateSelectedOnHandleDragHandler.class);
-
-		// multi selection: scale relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeTransformSelectedOnHandleDragHandler.class);
-	}
-
 	protected void bindGeometricCurvePartAdaptersInContentViewerContext(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hover on hover
