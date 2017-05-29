@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Fabian Steeg. All rights reserved. This program and
- * the accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
+ * Copyright (c) 2010, 2017 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse def License v1.0
+ * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * <p/>
+ *
  * Contributors:
- * Fabian Steeg
- * - initial API and implementation; see bug 277380
- * - custom outline labels, icons, and structure; see bug 452650
+ *    Fabian Steeg - initial API and implementation (bug #277380, #452650)
+ *    Tamas Miklossy (itemis AG) - minor refactorings
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.labeling;
 
@@ -23,6 +24,7 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode;
 import org.eclipse.gef.dot.internal.language.dot.NodeId;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.language.dot.Subgraph;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 
@@ -31,8 +33,8 @@ import com.google.inject.Inject;
 /**
  * Provides labels and icons for the different DOT EObjects.
  * 
- * see
- * http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse.support.html#label-provider
  */
 public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
@@ -86,13 +88,13 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	Object text(DotGraph graph) {
-		String name = graph.getName().toValue();
-		return styled((name != null ? name : "<?>") + ": Graph"); //$NON-NLS-1$ //$NON-NLS-2$
+		ID name = graph.getName();
+		return styled((name != null ? name.toValue() : "<?>") + ": Graph"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	Object text(Subgraph graph) {
-		String name = graph.getName().toValue();
-		return styled((name != null ? name : "<?>") + ": Subgraph"); //$NON-NLS-1$ //$NON-NLS-2$
+		ID name = graph.getName();
+		return styled((name != null ? name.toValue() : "<?>") + ": Subgraph"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	Object text(NodeStmt node) {

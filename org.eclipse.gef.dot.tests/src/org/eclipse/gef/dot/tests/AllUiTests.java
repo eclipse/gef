@@ -26,7 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotEscStringTests.class, DotHighlightingTests.class,
 		DotHighlightingCalculatorTests.class, DotValidatorTests.class,
 		DotContentAssistTests.class, DotBSplineInterpolatorTests.class,
-		DotHtmlLabelTests.class })
+		DotHtmlLabelTests.class, DotOutlineViewTests.class })
 public class AllUiTests {
 
 }
