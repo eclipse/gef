@@ -580,21 +580,23 @@ public interface IBendableContentPart<V extends Node>
 
 	@Override
 	default void setVisualSize(Dimension totalSize) {
+		List<BendPoint> visualBendPoints = getVisualBendPoints();
 		// determine visual offset
-		// FIXME: optimize: getVisualTransform() calls getVisualBendPoints()
-		Affine visualTransform = getVisualTransform();
+		Affine visualTransform = BendPoint.computeTranslation(visualBendPoints);
 		double currentX = visualTransform.getTx();
 		double currentY = visualTransform.getTy();
 		// resize visual bend points
-		List<BendPoint> resizedBendPoints = BendPoint.resize(
-				getVisualBendPoints(), currentX, currentY, getVisualSize(),
+		List<BendPoint> resizedBendPoints = BendPoint.resize(visualBendPoints,
+				currentX, currentY, BendPoint.computeSize(visualBendPoints),
 				totalSize);
 		setVisualBendPoints(resizedBendPoints);
 	}
 
 	@Override
 	default void setVisualTransform(Affine totalTransform) {
-		setVisualBendPoints(BendPoint.transform(getVisualBendPoints(),
-				getVisualTransform(), totalTransform));
+		List<BendPoint> visualBendPoints = getVisualBendPoints();
+		setVisualBendPoints(BendPoint.transform(visualBendPoints,
+				BendPoint.computeTranslation(visualBendPoints),
+				totalTransform));
 	}
 }
