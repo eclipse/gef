@@ -34,7 +34,7 @@ import com.google.inject.Inject;
  * Provides labels and icons for the different DOT EObjects.
  * 
  * See
- * https://www.eclipse.org/Xtext/documentation/310_eclipse.support.html#label-provider
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  */
 public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
