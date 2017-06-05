@@ -43,6 +43,7 @@ import org.eclipse.gef.dot.internal.language.point.PointFactory;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.ranktype.RankType;
 import org.eclipse.gef.dot.internal.language.rect.Rect;
+import org.eclipse.gef.dot.internal.language.rect.RectFactory;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
@@ -1154,6 +1155,7 @@ public class DotAttributesTests {
 		assertNull(DotAttributes.getBb(graph));
 		assertNull(DotAttributes.getBbParsed(graph));
 
+		// set valid string values
 		DotAttributes.setBb(graph, "39.631,558,111.63,398");
 		assertEquals("39.631,558,111.63,398", DotAttributes.getBb(graph));
 
@@ -1163,6 +1165,15 @@ public class DotAttributesTests {
 		assertEquals(r.getLly(), 558d, 0d);
 		assertEquals(r.getUrx(), 111.63d, 0d);
 		assertEquals(r.getUry(), 398d, 0d);
+
+		// set valid parsed values
+		Rect bb = RectFactory.eINSTANCE.createRect();
+		bb.setLlx(10.1);
+		bb.setLly(20.2);
+		bb.setUrx(30.3);
+		bb.setUry(40.4);
+		DotAttributes.setBbParsed(graph, bb);
+		assertEquals("10.1 , 20.2 , 30.3 , 40.4", DotAttributes.getBb(graph));
 
 		// set invalid string values
 		try {
