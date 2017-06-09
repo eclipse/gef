@@ -48,7 +48,8 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 			return;
 		treeLayout.internalApplyLayout(layoutContext);
 		Node[] entities = layoutContext.getNodes();
-		Rectangle bounds = LayoutProperties.getBounds(layoutContext.getGraph());
+		Rectangle bounds = LayoutProperties.getBounds(layoutContext.getGraph())
+				.getCopy();
 		computeRadialPositions(entities, bounds);
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
