@@ -483,14 +483,14 @@ public abstract class AbstractContentPart<V extends Node>
 	public void reorderContentChild(Object contentChild, int newIndex) {
 		List<Object> oldContentChildren = new ArrayList<>(
 				doGetContentChildren());
-		if (oldContentChildren.contains(contentChild)) {
+		if (!oldContentChildren.contains(contentChild)) {
 			throw new IllegalArgumentException("Cannot reorder " + contentChild
-					+ " because its not a content child.");
+					+ " because it is not a content child.");
 		}
 		if (oldContentChildren.indexOf(contentChild) == newIndex) {
 			throw new IllegalArgumentException(
 					"Cannot reorder " + contentChild + " to given index + "
-							+ newIndex + ", because its already there.");
+							+ newIndex + ", because it is already there.");
 		}
 		doReorderContentChild(contentChild, newIndex);
 		// check doReorderContentChild(Object, int) does not violate
