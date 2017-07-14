@@ -57,19 +57,19 @@
    <feature url="features/org.eclipse.gef.graph.sdk_5.0.0.qualifier.jar" id="org.eclipse.gef.graph.sdk" version="5.0.0.qualifier">
       <category name="GEF Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.fx_5.0.0.qualifier.jar" id="org.eclipse.gef.mvc.fx" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.mvc.fx_5.0.1.qualifier.jar" id="org.eclipse.gef.mvc.fx" version="5.0.1.qualifier">
       <category name="GEF MVC"/>
    </feature>
    <feature url="features/org.eclipse.gef.mvc.fx.ui_5.0.0.qualifier.jar" id="org.eclipse.gef.mvc.fx.ui" version="5.0.0.qualifier">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.doc_5.0.0.qualifier.jar" id="org.eclipse.gef.mvc.doc" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.mvc.doc_5.0.1.qualifier.jar" id="org.eclipse.gef.mvc.doc" version="5.0.1.qualifier">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.sdk_5.0.0.qualifier.jar" id="org.eclipse.gef.mvc.sdk" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.mvc.sdk_5.0.1.qualifier.jar" id="org.eclipse.gef.mvc.sdk" version="5.0.1.qualifier">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.examples.source_5.0.0.qualifier.jar" id="org.eclipse.gef.mvc.examples.source" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.mvc.examples.source_5.0.1.qualifier.jar" id="org.eclipse.gef.mvc.examples.source" version="5.0.1.qualifier">
       <category name="GEF MVC"/>
    </feature>
    <feature url="features/org.eclipse.gef.zest.fx.jface_5.0.0.qualifier.jar" id="org.eclipse.gef.zest.fx.jface" version="5.0.0.qualifier">
@@ -126,7 +126,7 @@
    <feature url="features/org.eclipse.gef.fx.compatibility.equinox_5.0.0.qualifier.jar" id="org.eclipse.gef.fx.compatibility.equinox" version="5.0.0.qualifier">
       <category name="Equinox Compatibility Patches (GEF FX, GEF MVC, GEF MVC.FX, GEF Zest.FX)"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.fx.compatibility.equinox_5.0.0.qualifier.jar" id="org.eclipse.gef.mvc.fx.compatibility.equinox" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.mvc.fx.compatibility.equinox_5.0.1.qualifier.jar" id="org.eclipse.gef.mvc.fx.compatibility.equinox" version="5.0.1.qualifier">
       <category name="Equinox Compatibility Patches (GEF FX, GEF MVC, GEF MVC.FX, GEF Zest.FX)"/>
    </feature>
    <feature url="features/org.eclipse.gef.zest.fx.compatibility.equinox_5.0.0.qualifier.jar" id="org.eclipse.gef.zest.fx.compatibility.equinox" version="5.0.0.qualifier">
