@@ -65,12 +65,6 @@ public class CustomNodeExample extends AbstractZestExample {
 
 	public static class CustomModule extends ZestFxModule {
 
-		@Override
-		protected void configure() {
-			super.configure();
-			bindIContentPartFactory();
-		}
-
 		protected void bindIContentPartFactory() {
 			binder().bind(IContentPartFactory.class)
 					.toInstance(new CustomContentPartFactory());
