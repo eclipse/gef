@@ -16,7 +16,7 @@ Export-Package: org.eclipse.gef.mvc.fx;uses:="com.google.inject.multibindings",
  org.eclipse.gef.mvc.fx.policies,
  org.eclipse.gef.mvc.fx.providers;uses:="com.google.inject",
  org.eclipse.gef.mvc.fx.viewer
-Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
+Require-Bundle: org.eclipse.osgi;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)",

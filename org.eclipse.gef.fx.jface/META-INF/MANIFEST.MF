@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF FX.JFace
 Bundle-SymbolicName: org.eclipse.gef.fx.jface
-Bundle-Version: 5.0.0.qualifier
+Bundle-Version: 5.0.1.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)",
- org.eclipse.jface;bundle-version="[3.10.0,4.0.0)",
+Require-Bundle: org.eclipse.swt;bundle-version="[3.100.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.gef.fx.swt;bundle-version="[5.0.0,6.0.0)"
 Export-Package: org.eclipse.gef.fx.jface

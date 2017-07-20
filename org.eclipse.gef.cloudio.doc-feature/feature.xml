@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.cloudio.doc"
       label="GEF Cloudio Developer Documentation"
-      version="5.0.0.qualifier"
+      version="5.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.cloudio.doc"
       license-feature="org.eclipse.license"
@@ -25,9 +25,9 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
 
    <plugin

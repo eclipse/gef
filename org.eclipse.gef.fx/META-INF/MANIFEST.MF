@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF FX
 Bundle-SymbolicName: org.eclipse.gef.fx
-Bundle-Version: 5.0.0.qualifier
+Bundle-Version: 5.0.1.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.fx,
@@ -10,7 +10,7 @@ Export-Package: org.eclipse.gef.fx,
  org.eclipse.gef.fx.listeners,
  org.eclipse.gef.fx.nodes,
  org.eclipse.gef.fx.utils
-Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
+Require-Bundle: org.eclipse.osgi;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.gef.geometry;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.gef.geometry.convert.fx;bundle-version="[5.0.0,6.0.0)"

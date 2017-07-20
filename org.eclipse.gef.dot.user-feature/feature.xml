@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.dot.user"
       label="GEF DOT End-User Tools"
-      version="5.0.0.qualifier"
+      version="5.0.1.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -48,7 +48,7 @@
 
    <requires>
       <import feature="org.eclipse.gef.common" version="5.0.0" match="compatible"/>
-   	  <import feature="org.eclipse.gef.geometry" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.geometry" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.fx" version="5.0.0" match="compatible"/>

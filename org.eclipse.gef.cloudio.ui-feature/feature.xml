@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.cloudio.ui"
       label="GEF Cloudio.UI"
-      version="5.0.0.qualifier"
+      version="5.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.cloudio.ui"
       license-feature="org.eclipse.license"
