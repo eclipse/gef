@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="OXYGEN" sequenceNumber="26">
+<?pde version="3.8"?><target name="OXYGEN" sequenceNumber="27">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
-<unit id="com.google.guava.source" version="21.0.0.v20170206-1425"/>
-<unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
-<unit id="com.google.inject" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
-<unit id="com.google.guava" version="21.0.0.v20170206-1425"/>
-<unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
-<repository location="http://download.eclipse.org/tools/orbit/R-builds/R20170516192513/repository"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
 <repository location="http://download.itemis.com/updates/releases/2.1.1"/>
@@ -26,6 +15,18 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="com.google.guava.source" version="21.0.0.v20170206-1425"/>
+<unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
+<unit id="javax.xml" version="1.3.4.v201005080400"/>
+<unit id="com.google.guava" version="21.0.0.v20170206-1425"/>
+<unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
+<repository location="http://download.eclipse.org/tools/orbit/R-builds/R20170516192513/repository"/>
 </location>
 </locations>
 </target>
