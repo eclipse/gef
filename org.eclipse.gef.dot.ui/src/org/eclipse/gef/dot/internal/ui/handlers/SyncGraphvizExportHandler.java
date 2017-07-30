@@ -47,6 +47,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
@@ -216,6 +217,15 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 	}
 
 	private void exportGraph(IFile inputFile) {
+		/**
+		 * do not try to export an empty dot file
+		 */
+		boolean isEmpty = "0  bytes" //$NON-NLS-1$
+				.equals(IDEResourceInfoUtils.getSizeString(inputFile));
+		if (isEmpty) {
+			return;
+		}
+
 		File resolvedInputFile = null;
 		try {
 			resolvedInputFile = DotFileUtils
