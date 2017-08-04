@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 itemis AG and others.
+ * Copyright (c) 2015, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
+ *     Tamas Miklossy   (itemis AG) - documentation improvements
  *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx;
@@ -31,9 +32,9 @@ import com.google.inject.Provider;
 import javafx.scene.image.Image;
 
 /**
- * The {@link ZestProperties} class contains a definition of attributes
+ * The {@link ZestProperties} class contains the definition of the attributes
  * (including their default values) that are evaluated by Zest.FX. It also
- * provides type-safe utility methods to set and get attribute values.
+ * provides type-safe utility methods to get and set the attribute values.
  *
  * @author mwienand
  *
@@ -42,7 +43,7 @@ public class ZestProperties {
 
 	/**
 	 * This attribute determines if an element (node/edge) should be ignored by
-	 * automatic layout.
+	 * the automatic layout.
 	 *
 	 * @see #getLayoutIrrelevant(Edge)
 	 * @see #getLayoutIrrelevant(Node)
@@ -52,7 +53,7 @@ public class ZestProperties {
 	public static final String LAYOUT_IRRELEVANT__NE = "element-layout-irrelevant";
 
 	/**
-	 * This attribute determines if the corresponding element is invisible.
+	 * This attribute determines if an element (node/edge) is invisible.
 	 *
 	 * @see #getInvisible(Edge)
 	 * @see #getInvisible(Node)
@@ -158,8 +159,8 @@ public class ZestProperties {
 	public static final String SHAPE__N = "node-shape";
 
 	/**
-	 * This attribute determines the CSS style for a node rectangle. This
-	 * attribute does not have a default value.
+	 * This attribute determines the CSS style for a node shape. This attribute
+	 * does not have a default value.
 	 *
 	 * @see #getShapeCssStyle(Node)
 	 * @see #setShapeCssStyle(Node, String)
@@ -167,8 +168,8 @@ public class ZestProperties {
 	public static final String SHAPE_CSS_STYLE__N = "node-rect-css-style";
 
 	/**
-	 * This attribute determines the CSS style for a node or edge label. This
-	 * attribute does not have a default value.
+	 * This attribute determines the CSS style for an element (node/edge) label.
+	 * This attribute does not have a default value.
 	 *
 	 * @see #getLabelCssStyle(Node)
 	 * @see #getLabelCssStyle(Edge)
@@ -196,8 +197,8 @@ public class ZestProperties {
 	public static final String TARGET_LABEL_CSS_STYLE__E = "edge-target-label-css-style";
 
 	/**
-	 * This attribute determines the CSS style for an external node or edge
-	 * label. This attribute does not have a default value.
+	 * This attribute determines the CSS style for an external label of an
+	 * element (node/edge). This attribute does not have a default value.
 	 *
 	 * @see #getExternalLabelCssStyle(Node)
 	 * @see #getExternalLabelCssStyle(Edge)
@@ -207,13 +208,14 @@ public class ZestProperties {
 	public static final String EXTERNAL_LABEL_CSS_STYLE__NE = "element-external-label-css-style";
 
 	/**
-	 * This attribute determines the (optional) external label of a node.
+	 * This attribute determines the (optional) external label of an element
+	 * (node/edge).
 	 */
 	public static final String EXTERNAL_LABEL__NE = "element-external-label";
 
 	/**
-	 * This attribute determines the position of a node's external label (in
-	 * case it exists).
+	 * This attribute determines the position of an element (node/edge)'s
+	 * external label (in case it exists).
 	 */
 	public static final String EXTERNAL_LABEL_POSITION__NE = "element-external-label-position";
 
@@ -245,7 +247,7 @@ public class ZestProperties {
 	public static final String ICON__N = "node-icon";
 
 	/**
-	 * This attribute determines the size for a {@link Node}.
+	 * This attribute determines the size for a node.
 	 *
 	 * @see #getSize(Node)
 	 * @see #setSize(Node, Dimension)
@@ -253,7 +255,7 @@ public class ZestProperties {
 	public static final String SIZE__N = "node-size";
 
 	/**
-	 * This attribute determines the position for a {@link Node}.
+	 * This attribute determines the position for a node.
 	 *
 	 * @see #getPosition(Node)
 	 * @see #setPosition(Node, Point)
@@ -417,10 +419,10 @@ public class ZestProperties {
 
 	/**
 	 * Returns the value of the {@link #CURVE__E} attribute of the given
-	 * {@link Node}.
+	 * {@link Edge}.
 	 *
 	 * @param edge
-	 *            The {@link Node} for which to return the value of its
+	 *            The {@link Edge} for which to return the value of its
 	 *            {@link #CURVE__E} attribute.
 	 * @return A {@link javafx.scene.Node} that represents the visualization of
 	 *         the edge.
@@ -519,7 +521,7 @@ public class ZestProperties {
 	 *
 	 * @param node
 	 *            The {@link Node} of which the label CSS style is determined.
-	 * @return The label CSS style of the given {@link Edge}.
+	 * @return The label CSS style of the given {@link Node}.
 	 */
 	public static String getExternalLabelCssStyle(Node node) {
 		Object value = node.attributesProperty().get(EXTERNAL_LABEL_CSS_STYLE__NE);
@@ -597,9 +599,7 @@ public class ZestProperties {
 
 	/**
 	 * Returns the value of the {@link #INVISIBLE__NE} attribute of the given
-	 * {@link Edge}. If the attribute is not set for the given {@link Edge},
-	 * either the default attribute value is returned, or <code>null</code>,
-	 * depending on the <i>returnDefaultIfMissing</i> flag.
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the {@link #INVISIBLE__NE} attribute
@@ -617,9 +617,7 @@ public class ZestProperties {
 
 	/**
 	 * Returns the value of the {@link #INVISIBLE__NE} attribute of the given
-	 * {@link Node}. If the attribute is not set for the given {@link Node},
-	 * either the default attribute value is returned, or <code>null</code>,
-	 * depending on the <i>returnDefaultIfMissing</i> flag.
+	 * {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the {@link #INVISIBLE__NE} attribute
@@ -738,9 +736,7 @@ public class ZestProperties {
 
 	/**
 	 * Returns the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
-	 * given {@link Edge}. If the attribute is not set for the given
-	 * {@link Edge}, either the default attribute value is returned, or
-	 * <code>null</code>, depending on the <i>returnDefaultIfMissing</i> flag.
+	 * given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the layout irrelevant flag is
@@ -757,12 +753,10 @@ public class ZestProperties {
 
 	/**
 	 * Returns the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
-	 * given {@link Node}. If the attribute is not set for the given
-	 * {@link Node}, either the default attribute value is returned, or
-	 * <code>null</code>, depending on the <i>returnDefaultIfMissing</i> flag.
+	 * given {@link Node}.
 	 *
 	 * @param node
-	 *            The {@link Edge} of which the layout irrelevant flag is
+	 *            The {@link Node} of which the layout irrelevant flag is
 	 *            determined.
 	 * @return The layout irrelevant flag of the given {@link Node}.
 	 */
@@ -1260,7 +1254,7 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SHAPE__N} attribute of the given
+	 * Sets the value of the {@link #CURVE__E} attribute of the given
 	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
