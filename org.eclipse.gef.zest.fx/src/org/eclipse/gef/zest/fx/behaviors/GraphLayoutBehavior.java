@@ -195,6 +195,11 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 			 * Our graph is the root graph, therefore we listen to viewport
 			 * changes to update the layout bounds in the context accordingly.
 			 */
+			// XXX: Window can be null when the viewportBoundsChangeListener is
+			// notified about a bounds change. Unfortunately, the corresponding
+			// windowProperty is only changed afterwards. Therefore, we cannot
+			// prevent that bounds changes are processed even though the window
+			// is null.
 			getInfiniteCanvas().scrollableBoundsProperty().addListener(viewportBoundsChangeListener);
 		} else {
 			/*
@@ -350,6 +355,11 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 * Updates the bounds property from the visual (viewport or nesting node)
 	 */
 	protected void updateBounds() {
+		// XXX: Prevent bounds updates when the scene is not rendered.
+		if (getHost().getVisual().getScene().getWindow() == null) {
+			return;
+		}
+
 		Rectangle newBounds = computeLayoutBounds();
 		Rectangle oldBounds = LayoutProperties.getBounds(getHost().getContent());
 		if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
