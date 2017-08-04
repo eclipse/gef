@@ -18,6 +18,7 @@ package org.eclipse.gef.dot.internal.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -31,6 +32,8 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotExtractor;
@@ -50,6 +53,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -270,6 +274,14 @@ public class DotGraphView extends ZestFxUiView {
 										Status.ERROR, DotActivator.getInstance()
 												.getBundle().getSymbolicName(),
 										message));
+						// whenever the dot file could not be imported,
+						// show the exception information to the user within an
+						// error dialog (not only in the error log)
+						MultiStatus status = createMultiStatus(
+								e.getLocalizedMessage(), e);
+						ErrorDialog.openError(getViewSite().getShell(), "Error", //$NON-NLS-1$
+								"Could not import DOT", status); //$NON-NLS-1$
+
 						return;
 					}
 					resourceLabel.setText(
@@ -278,6 +290,22 @@ public class DotGraphView extends ZestFxUiView {
 											: " [emulated]")); //$NON-NLS-1$
 					resourceLabel.setToolTipText(file.getAbsolutePath());
 				}
+			}
+
+			private MultiStatus createMultiStatus(String localizedMessage,
+					Throwable t) {
+				List<Status> childStatuses = new ArrayList<>();
+
+				String pluginId = DotActivator.getInstance().getBundle()
+						.getSymbolicName();
+
+				Status status = new Status(IStatus.ERROR, pluginId, dot);
+				childStatuses.add(status);
+
+				MultiStatus ms = new MultiStatus(pluginId, IStatus.ERROR,
+						childStatuses.toArray(new Status[] {}), t.toString(),
+						t);
+				return ms;
 			}
 		});
 
