@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.labeling;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
@@ -104,10 +105,17 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	Object text(EdgeStmtNode edge) {
 		String format = "%s %s [%s %s]: Edges"; //$NON-NLS-1$
 		String sourceNode = edge.getNode().getName().toValue();
-		String opLiteral = edge.getEdgeRHS().get(0).getOp().getLiteral();
-		int targetNodeCount = edge.getEdgeRHS().size();
-		return styled(String.format(format, sourceNode, opLiteral,
-				targetNodeCount, targetNodeCount > 1 ? "Nodes" : "Node")); //$NON-NLS-1$//$NON-NLS-2$
+		EList<EdgeRhs> edgeRHS = edge.getEdgeRHS();
+		// The label provider (used e.g. within the outline view) should be able
+		// to cope with incomplete statements
+		if (edgeRHS != null && edgeRHS.size() > 0) {
+			String opLiteral = edge.getEdgeRHS().get(0).getOp().getLiteral();
+			int targetNodeCount = edge.getEdgeRHS().size();
+			return styled(String.format(format, sourceNode, opLiteral,
+					targetNodeCount, targetNodeCount > 1 ? "Nodes" : "Node")); //$NON-NLS-1$//$NON-NLS-2$
+		} else {
+			return "<?>: Edges"; //$NON-NLS-1$
+		}
 	}
 
 	Object text(AttrStmt attr) {

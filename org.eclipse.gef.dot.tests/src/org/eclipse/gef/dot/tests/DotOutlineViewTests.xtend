@@ -52,6 +52,36 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
+	@Test
+	def void testCompleteEdge(){
+		'''
+			graph {
+				1--2
+			}
+		'''.assertAllLabels('''
+			test.dot: File
+			  <?>: Graph
+			    1 -- [1 Node]: Edges
+			      1: Node
+			      undirected -- 2: Node
+		''')
+	}
+	
+	@Test
+	def void testIncompleteEdge(){
+		// The outline view should be able to cope with incomplete statements
+		'''
+			graph {
+				1--
+			}
+		'''.assertAllLabels('''
+			test.dot: File
+			  <?>: Graph
+			    <?>: Edges
+			      1: Node
+		''')
+	}
+
 	override protected getEditorId() {
 		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
 	}
