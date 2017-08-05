@@ -1,0 +1,66 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse def License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.gef.dot.internal.ui.language.labeling;
+
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
+
+import com.google.inject.Inject;
+
+/**
+ * Provides labels for a EObjects.
+ * 
+ * see http://www.eclipse.org/Xtext/documentation.html#labelProvider
+ */
+public class DotHtmlLabelLabelProvider
+		extends org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider {
+
+	@Inject
+	public DotHtmlLabelLabelProvider(
+			org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider delegate) {
+		super(delegate);
+	}
+
+	String image(HtmlTag htmlTag) {
+		return "html_tag.png"; //$NON-NLS-1$
+	}
+
+	String image(HtmlAttr htmlAttr) {
+		return "attribute.png"; //$NON-NLS-1$
+	}
+
+	String image(HtmlContent htmlContent) {
+		return "html_text.png"; //$NON-NLS-1$
+	}
+
+	Object text(HtmlTag htmlTag) {
+		String format = htmlTag.isSelfClosing() ? "<%s/>: Tag" //$NON-NLS-1$
+				: "<%s>: Tag"; //$NON-NLS-1$
+		return DotLabelProvider
+				.styled(String.format(format, htmlTag.getName()));
+	}
+
+	Object text(HtmlAttr htmlAttr) {
+		String format = "%s = %s: Attribute"; //$NON-NLS-1$
+		return DotLabelProvider.styled(
+				String.format(format, htmlAttr.getName(), htmlAttr.getValue()));
+	}
+
+	Object text(HtmlContent htmlContent) {
+		String format = "%s: Text"; //$NON-NLS-1$
+		String text = htmlContent.getText() == null ? "" //$NON-NLS-1$
+				: htmlContent.getText().trim();
+
+		return DotLabelProvider.styled(String.format(format, text));
+	}
+}

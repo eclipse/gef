@@ -25,6 +25,9 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode;
 import org.eclipse.gef.dot.internal.language.dot.NodeId;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.language.dot.Subgraph;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
@@ -84,6 +87,18 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		return "rhs.png"; //$NON-NLS-1$
 	}
 
+	String image(HtmlTag htmlTag) {
+		return "html_tag.png"; //$NON-NLS-1$
+	}
+
+	String image(HtmlAttr htmlAttr) {
+		return "attribute.png"; //$NON-NLS-1$
+	}
+
+	String image(HtmlContent htmlContent) {
+		return "html_text.png"; //$NON-NLS-1$
+	}
+
 	Object text(DotAst model) {
 		return styled(model.eResource().getURI().lastSegment() + ": File"); //$NON-NLS-1$
 	}
@@ -126,7 +141,10 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
 	Object text(Attribute attr) {
 		String format = "%s = %s: Attribute"; //$NON-NLS-1$
-		return styled(String.format(format, attr.getName(), attr.getValue()));
+		ID attributeValue = attr.getValue();
+		String displayValue = attributeValue.getType() == ID.Type.HTML_STRING
+				? "<HTML-Label>" : attributeValue.toString(); //$NON-NLS-1$
+		return styled(String.format(format, attr.getName(), displayValue));
 	}
 
 	Object text(AttrList attrs) {
@@ -151,7 +169,27 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		return styled(String.format(format, name, literal, targetNodeText));
 	}
 
-	private static StyledString styled(String format) {
+	Object text(HtmlTag htmlTag) {
+		String format = htmlTag.isSelfClosing() ? "<%s/>: Tag" //$NON-NLS-1$
+				: "<%s>: Tag"; //$NON-NLS-1$
+		return styled(String.format(format, htmlTag.getName()));
+	}
+
+	Object text(HtmlAttr htmlAttr) {
+		String format = "%s = %s: Attribute"; //$NON-NLS-1$
+		return styled(
+				String.format(format, htmlAttr.getName(), htmlAttr.getValue()));
+	}
+
+	Object text(HtmlContent htmlContent) {
+		String format = "%s: Text"; //$NON-NLS-1$
+		String text = htmlContent.getText() == null ? "" //$NON-NLS-1$
+				: htmlContent.getText().trim();
+
+		return styled(String.format(format, text));
+	}
+
+	static StyledString styled(String format) {
 		StyledString styled = new StyledString(format);
 		int offset = format.indexOf(':');
 		styled.setStyle(offset, format.length() - offset,
