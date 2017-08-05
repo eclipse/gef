@@ -31,11 +31,9 @@ import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
-import org.eclipse.gef.dot.internal.language.dot.AttrStmt;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
-import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
@@ -48,6 +46,7 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
+import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
@@ -400,17 +399,20 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		}
 	}
 
-	// TODO: add color constants to delegate color proposal provider
 	private void proposeColorAttributeValues(Attribute attribute,
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
+		// give the DotColorProposalProvider the necessary 'global' information
+		DotColorProposalProvider.globalColorScheme = DotAstHelper
+				.getColorSchemeAttributeValue(attribute);
+
 		// propose color values based on the DotColor sub-grammar
 		proposeAttributeValues(
 				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLOR,
 				context, acceptor);
-		// propose color values based on the current color scheme
-		List<String> validColorNames = getColorNames(attribute);
-		proposeAttributeValues(validColorNames, context, acceptor);
+
+		// reset the state of the DotColorProposalProvider
+		DotColorJavaValidator.globalColorScheme = null;
 	}
 
 	private void proposeHtmlLabelAttributeValues(Attribute attribute,
@@ -473,54 +475,5 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		dotAttributeNames.put(Context.GRAPH, graphAttributeNames);
 		dotAttributeNames.put(Context.NODE, nodeAttributeNames);
 		return dotAttributeNames;
-	}
-
-	private List<String> getColorNames(Attribute attribute) {
-		// attribute nested below EdgeStmtNode
-		EObject container = EcoreUtil2.getContainerOfType(attribute,
-				EdgeStmtNode.class);
-		if (container != null) {
-			ID colorScheme = DotAstHelper.getAttributeValue(
-					((EdgeStmtNode) container).getAttrLists(),
-					DotAttributes.COLORSCHEME__GCNE);
-			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme.toValue());
-			}
-		}
-
-		// attribute nested below NodeStmt
-		container = EcoreUtil2.getContainerOfType(attribute, NodeStmt.class);
-		if (container != null) {
-			ID colorScheme = DotAstHelper.getAttributeValue(
-					((NodeStmt) container).getAttrLists(),
-					DotAttributes.COLORSCHEME__GCNE);
-			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme.toValue());
-			}
-		}
-
-		// attribute nested below Graph
-		container = EcoreUtil2.getContainerOfType(attribute, DotGraph.class);
-		if (container != null) {
-			ID colorScheme = DotAstHelper.getAttributeValue(
-					(DotGraph) container, DotAttributes.COLORSCHEME__GCNE);
-			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme.toValue());
-			}
-		}
-
-		// global AttrStmt
-		AttrStmt attrStmt = EcoreUtil2.getContainerOfType(attribute,
-				AttrStmt.class);
-		if (attrStmt != null) {
-			ID colorScheme = DotAstHelper.getAttributeValue(
-					attrStmt.getAttrLists(), DotAttributes.COLORSCHEME__GCNE);
-			if (colorScheme != null) {
-				return DotColors.getColorNames(colorScheme.toValue());
-			}
-		}
-
-		// return the default color scheme
-		return DotColors.getColorNames("x11"); //$NON-NLS-1$
 	}
 }

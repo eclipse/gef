@@ -63,9 +63,16 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		String attributeName = attribute.getName().toValue();
 		ID attributeValue = attribute.getValue();
 
+		// give the DotColorValidator the necessary 'global' information
+		DotColorJavaValidator.globalColorScheme = DotAstHelper
+				.getColorSchemeAttributeValue(attribute);
+
 		List<Diagnostic> diagnostics = DotAttributes.validateAttributeRawValue(
 				DotAttributes.getContext(attribute), attributeName,
 				attributeValue);
+
+		// reset the state of the DotColorValidator
+		DotColorJavaValidator.globalColorScheme = null;
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(attribute,
 				DotPackage.Literals.ATTRIBUTE__VALUE);

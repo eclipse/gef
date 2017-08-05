@@ -401,6 +401,20 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"azure3", "azure4")
 				.applyProposal(27, "azure2")
 				.expectContent("digraph {1->2[ color=\"azure2\" ]}");
+
+		// test local attribute value with local color scheme value
+		newBuilder().append("graph{1--2[color=; colorscheme=brbg10]}")
+				.assertTextAtCursorPosition(17, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10")
+				.applyProposal(17, "10")
+				.expectContent("graph{1--2[color=10; colorscheme=brbg10]}");
+
+		// test local attribute value with global color scheme value
+		newBuilder().append("graph{edge[colorscheme=brbg10] 1--2[color=]}")
+				.assertTextAtCursorPosition(42, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10")
+				.applyProposal(42, "10").expectContent(
+						"graph{edge[colorscheme=brbg10] 1--2[color=10]}");
 	}
 
 	@Test
@@ -619,6 +633,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						combine(expectedSvgColorNames, "#", "/"))
 				.applyProposal(46, "/").expectContent(
 						"digraph {1->2[ colorscheme=svg labelfontcolor=/ ]}");
+
+		// test local attribute values (case insensitive color scheme)
+		newBuilder().append("digraph {1->2[ colorscheme=SVG labelfontcolor= ]}")
+				.assertTextAtCursorPosition(46,
+						combine(expectedSvgColorNames, "#", "/"))
+				.applyProposal(46, "/").expectContent(
+						"digraph {1->2[ colorscheme=SVG labelfontcolor=/ ]}");
 
 		// test local attribute values with quotes
 		newBuilder()
@@ -892,6 +913,20 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"darkslategrey", "darkturquoise", "darkviolet")
 				.applyProposal(37, "darkturquoise").expectContent(
 						"graph { colorscheme=svg bgcolor=\"darkturquoise\" }");
+
+		// test local attribute value with local color scheme value
+		newBuilder().append("graph{colorscheme=brbg10 bgcolor= 1}")
+				.assertTextAtCursorPosition(33, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10")
+				.applyProposal(33, "10")
+				.expectContent("graph{colorscheme=brbg10 bgcolor=10 1}");
+
+		// test local attribute value with global color scheme value
+		newBuilder().append("graph{graph[colorscheme=brbg10] bgcolor= 1}")
+				.assertTextAtCursorPosition(40, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10")
+				.applyProposal(40, "10")
+				.expectContent("graph{graph[colorscheme=brbg10] bgcolor=10 1}");
 	}
 
 	@Test
@@ -1330,6 +1365,20 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"lightsteelblue3", "lightsteelblue4")
 				.applyProposal(23, "lightskyblue")
 				.expectContent("graph {1[ color=\"lightskyblue\" ]}");
+
+		// test local attribute value with local color scheme value
+		newBuilder().append("graph{1[colorscheme=brbg10 color=]}")
+				.assertTextAtCursorPosition(33, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10")
+				.applyProposal(33, "10")
+				.expectContent("graph{1[colorscheme=brbg10 color=10]}");
+
+		// test local attribute value with global color scheme value
+		newBuilder().append("graph{node[colorscheme=brbg10] 1[color=]}")
+				.assertTextAtCursorPosition(39, "#", "/", "1", "2", "3", "4",
+						"5", "6", "7", "8", "9", "10")
+				.applyProposal(39, "10")
+				.expectContent("graph{node[colorscheme=brbg10] 1[color=10]}");
 	}
 
 	@Test
@@ -1461,7 +1510,13 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {1[ fontcolor=\"/accent3/\" ]}")
 				.assertTextAtCursorPosition(30, "/", "1", "2", "3")
 				.applyProposal(30, "1")
-				.expectContent("graph {1[ fontcolor=\"/accent3/1\" ]}"); //
+				.expectContent("graph {1[ fontcolor=\"/accent3/1\" ]}");
+
+		// test local attribute values with quotes (case insensitively)
+		newBuilder().append("graph {1[ fontcolor=\"/ACCENT3/\" ]}")
+				.assertTextAtCursorPosition(30, "/", "1", "2", "3")
+				.applyProposal(30, "1")
+				.expectContent("graph {1[ fontcolor=\"/ACCENT3/1\" ]}");
 
 		// test local attribute values with prefix
 		newBuilder().append("graph {1[ colorscheme=svg fontcolor=w ]}")

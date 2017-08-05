@@ -267,6 +267,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testColorSchemeGraph() {
+		testFile("colorscheme.dot");
+	}
+
+	@Test
 	public void testHtmlLikeLabels1() {
 		testFile("html_like_labels1.dot");
 	}
@@ -284,6 +289,24 @@ public class DotParserTests {
 	@Test
 	public void testHtmlLikeLabels4() {
 		testFile("html_like_labels4.dot");
+	}
+
+	@Test
+	public void testGraphColorWithCustomColorScheme() {
+		testString("graph{graph[colorscheme=brbg10] bgcolor=5 1}");
+		testString("graph{colorscheme=brbg10 bgcolor=5 1}");
+	}
+
+	@Test
+	public void testNodeColorWithCustomColorScheme() {
+		testString("graph{node[colorscheme=brbg10] 1[color=5]}");
+		testString("graph{1[colorscheme=brbg10 color=5]}");
+	}
+
+	@Test
+	public void testEdgeColorWithCustomColorScheme() {
+		testString("graph{edge[colorscheme=brbg10] 1--2[color=5]}");
+		testString("graph{1--2[color=5 colorscheme=brbg10]}");
 	}
 
 	private void testFile(String fileName) {

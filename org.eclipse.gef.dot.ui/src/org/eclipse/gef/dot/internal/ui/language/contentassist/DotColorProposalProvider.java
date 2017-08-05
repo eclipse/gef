@@ -27,6 +27,15 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 public class DotColorProposalProvider extends
 		org.eclipse.gef.dot.internal.ui.language.contentassist.AbstractDotColorProposalProvider {
 
+	/**
+	 * Represents the color scheme that is defined in the DOT ast. If this color
+	 * scheme is not defined, the default color scheme should be used in the
+	 * proposal provider.
+	 */
+	public static String globalColorScheme = null;
+
+	private final String defaultColorScheme = "x11"; //$NON-NLS-1$
+
 	@Override
 	public void completeStringColor_Scheme(EObject model, Assignment assignment,
 			ContentAssistContext context,
@@ -43,16 +52,19 @@ public class DotColorProposalProvider extends
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		super.completeStringColor_Name(model, assignment, context, acceptor);
-		if (model instanceof StringColor) {
-			StringColor stringColor = (StringColor) model;
-			String colorScheme = stringColor.getScheme();
-			if (colorScheme != null) {
-				for (String colorName : DotColors.getColorNames(colorScheme)) {
-					acceptor.accept(
-							createCompletionProposal(colorName, context));
-				}
-			}
+		// start with the default color scheme
+		String colorScheme = defaultColorScheme;
+
+		if (model instanceof StringColor
+				&& ((StringColor) model).getScheme() != null) {
+			colorScheme = ((StringColor) model).getScheme();
+		} else if (globalColorScheme != null) {
+			colorScheme = globalColorScheme;
+		}
+
+		for (String colorName : DotColors
+				.getColorNames(colorScheme.toLowerCase())) {
+			acceptor.accept(createCompletionProposal(colorName, context));
 		}
 	}
-
 }

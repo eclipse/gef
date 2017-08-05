@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
-import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.ColorPackage;
+import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.xtext.validation.Check;
 
@@ -27,6 +27,15 @@ public class DotColorJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotColorJavaValidator {
 
 	/**
+	 * Represents the color scheme that is defined in the DOT ast. If this color
+	 * scheme is not defined, the default color scheme should be used in the
+	 * validation.
+	 */
+	public static String globalColorScheme = null;
+
+	private final String defaultColorScheme = "x11";
+
+	/**
 	 * Checks that the color scheme defined within the given <i>color</i> value
 	 * is a valid dot color scheme and that the color name also defined within
 	 * the given <i>color</i> value are consistent to the defined color scheme.
@@ -36,23 +45,31 @@ public class DotColorJavaValidator extends
 	 */
 	@Check
 	public void checkConsistentColorSchemeAndColorName(StringColor color) {
-		String colorScheme = color.getScheme();
-		if (colorScheme != null && !colorScheme.isEmpty()
-				&& !DotColors.getColorSchemes().contains(colorScheme)) {
-			error("'" + colorScheme + "' is not a valid color scheme.",
-					ColorPackage.Literals.STRING_COLOR__SCHEME);
-		} else {
-			// consider the default color scheme if no color scheme is
-			// explicitly set
-			colorScheme = colorScheme != null ? colorScheme : "x11";
+		// start with the default color scheme
+		String colorScheme = defaultColorScheme;
 
-			String colorName = color.getName();
-			if (colorName != null && !colorName.isEmpty() && !DotColors
-					.getColorNames(colorScheme).contains(colorName)) {
-				error("The '" + colorName + "' color is not valid within the '"
-						+ colorScheme + "' color scheme.",
+		String localColorScheme = color.getScheme();
+		if (localColorScheme != null && !localColorScheme.isEmpty()) {
+			// check if the localColorScheme is a valid colorScheme
+			// (case insensitively)
+			if (!DotColors.getColorSchemes()
+					.contains(localColorScheme.toLowerCase())) {
+				error("'" + localColorScheme + "' is not a valid color scheme.",
 						ColorPackage.Literals.STRING_COLOR__SCHEME);
+				return;
 			}
+			colorScheme = localColorScheme;
+		} else if (globalColorScheme != null) {
+			colorScheme = globalColorScheme;
+		}
+
+		// check if the color is valid in the colorScheme
+		String colorName = color.getName();
+		if (colorName != null && !colorName.isEmpty() && !DotColors
+				.getColorNames(colorScheme.toLowerCase()).contains(colorName)) {
+			error("The '" + colorName + "' color is not valid within the '"
+					+ colorScheme + "' color scheme.",
+					ColorPackage.Literals.STRING_COLOR__SCHEME);
 		}
 	}
 

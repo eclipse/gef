@@ -273,6 +273,40 @@ public class DotValidatorTests {
 	}
 
 	@Test
+	public void testGraphBackgroundColorDoesNotCorrespondToLocalColorScheme()
+			throws Exception {
+		registerColorPackage();
+
+		String text = "graph { colorscheme=brbg10 bgcolor=blue}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__GC,
+				"The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testGraphBackgroundColorDoesNotCorrespondToGlobalColorScheme()
+			throws Exception {
+		registerColorPackage();
+
+		String text = "graph { graph[colorscheme=brbg10] bgcolor=blue}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__GC,
+				"The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
 	public void testWrongNodeColor() throws Exception {
 		registerColorPackage();
 
@@ -283,6 +317,93 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.COLOR__CNE,
 				"The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testNodeColorDoesNotCorrespondToLocalColorScheme()
+			throws Exception {
+		registerColorPackage();
+
+		String text = "graph { 1[colorscheme=brbg10 color=blue]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.COLOR__CNE,
+				"The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testNodeColorDoesNotCorrespondToGlobalColorScheme()
+			throws Exception {
+		registerColorPackage();
+
+		String text = "graph { node[colorscheme=brbg10] 1[color=blue]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.COLOR__CNE,
+				"The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testWrongEdgeFillColor() throws Exception {
+		registerColorPackage();
+
+		String text = "digraph { 1->2[fillcolor=\"#fffff\"]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotAttributes.FILLCOLOR__CNE,
+				"The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testEdgeFillColorDoesNotCorrespondToLocalColorScheme()
+			throws Exception {
+		registerColorPackage();
+
+		String text = "digraph { 1->2[colorscheme=brbg10 fillcolor=white]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotAttributes.FILLCOLOR__CNE,
+				"The color value 'white' is not semantically correct: The 'white' color is not valid within the 'brbg10' color scheme.");
+
+		// verify that this is the only reported issues
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testEdgeFillColorDoesNotCorrespondToGlobalColorScheme()
+			throws Exception {
+		registerColorPackage();
+
+		String text = "digraph { edge[colorscheme=brbg10] 1->2[fillcolor=red]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotAttributes.FILLCOLOR__CNE,
+				"The color value 'red' is not semantically correct: The 'red' color is not valid within the 'brbg10' color scheme.");
 
 		// verify that this is the only reported issues
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
