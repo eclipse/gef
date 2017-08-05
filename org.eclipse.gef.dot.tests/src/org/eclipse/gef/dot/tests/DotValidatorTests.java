@@ -506,6 +506,14 @@ public class DotValidatorTests {
 	}
 
 	@Test
+	public void testInvalidHtmlLikeLabelInvalidAttributeValue() {
+		String text = "graph {1[label = <  <table align=\"foo\"></table>  >]}";
+		String errorProneText = "\"foo\"";
+		String errorMessage = "The htmlLabel value '  <table align=\"foo\"></table>  ' is not semantically correct: The value 'foo' is not a correct align: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.";
+		assertHtmlLikeLabelError(text, errorProneText, errorMessage);
+	}
+
+	@Test
 	public void testInvalidNodeStyle() {
 		String text = "graph {1[style=\"dashed, setlinewidth(4)\"]}";
 		String errorProneText = "setlinewidth";

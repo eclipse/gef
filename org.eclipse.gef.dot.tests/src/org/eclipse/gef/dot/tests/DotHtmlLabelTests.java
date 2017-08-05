@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelInjectorProvider;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
@@ -142,6 +143,370 @@ public class DotHtmlLabelTests {
 	@Test
 	public void test_self_closing_tags() {
 		parse(DotTestHtmlLabels.SELF_CLOSING_TAGS);
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_BR_ALIGN() {
+		parse("<BR ALIGN=\"CENTER\"/>");
+		parse("<BR ALIGN=\"LEFT\"/>");
+		parse("<BR ALIGN=\"RIGHT\"/>");
+		parse("<BR ALIGN=\"center\"/>");
+		parse("<BR ALIGN=\"left\"/>");
+		parse("<BR ALIGN=\"right\"/>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_FONT_COLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_FONT_FACE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_FONT_POINTSIZE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_IMG_SCALE() {
+		parse("<TABLE><TR><TD><IMG SCALE=\"FALSE\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"TRUE\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"WIDTH\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"HEIGHT\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"BOTH\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"false\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"true\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"width\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"height\"/></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD><IMG SCALE=\"both\"/></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_IMG_SRC() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_ALIGN() {
+		parse("<TABLE ALIGN=\"CENTER\"></TABLE>");
+		parse("<TABLE ALIGN=\"LEFT\"></TABLE>");
+		parse("<TABLE ALIGN=\"RIGHT\"></TABLE>");
+		parse("<TABLE ALIGN=\"center\"></TABLE>");
+		parse("<TABLE ALIGN=\"left\"></TABLE>");
+		parse("<TABLE ALIGN=\"right\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_BGCOLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_BORDER() {
+		parse("<TABLE BORDER=\"0\"></TABLE>");
+		parse("<TABLE BORDER=\"1\"></TABLE>");
+		parse("<TABLE BORDER=\"254\"></TABLE>");
+		parse("<TABLE BORDER=\"255\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_CELLBORDER() {
+		parse("<TABLE CELLBORDER=\"0\"></TABLE>");
+		parse("<TABLE CELLBORDER=\"1\"></TABLE>");
+		parse("<TABLE CELLBORDER=\"126\"></TABLE>");
+		parse("<TABLE CELLBORDER=\"127\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_CELLPADDING() {
+		parse("<TABLE CELLPADDING=\"0\"></TABLE>");
+		parse("<TABLE CELLPADDING=\"1\"></TABLE>");
+		parse("<TABLE CELLPADDING=\"254\"></TABLE>");
+		parse("<TABLE CELLPADDING=\"255\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_CELLSPACING() {
+		parse("<TABLE CELLSPACING=\"0\"></TABLE>");
+		parse("<TABLE CELLSPACING=\"1\"></TABLE>");
+		parse("<TABLE CELLSPACING=\"126\"></TABLE>");
+		parse("<TABLE CELLSPACING=\"127\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_COLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_COLUMNS() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_FIXEDSIZE() {
+		parse("<TABLE FIXEDSIZE=\"FALSE\"></TABLE>");
+		parse("<TABLE FIXEDSIZE=\"TRUE\"></TABLE>");
+		parse("<TABLE FIXEDSIZE=\"false\"></TABLE>");
+		parse("<TABLE FIXEDSIZE=\"true\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_GRADIENTANGLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_HEIGHT() {
+		parse("<TABLE HEIGHT=\"0\"></TABLE>");
+		parse("<TABLE HEIGHT=\"1\"></TABLE>");
+		parse("<TABLE HEIGHT=\"65534\"></TABLE>");
+		parse("<TABLE HEIGHT=\"65535\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_HREF() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_ID() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_PORT() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_ROWS() {
+		parse("<TABLE ROWS=\"*\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_SIDES() {
+		parse("<TABLE SIDES=\"L\"></TABLE>");
+		parse("<TABLE SIDES=\"T\"></TABLE>");
+		parse("<TABLE SIDES=\"R\"></TABLE>");
+		parse("<TABLE SIDES=\"B\"></TABLE>");
+		parse("<TABLE SIDES=\"LT\"></TABLE>");
+		parse("<TABLE SIDES=\"LR\"></TABLE>");
+		parse("<TABLE SIDES=\"LB\"></TABLE>");
+		parse("<TABLE SIDES=\"TR\"></TABLE>");
+		parse("<TABLE SIDES=\"TB\"></TABLE>");
+		parse("<TABLE SIDES=\"RB\"></TABLE>");
+		parse("<TABLE SIDES=\"LTR\"></TABLE>");
+		parse("<TABLE SIDES=\"TRB\"></TABLE>");
+		parse("<TABLE SIDES=\"LRB\"></TABLE>");
+		parse("<TABLE SIDES=\"LTB\"></TABLE>");
+		parse("<TABLE SIDES=\"LTRB\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_STYLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_TARGET() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_TITLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_TOOLTIP() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_VALIGN() {
+		parse("<TABLE VALIGN=\"MIDDLE\"></TABLE>");
+		parse("<TABLE VALIGN=\"BOTTOM\"></TABLE>");
+		parse("<TABLE VALIGN=\"TOP\"></TABLE>");
+		parse("<TABLE VALIGN=\"middle\"></TABLE>");
+		parse("<TABLE VALIGN=\"top\"></TABLE>");
+		parse("<TABLE VALIGN=\"bottom\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TABLE_WIDTH() {
+		parse("<TABLE WIDTH=\"0\"></TABLE>");
+		parse("<TABLE WIDTH=\"1\"></TABLE>");
+		parse("<TABLE WIDTH=\"65534\"></TABLE>");
+		parse("<TABLE WIDTH=\"65535\"></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_ALIGN() {
+		parse("<TABLE><TR><TD ALIGN=\"CENTER\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ALIGN=\"LEFT\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ALIGN=\"RIGHT\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ALIGN=\"TEXT\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ALIGN=\"center\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ALIGN=\"left\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ALIGN=\"right\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ALIGN=\"text\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_BALIGN() {
+		parse("<TABLE><TR><TD BALIGN=\"CENTER\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BALIGN=\"LEFT\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BALIGN=\"RIGHT\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BALIGN=\"center\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BALIGN=\"left\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BALIGN=\"right\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_BGCOLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_BORDER() {
+		parse("<TABLE><TR><TD BORDER=\"0\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BORDER=\"1\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BORDER=\"254\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD BORDER=\"255\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_CELLPADDING() {
+		parse("<TABLE><TR><TD CELLPADDING=\"0\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD CELLPADDING=\"1\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD CELLPADDING=\"254\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD CELLPADDING=\"255\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_CELLSPACING() {
+		parse("<TABLE><TR><TD CELLSPACING=\"0\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD CELLSPACING=\"1\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD CELLSPACING=\"126\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD CELLSPACING=\"127\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_COLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_COLSPAN() {
+		parse("<TABLE><TR><TD COLSPAN=\"1\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD COLSPAN=\"2\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD COLSPAN=\"65534\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD COLSPAN=\"65535\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_FIXEDSIZE() {
+		parse("<TABLE><TR><TD FIXEDSIZE=\"FALSE\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD FIXEDSIZE=\"TRUE\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD FIXEDSIZE=\"false\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD FIXEDSIZE=\"true\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_GRADIENTANGLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_HEIGHT() {
+		parse("<TABLE><TR><TD HEIGHT=\"0\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD HEIGHT=\"1\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD HEIGHT=\"65534\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD HEIGHT=\"65535\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_HREF() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_ID() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_PORT() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_ROWSPAN() {
+		parse("<TABLE><TR><TD ROWSPAN=\"1\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ROWSPAN=\"2\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ROWSPAN=\"65534\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD ROWSPAN=\"65535\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_SIDES() {
+		parse("<TABLE><TR><TD SIDES=\"L\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"T\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"R\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"B\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"LT\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"LR\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"LB\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"TR\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"TB\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"RB\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"LTR\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"TRB\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"LRB\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"LTB\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD SIDES=\"LTRB\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_STYLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_TARGET() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_TITLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_TOOLTIP() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_VALIGN() {
+		parse("<TABLE><TR><TD VALIGN=\"MIDDLE\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD VALIGN=\"BOTTOM\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD VALIGN=\"TOP\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD VALIGN=\"middle\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD VALIGN=\"bottom\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD VALIGN=\"top\"></TD></TR></TABLE>");
+	}
+
+	@Test
+	public void test_valid_attribute_value_of_tag_TD_WIDTH() {
+		parse("<TABLE><TR><TD WIDTH=\"0\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD WIDTH=\"1\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD WIDTH=\"65534\"></TD></TR></TABLE>");
+		parse("<TABLE><TR><TD WIDTH=\"65535\"></TD></TR></TABLE>");
 	}
 
 	/*
@@ -306,22 +671,483 @@ public class DotHtmlLabelTests {
 		testSelfClosingTag("<TABLE><TR><TD/></TR></TABLE>", "<TD/>");
 	}
 
+	@Test
+	public void test_invalid_attribute_value_of_tag_BR_ALIGN() {
+		verifyHtmlAttribute("<BR ALIGN=\"\"/>",
+				"The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.");
+		verifyHtmlAttribute("<BR ALIGN=\"foo\"/>",
+				"The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_FONT_COLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_FONT_FACE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_FONT_POINTSIZE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_IMG_SCALE() {
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD><IMG SCALE=\"\"/></TD></TR></TABLE>",
+				"The value '' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD><IMG SCALE=\"foo\"/></TD></TR></TABLE>",
+				"The value 'foo' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_IMG_SRC() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_ALIGN() {
+		verifyHtmlAttribute("<TABLE ALIGN=\"\"></TABLE>",
+				"The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.");
+		verifyHtmlAttribute("<TABLE ALIGN=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_BGCOLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_BORDER() {
+		verifyHtmlAttribute("<TABLE BORDER=\"\"></TABLE>",
+				"The value '' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE BORDER=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE BORDER=\"-2\"></TABLE>",
+				"The value '-2' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE BORDER=\"-1\"></TABLE>",
+				"The value '-1' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE BORDER=\"256\"></TABLE>",
+				"The value '256' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE BORDER=\"257\"></TABLE>",
+				"The value '257' is not a correct BORDER: Value has to be between 0 and 255.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_CELLBORDER() {
+		verifyHtmlAttribute("<TABLE CELLBORDER=\"\"></TABLE>",
+				"The value '' is not a correct CELLBORDER: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLBORDER=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct CELLBORDER: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLBORDER=\"-2\"></TABLE>",
+				"The value '-2' is not a correct CELLBORDER: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLBORDER=\"-1\"></TABLE>",
+				"The value '-1' is not a correct CELLBORDER: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLBORDER=\"128\"></TABLE>",
+				"The value '128' is not a correct CELLBORDER: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLBORDER=\"129\"></TABLE>",
+				"The value '129' is not a correct CELLBORDER: Value has to be between 0 and 127.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_CELLPADDING() {
+		verifyHtmlAttribute("<TABLE CELLPADDING=\"\"></TABLE>",
+				"The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE CELLPADDING=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE CELLPADDING=\"-2\"></TABLE>",
+				"The value '-2' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE CELLPADDING=\"-1\"></TABLE>",
+				"The value '-1' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE CELLPADDING=\"256\"></TABLE>",
+				"The value '256' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE CELLPADDING=\"257\"></TABLE>",
+				"The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_CELLSPACING() {
+		verifyHtmlAttribute("<TABLE CELLSPACING=\"\"></TABLE>",
+				"The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLSPACING=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLSPACING=\"-2\"></TABLE>",
+				"The value '-2' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLSPACING=\"-1\"></TABLE>",
+				"The value '-1' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLSPACING=\"128\"></TABLE>",
+				"The value '128' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute("<TABLE CELLSPACING=\"129\"></TABLE>",
+				"The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_COLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_COLUMNS() {
+		verifyHtmlAttribute("<TABLE ROWS=\"\"></TABLE>",
+				"The value '' is not a correct ROWS: Value has to be '*'.");
+		verifyHtmlAttribute("<TABLE ROWS=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct ROWS: Value has to be '*'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_FIXEDSIZE() {
+		verifyHtmlAttribute("<TABLE FIXEDSIZE=\"\"></TABLE>",
+				"The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.");
+		verifyHtmlAttribute("<TABLE FIXEDSIZE=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_GRADIENTANGLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_HEIGHT() {
+		verifyHtmlAttribute("<TABLE HEIGHT=\"\"></TABLE>",
+				"The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE HEIGHT=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE HEIGHT=\"-2\"></TABLE>",
+				"The value '-2' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE HEIGHT=\"-1\"></TABLE>",
+				"The value '-1' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE HEIGHT=\"65536\"></TABLE>",
+				"The value '65536' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE HEIGHT=\"65537\"></TABLE>",
+				"The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_HREF() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_ID() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_PORT() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_ROWS() {
+		verifyHtmlAttribute("<TABLE ROWS=\"\"></TABLE>",
+				"The value '' is not a correct ROWS: Value has to be '*'.");
+		verifyHtmlAttribute("<TABLE ROWS=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct ROWS: Value has to be '*'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_SIDES() {
+		verifyHtmlAttribute("<TABLE SIDES=\"\"></TABLE>",
+				"The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.");
+		verifyHtmlAttribute("<TABLE SIDES=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_STYLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_TARGET() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_TITLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_TOOLTIP() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_VALIGN() {
+		verifyHtmlAttribute("<TABLE VALIGN=\"\"></TABLE>",
+				"The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.");
+		verifyHtmlAttribute("<TABLE VALIGN=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TABLE_WIDTH() {
+		verifyHtmlAttribute("<TABLE WIDTH=\"\"></TABLE>",
+				"The value '' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE WIDTH=\"foo\"></TABLE>",
+				"The value 'foo' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE WIDTH=\"-2\"></TABLE>",
+				"The value '-2' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE WIDTH=\"-1\"></TABLE>",
+				"The value '-1' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE WIDTH=\"65536\"></TABLE>",
+				"The value '65536' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE WIDTH=\"65537\"></TABLE>",
+				"The value '65537' is not a correct WIDTH: Value has to be between 0 and 65535.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_ALIGN() {
+		verifyHtmlAttribute("<TABLE><TR><TD ALIGN=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.");
+		verifyHtmlAttribute("<TABLE><TR><TD ALIGN=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_BALIGN() {
+		verifyHtmlAttribute("<TABLE><TR><TD BALIGN=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.");
+		verifyHtmlAttribute("<TABLE><TR><TD BALIGN=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_BGCOLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_BORDER() {
+		verifyHtmlAttribute("<TABLE><TR><TD BORDER=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE><TR><TD BORDER=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE><TR><TD BORDER=\"-2\"></TD></TR></TABLE>",
+				"The value '-2' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE><TR><TD BORDER=\"-1\"></TD></TR></TABLE>",
+				"The value '-1' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE><TR><TD BORDER=\"256\"></TD></TR></TABLE>",
+				"The value '256' is not a correct BORDER: Value has to be between 0 and 255.");
+		verifyHtmlAttribute("<TABLE><TR><TD BORDER=\"257\"></TD></TR></TABLE>",
+				"The value '257' is not a correct BORDER: Value has to be between 0 and 255.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_CELLPADDING() {
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLPADDING=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLPADDING=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLPADDING=\"-2\"></TD></TR></TABLE>",
+				"The value '-2' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLPADDING=\"-1\"></TD></TR></TABLE>",
+				"The value '-1' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLPADDING=\"256\"></TD></TR></TABLE>",
+				"The value '256' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLPADDING=\"257\"></TD></TR></TABLE>",
+				"The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_CELLSPACING() {
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLSPACING=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLSPACING=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLSPACING=\"-2\"></TD></TR></TABLE>",
+				"The value '-2' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLSPACING=\"-1\"></TD></TR></TABLE>",
+				"The value '-1' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLSPACING=\"128\"></TD></TR></TABLE>",
+				"The value '128' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD CELLSPACING=\"129\"></TD></TR></TABLE>",
+				"The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_COLOR() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_COLSPAN() {
+		verifyHtmlAttribute("<TABLE><TR><TD COLSPAN=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct COLSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD COLSPAN=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct COLSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD COLSPAN=\"-1\"></TD></TR></TABLE>",
+				"The value '-1' is not a correct COLSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD COLSPAN=\"0\"></TD></TR></TABLE>",
+				"The value '0' is not a correct COLSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD COLSPAN=\"65536\"></TD></TR></TABLE>",
+				"The value '65536' is not a correct COLSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD COLSPAN=\"65537\"></TD></TR></TABLE>",
+				"The value '65537' is not a correct COLSPAN: Value has to be between 1 and 65535.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_FIXEDSIZE() {
+		verifyHtmlAttribute("<TABLE><TR><TD FIXEDSIZE=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD FIXEDSIZE=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_GRADIENTANGLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_HEIGHT() {
+		verifyHtmlAttribute("<TABLE><TR><TD HEIGHT=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD HEIGHT=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD HEIGHT=\"-2\"></TD></TR></TABLE>",
+				"The value '-2' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD HEIGHT=\"-1\"></TD></TR></TABLE>",
+				"The value '-1' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD HEIGHT=\"65536\"></TD></TR></TABLE>",
+				"The value '65536' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD HEIGHT=\"65537\"></TD></TR></TABLE>",
+				"The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_HREF() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_ID() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_PORT() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_ROWSPAN() {
+		verifyHtmlAttribute("<TABLE><TR><TD ROWSPAN=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct ROWSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD ROWSPAN=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct ROWSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD ROWSPAN=\"-1\"></TD></TR></TABLE>",
+				"The value '-1' is not a correct ROWSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD ROWSPAN=\"0\"></TD></TR></TABLE>",
+				"The value '0' is not a correct ROWSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD ROWSPAN=\"65536\"></TD></TR></TABLE>",
+				"The value '65536' is not a correct ROWSPAN: Value has to be between 1 and 65535.");
+		verifyHtmlAttribute(
+				"<TABLE><TR><TD ROWSPAN=\"65537\"></TD></TR></TABLE>",
+				"The value '65537' is not a correct ROWSPAN: Value has to be between 1 and 65535.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_SIDES() {
+		verifyHtmlAttribute("<TABLE><TR><TD SIDES=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.");
+		verifyHtmlAttribute("<TABLE><TR><TD SIDES=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_STYLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_TARGET() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_TITLE() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_TOOLTIP() {
+		// TODO implement
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_VALIGN() {
+		verifyHtmlAttribute("<TABLE><TR><TD VALIGN=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.");
+		verifyHtmlAttribute("<TABLE><TR><TD VALIGN=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.");
+	}
+
+	@Test
+	public void test_invalid_attribute_value_of_tag_TD_WIDTH() {
+		verifyHtmlAttribute("<TABLE><TR><TD WIDTH=\"\"></TD></TR></TABLE>",
+				"The value '' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD WIDTH=\"foo\"></TD></TR></TABLE>",
+				"The value 'foo' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD WIDTH=\"-2\"></TD></TR></TABLE>",
+				"The value '-2' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD WIDTH=\"-1\"></TD></TR></TABLE>",
+				"The value '-1' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD WIDTH=\"65536\"></TD></TR></TABLE>",
+				"The value '65536' is not a correct WIDTH: Value has to be between 0 and 65535.");
+		verifyHtmlAttribute("<TABLE><TR><TD WIDTH=\"65537\"></TD></TR></TABLE>",
+				"The value '65537' is not a correct WIDTH: Value has to be between 0 and 65535.");
+	}
+
 	private void testStringLiteral(String... text) {
 		String tagName = text.length > 1 ? text[1] : text[0];
-		verify(text[0],
+		verifyHtmlTag(text[0],
 				"Tag '<" + tagName + ">' cannot contain a string literal.");
 	}
 
 	private void testSelfClosingTag(String... text) {
 		String tagName = text.length > 1 ? text[1] : text[0];
-		verify(text[0], "Tag '" + tagName + "' cannot be self closing.");
+		verifyHtmlTag(text[0], "Tag '" + tagName + "' cannot be self closing.");
+	}
+
+	private void verifyHtmlTag(String text, String message) {
+		verify(text, message, HtmllabelPackage.eINSTANCE.getHtmlTag());
+	}
+
+	private void verifyHtmlAttribute(String text, String message) {
+		verify(text, message, HtmllabelPackage.eINSTANCE.getHtmlAttr());
 	}
 
 	/*
 	 * Verify that parsing the given text raises a validation error with the
 	 * given message.
 	 */
-	private void verify(String text, String message) {
+	private void verify(String text, String message, EClass objectType) {
 		HtmlLabel htmlLabel = null;
 		try {
 			htmlLabel = parseHelper.parse(text);
@@ -330,8 +1156,7 @@ public class DotHtmlLabelTests {
 			fail();
 		}
 
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null, message);
+		validationTestHelper.assertError(htmlLabel, objectType, null, message);
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());

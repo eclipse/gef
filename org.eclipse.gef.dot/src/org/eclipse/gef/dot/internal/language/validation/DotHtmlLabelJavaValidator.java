@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -179,6 +180,217 @@ public class DotHtmlLabelJavaValidator extends
 						attr, HtmllabelPackage.Literals.HTML_ATTR__NAME);
 			}
 		}
+	}
+
+	/**
+	 * Checks if the value of a given {@link HtmlAttr} is valid. Generates
+	 * errors if the value of a given {@link HtmlAttr} is not supported by
+	 * Graphviz.
+	 * 
+	 * @param attr
+	 *            The {@link HtmlAttr} of that's attribute value is to check.
+	 */
+	@Check
+	public void checkAttributeValueIsValid(HtmlAttr attr) {
+		String htmlAttributeName = attr.getName();
+		// trim the leading and trailing double quotes if necessary
+		String htmlAttributeValue = removeDoubleQuotes(attr.getValue());
+		EObject container = attr.eContainer();
+		if (container instanceof HtmlTag) {
+			HtmlTag tag = (HtmlTag) container;
+			String htmlTagName = tag.getName();
+			String message = getAttributeValueErrorMessage(htmlTagName,
+					htmlAttributeName, htmlAttributeValue);
+			if (message != null) {
+				reportRangeBasedError(
+						"The value '" + htmlAttributeValue
+								+ "' is not a correct " + htmlAttributeName
+								+ ": " + message,
+						attr, HtmllabelPackage.Literals.HTML_ATTR__VALUE);
+			}
+		}
+	}
+
+	private String removeDoubleQuotes(String value) {
+		if (value.startsWith("\"")) {
+			value = value.substring(1);
+		}
+		if (value.endsWith("\"")) {
+			value = value.substring(0, value.length() - 1);
+		}
+		return value;
+	}
+
+	/**
+	 * Determines whether the given html attribute value is valid or not.
+	 * 
+	 * @param htmlTagName
+	 *            The html tag name
+	 * @param htmlAttributeName
+	 *            The html attribute name
+	 * @param htmlAttributeValue
+	 *            The html attribute value
+	 * @return Null if the html attribute is valid, the error message otherwise.
+	 */
+	private String getAttributeValueErrorMessage(String htmlTagName,
+			String htmlAttributeName, String htmlAttributeValue) {
+		if ("BR".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "ALIGN": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"CENTER", "LEFT", //$NON-NLS-1$
+						"RIGHT");
+			default:
+				break;
+			}
+		}
+
+		if ("IMG".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "SCALE": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"FALSE", "TRUE", //$NON-NLS-1$ //$NON-NLS-2$
+						"WIDTH", "HEIGHT", "BOTH"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			default:
+				break;
+			}
+		}
+
+		if ("TABLE".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "ALIGN": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"CENTER", "LEFT", //$NON-NLS-1$ //$NON-NLS-2$
+						"RIGHT"); //$NON-NLS-1$
+			case "BORDER":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 255);
+			case "CELLBORDER":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 127);
+			case "CELLPADDING":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 255);
+			case "CELLSPACING":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 127);
+			case "COLUMNS":
+			case "ROWS":
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"*");
+			case "FIXEDSIZE": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"FALSE", "TRUE"); //$NON-NLS-1$ //$NON-NLS-2$
+			case "HEIGHT":
+			case "WIDTH":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 65535);
+			case "SIDES": //$NON-NLS-1$
+				return getSidesAttributeValueErrorMessage(htmlAttributeValue);
+			case "VALIGN": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"MIDDLE", "BOTTOM", //$NON-NLS-1$ //$NON-NLS-2$
+						"TOP");
+			default:
+				break;
+			}
+		}
+
+		if ("TD".equalsIgnoreCase(htmlTagName)) { //$NON-NLS-1$
+			switch (htmlAttributeName.toUpperCase()) {
+			case "ALIGN": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"CENTER", "LEFT", //$NON-NLS-1$ //$NON-NLS-2$
+						"RIGHT", "TEXT"); //$NON-NLS-1$ //$NON-NLS-2$
+			case "BALIGN": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"CENTER", "LEFT", //$NON-NLS-1$ //$NON-NLS-2$
+						"RIGHT"); //$NON-NLS-1$
+			case "BORDER":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 255);
+			case "CELLPADDING":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 255);
+			case "CELLSPACING":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 127);
+			case "COLSPAN":
+			case "ROWSPAN":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						1, 65535);
+			case "FIXEDSIZE": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"FALSE", "TRUE"); //$NON-NLS-1$ //$NON-NLS-2$
+			case "HEIGHT":
+			case "WIDTH":
+				return getNumberAttributeValueErrorMessage(htmlAttributeValue,
+						0, 65535);
+			case "SIDES": //$NON-NLS-1$
+				return getSidesAttributeValueErrorMessage(htmlAttributeValue);
+			case "VALIGN": //$NON-NLS-1$
+				return getEnumAttributeValueErrorMessage(htmlAttributeValue,
+						"MIDDLE", //$NON-NLS-1$
+						"BOTTOM", "TOP"); //$NON-NLS-1$ //$NON-NLS-2$
+			default:
+				break;
+			}
+		}
+
+		// html attribute values, that cannot be verified, are considered as
+		// valid.
+		return null;
+	}
+
+	private String getEnumAttributeValueErrorMessage(String currentValue,
+			String... allowedValues) {
+		List<String> allowedValuesList = Arrays.asList(allowedValues);
+
+		if (allowedValuesList.contains(currentValue.toUpperCase())) {
+			return null;
+		}
+
+		String formattedAllowedValues = allowedValuesList.stream()
+				.map(e -> "'" + e + "'").collect(Collectors.joining(", "));
+
+		return "Value has to be " + (allowedValues.length > 1 ? "one of " : "")
+				+ formattedAllowedValues + ".";
+	}
+
+	private String getNumberAttributeValueErrorMessage(String currentValue,
+			int minimum, int maximum) {
+		boolean isValid = true;
+
+		try {
+			int currentValueParsed = Integer.parseInt(currentValue);
+			isValid = minimum <= currentValueParsed
+					&& currentValueParsed <= maximum;
+		} catch (NumberFormatException e) {
+			isValid = false;
+		}
+
+		if (isValid) {
+			return null;
+		} else {
+			return String.format("Value has to be between %1$d and %2$d.",
+					minimum, maximum);
+		}
+	}
+
+	private String getSidesAttributeValueErrorMessage(
+			String htmlAttributeValue) {
+		if (htmlAttributeValue.isEmpty()) {
+			return "Value has to contain only the 'L', 'T', 'R', 'B' characters.";
+		}
+
+		for (int i = 0; i < htmlAttributeValue.length(); i++) {
+			String subString = Character.toString(htmlAttributeValue.charAt(i))
+					.toUpperCase();
+			if (!"LTRB".contains(subString)) {
+				return "Value has to contain only the 'L', 'T', 'R', 'B' characters.";
+			}
+		}
+		return null;
 	}
 
 	private void reportRangeBasedError(String message, EObject object,
