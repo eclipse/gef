@@ -28,6 +28,7 @@ import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
@@ -182,7 +183,13 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		// color
-		Color dotColor = DotAttributes.getColorParsed(dot);
+		Color dotColor = null;
+		ColorList colorList = DotAttributes.getColorParsed(dot);
+		if (colorList != null && !colorList.getColorValues().isEmpty()) {
+			// TODO: add support for colorList
+			dotColor = colorList.getColorValues().get(0).getColor();
+		}
+
 		String javaFxColor = computeZestColor(dotColor);
 		if (javaFxColor != null) {
 			String zestStroke = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -593,7 +600,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		if (isFilledStyle) {
-			Color dotFillColor = DotAttributes.getFillcolorParsed(dot);
+			Color dotFillColor = null;
+			ColorList colorList = DotAttributes.getFillcolorParsed(dot);
+			if (colorList != null && !colorList.getColorValues().isEmpty()) {
+				// TODO: add support for colorList
+				dotFillColor = colorList.getColorValues().get(0).getColor();
+			}
 			String javaFxFillColor = computeZestColor(dotFillColor);
 			if (javaFxFillColor != null) {
 				if (zestStyle == null) {

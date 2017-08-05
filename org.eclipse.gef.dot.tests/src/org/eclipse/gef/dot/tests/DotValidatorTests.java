@@ -259,6 +259,7 @@ public class DotValidatorTests {
 	@Test
 	public void testWrongGraphBackgroundColor() throws Exception {
 		registerColorPackage();
+		registerColorListPackage();
 
 		String text = "graph { bgcolor=grsy }";
 
@@ -266,7 +267,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__GC,
-				"The color value 'grsy' is not semantically correct: The 'grsy' color is not valid within the 'x11' color scheme.");
+				"The colorList value 'grsy' is not semantically correct: The 'grsy' color is not valid within the 'x11' color scheme.");
 
 		// verify that this is the only reported issues
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
@@ -276,6 +277,7 @@ public class DotValidatorTests {
 	public void testGraphBackgroundColorDoesNotCorrespondToLocalColorScheme()
 			throws Exception {
 		registerColorPackage();
+		registerColorListPackage();
 
 		String text = "graph { colorscheme=brbg10 bgcolor=blue}";
 
@@ -283,7 +285,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__GC,
-				"The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
+				"The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
 
 		// verify that this is the only reported issues
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
@@ -293,6 +295,7 @@ public class DotValidatorTests {
 	public void testGraphBackgroundColorDoesNotCorrespondToGlobalColorScheme()
 			throws Exception {
 		registerColorPackage();
+		registerColorListPackage();
 
 		String text = "graph { graph[colorscheme=brbg10] bgcolor=blue}";
 
@@ -300,7 +303,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.BGCOLOR__GC,
-				"The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
+				"The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.");
 
 		// verify that this is the only reported issues
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
@@ -771,6 +774,15 @@ public class DotValidatorTests {
 			EPackage.Registry.INSTANCE.put(
 					org.eclipse.gef.dot.internal.language.color.ColorPackage.eNS_URI,
 					org.eclipse.gef.dot.internal.language.color.ColorPackage.eINSTANCE);
+		}
+	}
+
+	private void registerColorListPackage() {
+		if (!EPackage.Registry.INSTANCE.containsKey(
+				org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eNS_URI)) {
+			EPackage.Registry.INSTANCE.put(
+					org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eNS_URI,
+					org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eINSTANCE);
 		}
 	}
 

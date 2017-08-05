@@ -29,10 +29,14 @@ import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.PrimitiveShape;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
+import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.color.ColorFactory;
 import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
+import org.eclipse.gef.dot.internal.language.colorlist.ColorlistFactory;
+import org.eclipse.gef.dot.internal.language.colorlist.WC;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
@@ -271,15 +275,15 @@ public class DotAttributesTests {
 		rgbColor.setR("ff");
 		rgbColor.setG("ff");
 		rgbColor.setB("ff");
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(edge)));
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
+				DotAttributes.getColorParsed(edge)));
 
 		// set valid string values - rgba format
 		DotAttributes.setColor(edge, "#ffffff42");
 		assertEquals("#ffffff42", DotAttributes.getColor(edge));
 		rgbColor.setA("42");
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(edge)));
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
+				DotAttributes.getColorParsed(edge)));
 
 		// set valid string values - hsv format
 		DotAttributes.setColor(edge, "0.000 0.000 1.000");
@@ -288,15 +292,15 @@ public class DotAttributesTests {
 		hsvColor.setH("0.000");
 		hsvColor.setS("0.000");
 		hsvColor.setV("1.000");
-		assertTrue(
-				EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(edge)));
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
+				DotAttributes.getColorParsed(edge)));
 
 		// set valid string values - string format
 		DotAttributes.setColor(edge, "white");
 		assertEquals("white", DotAttributes.getColor(edge));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("white");
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getColorParsed(edge)));
 
 		// set valid parsed values - rgb format
@@ -304,28 +308,28 @@ public class DotAttributesTests {
 		rgbColor.setR("ab");
 		rgbColor.setG("cd");
 		rgbColor.setB("ef");
-		DotAttributes.setColorParsed(edge, rgbColor);
+		DotAttributes.setColorParsed(edge, createColorList(rgbColor));
 		assertEquals("#abcdef", DotAttributes.getColor(edge));
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(edge)));
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
+				DotAttributes.getColorParsed(edge)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("00");
-		DotAttributes.setColorParsed(edge, rgbColor);
+		DotAttributes.setColorParsed(edge, createColorList(rgbColor));
 		assertEquals("#abcdef00", DotAttributes.getColor(edge));
-		assertTrue(
-				EcoreUtil.equals(rgbColor, DotAttributes.getColorParsed(edge)));
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
+				DotAttributes.getColorParsed(edge)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setColorParsed(edge, hsvColor);
+		DotAttributes.setColorParsed(edge, createColorList(hsvColor));
 		assertEquals("0.000 0.000 1.000", DotAttributes.getColor(edge));
-		assertTrue(
-				EcoreUtil.equals(hsvColor, DotAttributes.getColorParsed(edge)));
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
+				DotAttributes.getColorParsed(edge)));
 
 		// set valid parsed values - string format
-		DotAttributes.setColorParsed(edge, stringColor);
+		DotAttributes.setColorParsed(edge, createColorList(stringColor));
 		assertEquals("white", DotAttributes.getColor(edge));
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getColorParsed(edge)));
 
 		// set invalid string values
@@ -334,7 +338,7 @@ public class DotAttributesTests {
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set edge attribute 'color' to '#foo'. The value '#foo' is not a syntactically correct color: No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					"Cannot set edge attribute 'color' to '#foo'. The value '#foo' is not a syntactically correct colorList: No viable alternative at character 'o'. No viable alternative at character 'o'.",
 					e.getMessage());
 		}
 	}
@@ -1202,14 +1206,14 @@ public class DotAttributesTests {
 		rgbColor.setR("a0");
 		rgbColor.setG("52");
 		rgbColor.setB("2d");
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid string values - rgba format
 		DotAttributes.setBgcolor(graph, "#a0522dcc");
 		assertEquals("#a0522dcc", DotAttributes.getBgcolor(graph));
 		rgbColor.setA("cc");
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid string values - hsv format
@@ -1219,7 +1223,7 @@ public class DotAttributesTests {
 		hsvColor.setH(".051");
 		hsvColor.setS(".718");
 		hsvColor.setV(".627");
-		assertTrue(EcoreUtil.equals(hsvColor,
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid string values - string format
@@ -1227,7 +1231,7 @@ public class DotAttributesTests {
 		assertEquals("sienna", DotAttributes.getBgcolor(graph));
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setName("sienna");
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - rgb format
@@ -1235,28 +1239,28 @@ public class DotAttributesTests {
 		rgbColor.setR("a0");
 		rgbColor.setG("52");
 		rgbColor.setB("2d");
-		DotAttributes.setBgcolorParsed(graph, rgbColor);
+		DotAttributes.setBgcolorParsed(graph, createColorList(rgbColor));
 		assertEquals("#a0522d", DotAttributes.getBgcolor(graph));
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("cc");
-		DotAttributes.setBgcolorParsed(graph, rgbColor);
+		DotAttributes.setBgcolorParsed(graph, createColorList(rgbColor));
 		assertEquals("#a0522dcc", DotAttributes.getBgcolor(graph));
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setBgcolorParsed(graph, hsvColor);
+		DotAttributes.setBgcolorParsed(graph, createColorList(hsvColor));
 		assertEquals(".051 .718 .627", DotAttributes.getBgcolor(graph));
-		assertTrue(EcoreUtil.equals(hsvColor,
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set valid parsed values - string format
-		DotAttributes.setBgcolorParsed(graph, stringColor);
+		DotAttributes.setBgcolorParsed(graph, createColorList(stringColor));
 		assertEquals("sienna", DotAttributes.getBgcolor(graph));
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getBgcolorParsed(graph)));
 
 		// set invalid string values
@@ -1265,7 +1269,7 @@ public class DotAttributesTests {
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'bgcolor' to '#gggggg'. The value '#gggggg' is not a syntactically correct color: No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'.",
+					"Cannot set graph attribute 'bgcolor' to '#gggggg'. The value '#gggggg' is not a syntactically correct colorList: No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'. No viable alternative at character 'g'.",
 					e.getMessage());
 		}
 	}
@@ -1335,7 +1339,7 @@ public class DotAttributesTests {
 	}
 
 	@Test
-	public void graph_color() {
+	public void cluster_color() {
 		Graph graph = new Graph.Builder().build();
 
 		// test getters if no explicit value is set
@@ -1457,14 +1461,14 @@ public class DotAttributesTests {
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid string values - rgba format
 		DotAttributes.setFillcolor(graph, "#00ff00ff");
 		assertEquals("#00ff00ff", DotAttributes.getFillcolor(graph));
 		rgbColor.setA("ff");
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid string values - hsv format
@@ -1474,7 +1478,7 @@ public class DotAttributesTests {
 		hsvColor.setH("0.3");
 		hsvColor.setS(".8");
 		hsvColor.setV(".7");
-		assertTrue(EcoreUtil.equals(hsvColor,
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid string values - string format
@@ -1483,7 +1487,7 @@ public class DotAttributesTests {
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("bugn9");
 		stringColor.setName("7");
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - rgb format
@@ -1491,28 +1495,28 @@ public class DotAttributesTests {
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		DotAttributes.setFillcolorParsed(graph, rgbColor);
+		DotAttributes.setFillcolorParsed(graph, createColorList(rgbColor));
 		assertEquals("#00ff00", DotAttributes.getFillcolor(graph));
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("ff");
-		DotAttributes.setFillcolorParsed(graph, rgbColor);
+		DotAttributes.setFillcolorParsed(graph, createColorList(rgbColor));
 		assertEquals("#00ff00ff", DotAttributes.getFillcolor(graph));
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFillcolorParsed(graph, hsvColor);
+		DotAttributes.setFillcolorParsed(graph, createColorList(hsvColor));
 		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(graph));
-		assertTrue(EcoreUtil.equals(hsvColor,
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFillcolorParsed(graph, stringColor);
+		DotAttributes.setFillcolorParsed(graph, createColorList(stringColor));
 		assertEquals("/bugn9/7", DotAttributes.getFillcolor(graph));
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getFillcolorParsed(graph)));
 
 		// set invalid string values
@@ -1521,7 +1525,7 @@ public class DotAttributesTests {
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'fillcolor' to '//'. The value '//' is not a syntactically correct color: No viable alternative at input '<EOF>'.",
+					"Cannot set graph attribute 'fillcolor' to '//'. The value '//' is not a syntactically correct colorList: No viable alternative at input '<EOF>'.",
 					e.getMessage());
 		}
 	}
@@ -2529,14 +2533,14 @@ public class DotAttributesTests {
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid string values - rgba format
 		DotAttributes.setFillcolor(node, "#00ff00ff");
 		assertEquals("#00ff00ff", DotAttributes.getFillcolor(node));
 		rgbColor.setA("ff");
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid string values - hsv format
@@ -2546,7 +2550,7 @@ public class DotAttributesTests {
 		hsvColor.setH("0.3");
 		hsvColor.setS(".8");
 		hsvColor.setV(".7");
-		assertTrue(EcoreUtil.equals(hsvColor,
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid string values - string format
@@ -2555,7 +2559,7 @@ public class DotAttributesTests {
 		StringColor stringColor = ColorFactory.eINSTANCE.createStringColor();
 		stringColor.setScheme("bugn9");
 		stringColor.setName("7");
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - rgb format
@@ -2563,28 +2567,28 @@ public class DotAttributesTests {
 		rgbColor.setR("00");
 		rgbColor.setG("ff");
 		rgbColor.setB("00");
-		DotAttributes.setFillcolorParsed(node, rgbColor);
+		DotAttributes.setFillcolorParsed(node, createColorList(rgbColor));
 		assertEquals("#00ff00", DotAttributes.getFillcolor(node));
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - rgba format
 		rgbColor.setA("ff");
-		DotAttributes.setFillcolorParsed(node, rgbColor);
+		DotAttributes.setFillcolorParsed(node, createColorList(rgbColor));
 		assertEquals("#00ff00ff", DotAttributes.getFillcolor(node));
-		assertTrue(EcoreUtil.equals(rgbColor,
+		assertTrue(EcoreUtil.equals(createColorList(rgbColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - hsv format
-		DotAttributes.setFillcolorParsed(node, hsvColor);
+		DotAttributes.setFillcolorParsed(node, createColorList(hsvColor));
 		assertEquals("0.3 .8 .7", DotAttributes.getFillcolor(node));
-		assertTrue(EcoreUtil.equals(hsvColor,
+		assertTrue(EcoreUtil.equals(createColorList(hsvColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set valid parsed values - string format
-		DotAttributes.setFillcolorParsed(node, stringColor);
+		DotAttributes.setFillcolorParsed(node, createColorList(stringColor));
 		assertEquals("/bugn9/7", DotAttributes.getFillcolor(node));
-		assertTrue(EcoreUtil.equals(stringColor,
+		assertTrue(EcoreUtil.equals(createColorList(stringColor),
 				DotAttributes.getFillcolorParsed(node)));
 
 		// set invalid string values
@@ -2593,7 +2597,7 @@ public class DotAttributesTests {
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'fillcolor' to '//'. The value '//' is not a syntactically correct color: No viable alternative at input '<EOF>'.",
+					"Cannot set node attribute 'fillcolor' to '//'. The value '//' is not a syntactically correct colorList: No viable alternative at input '<EOF>'.",
 					e.getMessage());
 		}
 	}
@@ -3265,5 +3269,15 @@ public class DotAttributesTests {
 					"Cannot set graph attribute 'rank' to 'foo'. The value 'foo' is not a syntactically correct rankType: Value has to be one of 'same', 'min', 'source', 'max', 'sink'.",
 					e.getMessage());
 		}
+	}
+
+	private ColorList createColorList(Color color) {
+		WC weightedColor = ColorlistFactory.eINSTANCE.createWC();
+		weightedColor.setColor(color);
+
+		ColorList colorList = ColorlistFactory.eINSTANCE.createColorList();
+		colorList.getColorValues().add(weightedColor);
+
+		return colorList;
 	}
 }

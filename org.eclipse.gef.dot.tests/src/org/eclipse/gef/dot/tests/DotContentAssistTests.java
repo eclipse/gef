@@ -391,14 +391,14 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values with prefix
 		newBuilder().append("digraph {1->2[ color=azure ]}")
 				.assertTextAtCursorPosition(26, "azure", "azure1", "azure2",
-						"azure3", "azure4", ",", ";", "]")
+						"azure3", "azure4", ":", ",", ";", "]")
 				.applyProposal(26, "azure1")
 				.expectContent("digraph {1->2[ color=azure1 ]}");
 
 		// test local attribute values with quotes and prefix
 		newBuilder().append("digraph {1->2[ color=\"azure\" ]}")
 				.assertTextAtCursorPosition(27, "azure", "azure1", "azure2",
-						"azure3", "azure4")
+						"azure3", "azure4", ",", ":", ";")
 				.applyProposal(27, "azure2")
 				.expectContent("digraph {1->2[ color=\"azure2\" ]}");
 
@@ -515,14 +515,14 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values with prefix
 		newBuilder().append("digraph {1->2[ fillcolor=bisque ]}")
 				.assertTextAtCursorPosition(31, "bisque", "bisque1", "bisque2",
-						"bisque3", "bisque4", ",", ";", "]")
+						"bisque3", "bisque4", ":", ",", ";", "]")
 				.applyProposal(31, "bisque1")
 				.expectContent("digraph {1->2[ fillcolor=bisque1 ]}");
 
 		// test local attribute values with quotes and prefix
 		newBuilder().append("digraph {1->2[ fillcolor=\"bisque\" ]}")
-				.assertTextAtCursorPosition(32, "bisque", "bisque1", "bisque2",
-						"bisque3", "bisque4")
+				.assertTextAtCursorPosition(32, ",", ":", ";", "bisque",
+						"bisque1", "bisque2", "bisque3", "bisque4")
 				.applyProposal(32, "bisque2")
 				.expectContent("digraph {1->2[ fillcolor=\"bisque2\" ]}");
 	}
@@ -898,19 +898,20 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 		// test local attribute values with prefix
 		newBuilder().append("graph { colorscheme=svg bgcolor=aqua }")
-				.assertTextAtCursorPosition(36, "aqua", "aquamarine", ";", "{",
-						"}")
+				.assertTextAtCursorPosition(36, "aqua", "aquamarine", ",", ":",
+						";", "{", "}")
 				.applyProposal(36, "aqua")
 				.expectContent("graph { colorscheme=svg bgcolor=aqua }");
 
 		// test local attribute values with quotes and prefix
 		newBuilder().append("graph { colorscheme=svg bgcolor=\"dark\" }")
-				.assertTextAtCursorPosition(37, "darkblue", "darkcyan",
-						"darkgoldenrod", "darkgray", "darkgreen", "darkgrey",
-						"darkkhaki", "darkmagenta", "darkolivegreen",
-						"darkorange", "darkorchid", "darkred", "darksalmon",
-						"darkseagreen", "darkslateblue", "darkslategray",
-						"darkslategrey", "darkturquoise", "darkviolet")
+				.assertTextAtCursorPosition(37, ",", ":", ";", "darkblue",
+						"darkcyan", "darkgoldenrod", "darkgray", "darkgreen",
+						"darkgrey", "darkkhaki", "darkmagenta",
+						"darkolivegreen", "darkorange", "darkorchid", "darkred",
+						"darksalmon", "darkseagreen", "darkslateblue",
+						"darkslategray", "darkslategrey", "darkturquoise",
+						"darkviolet")
 				.applyProposal(37, "darkturquoise").expectContent(
 						"graph { colorscheme=svg bgcolor=\"darkturquoise\" }");
 
@@ -1444,14 +1445,14 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values with prefix
 		newBuilder().append("graph {1[ colorscheme=svg fillcolor=sa ]}")
 				.assertTextAtCursorPosition(38, "saddlebrown", "salmon",
-						"sandybrown", ",", ";", "]")
+						"sandybrown", ":", ",", ";", "]")
 				.applyProposal(38, "salmon")
 				.expectContent("graph {1[ colorscheme=svg fillcolor=salmon ]}");
 
 		// test local attribute values with quotes and prefix
 		newBuilder().append("graph {1[ colorscheme=svg fillcolor=\"sa\"]}")
 				.assertTextAtCursorPosition(39, "saddlebrown", "salmon",
-						"sandybrown")
+						"sandybrown", ",", ":", ";")
 				.applyProposal(39, "sandybrown").expectContent(
 						"graph {1[ colorscheme=svg fillcolor=\"sandybrown\"]}");
 	}
@@ -1551,7 +1552,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>",
 						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
 						"<U></U>");
-		
+
 		// test html-like label attribute value
 		newBuilder().append("graph {1[ label=< <BR ALIGN=\"\" /> >]}")
 				.assertTextAtCursorPosition(29, "CENTER", "LEFT", "RIGHT")

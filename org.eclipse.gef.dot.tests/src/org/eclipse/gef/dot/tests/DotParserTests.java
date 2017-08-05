@@ -309,6 +309,96 @@ public class DotParserTests {
 		testString("graph{1--2[color=5 colorscheme=brbg10]}");
 	}
 
+	@Test
+	public void testColorList_BGCOLOR_G() {
+		testString(DotTestGraphs.COLORLIST_BGCOLOR_G);
+	}
+
+	@Test
+	public void testColorList_BGCOLOR_C() {
+		testString(DotTestGraphs.COLORLIST_BGCOLOR_C);
+	}
+
+	@Test
+	public void testColorList_COLOR_E() {
+		testString(DotTestGraphs.COLORLIST_COLOR_E);
+	}
+
+	@Test
+	public void testColorList_FILLCOLOR_N() {
+		testString(DotTestGraphs.COLORLIST_FILLCOLOR_N);
+	}
+
+	@Test
+	public void testColorList_FILLCOLOR_C() {
+		testString(DotTestGraphs.COLORLIST_FILLCOLOR_C);
+	}
+
+	@Test
+	public void testColor() {
+		testFile("color.dot");
+	}
+
+	@Test
+	public void testGrdangles() {
+		testFile("grdangles.dot");
+	}
+
+	@Test
+	public void testGrdcluster() {
+		testFile("grdcluster.dot");
+	}
+
+	@Test
+	public void testGrdcolors() {
+		testFile("grdcolors.dot");
+	}
+
+	@Test
+	public void testGrdfillcolor() {
+		testFile("grdfillcolor.dot");
+	}
+
+	@Test
+	public void testGrdlinear_angle() {
+		testFile("grdlinear_angle.dot");
+	}
+
+	@Test
+	public void testGrdlinear_node() {
+		testFile("grdlinear_node.dot");
+	}
+
+	@Test
+	public void testGrdlinear() {
+		testFile("grdlinear.dot");
+	}
+
+	@Test
+	public void testGrdradial_angle() {
+		testFile("grdradial_angle.dot");
+	}
+
+	@Test
+	public void testGrdradial_node() {
+		testFile("grdradial_node.dot");
+	}
+
+	@Test
+	public void testGrdradial() {
+		testFile("grdradial.dot");
+	}
+
+	@Test
+	public void testGrdshapes() {
+		testFile("grdshapes.dot");
+	}
+
+	@Test
+	public void testSwitch() {
+		testFile("switch.dot");
+	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));

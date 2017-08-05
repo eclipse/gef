@@ -24,8 +24,15 @@ import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.gef.common.reflect.ReflectionUtils
+import org.eclipse.gef.dot.internal.DotAttributes.Context
+import org.eclipse.gef.dot.internal.DotAttributes.EnumParser
+import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueParser
+import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueSerializer
+import org.eclipse.gef.dot.internal.DotAttributes.IAttributeValueValidator
+import org.eclipse.gef.dot.internal.DotAttributes.RangeBasedDiagnosticEx
 import org.eclipse.gef.dot.internal.generator.DotAttribute
 import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotColorListStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotEscStringStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup
@@ -38,6 +45,7 @@ import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode
 import org.eclipse.gef.dot.internal.language.color.Color
 import org.eclipse.gef.dot.internal.language.color.DotColors
+import org.eclipse.gef.dot.internal.language.colorlist.ColorList
 import org.eclipse.gef.dot.internal.language.dir.DirType
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt
 import org.eclipse.gef.dot.internal.language.dot.AttributeType
@@ -63,6 +71,7 @@ import org.eclipse.gef.dot.internal.language.style.Style
 import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotColorListJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
@@ -401,13 +410,27 @@ class DotAttributes {
 			case ARROWSIZE__E: validateAttributeRawValue(DOUBLE_PARSER,	ARROWSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case ARROWTAIL__E: validateAttributeRawValue(ARROWTYPE_PARSER, ARROWTYPE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case BB__GC: validateAttributeRawValue(RECT_PARSER, RECT_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case BGCOLOR__GC: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case BGCOLOR__GC: validateAttributeRawValue(COLORLIST_PARSER, COLORLIST_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case CLUSTERRANK__G: validateAttributeRawValue(CLUSTERMODE_PARSER, null, attributeContext, attributeName, attributeValue)
-			case COLORSCHEME__GCNE:  validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
-			case COLOR__CNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case COLORSCHEME__GCNE: validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
+			case COLOR__CNE:
+				// TODO: remove "attributeContext == Context.GRAPH"
+				if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
+					validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+				else if (attributeContext == Context.EDGE)
+					validateAttributeRawValue(COLORLIST_PARSER, COLORLIST_VALIDATOR, attributeContext, attributeName, attributeValue)
+				else
+					Collections.emptyList
 			case DIR__E: validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case FILLCOLOR__CNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FILLCOLOR__CNE: 
+				// TODO: remove "attributeContext == Context.GRAPH"
+				if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
+					validateAttributeRawValue(COLORLIST_PARSER, COLORLIST_VALIDATOR, attributeContext, attributeName, attributeValue)
+				else if (attributeContext == Context.EDGE)
+					validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+				else
+					Collections.emptyList
 			case FIXEDSIZE__N: validateAttributeRawValue(BOOL_PARSER, null,	attributeContext, FIXEDSIZE__N, attributeValue)
 			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
@@ -1045,6 +1068,21 @@ class DotAttributes {
 	 */
 	static val COLOR_SERIALIZER = new EObjectSerializer<Color>(colorInjector)
 
+	static val Injector colorListInjector = new DotColorListStandaloneSetup().createInjectorAndDoEMFRegistration
+
+	/**
+	 * The parser for colorlist attribute values.
+	 */
+	static val COLORLIST_PARSER = new EObjectParser<ColorList>(colorListInjector)
+
+	/**
+	 * The serializer for colorlist attribute values.
+	 */
+	static val COLORLIST_SERIALIZER = new EObjectSerializer<ColorList>(colorListInjector)
+
+	static val COLORLIST_VALIDATOR = new EObjectValidator<ColorList>(colorListInjector,
+		DotColorListJavaValidator)
+
 	static val Injector htmlLabelInjector = new DotHtmlLabelStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
@@ -1338,13 +1376,18 @@ class DotAttributes {
 	@DotAttribute(parsedType=Rect)
 	public static val String BB__GC = "bb"
 
-	@DotAttribute(parsedType=Color)
+	@DotAttribute(parsedType=ColorList)
 	public static val String BGCOLOR__GC = "bgcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=ClusterMode)
 	public static val String CLUSTERRANK__G = "clusterrank"
 
-	@DotAttribute(parsedType=Color)
+	/**
+	 * color is a special case, where different parsed values for Cluster, 
+	 * Node and Edge attributes (Color, Color, ColorList) and thus different 
+	 * parsers and serializers are required.
+	 */
+	@DotAttribute(parsedType=#[Color, Color, ColorList])
 	public static val String COLOR__CNE = "color"
 
 	@DotAttribute(parsedType=String)
@@ -1356,7 +1399,12 @@ class DotAttributes {
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val String DISTORTION__N = "distortion"
 
-	@DotAttribute(parsedType=Color)
+	/**
+	 * fillcolor is a special case, where different parsed values for Cluster, 
+	 * Node and Edge attributes (ColorList, Color, Color) and thus different 
+	 * parsers and serializers are required.
+	 */
+	@DotAttribute(parsedType=#[ColorList, ColorList, Color])
 	public static val String FILLCOLOR__CNE = "fillcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
@@ -1401,8 +1449,11 @@ class DotAttributes {
 	@DotAttribute(rawType="STRING", parsedType=Pagedir)
 	public static val String PAGEDIR__G = "pagedir"
 
-	//XXX: pos is a special case, where different parsed values for Node and Edge attributes (Point, SplineType) and thus 
-	//     different parsers and serializers are required
+	/**
+	 * pos is a special case, where different parsed values for Node and Edge 
+	 * attributes (Point, SplineType) and thus different parsers and serializers
+	 * are required.
+	 */
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=#[Point, SplineType])
 	public static val String POS__NE = "pos"
 	

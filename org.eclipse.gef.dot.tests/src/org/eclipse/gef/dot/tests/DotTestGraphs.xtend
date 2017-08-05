@@ -538,7 +538,49 @@ class DotTestGraphs {
 		digraph {
 			1->2[style=invis]
 		}
-	'''	
+	'''
+	
+	public static val COLORLIST_BGCOLOR_G= '''
+		graph {
+			bgcolor="red;0.75:blue;0.25"
+		}
+	'''
+	
+	public static val COLORLIST_BGCOLOR_C= '''
+		graph {
+			subgraph cluster1{
+				bgcolor = "blue;0.75:red"
+				1
+			}
+		}
+	'''
+	
+	public static val COLORLIST_COLOR_E= '''
+		graph {
+			1--2[
+				color = "blue;0.75:red;0.25"
+			]
+		}
+	'''
+	
+	public static val COLORLIST_FILLCOLOR_N= '''
+		graph {
+			1[
+				style=filled
+				fillcolor="red;0.25:blue;0.75"
+			]
+		}
+	'''
+	
+	public static val COLORLIST_FILLCOLOR_C= '''
+		graph {
+			subgraph cluster1{
+				style=filled
+				fillcolor="red;0.75:blue"
+				1
+			}
+		}
+	'''
 
 /*
  ************************************************************************************************************

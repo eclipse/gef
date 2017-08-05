@@ -46,7 +46,6 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
-import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
@@ -197,6 +196,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					break;
 				case DotAttributes.COLOR__CNE:
 				case DotAttributes.FILLCOLOR__CNE:
+					proposeColorListAttributeValues(attribute, context,
+							acceptor);
+					break;
 				case DotAttributes.FONTCOLOR__GCNE:
 				case DotAttributes.LABELFONTCOLOR__E:
 					proposeColorAttributeValues(attribute, context, acceptor);
@@ -239,6 +241,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			} else if (DotAttributes.getContext(attribute) == Context.GRAPH) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.BGCOLOR__GC:
+					proposeColorListAttributeValues(attribute, context,
+							acceptor);
+					break;
 				case DotAttributes.FONTCOLOR__GCNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
@@ -287,7 +292,12 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			} else if (DotAttributes.getContext(attribute) == Context.NODE) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.COLOR__CNE:
+					proposeColorAttributeValues(attribute, context, acceptor);
+					break;
 				case DotAttributes.FILLCOLOR__CNE:
+					proposeColorListAttributeValues(attribute, context,
+							acceptor);
+					break;
 				case DotAttributes.FONTCOLOR__GCNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
@@ -412,7 +422,23 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				context, acceptor);
 
 		// reset the state of the DotColorProposalProvider
-		DotColorJavaValidator.globalColorScheme = null;
+		DotColorProposalProvider.globalColorScheme = null;
+	}
+
+	private void proposeColorListAttributeValues(Attribute attribute,
+			ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		// give the DotColorProposalProvider the necessary 'global' information
+		DotColorProposalProvider.globalColorScheme = DotAstHelper
+				.getColorSchemeAttributeValue(attribute);
+
+		// propose color values based on the DotColorList sub-grammar
+		proposeAttributeValues(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLORLIST,
+				context, acceptor);
+
+		// reset the state of the DotColorProposalProvider
+		DotColorProposalProvider.globalColorScheme = null;
 	}
 
 	private void proposeHtmlLabelAttributeValues(Attribute attribute,
