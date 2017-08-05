@@ -78,6 +78,16 @@ public class DotHtmlLabelTests {
 		parse(DotTestHtmlLabels.COMMENT_WITH_CLOSE_TAG);
 	}
 
+	@Test
+	public void test_comment_within_table_tag() throws Throwable {
+		parse(DotTestHtmlLabels.COMMENT_WITHIN_TABLE_TAG);
+	}
+
+	@Test
+	public void test_comment_within_text() throws Throwable {
+		parse(DotTestHtmlLabels.COMMENT_WITHIN_TEXT);
+	}
+
 	@Test(timeout = 2000)
 	public void test_tag_with_attribute() {
 		parse(DotTestHtmlLabels.TAG_WITH_ATTRIBUTE);
@@ -139,6 +149,17 @@ public class DotHtmlLabelTests {
 	 * Test cases for invalid DOT Html like labels
 	 ************************************************************************************************************
 	 */
+
+	@Test
+	public void test_invalid_comment() throws Throwable {
+		// HTML comments are not allowed inside a tag
+		String text = "<B <!--HTML comment--> >string</B>";
+
+		HtmlLabel htmlLabel = parseHelper.parse(text);
+
+		// verify that there are some reported issues
+		Assert.assertEquals(8, validationTestHelper.validate(htmlLabel).size());
+	}
 
 	@Test
 	public void test_tag_wrongly_closed() throws Exception {

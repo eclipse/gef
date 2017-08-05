@@ -43,6 +43,27 @@ class DotTestHtmlLabels {
 		<!-- <tags> -->
 		<B>Bold Label</B>
 	'''
+	
+	public static val COMMENT_WITHIN_TABLE_TAG = '''
+			<TABLE>
+				<!-- HTML comment-->
+				<TR>
+					<TD>left</TD>
+				</TR>
+			</TABLE>
+	'''
+	
+	public static val COMMENT_WITHIN_TEXT= '''
+			<TABLE>
+				<TR>
+					<TD>
+						left  <!-- HTML comment 1 -->
+						      <!-- HTML comment 2 -->
+						right <!-- HTML comment 3 -->
+					</TD>
+				</TR>
+			</TABLE>
+	'''
 
 	public static val FONT_TAG_CONTAINS_TABLE_TAG = '''
 		<!--
