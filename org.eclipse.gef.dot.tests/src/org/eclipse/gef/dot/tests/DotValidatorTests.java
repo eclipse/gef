@@ -19,7 +19,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
@@ -127,8 +126,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testArrowShapesInvalidModifiers() throws Exception {
-		registerEscStringPackage();
-
 		DotAst dotAst = parse("arrowshapes_invalid_modifiers.dot");
 
 		assertArrowTypeWarning(dotAst,
@@ -190,8 +187,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongArrowType() throws Exception {
-		registerArrowTypePackage();
-
 		String text = "digraph testGraph { 1->2[arrowhead=fooBar arrowtail=fooBar2] }";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -258,9 +253,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongGraphBackgroundColor() throws Exception {
-		registerColorPackage();
-		registerColorListPackage();
-
 		String text = "graph { bgcolor=grsy }";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -276,9 +268,6 @@ public class DotValidatorTests {
 	@Test
 	public void testGraphBackgroundColorDoesNotCorrespondToLocalColorScheme()
 			throws Exception {
-		registerColorPackage();
-		registerColorListPackage();
-
 		String text = "graph { colorscheme=brbg10 bgcolor=blue}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -294,9 +283,6 @@ public class DotValidatorTests {
 	@Test
 	public void testGraphBackgroundColorDoesNotCorrespondToGlobalColorScheme()
 			throws Exception {
-		registerColorPackage();
-		registerColorListPackage();
-
 		String text = "graph { graph[colorscheme=brbg10] bgcolor=blue}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -311,8 +297,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongNodeColor() throws Exception {
-		registerColorPackage();
-
 		String text = "graph { 1[color=\"#fffff\"]}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -328,8 +312,6 @@ public class DotValidatorTests {
 	@Test
 	public void testNodeColorDoesNotCorrespondToLocalColorScheme()
 			throws Exception {
-		registerColorPackage();
-
 		String text = "graph { 1[colorscheme=brbg10 color=blue]}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -345,8 +327,6 @@ public class DotValidatorTests {
 	@Test
 	public void testNodeColorDoesNotCorrespondToGlobalColorScheme()
 			throws Exception {
-		registerColorPackage();
-
 		String text = "graph { node[colorscheme=brbg10] 1[color=blue]}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -361,8 +341,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongEdgeFillColor() throws Exception {
-		registerColorPackage();
-
 		String text = "digraph { 1->2[fillcolor=\"#fffff\"]}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -379,8 +357,6 @@ public class DotValidatorTests {
 	@Test
 	public void testEdgeFillColorDoesNotCorrespondToLocalColorScheme()
 			throws Exception {
-		registerColorPackage();
-
 		String text = "digraph { 1->2[colorscheme=brbg10 fillcolor=white]}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -397,8 +373,6 @@ public class DotValidatorTests {
 	@Test
 	public void testEdgeFillColorDoesNotCorrespondToGlobalColorScheme()
 			throws Exception {
-		registerColorPackage();
-
 		String text = "digraph { edge[colorscheme=brbg10] 1->2[fillcolor=red]}";
 
 		DotAst dotAst = parserHelper.parse(text);
@@ -512,9 +486,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testInvalidCombinationOfNodeShapeAndStyle() throws Exception {
-		registerShapePackage();
-		registerStylePackage();
-
 		/*
 		 * The 'striped' node style is only supported with clusters and
 		 * rectangularly-shaped nodes('box', 'rect', 'rectangle' and 'square').
@@ -572,8 +543,6 @@ public class DotValidatorTests {
 
 	@Test
 	public void testInvalidHtmlLikeLabelParserProblem() {
-		registerHtmlLabelPackage();
-
 		String text = "graph {1[label = <<BR/><FONT>>]}";
 		String errorProneText = "<<BR/><FONT>>";
 		String errorMessage = "The value '<BR/><FONT>' is not a syntactically correct htmlLabel: Mismatched input '<EOF>' expecting RULE_TAG_START_CLOSE.";
@@ -756,69 +725,5 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
 				offset, length, errorMessage);
-	}
-
-	// TODO: check why these extra EMF Package registrations are necessary
-	private void registerArrowTypePackage() {
-		if (!EPackage.Registry.INSTANCE.containsKey(
-				org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(
-					org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eNS_URI,
-					org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eINSTANCE);
-		}
-	}
-
-	private void registerColorPackage() {
-		if (!EPackage.Registry.INSTANCE.containsKey(
-				org.eclipse.gef.dot.internal.language.color.ColorPackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(
-					org.eclipse.gef.dot.internal.language.color.ColorPackage.eNS_URI,
-					org.eclipse.gef.dot.internal.language.color.ColorPackage.eINSTANCE);
-		}
-	}
-
-	private void registerColorListPackage() {
-		if (!EPackage.Registry.INSTANCE.containsKey(
-				org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(
-					org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eNS_URI,
-					org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eINSTANCE);
-		}
-	}
-
-	private void registerEscStringPackage() {
-		if (!EPackage.Registry.INSTANCE.containsKey(
-				org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(
-					org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eNS_URI,
-					org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eINSTANCE);
-		}
-	}
-
-	private void registerHtmlLabelPackage() {
-		if (!EPackage.Registry.INSTANCE.containsKey(
-				org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(
-					org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eNS_URI,
-					org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eINSTANCE);
-		}
-	}
-
-	private void registerShapePackage() {
-		if (!EPackage.Registry.INSTANCE.containsKey(
-				org.eclipse.gef.dot.internal.language.shape.ShapePackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(
-					org.eclipse.gef.dot.internal.language.shape.ShapePackage.eNS_URI,
-					org.eclipse.gef.dot.internal.language.shape.ShapePackage.eINSTANCE);
-		}
-	}
-
-	private void registerStylePackage() {
-		if (!EPackage.Registry.INSTANCE.containsKey(
-				org.eclipse.gef.dot.internal.language.style.StylePackage.eNS_URI)) {
-			EPackage.Registry.INSTANCE.put(
-					org.eclipse.gef.dot.internal.language.style.StylePackage.eNS_URI,
-					org.eclipse.gef.dot.internal.language.style.StylePackage.eINSTANCE);
-		}
 	}
 }
