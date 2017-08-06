@@ -195,9 +195,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							context, acceptor);
 					break;
 				case DotAttributes.COLOR__CNE:
-				case DotAttributes.FILLCOLOR__CNE:
 					proposeColorListAttributeValues(attribute, context,
 							acceptor);
+					break;
+				case DotAttributes.FILLCOLOR__CNE:
+					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
 				case DotAttributes.FONTCOLOR__GCNE:
 				case DotAttributes.LABELFONTCOLOR__E:

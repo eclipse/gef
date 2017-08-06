@@ -414,7 +414,7 @@ class DotAttributes {
 			case CLUSTERRANK__G: validateAttributeRawValue(CLUSTERMODE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case COLORSCHEME__GCNE: validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
 			case COLOR__CNE:
-				// TODO: remove "attributeContext == Context.GRAPH"
+				// TODO: remove "attributeContext == Context.GRAPH", since color is not a valid graph attribute
 				if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
 					validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else if (attributeContext == Context.EDGE)
@@ -424,7 +424,7 @@ class DotAttributes {
 			case DIR__E: validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FILLCOLOR__CNE: 
-				// TODO: remove "attributeContext == Context.GRAPH"
+				// TODO: remove "attributeContext == Context.GRAPH", since fillcolor is not a valid graph attribute
 				if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
 					validateAttributeRawValue(COLORLIST_PARSER, COLORLIST_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else if (attributeContext == Context.EDGE)
@@ -1401,7 +1401,7 @@ class DotAttributes {
 
 	/**
 	 * fillcolor is a special case, where different parsed values for Cluster, 
-	 * Node and Edge attributes (ColorList, Color, Color) and thus different 
+	 * Node and Edge attributes (ColorList, ColorList, Color) and thus different 
 	 * parsers and serializers are required.
 	 */
 	@DotAttribute(parsedType=#[ColorList, ColorList, Color])

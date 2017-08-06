@@ -515,14 +515,14 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values with prefix
 		newBuilder().append("digraph {1->2[ fillcolor=bisque ]}")
 				.assertTextAtCursorPosition(31, "bisque", "bisque1", "bisque2",
-						"bisque3", "bisque4", ":", ",", ";", "]")
+						"bisque3", "bisque4", ",", ";", "]")
 				.applyProposal(31, "bisque1")
 				.expectContent("digraph {1->2[ fillcolor=bisque1 ]}");
 
 		// test local attribute values with quotes and prefix
 		newBuilder().append("digraph {1->2[ fillcolor=\"bisque\" ]}")
-				.assertTextAtCursorPosition(32, ",", ":", ";", "bisque",
-						"bisque1", "bisque2", "bisque3", "bisque4")
+				.assertTextAtCursorPosition(32, "bisque", "bisque1", "bisque2",
+						"bisque3", "bisque4")
 				.applyProposal(32, "bisque2")
 				.expectContent("digraph {1->2[ fillcolor=\"bisque2\" ]}");
 	}
