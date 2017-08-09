@@ -240,13 +240,15 @@ public class TypeStrokeGesture extends AbstractGesture {
 
 					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
 							targetNode);
-					Collection<? extends IOnTypeHandler> policies = getHandlerResolver()
-							.resolve(TypeStrokeGesture.this, targetNode,
-									targetViewer, ON_TYPE_POLICY_KEY);
-					// active policies are unnecessary because TYPED is not a
-					// gesture, just one event at one point in time
-					for (IOnTypeHandler policy : policies) {
-						policy.type(event, pressedKeys);
+					if (targetViewer != null) {
+						Collection<? extends IOnTypeHandler> policies = getHandlerResolver()
+								.resolve(TypeStrokeGesture.this, targetNode,
+										targetViewer, ON_TYPE_POLICY_KEY);
+						// active policies are unnecessary because TYPED is not a
+						// gesture, just one event at one point in time
+						for (IOnTypeHandler policy : policies) {
+							policy.type(event, pressedKeys);
+						}
 					}
 					if (pressedKeys.isEmpty()) {
 						getDomain().closeExecutionTransaction(TypeStrokeGesture.this);
