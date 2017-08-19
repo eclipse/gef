@@ -434,7 +434,11 @@ class DotAttributes {
 					validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else
 					Collections.emptyList
-			case FIXEDSIZE__N: validateAttributeRawValue(BOOL_PARSER, null,	attributeContext, FIXEDSIZE__N, attributeValue)
+			case FIXEDSIZE__N: 
+				if(attributeValue!==null && !attributeValue.toValue.isEmpty){
+					validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FIXEDSIZE__N, attributeValue)
+				}else
+					Collections.emptyList
 			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)

@@ -242,6 +242,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testPhilo() {
+		testFile("philo.dot");
+	}
+
+	@Test
 	public void testSimpleDigraph() {
 		testFile("simple_digraph.dot");
 	}
