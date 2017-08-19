@@ -340,6 +340,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testER() {
+		testFile("er.dot");
+	}
+
+	@Test
 	public void testGrdangles() {
 		testFile("grdangles.dot");
 	}

@@ -775,11 +775,11 @@ public class DotAttributesTests {
 
 		// set invalid string values
 		try {
-			DotAttributes.setLabelfontcolor(edge, "");
+			DotAttributes.setLabelfontcolor(edge, "_");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set edge attribute 'labelfontcolor' to ''. The value '' is not a syntactically correct color: No viable alternative at input '<EOF>'.",
+					"Cannot set edge attribute 'labelfontcolor' to '_'. The value '_' is not a syntactically correct color: No viable alternative at character '_'.",
 					e.getMessage());
 		}
 	}

@@ -414,12 +414,15 @@ class DotAttributes {
 			case CLUSTERRANK__G: validateAttributeRawValue(CLUSTERMODE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case COLORSCHEME__GCNE: validateAttributeRawValue(null, COLORSCHEME_VALIDATOR,	attributeContext, attributeName, attributeValue)
 			case COLOR__CNE:
-				// TODO: remove "attributeContext == Context.GRAPH", since color is not a valid graph attribute
-				if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
-					validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
-				else if (attributeContext == Context.EDGE)
-					validateAttributeRawValue(COLORLIST_PARSER, COLORLIST_VALIDATOR, attributeContext, attributeName, attributeValue)
-				else
+				if(attributeValue!==null && !attributeValue.toValue.isEmpty){
+					// TODO: remove "attributeContext == Context.GRAPH", since color is not a valid graph attribute
+					if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
+						validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+					else if (attributeContext == Context.EDGE)
+						validateAttributeRawValue(COLORLIST_PARSER, COLORLIST_VALIDATOR, attributeContext, attributeName, attributeValue)
+					else
+						Collections.emptyList
+				}else
 					Collections.emptyList
 			case DIR__E: validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)

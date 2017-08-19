@@ -370,21 +370,21 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test global attribute values
 		newBuilder().append("digraph {edge[ color= ]}")
 				.assertTextAtCursorPosition(21,
-						combine(expectedX11ColorNames, "#", "/"))
+						combine(expectedX11ColorNames, "#", "/", ":", ";"))
 				.applyProposal(21, "#")
 				.expectContent("digraph {edge[ color=# ]}");
 
 		// test local attribute values
 		newBuilder().append("digraph {1->2[ color= ]}")
 				.assertTextAtCursorPosition(21,
-						combine(expectedX11ColorNames, "#", "/"))
+						combine(expectedX11ColorNames, "#", "/", ":", ";"))
 				.applyProposal(21, "/")
 				.expectContent("digraph {1->2[ color=/ ]}");
 
 		// test local attribute values with quotes
 		newBuilder().append("digraph {1->2[ color=\"\" ]}")
 				.assertTextAtCursorPosition(22,
-						combine(expectedX11ColorNames, "#", "/"))
+						combine(expectedX11ColorNames, "#", "/", ":", ";"))
 				.applyProposal(22, "#")
 				.expectContent("digraph {1->2[ color=\"#\" ]}");
 
@@ -404,15 +404,15 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 		// test local attribute value with local color scheme value
 		newBuilder().append("graph{1--2[color=; colorscheme=brbg10]}")
-				.assertTextAtCursorPosition(17, "#", "/", "1", "2", "3", "4",
-						"5", "6", "7", "8", "9", "10")
+				.assertTextAtCursorPosition(17, "#", "/", ":", ";", "1", "2",
+						"3", "4", "5", "6", "7", "8", "9", "10")
 				.applyProposal(17, "10")
 				.expectContent("graph{1--2[color=10; colorscheme=brbg10]}");
 
 		// test local attribute value with global color scheme value
 		newBuilder().append("graph{edge[colorscheme=brbg10] 1--2[color=]}")
-				.assertTextAtCursorPosition(42, "#", "/", "1", "2", "3", "4",
-						"5", "6", "7", "8", "9", "10")
+				.assertTextAtCursorPosition(42, "#", "/", ":", ";", "1", "2",
+						"3", "4", "5", "6", "7", "8", "9", "10")
 				.applyProposal(42, "10").expectContent(
 						"graph{edge[colorscheme=brbg10] 1--2[color=10]}");
 	}
@@ -878,21 +878,21 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test global attribute values
 		newBuilder().append("graph {graph[ colorscheme=svg bgcolor= ]}")
 				.assertTextAtCursorPosition(38,
-						combine(expectedSvgColorNames, "#", "/"))
+						combine(expectedSvgColorNames, "#", "/", ":", ";"))
 				.applyProposal(38, "aliceblue").expectContent(
 						"graph {graph[ colorscheme=svg bgcolor=aliceblue ]}");
 
 		// test local attribute values
 		newBuilder().append("graph { colorscheme=svg bgcolor= }")
 				.assertTextAtCursorPosition(32,
-						combine(expectedSvgColorNames, "#", "/"))
+						combine(expectedSvgColorNames, "#", "/", ":", ";"))
 				.applyProposal(32, "aqua")
 				.expectContent("graph { colorscheme=svg bgcolor=aqua }");
 
 		// test local attribute values with quotes
 		newBuilder().append("graph { colorscheme=svg bgcolor=\"\" }")
 				.assertTextAtCursorPosition(33,
-						combine(expectedSvgColorNames, "#", "/"))
+						combine(expectedSvgColorNames, "#", "/", ":", ";"))
 				.applyProposal(33, "aquamarine").expectContent(
 						"graph { colorscheme=svg bgcolor=\"aquamarine\" }");
 
@@ -917,15 +917,15 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 		// test local attribute value with local color scheme value
 		newBuilder().append("graph{colorscheme=brbg10 bgcolor= 1}")
-				.assertTextAtCursorPosition(33, "#", "/", "1", "2", "3", "4",
-						"5", "6", "7", "8", "9", "10")
+				.assertTextAtCursorPosition(33, "#", "/", ":", ";", "1", "2",
+						"3", "4", "5", "6", "7", "8", "9", "10")
 				.applyProposal(33, "10")
 				.expectContent("graph{colorscheme=brbg10 bgcolor=10 1}");
 
 		// test local attribute value with global color scheme value
 		newBuilder().append("graph{graph[colorscheme=brbg10] bgcolor= 1}")
-				.assertTextAtCursorPosition(40, "#", "/", "1", "2", "3", "4",
-						"5", "6", "7", "8", "9", "10")
+				.assertTextAtCursorPosition(40, "#", "/", ":", ";", "1", "2",
+						"3", "4", "5", "6", "7", "8", "9", "10")
 				.applyProposal(40, "10")
 				.expectContent("graph{graph[colorscheme=brbg10] bgcolor=10 1}");
 	}
@@ -1424,21 +1424,21 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test global attribute values
 		newBuilder().append("graph {node[ colorscheme=svg fillcolor= ]}")
 				.assertTextAtCursorPosition(39,
-						combine(expectedSvgColorNames, "#", "/"))
+						combine(expectedSvgColorNames, "#", "/", ":", ";"))
 				.applyProposal(39, "#")
 				.expectContent("graph {node[ colorscheme=svg fillcolor=# ]}");
 
 		// test local attribute values
 		newBuilder().append("graph {1[ colorscheme=svg fillcolor= ]}")
 				.assertTextAtCursorPosition(36,
-						combine(expectedSvgColorNames, "#", "/"))
+						combine(expectedSvgColorNames, "#", "/", ":", ";"))
 				.applyProposal(36, "#")
 				.expectContent("graph {1[ colorscheme=svg fillcolor=# ]}");
 
 		// test local attribute values with quotes
 		newBuilder().append("graph {1[ colorscheme=svg fillcolor=\"\" ]}")
 				.assertTextAtCursorPosition(37,
-						combine(expectedSvgColorNames, "#", "/"))
+						combine(expectedSvgColorNames, "#", "/", ":", ";"))
 				.applyProposal(37, "#")
 				.expectContent("graph {1[ colorscheme=svg fillcolor=\"#\" ]}");
 

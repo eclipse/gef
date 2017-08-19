@@ -1,0 +1,129 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *       Tamas Miklossy  (itemis AG) - Initial text (bug #520919=
+ *******************************************************************************/
+
+// Sample graph from 
+// http://www.graphviz.org/content/ER
+// http://www.graphviz.org/Gallery/undirected/ER.gv.txt
+graph ER {
+	graph [bb="-154.44,170.56,189.1,-257.81",
+		fontsize=20,
+		label="\n\nEntity Relation Diagram\ndrawn by NEATO",
+		layout=neato,
+		lheight=1.28,
+		lp="17.33,120.56",
+		lwidth=2.76
+	];
+	node [color=lightgrey,
+		label="\N",
+		shape=diamond,
+		style=filled
+	];
+	{
+		node [label=name];
+		name0		 [color="",
+			height=0.5,
+			label=name,
+			pos="144.95,-173.45",
+			shape=ellipse,
+			style="",
+			width=0.83048];
+		name1		 [color="",
+			height=0.5,
+			label=name,
+			pos="-92.878,-239.81",
+			shape=ellipse,
+			style="",
+			width=0.83048];
+		name2		 [color="",
+			height=0.5,
+			label=name,
+			pos="-124.54,-10.021",
+			shape=ellipse,
+			style="",
+			width=0.83048];
+	}
+	course	 [color="",
+		height=0.5,
+		pos="86.543,-117.7",
+		shape=box,
+		style="",
+		width=0.75];
+	"C-I"	 [height=0.5,
+		pos="33.722,-183.7",
+		width=0.89363];
+	course -- "C-I"	 [label=n,
+		len=1.00,
+		lp="54.531,-145.83",
+		pos="72.109,-135.74 63.19,-146.88 51.958,-160.92 43.953,-170.92"];
+	institute	 [color="",
+		height=0.5,
+		pos="-48.25,-174.96",
+		shape=box,
+		style="",
+		width=0.81944];
+	institute -- name1	 [pos="-60.681,-193.03 -67.181,-202.47 -75.082,-213.95 -81.43,-223.18"];
+	"S-I"	 [height=0.5,
+		pos="-77.181,-98.113",
+		width=0.86809];
+	institute -- "S-I"	 [label=1,
+		len=1.00,
+		lp="-66.823,-142.42",
+		pos="-55.106,-156.75 -60.119,-143.43 -66.836,-125.59 -71.539,-113.1"];
+	student	 [color="",
+		height=0.5,
+		pos="-41.682,-21.084",
+		shape=box,
+		style="",
+		width=0.79167];
+	student -- name2	 [pos="-70.197,-17.277 -78.249,-16.202 -87.024,-15.03 -95.128,-13.948"];
+	grade	 [color="",
+		height=0.5,
+		pos="-1.7507,52.559",
+		shape=ellipse,
+		style="",
+		width=0.84854];
+	student -- grade	 [pos="-31.811,-2.8798 -25.529,8.7056 -17.438,23.628 -11.233,35.072"];
+	number	 [color="",
+		height=0.5,
+		pos="-77.705,51.111",
+		shape=ellipse,
+		style="",
+		width=1.0652];
+	student -- number	 [pos="-50.772,-2.866 -56.274,8.1616 -63.263,22.168 -68.742,33.149"];
+	"S-C"	 [height=0.5,
+		pos="38.268,-49.244",
+		width=0.99575];
+	student -- "S-C"	 [label=m,
+		len=1.00,
+		lp="-3.4218,-43.997",
+		pos="-12.818,-31.25 -2.9778,-34.716 7.838,-38.526 16.974,-41.744"];
+	name0 -- course	 [pos="128.99,-158.22 121.83,-151.38 113.32,-143.26 105.81,-136.09"];
+	code	 [color="",
+		height=0.5,
+		pos="160.5,-82.63",
+		shape=ellipse,
+		style="",
+		width=0.79437];
+	code -- course	 [pos="137.51,-93.534 129.96,-97.113 121.5,-101.12 113.67,-104.83"];
+	"C-I" -- institute	 [label=1,
+		len=1.00,
+		lp="-9.5553,-186.96",
+		pos="6.4263,-180.79 -1.5843,-179.94 -10.383,-179 -18.537,-178.13"];
+	"S-C" -- course	 [label=n,
+		len=1.00,
+		lp="57.27,-88.652",
+		pos="47.805,-62.769 55.225,-73.289 65.591,-87.99 73.734,-99.536"];
+	"S-I" -- student	 [label=n,
+		len=1.00,
+		lp="-63.793,-68.969",
+		pos="-70.504,-83.624 -64.719,-71.073 -56.323,-52.854 -50.083,-39.314"];
+}
