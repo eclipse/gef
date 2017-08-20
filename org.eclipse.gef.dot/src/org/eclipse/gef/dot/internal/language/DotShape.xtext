@@ -14,8 +14,9 @@ grammar org.eclipse.gef.dot.internal.language.DotShape with org.eclipse.xtext.co
 
 generate shape "http://www.eclipse.org/gef/dot/internal/language/DotShape"
 
+// XXX: While not documented explicitly, an empty color seems to be valid as well (see bug #521158)
 Shape: 
-	shape = (PolygonBasedShape | RecordBasedShape);
+	{Shape} shape = (PolygonBasedShape | RecordBasedShape)?;
 
 PolygonBasedShape:
 	shape = PolygonBasedNodeShape;

@@ -2927,7 +2927,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'shape' to 'foo'. The value 'foo' is not a syntactically correct shape: No viable alternative at input 'foo'.",
+					"Cannot set node attribute 'shape' to 'foo'. The value 'foo' is not a syntactically correct shape: Extraneous input 'foo' expecting EOF.",
 					e.getMessage());
 		}
 	}

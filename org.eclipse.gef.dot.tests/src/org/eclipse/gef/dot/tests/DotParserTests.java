@@ -350,6 +350,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testFancyGraph() {
+		testFile("fancy_graph.dot");
+	}
+
+	@Test
 	public void testGrdangles() {
 		testFile("grdangles.dot");
 	}

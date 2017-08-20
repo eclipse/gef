@@ -1,0 +1,95 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *       Tamas Miklossy  (itemis AG) - Initial text (bug #521158)
+ *******************************************************************************/
+
+// Sample graph from 
+// http://www.graphviz.org/Documentation/dotguide.pdf
+// Figure 3: Fancy graph Page5
+
+digraph G {
+	graph [bb="0,307.74,274.89,0",
+		size="4,4"
+	];
+	node [color=".7 .3 1.0",
+		label="\N",
+		shape=box,
+		style=filled
+	];
+	edge [color=red];
+	{
+		make_string		 [color="",
+			height=0.74639,
+			label="make a\nstring",
+			pos="201.55,280.87",
+			shape="",
+			style="",
+			width=1.0999];
+		printf		 [color="",
+			height=0.5,
+			pos="30.547,280.87",
+			shape="",
+			style="",
+			width=0.84854];
+	}
+	main	 [color="",
+		height=0.5,
+		pos="111.55,18",
+		style="",
+		width=0.75];
+	parse	 [color="",
+		height=0.5,
+		pos="111.55,91",
+		shape="",
+		style="",
+		width=0.84854];
+	main -> parse	 [color="",
+		pos="e,111.55,72.971 111.55,36.187 111.55,44.211 111.55,53.953 111.55,62.931",
+		weight=8];
+	init	 [color="",
+		height=0.5,
+		pos="173.55,145",
+		shape="",
+		style="",
+		width=0.75];
+	main -> init	 [color="",
+		pos="e,169.99,127.03 126.48,36.009 134.8,46.179 144.8,59.679 151.55,73 158.61,86.943 163.92,103.59 167.55,117.25",
+		style=dotted];
+	cleanup	 [color="",
+		height=0.5,
+		pos="236.55,91",
+		shape="",
+		style="",
+		width=1.0652];
+	main -> cleanup	 [color="",
+		pos="e,216.78,75.217 138.77,30.807 152.73,37.17 169.84,45.457 184.55,54 192.46,58.599 200.74,64.021 208.3,69.242"];
+	main -> printf	 [label="100 times",
+		lp="77.547,145",
+		pos="e,30.756,262.73 96.716,36.064 88.439,46.252 78.439,59.752 71.547,73 40.838,132.04 33.067,211.52 31.144,252.66",
+		style=bold];
+	execute	 [color="",
+		height=0.5,
+		pos="111.55,199",
+		shape="",
+		style="",
+		width=1.0652];
+	parse -> execute	 [color="",
+		pos="e,111.55,180.66 111.55,109.03 111.55,125.62 111.55,151.12 111.55,170.57"];
+	execute -> make_string	 [color="",
+		pos="e,178.12,259.08 128.9,215.4 140.71,225.88 156.67,240.04 170.62,252.42"];
+	execute -> printf	 [color="",
+		pos="e,45.695,264.93 95.544,215.78 83.442,227.71 66.666,244.26 53.189,257.54"];
+	compare	 [height=0.5,
+		pos="111.55,280.87",
+		width=0.90278];
+	execute -> compare	 [pos="e,111.55,262.85 111.55,217.33 111.55,227.66 111.55,240.99 111.55,252.69"];
+	init -> make_string	 [color="",
+		pos="e,196.11,253.87 177.09,162.95 181.33,183.2 188.53,217.63 194.02,243.9"];
+}
