@@ -77,6 +77,16 @@ class DotAstHelper {
 			}
 		}
 
+		// attribute nested below AttrStmt
+		val attrStmt = attribute.getContainerOfType(AttrStmt)
+		if(attrStmt!==null){
+			var ID colorScheme = attrStmt.attrLists.getAttributeValue(
+					DotAttributes.COLORSCHEME__GCNE)
+			if (colorScheme !== null) {
+				return colorScheme.toValue()
+			}
+		}
+
 		// attribute nested below Graph
 		val dotGraph = attribute.getContainerOfType(DotGraph)
 		if (dotGraph !== null) {

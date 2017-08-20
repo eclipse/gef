@@ -315,6 +315,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testGlobalEdgeNodeColorScheme() {
+		testString(DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME);
+	}
+
+	@Test
 	public void testColorList_BGCOLOR_G() {
 		testString(DotTestGraphs.COLORLIST_BGCOLOR_G);
 	}

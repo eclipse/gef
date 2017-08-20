@@ -76,6 +76,9 @@ public final class DotImportTests {
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotTestUtils.getStyledGraph().toString(),
 				graph.toString());
+
+		graph = importString(DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME);
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 	}
 
 	/**

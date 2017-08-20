@@ -31,7 +31,13 @@ public class DotColorJavaValidator extends
 	 * scheme is not defined, the default color scheme should be used in the
 	 * validation.
 	 */
-	public static String globalColorScheme = null;
+	static String globalColorScheme = null;
+
+	// TODO: eliminate this field and find a clear solution how to check if the
+	// used color corresponds to the default color scheme or to the globally
+	// defined color scheme. This issue is related to validation calls coming
+	// from either the DotJavaValidator or from the DotImport.
+	static boolean considerDefaultColorScheme = false;
 
 	private final String defaultColorScheme = "x11";
 
@@ -45,8 +51,12 @@ public class DotColorJavaValidator extends
 	 */
 	@Check
 	public void checkConsistentColorSchemeAndColorName(StringColor color) {
-		// start with the default color scheme
-		String colorScheme = defaultColorScheme;
+		String colorScheme = null;
+
+		// start with the default color scheme if desired
+		if (considerDefaultColorScheme) {
+			colorScheme = defaultColorScheme;
+		}
 
 		String localColorScheme = color.getScheme();
 		if (localColorScheme != null && !localColorScheme.isEmpty()) {
@@ -61,6 +71,10 @@ public class DotColorJavaValidator extends
 			colorScheme = localColorScheme;
 		} else if (globalColorScheme != null) {
 			colorScheme = globalColorScheme;
+		}
+
+		if (colorScheme == null) {
+			return;
 		}
 
 		// check if the color is valid in the colorScheme

@@ -350,6 +350,14 @@ class DotTestGraphs {
 			}
 		}
 	'''
+	
+	public static val GLOBAL_EDGE_NODE_COLORSCHEME = '''
+		digraph G {
+			edge [colorscheme=blues3 color=3]
+			node [colorscheme=blues4 fontcolor=4]
+			1->2
+		}
+	'''
 
 /*
  ************************************************************************************************************

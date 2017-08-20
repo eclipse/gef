@@ -64,6 +64,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		ID attributeValue = attribute.getValue();
 
 		// give the DotColorValidator the necessary 'global' information
+		DotColorJavaValidator.considerDefaultColorScheme = true;
 		DotColorJavaValidator.globalColorScheme = DotAstHelper
 				.getColorSchemeAttributeValue(attribute);
 
@@ -73,6 +74,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		// reset the state of the DotColorValidator
 		DotColorJavaValidator.globalColorScheme = null;
+		DotColorJavaValidator.considerDefaultColorScheme = false;
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(attribute,
 				DotPackage.Literals.ATTRIBUTE__VALUE);
