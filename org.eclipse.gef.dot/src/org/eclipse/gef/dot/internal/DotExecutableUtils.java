@@ -7,13 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *     Fabian Steeg                - initial API and implementation (see bug #277380)
- *     Alexander Nyßen (itemis AG) - Fixed NPE (see bug #473011)
- *     Tamas Miklossy (itemis AG)  - Refactoring of preferences (bug #446639)
- *                                 - Exporting *.dot files in different formats (bug #446647)
- *                                 - Naming of output file (bug #484198)
- *     Darius Jockel (itemis AG)   - Fixed problems when calling dot on windows with large 
- *                                   files (#492395)
+ *     Fabian Steeg                 - initial API and implementation (see bug #277380)
+ *     Alexander Nyßen (itemis AG)  - Fixed NPE (see bug #473011)
+ *     Tamas Miklossy (itemis AG)   - Refactoring of preferences (bug #446639)
+ *                                  - Exporting *.dot files in different formats (bug #446647)
+ *                                  - Naming of output file (bug #484198)
+ *     Darius Jockel (itemis AG)    - Fixed problems when calling dot on windows with large 
+ *                                    files (#492395)
+ *     Matthias Wienand (itemis AG) - Remove sysouts and return exception message (#521230)
  *
  *********************************************************************************************/
 package org.eclipse.gef.dot.internal;
@@ -23,7 +24,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,6 +32,7 @@ import java.util.List;
  * @author Fabian Steeg (fsteeg)
  * @author Alexander Nyßen (anyssen)
  * @author Darius Jockel
+ * @author Matthias Wieannd (mwienand)
  */
 final public class DotExecutableUtils {
 
@@ -67,22 +68,13 @@ final public class DotExecutableUtils {
 					+ dotFile.substring(0, dotFile.lastIndexOf('.') + 1)
 					+ format);
 		}
-
 		String[] localOutputs = executeDot(dotExecutablePath, false,
 				dotInputFile, outputFile, format);
-		if (!localOutputs[0].isEmpty()) {
-			System.out.println("Output from dot call: " + localOutputs[0]); //$NON-NLS-1$
-		}
-		if (!localOutputs[1].isEmpty()) {
-			System.err.println("Errors from dot call: " + localOutputs[1]); //$NON-NLS-1$
-		}
-
 		// make the local outputs array visible to the caller
 		if (outputs != null && outputs.length == 2) {
 			outputs[0] = localOutputs[0];
 			outputs[1] = localOutputs[1];
 		}
-
 		return outputFile;
 	}
 
@@ -155,9 +147,7 @@ final public class DotExecutableUtils {
 	 * @return String array of the supported export formats
 	 */
 	public static String[] getSupportedExportFormats(String dotExecutable) {
-
 		String[] commands = { dotExecutable, "-T?" };
-
 		String[] outputs = call(commands);
 		String output = outputs[1];
 		if (!output.isEmpty()) {
@@ -178,18 +168,20 @@ final public class DotExecutableUtils {
 	 *         of the error stream
 	 */
 	private static String[] call(final String[] commands) {
-		System.out.print("Calling '" + Arrays.asList(commands) + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+		// System.out.print("Calling '" + Arrays.asList(commands) + "'");
+		// //$NON-NLS-1$ //$NON-NLS-2$
 		String[] outputs = { "", "" };
 		Runtime runtime = Runtime.getRuntime();
 		Process p = null;
 		try {
 			p = runtime.exec(commands);
 			p.waitFor();
-			System.out.println(
-					" resulted in exit status: " + p.exitValue() + "."); //$NON-NLS-1$//$NON-NLS-2$
-		} catch (Exception e) {
-			System.out
-					.println(" failed with exception " + e.getMessage() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (Throwable e) {
+			String exitValue = p != null ? Integer.toString(p.exitValue())
+					: "?";
+			String errorMessage = e.getMessage();
+			outputs[1] = "Cannot execute program: " + exitValue + ": "
+					+ errorMessage;
 		}
 		// handle input and error stream only if process succeeded.
 		if (p != null) {
@@ -209,5 +201,4 @@ final public class DotExecutableUtils {
 		}
 		return "";
 	}
-
 }
