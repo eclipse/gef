@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.common.doc"
       label="GEF Common Developer Documentation"
-      version="5.0.0.qualifier"
+      version="5.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.common.doc"
       license-feature="org.eclipse.license"

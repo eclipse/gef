@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF Graph
 Bundle-SymbolicName: org.eclipse.gef.graph
-Bundle-Version: 5.0.0.qualifier
+Bundle-Version: 5.0.1.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.graph
-Require-Bundle: org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)"
+Require-Bundle: org.eclipse.gef.common;bundle-version="[5.0.1,6.0.0)"

@@ -47,11 +47,11 @@
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.gef.common.sdk" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.common.sdk" version="5.0.1" match="compatible"/>
       <import feature="org.eclipse.gef.geometry.sdk" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.fx.sdk" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.graph.sdk" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.layout.sdk" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.graph.sdk" version="5.0.1" match="compatible"/>
+      <import feature="org.eclipse.gef.layout.sdk" version="5.0.1" match="compatible"/>
       <import feature="org.eclipse.gef.mvc.sdk" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.zest.sdk" version="5.0.0" match="compatible"/>
    </requires>
