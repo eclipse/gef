@@ -282,6 +282,7 @@
 					<configuration>
 						<systemProperties>
 							<SWT_GTK3>0</SWT_GTK3>
+							<QT_STYLE_OVERRIDE>gtk2</QT_STYLE_OVERRIDE>
 						</systemProperties>
 						<includes>
 							<include>**/All*Tests.class</include>
