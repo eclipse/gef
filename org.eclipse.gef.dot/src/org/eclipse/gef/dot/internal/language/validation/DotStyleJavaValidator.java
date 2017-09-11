@@ -73,6 +73,8 @@ public class DotStyleJavaValidator extends
 					styleItem, StylePackage.Literals.STYLE_ITEM__NAME,
 					attributeContext);
 		}
+		// do nothing if the DOT attribute context cannot be determined. In such
+		// cases this validation rule should have no effect.
 	}
 
 	/**
@@ -142,9 +144,6 @@ public class DotStyleJavaValidator extends
 		// XXX: This context information is provided by the EObjectValidator
 		Context attributeContext = (Context) getContext()
 				.get(Context.class.getName());
-		if (attributeContext == null) {
-			throw new IllegalStateException("Attribute context not specified.");
-		}
 		return attributeContext;
 	}
 
