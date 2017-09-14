@@ -52,7 +52,7 @@
 
    <requires>
       <import feature="org.eclipse.gef.geometry.sdk" version="5.0.0" match="equivalent"/>
-      <import feature="org.eclipse.gef.common.sdk" version="5.0.0" match="equivalent"/>
+      <import feature="org.eclipse.gef.common.sdk" version="5.0.1" match="equivalent"/>
    </requires>
 
 </feature>

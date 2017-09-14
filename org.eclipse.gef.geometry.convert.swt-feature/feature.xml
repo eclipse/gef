@@ -31,7 +31,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef.geometry" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.geometry" version="5.0.1" match="compatible"/>
    </requires>
 
    <plugin

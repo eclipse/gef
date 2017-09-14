@@ -31,7 +31,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef.common" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.common" version="5.0.1" match="compatible"/>
       <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 

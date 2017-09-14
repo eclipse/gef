@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.gef</groupId>
 	<artifactId>org.eclipse.gef.releng</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
@@ -345,7 +345,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef</groupId>
 									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
+									<version>${project.version}</version>
 									<classifier>OXYGEN</classifier>
 								</artifact>
 							</target>
@@ -401,7 +401,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef</groupId>
 									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
+									<version>${project.version}</version>
 									<classifier>NEON</classifier>
 								</artifact>
 							</target>
@@ -457,7 +457,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef</groupId>
 									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
+									<version>${project.version}</version>
 									<classifier>MARS</classifier>
 								</artifact>
 							</target>
@@ -516,7 +516,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef</groupId>
 									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
+									<version>${project.version}</version>
 									<classifier>LUNA</classifier>
 								</artifact>
 							</target>

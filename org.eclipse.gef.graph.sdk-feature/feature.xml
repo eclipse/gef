@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.graph.sdk"
       label="GEF Graph SDK"
-      version="5.0.0.qualifier"
+      version="5.0.1.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -43,7 +43,7 @@
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.gef.common.sdk" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.common.sdk" version="5.0.1" match="compatible"/>
    </requires>
 
 </feature>

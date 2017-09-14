@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.layout"
       label="GEF Layout"
-      version="5.0.0.qualifier"
+      version="5.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.layout"
       license-feature="org.eclipse.license"
@@ -31,9 +31,9 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef.common" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.geometry" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.common" version="5.0.1" match="compatible"/>
+      <import feature="org.eclipse.gef.geometry" version="5.0.1" match="compatible"/>
+      <import feature="org.eclipse.gef.graph" version="5.0.1" match="compatible"/>
       <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 
