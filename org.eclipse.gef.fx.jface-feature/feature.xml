@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.fx.jface"
       label="GEF FX.JFace"
-      version="5.0.1.qualifier"
+      version="5.0.2.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.fx.jface"
       license-feature="org.eclipse.license"
