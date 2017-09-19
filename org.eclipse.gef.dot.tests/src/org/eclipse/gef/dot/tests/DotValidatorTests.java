@@ -770,6 +770,12 @@ public class DotValidatorTests {
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
 
+	@Test
+	public void testRecordShapeLabel() throws Exception {
+		DotAst ast = parse("record_shape_node1.dot");
+		validationTestHelper.assertNoIssues(ast);
+	}
+
 	private DotAst parse(String fileName) {
 		DotAst dotAst = null;
 		String fileContents = DotFileUtils

@@ -16,6 +16,8 @@
  *						- support for formatter API generation
  *						- support for content assistant API generation
  *						- integration of dot attribute sub-grammars (bug #461506)
+ *      Zoey Gerrit Prigge - integration of record label sub-grammar (bug #454629)
+ * 
  *******************************************************************************/
 module org.eclipse.gef.dot.internal.language.Dot
 
@@ -480,6 +482,47 @@ Workflow {
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotPoint.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dotpoint"
+			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
+
+			// a custom ResourceFactory for use with EMF
+			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
+
+			// generates Java API for the generated EPackages
+			fragment = ecore.EMFGeneratorFragment auto-inject {
+			// has to be explicitly set for headless execution (Tycho)
+				javaModelDirectory = "/${projectName}/src-gen"
+			}
+
+			// Java-based validator
+			fragment = validation.JavaValidatorFragment auto-inject {}
+			
+			// formatter API
+			fragment = formatting.FormatterFragment auto-inject {}
+			
+			// serializer 2.0
+			fragment = serializer.SerializerFragment auto-inject {
+				generateStub = false
+			}
+
+			// The antlr parser generator fragment
+			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
+			
+			// Java-based content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
+
+			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				options = {
+					ignoreCase = true
+				}
+			}
+
+			// generates junit test support classes into Generator#pathTestProject
+			fragment = junit.Junit4Fragment auto-inject {}
+		}
+		language = auto-inject {
+			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotRecordLabel.xtext"// Java API to access grammar elements (required by several other fragments)
+			fileExtensions = "dotrecordlabel"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// a custom ResourceFactory for use with EMF
