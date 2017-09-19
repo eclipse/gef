@@ -8,6 +8,8 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
+ *     Zoey Gerrit Prigge         - Generalized dependent attribute method 
+ * 									to use with recordBased Node shapes (bug #454629)
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language
@@ -45,72 +47,82 @@ class DotAstHelper {
 	 *         null if it cannot be determined.
 	 */
 	def static String getColorSchemeAttributeValue(Attribute attribute) {
+		getDependedOnAttributeValue(attribute, DotAttributes.COLORSCHEME__GCNE)
+	}	 
+	 
+	/**
+	 * 
+	 * Returns an attribute value specified by attributeName that is set for given attribute
+	 * 
+	 * @param dependentAttribute
+	 * 			The attribute to determine a depending value for.
+	 * @param attributeName
+	 * 			The name of the attribute that the dependentAttribute depends on.
+	 * @return The attribute value set for the attribute specified by attributeName
+	 */ 
+	def static String getDependedOnAttributeValue(Attribute dependentAttribute, String attributeName) {
 		// attribute nested below EdgeStmtNode
-		var edgeStmtNode = attribute.getContainerOfType(EdgeStmtNode)
+		var edgeStmtNode = dependentAttribute.getContainerOfType(EdgeStmtNode)
 		if (edgeStmtNode !== null) {
-			// look for a locally defined 'colorscheme' attribute
-			var ID colorScheme = edgeStmtNode.attrLists.getAttributeValue(
-					DotAttributes.COLORSCHEME__GCNE)
-			if (colorScheme !== null) {
-				return colorScheme.toValue()
+			// look for a locally defined 'dependedOnValue' attribute
+			var ID dependedOnValue = edgeStmtNode.attrLists.getAttributeValue(attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue()
 			}
-			// look for a globally defined 'colorscheme' attribute
-			colorScheme = edgeStmtNode.getGlobalColorSchemeValue(AttributeType.EDGE)
-			if (colorScheme !== null) {
-				return colorScheme.toValue()
+			// look for a globally defined 'dependedOnValue' attribute
+			dependedOnValue = edgeStmtNode.getGlobalDependedOnValue(AttributeType.EDGE, attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue()
 			}
 		}
 
 		// attribute nested below NodeStmt
-		val nodeStmt = attribute.getContainerOfType(NodeStmt)
+		val nodeStmt = dependentAttribute.getContainerOfType(NodeStmt)
 		if (nodeStmt !== null) {
-			// look for a locally defined 'colorscheme' attribute
-			var ID colorScheme = nodeStmt.attrLists.getAttributeValue(
-					DotAttributes.COLORSCHEME__GCNE)
-			if (colorScheme !== null) {
-				return colorScheme.toValue()
+			// look for a locally defined 'dependedOnValue' attribute
+			var ID dependedOnValue = nodeStmt.attrLists.getAttributeValue(attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue()
 			}
-			// look for a globally defined 'colorscheme' attribute
-			colorScheme = nodeStmt.getGlobalColorSchemeValue(AttributeType.NODE)
-			if (colorScheme !== null) {
-				return colorScheme.toValue()
+			// look for a globally defined 'dependedOnValue' attribute
+			dependedOnValue = nodeStmt.getGlobalDependedOnValue(AttributeType.NODE, attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue()
 			}
 		}
 
 		// attribute nested below AttrStmt
-		val attrStmt = attribute.getContainerOfType(AttrStmt)
-		if(attrStmt!==null){
-			var ID colorScheme = attrStmt.attrLists.getAttributeValue(
-					DotAttributes.COLORSCHEME__GCNE)
-			if (colorScheme !== null) {
-				return colorScheme.toValue()
+		val attrStmt = dependentAttribute.getContainerOfType(AttrStmt)
+		if (attrStmt !== null) {
+			var ID dependedOnValue = attrStmt.attrLists.getAttributeValue(attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue()
 			}
 		}
 
 		// attribute nested below Graph
-		val dotGraph = attribute.getContainerOfType(DotGraph)
+		val dotGraph = dependentAttribute.getContainerOfType(DotGraph)
 		if (dotGraph !== null) {
-			var ID colorScheme = dotGraph.getAttributeValueAll(DotAttributes.COLORSCHEME__GCNE)
-			if (colorScheme !== null) {
-				return colorScheme.toValue()
+			var ID dependedOnValue = dotGraph.getAttributeValueAll(attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue()
 			}
-			// look for a globally defined 'colorscheme' attribute
-			colorScheme = dotGraph.getGlobalColorSchemeValue(
-					AttributeType.GRAPH)
-			if (colorScheme !== null) {
-				return colorScheme.toValue()
+			// look for a globally defined 'dependedOnValue' attribute
+			dependedOnValue = dotGraph.getGlobalDependedOnValue(AttributeType.GRAPH, attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue()
 			}
 		}
 
 		return null
 	}
-
-	private def static ID getGlobalColorSchemeValue(EObject eObject,
-			AttributeType attributeType) {
+	
+	private def static ID getGlobalDependedOnValue(EObject eObject, 
+			AttributeType attributeType, String attributeName) {
 		// consider subgraph first
 		var EObject container = eObject.getContainerOfType(Subgraph)
 		if(container!==null){
-			val value = (container as Subgraph).stmts.getAttributeValue(attributeType, DotAttributes.COLORSCHEME__GCNE)
+			val value = (container as Subgraph).stmts.getAttributeValue(attributeType, attributeName)
 			if (value!==null){
 				return value
 			}
@@ -119,7 +131,7 @@ class DotAstHelper {
 		// consider graph second
 		container = eObject.getContainerOfType(DotGraph)
 		if(container!==null){
-			val value = (container as DotGraph).stmts.getAttributeValue(attributeType, DotAttributes.COLORSCHEME__GCNE)
+			val value = (container as DotGraph).stmts.getAttributeValue(attributeType, attributeName)
 			if (value!==null){
 				return value
 			}

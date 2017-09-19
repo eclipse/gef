@@ -297,6 +297,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testRecordShapeNode1() {
+		testFile("record_shape_node1.dot");
+	}
+
+	@Test
 	public void testGraphColorWithCustomColorScheme() {
 		testString("graph{graph[colorscheme=brbg10] bgcolor=5 1}");
 		testString("graph{colorscheme=brbg10 bgcolor=5 1}");
