@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - Merge DotInterpreter into DotImport (bug #491261)
- *                                 - Add support for all dot attributes (bug #461506)
+ *     Alexander Nyßen    (itemis AG) - initial API and implementation
+ *     Tamas Miklossy     (itemis AG) - Merge DotInterpreter into DotImport (bug #491261)
+ *                                    - Add support for all dot attributes (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -335,6 +336,7 @@ class DotImport {
 		setter.apply(FONTCOLOR__GCNE, [e, value|e.setFontcolorRaw(value)])
 		setter.apply(HEAD_LP__E, [e, value|e.setHeadLpRaw(value)])
 		setter.apply(HEADLABEL__E, [e, value|e.setHeadlabelRaw(value)])
+		setter.apply(HEADPORT__E, [e, value|e.setHeadportRaw(value)])
 		setter.apply(ID__GCNE, [e, value|e.setIdRaw(value)])
 		setter.apply(LABEL__GCNE, [e, value|e.setLabelRaw(value)])
 		setter.apply(LABELFONTCOLOR__E, [e, value|e.setLabelfontcolorRaw(value)])
@@ -342,6 +344,7 @@ class DotImport {
 		setter.apply(POS__NE, [e, value|e.setPosRaw(value)])
 		setter.apply(STYLE__GCNE, [e, value|e.setStyleRaw(value)])
 		setter.apply(TAILLABEL__E, [e, value|e.setTaillabelRaw(value)])
+		setter.apply(TAILPORT__E, [e, value|e.setTailportRaw(value)])
 		setter.apply(TAIL_LP__E, [e, value|e.setTailLpRaw(value)])
 		setter.apply(XLABEL__NE, [e, value|e.setXlabelRaw(value)])
 		setter.apply(XLP__NE, [e, value|e.setXlpRaw(value)])

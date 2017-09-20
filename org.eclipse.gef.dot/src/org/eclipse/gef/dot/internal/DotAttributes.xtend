@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - Add support for all dot attributes (bug #461506)
+ *     Alexander Nyßen    (itemis AG) - initial API and implementation
+ *     Tamas Miklossy     (itemis AG) - Add support for all dot attributes (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -31,6 +32,7 @@ import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotEscStringStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotPortPosStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotRectStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotShapeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotSplineTypeStandaloneSetup
@@ -55,6 +57,7 @@ import org.eclipse.gef.dot.internal.language.layout.Layout
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir
 import org.eclipse.gef.dot.internal.language.point.Point
+import org.eclipse.gef.dot.internal.language.portpos.PortPos
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir
 import org.eclipse.gef.dot.internal.language.ranktype.RankType
 import org.eclipse.gef.dot.internal.language.rect.Rect
@@ -436,6 +439,7 @@ class DotAttributes {
 			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case HEADPORT__E: validateAttributeRawValue(PORTPOS_PARSER, null, attributeContext, attributeName, attributeValue)
 			case HEIGHT__N: validateAttributeRawValue(DOUBLE_PARSER, HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LABEL__GCNE:
 				if (attributeValue.type == ID.Type.HTML_STRING)
@@ -465,6 +469,7 @@ class DotAttributes {
 			case SPLINES__G: validateAttributeRawValue(SPLINES_PARSER, null, attributeContext, attributeName, attributeValue)
 			case STYLE__GCNE: validateAttributeRawValue(STYLE_PARSER, STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case TAIL_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case TAILPORT__E: validateAttributeRawValue(PORTPOS_PARSER, null, attributeContext, attributeName, attributeValue)
 			case WIDTH__N: validateAttributeRawValue(DOUBLE_PARSER, WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case XLP__NE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			default: {
@@ -1197,6 +1202,24 @@ class DotAttributes {
 	 */
 	static val STYLE_VALIDATOR = new EObjectValidator<Style>(styleInjector, DotStyleJavaValidator)
 
+	static val Injector portPosInjector = new DotPortPosStandaloneSetup().createInjectorAndDoEMFRegistration
+
+//	/**
+//	 * The validator for portpos attribute values.
+//	 */
+//	static val PORTPOS_VALIDATOR = new EObjectValidator<ArrowType>(portPosInjector,
+//		DotPortPosJavaValidator)
+
+	/**
+	 * The parser for portpos attribute values.
+	 */
+	static val PORTPOS_PARSER = new EObjectParser<PortPos>(portPosInjector)
+
+//	/**
+//	 * The serializer for portpos attribute values.
+//	 */
+//	static val PORTPOS_SERIALIZER = new EObjectSerializer<PortPos>(portPosInjector)
+
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as
 	 * retrieved through the graph, node_id, as well as edge_stmt and edgeRHS
@@ -1423,6 +1446,9 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=String)
 	public static val String HEADLABEL__E = "headlabel"
+	
+	@DotAttribute(parsedType=String)
+	public static val String HEADPORT__E = "headport"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val String HEIGHT__N = "height"
@@ -1485,6 +1511,9 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=String)
 	public static val String TAILLABEL__E = "taillabel"
+	
+	@DotAttribute(parsedType=String)
+	public static val String TAILPORT__E = "tailport"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val String WIDTH__N = "width"
