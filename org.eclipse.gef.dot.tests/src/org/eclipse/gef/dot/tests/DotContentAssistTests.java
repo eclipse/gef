@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG) - initial implementation (bug #498324)
+ *     Tamas Miklossy     (itemis AG) - initial implementation (bug #498324)
+ *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
@@ -245,9 +246,9 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {edge[]}")
 				.assertTextAtCursorPosition(12, "]", "arrowhead", "arrowsize",
 						"arrowtail", "color", "colorscheme", "dir", "fillcolor",
-						"fontcolor", "headlabel", "head_lp", "id", "label",
-						"labelfontcolor", "lp", "pos", "style", "taillabel",
-						"tail_lp", "xlabel", "xlp")
+						"fontcolor", "headlabel", "headport", "head_lp", "id",
+						"label", "labelfontcolor", "lp", "pos", "style",
+						"taillabel", "tailport", "tail_lp", "xlabel", "xlp")
 				.applyProposal(12, "arrowhead")
 				.expectContent("graph {edge[arrowhead]}");
 
@@ -255,9 +256,9 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().append("graph {1--2[  ]}")
 				.assertTextAtCursorPosition(13, "]", "arrowhead", "arrowsize",
 						"arrowtail", "color", "colorscheme", "dir", "fillcolor",
-						"fontcolor", "headlabel", "head_lp", "id", "label",
-						"labelfontcolor", "lp", "pos", "style", "taillabel",
-						"tail_lp", "xlabel", "xlp")
+						"fontcolor", "headlabel", "headport", "head_lp", "id",
+						"label", "labelfontcolor", "lp", "pos", "style",
+						"taillabel", "tailport", "tail_lp", "xlabel", "xlp")
 				.applyProposal(13, "arrowtail")
 				.expectContent("graph {1--2[ arrowtail ]}");
 
