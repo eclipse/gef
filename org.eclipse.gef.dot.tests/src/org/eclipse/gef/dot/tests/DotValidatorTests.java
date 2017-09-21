@@ -9,6 +9,7 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)		
  *                                - Add support for polygon-based node shapes (bug #441352)
+ *     Zoey G. Prigge (itemis AG) - Add support for record-based node shapes (bug #454629)
  *
  *******************************************************************************/
 
@@ -24,6 +25,8 @@ import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
 import org.eclipse.gef.dot.internal.language.dot.DotAst;
 import org.eclipse.gef.dot.internal.language.dot.DotPackage;
+import org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator;
+import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
@@ -774,6 +777,43 @@ public class DotValidatorTests {
 	public void testRecordShapeLabel() throws Exception {
 		DotAst ast = parse("record_shape_node1.dot");
 		validationTestHelper.assertNoIssues(ast);
+	}
+
+	@Test
+	public void testInvalidPortAssignedSameNameRecordLabel() throws Exception {
+		String text = "digraph{ node [shape=record]; myNode [label=\"<here> foo | <here> more foo\"]; }";
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE, 46, 4,
+				"Semantic error on Attribute label: Port name not unique: here");
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE, 59, 4,
+				"Semantic error on Attribute label: Port name not unique: here");
+	}
+
+	@Test
+	public void testInvalidPortNotAssignedNameRecordLabel() throws Exception {
+		String text = "digraph{ node [shape=record]; myNode [label=\"<> foo | <here> more foo\"]; }";
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotRecordLabelJavaValidator.PORT_NAME_NOT_SET, 45, 6,
+				"Semantic warning on Attribute label: Port unnamed: port cannot be referenced");
+	}
+
+	@Test
+	public void testInvalidSyntaxErrorRecordLabel() throws Exception {
+		String text = "digraph{ node [shape=record]; myNode [label=\"<}> foo | <here> more foo\"]; }";
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				Diagnostic.SYNTAX_DIAGNOSTIC, 46, 1,
+				"Syntax error on Attribute label:", "'}'");
 	}
 
 	private DotAst parse(String fileName) {
