@@ -12,6 +12,7 @@
  *     Tamas Miklossy   (itemis AG) - Add support for arrowType edge decorations (bug #477980)
  *                                  - Add support for polygon-based node shapes (bug #441352)
  *                                  - Add support for all dot attributes (bug #461506)
+ *     Zoey Gerrit Prigge           - Add support for record-based node shapes (bug #454629)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -36,6 +37,8 @@ import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
+import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
+import org.eclipse.gef.dot.internal.language.shape.RecordBasedShape;
 import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.splinetype.Spline;
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType;
@@ -43,6 +46,7 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.style.Style;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.nodes.PolylineInterpolator;
@@ -466,11 +470,40 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	}
 
 	protected void convertAttributes(Node dot, Node zest) {
+		// for record shape (where Label is consumed by the Zest shape)
+		boolean isRecordBasedShape = false;
 		// id
 		String dotId = DotAttributes.getId(dot);
 		if (dotId != null) {
 			ZestProperties.setCssId(zest, dotId);
 		}
+
+		// width and height
+		// Convert position and size; as node position is interpreted as
+		// center,
+		// we need to know the size in order to infer correct zest positions
+		String dotHeight = DotAttributes.getHeight(dot);
+		String dotWidth = DotAttributes.getWidth(dot);
+
+		// default width is 0.75 inches
+		double zestWidth = (dotWidth == null ? 0.75
+				: Double.parseDouble(dotWidth)) * 72;
+		// default height is 0.5 inches
+		double zestHeight = (dotHeight == null ? 0.5
+				: Double.parseDouble(dotHeight)) * 72;
+
+		// label
+		String dotLabel = DotAttributes.getLabel(dot);
+		if (dotLabel == null || dotLabel.equals("\\N")) { //$NON-NLS-1$
+			// The node default label '\N' is used to indicate that a node's
+			// name or id becomes its label.
+			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
+		}
+		boolean isHtmlLabel = DotAttributes.getLabelRaw(dot) != null
+				? DotAttributes.getLabelRaw(dot)
+						.getType() == ID.Type.HTML_STRING
+				: false;
+		// TODO HTML label support
 
 		// style and color
 		String zestShapeStyle = computeZestStyle(dot);
@@ -505,8 +538,28 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			} else {
 				// TODO: handle other polygon shapes
 			}
+		} else if (dotShape.getShape() instanceof RecordBasedShape
+				&& !isHtmlLabel) {
+			// TODO record shapes that have HTML labels
+
+			if (zestShapeStyle != null)
+				zestShapeStyle = zestShapeStyle.replaceAll("-fx-fill", //$NON-NLS-1$
+						"-fx-background-color"); //$NON-NLS-1$
+
+			RecordBasedNodeShape recordBasedShape = ((RecordBasedShape) dotShape
+					.getShape()).getShape();
+			DotRecordBasedJavaFxNode node = new DotRecordBasedJavaFxNode(
+					dotLabel,
+					RecordBasedNodeShape.MRECORD.equals(recordBasedShape),
+					DotAttributes.getRankdirParsed(dot.getGraph()));
+			zestShape = node.getFxElement();
+
+			Bounds bounds = node.getBounds();
+			zestWidth = Math.max(zestWidth, bounds.getWidth());
+			zestHeight = Math.max(zestHeight, bounds.getHeight());
+			isRecordBasedShape = true;
 		} else {
-			// handle record and custom shapes
+			// handle custom shapes
 		}
 
 		if (zestShape != null) {
@@ -516,14 +569,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setShape(zest, zestShape);
 		}
 
-		// label
-		String dotLabel = DotAttributes.getLabel(dot);
-		if (dotLabel == null || dotLabel.equals("\\N")) { //$NON-NLS-1$
-			// The node default label '\N' is used to indicate that a node's
-			// name or id becomes its label.
-			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
-		}
-		ZestProperties.setLabel(zest, dotLabel);
+		// The label of a record based node shape is consumed by the zest shape
+		// hence, it needs not to be set again.
+		if (!isRecordBasedShape)
+			ZestProperties.setLabel(zest, dotLabel);
 
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXlabel(dot);
@@ -531,22 +580,13 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
 
-		// Convert position and size; as node position is interpreted as
-		// center,
-		// we need to know the size in order to infer correct zest positions
-		String dotHeight = DotAttributes.getHeight(dot);
-		String dotWidth = DotAttributes.getWidth(dot);
-
-		// default width is 0.75 inches
-		double zestWidth = (dotWidth == null ? 0.75
-				: Double.parseDouble(dotWidth)) * 72;
-		// default height is 0.5 inches
-		double zestHeight = (dotHeight == null ? 0.5
-				: Double.parseDouble(dotHeight)) * 72;
-
-		if (options().emulateLayout && !Boolean.TRUE
-				.equals(DotAttributes.getFixedsizeParsed(dot))) {
-			// if we are to emulate dot and fixedsize=true is not given, we have
+		// In case of a record based node shape the label is consumed by the
+		// zest shape, hence we do not need to account for label dimensions
+		if (options().emulateLayout
+				&& !Boolean.TRUE.equals(DotAttributes.getFixedsizeParsed(dot))
+				&& !isRecordBasedShape) {
+			// if we are to emulate dot and fixedsize=true is not given, we
+			// have
 			// to compute the size to enclose image, label, and margin.
 			// TODO: also enclose image and margin
 			Dimension labelSize = computeZestLabelSize(dotLabel);
