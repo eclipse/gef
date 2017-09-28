@@ -116,7 +116,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					break;
 
 				case Diagnostic.INFO:
-					getMessageAcceptor().acceptError(message, attribute, offset,
+					getMessageAcceptor().acceptInfo(message, attribute, offset,
 							length, code, issueData);
 					break;
 
