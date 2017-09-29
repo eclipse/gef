@@ -348,8 +348,12 @@ public abstract class AbstractBehavior implements IBehavior {
 	 */
 	protected IFeedbackPartFactory getFeedbackPartFactory(IViewer viewer) {
 		throw new UnsupportedOperationException(
-				"Need to implement getFeedbackPartFactory() for "
-						+ this.getClass());
+				"The default mechanism for generation of feedback depends on a feedback "
+						+ "part factory that needs to be made accessible by implementing "
+						+ this.getClass()
+						+ "#getFeedbackPartFactory(IViewer) method. In order to query the "
+						+ "factory from the viewer using a dedicated role, an implementation "
+						+ "can delegate to getFeedbackPartFactory(IViewer, String).");
 	}
 
 	/**
@@ -392,8 +396,12 @@ public abstract class AbstractBehavior implements IBehavior {
 	 */
 	protected IHandlePartFactory getHandlePartFactory(IViewer viewer) {
 		throw new UnsupportedOperationException(
-				"Need to implement getHandlePartFactory() for "
-						+ this.getClass());
+				"The default mechanism for generation of handles depends on a handle "
+						+ "part factory that needs to be made accessible by implementing "
+						+ this.getClass()
+						+ "#getHandlePartFactory(IViewer) method. In order to query the "
+						+ "factory from the viewer using a dedicated role, an implementation "
+						+ "can delegate to getHandlePartFactory(IViewer, String).");
 	}
 
 	/**
