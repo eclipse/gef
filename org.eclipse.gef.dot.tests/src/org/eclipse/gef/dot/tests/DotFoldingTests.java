@@ -87,6 +87,18 @@ public class DotFoldingTests {
 		testString(text, 1, 15, 2, 14, 7, 13, 8, 12, 9, 11, 4, 6);
 	}
 
+	@Test
+	public void testIncompleteAttributeStatement() {
+		String text = "graph {1[color= ]}";
+		testString(text);
+	}
+
+	@Test
+	public void testIncompleteAttributeStatementWithLineBreaks() {
+		String text = "graph {\r\n1[color=]\r\n}";
+		testString(text, 1, 2);
+	}
+
 	private void testString(String text, int... expectedLineNumbers) {
 		IXtextDocument xtextDocument = null;
 

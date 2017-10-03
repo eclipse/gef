@@ -83,7 +83,9 @@ public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 	 */
 	private void computeDotAttributeValueFolding(Attribute attribute,
 			IFoldingRegionAcceptor<ITextRegion> foldingRegionAcceptor) {
-		if (attribute.getValue().getType() == ID.Type.HTML_STRING) {
+		// The folding should be able to cope with incomplete statements
+		if (attribute.getValue() != null
+				&& attribute.getValue().getType() == ID.Type.HTML_STRING) {
 			String htmlLabelValue = attribute.getValue().toValue();
 			injector = DotActivator.getInstance().getInjector(
 					DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
