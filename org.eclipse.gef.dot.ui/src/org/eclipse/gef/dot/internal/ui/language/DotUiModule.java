@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - add binding for template proposal provider  (bug #321775)
- *                                 - add binding for folding region provider  (bug #321775)
+ *     Tamas Miklossy  (itemis AG) - add binding for template proposal provider (bug #321775)
+ *                                 - add binding for folding region provider (bug #321775)
+ *                                 - add binding for EObject hover/hover provider (bug #461506)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
@@ -17,9 +18,12 @@ import org.eclipse.gef.dot.internal.ui.language.folding.DotFoldingRegionProvider
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotAntlrTokenToAttributeIdMapper;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotHighlightingConfiguration;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotSemanticHighlightingCalculator;
+import org.eclipse.gef.dot.internal.ui.language.hover.DotEObjectHover;
+import org.eclipse.gef.dot.internal.ui.language.hover.DotHoverProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
@@ -53,5 +57,14 @@ public class DotUiModule
 
 	public Class<? extends IFoldingRegionProvider> bindIFoldingRegionProvider() {
 		return DotFoldingRegionProvider.class;
+	}
+
+	@Override
+	public Class<? extends org.eclipse.xtext.ui.editor.hover.IEObjectHover> bindIEObjectHover() {
+		return DotEObjectHover.class;
+	}
+
+	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
+		return DotHoverProvider.class;
 	}
 }
