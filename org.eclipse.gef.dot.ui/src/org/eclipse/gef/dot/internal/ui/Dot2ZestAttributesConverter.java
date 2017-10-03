@@ -191,7 +191,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			dotColor = colorList.getColorValues().get(0).getColor();
 		}
 
-		String javaFxColor = computeZestColor(dotColor);
+		String dotColorScheme = DotAttributes.getColorscheme(dot);
+		String javaFxColor = computeZestColor(dotColorScheme, dotColor);
 		if (javaFxColor != null) {
 			String zestStroke = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 			connectionCssStyle += zestStroke;
@@ -213,7 +214,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		// fillcolor
 		Color dotFillColor = DotAttributes.getFillcolorParsed(dot);
-		String javaFxFillColor = computeZestColor(dotFillColor);
+		String javaFxFillColor = computeZestColor(dotColorScheme, dotFillColor);
 		if (javaFxFillColor != null) {
 			String zestSourceDecorationCssStyle = ZestProperties
 					.getSourceDecorationCssStyle(zest);
@@ -583,7 +584,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		String zestStyle = null;
 		// color
 		Color dotColor = DotAttributes.getColorParsed(dot);
-		String javaFxColor = computeZestColor(dotColor);
+		String dotColorScheme = DotAttributes.getColorscheme(dot);
+		String javaFxColor = computeZestColor(dotColorScheme, dotColor);
 		if (javaFxColor != null) {
 			zestStyle = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -607,7 +609,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				// TODO: add support for colorList
 				dotFillColor = colorList.getColorValues().get(0).getColor();
 			}
-			String javaFxFillColor = computeZestColor(dotFillColor);
+			String javaFxFillColor = computeZestColor(dotColorScheme,
+					dotFillColor);
 			if (javaFxFillColor != null) {
 				if (zestStyle == null) {
 					zestStyle = "-fx-fill: " + javaFxFillColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -647,12 +650,14 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	/**
 	 * Returns the javafx representation of a dot color.
 	 * 
+	 * @param colorScheme
+	 *            The colorscheme attribute value (or null if not defined)
 	 * @param dotColor
 	 *            The color in dot representation.
 	 * @return The color in javafx representation, or null if the javafx color
 	 *         representation cannot be determined.
 	 */
-	private String computeZestColor(Color dotColor) {
+	private String computeZestColor(String colorScheme, Color dotColor) {
 		String javaFxColor = null;
 		if (dotColor instanceof RGBColor) {
 			RGBColor rgbColor = (RGBColor) dotColor;
@@ -673,12 +678,18 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					Double.parseDouble(hsvColor.getV()) * 100);
 		} else if (dotColor instanceof StringColor) {
 			StringColor stringColor = (StringColor) dotColor;
-			String colorSchema = stringColor.getScheme();
-			String colorName = stringColor.getName();
-			if (colorSchema == null || colorSchema.isEmpty()) {
-				colorSchema = "x11"; //$NON-NLS-1$
+			// first evaluate the locally defined color scheme, if it is null,
+			// fall back to the colorscheme dot attribute value, if it is null,
+			// fall back to the default color scheme
+			String currentColorScheme = stringColor.getScheme();
+			if (currentColorScheme == null) {
+				currentColorScheme = colorScheme;
 			}
-			javaFxColor = DotColors.get(colorSchema, colorName);
+			if (currentColorScheme == null || currentColorScheme.isEmpty()) {
+				currentColorScheme = "x11"; //$NON-NLS-1$
+			}
+			String colorName = stringColor.getName();
+			javaFxColor = DotColors.get(currentColorScheme, colorName);
 		}
 		return javaFxColor;
 	}
