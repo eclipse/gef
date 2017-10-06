@@ -13,6 +13,7 @@
  *                                    - Add support for polygon-based node shapes (bug #441352)
  *                                    - Add support for all dot attributes (bug #461506)
  *     Zoey Gerrit Prigge (itemis AG) - Add support for record-based node shapes (bug #454629)
+ *                                    - Add support for HTML labels (bug #321775)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -508,7 +509,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				? DotAttributes.getLabelRaw(dot)
 						.getType() == ID.Type.HTML_STRING
 				: false;
-		// TODO HTML label support
 
 		org.eclipse.gef.dot.internal.language.shape.Shape dotShape = DotAttributes
 				.getShapeParsed(dot);
@@ -585,10 +585,26 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setInvisible(zest, true);
 		}
 
-		// The label of a record based node shape is consumed by the zest shape
-		// hence, it needs not to be set again.
-		if (!isRecordBasedShape)
+		// TODO check if we can move this in front of the shape section above to
+		// coincide with the label
+		if (isHtmlLabel) {
+			// HTML label is treated as shape only
+			// the surrounding shape is missing here!!!
+			DotHTMLLabelJavaFxNode htmlNode = new DotHTMLLabelJavaFxNode(
+					dotLabel);
+			ZestProperties.setShape(zest, htmlNode.getFxElement());
+			// TODO Surround the HTML label with the shape as set above
+
+			Bounds htmlNodeBounds = htmlNode.getBounds();
+			zestWidth = htmlNodeBounds.getWidth();
+			zestHeight = htmlNodeBounds.getHeight();
+		} else if (!isRecordBasedShape) {
+			// The label of a record based node shape is consumed by the zest
+			// shape hence, it needs not to be set again.
+
+			// OrdinaryLabel
 			ZestProperties.setLabel(zest, dotLabel);
+		}
 
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXlabel(dot);
@@ -600,10 +616,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// zest shape, hence we do not need to account for label dimensions
 		if (options().emulateLayout
 				&& !Boolean.TRUE.equals(DotAttributes.getFixedsizeParsed(dot))
-				&& !isRecordBasedShape) {
+				&& !isRecordBasedShape && !isHtmlLabel) {
 			// if we are to emulate dot and fixedsize=true is not given, we
-			// have
-			// to compute the size to enclose image, label, and margin.
+			// have to compute the size to enclose image, label, and margin.
 			// TODO: also enclose image and margin
 			Dimension labelSize = computeZestLabelSize(dotLabel);
 			ZestProperties.setSize(zest, Dimension

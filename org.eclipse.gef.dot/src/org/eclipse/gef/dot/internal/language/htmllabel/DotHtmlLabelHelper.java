@@ -304,4 +304,41 @@ public class DotHtmlLabelHelper {
 			return "";
 		}
 	}
+
+	/**
+	 * Returns an Attribute or null for given HTML tag and attribute Name
+	 * 
+	 * @param tag
+	 *            the HTML tag to be analysed
+	 * @param attributeName
+	 *            the name of the attribute
+	 * @return the attribute object, if present; null else
+	 */
+	public static HtmlAttr getAttributeForTag(HtmlTag tag,
+			String attributeName) {
+		for (HtmlAttr attr : tag.getAttributes()) {
+			if (attr.getName().equalsIgnoreCase(attributeName))
+				return attr;
+		}
+		return null;
+	}
+
+	/**
+	 * Tries to find an Attribute for given HTML tags and attribute Name Returns
+	 * first found attribute value or null
+	 * 
+	 * @param tag
+	 *            the HTML tag to be analysed
+	 * @param attributeName
+	 *            the name of the attribute
+	 * @return the attribute object, if present; null else
+	 */
+	public static HtmlAttr getAttributeForTags(String attributeName,
+			HtmlTag... tags) {
+		for (HtmlTag tag : tags) {
+			if (getAttributeForTag(tag, attributeName) != null)
+				return getAttributeForTag(tag, attributeName);
+		}
+		return null;
+	}
 }
