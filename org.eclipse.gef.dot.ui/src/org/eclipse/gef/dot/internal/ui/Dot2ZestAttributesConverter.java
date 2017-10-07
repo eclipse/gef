@@ -179,7 +179,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// the edge
 			dotDir = GraphType.DIGRAPH.equals(
 					DotAttributes._getType(dot.getGraph().getRootGraph()))
-							? DirType.FORWARD : DirType.NONE;
+							? DirType.FORWARD
+							: DirType.NONE;
 		}
 
 		// color
