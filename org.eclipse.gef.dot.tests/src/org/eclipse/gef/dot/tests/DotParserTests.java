@@ -350,6 +350,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testColorCaseInsensitivity() {
+		testString("graph{1[color=Red,fontcolor=BLUE]}");
+	}
+
+	@Test
 	public void testER() {
 		testFile("er.dot");
 	}

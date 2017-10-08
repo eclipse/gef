@@ -79,8 +79,9 @@ public class DotColorJavaValidator extends
 
 		// check if the color is valid in the colorScheme
 		String colorName = color.getName();
-		if (colorName != null && !colorName.isEmpty() && !DotColors
-				.getColorNames(colorScheme.toLowerCase()).contains(colorName)) {
+		if (colorName != null && !colorName.isEmpty()
+				&& !DotColors.getColorNames(colorScheme.toLowerCase())
+						.contains(colorName.toLowerCase())) {
 			error("The '" + colorName + "' color is not valid within the '"
 					+ colorScheme + "' color scheme.",
 					ColorPackage.Literals.STRING_COLOR__SCHEME);
