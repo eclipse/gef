@@ -57,15 +57,16 @@ public class DotHtmlLabelProposalProvider extends
 			ICompletionProposal completionProposal = createCompletionProposal(
 					proposal, displayString, image, context);
 
-			// place the cursor between the opening and the closing html tag
-			// after the proposal has been applied
 			if (completionProposal instanceof ConfigurableCompletionProposal) {
 				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
 				int cursorPosition = calculateCursorPosition(displayString);
 				String tagDescription = DotHtmlLabelHelper
 						.getTagDescription(tagName);
+				// place the cursor between the opening and the closing html tag
+				// after the proposal has been applied
 				configurableCompletionProposal
 						.setCursorPosition(cursorPosition);
+				// add tag description to the proposal
 				configurableCompletionProposal
 						.setAdditionalProposalInfo(tagDescription);
 				acceptor.accept(configurableCompletionProposal);
