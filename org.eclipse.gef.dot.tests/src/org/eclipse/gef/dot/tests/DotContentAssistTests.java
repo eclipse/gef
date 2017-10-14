@@ -1553,6 +1553,28 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
 						"<U></U>");
 
+		// test html-like label children tags of TABLE tag
+		newBuilder().append("graph{1[label=<<TABLE></TABLE>>]}")
+				.assertTextAtCursorPosition(22, "<HR/>", "<TR></TR>")
+				.applyProposal(22, "<TR></TR>")
+				.expectContent("graph{1[label=<<TABLE><TR></TR></TABLE>>]}");
+
+		// test html-like label children tags of TR tag
+		newBuilder().append("graph{1[label=<<TABLE><TR></TR></TABLE>>]}")
+				.assertTextAtCursorPosition(26, "<VR/>", "<TD></TD>")
+				.applyProposal(26, "<TD></TD>").expectContent(
+						"graph{1[label=<<TABLE><TR><TD></TD></TR></TABLE>>]}");
+
+		// test html-like label children tags of TD tag
+		newBuilder()
+				.append("graph{1[label=<<TABLE><TR><TD></TD></TR></TABLE>>]}")
+				.assertTextAtCursorPosition(30, "<IMG/>", "<BR/>",
+						"<FONT></FONT>", "<I></I>", "<B></B>", "<U></U>",
+						"<O></O>", "<SUB></SUB>", "<SUP></SUP>", "<S></S>",
+						"<TABLE></TABLE>")
+				.applyProposal(30, "<U></U>").expectContent(
+						"graph{1[label=<<TABLE><TR><TD><U></U></TD></TR></TABLE>>]}");
+
 		// test html-like label attribute value
 		newBuilder().append("graph {1[ label=< <BR ALIGN=\"\" /> >]}")
 				.assertTextAtCursorPosition(29, "CENTER", "LEFT", "RIGHT")

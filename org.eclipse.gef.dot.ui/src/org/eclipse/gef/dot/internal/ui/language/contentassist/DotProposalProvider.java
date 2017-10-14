@@ -375,7 +375,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		}
 
 		if (text.startsWith("<")) { //$NON-NLS-1$
-			text = ID.fromString(text, Type.HTML_STRING).toValue();
+			text = text.substring(1);
 			context = context.copy().setPrefix(text).toContext();
 		}
 
