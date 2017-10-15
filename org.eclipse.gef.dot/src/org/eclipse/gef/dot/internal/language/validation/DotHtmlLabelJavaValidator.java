@@ -8,11 +8,12 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Tamas Miklossy   (itemis AG) - minor refactorings
+ *     Tamas Miklossy   (itemis AG) - implement additional validation checks (bug #321775)
  *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage;
 import org.eclipse.xtext.nodemodel.INode;
@@ -38,6 +40,30 @@ import org.eclipse.xtext.validation.Check;
  */
 public class DotHtmlLabelJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotHtmlLabelJavaValidator {
+
+	/**
+	 * Checks if the given {@link HtmlLabel}'s parts are valid siblings to each
+	 * other. Generates errors if the label's parts contains invalid siblings.
+	 * 
+	 * @param label
+	 *            The {@link HtmlLabel} of that's parts are to be checked.
+	 */
+	@Check
+	public void checkHtmlLabelPartsAreValidSiblings(HtmlLabel label) {
+		checkSiblingsAreValid(label.getParts());
+	}
+
+	/**
+	 * Checks if the given {@link HtmlTag}'s children are valid siblings to each
+	 * other. Generates errors if the tag's children contains invalid siblings.
+	 * 
+	 * @param tag
+	 *            The {@link HtmlTag} of that's children are to be checked.
+	 */
+	@Check
+	public void checkHtmlTagChildrenAreValidSiblings(HtmlTag tag) {
+		checkSiblingsAreValid(tag.getChildren());
+	}
 
 	/**
 	 * Checks if the given {@link HtmlTag} is properly closed. Generates errors
@@ -208,6 +234,38 @@ public class DotHtmlLabelJavaValidator extends
 								+ "' is not a correct " + htmlAttributeName
 								+ ": " + message,
 						attr, HtmllabelPackage.Literals.HTML_ATTR__VALUE);
+			}
+		}
+	}
+
+	private void checkSiblingsAreValid(List<HtmlContent> siblings) {
+		List<HtmlTag> htmlTableSiblings = new ArrayList<HtmlTag>();
+		List<HtmlContent> htmlTextSiblings = new ArrayList<HtmlContent>();
+	
+		for (HtmlContent content : siblings) {
+			HtmlTag tag = content.getTag();
+			String text = content.getText();
+	
+			if (tag != null && "TABLE".equals(tag.getName().toUpperCase())) {
+				htmlTableSiblings.add(tag);
+			}
+	
+			if (tag == null && text != null && !text.trim().isEmpty()) {
+				htmlTextSiblings.add(content);
+			}
+		}
+	
+		if ((htmlTableSiblings.size() > 0 && htmlTextSiblings.size() > 0)
+				|| htmlTableSiblings.size() > 1) {
+			for (HtmlTag htmlTable : htmlTableSiblings) {
+				reportRangeBasedError(
+						"There can't be text and table or multiple tables on the same level.",
+						htmlTable, HtmllabelPackage.Literals.HTML_TAG__NAME);
+			}
+			for (HtmlContent htmlText : htmlTextSiblings) {
+				reportRangeBasedError(
+						"There can't be text and table or multiple tables on the same level.",
+						htmlText, HtmllabelPackage.Literals.HTML_CONTENT__TEXT);
 			}
 		}
 	}

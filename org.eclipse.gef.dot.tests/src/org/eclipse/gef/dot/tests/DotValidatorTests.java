@@ -607,6 +607,80 @@ public class DotValidatorTests {
 	}
 
 	@Test
+	public void testInvalidHtmlLikeLabel_invalid_siblings_multiple_tables_on_the_root_level_are_not_allowed() {
+		String text = "graph {1[label = <<table></table><table></table>>]}";
+		String[] errorProneTextList = { "table", "table" };
+		int[] errorProneTextIndexList = { 0, 33 };
+		String[] errorMessages = {
+				"The htmlLabel value '<table></table><table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table></table><table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
+		assertHtmlLikeLabelErrors(text, errorProneTextList,
+				errorProneTextIndexList, errorMessages);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabel_invalid_siblings_table_and_text_on_the_root_level_are_not_allowed() {
+		String text = "graph {1[label = <<table></table>text>]}";
+		String[] errorProneTextList = { "table", "text" };
+		int[] errorProneTextIndexList = { 0, 33 };
+		String[] errorMessages = {
+				"The htmlLabel value '<table></table>text' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table></table>text' is not semantically correct: There can't be text and table or multiple tables on the same level." };
+		assertHtmlLikeLabelErrors(text, errorProneTextList,
+				errorProneTextIndexList, errorMessages);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabel_invalid_siblings_table_text_and_table_on_the_root_level_are_not_allowed() {
+		String text = "graph {1[label = <<table></table>text<table></table>>]}";
+		String[] errorProneTextList = { "table", "text", "table" };
+		int[] errorProneTextIndexList = { 0, 0, 38 };
+		String[] errorMessages = {
+				"The htmlLabel value '<table></table>text<table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table></table>text<table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table></table>text<table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
+		assertHtmlLikeLabelErrors(text, errorProneTextList,
+				errorProneTextIndexList, errorMessages);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabel_invalid_siblings_multiple_tables_on_nested_level_are_not_allowed() {
+		String text = "graph {1[label = <<table><tr><td><table></table><table></table></td></tr></table>>]}";
+		String[] errorProneTextList = { "table", "table" };
+		int[] errorProneTextIndexList = { 34, 49 };
+		String[] errorMessages = {
+				"The htmlLabel value '<table><tr><td><table></table><table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table><tr><td><table></table><table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
+		assertHtmlLikeLabelErrors(text, errorProneTextList,
+				errorProneTextIndexList, errorMessages);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabel_invalid_siblings_table_and_text_on_nested_level_are_not_allowed() {
+		String text = "graph {1[label = <<table><tr><td><table></table>text</td></tr></table>>]}";
+		String[] errorProneTextList = { "table", "text" };
+		int[] errorProneTextIndexList = { 34, 0 };
+		String[] errorMessages = {
+				"The htmlLabel value '<table><tr><td><table></table>text</td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table><tr><td><table></table>text</td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
+		assertHtmlLikeLabelErrors(text, errorProneTextList,
+				errorProneTextIndexList, errorMessages);
+	}
+
+	@Test
+	public void testInvalidHtmlLikeLabel_invalid_siblings_table_text_and_table_on_nested_level_are_not_allowed() {
+		String text = "graph {1[label = <<table><tr><td><table></table>text<table></table></td></tr></table>>]}";
+		String[] errorProneTextList = { "table", "text", "table" };
+		int[] errorProneTextIndexList = { 34, 0, 53 };
+		String[] errorMessages = {
+				"The htmlLabel value '<table><tr><td><table></table>text<table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table><tr><td><table></table>text<table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
+				"The htmlLabel value '<table><tr><td><table></table>text<table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
+		assertHtmlLikeLabelErrors(text, errorProneTextList,
+				errorProneTextIndexList, errorMessages);
+	}
+
+	@Test
 	public void testInvalidNodeStyle() {
 		String text = "graph {1[style=\"dashed, setlinewidth(4)\"]}";
 		String errorProneText = "setlinewidth";
@@ -692,6 +766,45 @@ public class DotValidatorTests {
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	private void assertHtmlLikeLabelErrors(String text,
+			String[] errorProneTextList, int[] fromIndexList,
+			String errorMessages[]) {
+		if (errorProneTextList.length != errorMessages.length
+				|| errorProneTextList.length != fromIndexList.length) {
+			throw new IllegalArgumentException(
+					"Expected as much as errorProneTextList as fromIndexList and as errorMessages!");
+		}
+
+		DotAst dotAst = null;
+		try {
+			dotAst = parserHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+		assertNotNull(dotAst);
+
+		for (int i = 0; i < errorProneTextList.length; i++) {
+			String errorProneText = errorProneTextList[i];
+			String errorMessage = errorMessages[i];
+			int fromIndex = fromIndexList[i];
+			int offset = text.indexOf(errorProneText, fromIndex);
+			if (offset < 0) {
+				throw new IllegalArgumentException("'" + errorProneText
+						+ "' cannot be found in the input string from index "
+						+ fromIndex);
+			}
+			int length = errorProneText.length();
+			validationTestHelper.assertError(dotAst,
+					DotPackage.eINSTANCE.getAttribute(),
+					DotAttributes.LABEL__GCNE, offset, length, errorMessage);
+		}
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(errorMessages.length,
+				validationTestHelper.validate(dotAst).size());
 	}
 
 	private void assertStyleWarning(String text, String errorProneText,
