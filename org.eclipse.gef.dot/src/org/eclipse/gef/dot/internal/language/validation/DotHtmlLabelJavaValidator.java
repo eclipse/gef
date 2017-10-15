@@ -135,7 +135,8 @@ public class DotHtmlLabelJavaValidator extends
 			// check if tag allowed inside parent or "root" if we could not find
 			// a parent
 			String parentName = parent == null
-					? DotHtmlLabelHelper.getRootTagKey() : parent.getName();
+					? DotHtmlLabelHelper.getRootTagKey()
+					: parent.getName();
 			Map<String, Set<String>> validTags = DotHtmlLabelHelper
 					.getValidTags();
 			if (!validTags.containsKey(parentName.toUpperCase())

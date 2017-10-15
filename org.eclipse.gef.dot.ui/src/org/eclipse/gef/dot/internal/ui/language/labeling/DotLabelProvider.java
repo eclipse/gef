@@ -143,7 +143,8 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		String format = "%s = %s: Attribute"; //$NON-NLS-1$
 		ID attributeValue = attr.getValue();
 		String displayValue = attributeValue.getType() == ID.Type.HTML_STRING
-				? "<HTML-Label>" : attributeValue.toString(); //$NON-NLS-1$
+				? "<HTML-Label>" //$NON-NLS-1$
+				: attributeValue.toString();
 		return styled(String.format(format, attr.getName(), displayValue));
 	}
 

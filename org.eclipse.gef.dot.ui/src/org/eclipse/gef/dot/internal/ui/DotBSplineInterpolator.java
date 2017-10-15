@@ -99,7 +99,8 @@ public class DotBSplineInterpolator extends AbstractInterpolator {
 		// }
 
 		Point endReference = connection.getEndAnchor() instanceof DynamicAnchor
-				? connection.getEndPointHint() : connection.getEndPoint();
+				? connection.getEndPointHint()
+				: connection.getEndPoint();
 		// TODO: maybe endReference == null
 		// if (endReference == null) {
 		// endReference = connection.getEndPoint();
