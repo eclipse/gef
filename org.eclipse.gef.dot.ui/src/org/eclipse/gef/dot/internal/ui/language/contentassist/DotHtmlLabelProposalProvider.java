@@ -12,12 +12,16 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
@@ -41,37 +45,49 @@ public class DotHtmlLabelProposalProvider extends
 			ICompletionProposalAcceptor acceptor) {
 
 		String parentName = null;
+		List<HtmlContent> siblings = new ArrayList<>();
 
 		if (model instanceof HtmlTag) {
-			parentName = ((HtmlTag) model).getName();
+			HtmlTag tag = (HtmlTag) model;
+			parentName = tag.getName();
+			siblings = tag.getChildren();
 		} else {
 			parentName = DotHtmlLabelHelper.getRootTagKey();
+			if (model instanceof HtmlLabel) {
+				siblings = ((HtmlLabel) model).getParts();
+			}
+			if (model instanceof HtmlContent) {
+				siblings.add((HtmlContent) model);
+			}
 		}
 
 		for (String tagName : DotHtmlLabelHelper.getValidTags()
 				.get(parentName)) {
-			String proposal = calculateProposalString(tagName);
-			String displayString = proposal;
-			Image image = null;
+			if (isValidSibling(tagName, siblings)) {
 
-			ICompletionProposal completionProposal = createCompletionProposal(
-					proposal, displayString, image, context);
+				String proposal = calculateProposalString(tagName);
+				String displayString = proposal;
+				Image image = null;
 
-			if (completionProposal instanceof ConfigurableCompletionProposal) {
-				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
-				int cursorPosition = calculateCursorPosition(displayString);
-				String tagDescription = DotHtmlLabelHelper
-						.getTagDescription(tagName);
-				// place the cursor between the opening and the closing html tag
-				// after the proposal has been applied
-				configurableCompletionProposal
-						.setCursorPosition(cursorPosition);
-				// add tag description to the proposal
-				configurableCompletionProposal
-						.setAdditionalProposalInfo(tagDescription);
-				acceptor.accept(configurableCompletionProposal);
+				ICompletionProposal completionProposal = createCompletionProposal(
+						proposal, displayString, image, context);
+
+				if (completionProposal instanceof ConfigurableCompletionProposal) {
+					ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+					int cursorPosition = calculateCursorPosition(displayString);
+					String tagDescription = DotHtmlLabelHelper
+							.getTagDescription(tagName);
+					// place the cursor between the opening and the closing html
+					// tag
+					// after the proposal has been applied
+					configurableCompletionProposal
+							.setCursorPosition(cursorPosition);
+					// add tag description to the proposal
+					configurableCompletionProposal
+							.setAdditionalProposalInfo(tagDescription);
+					acceptor.accept(configurableCompletionProposal);
+				}
 			}
-
 		}
 	}
 
@@ -148,6 +164,54 @@ public class DotHtmlLabelProposalProvider extends
 		}
 
 		return super.isValidProposal(proposal, prefix, context);
+	}
+
+	/**
+	 * Checks if the html tag is a valid sibling to determine if it should be
+	 * offered as proposal
+	 * 
+	 * @param tagName
+	 *            the name of the html tag
+	 * @param siblings
+	 *            the list of siblings
+	 * @return true if the html tag represented by the tagName is valid
+	 *         considering the siblings, false otherwise
+	 */
+	private boolean isValidSibling(String tagName, List<HtmlContent> siblings) {
+		List<HtmlTag> htmlTableSiblings = new ArrayList<HtmlTag>();
+		List<HtmlTag> htmlIMGSiblings = new ArrayList<HtmlTag>();
+		List<HtmlContent> htmlTextSiblings = new ArrayList<HtmlContent>();
+
+		for (HtmlContent content : siblings) {
+			HtmlTag tag = content.getTag();
+			String text = content.getText();
+
+			if (tag != null && "TABLE".equals(tag.getName().toUpperCase())) { //$NON-NLS-1$
+				htmlTableSiblings.add(tag);
+			} else if (tag != null
+					&& "IMG".equals(tag.getName().toUpperCase())) { //$NON-NLS-1$
+				htmlIMGSiblings.add(tag);
+			} else if (tag != null
+					|| (text != null && !text.trim().isEmpty())) {
+				htmlTextSiblings.add(content);
+			}
+		}
+
+		// no tag is a valid sibling of a <TABLE> tag or an <IMG> tag
+		if (htmlTableSiblings.size() > 0 || htmlIMGSiblings.size() > 0) {
+			return false;
+		}
+
+		// the <TABLE> tag and the <IMG> tag is not a valid sibling of a html
+		// text
+		if (htmlTextSiblings.size() > 0
+				&& ("TABLE".equals(tagName.toUpperCase()) //$NON-NLS-1$
+						|| "IMG".equals(tagName.toUpperCase()))) { //$NON-NLS-1$
+			return false;
+		}
+
+		return true;
+
 	}
 
 	private void proposeHtmlAttributeValues(String htmlTagName,

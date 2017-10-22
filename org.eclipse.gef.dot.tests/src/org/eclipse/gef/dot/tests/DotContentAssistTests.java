@@ -1580,6 +1580,10 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(29, "CENTER", "LEFT", "RIGHT")
 				.applyProposal(29, "CENTER")
 				.expectContent("graph {1[ label=< <BR ALIGN=\"CENTER\" /> >]}");
+
+		// test html-like label valid siblings
+		newBuilder().append("graph {1[label = <<TABLE></TABLE>>]}")
+				.assertTextAtCursorPosition(33);
 	}
 
 	@Test

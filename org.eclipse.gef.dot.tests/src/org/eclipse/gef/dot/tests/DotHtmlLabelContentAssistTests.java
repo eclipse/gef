@@ -579,6 +579,68 @@ public class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(11, "");
 	}
 
+	@Test
+	public void siblingOfTableTagOnTheRootLevel() throws Exception {
+		// do not offer any tag
+		newBuilder().append("<TABLE></TABLE>").assertTextAtCursorPosition(0);
+		newBuilder().append("<TABLE></TABLE>").assertTextAtCursorPosition(15);
+	}
+
+	@Test
+	public void siblingOfTableTagOnANestedLevel() throws Exception {
+		// do not offer any tag
+		newBuilder().append("<TABLE><TR><TD><TABLE></TABLE></TD></TR></TABLE>")
+				.assertTextAtCursorPosition(16);
+
+		newBuilder().append("<TABLE><TR><TD><TABLE></TABLE></TD></TR></TABLE>")
+				.assertTextAtCursorPosition(30);
+	}
+
+	@Test
+	public void siblingOfTextOnTheRootLevel() throws Exception {
+		String[] testData = { "text", "<B>b</B>", "<BR/>", "<FONT>font</FONT>",
+				"<I>i</I>", "<O>o</O>", "<S>s</S>", "<SUB>sub</SUB>",
+				"<SUP>sup</SUP>", "<U>u</U>" };
+
+		// do not offer the TABLE tag
+		String[] expectations = { "<B></B>", "<BR/>", "<FONT></FONT>",
+				"<I></I>", "<O></O>", "<S></S>", "<SUB></SUB>", "<SUP></SUP>",
+				"<U></U>" };
+
+		for (int i = 0; i < testData.length; i++) {
+			String htmlLabel = testData[i];
+			// the cursor is located before the html label
+			newBuilder().append(htmlLabel).assertTextAtCursorPosition(0,
+					expectations);
+			// the cursor is located after the html label
+			newBuilder().append(htmlLabel).assertTextAtCursorPosition(
+					htmlLabel.length(), expectations);
+		}
+	}
+
+	@Test
+	public void siblingOfTextOnANestedLevel() throws Exception {
+		String[] testData = { "text", "<B>b</B>", "<BR/>", "<FONT>font</FONT>",
+				"<I>i</I>", "<O>o</O>", "<S>s</S>", "<SUB>sub</SUB>",
+				"<SUP>sup</SUP>", "<U>u</U>" };
+
+		// do not offer the TABLE tag
+		String[] expectations = { "<B></B>", "<BR/>", "<FONT></FONT>",
+				"<I></I>", "<O></O>", "<S></S>", "<SUB></SUB>", "<SUP></SUP>",
+				"<U></U>" };
+
+		for (int i = 0; i < testData.length; i++) {
+			String htmlLabel = "<TABLE><TR><TD>" + testData[i]
+					+ "</TD></TR></TABLE>";
+			// the cursor is located before the html label
+			newBuilder().append(htmlLabel).assertTextAtCursorPosition(15,
+					expectations);
+			// the cursor is located after the html label
+			newBuilder().append(htmlLabel).assertTextAtCursorPosition(
+					15 + testData[i].length(), expectations);
+		}
+	}
+
 	@Override
 	protected ContentAssistProcessorTestBuilder newBuilder() throws Exception {
 		return new ContentAssistProcessorTestBuilder(injector, this) {
