@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 itemis AG and others.
+ * Copyright (c) 2011, 2017 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,8 +9,8 @@
  * Contributors:
  *     Fabian Steeg               - initial API and implementation (bug #277380)
  *                                - custom outline labels, icons, and structure (bug #452650)
- *     Tamas Miklossy (itemis AG) - minor renamings (bug #493745)
- *
+ *     Tamas Miklossy (itemis AG) - add support for HTML-Like labels (bug #321775)
+ *                                - minor renamings (bug #493745)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.outline;
 
@@ -212,7 +212,9 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 				.readOnly(new IUnitOfWork<HtmlLabel, XtextResource>() {
 					@Override
 					public HtmlLabel exec(XtextResource res) throws Exception {
-						return (HtmlLabel) res.getContents().get(0);
+						return res.getContents().size() > 0
+								? (HtmlLabel) res.getContents().get(0)
+								: null;
 					}
 				});
 

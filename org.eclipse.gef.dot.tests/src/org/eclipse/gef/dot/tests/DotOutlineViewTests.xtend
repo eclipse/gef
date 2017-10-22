@@ -85,6 +85,23 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 	
 	@Test
+	def void testIncompleteHtmlLikeLabels(){
+		// The outline view should be able to cope with incomplete statements
+		'''
+			graph {
+				1[label = <</TABLE>>]
+			}
+		'''.assertAllLabels('''
+		test.dot: File
+			<?>: Graph
+				1: Node
+					1: Node
+					1 Attribute: Attributes
+						label = <HTML-Label>: Attribute
+		''')
+	}
+	
+	@Test
 	def void testHtmlLikeLabels1() {
 		"html_like_labels1.dot".testFile('''
 		test.dot: File
