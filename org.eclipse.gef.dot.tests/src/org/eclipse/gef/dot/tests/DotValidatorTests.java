@@ -689,6 +689,9 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.LABEL__GCNE,
 				offset, length, errorMessage);
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
 
 	private void assertStyleWarning(String text, String errorProneText,
@@ -707,6 +710,9 @@ public class DotValidatorTests {
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
 				offset, length, warningMessage);
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
 
 	private void assertStyleError(String text, String errorProneText,
@@ -725,5 +731,8 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(), DotAttributes.STYLE__GCNE,
 				offset, length, errorMessage);
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
 }
