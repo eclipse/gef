@@ -248,9 +248,8 @@ public class DotHtmlLabelJavaValidator extends
 	
 			if (tag != null && "TABLE".equals(tag.getName().toUpperCase())) {
 				htmlTableSiblings.add(tag);
-			}
-	
-			if (tag == null && text != null && !text.trim().isEmpty()) {
+			} else if (tag != null
+					|| (text != null && !text.trim().isEmpty())) {
 				htmlTextSiblings.add(content);
 			}
 		}
@@ -263,9 +262,20 @@ public class DotHtmlLabelJavaValidator extends
 						htmlTable, HtmllabelPackage.Literals.HTML_TAG__NAME);
 			}
 			for (HtmlContent htmlText : htmlTextSiblings) {
-				reportRangeBasedError(
-						"There can't be text and table or multiple tables on the same level.",
-						htmlText, HtmllabelPackage.Literals.HTML_CONTENT__TEXT);
+				if (htmlText.getTag() != null) {
+					// if the htmlContent has a tag, mark the tag name as error
+					// prone text
+					reportRangeBasedError(
+							"There can't be text and table or multiple tables on the same level.",
+							htmlText.getTag(),
+							HtmllabelPackage.Literals.HTML_TAG__NAME);
+				} else {
+					// otherwise, mark the text as error prone text
+					reportRangeBasedError(
+							"There can't be text and table or multiple tables on the same level.",
+							htmlText,
+							HtmllabelPackage.Literals.HTML_CONTENT__TEXT);
+				}
 			}
 		}
 	}
