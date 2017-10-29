@@ -645,118 +645,48 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test
-	public void test_invalid_siblings_multiple_tables_on_the_root_level_are_not_allowed()
-			throws Exception {
-		HtmlLabel htmlLabel = parseHelper
-				.parse("<TABLE></TABLE><TABLE></TABLE>");
+	public void test_invalid_siblings() throws Exception {
+		// The graphviz DOT HTML-Like Label grammar does not allow text and
+		// table or multiple tables on the same (root or nested) level.
 
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
+		EClass htmlTag = HtmllabelPackage.eINSTANCE.getHtmlTag();
+		EClass htmlContent = HtmllabelPackage.eINSTANCE.getHtmlContent();
 
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
+		// testDataList[][0]: html label containing invalid siblings
+		// testDataList[][1]: object type 1 to be marked as error prone
+		// testDataList[][2]: object type2 be marked as error prone
+		// ...
+		Object[][] testDataList = {
+				// root level
+				{ "<TABLE></TABLE><TABLE></TABLE>", htmlTag, htmlTag },
+				{ "<TABLE></TABLE>text", htmlTag, htmlContent },
+				{ "<TABLE></TABLE>text<TABLE></TABLE>", htmlTag, htmlContent,
+						htmlTag },
 
-		// verify that these are the only reported issues
-		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
-	}
+				// nested level
+				{ "<TABLE><TR><TD><TABLE></TABLE><TABLE></TABLE></TD></TR></TABLE>",
+						htmlTag, htmlTag },
+				{ "<TABLE><TR><TD><TABLE></TABLE>text</TD></TR></TABLE>",
+						htmlTag, htmlContent },
+				{ "<TABLE><TR><TD><TABLE></TABLE>text<TABLE></TABLE></TD></TR></TABLE>",
+						htmlTag, htmlContent, htmlTag } };
 
-	@Test
-	public void test_invalid_siblings_table_and_text_on_the_root_level_are_not_allowed()
-			throws Exception {
-		HtmlLabel htmlLabel = parseHelper.parse("<TABLE></TABLE>text");
+		for (Object[] testData : testDataList) {
 
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
+			String htmlLabelText = (String) testData[0];
+			HtmlLabel htmlLabel = parseHelper.parse(htmlLabelText);
+			int numberOfErrorProneText = testData.length - 1;
 
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
+			for (int i = 0; i < numberOfErrorProneText; i++) {
+				EClass objectType = (EClass) testData[i + 1];
+				validationTestHelper.assertError(htmlLabel, objectType, null,
+						"There can't be text and table or multiple tables on the same level.");
+			}
 
-		// verify that these are the only reported issues
-		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
-	}
-
-	@Test
-	public void test_invalid_siblings_table_text_and_table_on_the_root_level_are_not_allowed()
-			throws Exception {
-		HtmlLabel htmlLabel = parseHelper
-				.parse("<TABLE></TABLE>text<TABLE></TABLE>");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlContent(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		// verify that these are the only reported issues
-		Assert.assertEquals(3, validationTestHelper.validate(htmlLabel).size());
-	}
-
-	@Test
-	public void test_invalid_siblings_multiple_tables_on_nested_level_are_not_allowed()
-			throws Exception {
-		HtmlLabel htmlLabel = parseHelper.parse(
-				"<TABLE><TR><TD><TABLE></TABLE><TABLE></TABLE></TD></TR></TABLE>");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		// verify that these are the only reported issues
-		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
-	}
-
-	@Test
-	public void test_invalid_siblings_table_and_text_on_nested_level_are_not_allowed()
-			throws Exception {
-		HtmlLabel htmlLabel = parseHelper
-				.parse("<TABLE><TR><TD><TABLE></TABLE>text</TD></TR></TABLE>");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		// verify that these are the only reported issues
-		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
-	}
-
-	@Test
-	public void test_invalid_siblings_table_text_and_table_on_nested_level_are_not_allowed()
-			throws Exception {
-		HtmlLabel htmlLabel = parseHelper.parse(
-				"<TABLE><TR><TD><TABLE></TABLE>text<TABLE></TABLE></TD></TR></TABLE>");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlContent(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
-				"There can't be text and table or multiple tables on the same level.");
-
-		// verify that these are the only reported issues
-		Assert.assertEquals(3, validationTestHelper.validate(htmlLabel).size());
+			// verify that these are the only reported issues
+			Assert.assertEquals(numberOfErrorProneText,
+					validationTestHelper.validate(htmlLabel).size());
+		}
 	}
 
 	@Test

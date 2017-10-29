@@ -607,77 +607,52 @@ public class DotValidatorTests {
 	}
 
 	@Test
-	public void testInvalidHtmlLikeLabel_invalid_siblings_multiple_tables_on_the_root_level_are_not_allowed() {
-		String text = "graph {1[label = <<table></table><table></table>>]}";
-		String[] errorProneTextList = { "table", "table" };
-		int[] errorProneTextIndexList = { 0, 33 };
-		String[] errorMessages = {
-				"The htmlLabel value '<table></table><table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table></table><table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
-		assertHtmlLikeLabelErrors(text, errorProneTextList,
-				errorProneTextIndexList, errorMessages);
-	}
+	public void testInvalidHtmlLikeLabelInvalidSiblings() {
+		// The graphviz DOT HTML-Like Label grammar does not allow text and
+		// table or multiple tables on the same (root or nested) level.
 
-	@Test
-	public void testInvalidHtmlLikeLabel_invalid_siblings_table_and_text_on_the_root_level_are_not_allowed() {
-		String text = "graph {1[label = <<table></table>text>]}";
-		String[] errorProneTextList = { "table", "text" };
-		int[] errorProneTextIndexList = { 0, 33 };
-		String[] errorMessages = {
-				"The htmlLabel value '<table></table>text' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table></table>text' is not semantically correct: There can't be text and table or multiple tables on the same level." };
-		assertHtmlLikeLabelErrors(text, errorProneTextList,
-				errorProneTextIndexList, errorMessages);
-	}
+		// testDataList[][0]: html label containing invalid siblings
+		// testDataList[][1]: text1 to be marked as error prone
+		// testDataList[][2]: index to locate the text1 from
+		// testDataList[][3]: text2 to be marked as error prone
+		// testDataList[][4]: index to locate the text2 from
+		// ...
+		String[][] testDataList = {
+				// root level
+				{ "<table></table><table></table>", "table", "0", "table",
+						"15" },
+				{ "<table></table>text", "table", "0", "text", "0" },
+				{ "<table></table>text<table></table>", "table", "0", "text",
+						"0", "table", "20" },
 
-	@Test
-	public void testInvalidHtmlLikeLabel_invalid_siblings_table_text_and_table_on_the_root_level_are_not_allowed() {
-		String text = "graph {1[label = <<table></table>text<table></table>>]}";
-		String[] errorProneTextList = { "table", "text", "table" };
-		int[] errorProneTextIndexList = { 0, 0, 38 };
-		String[] errorMessages = {
-				"The htmlLabel value '<table></table>text<table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table></table>text<table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table></table>text<table></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
-		assertHtmlLikeLabelErrors(text, errorProneTextList,
-				errorProneTextIndexList, errorMessages);
-	}
+				// nested level
+				{ "<table><tr><td><table></table><table></table></td></tr></table>",
+						"table", "15", "table", "30" },
+				{ "<table><tr><td><table></table>text</td></tr></table>",
+						"table", "15", "text", "15" },
+				{ "<table><tr><td><table></table>text<table></table></td></tr></table>",
+						"table", "15", "text", "15", "table", "34" } };
 
-	@Test
-	public void testInvalidHtmlLikeLabel_invalid_siblings_multiple_tables_on_nested_level_are_not_allowed() {
-		String text = "graph {1[label = <<table><tr><td><table></table><table></table></td></tr></table>>]}";
-		String[] errorProneTextList = { "table", "table" };
-		int[] errorProneTextIndexList = { 34, 49 };
-		String[] errorMessages = {
-				"The htmlLabel value '<table><tr><td><table></table><table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table><tr><td><table></table><table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
-		assertHtmlLikeLabelErrors(text, errorProneTextList,
-				errorProneTextIndexList, errorMessages);
-	}
+		for (String[] testData : testDataList) {
+			String htmlLabel = testData[0];
+			String text = "graph {1[label = <" + htmlLabel + ">]}";
+			int numberOfErrorProneText = (testData.length - 1) / 2;
 
-	@Test
-	public void testInvalidHtmlLikeLabel_invalid_siblings_table_and_text_on_nested_level_are_not_allowed() {
-		String text = "graph {1[label = <<table><tr><td><table></table>text</td></tr></table>>]}";
-		String[] errorProneTextList = { "table", "text" };
-		int[] errorProneTextIndexList = { 34, 0 };
-		String[] errorMessages = {
-				"The htmlLabel value '<table><tr><td><table></table>text</td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table><tr><td><table></table>text</td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
-		assertHtmlLikeLabelErrors(text, errorProneTextList,
-				errorProneTextIndexList, errorMessages);
-	}
+			String[] errorProneTextList = new String[numberOfErrorProneText];
+			int[] errorProneTextIndexList = new int[numberOfErrorProneText];
+			String[] errorMessages = new String[numberOfErrorProneText];
 
-	@Test
-	public void testInvalidHtmlLikeLabel_invalid_siblings_table_text_and_table_on_nested_level_are_not_allowed() {
-		String text = "graph {1[label = <<table><tr><td><table></table>text<table></table></td></tr></table>>]}";
-		String[] errorProneTextList = { "table", "text", "table" };
-		int[] errorProneTextIndexList = { 34, 0, 53 };
-		String[] errorMessages = {
-				"The htmlLabel value '<table><tr><td><table></table>text<table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table><tr><td><table></table>text<table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level.",
-				"The htmlLabel value '<table><tr><td><table></table>text<table></table></td></tr></table>' is not semantically correct: There can't be text and table or multiple tables on the same level." };
-		assertHtmlLikeLabelErrors(text, errorProneTextList,
-				errorProneTextIndexList, errorMessages);
+			for (int i = 0; i < numberOfErrorProneText; i++) {
+				errorProneTextList[i] = testData[2 * i + 1];
+				errorProneTextIndexList[i] = Integer
+						.valueOf(testData[2 * i + 2]) + 18;
+				errorMessages[i] = "The htmlLabel value '" + htmlLabel
+						+ "' is not semantically correct: There can't be text and table or multiple tables on the same level.";
+			}
+
+			assertHtmlLikeLabelErrors(text, errorProneTextList,
+					errorProneTextIndexList, errorMessages);
+		}
 	}
 
 	@Test
