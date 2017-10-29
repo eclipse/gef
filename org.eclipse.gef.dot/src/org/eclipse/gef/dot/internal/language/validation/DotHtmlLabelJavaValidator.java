@@ -239,41 +239,38 @@ public class DotHtmlLabelJavaValidator extends
 	}
 
 	private void checkSiblingsAreValid(List<HtmlContent> siblings) {
-		List<HtmlTag> htmlTableSiblings = new ArrayList<HtmlTag>();
+		List<HtmlTag> htmlTableOrIMGSiblings = new ArrayList<HtmlTag>();
 		List<HtmlContent> htmlTextSiblings = new ArrayList<HtmlContent>();
-	
+
 		for (HtmlContent content : siblings) {
 			HtmlTag tag = content.getTag();
 			String text = content.getText();
-	
-			if (tag != null && "TABLE".equals(tag.getName().toUpperCase())) {
-				htmlTableSiblings.add(tag);
+
+			if (tag != null && ("TABLE".equals(tag.getName().toUpperCase())
+					|| "IMG".equals(tag.getName().toUpperCase()))) {
+				htmlTableOrIMGSiblings.add(tag);
 			} else if (tag != null
 					|| (text != null && !text.trim().isEmpty())) {
 				htmlTextSiblings.add(content);
 			}
 		}
-	
-		if ((htmlTableSiblings.size() > 0 && htmlTextSiblings.size() > 0)
-				|| htmlTableSiblings.size() > 1) {
-			for (HtmlTag htmlTable : htmlTableSiblings) {
-				reportRangeBasedError(
-						"There can't be text and table or multiple tables on the same level.",
-						htmlTable, HtmllabelPackage.Literals.HTML_TAG__NAME);
+
+		if ((htmlTableOrIMGSiblings.size() > 0 && htmlTextSiblings.size() > 0)
+				|| htmlTableOrIMGSiblings.size() > 1) {
+			for (HtmlTag htmlTableOrIMG : htmlTableOrIMGSiblings) {
+				reportRangeBasedError("Invalid siblings.", htmlTableOrIMG,
+						HtmllabelPackage.Literals.HTML_TAG__NAME);
 			}
 			for (HtmlContent htmlText : htmlTextSiblings) {
 				if (htmlText.getTag() != null) {
 					// if the htmlContent has a tag, mark the tag name as error
 					// prone text
-					reportRangeBasedError(
-							"There can't be text and table or multiple tables on the same level.",
+					reportRangeBasedError("Invalid siblings.",
 							htmlText.getTag(),
 							HtmllabelPackage.Literals.HTML_TAG__NAME);
 				} else {
 					// otherwise, mark the text as error prone text
-					reportRangeBasedError(
-							"There can't be text and table or multiple tables on the same level.",
-							htmlText,
+					reportRangeBasedError("Invalid siblings.", htmlText,
 							HtmllabelPackage.Literals.HTML_CONTENT__TEXT);
 				}
 			}

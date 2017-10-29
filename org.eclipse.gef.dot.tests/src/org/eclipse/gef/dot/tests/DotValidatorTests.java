@@ -722,7 +722,7 @@ public class DotValidatorTests {
 				errorProneTextIndexList[i] = Integer
 						.valueOf(testData[2 * i + 2]) + 18;
 				errorMessages[i] = "The htmlLabel value '" + htmlLabel
-						+ "' is not semantically correct: There can't be text and table or multiple tables on the same level.";
+						+ "' is not semantically correct: Invalid siblings.";
 			}
 
 			assertHtmlLikeLabelErrors(text, errorProneTextList,
