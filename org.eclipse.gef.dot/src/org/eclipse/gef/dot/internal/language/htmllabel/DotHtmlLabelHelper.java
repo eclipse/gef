@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.htmllabel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -212,6 +214,50 @@ public class DotHtmlLabelHelper {
 	 */
 	public static Map<String, Set<String>> getValidAttributes() {
 		return validAttributes;
+	}
+
+	/**
+	 * Checks if the given {@link HtmlContent} list contains only valid siblings
+	 * to each other.
+	 * 
+	 * @param siblings
+	 *            The {@link HtmlContent} list to check.
+	 * 
+	 * @return true if the siblings contains only valid siblings, false
+	 *         otherwise.
+	 */
+	public static boolean isValidSiblings(List<HtmlContent> siblings) {
+		List<HtmlTag> htmlTableSiblings = new ArrayList<HtmlTag>();
+		List<HtmlTag> htmlIMGSiblings = new ArrayList<HtmlTag>();
+		List<HtmlContent> htmlTextSiblings = new ArrayList<HtmlContent>();
+
+		for (HtmlContent content : siblings) {
+			HtmlTag tag = content.getTag();
+			String text = content.getText();
+
+			if (tag != null && ("TABLE".equals(tag.getName().toUpperCase()))) {
+				htmlTableSiblings.add(tag);
+			} else if (tag != null
+					&& ("IMG".equals(tag.getName().toUpperCase()))) {
+				htmlIMGSiblings.add(tag);
+			} else if (tag != null
+					|| (text != null && !text.trim().isEmpty())) {
+				htmlTextSiblings.add(content);
+			}
+		}
+
+		// the siblings can contain at most one table or img at the same time
+		if (htmlTableSiblings.size() + htmlIMGSiblings.size() > 1) {
+			return false;
+		}
+
+		// if the siblings contain a table or an img, it cannot contain any
+		// text
+		if (htmlTableSiblings.size() + htmlIMGSiblings.size() == 1) {
+			return htmlTextSiblings.size() == 0;
+		}
+
+		return true;
 	}
 
 	/**

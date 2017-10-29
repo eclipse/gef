@@ -23,6 +23,7 @@ import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelFactory;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
@@ -178,40 +179,17 @@ public class DotHtmlLabelProposalProvider extends
 	 *         considering the siblings, false otherwise
 	 */
 	private boolean isValidSibling(String tagName, List<HtmlContent> siblings) {
-		List<HtmlTag> htmlTableSiblings = new ArrayList<HtmlTag>();
-		List<HtmlTag> htmlIMGSiblings = new ArrayList<HtmlTag>();
-		List<HtmlContent> htmlTextSiblings = new ArrayList<HtmlContent>();
+		// create a new sibling with the html tag 'tagName'
+		HtmlContent newSibling = HtmllabelFactory.eINSTANCE.createHtmlContent();
+		HtmlTag htmlTag = HtmllabelFactory.eINSTANCE.createHtmlTag();
+		htmlTag.setName(tagName);
+		newSibling.setTag(htmlTag);
 
-		for (HtmlContent content : siblings) {
-			HtmlTag tag = content.getTag();
-			String text = content.getText();
-
-			if (tag != null && "TABLE".equals(tag.getName().toUpperCase())) { //$NON-NLS-1$
-				htmlTableSiblings.add(tag);
-			} else if (tag != null
-					&& "IMG".equals(tag.getName().toUpperCase())) { //$NON-NLS-1$
-				htmlIMGSiblings.add(tag);
-			} else if (tag != null
-					|| (text != null && !text.trim().isEmpty())) {
-				htmlTextSiblings.add(content);
-			}
-		}
-
-		// no tag is a valid sibling of a <TABLE> tag or an <IMG> tag
-		if (htmlTableSiblings.size() > 0 || htmlIMGSiblings.size() > 0) {
-			return false;
-		}
-
-		// the <TABLE> tag and the <IMG> tag is not a valid sibling of a html
-		// text
-		if (htmlTextSiblings.size() > 0
-				&& ("TABLE".equals(tagName.toUpperCase()) //$NON-NLS-1$
-						|| "IMG".equals(tagName.toUpperCase()))) { //$NON-NLS-1$
-			return false;
-		}
-
-		return true;
-
+		// add the newly created sibling into the siblings list and verify the
+		// extended siblings list
+		List<HtmlContent> extendedSiblings = new ArrayList<>(siblings);
+		extendedSiblings.add(newSibling);
+		return DotHtmlLabelHelper.isValidSiblings(extendedSiblings);
 	}
 
 	private void proposeHtmlAttributeValues(String htmlTagName,

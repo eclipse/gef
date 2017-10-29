@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -239,29 +238,8 @@ public class DotHtmlLabelJavaValidator extends
 	}
 
 	private void checkSiblingsAreValid(List<HtmlContent> siblings) {
-		List<HtmlTag> htmlTableOrIMGSiblings = new ArrayList<HtmlTag>();
-		List<HtmlContent> htmlTextSiblings = new ArrayList<HtmlContent>();
-
-		for (HtmlContent content : siblings) {
-			HtmlTag tag = content.getTag();
-			String text = content.getText();
-
-			if (tag != null && ("TABLE".equals(tag.getName().toUpperCase())
-					|| "IMG".equals(tag.getName().toUpperCase()))) {
-				htmlTableOrIMGSiblings.add(tag);
-			} else if (tag != null
-					|| (text != null && !text.trim().isEmpty())) {
-				htmlTextSiblings.add(content);
-			}
-		}
-
-		if ((htmlTableOrIMGSiblings.size() > 0 && htmlTextSiblings.size() > 0)
-				|| htmlTableOrIMGSiblings.size() > 1) {
-			for (HtmlTag htmlTableOrIMG : htmlTableOrIMGSiblings) {
-				reportRangeBasedError("Invalid siblings.", htmlTableOrIMG,
-						HtmllabelPackage.Literals.HTML_TAG__NAME);
-			}
-			for (HtmlContent htmlText : htmlTextSiblings) {
+		if (!DotHtmlLabelHelper.isValidSiblings(siblings)) {
+			for (HtmlContent htmlText : siblings) {
 				if (htmlText.getTag() != null) {
 					// if the htmlContent has a tag, mark the tag name as error
 					// prone text
