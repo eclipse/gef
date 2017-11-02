@@ -424,6 +424,24 @@ public class DotParserTests {
 		testFile("switch.dot");
 	}
 
+	@Test
+	public void testCompassPtAsID() {
+		// it is legal to have a portname the same as one of the compass points.
+		testString(
+				"digraph{y[shape=record label=\"{<c>C|<d>D}\"] y:d:n->y:c:n}");
+
+		testString("graph{y:n:n}");
+		testString("graph{y:ne:n}");
+		testString("graph{y:e:n}");
+		testString("graph{y:se:n}");
+		testString("graph{y:s:n}");
+		testString("graph{y:sw:n}");
+		testString("graph{y:w:n}");
+		testString("graph{y:nw:n}");
+		testString("graph{y:c:n}");
+		testString("graph{y:_:n}");
+	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
