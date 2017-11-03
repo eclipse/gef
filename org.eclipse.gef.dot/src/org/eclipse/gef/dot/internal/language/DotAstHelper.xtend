@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -30,11 +30,24 @@ import org.eclipse.gef.dot.internal.language.dot.Subgraph
 import org.eclipse.gef.dot.internal.language.terminals.ID
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.gef.dot.internal.language.dot.NodeId
 
 /**
  * This class provides helper methods for walking the DOT abstract syntax tree.
  */
 class DotAstHelper {
+	
+	def static NodeId getNodeId(NodeId nodeId){
+		val dotGraph = nodeId.getContainerOfType(DotGraph)
+		
+		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
+			if(nodeStmt.node!==null && nodeStmt.node.name == nodeId.name){
+				return nodeStmt.node
+			}			
+		}
+		
+		null
+	}
 	
 	/**
 	 * Returns the color scheme attribute value that is set for the given

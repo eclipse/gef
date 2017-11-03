@@ -10,6 +10,7 @@
  *     Tamas Miklossy  (itemis AG) - add binding for template proposal provider (bug #321775)
  *                                 - add binding for folding region provider (bug #321775)
  *                                 - add binding for EObject hover/hover provider (bug #461506)
+ *                                 - add binding for hyperlink helper (bug #461506)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
@@ -20,10 +21,12 @@ import org.eclipse.gef.dot.internal.ui.language.highlighting.DotHighlightingConf
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotSemanticHighlightingCalculator;
 import org.eclipse.gef.dot.internal.ui.language.hover.DotEObjectHover;
 import org.eclipse.gef.dot.internal.ui.language.hover.DotHoverProvider;
+import org.eclipse.gef.dot.internal.ui.language.hyperlinking.DotHyperlinkHelper;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
@@ -66,5 +69,9 @@ public class DotUiModule
 
 	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
 		return DotHoverProvider.class;
+	}
+
+	public Class<? extends IHyperlinkHelper> bindIHyperlinkHelper() {
+		return DotHyperlinkHelper.class;
 	}
 }
