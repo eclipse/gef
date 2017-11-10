@@ -29,7 +29,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotHtmlLabelTests.class, DotOutlineViewTests.class,
 		DotFoldingTests.class, DotStyleTests.class, DotRecordLabelTests.class,
 		DotAstTests.class, DotHoverTests.class, Dot2ZestGraphCopierTests.class,
-		DotHyperlinkNavigationTests.class, DotPortPosTests.class })
+		DotHyperlinkNavigationTests.class, DotPortPosTests.class,
+		DotRenameRefactoringTests.class })
 public class AllUiTests {
 
 }

@@ -11,6 +11,7 @@
  *                                 - add binding for folding region provider (bug #321775)
  *                                 - add binding for EObject hover/hover provider (bug #461506)
  *                                 - add binding for hyperlink helper (bug #461506)
+ *                                 - add binding for rename strategy (bug #530423)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
@@ -22,6 +23,7 @@ import org.eclipse.gef.dot.internal.ui.language.highlighting.DotSemanticHighligh
 import org.eclipse.gef.dot.internal.ui.language.hover.DotEObjectHover;
 import org.eclipse.gef.dot.internal.ui.language.hover.DotHoverProvider;
 import org.eclipse.gef.dot.internal.ui.language.hyperlinking.DotHyperlinkHelper;
+import org.eclipse.gef.dot.internal.ui.language.renaming.DotRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
@@ -30,6 +32,7 @@ import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.refactoring.IRenameStrategy;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -73,5 +76,9 @@ public class DotUiModule
 
 	public Class<? extends IHyperlinkHelper> bindIHyperlinkHelper() {
 		return DotHyperlinkHelper.class;
+	}
+
+	public Class<? extends IRenameStrategy> bindIRenameStrategy() {
+		return DotRenameStrategy.class;
 	}
 }

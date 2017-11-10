@@ -23,6 +23,7 @@ import org.eclipse.gef.dot.internal.language.dot.AttrStmt
 import org.eclipse.gef.dot.internal.language.dot.Attribute
 import org.eclipse.gef.dot.internal.language.dot.AttributeType
 import org.eclipse.gef.dot.internal.language.dot.DotGraph
+import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeId
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
@@ -47,6 +48,43 @@ class DotAstHelper {
 		}
 		
 		null
+	}
+
+	/*
+	 * Collects all nodeId EObjects having the same name as the baseNodeId
+	 */
+	def static List<NodeId> getAllNodeIds(NodeId baseNodeId){
+		val result = newLinkedList
+		val dotGraph = baseNodeId.getContainerOfType(DotGraph)
+		
+		// consider nodes
+		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
+			val nodeId = nodeStmt.node
+			if(nodeId!==null && nodeId.name == baseNodeId.name && nodeId!=baseNodeId){
+				result.add(nodeId)
+			}
+		}
+		
+		// consider edges
+		for (edgeStmtNode : dotGraph.stmts.filter(EdgeStmtNode)) {
+			
+			// consider the left side of the edges
+			var nodeId = edgeStmtNode.node
+			if(nodeId!==null && nodeId.name == baseNodeId.name && nodeId!==baseNodeId){
+				result.add(nodeId)
+			}
+			
+			// consider the right side of the edges
+			val edgeRHS = edgeStmtNode.edgeRHS.head
+			if (edgeRHS instanceof EdgeRhsNode){
+				nodeId = (edgeRHS as EdgeRhsNode).node
+				if(nodeId!==null && nodeId.name == baseNodeId.name && nodeId!==baseNodeId){
+					result.add(nodeId)
+				}
+			}
+		}
+		
+		result
 	}
 	
 	/**

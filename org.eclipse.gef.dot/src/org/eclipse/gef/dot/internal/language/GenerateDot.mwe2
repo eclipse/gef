@@ -15,6 +15,7 @@
  *		Tamas Miklossy		- support for junit test plugin generation
  *							- support for formatter API generation
  *							- support for content assistant API generation
+ *							- support for rename refactoring (bug #530423)
  *							- integration of dot attribute sub-grammars (bug #461506)
  *		Zoey Gerrit Prigge	- integration of record label sub-grammar (bug #454629)
  * 
@@ -152,6 +153,10 @@ Workflow {
 				// A grammar file with .g will be expected in this package (should be stored in src folder)
 				lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
 				highlighting = true
+			}
+			
+			fragment = refactoring.RefactorElementNameFragment {
+				
 			}
 
 			// generates junit test support classes into Generator#pathTestProject
