@@ -2177,6 +2177,11 @@ public class DotAttributesTests {
 		DotAttributes.setNodesepParsed(graph, validNodesepParsed);
 		assertEquals(validNodesepParsed, DotAttributes.getNodesepParsed(graph));
 
+		// set valid parsed values
+		validNodesepParsed = new Double(0.0);
+		DotAttributes.setNodesepParsed(graph, validNodesepParsed);
+		assertEquals(validNodesepParsed, DotAttributes.getNodesepParsed(graph));
+
 		// set syntactically invalid values
 		try {
 			DotAttributes.setNodesep(graph, "0,5");
@@ -2198,11 +2203,11 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setNodesep(graph, "0.0199");
+			DotAttributes.setNodesep(graph, "-1");
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'nodesep' to '0.0199'. The double value '0.0199' is not semantically correct: Value may not be smaller than 0.02.",
+					"Cannot set graph attribute 'nodesep' to '-1'. The double value '-1' is not semantically correct: Value may not be smaller than 0.0.",
 					e.getMessage());
 		}
 	}
@@ -3088,6 +3093,11 @@ public class DotAttributesTests {
 		assertEquals(validNodeHeightParsed,
 				DotAttributes.getHeightParsed(node));
 
+		validNodeHeightParsed = 0.0;
+		DotAttributes.setHeightParsed(node, validNodeHeightParsed);
+		assertEquals(validNodeHeightParsed,
+				DotAttributes.getHeightParsed(node));
+
 		validNodeHeightParsed = 9.9;
 		DotAttributes.setHeightParsed(node, validNodeHeightParsed);
 		assertEquals(validNodeHeightParsed,
@@ -3105,11 +3115,11 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setHeight(node, "0.01");
+			DotAttributes.setHeight(node, "-0.01");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'height' to '0.01'. The double value '0.01' is not semantically correct: Value may not be smaller than 0.02.",
+					"Cannot set node attribute 'height' to '-0.01'. The double value '-0.01' is not semantically correct: Value may not be smaller than 0.0.",
 					e.getMessage());
 		}
 	}
@@ -3512,6 +3522,10 @@ public class DotAttributesTests {
 		DotAttributes.setWidthParsed(node, validNodeWidthParsed);
 		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(node));
 
+		validNodeWidthParsed = 0.0;
+		DotAttributes.setWidthParsed(node, validNodeWidthParsed);
+		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(node));
+
 		validNodeWidthParsed = 9.9;
 		DotAttributes.setWidthParsed(node, validNodeWidthParsed);
 		assertEquals(validNodeWidthParsed, DotAttributes.getWidthParsed(node));
@@ -3528,11 +3542,11 @@ public class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		try {
-			DotAttributes.setWidth(node, "0.009");
+			DotAttributes.setWidth(node, "-1.05");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'width' to '0.009'. The double value '0.009' is not semantically correct: Value may not be smaller than 0.01.",
+					"Cannot set node attribute 'width' to '-1.05'. The double value '-1.05' is not semantically correct: Value may not be smaller than 0.0.",
 					e.getMessage());
 		}
 	}

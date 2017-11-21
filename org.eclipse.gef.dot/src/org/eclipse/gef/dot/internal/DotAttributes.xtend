@@ -1037,17 +1037,17 @@ class DotAttributes {
 	/**
 	 * A validator for width {@link Double} attribute values.
 	 */
-	static val WIDTH_VALIDATOR = new DoubleValidator(0.01)
+	static val WIDTH_VALIDATOR = new DoubleValidator(0.00)
 
 	/**
 	 * A validator for height {@link Double} attribute values.
 	 */
-	static val HEIGHT_VALIDATOR = new DoubleValidator(0.02)
+	static val HEIGHT_VALIDATOR = new DoubleValidator(0.00)
 
 	/**
 	 * A validator for nodesep {@link Double} attribute values.
 	 */
-	static val NODESEP_VALIDATOR = new DoubleValidator(0.02)
+	static val NODESEP_VALIDATOR = new DoubleValidator(0)
 
 	static val Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration

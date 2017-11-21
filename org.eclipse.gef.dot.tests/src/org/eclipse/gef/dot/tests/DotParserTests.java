@@ -462,6 +462,10 @@ public class DotParserTests {
 		testString("digraph{1->2[arrowtail=\"\"]}");
 	}
 
+	@Test
+	public void testNodesepIsZero() {
+		testString("digraph {nodesep=0 1 2}");
+	}
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
