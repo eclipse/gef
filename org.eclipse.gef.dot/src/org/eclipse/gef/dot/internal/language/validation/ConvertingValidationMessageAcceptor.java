@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.SyntaxErrorMessage;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -24,7 +25,7 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 /**
  * This class provides a ValidationMessageAcceptor to be used with sub grammars.
  * It can be used when validating the main grammar to translate validation
- * errors.
+ * warnings/errors.
  * 
  * @author zgerritprigge
  *
@@ -32,7 +33,7 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 public class ConvertingValidationMessageAcceptor
 		implements ValidationMessageAcceptor {
 
-	private final EObject hostingEObject;
+	private final Attribute attribute;
 	private final ValidationMessageAcceptor hostMessageAcceptor;
 	private final String userReadableIdentifier;
 	private final int initialOffset;
@@ -41,8 +42,8 @@ public class ConvertingValidationMessageAcceptor
 	 * Constructs a Validation Message acceptor to 'translate' issues while
 	 * validating a sub grammar.
 	 * 
-	 * @param hostingEObject
-	 *            The Object in the main grammar that hosts the sub grammar
+	 * @param attribute
+	 *            The attribute in the main grammar that hosts the sub grammar
 	 * @param hostingFeature
 	 *            Can be null. If set, needs to be unique within hostingEObject
 	 *            (not a list, ...).
@@ -53,11 +54,11 @@ public class ConvertingValidationMessageAcceptor
 	 * @param internalOffset
 	 *            Offset from begin of feature
 	 */
-	public ConvertingValidationMessageAcceptor(EObject hostingEObject,
+	public ConvertingValidationMessageAcceptor(Attribute attribute,
 			EStructuralFeature hostingFeature, String userReadableIdentifier,
 			ValidationMessageAcceptor hostMessageAcceptor, int internalOffset) {
 
-		this.hostingEObject = hostingEObject;
+		this.attribute = attribute;
 		this.hostMessageAcceptor = hostMessageAcceptor;
 		this.userReadableIdentifier = userReadableIdentifier;
 
@@ -76,10 +77,9 @@ public class ConvertingValidationMessageAcceptor
 	public void acceptSyntaxError(INode error) {
 		SyntaxErrorMessage errorMessage = error.getSyntaxErrorMessage();
 		hostMessageAcceptor.acceptError(
-				buildMessage("Syntax error", errorMessage.getMessage()),
-				hostingEObject, calculateOffset(error.getOffset()),
-				error.getLength(), errorMessage.getIssueCode(),
-				errorMessage.getIssueData());
+				buildSyntaxErrorMessage(errorMessage.getMessage()), attribute,
+				calculateOffset(error.getOffset()), error.getLength(),
+				errorMessage.getIssueCode(), errorMessage.getIssueData());
 	}
 
 	@Override
@@ -87,18 +87,16 @@ public class ConvertingValidationMessageAcceptor
 			EStructuralFeature feature, int index, String code,
 			String... issueData) {
 		for (INode node : getNodesForEObject(object, feature))
-			hostMessageAcceptor.acceptError(
-					buildMessage("Semantic error", message), hostingEObject,
-					calculateOffset(node.getOffset()), node.getLength(), code,
-					issueData);
+			hostMessageAcceptor.acceptError(buildSemanticErrorMessage(message),
+					attribute, calculateOffset(node.getOffset()),
+					node.getLength(), code, issueData);
 	}
 
 	@Override
 	public void acceptError(String message, EObject object, int offset,
 			int length, String code, String... issueData) {
-		hostMessageAcceptor.acceptError(buildMessage("Semantic error", message),
-				hostingEObject, calculateOffset(offset), length, code,
-				issueData);
+		hostMessageAcceptor.acceptError(buildSemanticErrorMessage(message),
+				attribute, calculateOffset(offset), length, code, issueData);
 	}
 
 	@Override
@@ -106,18 +104,16 @@ public class ConvertingValidationMessageAcceptor
 			EStructuralFeature feature, int index, String code,
 			String... issueData) {
 		for (INode node : getNodesForEObject(object, feature))
-			hostMessageAcceptor.acceptInfo(
-					buildMessage("Semantic issue info", message),
-					hostingEObject, calculateOffset(node.getOffset()),
+			hostMessageAcceptor.acceptInfo(buildSemanticErrorMessage(message),
+					attribute, calculateOffset(node.getOffset()),
 					node.getLength(), code, issueData);
 	}
 
 	@Override
 	public void acceptInfo(String message, EObject object, int offset,
 			int length, String code, String... issueData) {
-		hostMessageAcceptor.acceptInfo(
-				buildMessage("Semantic issue info", message), hostingEObject,
-				calculateOffset(offset), length, code, issueData);
+		hostMessageAcceptor.acceptInfo(buildSemanticErrorMessage(message),
+				attribute, calculateOffset(offset), length, code, issueData);
 	}
 
 	@Override
@@ -126,7 +122,7 @@ public class ConvertingValidationMessageAcceptor
 			String... issueData) {
 		for (INode node : getNodesForEObject(object, feature))
 			hostMessageAcceptor.acceptWarning(
-					buildMessage("Semantic warning", message), hostingEObject,
+					buildSemanticErrorMessage(message), attribute,
 					calculateOffset(node.getOffset()), node.getLength(), code,
 					issueData);
 
@@ -135,14 +131,13 @@ public class ConvertingValidationMessageAcceptor
 	@Override
 	public void acceptWarning(String message, EObject object, int offset,
 			int length, String code, String... issueData) {
-		hostMessageAcceptor.acceptWarning(
-				buildMessage("Semantic warning", message), hostingEObject,
-				calculateOffset(offset), length, code, issueData);
+		hostMessageAcceptor.acceptWarning(buildSemanticErrorMessage(message),
+				attribute, calculateOffset(offset), length, code, issueData);
 	}
 
 	private int calculateInitialOffset(EStructuralFeature hostingFeature,
 			int internalOffset) {
-		List<INode> nodes = getNodesForEObject(hostingEObject, hostingFeature);
+		List<INode> nodes = getNodesForEObject(attribute, hostingFeature);
 		if (nodes.size() != 1)
 			throw new RuntimeException(
 					"EObject has no node or feature not unique");
@@ -170,14 +165,20 @@ public class ConvertingValidationMessageAcceptor
 		return nodes;
 	}
 
-	private String buildMessage(String errorType, String errorMessage) {
+	private String buildSyntaxErrorMessage(String errorMessage) {
 		StringBuilder message = new StringBuilder();
-		message.append(errorType).append(" on ")
-				.append(hostingEObject.eClass().getName()).append(" ")
-				.append(userReadableIdentifier).append(": ");
-		message.append(errorMessage);
-		String userMessage = message.toString();
-		return userMessage;
+		message.append("The value '" + attribute.getValue().toValue()
+				+ "' is not a syntactically correct " + userReadableIdentifier
+				+ ":").append(errorMessage);
+		return message.toString();
+	}
+
+	private String buildSemanticErrorMessage(String errorMessage) {
+		StringBuilder message = new StringBuilder();
+		message.append("The " + userReadableIdentifier + " '"
+				+ attribute.getValue().toValue()
+				+ "' is not semantically correct: ").append(errorMessage);
+		return message.toString();
 	}
 
 }

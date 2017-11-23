@@ -254,15 +254,15 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	}
 
 	/**
-	 * Use to run the recordLabel subgrammar validation on relevant labels
-	 * (label attributes on Nodes where a recordBased label shape attribute
-	 * exists).
+	 * Ensures that the label attribute value conforms to the recordLabel
+	 * subgrammar on nodes where the shape attribute is set to a
+	 * {@link RecordBasedNodeShape}.
 	 * 
 	 * @param attribute
 	 *            The attribute to validate.
 	 */
 	@Check
-	public void checkRecordBasedNodeShapeValue(Attribute attribute) {
+	public void checkRecordLabelValue(Attribute attribute) {
 		if (DotAttributes.getContext(attribute).equals(Context.NODE)
 				&& attribute.getName().toValue()
 						.equals(DotAttributes.LABEL__GCNE)) {
@@ -283,8 +283,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		ConvertingValidationMessageAcceptor messageAcceptor = new ConvertingValidationMessageAcceptor(
 				attribute, DotPackage.Literals.ATTRIBUTE__VALUE,
-				attribute.getName().toString(), getMessageAcceptor(),
-				"\"".length());
+				"record-based label", getMessageAcceptor(), "\"".length());
 
 		validator.setMessageAcceptor(messageAcceptor);
 

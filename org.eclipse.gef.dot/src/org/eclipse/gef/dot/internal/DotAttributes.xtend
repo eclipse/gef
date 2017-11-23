@@ -706,6 +706,7 @@ class DotAttributes {
 
 				// we need a specific message acceptor
 				validator.setMessageAcceptor(
+					// TODO: reuse the ConvertingValidationMessageAcceptor here
 					new ValidationMessageAcceptor {
 
 						override void acceptError(String message, EObject object,

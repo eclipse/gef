@@ -787,11 +787,11 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
 				DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE, 46, 4,
-				"Semantic error on Attribute label: Port name not unique: here");
+				"The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here");
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
 				DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE, 59, 4,
-				"Semantic error on Attribute label: Port name not unique: here");
+				"The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here");
 	}
 
 	@Test
@@ -802,7 +802,7 @@ public class DotValidatorTests {
 		validationTestHelper.assertWarning(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
 				DotRecordLabelJavaValidator.PORT_NAME_NOT_SET, 45, 6,
-				"Semantic warning on Attribute label: Port unnamed: port cannot be referenced");
+				"The record-based label '<> foo | <here> more foo' is not semantically correct: Port unnamed: port cannot be referenced");
 	}
 
 	@Test
@@ -813,7 +813,7 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
 				Diagnostic.SYNTAX_DIAGNOSTIC, 46, 1,
-				"Syntax error on Attribute label:", "'}'");
+				"The value '<}> foo | <here> more foo' is not a syntactically correct record-based label:");
 	}
 
 	private DotAst parse(String fileName) {
