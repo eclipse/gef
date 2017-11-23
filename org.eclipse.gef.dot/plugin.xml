@@ -87,6 +87,16 @@
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
+       uri = "http://www.eclipse.org/gef/dot/internal/language/DotRecordLabel" 
+       class = "org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelPackage"
+       genModel = "model/generated/DotRecordLabel.genmodel" /> 
+	
+  </extension>
+
+
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
        uri = "http://www.eclipse.org/gef/dot/internal/language/DotRect" 
        class = "org.eclipse.gef.dot.internal.language.rect.RectPackage"
        genModel = "model/generated/DotRect.genmodel" /> 
