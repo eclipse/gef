@@ -37,4 +37,4 @@ Require-Bundle: org.apache.commons.lang;bundle-version="[2.6.0,3.0.0)",
  org.eclipse.gef.dot;bundle-version="[5.0.0,6.0.0)"
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.eclipse.gef.dot.internal.ui.language.internal.DotActivator
+Bundle-Activator: org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx

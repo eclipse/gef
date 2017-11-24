@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,13 +12,17 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.xbase.junit.ui.AbstractContentAssistTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -1380,6 +1384,20 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"5", "6", "7", "8", "9", "10")
 				.applyProposal(39, "10")
 				.expectContent("graph{node[colorscheme=brbg10] 1[color=10]}");
+
+		// verify that an image (filled by the corresponding color) is generated to the color names
+		ICompletionProposal[] proposals = newBuilder()
+				.append("graph{1[color=]}").computeCompletionProposals(14);
+		for (ICompletionProposal completionProposal : proposals) {
+			if (completionProposal instanceof ConfigurableCompletionProposal) {
+				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+				String assertionErrorMessage = "Proposal image is missing for the '"
+						+ configurableCompletionProposal.getDisplayString()
+						+ "' color!";
+				assertNotNull(assertionErrorMessage,
+						configurableCompletionProposal.getImage());
+			}
+		}
 	}
 
 	@Test

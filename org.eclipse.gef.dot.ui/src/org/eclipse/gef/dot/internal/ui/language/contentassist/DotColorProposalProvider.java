@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,7 +15,11 @@ package org.eclipse.gef.dot.internal.ui.language.contentassist;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 
@@ -64,7 +68,17 @@ public class DotColorProposalProvider extends
 
 		for (String colorName : DotColors
 				.getColorNames(colorScheme.toLowerCase())) {
-			acceptor.accept(createCompletionProposal(colorName, context));
+			ICompletionProposal completionProposal = createCompletionProposal(
+					colorName, context);
+			if (completionProposal instanceof ConfigurableCompletionProposal) {
+				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+				String colorCode = DotColors.get(colorScheme, colorName);
+				// add color image to the proposal
+				Image image = DotActivator.getInstance().getImageRegistry()
+						.get(colorCode);
+				configurableCompletionProposal.setImage(image);
+				acceptor.accept(configurableCompletionProposal);
+			}
 		}
 	}
 }
