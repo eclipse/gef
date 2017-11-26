@@ -420,7 +420,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	@Test
 	public void edge_colorscheme() throws Exception {
 		// test global attribute values
-		String[] expectedDotColorSchemes = DotTestUtils.expectedDotColorSchemes;
+		String[] expectedDotColorSchemes = copyExpectedDotColorSchemes();
 		newBuilder().append("digraph {edge[ colorscheme= ]}")
 				.assertTextAtCursorPosition(27, expectedDotColorSchemes)
 				.applyProposal(27, "x11")
@@ -965,7 +965,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 	@Test
 	public void graph_colorscheme() throws Exception {
-		String[] expectedDotColorSchemes = DotTestUtils.expectedDotColorSchemes;
+		String[] expectedDotColorSchemes = copyExpectedDotColorSchemes();
 		// test global attribute values
 		newBuilder().append("graph {graph[ colorscheme= ]}")
 				.assertTextAtCursorPosition(26, expectedDotColorSchemes)
@@ -1384,7 +1384,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 	@Test
 	public void node_colorscheme() throws Exception {
-		String[] expectedDotColorSchemes = DotTestUtils.expectedDotColorSchemes;
+		String[] expectedDotColorSchemes = copyExpectedDotColorSchemes();
 		// test global attribute values
 		newBuilder().append("graph {node[ colorscheme= ]}")
 				.assertTextAtCursorPosition(25, expectedDotColorSchemes)
@@ -1492,7 +1492,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 	@Test
 	public void node_fontcolor() throws Exception {
-		String[] expectedDotColorSchemes = DotTestUtils.expectedDotColorSchemes;
+		String[] expectedDotColorSchemes = copyExpectedDotColorSchemes();
 		// test global attribute values
 		newBuilder().append("graph {node[ fontcolor=/ ]}")
 				.assertTextAtCursorPosition(24,
@@ -1758,10 +1758,28 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 	}
 
+	/**
+	 * Since the Content Assists Test Cases sorts the expectations array, the
+	 * array of the expected color schemes has to be copied in order to be able
+	 * to reuse that array in other test cases as well.
+	 * 
+	 * @return The copy of the expected color schemes
+	 */
+	private String[] copyExpectedDotColorSchemes() {
+		return copy(DotTestUtils.expectedDotColorSchemes);
+	}
+
 	private String[] combine(String[] array1, String... array2) {
 		String[] both = Stream
 				.concat(Arrays.stream(array1), Arrays.stream(array2))
 				.toArray(String[]::new);
 		return both;
+	}
+
+	private String[] copy(String[] src) {
+		String[] dest = new String[src.length];
+
+		System.arraycopy(src, 0, dest, 0, src.length);
+		return dest;
 	}
 }
