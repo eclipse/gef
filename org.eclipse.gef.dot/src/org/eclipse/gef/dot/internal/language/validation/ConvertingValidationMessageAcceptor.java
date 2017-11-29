@@ -169,7 +169,7 @@ public class ConvertingValidationMessageAcceptor
 		StringBuilder message = new StringBuilder();
 		message.append("The value '" + attribute.getValue().toValue()
 				+ "' is not a syntactically correct " + userReadableIdentifier
-				+ ":").append(errorMessage);
+				+ ": ").append(errorMessage);
 		return message.toString();
 	}
 

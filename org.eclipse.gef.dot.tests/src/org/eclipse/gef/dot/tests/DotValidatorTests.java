@@ -813,7 +813,7 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
 				Diagnostic.SYNTAX_DIAGNOSTIC, 46, 1,
-				"The value '<}> foo | <here> more foo' is not a syntactically correct record-based label:extraneous input '}' expecting '>'");
+				"The value '<}> foo | <here> more foo' is not a syntactically correct record-based label: extraneous input '}' expecting '>'");
 	}
 
 	private DotAst parse(String fileName) {
