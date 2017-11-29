@@ -447,6 +447,11 @@ public class DotParserTests {
 		testString("graph{y:_:n}");
 	}
 
+	@Test
+	public void testRecordLabelMixedWithHtmlLabel() {
+		testString("digraph{1[shape=Mrecord label=<<b>text</b>>]}");
+	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));

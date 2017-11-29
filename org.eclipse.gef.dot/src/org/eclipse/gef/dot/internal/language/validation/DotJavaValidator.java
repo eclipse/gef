@@ -268,7 +268,10 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 						.equals(DotAttributes.LABEL__GCNE)) {
 			String shapeValue = DotAstHelper.getDependedOnAttributeValue(
 					attribute, DotAttributes.SHAPE__N);
-			if (RecordBasedNodeShape.get(shapeValue) != null) {
+			// do not execute the record label validation in case of an html
+			// string
+			if (RecordBasedNodeShape.get(shapeValue) != null
+					&& attribute.getValue().getType() != ID.Type.HTML_STRING) {
 				doRecordLabelValidation(attribute);
 			}
 		}
