@@ -81,20 +81,18 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * An instance of {@link Modifiers} represents a set of modifier keys
-	 * (shift, control, alt, meta). For convenience, {@link Modifiers#NONE} can
-	 * be used to specify that no modifier keys are pressed, and
-	 * {@link Modifiers#ALL} can be used to specify that all modifier keys are
-	 * pressed.
+	 * An instance of {@link Modifiers} represents a set of modifier keys (shift,
+	 * control, alt, meta). For convenience, {@link Modifiers#NONE} can be used to
+	 * specify that no modifier keys are pressed, and {@link Modifiers#ALL} can be
+	 * used to specify that all modifier keys are pressed.
 	 * <p>
 	 * Starting with a set of modifier keys, you can use the
 	 * {@link Modifiers#alt(boolean)}, {@link Modifiers#control(boolean)},
-	 * {@link Modifiers#meta(boolean)}, and {@link Modifiers#shift(boolean)}
-	 * methods to create new sets of modifier keys with the changed attribute.
-	 * Moreover, the {@link Modifiers#talt()}, {@link Modifiers#tcontrol()},
-	 * {@link Modifiers#tmeta()}, {@link Modifiers#tshift()} methods can be used
-	 * to create a set of modifier keys with the respective value toggled, i.e.
-	 * <quote>
+	 * {@link Modifiers#meta(boolean)}, and {@link Modifiers#shift(boolean)} methods
+	 * to create new sets of modifier keys with the changed attribute. Moreover, the
+	 * {@link Modifiers#talt()}, {@link Modifiers#tcontrol()},
+	 * {@link Modifiers#tmeta()}, {@link Modifiers#tshift()} methods can be used to
+	 * create a set of modifier keys with the respective value toggled, i.e. <quote>
 	 *
 	 * <pre>
 	 * // press "A" while control, meta, and shift modifier keys are pressed
@@ -179,8 +177,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * Saves mouse interaction data, so that it can be reused for subsequent
-	 * mouse interaction.
+	 * Saves mouse interaction data, so that it can be reused for subsequent mouse
+	 * interaction.
 	 */
 	public static class MouseInteraction {
 		public Node target;
@@ -200,8 +198,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 	 * A {@link SyncEvent} can be used to ensure that all events have been
 	 * processed.
 	 * <ol>
-	 * <li>Register an event filter for {@link SyncEvent#SYNC} that notifies
-	 * when it is executed.
+	 * <li>Register an event filter for {@link SyncEvent#SYNC} that notifies when it
+	 * is executed.
 	 * <li>Fire a {@link SyncEvent#SYNC}.
 	 * <li>Wait for the notification from the event filter.
 	 * </ol>
@@ -211,8 +209,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 		private static final long serialVersionUID = 1L;
 
 		/**
-		 * A {@link SyncEvent#SYNC} event can be used to ensure that all events
-		 * have been processed.
+		 * A {@link SyncEvent#SYNC} event can be used to ensure that all events have
+		 * been processed.
 		 */
 		public static final EventType<SyncEvent> SYNC = new EventType<>(EventType.ROOT);
 
@@ -227,8 +225,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		 * Creates a new {@link SyncEvent} of the given {@link EventType}.
 		 *
 		 * @param eventType
-		 *            The {@link EventType} of the newly created
-		 *            {@link SyncEvent}.
+		 *            The {@link EventType} of the newly created {@link SyncEvent}.
 		 */
 		public SyncEvent(EventType<? extends SyncEvent> eventType) {
 			super(eventType);
@@ -353,10 +350,9 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * Fires a newly created {@link KeyEvent} of type
-	 * {@link KeyEvent#KEY_PRESSED} to the given target {@link Node}. The given
-	 * {@link KeyCode} and {@link Modifiers} are used to construct the
-	 * {@link KeyEvent}.
+	 * Fires a newly created {@link KeyEvent} of type {@link KeyEvent#KEY_PRESSED}
+	 * to the given target {@link Node}. The given {@link KeyCode} and
+	 * {@link Modifiers} are used to construct the {@link KeyEvent}.
 	 * <p>
 	 * The target {@link Node} and the {@link KeyCode} is saved for subsequent
 	 * {@link #keyRelease(Modifiers)} calls.
@@ -393,11 +389,11 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * Fires a newly created {@link KeyEvent} of type
-	 * {@link KeyEvent#KEY_RELEASED} to the target {@link Node} of the last
-	 * {@link #keyPress(Node, KeyCode, Modifiers)}. The {@link KeyCode} of the
-	 * last {@link #keyPress(Node, KeyCode, Modifiers)} is reused, however, the
-	 * given {@link Modifiers} are used for the new {@link KeyEvent}.
+	 * Fires a newly created {@link KeyEvent} of type {@link KeyEvent#KEY_RELEASED}
+	 * to the target {@link Node} of the last
+	 * {@link #keyPress(Node, KeyCode, Modifiers)}. The {@link KeyCode} of the last
+	 * {@link #keyPress(Node, KeyCode, Modifiers)} is reused, however, the given
+	 * {@link Modifiers} are used for the new {@link KeyEvent}.
 	 *
 	 * @param mods
 	 *            The {@link Modifiers} for the {@link KeyEvent}.
@@ -427,8 +423,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 	/**
 	 * Fires a newly created {@link MouseEvent} of type
-	 * {@link MouseEvent#MOUSE_DRAGGED} to the target {@link Node} of the last
-	 * mouse interaction.
+	 * {@link MouseEvent#MOUSE_DRAGGED} to the target {@link Node} of the last mouse
+	 * interaction.
 	 *
 	 * @param sceneX
 	 *            The final x-coordinate (in scene) for the drag.
@@ -489,8 +485,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * Fires a MOUSE_PRESSED event and waits for its processing to finish. The
-	 * given buttons mask can be composed by adding the following constants:
+	 * Fires a MOUSE_PRESSED event and waits for its processing to finish. The given
+	 * buttons mask can be composed by adding the following constants:
 	 * <ul>
 	 * <li>{@link InputEvent#BUTTON1_DOWN_MASK}
 	 * <li>{@link InputEvent#BUTTON2_DOWN_MASK}
@@ -508,8 +504,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 	/**
 	 * Fires a newly created {@link MouseEvent} of type
-	 * {@link MouseEvent#MOUSE_PRESSED} to the target {@link Node} of the last
-	 * mouse interaction.
+	 * {@link MouseEvent#MOUSE_PRESSED} to the target {@link Node} of the last mouse
+	 * interaction.
 	 *
 	 * @param mods
 	 *            The {@link Modifiers} for the {@link MouseEvent}.
@@ -566,14 +562,13 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * Executes the given {@link Runnable} on the JavaFX application thread. If
-	 * the current thread is the JavaFX application thread, then the given
-	 * {@link Runnable} is executed in-line. Otherwise, the given
-	 * {@link Runnable} is passed to a {@link Platform#runLater(Runnable)}.
+	 * Executes the given {@link Runnable} on the JavaFX application thread. If the
+	 * current thread is the JavaFX application thread, then the given
+	 * {@link Runnable} is executed in-line. Otherwise, the given {@link Runnable}
+	 * is passed to a {@link Platform#runLater(Runnable)}.
 	 *
 	 * @param r
-	 *            The {@link Runnable} to execute on the JavaFX application
-	 *            thread.
+	 *            The {@link Runnable} to execute on the JavaFX application thread.
 	 */
 	protected void run(Runnable r) {
 		if (Platform.isFxApplicationThread()) {
@@ -670,11 +665,10 @@ public class FXNonApplicationThreadRule implements TestRule {
 
 	/**
 	 * If the current thread is the JavaFX application thread, busy waiting is
-	 * performed, i.e. {@link Thread#sleep(long)} is called in-between checking
-	 * of a {@link CountDownLatch}. Otherwise,
-	 * {@link CountDownLatch#await(long, TimeUnit)} is used to wait. In either
-	 * case, an exception is thrown if the timeout of {@link #TIMEOUT_MILLIS} is
-	 * exceeded.
+	 * performed, i.e. {@link Thread#sleep(long)} is called in-between checking of a
+	 * {@link CountDownLatch}. Otherwise,
+	 * {@link CountDownLatch#await(long, TimeUnit)} is used to wait. In either case,
+	 * an exception is thrown if the timeout of {@link #TIMEOUT_MILLIS} is exceeded.
 	 *
 	 * @param latch
 	 *            The {@link CountDownLatch} that is waited for.
@@ -700,11 +694,11 @@ public class FXNonApplicationThreadRule implements TestRule {
 	}
 
 	/**
-	 * Ensures that processing of previously fired events is finished by firing
-	 * and waiting for a {@link SyncEvent}.
+	 * Ensures that processing of previously fired events is finished by firing and
+	 * waiting for a {@link SyncEvent}.
 	 * <p>
-	 * This method should only be called after firing an {@link Event} that is
-	 * not supported by this {@link FXNonApplicationThreadRule}, e.g. by using
+	 * This method should only be called after firing an {@link Event} that is not
+	 * supported by this {@link FXNonApplicationThreadRule}, e.g. by using
 	 * {@link Event#fireEvent(javafx.event.EventTarget, Event)}.
 	 */
 	public void waitForIdle() {
