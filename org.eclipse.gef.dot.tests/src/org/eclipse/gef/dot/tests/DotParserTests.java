@@ -277,6 +277,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testCpattlPie() {
+		testFile("cpattl-pie.dot");
+	}
+
+	@Test
 	public void testHtmlLikeLabels1() {
 		testFile("html_like_labels1.dot");
 	}
