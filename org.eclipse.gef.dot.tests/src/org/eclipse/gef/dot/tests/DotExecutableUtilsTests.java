@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 itemis AG and others.
+ * Copyright (c) 2009, 2017 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
@@ -30,6 +29,8 @@ import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.common.base.Joiner;
 
 /**
  * Tests for the {@link DotExecutableUtils} class.
@@ -93,10 +94,15 @@ public class DotExecutableUtilsTests {
 			String[] actualExportFormats = DotExecutableUtils
 					.getSupportedExportFormats(dotExecutablePath);
 
-			// compare the string representation of the arrays to get better
-			// feedback in case of failing test cases
-			Assert.assertEquals(Arrays.toString(expectedExportFormats),
-					Arrays.toString(actualExportFormats));
+			// join the expected and the actual export format arrays by the
+			// line separator to get better feedback in case of failing test
+			// cases
+			Joiner joiner = Joiner.on(System.lineSeparator());
+			String expectedExportFormatsText = joiner
+					.join(expectedExportFormats);
+			String actualExportFormatsText = joiner.join(actualExportFormats);
+			Assert.assertEquals(expectedExportFormatsText,
+					actualExportFormatsText);
 		}
 	}
 
