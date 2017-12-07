@@ -146,7 +146,82 @@ class DotHtmlLabelLexerTests {
 			RULE_TEXT '
 			'
 		''')
-	}	
+	}
+
+	
+	@Test(timeout = 2000)
+	def void testLexing06(){
+		'''<a b="c"/>'''
+		.assertLexing('''
+			RULE_TAG_START '<'
+			RULE_ID 'a'
+			RULE_WS ' '
+			RULE_ID 'b'
+			RULE_ASSIGN '='
+			RULE_ATTR_VALUE '"c"'
+			RULE_TAG_END_CLOSE '/>'
+		''')
+	}
+
+	@Test(timeout = 2000)
+	def void testLexing07(){
+		'''<BR ALIGN="LEFT"/>'''
+		.assertLexing('''
+			RULE_TAG_START '<'
+			RULE_ID 'BR'
+			RULE_WS ' '
+			RULE_ID 'ALIGN'
+			RULE_ASSIGN '='
+			RULE_ATTR_VALUE '"LEFT"'
+			RULE_TAG_END_CLOSE '/>'
+		''')
+	}
+	
+	@Test(timeout = 2000)
+	def void testLexing08() {
+		'''<a b="'''
+		.assertLexing(
+		'''
+		RULE_TAG_START '<'
+		RULE_ID 'a'
+		RULE_WS ' '
+		RULE_ID 'b'
+		RULE_ASSIGN '='
+		0 '"'
+		''')
+	}
+	
+	@Test(timeout = 2000)
+	def void testLexing09() {
+		'''<TABLE ALIGN="'''
+		.assertLexing(
+		'''
+		RULE_TAG_START '<'
+		RULE_ID 'TABLE'
+		RULE_WS ' '
+		RULE_ID 'ALIGN'
+		RULE_ASSIGN '='
+		0 '"'
+		''')
+	}
+	
+	@Test(timeout = 2000)
+	def void testLexing10() {
+		'''<TABLE ALIGN=""></TABLE>'''
+		.assertLexing(
+		'''
+		RULE_TAG_START '<'
+		RULE_ID 'TABLE'
+		RULE_WS ' '
+		RULE_ID 'ALIGN'
+		RULE_ASSIGN '='
+		RULE_ATTR_VALUE '""'
+		RULE_TAG_END '>'
+		RULE_TAG_START_CLOSE '</'
+		RULE_ID 'TABLE'
+		RULE_TAG_END '>'
+		''')
+	}
 
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
 		val lexer = new CustomInternalDotHtmlLabelLexer
