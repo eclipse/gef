@@ -12,11 +12,11 @@
 package org.eclipse.gef.common.adapt.inject;
 
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef.common.adapt.IAdaptable;
 
+import com.google.common.collect.MapMaker;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scope;
@@ -54,9 +54,12 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 	// type of the adaptable instance is applicable, we need to use a static
 	// field here. The scope method will ensure that only entered scopes really
 	// accesses the field.
-	// FIXME: We need to ensure scoped instances can be garbage collected (use
-	// week references here)
-	private static Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new IdentityHashMap<>();
+	// XXX: Use a map with weak keys so they can be properly garbage collected;
+	// Note that 'identity' equivalence will be used by default when weak keys
+	// are
+	// selected. This is crucial here!
+	private static Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new MapMaker()
+			.weakKeys().makeMap();
 
 	private A adaptable = null;
 	private Class<? extends A> type;
@@ -80,17 +83,14 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 	 * the scope is bound to another {@link IAdaptable} instance or left (see
 	 * {@link #leave(IAdaptable)}).
 	 *
-	 * @param instance
+	 * @param adaptable
 	 *            The {@link IAdaptable} instance to enter (and bind) this
 	 *            {@link AdaptableScope} for.
 	 */
-	public void enter(A instance) {
-		if (!scopedInstances.containsKey(instance)) {
-			scopedInstances.put(instance, new HashMap<Key<?>, Object>());
-		}
+	public void enter(A adaptable) {
 		// System.out.println(
 		// "Entering " + this + " of " + type + " for " + instance + ".");
-		this.adaptable = instance;
+		this.adaptable = adaptable;
 	}
 
 	/**
@@ -101,11 +101,11 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 	 * The scope may not be switched back to the {@link IAdaptable} instance
 	 * before having been re-entered for it (see {@link #enter(IAdaptable)}).
 	 *
-	 * @param instance
+	 * @param adaptable
 	 *            The {@link IAdaptable} instance to (unbind and) leave this
 	 *            {@link AdaptableScope} for.
 	 */
-	public void leave(A instance) {
+	public void leave(A adaptable) {
 		// System.out.println(
 		// "Leaving " + this + " of " + type + " for " + instance + ".");
 		this.adaptable = null;
@@ -125,13 +125,16 @@ class AdaptableScope<A extends IAdaptable> implements Scope {
 							+ " is scoped to adaptable '" + type
 							+ "', for which no scope has been activated. You can only scope adapters in a scope of a transitive adaptable.");
 				} else {
-					// FIXME: We need to process all scopes of superclasses and
-					// interfaces here to retrieve an instance.
-
 					// obtain the map of scoped instances for the given
 					// adaptable
+					if (!scopedInstances.containsKey(adaptable)) {
+						scopedInstances.put(adaptable,
+								new HashMap<Key<?>, Object>());
+					}
 					Map<Key<?>, Object> scope = scopedInstances.get(adaptable);
 					// retrieve a cached instance from the scope (if it exists)
+					// FIXME: We need to process all scopes of the key's
+					// superclasses and interfaces here to retrieve an instance.
 					Object instance = scope.get(key);
 					if (instance == null) {
 						// obtain a new instance
