@@ -1,5 +1,5 @@
 /********************************************************************************************
- * Copyright (c) 2014, 2016 Fabian Steeg (hbz), and others.
+ * Copyright (c) 2014, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg (hbz) - initial API & implementation
+ *     Fabian Steeg   (hbz)       - initial API & implementation
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - Exporting *.dot files in different formats (bug #446647)
  *
@@ -72,7 +72,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	}
 
 	public static boolean isGraphvizConfigured() {
-		return getDotExecutablePath().length() != 0;
+		return isValidDotExecutable(getDotExecutablePath());
 	}
 
 	public static void showGraphvizConfigurationDialog() {
@@ -94,7 +94,8 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 			return false;
 		}
 		File file = new File(path);
-		return file.getName().equals("dot") || file.getName().equals("dot.exe"); //$NON-NLS-1$//$NON-NLS-2$
+		return file.exists() && (file.getName().equals("dot") //$NON-NLS-1$
+				|| file.getName().equals("dot.exe")); //$NON-NLS-1$
 	}
 
 	// TODO: move to activator
