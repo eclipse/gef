@@ -39,6 +39,13 @@ public class DotExecutableLayoutingTests extends AbstractDotExecutableTests {
 		// actual
 		String dotExecutableBuild = "TODO: specify the path to the self-build graphviz dot executable here";
 
+		if (!new File(dotExecutableInstalled).exists()
+				|| !new File(dotExecutableBuild).exists()) {
+			// ensure that the tests are only executed if the paths are properly
+			// defined
+			return;
+		}
+
 		String expected = dotLayout(dotExecutableInstalled, name);
 		String actual = dotLayout(dotExecutableBuild, name);
 
