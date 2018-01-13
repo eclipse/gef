@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -71,6 +71,44 @@ public class DotColors {
 		}
 
 		return colorNames;
+	}
+
+	/**
+	 * Calculates the detailed description in html form providing more
+	 * information about the given color.
+	 * 
+	 * @param colorScheme
+	 *            The name of the color scheme.
+	 * 
+	 * @param colorName
+	 *            The name of the color.
+	 * 
+	 * @return the detailed description in html form
+	 */
+	public static String getColorDescription(String colorScheme,
+			String colorName) {
+		String colorCode = DotColors.get(colorScheme, colorName);
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("<table border=1>");
+		sb.append("    <tr>");
+		sb.append("        <td><b>color preview</b></td>");
+		sb.append("        <td><b>color scheme</b></td>");
+		sb.append("        <td><b>color name</b></td>");
+		sb.append("        <td><b>color code</b></td>");
+		sb.append("    </tr>");
+		sb.append("    <tr>");
+		sb.append(
+				"<td border=0 align=\"center\"><div style=\"border:1px solid black;width:50px;height:16px;background-color:");
+		sb.append(colorCode);
+		sb.append(";\"</div></td>");
+		sb.append("    		<td align=\"center\">" + colorScheme + "</td>");
+		sb.append("    		<td align=\"center\">" + colorName + "</td>");
+		sb.append("    		<td align=\"center\">" + colorCode + "</td>");
+		sb.append("    </tr>");
+		sb.append("</table>");
+
+		return sb.toString();
 	}
 
 	/**

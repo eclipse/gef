@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
+import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.xtext.junit4.InjectWith;
@@ -1385,17 +1387,63 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.applyProposal(39, "10")
 				.expectContent("graph{node[colorscheme=brbg10] 1[color=10]}");
 
-		// verify that an image (filled by the corresponding color) is generated to the color names
 		ICompletionProposal[] proposals = newBuilder()
 				.append("graph{1[color=]}").computeCompletionProposals(14);
 		for (ICompletionProposal completionProposal : proposals) {
 			if (completionProposal instanceof ConfigurableCompletionProposal) {
 				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+				String proposalDisplayString = configurableCompletionProposal
+						.getDisplayString();
+				if ("#".equals(proposalDisplayString)
+						|| "/".equals(proposalDisplayString)) {
+					// consider only color names proposals
+					continue;
+				}
+
+				// verify that an image (filled by the corresponding color) is
+				// generated to the color names
 				String assertionErrorMessage = "Proposal image is missing for the '"
-						+ configurableCompletionProposal.getDisplayString()
-						+ "' color!";
+						+ proposalDisplayString + "' color!";
 				assertNotNull(assertionErrorMessage,
 						configurableCompletionProposal.getImage());
+
+				// verify that a color description (as additional proposal
+				// information) is provided to the color names
+				String colorName = proposalDisplayString;
+				String colorCode = DotColors.get("x11", colorName);
+
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("<table border=1>");
+				sb.append("    <tr>");
+				sb.append("        <td><b>color preview</b></td>");
+				sb.append("        <td><b>color scheme</b></td>");
+				sb.append("        <td><b>color name</b></td>");
+				sb.append("        <td><b>color code</b></td>");
+				sb.append("    </tr>");
+				sb.append("    <tr>");
+				sb.append(
+						"<td border=0 align=\"center\"><div style=\"border:1px solid black;width:50px;height:16px;background-color:");
+				sb.append(colorCode);
+				sb.append(";\"</div></td>");
+				sb.append("    		<td align=\"center\">x11</td>");
+				sb.append("    		<td align=\"center\">" + colorName
+						+ "</td>");
+				sb.append("    		<td align=\"center\">" + colorCode
+						+ "</td>");
+				sb.append("    </tr>");
+				sb.append("</table>");
+
+				String expectedAdditionalProposalInfo = sb.toString();
+				String actualAdditionalProposalInfo = configurableCompletionProposal
+						.getAdditionalProposalInfo();
+
+				assertionErrorMessage = "Color description as additional proposal information for the '"
+						+ proposalDisplayString + "' color does not match!";
+
+				assertEquals(assertionErrorMessage,
+						expectedAdditionalProposalInfo,
+						actualAdditionalProposalInfo);
 			}
 		}
 	}

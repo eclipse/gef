@@ -16,12 +16,18 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControl;
 
 /**
  * See
@@ -77,8 +83,47 @@ public class DotColorProposalProvider extends
 				Image image = DotActivator.getInstance().getImageRegistry()
 						.get(colorCode);
 				configurableCompletionProposal.setImage(image);
+				// add color description to the proposal
+				String colorDescription = DotColors.getColorDescription(
+						colorScheme.toLowerCase(), colorName);
+				configurableCompletionProposal
+						.setAdditionalProposalInfo(colorDescription);
 				acceptor.accept(configurableCompletionProposal);
 			}
 		}
+	}
+
+	/**
+	 * This customization is needed to render the additional proposal
+	 * information in html form properly.
+	 */
+	@Override
+	protected ConfigurableCompletionProposal doCreateProposal(String proposal,
+			StyledString displayString, Image image, int replacementOffset,
+			int replacementLength) {
+		return new ConfigurableCompletionProposal(proposal, replacementOffset,
+				replacementLength, proposal.length(), image, displayString,
+				null, null) {
+			@Override
+			public IInformationControlCreator getInformationControlCreator() {
+				return new IInformationControlCreator() {
+
+					@Override
+					public IInformationControl createInformationControl(
+							Shell parent) {
+						/**
+						 * These information has been taken from the
+						 * org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider.HoverControlCreator
+						 * class
+						 */
+						String font = "org.eclipse.jdt.ui.javadocfont"; //$NON-NLS-1$
+						String tooltipAffordanceString = EditorsUI
+								.getTooltipAffordanceString();
+						return new XtextBrowserInformationControl(parent, font,
+								tooltipAffordanceString);
+					}
+				};
+			}
+		};
 	}
 }
