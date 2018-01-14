@@ -32,6 +32,7 @@ import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
+import org.eclipse.gef.graph.PrettyPrinter;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.junit.Assert;
@@ -49,6 +50,7 @@ import org.junit.runner.RunWith;
 public final class DotImportTests {
 
 	private final DotImport dotImport = new DotImport();
+	private final PrettyPrinter prettyPrinter = new PrettyPrinter();
 
 	/**
 	 * Test valid graphs can be imported without exceptions.
@@ -1678,6 +1680,10 @@ public final class DotImportTests {
 	private void testStringImport(Graph expected, String dot) {
 		List<Graph> graphs = dotImport.importDot(dot);
 		Assert.assertEquals("Expected one graph", 1, graphs.size()); //$NON-NLS-1$
-		Assert.assertEquals(expected.toString(), graphs.get(0).toString());
+
+		String expectedFormattedText = prettyPrinter.prettyPrint(expected);
+		String actualFormattedText = prettyPrinter.prettyPrint(graphs.get(0));
+
+		Assert.assertEquals(expectedFormattedText, actualFormattedText);
 	}
 }
