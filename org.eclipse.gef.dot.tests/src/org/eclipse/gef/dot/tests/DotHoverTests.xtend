@@ -63,6 +63,71 @@ class DotHoverTests extends AbstractEditorTest {
 		
 		text.assertHoveringResult(textUnderHover, expected)
 	}
+	
+	@Test
+	def void edge_color_custom_global_color_scheme() {
+		val text = '''
+			digraph {
+				a->b[
+					colorscheme=blues3
+					color=2
+				]
+			}
+		'''
+		
+		val textUnderHover = "2"
+		
+		val expected = '''
+			<table border=1>
+				<tr>
+					<td><b>color preview</b></td>
+					<td><b>color scheme</b></td>
+					<td><b>color name</b></td>
+					<td><b>color code</b></td>
+				</tr>
+				<tr>
+					<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:#9ecae1;"</div></td>
+					<td align="center">blues3</td>
+					<td align="center">2</td>
+					<td align="center">#9ecae1</td>
+				</tr>
+			</table>
+		'''
+		
+		text.assertHoveringResult(textUnderHover, expected)
+	}
+	
+	@Test
+	def void edge_color_custom_local_color_scheme() {
+		val text = '''
+			digraph {
+				a->b[
+					color="/blues3/2"
+				]
+			}
+		'''
+		
+		val textUnderHover = "2"
+		
+		val expected = '''
+			<table border=1>
+				<tr>
+					<td><b>color preview</b></td>
+					<td><b>color scheme</b></td>
+					<td><b>color name</b></td>
+					<td><b>color code</b></td>
+				</tr>
+				<tr>
+					<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:#9ecae1;"</div></td>
+					<td align="center">blues3</td>
+					<td align="center">2</td>
+					<td align="center">#9ecae1</td>
+				</tr>
+			</table>
+		'''
+		
+		text.assertHoveringResult(textUnderHover, expected)
+	}
 
 	@Test
 	def void edge_fillcolor() {

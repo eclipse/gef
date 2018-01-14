@@ -12,13 +12,24 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.hover;
 
+import java.io.StringReader;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.DotAstHelper;
+import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup;
+import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
+import org.eclipse.gef.dot.internal.language.color.HSVColor;
+import org.eclipse.gef.dot.internal.language.color.RGBColor;
+import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
+import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
+
+import com.google.inject.Injector;
 
 public class DotHoverProvider extends DefaultEObjectHoverProvider {
 
@@ -35,16 +46,27 @@ public class DotHoverProvider extends DefaultEObjectHoverProvider {
 				case DotAttributes.FILLCOLOR__CNE:
 				case DotAttributes.FONTCOLOR__GCNE:
 				case DotAttributes.LABELFONTCOLOR__E:
-					String colorScheme = DotAstHelper
-							.getColorSchemeAttributeValue(attribute);
-					if (colorScheme == null) {
-						colorScheme = "x11"; //$NON-NLS-1$
+					Color color = parse(attributeValue.toString());
+					if (color instanceof StringColor) {
+						StringColor stringColor = (StringColor) color;
+						String colorScheme = stringColor.getScheme();
+						if (colorScheme == null) {
+							colorScheme = DotAstHelper
+									.getColorSchemeAttributeValue(attribute);
+						}
+						if (colorScheme == null) {
+							colorScheme = "x11"; //$NON-NLS-1$
+						}
+						String colorName = stringColor.getName();
+						return DotColors.getColorDescription(colorScheme,
+								colorName);
 					}
-					// TODO: consider other cases, if the color is not given by
-					// its name, but with hex values
-					String colorName = attributeValue.toString();
-					return DotColors.getColorDescription(colorScheme,
-							colorName);
+					if (color instanceof RGBColor) {
+						// TODO: implement
+					}
+					if (color instanceof HSVColor) {
+						// TODO: implement
+					}
 
 				default:
 					break;
@@ -55,4 +77,13 @@ public class DotHoverProvider extends DefaultEObjectHoverProvider {
 		return super.getHoverInfoAsHtml(o);
 	}
 
+	private Color parse(String attributeValue) {
+		Injector dotColorInjector = new DotColorStandaloneSetup()
+				.createInjectorAndDoEMFRegistration();
+		IParser parser = dotColorInjector.getInstance(IParser.class);
+
+		IParseResult result = parser.parse(new StringReader(attributeValue));
+
+		return (Color) result.getRootASTElement();
+	}
 }
