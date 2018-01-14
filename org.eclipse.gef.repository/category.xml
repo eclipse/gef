@@ -48,13 +48,13 @@
    <feature url="features/org.eclipse.gef.fx.sdk_5.0.2.qualifier.jar" id="org.eclipse.gef.fx.sdk" version="5.0.2.qualifier">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.graph_5.0.0.qualifier.jar" id="org.eclipse.gef.graph" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.graph_5.1.0.qualifier.jar" id="org.eclipse.gef.graph" version="5.1.0.qualifier">
       <category name="GEF Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef.graph.doc_5.0.0.qualifier.jar" id="org.eclipse.gef.graph.doc" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.graph.doc_5.1.0.qualifier.jar" id="org.eclipse.gef.graph.doc" version="5.1.0.qualifier">
       <category name="GEF Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef.graph.sdk_5.0.0.qualifier.jar" id="org.eclipse.gef.graph.sdk" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.graph.sdk_5.1.0.qualifier.jar" id="org.eclipse.gef.graph.sdk" version="5.1.0.qualifier">
       <category name="GEF Graph"/>
    </feature>
    <feature url="features/org.eclipse.gef.mvc.fx_5.0.2.qualifier.jar" id="org.eclipse.gef.mvc.fx" version="5.0.2.qualifier">
