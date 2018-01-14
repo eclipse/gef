@@ -1389,6 +1389,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 		ICompletionProposal[] proposals = newBuilder()
 				.append("graph{1[color=]}").computeCompletionProposals(14);
+		String nl = System.lineSeparator();
 		for (ICompletionProposal completionProposal : proposals) {
 			if (completionProposal instanceof ConfigurableCompletionProposal) {
 				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
@@ -1409,30 +1410,32 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 				// verify that a color description (as additional proposal
 				// information) is provided to the color names
+				String colorScheme = "x11";
 				String colorName = proposalDisplayString;
-				String colorCode = DotColors.get("x11", colorName);
+				String colorCode = DotColors.get(colorScheme, colorName);
 
 				StringBuilder sb = new StringBuilder();
 
-				sb.append("<table border=1>");
-				sb.append("    <tr>");
-				sb.append("        <td><b>color preview</b></td>");
-				sb.append("        <td><b>color scheme</b></td>");
-				sb.append("        <td><b>color name</b></td>");
-				sb.append("        <td><b>color code</b></td>");
-				sb.append("    </tr>");
-				sb.append("    <tr>");
+				sb.append("<table border=1>" + nl);
+				sb.append("	<tr>" + nl);
+				sb.append("		<td><b>color preview</b></td>" + nl);
+				sb.append("		<td><b>color scheme</b></td>" + nl);
+				sb.append("		<td><b>color name</b></td>" + nl);
+				sb.append("		<td><b>color code</b></td>" + nl);
+				sb.append("	</tr>" + nl);
+				sb.append("	<tr>" + nl);
 				sb.append(
-						"<td border=0 align=\"center\"><div style=\"border:1px solid black;width:50px;height:16px;background-color:");
+						"		<td border=0 align=\"center\"><div style=\"border:1px solid black;width:50px;height:16px;background-color:");
 				sb.append(colorCode);
-				sb.append(";\"</div></td>");
-				sb.append("    		<td align=\"center\">x11</td>");
-				sb.append("    		<td align=\"center\">" + colorName
-						+ "</td>");
-				sb.append("    		<td align=\"center\">" + colorCode
-						+ "</td>");
-				sb.append("    </tr>");
-				sb.append("</table>");
+				sb.append(";\"</div></td>" + nl);
+				sb.append("		<td align=\"center\">" + colorScheme + "</td>"
+						+ nl);
+				sb.append("		<td align=\"center\">" + colorName + "</td>"
+						+ nl);
+				sb.append("		<td align=\"center\">" + colorCode + "</td>"
+						+ nl);
+				sb.append("	</tr>" + nl);
+				sb.append("</table>" + nl);
 
 				String expectedAdditionalProposalInfo = sb.toString();
 				String actualAdditionalProposalInfo = configurableCompletionProposal
