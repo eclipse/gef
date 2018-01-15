@@ -130,6 +130,34 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
+	def void edge_color_rgb_value() {
+		val text = '''
+			digraph {
+				a->b[
+					color="#fdc086"
+				]
+			}
+		'''
+		
+		val textUnderHover = "#fdc086"
+		
+		val expected = '''
+			<table border=1>
+				<tr>
+					<td><b>color preview</b></td>
+					<td><b>color code</b></td>
+				</tr>
+				<tr>
+					<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:#fdc086;"</div></td>
+					<td align="center">#fdc086</td>
+				</tr>
+			</table>
+		'''
+		
+		text.assertHoveringResult(textUnderHover, expected)
+	}
+
+	@Test
 	def void edge_fillcolor() {
 		val text = '''
 			digraph {

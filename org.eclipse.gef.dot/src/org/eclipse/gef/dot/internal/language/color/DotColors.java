@@ -78,24 +78,30 @@ public class DotColors {
 	 * information about the given color.
 	 * 
 	 * @param colorScheme
-	 *            The name of the color scheme.
+	 *            The name of the color scheme, can be null.
 	 * 
 	 * @param colorName
-	 *            The name of the color.
+	 *            The name of the color, can be null.
+	 * 
+	 * @param colorCode
+	 *            The hex code of the color, should not be null.
 	 * 
 	 * @return the detailed description in html form
 	 */
 	public static String getColorDescription(String colorScheme,
-			String colorName) {
+			String colorName, String colorCode) {
 		String nl = System.lineSeparator();
-		String colorCode = DotColors.get(colorScheme, colorName);
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("<table border=1>" + nl);
 		sb.append("	<tr>" + nl);
 		sb.append("		<td><b>color preview</b></td>" + nl);
-		sb.append("		<td><b>color scheme</b></td>" + nl);
-		sb.append("		<td><b>color name</b></td>" + nl);
+		if (colorScheme != null) {
+			sb.append("		<td><b>color scheme</b></td>" + nl);
+		}
+		if (colorName != null) {
+			sb.append("		<td><b>color name</b></td>" + nl);
+		}
 		sb.append("		<td><b>color code</b></td>" + nl);
 		sb.append("	</tr>" + nl);
 		sb.append("	<tr>" + nl);
@@ -103,8 +109,13 @@ public class DotColors {
 				"		<td border=0 align=\"center\"><div style=\"border:1px solid black;width:50px;height:16px;background-color:");
 		sb.append(colorCode);
 		sb.append(";\"</div></td>" + nl);
-		sb.append("		<td align=\"center\">" + colorScheme + "</td>" + nl);
-		sb.append("		<td align=\"center\">" + colorName + "</td>" + nl);
+		if (colorScheme != null) {
+			sb.append("		<td align=\"center\">" + colorScheme + "</td>"
+					+ nl);
+		}
+		if (colorName != null) {
+			sb.append("		<td align=\"center\">" + colorName + "</td>" + nl);
+		}
 		sb.append("		<td align=\"center\">" + colorCode + "</td>" + nl);
 		sb.append("	</tr>" + nl);
 		sb.append("</table>" + nl);

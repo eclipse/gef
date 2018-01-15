@@ -85,7 +85,7 @@ public class DotColorProposalProvider extends
 				configurableCompletionProposal.setImage(image);
 				// add color description to the proposal
 				String colorDescription = DotColors.getColorDescription(
-						colorScheme.toLowerCase(), colorName);
+						colorScheme.toLowerCase(), colorName, colorCode);
 				configurableCompletionProposal
 						.setAdditionalProposalInfo(colorDescription);
 				acceptor.accept(configurableCompletionProposal);

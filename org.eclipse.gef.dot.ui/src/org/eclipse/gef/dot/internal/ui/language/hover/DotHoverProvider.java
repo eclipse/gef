@@ -47,9 +47,12 @@ public class DotHoverProvider extends DefaultEObjectHoverProvider {
 				case DotAttributes.FONTCOLOR__GCNE:
 				case DotAttributes.LABELFONTCOLOR__E:
 					Color color = parse(attributeValue.toString());
+					String colorScheme = null;
+					String colorName = null;
+					String colorCode = null;
 					if (color instanceof StringColor) {
 						StringColor stringColor = (StringColor) color;
-						String colorScheme = stringColor.getScheme();
+						colorScheme = stringColor.getScheme();
 						if (colorScheme == null) {
 							colorScheme = DotAstHelper
 									.getColorSchemeAttributeValue(attribute);
@@ -57,17 +60,17 @@ public class DotHoverProvider extends DefaultEObjectHoverProvider {
 						if (colorScheme == null) {
 							colorScheme = "x11"; //$NON-NLS-1$
 						}
-						String colorName = stringColor.getName();
-						return DotColors.getColorDescription(colorScheme,
-								colorName);
+						colorName = stringColor.getName();
+						colorCode = DotColors.get(colorScheme, colorName);
 					}
 					if (color instanceof RGBColor) {
-						// TODO: implement
+						colorCode = attributeValue.toValue();
 					}
 					if (color instanceof HSVColor) {
 						// TODO: implement
 					}
-
+					return DotColors.getColorDescription(colorScheme, colorName,
+							colorCode);
 				default:
 					break;
 				}
