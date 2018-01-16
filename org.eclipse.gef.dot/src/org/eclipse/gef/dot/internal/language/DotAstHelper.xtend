@@ -24,13 +24,13 @@ import org.eclipse.gef.dot.internal.language.dot.Attribute
 import org.eclipse.gef.dot.internal.language.dot.AttributeType
 import org.eclipse.gef.dot.internal.language.dot.DotGraph
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
+import org.eclipse.gef.dot.internal.language.dot.NodeId
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.gef.dot.internal.language.dot.Stmt
 import org.eclipse.gef.dot.internal.language.dot.Subgraph
 import org.eclipse.gef.dot.internal.language.terminals.ID
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import org.eclipse.gef.dot.internal.language.dot.NodeId
 
 /**
  * This class provides helper methods for walking the DOT abstract syntax tree.

@@ -31,6 +31,7 @@ public class DotHyperlinkHelper extends HyperlinkHelper {
 	@Inject
 	private EObjectAtOffsetHelper eObjectAtOffsetHelper;
 
+	@Override
 	public void createHyperlinksByOffset(XtextResource resource, int offset,
 			IHyperlinkAcceptor acceptor) {
 
