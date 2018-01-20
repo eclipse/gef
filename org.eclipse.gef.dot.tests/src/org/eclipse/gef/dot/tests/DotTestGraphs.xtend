@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -803,6 +803,29 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val EDGE_HEADPORT_GLOBAL = '''
+		graph {
+			edge[headport="port5:nw"]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_HEADPORT_LOCAL = '''
+		graph {
+			1--2[headport="port1:w"]
+			3--4[headport="port2:e"]
+		}
+	'''
+	
+	public static val EDGE_HEADPORT_OVERRIDE = '''
+		graph {
+			edge[headport="port5:nw"]
+			1--2[headport="port1:w"]
+			3--4
+		}
+	'''
+	
 	public static val EDGE_HEAD_LP_LOCAL = '''
 		graph {
 			1--2[head_lp="2.2,3.3"  ]
@@ -919,6 +942,29 @@ class DotTestGraphs {
 		graph {
 			edge[taillabel=EdgeTailLabel4]
 			1--2[taillabel=EdgeTailLabel5]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_TAILPORT_GLOBAL = '''
+		graph {
+			edge[tailport="port5:nw"]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_TAILPORT_LOCAL = '''
+		graph {
+			1--2[tailport="port1:w"]
+			3--4[tailport="port2:e"]
+		}
+	'''
+	
+	public static val EDGE_TAILPORT_OVERRIDE = '''
+		graph {
+			edge[tailport="port5:nw"]
+			1--2[tailport="port1:w"]
 			3--4
 		}
 	'''

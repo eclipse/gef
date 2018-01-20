@@ -72,6 +72,7 @@ import org.eclipse.gef.dot.internal.language.validation.DotColorListJavaValidato
 import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotPortPosJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotRectJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
 import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
@@ -439,7 +440,7 @@ class DotAttributes {
 			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case HEADPORT__E: validateAttributeRawValue(PORTPOS_PARSER, null, attributeContext, attributeName, attributeValue)
+			case HEADPORT__E: validateAttributeRawValue(PORTPOS_PARSER, PORTPOS_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case HEIGHT__N: validateAttributeRawValue(DOUBLE_PARSER, HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LABEL__GCNE:
 				if (attributeValue.type == ID.Type.HTML_STRING)
@@ -469,7 +470,7 @@ class DotAttributes {
 			case SPLINES__G: validateAttributeRawValue(SPLINES_PARSER, null, attributeContext, attributeName, attributeValue)
 			case STYLE__GCNE: validateAttributeRawValue(STYLE_PARSER, STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case TAIL_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case TAILPORT__E: validateAttributeRawValue(PORTPOS_PARSER, null, attributeContext, attributeName, attributeValue)
+			case TAILPORT__E: validateAttributeRawValue(PORTPOS_PARSER, PORTPOS_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case WIDTH__N: validateAttributeRawValue(DOUBLE_PARSER, WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case XLP__NE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			default: {
@@ -1204,21 +1205,21 @@ class DotAttributes {
 
 	static val Injector portPosInjector = new DotPortPosStandaloneSetup().createInjectorAndDoEMFRegistration
 
-//	/**
-//	 * The validator for portpos attribute values.
-//	 */
-//	static val PORTPOS_VALIDATOR = new EObjectValidator<ArrowType>(portPosInjector,
-//		DotPortPosJavaValidator)
+	/**
+	 * The validator for portpos attribute values.
+	 */
+	static val PORTPOS_VALIDATOR = new EObjectValidator<PortPos>(portPosInjector,
+		DotPortPosJavaValidator)
 
 	/**
 	 * The parser for portpos attribute values.
 	 */
 	static val PORTPOS_PARSER = new EObjectParser<PortPos>(portPosInjector)
 
-//	/**
-//	 * The serializer for portpos attribute values.
-//	 */
-//	static val PORTPOS_SERIALIZER = new EObjectSerializer<PortPos>(portPosInjector)
+	/**
+	 * The serializer for portpos attribute values.
+	 */
+	static val PORTPOS_SERIALIZER = new EObjectSerializer<PortPos>(portPosInjector)
 
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as
@@ -1447,7 +1448,7 @@ class DotAttributes {
 	@DotAttribute(parsedType=String)
 	public static val String HEADLABEL__E = "headlabel"
 	
-	@DotAttribute(parsedType=String)
+	@DotAttribute(parsedType=PortPos)
 	public static val String HEADPORT__E = "headport"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
@@ -1512,7 +1513,7 @@ class DotAttributes {
 	@DotAttribute(parsedType=String)
 	public static val String TAILLABEL__E = "taillabel"
 	
-	@DotAttribute(parsedType=String)
+	@DotAttribute(parsedType=PortPos)
 	public static val String TAILPORT__E = "tailport"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)

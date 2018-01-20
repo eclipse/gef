@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 itemis AG and others.
+ * Copyright (c) 2010, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -227,6 +227,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeHtmlLabelAttributeValues(attribute, context,
 							acceptor);
 					break;
+				case DotAttributes.HEADPORT__E:
+				case DotAttributes.TAILPORT__E:
+					proposeAttributeValues(
+							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTPORTPOS,
+							context, acceptor);
 				case DotAttributes.POS__NE:
 					proposeAttributeValues(
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTSPLINETYPE,

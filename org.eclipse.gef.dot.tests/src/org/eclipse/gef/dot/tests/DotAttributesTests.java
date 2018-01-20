@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -44,6 +44,8 @@ import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.language.point.Point;
 import org.eclipse.gef.dot.internal.language.point.PointFactory;
+import org.eclipse.gef.dot.internal.language.portpos.PortPos;
+import org.eclipse.gef.dot.internal.language.portpos.PortposFactory;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.ranktype.RankType;
 import org.eclipse.gef.dot.internal.language.rect.Rect;
@@ -662,6 +664,44 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void edge_headport() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getHeadportRaw(edge));
+		assertNull(DotAttributes.getHeadport(edge));
+		assertNull(DotAttributes.getHeadportParsed(edge));
+
+		// set valid string values
+		DotAttributes.setHeadport(edge, "w");
+		assertEquals("w", DotAttributes.getHeadport(edge));
+
+		PortPos portPos = PortposFactory.eINSTANCE.createPortPos();
+		portPos.setPort("w");
+		assertTrue(EcoreUtil.equals(portPos,
+				DotAttributes.getHeadportParsed(edge)));
+
+		// set valid parsed values
+		PortPos headportParsed = PortposFactory.eINSTANCE.createPortPos();
+		headportParsed.setPort("nameOfThePort");
+		headportParsed.setCompassPoint("_");
+		DotAttributes.setHeadportParsed(edge, headportParsed);
+		assertEquals("nameOfThePort:_", DotAttributes.getHeadport(edge));
+
+		// set invalid string values
+		try {
+			DotAttributes.setHeadport(edge, "a:foo");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'headport' to 'a:foo'. The value 'a:foo' is not a syntactically correct portPos: Mismatched input 'foo' expecting RULE_COMPASS_POINT_POS.",
+					e.getMessage());
+		}
+	}
+
+	@Test
 	public void edge_id() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
@@ -1096,6 +1136,44 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set edge attribute 'tail_lp' to 'foo'. The value 'foo' is not a syntactically correct point: No viable alternative at character 'f'. No viable alternative at character 'o'. No viable alternative at character 'o'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void edge_tailport() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getTailportRaw(edge));
+		assertNull(DotAttributes.getTailport(edge));
+		assertNull(DotAttributes.getTailportParsed(edge));
+
+		// set valid string values
+		DotAttributes.setTailport(edge, "_");
+		assertEquals("_", DotAttributes.getTailport(edge));
+
+		PortPos portPos = PortposFactory.eINSTANCE.createPortPos();
+		portPos.setPort("_");
+		assertTrue(EcoreUtil.equals(portPos,
+				DotAttributes.getTailportParsed(edge)));
+
+		// set valid parsed values
+		PortPos tailportParsed = PortposFactory.eINSTANCE.createPortPos();
+		tailportParsed.setPort("a");
+		tailportParsed.setCompassPoint("se");
+		DotAttributes.setTailportParsed(edge, tailportParsed);
+		assertEquals("a:se", DotAttributes.getTailport(edge));
+
+		// set invalid string values
+		try {
+			DotAttributes.setTailport(edge, "a:foo");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'tailport' to 'a:foo'. The value 'a:foo' is not a syntactically correct portPos: Mismatched input 'foo' expecting RULE_COMPASS_POINT_POS.",
 					e.getMessage());
 		}
 	}

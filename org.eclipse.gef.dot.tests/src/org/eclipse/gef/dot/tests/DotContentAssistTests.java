@@ -606,6 +606,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void edge_headport() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {edge[ headport= ]}")
+				.assertTextAtCursorPosition(22, "e", "s");
+
+		// test local attribute values
+		newBuilder().append("graph {1--2[ headport= ]}")
+				.assertTextAtCursorPosition(22, "e", "s");
+
+		// no use to test local attribute values with prefix
+	}
+
+	@Test
 	public void edge_label() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {edge[ label= ]}")
@@ -811,6 +824,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test local attribute values
 		newBuilder().append("graph {1--2[ tail_lp= ]}")
 				.assertTextAtCursorPosition(21);
+
+		// no use to test local attribute values with prefix
+	}
+
+	@Test
+	public void edge_tailport() throws Exception {
+		// test global attribute values
+		newBuilder().append("graph {edge[ tailport= ]}")
+				.assertTextAtCursorPosition(22, "e", "s");
+
+		// test local attribute values
+		newBuilder().append("graph {1--2[ tailport= ]}")
+				.assertTextAtCursorPosition(22, "e", "s");
 
 		// no use to test local attribute values with prefix
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 itemis AG and others.
+ * Copyright (c) 2009, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -786,6 +786,38 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void edge_headport() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setHeadport, "port5:nw") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setHeadport, "port5:nw") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_HEADPORT_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setHeadport(e1, "port1:w");
+		DotAttributes.setHeadport(e2, "port2:e");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_HEADPORT_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setHeadport(e1, "port1:w");
+		DotAttributes.setHeadport(e2, "port5:nw");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_HEADPORT_OVERRIDE);
+	}
+
+	@Test
 	public void edge_id() {
 		// no global/override attribute tests, since they do not make sense
 		// test local attribute
@@ -979,6 +1011,38 @@ public final class DotImportTests {
 				.buildEdge();
 		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.EDGE_TAIL_LP_LOCAL);
+	}
+
+	@Test
+	public void edge_tailport() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setTailport, "port5:nw") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setTailport, "port5:nw") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TAILPORT_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setTailport(e1, "port1:w");
+		DotAttributes.setTailport(e2, "port2:e");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TAILPORT_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setTailport(e1, "port1:w");
+		DotAttributes.setTailport(e2, "port5:nw");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TAILPORT_OVERRIDE);
 	}
 
 	@Test
