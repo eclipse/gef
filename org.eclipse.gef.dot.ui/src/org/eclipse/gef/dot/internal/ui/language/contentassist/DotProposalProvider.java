@@ -232,6 +232,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeAttributeValues(
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTPORTPOS,
 							context, acceptor);
+					break;
 				case DotAttributes.POS__NE:
 					proposeAttributeValues(
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTSPLINETYPE,
