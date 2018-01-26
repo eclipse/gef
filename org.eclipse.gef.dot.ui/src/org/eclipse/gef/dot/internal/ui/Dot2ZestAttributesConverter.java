@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API & implementation
- *     Alexander Nyßen  (itemis AG) - initial API & implementation
- *     Tamas Miklossy   (itemis AG) - Add support for arrowType edge decorations (bug #477980)
- *                                  - Add support for polygon-based node shapes (bug #441352)
- *                                  - Add support for all dot attributes (bug #461506)
- *     Zoey Gerrit Prigge           - Add support for record-based node shapes (bug #454629)
+ *     Matthias Wienand   (itemis AG) - initial API & implementation
+ *     Alexander Nyßen    (itemis AG) - initial API & implementation
+ *     Tamas Miklossy     (itemis AG) - Add support for arrowType edge decorations (bug #477980)
+ *                                    - Add support for polygon-based node shapes (bug #441352)
+ *                                    - Add support for all dot attributes (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - Add support for record-based node shapes (bug #454629)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -506,7 +506,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// TODO HTML label support
 
 		// style and color
-		String zestShapeStyle = computeZestStyle(dot);
+		StringBuilder zestShapeStyle = computeZestStyle(dot);
 		org.eclipse.gef.dot.internal.language.shape.Shape dotShape = DotAttributes
 				.getShapeParsed(dot);
 		javafx.scene.Node zestShape = null;
@@ -542,16 +542,23 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				&& !isHtmlLabel) {
 			// TODO record shapes that have HTML labels
 
-			if (zestShapeStyle != null)
-				zestShapeStyle = zestShapeStyle.replaceAll("-fx-fill", //$NON-NLS-1$
-						"-fx-background-color"); //$NON-NLS-1$
-
 			RecordBasedNodeShape recordBasedShape = ((RecordBasedShape) dotShape
 					.getShape()).getShape();
+
+			zestShapeStyle = new StringBuilder(
+					zestShapeStyle.toString().replaceAll("-fx-fill", //$NON-NLS-1$
+							"-fx-background-color")); //$NON-NLS-1$
+			// Mrecord shape has rounded edges (for border and fill)
+			if (RecordBasedNodeShape.MRECORD.equals(recordBasedShape))
+				zestShapeStyle.append(
+						"-fx-background-radius:10px;-fx-border-radius:10px;"); //$NON-NLS-1$
+			// If a border is set, we don't change this, but per default, there
+			// is a solid border in graphviz
+			if (!zestShapeStyle.toString().contains("-fx-border-style:")) //$NON-NLS-1$
+				zestShapeStyle.append("-fx-border-style:solid;"); //$NON-NLS-1$
+
 			DotRecordBasedJavaFxNode node = new DotRecordBasedJavaFxNode(
-					dotLabel,
-					RecordBasedNodeShape.MRECORD.equals(recordBasedShape),
-					DotAttributes.getRankdirParsed(dot.getGraph()));
+					dotLabel, DotAttributes.getRankdirParsed(dot.getGraph()));
 			zestShape = node.getFxElement();
 
 			Bounds bounds = node.getBounds();
@@ -563,8 +570,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		if (zestShape != null) {
-			if (zestShapeStyle != null) {
-				zestShape.setStyle(zestShapeStyle);
+			if (zestShapeStyle.length() > 0) {
+				zestShape.setStyle(zestShapeStyle.toString());
 			}
 			ZestProperties.setShape(zest, zestShape);
 		}
@@ -620,14 +627,14 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 	}
 
-	private String computeZestStyle(Node dot) {
-		String zestStyle = null;
+	private StringBuilder computeZestStyle(Node dot) {
+		StringBuilder zestStyle = new StringBuilder();
 		// color
 		Color dotColor = DotAttributes.getColorParsed(dot);
 		String dotColorScheme = DotAttributes.getColorscheme(dot);
 		String javaFxColor = computeZestColor(dotColorScheme, dotColor);
 		if (javaFxColor != null) {
-			zestStyle = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+			zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// fillcolor: evaluate only if the node style is set to 'filled'.
@@ -652,11 +659,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			String javaFxFillColor = computeZestColor(dotColorScheme,
 					dotFillColor);
 			if (javaFxFillColor != null) {
-				if (zestStyle == null) {
-					zestStyle = "-fx-fill: " + javaFxFillColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					zestStyle += "-fx-fill: " + javaFxFillColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
-				}
+				zestStyle.append("-fx-fill: " + javaFxFillColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 		}
