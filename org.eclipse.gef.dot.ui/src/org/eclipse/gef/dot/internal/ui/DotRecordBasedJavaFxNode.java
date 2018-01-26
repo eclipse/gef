@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Zoey Gerrit Prigge  - initial API and implementation (bug #454629)
+ *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #454629)
  *    
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -37,16 +37,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 /**
@@ -55,12 +49,6 @@ import javafx.scene.text.Text;
  */
 public class DotRecordBasedJavaFxNode {
 
-	private static Border RECORD_BORDER = new Border(
-			new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,
-					new CornerRadii(0), BorderWidths.DEFAULT));
-	private static Border MRECORD_BORDER = new Border(
-			new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,
-					new CornerRadii(10), BorderWidths.DEFAULT));
 	private static Insets TEXT_MARGINS = new Insets(1.5f, 7, 1.5f, 7);
 
 	private final LabelNode root;
@@ -71,16 +59,11 @@ public class DotRecordBasedJavaFxNode {
 	 * 
 	 * @param dotLabel
 	 *            The string representation of the record shape label.
-	 * @param useRoundedBorders
-	 *            True, if Mrecord shape (i.e. rounded edges) is selected. False
-	 *            else.
 	 * @param rankdir
 	 *            The rankdir set for the current graph
 	 */
-	public DotRecordBasedJavaFxNode(String dotLabel, boolean useRoundedBorders,
-			Rankdir rankdir) {
-		root = rootNodeConstructor(rankdir).get()
-				.rootNode(useRoundedBorders ? MRECORD_BORDER : RECORD_BORDER);
+	public DotRecordBasedJavaFxNode(String dotLabel, Rankdir rankdir) {
+		root = rootNodeConstructor(rankdir).get().rootNode();
 		addToFx(parseLabel(dotLabel), root);
 	}
 
@@ -153,8 +136,7 @@ public class DotRecordBasedJavaFxNode {
 			return child;
 		}
 
-		public LabelNode rootNode(Border border) {
-			getFxElement().setBorder(border);
+		public LabelNode rootNode() {
 			getFxElement().getStyleClass().addAll(NodePart.CSS_CLASS);
 			return this;
 		}
