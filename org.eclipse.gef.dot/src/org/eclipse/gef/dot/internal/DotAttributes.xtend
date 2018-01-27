@@ -424,6 +424,7 @@ class DotAttributes {
 					Collections.emptyList
 			case DIR__E: validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case EDGETOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FILLCOLOR__CNE: 
 				// TODO: remove "attributeContext == Context.GRAPH", since fillcolor is not a valid graph attribute
 				if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
@@ -441,15 +442,17 @@ class DotAttributes {
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case HEADPORT__E: validateAttributeRawValue(PORTPOS_PARSER, PORTPOS_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case HEADTOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case HEIGHT__N: validateAttributeRawValue(DOUBLE_PARSER, HEIGHT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LABEL__GCNE:
 				if (attributeValue.type == ID.Type.HTML_STRING)
 					validateAttributeRawValue(HTML_LABEL_PARSER, HTML_LABEL_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else if (attributeValue.type == ID.Type.QUOTED_STRING)
-					validateAttributeRawValue(ESC_STRING_PARSER, ESC_STRING_VALIDATOR, attributeContext, attributeName, attributeValue)
+					validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else
 					Collections.emptyList
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LABELTOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LP__GCE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case NODESEP__G: validateAttributeRawValue(DOUBLE_PARSER, NODESEP_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -471,6 +474,8 @@ class DotAttributes {
 			case STYLE__GCNE: validateAttributeRawValue(STYLE_PARSER, STYLE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case TAIL_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case TAILPORT__E: validateAttributeRawValue(PORTPOS_PARSER, PORTPOS_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case TAILTOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case TOOLTIP__CNE: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case WIDTH__N: validateAttributeRawValue(DOUBLE_PARSER, WIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case XLP__NE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			default: {
@@ -1106,9 +1111,14 @@ class DotAttributes {
 	/**
 	 * The parser for (escString) label attribute values.
 	 */
-	static val ESC_STRING_PARSER = new EObjectParser<EscString>(escStringInjector)
+	static val ESCSTRING_PARSER = new EObjectParser<EscString>(escStringInjector)
 	
-	static val ESC_STRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
+	/**
+	 * The serializer for escstring attribute values.
+	 */
+	static val ESCSTRING_SERIALIZER = new EObjectSerializer<EscString>(escStringInjector)
+	
+	static val ESCSTRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
 		DotEscStringJavaValidator)
 
 	static val Injector rectInjector = new DotRectStandaloneSetup().createInjectorAndDoEMFRegistration
@@ -1425,6 +1435,9 @@ class DotAttributes {
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val String DISTORTION__N = "distortion"
 
+	@DotAttribute(parsedType=EscString)
+	public static val String EDGETOOLTIP__E = "edgetooltip"
+
 	/**
 	 * fillcolor is a special case, where different parsed values for Cluster, 
 	 * Node and Edge attributes (ColorList, ColorList, Color) and thus different 
@@ -1451,6 +1464,9 @@ class DotAttributes {
 	@DotAttribute(parsedType=PortPos)
 	public static val String HEADPORT__E = "headport"
 
+	@DotAttribute(parsedType=EscString)
+	public static val String HEADTOOLTIP__E = "headtooltip"
+
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val String HEIGHT__N = "height"
 
@@ -1462,6 +1478,9 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=Color)
 	public static val String LABELFONTCOLOR__E = "labelfontcolor"
+
+	@DotAttribute(parsedType=EscString)
+	public static val String LABELTOOLTIP__E = "labeltooltip"
 
 	@DotAttribute(rawType="STRING", parsedType=Layout)
 	public static val String LAYOUT__G = "layout"
@@ -1515,6 +1534,12 @@ class DotAttributes {
 	
 	@DotAttribute(parsedType=PortPos)
 	public static val String TAILPORT__E = "tailport"
+
+	@DotAttribute(parsedType=EscString)
+	public static val String TAILTOOLTIP__E = "tailtooltip"
+
+	@DotAttribute(parsedType=EscString)
+	public static val String TOOLTIP__CNE = "tooltip"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val String WIDTH__N = "width"

@@ -19,6 +19,7 @@ package org.eclipse.gef.dot.internal.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
@@ -33,6 +34,8 @@ import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
+import org.eclipse.gef.dot.internal.language.escstring.EscString;
+import org.eclipse.gef.dot.internal.language.escstring.JustifiedText;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
@@ -615,6 +618,16 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// ignore it
 			ZestProperties.setLayoutIrrelevant(zest,
 					dotPosParsed.isInputOnly());
+		}
+
+		// tooltip
+		EscString dotTooltip = DotAttributes.getTooltipParsed(dot);
+		if (dotTooltip != null) {
+			// TODO: consider EscString Justification
+			String zestTooltip = dotTooltip.getLines().stream()
+					.map(JustifiedText::getText)
+					.collect(Collectors.joining("\n")); //$NON-NLS-1$
+			ZestProperties.setTooltip(zest, zestTooltip);
 		}
 
 		// external label position (xlp)

@@ -673,6 +673,38 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void edge_edgetooltip() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setEdgetooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setEdgetooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_EDGETOOLTIP_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setEdgetooltip(e1, "b");
+		DotAttributes.setEdgetooltip(e2, "c");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_EDGETOOLTIP_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setEdgetooltip(e1, "e");
+		DotAttributes.setEdgetooltip(e2, "d");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_EDGETOOLTIP_OVERRIDE);
+	}
+
+	@Test
 	public void edge_fillcolor() {
 		// test global attribute
 		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
@@ -818,6 +850,38 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void edge_headtooltip() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setHeadtooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setHeadtooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_HEADTOOLTIP_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		DotAttributes.setHeadtooltip(e1, "b");
+		DotAttributes.setHeadtooltip(e2, "c");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_HEADTOOLTIP_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		DotAttributes.setHeadtooltip(e1, "e");
+		DotAttributes.setHeadtooltip(e2, "d");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_HEADTOOLTIP_OVERRIDE);
+	}
+
+	@Test
 	public void edge_id() {
 		// no global/override attribute tests, since they do not make sense
 		// test local attribute
@@ -896,6 +960,38 @@ public final class DotImportTests {
 		DotAttributes.setLabelfontcolor(e2, "0.482 0.714 0.878");
 		expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTCOLOR_OVERRIDE);
+	}
+
+	@Test
+	public void edge_labeltooltip() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setLabeltooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setLabeltooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELTOOLTIP_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setLabeltooltip(e1, "b");
+		DotAttributes.setLabeltooltip(e2, "c");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELTOOLTIP_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setLabeltooltip(e1, "e");
+		DotAttributes.setLabeltooltip(e2, "d");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELTOOLTIP_OVERRIDE);
 	}
 
 	@Test
@@ -1043,6 +1139,70 @@ public final class DotImportTests {
 		DotAttributes.setTailport(e2, "port5:nw");
 		expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.EDGE_TAILPORT_OVERRIDE);
+	}
+
+	@Test
+	public void edge_tailtooltip() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setTailtooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setTailtooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TAILTOOLTIP_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		DotAttributes.setTailtooltip(e1, "b");
+		DotAttributes.setTailtooltip(e2, "c");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TAILTOOLTIP_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.DIGRAPH);
+		DotAttributes.setTailtooltip(e1, "e");
+		DotAttributes.setTailtooltip(e2, "d");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TAILTOOLTIP_OVERRIDE);
+	}
+
+	@Test
+	public void edge_tooltip() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setTooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setTooltip, "a") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TOOLTIP_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setTooltip(e1, "b");
+		DotAttributes.setTooltip(e2, "c");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TOOLTIP_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setTooltip(e1, "e");
+		DotAttributes.setTooltip(e2, "d");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_TOOLTIP_OVERRIDE);
 	}
 
 	@Test
@@ -1545,6 +1705,35 @@ public final class DotImportTests {
 		DotAttributes.setStyle(n2, "bold, filled");
 		expected = graph.nodes(n1, n2).build();
 		testStringImport(expected, DotTestGraphs.NODE_STYLE_OVERRIDE);
+	}
+
+	@Test
+	public void node_tooltip() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1")
+				.attr(DotAttributes::setTooltip, "a").buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2")
+				.attr(DotAttributes::setTooltip, "a").buildNode();
+		Graph expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_TOOLTIP_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setTooltip(n1, "b");
+		DotAttributes.setTooltip(n2, "c");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_TOOLTIP_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setTooltip(n1, "e");
+		DotAttributes.setTooltip(n2, "d");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_TOOLTIP_OVERRIDE);
 	}
 
 	@Test

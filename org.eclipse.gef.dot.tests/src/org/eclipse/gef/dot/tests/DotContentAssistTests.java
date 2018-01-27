@@ -245,20 +245,24 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		// test global attribute names
 		newBuilder().append("graph {edge[]}")
 				.assertTextAtCursorPosition(12, "]", "arrowhead", "arrowsize",
-						"arrowtail", "color", "colorscheme", "dir", "fillcolor",
-						"fontcolor", "headlabel", "headport", "head_lp", "id",
-						"label", "labelfontcolor", "lp", "pos", "style",
-						"taillabel", "tailport", "tail_lp", "xlabel", "xlp")
+						"arrowtail", "color", "colorscheme", "dir",
+						"edgetooltip", "fillcolor", "fontcolor", "headlabel",
+						"headport", "headtooltip", "head_lp", "id", "label",
+						"labelfontcolor", "labeltooltip", "lp", "pos", "style",
+						"taillabel", "tailport", "tailtooltip", "tail_lp",
+						"tooltip", "xlabel", "xlp")
 				.applyProposal(12, "arrowhead")
 				.expectContent("graph {edge[arrowhead]}");
 
 		// test local attribute names
 		newBuilder().append("graph {1--2[  ]}")
 				.assertTextAtCursorPosition(13, "]", "arrowhead", "arrowsize",
-						"arrowtail", "color", "colorscheme", "dir", "fillcolor",
-						"fontcolor", "headlabel", "headport", "head_lp", "id",
-						"label", "labelfontcolor", "lp", "pos", "style",
-						"taillabel", "tailport", "tail_lp", "xlabel", "xlp")
+						"arrowtail", "color", "colorscheme", "dir",
+						"edgetooltip", "fillcolor", "fontcolor", "headlabel",
+						"headport", "headtooltip", "head_lp", "id", "label",
+						"labelfontcolor", "labeltooltip", "lp", "pos", "style",
+						"taillabel", "tailport", "tailtooltip", "tail_lp",
+						"tooltip", "xlabel", "xlp")
 				.applyProposal(13, "arrowtail")
 				.expectContent("graph {1--2[ arrowtail ]}");
 
@@ -497,6 +501,27 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void edge_edgetooltip() throws Exception {
+		// test global attribute values with quotes
+		newBuilder().append("graph {edge[ edgetooltip=\"\" ]}")
+				.assertTextAtCursorPosition(26, "\\n", "\\l", "\\r")
+				.applyProposal(26, "\\n")
+				.expectContent("graph {edge[ edgetooltip=\"\\n\" ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1--2[ edgetooltip=\"\" ]}")
+				.assertTextAtCursorPosition(26, "\\n", "\\l", "\\r")
+				.applyProposal(26, "\\l")
+				.expectContent("graph {1--2[ edgetooltip=\"\\l\" ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1--2[ edgetooltip=\"line1\" ]}")
+				.assertTextAtCursorPosition(31, "\\n", "\\l", "\\r")
+				.applyProposal(31, "\\r")
+				.expectContent("graph {1--2[ edgetooltip=\"line1\\r\" ]}");
+	}
+
+	@Test
 	public void edge_fillcolor() throws Exception {
 		// test global attribute values
 		newBuilder().append("digraph {edge[ fillcolor= ]}")
@@ -619,6 +644,27 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void edge_headtooltip() throws Exception {
+		// test global attribute values with quotes
+		newBuilder().append("graph {edge[ headtooltip=\"\" ]}")
+				.assertTextAtCursorPosition(26, "\\n", "\\l", "\\r")
+				.applyProposal(26, "\\n")
+				.expectContent("graph {edge[ headtooltip=\"\\n\" ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1--2[ headtooltip=\"\" ]}")
+				.assertTextAtCursorPosition(26, "\\n", "\\l", "\\r")
+				.applyProposal(26, "\\l")
+				.expectContent("graph {1--2[ headtooltip=\"\\l\" ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1--2[ headtooltip=\"line1\" ]}")
+				.assertTextAtCursorPosition(31, "\\n", "\\l", "\\r")
+				.applyProposal(31, "\\r")
+				.expectContent("graph {1--2[ headtooltip=\"line1\\r\" ]}");
+	}
+
+	@Test
 	public void edge_label() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {edge[ label= ]}")
@@ -720,6 +766,27 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"gray96", "gray97", "gray98", "gray99")
 				.applyProposal(35, "gray99")
 				.expectContent("digraph {1->2[ labelfontcolor=\"gray99\" ]}");
+	}
+
+	@Test
+	public void edge_labeltooltip() throws Exception {
+		// test global attribute values with quotes
+		newBuilder().append("graph {edge[ labeltooltip=\"\" ]}")
+				.assertTextAtCursorPosition(27, "\\n", "\\l", "\\r")
+				.applyProposal(27, "\\n")
+				.expectContent("graph {edge[ labeltooltip=\"\\n\" ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1--2[ labeltooltip=\"\" ]}")
+				.assertTextAtCursorPosition(27, "\\n", "\\l", "\\r")
+				.applyProposal(27, "\\l")
+				.expectContent("graph {1--2[ labeltooltip=\"\\l\" ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1--2[ labeltooltip=\"line1\" ]}")
+				.assertTextAtCursorPosition(32, "\\n", "\\l", "\\r")
+				.applyProposal(32, "\\r")
+				.expectContent("graph {1--2[ labeltooltip=\"line1\\r\" ]}");
 	}
 
 	@Test
@@ -839,6 +906,48 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(22);
 
 		// no use to test local attribute values with prefix
+	}
+
+	@Test
+	public void edge_tailtooltip() throws Exception {
+		// test global attribute values with quotes
+		newBuilder().append("graph {edge[ tailtooltip=\"\" ]}")
+				.assertTextAtCursorPosition(26, "\\n", "\\l", "\\r")
+				.applyProposal(26, "\\n")
+				.expectContent("graph {edge[ tailtooltip=\"\\n\" ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1--2[ tailtooltip=\"\" ]}")
+				.assertTextAtCursorPosition(26, "\\n", "\\l", "\\r")
+				.applyProposal(26, "\\l")
+				.expectContent("graph {1--2[ tailtooltip=\"\\l\" ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1--2[ tailtooltip=\"line1\" ]}")
+				.assertTextAtCursorPosition(31, "\\n", "\\l", "\\r")
+				.applyProposal(31, "\\r")
+				.expectContent("graph {1--2[ tailtooltip=\"line1\\r\" ]}");
+	}
+
+	@Test
+	public void edge_tooltip() throws Exception {
+		// test global attribute values with quotes
+		newBuilder().append("graph {edge[ tooltip=\"\" ]}")
+				.assertTextAtCursorPosition(22, "\\n", "\\l", "\\r")
+				.applyProposal(22, "\\n")
+				.expectContent("graph {edge[ tooltip=\"\\n\" ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1--2[ tooltip=\"\" ]}")
+				.assertTextAtCursorPosition(22, "\\n", "\\l", "\\r")
+				.applyProposal(22, "\\l")
+				.expectContent("graph {1--2[ tooltip=\"\\l\" ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1--2[ tooltip=\"line1\" ]}")
+				.assertTextAtCursorPosition(27, "\\n", "\\l", "\\r")
+				.applyProposal(27, "\\r")
+				.expectContent("graph {1--2[ tooltip=\"line1\\r\" ]}");
 	}
 
 	@Test
@@ -1325,7 +1434,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(12, "]", "color", "colorscheme",
 						"distortion", "fillcolor", "fixedsize", "fontcolor",
 						"height", "id", "label", "pos", "shape", "sides",
-						"skew", "style", "width", "xlabel", "xlp")
+						"skew", "style", "tooltip", "width", "xlabel", "xlp")
 				.applyProposal(12, "distortion")
 				.expectContent("graph {node[distortion]}");
 
@@ -1334,7 +1443,7 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(10, "]", "color", "colorscheme",
 						"distortion", "fillcolor", "fixedsize", "fontcolor",
 						"height", "id", "label", "pos", "shape", "sides",
-						"skew", "style", "width", "xlabel", "xlp")
+						"skew", "style", "tooltip", "width", "xlabel", "xlp")
 				.applyProposal(10, "fixedsize")
 				.expectContent("graph {1[ fixedsize ]}");
 
@@ -1809,6 +1918,27 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test
+	public void node_tooltip() throws Exception {
+		// test global attribute values with quotes
+		newBuilder().append("graph {node[ tooltip=\"\" ]}")
+				.assertTextAtCursorPosition(22, "\\n", "\\l", "\\r")
+				.applyProposal(22, "\\n")
+				.expectContent("graph {node[ tooltip=\"\\n\" ]}");
+
+		// test local attribute values with quotes
+		newBuilder().append("graph {1[ tooltip=\"\" ]}")
+				.assertTextAtCursorPosition(19, "\\n", "\\l", "\\r")
+				.applyProposal(19, "\\l")
+				.expectContent("graph {1[ tooltip=\"\\l\" ]}");
+
+		// test local attribute values with quotes and prefix
+		newBuilder().append("graph {1[ tooltip=\"line1\" ]}")
+				.assertTextAtCursorPosition(24, "\\n", "\\l", "\\r")
+				.applyProposal(24, "\\r")
+				.expectContent("graph {1[ tooltip=\"line1\\r\" ]}");
+	}
+
+	@Test
 	public void node_xlabel() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {node[ xlabel= ]}")
@@ -1852,6 +1982,12 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 						"<SUB></SUB>", "<SUP></SUP>", "<TABLE></TABLE>",
 						"<U></U>");
 
+	}
+
+	@Test
+	public void subgraph_tooltip() throws Exception {
+		newBuilder().append("graph{subgraph cluster{tooltip =\"\" }}")
+				.assertTextAtCursorPosition(33, "\\n", "\\l", "\\r");
 	}
 
 	/**

@@ -39,6 +39,10 @@ import org.eclipse.gef.dot.internal.language.colorlist.ColorlistFactory;
 import org.eclipse.gef.dot.internal.language.colorlist.WC;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
+import org.eclipse.gef.dot.internal.language.escstring.EscString;
+import org.eclipse.gef.dot.internal.language.escstring.EscstringFactory;
+import org.eclipse.gef.dot.internal.language.escstring.Justification;
+import org.eclipse.gef.dot.internal.language.escstring.JustifiedText;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
@@ -437,6 +441,46 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void edge_edgetooltip() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getEdgetooltipRaw(edge));
+		assertNull(DotAttributes.getEdgetooltip(edge));
+		assertNull(DotAttributes.getEdgetooltipParsed(edge));
+
+		// set valid string values
+		DotAttributes.setEdgetooltip(edge, "line1\\nline2");
+		assertEquals("line1\\nline2", DotAttributes.getEdgetooltip(edge));
+
+		EscString edgeTooltip = EscstringFactory.eINSTANCE.createEscString();
+		JustifiedText line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("line1");
+		JustifiedText line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("line2");
+		edgeTooltip.getLines().add(line1);
+		edgeTooltip.getLines().add(line2);
+		assertTrue(EcoreUtil.equals(edgeTooltip,
+				DotAttributes.getEdgetooltipParsed(edge)));
+
+		// set valid parsed values
+		EscString edgeTooltipParsed = EscstringFactory.eINSTANCE
+				.createEscString();
+		line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("a");
+		line1.setJustification(Justification.LEFT);
+		line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("b");
+		line2.setJustification(Justification.RIGHT);
+		edgeTooltipParsed.getLines().add(line1);
+		edgeTooltipParsed.getLines().add(line2);
+		DotAttributes.setEdgetooltipParsed(edge, edgeTooltipParsed);
+		assertEquals("a\\lb\\r", DotAttributes.getEdgetooltip(edge));
+	}
+
+	@Test
 	public void edge_fillcolor() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
@@ -702,6 +746,46 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void edge_headtooltip() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getHeadtooltipRaw(edge));
+		assertNull(DotAttributes.getHeadtooltip(edge));
+		assertNull(DotAttributes.getHeadtooltipParsed(edge));
+
+		// set valid string values
+		DotAttributes.setHeadtooltip(edge, "line1\\nline2");
+		assertEquals("line1\\nline2", DotAttributes.getHeadtooltip(edge));
+
+		EscString headTooltip = EscstringFactory.eINSTANCE.createEscString();
+		JustifiedText line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("line1");
+		JustifiedText line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("line2");
+		headTooltip.getLines().add(line1);
+		headTooltip.getLines().add(line2);
+		assertTrue(EcoreUtil.equals(headTooltip,
+				DotAttributes.getHeadtooltipParsed(edge)));
+
+		// set valid parsed values
+		EscString headTooltipParsed = EscstringFactory.eINSTANCE
+				.createEscString();
+		line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("a");
+		line1.setJustification(Justification.LEFT);
+		line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("b");
+		line2.setJustification(Justification.RIGHT);
+		headTooltipParsed.getLines().add(line1);
+		headTooltipParsed.getLines().add(line2);
+		DotAttributes.setHeadtooltipParsed(edge, headTooltipParsed);
+		assertEquals("a\\lb\\r", DotAttributes.getHeadtooltip(edge));
+	}
+
+	@Test
 	public void edge_id() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
@@ -822,6 +906,46 @@ public class DotAttributesTests {
 					"Cannot set edge attribute 'labelfontcolor' to '_'. The value '_' is not a syntactically correct color: No viable alternative at character '_'.",
 					e.getMessage());
 		}
+	}
+
+	@Test
+	public void edge_labeltooltip() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLabeltooltipRaw(edge));
+		assertNull(DotAttributes.getLabeltooltip(edge));
+		assertNull(DotAttributes.getLabeltooltipParsed(edge));
+
+		// set valid string values
+		DotAttributes.setLabeltooltip(edge, "line1\\nline2");
+		assertEquals("line1\\nline2", DotAttributes.getLabeltooltip(edge));
+
+		EscString labelTooltip = EscstringFactory.eINSTANCE.createEscString();
+		JustifiedText line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("line1");
+		JustifiedText line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("line2");
+		labelTooltip.getLines().add(line1);
+		labelTooltip.getLines().add(line2);
+		assertTrue(EcoreUtil.equals(labelTooltip,
+				DotAttributes.getLabeltooltipParsed(edge)));
+
+		// set valid parsed values
+		EscString labelTooltipParsed = EscstringFactory.eINSTANCE
+				.createEscString();
+		line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("a");
+		line1.setJustification(Justification.LEFT);
+		line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("b");
+		line2.setJustification(Justification.RIGHT);
+		labelTooltipParsed.getLines().add(line1);
+		labelTooltipParsed.getLines().add(line2);
+		DotAttributes.setLabeltooltipParsed(edge, labelTooltipParsed);
+		assertEquals("a\\lb\\r", DotAttributes.getLabeltooltip(edge));
 	}
 
 	@Test
@@ -1176,6 +1300,85 @@ public class DotAttributesTests {
 					"Cannot set edge attribute 'tailport' to 'a:foo'. The value 'a:foo' is not a syntactically correct portPos: Mismatched input 'foo' expecting RULE_COMPASS_POINT_POS.",
 					e.getMessage());
 		}
+	}
+
+	@Test
+	public void edge_tailtooltip() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getTailtooltipRaw(edge));
+		assertNull(DotAttributes.getTailtooltip(edge));
+		assertNull(DotAttributes.getTailtooltipParsed(edge));
+
+		// set valid string values
+		DotAttributes.setTailtooltip(edge, "line1\\nline2");
+		assertEquals("line1\\nline2", DotAttributes.getTailtooltip(edge));
+
+		EscString tailTooltip = EscstringFactory.eINSTANCE.createEscString();
+		JustifiedText line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("line1");
+		JustifiedText line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("line2");
+		tailTooltip.getLines().add(line1);
+		tailTooltip.getLines().add(line2);
+		assertTrue(EcoreUtil.equals(tailTooltip,
+				DotAttributes.getTailtooltipParsed(edge)));
+
+		// set valid parsed values
+		EscString tailTooltipParsed = EscstringFactory.eINSTANCE
+				.createEscString();
+		line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("a");
+		line1.setJustification(Justification.LEFT);
+		line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("b");
+		line2.setJustification(Justification.RIGHT);
+		tailTooltipParsed.getLines().add(line1);
+		tailTooltipParsed.getLines().add(line2);
+		DotAttributes.setTailtooltipParsed(edge, tailTooltipParsed);
+		assertEquals("a\\lb\\r", DotAttributes.getTailtooltip(edge));
+	}
+
+	@Test
+	public void edge_tooltip() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getTooltipRaw(edge));
+		assertNull(DotAttributes.getTooltip(edge));
+		assertNull(DotAttributes.getTooltipParsed(edge));
+
+		// set valid string values
+		DotAttributes.setTooltip(edge, "line1\\nline2");
+		assertEquals("line1\\nline2", DotAttributes.getTooltip(edge));
+
+		EscString tooltip = EscstringFactory.eINSTANCE.createEscString();
+		JustifiedText line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("line1");
+		JustifiedText line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("line2");
+		tooltip.getLines().add(line1);
+		tooltip.getLines().add(line2);
+		assertTrue(EcoreUtil.equals(tooltip,
+				DotAttributes.getTooltipParsed(edge)));
+
+		// set valid parsed values
+		EscString tooltipParsed = EscstringFactory.eINSTANCE.createEscString();
+		line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("a");
+		line1.setJustification(Justification.LEFT);
+		line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("b");
+		line2.setJustification(Justification.RIGHT);
+		tooltipParsed.getLines().add(line1);
+		tooltipParsed.getLines().add(line2);
+		DotAttributes.setTooltipParsed(edge, tooltipParsed);
+		assertEquals("a\\lb\\r", DotAttributes.getTooltip(edge));
 	}
 
 	@Test
@@ -2409,6 +2612,43 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void cluster_tooltip() {
+		Graph graph = new Graph.Builder().build();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getTooltipRaw(graph));
+		assertNull(DotAttributes.getTooltip(graph));
+		assertNull(DotAttributes.getTooltipParsed(graph));
+
+		// set valid string values
+		DotAttributes.setTooltip(graph, "line1\\nline2");
+		assertEquals("line1\\nline2", DotAttributes.getTooltip(graph));
+
+		EscString tooltip = EscstringFactory.eINSTANCE.createEscString();
+		JustifiedText line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("line1");
+		JustifiedText line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("line2");
+		tooltip.getLines().add(line1);
+		tooltip.getLines().add(line2);
+		assertTrue(EcoreUtil.equals(tooltip,
+				DotAttributes.getTooltipParsed(graph)));
+
+		// set valid parsed values
+		EscString tooltipParsed = EscstringFactory.eINSTANCE.createEscString();
+		line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("a");
+		line1.setJustification(Justification.LEFT);
+		line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("b");
+		line2.setJustification(Justification.RIGHT);
+		tooltipParsed.getLines().add(line1);
+		tooltipParsed.getLines().add(line2);
+		DotAttributes.setTooltipParsed(graph, tooltipParsed);
+		assertEquals("a\\lb\\r", DotAttributes.getTooltip(graph));
+	}
+
+	@Test
 	public void graph_type() {
 		// test directed graph
 		Graph graph = new Graph.Builder()
@@ -3187,6 +3427,43 @@ public class DotAttributesTests {
 					"Cannot set node attribute 'style' to 'tapered'. The style value 'tapered' is not semantically correct: Value should be one of 'bold', 'dashed', 'diagonals', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped', 'wedged'.",
 					e.getMessage());
 		}
+	}
+
+	@Test
+	public void node_tooltip() {
+		Node node = new Node.Builder().buildNode();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getTooltipRaw(node));
+		assertNull(DotAttributes.getTooltip(node));
+		assertNull(DotAttributes.getTooltipParsed(node));
+
+		// set valid string values
+		DotAttributes.setTooltip(node, "line1\\nline2");
+		assertEquals("line1\\nline2", DotAttributes.getTooltip(node));
+
+		EscString tooltip = EscstringFactory.eINSTANCE.createEscString();
+		JustifiedText line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("line1");
+		JustifiedText line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("line2");
+		tooltip.getLines().add(line1);
+		tooltip.getLines().add(line2);
+		assertTrue(EcoreUtil.equals(tooltip,
+				DotAttributes.getTooltipParsed(node)));
+
+		// set valid parsed values
+		EscString tooltipParsed = EscstringFactory.eINSTANCE.createEscString();
+		line1 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line1.setText("a");
+		line1.setJustification(Justification.LEFT);
+		line2 = EscstringFactory.eINSTANCE.createJustifiedText();
+		line2.setText("b");
+		line2.setJustification(Justification.RIGHT);
+		tooltipParsed.getLines().add(line1);
+		tooltipParsed.getLines().add(line2);
+		DotAttributes.setTooltipParsed(node, tooltipParsed);
+		assertEquals("a\\lb\\r", DotAttributes.getTooltip(node));
 	}
 
 	@Test

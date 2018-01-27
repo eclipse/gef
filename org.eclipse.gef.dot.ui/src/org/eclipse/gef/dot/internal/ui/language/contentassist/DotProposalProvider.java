@@ -198,6 +198,15 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeColorListAttributeValues(attribute, context,
 							acceptor);
 					break;
+				case DotAttributes.EDGETOOLTIP__E:
+				case DotAttributes.HEADTOOLTIP__E:
+				case DotAttributes.LABELTOOLTIP__E:
+				case DotAttributes.TAILTOOLTIP__E:
+				case DotAttributes.TOOLTIP__CNE:
+					proposeAttributeValues(
+							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTESCSTRING,
+							context, acceptor);
+					break;
 				case DotAttributes.FILLCOLOR__CNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
@@ -336,6 +345,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				case DotAttributes.STYLE__GCNE:
 					proposeAttributeValues(NodeStyle.VALUES, context, acceptor);
 					break;
+				case DotAttributes.TOOLTIP__CNE:
+					proposeAttributeValues(
+							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTESCSTRING,
+							context, acceptor);
 				default:
 					break;
 				}
@@ -347,6 +360,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeHtmlLabelAttributeValues(attribute, context,
 							acceptor);
 					break;
+				case DotAttributes.TOOLTIP__CNE:
+					proposeAttributeValues(
+							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTESCSTRING,
+							context, acceptor);
 				}
 			}
 

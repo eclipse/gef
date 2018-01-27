@@ -733,6 +733,29 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val EDGE_EDGETOOLTIP_GLOBAL = '''
+		graph {
+			edge[edgetooltip=a]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_EDGETOOLTIP_LOCAL = '''
+		graph {
+			1--2[edgetooltip=b]
+			3--4[edgetooltip=c]
+		}
+	'''
+	
+	public static val EDGE_EDGETOOLTIP_OVERRIDE = '''
+		graph {
+			edge[edgetooltip=d]
+			1--2[edgetooltip=e]
+			3--4
+		}
+	'''
+	
 	public static val EDGE_FILLCOLOR_GLOBAL = '''
 		graph {
 			edge[fillcolor="0.000 0.000 0.000"]
@@ -778,8 +801,7 @@ class DotTestGraphs {
 			3--4
 		}
 	'''
-	
-	
+		
 	public static val EDGE_HEADLABEL_GLOBAL = '''
 		graph {
 			edge[headlabel=EdgeHeadLabel1]
@@ -823,6 +845,29 @@ class DotTestGraphs {
 			edge[headport="port5:nw"]
 			1--2[headport="port1:w"]
 			3--4
+		}
+	'''
+	
+	public static val EDGE_HEADTOOLTIP_GLOBAL = '''
+		digraph {
+			edge[headtooltip=a]
+			1->2
+			3->4
+		}
+	'''
+	
+	public static val EDGE_HEADTOOLTIP_LOCAL = '''
+		digraph {
+			1->2[headtooltip=b]
+			3->4[headtooltip=c]
+		}
+	'''
+	
+	public static val EDGE_HEADTOOLTIP_OVERRIDE = '''
+		digraph {
+			edge[headtooltip=d]
+			1->2[headtooltip=e]
+			3->4
 		}
 	'''
 	
@@ -882,6 +927,29 @@ class DotTestGraphs {
 		graph {
 			edge[labelfontcolor="0.482 0.714 0.878"]
 			1--2[labelfontcolor=turquoise]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELTOOLTIP_GLOBAL = '''
+		graph {
+			edge[labeltooltip=a]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELTOOLTIP_LOCAL = '''
+		graph {
+			1--2[labeltooltip=b]
+			3--4[labeltooltip=c]
+		}
+	'''
+	
+	public static val EDGE_LABELTOOLTIP_OVERRIDE = '''
+		graph {
+			edge[labeltooltip=d]
+			1--2[labeltooltip=e]
 			3--4
 		}
 	'''
@@ -969,10 +1037,56 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val EDGE_TAILTOOLTIP_GLOBAL = '''
+		digraph {
+			edge[tailtooltip=a]
+			1->2
+			3->4
+		}
+	'''
+	
+	public static val EDGE_TAILTOOLTIP_LOCAL = '''
+		digraph {
+			1->2[tailtooltip=b]
+			3->4[tailtooltip=c]
+		}
+	'''
+	
+	public static val EDGE_TAILTOOLTIP_OVERRIDE = '''
+		digraph {
+			edge[tailtooltip=d]
+			1->2[tailtooltip=e]
+			3->4
+		}
+	'''
+	
 	public static val EDGE_TAIL_LP_LOCAL = '''
 		graph {
 			1--2[tail_lp="-4.5,-6.7"  ]
 			3--4[tail_lp="-8.9,-10.11"]
+		}
+	'''
+	
+	public static val EDGE_TOOLTIP_GLOBAL = '''
+		graph {
+			edge[tooltip=a]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_TOOLTIP_LOCAL = '''
+		graph {
+			1--2[tooltip=b]
+			3--4[tooltip=c]
+		}
+	'''
+	
+	public static val EDGE_TOOLTIP_OVERRIDE = '''
+		graph {
+			edge[tooltip=d]
+			1--2[tooltip=e]
+			3--4
 		}
 	'''
 	
@@ -1344,6 +1458,29 @@ class DotTestGraphs {
 		graph {
 			node[style="bold, filled"]
 			1[style=rounded]
+			2
+		}
+	'''
+	
+	public static val NODE_TOOLTIP_GLOBAL = '''
+		graph {
+			node[tooltip=a]
+			1
+			2
+		}
+	'''
+	
+	public static val NODE_TOOLTIP_LOCAL = '''
+		graph {
+			1[tooltip=b]
+			2[tooltip=c]
+		}
+	'''
+	
+	public static val NODE_TOOLTIP_OVERRIDE = '''
+		graph {
+			node[tooltip=d]
+			1[tooltip=e]
 			2
 		}
 	'''
