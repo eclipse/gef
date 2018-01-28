@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 itemis AG and others.
+ * Copyright (c) 2009, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -118,7 +118,7 @@ public final class DotFileUtils {
 	 * @throws IOException
 	 *             In case I/O exceptions occurred.
 	 */
-	static String read(InputStream is) throws IOException {
+	public static String read(InputStream is) throws IOException {
 		String lineSeparator = System.lineSeparator();
 		StringBuilder builder = new StringBuilder();
 		BufferedReader reader = new BufferedReader(
