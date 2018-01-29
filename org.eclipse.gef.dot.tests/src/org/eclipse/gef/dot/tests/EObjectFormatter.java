@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
  * Modification added: usage of System.lineSeparator instead of '\n' for line
  * separation; usage of tabs instead of two spaces for indentation.
  */
-public class EObjectFormatter implements Function<EObject, String> {
+class EObjectFormatter implements Function<EObject, String> {
 
 	protected boolean resolveCrossReferences = false;
 

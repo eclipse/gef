@@ -10,20 +10,23 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #518417)
  *
  *******************************************************************************/
-package org.eclipse.gef.graph;
+package org.eclipse.gef.dot.tests;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.eclipse.gef.graph.Edge;
+import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.graph.Node;
 
 /**
  * A Pretty Printer providing formatted string representations (with line
  * separation and indentation) for {@link Graph}, {@link Node} and {@link Edge}
  * objects.
  *
- * @since 5.1
  */
-public class PrettyPrinter {
+class PrettyPrinter {
 
 	private String indent;
 	private String lineSeparator;
@@ -38,7 +41,8 @@ public class PrettyPrinter {
 	}
 
 	/**
-	 * Creates a Pretty Printer with the given indent and lineSeparator characters.
+	 * Creates a Pretty Printer with the given indent and lineSeparator
+	 * characters.
 	 *
 	 * @param indent
 	 *            characters to use for indenting.
@@ -60,8 +64,8 @@ public class PrettyPrinter {
 	 *            containing {@link Graph}.
 	 *
 	 * @return The (1-based) position of the given {@link Edge} within the
-	 *         containing {@link Graph} or -1 if the edge is not contained in any
-	 *         {@link Graph}.
+	 *         containing {@link Graph} or -1 if the edge is not contained in
+	 *         any {@link Graph}.
 	 */
 	protected int getPosition(Edge edge) {
 		Graph graph = edge.getGraph();
@@ -81,8 +85,8 @@ public class PrettyPrinter {
 	 *            containing {@link Graph}.
 	 *
 	 * @return The (1-based) position of the given {@link Node} within the
-	 *         containing {@link Graph} or -1 if the node is not contained in any
-	 *         {@link Graph}.
+	 *         containing {@link Graph} or -1 if the node is not contained in
+	 *         any {@link Graph}.
 	 */
 	protected int getPosition(Node node) {
 		Graph graph = node.getGraph();
@@ -120,7 +124,8 @@ public class PrettyPrinter {
 	 * @return The formatted string representation (with line separation and
 	 *         indentation) of the given {@link Edge}.
 	 */
-	protected String prettyPrint(Edge edge, String startIndent, String positionPrefix) {
+	protected String prettyPrint(Edge edge, String startIndent,
+			String positionPrefix) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(startIndent);
@@ -131,14 +136,16 @@ public class PrettyPrinter {
 			sb.append(position);
 		}
 
-		sb.append(String.format(" from Node%s to Node%s {", nodeToIdMapper.get(edge.getSource()),
+		sb.append(String.format(" from Node%s to Node%s {",
+				nodeToIdMapper.get(edge.getSource()),
 				nodeToIdMapper.get(edge.getTarget())));
 		sb.append(lineSeparator);
 		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
 		sortedAttrs.putAll(edge.attributesProperty());
 		for (Object attrKey : sortedAttrs.keySet()) {
 			sb.append(startIndent + indent);
-			sb.append(attrKey.toString() + " : " + edge.attributesProperty().get(attrKey));
+			sb.append(attrKey.toString() + " : "
+					+ edge.attributesProperty().get(attrKey));
 			sb.append(lineSeparator);
 		}
 		sb.append(startIndent);
@@ -175,7 +182,8 @@ public class PrettyPrinter {
 	 * @return The formatted string representation (with line separation and
 	 *         indentation) of the given {@link Graph}.
 	 */
-	protected String prettyPrint(Graph graph, String startIndent, String positionPrefix) {
+	protected String prettyPrint(Graph graph, String startIndent,
+			String positionPrefix) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(startIndent);
@@ -186,7 +194,8 @@ public class PrettyPrinter {
 		sortedAttrs.putAll(graph.attributesProperty());
 		for (Object attrKey : sortedAttrs.keySet()) {
 			sb.append(startIndent + indent);
-			sb.append(attrKey.toString() + " : " + graph.attributesProperty().get(attrKey));
+			sb.append(attrKey.toString() + " : "
+					+ graph.attributesProperty().get(attrKey));
 			sb.append(lineSeparator);
 		}
 		for (Node node : graph.getNodes()) {
@@ -229,7 +238,8 @@ public class PrettyPrinter {
 	 * @return The formatted string representation (with line separation and
 	 *         indentation) of the given {@link Edge}.
 	 */
-	protected String prettyPrint(Node node, String startIndent, String positionPrefix) {
+	protected String prettyPrint(Node node, String startIndent,
+			String positionPrefix) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(startIndent);
@@ -247,14 +257,16 @@ public class PrettyPrinter {
 		sortedAttrs.putAll(node.attributesProperty());
 		for (Object attrKey : sortedAttrs.keySet()) {
 			sb.append(startIndent + indent);
-			sb.append(attrKey.toString() + " : " + node.attributesProperty().get(attrKey));
+			sb.append(attrKey.toString() + " : "
+					+ node.attributesProperty().get(attrKey));
 			sb.append(lineSeparator);
 		}
 
 		Graph nestedGraph = node.getNestedGraph();
 		if (nestedGraph != null) {
 			String newPositionPrefix = positionPrefix + position + ".";
-			String nestedGraphText = prettyPrint(nestedGraph, startIndent + indent, newPositionPrefix);
+			String nestedGraphText = prettyPrint(nestedGraph,
+					startIndent + indent, newPositionPrefix);
 			sb.append(nestedGraphText);
 		}
 		sb.append(startIndent);

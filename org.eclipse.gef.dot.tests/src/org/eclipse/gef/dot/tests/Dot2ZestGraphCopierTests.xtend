@@ -16,7 +16,6 @@ import org.eclipse.gef.dot.internal.ui.Dot2ZestGraphCopier
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
-import org.eclipse.gef.graph.PrettyPrinter
 import org.eclipse.gef.mvc.tests.fx.rules.FXApplicationThreadRule
 import org.junit.BeforeClass
 import org.junit.Rule
