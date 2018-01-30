@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2016, 2018 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +13,7 @@
  *                                 - add binding for EObject hover/hover provider (bug #461506)
  *                                 - add binding for hyperlink helper (bug #461506)
  *                                 - add binding for rename strategy (bug #530423)
+ *                                 - add binding for occurrence computer (bug #530699)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
@@ -23,12 +25,14 @@ import org.eclipse.gef.dot.internal.ui.language.highlighting.DotSemanticHighligh
 import org.eclipse.gef.dot.internal.ui.language.hover.DotEObjectHover;
 import org.eclipse.gef.dot.internal.ui.language.hover.DotHoverProvider;
 import org.eclipse.gef.dot.internal.ui.language.hyperlinking.DotHyperlinkHelper;
+import org.eclipse.gef.dot.internal.ui.language.markoccurrences.DotOccurrenceComputer;
 import org.eclipse.gef.dot.internal.ui.language.renaming.DotRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
+import org.eclipse.xtext.ui.editor.occurrences.IOccurrenceComputer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
@@ -80,5 +84,9 @@ public class DotUiModule
 
 	public Class<? extends IRenameStrategy> bindIRenameStrategy() {
 		return DotRenameStrategy.class;
+	}
+
+	public Class<? extends IOccurrenceComputer> bindIOccurrenceComputer() {
+		return DotOccurrenceComputer.class;
 	}
 }
