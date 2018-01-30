@@ -26,7 +26,7 @@ import org.eclipse.gef.graph.Node;
  * objects.
  *
  */
-class PrettyPrinter {
+class DotGraphPrettyPrinter {
 
 	private String indent;
 	private String lineSeparator;
@@ -36,7 +36,7 @@ class PrettyPrinter {
 	/**
 	 * Creates a Pretty Printer with the default settings.
 	 */
-	public PrettyPrinter() {
+	public DotGraphPrettyPrinter() {
 		this("\t", System.lineSeparator());
 	}
 
@@ -49,7 +49,7 @@ class PrettyPrinter {
 	 * @param lineSeparator
 	 *            characters to use for line separations.
 	 */
-	public PrettyPrinter(String indent, String lineSeparator) {
+	public DotGraphPrettyPrinter(String indent, String lineSeparator) {
 		this.indent = indent;
 		this.lineSeparator = lineSeparator;
 		this.nodeToIdMapper = new HashMap<>();

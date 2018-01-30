@@ -49,7 +49,7 @@ import org.junit.runner.RunWith;
 public final class DotImportTests {
 
 	private final DotImport dotImport = new DotImport();
-	private final PrettyPrinter prettyPrinter = new PrettyPrinter();
+	private final DotGraphPrettyPrinter prettyPrinter = new DotGraphPrettyPrinter();
 
 	/**
 	 * Test valid graphs can be imported without exceptions.

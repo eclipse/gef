@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
  * Modification added: usage of System.lineSeparator instead of '\n' for line
  * separation; usage of tabs instead of two spaces for indentation.
  */
-class EObjectFormatter implements Function<EObject, String> {
+class DotEObjectFormatter implements Function<EObject, String> {
 
 	protected boolean resolveCrossReferences = false;
 
@@ -168,7 +168,7 @@ class EObjectFormatter implements Function<EObject, String> {
 		return string.replaceAll("\\n", "\n\t");
 	}
 
-	public EObjectFormatter resolveCrossReferences() {
+	public DotEObjectFormatter resolveCrossReferences() {
 		this.resolveCrossReferences = true;
 		return this;
 	}
@@ -192,12 +192,12 @@ class EObjectFormatter implements Function<EObject, String> {
 		return true;
 	}
 
-	public EObjectFormatter showIndex() {
+	public DotEObjectFormatter showIndex() {
 		this.showIndex = true;
 		return this;
 	}
 
-	public EObjectFormatter sortFeaturesByName() {
+	public DotEObjectFormatter sortFeaturesByName() {
 		this.sortFeatures = true;
 		return this;
 	}

@@ -38,14 +38,14 @@ class Dot2ZestGraphCopierTests {
 	public FXApplicationThreadRule fxApplicationThreadRule = new FXApplicationThreadRule
 
 	static extension Dot2ZestGraphCopier dot2ZestGraphCopier
-	static extension PrettyPrinter prettyPrinter
+	static extension DotGraphPrettyPrinter prettyPrinter
 
 	@BeforeClass
 	def static void beforeClass(){
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
 		
-		prettyPrinter = new PrettyPrinter
+		prettyPrinter = new DotGraphPrettyPrinter
 	}
 
 	@Test
