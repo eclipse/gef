@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG) - initial API and implementation
+ *     Tamas Miklossy     (itemis AG) - initial API and implementation
+ *     Zoey Gerrit Prigge (itemis AG) - added switch to ignore whitespace
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
@@ -39,6 +40,11 @@ public class DotExecutableLayoutingTests extends AbstractDotExecutableTests {
 		// actual
 		String dotExecutableBuild = "TODO: specify the path to the self-build graphviz dot executable here";
 
+		// whitespace differences in Layout output will be ignored if true
+		// for testing builds from different build-mechanisms
+
+		boolean ignoreWhitespace = false;
+
 		if (!new File(dotExecutableInstalled).exists()
 				|| !new File(dotExecutableBuild).exists()) {
 			// ensure that the tests are only executed if the paths are properly
@@ -49,7 +55,12 @@ public class DotExecutableLayoutingTests extends AbstractDotExecutableTests {
 		String expected = dotLayout(dotExecutableInstalled, name);
 		String actual = dotLayout(dotExecutableBuild, name);
 
-		assertEquals(expected, actual);
+		if (ignoreWhitespace) {
+			assertEquals(expected.replaceAll("\\s+", " "),
+					actual.replaceAll("\\s+", " "));
+		} else {
+			assertEquals(expected, actual);
+		}
 	}
 
 	private String dotLayout(String dotExecutablePath, String fileName) {
