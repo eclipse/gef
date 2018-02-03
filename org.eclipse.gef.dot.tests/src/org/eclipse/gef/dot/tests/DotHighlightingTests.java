@@ -65,44 +65,6 @@ public class DotHighlightingTests extends AbstractEditorTest {
 	}
 
 	@Test
-	public void htmlLabel() {
-		String text = DotTestGraphs
-				.NODE_LABEL_HTML_LIKE(
-						DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG)
-				.toString();
-		StyledText textWidget = getTextWidget(text);
-
-		// test highlighting of Html tag
-		test(textWidget, "<", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "<font", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "<table>", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "<tr>", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "<td>", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "</td>", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "</tr>", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "</table>", SWT.NORMAL, 63, 127, 127);
-		test(textWidget, "</font>", SWT.NORMAL, 63, 127, 127);
-
-		// test highlighting of Html attribute name
-		test(textWidget, "color", SWT.NORMAL, 127, 0, 127);
-
-		// test highlighting of Html attribute equal sign
-		test(textWidget, "=", SWT.NORMAL, 0, 0, 0);
-
-		// test highlighting of Html attribute value
-		test(textWidget, "\"green\"", SWT.ITALIC, 42, 0, 255);
-
-		// test highlighting of Html content
-		test(textWidget, "text", SWT.NORMAL, 0, 0, 0);
-
-		// test highlighting of Html comment
-		test(textWidget, "<!--", SWT.NORMAL, 63, 95, 191);
-		test(textWidget, "Html label with custom font", SWT.NORMAL, 63, 95,
-				191);
-		test(textWidget, "-->", SWT.NORMAL, 63, 95, 191);
-	}
-
-	@Test
 	public void comments() {
 		String text = DotTestGraphs.EMPTY_WITH_COMMENTS;
 		StyledText textWidget = getTextWidget(text);
@@ -171,6 +133,44 @@ public class DotHighlightingTests extends AbstractEditorTest {
 		String text = DotTestGraphs.ONE_EDGE;
 		StyledText textWidget = getTextWidget(text);
 		test(textWidget, "--", SWT.NORMAL, 0, 153, 0);
+	}
+
+	@Test
+	public void htmlLabel() {
+		String text = DotTestGraphs
+				.NODE_LABEL_HTML_LIKE(
+						DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG)
+				.toString();
+		StyledText textWidget = getTextWidget(text);
+
+		// test highlighting of Html tag
+		test(textWidget, "<", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<font", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<table>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<tr>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "<td>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</td>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</tr>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</table>", SWT.NORMAL, 63, 127, 127);
+		test(textWidget, "</font>", SWT.NORMAL, 63, 127, 127);
+
+		// test highlighting of Html attribute name
+		test(textWidget, "color", SWT.NORMAL, 127, 0, 127);
+
+		// test highlighting of Html attribute equal sign
+		test(textWidget, "=", SWT.NORMAL, 0, 0, 0);
+
+		// test highlighting of Html attribute value
+		test(textWidget, "\"green\"", SWT.ITALIC, 42, 0, 255);
+
+		// test highlighting of Html content
+		test(textWidget, "text", SWT.NORMAL, 0, 0, 0);
+
+		// test highlighting of Html comment
+		test(textWidget, "<!--", SWT.NORMAL, 63, 95, 191);
+		test(textWidget, "Html label with custom font", SWT.NORMAL, 63, 95,
+				191);
+		test(textWidget, "-->", SWT.NORMAL, 63, 95, 191);
 	}
 
 	private StyledText getTextWidget(String content) {
