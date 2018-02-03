@@ -16,8 +16,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest;
 import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.junit.Test;
 
 @SuppressWarnings("restriction")
@@ -182,21 +184,17 @@ public class DotHighlightingTests extends AbstractEditorTest {
 			fail(e.getMessage());
 		}
 
-		// wait for the Xtext framework to apply the semantic highlighting,
-		// since the semantic highlighting stage is executed asynchronously in
-		// the background
-		// TODO: replace the hard-coded sleep value with a proper wait
-		// condition
-		try {
-			sleep(700);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		XtextSourceViewer xtextSourceViewer = (XtextSourceViewer) editor
+				.getInternalSourceViewer();
+
+		Display display = xtextSourceViewer.getControl().getDisplay();
+		while (display.readAndDispatch()) {
+			// wait for the Xtext framework
+			// HighlightingPresenter.updatePresentation() to apply the semantic
+			// highlighting executed asynchronously
 		}
 
-		StyledText textWidget = editor.getInternalSourceViewer()
-				.getTextWidget();
-
-		return textWidget;
+		return xtextSourceViewer.getTextWidget();
 	}
 
 	private void test(StyledText textWidget, String subString,
