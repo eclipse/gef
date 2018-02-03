@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 itemis AG and others.
+ * Copyright (c) 2009, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -76,6 +76,12 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	public void checkValidAttributeValue(final Attribute attribute) {
 		String attributeName = attribute.getName().toValue();
 		ID attributeValue = attribute.getValue();
+
+		if (attributeValue == null) {
+			// if the attribute value is missing
+			// (e.g in case of an incomplete model)
+			return;
+		}
 
 		// give the DotColorValidator the necessary 'global' information
 		DotColorJavaValidator.considerDefaultColorScheme = true;

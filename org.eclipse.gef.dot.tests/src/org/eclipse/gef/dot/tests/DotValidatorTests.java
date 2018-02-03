@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -814,6 +814,17 @@ public class DotValidatorTests {
 				DotPackage.eINSTANCE.getAttribute(),
 				Diagnostic.SYNTAX_DIAGNOSTIC, 46, 1,
 				"The value '<}> foo | <here> more foo' is not a syntactically correct record-based label: extraneous input '}' expecting '>'");
+	}
+
+	@Test
+	public void testIncompleteModel() throws Exception {
+		String text = "graph{1[c]}";
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttrList(),
+				Diagnostic.SYNTAX_DIAGNOSTIC, 9, 1,
+				"mismatched input ']' expecting '='");
 	}
 
 	private DotAst parse(String fileName) {
