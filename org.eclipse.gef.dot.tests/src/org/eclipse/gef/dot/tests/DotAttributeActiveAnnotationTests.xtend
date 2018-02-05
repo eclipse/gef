@@ -147,12 +147,12 @@ class XtendCompilerTesterEx extends XtendCompilerTester {
 		compilationTestHelperEx = XtendInjectorSingleton.INJECTOR
 				.getInstance(CompilationTestHelperEx)
 
-		instance.setJavaCompilerClassPath(classLoader)
+		instance.setJavaCompilerClassPathEx(classLoader)
 		instance
 	}
 
-	def void setJavaCompilerClassPath(ClassLoader classPath) {
-		compilationTestHelperEx.setJavaCompilerClassPath(classPath)
+	def void setJavaCompilerClassPathEx(ClassLoader classPath) {
+		compilationTestHelperEx.setJavaCompilerClassPathEx(classPath)
 	}
 
 	override void assertCompilesTo(CharSequence source,
@@ -170,7 +170,7 @@ class CompilationTestHelperEx extends CompilationTestHelper {
 
 	ClassLoader classpathUriContext
 
-	def void setJavaCompilerClassPath(ClassLoader classLoader) {
+	def void setJavaCompilerClassPathEx(ClassLoader classLoader) {
 		this.classpathUriContext = classLoader
 	}
 
