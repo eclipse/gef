@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API & implementation
+ *     Tamas Miklossy  (itemis AG) - minor improvements
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.generator;
@@ -66,8 +67,9 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 				+ "' attribute, which is used by: "
 				+ usedBy(field).stream()
 						.map((f) -> "Cluster".contentEquals(paramTypeName(f))
-								? paramTypeName(f)
-								: "{@link " + paramTypeName(f) + "}")
+								|| "Subgraph".contentEquals(paramTypeName(f))
+										? paramTypeName(f)
+										: "{@link " + paramTypeName(f) + "}")
 						.collect(Collectors.joining(", "))
 				+ ".");
 
@@ -162,7 +164,7 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 						body.append("checkAttributeRawValue(Context."
 								+ c.name().toUpperCase() + ", "
 								+ field.getSimpleName() + ", " + attributeName
-								+ ");");
+								+ ");\n");
 						body.append(paramName(c) + ".attributesProperty().put("
 								+ field.getSimpleName() + ", " + attributeName
 								+ ");");

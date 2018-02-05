@@ -41,8 +41,7 @@ class DotAttributeActiveAnnotationTests {
 			@SuppressWarnings("all")
 			public class DotAttributes {
 			  /**
-«««			  TODO: this should be changed to Subgraph
-			   * The 'rank' attribute, which is used by: {@link Subgraph}.
+			   * The 'rank' attribute, which is used by: Subgraph.
 			   */
 			  public final static String RANK__S = "rank";
 			  
@@ -72,8 +71,8 @@ class DotAttributeActiveAnnotationTests {
 			   * 
 			   */
 			  public static void setRankRaw(final Graph graph, final ID rank) {
-«««			  	TODO: there should be a linewrap here
-			    checkAttributeRawValue(Context.GRAPH, RANK__S, rank);graph.attributesProperty().put(RANK__S, rank);
+			    checkAttributeRawValue(Context.GRAPH, RANK__S, rank);
+			    graph.attributesProperty().put(RANK__S, rank);
 			  }
 			  
 			  /**
