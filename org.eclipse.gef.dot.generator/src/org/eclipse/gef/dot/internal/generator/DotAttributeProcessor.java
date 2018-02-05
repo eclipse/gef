@@ -79,9 +79,11 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 			// we may specify different values for each context (the order has
 			// to match)
 			String attributeRawType = attributeRawTypes.length > 1
-					? attributeRawTypes[i] : attributeRawTypes[0];
+					? attributeRawTypes[i]
+					: attributeRawTypes[0];
 			TypeReference attributeParsedType = attributeParsedTypes.length > 1
-					? attributeParsedTypes[i] : attributeParsedTypes[0];
+					? attributeParsedTypes[i]
+					: attributeParsedTypes[0];
 
 			// raw getter
 			field.getDeclaringType().addMethod(rawGetterName(field),
@@ -89,8 +91,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 						field.markAsRead();
 
 						StringBuilder docComment = new StringBuilder();
-						docComment
-								.append("Returns the (raw) value of the {@link #"
+						docComment.append(
+								"Returns the (raw) value of the {@link #"
 										+ field.getSimpleName()
 										+ "} attribute of the given {@link "
 										+ paramTypeName(c) + "}.\n");
@@ -100,8 +102,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 								+ "} for which to return the value of the\n");
 						docComment.append("               {@link #"
 								+ field.getSimpleName() + "} attribute.\n");
-						docComment
-								.append("    @return The (raw) value of the {@link #"
+						docComment.append(
+								"    @return The (raw) value of the {@link #"
 										+ field.getSimpleName()
 										+ "} attribute of the given\n");
 						docComment.append("            {@link "
@@ -138,8 +140,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 						docComment.append("               {@link #"
 								+ field.getSimpleName() + "} attribute.\n");
 						docComment.append("    @param " + attributeName + "\n");
-						docComment
-								.append("               The new (raw) value of the {@link #"
+						docComment.append(
+								"               The new (raw) value of the {@link #"
 										+ field.getSimpleName()
 										+ "} attribute.\n");
 						docComment.append(
@@ -221,8 +223,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 								+ "} for which to change the value of the {@link #"
 								+ field.getSimpleName() + "} attribute.\n");
 						docComment.append("    @param " + attributeName + "\n");
-						docComment
-								.append("           The new value of the {@link #"
+						docComment.append(
+								"           The new value of the {@link #"
 										+ field.getSimpleName()
 										+ "} attribute.\n");
 						docComment.append(
@@ -262,8 +264,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 							field.markAsRead();
 
 							StringBuilder docComment = new StringBuilder();
-							docComment
-									.append("Returns the (parsed) value of the {@link #"
+							docComment.append(
+									"Returns the (parsed) value of the {@link #"
 											+ field.getSimpleName()
 											+ "} attribute of the given {@link "
 											+ paramTypeName(c) + "}.\n");
@@ -273,8 +275,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 									+ paramTypeName(c)
 									+ "} for which to return the value of the {@link #"
 									+ field.getSimpleName() + "} attribute.\n");
-							docComment
-									.append("    @return The (parsed) value of the {@link #"
+							docComment.append(
+									"    @return The (parsed) value of the {@link #"
 											+ field.getSimpleName()
 											+ "} attribute of the given {@link "
 											+ paramTypeName(c) + "}.\n");
@@ -301,8 +303,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 							field.markAsRead();
 
 							StringBuilder docComment = new StringBuilder();
-							docComment
-									.append("Sets the (parsed) value of the {@link #"
+							docComment.append(
+									"Sets the (parsed) value of the {@link #"
 											+ field.getSimpleName()
 											+ "} attribute of the given {@link "
 											+ paramTypeName(c)
@@ -316,8 +318,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 									+ field.getSimpleName() + "} attribute.\n");
 							docComment.append(
 									"    @param " + attributeName + "\n");
-							docComment
-									.append("               The new (parsed) value of the {@link #"
+							docComment.append(
+									"               The new (parsed) value of the {@link #"
 											+ field.getSimpleName()
 											+ "} attribute.\n");
 							docComment.append(
