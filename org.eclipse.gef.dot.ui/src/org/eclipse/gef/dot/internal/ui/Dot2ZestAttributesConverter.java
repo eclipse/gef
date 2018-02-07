@@ -510,10 +510,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				: false;
 		// TODO HTML label support
 
-		// style and color
-		StringBuilder zestShapeStyle = computeZestStyle(dot);
 		org.eclipse.gef.dot.internal.language.shape.Shape dotShape = DotAttributes
 				.getShapeParsed(dot);
+		// style and color
+		StringBuilder zestShapeStyle = computeZestStyle(dot, dotShape);
 		javafx.scene.Node zestShape = null;
 		if (dotShape == null) {
 			// ellipse is default shape
@@ -581,6 +581,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setShape(zest, zestShape);
 		}
 
+		if (isInvisible(dot)) {
+			ZestProperties.setInvisible(zest, true);
+		}
+
 		// The label of a record based node shape is consumed by the zest shape
 		// hence, it needs not to be set again.
 		if (!isRecordBasedShape)
@@ -642,7 +646,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 	}
 
-	private StringBuilder computeZestStyle(Node dot) {
+	private StringBuilder computeZestStyle(Node dot,
+			org.eclipse.gef.dot.internal.language.shape.Shape dotShape) {
 		StringBuilder zestStyle = new StringBuilder();
 		// color
 		Color dotColor = DotAttributes.getColorParsed(dot);
@@ -652,19 +657,19 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		// fillcolor: evaluate only if the node style is set to 'filled'.
-		boolean isFilledStyle = false;
-		Style nodeStyle = DotAttributes.getStyleParsed(dot);
-		if (nodeStyle != null) {
-			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
-				if (styleItem.getName().equals(NodeStyle.FILLED.toString())) {
-					isFilledStyle = true;
-					break;
-				}
+		Style style = DotAttributes.getStyleParsed(dot);
+		if (style != null) {
+			boolean isRecordBasedShape = dotShape != null
+					? dotShape.getShape() instanceof RecordBasedShape
+					: false;
+			for (StyleItem styleItem : style.getStyleItems()) {
+				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
+				addNodeStyle(zestStyle, nodeStyle, isRecordBasedShape);
 			}
 		}
 
-		if (isFilledStyle) {
+		// fillcolor: evaluate only if the node style is set to 'filled'.
+		if (isFilledStyle(style)) {
 			Color dotFillColor = null;
 			ColorList colorList = DotAttributes.getFillcolorParsed(dot);
 			if (colorList != null && !colorList.getColorValues().isEmpty()) {
@@ -750,6 +755,100 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			javaFxColor = DotColors.get(currentColorScheme, colorName);
 		}
 		return javaFxColor;
+	}
+
+	/**
+	 * The node styles have to be translated from dot to zest differently for
+	 * polygon-based nodes and differently for record-based nodes
+	 */
+	private void addNodeStyle(StringBuilder zestStyle, NodeStyle style,
+			boolean isRecordBasedNode) {
+		if (isRecordBasedNode) {
+			// in case of record based nodes shapes use 'border'
+			switch (style) {
+			case BOLD:
+				zestStyle.append("-fx-border-width: 2;"); //$NON-NLS-1$
+				break;
+			case DASHED:
+				zestStyle.append("-fx-border-style:dashed;"); //$NON-NLS-1$
+				break;
+			case DIAGONALS:
+				// TODO: add support for 'diagonals' styled nodes
+				break;
+			case DOTTED:
+				zestStyle.append("-fx-border-style:dotted;"); //$NON-NLS-1$
+				break;
+			case RADIAL:
+				// TODO: add support for 'radial' styled nodes
+				break;
+			case ROUNDED:
+				// TODO: add support for 'rounded' styled nodes
+				break;
+			case SOLID:
+				zestStyle.append("-fx-border-style:solid;"); //$NON-NLS-1$
+				break;
+			case STRIPED:
+				// TODO: add support for 'striped' styled nodes
+				break;
+			case WEDGED:
+				// TODO: add support for 'wedged' styled nodes
+				break;
+			}
+		} else {
+			// in case of polygon-based nodes shapes use 'stroke'
+			switch (style) {
+			case BOLD:
+				zestStyle.append("-fx-stroke-width:2;"); //$NON-NLS-1$
+				break;
+			case DASHED:
+				zestStyle.append("-fx-stroke-dash-array: 7 7;"); //$NON-NLS-1$
+				break;
+			case DIAGONALS:
+				// TODO: add support for 'diagonals' styled nodes
+				break;
+			case DOTTED:
+				zestStyle.append("-fx-stroke-dash-array: 1 6;"); //$NON-NLS-1$
+				break;
+			case RADIAL:
+				// TODO: add support for 'radial' styled nodes
+				break;
+			case ROUNDED:
+				// TODO: add support for 'rounded' styled nodes
+				break;
+			case SOLID:
+				zestStyle.append("-fx-stroke-width: 1;"); //$NON-NLS-1$
+				break;
+			case STRIPED:
+				// TODO: add support for 'striped' styled nodes
+				break;
+			case WEDGED:
+				// TODO: add support for 'wedged' styled nodes
+				break;
+			}
+		}
+	}
+
+	private boolean isInvisible(Node dot) {
+		Style nodeStyle = DotAttributes.getStyleParsed(dot);
+		if (nodeStyle != null) {
+			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
+				if (styleItem.getName().equals(NodeStyle.INVIS.toString())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean isFilledStyle(Style nodeStyle) {
+		if (nodeStyle != null) {
+			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
+				if (styleItem.getName().equals(NodeStyle.FILLED.toString())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	protected void convertAttributes(Graph dot, Graph zest) {
