@@ -243,7 +243,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// arrow head
 		String dotArrowHead = DotAttributes.getArrowhead(dot);
 		javafx.scene.Node zestEdgeTargetDecoration = null;
-		if (dotArrowHead == null) {
+		if (dotArrowHead == null || DotAttributes.getArrowheadParsed(dot)
+				.getArrowShapes().isEmpty()) {
 			// use the default arrow head decoration in case the graph is
 			// directed
 			if (GraphType.DIGRAPH.equals(DotAttributes
@@ -265,7 +266,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// arrow tail
 		String dotArrowTail = DotAttributes.getArrowtail(dot);
 		javafx.scene.Node zestEdgeSourceDecoration = null;
-		if (dotArrowTail == null) {
+		if (dotArrowTail == null || DotAttributes.getArrowtailParsed(dot)
+				.getArrowShapes().isEmpty()) {
 			// use the default arrow tail decoration in case the graph is
 			// directed
 			if (GraphType.DIGRAPH.equals(DotAttributes

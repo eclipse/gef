@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -450,6 +450,16 @@ public class DotParserTests {
 	@Test
 	public void testRecordLabelMixedWithHtmlLabel() {
 		testString("digraph{1[shape=Mrecord label=<<b>text</b>>]}");
+	}
+
+	@Test
+	public void testEmptyArrowhead() {
+		testString("digraph{1->2[arrowhead=\"\"]}");
+	}
+
+	@Test
+	public void testEmptyArrowtail() {
+		testString("digraph{1->2[arrowtail=\"\"]}");
 	}
 
 	private void testFile(String fileName) {

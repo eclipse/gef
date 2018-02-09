@@ -105,6 +105,15 @@ public class DotAttributesTests {
 		assertTrue(EcoreUtil.equals(arrowHead,
 				DotAttributes.getArrowheadParsed(edge)));
 
+		// set empty string value (this is also valid, however, currently not
+		// documented)
+		DotAttributes.setArrowhead(edge, "");
+		assertEquals("", DotAttributes.getArrowhead(edge));
+
+		arrowHead = ArrowtypeFactory.eINSTANCE.createArrowType();
+		assertTrue(EcoreUtil.equals(arrowHead,
+				DotAttributes.getArrowheadParsed(edge)));
+
 		// set valid parsed values
 		ArrowType arrowHeadParsed = ArrowtypeFactory.eINSTANCE
 				.createArrowType();
@@ -219,6 +228,15 @@ public class DotAttributesTests {
 		olBox.setSide("l");
 		olBox.setShape(PrimitiveShape.BOX);
 		arrowTail.getArrowShapes().add(olBox);
+		assertTrue(EcoreUtil.equals(arrowTail,
+				DotAttributes.getArrowtailParsed(edge)));
+
+		// set empty string value (this is also valid, however, currently not
+		// documented)
+		DotAttributes.setArrowtail(edge, "");
+		assertEquals("", DotAttributes.getArrowtail(edge));
+
+		arrowTail = ArrowtypeFactory.eINSTANCE.createArrowType();
 		assertTrue(EcoreUtil.equals(arrowTail,
 				DotAttributes.getArrowtailParsed(edge)));
 

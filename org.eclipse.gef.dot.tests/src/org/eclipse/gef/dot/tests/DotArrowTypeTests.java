@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -89,6 +89,20 @@ public class DotArrowTypeTests {
 		errorProneText = "none";
 		warningMessage = "The shape 'none' may not be the last shape.";
 		assertArrowShapeWarning(text, errorProneText, warningMessage);
+	}
+
+	@Test
+	public void testEmptyArrowType() {
+		String text = "";
+		ArrowType arrowType = null;
+		try {
+			arrowType = parseHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+		assertNotNull(arrowType);
+		validationTestHelper.assertNoErrors(arrowType);
 	}
 
 	private void assertArrowShapeWarning(String text, String errorProneText,
