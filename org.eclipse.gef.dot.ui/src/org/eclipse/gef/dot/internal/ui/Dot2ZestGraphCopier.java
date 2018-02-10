@@ -83,7 +83,7 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 					// determine label for cluster
 					String dotLabel = DotAttributes
 							.getLabel(dotNode.getNestedGraph());
-					if (dotLabel == null || dotLabel.equals("\\G")) { //$NON-NLS-1$
+					if ("\\G".equals(dotLabel)) { //$NON-NLS-1$
 						dotLabel = DotAttributes
 								._getName(dotNode.getNestedGraph());
 					}
