@@ -159,6 +159,18 @@ public class DotColors {
 		return null;
 	}
 
+	/**
+	 * @return The default color used for filling the nodes having the styled
+	 *         'filled', but neither 'fillcolor' nor 'color' values is
+	 *         explicitly specified.
+	 */
+	public static Color getDefaultNodeFillColor() {
+		StringColor color = ColorFactory.eINSTANCE.createStringColor();
+		color.setScheme("svg");
+		color.setName("lightgrey");
+		return color;
+	}
+
 	private static Map<String, String> x11ColorScheme = ImmutableMap
 			.<String, String> builder().put("aliceblue", "#f0f8ff") //$NON-NLS-1$ //$NON-NLS-2$
 			.put("antiquewhite", "#faebd7").put("antiquewhite1", "#ffefdb") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

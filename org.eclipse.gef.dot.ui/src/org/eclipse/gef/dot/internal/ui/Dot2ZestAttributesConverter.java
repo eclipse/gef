@@ -675,6 +675,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			if (fillColor != null && !fillColor.getColorValues().isEmpty()) {
 				// TODO: add support for colorList
 				dotFillColor = fillColor.getColorValues().get(0).getColor();
+			} else {
+				// if the style is filled, but fillcolor is not specified, use
+				// the color attribute value. If neither the fillcolor nor the
+				// color attribute is specified, used the default value.
+				dotFillColor = dotColor != null ? dotColor
+						: DotColors.getDefaultNodeFillColor();
 			}
 			String javaFxFillColor = computeZestColor(dotColorScheme,
 					dotFillColor);
