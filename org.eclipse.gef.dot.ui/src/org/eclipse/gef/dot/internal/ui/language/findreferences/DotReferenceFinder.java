@@ -50,7 +50,13 @@ public class DotReferenceFinder extends ReferenceFinder {
 		return getInstance();
 	}
 
-	@Override
+	/**
+	 * Using the @Override notation leads to a compile error on some platforms,
+	 * since this internal Xtext API has been changed over time. Thus, it is not
+	 * guaranted that this custom method implementation will be invoked on all
+	 * supported platforms. TODO: find a general solution to provide this
+	 * functionality on all supported platforms.
+	 **/
 	public void findReferences(TargetURIs targetURIs, Resource resource,
 			Acceptor acceptor, IProgressMonitor monitor) {
 		super.findReferences(targetURIs, resource, acceptor, monitor);
