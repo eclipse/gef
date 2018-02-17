@@ -61,7 +61,9 @@ class DotColorListTests {
 							r = 'E0'
 							g = 'E0'
 							b = 'E0'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -77,7 +79,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -93,6 +97,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '1'
 					}
@@ -110,6 +115,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '1'
 					}
@@ -127,6 +133,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.5'
 					}
@@ -144,6 +151,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.99408284'
 					}
@@ -161,6 +169,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0213903743'
 					}
@@ -178,14 +187,18 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
+						weight = null
 					}
 					WC {
 						color = RGBColor {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -201,6 +214,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0213903743'
 					}
@@ -209,7 +223,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -225,6 +241,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '1'
 					}
@@ -233,7 +250,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -249,6 +268,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '1'
 					}
@@ -257,7 +277,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -273,6 +295,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.5'
 					}
@@ -281,7 +304,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -297,6 +322,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.99408284'
 					}
@@ -305,7 +331,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -321,6 +349,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.5'
 					}
@@ -329,6 +358,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.5'
 					}
@@ -337,7 +367,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -353,6 +385,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '1'
 					}
@@ -361,6 +394,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '1'
 					}
@@ -369,7 +403,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -385,6 +421,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.36'
 					}
@@ -393,6 +430,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.08'
 					}
@@ -401,7 +439,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -417,6 +457,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0119926199'
 					}
@@ -425,6 +466,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.73800738'
 					}
@@ -433,7 +475,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -449,6 +493,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0555555556'
 					}
@@ -457,6 +502,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.037037037'
 					}
@@ -465,7 +511,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -481,6 +529,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0105485232'
 					}
@@ -489,6 +538,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.723628692'
 					}
@@ -497,7 +547,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -513,6 +565,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0186915888'
 					}
@@ -521,6 +574,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.981308411'
 					}
@@ -529,7 +583,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -545,6 +601,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0107719928'
 					}
@@ -553,6 +610,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.854578097'
 					}
@@ -561,7 +619,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -577,6 +637,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0498812352'
 					}
@@ -585,6 +646,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.250593824'
 					}
@@ -593,7 +655,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -609,6 +673,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.0416666667'
 					}
@@ -617,6 +682,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.958333333'
 					}
@@ -625,7 +691,9 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
+						weight = null
 					}
 				]
 			}
@@ -641,6 +709,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.1'
 					}
@@ -649,6 +718,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -657,6 +727,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.7'
 					}
@@ -674,6 +745,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -682,6 +754,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -690,6 +763,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.6'
 					}
@@ -707,6 +781,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.3'
 					}
@@ -715,6 +790,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -723,6 +799,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.5'
 					}
@@ -740,6 +817,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.4'
 					}
@@ -748,6 +826,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -756,6 +835,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.4'
 					}
@@ -773,6 +853,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.5'
 					}
@@ -781,6 +862,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -789,6 +871,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.3'
 					}
@@ -806,6 +889,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.6'
 					}
@@ -814,6 +898,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -822,6 +907,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -839,6 +925,7 @@ class DotColorListTests {
 							r = '31'
 							g = '32'
 							b = '33'
+							a = null
 						}
 						weight = '0.7'
 					}
@@ -847,6 +934,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C1'
 							b = 'C2'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -855,6 +943,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.1'
 					}
@@ -872,6 +961,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.8'
 					}
@@ -880,6 +970,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.1'
 					}
@@ -888,6 +979,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.1'
 					}
@@ -905,6 +997,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.1'
 					}
@@ -913,6 +1006,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.3'
 					}
@@ -921,6 +1015,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.6'
 					}
@@ -938,6 +1033,7 @@ class DotColorListTests {
 							r = '30'
 							g = '30'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.2'
 					}
@@ -946,6 +1042,7 @@ class DotColorListTests {
 							r = 'C0'
 							g = 'C0'
 							b = 'C0'
+							a = null
 						}
 						weight = '0.4'
 					}
@@ -954,6 +1051,7 @@ class DotColorListTests {
 							r = '80'
 							g = '80'
 							b = 'FF'
+							a = null
 						}
 						weight = '0.4'
 					}

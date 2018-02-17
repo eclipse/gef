@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -35,7 +35,8 @@ import com.google.common.collect.Lists;
  * org.eclipse.xpect.xtext.lib.util.EObjectFormatter java class.
  * 
  * Modification added: usage of System.lineSeparator instead of '\n' for line
- * separation; usage of tabs instead of two spaces for indentation.
+ * separation; usage of tabs instead of two spaces for indentation; format all
+ * EStructuralFeatures of an EObject, not only those that are explicitly set
  */
 class DotEObjectFormatter implements Function<EObject, String> {
 
@@ -179,7 +180,11 @@ class DotEObjectFormatter implements Function<EObject, String> {
 		if (feature instanceof EReference
 				&& ((EReference) feature).isContainer())
 			return false;
-		return object.eIsSet(feature);
+		/*
+		 * Format all EStructuralFeatures of an EObject, not only those that are
+		 * explicitly set (e.g. the default values are implicitly set)
+		 */
+		return /* object.eIsSet(feature) */ true;
 	}
 
 	protected boolean shouldFormat(EObject object, EStructuralFeature feature,

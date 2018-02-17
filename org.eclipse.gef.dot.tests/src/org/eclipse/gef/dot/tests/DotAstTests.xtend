@@ -41,6 +41,11 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
+						stmts = [
+						]
 					}
 				]
 			}
@@ -53,7 +58,11 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
 						type = 'digraph'
+						name = null
+						stmts = [
+						]
 					}
 				]
 			}
@@ -67,6 +76,10 @@ class DotAstTests {
 				graphs = [
 					DotGraph {
 						strict = 'true'
+						type = 'graph'
+						name = null
+						stmts = [
+						]
 					}
 				]
 			}
@@ -81,6 +94,9 @@ class DotAstTests {
 					DotGraph {
 						strict = 'true'
 						type = 'digraph'
+						name = null
+						stmts = [
+						]
 					}
 				]
 			}
@@ -93,11 +109,17 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
 						stmts = [
 							NodeStmt {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 						]
 					}
@@ -112,13 +134,19 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
 						stmts = [
 							NodeStmt {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								attrLists = [
 									AttrList {
+										attributes = [
+										]
 									}
 								]
 							}
@@ -135,18 +163,25 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
 						stmts = [
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
 										op = '--'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 						]
@@ -162,18 +197,25 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
 						type = 'digraph'
+						name = null
 						stmts = [
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 						]
@@ -189,21 +231,28 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
 						stmts = [
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
 										op = '--'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
 								]
 								attrLists = [
 									AttrList {
+										attributes = [
+										]
 									}
 								]
 							}
@@ -220,21 +269,28 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
 						type = 'digraph'
+						name = null
 						stmts = [
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
 								]
 								attrLists = [
 									AttrList {
+										attributes = [
+										]
 									}
 								]
 							}
@@ -251,10 +307,16 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
 						stmts = [
 							AttrStmt {
+								type = 'graph'
 								attrLists = [
 									AttrList {
+										attributes = [
+										]
 									}
 								]
 							}
@@ -271,11 +333,16 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
 						stmts = [
 							AttrStmt {
 								type = 'node'
 								attrLists = [
 									AttrList {
+										attributes = [
+										]
 									}
 								]
 							}
@@ -292,11 +359,16 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
+						name = null
 						stmts = [
 							AttrStmt {
 								type = 'edge'
 								attrLists = [
 									AttrList {
+										attributes = [
+										]
 									}
 								]
 							}
@@ -313,30 +385,42 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
 						type = 'digraph'
+						name = null
 						stmts = [
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '3'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 							AttrStmt {
@@ -372,24 +456,35 @@ class DotAstTests {
 							EdgeStmtNode {
 								node = NodeId {
 									name = 'foo'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsSubgraph {
+										op = '->'
 										subgraph = Subgraph {
+											name = null
 											stmts = [
 												NodeStmt {
 													node = NodeId {
 														name = 'bar'
+														port = null
 													}
+													attrLists = [
+													]
 												}
 												NodeStmt {
 													node = NodeId {
 														name = 'baz'
+														port = null
 													}
+													attrLists = [
+													]
 												}
 											]
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 						]
@@ -405,12 +500,14 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
 						type = 'digraph'
 						name = 'LabeledGraph'
 						stmts = [
 							NodeStmt {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								attrLists = [
 									AttrList {
@@ -426,6 +523,7 @@ class DotAstTests {
 							NodeStmt {
 								node = NodeId {
 									name = '2'
+									port = null
 								}
 								attrLists = [
 									AttrList {
@@ -441,21 +539,30 @@ class DotAstTests {
 							NodeStmt {
 								node = NodeId {
 									name = '3'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '4'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
 								]
@@ -473,11 +580,14 @@ class DotAstTests {
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '3'
+											port = null
 										}
 									}
 								]
@@ -495,13 +605,18 @@ class DotAstTests {
 							EdgeStmtNode {
 								node = NodeId {
 									name = '3'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '4'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 						]
@@ -517,46 +632,66 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
 						type = 'digraph'
 						name = 'SimpleDigraph'
 						stmts = [
 							NodeStmt {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '2'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '3'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 							EdgeStmtNode {
 								node = NodeId {
 									name = '2'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '3'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 						]
@@ -572,47 +707,66 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
+						type = 'graph'
 						name = 'SimpleGraph'
 						stmts = [
 							NodeStmt {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '2'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '3'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
 										op = '--'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
 										op = '--'
 										node = NodeId {
 											name = '3'
+											port = null
 										}
 									}
+								]
+								attrLists = [
 								]
 							}
 						]
@@ -628,6 +782,7 @@ class DotAstTests {
 			DotAst {
 				graphs = [
 					DotGraph {
+						strict = 'false'
 						type = 'digraph'
 						name = 'StyledGraph'
 						stmts = [
@@ -638,36 +793,54 @@ class DotAstTests {
 							NodeStmt {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '2'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '3'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '4'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							NodeStmt {
 								node = NodeId {
 									name = '5'
+									port = null
 								}
+								attrLists = [
+								]
 							}
 							EdgeStmtNode {
 								node = NodeId {
 									name = '1'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '2'
+											port = null
 										}
 									}
 								]
@@ -685,11 +858,14 @@ class DotAstTests {
 							EdgeStmtNode {
 								node = NodeId {
 									name = '2'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '3'
+											port = null
 										}
 									}
 								]
@@ -707,11 +883,14 @@ class DotAstTests {
 							EdgeStmtNode {
 								node = NodeId {
 									name = '3'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '4'
+											port = null
 										}
 									}
 								]
@@ -729,11 +908,14 @@ class DotAstTests {
 							EdgeStmtNode {
 								node = NodeId {
 									name = '3'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '5'
+											port = null
 										}
 									}
 								]
@@ -751,11 +933,14 @@ class DotAstTests {
 							EdgeStmtNode {
 								node = NodeId {
 									name = '4'
+									port = null
 								}
 								edgeRHS = [
 									EdgeRhsNode {
+										op = '->'
 										node = NodeId {
 											name = '5'
+											port = null
 										}
 									}
 								]
