@@ -87,6 +87,22 @@ class DotArrowTypeTests {
 			T__6 'r'
 			T__13 'crow'
 		''')
+	}	
+		
+	@Test def void testLexingCurve(){
+		"curve".assertLexing('''
+			T__14 'curve'
+		''')
+		
+		"lcurve".assertLexing('''
+			T__5 'l'
+			T__14 'curve'
+		''')
+		
+		"rcurve".assertLexing('''
+			T__6 'r'
+			T__14 'curve'
+		''')
 	}
 	
 	@Test def void testLexingDiamond(){
@@ -130,6 +146,22 @@ class DotArrowTypeTests {
 		"odot".assertLexing('''
 			T__4 'o'
 			T__17 'dot'
+		''')
+	}	
+		
+	@Test def void testLexingICurve(){
+		"icurve".assertLexing('''
+			T__15 'icurve'
+		''')
+		
+		"licurve".assertLexing('''
+			T__5 'l'
+			T__15 'icurve'
+		''')
+		
+		"ricurve".assertLexing('''
+			T__6 'r'
+			T__15 'icurve'
 		''')
 	}
 	
@@ -234,38 +266,6 @@ class DotArrowTypeTests {
 		"rvee".assertLexing('''
 			T__6 'r'
 			T__22 'vee'
-		''')
-	}
-	
-	@Test def void testLexingCurve(){
-		"curve".assertLexing('''
-			T__14 'curve'
-		''')
-		
-		"lcurve".assertLexing('''
-			T__5 'l'
-			T__14 'curve'
-		''')
-		
-		"rcurve".assertLexing('''
-			T__6 'r'
-			T__14 'curve'
-		''')
-	}
-	
-	@Test def void testLexingICurve(){
-		"icurve".assertLexing('''
-			T__15 'icurve'
-		''')
-		
-		"licurve".assertLexing('''
-			T__5 'l'
-			T__15 'icurve'
-		''')
-		
-		"ricurve".assertLexing('''
-			T__6 'r'
-			T__15 'icurve'
 		''')
 	}
 	
