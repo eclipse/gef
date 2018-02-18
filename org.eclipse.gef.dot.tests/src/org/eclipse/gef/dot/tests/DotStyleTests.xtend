@@ -33,6 +33,7 @@ class DotStyleTests {
 	
 	@Inject extension ParseHelper<Style>
 	@Inject extension ValidationTestHelper
+	@Inject extension DotEObjectFormatter
 	@Inject extension IAntlrTokenFileProvider
 
 	@Inject Lexer lexer
@@ -336,10 +337,661 @@ class DotStyleTests {
 			RULE_NAME 'bold'
 		''')
 	}
+	
+	@Test def void testAstNodeStyle01(){
+		"bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle02(){
+		"dashed".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle03(){
+		"diagonals".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'diagonals'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle04(){
+		"dotted".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dotted'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle05(){
+		"filled".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle06(){
+		"invis".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'invis'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle07(){
+		"radial".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'radial'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle08(){
+		"rounded".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'rounded'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle09(){
+		"solid".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'solid'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle10(){
+		"striped".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'striped'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle11(){
+		"wedged".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'wedged'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle12(){
+		"bold, dashed".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle13(){
+		"dashed, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle14(){
+		"bold, dotted".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'dotted'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle15(){
+		"dotted, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dotted'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle16(){
+		"filled, dashed".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle17(){
+		"dashed, filled".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle18(){
+		"bold, filled".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle19(){
+		"filled, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle20(){
+		"bold, diagonals".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'diagonals'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle21(){
+		"diagonals, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'diagonals'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle22(){
+		"diagonals, filled".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'diagonals'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle23(){
+		"filled, diagonals".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'diagonals'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle24(){
+		"diagonals, filled, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'diagonals'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle25(){
+		"filled, bold, diagonals".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'filled'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'diagonals'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstNodeStyle26(){
+		"setlinewidth(4)".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'setlinewidth'
+						args = [
+							'4'
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle01(){
+		"bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle02(){
+		"dashed".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle03(){
+		"dotted".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dotted'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle04(){
+		"invis".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'invis'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle05(){
+		"solid".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'solid'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle06(){
+		"tapered".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'tapered'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle07(){
+		"bold, dashed".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle08(){
+		"dashed, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dashed'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle09(){
+		"bold, dotted".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'dotted'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle10(){
+		"dotted, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'dotted'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle11(){
+		"bold, tapered".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'tapered'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
+	
+	@Test def void testAstEdgeStyle12(){
+		"tapered, bold".assertAst('''
+			Style {
+				styleItems = [
+					StyleItem {
+						name = 'tapered'
+						args = [
+						]
+					}
+					StyleItem {
+						name = 'bold'
+						args = [
+						]
+					}
+				]
+			}
+		''')
+	}
 
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
 		val actual = modelAsText.lex(lexer, antlrTokenFile)
 		expected.toString.trim.assertEquals(actual.toString.trim)
+	}
+	
+	private def assertAst(CharSequence modelAsText,
+			CharSequence expected) {
+		val ast = modelAsText.parse
+		ast.assertNoErrors
+		val astString = ast.apply
+		expected.toString.assertEquals(astString.toString)
 	}
 
 }
