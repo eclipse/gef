@@ -13,10 +13,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.io.FileReader
-import java.util.Map
-import org.antlr.runtime.ANTLRStringStream
-import org.antlr.runtime.Token
 import org.eclipse.gef.dot.internal.language.DotColorListInjectorProvider
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList
 import org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorListLexer
@@ -27,7 +23,7 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension com.google.common.io.CharStreams.*
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.lex
 import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
@@ -37,7 +33,7 @@ class DotColorListTests {
 	@Inject extension ParseHelper<ColorList>
 	@Inject extension ValidationTestHelper
 	@Inject extension DotEObjectFormatter
-
+	
 	@Test def void oneColorValueWithWeightLexerTest() {
 		"#3030FF;1".assertLexing('''
 			NumberSign '#'
@@ -1060,8 +1056,11 @@ class DotColorListTests {
 		''')
 	}
 	
-	def private assertLexing(CharSequence modelAsText, CharSequence expected) {
-		expected.toString.trim.assertEquals(modelAsText.lex.toString.trim)
+	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
+		val lexer = new CustomInternalDotColorListLexer
+		val tokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/InternalDotColorListLexer.tokens";
+		val actual = modelAsText.lex(lexer, tokenFilePath);
+		expected.toString.trim.assertEquals(actual.toString.trim)
 	}
 	
 	private def assertAst(CharSequence modelAsText,
@@ -1071,28 +1070,4 @@ class DotColorListTests {
 		val astString = ast.apply
 		expected.toString.assertEquals(astString.toString)
 	}
-	
-	private def String lex(CharSequence text) {
-		val names = tokenNames()
-		val lexer = new CustomInternalDotColorListLexer(new ANTLRStringStream(text.toString))
-		val result = newArrayList
-		while (true) {
-			val token = lexer.nextToken
-			if (token == Token.EOF_TOKEN)
-				return result.join(System.lineSeparator)
-			result += (names.get(token.type) ?: token.type) + " '" + token.text + "'"
-		}
-	}
-
-	private def Map<Integer, String> tokenNames() {
-		val file = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/InternalDotColorListLexer.tokens"
-		val result = <Integer, String>newLinkedHashMap
-		for (line : new FileReader(file).readLines) {
-			val s = line.split("=")
-			val name = s.get(0)
-			result.put(Integer.parseInt(s.get(1)), if(name.startsWith("KEYWORD")) "KEYWORD" else name)
-		}
-		result
-	}
-	
 }

@@ -13,10 +13,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.io.FileReader
-import java.util.Map
-import org.antlr.runtime.ANTLRStringStream
-import org.antlr.runtime.Token
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.gef.dot.internal.language.DotArrowTypeInjectorProvider
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType
@@ -25,12 +21,13 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.parser.antlr.IAntlrTokenFileProvider
+import org.eclipse.xtext.parser.antlr.Lexer
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension com.google.common.io.CharStreams.*
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.lex
 import static extension org.junit.Assert.*
-import org.eclipse.gef.dot.internal.language.parser.antlr.internal.InternalDotArrowTypeLexer
 
 @RunWith(XtextRunner)
 @InjectWith(DotArrowTypeInjectorProvider)
@@ -39,6 +36,9 @@ class DotArrowTypeTests {
 	@Inject extension ParseHelper<ArrowType>
 	@Inject extension ValidationTestHelper
 	@Inject extension DotEObjectFormatter
+	@Inject extension IAntlrTokenFileProvider
+	
+	@Inject Lexer lexer
 
 	@Test def void testLexingBox(){
 		"box".assertLexing('''
@@ -1360,30 +1360,8 @@ class DotArrowTypeTests {
 	}
 	
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		expected.toString.trim.assertEquals(modelAsText.lex.toString.trim)
-	}
-	
-	private def String lex(CharSequence text) {
-		val names = tokenNames()
-		val lexer = new InternalDotArrowTypeLexer(new ANTLRStringStream(text.toString))
-		val result = newArrayList
-		while (true) {
-			val token = lexer.nextToken
-			if (token == Token.EOF_TOKEN)
-				return result.join(System.lineSeparator)
-			result += (names.get(token.type) ?: token.type) + " '" + token.text + "'"
-		}
-	}
-	
-	private def Map<Integer, String> tokenNames() {
-		val file = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/internal/InternalDotArrowType.tokens"
-		val result = <Integer, String>newLinkedHashMap
-		for (line : new FileReader(file).readLines) {
-			val s = line.split("=")
-			val name = s.get(0)
-			result.put(Integer.parseInt(s.get(1)), if(name.startsWith("KEYWORD")) "KEYWORD" else name)
-		}
-		result
+		val actual = modelAsText.lex(lexer, antlrTokenFile);
+		expected.toString.trim.assertEquals(actual.toString.trim)
 	}
 	
 	def private ArrowType parseArrowType(String modelAsText){
