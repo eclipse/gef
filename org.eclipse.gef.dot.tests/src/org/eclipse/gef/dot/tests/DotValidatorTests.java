@@ -553,6 +553,24 @@ public class DotValidatorTests {
 	}
 
 	@Test
+	public void testInvalidHtmlLikeLabelParserProblem2() throws Exception {
+		String text = "graph {1[label = <<TABLE</TABLE>>]}";
+		String errorProneText = "<<TABLE</TABLE>>]}";
+		String errorMessage = "mismatched character '<EOF>' expecting '>'";
+		int offset = text.indexOf(errorProneText);
+		int length = errorProneText.length();
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getDotAst(), Diagnostic.SYNTAX_DIAGNOSTIC,
+				offset, length, errorMessage);
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
 	public void testInvalidHtmlLikeLabelTagIsNotClosedProperly() {
 		String text = "graph {1[label = <<BR/><FONT/>>]}";
 		String errorProneText = "FONT";
