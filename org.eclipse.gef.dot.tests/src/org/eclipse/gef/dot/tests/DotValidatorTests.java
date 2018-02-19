@@ -42,10 +42,10 @@ import com.google.inject.Inject;
 public class DotValidatorTests {
 
 	@Inject
-	ParseHelper<DotAst> parserHelper;
+	private ParseHelper<DotAst> parserHelper;
 
 	@Inject
-	ValidationTestHelper validationTestHelper;
+	private ValidationTestHelper validationTestHelper;
 
 	@Test
 	public void testSingleArrowShapes() {
@@ -545,7 +545,7 @@ public class DotValidatorTests {
 	}
 
 	@Test
-	public void testInvalidHtmlLikeLabelParserProblem() {
+	public void testInvalidHtmlLikeLabel01() {
 		String text = "graph {1[label = <<BR/><FONT>>]}";
 		String errorProneText = "<<BR/><FONT>>";
 		String errorMessage = "The value '<BR/><FONT>' is not a syntactically correct htmlLabel: Mismatched input '<EOF>' expecting RULE_TAG_START_CLOSE.";
@@ -553,7 +553,7 @@ public class DotValidatorTests {
 	}
 
 	@Test
-	public void testInvalidHtmlLikeLabelParserProblem2() throws Exception {
+	public void testInvalidHtmlLikeLabel02() throws Exception {
 		String text = "graph {1[label = <<TABLE</TABLE>>]}";
 		String errorProneText = "<<TABLE</TABLE>>]}";
 		String errorMessage = "mismatched character '<EOF>' expecting '>'";
