@@ -1058,7 +1058,7 @@ class DotColorListTests {
 	
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
 		val lexer = new CustomInternalDotColorListLexer
-		val tokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/InternalDotColorListLexer.tokens";
+		val tokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/CustomInternalDotColorListLexer.tokens";
 		val actual = modelAsText.lex(lexer, tokenFilePath)
 		expected.toString.trim.assertEquals(actual.toString.trim)
 	}
