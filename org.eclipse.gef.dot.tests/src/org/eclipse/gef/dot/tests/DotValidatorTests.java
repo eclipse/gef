@@ -570,6 +570,16 @@ public class DotValidatorTests {
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
 
+	@Test(timeout = 2000)
+	public void testInvalidHtmlLikeLabel03() throws Exception {
+		String text = DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL;
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		// verify that there are some reported issues
+		Assert.assertTrue(validationTestHelper.validate(dotAst).size() > 0);
+	}
+
 	@Test
 	public void testInvalidHtmlLikeLabelTagIsNotClosedProperly() {
 		String text = "graph {1[label = <<BR/><FONT/>>]}";

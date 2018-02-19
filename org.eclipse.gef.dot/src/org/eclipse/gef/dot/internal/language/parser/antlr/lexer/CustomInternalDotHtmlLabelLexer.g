@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,7 +8,8 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *    
+ *     Tamas Miklossy   (itemis AG) - avoid lexing in infinite loop (bug #529703)
+ *
  *******************************************************************************/
 lexer grammar CustomInternalDotHtmlLabelLexer;
 
@@ -26,8 +27,8 @@ package org.eclipse.gef.dot.internal.language.parser.antlr.lexer;
 
 RULE_HTML_COMMENT: { !tagMode }?=> ( '<!--' (~('-')|'-' ~('-')|'-' '-' ~('>'))* '-->' );
 
-RULE_TAG_START_CLOSE: { !tagMode }?=> ( '</' ) { tagMode = true; };
-RULE_TAG_START      : { !tagMode }?=> ( '<'  ) { tagMode = true; };
+RULE_TAG_START_CLOSE: ( '</' ) { tagMode = true; };
+RULE_TAG_START      : ( '<'  ) { tagMode = true; };
 RULE_TAG_END        : {  tagMode }?=> ( '>'  ) { tagMode = false; };
 RULE_TAG_END_CLOSE  : {  tagMode }?=> ( '/>' ) { tagMode = false; };
 

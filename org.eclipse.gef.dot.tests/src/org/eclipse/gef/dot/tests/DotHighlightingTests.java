@@ -175,6 +175,16 @@ public class DotHighlightingTests extends AbstractEditorTest {
 		test(textWidget, "-->", SWT.NORMAL, 63, 95, 191);
 	}
 
+	@Test
+	public void incomplete_htmlLabel() {
+		String text = DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL;
+
+		StyledText textWidget = getTextWidget(text);
+
+		// test highlighting of Html tag
+		test(textWidget, "<", SWT.NORMAL, 63, 127, 127);
+	}
+
 	private StyledText getTextWidget(String content) {
 		XtextEditor editor = null;
 		try {

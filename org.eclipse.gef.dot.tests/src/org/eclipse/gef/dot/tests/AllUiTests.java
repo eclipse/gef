@@ -31,7 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotAstTests.class, DotHoverTests.class, Dot2ZestGraphCopierTests.class,
 		DotHyperlinkNavigationTests.class, DotPortPosTests.class,
 		DotRenameRefactoringTests.class, DotMarkingOccurrencesTests.class,
-		DotAttributeActiveAnnotationTests.class, DotColorListTests.class})
+		DotAttributeActiveAnnotationTests.class, DotColorListTests.class,
+		DotHtmlLabelLexerTests.class })
 public class AllUiTests {
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -143,6 +143,28 @@ public class DotHtmlLabelTests {
 	@Test
 	public void test_self_closing_tags() {
 		parse(DotTestHtmlLabels.SELF_CLOSING_TAGS);
+	}
+
+	@Test(timeout = 2000)
+	public void test_incomplete_tag01() {
+		String text = "<TABLE</TABLE>";
+		try {
+			parseHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test(timeout = 2000)
+	public void test_incomplete_tag02() {
+		String text = "<T</TABLE>";
+		try {
+			parseHelper.parse(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 
 	@Test

@@ -1538,6 +1538,18 @@ class DotTestGraphs {
 		}
 	'''
 	
+	public static val INCOMPLETE_HTML_LIKE_LABEL = '''
+		digraph structs {
+			node [shape=plaintext]
+			struct [label=<
+				<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" bgcolor="blue">
+					<TR><TD><fonttext2</font></TD></TR>
+				</TABLE>>];
+			// need something after this to cause error
+			struct:w -> struct:e;
+		}
+	'''
+	
 	public static val CLUSTERS = '''
 		digraph {
 			subgraph cluster1 {
