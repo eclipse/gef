@@ -152,7 +152,14 @@ class DotHtmlLabelLexerTests {
 			'
 		''')
 	}
-
+	
+	@Test(timeout = 2000)
+	def void testLexing05(){
+		'''"text"'''
+		.assertLexing('''
+			RULE_TEXT '"text"'
+		''')
+	}
 	
 	@Test(timeout = 2000)
 	def void testLexing06(){

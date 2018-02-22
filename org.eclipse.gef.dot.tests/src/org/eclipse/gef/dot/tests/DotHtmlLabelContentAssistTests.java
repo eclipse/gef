@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -246,6 +246,14 @@ public class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 				.assertTextAtCursorPosition(11, "CENTER", "LEFT", "RIGHT")
 				.applyProposal(11, "CENTER")
 				.expectContent("<BR ALIGN=\"CENTER\" />");
+	}
+
+	@Test
+	public void attributeValuesOfTagBR_ALIGN_single_quoted() throws Exception {
+		newBuilder().append("<BR ALIGN='' />")
+				.assertTextAtCursorPosition(11, "CENTER", "LEFT", "RIGHT")
+				.applyProposal(11, "CENTER")
+				.expectContent("<BR ALIGN='CENTER' />");
 	}
 
 	@Test

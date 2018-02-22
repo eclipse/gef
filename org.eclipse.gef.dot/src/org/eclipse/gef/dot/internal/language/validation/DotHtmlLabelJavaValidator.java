@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -219,8 +219,8 @@ public class DotHtmlLabelJavaValidator extends
 	@Check
 	public void checkAttributeValueIsValid(HtmlAttr attr) {
 		String htmlAttributeName = attr.getName();
-		// trim the leading and trailing double quotes if necessary
-		String htmlAttributeValue = removeDoubleQuotes(attr.getValue());
+		// trim the leading and trailing (single or double) quotes if necessary
+		String htmlAttributeValue = removeQuotes(attr.getValue());
 		EObject container = attr.eContainer();
 		if (container instanceof HtmlTag) {
 			HtmlTag tag = (HtmlTag) container;
@@ -255,11 +255,11 @@ public class DotHtmlLabelJavaValidator extends
 		}
 	}
 
-	private String removeDoubleQuotes(String value) {
-		if (value.startsWith("\"")) {
+	private String removeQuotes(String value) {
+		if (value.startsWith("\"") || value.startsWith("'")) {
 			value = value.substring(1);
 		}
-		if (value.endsWith("\"")) {
+		if (value.endsWith("\"") || value.endsWith("'")) {
 			value = value.substring(0, value.length() - 1);
 		}
 		return value;

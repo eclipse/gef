@@ -41,6 +41,7 @@ class DotHtmlLabelContentAssistLexerTests {
 		RULE_WS ' '
 		RULE_ID 'b'
 		RULE_ASSIGN '='
+		0 '"'
 		''')
 	}
 		
@@ -54,6 +55,7 @@ class DotHtmlLabelContentAssistLexerTests {
 		RULE_WS ' '
 		RULE_ID 'ALIGN'
 		RULE_ASSIGN '='
+		0 '"'
 		''')
 	}
 	

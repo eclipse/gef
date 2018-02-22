@@ -18,7 +18,7 @@ package org.eclipse.gef.dot.internal.language.parser.antlr.lexer;
 
     // Hack: Use our own Lexer superclass by means of import.
     // Currently there is no other way to specify the superclass for the lexer.
-    import org.eclipse.xtext.parser.antlr.Lexer;
+    import org.eclipse.gef.dot.internal.language.parser.antlr.lexer.Lexer;
 }
 
 @members {
@@ -33,8 +33,8 @@ RULE_TAG_END        : {  tagMode }?=> ( '>'  ) { tagMode = false; };
 RULE_TAG_END_CLOSE  : {  tagMode }?=> ( '/>' ) { tagMode = false; };
 
 RULE_ASSIGN    : { tagMode }?=> ( '=' );
-RULE_ATTR_VALUE: { tagMode }?=> ( '"' ( options {greedy=false;} : . )* '"' );
+RULE_ATTR_VALUE: { tagMode }?=> ('"' ~('"')* '"'|'\'' ~('\'')* '\'');
 RULE_ID        : { tagMode }?=> ( ('_'|'a'..'z'|'A'..'Z') ('_'|'-'|'a'..'z'|'A'..'Z'|'0'..'9')* );
 RULE_WS        : { tagMode }?=> ( (' '|'\t'|'\n'|'\r'|'\f')+ );
 
-RULE_TEXT: { !tagMode }?=> ( ~(('<'|'"'))+ );
+RULE_TEXT: { !tagMode }?=> ( ~('<')+ );

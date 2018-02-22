@@ -227,8 +227,16 @@ class DotTestHtmlLabels {
 			</TR>
 		</TABLE>
 	'''
+	
+	public static val TAG_WITH_SINGLE_QUTOED_ATTRIBUTE_VALUE = '''
+		<BR ALIGN='LEFT'/>
+	'''
 
-	public static val TAG_WITH_ATTRIBUTE = '''
+	public static val TAG_WITH_DOUBLE_QUOTED_ATTRIBUTE_VALUE = '''
 		<BR ALIGN="LEFT"/>
+	'''
+
+	public static val QUOTES_IN_HTML_TEXT = '''
+		"text"
 	'''
 }

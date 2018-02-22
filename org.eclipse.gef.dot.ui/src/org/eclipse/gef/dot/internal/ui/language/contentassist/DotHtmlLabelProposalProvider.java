@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Tamas Miklossy   (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
@@ -146,9 +147,10 @@ public class DotHtmlLabelProposalProvider extends
 		if (prefix == null) {
 			return false;
 		}
-		// consider a double quote as a valid prefix for the attribute values
+		// consider a single quote / double quote as a valid prefix for the
+		// attribute values
 		if (context.getCurrentModel() instanceof HtmlAttr
-				&& prefix.startsWith("\"")) { //$NON-NLS-1$
+				&& (prefix.startsWith("\"") || prefix.startsWith("'"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			prefix = prefix.substring(1);
 			if (!context.getMatcher().isCandidateMatchingPrefix(proposal,
 					prefix)) {
@@ -277,9 +279,11 @@ public class DotHtmlLabelProposalProvider extends
 		for (String proposal : proposals) {
 			ICompletionProposal completionProposal = createCompletionProposal(
 					proposal, context);
-			if (context.getCurrentNode().getText().startsWith("\"") //$NON-NLS-1$
+			String text = context.getCurrentNode().getText();
+			if ((text.startsWith("\"") || text.startsWith("'"))//$NON-NLS-1$ //$NON-NLS-2$
 					&& completionProposal instanceof ConfigurableCompletionProposal) {
-				// ensure that the double quote at the beginning of an attribute
+				// ensure that the single quote / double quote at the beginning
+				// of an attribute
 				// value is not overridden when applying the proposal
 				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
 				configurableCompletionProposal.setReplacementOffset(

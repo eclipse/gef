@@ -90,8 +90,13 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test(timeout = 2000)
-	public void test_tag_with_attribute() {
-		parse(DotTestHtmlLabels.TAG_WITH_ATTRIBUTE);
+	public void test_tag_with_single_quoted_attribute_value() {
+		parse(DotTestHtmlLabels.TAG_WITH_SINGLE_QUTOED_ATTRIBUTE_VALUE);
+	}
+
+	@Test(timeout = 2000)
+	public void test_tag_with_double_quoted_attribute_value() {
+		parse(DotTestHtmlLabels.TAG_WITH_DOUBLE_QUOTED_ATTRIBUTE_VALUE);
 	}
 
 	@Test
@@ -143,6 +148,11 @@ public class DotHtmlLabelTests {
 	@Test
 	public void test_self_closing_tags() {
 		parse(DotTestHtmlLabels.SELF_CLOSING_TAGS);
+	}
+
+	@Test
+	public void test_quotes_in_html_text() {
+		parse(DotTestHtmlLabels.QUOTES_IN_HTML_TEXT);
 	}
 
 	@Test(timeout = 2000)
