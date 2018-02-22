@@ -96,9 +96,9 @@ public class DotHighlightingTests extends AbstractEditorTest {
 	// semantic highlighting test cases
 	@Test
 	public void graphName() {
-		String text = DotTestGraphs.EXTRACTED_01;
+		String text = DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME;
 		StyledText textWidget = getTextWidget(text);
-		test(textWidget, "name", SWT.NORMAL, 0, 0, 0);
+		test(textWidget, "G", SWT.NORMAL, 0, 0, 0);
 	}
 
 	@Test
