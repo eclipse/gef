@@ -36,7 +36,7 @@ public class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 	private Injector injector;
 
 	@Inject
-	IResourceFactory resourceFactory;
+	private IResourceFactory resourceFactory;
 
 	@Before
 	public void before() {
