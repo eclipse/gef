@@ -24,40 +24,156 @@ import org.junit.Test
  * @author Fabian Steeg (fsteeg)
  */
 class DotExtractorTests {
+	
 	@Test def void testDotExtraction01() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_01, DotTestGraphs.EXTRACTED_01)
+		'''
+			/** 
+				Javadoc stuff 
+					graph name {
+						a;
+						b;
+						a--b
+					} 
+				and more 
+			*/
+	 	'''
+	 	.testDotExtraction(
+	 	'''
+			graph name {
+						a;
+						b;
+						a--b
+					}
+		''')
 	}
 
 	@Test def void testDotExtraction02() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_02, DotTestGraphs.EXTRACTED_02)
+		'''
+			/** Javadoc stuff 
+			graph long_name {
+				a;
+				b;
+				a--b
+			} and more */
+		'''
+		.testDotExtraction(
+		'''
+			graph long_name {
+				a;
+				b;
+				a--b
+			}
+		''')
 	}
 
 	@Test def void testDotExtraction03() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_03, DotTestGraphs.EXTRACTED_03)
+		'''
+			/* Java block comment 
+				stuff 
+			digraph {
+				a;
+				b;
+				a->b
+			} and more */
+		'''
+		.testDotExtraction(
+		'''
+			digraph {
+				a;
+				b;
+				a->b
+			}
+		''')
 	}
 
 	@Test def void testDotExtraction04() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_04, DotTestGraphs.EXTRACTED_04)
+		'''
+			Stuff about a graph and then 
+			graph {
+				a;
+				b;
+				a--b
+			} and more 
+		'''
+	.testDotExtraction(
+		'''
+			graph {
+				a;
+				b;
+				a--b
+			}
+		''')
 	}
 
 	@Test def void testDotExtraction05() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_05, DotTestGraphs.EXTRACTED_05)
+		'''
+			Stuff about a graph and then with breaks 
+				graph{
+					a
+					b
+					a--b
+				} and more 
+		'''
+		.testDotExtraction(
+		'''
+			graph{
+					a
+					b
+					a--b
+				}
+		''')
 	}
 
 	@Test def void testDotExtraction06() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_06, DotTestGraphs.EXTRACTED_06)
+		'''
+			Stuff about a graph and then digraph{a;b;a->b} and more 
+		'''
+		.testDotExtraction(
+		'''
+			digraph{a;b;a->b}
+		''')
 	}
 
 	@Test def void testDotExtraction07() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_07, DotTestGraphs.EXTRACTED_07)
+		'''
+			Stuff about a graph and then 
+			digraph {
+				subgraph cluster_0 {
+					1->2
+				}; 
+				1->3
+			} and more 
+		'''
+		.testDotExtraction(
+		'''
+			digraph {
+				subgraph cluster_0 {
+					1->2
+				}; 
+				1->3
+			}
+		''')
 	}
 
 	@Test def void testDotExtraction08() {
-		testDotExtraction(DotTestGraphs.EMBEDDED_08, DotTestGraphs.EXTRACTED_08)
+		'''
+			Stuff about a graph then 
+				graph {
+					node[shape=record];
+					1[label="{Text|Text}"]
+				} and more
+		'''
+		.testDotExtraction(
+		'''
+			graph {
+					node[shape=record];
+					1[label="{Text|Text}"]
+				}
+		''')
 	}
 
-	def private void testDotExtraction(String embedded, String expected) {
-		var String extracted = new DotExtractor(embedded).getDotString()
-		Assert.assertEquals(String.format("Incorrect DOT extraction for '%s';", embedded), expected.trim(), extracted)
+	def private void testDotExtraction(CharSequence embedded, CharSequence expected) {
+		var extracted = new DotExtractor(embedded.toString).dotString
+		Assert.assertEquals(String.format("Incorrect DOT extraction for '%s';", embedded), expected.toString.trim, extracted)
 	}
 }
