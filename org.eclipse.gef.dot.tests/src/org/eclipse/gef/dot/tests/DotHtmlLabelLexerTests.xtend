@@ -12,10 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
+import javax.inject.Inject
+import javax.inject.Named
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelInjectorProvider
-import org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotHtmlLabelLexer
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.parser.antlr.Lexer
+import org.eclipse.xtext.parser.antlr.LexerBindings
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -25,6 +28,8 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelInjectorProvider)
 class DotHtmlLabelLexerTests {
+
+	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
 
 	@Test
 	def void testLexing01(){
@@ -224,7 +229,6 @@ class DotHtmlLabelLexerTests {
 	}
 
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val lexer = new CustomInternalDotHtmlLabelLexer
 		val tokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/CustomInternalDotHtmlLabelLexer.tokens";
 		val actual = modelAsText.lex(lexer, tokenFilePath)
 		expected.toString.trim.assertEquals(actual.toString.trim)

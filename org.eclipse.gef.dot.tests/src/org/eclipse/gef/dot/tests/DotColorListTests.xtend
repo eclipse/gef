@@ -13,13 +13,15 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
+import javax.inject.Named
 import org.eclipse.gef.dot.internal.language.DotColorListInjectorProvider
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList
-import org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorListLexer
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.parser.antlr.Lexer
+import org.eclipse.xtext.parser.antlr.LexerBindings
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -30,6 +32,7 @@ import static extension org.junit.Assert.*
 @InjectWith(DotColorListInjectorProvider)
 class DotColorListTests {
 	
+	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
 	@Inject extension ParseHelper<ColorList>
 	@Inject extension ValidationTestHelper
 	@Inject extension DotEObjectFormatter
@@ -1057,7 +1060,6 @@ class DotColorListTests {
 	}
 	
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val lexer = new CustomInternalDotColorListLexer
 		val tokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/CustomInternalDotColorListLexer.tokens";
 		val actual = modelAsText.lex(lexer, tokenFilePath)
 		expected.toString.trim.assertEquals(actual.toString.trim)

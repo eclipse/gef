@@ -12,13 +12,24 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer.CustomContentAssistInternalDotHtmlLabelLexer
+import javax.inject.Inject
+import javax.inject.Named
+import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.ui.LexerUIBindings
+import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer
+import org.junit.Test
+import org.junit.runner.RunWith
 
 import static extension org.eclipse.gef.dot.tests.DotTestUtils.lex
 import static extension org.junit.Assert.*
-import org.junit.Test
 
+@RunWith(XtextRunner)
+@InjectWith(DotHtmlLabelUiInjectorProvider)
 class DotHtmlLabelContentAssistLexerTests {
+	
+	@Inject @Named(LexerUIBindings.CONTENT_ASSIST) Lexer lexer
 	
 	@Test(timeout = 2000)
 	def void testLexing01() {
@@ -65,7 +76,6 @@ class DotHtmlLabelContentAssistLexerTests {
 	}
 	
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val lexer = new CustomContentAssistInternalDotHtmlLabelLexer
 		val tokenFilePath = "../org.eclipse.gef.dot.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer/CustomContentAssistInternalDotHtmlLabelLexer.tokens";
 		val actual = modelAsText.lex(lexer, tokenFilePath)
 		expected.toString.trim.assertEquals(actual.toString.trim)

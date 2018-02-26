@@ -12,13 +12,24 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotHtmlLabelLexer
+import javax.inject.Inject
+import javax.inject.Named
+import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.parser.antlr.Lexer
+import org.eclipse.xtext.ui.LexerUIBindings
+import org.junit.Test
+import org.junit.runner.RunWith
 
 import static extension org.eclipse.gef.dot.tests.DotTestUtils.lex
 import static extension org.junit.Assert.*
-import org.junit.Test
 
+@RunWith(XtextRunner)
+@InjectWith(DotHtmlLabelUiInjectorProvider)
 class DotHtmlLabelHighlightingLexerTests {
+	
+	@Inject @Named(LexerUIBindings.HIGHLIGHTING) Lexer lexer
 	
 	@Test(timeout = 2000)
 	def void testLexing01() {
@@ -67,7 +78,6 @@ class DotHtmlLabelHighlightingLexerTests {
 	}
 	
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val lexer = new CustomHighlightingInternalDotHtmlLabelLexer
 		val tokenFilePath = "../org.eclipse.gef.dot.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/highlighting/antlr/lexer/CustomHighlightingInternalDotHtmlLabelLexer.tokens";
 		val actual = modelAsText.lex(lexer, tokenFilePath)
 		expected.toString.trim.assertEquals(actual.toString.trim)
