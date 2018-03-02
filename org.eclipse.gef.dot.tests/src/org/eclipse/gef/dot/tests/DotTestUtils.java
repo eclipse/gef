@@ -650,7 +650,7 @@ public final class DotTestUtils {
 	 * The implementation of the following helper methods is mainly taken from
 	 * the Eclipse Xpect project org.eclipse.xpect.tests.LexerTest class.
 	 */
-	static String lex(CharSequence text, Lexer lexer, String tokensFilePath) {
+	static String lex(Lexer lexer, String tokensFilePath, CharSequence text) {
 		FileReader tokensFileReader = null;
 		try {
 			tokensFileReader = new FileReader(tokensFilePath);
@@ -660,23 +660,23 @@ public final class DotTestUtils {
 
 		Map<Integer, String> tokenNames = tokenNames(tokensFileReader);
 
-		String lexerResult = getLexerResult(text, lexer, tokenNames);
+		String lexerResult = getLexerResult(lexer, tokenNames, text);
 		return lexerResult;
 	}
 
-	static String lex(CharSequence text, Lexer lexer,
-			InputStream tokensStream) {
+	static String lex(Lexer lexer, InputStream tokensStream,
+			CharSequence text) {
 		InputStreamReader tokensStreamReader = new InputStreamReader(
 				tokensStream);
 
 		Map<Integer, String> tokenNames = tokenNames(tokensStreamReader);
 
-		String lexerResult = getLexerResult(text, lexer, tokenNames);
+		String lexerResult = getLexerResult(lexer, tokenNames, text);
 		return lexerResult;
 	}
 
-	private static String getLexerResult(CharSequence text, Lexer lexer,
-			Map<Integer, String> tokenNames) {
+	private static String getLexerResult(Lexer lexer,
+			Map<Integer, String> tokenNames, CharSequence text) {
 		lexer.setCharStream(new ANTLRStringStream(text.toString()));
 		List<String> result = new ArrayList<>();
 		while (true) {

@@ -1360,7 +1360,7 @@ class DotArrowTypeTests {
 	}
 	
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val actual = modelAsText.lex(lexer, antlrTokenFile)
+		val actual = lexer.lex(antlrTokenFile, modelAsText)
 		expected.toString.trim.assertEquals(actual.toString.trim)
 	}
 	

@@ -236,8 +236,8 @@ class DotHtmlLabelLexerTests {
 	}
 
 	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val tokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/CustomInternalDotHtmlLabelLexer.tokens";
-		val actual = modelAsText.lex(lexer, tokenFilePath)
+		val antlrTokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/CustomInternalDotHtmlLabelLexer.tokens";
+		val actual = lexer.lex(antlrTokenFilePath, modelAsText)
 		expected.toString.trim.assertEquals(actual.toString.trim)
 	}
 }
