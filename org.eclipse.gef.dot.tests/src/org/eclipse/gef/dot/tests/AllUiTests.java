@@ -33,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotRenameRefactoringTests.class, DotMarkingOccurrencesTests.class,
 		DotAttributeActiveAnnotationTests.class, DotColorListTests.class,
 		DotHtmlLabelLexerTests.class, DotHtmlLabelContentAssistLexerTests.class,
-		DotHtmlLabelHighlightingLexerTests.class, DotLexerTests.class })
+		DotHtmlLabelHighlightingLexerTests.class, DotLexerTests.class,
+		DotFormatterTests.class, DotHtmlLabelFormatterTests.class })
 public class AllUiTests {
 
 }

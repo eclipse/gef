@@ -10,13 +10,16 @@
  *     Fabian Steeg    - intial Xtext generation (see bug #277380)
  *     Alexander Nyßen (itemis AG) - initial implementation (value converter binding)
  *     Tamas Miklossy  (itemis AG) - request for static injection (#498324)
+ *                                 - add binding for node model streamer (bug #532216)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.language.formatting.DotNodeModelStreamer;
 import org.eclipse.gef.dot.internal.language.terminals.DotTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.formatting.INodeModelStreamer;
 
 import com.google.inject.Binder;
 
@@ -30,6 +33,10 @@ public class DotRuntimeModule
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
 		return DotTerminalConverters.class;
+	}
+
+	public Class<? extends INodeModelStreamer> bindINodeModelStreamer() {
+		return DotNodeModelStreamer.class;
 	}
 
 	@Override
