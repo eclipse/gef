@@ -31,7 +31,12 @@ import org.eclipse.gef.zest.fx.ZestProperties;
 public class Dot2ZestGraphCopier extends GraphCopier {
 
 	public Dot2ZestGraphCopier() {
-		super(new Dot2ZestAttributesConverter());
+		this(new Dot2ZestAttributesConverter());
+	}
+
+	public Dot2ZestGraphCopier(
+			Dot2ZestAttributesConverter dot2ZestAttributesConverter) {
+		super(dot2ZestAttributesConverter);
 	}
 
 	@Override

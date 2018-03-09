@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -77,6 +77,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.util.Modules;
 
 import javafx.application.Platform;
@@ -105,7 +106,8 @@ public class DotGraphView extends ZestFxUiView {
 	private File currentFile = null;
 	private Link resourceLabel = null;
 
-	private Dot2ZestGraphCopier dot2ZestGraphCopier = new Dot2ZestGraphCopier();
+	@Inject
+	private Dot2ZestGraphCopier dot2ZestGraphCopier;
 
 	private IPropertyChangeListener preferenceChangeListener = new IPropertyChangeListener() {
 		@Override
