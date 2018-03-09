@@ -22,12 +22,10 @@ import org.junit.Rule
 import org.junit.Test
 
 import static extension org.junit.Assert.*
-import org.junit.Ignore
 
 /*
  * Test class containing test cases for the {@link Dot2ZestGraphCopier} class.
  */
-@Ignore("The CI Server (Travis/Hudson) calculates other position information")
 class Dot2ZestGraphCopierTests {
 
 	/**
