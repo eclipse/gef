@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -76,6 +76,58 @@ class DotTestHtmlLabels {
 				</tr>
 			</table>
 		</font>
+	'''
+	
+	public static val I_TAG_CONTAINS_TABLE_TAG = '''
+		<!--
+			Html table with italic syled text
+		-->
+		<i>
+			<table>
+				<tr>
+					<td>text</td>
+				</tr>
+			</table>
+		</i>
+	'''
+	
+	public static val B_TAG_CONTAINS_TABLE_TAG = '''
+		<!--
+			Html table with bold syled text
+		-->
+		<b>
+			<table>
+				<tr>
+					<td>text</td>
+				</tr>
+			</table>
+		</b>
+	'''
+	
+	public static val U_TAG_CONTAINS_TABLE_TAG = '''
+		<!--
+			Html table with underlined text
+		-->
+		<u>
+			<table>
+				<tr>
+					<td>text</td>
+				</tr>
+			</table>
+		</u>
+	'''
+
+	public static val O_TAG_CONTAINS_TABLE_TAG = '''
+		<!--
+			Html table with overlined text
+		-->
+		<o>
+			<table>
+				<tr>
+					<td>text</td>
+				</tr>
+			</table>
+		</o>
 	'''
 
 	public static val FONT_TAG_WITH_POINT_SIZE_ATTRIBUTE = '''

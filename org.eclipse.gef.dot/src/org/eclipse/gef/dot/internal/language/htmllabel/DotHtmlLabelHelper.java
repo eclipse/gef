@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -43,16 +43,16 @@ public class DotHtmlLabelHelper {
 				"TABLE", "BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
 
 		validTags("I", // allowed tags between <I> and </I>
-				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+				"TABLE", "BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
 
 		validTags("B", // allowed tags between <B> and </B>
-				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+				"TABLE", "BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
 
 		validTags("U", // allowed tags between <U> and </U>
-				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+				"TABLE", "BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
 
 		validTags("O", // allowed tags between <O> and </O>
-				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
+				"TABLE", "BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");
 
 		validTags("SUB", // allowed tags between <SUB> and </SUB>
 				"BR", "FONT", "I", "B", "U", "O", "SUB", "SUP", "S");

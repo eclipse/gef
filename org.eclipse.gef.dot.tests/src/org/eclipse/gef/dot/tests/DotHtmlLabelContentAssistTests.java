@@ -70,28 +70,28 @@ public class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 	public void childrenTagOfTagI() throws Exception {
 		newBuilder().append("<I></I>").assertTextAtCursorPosition(3, "<BR/>",
 				"<FONT></FONT>", "<I></I>", "<B></B>", "<U></U>", "<O></O>",
-				"<SUB></SUB>", "<SUP></SUP>", "<S></S>");
+				"<SUB></SUB>", "<SUP></SUP>", "<S></S>", "<TABLE></TABLE>");
 	}
 
 	@Test
 	public void childrenTagOfTagB() throws Exception {
 		newBuilder().append("<B></B>").assertTextAtCursorPosition(3, "<BR/>",
 				"<FONT></FONT>", "<I></I>", "<B></B>", "<U></U>", "<O></O>",
-				"<SUB></SUB>", "<SUP></SUP>", "<S></S>");
+				"<SUB></SUB>", "<SUP></SUP>", "<S></S>", "<TABLE></TABLE>");
 	}
 
 	@Test
 	public void childrenTagOfTagU() throws Exception {
 		newBuilder().append("<U></U>").assertTextAtCursorPosition(3, "<BR/>",
 				"<FONT></FONT>", "<I></I>", "<B></B>", "<U></U>", "<O></O>",
-				"<SUB></SUB>", "<SUP></SUP>", "<S></S>");
+				"<SUB></SUB>", "<SUP></SUP>", "<S></S>", "<TABLE></TABLE>");
 	}
 
 	@Test
 	public void childrenTagOfTagO() throws Exception {
 		newBuilder().append("<O></O>").assertTextAtCursorPosition(3, "<BR/>",
 				"<FONT></FONT>", "<I></I>", "<B></B>", "<U></U>", "<O></O>",
-				"<SUB></SUB>", "<SUP></SUP>", "<S></S>");
+				"<SUB></SUB>", "<SUP></SUP>", "<S></S>", "<TABLE></TABLE>");
 	}
 
 	@Test
