@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -41,7 +41,7 @@ public class DotEscStringTests {
 	private ValidationTestHelper validationTestHelper;
 
 	@Test
-	public void test_empty() throws Throwable {
+	public void test_empty() {
 		String text = "";
 		EscString ast = parse(text);
 		EList<JustifiedText> segments = ast.getLines();
@@ -49,7 +49,7 @@ public class DotEscStringTests {
 	}
 
 	@Test
-	public void test_text_with_escape_sequences() throws Throwable {
+	public void test_text_with_escape_sequences() {
 		String text = "Some text containing \\arbitrary \\escape \\sequences.";
 		EscString ast = parse(text);
 		EList<JustifiedText> segments = ast.getLines();
@@ -63,7 +63,7 @@ public class DotEscStringTests {
 	}
 
 	@Test
-	public void test_justifications() throws Throwable {
+	public void test_justifications() {
 		String text = "center-justified\\nleft-justified\\lright-justified\\rdefault-justified";
 		EscString ast = parse(text);
 		EList<JustifiedText> segments = ast.getLines();

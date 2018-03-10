@@ -50,42 +50,42 @@ public class DotHtmlLabelTests {
 	 ************************************************************************************************************
 	 */
 	@Test
-	public void test_tag_case_insensitivity() throws Throwable {
+	public void test_tag_case_insensitivity() {
 		parse(DotTestHtmlLabels.MIXED_LOWER_CASE_AND_UPPER_CASE);
 	}
 
 	@Test
-	public void test_comment() throws Throwable {
+	public void test_comment() {
 		parse(DotTestHtmlLabels.COMMENT);
 	}
 
 	@Test
-	public void test_comment_with_hyphen() throws Throwable {
+	public void test_comment_with_hyphen() {
 		parse(DotTestHtmlLabels.COMMENT_WITH_HYPHEN);
 	}
 
 	@Test
-	public void test_comment_with_nested_tags() throws Throwable {
+	public void test_comment_with_nested_tags() {
 		parse(DotTestHtmlLabels.COMMENT_WITH_NESTED_TAG);
 	}
 
 	@Test
-	public void test_comment_with_open_tag() throws Throwable {
+	public void test_comment_with_open_tag() {
 		parse(DotTestHtmlLabels.COMMENT_WITH_OPEN_TAG);
 	}
 
 	@Test
-	public void test_comment_with_close_tag() throws Throwable {
+	public void test_comment_with_close_tag() {
 		parse(DotTestHtmlLabels.COMMENT_WITH_CLOSE_TAG);
 	}
 
 	@Test
-	public void test_comment_within_table_tag() throws Throwable {
+	public void test_comment_within_table_tag() {
 		parse(DotTestHtmlLabels.COMMENT_WITHIN_TABLE_TAG);
 	}
 
 	@Test
-	public void test_comment_within_text() throws Throwable {
+	public void test_comment_within_text() {
 		parse(DotTestHtmlLabels.COMMENT_WITHIN_TEXT);
 	}
 
@@ -110,7 +110,7 @@ public class DotHtmlLabelTests {
 	}
 
 	@Test
-	public void test_nesting() throws Throwable {
+	public void test_nesting() {
 		HtmlLabel htmlLabel = parse(DotTestHtmlLabels.NESTED_TAGS);
 
 		EList<HtmlContent> parts = htmlLabel.getParts();
@@ -548,7 +548,7 @@ public class DotHtmlLabelTests {
 	 */
 
 	@Test
-	public void test_invalid_comment() throws Throwable {
+	public void test_invalid_comment() throws Exception {
 		// HTML comments are not allowed inside a tag
 		String text = "<B <!--HTML comment--> >string</B>";
 
