@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
+import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.ui.Dot2ZestGraphCopier
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
@@ -33,15 +34,64 @@ class Dot2ZestGraphCopierTests {
 	//@Rule
 	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
 
+	static extension DotImport dotImport
 	static extension Dot2ZestGraphCopier dot2ZestGraphCopier
 	static extension DotGraphPrettyPrinter prettyPrinter
 
 	@BeforeClass
 	def static void beforeClass(){
+		dotImport = new DotImport
+		
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
 		
 		prettyPrinter = new DotGraphPrettyPrinter
+	}
+	
+	@Test
+	def void node_xlabel(){
+		'''
+			graph {
+				1[xlabel=foo]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : foo
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
+	@Ignore("Failing on Travis/Jenkins")
+	@Test
+	def void node_xlabel_with_layout_information(){
+		'''
+			graph {
+				graph [bb="0,51,81,0"];
+				node [label="\N"];
+				1	 [height=0.5,
+					pos="54,33",
+					width=0.75,
+					xlabel=foo,
+					xlp="13.5,7.5"];
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : foo
+					element-external-label-position : Point(4.5908203125, -0.48046875)
+					element-label : 1
+					element-layout-irrelevant : false
+					node-position : Point(27.0, 15.0)
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
 	@Test
@@ -630,6 +680,12 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
+	}
+	
+	private def assertZestConversion(CharSequence dotText, CharSequence expectedZestText){
+		val dot = dotText.toString.importDot.get(0)
+		val zest = dot.copy
+		zest.test(expectedZestText)
 	}
 
 	private def test(Graph actual, CharSequence expected) {
