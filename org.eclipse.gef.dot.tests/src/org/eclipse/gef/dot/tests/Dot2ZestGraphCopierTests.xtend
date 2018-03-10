@@ -14,9 +14,12 @@ package org.eclipse.gef.dot.tests;
 
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.ui.Dot2ZestGraphCopier
+import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
+import org.eclipse.gef.zest.fx.ZestProperties
+import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Ignore
 import org.junit.Test
@@ -36,7 +39,7 @@ class Dot2ZestGraphCopierTests {
 
 	static extension DotImport dotImport
 	static extension Dot2ZestGraphCopier dot2ZestGraphCopier
-	static extension DotGraphPrettyPrinter prettyPrinter
+	extension DotGraphPrettyPrinter prettyPrinter
 
 	@BeforeClass
 	def static void beforeClass(){
@@ -44,8 +47,358 @@ class Dot2ZestGraphCopierTests {
 		
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
-		
+	}
+	
+	@Before
+	def void before(){
 		prettyPrinter = new DotGraphPrettyPrinter
+	}
+	
+	@Test
+	def void node_shape() {
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				if (attrKey == ZestProperties.SHAPE__N
+							&& attrValue instanceof GeometryNode<?>) {
+					val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
+					return attrKey + " : " + geometry
+				} else {
+					return super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		'''
+			graph PolygonBasedNodeShapes {
+				box[shape=box]
+				polygon[shape=polygon]
+				ellipse[shape=ellipse]
+				oval[shape=oval]
+				circle[shape=circle]
+				point[shape=point]
+				egg[shape=egg]
+				triangle[shape=triangle]
+				plaintext[shape=plaintext]
+				plain[shape=plain]
+				diamond[shape=diamond]
+				trapezium[shape=trapezium]
+				parallelogram[shape=parallelogram]
+				house[shape=house]
+				pentagon[shape=pentagon]
+				hexagon[shape=hexagon]
+				septagon[shape=septagon]
+				octagon[shape=octagon]
+				doublecircle[shape=doublecircle]
+				doubleoctagon[shape=doubleoctagon]
+				tripleoctagon[shape=tripleoctagon]
+				invtriangle[shape=invtriangle]
+				invtrapezium[shape=invtrapezium]
+				invhouse[shape=invhouse]
+				Mdiamond[shape=Mdiamond]
+				Msquare[shape=Msquare]
+				Mcircle[shape=Mcircle]
+				rect[shape=rect]
+				rectangle[shape=rectangle]
+				square[shape=square]
+				star[shape=star]
+				none[shape=none]
+				underline[shape=underline]
+				cylinder[shape=cylinder]
+				note[shape=note]
+				tab[shape=tab]
+				folder[shape=folder]
+				box3d[shape=box3d]
+				component[shape=component]
+				promoter[shape=promoter]
+				cds[shape=cds]
+				terminator[shape=terminator]
+				utr[shape=utr]
+				primersite[shape=primersite]
+				restrictionsite[shape=restrictionsite]
+				fivepoverhang[shape=fivepoverhang]
+				threepoverhang[shape=threepoverhang]
+				noverhang[shape=noverhang]
+				assembly[shape=assembly]
+				signature[shape=signature]
+				insulator[shape=insulator]
+				ribosite[shape=ribosite]
+				rnastab[shape=rnastab]
+				proteasesite[shape=proteasesite]
+				proteinstab[shape=proteinstab]
+				rpromoter[shape=rpromoter]
+				rarrow[shape=rarrow]
+				laarrow[shape=larrow]
+				lpromoter[shape=lpromoter]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : box
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : polygon
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : ellipse
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node4 {
+					element-label : oval
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node5 {
+					element-label : circle
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node6 {
+					element-label : point
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node7 {
+					element-label : egg
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node8 {
+					element-label : triangle
+					node-shape : Polygon: (0.0, 50.0) -> (50.0, 0.0) -> (100.0, 50.0) -> (0.0, 50.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node9 {
+					element-label : plaintext
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node10 {
+					element-label : plain
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node11 {
+					element-label : diamond
+					node-shape : Polygon: (0.0, 50.0) -> (50.0, 0.0) -> (100.0, 50.0) -> (50.0, 100.0) -> (0.0, 50.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node12 {
+					element-label : trapezium
+					node-shape : Polygon: (0.0, 100.0) -> (25.0, 0.0) -> (75.0, 0.0) -> (100.0, 100.0) -> (0.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node13 {
+					element-label : parallelogram
+					node-shape : Polygon: (0.0, 100.0) -> (25.0, 0.0) -> (100.0, 0.0) -> (75.0, 100.0) -> (0.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node14 {
+					element-label : house
+					node-shape : Polygon: (0.0, 100.0) -> (0.0, 40.0) -> (50.0, 0.0) -> (100.0, 40.0) -> (100.0, 100.0) -> (0.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node15 {
+					element-label : pentagon
+					node-shape : Polygon: (25.0, 100.0) -> (0.0, 40.0) -> (50.0, 0.0) -> (100.0, 40.0) -> (75.0, 100.0) -> (25.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node16 {
+					element-label : hexagon
+					node-shape : Polygon: (25.0, 100.0) -> (0.0, 50.0) -> (25.0, 0.0) -> (75.0, 0.0) -> (100.0, 50.0) -> (75.0, 100.0) -> (25.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node17 {
+					element-label : septagon
+					node-shape : Polygon: (0.0, 60.0) -> (15.0, 15.0) -> (50.0, 0.0) -> (85.0, 15.0) -> (100.0, 60.0) -> (75.0, 100.0) -> (25.0, 100.0) -> (0.0, 60.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node18 {
+					element-label : octagon
+					node-shape : Polygon: (0.0, 70.0) -> (0.0, 30.0) -> (30.0, 0.0) -> (70.0, 0.0) -> (100.0, 30.0) -> (100.0, 70.0) -> (70.0, 100.0) -> (30.0, 100.0) -> (0.0, 70.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node19 {
+					element-label : doublecircle
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node20 {
+					element-label : doubleoctagon
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node21 {
+					element-label : tripleoctagon
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node22 {
+					element-label : invtriangle
+					node-shape : Polygon: (0.0, 10.0) -> (100.0, 10.0) -> (50.0, 100.0) -> (0.0, 10.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node23 {
+					element-label : invtrapezium
+					node-shape : Polygon: (0.0, 0.0) -> (100.0, 0.0) -> (75.0, 100.0) -> (25.0, 100.0) -> (0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node24 {
+					element-label : invhouse
+					node-shape : Polygon: (0.0, 0.0) -> (100.0, 0.0) -> (100.0, 60.0) -> (50.0, 100.0) -> (0.0, 60.0) -> (0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node25 {
+					element-label : Mdiamond
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node26 {
+					element-label : Msquare
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node27 {
+					element-label : Mcircle
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node28 {
+					element-label : rect
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node29 {
+					element-label : rectangle
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node30 {
+					element-label : square
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node31 {
+					element-label : star
+					node-shape : Polygon: (15.0, 100.0) -> (30.0, 60.0) -> (0.0, 40.0) -> (40.0, 40.0) -> (50.0, 0.0) -> (60.0, 40.0) -> (100.0, 40.0) -> (70.0, 60.0) -> (85.0, 100.0) -> (50.0, 75.0) -> (15.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node32 {
+					element-label : none
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node33 {
+					element-label : underline
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node34 {
+					element-label : cylinder
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node35 {
+					element-label : note
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node36 {
+					element-label : tab
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node37 {
+					element-label : folder
+					node-shape : Polygon: (0.0, 100.0) -> (0.0, 10.0) -> (50.0, 10.0) -> (55.0, 0.0) -> (95.0, 0.0) -> (100.0, 10.0) -> (100.0, 100.0) -> (0.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node38 {
+					element-label : box3d
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node39 {
+					element-label : component
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node40 {
+					element-label : promoter
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node41 {
+					element-label : cds
+					node-shape : Polygon: (0.0, 100.0) -> (0.0, 0.0) -> (70.0, 0.0) -> (100.0, 50.0) -> (70.0, 100.0) -> (0.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node42 {
+					element-label : terminator
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node43 {
+					element-label : utr
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node44 {
+					element-label : primersite
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node45 {
+					element-label : restrictionsite
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node46 {
+					element-label : fivepoverhang
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node47 {
+					element-label : threepoverhang
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node48 {
+					element-label : noverhang
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node49 {
+					element-label : assembly
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node50 {
+					element-label : signature
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node51 {
+					element-label : insulator
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node52 {
+					element-label : ribosite
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node53 {
+					element-label : rnastab
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node54 {
+					element-label : proteasesite
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node55 {
+					element-label : proteinstab
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node56 {
+					element-label : rpromoter
+					node-shape : Polygon: (0.0, 100.0) -> (0.0, 15.0) -> (60.0, 15.0) -> (60.0, 0.0) -> (100.0, 50.0) -> (60.0, 100.0) -> (60.0, 85.0) -> (30.0, 85.0) -> (30.0, 100.0) -> (0.0, 100.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node57 {
+					element-label : rarrow
+					node-shape : Polygon: (0.0, 85.0) -> (0.0, 15.0) -> (60.0, 15.0) -> (60.0, 0.0) -> (100.0, 50.0) -> (60.0, 100.0) -> (60.0, 85.0) -> (0.0, 85.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node58 {
+					element-label : laarrow
+					node-shape : Polygon: (0.0, 50.0) -> (40.0, 0.0) -> (40.0, 15.0) -> (100.0, 15.0) -> (100.0, 85.0) -> (40.0, 85.0) -> (40.0, 100.0) -> (0.0, 50.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node59 {
+					element-label : lpromoter
+					node-shape : Polygon: (0.0, 50.0) -> (40.0, 0.0) -> (40.0, 15.0) -> (100.0, 15.0) -> (100.0, 100.0) -> (70.0, 100.0) -> (70.0, 85.0) -> (40.0, 85.0) -> (40.0, 100.0) -> (0.0, 50.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 	
 	@Test
@@ -345,7 +698,7 @@ class Dot2ZestGraphCopierTests {
 				Edge2 from Node2.5 to Node1.1 {
 				}
 			}
-		'''.toString.assertEquals(dot.prettyPrint)
+		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
 	}
 	
 	@Test
@@ -407,7 +760,7 @@ class Dot2ZestGraphCopierTests {
 				Edge2 from Node2.5 to Node1.1.1 {
 				}
 			}
-		'''.toString.assertEquals(dot.prettyPrint)
+		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
 	}
 	
 	@Test
@@ -690,17 +1043,17 @@ class Dot2ZestGraphCopierTests {
 
 	private def test(Graph actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
-		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
+		expected.toString.assertEquals(prettyPrinter.prettyPrint(actual).removeObjectIDs)
 	}
 	
 	private def test(Node actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
-		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
+		expected.toString.assertEquals(prettyPrinter.prettyPrint(actual).removeObjectIDs)
 	}
 	
 	private def test(Edge actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
-		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
+		expected.toString.assertEquals(prettyPrinter.prettyPrint(actual).removeObjectIDs)
 	}
 	
 	private def removeObjectIDs(String text){

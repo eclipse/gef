@@ -59,7 +59,6 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Ellipse;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
@@ -521,28 +520,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
 			PolygonBasedNodeShape polygonShape = ((PolygonBasedShape) dotShape
 					.getShape()).getShape();
-			// handle different polygon shapes
-			if (PolygonBasedNodeShape.CIRCLE.equals(polygonShape)
-					|| PolygonBasedNodeShape.ELLIPSE.equals(polygonShape)
-					|| PolygonBasedNodeShape.OVAL.equals(polygonShape)) {
-				zestShape = new GeometryNode<>(new Ellipse(new Rectangle()));
-			} else if (PolygonBasedNodeShape.BOX.equals(polygonShape)
-					|| PolygonBasedNodeShape.RECT.equals(polygonShape)
-					|| PolygonBasedNodeShape.RECTANGLE.equals(polygonShape)
-					|| PolygonBasedNodeShape.SQUARE.equals(polygonShape)) {
-				zestShape = new GeometryNode<>(new Rectangle());
-			} else if (PolygonBasedNodeShape.DIAMOND.equals(polygonShape)) {
-				zestShape = new GeometryNode<>(
-						new Polygon(0, 50, 50, 0, 100, 50, 50, 100, 0, 50));
-			} else if (PolygonBasedNodeShape.INVTRIANGLE.equals(polygonShape)) {
-				zestShape = new GeometryNode<>(
-						new Polygon(0, 10, 100, 10, 50, 100, 0, 10));
-			} else if (PolygonBasedNodeShape.TRIANGLE.equals(polygonShape)) {
-				zestShape = new GeometryNode<>(
-						new Polygon(0, 50, 50, 0, 100, 50, 0, 50));
-			} else {
-				// TODO: handle other polygon shapes
-			}
+			zestShape = DotPolygonBasedNodeShapes.get(polygonShape);
 		} else if (dotShape.getShape() instanceof RecordBasedShape
 				&& !isHtmlLabel) {
 			// TODO record shapes that have HTML labels
