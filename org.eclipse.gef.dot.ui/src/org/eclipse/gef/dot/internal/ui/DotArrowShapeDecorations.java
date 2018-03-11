@@ -1,5 +1,5 @@
 /************************************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -28,7 +28,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineJoin;
 
-public class DotArrowShapeDecorations {
+class DotArrowShapeDecorations {
 
 	/**
 	 * Returns the default dot arrow shape decoration for directed/non-directed
@@ -42,7 +42,7 @@ public class DotArrowShapeDecorations {
 	 *
 	 * @return The default dot arrow shape decoration
 	 */
-	public static Node getDefault(double arrowSize, boolean isGraphDirected) {
+	static Node getDefault(double arrowSize, boolean isGraphDirected) {
 
 		Shape shape = isGraphDirected ? new Normal(arrowSize) : null;
 		setStroke(shape);
@@ -62,7 +62,7 @@ public class DotArrowShapeDecorations {
 	 * 
 	 * @return The dot arrow shape decoration.
 	 */
-	public static Node get(ArrowType arrowType, double arrowSize) {
+	static Node get(ArrowType arrowType, double arrowSize) {
 		// The first arrow shape specified should occur closest to the node.
 		double offset = 0.0;
 		Group group = new Group();
