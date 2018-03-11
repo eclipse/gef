@@ -20,6 +20,8 @@ import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 
+import javafx.beans.property.ReadOnlyMapProperty;
+
 /**
  * A Pretty Printer providing formatted string representations (with line
  * separation and indentation) for {@link Graph}, {@link Node} and {@link Edge}
@@ -47,7 +49,7 @@ class DotGraphPrettyPrinter {
 	 * @param indent
 	 *            characters to use for indenting.
 	 * @param lineSeparator
-	 *            characters to use for line separations.
+	 *            characters to use for line separation.
 	 */
 	public DotGraphPrettyPrinter(String indent, String lineSeparator) {
 		this.indent = indent;
@@ -140,14 +142,9 @@ class DotGraphPrettyPrinter {
 				nodeToIdMapper.get(edge.getSource()),
 				nodeToIdMapper.get(edge.getTarget())));
 		sb.append(lineSeparator);
-		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
-		sortedAttrs.putAll(edge.attributesProperty());
-		for (Object attrKey : sortedAttrs.keySet()) {
-			sb.append(startIndent + indent);
-			sb.append(attrKey.toString() + " : "
-					+ edge.attributesProperty().get(attrKey));
-			sb.append(lineSeparator);
-		}
+
+		sb.append(prettyPrint(edge.attributesProperty(), startIndent + indent));
+
 		sb.append(startIndent);
 		sb.append("}");
 		sb.append(lineSeparator);
@@ -190,14 +187,9 @@ class DotGraphPrettyPrinter {
 		sb.append("Graph {");
 		sb.append(lineSeparator);
 
-		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
-		sortedAttrs.putAll(graph.attributesProperty());
-		for (Object attrKey : sortedAttrs.keySet()) {
-			sb.append(startIndent + indent);
-			sb.append(attrKey.toString() + " : "
-					+ graph.attributesProperty().get(attrKey));
-			sb.append(lineSeparator);
-		}
+		sb.append(
+				prettyPrint(graph.attributesProperty(), startIndent + indent));
+
 		for (Node node : graph.getNodes()) {
 			sb.append(prettyPrint(node, startIndent + indent, positionPrefix));
 		}
@@ -236,7 +228,7 @@ class DotGraphPrettyPrinter {
 	 * @param positionPrefix
 	 *            The prefix to prepend the node position.
 	 * @return The formatted string representation (with line separation and
-	 *         indentation) of the given {@link Edge}.
+	 *         indentation) of the given {@link Node}.
 	 */
 	protected String prettyPrint(Node node, String startIndent,
 			String positionPrefix) {
@@ -253,14 +245,8 @@ class DotGraphPrettyPrinter {
 		nodeToIdMapper.put(node, nodeId);
 		sb.append(" {");
 		sb.append(lineSeparator);
-		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
-		sortedAttrs.putAll(node.attributesProperty());
-		for (Object attrKey : sortedAttrs.keySet()) {
-			sb.append(startIndent + indent);
-			sb.append(attrKey.toString() + " : "
-					+ node.attributesProperty().get(attrKey));
-			sb.append(lineSeparator);
-		}
+
+		sb.append(prettyPrint(node.attributesProperty(), startIndent + indent));
 
 		Graph nestedGraph = node.getNestedGraph();
 		if (nestedGraph != null) {
@@ -276,4 +262,62 @@ class DotGraphPrettyPrinter {
 		return sb.toString();
 	}
 
+	/**
+	 * Creates a formatted string representation of a given attributesProperty.
+	 *
+	 * @param node
+	 *            The attributesProperty for which to create a formatted string
+	 *            representation.
+	 * @param startIndent
+	 *            The indentation to use when creating the formatted string
+	 *            representation.
+	 * @return The formatted string representation (with line separation and
+	 *         indentation) of the given attributesProperty.
+	 */
+	protected String prettyPrint(
+			ReadOnlyMapProperty<String, Object> attributesProperty,
+			String startIndent) {
+		StringBuilder sb = new StringBuilder();
+
+		TreeMap<String, Object> sortedAttributes = new TreeMap<>();
+		sortedAttributes.putAll(attributesProperty);
+		for (String attrKey : sortedAttributes.keySet()) {
+			Object attrValue = attributesProperty.get(attrKey);
+			sb.append(startIndent);
+			sb.append(prettyPrint(attrKey, attrValue));
+			sb.append(lineSeparator);
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * Creates a formatted string representation of a given attribute.
+	 *
+	 * @param attrKey
+	 *            The key of the attribute for which to create a formatted
+	 *            string representation.
+	 * @param attrValue
+	 *            The value of the attribute for which to create a formatted
+	 *            string representation.
+	 * @return The formatted string representation (with line separation and
+	 *         indentation) of the given attribute.
+	 */
+	protected String prettyPrint(String attrKey, Object attrValue) {
+		return attrKey + " : " + attrValue;
+	}
+
+	/**
+	 * @return The characters to use for indentation.
+	 */
+	public String getIndent() {
+		return indent;
+	}
+
+	/**
+	 * @return The characters to use for line separation.
+	 */
+	public String getLineSeparator() {
+		return lineSeparator;
+	}
 }
