@@ -69,6 +69,32 @@ class Dot2ZestGraphCopierTests {
 		prettyPrinter = new DotGraphPrettyPrinter
 	}
 	
+	@Test def void edge_id() {
+		'''
+			graph {
+				1--2[id="edgeID"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					element-css-id : edgeID
+				}
+			}
+		''')
+	}
+	
 	@Test def void edge_label() {
 		// undirected edge label
 		'''
@@ -168,6 +194,138 @@ class Dot2ZestGraphCopierTests {
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
 					element-label : 1->2
+				}
+			}
+		''')
+	}
+	
+	@Test def void edge_label_and_id() {
+		'''
+			graph {
+				1--2[id="edgeID" label="edgeLabel"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					element-css-id : edgeID
+					element-label : edgeLabel
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				1--2[id="edgeID" label="\E"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					element-css-id : edgeID
+					element-label : 1--2
+				}
+			}
+		''')
+	}
+
+	@Test def void node_id() {
+		'''
+			graph {
+				1[id="nodeID"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-css-id : nodeID
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
+	@Test def void node_label() {
+		'''
+			graph {
+				1[label="node label"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : node label
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+		
+		// node label indicating that the node's name becomes its label
+		'''
+			graph {
+				1[label="\N"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
+	@Test def void node_label_and_id() {
+		'''
+			graph {
+				1[id="nodeID" label="nodeLabel"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-css-id : nodeID
+					element-label : nodeLabel
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				1[id="nodeID" label="\N"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-css-id : nodeID
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
 				}
 			}
 		''')

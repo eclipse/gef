@@ -130,10 +130,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		String dotLabel = DotAttributes.getLabel(dot);
-		if (dotLabel != null && dotLabel.equals("\\E")) { //$NON-NLS-1$
-			// The edge default label '\E' is used to indicate that an edge's
-			// name or id becomes its label.
-			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
+		if ("\\E".equals(dotLabel)) { //$NON-NLS-1$
+			// The escString '\E' indicates that the edge's name becomes its
+			// label.
+			dotLabel = DotAttributes._getName(dot);
 		}
 		if (dotLabel != null) {
 			ZestProperties.setLabel(zest, dotLabel);
@@ -493,9 +493,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// label
 		String dotLabel = DotAttributes.getLabel(dot);
 		if (dotLabel == null || dotLabel.equals("\\N")) { //$NON-NLS-1$
-			// The node default label '\N' is used to indicate that a node's
-			// name or id becomes its label.
-			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
+			// The escString '\N' (the node's default label) indicates that the
+			// node's name becomes its label.
+			dotLabel = DotAttributes._getName(dot);
 		}
 		boolean isHtmlLabel = DotAttributes.getLabelRaw(dot) != null
 				? DotAttributes.getLabelRaw(dot)
