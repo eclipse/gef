@@ -1382,8 +1382,14 @@ class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static def String _getName(Edge edge) {
-		edge.source._getName + (if(GraphType.DIGRAPH.equals(edge.graph.rootGraph._getType)) EdgeOp.DIRECTED.literal else EdgeOp.UNDIRECTED.literal) +
-			edge.target._getName
+		edge.source._getName +
+			(
+				switch edge.graph?.rootGraph?._getType {
+					case GRAPH: EdgeOp.UNDIRECTED.literal
+					case DIGRAPH: EdgeOp.DIRECTED.literal
+				}
+			)
+		+ edge.target._getName
 	}
 
 	/**
