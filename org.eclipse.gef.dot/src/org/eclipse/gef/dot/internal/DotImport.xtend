@@ -83,7 +83,7 @@ class DotImport {
 	}
 	
 	def List<Graph> importDot(DotAst dotAst) {
-		// TODO: use validator to semantically validate as well
+		// TODO: use validator to semantically validate
 		dotAst.graphs.map[transformDotGraph].filterNull.toList
 	}
 
