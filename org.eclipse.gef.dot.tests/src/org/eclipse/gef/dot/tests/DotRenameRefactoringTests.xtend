@@ -265,6 +265,30 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		initialText.testRenaming(targetElement, newNodeName, expectedText)
 	}
 	
+	@Test
+	def void testRenaming11(){
+		val initialText = '''
+			digraph {
+				1
+				2
+				1->3
+				1->1
+			}
+		'''
+		val targetElement = initialText.targetNodeOfSecondEdge
+		val newNodeName = "4"
+		val expectedText = '''
+			digraph {
+				4
+				2
+				4->3
+				4->4
+			}
+		'''
+		
+		initialText.testRenaming(targetElement, newNodeName, expectedText)
+	}
+	
 	def private testRenaming(String initialText, NodeId targetElement, String newNodeName, String expectedTextAfterRenaming){
 		val testFile = initialText.createTestFile
 		testFile.doRename(targetElement, newNodeName)
