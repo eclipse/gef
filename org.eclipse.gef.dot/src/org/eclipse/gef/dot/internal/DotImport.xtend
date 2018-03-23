@@ -79,8 +79,12 @@ class DotImport {
 					parseResult.syntaxErrors.map[syntaxErrorMessage.message].join(","))
 		}
 
+		(parseResult.rootASTElement as DotAst).importDot
+	}
+	
+	def List<Graph> importDot(DotAst dotAst) {
 		// TODO: use validator to semantically validate as well
-		(parseResult.rootASTElement as DotAst).graphs.map[transformDotGraph].filterNull.toList
+		dotAst.graphs.map[transformDotGraph].filterNull.toList
 	}
 
 	private def Map<String, ID> create newHashMap globalGraphAttributes(Graph.Builder context) {
