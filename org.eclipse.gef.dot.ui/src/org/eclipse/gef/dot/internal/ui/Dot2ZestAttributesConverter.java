@@ -33,7 +33,6 @@ import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
-import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.escstring.EscString;
 import org.eclipse.gef.dot.internal.language.escstring.JustifiedText;
@@ -134,13 +133,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotLabel != null && dotLabel.equals("\\E")) { //$NON-NLS-1$
 			// The edge default label '\E' is used to indicate that an edge's
 			// name or id becomes its label.
-			boolean directed = GraphType.DIGRAPH.equals(
-					DotAttributes._getType(dot.getGraph().getRootGraph()));
-			String dotName = DotAttributes._getName(dot.getSource())
-					+ (directed ? EdgeOp.DIRECTED.toString()
-							: EdgeOp.UNDIRECTED.toString())
-					+ DotAttributes._getName(dot.getTarget());
-			dotLabel = dotId != null ? dotId : dotName;
+			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
 		}
 		if (dotLabel != null) {
 			ZestProperties.setLabel(zest, dotLabel);
