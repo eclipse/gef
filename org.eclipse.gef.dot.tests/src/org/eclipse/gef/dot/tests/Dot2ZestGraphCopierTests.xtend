@@ -1043,17 +1043,17 @@ class Dot2ZestGraphCopierTests {
 
 	private def test(Graph actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
-		expected.toString.assertEquals(prettyPrinter.prettyPrint(actual).removeObjectIDs)
+		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
 	
 	private def test(Node actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
-		expected.toString.assertEquals(prettyPrinter.prettyPrint(actual).removeObjectIDs)
+		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
 	
 	private def test(Edge actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
-		expected.toString.assertEquals(prettyPrinter.prettyPrint(actual).removeObjectIDs)
+		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
 	
 	private def removeObjectIDs(String text){
