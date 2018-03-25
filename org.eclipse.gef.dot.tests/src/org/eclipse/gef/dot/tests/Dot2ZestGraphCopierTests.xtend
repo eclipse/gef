@@ -12,23 +12,33 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
+import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.DotImport
+import org.eclipse.gef.dot.internal.language.DotInjectorProvider
+import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.ui.Dot2ZestGraphCopier
 import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
 import org.eclipse.gef.zest.fx.ZestProperties
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Ignore
 import org.junit.Test
+import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
 
 /*
  * Test class containing test cases for the {@link Dot2ZestGraphCopier} class.
  */
+@RunWith(XtextRunner)
+@InjectWith(DotInjectorProvider)
 class Dot2ZestGraphCopierTests {
 
 	/**
@@ -36,6 +46,9 @@ class Dot2ZestGraphCopierTests {
 	 */
 	//@Rule
 	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
+
+	@Inject extension ParseHelper<DotAst>
+	@Inject extension ValidationTestHelper
 
 	static extension DotImport dotImport
 	static extension Dot2ZestGraphCopier dot2ZestGraphCopier
@@ -1139,10 +1152,14 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 	
-	private def assertZestConversion(CharSequence dotText, CharSequence expectedZestText){
-		val dot = dotText.toString.importDot.get(0)
-		val zest = dot.copy
-		zest.test(expectedZestText)
+	private def assertZestConversion(CharSequence dotText, CharSequence expectedZestGraphText) {
+		// ensure that the input text can be parsed and the ast can be created
+		val dotAst = dotText.parse
+		dotAst.assertNoErrors
+		
+		val dotGraph = dotAst.importDot.get(0)
+		val zestGraph = dotGraph.copy
+		zestGraph.test(expectedZestGraphText)
 	}
 
 	private def test(Graph actual, CharSequence expected) {
