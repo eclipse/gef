@@ -32,6 +32,7 @@ import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,6 +47,11 @@ public class DotValidatorTests {
 
 	@Inject
 	private ValidationTestHelper validationTestHelper;
+
+	@BeforeClass
+	public static void before() {
+		DotTestUtils.registerDotSubgrammarPackages();
+	}
 
 	@Test
 	public void testSingleArrowShapes() {

@@ -21,7 +21,7 @@ import static org.junit.Assert.fail;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.DotAttributes;
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
+import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypeFactory;
@@ -74,12 +74,18 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
-@InjectWith(DotUiInjectorProvider.class)
+@InjectWith(DotInjectorProvider.class)
 public class DotAttributesTests {
+
+	@BeforeClass
+	public static void before() {
+		DotTestUtils.registerDotSubgrammarPackages();
+	}
 
 	@Test
 	public void edge_arrowhead() {

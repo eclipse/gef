@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
@@ -715,6 +716,64 @@ public final class DotTestUtils {
 		}
 
 		return result;
+	}
+
+	public static void registerDotSubgrammarPackages() {
+		registerEPackage( // register the ArrowTypePackage
+				org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage.eINSTANCE);
+
+		registerEPackage( // register the ColorPackage
+				org.eclipse.gef.dot.internal.language.color.ColorPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.color.ColorPackage.eINSTANCE);
+
+		registerEPackage( // register the ColorListPackage
+				org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage.eINSTANCE);
+
+		registerEPackage( // register the EscStringPackage
+				org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.escstring.EscstringPackage.eINSTANCE);
+
+		registerEPackage( // register the HtmlLabelPackage
+				org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.eINSTANCE);
+
+		registerEPackage( // register the PointPackage
+				org.eclipse.gef.dot.internal.language.point.PointPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.point.PointPackage.eINSTANCE);
+
+		registerEPackage( // register the PortPosPackage
+				org.eclipse.gef.dot.internal.language.portpos.PortposPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.portpos.PortposPackage.eINSTANCE);
+
+		registerEPackage( // register the RecordLabelPackage
+				org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelPackage.eINSTANCE);
+
+		registerEPackage( // register the RectPackage
+				org.eclipse.gef.dot.internal.language.rect.RectPackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.rect.RectPackage.eINSTANCE);
+
+		registerEPackage( // register the ShapePackage
+				org.eclipse.gef.dot.internal.language.shape.ShapePackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.shape.ShapePackage.eINSTANCE);
+
+		registerEPackage( // register the SplineTypePackage
+				org.eclipse.gef.dot.internal.language.splinetype.SplinetypePackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.splinetype.SplinetypePackage.eINSTANCE);
+
+		registerEPackage( // register the StylePackage
+				org.eclipse.gef.dot.internal.language.style.StylePackage.eNS_URI,
+				org.eclipse.gef.dot.internal.language.style.StylePackage.eINSTANCE);
+	}
+
+	private static void registerEPackage(String packageNamespaceURI,
+			EPackage packageInstance) {
+		if (!EPackage.Registry.INSTANCE.containsKey(packageNamespaceURI)) {
+			EPackage.Registry.INSTANCE.put(packageNamespaceURI,
+					packageInstance);
+		}
 	}
 
 	/**

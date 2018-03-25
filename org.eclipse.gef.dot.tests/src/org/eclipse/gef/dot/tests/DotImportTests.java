@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotImport;
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
+import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
@@ -35,6 +35,7 @@ import org.eclipse.gef.graph.Node;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,11 +46,16 @@ import org.junit.runner.RunWith;
  * @author Fabian Steeg (fsteeg)
  */
 @RunWith(XtextRunner.class)
-@InjectWith(DotUiInjectorProvider.class)
+@InjectWith(DotInjectorProvider.class)
 public final class DotImportTests {
 
 	private final DotImport dotImport = new DotImport();
 	private final DotGraphPrettyPrinter prettyPrinter = new DotGraphPrettyPrinter();
+
+	@BeforeClass
+	public static void before() {
+		DotTestUtils.registerDotSubgrammarPackages();
+	}
 
 	/**
 	 * Test valid graphs can be imported without exceptions.

@@ -31,6 +31,7 @@ import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,6 +60,11 @@ public class DotParserTests {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@BeforeClass
+	public static void before() {
+		DotTestUtils.registerDotSubgrammarPackages();
 	}
 
 	@Test
@@ -471,6 +477,7 @@ public class DotParserTests {
 	public void testNodesepIsZero() {
 		testString("digraph {nodesep=0 1 2}");
 	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));

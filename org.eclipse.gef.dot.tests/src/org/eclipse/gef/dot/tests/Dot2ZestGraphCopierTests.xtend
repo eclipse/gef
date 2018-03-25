@@ -56,6 +56,8 @@ class Dot2ZestGraphCopierTests {
 
 	@BeforeClass
 	def static void beforeClass(){
+		DotTestUtils.registerDotSubgrammarPackages
+		
 		dotImport = new DotImport
 		
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
