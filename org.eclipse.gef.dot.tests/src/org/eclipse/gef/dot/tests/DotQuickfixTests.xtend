@@ -485,7 +485,7 @@ class DotQuickfixTests {
 		rs.getResources().add(resource)
 		resource.load(in, null)
 		if (resource instanceof LazyLinkingResource) {
-			((resource as LazyLinkingResource)).resolveLazyCrossReferences(CancelIndicator.NullImpl)
+			resource.resolveLazyCrossReferences(CancelIndicator.NullImpl)
 		} else {
 			EcoreUtil.resolveAll(resource)
 		}
