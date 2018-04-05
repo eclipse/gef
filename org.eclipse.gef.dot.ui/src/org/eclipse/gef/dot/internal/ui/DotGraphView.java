@@ -74,6 +74,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import com.google.inject.Guice;
@@ -91,7 +93,7 @@ import javafx.scene.Scene;
  *
  */
 /* provisional API */@SuppressWarnings("restriction")
-public class DotGraphView extends ZestFxUiView {
+public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	public static final String STYLES_CSS_FILE = DotGraphView.class
 			.getResource("styles.css") //$NON-NLS-1$
@@ -564,5 +566,21 @@ public class DotGraphView extends ZestFxUiView {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean show(ShowInContext context) {
+		Object input = context.getInput();
+		if (input instanceof FileEditorInput) {
+			FileEditorInput fileEditorInput = (FileEditorInput) input;
+			IFile file = fileEditorInput.getFile();
+			String workspaceRoot = ResourcesPlugin.getWorkspace().getRoot()
+					.getLocation().toString();
+			File dotFile = new File(workspaceRoot + "/" + file.getFullPath()); //$NON-NLS-1$
+			updateGraph(dotFile);
+			return true;
+		}
+
+		return false;
 	}
 }

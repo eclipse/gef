@@ -292,11 +292,22 @@
         point="org.eclipse.ui.views">
         <view
             class="org.eclipse.gef.dot.internal.ui.DotGraphView"
-            id="org.eclipse.gef.dot.view"
+            id="org.eclipse.gef.dot.internal.ui.DotGraphView"
             icon="icons/graph_view.png"
             category="org.eclipse.gef.visualization"
             name="DOT Graph"
             restorable="true">
         </view>
     </extension>
+    <!-- Show In->DOT Graph View Context Menu -->
+	<extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.xtext.ui.editor.XtextEditor"
+            class="org.eclipse.gef.dot.internal.ui.DotEditorAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.part.IShowInTargetList">
+         </adapter>
+      </factory>
+   </extension>
 </plugin>
