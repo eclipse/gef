@@ -42,7 +42,7 @@
 	        class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
 	        id="org.eclipse.gef.dot.internal.language.Dot.refactoring"
 	        name="Refactoring">
-	        <keywordReference id="org.eclipse.gef.dot.internal.language.ui.keyword_Dot"/>
+	        <keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
 	    </page>
 	</extension>
     <extension point="org.eclipse.ui.activities">
