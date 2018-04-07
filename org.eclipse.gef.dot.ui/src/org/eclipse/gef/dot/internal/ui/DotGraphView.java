@@ -68,6 +68,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISharedImages;
@@ -75,10 +76,10 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -551,12 +552,12 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		 */
 		private void checkActiveEditorAndUpdateGraph(IWorkbenchPart part) {
 			if (DotEditorUtils.isDotEditor(part)) {
-				XtextEditor editor = (XtextEditor) part;
-				if (editor.getEditorInput() instanceof FileEditorInput) {
+				IEditorInput editorInput = ((EditorPart) part).getEditorInput();
+				if (editorInput instanceof FileEditorInput) {
+					IFile file = ((FileEditorInput) editorInput).getFile();
 					try {
-						File resolvedFile = DotFileUtils.resolve(
-								((FileEditorInput) editor.getEditorInput())
-										.getFile().getLocationURI().toURL());
+						File resolvedFile = DotFileUtils
+								.resolve(file.getLocationURI().toURL());
 						if (!resolvedFile.equals(currentFile)) {
 							updateGraph(resolvedFile);
 						}

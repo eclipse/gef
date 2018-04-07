@@ -39,6 +39,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
@@ -48,8 +49,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.xtext.ui.editor.XtextEditor;
 
 public class SyncGraphvizExportHandler extends AbstractHandler {
 
@@ -205,10 +206,9 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 	 */
 	private void checkActiveEditorAndExportGraph(IWorkbenchPart part) {
 		if (DotEditorUtils.isDotEditor(part)) {
-			XtextEditor editor = (XtextEditor) part;
-			if (editor.getEditorInput() instanceof FileEditorInput) {
-				IFile file = ((FileEditorInput) editor.getEditorInput())
-						.getFile();
+			IEditorInput editorInput = ((EditorPart) part).getEditorInput();
+			if (editorInput instanceof FileEditorInput) {
+				IFile file = ((FileEditorInput) editorInput).getFile();
 				exportGraph(file);
 			}
 		}
