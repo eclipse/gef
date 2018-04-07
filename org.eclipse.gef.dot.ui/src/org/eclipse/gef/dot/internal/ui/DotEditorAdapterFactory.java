@@ -13,9 +13,7 @@
 package org.eclipse.gef.dot.internal.ui;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.ui.part.IShowInTargetList;
-import org.eclipse.xtext.ui.editor.XtextEditor;
 
 /**
  * Usually, the editor class can directly implement the IShowInTargetList
@@ -31,7 +29,7 @@ public class DotEditorAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (isDotEditor(adaptableObject)
+		if (DotEditorUtils.isDotEditor(adaptableObject)
 				&& IShowInTargetList.class.equals(adapterType)) {
 			return new IShowInTargetList() {
 				@Override
@@ -46,21 +44,6 @@ public class DotEditorAdapterFactory implements IAdapterFactory {
 	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { IShowInTargetList.class };
-	}
-
-	/**
-	 * @param object
-	 * 
-	 * @return true if the object is the DOT Editor, false otherwise
-	 */
-	private boolean isDotEditor(Object object) {
-		if (object instanceof XtextEditor) {
-			XtextEditor editor = (XtextEditor) object;
-			return DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
-					.equals(editor.getLanguageName());
-		}
-
-		return false;
 	}
 
 }

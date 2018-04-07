@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -33,8 +33,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
+import org.eclipse.gef.dot.internal.ui.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -204,11 +204,9 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 	 * nothing
 	 */
 	private void checkActiveEditorAndExportGraph(IWorkbenchPart part) {
-		if (part instanceof XtextEditor) {
+		if (DotEditorUtils.isDotEditor(part)) {
 			XtextEditor editor = (XtextEditor) part;
-			if (DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
-					.equals(editor.getLanguageName())
-					&& editor.getEditorInput() instanceof FileEditorInput) {
+			if (editor.getEditorInput() instanceof FileEditorInput) {
 				IFile file = ((FileEditorInput) editor.getEditorInput())
 						.getFile();
 				exportGraph(file);

@@ -550,11 +550,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		 * do nothing
 		 */
 		private void checkActiveEditorAndUpdateGraph(IWorkbenchPart part) {
-			if (part instanceof XtextEditor) {
+			if (DotEditorUtils.isDotEditor(part)) {
 				XtextEditor editor = (XtextEditor) part;
-				if (DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
-						.equals(editor.getLanguageName())
-						&& editor.getEditorInput() instanceof FileEditorInput) {
+				if (editor.getEditorInput() instanceof FileEditorInput) {
 					try {
 						File resolvedFile = DotFileUtils.resolve(
 								((FileEditorInput) editor.getEditorInput())
