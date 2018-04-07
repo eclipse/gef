@@ -42,6 +42,7 @@ import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
@@ -63,6 +64,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IActionBars;
@@ -578,9 +580,26 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 					.getLocation().toString();
 			File dotFile = new File(workspaceRoot + "/" + file.getFullPath()); //$NON-NLS-1$
 			updateGraph(dotFile);
+			// wait for the view to set the graph content executed
+			// asynchronously
+			waitForEventProcessing();
+			// call fit to viewport
+			fitToViewPort();
 			return true;
 		}
 
 		return false;
+	}
+
+	private void fitToViewPort() {
+		FitToViewportAction fitToViewportAction = (FitToViewportAction) fitToViewportActionGroup
+				.getContributions().get(0);
+		waitForEventProcessing();
+		fitToViewportAction.runWithEvent(null);
+	}
+
+	private void waitForEventProcessing() {
+		while (Display.getDefault().readAndDispatch()) {
+		}
 	}
 }
