@@ -15,9 +15,11 @@
  *                                 - add binding for rename strategy (bug #530423)
  *                                 - add binding for occurrence computer (bug #530699)
  *                                 - add binding for reference finder/reference query executor (bug #531049)
+ *                                 - add binding for the Xtext Editor
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
+import org.eclipse.gef.dot.internal.ui.DotEditor;
 import org.eclipse.gef.dot.internal.ui.language.contentassist.DynamicTemplateProposalProvider;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotFindReferencesQueryExecutor;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotUiReferenceFinder;
@@ -31,6 +33,7 @@ import org.eclipse.gef.dot.internal.ui.language.hyperlinking.DotHyperlinkHelper;
 import org.eclipse.gef.dot.internal.ui.language.markoccurrences.DotOccurrenceComputer;
 import org.eclipse.gef.dot.internal.ui.language.renaming.DotRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.findrefs.IReferenceFinder;
 import org.eclipse.xtext.ui.editor.findrefs.ReferenceQueryExecutor;
@@ -101,5 +104,9 @@ public class DotUiModule
 
 	public Class<? extends ReferenceQueryExecutor> bindReferenceQueryExecutor() {
 		return DotFindReferencesQueryExecutor.class;
+	}
+
+	public Class<? extends XtextEditor> bindXtextEditor() {
+		return DotEditor.class;
 	}
 }
