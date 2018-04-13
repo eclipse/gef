@@ -571,13 +571,20 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	@Override
 	public boolean show(ShowInContext context) {
+		File dotFile = null;
 		Object input = context.getInput();
-		if (input instanceof FileEditorInput) {
+
+		if (input instanceof File) {
+			dotFile = (File) input;
+		} else if (input instanceof FileEditorInput) {
 			FileEditorInput fileEditorInput = (FileEditorInput) input;
 			IFile file = fileEditorInput.getFile();
 			String workspaceRoot = ResourcesPlugin.getWorkspace().getRoot()
 					.getLocation().toString();
-			File dotFile = new File(workspaceRoot + "/" + file.getFullPath()); //$NON-NLS-1$
+			dotFile = new File(workspaceRoot + "/" + file.getFullPath()); //$NON-NLS-1$
+		}
+
+		if (dotFile != null) {
 			updateGraph(dotFile);
 			// wait for the view to set the graph content executed
 			// asynchronously
