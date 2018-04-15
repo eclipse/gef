@@ -20,11 +20,11 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.ui.editor.XtextEditor
 import org.eclipse.xtext.ui.editor.doubleClicking.LexerTokenAndCharacterPairAwareStrategy
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -32,29 +32,31 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	
 	@Inject extension LexerTokenAndCharacterPairAwareStrategy
 	
-	// symbols indicating the current cursor position
+	/**
+	 * Special symbols indicating the current cursor position
+	 */
 	val c = '''<|>'''
 	
 	override protected getEditorId() {
 		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
 	}
 
-	@Test def void empty_graph() {
+	@Test def empty_graph() {
 		'''
 			grap«c»h {
 			}
 		'''.assertTextSelectedAfterDoubleClicking('''graph''')
 	}
 	
-	@Test def void empty_digraph() {
+	@Test def empty_digraph() {
 		'''
 			d«c»igraph {
 			}
 		'''.assertTextSelectedAfterDoubleClicking('''digraph''')
 	}
 	
-	@Ignore("activate as soon as solution for bug #532244 has been implemented")	
-	@Test def void node_html_label_001() {
+	@Ignore("activate as soon as solution for bug #532244 has been implemented")
+	@Test def node_html_label_001() {
 		'''
 			graph {
 				1[label=<
@@ -69,7 +71,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	}
 	
 	@Ignore("activate as soon as solution for bug #532244 has been implemented")
-	@Test def void node_record_label_001() {
+	@Test def node_record_label_001() {
 		'''
 			graph{
 				1[shape=record label=" text1 | text«c»2 "]
@@ -78,7 +80,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	}
 	
 	@Ignore("activate as soon as solution for bug #532244 has been implemented")
-	@Test def void node_style_001() {
+	@Test def node_style_001() {
 		'''
 			graph{
 				1[style=" bo«c»ld, dotted "]
@@ -87,7 +89,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	}
 	
 	@Ignore("activate as soon as solution for bug #532244 has been implemented")
-	@Test def void node_style_002() {
+	@Test def node_style_002() {
 		'''
 			graph{
 				1[style=" bold, dot«c»ted "]
@@ -97,24 +99,24 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	
 	/**
 	  * @param it The text representing the input dot content.
-	  * 	The text should contain special symbols indicating the current cursor position.
+	  * 	The text must contain the {@link #c} symbols indicating the current cursor position.
 	  * 
 	  * @param expected The text that is expected to be selected after double clicking.
 	  */
-	def private void assertTextSelectedAfterDoubleClicking(CharSequence it, String expected) {
+	def private assertTextSelectedAfterDoubleClicking(CharSequence it, String expected) {
 		
-		content.openDotEditor
+		content.openDotEditor.
 		
-		.doubleClick(cursorPosition)
+		doubleClick(cursorPosition).
 		
-		.assertSelectedText(expected)
+		assertSelectedText(expected)
 	}
 
 	private def getContent(CharSequence text) {
 		text.toString.replace(c, "")
 	}
 	
-	private def openDotEditor(String content){
+	private def openDotEditor(String content) {
 		var XtextEditor editor = null
 		try {
 			editor = content.createTestFile.openEditor
@@ -125,13 +127,13 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 		editor
 	}
 	
-	private def int getCursorPosition(CharSequence text) {
+	private def getCursorPosition(CharSequence text) {
 		val cursorPosition = text.toString.indexOf(c)
 		if(cursorPosition==-1){
 			fail('''
 				The input text
 				«text»
-				should contain the «c» symbols to indicating the current cursor position!
+				must contain the «c» symbols indicating the current cursor position!
 			''')
 		}
 		cursorPosition
@@ -140,7 +142,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	private def doubleClick(XtextEditor dotEditor, int cursorPosition) {
 		val viewer = dotEditor.internalSourceViewer
 		
-		// set the cursor position		
+		// set the cursor position
 		viewer.setSelectedRange(cursorPosition, 0)
 		
 		// double click on the cursor position
