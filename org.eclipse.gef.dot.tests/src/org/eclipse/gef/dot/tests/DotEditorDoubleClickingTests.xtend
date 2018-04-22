@@ -11,15 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator
 import org.eclipse.jface.text.ITextSelection
+import org.eclipse.swt.SWT
+import org.eclipse.swt.widgets.Event
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.ui.editor.XtextEditor
-import org.eclipse.xtext.ui.editor.doubleClicking.LexerTokenAndCharacterPairAwareStrategy
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,8 +29,6 @@ import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
 class DotEditorDoubleClickingTests extends AbstractEditorTest {
-	
-	@Inject extension LexerTokenAndCharacterPairAwareStrategy
 	
 	/**
 	 * Special symbols indicating the current cursor position
@@ -145,8 +143,12 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 		// set the cursor position
 		viewer.setSelectedRange(cursorPosition, 0)
 		
-		// double click on the cursor position
-		viewer.doubleClicked
+		// simulate mouse down event with the left mouse button
+		viewer.textWidget.notifyListeners(SWT.MouseDown,
+			new Event => [
+				button = 1
+			]
+		)
 		
 		dotEditor
 	}
