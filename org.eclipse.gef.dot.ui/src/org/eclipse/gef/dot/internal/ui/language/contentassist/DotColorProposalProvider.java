@@ -42,7 +42,7 @@ public class DotColorProposalProvider extends
 	 * scheme is not defined, the default color scheme should be used in the
 	 * proposal provider.
 	 */
-	public static String globalColorScheme = null;
+	static String globalColorScheme = null;
 
 	private final String defaultColorScheme = "x11"; //$NON-NLS-1$
 

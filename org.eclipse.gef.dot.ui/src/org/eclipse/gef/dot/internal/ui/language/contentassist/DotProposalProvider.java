@@ -68,7 +68,7 @@ import com.google.inject.Inject;
 public class DotProposalProvider extends AbstractDotProposalProvider {
 
 	@Inject
-	DotGrammarAccess dotGrammarAccess;
+	private DotGrammarAccess dotGrammarAccess;
 
 	private static Map<Context, List<String>> dotAttributeNames;
 	private String[] booleanAttributeValuesProposals = { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
