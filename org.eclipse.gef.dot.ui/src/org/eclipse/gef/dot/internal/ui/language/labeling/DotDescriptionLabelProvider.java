@@ -32,6 +32,7 @@ import org.eclipse.xtext.resource.IReferenceDescription;
 public class DotDescriptionLabelProvider
 		extends org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider {
 
+	@Override
 	public Object image(IReferenceDescription referenceDescription) {
 		String result = ""; //$NON-NLS-1$
 		EObject eObject = getEObject(referenceDescription);
@@ -52,6 +53,7 @@ public class DotDescriptionLabelProvider
 		return !result.isEmpty() ? result : super.image(referenceDescription);
 	}
 
+	@Override
 	public Object text(IReferenceDescription referenceDescription) {
 		StringBuilder result = new StringBuilder();
 

@@ -90,6 +90,7 @@ public class DotUiModule
 		return DotHyperlinkHelper.class;
 	}
 
+	@Override
 	public Class<? extends IRenameStrategy> bindIRenameStrategy() {
 		return DotRenameStrategy.class;
 	}

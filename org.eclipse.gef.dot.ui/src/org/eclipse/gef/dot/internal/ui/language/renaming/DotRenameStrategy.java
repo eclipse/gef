@@ -81,6 +81,7 @@ public class DotRenameStrategy extends DefaultRenameStrategy {
 		return targetElement;
 	}
 
+	@Override
 	public void createDeclarationUpdates(String newName,
 			ResourceSet resourceSet,
 			IRefactoringUpdateAcceptor updateAcceptor) {

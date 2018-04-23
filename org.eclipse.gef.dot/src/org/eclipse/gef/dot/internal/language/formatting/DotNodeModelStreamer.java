@@ -36,6 +36,7 @@ import com.google.inject.Injector;
  */
 public class DotNodeModelStreamer extends NodeModelStreamer {
 
+	@Override
 	protected void writeSemantic(ITokenStream out, ICompositeNode node)
 			throws IOException {
 		AbstractRule rule = tokenUtil.getTokenRule(node);
