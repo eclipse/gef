@@ -16,7 +16,7 @@ import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 /**
- * The DOTEditor class implements the IShowInTargetList interface to provide the
+ * The DotEditor class implements the IShowInTargetList interface to provide the
  * list of views that should occur in the 'Show In' context menu of the DOT
  * Editor.
  */

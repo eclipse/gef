@@ -26,6 +26,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 
 public class DotHtmlLabelSemanticHighlightingCalculator
 		extends DefaultSemanticHighlightingCalculator {
+
 	@Override
 	public void doProvideHighlightingFor(XtextResource resource,
 			IHighlightedPositionAcceptor acceptor) {

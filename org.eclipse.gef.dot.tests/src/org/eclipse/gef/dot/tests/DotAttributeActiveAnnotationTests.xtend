@@ -21,7 +21,7 @@ import org.junit.Test
 
 class DotAttributeActiveAnnotationTests {
 
-	extension XtendCompilerTesterEx compilerTester = XtendCompilerTesterEx.newXtendCompilerTesterEx(class.classLoader)
+	extension XtendCompilerTesterEx = XtendCompilerTesterEx.newXtendCompilerTesterEx(class.classLoader)
 	
 	@Test
 	def void subgraph_rank(){
