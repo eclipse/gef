@@ -37,7 +37,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 
 	@Inject extension IOccurrenceComputer
 
-	override String getEditorId() {
+	override protected getEditorId() {
 		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
 	}
 

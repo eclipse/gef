@@ -361,7 +361,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		return change
 	}
 
-	override protected String getEditorId() {
+	override protected getEditorId() {
 		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
 	}
 }
