@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,11 +18,14 @@ public class DotHtmlLabelTerminalsTokenTypeToPartitionMapper
 
 	@Override
 	protected String calculateId(String tokenName, int tokenType) {
-		// assign the COMMENT_PARTITION to the HTML_COMMENT rule, otherwise, the
-		// multi-line comment folding does not work
-		if ("RULE_HTML_COMMENT".equals(tokenName)) { //$NON-NLS-1$
+		switch (tokenName) {
+		case "RULE_HTML_COMMENT": //$NON-NLS-1$
+			/**
+			 * assign the COMMENT_PARTITION to the HTML_COMMENT rule, otherwise,
+			 * the multi-line comment folding does not work
+			 */
 			return COMMENT_PARTITION;
-		} else {
+		default:
 			return super.calculateId(tokenName, tokenType);
 		}
 	}
