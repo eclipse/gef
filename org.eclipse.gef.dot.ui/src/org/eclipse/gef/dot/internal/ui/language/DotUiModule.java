@@ -16,11 +16,13 @@
  *                                 - add binding for occurrence computer (bug #530699)
  *                                 - add binding for reference finder/reference query executor (bug #531049)
  *                                 - add binding for the Xtext Editor
+ *                                 - add binding for token type to partition mapper (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
 import org.eclipse.gef.dot.internal.ui.language.contentassist.DynamicTemplateProposalProvider;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditor;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotFindReferencesQueryExecutor;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotUiReferenceFinder;
 import org.eclipse.gef.dot.internal.ui.language.folding.DotFoldingRegionProvider;
@@ -40,6 +42,7 @@ import org.eclipse.xtext.ui.editor.findrefs.ReferenceQueryExecutor;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
+import org.eclipse.xtext.ui.editor.model.ITokenTypeToPartitionTypeMapper;
 import org.eclipse.xtext.ui.editor.occurrences.IOccurrenceComputer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -109,5 +112,9 @@ public class DotUiModule
 
 	public Class<? extends XtextEditor> bindXtextEditor() {
 		return DotEditor.class;
+	}
+
+	public Class<? extends ITokenTypeToPartitionTypeMapper> bindITokenTypeToPartitionTypeMapper() {
+		return DotTerminalsTokenTypeToPartitionMapper.class;
 	}
 }

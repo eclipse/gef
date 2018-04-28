@@ -25,6 +25,12 @@ public class DotHtmlLabelTerminalsTokenTypeToPartitionMapper
 			 * the multi-line comment folding does not work
 			 */
 			return COMMENT_PARTITION;
+		case "RULE_ATTR_VALUE": //$NON-NLS-1$
+			/**
+			 * assign the STRING_LITERAL_PARTITION to the ATTR_VALUE rule,
+			 * otherwise, the double click text selection does not work properly
+			 */
+			return STRING_LITERAL_PARTITION;
 		default:
 			return super.calculateId(tokenName, tokenType);
 		}
