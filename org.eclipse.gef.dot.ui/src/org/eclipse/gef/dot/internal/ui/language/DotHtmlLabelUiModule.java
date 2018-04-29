@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
+import org.eclipse.gef.dot.internal.ui.language.editor.DotHtmlLabelTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.folding.DotHtmlLabelFoldingRegionProvider;
-import org.eclipse.gef.dot.internal.ui.language.folding.DotHtmlLabelTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotHtmlLabelSemanticHighlightingCalculator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;

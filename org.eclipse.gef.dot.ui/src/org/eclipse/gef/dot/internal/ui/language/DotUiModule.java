@@ -19,8 +19,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
-import org.eclipse.gef.dot.internal.ui.DotEditor;
 import org.eclipse.gef.dot.internal.ui.language.contentassist.DynamicTemplateProposalProvider;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditor;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotFindReferencesQueryExecutor;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotUiReferenceFinder;
 import org.eclipse.gef.dot.internal.ui.language.folding.DotFoldingRegionProvider;

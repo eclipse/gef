@@ -9,7 +9,7 @@
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui.language.folding;
+package org.eclipse.gef.dot.internal.ui.language.editor;
 
 import org.eclipse.xtext.ui.editor.model.TerminalsTokenTypeToPartitionMapper;
 

@@ -10,26 +10,22 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.language.editor;
 
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.DotGraphView;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
-public class DotEditorUtils {
+/**
+ * The DotEditor class implements the IShowInTargetList interface to provide the
+ * list of views that should occur in the 'Show In' context menu of the DOT
+ * Editor.
+ */
+public class DotEditor extends XtextEditor implements IShowInTargetList {
 
-	/**
-	 * @param object
-	 * 
-	 * @return true if the object is the DOT Editor, false otherwise
-	 */
-	public static boolean isDotEditor(Object object) {
-		if (object instanceof XtextEditor) {
-			XtextEditor editor = (XtextEditor) object;
-			return DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
-					.equals(editor.getLanguageName());
-		}
-
-		return false;
+	@Override
+	public String[] getShowInTargetIds() {
+		return new String[] { DotGraphView.class.getName() };
 	}
 
 }
