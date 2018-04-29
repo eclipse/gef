@@ -53,7 +53,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 		'''.assertTextSelectedAfterDoubleClicking('''digraph''')
 	}
 	
-		@Test def edge_arrowhead_001() {
+	@Test def edge_arrowhead_001() {
 		'''
 			digraph {
 				1->2[arrowhead=b«c»ox]
