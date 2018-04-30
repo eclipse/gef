@@ -13,7 +13,7 @@ package org.eclipse.gef.dot.tests;
 
 import java.util.Collection;
 
-import org.eclipse.gef.dot.internal.language.DotInjectorProvider;
+import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.gef.dot.internal.language.dot.DotAst;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotHighlightingConfiguration;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotSemanticHighlightingCalculator;
@@ -42,7 +42,7 @@ import com.google.inject.Inject;
  *
  */
 @RunWith(XtextRunner.class)
-@InjectWith(DotInjectorProvider.class)
+@InjectWith(DotUiInjectorProvider.class)
 public class DotHighlightingCalculatorTests
 		implements IHighlightedPositionAcceptor {
 
