@@ -19,25 +19,30 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ DotHtmlLabelContentAssistTests.class, DotArrowTypeTests.class,
-		DotImportTests.class, DotExportTests.class,
-		DotExecutableUtilsTests.class, DotExtractorTests.class,
-		DotAttributesTests.class, DotParserTests.class, DotQuickfixTests.class,
-		DotEscStringTests.class, DotHighlightingTests.class,
-		DotHighlightingCalculatorTests.class, DotValidatorTests.class,
-		DotContentAssistTests.class, DotBSplineInterpolatorTests.class,
-		DotHtmlLabelTests.class, DotOutlineViewTests.class,
-		DotFoldingTests.class, DotStyleTests.class, DotRecordLabelTests.class,
-		DotAstTests.class, DotHoverTests.class, Dot2ZestGraphCopierTests.class,
-		DotHyperlinkNavigationTests.class, DotPortPosTests.class,
-		DotRenameRefactoringTests.class, DotMarkingOccurrencesTests.class,
-		DotAttributeActiveAnnotationTests.class, DotColorListTests.class,
-		DotHtmlLabelLexerTests.class, DotHtmlLabelContentAssistLexerTests.class,
-		DotHtmlLabelHighlightingLexerTests.class, DotLexerTests.class,
-		DotFormatterTests.class, DotHtmlLabelFormatterTests.class,
-		DotEditorDoubleClickingTests.class,
-		DotTokenTypeToPartitionMapperTests.class,
-		DotHtmlLabelTokenTypeToPartitionMapperTests.class })
+@SuiteClasses({ // JUnit Tests
+		Dot2ZestGraphCopierTests.class, DotArrowTypeTests.class,
+		DotAstTests.class, DotAttributeActiveAnnotationTests.class,
+		DotAttributesTests.class, DotBSplineInterpolatorTests.class,
+		DotColorListTests.class, DotEscStringTests.class,
+		DotExecutableUtilsTests.class, DotExportTests.class,
+		DotExtractorTests.class, DotFormatterTests.class,
+		DotHtmlLabelFormatterTests.class, DotHtmlLabelLexerTests.class,
+		DotHtmlLabelTests.class, DotImportTests.class, DotLexerTests.class,
+		DotParserTests.class, DotPortPosTests.class, DotRecordLabelTests.class,
+		DotStyleTests.class, DotValidatorTests.class,
+
+		// JUnit Plug-in Tests
+		DotContentAssistTests.class, DotEditorDoubleClickingTests.class,
+		DotFoldingTests.class, DotHighlightingCalculatorTests.class,
+		DotHighlightingTests.class, DotHoverTests.class,
+		DotHtmlLabelContentAssistLexerTests.class,
+		DotHtmlLabelContentAssistTests.class,
+		DotHtmlLabelHighlightingLexerTests.class,
+		DotHtmlLabelTokenTypeToPartitionMapperTests.class,
+		DotHyperlinkNavigationTests.class, DotMarkingOccurrencesTests.class,
+		DotOutlineViewTests.class, DotQuickfixTests.class,
+		DotRenameRefactoringTests.class,
+		DotTokenTypeToPartitionMapperTests.class })
 public class AllUiTests {
 
 }
