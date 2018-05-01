@@ -1027,14 +1027,17 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	}
 	
 	/**
-	  * @param it The text representing the input dot content.
-	  * 	The text must contain the {@link #c} symbols indicating the current cursor position.
-	  * 
-	  * @param expected The text that is expected to be selected after double clicking.
-	  */
+	 * @param it
+	 *            The editor's input text. The text must contain the {@link #c}
+	 *            symbols indicating the current cursor position.
+	 * 
+	 * @param expected
+	 *            The text that is expected to be selected after double clicking
+	 *            in the text editor on the current cursor position.
+	 */
 	def private assertTextSelectedAfterDoubleClicking(CharSequence it, String expected) {
 		
-		content.openDotEditor.
+		content.createTestFile.openEditor.
 		
 		doubleClick(cursorPosition).
 		
@@ -1043,17 +1046,6 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 
 	private def getContent(CharSequence text) {
 		text.toString.replace(c, "")
-	}
-	
-	private def openDotEditor(String content) {
-		var XtextEditor editor = null
-		try {
-			editor = content.createTestFile.openEditor
-		} catch (Exception e) {
-			e.printStackTrace
-			fail(e.message)
-		}
-		editor
 	}
 	
 	private def getCursorPosition(CharSequence text) {
