@@ -11,19 +11,30 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.xtext.junit4.InjectWith;
+import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest;
 import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.XtextEditorInfo;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import com.google.inject.Inject;
+
+@RunWith(XtextRunner.class)
+@InjectWith(DotUiInjectorProvider.class)
 @SuppressWarnings("restriction")
 public class DotHighlightingTests extends AbstractEditorTest {
+
+	@Inject
+	private XtextEditorInfo editorInfo;
 
 	@Override
 	public void setUp() throws Exception {
@@ -33,7 +44,7 @@ public class DotHighlightingTests extends AbstractEditorTest {
 
 	@Override
 	protected String getEditorId() {
-		return DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT;
+		return editorInfo.getEditorId();
 	}
 
 	// lexical highlighting test cases

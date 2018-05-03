@@ -14,12 +14,12 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator
 import org.eclipse.jface.text.Region
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
+import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.hover.AbstractEObjectHover
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover
 import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControlInput
@@ -31,6 +31,7 @@ import org.junit.runner.RunWith
 class DotHoverTests extends AbstractEditorTest {
 
 	@Inject IEObjectHover eObjectHover
+	@Inject XtextEditorInfo editorInfo
 
 	@Test
 	def void edge_color() {
@@ -484,7 +485,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 	
 	override protected getEditorId() {
-		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
+		editorInfo.editorId
 	}
 	
 	private def assertHoveringResult(String text, String textUnderHover, String expected){

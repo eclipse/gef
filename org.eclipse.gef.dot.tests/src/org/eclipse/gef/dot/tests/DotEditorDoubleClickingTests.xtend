@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
+import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator
 import org.eclipse.jface.text.ITextSelection
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Event
@@ -20,6 +20,7 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.ui.editor.XtextEditor
+import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,13 +31,15 @@ import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
 @InjectWith(DotUiInjectorProvider)
 class DotEditorDoubleClickingTests extends AbstractEditorTest {
 	
+	@Inject XtextEditorInfo editorInfo
+	
 	/**
 	 * Special symbols indicating the current cursor position
 	 */
 	val c = '''<|>'''
 	
 	override protected getEditorId() {
-		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
+		editorInfo.editorId
 	}
 
 	@Test def empty_graph() {

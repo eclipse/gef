@@ -19,7 +19,6 @@ import java.util.Map
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.core.runtime.SubMonitor
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator
 import org.eclipse.jface.text.Position
 import org.eclipse.jface.text.TextSelection
 import org.eclipse.jface.text.source.Annotation
@@ -27,6 +26,7 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.ui.editor.XtextEditor
+import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.occurrences.IOccurrenceComputer
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,9 +36,10 @@ import org.junit.runner.RunWith
 class DotMarkingOccurrencesTests extends AbstractEditorTest {
 
 	@Inject extension IOccurrenceComputer
+	@Inject XtextEditorInfo editorInfo
 
 	override protected getEditorId() {
-		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
+		editorInfo.editorId
 	}
 
 	@Test def void testMarkingOccurrences01() {

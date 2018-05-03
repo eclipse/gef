@@ -31,7 +31,6 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeId
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator
 import org.eclipse.ltk.core.refactoring.Change
 import org.eclipse.ltk.core.refactoring.RefactoringStatus
 import org.eclipse.ui.actions.WorkspaceModifyOperation
@@ -40,6 +39,7 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.parser.IParseResult
 import org.eclipse.xtext.parser.IParser
+import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.refactoring.impl.RenameElementProcessor
 import org.eclipse.xtext.ui.refactoring.ui.IRenameElementContext
 import org.junit.Test
@@ -54,6 +54,7 @@ import static extension org.eclipse.gef.dot.tests.DotTestUtils.*
 class DotRenameRefactoringTests extends AbstractEditorTest {
 	
 	@Inject Provider<RenameElementProcessor> processorProvider
+	@Inject XtextEditorInfo editorInfo
 	@Inject IParser parser
 
 	override void setUp() throws Exception {
@@ -362,6 +363,6 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 
 	override protected getEditorId() {
-		DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOT
+		editorInfo.editorId
 	}
 }
