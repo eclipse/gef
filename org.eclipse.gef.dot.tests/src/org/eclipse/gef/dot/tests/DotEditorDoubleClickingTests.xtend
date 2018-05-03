@@ -24,7 +24,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 
 	/**
 	 * The default special symbol is part of the dot record-based labels,
-	 * therefore the useage of a more complex special symbols is desired.
+	 * therefore the usage of a more complex special symbols is desired.
 	 */
 	override String c() '''<|>'''
 	
