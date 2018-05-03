@@ -11,36 +11,23 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
-import org.eclipse.jface.text.ITextSelection
-import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.Event
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.ui.editor.XtextEditor
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
-
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotEditorDoubleClickingTests extends AbstractEditorTest {
-	
-	@Inject XtextEditorInfo editorInfo
-	
+class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectionTest {
+
 	/**
-	 * Special symbols indicating the current cursor position
+	 * The default special symbol is part of the dot record-based labels,
+	 * therefore the useage of a more complex special symbols is desired.
 	 */
-	val c = '''<|>'''
+	override String c() '''<|>'''
 	
-	override protected getEditorId() {
-		editorInfo.editorId
-	}
 
 	@Test def empty_graph() {
 		'''
@@ -1029,58 +1016,4 @@ class DotEditorDoubleClickingTests extends AbstractEditorTest {
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
 	}
 	
-	/**
-	 * @param it
-	 *            The editor's input text. The text must contain the {@link #c}
-	 *            symbols indicating the current cursor position.
-	 * 
-	 * @param expected
-	 *            The text that is expected to be selected after double clicking
-	 *            in the text editor on the current cursor position.
-	 */
-	def private assertSelectedTextAfterDoubleClicking(CharSequence it, String expected) {
-		
-		content.createTestFile.openEditor.
-		
-		doubleClick(cursorPosition).
-		
-		assertSelectedText(expected)
-	}
-
-	private def getContent(CharSequence text) {
-		text.toString.replace(c, "")
-	}
-	
-	private def getCursorPosition(CharSequence text) {
-		val cursorPosition = text.toString.indexOf(c)
-		if(cursorPosition==-1){
-			fail('''
-				The input text
-				«text»
-				must contain the «c» symbols indicating the current cursor position!
-			''')
-		}
-		cursorPosition
-	}
-	
-	private def doubleClick(XtextEditor dotEditor, int cursorPosition) {
-		val viewer = dotEditor.internalSourceViewer
-		
-		// set the cursor position
-		viewer.setSelectedRange(cursorPosition, 0)
-		
-		// simulate mouse down event with the left mouse button
-		viewer.textWidget.notifyListeners(SWT.MouseDown,
-			new Event => [
-				button = 1
-			]
-		)
-		
-		dotEditor
-	}
-	
-	private def assertSelectedText(XtextEditor dotEditor, CharSequence expectedSelectedText) {
-		val actualSelectedText = (dotEditor.selectionProvider.selection as ITextSelection).text
-		expectedSelectedText.assertEquals(actualSelectedText)
-	}
 }
