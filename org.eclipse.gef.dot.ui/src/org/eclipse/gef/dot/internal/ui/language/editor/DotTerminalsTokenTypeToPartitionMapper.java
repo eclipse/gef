@@ -7,15 +7,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tamas Miklossy (itemis AG) - initial API and implementation (bug #532244)
+ *    Tamas Miklossy (itemis AG)     - initial API and implementation (bug #532244)
+ *    Zoey Gerrit Prigge (itemis AG) - added HTML_STRING_PARTITION type (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.editor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.xtext.ui.editor.model.TerminalsTokenTypeToPartitionMapper;
 
 public class DotTerminalsTokenTypeToPartitionMapper
 		extends TerminalsTokenTypeToPartitionMapper {
+
+	public static final String HTML_STRING_PARTITION = "__html_string"; //$NON-NLS-1$
 
 	@Override
 	protected String calculateId(String tokenName, int tokenType) {
@@ -41,8 +48,23 @@ public class DotTerminalsTokenTypeToPartitionMapper
 			return IDocument.DEFAULT_CONTENT_TYPE;
 		case "RULE_QUOTED_STRING": //$NON-NLS-1$
 			return STRING_LITERAL_PARTITION;
+		/**
+		 * Html strings ('RULE_HTML_STRING') in dot use a specific syntax, hence
+		 * for double clicking support, we need to implement a custom double
+		 * click strategy using the HTML_STRING_PARTITION.
+		 */
+		case "RULE_HTML_STRING": //$NON-NLS-1$
+			return HTML_STRING_PARTITION;
 		default:
 			return super.calculateId(tokenName, tokenType);
 		}
+	}
+
+	@Override
+	public String[] getSupportedPartitionTypes() {
+		List<String> supportedTypes = new ArrayList<>(
+				Arrays.asList(super.getSupportedPartitionTypes()));
+		supportedTypes.add(HTML_STRING_PARTITION);
+		return supportedTypes.toArray(new String[supportedTypes.size()]);
 	}
 }

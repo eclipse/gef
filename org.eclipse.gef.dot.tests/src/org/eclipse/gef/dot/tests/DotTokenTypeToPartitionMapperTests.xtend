@@ -7,12 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *    Tamas Miklossy (itemis AG)     - initial API and implementation
+ *    Zoey Gerrit Prigge (itemis AG) - introduced htmlStringPartition (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
+import org.eclipse.gef.dot.internal.ui.language.editor.DotTerminalsTokenTypeToPartitionMapper
 import org.eclipse.jface.text.IDocument
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -77,7 +79,7 @@ class DotTokenTypeToPartitionMapperTests {
 
 	@Test def RULE_HTML_CHARS() { "RULE_HTML_CHARS".hasDefaultPartition }
 
-	@Test def RULE_HTML_STRING() { "RULE_HTML_STRING".hasDefaultPartition }
+	@Test def RULE_HTML_STRING() { "RULE_HTML_STRING".hasHtmlStringPartition }
 
 	@Test def RULE_ML_COMMENT() { "RULE_ML_COMMENT".hasCommentPartition }
 
@@ -101,6 +103,10 @@ class DotTokenTypeToPartitionMapperTests {
 
 	private def hasCommentPartition(String tokenName) {
 		tokenName.hasPartition(TerminalsTokenTypeToPartitionMapper.COMMENT_PARTITION)
+	}
+	
+	private def hasHtmlStringPartition(String tokenName) {
+		tokenName.hasPartition(DotTerminalsTokenTypeToPartitionMapper.HTML_STRING_PARTITION)
 	}
 
 	private def hasPartition(String tokenName, String expectedPartition) {

@@ -7,12 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *    Tamas Miklossy (itemis AG)     - initial API and implementation
+ *    Zoey Gerrit Prigge (itemis AG) - introduced textPartition (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
+import org.eclipse.gef.dot.internal.ui.language.editor.DotHtmlLabelTerminalsTokenTypeToPartitionMapper
 import org.eclipse.jface.text.IDocument
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -49,7 +51,7 @@ class DotHtmlLabelTokenTypeToPartitionMapperTests {
 	
 	@Test def RULE_WS() { "RULE_WS".hasDefaultPartition }
 	
-	@Test def RULE_TEXT() { "RULE_TEXT".hasDefaultPartition }
+	@Test def RULE_TEXT() { "RULE_TEXT".hasTextPartition }
 
 	private def hasDefaultPartition(String tokenName) {
 		tokenName.hasPartition(IDocument.DEFAULT_CONTENT_TYPE)
@@ -61,6 +63,10 @@ class DotHtmlLabelTokenTypeToPartitionMapperTests {
 
 	private def hasCommentPartition(String tokenName) {
 		tokenName.hasPartition(TerminalsTokenTypeToPartitionMapper.COMMENT_PARTITION)
+	}
+	
+	private def hasTextPartition(String tokenName) {
+		tokenName.hasPartition(DotHtmlLabelTerminalsTokenTypeToPartitionMapper.TEXT_PARTITION)
 	}
 
 	private def hasPartition(String tokenName, String expectedPartition) {

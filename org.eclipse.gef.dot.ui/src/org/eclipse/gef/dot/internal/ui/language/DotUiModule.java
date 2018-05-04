@@ -7,20 +7,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - add binding for template proposal provider (bug #321775)
- *                                 - add binding for folding region provider (bug #321775)
- *                                 - add binding for EObject hover/hover provider (bug #461506)
- *                                 - add binding for hyperlink helper (bug #461506)
- *                                 - add binding for rename strategy (bug #530423)
- *                                 - add binding for occurrence computer (bug #530699)
- *                                 - add binding for reference finder/reference query executor (bug #531049)
- *                                 - add binding for the Xtext Editor
- *                                 - add binding for token type to partition mapper (bug #532244)
+ *     Alexander Nyßen (itemis AG)    - initial API and implementation
+ *     Tamas Miklossy  (itemis AG)    - add binding for template proposal provider (bug #321775)
+ *                                    - add binding for folding region provider (bug #321775)
+ *                                    - add binding for EObject hover/hover provider (bug #461506)
+ *                                    - add binding for hyperlink helper (bug #461506)
+ *                                    - add binding for rename strategy (bug #530423)
+ *                                    - add binding for occurrence computer (bug #530699)
+ *                                    - add binding for reference finder/reference query executor (bug #531049)
+ *                                    - add binding for the Xtext Editor
+ *                                    - add binding for token type to partition mapper (bug #532244)
+ *     Zoey Gerrit Prigge (itemis AG) - add binding for doubleClickStrategyProvider (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
 import org.eclipse.gef.dot.internal.ui.language.contentassist.DynamicTemplateProposalProvider;
+import org.eclipse.gef.dot.internal.ui.language.doubleclicking.DotDoubleClickStrategyProvider;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditor;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotFindReferencesQueryExecutor;
@@ -37,6 +39,7 @@ import org.eclipse.gef.dot.internal.ui.language.renaming.DotRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
+import org.eclipse.xtext.ui.editor.doubleClicking.DoubleClickStrategyProvider;
 import org.eclipse.xtext.ui.editor.findrefs.IReferenceFinder;
 import org.eclipse.xtext.ui.editor.findrefs.ReferenceQueryExecutor;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
@@ -116,5 +119,9 @@ public class DotUiModule
 
 	public Class<? extends ITokenTypeToPartitionTypeMapper> bindITokenTypeToPartitionTypeMapper() {
 		return DotTerminalsTokenTypeToPartitionMapper.class;
+	}
+
+	public Class<? extends DoubleClickStrategyProvider> bindDoubleClickStrategyProvider() {
+		return DotDoubleClickStrategyProvider.class;
 	}
 }

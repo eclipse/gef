@@ -472,6 +472,199 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 		'''.assertSelectedTextAfterDoubleClicking('''"x11"''')
 	}
 	
+	@Test def edge_html_label_001() {
+		'''
+			digraph {
+				1->2[label=<<b>bold Te«c»xt</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''Text''')
+		}
+	
+	@Test def edge_html_label_002() {
+		'''
+			digraph {
+				1->2[label=<<«c»b>bold Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''b''')
+	}
+	
+	@Test def edge_html_label_003() {
+		'''
+			digraph {
+				1->2[label=<«c»<b>bold Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''<''')
+	}
+	
+	@Test def edge_html_label_004() {
+		'''
+			digraph {
+				1->2[label=<<font face=«c»"Times">serif Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''="''')
+	}
+	
+	@Test def edge_html_label_005() {
+		'''
+			digraph {
+				1->2[label=<<font face="Ti«c»mes">serif Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''Times''')
+	}
+	
+	@Test def edge_html_label_006() {
+		'''
+			digraph {
+				1->2[label=<<font face«c»="Times">serif Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''face''')
+	}
+	
+	@Test def edge_html_label_007() {
+		'''
+			digraph {
+				1->2[label=<<font «c»face="Times">serif Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''face''')
+	}
+	
+	@Test def edge_html_label_008() {
+		'''
+			digraph {
+				1->2[label=<<fo«c»nt face="Times">serif Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''font''')
+	}
+	
+	
+	@Test def edge_html_label_009() {
+		'''
+			digraph {
+				1->2[label=«c»<<font face="Times">serif Text</b>>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''<<font face="Times">serif Text</b>>''')
+	}
+	
+	@Test def edge_html_label_010() {
+		'''
+			digraph{1->2[label=<«c»text>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_011() {
+		'''
+			digraph{1->2[label=<t«c»ext>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_012() {
+		'''
+			digraph{1->2[label=<te«c»xt>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_013() {
+		'''
+			digraph{1->2[label=<tex«c»t>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_014() {
+		'''
+			digraph{1->2[label=<text«c»>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_015() {
+		'''
+			digraph{1->2[label=< «c»text >]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_016() {
+		'''
+			digraph{1->2[label=< t«c»ext >]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_017() {
+		'''
+			digraph{1->2[label=< te«c»xt >]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_018() {
+		'''
+			digraph{1->2[label=< tex«c»t >]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_019() {
+		'''
+			digraph{1->2[label=< text«c» >]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_020() {
+		'''
+			digraph{1->2[label=<<B>«c»text</B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_021() {
+		'''
+			digraph{1->2[label=<<B>t«c»ext</B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_022() {
+		'''
+			digraph{1->2[label=<<B>te«c»xt</B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_023() {
+		'''
+			digraph{1->2[label=<<B>tex«c»t</B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_024() {
+		'''
+			digraph{1->2[label=<<B>text«c»</B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_025() {
+		'''
+			digraph{1->2[label=<<B> «c»text </B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_026() {
+		'''
+			digraph{1->2[label=<<B> t«c»ext </B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_027() {
+		'''
+			digraph{1->2[label=<<B> te«c»xt </B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_028() {
+		'''
+			digraph{1->2[label=<<B> tex«c»t </B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
+	@Test def edge_html_label_029() {
+		'''
+			digraph{1->2[label=<<B> text«c» </B>>]}
+		'''.assertSelectedTextAfterDoubleClicking('''text''')
+	}
+	
 	@Test def edge_style_001() {
 		'''
 			graph{
@@ -984,6 +1177,132 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 		'''
 			graph {	1[height="2.3"«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
+	}
+	
+	@Test def node_html_label_001() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td align="center">Cate«c»gory One</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''Category''')
+	}
+	
+	@Test def node_html_label_002() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td align="center">Category«c» One</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''Category''') 
+	}
+	
+	@Test def node_html_label_003() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td align="center">C«c»ategory One</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''Category''')
+	}
+	
+	@Test def node_html_label_004() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td align="center">Category «c»One</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''One''')
+	}
+	
+	@Test def node_html_label_005() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td al«c»ign="center">Category</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''align''')
+	}
+	
+	@Test def node_html_label_006() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td align="c«c»enter">Category</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''center''')
+	}
+	
+	@Test def node_html_label_007() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<«c»td align="center">Category</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''td''')
+	}
+	
+	@Test def node_html_label_008() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td align="center">Category</td>
+						</t«c»r>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''tr''')
+	}
+	
+	@Test def node_html_label_009() {
+		'''
+			graph {
+				1[label=<
+					<table>
+						<tr>
+							<td align="center">«c»Category Five</td>
+						</tr>
+					</table>
+				>]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''Category''')
 	}
 	
 	@Test def node_record_label_001() {

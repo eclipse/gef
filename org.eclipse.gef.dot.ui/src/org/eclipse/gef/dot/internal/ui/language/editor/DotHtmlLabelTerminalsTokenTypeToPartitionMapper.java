@@ -7,14 +7,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *    Tamas Miklossy (itemis AG)     - initial API and implementation
+ *    Zoey Gerrit Prigge (itemis AG) - add TEXT_PARTITION type (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.editor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.xtext.ui.editor.model.TerminalsTokenTypeToPartitionMapper;
 
 public class DotHtmlLabelTerminalsTokenTypeToPartitionMapper
 		extends TerminalsTokenTypeToPartitionMapper {
+
+	public static final String TEXT_PARTITION = "__html_text"; //$NON-NLS-1$
 
 	@Override
 	protected String calculateId(String tokenName, int tokenType) {
@@ -31,8 +38,23 @@ public class DotHtmlLabelTerminalsTokenTypeToPartitionMapper
 			 * otherwise, the double click text selection does not work properly
 			 */
 			return STRING_LITERAL_PARTITION;
+		case "RULE_TEXT": //$NON-NLS-1$
+			/**
+			 * assign the TEXT_PARTITION to the TEXT rule, to assign double
+			 * click strategy manually as double click text selection does not
+			 * work properly otherwise.
+			 */
+			return TEXT_PARTITION;
 		default:
 			return super.calculateId(tokenName, tokenType);
 		}
+	}
+
+	@Override
+	public String[] getSupportedPartitionTypes() {
+		List<String> supportedTypes = new ArrayList<>(
+				Arrays.asList(super.getSupportedPartitionTypes()));
+		supportedTypes.add(TEXT_PARTITION);
+		return supportedTypes.toArray(new String[supportedTypes.size()]);
 	}
 }
