@@ -7,14 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tamas Miklossy (itemis AG) - initial API and implementation (bug #532244)
+ *    Tamas Miklossy (itemis AG)     - initial API and implementation (bug #532244)
+ *    Zoey Gerrit Prigge (itemis AG) - added additional test cases (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -41,6 +41,67 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			d«c»igraph {
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''digraph''')
+	}
+	
+	@Test def clicking_on_middle_letters_001() {
+		'''
+			digraph xyz {
+			    c4->4  [t«c»ailport = s, headport = n];
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''tailport''')
+	}
+
+	@Test def clicking_on_middle_letters_002() {
+		'''graph { 1[«c»shape=none] }'''.assertSelectedTextAfterDoubleClicking("shape=none")
+	}
+
+	@Test def clicking_on_middle_letters_003() {
+		'''graph { 1[s«c»hape=none] }'''.assertSelectedTextAfterDoubleClicking("shape")
+	}
+
+	@Test def clicking_on_middle_letters_004() {
+		'''graph { 1[sh«c»ape=none] }'''.assertSelectedTextAfterDoubleClicking("shape")
+	}
+
+	@Test def clicking_on_middle_letters_005() {
+		'''graph { 1[sha«c»pe=none] }'''.assertSelectedTextAfterDoubleClicking("shape")
+	}
+
+	@Test def clicking_on_middle_letters_006() {
+		'''graph { 1[shap«c»e=none] }'''.assertSelectedTextAfterDoubleClicking("shape")
+	}
+
+	@Test def clicking_on_middle_letters_007() {
+		'''graph { 1[shape«c»=none] }'''.assertSelectedTextAfterDoubleClicking("shape")
+	}
+
+	@Test def clicking_on_middle_letters_008() {
+		'''graph { 1[shape=«c»none] }'''.assertSelectedTextAfterDoubleClicking("none")
+	}
+
+	@Test def clicking_on_middle_letters_009() {
+		'''graph { 1[shape=n«c»one] }'''.assertSelectedTextAfterDoubleClicking("none")
+	}
+
+	@Test def clicking_on_middle_letters_010() {
+		'''graph { 1[shape=no«c»ne] }'''.assertSelectedTextAfterDoubleClicking("none")
+	}
+
+	@Test def clicking_on_middle_letters_011() {
+		'''graph { 1[shape=non«c»e] }'''.assertSelectedTextAfterDoubleClicking("none")
+	}
+
+	@Test def clicking_on_middle_letters_012() {
+		'''graph { 1[shape=none«c»] }'''.assertSelectedTextAfterDoubleClicking("none")
+
+	}
+
+	@Test def edge_operator() {
+		'''
+			digraph {
+				1 «c»-> 2
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''->''')
 	}
 	
 	@Test def edge_arrowhead_001() {
@@ -409,6 +470,14 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 		'''
 			digraph { 1->2[colorscheme="x11"«c»]}
 		'''.assertSelectedTextAfterDoubleClicking('''"x11"''')
+	}
+	
+	@Test def edge_style_001() {
+		'''
+			graph{
+				1->2[style="bo«c»ld, dotted"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''bold''')
 	}
 	
 	@Test def graph_bgcolor_001() {
@@ -917,21 +986,6 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
 	}
 	
-	@Ignore("activate as soon as solution for bug #532244 has been implemented")
-	@Test def node_html_label_001() {
-		'''
-			graph {
-				1[label=<
-					<table>
-						<tr>
-							<td align="center">Cate«c»gory</td>
-						</tr>
-					</table>
-				>]
-			}
-		'''.assertSelectedTextAfterDoubleClicking('''Category''')
-	}
-	
 	@Test def node_record_label_001() {
 		'''
 			graph{
@@ -940,10 +994,114 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 		'''.assertSelectedTextAfterDoubleClicking('''text2''')
 	}
 	
+	@Test def node_record_label_002() {
+		'''
+			graph{
+				1[shape=record label=" text1 | <po«c»rt123>text2 "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''port123''')
+	}
+	
+	@Test def node_record_label_003() {
+		'''
+			graph{
+				1[shape=record label=" text1 | <«c»rt123 s >text2 "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''rt123''')
+	}
+	
+	@Test def node_record_label_004() {
+		'''
+			graph{
+				1[shape=record label=" text1 | <po«c»rt123 s>text2 "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''port123''')
+	}
+	
+	@Test def node_record_label_005() {
+		'''
+			graph{
+				1[shape=record label=" text1 | {«c» text2 } "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''{''')
+	}
+	
+	@Test def node_record_label_006() {
+		'''
+			graph{
+				1[shape=record label=" text1 | {«c»text2 } "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''text2''')
+	}
+	
+	@Test def node_record_label_007() {
+		'''
+			graph{
+				1[shape=record label=" text1 | {«c» text2 text3} "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''{''')
+	}
+	
+	@Test def node_record_label_008() {
+		'''
+			graph{
+				1[shape=record label=" text1 | { te«c»xt2 text3} "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''text2''')
+	}
+	
+	@Test def node_record_label_009() {
+		'''
+			graph{
+				1[shape=record label=" text1 | text«c»2 text3 "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''text2''')
+	}
+	
+	@Test def node_record_label_010() {
+		'''
+			graph{
+				1[shape=record label=" text1 | t«c»ext2 text3 "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''text2''')
+	}
+	
+	@Test def node_record_label_011() {
+		'''
+			graph{
+				1[shape=record label=" text1 | «c»{ text2 text3 } "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking(''' ''')
+	}
+	
+	@Test def node_record_label_012() {
+		'''
+			graph{
+				1[shape=record label=" text1 | { text2 text3 }«c» "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''}''')
+	}
+
+	@Test def node_record_label_013() {
+		'''
+			graph{
+				1[shape=record label=" text1 | «c»<text2> text3 } "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking(''' ''')
+	}
+	
+	@Test def node_record_label_hidden_token() {
+		'''
+			graph{
+				1[shape=record label=" text1 | {«c»text2         text3} "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''text2''')
+	}
+
 	@Test def node_style_001() {
 		'''
 			graph{
-				1[style=" bo«c»ld, dotted "]
+				1[style="bo«c»ld"]
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''bold''')
 	}
@@ -951,9 +1109,89 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 	@Test def node_style_002() {
 		'''
 			graph{
+				1[style=«c»"bold"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''"bold"''')
+	}
+	
+	@Test def node_style_003() {
+		'''
+			graph{
+				1[style=" bo«c»ld, dotted "]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''bold''')
+	}
+	
+	@Test def node_style_004() {
+		'''
+			graph{
 				1[style=" bold, dot«c»ted "]
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''dotted''')
+	}
+	
+	@Test def node_style_005() {
+		'''
+			graph{
+				1[style=«c»"bold, dotted"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''"bold, dotted"''')
+	}
+	
+	@Test def node_style_006() {
+		'''
+			graph{
+				1[style="bo«c»ld, dotted"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''bold''')
+	}
+	
+	@Test def node_style_007() {
+		'''
+			graph{
+				1[style="bold«c», dotted"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''bold''')
+	}
+	
+	@Test def node_style_008() {
+		'''
+			graph{
+				1[style="bold,«c» dotted"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking(''',''')
+	}
+	
+	@Test def node_style_009() {
+		'''
+			graph{
+				1[style="bold, «c»dotted"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''dotted''')
+	}
+	
+	@Test def node_style_010() {
+		'''
+			graph{
+				1[style="bold, dot«c»ted"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''dotted''')
+	}
+	
+	@Test def node_style_011() {
+		'''
+			graph{
+				1[style="bold, dotted«c»"]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''bold, dotted''')
+	}
+	
+	@Test def node_style_012() {
+		'''
+			graph{
+				1[style="bold, dotted"«c»]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''"bold, dotted"''') 
 	}
 	
 	@Test def node_width_001() {
@@ -1016,4 +1254,81 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
 	}
 	
+	@Test def other_attributes_001() {
+		'''
+			digraph {
+				graph[charset=latin1, size="19,46, 11,12"]
+				1
+				2
+				1 -> 2 [c«c»olor=red, tailport=w, headport=w]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''color''')
+	}
+	
+	@Test def other_attributes_002() {
+		'''
+			digraph {
+				graph[charset=latin1, size="19,46, 11,12"]
+				1
+				2
+				1 -> 2 [color=r«c»ed, tailport=w, headport=w]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''red''')
+	}
+	
+	@Test def other_attributes_003() {
+		'''
+			digraph {
+				graph[charset=latin1, size="19,46, 11,12"]
+				1
+				2
+				1 -> 2 [color=red«c», tailport=w, headport=w]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''red''')
+	}
+	
+	@Test def other_attributes_004() {
+		'''
+			digraph {
+				graph[charset=latin1, size="19,46, 11,12"]
+				1
+				2
+				1 -> 2 [color=«c»red, tailport=w, headport=w]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''red''')
+	}
+	
+	
+	@Test def other_attributes_005() {
+		'''
+			digraph {
+				graph[charset=latin1, size="19,46, 11,12"]
+				1
+				2
+				1 -> 2 [color=red, «c»tailport=w, headport=w]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''tailport''')
+	}
+	
+	@Test def other_attributes_clicking_before_quotes() {
+		'''
+			digraph {
+				graph[charset=latin1, size="19,46, 11,12"]
+				1
+				2
+				1 -> 2 [color=red, tailport=«c»"w", headport=w]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''"w"''')
+	}
+	
+	@Test def other_attributes_equals_sign_throws_no_exception() {
+		'''
+			digraph {
+				graph[charset=latin1, size="19,46, 11,12"]
+				1
+				2
+				1 -> 2 [color=red, tailport=w, headport«c»=w]
+			}
+		'''.assertSelectedTextAfterDoubleClicking('''headport''') 
+	}
 }
