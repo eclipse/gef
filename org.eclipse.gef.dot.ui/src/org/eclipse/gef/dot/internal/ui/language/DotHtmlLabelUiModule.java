@@ -7,16 +7,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Tamas Miklossy   (itemis AG) - improve html-label highlighting/folding
+ *     Matthias Wienand   (itemis AG) - initial API and implementation
+ *     Tamas Miklossy     (itemis AG) - improve html-label highlighting/folding
+ *     Zoey Gerrit Prigge (itemis AG) - bind double click strategy provider (bug #532244)
  *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
+import org.eclipse.gef.dot.internal.ui.language.doubleclicking.DotHtmlLabelDoubleClickStrategyProvider;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotHtmlLabelTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.folding.DotHtmlLabelFoldingRegionProvider;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotHtmlLabelSemanticHighlightingCalculator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ui.editor.doubleClicking.DoubleClickStrategyProvider;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.model.ITokenTypeToPartitionTypeMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
@@ -41,4 +44,9 @@ public class DotHtmlLabelUiModule extends
 	public Class<? extends ITokenTypeToPartitionTypeMapper> bindITokenTypeToPartitionTypeMapper() {
 		return DotHtmlLabelTerminalsTokenTypeToPartitionMapper.class;
 	}
+
+	public Class<? extends DoubleClickStrategyProvider> bindDoubleClickStrategyProvider() {
+		return DotHtmlLabelDoubleClickStrategyProvider.class;
+	}
+
 }
