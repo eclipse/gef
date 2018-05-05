@@ -10,6 +10,7 @@ Export-Package: org.eclipse.gef.dot.internal.ui;x-friends:="org.eclipse.gef.dot.
  org.eclipse.gef.dot.internal.ui.language;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.language.contentassist;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.language.contentassist.antlr.lexer;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.ui.language.editor;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.language.highlighting;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.language.internal;x-friends:="org.eclipse.gef.dot.tests",
