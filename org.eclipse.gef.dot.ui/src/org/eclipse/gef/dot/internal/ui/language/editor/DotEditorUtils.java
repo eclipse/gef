@@ -67,6 +67,7 @@ public class DotEditorUtils {
 			xtextResource = doGetResource(injector,
 					new StringInputStream(
 							Strings.emptyIfNull(currentModelToParse)),
+					// creating an in-memory EMF Resource
 					URI.createURI("")); //$NON-NLS-1$
 		} catch (Exception exception) {
 			exception.printStackTrace();
