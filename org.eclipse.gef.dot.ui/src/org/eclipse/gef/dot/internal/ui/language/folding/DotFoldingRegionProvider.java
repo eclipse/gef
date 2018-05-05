@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,37 +12,27 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.folding;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.language.dot.DotPackage;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
-import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.folding.DefaultFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.folding.FoldedPosition;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionAcceptor;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
-import org.eclipse.xtext.ui.editor.model.DocumentPartitioner;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.ui.editor.model.XtextDocument;
-import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.util.ITextRegion;
-import org.eclipse.xtext.util.StringInputStream;
-import org.eclipse.xtext.util.Strings;
 
 import com.google.inject.Injector;
 
@@ -94,7 +84,8 @@ public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 
 			IXtextDocument xtextDocument = null;
 			try {
-				xtextDocument = getDocument(htmlLabelValue);
+				xtextDocument = DotEditorUtils.getDocument(injector,
+						htmlLabelValue);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -139,51 +130,4 @@ public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 		}
 		return attributeValueStartOffset;
 	}
-
-	private IXtextDocument getDocument(final String currentModelToParse)
-			throws Exception {
-		XtextResource xtextResource = doGetResource(
-				new StringInputStream(Strings.emptyIfNull(currentModelToParse)),
-				// creating an in-memory EMF Resource
-				URI.createURI("")); //$NON-NLS-1$
-
-		return getDocument(xtextResource, currentModelToParse);
-	}
-
-	private IXtextDocument getDocument(final XtextResource xtextResource,
-			final String model) {
-		XtextDocument document = get(XtextDocument.class);
-		document.set(model);
-		document.setInput(xtextResource);
-		DocumentPartitioner partitioner = get(DocumentPartitioner.class);
-		partitioner.connect(document);
-		document.setDocumentPartitioner(partitioner);
-		return document;
-	}
-
-	private <T> T get(Class<T> clazz) {
-		return injector.getInstance(clazz);
-	}
-
-	private XtextResource doGetResource(InputStream in, URI uri)
-			throws Exception {
-		XtextResourceSet rs = get(XtextResourceSet.class);
-		rs.setClasspathURIContext(getClass());
-		XtextResource resource = (XtextResource) getResourceFactory()
-				.createResource(uri);
-		rs.getResources().add(resource);
-		resource.load(in, null);
-		if (resource instanceof LazyLinkingResource) {
-			((LazyLinkingResource) resource)
-					.resolveLazyCrossReferences(CancelIndicator.NullImpl);
-		} else {
-			EcoreUtil.resolveAll(resource);
-		}
-		return resource;
-	}
-
-	private IResourceFactory getResourceFactory() {
-		return injector.getInstance(IResourceFactory.class);
-	}
-
 }

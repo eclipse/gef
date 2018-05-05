@@ -13,10 +13,7 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import java.io.InputStream
 import java.util.List
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.ui.language.quickfix.DotQuickfixProvider
@@ -24,21 +21,13 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.eclipse.xtext.linking.lazy.LazyLinkingResource
-import org.eclipse.xtext.resource.IResourceFactory
-import org.eclipse.xtext.resource.XtextResource
-import org.eclipse.xtext.resource.XtextResourceSet
-import org.eclipse.xtext.ui.editor.model.DocumentPartitioner
 import org.eclipse.xtext.ui.editor.model.IXtextDocument
-import org.eclipse.xtext.ui.editor.model.XtextDocument
 import org.eclipse.xtext.ui.editor.model.edit.IssueModificationContext
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution
-import org.eclipse.xtext.util.CancelIndicator
-import org.eclipse.xtext.util.StringInputStream
-import org.eclipse.xtext.util.Strings
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import static extension org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils.getDocument
 import static extension org.junit.Assert.assertEquals
 import static extension org.junit.Assert.assertNotNull
 
@@ -442,7 +431,7 @@ class DotQuickfixTests {
 	}
 
 	def private void assertIssueResolutionEffect(String expectedResult, IssueResolution actualIssueResolution, String originalText) {
-		val xtextDocument = originalText.getDocument
+		val xtextDocument = injector.getDocument(originalText)
 		xtextDocument.assertNotNull
 		var modificationContext = new TestIssueModificationContext
 		modificationContext.setDocument(xtextDocument)
@@ -452,48 +441,6 @@ class DotQuickfixTests {
 		actualIssueResolution2.apply
 		var actualResult = actualIssueResolution2.modificationContext.xtextDocument.get
 		expectedResult.assertEquals(actualResult)
-	}
-
-	/** 
-	 * The implementation of the following helper methods are taken from the
-	 * org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder java class.
-	 */
-	def private IXtextDocument getDocument(String currentModelToParse) throws Exception {
-		var XtextResource xtextResource = doGetResource(new StringInputStream(Strings.emptyIfNull(currentModelToParse)),
-			URI.createURI("dummy:/example.mydsl"))
-		return getDocument(xtextResource, currentModelToParse)
-	}
-
-	def private IXtextDocument getDocument(XtextResource xtextResource, String model) {
-		var XtextDocument document = get(XtextDocument)
-		document.set(model)
-		document.setInput(xtextResource)
-		var DocumentPartitioner partitioner = get(DocumentPartitioner)
-		partitioner.connect(document)
-		document.setDocumentPartitioner(partitioner)
-		return document
-	}
-
-	def private <T> T get(Class<T> clazz) {
-		return injector.getInstance(clazz)
-	}
-
-	def private XtextResource doGetResource(InputStream in, URI uri) throws Exception {
-		var XtextResourceSet rs = get(XtextResourceSet)
-		rs.setClasspathURIContext(getClass())
-		var XtextResource resource = (getResourceFactory().createResource(uri) as XtextResource)
-		rs.getResources().add(resource)
-		resource.load(in, null)
-		if (resource instanceof LazyLinkingResource) {
-			resource.resolveLazyCrossReferences(CancelIndicator.NullImpl)
-		} else {
-			EcoreUtil.resolveAll(resource)
-		}
-		return resource
-	}
-
-	def private IResourceFactory getResourceFactory() {
-		return injector.getInstance(IResourceFactory)
 	}
 
 	private static class TestIssueModificationContext extends IssueModificationContext {

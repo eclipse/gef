@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,12 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -24,19 +22,10 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
-import org.eclipse.xtext.resource.IResourceFactory;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
-import org.eclipse.xtext.ui.editor.model.DocumentPartitioner;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.ui.editor.model.XtextDocument;
-import org.eclipse.xtext.util.CancelIndicator;
-import org.eclipse.xtext.util.StringInputStream;
-import org.eclipse.xtext.util.Strings;
 
 import com.google.inject.Injector;
 
@@ -94,7 +83,8 @@ public class DotProposalProviderDelegator {
 			final String currentModelToParse, int cursorPosition)
 			throws Exception {
 
-		final IXtextDocument xtextDocument = getDocument(currentModelToParse);
+		final IXtextDocument xtextDocument = DotEditorUtils
+				.getDocument(injector, currentModelToParse);
 		return computeCompletionProposals(xtextDocument, cursorPosition);
 	}
 
@@ -137,26 +127,6 @@ public class DotProposalProviderDelegator {
 		return new ICompletionProposal[0];
 	}
 
-	private IXtextDocument getDocument(final String currentModelToParse)
-			throws Exception {
-		XtextResource xtextResource = doGetResource(
-				new StringInputStream(Strings.emptyIfNull(currentModelToParse)),
-				URI.createURI("dummy:/example.mydsl")); //$NON-NLS-1$
-
-		return getDocument(xtextResource, currentModelToParse);
-	}
-
-	private IXtextDocument getDocument(final XtextResource xtextResource,
-			final String model) {
-		XtextDocument document = get(XtextDocument.class);
-		document.set(model);
-		document.setInput(xtextResource);
-		DocumentPartitioner partitioner = get(DocumentPartitioner.class);
-		partitioner.connect(document);
-		document.setDocumentPartitioner(partitioner);
-		return document;
-	}
-
 	private <T> T get(Class<T> clazz) {
 		return injector.getInstance(clazz);
 	}
@@ -171,26 +141,5 @@ public class DotProposalProviderDelegator {
 		sourceViewer.configure(configuration);
 		sourceViewer.setDocument(xtextDocument);
 		return sourceViewer;
-	}
-
-	private XtextResource doGetResource(InputStream in, URI uri)
-			throws Exception {
-		XtextResourceSet rs = get(XtextResourceSet.class);
-		rs.setClasspathURIContext(getClass());
-		XtextResource resource = (XtextResource) getResourceFactory()
-				.createResource(uri);
-		rs.getResources().add(resource);
-		resource.load(in, null);
-		if (resource instanceof LazyLinkingResource) {
-			((LazyLinkingResource) resource)
-					.resolveLazyCrossReferences(CancelIndicator.NullImpl);
-		} else {
-			EcoreUtil.resolveAll(resource);
-		}
-		return resource;
-	}
-
-	private IResourceFactory getResourceFactory() {
-		return injector.getInstance(IResourceFactory.class);
 	}
 }

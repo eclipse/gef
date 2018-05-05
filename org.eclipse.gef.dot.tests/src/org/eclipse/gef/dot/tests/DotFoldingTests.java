@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,29 +15,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
-import org.eclipse.xtext.resource.IResourceFactory;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.folding.FoldedPosition;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
-import org.eclipse.xtext.ui.editor.model.DocumentPartitioner;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.ui.editor.model.XtextDocument;
-import org.eclipse.xtext.util.CancelIndicator;
-import org.eclipse.xtext.util.StringInputStream;
-import org.eclipse.xtext.util.Strings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -103,7 +92,7 @@ public class DotFoldingTests {
 		IXtextDocument xtextDocument = null;
 
 		try {
-			xtextDocument = getDocument(text);
+			xtextDocument = DotEditorUtils.getDocument(injector, text);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -148,55 +137,4 @@ public class DotFoldingTests {
 					expectedFoldingRegions[i + 1], endLine);
 		}
 	}
-
-	/**
-	 * The implementation of the following helper methods are taken from the
-	 * org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder java class.
-	 */
-
-	private IXtextDocument getDocument(final String currentModelToParse)
-			throws Exception {
-		XtextResource xtextResource = doGetResource(
-				new StringInputStream(Strings.emptyIfNull(currentModelToParse)),
-				URI.createURI("dummy:/example.mydsl")); //$NON-NLS-1$
-
-		return getDocument(xtextResource, currentModelToParse);
-	}
-
-	private IXtextDocument getDocument(final XtextResource xtextResource,
-			final String model) {
-		XtextDocument document = get(XtextDocument.class);
-		document.set(model);
-		document.setInput(xtextResource);
-		DocumentPartitioner partitioner = get(DocumentPartitioner.class);
-		partitioner.connect(document);
-		document.setDocumentPartitioner(partitioner);
-		return document;
-	}
-
-	private <T> T get(Class<T> clazz) {
-		return injector.getInstance(clazz);
-	}
-
-	private XtextResource doGetResource(InputStream in, URI uri)
-			throws Exception {
-		XtextResourceSet rs = get(XtextResourceSet.class);
-		rs.setClasspathURIContext(getClass());
-		XtextResource resource = (XtextResource) getResourceFactory()
-				.createResource(uri);
-		rs.getResources().add(resource);
-		resource.load(in, null);
-		if (resource instanceof LazyLinkingResource) {
-			((LazyLinkingResource) resource)
-					.resolveLazyCrossReferences(CancelIndicator.NullImpl);
-		} else {
-			EcoreUtil.resolveAll(resource);
-		}
-		return resource;
-	}
-
-	private IResourceFactory getResourceFactory() {
-		return injector.getInstance(IResourceFactory.class);
-	}
-
 }

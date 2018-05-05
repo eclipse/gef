@@ -12,8 +12,24 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.editor;
 
+import java.io.InputStream;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
+import org.eclipse.xtext.resource.IResourceFactory;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.model.DocumentPartitioner;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.ui.editor.model.XtextDocument;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.util.StringInputStream;
+import org.eclipse.xtext.util.Strings;
+
+import com.google.inject.Injector;
 
 public class DotEditorUtils {
 
@@ -32,4 +48,59 @@ public class DotEditorUtils {
 		return false;
 	}
 
+	/**
+	 * The implementation of the following helper methods are taken from the
+	 * org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder java class.
+	 */
+	public static IXtextDocument getDocument(final Injector injector,
+			final String currentModelToParse) throws Exception {
+		XtextResource xtextResource = getXtextResource(injector,
+				currentModelToParse);
+		return getDocument(injector, xtextResource, currentModelToParse);
+	}
+
+	public static XtextResource getXtextResource(Injector injector,
+			final String currentModelToParse) {
+		XtextResource xtextResource = null;
+
+		try {
+			xtextResource = doGetResource(injector,
+					new StringInputStream(
+							Strings.emptyIfNull(currentModelToParse)),
+					URI.createURI("")); //$NON-NLS-1$
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+
+		return xtextResource;
+	}
+
+	private static IXtextDocument getDocument(final Injector injector,
+			final XtextResource xtextResource, final String model) {
+		XtextDocument document = injector.getInstance(XtextDocument.class);
+		document.set(model);
+		document.setInput(xtextResource);
+		DocumentPartitioner partitioner = injector
+				.getInstance(DocumentPartitioner.class);
+		partitioner.connect(document);
+		document.setDocumentPartitioner(partitioner);
+		return document;
+	}
+
+	private static XtextResource doGetResource(Injector injector,
+			InputStream in, URI uri) throws Exception {
+		XtextResourceSet rs = injector.getInstance(XtextResourceSet.class);
+		rs.setClasspathURIContext(DotEditorUtils.class);
+		XtextResource resource = (XtextResource) injector
+				.getInstance(IResourceFactory.class).createResource(uri);
+		rs.getResources().add(resource);
+		resource.load(in, null);
+		if (resource instanceof LazyLinkingResource) {
+			((LazyLinkingResource) resource)
+					.resolveLazyCrossReferences(CancelIndicator.NullImpl);
+		} else {
+			EcoreUtil.resolveAll(resource);
+		}
+		return resource;
+	}
 }
