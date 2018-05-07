@@ -8,7 +8,7 @@
  * 
  * Contributors: 
  *		Fabian Steeg		- initial implementation (bug #277380)
- *		Alexander Nyßen		- migration to Xtext 2.7.3 (bug #478562); 
+ *		Alexander Nyßen		- migration to Xtext 2.7.3 (bug #478562)
  *							- support for case insensitive keywords (bug #454626)
  *							- integration of attribute grammars
  *							- integration of custom lexers for DOT (bug #321775)
@@ -18,7 +18,7 @@
  *							- support for rename refactoring (bug #530423)
  *							- integration of dot attribute sub-grammars (bug #461506)
  *		Zoey Gerrit Prigge	- integration of record label sub-grammar (bug #454629)
- * 
+ *
  *******************************************************************************/
 module org.eclipse.gef.dot.internal.language.Dot
 
@@ -79,7 +79,7 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
@@ -92,10 +92,10 @@ Workflow {
 			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
 
 			/*
-			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar. 
-			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment 
-			 * ensures that a separate lexer and a separate parser are generated. 
-			 * This enables us to override the lexer. 
+			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar.
+			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment
+			 * ensures that a separate lexer and a separate parser are generated.
+			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment (for case-insensitive keywords)
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
@@ -149,17 +149,15 @@ Workflow {
 				// This is the folder where the lexer will be created
 				antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 				// A grammar file with .g will be expected in this package (should be stored in src folder)
 				lexerGrammar = "org.eclipse.gef.dot.internal.ui.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
 				highlighting = true
 			}
-			
-			fragment = refactoring.RefactorElementNameFragment {
-				
-			}
+
+			fragment = refactoring.RefactorElementNameFragment {}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
@@ -174,7 +172,7 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
@@ -183,7 +181,7 @@ Workflow {
 			
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
-			
+
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
@@ -191,7 +189,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
@@ -215,7 +213,7 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
@@ -231,10 +229,10 @@ Workflow {
 			}
 
 			/*
-			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar. 
-			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment 
-			 * ensures that a separate lexer and a separate parser are generated. 
-			 * This enables us to override the lexer. 
+			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar.
+			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment
+			 * ensures that a separate lexer and a separate parser are generated.
+			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
@@ -272,7 +270,7 @@ Workflow {
 				// This is the folder where the lexer will be created
 				antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 				// A grammar file with .g will be expected in this package (should be stored in src folder)
@@ -284,7 +282,7 @@ Workflow {
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
 		language = auto-inject {
-		// ensure DotColor grammar is accessible to DotColorList grammar
+			// ensure DotColor grammar is accessible to DotColorList grammar
 			loadedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotColor.xtext"
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotColorList.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dotcolorlist"
@@ -295,13 +293,13 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-						
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
 
@@ -311,10 +309,10 @@ Workflow {
 			}
 
 			/*
-			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar. 
-			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment 
-			 * ensures that a separate lexer and a separate parser are generated. 
-			 * This enables us to override the lexer. 
+			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar.
+			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment
+			 * ensures that a separate lexer and a separate parser are generated.
+			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
@@ -332,7 +330,7 @@ Workflow {
 				// This is the folder where the lexer will be created
 				antlrParam = "${runtimeProject}/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer"
 			}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
@@ -342,7 +340,7 @@ Workflow {
 					ignoreCase = true
 				}
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 				// A grammar file with .g will be expected in this package (should be stored in src folder)
@@ -352,7 +350,7 @@ Workflow {
 				// This is the folder where the lexer will be created
 				antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 				// A grammar file with .g will be expected in this package (should be stored in src folder)
@@ -362,7 +360,7 @@ Workflow {
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
-		}		
+		}
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotEscString.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dotescstring"
@@ -373,7 +371,7 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
@@ -418,7 +416,7 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
@@ -427,7 +425,7 @@ Workflow {
 
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
-			
+
 			// labeling API
 			fragment = labeling.LabelProviderFragment auto-inject {}
 			
@@ -440,9 +438,9 @@ Workflow {
 			}
 
 			/*
-			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar. 
-			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment 
-			 * ensures that a separate lexer and a separate parser are generated. 
+			 * By default, Xtext generates a unified ANTLR lexer/parser from the grammar.
+			 * Using the AntlrGeneratorFragment instead of the XtextAntlrGeneratorFragment
+			 * ensures that a separate lexer and a separate parser are generated.
 			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment
@@ -481,7 +479,7 @@ Workflow {
 				// This is the folder where the lexer will be created
 				antlrParam = "${runtimeProject}.ui/src-gen/org/eclipse/gef/dot/internal/ui/language/contentassist/antlr/lexer"
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 				// A grammar file with .g will be expected in this package (should be stored in src folder)
@@ -502,16 +500,16 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-			
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
-			
+
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
@@ -519,7 +517,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
@@ -543,13 +541,13 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-			
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
 			
@@ -560,7 +558,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
@@ -584,16 +582,16 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-			
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
-			
+
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
@@ -601,7 +599,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
@@ -625,16 +623,16 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-			
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
-			
+
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
@@ -666,16 +664,16 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-			
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
-						
+
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
@@ -683,10 +681,10 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
-			
+
 			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
 			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
 				options = {
@@ -698,7 +696,7 @@ Workflow {
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
 		language = auto-inject {
-		// ensure DotPoint grammar is accessible to DotSplinesType grammar
+			// ensure DotPoint grammar is accessible to DotSplinesType grammar
 			loadedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotPoint.xtext"
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotSplineType.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dotsplinetype"
@@ -709,13 +707,13 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-						
+
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
 
@@ -726,7 +724,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
-			
+
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
@@ -750,7 +748,7 @@ Workflow {
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-			// has to be explicitly set for headless execution (Tycho)
+				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
