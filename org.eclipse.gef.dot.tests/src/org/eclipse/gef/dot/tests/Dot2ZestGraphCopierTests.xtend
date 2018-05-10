@@ -69,6 +69,33 @@ class Dot2ZestGraphCopierTests {
 		prettyPrinter = new DotGraphPrettyPrinter
 	}
 	
+	@Test def edge_color() {
+		'''
+			digraph {
+				1->2[color=green]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;-fx-stroke: #00ff00;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration-css-style : -fx-stroke: #00ff00;-fx-fill: #00ff00;
+				}
+			}
+		''')
+	}
+	
 	@Test def edge_id() {
 		'''
 			graph {
