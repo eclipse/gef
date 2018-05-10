@@ -48,7 +48,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		DotTestUtils.registerDotSubgrammarPackages
 	}
 
-	@Test def empty_edge() {
+	@Test def edge_style001() {
 		'''
 			digraph {
 				1->2
@@ -58,7 +58,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 
-	@Test def edge_color() {
+	@Test def edge_style002() {
 		'''
 			digraph {
 				1->2[color=green]
@@ -69,7 +69,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 	
-	@Test def edge_style001() {
+	@Test def edge_style003() {
 		'''
 			graph {
 				1--2 [style=bold]
@@ -79,7 +79,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 	
-	@Test def edge_style002() {
+	@Test def edge_style004() {
 		'''
 			graph {
 				1--2 [style=dashed]
@@ -89,7 +89,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 	
-	@Test def edge_style003() {
+	@Test def edge_style005() {
 		'''
 			graph {
 				1--2 [style=dotted]
@@ -99,7 +99,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 	
-	@Test def edge_style004() {
+	@Test def edge_style006() {
 		'''
 			graph {
 				1--2 [style=solid]
@@ -110,7 +110,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 	
 	private def assertEdgeStyle(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.style
+		val actual = dotText.firstEdge.convert.curveCssStyle.split
 		expected.assertEquals(actual)
 	}
 	
@@ -131,9 +131,9 @@ class Dot2ZestEdgeAttributesConversionTests {
 		dotEdge.convertAttributes(zestEdge)
 		zestEdge
 	}
-	
-	private def style(Edge it) {
-		curveCssStyle.replaceAll(";", ";" + System.lineSeparator)
+
+	private def split(String text) {
+		text.replaceAll(";", ";" + System.lineSeparator)
 	}
 	
 	private static class TestableDot2ZestAttributesConverter extends Dot2ZestAttributesConverter {
@@ -144,5 +144,4 @@ class Dot2ZestEdgeAttributesConversionTests {
 		}
 		
 	}
-	
 }
