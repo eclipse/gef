@@ -70,6 +70,7 @@ import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.text.Text;
 
 /**
@@ -254,6 +255,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// direction is "forward" or "both".
 		if (DirType.FORWARD.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
 			ZestProperties.setTargetDecoration(zest, zestEdgeTargetDecoration);
+			setStyleOnEdgeTargetDecorationChildren(zest);
 		}
 
 		// arrow tail
@@ -277,6 +279,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// direction is "back" or "both".
 		if (DirType.BACK.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
+			setStyleOnEdgeSourceDecorationChildren(zest);
 		}
 
 		// create edge curve
@@ -841,6 +844,34 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			}
 		}
 		return false;
+	}
+
+	private void setStyleOnEdgeSourceDecorationChildren(Edge edge) {
+		javafx.scene.Node sourceDecoration = ZestProperties
+				.getSourceDecoration(edge);
+		String sourceDecorationStyle = ZestProperties
+				.getSourceDecorationCssStyle(edge);
+		setStyleOnEdgeDecorationChildren(sourceDecoration,
+				sourceDecorationStyle);
+	}
+
+	private void setStyleOnEdgeTargetDecorationChildren(Edge edge) {
+		javafx.scene.Node targetDecoration = ZestProperties
+				.getTargetDecoration(edge);
+		String targetDecorationStyle = ZestProperties
+				.getTargetDecorationCssStyle(edge);
+		setStyleOnEdgeDecorationChildren(targetDecoration,
+				targetDecorationStyle);
+	}
+
+	private void setStyleOnEdgeDecorationChildren(
+			javafx.scene.Node edgeDecoration, String style) {
+		if (edgeDecoration instanceof Group) {
+			Group group = (Group) edgeDecoration;
+			for (javafx.scene.Node child : group.getChildren()) {
+				child.setStyle(style);
+			}
+		}
 	}
 
 	protected void convertAttributes(Graph dot, Graph zest) {

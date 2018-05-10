@@ -13,6 +13,7 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
+import javafx.scene.Group
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
@@ -109,9 +110,65 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 	
+	@Test def edge_sourceDecorationStyle001() {
+		'''
+			digraph {
+				1->2[dir=back]
+			}
+		'''.assertEdgeSourceDecorationStyle('''''')
+	}
+	
+	@Test def edge_sourceDecorationStyle002() {
+		'''
+			digraph {
+				1->2[color=green arrowtail=normal dir=back]
+			}
+		'''.assertEdgeSourceDecorationStyle('''
+			-fx-stroke: #00ff00;
+			-fx-fill: #00ff00;
+		''')
+	}
+	
+	@Test def edge_targetDecorationStyle001() {
+		'''
+			digraph {
+				1->2
+			}
+		'''.assertEdgeTargetDecorationStyle('''''')
+	}
+	
+	@Test def edge_targetDecorationStyle002() {
+		'''
+			digraph {
+				1->2[color=green arrowhead=normal]
+			}
+		'''.assertEdgeTargetDecorationStyle('''
+			-fx-stroke: #00ff00;
+			-fx-fill: #00ff00;
+		''')
+	}
+	
 	private def assertEdgeStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.curveCssStyle.split
 		expected.assertEquals(actual)
+	}
+	
+	private def assertEdgeSourceDecorationStyle(CharSequence dotText, String expected) {
+		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecorationStyle(expected)
+	}
+	
+	private def assertEdgeTargetDecorationStyle(CharSequence dotText, String expected) {
+		dotText.firstEdge.convert.targetDecoration.assertEdgeDecorationStyle(expected)
+	}
+	
+	private def assertEdgeDecorationStyle(javafx.scene.Node decoration, String expected) {
+		if(decoration instanceof Group) {
+			decoration.children.forEach[
+				expected.assertEquals(style.split)
+			]
+		} else {
+			expected.assertEquals(decoration.style.split)
+		}
 	}
 	
 	private def firstEdge(CharSequence dotText) {
