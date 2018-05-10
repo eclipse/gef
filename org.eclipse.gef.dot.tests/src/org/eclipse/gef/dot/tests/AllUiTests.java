@@ -20,7 +20,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ // JUnit Tests
-		Dot2ZestGraphCopierTests.class, DotArrowTypeTests.class,
+		Dot2ZestGraphCopierTests.class,
+		Dot2ZestEdgeAttributesConversionTests.class, DotArrowTypeTests.class,
 		DotAstTests.class, DotAttributeActiveAnnotationTests.class,
 		DotAttributesTests.class, DotBSplineInterpolatorTests.class,
 		DotColorListTests.class, DotEscStringTests.class,
