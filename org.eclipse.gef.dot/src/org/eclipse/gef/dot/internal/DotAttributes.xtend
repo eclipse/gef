@@ -422,7 +422,11 @@ class DotAttributes {
 						Collections.emptyList
 				}else
 					Collections.emptyList
-			case DIR__E: validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
+			case DIR__E:
+				if(attributeValue!==null && !attributeValue.toValue.isEmpty){
+					validateAttributeRawValue(DIRTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
+				}else
+					Collections.emptyList
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case EDGETOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FILLCOLOR__CNE: 

@@ -474,6 +474,11 @@ public class DotParserTests {
 	}
 
 	@Test
+	public void testEmptyEdgeDir() {
+		testString("digraph{1->2[dir=\"\"]}");
+	}
+
+	@Test
 	public void testNodesepIsZero() {
 		testString("digraph {nodesep=0 1 2}");
 	}

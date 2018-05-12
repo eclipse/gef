@@ -432,6 +432,10 @@ public class DotAttributesTests {
 		assertEquals(validEdgeDir, DotAttributes.getDir(edge));
 		assertEquals(DirType.NONE, DotAttributes.getDirParsed(edge));
 
+		validEdgeDir = "";
+		DotAttributes.setDir(edge, validEdgeDir);
+		assertEquals(validEdgeDir, DotAttributes.getDir(edge));
+
 		// set valid parsed values
 		DirType validEdgeDirParsed = DirType.FORWARD;
 		DotAttributes.setDirParsed(edge, validEdgeDirParsed);
