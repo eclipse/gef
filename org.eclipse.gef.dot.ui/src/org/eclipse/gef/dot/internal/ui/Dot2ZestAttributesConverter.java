@@ -137,22 +137,26 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			dotLabel = DotAttributes._getName(dot);
 		}
 		if (dotLabel != null) {
+			dotLabel = decode(dotLabel);
 			ZestProperties.setLabel(zest, dotLabel);
 		}
 
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXlabel(dot);
 		if (dotXLabel != null) {
+			dotXLabel = decode(dotXLabel);
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
 
 		// head and tail labels (headlabel, taillabel)
 		String dotHeadLabel = DotAttributes.getHeadlabel(dot);
 		if (dotHeadLabel != null) {
+			dotHeadLabel = decode(dotHeadLabel);
 			ZestProperties.setTargetLabel(zest, dotHeadLabel);
 		}
 		String dotTailLabel = DotAttributes.getTaillabel(dot);
 		if (dotTailLabel != null) {
+			dotTailLabel = decode(dotTailLabel);
 			ZestProperties.setSourceLabel(zest, dotTailLabel);
 		}
 
@@ -431,6 +435,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	private javafx.scene.Node computeZestDecoration(ArrowType arrowType,
 			double arrowSize) {
 		return DotArrowShapeDecorations.get(arrowType, arrowSize);
+	}
+
+	private String decode(String text) {
+		return text.replaceAll("\\\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private List<Point> computeZestBSplineControlPoints(Edge dot) {

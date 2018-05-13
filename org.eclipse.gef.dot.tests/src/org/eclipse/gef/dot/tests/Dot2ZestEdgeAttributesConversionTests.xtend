@@ -147,6 +147,102 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #00ff00;
 		''')
 	}
+
+	@Test def edge_label001() {
+		'''
+			digraph {
+				1->2[label="foobar"]
+			}
+		'''.assertEdgeLabel("foobar")
+	}
+	
+	@Test def edge_label002() {
+		'''
+			digraph {
+				1->2[label="foo\nbar"]
+			}
+		'''.assertEdgeLabel("foo\nbar")
+	}
+	
+	@Test def edge_label003() {
+		'''
+			digraph {
+				1->2[label="foo\nbar\nbaz"]
+			}
+		'''.assertEdgeLabel("foo\nbar\nbaz")
+	}
+	
+	@Test def edge_externalLabel001() {
+		'''
+			digraph {
+				1->2[xlabel="foobar"]
+			}
+		'''.assertEdgeExternalLabel("foobar")
+	}
+	
+	@Test def edge_externalLabel002() {
+		'''
+			digraph {
+				1->2[xlabel="foo\nbar"]
+			}
+		'''.assertEdgeExternalLabel("foo\nbar")
+	}
+	
+	@Test def edge_externalLabel003() {
+		'''
+			digraph {
+				1->2[xlabel="foo\nbar\nbaz"]
+			}
+		'''.assertEdgeExternalLabel("foo\nbar\nbaz")
+	}
+	
+	@Test def edge_sourceLabel001() {
+		'''
+			digraph {
+				1->2[taillabel="foobar"]
+			}
+		'''.assertEdgeSourceLabel("foobar")
+	}
+	
+	@Test def edge_sourceLabel002() {
+		'''
+			digraph {
+				1->2[taillabel="foo\nbar"]
+			}
+		'''.assertEdgeSourceLabel("foo\nbar")
+	}
+	
+	@Test def edge_sourceLabel003() {
+		'''
+			digraph {
+				1->2[taillabel="foo\nbar\nbaz"]
+			}
+		'''.assertEdgeSourceLabel("foo\nbar\nbaz")
+	}
+
+	@Test def edge_targetLabel001() {
+		'''
+			digraph {
+				1->2[headlabel="foobar"]
+			}
+		'''.assertEdgeTargetLabel("foobar")
+	}
+	
+	@Test def edge_targetLabel002() {
+		'''
+			digraph {
+				1->2[headlabel="foo\nbar"]
+			}
+		'''.assertEdgeTargetLabel("foo\nbar")
+	}
+	
+	@Test def edge_targetLabel003() {
+		'''
+			digraph {
+				1->2[headlabel="foo\nbar\nbaz"]
+			}
+		'''.assertEdgeTargetLabel("foo\nbar\nbaz")
+	}
 	
 	private def assertEdgeStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.curveCssStyle.split
@@ -159,6 +255,26 @@ class Dot2ZestEdgeAttributesConversionTests {
 	
 	private def assertEdgeTargetDecorationStyle(CharSequence dotText, String expected) {
 		dotText.firstEdge.convert.targetDecoration.assertEdgeDecorationStyle(expected)
+	}
+
+	private def assertEdgeLabel(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.label
+		expected.assertEquals(actual)
+	}
+	
+	private def assertEdgeExternalLabel(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.externalLabel
+		expected.assertEquals(actual)
+	}
+
+	private def assertEdgeSourceLabel(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.sourceLabel
+		expected.assertEquals(actual)
+	}
+	
+	private def assertEdgeTargetLabel(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.targetLabel
+		expected.assertEquals(actual)
 	}
 	
 	private def assertEdgeDecorationStyle(javafx.scene.Node decoration, String expected) {
