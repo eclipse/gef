@@ -327,7 +327,7 @@ public class DotHtmlLabelHelper {
 	 * Tries to find an Attribute for given HTML tags and attribute Name Returns
 	 * first found attribute value or null
 	 * 
-	 * @param tag
+	 * @param tags
 	 *            the HTML tag to be analysed
 	 * @param attributeName
 	 *            the name of the attribute
