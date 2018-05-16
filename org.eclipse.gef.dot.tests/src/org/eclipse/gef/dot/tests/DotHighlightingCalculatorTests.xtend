@@ -122,7 +122,7 @@ class DotHighlightingCalculatorTests implements IHighlightedPositionAcceptor {
 		)
 	}
 
-	private def void assertHightlightingIDs(CharSequence it, Pair<String, String>... expectedHighlightingIDs) {
+	private def assertHightlightingIDs(CharSequence it, Pair<String, String>... expectedHighlightingIDs) {
 		expect(expectedHighlightingIDs)
 		highlight
 		assertAllExpectedRegionsHasBeenFound
