@@ -23,6 +23,7 @@ import java.util.Properties
 import org.eclipse.gef.dot.internal.DotExecutableUtils
 import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage
 import org.junit.Assert
+import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -42,6 +43,7 @@ class DotExecutableUtilsTests {
 	@BeforeClass
 	def static void setup() {
 		dotExecutablePath = getDotExecutablePath
+		Assume.assumeTrue(!dotExecutablePath.nullOrEmpty)
 	}
 
 	@Test def simpleGraph() {
@@ -62,38 +64,32 @@ class DotExecutableUtilsTests {
 
 	@Test(timeout=2000)
 	def testComplexDot() {
-		if (dotExecutablePath !== null) {
-			"arrowshapes_direction_both.dot".inputFile.executeDot.assertNotNull
-		}
+		"arrowshapes_direction_both.dot".inputFile.executeDot.assertNotNull
 	}
 
 	@Test def testSupportedExportFormatCalculation() {
-		if (dotExecutablePath !== null) {
-			#[
-				"bmp", "canon", "cmap", "cmapx", "cmapx_np", "dot", "emf", "emfplus", "eps", "fig",
-				"gd", "gd2", "gif", "gv", "imap", "imap_np", "ismap", "jpe", "jpeg", "jpg", "metafile",
-				"pdf", "pic", "plain", "plain-ext", "png", "pov", "ps", "ps2", "svg", "svgz", "tif",
-				"tiff", "tk","vml", "vmlz", "vrml", "wbmp", "xdot", "xdot1.2", "xdot1.4"
-			].join(System.lineSeparator).assertEquals(supportedExportFormats)
-		}
+		#[
+			"bmp", "canon", "cmap", "cmapx", "cmapx_np", "dot", "emf", "emfplus", "eps", "fig",
+			"gd", "gd2", "gif", "gv", "imap", "imap_np", "ismap", "jpe", "jpeg", "jpg", "metafile",
+			"pdf", "pic", "plain", "plain-ext", "png", "pov", "ps", "ps2", "svg", "svgz", "tif",
+			"tiff", "tk","vml", "vmlz", "vrml", "wbmp", "xdot", "xdot1.2", "xdot1.4"
+		].join(System.lineSeparator).assertEquals(supportedExportFormats)
 	}
 
 	private def testImageExport(String fileName) {
-		if (dotExecutablePath !== null) {
-			// given
-			val inputFile = fileName.inputFile
-			val outputFile = fileName.outputFile
-			val outputs = newArrayList("", "")
+		// given
+		val inputFile = fileName.inputFile
+		val outputFile = fileName.outputFile
+		val outputs = newArrayList("", "")
 
-			// when
-			val image = inputFile.renderImage(outputFile, outputs)
+		// when
+		val image = inputFile.renderImage(outputFile, outputs)
 
-			// then
-			Assert.assertEquals("The dot executable produced the following errors:", "", outputs.get(1))
-			Assert.assertNotNull("Image must not be null", image)
-			Assert.assertTrue("Image must exist", image.exists)
-			System.out.println('''Created image: «image»''')
-		}
+		// then
+		Assert.assertEquals("The dot executable produced the following errors:", "", outputs.get(1))
+		Assert.assertNotNull("Image must not be null", image)
+		Assert.assertTrue("Image must exist", image.exists)
+		System.out.println('''Created image: «image»''')
 	}
 
 	/**
