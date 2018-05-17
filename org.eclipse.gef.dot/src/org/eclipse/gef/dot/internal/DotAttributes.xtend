@@ -358,15 +358,14 @@ class DotAttributes {
 		if (validator !== null) {
 			val List<Diagnostic> validationResults = validator.validate(attributeContext, parsedValue)
 			val newMessagePrefix = "The " + attributeTypeName + " value '" + attributeValue.toValue + "' is not semantically correct: "
-			for (Diagnostic r : validationResults) {
-				val newMessage = newMessagePrefix + r.message
+			for (Diagnostic result : validationResults) {
+				val newMessage = newMessagePrefix + result.message
 				diagnostics.add(
-					if(r instanceof RangeBasedDiagnostic){
-						val result = r as RangeBasedDiagnostic
+					if(result instanceof RangeBasedDiagnostic){
 						new RangeBasedDiagnosticEx(result.severity, newMessage, null, result.offset, result.length, result.checkType, attributeName, result.issueData)
 					}
 					else{
-						new BasicDiagnostic(r.severity, null, -1, newMessage, #[])
+						new BasicDiagnostic(result.severity, null, -1, newMessage, #[])
 					}
 				)
 			}
