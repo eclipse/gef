@@ -105,7 +105,7 @@ class DotAttributes {
 	/**
 	 * Contexts by which attributes may be used.
 	 */
-	public static enum Context {
+	static enum Context {
 
 		/**
 		 * Graph context
@@ -224,10 +224,10 @@ class DotAttributes {
 	 */
 	private interface IAttributeValueParser<T> {
 
-		public static class ParseResult<T> {
+		static class ParseResult<T> {
 
-			private T parsedValue
-			private List<Diagnostic> syntaxErrors
+			T parsedValue
+			List<Diagnostic> syntaxErrors
 
 			private new(T parsedValue) {
 				this(parsedValue, Collections.<Diagnostic>emptyList)
@@ -496,7 +496,7 @@ class DotAttributes {
 	 */
 	private static class EnumParser<E extends Enum<E>> implements IAttributeValueParser<E> {
 
-		private Class<E> definition
+		Class<E> definition
 
 		/**
 		 * Creates a new parser for the given enumeration definition
@@ -541,7 +541,7 @@ class DotAttributes {
 	 */
 	private static class EnumSerializer<E extends Enum<E>> implements IAttributeValueSerializer<E> {
 
-		private Class<E> definition
+		Class<E> definition
 
 		/**
 		 * Creates a new serializer for the given enumeration definition
@@ -1257,7 +1257,7 @@ class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Graph}.
 	 */
-	public static def ID _getNameRaw(Graph graph) {
+	static def ID _getNameRaw(Graph graph) {
 		graph.attributesProperty.get(_NAME__GNE) as ID
 	}
 
@@ -1271,7 +1271,7 @@ class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Graph}.
 	 */
-	public static def String _getName(Graph graph) {
+	static def String _getName(Graph graph) {
 		val ID _nameRaw = _getNameRaw(graph)
 		if(_nameRaw !== null) _nameRaw.toValue else null
 	}
@@ -1286,7 +1286,7 @@ class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Node}.
 	 */
-	public static def ID _getNameRaw(Node node) {
+	static def ID _getNameRaw(Node node) {
 		node.attributesProperty.get(_NAME__GNE) as ID
 	}
 
@@ -1300,7 +1300,7 @@ class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Node}.
 	 */
-	public static def String _getName(Node node) {
+	static def String _getName(Node node) {
 		val ID _nameRaw = _getNameRaw(node)
 		if(_nameRaw !== null) _nameRaw.toValue else null
 	}
@@ -1315,7 +1315,7 @@ class DotAttributes {
 	 * @return The value of the {@link #_TYPE__G} attribute of the given
 	 *         {@link Graph}.
 	 */
-	public static def GraphType _getType(Graph graph) {
+	static def GraphType _getType(Graph graph) {
 		graph.attributesProperty.get(_TYPE__G) as GraphType
 	}
 
@@ -1329,7 +1329,7 @@ class DotAttributes {
 	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
-	public static def void _setNameRaw(Graph graph, ID name) {
+	static def void _setNameRaw(Graph graph, ID name) {
 		graph.attributesProperty.put(_NAME__GNE, name)
 	}
 
@@ -1343,7 +1343,7 @@ class DotAttributes {
 	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
-	public static def void _setName(Graph graph, String name) {
+	static def void _setName(Graph graph, String name) {
 		_setNameRaw(graph, ID.fromValue(name))
 	}
 
@@ -1357,7 +1357,7 @@ class DotAttributes {
 	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
-	public static def void _setNameRaw(Node node, ID name) {
+	static def void _setNameRaw(Node node, ID name) {
 		node.attributesProperty.put(_NAME__GNE, name)
 	}
 
@@ -1371,7 +1371,7 @@ class DotAttributes {
 	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} attribute.
 	 */
-	public static def void _setName(Node node, String name) {
+	static def void _setName(Node node, String name) {
 		_setNameRaw(node, ID.fromValue(name))
 	}
 	
@@ -1385,7 +1385,7 @@ class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} attribute of the given
 	 *         {@link Edge}.
 	 */
-	public static def String _getName(Edge edge) {
+	static def String _getName(Edge edge) {
 		edge.source._getName +
 			(
 				switch edge.graph?.rootGraph?._getType {
@@ -1406,7 +1406,7 @@ class DotAttributes {
 	 * @param type
 	 *            The new value for the {@link #_TYPE__G} attribute.
 	 */
-	public static def void _setType(Graph graph, GraphType type) {
+	static def void _setType(Graph graph, GraphType type) {
 		graph.attributesProperty.put(_TYPE__G, type)
 	}
 

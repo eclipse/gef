@@ -29,11 +29,9 @@ import static extension org.junit.Assert.*
 @InjectWith(DotInjectorProvider)
 class DotAstTests {
 	
-	@Inject
-	private extension ParseHelper<DotAst>
+	@Inject extension ParseHelper<DotAst>
 
-	@Inject
-	private extension DotEObjectFormatter
+	@Inject extension DotEObjectFormatter
 	
 	@Test
 	def testEmptyGraph() {

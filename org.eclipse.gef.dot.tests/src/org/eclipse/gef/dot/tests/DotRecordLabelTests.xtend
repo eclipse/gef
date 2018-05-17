@@ -31,7 +31,7 @@ import static org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(DotRecordLabelInjectorProvider)
-public class DotRecordLabelTests {
+class DotRecordLabelTests {
 	@Inject extension ParseHelper<RLabel> parseHelper
 	@Inject extension ValidationTestHelper
 
