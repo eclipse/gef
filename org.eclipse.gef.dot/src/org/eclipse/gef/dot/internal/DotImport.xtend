@@ -319,7 +319,7 @@ class DotImport {
 	private def create new Node.Builder().buildNode() createNode(String nodeName) {
 	}
 
-	def private Edge createEdge(Node sourceNode, String edgeOp, Node targetNode, List<AttrList> attrLists,
+	private def Edge createEdge(Node sourceNode, String edgeOp, Node targetNode, List<AttrList> attrLists,
 		Graph.Builder graphBuilder) {
 		val edge = new Edge.Builder(sourceNode, targetNode).buildEdge()
 

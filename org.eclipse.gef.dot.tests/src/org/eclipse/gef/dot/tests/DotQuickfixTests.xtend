@@ -416,7 +416,7 @@ class DotQuickfixTests {
 		])
 	}
 
-	def private void assertQuickfixes(CharSequence text, List<List<String>> expected) {
+	private def void assertQuickfixes(CharSequence text, List<List<String>> expected) {
 		val issues = text.parse.validate
 		1.assertEquals(issues.size)
 		val actualIssueResolutions = issues.get(0).getResolutions
@@ -430,7 +430,7 @@ class DotQuickfixTests {
 		}
 	}
 
-	def private void assertIssueResolutionEffect(String expectedResult, IssueResolution actualIssueResolution, String originalText) {
+	private def void assertIssueResolutionEffect(String expectedResult, IssueResolution actualIssueResolution, String originalText) {
 		val xtextDocument = injector.getDocument(originalText)
 		xtextDocument.assertNotNull
 		var modificationContext = new TestIssueModificationContext

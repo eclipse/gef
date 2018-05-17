@@ -290,14 +290,14 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		initialText.testRenaming(targetElement, newNodeName, expectedText)
 	}
 	
-	def private testRenaming(String initialText, NodeId targetElement, String newNodeName, String expectedTextAfterRenaming){
+	private def testRenaming(String initialText, NodeId targetElement, String newNodeName, String expectedTextAfterRenaming){
 		val testFile = initialText.createTestFile
 		testFile.doRename(targetElement, newNodeName)
 		var String actualTextAfterRenaming = read(testFile.contents)
 		assertEquals(expectedTextAfterRenaming, actualTextAfterRenaming)
 	}
 
-	def private void doRename(IFile testFile, NodeId targetElement, String newNodeName) throws Exception {
+	private def void doRename(IFile testFile, NodeId targetElement, String newNodeName) throws Exception {
 		waitForBuild(null)
 		var String targetElementFragment = EcoreUtil.getURI(targetElement).fragment
 		var URI targetElementURI = URI.createPlatformResourceURI(testFile.getFullPath().toString(), true).
@@ -306,42 +306,42 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		([IProgressMonitor monitor|change.perform(monitor)] as WorkspaceModifyOperation).run(null)
 	}
 
-	def private NodeId getFirstNode(String modelAsText) {
+	private def NodeId getFirstNode(String modelAsText) {
 		var DotAst dotAst = modelAsText.dotAst
 		var NodeStmt nodeStmt = dotAst.graphs.head.stmts.filter(NodeStmt).head
 		nodeStmt.node		
 	}
 	
-	def private NodeId getSourceNodeOfFirstEdge(String modelAsText) {
+	private def NodeId getSourceNodeOfFirstEdge(String modelAsText) {
 		var DotAst dotAst = modelAsText.dotAst
 		var EdgeStmtNode edgeStmtNode = (dotAst.graphs.head.stmts.filter(EdgeStmtNode).head)
 		edgeStmtNode.node		
 	}
 
-	def private NodeId getTargetNodeOfFirstEdge(String modelAsText) {
+	private def NodeId getTargetNodeOfFirstEdge(String modelAsText) {
 		var DotAst dotAst = modelAsText.dotAst
 		var EdgeStmtNode edgeStmtNode = (dotAst.graphs.head.stmts.filter(EdgeStmtNode).head)
 		(edgeStmtNode.edgeRHS.head as EdgeRhsNode).node		
 	}
 	
-	def private NodeId getSourceNodeOfSecondEdge(String modelAsText) {
+	private def NodeId getSourceNodeOfSecondEdge(String modelAsText) {
 		var DotAst dotAst = modelAsText.dotAst
 		var EdgeStmtNode edgeStmtNode = (dotAst.graphs.head.stmts.filter(EdgeStmtNode).get(1))
 		edgeStmtNode.node		
 	}
 
-	def private NodeId getTargetNodeOfSecondEdge(String modelAsText) {
+	private def NodeId getTargetNodeOfSecondEdge(String modelAsText) {
 		var DotAst dotAst = modelAsText.dotAst
 		var EdgeStmtNode edgeStmtNode = (dotAst.graphs.head.stmts.filter(EdgeStmtNode).get(1))
 		(edgeStmtNode.edgeRHS.head as EdgeRhsNode).node		
 	}
 
-	def private getDotAst(String modelAsText) {
+	private def getDotAst(String modelAsText) {
 		var IParseResult parseResult = parser.parse(new StringReader(modelAsText))
 		parseResult.rootASTElement as DotAst
 	}
 
-	def private void waitForBuild(IProgressMonitor monitor) {
+	private def void waitForBuild(IProgressMonitor monitor) {
 		try {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder::INCREMENTAL_BUILD, monitor)
 		} catch (CoreException e) {
@@ -349,7 +349,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		}
 	}
 
-	def private Change createChange(URI targetElementURI, String newName) throws Exception {
+	private def Change createChange(URI targetElementURI, String newName) throws Exception {
 		var RenameElementProcessor processor = processorProvider.get()
 		processor.initialize(new IRenameElementContext.Impl(targetElementURI, DotPackage.Literals::NODE_ID))
 		processor.setNewName(newName)

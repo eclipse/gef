@@ -172,7 +172,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	def private void testDotExtraction(CharSequence embedded, CharSequence expected) {
+	private def void testDotExtraction(CharSequence embedded, CharSequence expected) {
 		var extracted = new DotExtractor(embedded.toString).dotString
 		Assert.assertEquals(String.format("Incorrect DOT extraction for '%s';", embedded), expected.toString.trim, extracted)
 	}

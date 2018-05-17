@@ -1333,15 +1333,15 @@ class DotArrowTypeTests {
 		"".parseArrowType
 	}
 
-	def private void assertArrowShapeWarning(String text, String errorProneText, String warningMessage) {
+	private def void assertArrowShapeWarning(String text, String errorProneText, String warningMessage) {
 		text.assertArrowTypeWarning(errorProneText, warningMessage, ArrowtypePackage.eINSTANCE.arrowShape)
 	}
 
-	def private void assertDeprecatedArrowShapeWarning(String text, String errorProneText, String warningMessage) {
+	private def void assertDeprecatedArrowShapeWarning(String text, String errorProneText, String warningMessage) {
 		text.assertArrowTypeWarning(errorProneText, warningMessage,	ArrowtypePackage.eINSTANCE.deprecatedArrowShape)
 	}
 
-	def private void assertArrowTypeWarning(String text, String errorProneText, String warningMessage, EClass objectType) {
+	private def void assertArrowTypeWarning(String text, String errorProneText, String warningMessage, EClass objectType) {
 		val ast = text.parseArrowType
 		val offset = text.indexOf(errorProneText)
 		val length = errorProneText.length
@@ -1364,7 +1364,7 @@ class DotArrowTypeTests {
 		expected.toString.trim.assertEquals(actual.toString.trim)
 	}
 	
-	def private ArrowType parseArrowType(String modelAsText){
+	private def ArrowType parseArrowType(String modelAsText){
 		var ArrowType ast = null
 		try {
 			ast = modelAsText.parse

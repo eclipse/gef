@@ -267,11 +267,11 @@ class DotAstHelper {
 		null
 	}
 
-	def private static ID getAttributeValue(AttrList attrList, String name) {
+	private def static ID getAttributeValue(AttrList attrList, String name) {
 		attrList.attributes.findFirst[it.name.toValue == name]?.value
 	}
 
-	def private static ID getAttributeValue(Attribute attribute, String name) {
+	private def static ID getAttributeValue(Attribute attribute, String name) {
 		if (attribute.name.toValue.equals(name)) {
 			return attribute.value
 		}

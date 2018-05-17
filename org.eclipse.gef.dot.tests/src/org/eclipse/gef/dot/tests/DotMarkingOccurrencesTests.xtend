@@ -145,7 +145,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.third("1"), #[text.first("1"), text.second("1")])
 	}
 
-	def private void verifyOccurrences(CharSequence content, int selectionOffset, List<Integer> expected) {
+	private def void verifyOccurrences(CharSequence content, int selectionOffset, List<Integer> expected) {
 		var XtextEditor editor = null
 		try {
 			editor = openEditor(DotTestUtils.createTestFile(content.toString))
@@ -167,21 +167,21 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		}
 	}
 
-	def private List<Position> sortAnnotationMap(Map<Annotation, Position> annotationMap) {
+	private def List<Position> sortAnnotationMap(Map<Annotation, Position> annotationMap) {
 		val List<Position> sortedAnnotationPositions = newArrayList(annotationMap.values)
 		Collections.sort(sortedAnnotationPositions, [Position o1, Position o2|o1.offset - o2.offset])
 		sortedAnnotationPositions
 	}
 	
-	def private first(String text, String substring){
+	private def first(String text, String substring){
 		text.indexOf(substring)
 	}	
 	
-	def private second(String text, String substring){
+	private def second(String text, String substring){
 		text.indexOf(substring, text.first(substring) + 1)
 	}
 	
-	def private third(String text, String substring){
+	private def third(String text, String substring){
 		text.indexOf(substring, text.second(substring) + 1)
 	}	
 }
