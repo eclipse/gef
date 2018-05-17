@@ -44,7 +44,7 @@ class DotAstHelper {
 		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
 			if(nodeStmt.node!==null && nodeStmt.node.name == nodeId.name){
 				return nodeStmt.node
-			}			
+			}
 		}
 		
 		null
@@ -99,8 +99,8 @@ class DotAstHelper {
 	 */
 	def static String getColorSchemeAttributeValue(Attribute attribute) {
 		getDependedOnAttributeValue(attribute, DotAttributes.COLORSCHEME__GCNE)
-	}	 
-	 
+	}
+	
 	/**
 	 * 
 	 * Returns an attribute value specified by attributeName that is set for given attribute
@@ -178,7 +178,7 @@ class DotAstHelper {
 				return value
 			}
 		}
-				
+		
 		// consider graph second
 		container = eObject.getContainerOfType(DotGraph)
 		if(container!==null){
@@ -189,7 +189,7 @@ class DotAstHelper {
 		}
 		
 		null
-	}	
+	}
 
 	private def static ID getAttributeValue(EList<Stmt> stmts, AttributeType attributeType, String attributeName){
 		for (stmt : stmts) {
