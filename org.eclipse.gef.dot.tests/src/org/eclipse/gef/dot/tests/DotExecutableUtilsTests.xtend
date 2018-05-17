@@ -100,7 +100,7 @@ class DotExecutableUtilsTests {
 	 * @return The path of the local Graphviz DOT executable, as specified in
 	 *         the test.properties file
 	 */
-	private def static String getDotExecutablePath() {
+	private def static getDotExecutablePath() {
 		if (dotExecutablePath === null) {
 			val props = new Properties
 			val stream = DotExecutableUtilsTests.getResourceAsStream("test.properties")
