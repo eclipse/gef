@@ -77,7 +77,7 @@ class DotAstHelper {
 			// consider the right side of the edges
 			val edgeRHS = edgeStmtNode.edgeRHS.head
 			if (edgeRHS instanceof EdgeRhsNode){
-				nodeId = (edgeRHS as EdgeRhsNode).node
+				nodeId = edgeRHS.node
 				if(nodeId!==null && nodeId.name == baseNodeId.name && nodeId!==baseNodeId){
 					result.add(nodeId)
 				}
@@ -194,9 +194,8 @@ class DotAstHelper {
 	private def static ID getAttributeValue(EList<Stmt> stmts, AttributeType attributeType, String attributeName){
 		for (stmt : stmts) {
 			if (stmt instanceof AttrStmt) {
-				val attrStmt = stmt as AttrStmt 
-				if (attrStmt.type == attributeType) {
-					return attrStmt.attrLists.getAttributeValue(attributeName)
+				if (stmt.type == attributeType) {
+					return stmt.attrLists.getAttributeValue(attributeName)
 				}
 			}
 		}
