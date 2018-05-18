@@ -35,10 +35,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotExtractor;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
@@ -48,6 +50,7 @@ import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
+import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
@@ -87,7 +90,14 @@ import com.google.inject.Inject;
 import com.google.inject.util.Modules;
 
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 /**
  * Render DOT content with ZestFx and Graphviz
@@ -329,9 +339,25 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		dot2ZestGraphCopier.getAttributeCopier().options().invertYAxis = false;
 		super.setGraph(dot2ZestGraphCopier.copy(graph));
 
+		// apply graph background color
+		// TODO: add Zest property for background color
+		// TODO: convert bgcolorList (Dot) to backgroubd color (Zest) within
+		// Dot2ZestAttributesConverter
+		DotColorUtil colorUtil = new DotColorUtil();
+		ColorList bgcolorList = DotAttributes.getBgcolorParsed(graph);
+		if (bgcolorList != null && bgcolorList.getColorValues() != null
+				&& bgcolorList.getColorValues().size() > 0) {
+			// FIXME: apply all colors. Currently, only the first one is
+			// applied.
+			addGraphBackground(Color.web(colorUtil.computeZestColor(
+					DotAttributes.getColorscheme(graph),
+					bgcolorList.getColorValues().get(0).getColor())));
+		} else {
+			removeGraphBackground();
+		}
+
 		// adjust viewport to scroll to top-left
 		Platform.runLater(new Runnable() {
-
 			@Override
 			public void run() {
 				InfiniteCanvas canvas = ((InfiniteCanvasViewer) getContentViewer())
@@ -343,6 +369,25 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 						- canvas.getContentBounds().getMinY());
 			}
 		});
+	}
+
+	private void removeGraphBackground() {
+		GraphPart graphPart = (GraphPart) getContentViewer().getRootPart()
+				.getContentPartChildren().get(0);
+		Group group = graphPart.getVisual();
+		group.setEffect(null);
+	}
+
+	private void addGraphBackground(Paint paint) {
+		GraphPart graphPart = (GraphPart) getContentViewer().getRootPart()
+				.getContentPartChildren().get(0);
+		Group group = graphPart.getVisual();
+		Bounds bounds = group.getLayoutBounds();
+		group.setEffect(
+				new Blend(BlendMode.SRC_OVER,
+						new ColorInput(bounds.getMinX(), bounds.getMinY(),
+								bounds.getWidth(), bounds.getHeight(), paint),
+						null));
 	}
 
 	private boolean toggle(Action action, boolean input) {
