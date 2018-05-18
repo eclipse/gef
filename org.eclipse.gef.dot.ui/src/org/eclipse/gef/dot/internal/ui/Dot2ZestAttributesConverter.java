@@ -28,9 +28,6 @@ import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
-import org.eclipse.gef.dot.internal.language.color.HSVColor;
-import org.eclipse.gef.dot.internal.language.color.RGBColor;
-import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
@@ -109,6 +106,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		 */
 		public boolean invertYAxis = false;
 	}
+
+	private DotColorUtil colorUtil = new DotColorUtil();
 
 	@Override
 	public void copy(IAttributeStore source, IAttributeStore target) {
@@ -197,7 +196,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		String dotColorScheme = DotAttributes.getColorscheme(dot);
-		String javaFxColor = computeZestColor(dotColorScheme, dotColor);
+		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
+				dotColor);
 		if (javaFxColor != null) {
 			String zestStroke = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 			connectionCssStyle += zestStroke;
@@ -219,7 +219,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		// fillcolor
 		Color dotFillColor = DotAttributes.getFillcolorParsed(dot);
-		String javaFxFillColor = computeZestColor(dotColorScheme, dotFillColor);
+		String javaFxFillColor = colorUtil.computeZestColor(dotColorScheme,
+				dotFillColor);
 		if (javaFxFillColor != null) {
 			String zestSourceDecorationCssStyle = ZestProperties
 					.getSourceDecorationCssStyle(zest);
@@ -649,7 +650,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// color
 		Color dotColor = DotAttributes.getColorParsed(dot);
 		String dotColorScheme = DotAttributes.getColorscheme(dot);
-		String javaFxColor = computeZestColor(dotColorScheme, dotColor);
+		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
+				dotColor);
 		if (javaFxColor != null) {
 			zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -679,7 +681,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				dotFillColor = dotColor != null ? dotColor
 						: DotColors.getDefaultNodeFillColor();
 			}
-			String javaFxFillColor = computeZestColor(dotColorScheme,
+			String javaFxFillColor = colorUtil.computeZestColor(dotColorScheme,
 					dotFillColor);
 			if (javaFxFillColor != null) {
 				zestStyle.append("-fx-fill: " + javaFxFillColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -711,53 +713,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// TODO: respect font settings (font name and size)
 		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
 		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
-	}
-
-	/**
-	 * Returns the javafx representation of a dot color.
-	 * 
-	 * @param colorScheme
-	 *            The colorscheme attribute value (or null if not defined)
-	 * @param dotColor
-	 *            The color in dot representation.
-	 * @return The color in javafx representation, or null if the javafx color
-	 *         representation cannot be determined.
-	 */
-	private String computeZestColor(String colorScheme, Color dotColor) {
-		String javaFxColor = null;
-		if (dotColor instanceof RGBColor) {
-			RGBColor rgbColor = (RGBColor) dotColor;
-			StringBuffer sb = new StringBuffer();
-			sb.append("#"); //$NON-NLS-1$
-			sb.append(rgbColor.getR());
-			sb.append(rgbColor.getG());
-			sb.append(rgbColor.getB());
-			if (rgbColor.getA() != null) {
-				sb.append(rgbColor.getA());
-			}
-			javaFxColor = sb.toString();
-		} else if (dotColor instanceof HSVColor) {
-			HSVColor hsvColor = (HSVColor) dotColor;
-			javaFxColor = String.format("hsb(%s, %s%%, %s%%)", //$NON-NLS-1$
-					Double.parseDouble(hsvColor.getH()) * 360,
-					Double.parseDouble(hsvColor.getS()) * 100,
-					Double.parseDouble(hsvColor.getV()) * 100);
-		} else if (dotColor instanceof StringColor) {
-			StringColor stringColor = (StringColor) dotColor;
-			// first evaluate the locally defined color scheme, if it is null,
-			// fall back to the colorscheme dot attribute value, if it is null,
-			// fall back to the default color scheme
-			String currentColorScheme = stringColor.getScheme();
-			if (currentColorScheme == null) {
-				currentColorScheme = colorScheme;
-			}
-			if (currentColorScheme == null || currentColorScheme.isEmpty()) {
-				currentColorScheme = "x11"; //$NON-NLS-1$
-			}
-			String colorName = stringColor.getName();
-			javaFxColor = DotColors.get(currentColorScheme, colorName);
-		}
-		return javaFxColor;
 	}
 
 	/**
