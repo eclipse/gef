@@ -24,7 +24,6 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.xtext.ui.editor.doubleClicking.DoubleClickStrategyProvider;
-import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.XtextDocument;
 
 import com.google.inject.Injector;
@@ -62,7 +61,7 @@ public class DotHtmlLabelDoubleClickStrategy
 		Injector injector = DotActivator.getInstance().getInjector(
 				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
 
-		IXtextDocument htmlDocument = null;
+		IDocument htmlDocument = null;
 		try {
 			htmlDocument = DotEditorUtils.getDocument(injector, htmlLabel);
 		} catch (Exception e) {
@@ -93,7 +92,7 @@ public class DotHtmlLabelDoubleClickStrategy
 				htmlRegion.getLength());
 	}
 
-	private IRegion findRegionHtml(IXtextDocument htmlDocument,
+	private IRegion findRegionHtml(IDocument htmlDocument,
 			int htmlLabelClickOffset,
 			ITextDoubleClickStrategy doubleClickStrategy) {
 		IRegion htmlRegion = findExtendedSelectionHtml(doubleClickStrategy,
@@ -108,7 +107,7 @@ public class DotHtmlLabelDoubleClickStrategy
 
 	private IRegion findExtendedSelectionHtml(
 			ITextDoubleClickStrategy doubleClickStrategy,
-			IXtextDocument htmlDocument, int htmlLabelClickOffset) {
+			IDocument htmlDocument, int htmlLabelClickOffset) {
 		Method findExtendedSelection = findExtendedDoubleClickSelectionMethod(
 				doubleClickStrategy.getClass());
 		return invokeMethodOn(findExtendedSelection, doubleClickStrategy,
@@ -116,7 +115,7 @@ public class DotHtmlLabelDoubleClickStrategy
 	}
 
 	private IRegion findWordHtml(ITextDoubleClickStrategy doubleClickStrategy,
-			IXtextDocument htmlDocument, int htmlLabelClickOffset) {
+			IDocument htmlDocument, int htmlLabelClickOffset) {
 		Method findWord = findWordMethod(doubleClickStrategy.getClass());
 		return invokeMethodOn(findWord, doubleClickStrategy, htmlDocument,
 				htmlLabelClickOffset);
@@ -170,7 +169,7 @@ public class DotHtmlLabelDoubleClickStrategy
 
 	private IRegion invokeMethodOn(Method method,
 			ITextDoubleClickStrategy doubleClickStrategy,
-			IXtextDocument htmlDocument, int htmlLabelClickOffset) {
+			IDocument htmlDocument, int htmlLabelClickOffset) {
 		IRegion htmlRegion = null;
 		try {
 			htmlRegion = (IRegion) method.invoke(doubleClickStrategy,
