@@ -40,7 +40,7 @@ class DotArrowTypeTests {
 	
 	@Inject Lexer lexer
 
-	@Test def void testLexingBox(){
+	@Test def testLexingBox(){
 		"box".assertLexing('''
 			T__12 'box'
 		''')
@@ -73,7 +73,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingCrow(){
+	@Test def testLexingCrow(){
 		"crow".assertLexing('''
 			T__13 'crow'
 		''')
@@ -89,7 +89,7 @@ class DotArrowTypeTests {
 		''')
 	}	
 		
-	@Test def void testLexingCurve(){
+	@Test def testLexingCurve(){
 		"curve".assertLexing('''
 			T__14 'curve'
 		''')
@@ -105,7 +105,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingDiamond(){
+	@Test def testLexingDiamond(){
 		"diamond".assertLexing('''
 			T__16 'diamond'
 		''')
@@ -138,7 +138,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingDot(){
+	@Test def testLexingDot(){
 		"dot".assertLexing('''
 			T__17 'dot'
 		''')
@@ -149,7 +149,7 @@ class DotArrowTypeTests {
 		''')
 	}	
 		
-	@Test def void testLexingICurve(){
+	@Test def testLexingICurve(){
 		"icurve".assertLexing('''
 			T__15 'icurve'
 		''')
@@ -165,7 +165,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingInv(){
+	@Test def testLexingInv(){
 		"inv".assertLexing('''
 			T__18 'inv'
 		''')
@@ -198,13 +198,13 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingNone(){
+	@Test def testLexingNone(){
 		"none".assertLexing('''
 			T__19 'none'
 		''')
 	}
 	
-	@Test def void testLexingNormal(){
+	@Test def testLexingNormal(){
 		"normal".assertLexing('''
 			T__20 'normal'
 		''')
@@ -237,7 +237,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingTee(){
+	@Test def testLexingTee(){
 		"tee".assertLexing('''
 			T__21 'tee'
 		''')
@@ -253,7 +253,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingVee(){
+	@Test def testLexingVee(){
 		"vee".assertLexing('''
 			T__22 'vee'
 		''')
@@ -269,7 +269,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingTwoPrimitiveShapes(){
+	@Test def testLexingTwoPrimitiveShapes(){
 		"invdot".assertLexing('''
 			T__18 'inv'
 			T__17 'dot'
@@ -305,7 +305,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingThreePrimitiveShapes(){
+	@Test def testLexingThreePrimitiveShapes(){
 		"dotodotdot".assertLexing('''
 			T__17 'dot'
 			T__4 'o'
@@ -329,7 +329,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingFourPrimitiveShapes(){
+	@Test def testLexingFourPrimitiveShapes(){
 		"onormalnormalonormalnormal".assertLexing('''
 			T__4 'o'
 			T__20 'normal'
@@ -361,7 +361,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testLexingDeprecatedShapes(){
+	@Test def testLexingDeprecatedShapes(){
 		"ediamond".assertLexing('''
 			T__7 'ediamond'
 		''')
@@ -393,7 +393,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstBox(){
+	@Test def testAstBox(){
 		"box".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -467,7 +467,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstCrow(){
+	@Test def testAstCrow(){
 		"crow".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -505,7 +505,7 @@ class DotArrowTypeTests {
 		''')
 	}	
 		
-	@Test def void testAstCurve(){
+	@Test def testAstCurve(){
 		"curve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -543,7 +543,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstDiamond(){
+	@Test def testAstDiamond(){
 		"diamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -617,7 +617,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstDot(){
+	@Test def testAstDot(){
 		"dot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -643,7 +643,7 @@ class DotArrowTypeTests {
 		''')
 	}	
 		
-	@Test def void testAstICurve(){
+	@Test def testAstICurve(){
 		"icurve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -681,7 +681,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstInv(){
+	@Test def testAstInv(){
 		"inv".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -755,7 +755,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstNone(){
+	@Test def testAstNone(){
 		"none".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -769,7 +769,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstNormal(){
+	@Test def testAstNormal(){
 		"normal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -843,7 +843,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstTee(){
+	@Test def testAstTee(){
 		"tee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -881,7 +881,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstVee(){
+	@Test def testAstVee(){
 		"vee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -919,7 +919,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstTwoPrimitiveShapes(){
+	@Test def testAstTwoPrimitiveShapes(){
 		"invdot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1023,7 +1023,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstThreePrimitiveShapes(){
+	@Test def testAstThreePrimitiveShapes(){
 		"dotodotdot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1091,7 +1091,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstFourPrimitiveShapes(){
+	@Test def testAstFourPrimitiveShapes(){
 		"onormalnormalonormalnormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1201,7 +1201,7 @@ class DotArrowTypeTests {
 		''')
 	}
 	
-	@Test def void testAstDeprecatedShapes(){
+	@Test def testAstDeprecatedShapes(){
 		"ediamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1281,7 +1281,7 @@ class DotArrowTypeTests {
 		''')
 	}
 
-	@Test def void testInvalidOpenModifier() {
+	@Test def testInvalidOpenModifier() {
 		"ocrow".assertArrowShapeWarning(
 			"o",
 			"The open modifier 'o' may not be combined with primitive shape 'crow'."
@@ -1293,7 +1293,7 @@ class DotArrowTypeTests {
 		)
 	}
 
-	@Test def void testInvalidSideModifier() {
+	@Test def testInvalidSideModifier() {
 		"rdot".assertArrowShapeWarning(
 			"r",
 			"The side modifier 'r' may not be combined with primitive shape 'dot'."
@@ -1305,7 +1305,7 @@ class DotArrowTypeTests {
 		)
 	}
 
-	@Test def void testDeprecatedArrowShape() {
+	@Test def testDeprecatedArrowShape() {
 		"openbox".assertDeprecatedArrowShapeWarning(
 			"open",
 			"The shape 'open' is deprecated."
@@ -1317,7 +1317,7 @@ class DotArrowTypeTests {
 		)
 	}
 
-	@Test def void testNoneIsTheLastArrowShape() {
+	@Test def testNoneIsTheLastArrowShape() {
 		"boxnone".assertArrowShapeWarning(
 			"none",
 			"The shape 'none' may not be the last shape."
@@ -1333,15 +1333,15 @@ class DotArrowTypeTests {
 		"".parseArrowType
 	}
 
-	private def void assertArrowShapeWarning(String text, String errorProneText, String warningMessage) {
+	private def assertArrowShapeWarning(String text, String errorProneText, String warningMessage) {
 		text.assertArrowTypeWarning(errorProneText, warningMessage, ArrowtypePackage.eINSTANCE.arrowShape)
 	}
 
-	private def void assertDeprecatedArrowShapeWarning(String text, String errorProneText, String warningMessage) {
+	private def assertDeprecatedArrowShapeWarning(String text, String errorProneText, String warningMessage) {
 		text.assertArrowTypeWarning(errorProneText, warningMessage,	ArrowtypePackage.eINSTANCE.deprecatedArrowShape)
 	}
 
-	private def void assertArrowTypeWarning(String text, String errorProneText, String warningMessage, EClass objectType) {
+	private def assertArrowTypeWarning(String text, String errorProneText, String warningMessage, EClass objectType) {
 		val ast = text.parseArrowType
 		val offset = text.indexOf(errorProneText)
 		val length = errorProneText.length

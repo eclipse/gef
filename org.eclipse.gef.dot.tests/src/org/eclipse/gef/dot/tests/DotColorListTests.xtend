@@ -37,7 +37,7 @@ class DotColorListTests {
 	@Inject extension ValidationTestHelper
 	@Inject extension DotEObjectFormatter
 	
-	@Test def void oneColorValueWithWeightLexerTest() {
+	@Test def oneColorValueWithWeightLexerTest() {
 		"#3030FF;1".assertLexing('''
 			NumberSign '#'
 			RULE_HEXADECIMAL_DIGIT '3'
@@ -51,7 +51,7 @@ class DotColorListTests {
 		''')
 	}
 
-	@Test def void oneColorValueWithoutWeight01() {
+	@Test def oneColorValueWithoutWeight01() {
 		"#E0E0E0".assertAst('''
 			ColorList {
 				colorValues = [
@@ -69,7 +69,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void oneColorValueWithoutWeight02() {
+	@Test def oneColorValueWithoutWeight02() {
 		"#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -87,7 +87,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void oneColorValueWithWeight01() {
+	@Test def oneColorValueWithWeight01() {
 		"#3030FF;1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -105,7 +105,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void oneColorValueWithWeight02() {
+	@Test def oneColorValueWithWeight02() {
 		"#C0C0C0;1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -123,7 +123,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void oneColorValueWithWeight03() {
+	@Test def oneColorValueWithWeight03() {
 		"#C0C0C0;0.5".assertAst('''
 			ColorList {
 				colorValues = [
@@ -141,7 +141,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void oneColorValueWithWeight04() {
+	@Test def oneColorValueWithWeight04() {
 		"#C0C0C0;0.99408284".assertAst('''
 			ColorList {
 				colorValues = [
@@ -159,7 +159,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void oneColorValueWithWeight05() {
+	@Test def oneColorValueWithWeight05() {
 		"#3030FF;0.0213903743".assertAst('''
 			ColorList {
 				colorValues = [
@@ -177,7 +177,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void twoColorValuesWithoutWeight01() {
+	@Test def twoColorValuesWithoutWeight01() {
 		"#C0C0C0:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -204,7 +204,7 @@ class DotColorListTests {
 		''')
 	}
 
-	@Test def void twoColorValuesWithWeight01() {
+	@Test def twoColorValuesWithWeight01() {
 		"#3030FF;0.0213903743:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -231,7 +231,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void twoColorValuesWithWeight02() {
+	@Test def twoColorValuesWithWeight02() {
 		"#C0C0C0;1:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -258,7 +258,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void twoColorValuesWithWeight03() {
+	@Test def twoColorValuesWithWeight03() {
 		"#3030FF;1:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -285,7 +285,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void twoColorValuesWithWeight04() {
+	@Test def twoColorValuesWithWeight04() {
 		"#C0C0C0;0.5:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -312,7 +312,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void twoColorValuesWithWeight05() {
+	@Test def twoColorValuesWithWeight05() {
 		"#C0C0C0;0.99408284:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -339,7 +339,7 @@ class DotColorListTests {
 		''')
 	}
 
-	@Test def void threeColorValuesWithWeight01() {
+	@Test def threeColorValuesWithWeight01() {
 		"#3030FF;0.5:#C0C0C0;0.5:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -375,7 +375,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight02() {
+	@Test def threeColorValuesWithWeight02() {
 		"#3030FF;1:#C0C0C0;1:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -411,7 +411,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight03() {
+	@Test def threeColorValuesWithWeight03() {
 		"#3030FF;0.36:#C0C0C0;0.08:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -447,7 +447,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight04() {
+	@Test def threeColorValuesWithWeight04() {
 		"#3030FF;0.0119926199:#C0C0C0;0.73800738:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -483,7 +483,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight05() {
+	@Test def threeColorValuesWithWeight05() {
 		"#3030FF;0.0555555556:#C0C0C0;0.037037037:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -519,7 +519,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight06() {
+	@Test def threeColorValuesWithWeight06() {
 		"#3030FF;0.0105485232:#C0C0C0;0.723628692:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -555,7 +555,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight07() {
+	@Test def threeColorValuesWithWeight07() {
 		"#3030FF;0.0186915888:#C0C0C0;0.981308411:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -591,7 +591,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight08() {
+	@Test def threeColorValuesWithWeight08() {
 		"#3030FF;0.0107719928:#C0C0C0;0.854578097:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -627,7 +627,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight09() {
+	@Test def threeColorValuesWithWeight09() {
 		"#3030FF;0.0498812352:#C0C0C0;0.250593824:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -663,7 +663,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight10() {
+	@Test def threeColorValuesWithWeight10() {
 		"#3030FF;0.0416666667:#C0C0C0;0.958333333:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -699,7 +699,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight11() {
+	@Test def threeColorValuesWithWeight11() {
 		"#3030FF;0.1:#C0C0C0;0.2:#8080FF;0.7".assertAst('''
 			ColorList {
 				colorValues = [
@@ -735,7 +735,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight12() {
+	@Test def threeColorValuesWithWeight12() {
 		"#3030FF;0.2:#C0C0C0;0.2:#8080FF;0.6".assertAst('''
 			ColorList {
 				colorValues = [
@@ -771,7 +771,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight13() {
+	@Test def threeColorValuesWithWeight13() {
 		"#3030FF;0.3:#8080FF;0.2:#C0C0C0;0.5".assertAst('''
 			ColorList {
 				colorValues = [
@@ -807,7 +807,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight14() {
+	@Test def threeColorValuesWithWeight14() {
 		"#3030FF;0.4:#C0C0C0;0.2:#8080FF;0.4".assertAst('''
 			ColorList {
 				colorValues = [
@@ -843,7 +843,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight15() {
+	@Test def threeColorValuesWithWeight15() {
 		"#3030FF;0.5:#C0C0C0;0.2:#8080FF;0.3".assertAst('''
 			ColorList {
 				colorValues = [
@@ -879,7 +879,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight16() {
+	@Test def threeColorValuesWithWeight16() {
 		"#3030FF;0.6:#C0C0C0;0.2:#8080FF;0.2".assertAst('''
 			ColorList {
 				colorValues = [
@@ -915,7 +915,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight17() {
+	@Test def threeColorValuesWithWeight17() {
 		"#313233;0.7:#C0C1C2;0.2:#8080FF;0.1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -951,7 +951,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight18() {
+	@Test def threeColorValuesWithWeight18() {
 		"#3030FF;0.8:#C0C0C0;0.1:#8080FF;0.1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -987,7 +987,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight19() {
+	@Test def threeColorValuesWithWeight19() {
 		"#3030FF;0.1:#C0C0C0;0.3:#8080FF;0.6".assertAst('''
 			ColorList {
 				colorValues = [
@@ -1023,7 +1023,7 @@ class DotColorListTests {
 		''')
 	}
 	
-	@Test def void threeColorValuesWithWeight20() {
+	@Test def threeColorValuesWithWeight20() {
 		"#3030FF;0.2:#C0C0C0;0.4:#8080FF;0.4".assertAst('''
 			ColorList {
 				colorValues = [

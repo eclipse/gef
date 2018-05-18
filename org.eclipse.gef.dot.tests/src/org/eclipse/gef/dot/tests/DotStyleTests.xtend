@@ -38,77 +38,77 @@ class DotStyleTests {
 
 	@Inject Lexer lexer
 
-	@Test def void test_valid_style() {
+	@Test def test_valid_style() {
 		"bold".parse.assertNoErrors
 	}
 
-	@Test def void testLexingNodeStyle01(){
+	@Test def testLexingNodeStyle01(){
 		"bold".assertLexing('''
 			RULE_NAME 'bold'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle02(){
+	@Test def testLexingNodeStyle02(){
 		"dashed".assertLexing('''
 			RULE_NAME 'dashed'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle03(){
+	@Test def testLexingNodeStyle03(){
 		"diagonals".assertLexing('''
 			RULE_NAME 'diagonals'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle04(){
+	@Test def testLexingNodeStyle04(){
 		"dotted".assertLexing('''
 			RULE_NAME 'dotted'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle05(){
+	@Test def testLexingNodeStyle05(){
 		"filled".assertLexing('''
 			RULE_NAME 'filled'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle06(){
+	@Test def testLexingNodeStyle06(){
 		"invis".assertLexing('''
 			RULE_NAME 'invis'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle07(){
+	@Test def testLexingNodeStyle07(){
 		"radial".assertLexing('''
 			RULE_NAME 'radial'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle08(){
+	@Test def testLexingNodeStyle08(){
 		"rounded".assertLexing('''
 			RULE_NAME 'rounded'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle09(){
+	@Test def testLexingNodeStyle09(){
 		"solid".assertLexing('''
 			RULE_NAME 'solid'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle10(){
+	@Test def testLexingNodeStyle10(){
 		"striped".assertLexing('''
 			RULE_NAME 'striped'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle11(){
+	@Test def testLexingNodeStyle11(){
 		"wedged".assertLexing('''
 			RULE_NAME 'wedged'
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle12(){
+	@Test def testLexingNodeStyle12(){
 		"bold, dashed".assertLexing('''
 			RULE_NAME 'bold'
 			T__6 ','
@@ -117,7 +117,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle13(){
+	@Test def testLexingNodeStyle13(){
 		"dashed,bold".assertLexing('''
 			RULE_NAME 'dashed'
 			T__6 ','
@@ -125,7 +125,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle14(){
+	@Test def testLexingNodeStyle14(){
 		"bold, dotted".assertLexing('''
 			RULE_NAME 'bold'
 			T__6 ','
@@ -134,7 +134,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle15(){
+	@Test def testLexingNodeStyle15(){
 		"dotted, bold".assertLexing('''
 			RULE_NAME 'dotted'
 			T__6 ','
@@ -143,7 +143,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle16(){
+	@Test def testLexingNodeStyle16(){
 		"filled, dashed".assertLexing('''
 			RULE_NAME 'filled'
 			T__6 ','
@@ -152,7 +152,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle17(){
+	@Test def testLexingNodeStyle17(){
 		"dashed, filled".assertLexing('''
 			RULE_NAME 'dashed'
 			T__6 ','
@@ -161,7 +161,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle18(){
+	@Test def testLexingNodeStyle18(){
 		"bold, filled".assertLexing('''
 			RULE_NAME 'bold'
 			T__6 ','
@@ -170,7 +170,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle19(){
+	@Test def testLexingNodeStyle19(){
 		"filled, bold".assertLexing('''
 			RULE_NAME 'filled'
 			T__6 ','
@@ -179,7 +179,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle20(){
+	@Test def testLexingNodeStyle20(){
 		"bold, diagonals".assertLexing('''
 			RULE_NAME 'bold'
 			T__6 ','
@@ -188,7 +188,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle21(){
+	@Test def testLexingNodeStyle21(){
 		"diagonals, bold".assertLexing('''
 			RULE_NAME 'diagonals'
 			T__6 ','
@@ -197,7 +197,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle22(){
+	@Test def testLexingNodeStyle22(){
 		"diagonals, filled".assertLexing('''
 			RULE_NAME 'diagonals'
 			T__6 ','
@@ -206,7 +206,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle23(){
+	@Test def testLexingNodeStyle23(){
 		"filled, diagonals".assertLexing('''
 			RULE_NAME 'filled'
 			T__6 ','
@@ -215,7 +215,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle24(){
+	@Test def testLexingNodeStyle24(){
 		"diagonals, filled, bold".assertLexing('''
 			RULE_NAME 'diagonals'
 			T__6 ','
@@ -227,7 +227,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle25(){
+	@Test def testLexingNodeStyle25(){
 		"filled, bold, diagonals".assertLexing('''
 			RULE_NAME 'filled'
 			T__6 ','
@@ -239,7 +239,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingNodeStyle26(){
+	@Test def testLexingNodeStyle26(){
 		"setlinewidth(4)".assertLexing('''
 			RULE_NAME 'setlinewidth'
 			T__7 '('
@@ -248,43 +248,43 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle01(){
+	@Test def testLexingEdgeStyle01(){
 		"bold".assertLexing('''
 			RULE_NAME 'bold'
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle02(){
+	@Test def testLexingEdgeStyle02(){
 		"dashed".assertLexing('''
 			RULE_NAME 'dashed'
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle03(){
+	@Test def testLexingEdgeStyle03(){
 		"dotted".assertLexing('''
 			RULE_NAME 'dotted'
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle04(){
+	@Test def testLexingEdgeStyle04(){
 		"invis".assertLexing('''
 			RULE_NAME 'invis'
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle05(){
+	@Test def testLexingEdgeStyle05(){
 		"solid".assertLexing('''
 			RULE_NAME 'solid'
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle06(){
+	@Test def testLexingEdgeStyle06(){
 		"tapered".assertLexing('''
 			RULE_NAME 'tapered'
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle07(){
+	@Test def testLexingEdgeStyle07(){
 		"bold, dashed".assertLexing('''
 			RULE_NAME 'bold'
 			T__6 ','
@@ -293,7 +293,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle08(){
+	@Test def testLexingEdgeStyle08(){
 		"dashed, bold".assertLexing('''
 			RULE_NAME 'dashed'
 			T__6 ','
@@ -302,7 +302,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle09(){
+	@Test def testLexingEdgeStyle09(){
 		"bold, dotted".assertLexing('''
 			RULE_NAME 'bold'
 			T__6 ','
@@ -311,7 +311,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle10(){
+	@Test def testLexingEdgeStyle10(){
 		"dotted, bold".assertLexing('''
 			RULE_NAME 'dotted'
 			T__6 ','
@@ -320,7 +320,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle11(){
+	@Test def testLexingEdgeStyle11(){
 		"bold, tapered".assertLexing('''
 			RULE_NAME 'bold'
 			T__6 ','
@@ -329,7 +329,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testLexingEdgeStyle12(){
+	@Test def testLexingEdgeStyle12(){
 		"tapered, bold".assertLexing('''
 			RULE_NAME 'tapered'
 			T__6 ','
@@ -338,7 +338,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle01(){
+	@Test def testAstNodeStyle01(){
 		"bold".assertAst('''
 			Style {
 				styleItems = [
@@ -352,7 +352,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle02(){
+	@Test def testAstNodeStyle02(){
 		"dashed".assertAst('''
 			Style {
 				styleItems = [
@@ -366,7 +366,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle03(){
+	@Test def testAstNodeStyle03(){
 		"diagonals".assertAst('''
 			Style {
 				styleItems = [
@@ -380,7 +380,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle04(){
+	@Test def testAstNodeStyle04(){
 		"dotted".assertAst('''
 			Style {
 				styleItems = [
@@ -394,7 +394,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle05(){
+	@Test def testAstNodeStyle05(){
 		"filled".assertAst('''
 			Style {
 				styleItems = [
@@ -408,7 +408,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle06(){
+	@Test def testAstNodeStyle06(){
 		"invis".assertAst('''
 			Style {
 				styleItems = [
@@ -422,7 +422,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle07(){
+	@Test def testAstNodeStyle07(){
 		"radial".assertAst('''
 			Style {
 				styleItems = [
@@ -436,7 +436,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle08(){
+	@Test def testAstNodeStyle08(){
 		"rounded".assertAst('''
 			Style {
 				styleItems = [
@@ -450,7 +450,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle09(){
+	@Test def testAstNodeStyle09(){
 		"solid".assertAst('''
 			Style {
 				styleItems = [
@@ -464,7 +464,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle10(){
+	@Test def testAstNodeStyle10(){
 		"striped".assertAst('''
 			Style {
 				styleItems = [
@@ -478,7 +478,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle11(){
+	@Test def testAstNodeStyle11(){
 		"wedged".assertAst('''
 			Style {
 				styleItems = [
@@ -492,7 +492,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle12(){
+	@Test def testAstNodeStyle12(){
 		"bold, dashed".assertAst('''
 			Style {
 				styleItems = [
@@ -511,7 +511,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle13(){
+	@Test def testAstNodeStyle13(){
 		"dashed, bold".assertAst('''
 			Style {
 				styleItems = [
@@ -530,7 +530,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle14(){
+	@Test def testAstNodeStyle14(){
 		"bold, dotted".assertAst('''
 			Style {
 				styleItems = [
@@ -549,7 +549,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle15(){
+	@Test def testAstNodeStyle15(){
 		"dotted, bold".assertAst('''
 			Style {
 				styleItems = [
@@ -568,7 +568,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle16(){
+	@Test def testAstNodeStyle16(){
 		"filled, dashed".assertAst('''
 			Style {
 				styleItems = [
@@ -587,7 +587,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle17(){
+	@Test def testAstNodeStyle17(){
 		"dashed, filled".assertAst('''
 			Style {
 				styleItems = [
@@ -606,7 +606,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle18(){
+	@Test def testAstNodeStyle18(){
 		"bold, filled".assertAst('''
 			Style {
 				styleItems = [
@@ -625,7 +625,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle19(){
+	@Test def testAstNodeStyle19(){
 		"filled, bold".assertAst('''
 			Style {
 				styleItems = [
@@ -644,7 +644,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle20(){
+	@Test def testAstNodeStyle20(){
 		"bold, diagonals".assertAst('''
 			Style {
 				styleItems = [
@@ -663,7 +663,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle21(){
+	@Test def testAstNodeStyle21(){
 		"diagonals, bold".assertAst('''
 			Style {
 				styleItems = [
@@ -682,7 +682,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle22(){
+	@Test def testAstNodeStyle22(){
 		"diagonals, filled".assertAst('''
 			Style {
 				styleItems = [
@@ -701,7 +701,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle23(){
+	@Test def testAstNodeStyle23(){
 		"filled, diagonals".assertAst('''
 			Style {
 				styleItems = [
@@ -720,7 +720,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle24(){
+	@Test def testAstNodeStyle24(){
 		"diagonals, filled, bold".assertAst('''
 			Style {
 				styleItems = [
@@ -744,7 +744,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle25(){
+	@Test def testAstNodeStyle25(){
 		"filled, bold, diagonals".assertAst('''
 			Style {
 				styleItems = [
@@ -768,7 +768,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstNodeStyle26(){
+	@Test def testAstNodeStyle26(){
 		"setlinewidth(4)".assertAst('''
 			Style {
 				styleItems = [
@@ -783,7 +783,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle01(){
+	@Test def testAstEdgeStyle01(){
 		"bold".assertAst('''
 			Style {
 				styleItems = [
@@ -797,7 +797,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle02(){
+	@Test def testAstEdgeStyle02(){
 		"dashed".assertAst('''
 			Style {
 				styleItems = [
@@ -811,7 +811,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle03(){
+	@Test def testAstEdgeStyle03(){
 		"dotted".assertAst('''
 			Style {
 				styleItems = [
@@ -825,7 +825,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle04(){
+	@Test def testAstEdgeStyle04(){
 		"invis".assertAst('''
 			Style {
 				styleItems = [
@@ -839,7 +839,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle05(){
+	@Test def testAstEdgeStyle05(){
 		"solid".assertAst('''
 			Style {
 				styleItems = [
@@ -853,7 +853,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle06(){
+	@Test def testAstEdgeStyle06(){
 		"tapered".assertAst('''
 			Style {
 				styleItems = [
@@ -867,7 +867,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle07(){
+	@Test def testAstEdgeStyle07(){
 		"bold, dashed".assertAst('''
 			Style {
 				styleItems = [
@@ -886,7 +886,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle08(){
+	@Test def testAstEdgeStyle08(){
 		"dashed, bold".assertAst('''
 			Style {
 				styleItems = [
@@ -905,7 +905,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle09(){
+	@Test def testAstEdgeStyle09(){
 		"bold, dotted".assertAst('''
 			Style {
 				styleItems = [
@@ -924,7 +924,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle10(){
+	@Test def testAstEdgeStyle10(){
 		"dotted, bold".assertAst('''
 			Style {
 				styleItems = [
@@ -943,7 +943,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle11(){
+	@Test def testAstEdgeStyle11(){
 		"bold, tapered".assertAst('''
 			Style {
 				styleItems = [
@@ -962,7 +962,7 @@ class DotStyleTests {
 		''')
 	}
 	
-	@Test def void testAstEdgeStyle12(){
+	@Test def testAstEdgeStyle12(){
 		"tapered, bold".assertAst('''
 			Style {
 				styleItems = [

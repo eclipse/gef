@@ -32,7 +32,7 @@ class DotHtmlLabelHighlightingLexerTests {
 	@Inject @Named(LexerUIBindings.HIGHLIGHTING) Lexer lexer
 	
 	@Test(timeout = 2000)
-	def void testLexing01() {
+	def testLexing01() {
 		'''<a b="'''
 		.assertLexing(
 		'''
@@ -46,7 +46,7 @@ class DotHtmlLabelHighlightingLexerTests {
 	}
 		
 	@Test(timeout = 2000)
-	def void testLexing02() {
+	def testLexing02() {
 		'''<TABLE ALIGN="'''
 		.assertLexing(
 		'''
@@ -60,7 +60,7 @@ class DotHtmlLabelHighlightingLexerTests {
 	}
 	
 	@Test(timeout = 2000)
-	def void testLexing03() {
+	def testLexing03() {
 		'''<TABLE ALIGN=""></TABLE>'''
 		.assertLexing(
 		'''

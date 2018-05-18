@@ -28,7 +28,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	@Inject XtextEditorInfo editorInfo
 
 	@Test
-	def void testEmptyGraph() {
+	def testEmptyGraph() {
 		DotTestGraphs.EMPTY.assertAllLabels('''
 		test.dot: File
 			<?>: Graph
@@ -36,7 +36,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 
 	@Test
-	def void testSubgraph() {
+	def testSubgraph() {
 		DotTestGraphs.CLUSTER_SCOPE.assertAllLabels('''
 		test.dot: File
 			<?>: Graph
@@ -58,7 +58,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 	
 	@Test
-	def void testCompleteEdge(){
+	def testCompleteEdge(){
 		'''
 			graph {
 				1--2
@@ -73,7 +73,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 	
 	@Test
-	def void testIncompleteEdge(){
+	def testIncompleteEdge(){
 		// The outline view should be able to cope with incomplete statements
 		'''
 			graph {
@@ -88,7 +88,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 	
 	@Test
-	def void testIncompleteHtmlLikeLabels(){
+	def testIncompleteHtmlLikeLabels(){
 		// The outline view should be able to cope with incomplete statements
 		'''
 			graph {
@@ -105,7 +105,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 	
 	@Test
-	def void testHtmlLikeLabels1() {
+	def testHtmlLikeLabels1() {
 		"html_like_labels1.dot".testFile('''
 		test.dot: File
 			structs: Graph
@@ -188,7 +188,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 
 	@Test
-	def void testHtmlLikeLabels2() {
+	def testHtmlLikeLabels2() {
 		"html_like_labels2.dot".testFile('''
 		test.dot: File
 			G: Graph
@@ -307,7 +307,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 
 	@Test
-	def void testHtmlLikeLabels3() {
+	def testHtmlLikeLabels3() {
 		"html_like_labels3.dot".testFile('''
 		test.dot: File
 			structs: Graph
@@ -355,7 +355,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 
 	@Test
-	def void testHtmlLikeLabels4() {
+	def testHtmlLikeLabels4() {
 		"html_like_labels4.dot".testFile('''
 		test.dot: File
 			<?>: Graph
@@ -404,7 +404,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
-	private def void testFile(String fileName, CharSequence expected) {
+	private def testFile(String fileName, CharSequence expected) {
 		val fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
 		fileContents.assertAllLabels(expected)

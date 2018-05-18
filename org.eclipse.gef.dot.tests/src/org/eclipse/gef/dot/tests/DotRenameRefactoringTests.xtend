@@ -63,7 +63,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void testRenaming01(){
+	def testRenaming01(){
 		val initialText = '''
 			digraph {
 				1
@@ -83,7 +83,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void testRenaming02(){
+	def testRenaming02(){
 		val initialText = '''
 			digraph {
 				1
@@ -103,7 +103,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming03(){
+	def testRenaming03(){
 		val initialText = '''
 			digraph {
 				1
@@ -123,7 +123,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming04(){
+	def testRenaming04(){
 		val initialText = '''
 			digraph {
 				1
@@ -143,7 +143,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming05(){
+	def testRenaming05(){
 		val initialText = '''
 			digraph {
 				1
@@ -165,7 +165,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming06(){
+	def testRenaming06(){
 		val initialText = '''
 			digraph {
 				1
@@ -187,7 +187,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming07(){
+	def testRenaming07(){
 		val initialText = '''
 			digraph {
 				1
@@ -209,7 +209,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming08(){
+	def testRenaming08(){
 		val initialText = '''
 			digraph {
 				1
@@ -231,7 +231,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming09(){
+	def testRenaming09(){
 		val initialText = '''
 			graph {
 				1--1
@@ -249,7 +249,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming10(){
+	def testRenaming10(){
 		val initialText = '''
 			graph {
 				1--1
@@ -267,7 +267,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void testRenaming11(){
+	def testRenaming11(){
 		val initialText = '''
 			digraph {
 				1
@@ -297,7 +297,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		assertEquals(expectedTextAfterRenaming, actualTextAfterRenaming)
 	}
 
-	private def void doRename(IFile testFile, NodeId targetElement, String newNodeName) throws Exception {
+	private def doRename(IFile testFile, NodeId targetElement, String newNodeName) throws Exception {
 		waitForBuild(null)
 		var String targetElementFragment = EcoreUtil.getURI(targetElement).fragment
 		var URI targetElementURI = URI.createPlatformResourceURI(testFile.getFullPath().toString(), true).
@@ -341,7 +341,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		parseResult.rootASTElement as DotAst
 	}
 
-	private def void waitForBuild(IProgressMonitor monitor) {
+	private def waitForBuild(IProgressMonitor monitor) {
 		try {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder::INCREMENTAL_BUILD, monitor)
 		} catch (CoreException e) {

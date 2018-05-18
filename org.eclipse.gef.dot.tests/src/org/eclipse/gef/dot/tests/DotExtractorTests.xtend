@@ -25,7 +25,7 @@ import org.junit.Test
  */
 class DotExtractorTests {
 	
-	@Test def void testDotExtraction01() {
+	@Test def testDotExtraction01() {
 		'''
 			/** 
 				Javadoc stuff 
@@ -47,7 +47,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def void testDotExtraction02() {
+	@Test def testDotExtraction02() {
 		'''
 			/** Javadoc stuff 
 			graph long_name {
@@ -66,7 +66,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def void testDotExtraction03() {
+	@Test def testDotExtraction03() {
 		'''
 			/* Java block comment 
 				stuff 
@@ -86,7 +86,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def void testDotExtraction04() {
+	@Test def testDotExtraction04() {
 		'''
 			Stuff about a graph and then 
 			graph {
@@ -105,7 +105,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def void testDotExtraction05() {
+	@Test def testDotExtraction05() {
 		'''
 			Stuff about a graph and then with breaks 
 				graph{
@@ -124,7 +124,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def void testDotExtraction06() {
+	@Test def testDotExtraction06() {
 		'''
 			Stuff about a graph and then digraph{a;b;a->b} and more 
 		'''
@@ -134,7 +134,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def void testDotExtraction07() {
+	@Test def testDotExtraction07() {
 		'''
 			Stuff about a graph and then 
 			digraph {
@@ -155,7 +155,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def void testDotExtraction08() {
+	@Test def testDotExtraction08() {
 		'''
 			Stuff about a graph then 
 				graph {
@@ -172,7 +172,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	private def void testDotExtraction(CharSequence embedded, CharSequence expected) {
+	private def testDotExtraction(CharSequence embedded, CharSequence expected) {
 		var extracted = new DotExtractor(embedded.toString).dotString
 		Assert.assertEquals(String.format("Incorrect DOT extraction for '%s';", embedded), expected.toString.trim, extracted)
 	}

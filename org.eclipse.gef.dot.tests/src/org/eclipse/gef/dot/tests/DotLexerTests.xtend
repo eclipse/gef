@@ -36,99 +36,99 @@ class DotLexerTests {
 	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
 
 	@Test
-	def void testLexing_mSubgraph(){
+	def testLexing_mSubgraph(){
 		"subgraph".assertLexing("Subgraph 'subgraph'")
 		"Subgraph".assertLexing("Subgraph 'Subgraph'")
 		"SUBGRAPH".assertLexing("Subgraph 'SUBGRAPH'")
 	}
 	
 	@Test
-	def void testLexing_mDigraph(){
+	def testLexing_mDigraph(){
 		"digraph".assertLexing("Digraph 'digraph'")
 		"Digraph".assertLexing("Digraph 'Digraph'")
 		"DIGRAPH".assertLexing("Digraph 'DIGRAPH'")
 	}
 
 	@Test
-	def void testLexing_mStrict(){
+	def testLexing_mStrict(){
 		"strict".assertLexing("Strict 'strict'")
 		"Strict".assertLexing("Strict 'Strict'")
 		"STRICT".assertLexing("Strict 'STRICT'")
 	}
 
 	@Test
-	def void testLexing_mGraph(){
+	def testLexing_mGraph(){
 		"graph".assertLexing("Graph 'graph'")
 		"Graph".assertLexing("Graph 'Graph'")
 		"GRAPH".assertLexing("Graph 'GRAPH'")
 	}
 	
 	@Test
-	def void testLexing_mEdge(){
+	def testLexing_mEdge(){
 		"edge".assertLexing("Edge 'edge'")
 		"Edge".assertLexing("Edge 'Edge'")
 		"EDGE".assertLexing("Edge 'EDGE'")
 	}
 	
 	@Test
-	def void testLexing_mNode(){
+	def testLexing_mNode(){
 		"node".assertLexing("Node 'node'")
 		"Node".assertLexing("Node 'Node'")
 		"NODE".assertLexing("Node 'NODE'")
 	}
 	
 	@Test
-	def void testLexing_mHyphenMinusHyphenMinus(){
+	def testLexing_mHyphenMinusHyphenMinus(){
 		"--".assertLexing("HyphenMinusHyphenMinus '--'")
 	}
 	
 	@Test
-	def void testLexing_mHyphenMinusGreaterThanSign(){
+	def testLexing_mHyphenMinusGreaterThanSign(){
 		"->".assertLexing("HyphenMinusGreaterThanSign '->'")
 	}
 	
 	@Test
-	def void testLexing_mComma(){
+	def testLexing_mComma(){
 		",".assertLexing("Comma ','")
 	}
 	
 	@Test
-	def void testLexing_mColon(){
+	def testLexing_mColon(){
 		":".assertLexing("Colon ':'")
 	}
 	
 	@Test
-	def void testLexing_mSemicolon(){
+	def testLexing_mSemicolon(){
 		";".assertLexing("Semicolon ';'")
 	}
 	
 	@Test
-	def void testLexing_mEqualsSign(){
+	def testLexing_mEqualsSign(){
 		"=".assertLexing("EqualsSign '='")
 	}
 	
 	@Test
-	def void testLexing_mLeftSquareBracket(){
+	def testLexing_mLeftSquareBracket(){
 		"[".assertLexing("LeftSquareBracket '['")
 	}
 	
 	@Test
-	def void testLexing_mRightSquareBracket(){
+	def testLexing_mRightSquareBracket(){
 		"]".assertLexing("RightSquareBracket ']'")
 	}
 	
 	@Test
-	def void testLexing_mLeftCurlyBracket(){
+	def testLexing_mLeftCurlyBracket(){
 		"{".assertLexing("LeftCurlyBracket '{'")
 	}
 	
 	@Test
-	def void testLexing_mRightCurlyBracket(){
+	def testLexing_mRightCurlyBracket(){
 		"}".assertLexing("RightCurlyBracket '}'")
 	}
 	
 	@Test
-	def void testLexing_mRULE_NUMERAL(){
+	def testLexing_mRULE_NUMERAL(){
 		"0"		.assertLexing("RULE_NUMERAL '0'"	)
 		"1"		.assertLexing("RULE_NUMERAL '1'"	)
 		"-1"	.assertLexing("RULE_NUMERAL '-1'"	)
@@ -139,7 +139,7 @@ class DotLexerTests {
 	}
 	
 	@Test
-	def void testLexing_mRULE_COMPASS_PT(){
+	def testLexing_mRULE_COMPASS_PT(){
 		"n"	.assertLexing("RULE_COMPASS_PT 'n'"	)
 		"ne".assertLexing("RULE_COMPASS_PT 'ne'")
 		"e"	.assertLexing("RULE_COMPASS_PT 'e'"	)
@@ -153,7 +153,7 @@ class DotLexerTests {
 	}
 	
 	@Test
-	def void testLexing_mRULE_STRING(){
+	def testLexing_mRULE_STRING(){
 		"foo"	.assertLexing("RULE_STRING 'foo'"	)
 		"ä"		.assertLexing("RULE_STRING 'ä'"		)
 		"ß"		.assertLexing("RULE_STRING 'ß'"		)
@@ -164,7 +164,7 @@ class DotLexerTests {
 	}
 	
 	@Test
-	def void testLexing_mRULE_QUOTED_STRING(){
+	def testLexing_mRULE_QUOTED_STRING(){
 		'''""'''.assertLexing('''
 			RULE_QUOTED_STRING '""'
 		''')
@@ -191,7 +191,7 @@ class DotLexerTests {
 	}
 	
 	@Test
-	def void testLexing_mRULE_HTML_STRING(){
+	def testLexing_mRULE_HTML_STRING(){
 		'''<>'''					.assertLexing("RULE_HTML_STRING '<>'"						)
 		'''<	>'''				.assertLexing("RULE_HTML_STRING '<	>'"						)
 		'''<<B>Bold Label</B>>'''	.assertLexing("RULE_HTML_STRING '<<B>Bold Label</B>>'"		)
@@ -227,7 +227,7 @@ class DotLexerTests {
 	}
 	
 	@Test
-	def void testLexing_mRULE_ML_COMMENT(){
+	def testLexing_mRULE_ML_COMMENT(){
 		'''/*
 		 	* This is a C++-style multi line comment.
 		 	*/'''.assertLexing('''
@@ -239,7 +239,7 @@ class DotLexerTests {
 	}
 	
 	@Test
-	def void testLexing_mRULE_SL_COMMENT(){
+	def testLexing_mRULE_SL_COMMENT(){
 		'''// This is a C++-style single line comment.'''
 		.assertLexing('''
 			RULE_SL_COMMENT '// This is a C++-style single line comment.'
@@ -260,7 +260,7 @@ class DotLexerTests {
 	}
 	
 	@Test
-	def void testLexing_mRULE_WS(){
+	def testLexing_mRULE_WS(){
 		" "		.assertLexing("RULE_WS ' '"		)
 		"	"	.assertLexing("RULE_WS '	'"	)
 		'''

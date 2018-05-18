@@ -34,7 +34,7 @@ class DotHoverTests extends AbstractEditorTest {
 	@Inject XtextEditorInfo editorInfo
 
 	@Test
-	def void edge_color() {
+	def edge_color() {
 		val text = '''
 			digraph {
 				1->2[
@@ -66,7 +66,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void edge_color_custom_global_color_scheme() {
+	def edge_color_custom_global_color_scheme() {
 		val text = '''
 			digraph {
 				a->b[
@@ -99,7 +99,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void edge_color_custom_local_color_scheme() {
+	def edge_color_custom_local_color_scheme() {
 		val text = '''
 			digraph {
 				a->b[
@@ -131,7 +131,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void edge_color_rgb_value() {
+	def edge_color_rgb_value() {
 		val text = '''
 			digraph {
 				a->b[
@@ -159,7 +159,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void edge_fillcolor() {
+	def edge_fillcolor() {
 		val text = '''
 			digraph {
 				1->2[
@@ -191,7 +191,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void edge_fontcolor() {
+	def edge_fontcolor() {
 		val text = '''
 			digraph {
 				1->2[
@@ -224,7 +224,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void edge_labelfontcolor() {
+	def edge_labelfontcolor() {
 		val text = '''
 			digraph {
 				1->2[
@@ -258,7 +258,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void graph_bgcolor() {
+	def graph_bgcolor() {
 		val text = '''
 			digraph {
 				bgcolor=darkgoldenrod2
@@ -289,7 +289,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void graph_fontcolor() {
+	def graph_fontcolor() {
 		val text = '''
 			digraph {
 				fontcolor=firebrick
@@ -321,7 +321,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void node_color() {
+	def node_color() {
 		val text = '''
 			digraph {
 				1[color=aquamarine4]
@@ -351,7 +351,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 
 	@Test
-	def void node_fillcolor() {
+	def node_fillcolor() {
 		val text = '''
 			digraph {
 				1[
@@ -384,7 +384,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void node_fontcolor() {
+	def node_fontcolor() {
 		val text = '''
 			digraph {
 				1[
@@ -416,7 +416,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void cluster_color() {
+	def cluster_color() {
 		val text = '''
 			digraph {
 				1
@@ -450,7 +450,7 @@ class DotHoverTests extends AbstractEditorTest {
 	}
 	
 	@Test
-	def void cluster_fillcolor() {
+	def cluster_fillcolor() {
 		val text = '''
 			digraph {
 				1

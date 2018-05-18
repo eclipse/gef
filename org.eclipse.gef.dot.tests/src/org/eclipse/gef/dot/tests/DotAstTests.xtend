@@ -960,7 +960,7 @@ class DotAstTests {
 		''')
 	}
 	
-	private def void assertDotAstFromFile(String fileName, CharSequence expected) {
+	private def assertDotAstFromFile(String fileName, CharSequence expected) {
 		val fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName))
 		fileContents.assertDotAst(expected)

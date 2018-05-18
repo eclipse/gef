@@ -40,7 +40,7 @@ class DotQuickfixTests {
 	@Inject extension ValidationTestHelper
 	@Inject extension DotQuickfixProvider
 
-	@Test def void edge_arrowhead() {
+	@Test def edge_arrowhead() {
 		val deprecatedArrowShapes = #["ediamond", "open", "halfopen", "empty", "invempty"]
 		val validArrowShapes = #["odiamond", "vee", "lvee", "onormal", "oinv"]
 
@@ -107,7 +107,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void edge_colorscheme() {
+	def edge_colorscheme() {
 		// test unquoted attribute value
 		val validColorSchemes = DotTestUtils.expectedDotColorSchemes
 		val List<List<String>> expectedQuickfixes = newArrayList
@@ -123,7 +123,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void edge_dir() {
+	def edge_dir() {
 		// test unquoted attribute value
 		'''graph{1--2[dir=foo]}'''.assertQuickfixes(#[
 			// quickfix label					quickfix description	 									text after quickfix application
@@ -144,7 +144,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void edge_style() {
+	def edge_style() {
 		// test unquoted attribute value
 		'''graph{1--2[style=foo]}'''.assertQuickfixes(#[
 			// quickfix label					quickfix description	 									text after quickfix application
@@ -173,7 +173,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void graph_colorscheme() {
+	def graph_colorscheme() {
 		// test unquoted attribute value
 		val validColorSchemes = DotTestUtils.expectedDotColorSchemes
 		val List<List<String>> expectedQuickfixes = newArrayList
@@ -188,7 +188,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void graph_clusterrank() {
+	def graph_clusterrank() {
 		// test unquoted attribute value
 		'''graph{clusterrank=foo}'''.assertQuickfixes(#[
 			// quickfix label					quickfix description	 											text after quickfix application
@@ -207,7 +207,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void graph_layout() {
+	def graph_layout() {
 		// test unquoted attribute value
 		'''graph{layout=foo}'''.assertQuickfixes(#[
 			// quickfix label					quickfix description	 									text after quickfix application
@@ -234,7 +234,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void graph_outputorder() {
+	def graph_outputorder() {
 		// test unquoted attribute value
 		'''graph{outputorder=foo}'''.assertQuickfixes(#[
 			// quickfix label						quickfix description			   										text after quickfix application
@@ -253,7 +253,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void graph_pagedir() {
+	def graph_pagedir() {
 		// test unquoted attribute value
 		'''graph{pagedir=foo}'''.assertQuickfixes(#[
 			// quickfix label				quickfix description	 									text after quickfix application
@@ -282,7 +282,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void graph_rankdir() {
+	def graph_rankdir() {
 		// test unquoted attribute value
 		'''graph{rankdir=foo}'''.assertQuickfixes(#[
 			// quickfix label			  quickfix description	 									text after quickfix application
@@ -303,7 +303,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void node_colorscheme() {
+	def node_colorscheme() {
 		// test unquoted attribute value
 		val validColorSchemes = DotTestUtils.expectedDotColorSchemes
 		val List<List<String>> expectedQuickfixes = newArrayList
@@ -320,7 +320,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void node_shape() {
+	def node_shape() {
 		val validNodeShapes = #[ "box", "polygon", "ellipse", "oval", "circle", "point", "egg", "triangle",
 				"plaintext", "plain", "diamond", "trapezium", "parallelogram", "house", "pentagon", "hexagon", "septagon",
 				"octagon", "doublecircle", "doubleoctagon", "tripleoctagon", "invtriangle", "invtrapezium", "invhouse", "Mdiamond",
@@ -355,7 +355,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void node_style() {
+	def node_style() {
 		// test unquoted attribute value
 		'''graph{1[style=foo]}'''.assertQuickfixes(#[
 			// quickfix label			 		 quickfix description	 										text after quickfix application
@@ -394,7 +394,7 @@ class DotQuickfixTests {
 	}
 
 	@Test
-	def void subgraph_rank() {
+	def subgraph_rank() {
 		// test unquoted attribute value
 		'''graph{subgraph{rank=foo}}'''.assertQuickfixes(#[
 			// quickfix label					quickfix description	 											text after quickfix application
@@ -416,7 +416,7 @@ class DotQuickfixTests {
 		])
 	}
 
-	private def void assertQuickfixes(CharSequence text, List<List<String>> expected) {
+	private def assertQuickfixes(CharSequence text, List<List<String>> expected) {
 		val issues = text.parse.validate
 		1.assertEquals(issues.size)
 		val actualIssueResolutions = issues.get(0).getResolutions
@@ -430,7 +430,7 @@ class DotQuickfixTests {
 		}
 	}
 
-	private def void assertIssueResolutionEffect(String expectedResult, IssueResolution actualIssueResolution, String originalText) {
+	private def assertIssueResolutionEffect(String expectedResult, IssueResolution actualIssueResolution, String originalText) {
 		val xtextDocument = injector.getDocument(originalText)
 		xtextDocument.assertNotNull
 		var modificationContext = new TestIssueModificationContext
@@ -450,7 +450,7 @@ class DotQuickfixTests {
 			return doc
 		}
 
-		def void setDocument(IXtextDocument doc) {
+		def setDocument(IXtextDocument doc) {
 			this.doc = doc
 		}
 	}

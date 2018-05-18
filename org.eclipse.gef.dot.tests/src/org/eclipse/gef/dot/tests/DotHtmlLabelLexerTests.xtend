@@ -32,7 +32,7 @@ class DotHtmlLabelLexerTests {
 	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
 
 	@Test
-	def void testLexing01(){
+	def testLexing01(){
 		'''
 			<TABLE>
 			</TABLE>
@@ -52,7 +52,7 @@ class DotHtmlLabelLexerTests {
 	}
 
 	@Test
-	def void testLexing02(){
+	def testLexing02(){
 		'''
 			<font>text</font>
 		'''
@@ -70,7 +70,7 @@ class DotHtmlLabelLexerTests {
 	}
 
 	@Test(timeout = 2000)
-	def void testLexing03(){
+	def testLexing03(){
 		'''
 			<font><text</font>
 		'''
@@ -89,7 +89,7 @@ class DotHtmlLabelLexerTests {
 	}
 	
 	@Test(timeout = 2000)
-	def void testLexing04(){
+	def testLexing04(){
 		'''
 		<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" bgcolor="blue">
 			<TR>
@@ -154,7 +154,7 @@ class DotHtmlLabelLexerTests {
 	}
 	
 	@Test(timeout = 2000)
-	def void testLexing05(){
+	def testLexing05(){
 		'''"text"'''
 		.assertLexing('''
 			RULE_TEXT '"text"'
@@ -162,7 +162,7 @@ class DotHtmlLabelLexerTests {
 	}
 	
 	@Test(timeout = 2000)
-	def void testLexing06(){
+	def testLexing06(){
 		'''<a b="c"/>'''
 		.assertLexing('''
 			RULE_TAG_START '<'
@@ -176,7 +176,7 @@ class DotHtmlLabelLexerTests {
 	}
 
 	@Test(timeout = 2000)
-	def void testLexing07(){
+	def testLexing07(){
 		'''<BR ALIGN="LEFT"/>'''
 		.assertLexing('''
 			RULE_TAG_START '<'
@@ -190,7 +190,7 @@ class DotHtmlLabelLexerTests {
 	}
 	
 	@Test(timeout = 2000)
-	def void testLexing08() {
+	def testLexing08() {
 		'''<a b="'''
 		.assertLexing(
 		'''
@@ -204,7 +204,7 @@ class DotHtmlLabelLexerTests {
 	}
 	
 	@Test(timeout = 2000)
-	def void testLexing09() {
+	def testLexing09() {
 		'''<TABLE ALIGN="'''
 		.assertLexing(
 		'''
@@ -218,7 +218,7 @@ class DotHtmlLabelLexerTests {
 	}
 	
 	@Test(timeout = 2000)
-	def void testLexing10() {
+	def testLexing10() {
 		'''<TABLE ALIGN=""></TABLE>'''
 		.assertLexing(
 		'''

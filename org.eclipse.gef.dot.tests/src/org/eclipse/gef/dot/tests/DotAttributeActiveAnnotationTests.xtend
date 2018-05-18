@@ -24,7 +24,7 @@ class DotAttributeActiveAnnotationTests {
 	extension XtendCompilerTesterEx = XtendCompilerTesterEx.newXtendCompilerTesterEx(class.classLoader)
 	
 	@Test
-	def void subgraph_rank(){
+	def subgraph_rank(){
 		'''
 			import org.eclipse.gef.dot.internal.generator.DotAttribute
 			import org.eclipse.gef.dot.internal.language.ranktype.RankType
@@ -150,11 +150,11 @@ class XtendCompilerTesterEx extends XtendCompilerTester {
 		instance
 	}
 
-	def void setJavaCompilerClassPathEx(ClassLoader classPath) {
+	def setJavaCompilerClassPathEx(ClassLoader classPath) {
 		compilationTestHelperEx.setJavaCompilerClassPathEx(classPath)
 	}
 
-	override void assertCompilesTo(CharSequence source,
+	override assertCompilesTo(CharSequence source,
 			CharSequence expected) {
 		try {
 			compilationTestHelperEx.configureFreshWorkspace();
@@ -169,7 +169,7 @@ class CompilationTestHelperEx extends CompilationTestHelper {
 
 	ClassLoader classpathUriContext
 
-	def void setJavaCompilerClassPathEx(ClassLoader classLoader) {
+	def setJavaCompilerClassPathEx(ClassLoader classLoader) {
 		this.classpathUriContext = classLoader
 	}
 

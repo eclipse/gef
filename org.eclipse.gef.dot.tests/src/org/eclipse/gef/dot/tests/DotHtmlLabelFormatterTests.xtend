@@ -250,7 +250,7 @@ class DotHtmlLabelFormatterTests {
 		''')
 	}	
 	
-	private def void assertFormattedAs(CharSequence input, CharSequence expected){
+	private def assertFormattedAs(CharSequence input, CharSequence expected){
 		expected.toString.trim.assertEquals(input.formattedText)
 	}
 	
