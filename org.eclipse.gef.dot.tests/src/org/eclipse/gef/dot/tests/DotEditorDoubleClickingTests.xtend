@@ -28,7 +28,6 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 	 */
 	override String c() '''<|>'''
 	
-
 	@Test def empty_graph() {
 		'''
 			grap«c»h {
@@ -535,7 +534,6 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''font''')
 	}
-	
 	
 	@Test def edge_html_label_009() {
 		'''
@@ -1616,7 +1614,6 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''red''')
 	}
-	
 	
 	@Test def other_attributes_005() {
 		'''
