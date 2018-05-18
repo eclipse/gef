@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
@@ -243,7 +244,7 @@ public class DotHTMLLabelJavaFxNode {
 			builder.addFormattedString(new FormattedString(
 					parentStyle != null ? parentStyle
 							: new TagStyleContainer(null, null),
-					content.getText()));
+					StringEscapeUtils.unescapeHtml(content.getText())));
 	}
 
 	private Pos getPosForBr(HtmlTag brTag) {
