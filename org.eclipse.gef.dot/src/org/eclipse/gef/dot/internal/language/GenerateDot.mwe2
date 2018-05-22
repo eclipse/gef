@@ -98,7 +98,7 @@ Workflow {
 			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment (for case-insensitive keywords)
-			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
+			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment {
 				options = {
 					ignoreCase = true
 					backtrack = false
@@ -235,7 +235,7 @@ Workflow {
 			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment
-			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
+			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment {
 				options = {
 					backtrack = false
 					backtrackLexer = false
@@ -315,7 +315,7 @@ Workflow {
 			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment
-			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
+			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment {
 				options = {
 					backtrack = false
 					backtrackLexer = false
@@ -444,7 +444,7 @@ Workflow {
 			 * This enables us to override the lexer.
 			 */
 			// The antlr parser generator fragment
-			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
+			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment {
 				options = {
 					backtrack = false
 					backtrackLexer = false
