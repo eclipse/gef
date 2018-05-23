@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Zoey Gerrit Prigge  - initial API and implementation (bug #454629)
+ *     Tamas Miklossy (itemis AG) - minor refactorings
  *    
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -32,59 +33,60 @@ import static org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotRecordLabelInjectorProvider)
 class DotRecordLabelTests {
-	@Inject extension ParseHelper<RLabel> parseHelper
+	
+	@Inject extension ParseHelper<RLabel>
 	@Inject extension ValidationTestHelper
 
 	// good Syntax
-	@Test def void emptyString() {
+	@Test def emptyString() {
 		''''''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField(null))
 		)
 	}
 
-	@Test def void singleLetter() {
+	@Test def singleLetter() {
 		'''F'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("F"))
 		)
 	}
 
-	@Test def void specialSign() {
+	@Test def specialSign() {
 		'''§'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("§"))
 		)
 	}
 
-	@Test def void word() {
+	@Test def word() {
 		'''Hello'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("Hello"))
 		)
 	}
 
-	@Test def void escapedCharacter() {
+	@Test def escapedCharacter() {
 		'''Please\ read\ §146'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''Please\ read\ §146'''))
 		)
 	}
 
-	@Test def void escapedBraceInText() {
+	@Test def escapedBraceInText() {
 		'''Ple\}se146read'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''Ple\}se146read'''))
 		)
 	}
 
-	@Test def void escapedBackslash() {
+	@Test def escapedBackslash() {
 		'''\\'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''\\'''))
 		)
 	}
 
-	@Test def void whiteSpaceBetweenLetters() {
+	@Test def whiteSpaceBetweenLetters() {
 		'''k D'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''k D'''))
 		)
 	}
 
-	@Test def void separatorSign() {
+	@Test def separatorSign() {
 		'''abc|def'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("abc"),
@@ -93,7 +95,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void threeFields() {
+	@Test def threeFields() {
 		'''abc | def | gh4i'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("abc"),
@@ -103,12 +105,12 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void simpleFourFields() {
+	@Test def simpleFourFields() {
 		'''A | B | C | D'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("A"), fieldIDinField("B"), fieldIDinField("C"), fieldIDinField("D")))
 	}
 
-	@Test def void emptyRotatedLabel() {
+	@Test def emptyRotatedLabel() {
 		'''{}'''.assertNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField(null)
@@ -116,7 +118,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void simpleRotation() {
+	@Test def simpleRotation() {
 		'''{ Hi }'''.assertNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Hi")
@@ -124,7 +126,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void rotatedFourFieldsLabel() {
+	@Test def rotatedFourFieldsLabel() {
 		'''{ Hi | This | Is | Awesome }'''.assertNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Hi"),
@@ -135,7 +137,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void rotatedMoreComplexLabel() {
+	@Test def rotatedMoreComplexLabel() {
 		'''Hi | {Test | Section 2 } | xyz'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("Hi"),
@@ -148,13 +150,13 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void fieldId() {
+	@Test def fieldId() {
 		'''<fgh> someField'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("fgh", "someField"))
 		)
 	}
 
-	@Test def void emptyPortname() {
+	@Test def emptyPortname() {
 		'''<>'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("", null)
@@ -162,7 +164,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void emptyPortnameWithText() {
+	@Test def emptyPortnameWithText() {
 		'''<> kids'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("", "kids")
@@ -170,13 +172,13 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void namedPort() {
+	@Test def namedPort() {
 		'''<Label>'''.assertNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("Label", null))
 		)
 	}
 
-	@Test def void portInHField() {
+	@Test def portInHField() {
 		'''{<Label>}'''.assertNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(
 				rlabel(fieldIDinField("Label", null))
@@ -184,7 +186,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void portInHFieldWithText() {
+	@Test def portInHFieldWithText() {
 		'''{<Label> Coolstuff!}'''.assertNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(
 				rlabel(fieldIDinField("Label", "Coolstuff!"))
@@ -192,7 +194,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void portWithEscapedCharInName() {
+	@Test def portWithEscapedCharInName() {
 		'''<some_weans\{>'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField('''some_weans\{''', null)
@@ -201,14 +203,14 @@ class DotRecordLabelTests {
 	}
 
 	// complex Parse Tests
-	@Test def void parseTreeSimple() {
+	@Test def parseTreeSimple() {
 		'''hello word | <port> cool stuff going on '''.assertTreeEquals(rlabel(
 			fieldIDinField("hello word"),
 			fieldIDinField("port", "cool stuff going on")
 		))
 	}
 
-	@Test def void parseTreeComplex() {
+	@Test def parseTreeComplex() {
 		'''
 		hello word | cool stuff going on | { <free> free beer here |
 		wine there } | sad it's just a test'''.assertTreeEquals(
@@ -221,7 +223,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void documentationExampleLine1() {
+	@Test def documentationExampleLine1() {
 		'''<f0> left|<f1> mid&#92; dle|<f2> right'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("f0", "left"),
@@ -231,7 +233,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void documentationExampleLine3() {
+	@Test def documentationExampleLine3() {
 		'''hello&#92;nworld |{ b |{c|<here> d|e}| f}| g | h'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("hello&#92;nworld"),
@@ -250,7 +252,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void complexExampleLineBreak() {
+	@Test def complexExampleLineBreak() {
 		'''
 		hello&#92;nworld |{ b |{c|<here>
 		 d
@@ -273,7 +275,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void complexLineBreakInString() {
+	@Test def complexLineBreakInString() {
 		'''
 		hello
 		world |{ b |{c|<here>
@@ -299,7 +301,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void complexExampleUsingSpecialSignsRotated() {
+	@Test def complexExampleUsingSpecialSignsRotated() {
 		'''{Animal|+ name : string\l+ age : int\l|+ die() : void\l}'''.assertNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Animal"),
@@ -310,7 +312,7 @@ class DotRecordLabelTests {
 
 	}
 
-	@Test def void fieldIDsWithNoEntry() {
+	@Test def fieldIDsWithNoEntry() {
 		'''<f0> (nil)| | |-1'''.assertNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("f0", "(nil)"),
@@ -361,13 +363,11 @@ class DotRecordLabelTests {
 	}
 
 	// validation tests
-	@Test
-	def void sameNamePortsSameLevel() {
+	@Test def void sameNamePortsSameLevel() {
 		'''<here>|<here>'''.assertValidationErrorfieldIDinField(DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE)
 	}
 
-	@Test
-	def void sameNamePortsDifferentLevel() {
+	@Test def void sameNamePortsDifferentLevel() {
 		'''a | <b> c | { <d> f | <b> f } | x'''.assertValidationErrorfieldID(
 			DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE,
 			5,
@@ -379,72 +379,67 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test
-	def void twoEmptyPortNamesNoError() {
-		'''<> a | <> b'''.assertNoErrors()
+	@Test def void twoEmptyPortNamesNoError() {
+		'''<> a | <> b'''.assertNoErrors
 	}
 
-	@Test
-	def void emptyPortNameWarning() {
+	@Test def void emptyPortNameWarning() {
 		'''<>'''.parse.assertWarning(
 			RecordlabelPackage.eINSTANCE.fieldID,
 			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
 		)
 	}
 
-	@Test
-	def void complexEmptyPortNameWarning() {
+	@Test def complexEmptyPortNameWarning() {
 		'''a | <b> c | { <d> f | <> f } | x'''.parse.assertWarning(
 			RecordlabelPackage.eINSTANCE.fieldID,
 			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
 		)
 	}
 
-	@Test
-	def void noWhitespaceWarning() {
+	@Test def noWhitespaceWarning() {
 		'''a | <b> coolstuff | { <d> f\ kinds | <f> f\nbut } | x'''.assertNoIssues
 	}
 
-	private def CharSequence assertValidationErrorfieldID(CharSequence content, String error, int offset,
+	private def assertValidationErrorfieldID(CharSequence content, String error, int offset,
 		int length) {
 		assertError(parse(content), RecordlabelPackage.eINSTANCE.fieldID, error, offset, length)
 		content
 	}
 
-	private def CharSequence assertValidationErrorfieldIDinField(CharSequence content, String error) {
+	private def assertValidationErrorfieldIDinField(CharSequence content, String error) {
 		assertError(parse(content), RecordlabelPackage.eINSTANCE.fieldID, error)
-		return content
+		content
 	}
 
-	private def CharSequence assertNoIssues(CharSequence sequence) {
+	private def assertNoIssues(CharSequence sequence) {
 		sequence.parse.assertNoIssues
-		return sequence
 	}
 
-	private def CharSequence assertNoErrors(CharSequence sequence) {
+	private def assertNoErrors(CharSequence sequence) {
 		sequence.parse.assertNoErrors
-		return sequence
+		sequence
 	}
 
-	private def CharSequence assertSyntaxErrorLabel(CharSequence content, String character) {
-		return assertSyntaxError(content, RecordlabelPackage.eINSTANCE.RLabel, "'" + character + "'")
+	private def assertSyntaxErrorLabel(CharSequence content, String character) {
+		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.RLabel, "'" + character + "'")
 	}
 
-	private def CharSequence assertSyntaxErrorRotationWrapper(CharSequence content, String character) {
-		return assertSyntaxError(content, RecordlabelPackage.eINSTANCE.field, "'" + character + "'")
+	private def assertSyntaxErrorRotationWrapper(CharSequence content, String character) {
+		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.field, "'" + character + "'")
 	}
 
-	private def CharSequence assertSyntaxErrorfieldIDinField(CharSequence content, String character) {
-		return assertSyntaxError(content, RecordlabelPackage.eINSTANCE.fieldID, "'" + character + "'")
+	private def assertSyntaxErrorfieldIDinField(CharSequence content, String character) {
+		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.fieldID, "'" + character + "'")
 	}
 
-	private def CharSequence assertSyntaxErrorPort(CharSequence content, String character) {
-		return assertSyntaxError(content, RecordlabelPackage.eINSTANCE.fieldID, "'" + character + "'")
+	private def assertSyntaxErrorPort(CharSequence content, String character) {
+		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.fieldID, "'" + character + "'")
 	}
 
-	private def CharSequence assertSyntaxError(CharSequence content, EClass eClass, String message) {
+	private def assertSyntaxError(CharSequence content, EClass eClass, String message) {
 		assertError(parse(content), eClass, "org.eclipse.xtext.diagnostics.Diagnostic.Syntax", message)
-		return content
+		content
 	}
 
 	private def void assertTreeEquals(CharSequence sequenceForParsing, EObject expected) {
@@ -461,16 +456,16 @@ class DotRecordLabelTests {
 		for (var i = 0; i < expected.eContents.size; i++) {
 			actual.eContents.get(i).assertTreeEquals(expected.eContents.get(i))
 		}
-		return actual
+		actual
 	}
 
-	private def RLabel rlabel(Field... fields) {
+	private def rlabel(Field... fields) {
 		val label = RecordlabelFactory.eINSTANCE.createRLabel
 		label.fields.addAll(fields)
-		return label
+		label
 	}
 
-	private def Field fieldIDinField(String port, String name) {
+	private def fieldIDinField(String port, String name) {
 		val fieldID = RecordlabelFactory.eINSTANCE.createFieldID
 		fieldID.name = name
 		if (port !== null) {
@@ -480,17 +475,16 @@ class DotRecordLabelTests {
 		}
 		val field = RecordlabelFactory.eINSTANCE.createField
 		field.fieldID = fieldID
-		return field
+		field
 	}
 
-	private def Field fieldIDinField(String name) {
+	private def fieldIDinField(String name) {
 		fieldIDinField(null, name)
 	}
 
-
-	private def Field rotationWrapper(RLabel label) {
+	private def rotationWrapper(RLabel label) {
 		val wrapper = RecordlabelFactory.eINSTANCE.createField
 		wrapper.label = label
-		return wrapper
+		wrapper
 	}
 }
