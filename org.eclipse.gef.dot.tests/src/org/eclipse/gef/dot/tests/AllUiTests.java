@@ -28,9 +28,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotExecutableUtilsTests.class, DotExportTests.class,
 		DotExtractorTests.class, DotFormatterTests.class,
 		DotHtmlLabelFormatterTests.class, DotHtmlLabelLexerTests.class,
-		DotHtmlLabelTests.class, DotImportTests.class, DotLexerTests.class,
-		DotParserTests.class, DotPortPosTests.class, DotRecordLabelTests.class,
-		DotStyleTests.class, DotValidatorTests.class,
+		DotHtmlLabelParserTests.class, DotHtmlLabelValidatorTests.class,
+		DotImportTests.class, DotLexerTests.class, DotParserTests.class,
+		DotPortPosTests.class, DotRecordLabelTests.class, DotStyleTests.class,
+		DotValidatorTests.class,
 
 		// JUnit Plug-in Tests
 		DotContentAssistTests.class, DotEditorDoubleClickingTests.class,
