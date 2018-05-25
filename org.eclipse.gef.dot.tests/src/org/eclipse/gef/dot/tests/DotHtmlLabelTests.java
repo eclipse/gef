@@ -555,7 +555,7 @@ public class DotHtmlLabelTests {
 		HtmlLabel htmlLabel = parseHelper.parse(text);
 
 		// verify that there are some reported issues
-		Assert.assertEquals(8, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 8);
 	}
 
 	@Test
@@ -573,7 +573,7 @@ public class DotHtmlLabelTests {
 				"Tag '<test>' is not supported.");
 
 		// verify that these are the only reported issues
-		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 2);
 	}
 
 	@Test
@@ -591,7 +591,7 @@ public class DotHtmlLabelTests {
 				"Tag '<tr>' is not allowed inside '<foo>', but only inside '<TABLE>'.");
 
 		// verify that these are the only reported issues
-		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 2);
 	}
 
 	@Test
@@ -605,7 +605,7 @@ public class DotHtmlLabelTests {
 				"Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.");
 
 		// verify that this is the only reported issue
-		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 1);
 	}
 
 	@Test
@@ -619,7 +619,7 @@ public class DotHtmlLabelTests {
 				"Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<SUB>', '<B>', '<S>', '<ROOT>', '<U>', '<I>', '<FONT>', '<O>', '<SUP>'.");
 
 		// verify that this is the only reported issue
-		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 1);
 	}
 
 	@Test
@@ -633,7 +633,7 @@ public class DotHtmlLabelTests {
 				"Attribute 'foo' is not allowed inside '<table>'.");
 
 		// verify that this is the only reported issue
-		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 1);
 	}
 
 	@Test
@@ -651,7 +651,7 @@ public class DotHtmlLabelTests {
 				"Attribute 'bar' is not allowed inside '<foo>'.");
 
 		// verify that these are the only reported issues
-		Assert.assertEquals(2, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 2);
 	}
 
 	@Test
@@ -817,8 +817,7 @@ public class DotHtmlLabelTests {
 			}
 
 			// verify that these are the only reported issues
-			Assert.assertEquals(numberOfErrorProneText,
-					validationTestHelper.validate(htmlLabel).size());
+			assertNumberOfIssues(htmlLabel, numberOfErrorProneText);
 		}
 	}
 
@@ -1337,7 +1336,13 @@ public class DotHtmlLabelTests {
 		validationTestHelper.assertError(htmlLabel, objectType, null, message);
 
 		// verify that this is the only reported issue
-		Assert.assertEquals(1, validationTestHelper.validate(htmlLabel).size());
+		assertNumberOfIssues(htmlLabel, 1);
+	}
+
+	private void assertNumberOfIssues(HtmlLabel htmlLabel,
+			int expectedNumberOfIssues) {
+		Assert.assertEquals(expectedNumberOfIssues,
+				validationTestHelper.validate(htmlLabel).size());
 	}
 
 	private HtmlLabel parse(String text) {
