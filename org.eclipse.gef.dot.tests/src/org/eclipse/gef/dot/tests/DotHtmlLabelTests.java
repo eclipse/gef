@@ -28,7 +28,6 @@ import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -1341,7 +1340,7 @@ public class DotHtmlLabelTests {
 
 	private void assertNumberOfIssues(HtmlLabel htmlLabel,
 			int expectedNumberOfIssues) {
-		Assert.assertEquals(expectedNumberOfIssues,
+		assertEquals(expectedNumberOfIssues,
 				validationTestHelper.validate(htmlLabel).size());
 	}
 
