@@ -42,7 +42,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 	@Inject extension ValidationTestHelper
 	
 	extension DotImport = new DotImport
-	extension TestableDot2ZestAttributesConverter = new TestableDot2ZestAttributesConverter
+	extension Dot2ZestAttributesConverter = new Dot2ZestAttributesConverter
 
 	@BeforeClass
 	def static before() {
@@ -301,20 +301,12 @@ class Dot2ZestEdgeAttributesConversionTests {
 	
 	private def convert(Edge dotEdge) {
 		val zestEdge = new Edge(new Node, new Node)
-		dotEdge.convertAttributes(zestEdge)
+		dotEdge.copy(zestEdge)
 		zestEdge
 	}
 
 	private def split(String text) {
 		text.replaceAll(";", ";" + System.lineSeparator)
 	}
-	
-	private static class TestableDot2ZestAttributesConverter extends Dot2ZestAttributesConverter {
-		
-		// extend the method visibility from 'protected' to 'public'
-		override convertAttributes(Edge dot, Edge zest) {
-			super.convertAttributes(dot, zest)
-		}
-		
-	}
+
 }
