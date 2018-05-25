@@ -44,6 +44,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -59,7 +60,6 @@ import javafx.scene.text.Text;
  * Comments will refer to the graphviz grammar at the URL above.
  *
  * Known Limitations, TODO:
- * - the align currently defaults to center <-> Align Table tags
  * - consider outside-label formatting and default size, padding
  * - consider implementing Port attribute on TD
  */
@@ -115,11 +115,11 @@ public class DotHTMLLabelJavaFxNode {
 	private Pane drawLabel(HtmlLabel label) {
 		// TODO consider making TagStyleContainer a public class, use this to
 		// get the styles set as attributes on the node itself
-		return drawContents(label.getParts(), null);
+		return drawContents(label.getParts(), null, null);
 	}
 
 	private Pane drawContents(List<HtmlContent> contents,
-			TagStyleContainer parentStyle) {
+			TagStyleContainer parentStyle, Pos bAlign) {
 		if (contents.size() <= 0)
 			return new Pane(); // an empty HTML label, ought not to occur
 
@@ -145,19 +145,23 @@ public class DotHTMLLabelJavaFxNode {
 		// in textitem because the tag could have multiple children in the
 		// latter case. Hence, to avoid reimplementing a loop here, we hand this
 		// down to the text handling.
+
+		// TODO implement styleTag support as grammar now allows these to occur
+		// before tables (changes described in the #23 comment on 321775) which
+		// is in line with (undocumented) graphviz behaviour.
 		else if (tag != null && tag.getName().equalsIgnoreCase("font")) { //$NON-NLS-1$
 			if (tag.getChildren().size() != 1
 					|| tag.getChildren().get(0).getTag() == null
 					|| !tag.getChildren().get(0).getTag().getName()
 							.equalsIgnoreCase("table")) //$NON-NLS-1$
-				return drawText(contents, parentStyle);
+				return drawText(contents, parentStyle, bAlign);
 			return drawTable(tag.getChildren().get(0).getTag(),
 					fontTagStyleContainer(tag, parentStyle));
 		}
 		// by the grammar we assume it's all text, if the first non-FONT-tag
 		// does not indicate a table
 		else
-			return drawText(contents, parentStyle);
+			return drawText(contents, parentStyle, bAlign);
 	}
 
 	private boolean isWhitespaceOnlyTag(HtmlContent content) {
@@ -167,8 +171,8 @@ public class DotHTMLLabelJavaFxNode {
 	}
 
 	private Pane drawText(List<HtmlContent> contents,
-			TagStyleContainer parentStyle) {
-		TextFXBuilder builder = new TextFXBuilder();
+			TagStyleContainer parentStyle, Pos bAlign) {
+		TextFXBuilder builder = new TextFXBuilder(bAlign);
 		contents.forEach(
 				content -> handleTextContent(builder, content, parentStyle));
 		return builder.getFxElement();
@@ -248,16 +252,27 @@ public class DotHTMLLabelJavaFxNode {
 	}
 
 	private Pos getPosForBr(HtmlTag brTag) {
-		HtmlAttr attr = DotHtmlLabelHelper.getAttributeForTag(brTag, "align"); //$NON-NLS-1$
-		String value = attr != null ? unquotedValueForAttr(attr) : ""; //$NON-NLS-1$
-		switch (value.toLowerCase()) {
+		return getAlignPosForAttributeNameAndTag("align", brTag); //$NON-NLS-1$
+	}
+
+	private Pos getPosForTdBalign(HtmlTag tdTag) {
+		return getAlignPosForAttributeNameAndTag("balign", tdTag); //$NON-NLS-1$
+	}
+
+	private Pos getAlignPosForAttributeNameAndTag(String attributeName,
+			HtmlTag tag) {
+		HtmlAttr attr = DotHtmlLabelHelper.getAttributeForTag(tag,
+				attributeName);
+		if (attr == null) {
+			return null;
+		}
+		switch (unquotedValueForAttr(attr).toLowerCase()) {
 		case "right": //$NON-NLS-1$
 			return Pos.CENTER_RIGHT;
 		case "left": //$NON-NLS-1$
 			return Pos.CENTER_LEFT;
 		case "center": //$NON-NLS-1$
 		default:
-			// TODO adapt the default to an align in a TD
 			return Pos.CENTER;
 		}
 	}
@@ -266,7 +281,7 @@ public class DotHTMLLabelJavaFxNode {
 		// TODO VR, HR support
 
 		GridPane fullPane = new GridPane();
-		applyAttributesOnTablePane(fullPane, tag);
+		applyCssAttributesOnTablePane(fullPane, tag);
 		List<HtmlTag> trTags = childHtmlTagsOfKind(tag, "TR"); //$NON-NLS-1$
 		Map<Integer, BitSet> rowsToFilledCellsMap = initializedRowsToFilledCellsMap(
 				trTags.size());
@@ -279,7 +294,7 @@ public class DotHTMLLabelJavaFxNode {
 	private void addRowToPane(HtmlTag tag,
 			Map<Integer, BitSet> rowsToFilledCellsMap, HtmlTag tr, int rowIndex,
 			GridPane fullPane, TagStyleContainer parentStyle) {
-		for (HtmlTag td : childHtmlTagsOfKind(tr, "TD")) {
+		for (HtmlTag td : childHtmlTagsOfKind(tr, "TD")) { //$NON-NLS-1$
 			addCellToPane(tag, rowsToFilledCellsMap, rowIndex, fullPane,
 					parentStyle, td);
 		}
@@ -290,7 +305,7 @@ public class DotHTMLLabelJavaFxNode {
 			GridPane fullPane, TagStyleContainer parentStyle, HtmlTag td) {
 		// "label" rule in the original graphviz grammar
 		// > cell : <TD> label </TD>
-		Pane labelPane = drawContents(td.getChildren(), parentStyle);
+		Pane labelPane = styledTdContent(tag, parentStyle, td);
 
 		int colspan = getIntSpanAttrValue(td, "colspan"); //$NON-NLS-1$
 		int rowspan = getIntSpanAttrValue(td, "rowspan"); //$NON-NLS-1$
@@ -301,7 +316,21 @@ public class DotHTMLLabelJavaFxNode {
 			rowsToFilledCellsMap.get(row).set(index, index + colspan);
 
 		fullPane.add(labelPane, index, rowIndex, colspan, rowspan);
-		applyAttributesOnTdPane(labelPane, td, tag);
+	}
+
+	private GridPane styledTdContent(HtmlTag tag, TagStyleContainer parentStyle,
+			HtmlTag td) {
+		Pos bAlign = getPosForTdBalign(td);
+		Pane unstyled = drawContents(td.getChildren(), parentStyle, bAlign);
+
+		// to set Alignment and Growth the labelPane content must be wrapped
+		GridPane wrapper = new GridPane();
+		wrapper.add(unstyled, 0, 0);
+
+		applyAlignAttributesOnTdPane(wrapper, td);
+		applyCssAttributesOnTdPane(wrapper, td, tag);
+
+		return wrapper;
 	}
 
 	private List<HtmlTag> childHtmlTagsOfKind(HtmlTag tag, String name) {
@@ -320,7 +349,7 @@ public class DotHTMLLabelJavaFxNode {
 		return tableCellMap;
 	}
 
-	private void applyAttributesOnTablePane(GridPane fullPane, HtmlTag tag) {
+	private void applyCssAttributesOnTablePane(GridPane fullPane, HtmlTag tag) {
 		StringBuilder css = new StringBuilder();
 		/*
 		 * Attributes TODO
@@ -351,14 +380,13 @@ public class DotHTMLLabelJavaFxNode {
 		fullPane.setStyle(css.toString());
 	}
 
-	private void applyAttributesOnTdPane(Pane labelPane, HtmlTag tdTag,
+	private void applyCssAttributesOnTdPane(Pane labelPane, HtmlTag tdTag,
 			HtmlTag tableTag) {
 		StringBuilder css = new StringBuilder();
 		/*
 		 * Attributes TODO
 		 * 
-		 * Align, Balign (deal with this when drawing?), Cellpadding,
-		 * Gradientangle, Style, Valign
+		 * Cellpadding, Gradientangle, Style
 		 * 
 		 * Attributes that are not relevant for layouting of the HTML label
 		 * Href, Port, Title, Tooltip
@@ -367,7 +395,7 @@ public class DotHTMLLabelJavaFxNode {
 		 */
 
 		// FIXEDSIZE="FALSE|TRUE" used in HEIGHT and WIDTH attributes
-		HtmlAttr fixedSize = DotHtmlLabelHelper.getAttributeForTag(tableTag,
+		HtmlAttr fixedSize = DotHtmlLabelHelper.getAttributeForTag(tdTag,
 				"fixedsize"); //$NON-NLS-1$
 
 		appendBgcolorTdAttribute(css,
@@ -473,6 +501,56 @@ public class DotHTMLLabelJavaFxNode {
 			css.append("-fx-background-color:"); //$NON-NLS-1$
 			css.append(unquotedValueForAttr(bgcolor));
 			css.append(";"); //$NON-NLS-1$
+		}
+	}
+
+	private void applyAlignAttributesOnTdPane(GridPane wrapper, HtmlTag td) {
+		String hAlign = unquotedValueForAttr(
+				DotHtmlLabelHelper.getAttributeForTag(td, "align")); //$NON-NLS-1$
+		String vAlign = unquotedValueForAttr(
+				DotHtmlLabelHelper.getAttributeForTag(td, "valign")); //$NON-NLS-1$
+
+		if ("text".equalsIgnoreCase(hAlign)) { //$NON-NLS-1$
+			GridPane.setHgrow(wrapper.getChildren().get(0), Priority.ALWAYS);
+		}
+
+		wrapper.setAlignment(posForTd(hAlign, vAlign));
+	}
+
+	private Pos posForTd(String hAlign, String vAlign) {
+		switch (hAlign != null ? hAlign.toLowerCase() : "") { //$NON-NLS-1$
+		case "left": //$NON-NLS-1$
+			switch (vAlign != null ? vAlign.toLowerCase() : "") { //$NON-NLS-1$
+			case "top": //$NON-NLS-1$
+				return Pos.TOP_LEFT;
+			case "bottom": //$NON-NLS-1$
+				return Pos.BOTTOM_LEFT;
+			case "middle": //$NON-NLS-1$
+			default:
+				return Pos.CENTER_LEFT;
+			}
+		case "right": //$NON-NLS-1$
+			switch (vAlign != null ? vAlign.toLowerCase() : "") { //$NON-NLS-1$
+			case "top": //$NON-NLS-1$
+				return Pos.TOP_RIGHT;
+			case "bottom": //$NON-NLS-1$
+				return Pos.BOTTOM_RIGHT;
+			case "middle": //$NON-NLS-1$
+			default:
+				return Pos.CENTER_RIGHT;
+			}
+		case "center": //$NON-NLS-1$
+		case "text": //$NON-NLS-1$
+		default:
+			switch (vAlign != null ? vAlign.toLowerCase() : "") { //$NON-NLS-1$
+			case "top": //$NON-NLS-1$
+				return Pos.TOP_CENTER;
+			case "bottom": //$NON-NLS-1$
+				return Pos.BOTTOM_CENTER;
+			case "middle": //$NON-NLS-1$
+			default:
+				return Pos.CENTER;
+			}
 		}
 	}
 
@@ -628,20 +706,26 @@ public class DotHTMLLabelJavaFxNode {
 
 	private class FormattedLine {
 		private final List<FormattedString> textitems = new ArrayList<>();
-		// the default value
-		private Pos alignment = Pos.CENTER;
+		private Pos alignment = null;
+		private Pos defaultAlignment;
+
+		public FormattedLine(Pos bAlign) {
+			defaultAlignment = bAlign != null ? bAlign : Pos.CENTER;
+		}
 
 		public void addFormattedString(FormattedString textItem) {
 			textitems.add(textItem);
 		}
 
 		public void setAlignment(Pos pos) {
-			alignment = pos;
+			if (pos != null) {
+				alignment = pos;
+			}
 		}
 
 		public Pane getFxElement() {
 			final HBox hbox = new HBox();
-			hbox.setAlignment(alignment);
+			hbox.setAlignment(alignment != null ? alignment : defaultAlignment);
 			textitems.forEach(textitem -> hbox.getChildren()
 					.add(textitem.getFxElement()));
 			return hbox;
@@ -651,8 +735,10 @@ public class DotHTMLLabelJavaFxNode {
 	private class TextFXBuilder {
 		private final List<FormattedLine> lines = new ArrayList<>();
 		private FormattedLine current;
+		private Pos bAlign;
 
-		public TextFXBuilder() {
+		public TextFXBuilder(Pos bAlign) {
+			this.bAlign = bAlign;
 			newLine();
 		}
 
@@ -662,7 +748,7 @@ public class DotHTMLLabelJavaFxNode {
 		}
 
 		private void newLine() {
-			FormattedLine line = new FormattedLine();
+			FormattedLine line = new FormattedLine(bAlign);
 			lines.add(line);
 			current = line;
 		}
@@ -673,8 +759,6 @@ public class DotHTMLLabelJavaFxNode {
 
 		public Pane getFxElement() {
 			VBox vbox = new VBox();
-			// TODO consider this for align="text" in <td> tag
-			// vbox.setFillWidth(fill);
 			lines.forEach(line -> vbox.getChildren().add(line.getFxElement()));
 			return vbox;
 		}
