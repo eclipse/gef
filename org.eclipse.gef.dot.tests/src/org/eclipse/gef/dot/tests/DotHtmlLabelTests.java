@@ -595,44 +595,20 @@ public class DotHtmlLabelTests {
 
 	@Test
 	public void test_invalid_parent1() throws Exception {
-		String text = "<tr></tr>";
-
-		HtmlLabel htmlLabel = parseHelper.parse(text);
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+		verifyHtmlTag("<tr></tr>",
 				"Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.");
-
-		// verify that this is the only reported issue
-		assertNumberOfIssues(htmlLabel, 1);
 	}
 
 	@Test
 	public void test_invalid_parent2() throws Exception {
-		String text = "<table><U></U></table>";
-
-		HtmlLabel htmlLabel = parseHelper.parse(text);
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlTag(), null,
+		verifyHtmlTag("<table><U></U></table>",
 				"Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<SUB>', '<B>', '<S>', '<ROOT>', '<U>', '<I>', '<FONT>', '<O>', '<SUP>'.");
-
-		// verify that this is the only reported issue
-		assertNumberOfIssues(htmlLabel, 1);
 	}
 
 	@Test
 	public void test_invalid_attribute_in_valid_tag() throws Exception {
-		String text = "<table foo=\"bar\"></table>";
-
-		HtmlLabel htmlLabel = parseHelper.parse(text);
-
-		validationTestHelper.assertError(htmlLabel,
-				HtmllabelPackage.eINSTANCE.getHtmlAttr(), null,
+		verifyHtmlAttribute("<table foo=\"bar\"></table>",
 				"Attribute 'foo' is not allowed inside '<table>'.");
-
-		// verify that this is the only reported issue
-		assertNumberOfIssues(htmlLabel, 1);
 	}
 
 	@Test
