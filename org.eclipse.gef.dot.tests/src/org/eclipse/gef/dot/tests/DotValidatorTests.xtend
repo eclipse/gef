@@ -19,7 +19,6 @@ import java.io.File
 import java.util.List
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
-import org.eclipse.gef.dot.internal.language.dot.DotPackage
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -30,6 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.DotAttributes.*
+import static org.eclipse.gef.dot.internal.language.dot.DotPackage.Literals.*
 import static org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator.*
 import static org.eclipse.xtext.diagnostics.Diagnostic.*
 
@@ -42,8 +42,6 @@ class DotValidatorTests {
 
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
-
-	extension DotPackage = DotPackage.eINSTANCE
 
 	val l = System.getProperty("line.separator").length
 
@@ -74,11 +72,11 @@ class DotValidatorTests {
 
 	@Test def testDeprecatedStyle() {
 		val dotAst = DotTestGraphs.DEPRECATED_STYLES.parse.assertNumberOfIssues(5)
-		dotAst.assertWarning(attribute, STYLE__GCNE, 113 + 5 * l, 12, "The style value 'setlinewidth(1)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
-		dotAst.assertWarning(attribute, STYLE__GCNE, 140 + 6 * l, 12, "The style value 'setlinewidth(2)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
-		dotAst.assertWarning(attribute, STYLE__GCNE, 170 + 7 * l, 12, "The style value 'setlinewidth(3)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
-		dotAst.assertWarning(attribute, STYLE__GCNE, 222 + 10 * l, 12,"The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
-		dotAst.assertWarning(attribute, STYLE__GCNE, 249 + 11 * l, 12,"The style value 'setlinewidth(5), dotted' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
+		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 113 + 5 * l, 12, "The style value 'setlinewidth(1)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
+		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 140 + 6 * l, 12, "The style value 'setlinewidth(2)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
+		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 170 + 7 * l, 12, "The style value 'setlinewidth(3)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
+		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 222 + 10 * l, 12,"The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
+		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 249 + 11 * l, 12,"The style value 'setlinewidth(5), dotted' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
 	}
 
 	@Test def testArrowshapesDirectionBoth() {
@@ -117,19 +115,19 @@ class DotValidatorTests {
 
 	@Test def testWrongArrowType() {
 		val dotAst = '''digraph testGraph { 1->2[arrowhead=fooBar arrowtail=fooBar2] }'''.parse.assertNumberOfIssues(2)
-		dotAst.assertError(attribute, ARROWHEAD__E, 35, 6, "The value 'fooBar' is not a syntactically correct arrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.")
-		dotAst.assertError(attribute, ARROWTAIL__E, 52, 7, "The value 'fooBar2' is not a syntactically correct arrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at character '2'.")
+		dotAst.assertError(ATTRIBUTE, ARROWHEAD__E, 35, 6, "The value 'fooBar' is not a syntactically correct arrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.")
+		dotAst.assertError(ATTRIBUTE, ARROWTAIL__E, 52, 7, "The value 'fooBar2' is not a syntactically correct arrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at character '2'.")
 	}
 
 	@Test def testWrongEdgeDirection() {
 		'''digraph testGraph { 1->2[dir=foo] }'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, DIR__E, 29, 3, "The value 'foo' is not a syntactically correct dirType: Value has to be one of 'forward', 'back', 'both', 'none'.")
+		assertError(ATTRIBUTE, DIR__E, 29, 3, "The value 'foo' is not a syntactically correct dirType: Value has to be one of 'forward', 'back', 'both', 'none'.")
 	}
 
 	@Test def testWrongEdgeArrowSize() {
 		val dotAst = '''digraph testGraph { 1->2[arrowsize=foo] 3->4[arrowsize="-2.0"]}'''.parse.assertNumberOfIssues(2)
-		dotAst.assertError(attribute, ARROWSIZE__E, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
-		dotAst.assertError(attribute, ARROWSIZE__E, "The double value '-2.0' is not semantically correct: Value may not be smaller than 0.0.")
+		dotAst.assertError(ATTRIBUTE, ARROWSIZE__E, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
+		dotAst.assertError(ATTRIBUTE, ARROWSIZE__E, "The double value '-2.0' is not semantically correct: Value may not be smaller than 0.0.")
 	}
 
 	@Test def testNoneIsTheLastArrowShape() {
@@ -139,80 +137,80 @@ class DotValidatorTests {
 
 	@Test def testWrongGraphBackgroundColor() {
 		'''graph { bgcolor=grsy }'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, BGCOLOR__GC, "The colorList value 'grsy' is not semantically correct: The 'grsy' color is not valid within the 'x11' color scheme.")
+		assertError(ATTRIBUTE, BGCOLOR__GC, "The colorList value 'grsy' is not semantically correct: The 'grsy' color is not valid within the 'x11' color scheme.")
 	}
 
 	@Test def testGraphBackgroundColorDoesNotCorrespondToLocalColorScheme() {
 		'''graph { colorscheme=brbg10 bgcolor=blue}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, BGCOLOR__GC, "The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
+		assertError(ATTRIBUTE, BGCOLOR__GC, "The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
 
 	@Test def testGraphBackgroundColorDoesNotCorrespondToGlobalColorScheme() {
 		'''graph { graph[colorscheme=brbg10] bgcolor=blue}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, BGCOLOR__GC, "The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
+		assertError(ATTRIBUTE, BGCOLOR__GC, "The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
 
 	@Test def testWrongNodeColor() {
 		'''graph { 1[color="#fffff"]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, COLOR__CNE, "The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.")
+		assertError(ATTRIBUTE, COLOR__CNE, "The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.")
 	}
 
 	@Test def testNodeColorDoesNotCorrespondToLocalColorScheme() {
 		'''graph { 1[colorscheme=brbg10 color=blue]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, COLOR__CNE, "The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
+		assertError(ATTRIBUTE, COLOR__CNE, "The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
 
 	@Test def testNodeColorDoesNotCorrespondToGlobalColorScheme() {
 		'''graph { node[colorscheme=brbg10] 1[color=blue]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, COLOR__CNE, "The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
+		assertError(ATTRIBUTE, COLOR__CNE, "The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
 
 	@Test def testWrongEdgeFillColor() {
 		'''digraph { 1->2[fillcolor="#fffff"]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, FILLCOLOR__CNE, "The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.")
+		assertError(ATTRIBUTE, FILLCOLOR__CNE, "The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.")
 	}
 
 	@Test def testEdgeFillColorDoesNotCorrespondToLocalColorScheme() {
 		'''digraph { 1->2[colorscheme=brbg10 fillcolor=white]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, FILLCOLOR__CNE, "The color value 'white' is not semantically correct: The 'white' color is not valid within the 'brbg10' color scheme.")
+		assertError(ATTRIBUTE, FILLCOLOR__CNE, "The color value 'white' is not semantically correct: The 'white' color is not valid within the 'brbg10' color scheme.")
 	}
 
 	@Test def testEdgeFillColorDoesNotCorrespondToGlobalColorScheme() {
 		'''digraph { edge[colorscheme=brbg10] 1->2[fillcolor=red]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, FILLCOLOR__CNE, "The color value 'red' is not semantically correct: The 'red' color is not valid within the 'brbg10' color scheme.")
+		assertError(ATTRIBUTE, FILLCOLOR__CNE, "The color value 'red' is not semantically correct: The 'red' color is not valid within the 'brbg10' color scheme.")
 	}
 
 	@Test def testWrongNodeDistortion() {
 		val dotAst = '''graph { 1[distortion=foo] 2[distortion="-100.0001"]}'''.parse.assertNumberOfIssues(2)
-		dotAst.assertError(attribute, DISTORTION__N, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
-		dotAst.assertError(attribute, DISTORTION__N, "The double value '-100.0001' is not semantically correct: Value may not be smaller than -100.0.")
+		dotAst.assertError(ATTRIBUTE, DISTORTION__N, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
+		dotAst.assertError(ATTRIBUTE, DISTORTION__N, "The double value '-100.0001' is not semantically correct: Value may not be smaller than -100.0.")
 	}
 
 	@Test def testWrongNodeShape() {
 		'''graph { 1[shape=foo] }'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, SHAPE__N, "The value 'foo' is not a syntactically correct shape: Extraneous input 'foo' expecting EOF.")
+		assertError(ATTRIBUTE, SHAPE__N, "The value 'foo' is not a syntactically correct shape: Extraneous input 'foo' expecting EOF.")
 	}
 
 	@Test def testWrongNodeSides() {
 		val dotAst = "graph { 1[sides=foo] 2[sides=\"-1\"]}".parse.assertNumberOfIssues(2)
-		dotAst.assertError(attribute, SIDES__N, "The value 'foo' is not a syntactically correct int: For input string: \"foo\".")
-		dotAst.assertError(attribute, SIDES__N, "The int value '-1' is not semantically correct: Value may not be smaller than 0.")
+		dotAst.assertError(ATTRIBUTE, SIDES__N, "The value 'foo' is not a syntactically correct int: For input string: \"foo\".")
+		dotAst.assertError(ATTRIBUTE, SIDES__N, "The int value '-1' is not semantically correct: Value may not be smaller than 0.")
 	}
 
 	@Test def testWrongNodeSkew() {
 		val dotAst = "graph { 1[skew=foo] 2[skew=\"-100.1\"]}".parse.assertNumberOfIssues(2)
-		dotAst.assertError(attribute, SKEW__N, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
-		dotAst.assertError(attribute, SKEW__N, "The double value '-100.1' is not semantically correct: Value may not be smaller than -100.0.")
+		dotAst.assertError(ATTRIBUTE, SKEW__N, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
+		dotAst.assertError(ATTRIBUTE, SKEW__N, "The double value '-100.1' is not semantically correct: Value may not be smaller than -100.0.")
 	}
 
 	@Test def testDirectedGraphWithNonDirectedEdge() {
 		'''digraph {1--2}'''.parse.assertNumberOfIssues(1).
-		assertError(edgeRhsNode, null, "EdgeOp '--' may only be used in undirected graphs.")
+		assertError(EDGE_RHS_NODE, null, "EdgeOp '--' may only be used in undirected graphs.")
 	}
 
 	@Test def testNonDirectedGraphWithDirectedEdge() {
 		'''graph {1->2}'''.parse.assertNumberOfIssues(1).
-		assertError(edgeRhsNode, null, "EdgeOp '->' may only be used in directed graphs.")
+		assertError(EDGE_RHS_NODE, null, "EdgeOp '->' may only be used in directed graphs.")
 	}
 
 	@Test def testInvalidCombinationOfNodeShapeAndStyle() {
@@ -223,16 +221,16 @@ class DotValidatorTests {
 		val expectedErrorMessage = "The style 'striped' is only supported with clusters and rectangularly-shaped nodes, such as 'box', 'rect', 'rectangle', 'square'."
 
 		'''graph {1[shape=ellipse style=striped]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, null, expectedErrorMessage)
+		assertError(ATTRIBUTE, null, expectedErrorMessage)
 
 		'''graph {1[style=striped shape=ellipse]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, null, expectedErrorMessage)
+		assertError(ATTRIBUTE, null, expectedErrorMessage)
 
 		'''graph {node[style=striped shape=ellipse]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, null, expectedErrorMessage)
+		assertError(ATTRIBUTE, null, expectedErrorMessage)
 
 		'''graph {1[style=striped]}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, null, expectedErrorMessage)
+		assertError(ATTRIBUTE, null, expectedErrorMessage)
 
 		// TODO: implement test case
 		// text = "graph {node[shape=ellipse] 1[style=striped]}";
@@ -250,7 +248,7 @@ class DotValidatorTests {
 		val offset = text.indexOf(errorProneText)
 		val length = errorProneText.length
 		text.parse.assertNumberOfIssues(1).
-		assertError(getDotAst, SYNTAX_DIAGNOSTIC, offset, length, errorMessage)
+		assertError(DOT_AST, SYNTAX_DIAGNOSTIC, offset, length, errorMessage)
 	}
 
 	@Test(timeout=2000) def testInvalidHtmlLikeLabel03() {
@@ -370,7 +368,8 @@ class DotValidatorTests {
 			#["<table><tr><td><sup></sup><table></table></td></tr></table>", "sup", "15", "table", "15"],
 			#["<table><tr><td><u></u><table></table></td></tr></table>", "u", "15", "table", "15"],
 			#["<table><tr><td>text<table></table></td></tr></table>", "text", "15", "table", "15"],
-			#["<table><tr><td><table></table>text<table></table></td></tr></table>", "table", "15", "text", "15", "table", "34"]]
+			#["<table><tr><td><table></table>text<table></table></td></tr></table>", "table", "15", "text", "15", "table", "34"]
+		]
 		
 		for (testData : testDataList) {
 			val htmlLabel = testData.get(0)
@@ -409,7 +408,7 @@ class DotValidatorTests {
 
 	@Test def testInvalidSubgraphRankAttribute() {
 		'''graph{subgraph{rank=foo}}'''.parse.assertNumberOfIssues(1).
-		assertError(attribute, RANK__S, '''The value 'foo' is not a syntactically correct rankType: Value has to be one of 'same', 'min', 'source', 'max', 'sink'.''')
+		assertError(ATTRIBUTE, RANK__S, '''The value 'foo' is not a syntactically correct rankType: Value has to be one of 'same', 'min', 'source', 'max', 'sink'.''')
 	}
 
 	@Test def testRecordShapeLabel() {
@@ -418,37 +417,37 @@ class DotValidatorTests {
 
 	@Test def testInvalidPortAssignedSameNameRecordLabel() {
 		val dotAst = '''digraph{ node [shape=record]; myNode [label="<here> foo | <here> more foo"]; }'''.parse.assertNumberOfIssues(2)
-		dotAst.assertError(attribute, PORT_NAME_DUPLICATE, 46, 4, "The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here")
-		dotAst.assertError(attribute, PORT_NAME_DUPLICATE, 59, 4, "The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here")
+		dotAst.assertError(ATTRIBUTE, PORT_NAME_DUPLICATE, 46, 4, "The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here")
+		dotAst.assertError(ATTRIBUTE, PORT_NAME_DUPLICATE, 59, 4, "The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here")
 	}
 
 	@Test def testInvalidPortNotAssignedNameRecordLabel() {
 		'''digraph{ node [shape=record]; myNode [label="<> foo | <here> more foo"]; }'''.parse.assertNumberOfIssues(1).
-		assertWarning(attribute, PORT_NAME_NOT_SET, 45, 6, "The record-based label '<> foo | <here> more foo' is not semantically correct: Port unnamed: port cannot be referenced")
+		assertWarning(ATTRIBUTE, PORT_NAME_NOT_SET, 45, 6, "The record-based label '<> foo | <here> more foo' is not semantically correct: Port unnamed: port cannot be referenced")
 	}
 
 	@Test def testInvalidSyntaxErrorRecordLabel() {
 		'''digraph{ node [shape=record]; myNode [label="<}> foo | <here> more foo"]; }'''.parse.
-		assertError(attribute, SYNTAX_DIAGNOSTIC, 46, 1, "The value '<}> foo | <here> more foo' is not a syntactically correct record-based label: extraneous input '}' expecting '>'")
+		assertError(ATTRIBUTE, SYNTAX_DIAGNOSTIC, 46, 1, "The value '<}> foo | <here> more foo' is not a syntactically correct record-based label: extraneous input '}' expecting '>'")
 	}
 
 	@Test def testIncompleteModel() {
 		'''graph{1[c]}'''.parse.
-		assertError(attrList, SYNTAX_DIAGNOSTIC, 9, 1, "mismatched input ']' expecting '='")
+		assertError(ATTR_LIST, SYNTAX_DIAGNOSTIC, 9, 1, "mismatched input ']' expecting '='")
 	}
 
 	private def assertArrowTypeWarning(DotAst dotAst, String message) {
-		dotAst.assertWarning(attribute, ARROWHEAD__E, message)
+		dotAst.assertWarning(ATTRIBUTE, ARROWHEAD__E, message)
 	}
 
 	private def assertArrowTypeWarning(DotAst dotAst, int offset, int length, String message) {
-		dotAst.assertWarning(attribute, ARROWHEAD__E, offset, length, message)
+		dotAst.assertWarning(ATTRIBUTE, ARROWHEAD__E, offset, length, message)
 	}
 
 	private def assertHtmlLikeLabelError(CharSequence text, String errorProneText, String message) {
 		val offset = text.toString.indexOf(errorProneText)
 		val length = errorProneText.length
-		text.parse.assertNumberOfIssues(1).assertError(attribute, LABEL__GCNE, offset, length, message)
+		text.parse.assertNumberOfIssues(1).assertError(ATTRIBUTE, LABEL__GCNE, offset, length, message)
 	}
 
 	private def assertHtmlLikeLabelErrors(CharSequence text, List<String> errorProneTextList, List<Integer> fromIndexList, List<String> errorMessages) {
@@ -468,20 +467,20 @@ class DotValidatorTests {
 			
 			text.parse
 			.assertNumberOfIssues(errorMessages.length)
-			.assertError(attribute, LABEL__GCNE, offset, length, errorMessage)
+			.assertError(ATTRIBUTE, LABEL__GCNE, offset, length, errorMessage)
 		}
 	}
 
 	private def assertStyleWarning(CharSequence text, String errorProneText, String message) {
 		val offset = text.toString.indexOf(errorProneText)
 		val length = errorProneText.length
-		text.parse.assertNumberOfIssues(1).assertWarning(attribute, STYLE__GCNE, offset, length, message)
+		text.parse.assertNumberOfIssues(1).assertWarning(ATTRIBUTE, STYLE__GCNE, offset, length, message)
 	}
 
 	private def assertStyleError(CharSequence text, String errorProneText, String message) {
 		val offset = text.toString.indexOf(errorProneText)
 		val length = errorProneText.length
-		text.parse.assertNumberOfIssues(1).assertError(attribute, STYLE__GCNE, offset, length, message)
+		text.parse.assertNumberOfIssues(1).assertError(ATTRIBUTE, STYLE__GCNE, offset, length, message)
 	}
 	
 	private def assertNumberOfIssues(DotAst dotAst, int expectedNumberOfIssues) {
