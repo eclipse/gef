@@ -17,6 +17,7 @@
  *                                    - add binding for reference finder/reference query executor (bug #531049)
  *                                    - add binding for the Xtext Editor
  *                                    - add binding for token type to partition mapper (bug #532244)
+ *                                    - add binding for abstract edit strategy provider (bug #536795)
  *     Zoey Gerrit Prigge (itemis AG) - add binding for doubleClickStrategyProvider (bug #532244)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
@@ -25,6 +26,7 @@ import org.eclipse.gef.dot.internal.ui.language.contentassist.DynamicTemplatePro
 import org.eclipse.gef.dot.internal.ui.language.doubleclicking.DotDoubleClickStrategyProvider;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditor;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotTerminalsTokenTypeToPartitionMapper;
+import org.eclipse.gef.dot.internal.ui.language.editor.autoedit.DotAutoEditStrategyProvider;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotFindReferencesQueryExecutor;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotUiReferenceFinder;
 import org.eclipse.gef.dot.internal.ui.language.folding.DotFoldingRegionProvider;
@@ -38,6 +40,7 @@ import org.eclipse.gef.dot.internal.ui.language.markoccurrences.DotOccurrenceCom
 import org.eclipse.gef.dot.internal.ui.language.renaming.DotRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.doubleClicking.DoubleClickStrategyProvider;
 import org.eclipse.xtext.ui.editor.findrefs.IReferenceFinder;
@@ -123,5 +126,10 @@ public class DotUiModule
 
 	public Class<? extends DoubleClickStrategyProvider> bindDoubleClickStrategyProvider() {
 		return DotDoubleClickStrategyProvider.class;
+	}
+
+	@Override
+	public Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
+		return DotAutoEditStrategyProvider.class;
 	}
 }

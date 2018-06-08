@@ -45,7 +45,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			graph {|}
 		''')
 	}
-	
+
 	@Test def testAutoEdit002() {
 		'''
 			digraph |
@@ -53,7 +53,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			digraph {|}
 		''')
 	}
-	
+
 	@Test def testAutoEdit003() {
 		'''
 			graph {
@@ -65,7 +65,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			}
 		''')
 	}
-	
+
 	@Test def testAutoEdit004() {
 		'''
 			graph {
@@ -77,7 +77,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			}
 		''')
 	}
-	
+
 	@Test def testAutoEdit005() {
 		'''
 			digraph {
@@ -89,7 +89,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			}
 		''')
 	}
-	
+
 	@Test def testAutoEdit006() {
 		'''
 			graph {
@@ -101,7 +101,101 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			}
 		''')
 	}
-	
+
+	@Test def testAutoEdit007() {
+		'''
+			graph {
+				1[label=|]
+			}
+		'''.testAutoEdit('<', '''
+			graph {
+				1[label=<|>]
+			}
+		''')
+	}
+
+	@Test def testAutoEdit008() {
+		'''
+			graph {
+				1[label=<|>]
+			}
+		'''.testAutoEdit('<', '''
+			graph {
+				1[label=<<|>]
+			}
+		''')
+	}
+
+	@Test def testAutoEdit009() {
+		'''
+			graph {1[label=<<table|>]}
+		'''.testAutoEdit('>', '''
+			graph {1[label=<<table>|</table>>]}
+		''')
+	}
+
+	@Test def testAutoEdit010() {
+		'''
+			graph {
+				1[label=<<table|>]
+			}
+		'''.testAutoEdit('>', '''
+			graph {
+				1[label=<<table>|</table>>]
+			}
+		''')
+	}
+	@Test def testAutoEdit011() {
+		'''
+			graph {
+				1[label=<
+					<table|
+				>]
+			}
+		'''.testAutoEdit('>', '''
+			graph {
+				1[label=<
+					<table>|</table>
+				>]
+			}
+		''')
+	}
+
+	@Test def testAutoEdit012() {
+		'''
+			graph{1[label=<<table><tr|</table>>]}
+		'''.testAutoEdit('>', '''
+			graph{1[label=<<table><tr>|</tr></table>>]}
+		''')
+	}
+
+	@Test def testAutoEdit013() {
+		'''
+			graph {
+				1[label=<
+					<table><tr|</table>
+				>]
+			}
+		'''.testAutoEdit('>', '''
+			graph {
+				1[label=<
+					<table><tr>|</tr></table>
+				>]
+			}
+		''')
+	}
+
+	@Test def testAutoEdit014() {
+		'''
+			graph {
+				1[label=<|]
+			}
+		'''.testAutoEdit('>', '''
+			graph {
+				1[label=<>|]
+			}
+		''')
+	}
 
 	private def testAutoEdit(CharSequence it, char key, CharSequence newContent) {
 		// given
