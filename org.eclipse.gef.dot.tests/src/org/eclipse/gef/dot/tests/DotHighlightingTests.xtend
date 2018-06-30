@@ -12,15 +12,18 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
+import java.util.List
+import org.eclipse.core.resources.IFile
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.swt.SWT
+import org.eclipse.swt.custom.StyleRange
+import org.eclipse.swt.custom.StyledText
 import org.eclipse.swt.graphics.Color
 import org.eclipse.swt.widgets.Display
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
-import org.eclipse.xtext.ui.editor.XtextSourceViewer
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -149,37 +152,76 @@ class DotHighlightingTests extends AbstractEditorTest {
 		DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL.assertHighlighting("<", SWT.NORMAL, 63, 127, 127)
 	}
 
-	private def assertHighlighting(CharSequence content, String subString, int expectedFontStyle,
-		int expectedR, int expectedG, int expectedB) {
+	private def assertHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue) {
+		// given
+		dslFile
+		// when
+		.openInEditor
+		// then
+		.text(text).isHighlightedIn(fontStyle, red, green, blue)
+	}
 
-		val textWidget = (content.toString.createTestFile.openEditor.internalSourceViewer as XtextSourceViewer).textWidget
+	private def dslFile(CharSequence it) {
+		toString.createTestFile
+	}
+
+	private def openInEditor(IFile dslFile) {
+		val editor = dslFile.openEditor
 		
 		/*
 		 * wait for the Xtext framework HighlightingPresenter.updatePresentation()
 		 * to apply the semantic highlighting executed asynchronously
 		 */
 		waitForEventProcessing
+	
+		editor.internalSourceViewer.textWidget
+	}
 
-		var int startPosition = content.toString.indexOf(subString)
-		for (var i = 0; i < subString.length; i++) {
-			val currentPosition = startPosition + i
-			val styleRange = textWidget.getStyleRangeAtOffset(currentPosition)
-			val character = textWidget.content.getTextRange(currentPosition, 1)
+	private def text(StyledText styledText, String text) {
+		val List<Pair<String, StyleRange>> elements = newArrayList
+		
+		val content = styledText.text
+		val offset = content.indexOf(text)
+		assertNotEquals('''Cannot locate '«text»' in «content»''', -1, offset)
+		
+		for (var i = 0; i < text.length; i++) {
+			val currentPosition = offset + i
+			val character = styledText.getTextRange(currentPosition, 1)
+			val styleRange = styledText.getStyleRangeAtOffset(currentPosition)
+			elements += character -> styleRange
+		}
+		elements
+	}
+
+	private def isHighlightedIn(List<Pair<String, StyleRange>> elements, int fontStyle, int red, int green, int blue) {
+		val expectedColor = new Color(null, red, green, blue)
+		
+		for(element : elements) {
+			val character = element.key
+			val styleRange = element.value
 			// skipping the whitespace characters
 			if (character != " " && character != "\t") {
-				val actualFontStyle = styleRange.fontStyle
-				assertEquals('''Expected font style does not correspond to the actual font style on character «character»''',
-					expectedFontStyle, actualFontStyle)
-				
-				val expectedColor = new Color(null, expectedR, expectedG, expectedB)
-				val actualColor = styleRange.foreground ?: new Color(null, 0, 0, 0) // the default color is black 
-				assertEquals('''Expected foreground color does not correspond to the actual foreground color on character «character»''',
-					expectedColor, actualColor)
+				styleRange => [
+					hasFontStyle(character, fontStyle)
+					hasForegroundColor(character, expectedColor)
+				]
 			}
 		}
 	}
 
+	private def hasFontStyle(StyleRange it, String character, int expected) {
+		val actual = fontStyle
+		assertEquals('''Expected font style does not correspond to the actual font style on character «character»''',
+			expected, actual)
+	}
+
+	private def hasForegroundColor(StyleRange it, String character, Color expected) {
+		val actual = foreground ?: new Color(null, 0, 0, 0) // the default color is black 
+		assertEquals('''Expected foreground color does not correspond to the actual foreground color on character «character»''',
+			expected, actual)
+	}
+
 	private def waitForEventProcessing() {
-		while (Display.getDefault().readAndDispatch()) { }
+		while (Display.^default.readAndDispatch) { }
 	}
 }
