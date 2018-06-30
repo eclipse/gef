@@ -1410,22 +1410,22 @@ class DotAttributes {
 	}
 
 	@DotAttribute(rawType="STRING", parsedType=ArrowType)
-	public static val String ARROWHEAD__E = "arrowhead"
+	public static val ARROWHEAD__E = "arrowhead"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static val String ARROWSIZE__E = "arrowsize"
+	public static val ARROWSIZE__E = "arrowsize"
 
 	@DotAttribute(rawType="STRING", parsedType=ArrowType)
-	public static val String ARROWTAIL__E = "arrowtail"
+	public static val ARROWTAIL__E = "arrowtail"
 
 	@DotAttribute(parsedType=Rect)
-	public static val String BB__GC = "bb"
+	public static val BB__GC = "bb"
 
 	@DotAttribute(parsedType=ColorList)
-	public static val String BGCOLOR__GC = "bgcolor"
+	public static val BGCOLOR__GC = "bgcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=ClusterMode)
-	public static val String CLUSTERRANK__G = "clusterrank"
+	public static val CLUSTERRANK__G = "clusterrank"
 
 	/**
 	 * color is a special case, where different parsed values for Cluster, 
@@ -1433,19 +1433,19 @@ class DotAttributes {
 	 * parsers and serializers are required.
 	 */
 	@DotAttribute(parsedType=#[Color, Color, ColorList])
-	public static val String COLOR__CNE = "color"
+	public static val COLOR__CNE = "color"
 
 	@DotAttribute(parsedType=String)
-	public static val String COLORSCHEME__GCNE = "colorscheme"
+	public static val COLORSCHEME__GCNE = "colorscheme"
 
 	@DotAttribute(rawType="STRING", parsedType=DirType)
-	public static val String DIR__E = "dir"
+	public static val DIR__E = "dir"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static val String DISTORTION__N = "distortion"
+	public static val DISTORTION__N = "distortion"
 
 	@DotAttribute(parsedType=EscString)
-	public static val String EDGETOOLTIP__E = "edgetooltip"
+	public static val EDGETOOLTIP__E = "edgetooltip"
 
 	/**
 	 * fillcolor is a special case, where different parsed values for Cluster, 
@@ -1453,58 +1453,58 @@ class DotAttributes {
 	 * parsers and serializers are required.
 	 */
 	@DotAttribute(parsedType=#[ColorList, ColorList, Color])
-	public static val String FILLCOLOR__CNE = "fillcolor"
+	public static val FILLCOLOR__CNE = "fillcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
-	public static val String FIXEDSIZE__N = "fixedsize"
+	public static val FIXEDSIZE__N = "fixedsize"
 
 	@DotAttribute(parsedType=Color)
-	public static val String FONTCOLOR__GCNE = "fontcolor"
+	public static val FONTCOLOR__GCNE = "fontcolor"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
-	public static val String FORCELABELS__G = "forcelabels"
+	public static val FORCELABELS__G = "forcelabels"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static val String HEAD_LP__E = "head_lp"
+	public static val HEAD_LP__E = "head_lp"
 
-	@DotAttribute(parsedType=String)
-	public static val String HEADLABEL__E = "headlabel"
+	@DotAttribute(parsedType=String) // TODO: change to lblString
+	public static val HEADLABEL__E = "headlabel"
 	
 	@DotAttribute(parsedType=PortPos)
-	public static val String HEADPORT__E = "headport"
+	public static val HEADPORT__E = "headport"
 
 	@DotAttribute(parsedType=EscString)
-	public static val String HEADTOOLTIP__E = "headtooltip"
+	public static val HEADTOOLTIP__E = "headtooltip"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static val String HEIGHT__N = "height"
+	public static val HEIGHT__N = "height"
 
-	@DotAttribute(parsedType=String)
-	public static val String ID__GCNE = "id"
+	@DotAttribute(parsedType=String) // TODO: change to escString
+	public static val ID__GCNE = "id"
 
-	@DotAttribute(parsedType=String)
-	public static val String LABEL__GCNE = "label"
+	@DotAttribute(parsedType=String) // TODO: change to lblString
+	public static val LABEL__GCNE = "label"
 
 	@DotAttribute(parsedType=Color)
-	public static val String LABELFONTCOLOR__E = "labelfontcolor"
+	public static val LABELFONTCOLOR__E = "labelfontcolor"
 
 	@DotAttribute(parsedType=EscString)
-	public static val String LABELTOOLTIP__E = "labeltooltip"
+	public static val LABELTOOLTIP__E = "labeltooltip"
 
 	@DotAttribute(rawType="STRING", parsedType=Layout)
-	public static val String LAYOUT__G = "layout"
+	public static val LAYOUT__G = "layout"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static val String LP__GCE = "lp"
+	public static val LP__GCE = "lp"
 	
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static val String NODESEP__G = "nodesep"
+	public static val NODESEP__G = "nodesep"
 
 	@DotAttribute(rawType="STRING", parsedType=OutputMode)
-	public static val String OUTPUTORDER__G = "outputorder"
+	public static val OUTPUTORDER__G = "outputorder"
 
 	@DotAttribute(rawType="STRING", parsedType=Pagedir)
-	public static val String PAGEDIR__G = "pagedir"
+	public static val PAGEDIR__G = "pagedir"
 
 	/**
 	 * pos is a special case, where different parsed values for Node and Edge 
@@ -1512,50 +1512,50 @@ class DotAttributes {
 	 * are required.
 	 */
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=#[Point, SplineType])
-	public static val String POS__NE = "pos"
+	public static val POS__NE = "pos"
 	
 	@DotAttribute(rawType="STRING", parsedType=RankType)
-	public static val String RANK__S = "rank"
+	public static val RANK__S = "rank"
 
 	@DotAttribute(rawType="STRING", parsedType=Rankdir)
-	public static val String RANKDIR__G = "rankdir"
+	public static val RANKDIR__G = "rankdir"
 
 	@DotAttribute(parsedType=Shape)
-	public static val String SHAPE__N = "shape"
+	public static val SHAPE__N = "shape"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Integer)
-	public static val String SIDES__N = "sides"
+	public static val SIDES__N = "sides"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static val String SKEW__N = "skew"
+	public static val SKEW__N = "skew"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Splines)
-	public static val String SPLINES__G = "splines"
+	public static val SPLINES__G = "splines"
 
 	@DotAttribute(parsedType=Style)
-	public static val String STYLE__GCNE = "style"
+	public static val STYLE__GCNE = "style"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static val String TAIL_LP__E = "tail_lp"
+	public static val TAIL_LP__E = "tail_lp"
 
-	@DotAttribute(parsedType=String)
-	public static val String TAILLABEL__E = "taillabel"
+	@DotAttribute(parsedType=String) // TODO: change to lblString
+	public static val TAILLABEL__E = "taillabel"
 	
 	@DotAttribute(parsedType=PortPos)
-	public static val String TAILPORT__E = "tailport"
+	public static val TAILPORT__E = "tailport"
 
 	@DotAttribute(parsedType=EscString)
-	public static val String TAILTOOLTIP__E = "tailtooltip"
+	public static val TAILTOOLTIP__E = "tailtooltip"
 
 	@DotAttribute(parsedType=EscString)
-	public static val String TOOLTIP__CNE = "tooltip"
+	public static val TOOLTIP__CNE = "tooltip"
 
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
-	public static val String WIDTH__N = "width"
+	public static val WIDTH__N = "width"
 
-	@DotAttribute(parsedType=String)
-	public static val String XLABEL__NE = "xlabel"
+	@DotAttribute(parsedType=String) // TODO: change to lblString
+	public static val XLABEL__NE = "xlabel"
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
-	public static val String XLP__NE = "xlp"
+	public static val XLP__NE = "xlp"
 }
