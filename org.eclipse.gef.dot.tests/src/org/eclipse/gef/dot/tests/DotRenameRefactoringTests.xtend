@@ -19,12 +19,12 @@ import org.eclipse.core.resources.IncrementalProjectBuilder
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.NullProgressMonitor
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.language.dot.DotPackage
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
-import org.eclipse.gef.dot.internal.language.dot.NodeId
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.ui.actions.WorkspaceModifyOperation
 import org.eclipse.xtext.junit4.InjectWith
@@ -38,10 +38,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.DotFileUtils.read
+import static org.eclipse.gef.dot.tests.DotTestUtils.createTestProjectWithXtextNature
 
 import static extension org.eclipse.emf.common.util.URI.createPlatformResourceURI
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.getURI
-import static extension org.eclipse.gef.dot.tests.DotTestUtils.*
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -51,8 +52,8 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension Provider<RenameElementProcessor>
 
-	override void setUp() {
-		super.setUp()
+	override setUp() {
+		super.setUp
 		createTestProjectWithXtextNature
 	}
 
@@ -244,7 +245,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	private def testRenameRefactoring(CharSequence it, (DotAst)=>NodeId element, String newName, CharSequence newContent) {
+	private def testRenameRefactoring(CharSequence it, (DotAst)=>EObject element, String newName, CharSequence newContent) {
 		// given
 		dslFile.
 		// when
@@ -257,11 +258,11 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		toString.createTestFile
 	}
 
-	private def target(CharSequence it, extension (DotAst)=>NodeId elementProvider) {
+	private def target(CharSequence it, extension (DotAst)=>EObject elementProvider) {
 		parse.apply
 	}
 
-	private def rename(IFile testFile, NodeId targetElement, String newName) {
+	private def rename(IFile testFile, EObject targetElement, String newName) {
 		waitForBuild
 		val targetElementFragment = targetElement.URI.fragment
 		val targetElementURI = testFile.fullPath.toString.createPlatformResourceURI(true).appendFragment(targetElementFragment)
