@@ -35,10 +35,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotValidatorTests.class,
 
 		// JUnit Plug-in Tests
-		DotContentAssistTests.class, DotEditorDoubleClickingTests.class,
-		DotFoldingTests.class, DotHighlightingCalculatorTests.class,
-		DotHighlightingTests.class, DotHoverTests.class,
-		DotHtmlLabelContentAssistLexerTests.class,
+		DotAutoEditTests.class, DotContentAssistTests.class,
+		DotEditorDoubleClickingTests.class, DotFoldingTests.class,
+		DotHighlightingCalculatorTests.class, DotHighlightingTests.class,
+		DotHoverTests.class, DotHtmlLabelContentAssistLexerTests.class,
 		DotHtmlLabelContentAssistTests.class,
 		DotHtmlLabelHighlightingLexerTests.class,
 		DotHtmlLabelTokenTypeToPartitionMapperTests.class,
