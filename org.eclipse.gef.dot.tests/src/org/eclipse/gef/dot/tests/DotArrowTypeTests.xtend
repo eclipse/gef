@@ -13,6 +13,7 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
+import com.google.inject.name.Named
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.gef.dot.internal.language.DotArrowTypeInjectorProvider
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType
@@ -21,26 +22,28 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.eclipse.xtext.parser.antlr.IAntlrTokenFileProvider
 import org.eclipse.xtext.parser.antlr.Lexer
+import org.eclipse.xtext.parser.antlr.LexerBindings
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.tests.DotTestUtils.lex
 import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(DotArrowTypeInjectorProvider)
-class DotArrowTypeTests {
-	
+class DotArrowTypeTests extends AbstractLexerTest {
+
 	@Inject extension ParseHelper<ArrowType>
 	@Inject extension ValidationTestHelper
 	@Inject extension DotEObjectFormatter
-	@Inject extension IAntlrTokenFileProvider
-	
-	@Inject Lexer lexer
 
-	@Test def testLexingBox(){
+	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
+
+	override lexer() {
+		lexer
+	}
+
+	@Test def testLexingBox() {
 		"box".assertLexing('''
 			T__12 'box'
 		''')
@@ -72,8 +75,8 @@ class DotArrowTypeTests {
 			T__12 'box'
 		''')
 	}
-	
-	@Test def testLexingCrow(){
+
+	@Test def testLexingCrow() {
 		"crow".assertLexing('''
 			T__13 'crow'
 		''')
@@ -87,9 +90,9 @@ class DotArrowTypeTests {
 			T__6 'r'
 			T__13 'crow'
 		''')
-	}	
-		
-	@Test def testLexingCurve(){
+	}
+
+	@Test def testLexingCurve() {
 		"curve".assertLexing('''
 			T__14 'curve'
 		''')
@@ -104,8 +107,8 @@ class DotArrowTypeTests {
 			T__14 'curve'
 		''')
 	}
-	
-	@Test def testLexingDiamond(){
+
+	@Test def testLexingDiamond() {
 		"diamond".assertLexing('''
 			T__16 'diamond'
 		''')
@@ -137,8 +140,8 @@ class DotArrowTypeTests {
 			T__16 'diamond'
 		''')
 	}
-	
-	@Test def testLexingDot(){
+
+	@Test def testLexingDot() {
 		"dot".assertLexing('''
 			T__17 'dot'
 		''')
@@ -147,9 +150,9 @@ class DotArrowTypeTests {
 			T__4 'o'
 			T__17 'dot'
 		''')
-	}	
-		
-	@Test def testLexingICurve(){
+	}
+
+	@Test def testLexingICurve() {
 		"icurve".assertLexing('''
 			T__15 'icurve'
 		''')
@@ -164,8 +167,8 @@ class DotArrowTypeTests {
 			T__15 'icurve'
 		''')
 	}
-	
-	@Test def testLexingInv(){
+
+	@Test def testLexingInv() {
 		"inv".assertLexing('''
 			T__18 'inv'
 		''')
@@ -197,14 +200,14 @@ class DotArrowTypeTests {
 			T__18 'inv'
 		''')
 	}
-	
-	@Test def testLexingNone(){
+
+	@Test def testLexingNone() {
 		"none".assertLexing('''
 			T__19 'none'
 		''')
 	}
-	
-	@Test def testLexingNormal(){
+
+	@Test def testLexingNormal() {
 		"normal".assertLexing('''
 			T__20 'normal'
 		''')
@@ -236,8 +239,8 @@ class DotArrowTypeTests {
 			T__20 'normal'
 		''')
 	}
-	
-	@Test def testLexingTee(){
+
+	@Test def testLexingTee() {
 		"tee".assertLexing('''
 			T__21 'tee'
 		''')
@@ -252,8 +255,8 @@ class DotArrowTypeTests {
 			T__21 'tee'
 		''')
 	}
-	
-	@Test def testLexingVee(){
+
+	@Test def testLexingVee() {
 		"vee".assertLexing('''
 			T__22 'vee'
 		''')
@@ -268,8 +271,8 @@ class DotArrowTypeTests {
 			T__22 'vee'
 		''')
 	}
-	
-	@Test def testLexingTwoPrimitiveShapes(){
+
+	@Test def testLexingTwoPrimitiveShapes() {
 		"invdot".assertLexing('''
 			T__18 'inv'
 			T__17 'dot'
@@ -304,8 +307,8 @@ class DotArrowTypeTests {
 			T__17 'dot'
 		''')
 	}
-	
-	@Test def testLexingThreePrimitiveShapes(){
+
+	@Test def testLexingThreePrimitiveShapes() {
 		"dotodotdot".assertLexing('''
 			T__17 'dot'
 			T__4 'o'
@@ -328,8 +331,8 @@ class DotArrowTypeTests {
 			T__17 'dot'
 		''')
 	}
-	
-	@Test def testLexingFourPrimitiveShapes(){
+
+	@Test def testLexingFourPrimitiveShapes() {
 		"onormalnormalonormalnormal".assertLexing('''
 			T__4 'o'
 			T__20 'normal'
@@ -360,8 +363,8 @@ class DotArrowTypeTests {
 			T__17 'dot'
 		''')
 	}
-	
-	@Test def testLexingDeprecatedShapes(){
+
+	@Test def testLexingDeprecatedShapes() {
 		"ediamond".assertLexing('''
 			T__7 'ediamond'
 		''')
@@ -392,8 +395,8 @@ class DotArrowTypeTests {
 			T__12 'box'
 		''')
 	}
-	
-	@Test def testAstBox(){
+
+	@Test def testAstBox() {
 		"box".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -466,8 +469,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstCrow(){
+
+	@Test def testAstCrow() {
 		"crow".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -503,9 +506,9 @@ class DotArrowTypeTests {
 				]
 			}
 		''')
-	}	
-		
-	@Test def testAstCurve(){
+	}
+
+	@Test def testAstCurve() {
 		"curve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -542,8 +545,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstDiamond(){
+
+	@Test def testAstDiamond() {
 		"diamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -616,8 +619,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstDot(){
+
+	@Test def testAstDot() {
 		"dot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -641,9 +644,9 @@ class DotArrowTypeTests {
 				]
 			}
 		''')
-	}	
-		
-	@Test def testAstICurve(){
+	}
+
+	@Test def testAstICurve() {
 		"icurve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -680,8 +683,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstInv(){
+
+	@Test def testAstInv() {
 		"inv".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -754,8 +757,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstNone(){
+
+	@Test def testAstNone() {
 		"none".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -768,8 +771,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstNormal(){
+
+	@Test def testAstNormal() {
 		"normal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -842,8 +845,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstTee(){
+
+	@Test def testAstTee() {
 		"tee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -880,8 +883,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstVee(){
+
+	@Test def testAstVee() {
 		"vee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -918,8 +921,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstTwoPrimitiveShapes(){
+
+	@Test def testAstTwoPrimitiveShapes() {
 		"invdot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1022,8 +1025,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstThreePrimitiveShapes(){
+
+	@Test def testAstThreePrimitiveShapes() {
 		"dotodotdot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1090,8 +1093,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstFourPrimitiveShapes(){
+
+	@Test def testAstFourPrimitiveShapes() {
 		"onormalnormalonormalnormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1200,8 +1203,8 @@ class DotArrowTypeTests {
 			}
 		''')
 	}
-	
-	@Test def testAstDeprecatedShapes(){
+
+	@Test def testAstDeprecatedShapes() {
 		"ediamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1350,7 +1353,7 @@ class DotArrowTypeTests {
 		// verify that this is the only reported issue
 		1.assertEquals(ast.validate.size)
 	}
-	
+
 	private def assertAst(CharSequence modelAsText,
 			CharSequence expected) {
 		val ast = modelAsText.parse
@@ -1358,13 +1361,8 @@ class DotArrowTypeTests {
 		val astString = ast.apply
 		expected.toString.assertEquals(astString.toString)
 	}
-	
-	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val actual = lexer.lex(antlrTokenFile, modelAsText)
-		expected.toString.trim.assertEquals(actual.toString.trim)
-	}
-	
-	private def ArrowType parseArrowType(String modelAsText){
+
+	private def ArrowType parseArrowType(String modelAsText) {
 		var ArrowType ast = null
 		try {
 			ast = modelAsText.parse

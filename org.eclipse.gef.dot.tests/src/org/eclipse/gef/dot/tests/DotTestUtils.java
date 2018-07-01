@@ -13,21 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.Lexer;
-import org.antlr.runtime.Token;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -51,8 +38,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 import org.eclipse.xtext.util.StringInputStream;
-
-import com.google.common.io.CharStreams;
 
 import javafx.collections.ObservableList;
 
@@ -646,77 +631,6 @@ public final class DotTestUtils {
 			"ylgnbu8", "ylgnbu9", "ylorbr3", "ylorbr4", "ylorbr5", "ylorbr6",
 			"ylorbr7", "ylorbr8", "ylorbr9", "ylorrd3", "ylorrd4", "ylorrd5",
 			"ylorrd6", "ylorrd7", "ylorrd8", "ylorrd9" };
-
-	/**
-	 * The implementation of the following helper methods is mainly taken from
-	 * the Eclipse Xpect project org.eclipse.xpect.tests.LexerTest class.
-	 */
-	static String lex(Lexer lexer, String tokensFilePath, CharSequence text) {
-		FileReader tokensFileReader = null;
-		try {
-			tokensFileReader = new FileReader(tokensFilePath);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		Map<Integer, String> tokenNames = tokenNames(tokensFileReader);
-
-		String lexerResult = getLexerResult(lexer, tokenNames, text);
-		return lexerResult;
-	}
-
-	static String lex(Lexer lexer, InputStream tokensStream,
-			CharSequence text) {
-		InputStreamReader tokensStreamReader = new InputStreamReader(
-				tokensStream);
-
-		Map<Integer, String> tokenNames = tokenNames(tokensStreamReader);
-
-		String lexerResult = getLexerResult(lexer, tokenNames, text);
-		return lexerResult;
-	}
-
-	private static String getLexerResult(Lexer lexer,
-			Map<Integer, String> tokenNames, CharSequence text) {
-		lexer.setCharStream(new ANTLRStringStream(text.toString()));
-		List<String> result = new ArrayList<>();
-		while (true) {
-			Token token = lexer.nextToken();
-			if (token == Token.EOF_TOKEN) {
-				return String.join(System.lineSeparator(), result);
-			}
-			int tokenType = token.getType();
-			String tokenName = tokenNames.get(tokenType);
-			String element = "";
-			if (tokenName != null) {
-				element += tokenName;
-			} else {
-				element += tokenType;
-			}
-			element += " '" + token.getText() + "'";
-			result.add(element);
-		}
-	}
-
-	private static Map<Integer, String> tokenNames(Reader tokensReader) {
-		Map<Integer, String> result = new HashMap<Integer, String>();
-
-		List<String> lines = null;
-		try {
-			lines = CharStreams.readLines(tokensReader);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		for (String line : lines) {
-			String[] s = line.split("=");
-			String name = s[0];
-			int index = Integer.parseInt(s[1]);
-			result.put(index, name.startsWith("KEYWORD") ? "KEYWORD" : name);
-		}
-
-		return result;
-	}
 
 	public static void registerDotSubgrammarPackages() {
 		registerEPackage( // register the ArrowTypePackage
