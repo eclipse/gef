@@ -1,31 +1,31 @@
 /*******************************************************************************
  * Copyright (c) 2018 itemis AG and others.
- *
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #321775)
- *
+ *     Tamas Miklossy (itemis AG) - initial API and implementation
+ * 
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
 import javax.inject.Inject
 import javax.inject.Named
-import org.eclipse.gef.dot.internal.language.DotInjectorProvider
+import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.parser.antlr.Lexer
-import org.eclipse.xtext.parser.antlr.LexerBindings
+import org.eclipse.xtext.ui.LexerUIBindings
+import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
-@InjectWith(DotInjectorProvider)
-class DotLexerTests extends AbstractDotLexerTest {
+@InjectWith(DotUiInjectorProvider)
+class DotContentAssistLexerTests extends AbstractDotLexerTest {
 
-	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
+	@Inject @Named(LexerUIBindings.CONTENT_ASSIST) Lexer lexer
 
 	override lexer() {
 		lexer

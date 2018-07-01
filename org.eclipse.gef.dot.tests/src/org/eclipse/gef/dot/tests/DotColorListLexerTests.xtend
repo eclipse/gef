@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.tests
 
 import javax.inject.Inject
 import javax.inject.Named
-import org.eclipse.gef.dot.internal.language.DotInjectorProvider
+import org.eclipse.gef.dot.internal.language.DotColorListInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.parser.antlr.Lexer
@@ -22,8 +22,8 @@ import org.eclipse.xtext.parser.antlr.LexerBindings
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
-@InjectWith(DotInjectorProvider)
-class DotLexerTests extends AbstractDotLexerTest {
+@InjectWith(DotColorListInjectorProvider)
+class DotColorListLexerTests extends AbstractDotColorListLexerTest {
 
 	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
 

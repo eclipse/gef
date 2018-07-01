@@ -13,44 +13,25 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import javax.inject.Named
 import org.eclipse.gef.dot.internal.language.DotColorListInjectorProvider
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.eclipse.xtext.parser.antlr.Lexer
-import org.eclipse.xtext.parser.antlr.LexerBindings
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.tests.DotTestUtils.lex
 import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(DotColorListInjectorProvider)
 class DotColorListTests {
 	
-	@Inject @Named(LexerBindings.RUNTIME) Lexer lexer
 	@Inject extension ParseHelper<ColorList>
 	@Inject extension ValidationTestHelper
 	@Inject extension DotEObjectFormatter
 	
-	@Test def oneColorValueWithWeightLexerTest() {
-		"#3030FF;1".assertLexing('''
-			NumberSign '#'
-			RULE_HEXADECIMAL_DIGIT '3'
-			RULE_HEXADECIMAL_DIGIT '0'
-			RULE_HEXADECIMAL_DIGIT '3'
-			RULE_HEXADECIMAL_DIGIT '0'
-			RULE_HEXADECIMAL_DIGIT 'F'
-			RULE_HEXADECIMAL_DIGIT 'F'
-			Semicolon ';'
-			RULE_COLOR_NUMBER '1'
-		''')
-	}
-
 	@Test def oneColorValueWithoutWeight01() {
 		"#E0E0E0".assertAst('''
 			ColorList {
@@ -1057,12 +1038,6 @@ class DotColorListTests {
 				]
 			}
 		''')
-	}
-	
-	private def assertLexing(CharSequence modelAsText, CharSequence expected) {
-		val antlrTokenFilePath = "../org.eclipse.gef.dot/src-gen/org/eclipse/gef/dot/internal/language/parser/antlr/lexer/CustomInternalDotColorListLexer.tokens";
-		val actual = lexer.lex(antlrTokenFilePath, modelAsText)
-		expected.toString.trim.assertEquals(actual.toString.trim)
 	}
 	
 	private def assertAst(CharSequence modelAsText,
