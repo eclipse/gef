@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tamas Miklossy (itemis AG)     - initial API and implementation
+ *    Tamas Miklossy (itemis AG) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
