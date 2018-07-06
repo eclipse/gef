@@ -73,7 +73,7 @@ public class DotHtmlLabelJavaValidator extends
 	 */
 	@Check
 	public void checkTagIsClosed(HtmlTag tag) {
-		if (!tag.getName().toUpperCase()
+		if (!tag.isSelfClosing() && !tag.getName().toUpperCase()
 				.equals(tag.getCloseName().toUpperCase())) {
 			reportRangeBasedError(
 					"Tag '<" + tag.getName() + ">' is not closed (expected '</"
