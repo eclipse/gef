@@ -331,6 +331,11 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	@Override
 	public void setGraph(Graph graph) {
+		// Do not try to set the graph if the DOT Graph View has been closed
+		if (getDomain() == null) {
+			return;
+		}
+
 		// do no convert layout algorithm and rankdir in emulated mode, invert
 		// y-axis mode (as by default y-axis is interpreted inverse in dot)
 		boolean isNativeMode = isNativeMode();
