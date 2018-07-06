@@ -260,26 +260,30 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 		// refresh the parent folder and open the output file if the export
 		// was successful
 		if (outputFile != null) {
-			refreshParent(outputFile);
-			openFile(outputFile);
+			IFile outputEclipseFile = convertToEclipseFile(outputFile);
+			if (outputEclipseFile != null) {
+				refreshParent(outputEclipseFile);
+				openFile(outputEclipseFile);
+			}
 		}
 	}
 
-	private void refreshParent(File file) {
+	private IFile convertToEclipseFile(File file) {
+		IPath location = Path.fromOSString(file.getAbsolutePath());
+		IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+				.findFilesForLocation(location);
+		return files.length == 1 ? files[0] : null;
+	}
+
+	private void refreshParent(IFile file) {
 		try {
-			ResourcesPlugin.getWorkspace().getRoot()
-					.getFileForLocation(
-							Path.fromOSString(file.getAbsolutePath()))
-					.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+			file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void openFile(File resolvedFile) {
-		IPath location = Path.fromOSString(resolvedFile.getAbsolutePath());
-		final IFile file = ResourcesPlugin.getWorkspace().getRoot()
-				.getFileForLocation(location);
+	private void openFile(IFile file) {
 		IEditorRegistry registry = PlatformUI.getWorkbench()
 				.getEditorRegistry();
 		if (registry.isSystemExternalEditorAvailable(file.getName())) {

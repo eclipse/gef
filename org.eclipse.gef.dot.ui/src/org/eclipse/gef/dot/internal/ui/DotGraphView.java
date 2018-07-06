@@ -625,9 +625,11 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		} else if (input instanceof FileEditorInput) {
 			FileEditorInput fileEditorInput = (FileEditorInput) input;
 			IFile file = fileEditorInput.getFile();
-			String workspaceRoot = ResourcesPlugin.getWorkspace().getRoot()
-					.getLocation().toString();
-			dotFile = new File(workspaceRoot + "/" + file.getFullPath()); //$NON-NLS-1$
+			try {
+				dotFile = DotFileUtils.resolve(file.getLocationURI().toURL());
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (dotFile != null) {
