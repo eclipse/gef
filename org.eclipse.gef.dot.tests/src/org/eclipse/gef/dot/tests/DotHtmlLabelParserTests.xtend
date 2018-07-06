@@ -36,87 +36,87 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_tag_case_insensitivity() {
-		DotTestHtmlLabels.MIXED_LOWER_CASE_AND_UPPER_CASE.verify
+		DotTestHtmlLabels.MIXED_LOWER_CASE_AND_UPPER_CASE.hasNoErrors
 	}
 
 	@Test
 	def test_comment() {
-		DotTestHtmlLabels.COMMENT.verify
+		DotTestHtmlLabels.COMMENT.hasNoErrors
 	}
 
 	@Test
 	def test_comment_with_hyphen() {
-		DotTestHtmlLabels.COMMENT_WITH_HYPHEN.verify
+		DotTestHtmlLabels.COMMENT_WITH_HYPHEN.hasNoErrors
 	}
 
 	@Test
 	def test_comment_with_nested_tags() {
-		DotTestHtmlLabels.COMMENT_WITH_NESTED_TAG.verify
+		DotTestHtmlLabels.COMMENT_WITH_NESTED_TAG.hasNoErrors
 	}
 
 	@Test
 	def test_comment_with_open_tag() {
-		DotTestHtmlLabels.COMMENT_WITH_OPEN_TAG.verify
+		DotTestHtmlLabels.COMMENT_WITH_OPEN_TAG.hasNoErrors
 	}
 
 	@Test
 	def test_comment_with_close_tag() {
-		DotTestHtmlLabels.COMMENT_WITH_CLOSE_TAG.verify
+		DotTestHtmlLabels.COMMENT_WITH_CLOSE_TAG.hasNoErrors
 	}
 
 	@Test
 	def test_comment_within_table_tag() {
-		DotTestHtmlLabels.COMMENT_WITHIN_TABLE_TAG.verify
+		DotTestHtmlLabels.COMMENT_WITHIN_TABLE_TAG.hasNoErrors
 	}
 
 	@Test
 	def test_comment_within_text() {
-		DotTestHtmlLabels.COMMENT_WITHIN_TEXT.verify
+		DotTestHtmlLabels.COMMENT_WITHIN_TEXT.hasNoErrors
 	}
 
 	@Test(timeout = 2000)
 	def test_tag_with_single_quoted_attribute_value() {
-		DotTestHtmlLabels.TAG_WITH_SINGLE_QUTOED_ATTRIBUTE_VALUE.verify
+		DotTestHtmlLabels.TAG_WITH_SINGLE_QUTOED_ATTRIBUTE_VALUE.hasNoErrors
 	}
 
 	@Test(timeout = 2000)
 	def test_tag_with_double_quoted_attribute_value() {
-		DotTestHtmlLabels.TAG_WITH_DOUBLE_QUOTED_ATTRIBUTE_VALUE.verify
+		DotTestHtmlLabels.TAG_WITH_DOUBLE_QUOTED_ATTRIBUTE_VALUE.hasNoErrors
 	}
 
 	@Test
 	def test_font_tag_with_point_size_attribute() {
-		DotTestHtmlLabels.FONT_TAG_WITH_POINT_SIZE_ATTRIBUTE.verify
+		DotTestHtmlLabels.FONT_TAG_WITH_POINT_SIZE_ATTRIBUTE.hasNoErrors
 	}
 
 	@Test
 	def test_font_tag_contains_table_tag() {
-		DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG.verify
+		DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG.hasNoErrors
 	}
 
 	@Test
 	def test_nesting() {
-		DotTestHtmlLabels.NESTED_TAGS2.verify
+		DotTestHtmlLabels.NESTED_TAGS2.hasNoErrors
 	}
 
 	@Test
 	def test_self_closing_tags() {
-		DotTestHtmlLabels.SELF_CLOSING_TAGS.verify
+		DotTestHtmlLabels.SELF_CLOSING_TAGS.hasNoErrors
 	}
 
 	@Test
 	def test_quotes_in_html_text() {
-		DotTestHtmlLabels.QUOTES_IN_HTML_TEXT.verify
+		DotTestHtmlLabels.QUOTES_IN_HTML_TEXT.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_BR_ALIGN() {
-		'''<BR ALIGN="CENTER"/>'''.verify
-		'''<BR ALIGN="LEFT"/>'''.verify
-		'''<BR ALIGN="RIGHT"/>'''.verify
-		'''<BR ALIGN="center"/>'''.verify
-		'''<BR ALIGN="left"/>'''.verify
-		'''<BR ALIGN="right"/>'''.verify
+		'''<BR ALIGN="CENTER"/>'''.hasNoErrors
+		'''<BR ALIGN="LEFT"/>'''.hasNoErrors
+		'''<BR ALIGN="RIGHT"/>'''.hasNoErrors
+		'''<BR ALIGN="center"/>'''.hasNoErrors
+		'''<BR ALIGN="left"/>'''.hasNoErrors
+		'''<BR ALIGN="right"/>'''.hasNoErrors
 	}
 
 	@Test
@@ -136,16 +136,16 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_IMG_SCALE() {
-		'''<TABLE><TR><TD><IMG SCALE="FALSE"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="TRUE"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="WIDTH"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="HEIGHT"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="BOTH"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="false"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="true"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="width"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="height"/></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD><IMG SCALE="both"/></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD><IMG SCALE="FALSE"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="TRUE"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="WIDTH"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="HEIGHT"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="BOTH"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="false"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="true"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="width"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="height"/></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD><IMG SCALE="both"/></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -155,12 +155,12 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def void test_valid_attribute_value_of_tag_TABLE_ALIGN() {
-		'''<TABLE ALIGN="CENTER"></TABLE>'''.verify
-		'''<TABLE ALIGN="LEFT"></TABLE>'''.verify
-		'''<TABLE ALIGN="RIGHT"></TABLE>'''.verify
-		'''<TABLE ALIGN="center"></TABLE>'''.verify
-		'''<TABLE ALIGN="left"></TABLE>'''.verify
-		'''<TABLE ALIGN="right"></TABLE>'''.verify
+		'''<TABLE ALIGN="CENTER"></TABLE>'''.hasNoErrors
+		'''<TABLE ALIGN="LEFT"></TABLE>'''.hasNoErrors
+		'''<TABLE ALIGN="RIGHT"></TABLE>'''.hasNoErrors
+		'''<TABLE ALIGN="center"></TABLE>'''.hasNoErrors
+		'''<TABLE ALIGN="left"></TABLE>'''.hasNoErrors
+		'''<TABLE ALIGN="right"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -170,34 +170,34 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_BORDER() {
-		'''<TABLE BORDER="0"></TABLE>'''.verify
-		'''<TABLE BORDER="1"></TABLE>'''.verify
-		'''<TABLE BORDER="254"></TABLE>'''.verify
-		'''<TABLE BORDER="255"></TABLE>'''.verify
+		'''<TABLE BORDER="0"></TABLE>'''.hasNoErrors
+		'''<TABLE BORDER="1"></TABLE>'''.hasNoErrors
+		'''<TABLE BORDER="254"></TABLE>'''.hasNoErrors
+		'''<TABLE BORDER="255"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_CELLBORDER() {
-		'''<TABLE CELLBORDER="0"></TABLE>'''.verify
-		'''<TABLE CELLBORDER="1"></TABLE>'''.verify
-		'''<TABLE CELLBORDER="126"></TABLE>'''.verify
-		'''<TABLE CELLBORDER="127"></TABLE>'''.verify
+		'''<TABLE CELLBORDER="0"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLBORDER="1"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLBORDER="126"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLBORDER="127"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_CELLPADDING() {
-		'''<TABLE CELLPADDING="0"></TABLE>'''.verify
-		'''<TABLE CELLPADDING="1"></TABLE>'''.verify
-		'''<TABLE CELLPADDING="254"></TABLE>'''.verify
-		'''<TABLE CELLPADDING="255"></TABLE>'''.verify
+		'''<TABLE CELLPADDING="0"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLPADDING="1"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLPADDING="254"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLPADDING="255"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_CELLSPACING() {
-		'''<TABLE CELLSPACING="0"></TABLE>'''.verify
-		'''<TABLE CELLSPACING="1"></TABLE>'''.verify
-		'''<TABLE CELLSPACING="126"></TABLE>'''.verify
-		'''<TABLE CELLSPACING="127"></TABLE>'''.verify
+		'''<TABLE CELLSPACING="0"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLSPACING="1"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLSPACING="126"></TABLE>'''.hasNoErrors
+		'''<TABLE CELLSPACING="127"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -212,10 +212,10 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_FIXEDSIZE() {
-		'''<TABLE FIXEDSIZE="FALSE"></TABLE>'''.verify
-		'''<TABLE FIXEDSIZE="TRUE"></TABLE>'''.verify
-		'''<TABLE FIXEDSIZE="false"></TABLE>'''.verify
-		'''<TABLE FIXEDSIZE="true"></TABLE>'''.verify
+		'''<TABLE FIXEDSIZE="FALSE"></TABLE>'''.hasNoErrors
+		'''<TABLE FIXEDSIZE="TRUE"></TABLE>'''.hasNoErrors
+		'''<TABLE FIXEDSIZE="false"></TABLE>'''.hasNoErrors
+		'''<TABLE FIXEDSIZE="true"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -225,10 +225,10 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_HEIGHT() {
-		'''<TABLE HEIGHT="0"></TABLE>'''.verify
-		'''<TABLE HEIGHT="1"></TABLE>'''.verify
-		'''<TABLE HEIGHT="65534"></TABLE>'''.verify
-		'''<TABLE HEIGHT="65535"></TABLE>'''.verify
+		'''<TABLE HEIGHT="0"></TABLE>'''.hasNoErrors
+		'''<TABLE HEIGHT="1"></TABLE>'''.hasNoErrors
+		'''<TABLE HEIGHT="65534"></TABLE>'''.hasNoErrors
+		'''<TABLE HEIGHT="65535"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -248,26 +248,26 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_ROWS() {
-		'''<TABLE ROWS="*"></TABLE>'''.verify
+		'''<TABLE ROWS="*"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_SIDES() {
-		'''<TABLE SIDES="L"></TABLE>'''.verify
-		'''<TABLE SIDES="T"></TABLE>'''.verify
-		'''<TABLE SIDES="R"></TABLE>'''.verify
-		'''<TABLE SIDES="B"></TABLE>'''.verify
-		'''<TABLE SIDES="LT"></TABLE>'''.verify
-		'''<TABLE SIDES="LR"></TABLE>'''.verify
-		'''<TABLE SIDES="LB"></TABLE>'''.verify
-		'''<TABLE SIDES="TR"></TABLE>'''.verify
-		'''<TABLE SIDES="TB"></TABLE>'''.verify
-		'''<TABLE SIDES="RB"></TABLE>'''.verify
-		'''<TABLE SIDES="LTR"></TABLE>'''.verify
-		'''<TABLE SIDES="TRB"></TABLE>'''.verify
-		'''<TABLE SIDES="LRB"></TABLE>'''.verify
-		'''<TABLE SIDES="LTB"></TABLE>'''.verify
-		'''<TABLE SIDES="LTRB"></TABLE>'''.verify
+		'''<TABLE SIDES="L"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="T"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="R"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="B"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="LT"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="LR"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="LB"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="TR"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="TB"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="RB"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="LTR"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="TRB"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="LRB"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="LTB"></TABLE>'''.hasNoErrors
+		'''<TABLE SIDES="LTRB"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -292,42 +292,42 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_VALIGN() {
-		'''<TABLE VALIGN="MIDDLE"></TABLE>'''.verify
-		'''<TABLE VALIGN="BOTTOM"></TABLE>'''.verify
-		'''<TABLE VALIGN="TOP"></TABLE>'''.verify
-		'''<TABLE VALIGN="middle"></TABLE>'''.verify
-		'''<TABLE VALIGN="top"></TABLE>'''.verify
-		'''<TABLE VALIGN="bottom"></TABLE>'''.verify
+		'''<TABLE VALIGN="MIDDLE"></TABLE>'''.hasNoErrors
+		'''<TABLE VALIGN="BOTTOM"></TABLE>'''.hasNoErrors
+		'''<TABLE VALIGN="TOP"></TABLE>'''.hasNoErrors
+		'''<TABLE VALIGN="middle"></TABLE>'''.hasNoErrors
+		'''<TABLE VALIGN="top"></TABLE>'''.hasNoErrors
+		'''<TABLE VALIGN="bottom"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TABLE_WIDTH() {
-		'''<TABLE WIDTH="0"></TABLE>'''.verify
-		'''<TABLE WIDTH="1"></TABLE>'''.verify
-		'''<TABLE WIDTH="65534"></TABLE>'''.verify
-		'''<TABLE WIDTH="65535"></TABLE>'''.verify
+		'''<TABLE WIDTH="0"></TABLE>'''.hasNoErrors
+		'''<TABLE WIDTH="1"></TABLE>'''.hasNoErrors
+		'''<TABLE WIDTH="65534"></TABLE>'''.hasNoErrors
+		'''<TABLE WIDTH="65535"></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_ALIGN() {
-		'''<TABLE><TR><TD ALIGN="CENTER"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ALIGN="LEFT"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ALIGN="RIGHT"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ALIGN="TEXT"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ALIGN="center"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ALIGN="left"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ALIGN="right"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ALIGN="text"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD ALIGN="CENTER"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ALIGN="LEFT"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ALIGN="RIGHT"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ALIGN="TEXT"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ALIGN="center"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ALIGN="left"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ALIGN="right"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ALIGN="text"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_BALIGN() {
-		'''<TABLE><TR><TD BALIGN="CENTER"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BALIGN="LEFT"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BALIGN="RIGHT"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BALIGN="center"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BALIGN="left"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BALIGN="right"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD BALIGN="CENTER"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BALIGN="LEFT"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BALIGN="RIGHT"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BALIGN="center"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BALIGN="left"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BALIGN="right"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -337,26 +337,26 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_BORDER() {
-		'''<TABLE><TR><TD BORDER="0"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BORDER="1"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BORDER="254"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD BORDER="255"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD BORDER="0"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BORDER="1"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BORDER="254"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD BORDER="255"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_CELLPADDING() {
-		'''<TABLE><TR><TD CELLPADDING="0"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD CELLPADDING="1"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD CELLPADDING="254"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD CELLPADDING="255"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD CELLPADDING="0"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD CELLPADDING="1"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD CELLPADDING="254"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD CELLPADDING="255"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_CELLSPACING() {
-		'''<TABLE><TR><TD CELLSPACING="0"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD CELLSPACING="1"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD CELLSPACING="126"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD CELLSPACING="127"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD CELLSPACING="0"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD CELLSPACING="1"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD CELLSPACING="126"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD CELLSPACING="127"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -366,18 +366,18 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_COLSPAN() {
-		'''<TABLE><TR><TD COLSPAN="1"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD COLSPAN="2"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD COLSPAN="65534"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD COLSPAN="65535"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD COLSPAN="1"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD COLSPAN="2"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD COLSPAN="65534"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD COLSPAN="65535"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_FIXEDSIZE() {
-		'''<TABLE><TR><TD FIXEDSIZE="FALSE"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD FIXEDSIZE="TRUE"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD FIXEDSIZE="false"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD FIXEDSIZE="true"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD FIXEDSIZE="FALSE"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD FIXEDSIZE="TRUE"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD FIXEDSIZE="false"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD FIXEDSIZE="true"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -387,10 +387,10 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_HEIGHT() {
-		'''<TABLE><TR><TD HEIGHT="0"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD HEIGHT="1"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD HEIGHT="65534"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD HEIGHT="65535"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD HEIGHT="0"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD HEIGHT="1"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD HEIGHT="65534"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD HEIGHT="65535"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -410,29 +410,29 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_ROWSPAN() {
-		'''<TABLE><TR><TD ROWSPAN="1"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ROWSPAN="2"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ROWSPAN="65534"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD ROWSPAN="65535"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD ROWSPAN="1"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ROWSPAN="2"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ROWSPAN="65534"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD ROWSPAN="65535"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_SIDES() {
-		'''<TABLE><TR><TD SIDES="L"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="T"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="R"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="B"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="LT"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="LR"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="LB"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="TR"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="TB"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="RB"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="LTR"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="TRB"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="LRB"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="LTB"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD SIDES="LTRB"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD SIDES="L"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="T"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="R"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="B"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="LT"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="LR"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="LB"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="TR"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="TB"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="RB"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="LTR"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="TRB"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="LRB"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="LTB"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD SIDES="LTRB"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -457,20 +457,20 @@ class DotHtmlLabelParserTests {
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_VALIGN() {
-		'''<TABLE><TR><TD VALIGN="MIDDLE"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD VALIGN="BOTTOM"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD VALIGN="TOP"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD VALIGN="middle"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD VALIGN="bottom"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD VALIGN="top"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD VALIGN="MIDDLE"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD VALIGN="BOTTOM"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD VALIGN="TOP"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD VALIGN="middle"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD VALIGN="bottom"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD VALIGN="top"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
 	def test_valid_attribute_value_of_tag_TD_WIDTH() {
-		'''<TABLE><TR><TD WIDTH="0"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD WIDTH="1"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD WIDTH="65534"></TD></TR></TABLE>'''.verify
-		'''<TABLE><TR><TD WIDTH="65535"></TD></TR></TABLE>'''.verify
+		'''<TABLE><TR><TD WIDTH="0"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD WIDTH="1"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD WIDTH="65534"></TD></TR></TABLE>'''.hasNoErrors
+		'''<TABLE><TR><TD WIDTH="65535"></TD></TR></TABLE>'''.hasNoErrors
 	}
 
 	@Test
@@ -503,11 +503,11 @@ class DotHtmlLabelParserTests {
 						.tag.children.get(0).tag.children.get(0).text)
 	}
 
-	private def verify(CharSequence text) {
-		text.toString.verify
+	private def hasNoErrors(CharSequence text) {
+		text.toString.hasNoErrors
 	}
 
-	private def verify(String text) {
+	private def hasNoErrors(String text) {
 		text.parse.assertNoErrors
 	}
 }
