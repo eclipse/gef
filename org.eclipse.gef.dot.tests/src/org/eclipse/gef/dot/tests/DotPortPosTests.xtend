@@ -30,37 +30,37 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotPortPosInjectorProvider)
 class DotPortPosTests {
-	
+
 	@Inject extension ParseHelper<PortPos>
 	@Inject extension ValidationTestHelper
 
 	@Test def compassPointAsName() {
-		"w:sw".assertNoErrors
+		"w:sw".hasNoErrors
 	}
 
 	@Test def noCompassPoint() {
-		"hello".assertNoErrors
+		"hello".hasNoErrors
 	}
 
 	@Test def justCompassPoint() {
-		"ne".assertNoErrors
+		"ne".hasNoErrors
 	}
 
 	@Test def testTwoColons() {
-		"port:w:w".assertSyntaxError("':'")
+		"port:w:w".hasOneSyntaxErrorOn("':'")
 	}
 
 	@Test def testInvalidCompassPoint() {
-		"king:r".assertSyntaxError("'r'")
+		"king:r".hasOneSyntaxErrorOn("'r'")
 	}
 
-	private def assertNoErrors(String text) {
+	private def hasNoErrors(String text) {
 		val ast = text.parse
 		ast.assertNotNull
 		ast.assertNoErrors
 	}
 
-	private def assertSyntaxError(String text, String errorProneText) {
+	private def hasOneSyntaxErrorOn(String text, String errorProneText) {
 		val ast = text.parse
 		ast.assertNotNull
 		ast.assertError(PortposPackage.eINSTANCE.portPos, Diagnostic.SYNTAX_DIAGNOSTIC, errorProneText)
