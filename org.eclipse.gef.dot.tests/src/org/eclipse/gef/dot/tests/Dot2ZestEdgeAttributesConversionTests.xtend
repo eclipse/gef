@@ -115,7 +115,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			digraph {
 				1->2[dir=back]
 			}
-		'''.assertEdgeSourceDecorationStyle('''''')
+		'''.assertEdgeSourceDecorationStyles('''''')
 	}
 	
 	@Test def edge_sourceDecorationStyle002() {
@@ -123,7 +123,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			digraph {
 				1->2[color=green arrowtail=normal dir=back]
 			}
-		'''.assertEdgeSourceDecorationStyle('''
+		'''.assertEdgeSourceDecorationStyles('''
 			-fx-stroke: #00ff00;
 			-fx-fill: #00ff00;
 		''')
@@ -134,7 +134,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			digraph {
 				1->2
 			}
-		'''.assertEdgeTargetDecorationStyle('''''')
+		'''.assertEdgeTargetDecorationStyles('''''')
 	}
 	
 	@Test def edge_targetDecorationStyle002() {
@@ -142,7 +142,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			digraph {
 				1->2[color=green arrowhead=normal]
 			}
-		'''.assertEdgeTargetDecorationStyle('''
+		'''.assertEdgeTargetDecorationStyles('''
 			-fx-stroke: #00ff00;
 			-fx-fill: #00ff00;
 		''')
@@ -249,12 +249,12 @@ class Dot2ZestEdgeAttributesConversionTests {
 		expected.assertEquals(actual)
 	}
 	
-	private def assertEdgeSourceDecorationStyle(CharSequence dotText, String expected) {
-		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecorationStyle(expected)
+	private def assertEdgeSourceDecorationStyles(CharSequence dotText, String... expected) {
+		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecorationStyles(expected)
 	}
 	
-	private def assertEdgeTargetDecorationStyle(CharSequence dotText, String expected) {
-		dotText.firstEdge.convert.targetDecoration.assertEdgeDecorationStyle(expected)
+	private def assertEdgeTargetDecorationStyles(CharSequence dotText, String... expected) {
+		dotText.firstEdge.convert.targetDecoration.assertEdgeDecorationStyles(expected)
 	}
 
 	private def assertEdgeLabel(CharSequence dotText, String expected) {
@@ -277,14 +277,30 @@ class Dot2ZestEdgeAttributesConversionTests {
 		expected.assertEquals(actual)
 	}
 	
-	private def assertEdgeDecorationStyle(javafx.scene.Node decoration, String expected) {
+	private def assertEdgeDecorationStyles(javafx.scene.Node decoration, String... expectedStyles) {
+		decoration.hasSameNumberOfDecorationStylesAs(expectedStyles)
+		
 		if(decoration instanceof Group) {
-			decoration.children.forEach[
-				expected.assertEquals(style.split)
-			]
+			for(var i=0; i<decoration.children.size; i++) {
+				decoration.children.get(i).hasStyle(expectedStyles.get(i))
+			}
 		} else {
-			expected.assertEquals(decoration.style.split)
+			decoration.hasStyle(expectedStyles.get(0))
 		}
+	}
+	
+	private def hasStyle(javafx.scene.Node decoration, String expectedStyle) {
+		expectedStyle.assertEquals(decoration.style.split)
+	}
+		
+	private def hasSameNumberOfDecorationStylesAs(javafx.scene.Node decoration, String... expected) {
+		val numberOfActualDecorations = if(decoration instanceof Group) decoration.children.size else 1
+		val numberOfExpectedDecorations = expected.size
+		
+		assertEquals(
+			"The number of expected decoration styles does not match the number of actual decoration styles.", 
+			numberOfExpectedDecorations, numberOfActualDecorations
+		)
 	}
 	
 	private def firstEdge(CharSequence dotText) {
