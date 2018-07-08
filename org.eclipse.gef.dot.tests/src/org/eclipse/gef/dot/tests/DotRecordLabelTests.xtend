@@ -19,7 +19,6 @@ import org.eclipse.gef.dot.internal.language.DotRecordLabelInjectorProvider
 import org.eclipse.gef.dot.internal.language.recordlabel.Field
 import org.eclipse.gef.dot.internal.language.recordlabel.RLabel
 import org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelFactory
-import org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelPackage
 import org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -28,66 +27,67 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import static org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelPackage.Literals.*
 import static org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(DotRecordLabelInjectorProvider)
 class DotRecordLabelTests {
-	
+
 	@Inject extension ParseHelper<RLabel>
 	@Inject extension ValidationTestHelper
 
 	// good Syntax
 	@Test def emptyString() {
-		''''''.assertNoErrors.assertTreeEquals(
+		''''''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField(null))
 		)
 	}
 
 	@Test def singleLetter() {
-		'''F'''.assertNoErrors.assertTreeEquals(
+		'''F'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("F"))
 		)
 	}
 
 	@Test def specialSign() {
-		'''§'''.assertNoErrors.assertTreeEquals(
+		'''§'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("§"))
 		)
 	}
 
 	@Test def word() {
-		'''Hello'''.assertNoErrors.assertTreeEquals(
+		'''Hello'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("Hello"))
 		)
 	}
 
 	@Test def escapedCharacter() {
-		'''Please\ read\ §146'''.assertNoErrors.assertTreeEquals(
+		'''Please\ read\ §146'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''Please\ read\ §146'''))
 		)
 	}
 
 	@Test def escapedBraceInText() {
-		'''Ple\}se146read'''.assertNoErrors.assertTreeEquals(
+		'''Ple\}se146read'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''Ple\}se146read'''))
 		)
 	}
 
 	@Test def escapedBackslash() {
-		'''\\'''.assertNoErrors.assertTreeEquals(
+		'''\\'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''\\'''))
 		)
 	}
 
 	@Test def whiteSpaceBetweenLetters() {
-		'''k D'''.assertNoErrors.assertTreeEquals(
+		'''k D'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''k D'''))
 		)
 	}
 
 	@Test def separatorSign() {
-		'''abc|def'''.assertNoErrors.assertTreeEquals(
+		'''abc|def'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("abc"),
 				fieldIDinField("def")
@@ -96,7 +96,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def threeFields() {
-		'''abc | def | gh4i'''.assertNoErrors.assertTreeEquals(
+		'''abc | def | gh4i'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("abc"),
 				fieldIDinField("def"),
@@ -106,12 +106,12 @@ class DotRecordLabelTests {
 	}
 
 	@Test def simpleFourFields() {
-		'''A | B | C | D'''.assertNoErrors.assertTreeEquals(
+		'''A | B | C | D'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("A"), fieldIDinField("B"), fieldIDinField("C"), fieldIDinField("D")))
 	}
 
 	@Test def emptyRotatedLabel() {
-		'''{}'''.assertNoErrors.assertTreeEquals(
+		'''{}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField(null)
 			)))
@@ -119,7 +119,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def simpleRotation() {
-		'''{ Hi }'''.assertNoErrors.assertTreeEquals(
+		'''{ Hi }'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Hi")
 			)))
@@ -127,7 +127,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def rotatedFourFieldsLabel() {
-		'''{ Hi | This | Is | Awesome }'''.assertNoErrors.assertTreeEquals(
+		'''{ Hi | This | Is | Awesome }'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Hi"),
 				fieldIDinField("This"),
@@ -138,7 +138,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def rotatedMoreComplexLabel() {
-		'''Hi | {Test | Section 2 } | xyz'''.assertNoErrors.assertTreeEquals(
+		'''Hi | {Test | Section 2 } | xyz'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("Hi"),
 				rotationWrapper(rlabel(
@@ -151,13 +151,13 @@ class DotRecordLabelTests {
 	}
 
 	@Test def fieldId() {
-		'''<fgh> someField'''.assertNoErrors.assertTreeEquals(
+		'''<fgh> someField'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("fgh", "someField"))
 		)
 	}
 
 	@Test def emptyPortname() {
-		'''<>'''.assertNoErrors.assertTreeEquals(
+		'''<>'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("", null)
 			)
@@ -165,7 +165,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def emptyPortnameWithText() {
-		'''<> kids'''.assertNoErrors.assertTreeEquals(
+		'''<> kids'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("", "kids")
 			)
@@ -173,13 +173,13 @@ class DotRecordLabelTests {
 	}
 
 	@Test def namedPort() {
-		'''<Label>'''.assertNoErrors.assertTreeEquals(
+		'''<Label>'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("Label", null))
 		)
 	}
 
 	@Test def portInHField() {
-		'''{<Label>}'''.assertNoErrors.assertTreeEquals(
+		'''{<Label>}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(
 				rlabel(fieldIDinField("Label", null))
 			))
@@ -187,7 +187,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def portInHFieldWithText() {
-		'''{<Label> Coolstuff!}'''.assertNoErrors.assertTreeEquals(
+		'''{<Label> Coolstuff!}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(
 				rlabel(fieldIDinField("Label", "Coolstuff!"))
 			))
@@ -195,7 +195,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def portWithEscapedCharInName() {
-		'''<some_weans\{>'''.assertNoErrors.assertTreeEquals(
+		'''<some_weans\{>'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField('''some_weans\{''', null)
 			)
@@ -224,7 +224,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def documentationExampleLine1() {
-		'''<f0> left|<f1> mid&#92; dle|<f2> right'''.assertNoErrors.assertTreeEquals(
+		'''<f0> left|<f1> mid&#92; dle|<f2> right'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("f0", "left"),
 				fieldIDinField("f1", "mid&#92; dle"),
@@ -234,7 +234,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def documentationExampleLine3() {
-		'''hello&#92;nworld |{ b |{c|<here> d|e}| f}| g | h'''.assertNoErrors.assertTreeEquals(
+		'''hello&#92;nworld |{ b |{c|<here> d|e}| f}| g | h'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("hello&#92;nworld"),
 				rotationWrapper(rlabel(
@@ -257,7 +257,7 @@ class DotRecordLabelTests {
 		hello&#92;nworld |{ b |{c|<here>
 		 d
 		 |e}| f}|
-		g | h'''.assertNoErrors.assertTreeEquals(
+		g | h'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("hello&#92;nworld"),
 				rotationWrapper(rlabel(
@@ -280,7 +280,7 @@ class DotRecordLabelTests {
 		hello
 		world |{ b |{c|<here>
 		 d|e}| f}|
-		g | h'''.assertNoErrors.assertTreeEquals(
+		g | h'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField('''hello world'''), //this deviates from graphviz rendering
 //				fieldID(''' // this should be the assertion, if rendering identical to graphviz
@@ -302,7 +302,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def complexExampleUsingSpecialSignsRotated() {
-		'''{Animal|+ name : string\l+ age : int\l|+ die() : void\l}'''.assertNoErrors.assertTreeEquals(
+		'''{Animal|+ name : string\l+ age : int\l|+ die() : void\l}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Animal"),
 				fieldIDinField('''+ name : string\l+ age : int\l'''),
@@ -313,7 +313,7 @@ class DotRecordLabelTests {
 	}
 
 	@Test def fieldIDsWithNoEntry() {
-		'''<f0> (nil)| | |-1'''.assertNoErrors.assertTreeEquals(
+		'''<f0> (nil)| | |-1'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("f0", "(nil)"),
 				fieldIDinField(null),
@@ -324,55 +324,55 @@ class DotRecordLabelTests {
 	}
 
 	// bad Syntax
-	@Test def void singleClosePortFails() { '''>'''.assertSyntaxErrorLabel(">") }
+	@Test def void singleClosePortFails() { '''>'''.hasSyntaxErrorOnLabel(">") }
 
-	@Test def void singleCloseBraceFails() { '''}'''.assertSyntaxErrorLabel("}") }
+	@Test def void singleCloseBraceFails() { '''}'''.hasSyntaxErrorOnLabel("}") }
 
-	@Test def void missingOpenBraceFails() { '''}asas'''.assertSyntaxErrorLabel("}") }
+	@Test def void missingOpenBraceFails() { '''}asas'''.hasSyntaxErrorOnLabel("}") }
 
-	@Test def void escapedOpeningBraceFails() { '''\{ Hello }'''.assertSyntaxErrorLabel("}") }
+	@Test def void escapedOpeningBraceFails() { '''\{ Hello }'''.hasSyntaxErrorOnLabel("}") }
 
-	@Test def void escapedClosingBraceFails() { '''{ Hello \}'''.assertSyntaxErrorfieldIDinField("<EOF>") }
+	@Test def void escapedClosingBraceFails() { '''{ Hello \}'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
 
-	@Test def void escapedOpeningPortFails() { '''\< Hello >'''.assertSyntaxErrorLabel(">") }
+	@Test def void escapedOpeningPortFails() { '''\< Hello >'''.hasSyntaxErrorOnLabel(">") }
 
-	@Test def void escapedClosingPortFails() { '''< Hello \>'''.assertSyntaxErrorPort("<EOF>") }
+	@Test def void escapedClosingPortFails() { '''< Hello \>'''.hasSyntaxErrorOnPort("<EOF>") }
 
-	@Test def void missingClosingPortFails() { '''< Hello'''.assertSyntaxErrorPort("<EOF>") }
+	@Test def void missingClosingPortFails() { '''< Hello'''.hasSyntaxErrorOnPort("<EOF>") }
 
-	@Test def void portWithBraceFails() { '''< Hello }>'''.assertSyntaxErrorPort(">") }
+	@Test def void portWithBraceFails() { '''< Hello }>'''.hasSyntaxErrorOnPort(">") }
 
-	@Test def void braceUnclosedFirstFieldFails() { '''{ Hello | MoreHi'''.assertSyntaxErrorfieldIDinField("<EOF>") }
+	@Test def void braceUnclosedFirstFieldFails() { '''{ Hello | MoreHi'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
 
-	@Test def void braceUnclosedSecondFieldFails() { '''hello|{ hslnh'''.assertSyntaxErrorfieldIDinField("<EOF>") }
+	@Test def void braceUnclosedSecondFieldFails() { '''hello|{ hslnh'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
 
-	@Test def void wrongPosLabelFails() { '''sdsdsdsd<>'''.assertSyntaxErrorLabel("<") }
+	@Test def void wrongPosLabelFails() { '''sdsdsdsd<>'''.hasSyntaxErrorOnLabel("<") }
 
-	@Test def void bracesInFieldFail() { '''This{Is}Illegal'''.assertSyntaxErrorLabel("{") }
+	@Test def void bracesInFieldFail() { '''This{Is}Illegal'''.hasSyntaxErrorOnLabel("{") }
 
-	@Test def void bracesInMiddleFail() { '''This{Is}Illegal'''.assertSyntaxErrorLabel("{") }
+	@Test def void bracesInMiddleFail() { '''This{Is}Illegal'''.hasSyntaxErrorOnLabel("{") }
 
-	@Test def void bracesAfterPortNameFail() { '''<Port1>{Stuff}'''.assertSyntaxErrorLabel("{") }
+	@Test def void bracesAfterPortNameFail() { '''<Port1>{Stuff}'''.hasSyntaxErrorOnLabel("{") }
 
-	@Test def void complexBracesMistaken() { '''<f0> left|{ middle|<f2> right} boo'''.assertSyntaxErrorLabel("boo") }
+	@Test def void complexBracesMistaken() { '''<f0> left|{ middle|<f2> right} boo'''.hasSyntaxErrorOnLabel("boo") }
 
 	@Test def void missingABraceMiddle() {
 		'''
 		hello word | cool stuff going on | { <free> free beer here |
-		<expensive wine there } | sad its just a test'''.assertSyntaxErrorRotationWrapper(">")
+		<expensive wine there } | sad its just a test'''.hasSyntaxErrorOnRotationWrapper(">")
 	}
 
 	// validation tests
 	@Test def void sameNamePortsSameLevel() {
-		'''<here>|<here>'''.assertValidationErrorfieldIDinField(DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE)
+		'''<here>|<here>'''.hasValidationErrorOnFieldIDinField(DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE)
 	}
 
 	@Test def void sameNamePortsDifferentLevel() {
-		'''a | <b> c | { <d> f | <b> f } | x'''.assertValidationErrorfieldID(
+		'''a | <b> c | { <d> f | <b> f } | x'''.hasValidationErrorOnFieldID(
 			DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE,
 			5,
 			1
-		).assertValidationErrorfieldID(
+		).hasValidationErrorOnFieldID(
 			DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE,
 			23,
 			1
@@ -380,65 +380,64 @@ class DotRecordLabelTests {
 	}
 
 	@Test def void twoEmptyPortNamesNoError() {
-		'''<> a | <> b'''.assertNoErrors
+		'''<> a | <> b'''.hasNoErrors
 	}
 
 	@Test def void emptyPortNameWarning() {
 		'''<>'''.parse.assertWarning(
-			RecordlabelPackage.eINSTANCE.fieldID,
+			FIELD_ID,
 			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
 		)
 	}
 
 	@Test def complexEmptyPortNameWarning() {
 		'''a | <b> c | { <d> f | <> f } | x'''.parse.assertWarning(
-			RecordlabelPackage.eINSTANCE.fieldID,
+			FIELD_ID,
 			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
 		)
 	}
 
 	@Test def noWhitespaceWarning() {
-		'''a | <b> coolstuff | { <d> f\ kinds | <f> f\nbut } | x'''.assertNoIssues
+		'''a | <b> coolstuff | { <d> f\ kinds | <f> f\nbut } | x'''.hasNoIssues
 	}
 
-	private def assertValidationErrorfieldID(CharSequence content, String error, int offset,
-		int length) {
-		assertError(parse(content), RecordlabelPackage.eINSTANCE.fieldID, error, offset, length)
+	private def hasValidationErrorOnFieldID(CharSequence content, String error, int offset, int length) {
+		content.parse.assertError(FIELD_ID, error, offset, length)
 		content
 	}
 
-	private def assertValidationErrorfieldIDinField(CharSequence content, String error) {
-		assertError(parse(content), RecordlabelPackage.eINSTANCE.fieldID, error)
+	private def hasValidationErrorOnFieldIDinField(CharSequence content, String error) {
+		content.parse.assertError(FIELD_ID, error)
 		content
 	}
 
-	private def assertNoIssues(CharSequence sequence) {
+	private def hasNoIssues(CharSequence sequence) {
 		sequence.parse.assertNoIssues
 	}
 
-	private def assertNoErrors(CharSequence sequence) {
+	private def hasNoErrors(CharSequence sequence) {
 		sequence.parse.assertNoErrors
 		sequence
 	}
 
-	private def assertSyntaxErrorLabel(CharSequence content, String character) {
-		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.RLabel, "'" + character + "'")
+	private def hasSyntaxErrorOnLabel(CharSequence content, String character) {
+		content.hasSyntaxError(RLABEL, "'" + character + "'")
 	}
 
-	private def assertSyntaxErrorRotationWrapper(CharSequence content, String character) {
-		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.field, "'" + character + "'")
+	private def hasSyntaxErrorOnRotationWrapper(CharSequence content, String character) {
+		content.hasSyntaxError(FIELD, "'" + character + "'")
 	}
 
-	private def assertSyntaxErrorfieldIDinField(CharSequence content, String character) {
-		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.fieldID, "'" + character + "'")
+	private def hasSyntaxErrorOnFieldIDinField(CharSequence content, String character) {
+		content.hasSyntaxError(FIELD_ID, "'" + character + "'")
 	}
 
-	private def assertSyntaxErrorPort(CharSequence content, String character) {
-		assertSyntaxError(content, RecordlabelPackage.eINSTANCE.fieldID, "'" + character + "'")
+	private def hasSyntaxErrorOnPort(CharSequence content, String character) {
+		content.hasSyntaxError(FIELD_ID, "'" + character + "'")
 	}
 
-	private def assertSyntaxError(CharSequence content, EClass eClass, String message) {
-		assertError(parse(content), eClass, "org.eclipse.xtext.diagnostics.Diagnostic.Syntax", message)
+	private def hasSyntaxError(CharSequence content, EClass eClass, String message) {
+		content.parse.assertError(eClass, "org.eclipse.xtext.diagnostics.Diagnostic.Syntax", message)
 		content
 	}
 
