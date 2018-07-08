@@ -68,6 +68,7 @@ import org.eclipse.gef.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 /**
@@ -832,9 +833,23 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (edgeDecoration instanceof Group) {
 			Group group = (Group) edgeDecoration;
 			for (javafx.scene.Node child : group.getChildren()) {
-				child.setStyle(style);
+				if (styleShouldBeSetOn(child)) {
+					child.setStyle(style);
+				}
 			}
 		}
+	}
+
+	private boolean styleShouldBeSetOn(javafx.scene.Node child) {
+		/*
+		 * do not apply the style on children having transparent color e.g. in
+		 * case of 'none' arrowshapes
+		 */
+		if (child instanceof Shape) {
+			return ((Shape) child)
+					.getFill() != javafx.scene.paint.Color.TRANSPARENT;
+		}
+		return true;
 	}
 
 	protected void convertAttributes(Graph dot, Graph zest) {
