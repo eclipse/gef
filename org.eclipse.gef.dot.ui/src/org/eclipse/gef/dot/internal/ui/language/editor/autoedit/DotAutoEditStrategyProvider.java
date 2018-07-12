@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.editor.autoedit;
 
+import org.eclipse.gef.dot.internal.ui.language.editor.DotTerminalsTokenTypeToPartitionMapper;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.xtext.ui.editor.autoedit.DefaultAutoEditStrategyProvider;
 
@@ -22,8 +24,13 @@ public class DotAutoEditStrategyProvider
 		super.configure(acceptor);
 		configureAngleBrackets(acceptor);
 
-		acceptor.accept(new DotAutoEditStrategy(),
-				IDocument.DEFAULT_CONTENT_TYPE);
+		/*
+		 * TODO: verify why the strategy has to added to both content types
+		 */
+		IAutoEditStrategy strategy = new DotAutoEditStrategy();
+		acceptor.accept(strategy, IDocument.DEFAULT_CONTENT_TYPE);
+		acceptor.accept(strategy,
+				DotTerminalsTokenTypeToPartitionMapper.HTML_STRING_PARTITION);
 	}
 
 	protected void configureAngleBrackets(IEditStrategyAcceptor acceptor) {

@@ -196,6 +196,24 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			}
 		''')
 	}
+	
+	@Test def testAutoEdit015() {
+		'''
+			digraph {
+				1[label=<
+					<b|
+				>]
+				1->2
+			}
+		'''.testAutoEdit('>', '''
+			digraph {
+				1[label=<
+					<b>|</b>
+				>]
+				1->2
+			}
+		''')
+	}
 
 	private def testAutoEdit(CharSequence it, char key, CharSequence newContent) {
 		// given
