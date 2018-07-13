@@ -7,17 +7,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - Initial API and contribution
- *     Tamas Miklossy   (itemis AG) - Initial API and contribution
+ *     Matthias Wienand   (itemis AG) - Initial API and contribution
+ *     Tamas Miklossy     (itemis AG) - Initial API and contribution
+ *     Zoey Gerrit Prigge (itemis AG) - compute HTML color (bug #321775)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
 
+import java.io.StringReader;
+
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.xtext.parser.IParser;
 
 public class DotColorUtil {
 
@@ -66,5 +72,30 @@ public class DotColorUtil {
 			javaFxColor = DotColors.get(currentColorScheme, colorName);
 		}
 		return javaFxColor;
+	}
+
+	/**
+	 * Returns the java Fx representation of a HTML-like label color attribute
+	 * 
+	 * @param colorScheme
+	 *            The colorscheme attribute value (or null if not defined).
+	 * @param htmlColor
+	 *            The string attribute value.
+	 * @return The color in javafx representation, or null if the javafx color
+	 *         representation cannot be determined.
+	 */
+	public String computeHtmlColor(String colorScheme, String htmlColor) {
+		if (htmlColor == null) {
+			return null;
+		}
+		IParser parser = DotActivator.getInstance().getInjector(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLOR)
+				.getInstance(IParser.class);
+		EObject rootNode = parser.parse(new StringReader(htmlColor))
+				.getRootASTElement();
+		if (rootNode instanceof Color) {
+			return computeZestColor(colorScheme, (Color) rootNode);
+		}
+		return null;
 	}
 }

@@ -14,6 +14,7 @@ package org.eclipse.gef.dot.internal.ui;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,6 +67,8 @@ import javafx.scene.text.Text;
 public class DotHTMLLabelJavaFxNode {
 
 	HtmlLabel root;
+
+	DotColorUtil colorUtil = new DotColorUtil();
 
 	/**
 	 * Creates a DotHTMLLabelJavaNode creator
@@ -357,12 +360,17 @@ public class DotHTMLLabelJavaFxNode {
 		 * Align (Note: For table ALIGN="CENTER|LEFT|RIGHT"), Cellspacing,
 		 * COLUMNS="*" for a vertical line between every column, ROWS="*" for a
 		 * horizontal line between every line, VALIGN="MIDDLE|BOTTOM|TOP"
+		 * 
 		 */
 
 		// FIXEDSIZE="FALSE|TRUE" used in HEIGHT and WIDTH attributes
 		HtmlAttr fixedSize = DotHtmlLabelHelper.getAttributeForTag(tag,
 				"fixedsize"); //$NON-NLS-1$
 
+		appendBgcolorAttribute(css,
+				DotHtmlLabelHelper.getAttributeForTag(tag, "bgcolor"), //$NON-NLS-1$
+				DotHtmlLabelHelper.getAttributeForTag(tag, "style"), //$NON-NLS-1$
+				DotHtmlLabelHelper.getAttributeForTag(tag, "gradientangle")); //$NON-NLS-1$
 		appendBorderAttribute(css,
 				DotHtmlLabelHelper.getAttributeForTag(tag, "border")); //$NON-NLS-1$
 		appendColorAttribute(css,
@@ -384,9 +392,7 @@ public class DotHTMLLabelJavaFxNode {
 			HtmlTag tableTag) {
 		StringBuilder css = new StringBuilder();
 		/*
-		 * Attributes TODO
-		 * 
-		 * Cellpadding, Gradientangle, Style
+		 * TODO Cellpadding
 		 * 
 		 * Attributes that are not relevant for layouting of the HTML label
 		 * Href, Port, Title, Tooltip
@@ -398,9 +404,10 @@ public class DotHTMLLabelJavaFxNode {
 		HtmlAttr fixedSize = DotHtmlLabelHelper.getAttributeForTag(tdTag,
 				"fixedsize"); //$NON-NLS-1$
 
-		appendBgcolorTdAttribute(css,
-				DotHtmlLabelHelper.getAttributeForTags("bgcolor", //$NON-NLS-1$
-						tdTag, tableTag));
+		appendBgcolorAttribute(css,
+				DotHtmlLabelHelper.getAttributeForTag(tdTag, "bgcolor"), //$NON-NLS-1$
+				DotHtmlLabelHelper.getAttributeForTag(tdTag, "style"), //$NON-NLS-1$
+				DotHtmlLabelHelper.getAttributeForTag(tdTag, "gradientangle")); //$NON-NLS-1$
 		appendBorderAttribute(css, borderAttributeForTd(tdTag, tableTag));
 		appendColorAttribute(css,
 				DotHtmlLabelHelper.getAttributeForTags("color", //$NON-NLS-1$
@@ -421,9 +428,10 @@ public class DotHTMLLabelJavaFxNode {
 	private void appendStyleTableAttribute(StringBuilder css, HtmlAttr style) {
 		if (style != null) {
 			String styleValue = unquotedValueForAttr(style).toLowerCase();
-			if (styleValue.equals("rounded")) //$NON-NLS-1$
+			if (styleValue.contains("rounded")) { //$NON-NLS-1$
 				css.append("-fx-border-radius: 5%;"); //$NON-NLS-1$
-			// TODO implement Radian support in Rounded attribute
+				css.append("-fx-background-radius: 5%;"); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -472,8 +480,9 @@ public class DotHTMLLabelJavaFxNode {
 
 	private void appendColorAttribute(StringBuilder css, HtmlAttr bordercolor) {
 		css.append("-fx-border-color:"); //$NON-NLS-1$
-		css.append(bordercolor != null ? unquotedValueForAttr(bordercolor)
-				: "black"); //$NON-NLS-1$
+		// TODO colorscheme
+		css.append(bordercolor != null ? colorUtil.computeHtmlColor(null,
+				unquotedValueForAttr(bordercolor)) : "black"); //$NON-NLS-1$
 		css.append(";"); //$NON-NLS-1$
 	}
 
@@ -496,10 +505,36 @@ public class DotHTMLLabelJavaFxNode {
 		return border;
 	}
 
-	private void appendBgcolorTdAttribute(StringBuilder css, HtmlAttr bgcolor) {
+	private void appendBgcolorAttribute(StringBuilder css, HtmlAttr bgcolor,
+			HtmlAttr style, HtmlAttr gradientAngle) {
 		if (bgcolor != null) {
 			css.append("-fx-background-color:"); //$NON-NLS-1$
-			css.append(unquotedValueForAttr(bgcolor));
+			// TODO colorscheme
+			List<String> colors = Arrays
+					.stream(unquotedValueForAttr(bgcolor).split(":")) //$NON-NLS-1$
+					.map(e -> colorUtil.computeHtmlColor(null, e))
+					.collect(Collectors.toList());
+			if (colors.size() > 1) {
+				if (style != null && unquotedValueForAttr(style).toLowerCase()
+						.contains("radial")) { //$NON-NLS-1$
+					css.append("radial-gradient("); //$NON-NLS-1$
+					// TODO gradientangle
+					css.append("center "); //$NON-NLS-1$
+					css.append("50% 50%"); //$NON-NLS-1$
+					css.append(", "); //$NON-NLS-1$
+					css.append("radius 50%, "); //$NON-NLS-1$
+				} else {
+					// TODO gradientangle
+					css.append("linear-gradient("); //$NON-NLS-1$
+					css.append("from 0% 0% to 100% 0%, "); //$NON-NLS-1$
+				}
+				css.append(colors.get(0));
+				css.append(", "); //$NON-NLS-1$
+				css.append(colors.get(1));
+				css.append(")"); //$NON-NLS-1$
+			} else {
+				css.append(colors.get(0));
+			}
 			css.append(";"); //$NON-NLS-1$
 		}
 	}
@@ -659,11 +694,11 @@ public class DotHTMLLabelJavaFxNode {
 				css.append(";"); //$NON-NLS-1$
 			}
 
-			String color = color();
+			// TODO colorscheme
+			String color = colorUtil.computeHtmlColor(null, color());
 			if (color != null) {
 				css.append("-fx-fill:"); //$NON-NLS-1$
-				css.append(color); // TODO check the CSS and Graphviz color
-									// differences
+				css.append(color);
 				css.append(";"); //$NON-NLS-1$
 			}
 
