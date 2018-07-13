@@ -198,6 +198,48 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodeLabel("a\nb")
 	}
 	
+	@Test def node_label007() {
+			'''
+				digraph {
+					1[label="label \N"]
+				}
+			'''.assertNodeLabel("label 1")
+	}
+	
+	@Test def node_label008() {
+		'''
+			digraph {
+				sample [label="\N"]
+			}
+		'''.assertNodeLabel("sample")
+	}
+	
+	@Test def node_label009() {
+		'''
+			graph mygraph {
+				a[label="graph: \G, node no. \N"]
+			}
+		'''.assertNodeLabel("graph: mygraph, node no. a")
+	}
+	
+	@Test def node_label010() {
+		//test to ascertain no loop is reached 
+		'''
+			graph {
+				a[label="\L"]
+			}
+		'''.assertNodeLabel("\\L")
+	}
+	
+	@Test def node_label011() {
+		//test to ascertain no NPE is reached 
+		'''
+			graph {
+				a[label="\G"]
+			}
+		'''.assertNodeLabel("")
+	}
+	
 	@Test def node_id001() {
 		'''
 			digraph {
@@ -236,6 +278,14 @@ class Dot2ZestNodeAttributesConversionTests {
 				1[xlabel="fantastic label"]
 			}
 		'''.assertNodeXLabel("fantastic label")
+	}
+	
+	@Test def node_xlabel003() { 
+		'''
+			digraph testedGraphName {
+				1[xlabel="node:\L graph:\G"]
+			}
+		'''.assertNodeXLabel("node:1 graph:testedGraphName")
 	}
 	
 	@Test def node_polygonbasedshape001() { 
@@ -545,6 +595,14 @@ class Dot2ZestNodeAttributesConversionTests {
 				1[tooltip="testing\nis\nfun"]
 			}
 		'''.assertNodeTooltip("testing\nis\nfun")
+	}
+	
+	@Test def node_tooltip003() {
+		'''
+			digraph testing{
+				nodename[label="label of \N", tooltip="l:\L n:\N g:\G"]
+			}
+		'''.assertNodeTooltip("l:label of nodename n:nodename g:testing")
 	}
 	
 	private def assertNodeLabelCssStyle(CharSequence dotText, String expected) {

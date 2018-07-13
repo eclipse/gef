@@ -14,6 +14,7 @@
  *                                    - Add support for all dot attributes (bug #461506)
  *     Zoey Gerrit Prigge (itemis AG) - Add support for record-based node shapes (bug #454629)
  *                                    - Add support for HTML labels (bug #321775)
+ *                                    - Fix handling of "\N", "\E", "\G" in labels (bug #534707)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -131,32 +132,31 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		String dotLabel = DotAttributes.getLabel(dot);
-		if ("\\E".equals(dotLabel)) { //$NON-NLS-1$
-			// The escString '\E' indicates that the edge's name becomes its
-			// label.
-			dotLabel = DotAttributes._getName(dot);
-		}
 		if (dotLabel != null) {
-			dotLabel = decode(dotLabel);
+			dotLabel = decodeEscString(dotLabel, dot);
+			dotLabel = decodeLineBreak(dotLabel);
 			ZestProperties.setLabel(zest, dotLabel);
 		}
 
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXlabel(dot);
 		if (dotXLabel != null) {
-			dotXLabel = decode(dotXLabel);
+			dotXLabel = decodeEscString(dotXLabel, dot);
+			dotXLabel = decodeLineBreak(dotXLabel);
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
 
 		// head and tail labels (headlabel, taillabel)
 		String dotHeadLabel = DotAttributes.getHeadlabel(dot);
 		if (dotHeadLabel != null) {
-			dotHeadLabel = decode(dotHeadLabel);
+			dotHeadLabel = decodeEscString(dotHeadLabel, dot);
+			dotHeadLabel = decodeLineBreak(dotHeadLabel);
 			ZestProperties.setTargetLabel(zest, dotHeadLabel);
 		}
 		String dotTailLabel = DotAttributes.getTaillabel(dot);
 		if (dotTailLabel != null) {
-			dotTailLabel = decode(dotTailLabel);
+			dotTailLabel = decodeEscString(dotTailLabel, dot);
+			dotTailLabel = decodeLineBreak(dotTailLabel);
 			ZestProperties.setSourceLabel(zest, dotTailLabel);
 		}
 
@@ -439,10 +439,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		return DotArrowShapeDecorations.get(arrowType, arrowSize);
 	}
 
-	private String decode(String text) {
-		return text.replaceAll("\\\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 	private List<Point> computeZestBSplineControlPoints(Edge dot) {
 		SplineType splineType = DotAttributes.getPosParsed(dot);
 		List<Point> controlPoints = new ArrayList<>();
@@ -505,11 +501,13 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		// label
 		String dotLabel = DotAttributes.getLabel(dot);
-		if (dotLabel == null || dotLabel.equals("\\N")) { //$NON-NLS-1$
-			// The escString '\N' (the node's default label) indicates that the
-			// node's name becomes its label.
-			dotLabel = DotAttributes._getName(dot);
+		// The escString '\N' is the node's default label (replaced by
+		// the node's name); i.e. the default label is the node's name.
+		if (dotLabel == null) {
+			dotLabel = "\\N"; //$NON-NLS-1$
 		}
+		dotLabel = decodeEscString(dotLabel, dot);
+
 		boolean isHtmlLabel = DotAttributes.getLabelRaw(dot) != null
 				? DotAttributes.getLabelRaw(dot)
 						.getType() == ID.Type.HTML_STRING
@@ -588,17 +586,16 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// The label of a record based node shape is consumed by the zest
 			// shape hence, it needs not to be set again.
 
-			// OrdinaryLabel
-			// TODO: find a better way/place to decode the label
-			if (dotLabel != null) {
-				dotLabel = decode(dotLabel);
-			}
+			// OrdinaryLabel (should never be null, due to standard label \N)
+			dotLabel = decodeLineBreak(dotLabel);
+
 			ZestProperties.setLabel(zest, dotLabel);
 		}
 
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXlabel(dot);
 		if (dotXLabel != null) {
+			dotXLabel = decodeEscString(dotXLabel, dot);
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
 
@@ -635,9 +632,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		EscString dotTooltip = DotAttributes.getTooltipParsed(dot);
 		if (dotTooltip != null) {
 			// TODO: consider EscString Justification
-			String zestTooltip = dotTooltip.getLines().stream()
+			String stringTooltip = dotTooltip.getLines().stream()
 					.map(JustifiedText::getText)
 					.collect(Collectors.joining("\n")); //$NON-NLS-1$
+			String zestTooltip = decodeEscString(stringTooltip, dot);
 			ZestProperties.setTooltip(zest, zestTooltip);
 		}
 
@@ -889,6 +887,90 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			}
 			ZestProperties.setLayoutAlgorithm(zest, algo);
 		}
+	}
+
+	private String decodeLineBreak(String text) {
+		// TODO support for \l \c by better way of decoding line breaks
+		return text.replaceAll("\\\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private String decodeEscString(String escString, Edge edge) {
+		Node tail = edge.getSource();
+		Node head = edge.getTarget();
+		Graph graph = edge.getGraph();
+
+		String label = DotAttributes.getLabel(edge);
+
+		String edgeName = DotAttributes._getName(edge);
+		String tailName = tail != null ? DotAttributes._getName(tail) : null;
+		String headName = head != null ? DotAttributes._getName(head) : null;
+		String graphName = graph != null ? DotAttributes._getName(graph) : null;
+
+		/*
+		 * \L is replaced first using the raw Label, such that we can avoid a
+		 * loop if a label contains \L. As such, we need to double all
+		 * backslashes as single backslashes are consumed by replace all.
+		 * 
+		 * Graphviz behaviour differs slightly for unset names and error
+		 * handling, however we cannot reproduce this (i.e. an internally used
+		 * variable is produced and for escape sequences invalid in this
+		 * context, e.g. \N, graphviz removes the backslash.)
+		 */
+		return escString.replaceAll("\\\\L", //$NON-NLS-1$
+				(label != null ? label : "").replaceAll("\\\\", //$NON-NLS-1$ //$NON-NLS-2$
+						"\\\\\\\\")) //$NON-NLS-1$
+				.replaceAll("\\\\E", edgeName != null ? edgeName : "") //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("\\\\T", tailName != null ? tailName : "") //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("\\\\H", headName != null ? headName : "") //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("\\\\G", graphName != null ? graphName : ""); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private String decodeEscString(String escString, Node node) {
+		Graph graph = node.getGraph();
+
+		String label = DotAttributes.getLabel(node);
+
+		String nodeName = DotAttributes._getName(node);
+		String graphName = graph != null ? DotAttributes._getName(graph) : null;
+
+		/*
+		 * \L is replaced first using the raw Label, such that we can avoid a
+		 * loop if a label contains \L. As such, we need to double all
+		 * backslashes as single backslashes are consumed by replace all.
+		 * 
+		 * For a node, the label defaults to \N.
+		 * 
+		 * Graphviz behaviour differs slightly for unset names and error
+		 * handling, however we cannot reproduce this (i.e. an internally used
+		 * variable is produced and for escape sequences invalid in this
+		 * context, e.g. \E, graphviz removes the backslash.)
+		 */
+		return escString.replaceAll("\\\\L", //$NON-NLS-1$
+				(label != null ? label : "\\N").replaceAll("\\\\", //$NON-NLS-1$ //$NON-NLS-2$
+						"\\\\\\\\")) //$NON-NLS-1$
+				.replaceAll("\\\\N", nodeName != null ? nodeName : "") //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("\\\\G", graphName != null ? graphName : ""); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private String decodeEscString(String escString, Graph graph) {
+		String label = DotAttributes.getLabel(graph);
+
+		String graphName = DotAttributes._getName(graph);
+
+		/*
+		 * \L is replaced first using the raw Label, such that we can avoid a
+		 * loop if a label contains \L. As such, we need to double all
+		 * backslashes as single backslashes are consumed by replace all.
+		 * 
+		 * Graphviz behaviour differs slightly for unset names and error
+		 * handling, however we cannot reproduce this (i.e. an internally used
+		 * variable is produced and for escape sequences invalid in this
+		 * context, e.g. \N, graphviz removes the backslash.)
+		 */
+		return escString.replaceAll("\\\\L", //$NON-NLS-1$
+				(label != null ? label : "").replaceAll("\\\\", //$NON-NLS-1$ //$NON-NLS-2$
+						"\\\\\\\\")) //$NON-NLS-1$
+				.replaceAll("\\\\G", graphName != null ? graphName : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private Options options;
