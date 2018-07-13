@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
+ *     Zoey Gerrit Prigge (itemis AG) - test cases for \E, \T, ... replacement (bug #534707)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -213,6 +214,22 @@ class Dot2ZestEdgeAttributesConversionTests {
 		'''.assertEdgeLabel("foo\nbar\nbaz")
 	}
 	
+	@Test def edge_label004() {
+		'''
+			digraph {
+				1->2[label="Test \E"]
+			}
+		'''.assertEdgeLabel("Test 1->2")
+	}
+	
+	@Test def edge_label005() {
+		'''
+			digraph samplegraph {
+				1->2[label="\E \G"]
+			}
+		'''.assertEdgeLabel("1->2 samplegraph")
+	}
+	
 	@Test def edge_externalLabel001() {
 		'''
 			digraph {
@@ -235,6 +252,14 @@ class Dot2ZestEdgeAttributesConversionTests {
 				1->2[xlabel="foo\nbar\nbaz"]
 			}
 		'''.assertEdgeExternalLabel("foo\nbar\nbaz")
+	}
+	
+	@Test def edge_externalLabel004() {
+		'''
+			digraph testedGraphName {
+				1->2[xlabel="g: \G e:\E h:\H t:\T"]
+			}
+		'''.assertEdgeExternalLabel("g: testedGraphName e:1->2 h:2 t:1")
 	}
 	
 	@Test def edge_sourceLabel001() {
@@ -260,6 +285,14 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeSourceLabel("foo\nbar\nbaz")
 	}
+	
+	@Test def edge_sourceLabel004() {
+		'''
+			digraph testedGraphName {
+				1->2[taillabel="g: \G e:\E h:\H t:\T"]
+			}
+		'''.assertEdgeSourceLabel("g: testedGraphName e:1->2 h:2 t:1")
+	}
 
 	@Test def edge_targetLabel001() {
 		'''
@@ -283,6 +316,23 @@ class Dot2ZestEdgeAttributesConversionTests {
 				1->2[headlabel="foo\nbar\nbaz"]
 			}
 		'''.assertEdgeTargetLabel("foo\nbar\nbaz")
+	}
+	
+	@Test def edge_targetLabel004() {
+		'''
+			digraph testedGraphName {
+				1->2[headlabel="g: \G e:\E h:\H t:\T"]
+			}
+		'''.assertEdgeTargetLabel("g: testedGraphName e:1->2 h:2 t:1")
+	}
+	
+	@Test def edge_targetLabel005() {
+		//test against null pointer exception
+		'''
+			digraph {
+				1->2[headlabel="\G\L"]
+			}
+		'''.assertEdgeTargetLabel("")
 	}
 	
 	private def assertEdgeStyle(CharSequence dotText, String expected) {
