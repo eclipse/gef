@@ -1326,6 +1326,25 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 	
+	@Test def subgraph() {
+		'''
+			graph {
+				
+				subgraph {
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
 	private def assertZestConversion(CharSequence dotText, CharSequence expectedZestGraphText) {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = dotText.parse

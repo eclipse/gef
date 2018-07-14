@@ -189,6 +189,14 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodeLabel("label")
 	}
 	
+	@Test def node_label006() {
+		'''
+			digraph {
+				1[label="a\nb"]
+			}
+		'''.assertNodeLabel("a\nb")
+	}
+	
 	@Test def node_id001() {
 		'''
 			digraph {
