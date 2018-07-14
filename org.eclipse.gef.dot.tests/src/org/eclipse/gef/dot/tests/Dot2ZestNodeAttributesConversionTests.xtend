@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation
- *
+ *     Tamas Miklossy (itemis AG) - implement additional test cases
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -57,6 +57,56 @@ class Dot2ZestNodeAttributesConversionTests {
 	def static void before() {
 		DotTestUtils.registerDotSubgrammarPackages
 		converter.options.emulateLayout=false //TODO remove once FX tests work
+	}
+	
+	@Test def node_fontcolor001() {
+		'''
+			graph {
+				1[fontcolor=red]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def node_fontcolor002() {
+		'''
+			graph {
+				1[fontcolor="#76eec6"]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-fill: #76eec6;
+		''')
+	}
+	
+	@Test def node_fontcolor003() {
+		'''
+			graph {
+				1[fontcolor="/accent3/3"]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-fill: #fdc086;
+		''')
+	}
+	
+	@Test def node_fontcolor004() {
+		'''
+			graph {
+				1[colorscheme=accent3 fontcolor=2]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-fill: #beaed4;
+		''')
+	}
+	
+	@Test def node_fontcolor005() {
+		'''
+			graph {
+				1[fontcolor="0.482 0.714 0.878"]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-fill: hsb(173.51999999999998, 71.39999999999999%, 87.8%);
+		''')
 	}
 
 	@Test def node_height001() {
@@ -470,6 +520,11 @@ class Dot2ZestNodeAttributesConversionTests {
 				1[tooltip="testing\nis\nfun"]
 			}
 		'''.assertNodeTooltip("testing\nis\nfun")
+	}
+	
+	private def assertNodeLabelCssStyle(CharSequence dotText, String expected) {
+		val actual = dotText.firstNode.convert.labelCssStyle
+		expected.assertEquals(actual.split)
 	}
 			
 	private def assertNodeWidth(CharSequence dotText, double expected) {

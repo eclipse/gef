@@ -643,6 +643,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setExternalLabelPosition(zest,
 					computeZestLabelPosition(dotXlpParsed, dotXLabel));
 		}
+
+		// label fontcolor
+		String zestNodeLabelCssStyle = computeZestNodeLabelCssStyle(dot);
+		if (zestNodeLabelCssStyle != null) {
+			ZestProperties.setLabelCssStyle(zest, zestNodeLabelCssStyle);
+		}
 	}
 
 	private StringBuilder computeZestStyle(Node dot,
@@ -714,6 +720,19 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// TODO: respect font settings (font name and size)
 		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
 		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
+	}
+
+	private String computeZestNodeLabelCssStyle(Node dot) {
+		Color dotColor = DotAttributes.getFontcolorParsed(dot);
+		if (dotColor != null) {
+			String dotColorScheme = DotAttributes.getColorscheme(dot);
+			String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
+					dotColor);
+			if (javaFxColor != null) {
+				return "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return null;
 	}
 
 	/**
