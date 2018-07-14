@@ -451,6 +451,13 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			// System.out.println("[DOT Output] [" + currentDot + "]");
 		}
 		setGraphAsync(currentDot, currentFile);
+
+		// wait for the view to set the graph content executed
+		// asynchronously
+		waitForEventProcessing();
+		// call fit to viewport
+		fitToViewPort();
+
 		return true;
 	}
 
@@ -641,11 +648,6 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		if (dotFile != null) {
 			updateGraph(dotFile);
-			// wait for the view to set the graph content executed
-			// asynchronously
-			waitForEventProcessing();
-			// call fit to viewport
-			fitToViewPort();
 			return true;
 		}
 
