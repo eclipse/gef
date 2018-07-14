@@ -384,15 +384,17 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	}
 
 	private void addGraphBackground(Paint paint) {
+		double margin = 5;
 		GraphPart graphPart = (GraphPart) getContentViewer().getRootPart()
 				.getContentPartChildren().get(0);
 		Group group = graphPart.getVisual();
 		Bounds bounds = group.getLayoutBounds();
-		group.setEffect(
-				new Blend(BlendMode.SRC_OVER,
-						new ColorInput(bounds.getMinX(), bounds.getMinY(),
-								bounds.getWidth(), bounds.getHeight(), paint),
-						null));
+		group.setEffect(new Blend(BlendMode.SRC_OVER,
+				new ColorInput(bounds.getMinX() - margin,
+						bounds.getMinY() - margin,
+						bounds.getWidth() + 2 * margin,
+						bounds.getHeight() + 2 * margin, paint),
+				null));
 	}
 
 	private boolean toggle(Action action, boolean input) {
