@@ -530,7 +530,11 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
 			PolygonBasedNodeShape polygonShape = ((PolygonBasedShape) dotShape
 					.getShape()).getShape();
-			zestShape = DotPolygonBasedNodeShapes.get(polygonShape);
+			boolean isRounded = isRoundedStyle(
+					DotAttributes.getStyleParsed(dot));
+			zestShape = isRounded
+					? DotPolygonBasedNodeShapes.getRoundedStyled(polygonShape)
+					: DotPolygonBasedNodeShapes.get(polygonShape);
 		} else if (dotShape.getShape() instanceof RecordBasedShape
 				&& !isHtmlLabel) {
 			// TODO record shapes that have HTML labels
@@ -826,6 +830,17 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (nodeStyle != null) {
 			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
 				if (styleItem.getName().equals(NodeStyle.FILLED.toString())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean isRoundedStyle(Style nodeStyle) {
+		if (nodeStyle != null) {
+			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
+				if (styleItem.getName().equals(NodeStyle.ROUNDED.toString())) {
 					return true;
 				}
 			}

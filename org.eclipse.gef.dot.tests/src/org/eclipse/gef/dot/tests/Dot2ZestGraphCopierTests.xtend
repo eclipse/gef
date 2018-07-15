@@ -704,6 +704,55 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 	
+	@Test def node_shape_rounded_and_filled_styled() {
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				if (attrKey == ZestProperties.SHAPE__N
+							&& attrValue instanceof GeometryNode<?>) {
+					val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
+					return attrKey + " : " + geometry
+				} else {
+					return super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		'''
+			graph RoundedStyledPolygonBasedNodeShapes {
+				node[style=rounded]
+				box[shape=box]
+				rect[shape=rect]
+				rectangle[shape=rectangle]
+				square[shape=square]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : box
+					node-shape : RoundedRectangle(0.0, 0.0, 0.0, 0.0, 25.0, 25.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : rect
+					node-shape : RoundedRectangle(0.0, 0.0, 0.0, 0.0, 25.0, 25.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : rectangle
+					node-shape : RoundedRectangle(0.0, 0.0, 0.0, 0.0, 25.0, 25.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node4 {
+					element-label : square
+					node-shape : RoundedRectangle(0.0, 0.0, 0.0, 0.0, 25.0, 25.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
 	@Test def node_xlabel(){
 		'''
 			graph {

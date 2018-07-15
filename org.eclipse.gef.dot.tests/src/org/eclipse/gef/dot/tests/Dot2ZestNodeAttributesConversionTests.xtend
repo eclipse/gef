@@ -22,6 +22,7 @@ import org.eclipse.gef.geometry.planar.Ellipse
 import org.eclipse.gef.geometry.planar.IGeometry
 import org.eclipse.gef.geometry.planar.Polygon
 import org.eclipse.gef.geometry.planar.Rectangle
+import org.eclipse.gef.geometry.planar.RoundedRectangle
 import org.eclipse.gef.graph.Node
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -409,6 +410,12 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodePolygonBasedShape(new Ellipse(new Rectangle))
 	}
 	
+	@Test def node_polygonbasedshape031() {
+		'''
+			graph{1[shape=box style=rounded]}
+		'''.assertNodePolygonBasedShape(new RoundedRectangle(new Rectangle, 25, 25))
+	}
+	
 	@Test def node_style001() {
 		'''
 			digraph{
@@ -464,6 +471,16 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeStyle('''
 			-fx-stroke-dash-array: 1 6;
+		''')
+	}
+	
+	@Test def node_style007() {
+		'''
+			graph {
+				1[shape=box style="rounded, filled" fillcolor=green]
+			}
+		'''.assertNodeStyle('''
+			-fx-fill: #00ff00;
 		''')
 	}
 	

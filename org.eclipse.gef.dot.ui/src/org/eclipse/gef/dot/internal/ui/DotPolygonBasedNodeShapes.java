@@ -18,6 +18,7 @@ import org.eclipse.gef.geometry.planar.Ellipse;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Polygon;
 import org.eclipse.gef.geometry.planar.Rectangle;
+import org.eclipse.gef.geometry.planar.RoundedRectangle;
 
 import javafx.scene.Node;
 
@@ -150,6 +151,31 @@ class DotPolygonBasedNodeShapes {
 		case UTR:
 			// TODO: handle the polygon shapes
 			return null;
+		}
+		return new GeometryNode<>(geometry);
+	}
+
+	/**
+	 * Returns the 'rounded' JavaFX node corresponding to the
+	 * <i>polygonShape</i> parameter and the style=rounded dot parameter.
+	 * 
+	 * @param polygonShape
+	 *            The polygon shape for which the 'rounded' JavaFX node should
+	 *            be determined.
+	 * 
+	 * @return The JavaFX node.
+	 */
+	static Node getRoundedStyled(PolygonBasedNodeShape polygonShape) {
+		IGeometry geometry = null;
+		switch (polygonShape) {
+		case BOX:
+		case RECT:
+		case RECTANGLE:
+		case SQUARE:
+			geometry = new RoundedRectangle(new Rectangle(), 25, 25);
+			break;
+		default:
+			return get(polygonShape);
 		}
 		return new GeometryNode<>(geometry);
 	}
