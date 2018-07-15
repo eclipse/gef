@@ -530,9 +530,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
 			PolygonBasedNodeShape polygonShape = ((PolygonBasedShape) dotShape
 					.getShape()).getShape();
-			boolean isRounded = isRoundedStyle(
-					DotAttributes.getStyleParsed(dot));
-			zestShape = isRounded
+			zestShape = hasStyle(dot, NodeStyle.ROUNDED)
 					? DotPolygonBasedNodeShapes.getRoundedStyled(polygonShape)
 					: DotPolygonBasedNodeShapes.get(polygonShape);
 		} else if (dotShape.getShape() instanceof RecordBasedShape
@@ -573,7 +571,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setShape(zest, zestShape);
 		}
 
-		if (isInvisible(dot)) {
+		if (hasStyle(dot, NodeStyle.INVIS)) {
 			ZestProperties.setInvisible(zest, true);
 		}
 
@@ -683,7 +681,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		// fillcolor: evaluate only if the node style is set to 'filled'.
-		if (isFilledStyle(style)) {
+		if (hasStyle(dot, NodeStyle.FILLED)) {
 			Color dotFillColor = null;
 			ColorList fillColor = DotAttributes.getFillcolorParsed(dot);
 			if (fillColor != null && !fillColor.getColorValues().isEmpty()) {
@@ -814,33 +812,11 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 	}
 
-	private boolean isInvisible(Node dot) {
-		Style nodeStyle = DotAttributes.getStyleParsed(dot);
-		if (nodeStyle != null) {
-			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
-				if (styleItem.getName().equals(NodeStyle.INVIS.toString())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isFilledStyle(Style nodeStyle) {
-		if (nodeStyle != null) {
-			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
-				if (styleItem.getName().equals(NodeStyle.FILLED.toString())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isRoundedStyle(Style nodeStyle) {
-		if (nodeStyle != null) {
-			for (StyleItem styleItem : nodeStyle.getStyleItems()) {
-				if (styleItem.getName().equals(NodeStyle.ROUNDED.toString())) {
+	private boolean hasStyle(Node dot, NodeStyle nodeStyle) {
+		Style nodeStyleParsed = DotAttributes.getStyleParsed(dot);
+		if (nodeStyleParsed != null) {
+			for (StyleItem styleItem : nodeStyleParsed.getStyleItems()) {
+				if (styleItem.getName().equals(nodeStyle.toString())) {
 					return true;
 				}
 			}
