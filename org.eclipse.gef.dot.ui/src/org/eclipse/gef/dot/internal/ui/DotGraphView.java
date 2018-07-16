@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef.common.adapt.IAdaptable.Bound;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotExtractor;
@@ -49,6 +50,7 @@ import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
@@ -302,11 +304,13 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 						return;
 					}
-					resourceLabel.setText(
-							String.format(GRAPH_RESOURCE, file.getName())
-									+ (isNativeMode() ? " [native]" //$NON-NLS-1$
-											: " [emulated]")); //$NON-NLS-1$
-					resourceLabel.setToolTipText(file.getAbsolutePath());
+					if (!resourceLabel.isDisposed()) {
+						resourceLabel.setText(
+								String.format(GRAPH_RESOURCE, file.getName())
+										+ (isNativeMode() ? " [native]" //$NON-NLS-1$
+												: " [emulated]")); //$NON-NLS-1$
+						resourceLabel.setToolTipText(file.getAbsolutePath());
+					}
 				}
 			}
 
@@ -655,10 +659,16 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	}
 
 	private void fitToViewPort() {
-		FitToViewportAction fitToViewportAction = (FitToViewportAction) fitToViewportActionGroup
-				.getContributions().get(0);
-		waitForEventProcessing();
-		fitToViewportAction.runWithEvent(null);
+		if (fitToViewportActionGroup != null) {
+			List<Bound<IViewer>> contributions = fitToViewportActionGroup
+					.getContributions();
+			if (contributions != null && contributions.size() > 1) {
+				FitToViewportAction fitToViewportAction = (FitToViewportAction) contributions
+						.get(0);
+				waitForEventProcessing();
+				fitToViewportAction.runWithEvent(null);
+			}
+		}
 	}
 
 	private void waitForEventProcessing() {
