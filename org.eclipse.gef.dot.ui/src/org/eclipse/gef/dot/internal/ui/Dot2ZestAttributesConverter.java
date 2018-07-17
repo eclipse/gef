@@ -510,10 +510,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// node's name becomes its label.
 			dotLabel = DotAttributes._getName(dot);
 		}
-		if (dotLabel != null) {
-			dotLabel = decode(dotLabel);
-		}
-
 		boolean isHtmlLabel = DotAttributes.getLabelRaw(dot) != null
 				? DotAttributes.getLabelRaw(dot)
 						.getType() == ID.Type.HTML_STRING
@@ -593,6 +589,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// shape hence, it needs not to be set again.
 
 			// OrdinaryLabel
+			// TODO: find a better way/place to decode the label
+			if (dotLabel != null) {
+				dotLabel = decode(dotLabel);
+			}
 			ZestProperties.setLabel(zest, dotLabel);
 		}
 
