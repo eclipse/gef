@@ -22,14 +22,22 @@ import java.util.stream.Stream;
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
+import org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder;
+import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.xbase.junit.ui.AbstractContentAssistTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 @SuppressWarnings("restriction")
 @RunWith(XtextRunner.class)
@@ -216,6 +224,18 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 		newBuilder().assertText("strict", "graph", "digraph",
 				"graph - Insert a template", "digraph - Insert a template")
 				.applyProposal("strict").expectContent("strict");
+
+		newBuilder().assertText("strict", "graph", "digraph",
+				"graph - Insert a template", "digraph - Insert a template")
+				.applyProposal("graph - Insert a template")
+				.expectContent("graph {" + System.lineSeparator() + "\t"
+						+ System.lineSeparator() + "}");
+
+		newBuilder().assertText("strict", "graph", "digraph",
+				"graph - Insert a template", "digraph - Insert a template")
+				.applyProposal("digraph - Insert a template")
+				.expectContent("digraph {" + System.lineSeparator() + "\t"
+						+ System.lineSeparator() + "}");
 	}
 
 	@Test
@@ -601,13 +621,19 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 	public void edge_headlabel() throws Exception {
 		// test global attribute values
 		newBuilder().append("graph {edge[ headlabel= ]}")
-				.assertTextAtCursorPosition(23,
-						"HTMLLabel - Insert a template");
+				.assertTextAtCursorPosition(23, "HTMLLabel - Insert a template")
+				.applyProposal(23, "HTMLLabel - Insert a template")
+				.expectContent(
+						"graph {edge[ headlabel=<" + System.lineSeparator()
+								+ "\t" + System.lineSeparator() + "> ]}");
 
 		// test local attribute values
-		newBuilder().append("digraph {1->2[ headlabel= ]}")
-				.assertTextAtCursorPosition(25,
-						"HTMLLabel - Insert a template");
+		newBuilder().append("digraph {edge[ headlabel= ]}")
+				.assertTextAtCursorPosition(25, "HTMLLabel - Insert a template")
+				.applyProposal(25, "HTMLLabel - Insert a template")
+				.expectContent(
+						"digraph {edge[ headlabel=<" + System.lineSeparator()
+								+ "\t" + System.lineSeparator() + "> ]}");
 
 		// test html-like label attribute
 		newBuilder().append("digraph {1->2[ headlabel=<  >]}")
@@ -2013,5 +2039,55 @@ public class DotContentAssistTests extends AbstractContentAssistTest {
 
 		System.arraycopy(src, 0, dest, 0, src.length);
 		return dest;
+	}
+
+	// workaround for bug https://github.com/eclipse/xtext-eclipse/issues/219
+	@Inject
+	Injector injector;
+
+	@Override
+	protected ContentAssistProcessorTestBuilder newBuilder() throws Exception {
+		return new ContentAssistProcessorTestBuilder(injector, this) {
+
+			@Override
+			protected ContentAssistProcessorTestBuilder applyProposal(
+					ICompletionProposal proposal, IXtextDocument document)
+					throws Exception {
+				return applyProposal(proposal, getCursorPosition(), document);
+			}
+
+			@Override
+			public ContentAssistProcessorTestBuilder applyProposal(int position,
+					String proposalString) throws Exception {
+				IXtextDocument document = getDocument(getModel());
+				Shell shell = new Shell();
+				try {
+					ICompletionProposal[] proposals = computeCompletionProposals(
+							document, position, shell);
+					ICompletionProposal proposal = findProposal(proposalString,
+							proposals);
+					return applyProposal(proposal, position, document);
+				} finally {
+					shell.dispose();
+				}
+			}
+
+			protected ContentAssistProcessorTestBuilder applyProposal(
+					ICompletionProposal proposal, int position,
+					IXtextDocument document) throws Exception {
+				Shell shell = new Shell();
+				try {
+					XtextSourceViewerConfiguration configuration = injector
+							.getInstance(XtextSourceViewerConfiguration.class);
+					ISourceViewer sourceViewer = getSourceViewer(shell,
+							document, configuration);
+					return appendAndApplyProposal(proposal, sourceViewer,
+							getModel(), position);
+				} finally {
+					shell.dispose();
+				}
+			}
+
+		};
 	}
 }
