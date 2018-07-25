@@ -15,10 +15,10 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import com.google.inject.Injector
+import java.util.List
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.color.DotColors
 import org.eclipse.jface.text.contentassist.ICompletionProposal
-import org.eclipse.jface.text.source.ISourceViewer
 import org.eclipse.swt.widgets.Shell
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry
 import org.eclipse.xtext.junit4.InjectWith
@@ -35,7 +35,6 @@ import org.junit.runner.RunWith
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.fail
-import java.util.List
 
 @SuppressWarnings("restriction")
 @RunWith(XtextRunner)
