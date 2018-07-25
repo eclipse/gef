@@ -1298,6 +1298,66 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		''')
 	}
+	
+	@Test def edge_template() {
+		// test edge template in non-directed graphs
+		'''
+			graph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph", "node", "subgraph",
+									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
+									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
+		'''
+			graph {
+				source -- target
+			}
+		''')
+		
+		'''
+			graph {
+				1
+				«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph",
+									"node", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
+		'''
+			graph {
+				1
+				source -- target
+			}
+		''')
+
+		// test edge template in directed graphs
+		'''
+			digraph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph", "node", "subgraph",
+									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
+									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
+		'''
+			digraph {
+				source -> target
+			}
+		''')
+		
+		'''
+			digraph {
+				1
+				«c»
+			}
+		'''.testContentAssistant(#["->", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph",
+									"node", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
+		'''
+			digraph {
+				1
+				source -> target
+			}
+		''')
+	}
 
 	@Test def edge_tooltip() {
 		// test global attribute values with quotes
@@ -1418,7 +1478,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph",
 									"node",	"subgraph", "{", "}", "forcelabels", "id", "label",	"layout", "lp",
-									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style"], "rankdir",
+									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "rankdir",
 		'''
 			graph {
 				rankdir
@@ -1430,7 +1490,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				la«c»
 			}
-		'''.testContentAssistant(#["label", "layout", "--", ":", ";", "=", "[", "{", "}"], "layout", '''
+		'''.testContentAssistant(#["label", "layout", "--", ":", ";", "=", "[", "{", "}", "edge - Insert a template"], "layout", '''
 			graph {
 				layout
 			}
@@ -1440,7 +1500,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			digraph {
 				la«c»
 			}
-		'''.testContentAssistant(#["label", "layout", "->", ":", ";", "=", "[", "{", "}"], "label", '''
+		'''.testContentAssistant(#["label", "layout", "->", ":", ";", "=", "[", "{", "}", "edge - Insert a template"], "label", '''
 			digraph {
 				label
 			}
@@ -1491,7 +1551,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				colorscheme=svg
 				bgcolor=aqua«c»
 			}
-		'''.testContentAssistant(#["aqua", "aquamarine", ":", ";", "{", "}"], "aqua", '''
+		'''.testContentAssistant(#["aqua", "aquamarine", ":", ";", "{", "}", "edge - Insert a template"], "aqua", '''
 			graph {
 				colorscheme=svg
 				bgcolor=aqua
@@ -1585,7 +1645,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				clusterrank=l«c»
 			}
-		'''.testContentAssistant(#["local", ";", "{", "}"], "local", '''
+		'''.testContentAssistant(#["local", ";", "{", "}", "edge - Insert a template"], "local", '''
 			graph {
 				clusterrank=local
 			}
@@ -1644,7 +1704,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				colorscheme=blues«c»
 			}
-		'''.testContentAssistant(#["blues3", "blues4", "blues5", "blues6", "blues7", "blues8", "blues9", ";", "{", "}"], "blues5", '''
+		'''.testContentAssistant(#["blues3", "blues4", "blues5", "blues6", "blues7", "blues8", "blues9", ";", "{", "}", "edge - Insert a template"], "blues5", '''
 			graph {
 				colorscheme=blues5
 			}
@@ -1703,7 +1763,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["1", "10", "11", ",", ";", "{", "}", "bb", "bgcolor", "colorscheme", "clusterrank",
 									"edge", "fontcolor", "forcelabels", "graph", "id", "label", "layout", "lp", "node",
-									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph"], "11",
+									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "edge - Insert a template"], "11",
 		'''
 			graph {
 				colorscheme=brbg11 fontcolor=11
@@ -1761,7 +1821,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				forcelabels=t«c»
 			}
-		'''.testContentAssistant(#["true", ";", "{", "}"], "true", '''
+		'''.testContentAssistant(#["true", ";", "{", "}", "edge - Insert a template"], "true", '''
 			graph {
 				forcelabels=true
 			}
@@ -1877,7 +1937,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				layout=f«c»
 			}
-		'''.testContentAssistant(#["fdp", ";", "{", "}"], "fdp", '''
+		'''.testContentAssistant(#["fdp", ";", "{", "}", "edge - Insert a template"], "fdp", '''
 			graph {
 				layout=fdp
 			}
@@ -1952,7 +2012,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				outputorder=b«c»
 			}
-		'''.testContentAssistant(#["breadthfirst", ";", "{", "}"], "breadthfirst", '''
+		'''.testContentAssistant(#["breadthfirst", ";", "{", "}", "edge - Insert a template"], "breadthfirst", '''
 			graph {
 				outputorder=breadthfirst
 			}
@@ -2009,7 +2069,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				pagedir=B«c»
 			}
-		'''.testContentAssistant(#["BL", "BR", ";", "{", "}"], "BL", '''
+		'''.testContentAssistant(#["BL", "BR", ";", "{", "}", "edge - Insert a template"], "BL", '''
 			graph {
 				pagedir=BL
 			}
@@ -2066,7 +2126,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				rankdir=T«c»
 			}
-		'''.testContentAssistant(#["TB", ";", "{", "}"], "TB", '''
+		'''.testContentAssistant(#["TB", ";", "{", "}", "edge - Insert a template"], "TB", '''
 			graph {
 				rankdir=TB
 			}
@@ -2123,7 +2183,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				splines=c«c»
 			}
-		'''.testContentAssistant(#["compound", "curved", ";", "{", "}"], "compound", '''
+		'''.testContentAssistant(#["compound", "curved", ";", "{", "}", "edge - Insert a template"], "compound", '''
 			graph {
 				splines=compound
 			}

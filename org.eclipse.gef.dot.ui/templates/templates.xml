@@ -29,4 +29,8 @@
 		description="Insert a template" enabled="true" name="HTMLLabel">&lt;&#13;
 	${cursor}&#13;
 &gt;</template>
+	<template
+		id="EdgeTemplate" autoinsert="false"
+		context="org.eclipse.gef.dot.internal.language.Dot.Stmt" deleted="false"
+		description="Insert a template" enabled="true" name="edge">${source} ${op} ${target}</template>
 </templates>

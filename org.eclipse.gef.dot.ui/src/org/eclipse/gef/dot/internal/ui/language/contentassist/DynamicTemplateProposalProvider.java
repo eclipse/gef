@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,15 +12,22 @@
 
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
+import org.eclipse.gef.dot.internal.language.dot.DotGraph;
+import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
+import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContext;
+import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
-import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 import org.eclipse.xtext.ui.editor.templates.DefaultTemplateProposalProvider;
 
@@ -35,15 +42,23 @@ public class DynamicTemplateProposalProvider
 		super(templateStore, registry, helper);
 	}
 
-	@Override
-	protected void createTemplates(TemplateContext templateContext,
-			ContentAssistContext context, ITemplateAcceptor acceptor) {
-
+	protected TemplateProposal doCreateProposal(Template template,
+			TemplateContext templateContext, ContentAssistContext context,
+			Image image, int relevance) {
 		EObject currentModel = context.getCurrentModel();
 		if (currentModel == null) {
-			super.createTemplates(templateContext, context, acceptor);
+			return super.doCreateProposal(template, templateContext, context,
+					image, relevance);
 		}
-		if (currentModel instanceof Attribute) {
+
+		if (currentModel instanceof DotGraph && isEdgeTemplate(template)) {
+			template = replaceOpVariable(template, (DotGraph) currentModel);
+			return super.doCreateProposal(template, templateContext, context,
+					image, relevance);
+		}
+
+		if (currentModel instanceof Attribute
+				&& isHtmlLabelTemplate(template)) {
 			ID attributeNameID = ((Attribute) currentModel).getName();
 			if (attributeNameID != null) {
 				String attributeName = attributeNameID.toValue();
@@ -52,9 +67,33 @@ public class DynamicTemplateProposalProvider
 				case DotAttributes.LABEL__GCNE:
 				case DotAttributes.TAILLABEL__E:
 				case DotAttributes.XLABEL__NE:
-					super.createTemplates(templateContext, context, acceptor);
+					return super.doCreateProposal(template, templateContext,
+							context, image, relevance);
 				}
 			}
 		}
+
+		return null;
+	}
+
+	private boolean isEdgeTemplate(Template template) {
+		return "edge".equals(template.getName()); //$NON-NLS-1$
+	}
+
+	private boolean isHtmlLabelTemplate(Template template) {
+		return "HTMLLabel".equals(template.getName()); //$NON-NLS-1$
+	}
+
+	private Template replaceOpVariable(Template edgeTemplate,
+			DotGraph dotGraph) {
+		boolean isDirected = dotGraph.getType() == GraphType.DIGRAPH;
+		String edgeOp = isDirected ? EdgeOp.DIRECTED.toString()
+				: EdgeOp.UNDIRECTED.toString();
+
+		return new Template(edgeTemplate.getName(),
+				edgeTemplate.getDescription(), edgeTemplate.getContextTypeId(),
+				edgeTemplate.getPattern().replaceAll(Pattern.quote("${op}"), //$NON-NLS-1$
+						edgeOp),
+				edgeTemplate.isAutoInsertable());
 	}
 }
