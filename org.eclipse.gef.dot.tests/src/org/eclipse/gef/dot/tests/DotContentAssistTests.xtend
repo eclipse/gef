@@ -3089,6 +3089,13 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 					shell.dispose
 				}
 			}
+			
+			// TODO: remove this workaround			
+			override expectContent(String expectation) {
+				val actual = model.replaceAll("\r?\n", System.lineSeparator)
+				assertEquals(expectation, actual)
+				this
+			}
 		}
 	}
 }
