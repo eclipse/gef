@@ -416,14 +416,24 @@ class DotQuickfixTests {
 		])
 	}
 
-	private def assertQuickfixes(CharSequence text, List<List<String>> expected) {
+	/**
+	  * Test that the expected quickfixes are offered on a given validation issue in a given dsl text.
+	  * 
+	  * @param text The initial dsl text.
+	  * @param quickfixes The quickfixes that are expected to be offered.
+	  * Each expected quickfix should be described by a following tripple:
+	  *  1. the quickfix label
+	  *  2. the quickfix description
+	  *  3. the dsl text after the quickfix application
+	  */
+	private def assertQuickfixes(CharSequence text, List<List<String>> quickfixes) {
 		val issues = text.parse.validate
 		1.assertEquals(issues.size)
 		val actualIssueResolutions = issues.get(0).getResolutions
-		expected.size.assertEquals(actualIssueResolutions.size)
+		quickfixes.size.assertEquals(actualIssueResolutions.size)
 		for (i : 0..< actualIssueResolutions.length) {
 			val actualIssueResolution = actualIssueResolutions.get(i)
-			val expectedIssueResolution = expected.get(i)
+			val expectedIssueResolution = quickfixes.get(i)
 			expectedIssueResolution.get(0).assertEquals(actualIssueResolution.label)
 			expectedIssueResolution.get(1).assertEquals(actualIssueResolution.getDescription)
 			expectedIssueResolution.get(2).assertIssueResolutionEffect(actualIssueResolution, text.toString)
