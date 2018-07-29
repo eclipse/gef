@@ -16,7 +16,6 @@ import com.google.inject.Injector
 import java.util.List
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
-import org.eclipse.gef.dot.internal.ui.language.quickfix.DotQuickfixProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -24,6 +23,7 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.xtext.ui.editor.model.IXtextDocument
 import org.eclipse.xtext.ui.editor.model.edit.IssueModificationContext
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -38,7 +38,7 @@ class DotQuickfixTests {
 	@Inject Injector injector
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
-	@Inject extension DotQuickfixProvider
+	@Inject extension IssueResolutionProvider
 
 	@Test def edge_arrowhead() {
 		val deprecatedArrowShapes = #["ediamond", "open", "halfopen", "empty", "invempty"]
