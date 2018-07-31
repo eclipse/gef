@@ -31,8 +31,6 @@ import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.parser.antlr.DotHtmlLabelParser;
-import org.eclipse.gef.zest.fx.parts.NodePart;
-import org.eclipse.gef.zest.fx.parts.ZestFxRootPart;
 import org.eclipse.xtext.parser.IParseResult;
 
 import com.google.inject.Injector;
@@ -61,13 +59,17 @@ import javafx.scene.text.Text;
  * Comments will refer to the graphviz grammar at the URL above.
  *
  * Known Limitations, TODO:
- * - consider outside-label formatting and default size, padding
+ * - check default padding
  * - consider implementing Port attribute on TD
  */
 public class DotHTMLLabelJavaFxNode {
 
-	final private HtmlLabel root;
+	final private TagStyleContainer defaultStyle = new TagStyleContainer(null,
+			"Times New Roman", "14", "black"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	final private TagStyleContainer nodeStyle;
 
+	final private HtmlLabel root;
+	final private String colorscheme;
 	final private DotColorUtil colorUtil = new DotColorUtil();
 
 	/**
@@ -77,7 +79,28 @@ public class DotHTMLLabelJavaFxNode {
 	 *            HTML label attribute as string
 	 */
 	public DotHTMLLabelJavaFxNode(final String label) {
+		this(label, null, null, null, null);
+	}
+
+	/**
+	 * Creates a DotHTMLLabelJavaNode creator with default styles
+	 * 
+	 * @param label
+	 *            HTML label attribute as string
+	 * @param face
+	 *            Default typeface
+	 * @param size
+	 *            Default font size
+	 * @param color
+	 *            Default font color
+	 * @param colorscheme
+	 *            The colorscheme in use
+	 */
+	public DotHTMLLabelJavaFxNode(final String label, String face, String size,
+			String color, String colorscheme) {
 		root = parseLabel(label);
+		nodeStyle = new TagStyleContainer(defaultStyle, face, size, color);
+		this.colorscheme = colorscheme;
 	}
 
 	/**
@@ -87,7 +110,6 @@ public class DotHTMLLabelJavaFxNode {
 	 */
 	public Pane getFxElement() {
 		Pane element = drawLabel(root);
-		element.getStyleClass().add(NodePart.CSS_CLASS_LABEL);
 		return element;
 	}
 
@@ -98,8 +120,9 @@ public class DotHTMLLabelJavaFxNode {
 	 */
 	public Bounds getBounds() {
 		Group fxElement = new Group(getFxElement());
+		@SuppressWarnings("unused") // group layout only works, if the group is
+									// included in a scene.
 		Scene scene = new Scene(fxElement);
-		scene.getStylesheets().add(ZestFxRootPart.STYLES_CSS_FILE);
 		fxElement.applyCss();
 		fxElement.layout();
 		return fxElement.getBoundsInParent();
@@ -116,9 +139,7 @@ public class DotHTMLLabelJavaFxNode {
 	}
 
 	private Pane drawLabel(HtmlLabel label) {
-		// TODO consider making TagStyleContainer a public class, use this to
-		// get the styles set as attributes on the node itself
-		return drawContents(label.getParts(), null, null);
+		return drawContents(label.getParts(), nodeStyle, null);
 	}
 
 	private Pane drawContents(List<HtmlContent> contents,
@@ -513,8 +534,7 @@ public class DotHTMLLabelJavaFxNode {
 
 	private void appendColorAttribute(StringBuilder css, HtmlAttr bordercolor) {
 		css.append("-fx-border-color:"); //$NON-NLS-1$
-		// TODO colorscheme
-		css.append(bordercolor != null ? colorUtil.computeHtmlColor(null,
+		css.append(bordercolor != null ? colorUtil.computeHtmlColor(colorscheme,
 				unquotedValueForAttr(bordercolor)) : "black"); //$NON-NLS-1$
 		css.append(";"); //$NON-NLS-1$
 	}
@@ -542,10 +562,9 @@ public class DotHTMLLabelJavaFxNode {
 			HtmlAttr style, HtmlAttr gradientAngle) {
 		if (bgcolor != null) {
 			css.append("-fx-background-color:"); //$NON-NLS-1$
-			// TODO colorscheme
 			List<String> colors = Arrays
 					.stream(unquotedValueForAttr(bgcolor).split(":")) //$NON-NLS-1$
-					.map(e -> colorUtil.computeHtmlColor(null, e))
+					.map(e -> colorUtil.computeHtmlColor(colorscheme, e))
 					.collect(Collectors.toList());
 			if (colors.size() > 1) {
 				if (style != null && unquotedValueForAttr(style).toLowerCase()
@@ -748,8 +767,7 @@ public class DotHTMLLabelJavaFxNode {
 				css.append(";"); //$NON-NLS-1$
 			}
 
-			// TODO colorscheme
-			String color = colorUtil.computeHtmlColor(null, color());
+			String color = colorUtil.computeHtmlColor(colorscheme, color());
 			if (color != null) {
 				css.append("-fx-fill:"); //$NON-NLS-1$
 				css.append(color);
