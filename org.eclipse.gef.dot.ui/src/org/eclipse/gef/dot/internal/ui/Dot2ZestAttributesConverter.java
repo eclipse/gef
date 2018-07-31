@@ -608,7 +608,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// HTML label is treated as shape only
 			// the surrounding shape is missing here!!!
 			DotHTMLLabelJavaFxNode htmlNode = new DotHTMLLabelJavaFxNode(
-					dotLabel);
+					dotLabel, DotAttributes.getFontname(dot),
+					DotAttributes.getFontsize(dot),
+					DotAttributes.getFontcolor(dot),
+					DotAttributes.getColorscheme(dot));
 			ZestProperties.setShape(zest, htmlNode.getFxElement());
 			// TODO Surround the HTML label with the shape as set above
 
