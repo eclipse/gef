@@ -74,7 +74,7 @@ import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -82,10 +82,8 @@ import org.junit.runner.RunWith;
 @InjectWith(DotInjectorProvider.class)
 public class DotAttributesTests {
 
-	@BeforeClass
-	public static void before() {
-		DotTestUtils.registerDotSubgrammarPackages();
-	}
+	@Rule
+	public DotSubgrammarPackagesRegistrationRule rule = new DotSubgrammarPackagesRegistrationRule();
 
 	@Test
 	public void edge_arrowhead() {

@@ -29,6 +29,7 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -40,6 +41,8 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotInjectorProvider)
 class Dot2ZestGraphCopierTests {
+
+	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
 
 	/**
 	 * Ensure the JavaFX toolkit is properly initialized.
@@ -55,9 +58,7 @@ class Dot2ZestGraphCopierTests {
 	extension DotGraphPrettyPrinter prettyPrinter
 
 	@BeforeClass
-	def static void beforeClass(){
-		DotTestUtils.registerDotSubgrammarPackages
-		
+	def static void beforeClass() {
 		dotImport = new DotImport
 		
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
@@ -65,7 +66,7 @@ class Dot2ZestGraphCopierTests {
 	}
 	
 	@Before
-	def void before(){
+	def void before() {
 		prettyPrinter = new DotGraphPrettyPrinter
 	}
 	

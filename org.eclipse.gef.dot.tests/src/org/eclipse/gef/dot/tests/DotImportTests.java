@@ -35,8 +35,8 @@ import org.eclipse.gef.graph.Node;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,13 +49,11 @@ import org.junit.runner.RunWith;
 @InjectWith(DotInjectorProvider.class)
 public final class DotImportTests {
 
+	@Rule
+	public DotSubgrammarPackagesRegistrationRule rule = new DotSubgrammarPackagesRegistrationRule();
+
 	private final DotImport dotImport = new DotImport();
 	private final DotGraphPrettyPrinter prettyPrinter = new DotGraphPrettyPrinter();
-
-	@BeforeClass
-	public static void before() {
-		DotTestUtils.registerDotSubgrammarPackages();
-	}
 
 	/**
 	 * Test valid graphs can be imported without exceptions.

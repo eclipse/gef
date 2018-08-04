@@ -29,6 +29,7 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -47,6 +48,8 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotInjectorProvider)
 class Dot2ZestNodeAttributesConversionTests {
+
+	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
 	
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
@@ -56,7 +59,6 @@ class Dot2ZestNodeAttributesConversionTests {
 	
 	@BeforeClass
 	def static void before() {
-		DotTestUtils.registerDotSubgrammarPackages
 		converter.options.emulateLayout=false //TODO remove once FX tests work
 	}
 	

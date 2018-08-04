@@ -24,7 +24,7 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Assert
-import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -40,15 +40,12 @@ import static extension org.junit.Assert.*
 @InjectWith(DotInjectorProvider)
 class DotValidatorTests {
 
+	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
+
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
 
 	val l = System.getProperty("line.separator").length
-
-	@BeforeClass
-	def static before() {
-		DotTestUtils.registerDotSubgrammarPackages
-	}
 
 	@Test def testSingleArrowShapes() {
 		"arrowshapes_single.dot".readFile.assertNoIssues

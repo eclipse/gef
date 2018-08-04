@@ -25,7 +25,7 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -39,16 +39,13 @@ import static extension org.junit.Assert.*
 @InjectWith(DotInjectorProvider)
 class Dot2ZestEdgeAttributesConversionTests {
 	
+	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
+	
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
 	
 	extension DotImport = new DotImport
 	extension Dot2ZestAttributesConverter = new Dot2ZestAttributesConverter
-
-	@BeforeClass
-	def static before() {
-		DotTestUtils.registerDotSubgrammarPackages
-	}
 
 	@Test def edge_style001() {
 		'''
