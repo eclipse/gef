@@ -53,6 +53,8 @@ public class DotRecordBasedJavaFxNode {
 
 	private final LabelNode root;
 
+	private String zestNodeLabelCssStyle;
+
 	/**
 	 * Constructor for record based node shapes. Requires the string
 	 * representation of the record shape label.
@@ -61,9 +63,14 @@ public class DotRecordBasedJavaFxNode {
 	 *            The string representation of the record shape label.
 	 * @param rankdir
 	 *            The rankdir set for the current graph
+	 * @param zestNodeLabelCssStyle
+	 *            The zestNodeLabelCssStyle set for the text of the record-based
+	 *            node
 	 */
-	public DotRecordBasedJavaFxNode(String dotLabel, Rankdir rankdir) {
+	public DotRecordBasedJavaFxNode(String dotLabel, Rankdir rankdir,
+			String zestNodeLabelCssStyle) {
 		root = rootNodeConstructor(rankdir).get().rootNode();
+		this.zestNodeLabelCssStyle = zestNodeLabelCssStyle;
 		addToFx(parseLabel(dotLabel), root);
 	}
 
@@ -106,7 +113,8 @@ public class DotRecordBasedJavaFxNode {
 				addToFx(((Field) child).getLabel(), treeNode.childNode());
 			} else if (child instanceof Field
 					&& ((Field) child).getFieldID() != null) {
-				treeNode.addText(((Field) child).getFieldID().getName());
+				treeNode.addText(((Field) child).getFieldID().getName(),
+						zestNodeLabelCssStyle);
 			}
 		}
 	}
@@ -141,9 +149,9 @@ public class DotRecordBasedJavaFxNode {
 			return this;
 		}
 
-		public void addText(String string) {
+		public void addText(String string, String zestNodeLabelCssStyle) {
 			separatorUnlessFirstField();
-			TextHelper text = new TextHelper(string);
+			TextHelper text = new TextHelper(string, zestNodeLabelCssStyle);
 			setMargin(text.getFxElement(), TEXT_MARGINS);
 			setGrow(text.getFxElement());
 			getFxElement().getChildren().add(text.getFxElement());
@@ -286,13 +294,14 @@ public class DotRecordBasedJavaFxNode {
 			return null;
 		}
 
-		public Pane getFxElement() {
+		public Pane getFxElement(String style) {
 			if (line == null)
 				throw new RuntimeException(
 						"Unable to get FXElement: TextLine not initialized."); //$NON-NLS-1$
 			final HBox alignmentBox = new HBox();
 			alignmentBox.setAlignment(pos != null ? pos : Pos.CENTER);
 			Text text = new Text(line);
+			text.setStyle(style);
 			HBox.setHgrow(text, Priority.NEVER);
 			text.getStyleClass().add(NodePart.CSS_CLASS_LABEL);
 			alignmentBox.getChildren().add(text);
@@ -302,8 +311,10 @@ public class DotRecordBasedJavaFxNode {
 
 	private static class TextHelper {
 		private final Pane fxElement;
+		private final String style;
 
-		public TextHelper(String string) {
+		public TextHelper(String string, String style) {
+			this.style = style;
 			fxElement = fxElementFromString(unescapeString(string));
 		}
 
@@ -315,7 +326,7 @@ public class DotRecordBasedJavaFxNode {
 			final VBox textContainer = new VBox();
 			textContainer.setAlignment(Pos.CENTER);
 			makeLines(string).forEach(line -> textContainer.getChildren()
-					.add(line.getFxElement()));
+					.add(line.getFxElement(style)));
 			return textContainer;
 		}
 

@@ -513,6 +513,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 						.getType() == ID.Type.HTML_STRING
 				: false;
 
+		// label fontcolor
+		String zestNodeLabelCssStyle = computeZestNodeLabelCssStyle(dot);
+		if (zestNodeLabelCssStyle != null) {
+			ZestProperties.setLabelCssStyle(zest, zestNodeLabelCssStyle);
+		}
+
 		org.eclipse.gef.dot.internal.language.shape.Shape dotShape = DotAttributes
 				.getShapeParsed(dot);
 		// style and color
@@ -547,7 +553,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				zestShapeStyle.append("-fx-border-style:solid;"); //$NON-NLS-1$
 
 			DotRecordBasedJavaFxNode node = new DotRecordBasedJavaFxNode(
-					dotLabel, DotAttributes.getRankdirParsed(dot.getGraph()));
+					dotLabel, DotAttributes.getRankdirParsed(dot.getGraph()),
+					zestNodeLabelCssStyle);
 			zestShape = node.getFxElement();
 
 			Bounds bounds = node.getBounds();
@@ -648,11 +655,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					computeZestLabelPosition(dotXlpParsed, dotXLabel));
 		}
 
-		// label fontcolor
-		String zestNodeLabelCssStyle = computeZestNodeLabelCssStyle(dot);
-		if (zestNodeLabelCssStyle != null) {
-			ZestProperties.setLabelCssStyle(zest, zestNodeLabelCssStyle);
-		}
 	}
 
 	private StringBuilder computeZestStyle(Node dot,
