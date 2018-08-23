@@ -90,8 +90,7 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;-fx-stroke: #00ff00;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
-					edge-target-decoration-css-style : -fx-stroke: #00ff00;-fx-fill: #00ff00;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')
@@ -194,7 +193,7 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : EdgeLabel
 				}
 			}
@@ -220,7 +219,7 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : 1->2
 				}
 			}
@@ -873,12 +872,12 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge2 from Node2 to Node3 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')
@@ -913,19 +912,19 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : +1
 				}
 				Edge2 from Node1 to Node3 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : +2
 				}
 				Edge3 from Node3 to Node4 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')
@@ -965,27 +964,27 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 7 7;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge2 from Node2 to Node3 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 1 7;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge3 from Node3 to Node4 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 7 7;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge4 from Node3 to Node5 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 7 7;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge5 from Node4 to Node5 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')
@@ -1192,7 +1191,7 @@ class Dot2ZestGraphCopierTests {
 					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(27.0, 36.303)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge2 from Node2 to Node3 {
 					edge-control-points : [Point(27.0, 108.3), Point(27.0, 116.02), Point(27.0, 125.29), Point(27.0, 133.89)]
@@ -1202,7 +1201,7 @@ class Dot2ZestGraphCopierTests {
 					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(27.0, 108.3)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')
@@ -1330,7 +1329,7 @@ class Dot2ZestGraphCopierTests {
 					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(54.0, 36.303)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge2 from Node2 to Node3 {
 					edge-control-points : [Point(54.0, 108.3), Point(54.0, 116.02), Point(54.0, 125.29), Point(54.0, 133.89)]
@@ -1340,7 +1339,7 @@ class Dot2ZestGraphCopierTests {
 					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(54.0, 108.3)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge3 from Node3 to Node4 {
 					edge-control-points : [Point(47.601, 179.59), Point(44.486, 187.66), Point(40.666, 197.57), Point(37.165, 206.65)]
@@ -1350,7 +1349,7 @@ class Dot2ZestGraphCopierTests {
 					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(47.601, 179.59)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge4 from Node3 to Node5 {
 					edge-control-points : [Point(57.654, 180.09), Point(59.676, 190.43), Point(61.981, 203.91), Point(63.0, 216.0), Point(64.344, 231.94), Point(64.344, 236.06), Point(63.0, 252.0), Point(62.283, 260.5), Point(60.931, 269.69), Point(59.488, 277.99)]
@@ -1360,7 +1359,7 @@ class Dot2ZestGraphCopierTests {
 					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(57.654, 180.09)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 				Edge5 from Node4 to Node5 {
 					edge-control-points : [Point(33.399, 251.59), Point(36.514, 259.66), Point(40.334, 269.57), Point(43.835, 278.65)]
@@ -1370,7 +1369,7 @@ class Dot2ZestGraphCopierTests {
 					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(33.399, 251.59)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')

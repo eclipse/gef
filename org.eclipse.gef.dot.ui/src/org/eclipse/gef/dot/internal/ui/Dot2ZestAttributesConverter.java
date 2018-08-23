@@ -68,8 +68,6 @@ import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 /**
@@ -202,18 +200,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (javaFxColor != null) {
 			String zestStroke = "-fx-stroke: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 			connectionCssStyle += zestStroke;
-			if (DirType.BACK.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
-				String zestFill = "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
-				String zestSourceDecorationCssStyle = zestStroke + zestFill;
-				ZestProperties.setSourceDecorationCssStyle(zest,
-						zestSourceDecorationCssStyle);
-			}
-			if (DirType.FORWARD.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
-				String zestFill = "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
-				String zestTargetDecorationCssStyle = zestStroke + zestFill;
-				ZestProperties.setTargetDecorationCssStyle(zest,
-						zestTargetDecorationCssStyle);
-			}
 		}
 
 		ZestProperties.setCurveCssStyle(zest, connectionCssStyle);
@@ -222,19 +208,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		Color dotFillColor = DotAttributes.getFillcolorParsed(dot);
 		String javaFxFillColor = colorUtil.computeZestColor(dotColorScheme,
 				dotFillColor);
-		if (javaFxFillColor != null) {
-			String zestSourceDecorationCssStyle = ZestProperties
-					.getSourceDecorationCssStyle(zest);
-			ZestProperties.setSourceDecorationCssStyle(zest,
-					zestSourceDecorationCssStyle + "-fx-fill: " //$NON-NLS-1$
-							+ javaFxFillColor + ";"); //$NON-NLS-1$
-
-			String zestTargetDecorationCssStyle = ZestProperties
-					.getTargetDecorationCssStyle(zest);
-			ZestProperties.setTargetDecorationCssStyle(zest,
-					zestTargetDecorationCssStyle + "-fx-fill: " //$NON-NLS-1$
-							+ javaFxFillColor + ";"); //$NON-NLS-1$
-		}
 
 		// arrow size
 		Double arrowSizeParsed = DotAttributes.getArrowsizeParsed(dot);
@@ -249,19 +222,19 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// directed
 			if (GraphType.DIGRAPH.equals(DotAttributes
 					._getType(dot.getGraph().getRootGraph().getRootGraph()))) {
-				zestEdgeTargetDecoration = DotArrowShapeDecorations
-						.getDefault(arrowSize, true);
+				zestEdgeTargetDecoration = DotArrowShapeDecorations.getDefault(
+						arrowSize, true, javaFxColor, javaFxFillColor);
 			}
 		} else {
 			zestEdgeTargetDecoration = computeZestDecoration(
-					DotAttributes.getArrowheadParsed(dot), arrowSize);
+					DotAttributes.getArrowheadParsed(dot), arrowSize,
+					javaFxColor, javaFxFillColor);
 		}
 
 		// The zest edge target decoration should only appear if the edge
 		// direction is "forward" or "both".
 		if (DirType.FORWARD.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
 			ZestProperties.setTargetDecoration(zest, zestEdgeTargetDecoration);
-			setStyleOnEdgeTargetDecorationChildren(zest);
 		}
 
 		// arrow tail
@@ -273,19 +246,19 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// directed
 			if (GraphType.DIGRAPH.equals(DotAttributes
 					._getType(dot.getGraph().getRootGraph().getRootGraph()))) {
-				zestEdgeSourceDecoration = DotArrowShapeDecorations
-						.getDefault(arrowSize, true);
+				zestEdgeSourceDecoration = DotArrowShapeDecorations.getDefault(
+						arrowSize, true, javaFxColor, javaFxFillColor);
 			}
 		} else {
 			zestEdgeSourceDecoration = computeZestDecoration(
-					DotAttributes.getArrowtailParsed(dot), arrowSize);
+					DotAttributes.getArrowtailParsed(dot), arrowSize,
+					javaFxColor, javaFxFillColor);
 		}
 
 		// The zest edge source decoration should only appear if the edge
 		// direction is "back" or "both".
 		if (DirType.BACK.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
-			setStyleOnEdgeSourceDecorationChildren(zest);
 		}
 
 		// create edge curve
@@ -435,8 +408,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	}
 
 	private javafx.scene.Node computeZestDecoration(ArrowType arrowType,
-			double arrowSize) {
-		return DotArrowShapeDecorations.get(arrowType, arrowSize);
+			double arrowSize, String javaFxColor, String javaFxFillColor) {
+		return DotArrowShapeDecorations.get(arrowType, arrowSize, javaFxColor,
+				javaFxFillColor);
 	}
 
 	private List<Point> computeZestBSplineControlPoints(Edge dot) {
@@ -822,48 +796,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			}
 		}
 		return false;
-	}
-
-	private void setStyleOnEdgeSourceDecorationChildren(Edge edge) {
-		javafx.scene.Node sourceDecoration = ZestProperties
-				.getSourceDecoration(edge);
-		String sourceDecorationStyle = ZestProperties
-				.getSourceDecorationCssStyle(edge);
-		setStyleOnEdgeDecorationChildren(sourceDecoration,
-				sourceDecorationStyle);
-	}
-
-	private void setStyleOnEdgeTargetDecorationChildren(Edge edge) {
-		javafx.scene.Node targetDecoration = ZestProperties
-				.getTargetDecoration(edge);
-		String targetDecorationStyle = ZestProperties
-				.getTargetDecorationCssStyle(edge);
-		setStyleOnEdgeDecorationChildren(targetDecoration,
-				targetDecorationStyle);
-	}
-
-	private void setStyleOnEdgeDecorationChildren(
-			javafx.scene.Node edgeDecoration, String style) {
-		if (edgeDecoration instanceof Group) {
-			Group group = (Group) edgeDecoration;
-			for (javafx.scene.Node child : group.getChildren()) {
-				if (styleShouldBeSetOn(child)) {
-					child.setStyle(style);
-				}
-			}
-		}
-	}
-
-	private boolean styleShouldBeSetOn(javafx.scene.Node child) {
-		/*
-		 * do not apply the style on children having transparent color e.g. in
-		 * case of 'none' arrowshapes
-		 */
-		if (child instanceof Shape) {
-			return ((Shape) child)
-					.getFill() != javafx.scene.paint.Color.TRANSPARENT;
-		}
-		return true;
 	}
 
 	protected void convertAttributes(Graph dot, Graph zest) {

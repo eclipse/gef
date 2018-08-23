@@ -40,12 +40,19 @@ class DotArrowShapeDecorations {
 	 * @param isGraphDirected
 	 *            true if the graph is directed, false otherwise
 	 *
+	 * @param color
+	 *            the color to use for the arrow shape decoration outline
+	 *
+	 * @param fillColor
+	 *            the color to use for the arrow shape decoration background
+	 *
 	 * @return The default dot arrow shape decoration
 	 */
-	static Node getDefault(double arrowSize, boolean isGraphDirected) {
+	static Node getDefault(double arrowSize, boolean isGraphDirected,
+			String color, String fillColor) {
 
 		Shape shape = isGraphDirected ? new Normal(arrowSize) : null;
-		setStroke(shape);
+		setStroke(shape, color, fillColor);
 		return shape;
 	}
 
@@ -60,14 +67,21 @@ class DotArrowShapeDecorations {
 	 * @param arrowSize
 	 *            The size of the arrow shape decoration.
 	 * 
+	 * @param color
+	 *            The color to use for the arrow shape decoration outline.
+	 *
+	 * @param fillColor
+	 *            The color to use for the arrow shape decoration background.
+	 * 
 	 * @return The dot arrow shape decoration.
 	 */
-	static Node get(ArrowType arrowType, double arrowSize) {
+	static Node get(ArrowType arrowType, double arrowSize, String color,
+			String fillColor) {
 		// The first arrow shape specified should occur closest to the node.
 		double offset = 0.0;
 		Group group = new Group();
 		for (AbstractArrowShape arrowShape : arrowType.getArrowShapes()) {
-			Shape currentShape = get(arrowShape, arrowSize);
+			Shape currentShape = get(arrowShape, arrowSize, color, fillColor);
 			if (currentShape == null) {
 				// represent the "none" arrow shape with a transparent box with
 				// the corresponding size
@@ -93,7 +107,7 @@ class DotArrowShapeDecorations {
 	}
 
 	private static Shape get(AbstractArrowShape abstractArrowShape,
-			double arrowSize) {
+			double arrowSize, String color, String fillColor) {
 		Shape shape = null;
 
 		if (abstractArrowShape instanceof DeprecatedArrowShape) {
@@ -101,28 +115,28 @@ class DotArrowShapeDecorations {
 			case EDIAMOND:
 				// "ediamond" is deprecated, use "odiamond"
 				shape = new Diamond(arrowSize);
-				setOpen(shape);
+				setOpen(shape, color);
 				break;
 			case OPEN:
 				// "open" is deprecated, use "vee"
 				shape = new Vee(arrowSize);
-				setStroke(shape);
+				setStroke(shape, color, fillColor);
 				break;
 			case HALFOPEN:
 				// "halfopen" is deprecated, use "lvee"
 				shape = new Vee(arrowSize);
 				setSide(shape, "l"); //$NON-NLS-1$
-				setStroke(shape);
+				setStroke(shape, color, fillColor);
 				break;
 			case EMPTY:
 				// "empty" is deprecated, use "onormal"
 				shape = new Normal(arrowSize);
-				setOpen(shape);
+				setOpen(shape, color);
 				break;
 			case INVEMPTY:
 				// "invempty" is deprecated, use "oinv"
 				shape = new Inv(arrowSize);
-				setOpen(shape);
+				setOpen(shape, color);
 				break;
 			default:
 				break;
@@ -131,9 +145,9 @@ class DotArrowShapeDecorations {
 			ArrowShape arrowShape = (ArrowShape) abstractArrowShape;
 			shape = getPrimitiveShape(arrowShape.getShape(), arrowSize);
 			if (arrowShape.isOpen()) {
-				setOpen(shape);
+				setOpen(shape, color);
 			} else {
-				setStroke(shape);
+				setStroke(shape, color, fillColor);
 			}
 
 			if (arrowShape.getSide() != null) {
@@ -144,16 +158,32 @@ class DotArrowShapeDecorations {
 		return shape;
 	}
 
-	private static void setStroke(Shape shape) {
+	private static void setStroke(Shape shape, String color, String fillColor) {
 		if (shape != null) {
-			shape.setStroke(Color.BLACK);
+			String style = ""; //$NON-NLS-1$
+
+			if (color == null) {
+				color = "#000000"; // the default color is black //$NON-NLS-1$
+			}
+			style += "-fx-stroke: " + color + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+
+			if (fillColor == null) {
+				fillColor = color;
+			}
+			style += "-fx-fill: " + fillColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+
+			shape.setStyle(style);
 			shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
 		}
 	}
 
-	private static void setOpen(Shape shape) {
+	private static void setOpen(Shape shape, String color) {
 		if (shape != null) {
-			shape.setStroke(Color.BLACK);
+			if (color == null) {
+				shape.setStroke(Color.BLACK);
+			} else {
+				shape.setStyle("-fx-stroke: " + color + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			shape.setFill(Color.WHITE);
 			shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
 		}

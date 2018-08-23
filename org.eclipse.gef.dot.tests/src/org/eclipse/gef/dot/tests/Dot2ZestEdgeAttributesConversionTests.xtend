@@ -113,7 +113,10 @@ class Dot2ZestEdgeAttributesConversionTests {
 			digraph {
 				1->2[dir=back]
 			}
-		'''.assertEdgeSourceDecorationStyles('''''')
+		'''.assertEdgeSourceDecorationStyles('''
+			-fx-stroke: #000000;
+			-fx-fill: #000000;
+		''')
 	}
 	
 	@Test def edge_sourceDecorationStyle002() {
@@ -147,12 +150,25 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 	
+	@Test def edge_sourceDecorationStyle005() {
+		'''
+			digraph {
+				1->2 [dir=both color=green arrowtail=noneobox]
+			}
+		'''.assertEdgeSourceDecorationStyles('''''', '''
+			-fx-stroke: #00ff00;
+		''')
+	}
+	
 	@Test def edge_targetDecorationStyle001() {
 		'''
 			digraph {
 				1->2
 			}
-		'''.assertEdgeTargetDecorationStyles('''''')
+		'''.assertEdgeTargetDecorationStyles('''
+			-fx-stroke: #000000;
+			-fx-fill: #000000;
+		''')
 	}
 	
 	@Test def edge_targetDecorationStyle002() {
@@ -184,6 +200,16 @@ class Dot2ZestEdgeAttributesConversionTests {
 		'''
 			-fx-stroke: #00ff00;
 			-fx-fill: #00ff00;
+		''')
+	}
+	
+	@Test def edge_targetDecorationStyle005() {
+		'''
+			digraph {
+				1->2[color=green arrowhead=onormal]
+			}
+		'''.assertEdgeTargetDecorationStyles('''
+			-fx-stroke: #00ff00;
 		''')
 	}
 
