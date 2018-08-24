@@ -554,9 +554,13 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			if (!zestShapeStyle.toString().contains("-fx-border-style:")) //$NON-NLS-1$
 				zestShapeStyle.append("-fx-border-style:solid;"); //$NON-NLS-1$
 
+			StringBuilder recordBasedShapeLineStyle = computeRecordBasedShapeLineStyle(
+					dot);
+
 			DotRecordBasedJavaFxNode node = new DotRecordBasedJavaFxNode(
 					dotLabel, DotAttributes.getRankdirParsed(dot.getGraph()),
-					zestNodeLabelCssStyle);
+					zestNodeLabelCssStyle,
+					recordBasedShapeLineStyle.toString());
 			zestShape = node.getFxElement();
 
 			Bounds bounds = node.getBounds();
@@ -662,20 +666,27 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	private StringBuilder computeZestStyle(Node dot,
 			org.eclipse.gef.dot.internal.language.shape.Shape dotShape) {
 		StringBuilder zestStyle = new StringBuilder();
+
+		boolean isRecordBasedShape = dotShape != null
+				? dotShape.getShape() instanceof RecordBasedShape
+				: false;
+
 		// color
 		Color dotColor = DotAttributes.getColorParsed(dot);
 		String dotColorScheme = DotAttributes.getColorscheme(dot);
 		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
 				dotColor);
 		if (javaFxColor != null) {
-			zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (isRecordBasedShape) {
+				zestStyle.append("-fx-border-color: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 
+		// style
 		Style style = DotAttributes.getStyleParsed(dot);
 		if (style != null) {
-			boolean isRecordBasedShape = dotShape != null
-					? dotShape.getShape() instanceof RecordBasedShape
-					: false;
 			for (StyleItem styleItem : style.getStyleItems()) {
 				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
 				addNodeStyle(zestStyle, nodeStyle, isRecordBasedShape);
@@ -702,6 +713,27 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				zestStyle.append("-fx-fill: " + javaFxFillColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
+		}
+		return zestStyle;
+	}
+
+	private StringBuilder computeRecordBasedShapeLineStyle(Node dot) {
+		StringBuilder zestStyle = new StringBuilder();
+		// color
+		Color dotColor = DotAttributes.getColorParsed(dot);
+		String dotColorScheme = DotAttributes.getColorscheme(dot);
+		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
+				dotColor);
+		if (javaFxColor != null) {
+			zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		Style style = DotAttributes.getStyleParsed(dot);
+		if (style != null) {
+			for (StyleItem styleItem : style.getStyleItems()) {
+				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
+				addNodeStyle(zestStyle, nodeStyle, false);
+			}
 		}
 		return zestStyle;
 	}

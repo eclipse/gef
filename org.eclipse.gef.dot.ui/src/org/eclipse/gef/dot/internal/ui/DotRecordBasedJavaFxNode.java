@@ -55,6 +55,8 @@ public class DotRecordBasedJavaFxNode {
 
 	private String zestNodeLabelCssStyle;
 
+	private String lineCssStyle;
+
 	/**
 	 * Constructor for record based node shapes. Requires the string
 	 * representation of the record shape label.
@@ -66,11 +68,14 @@ public class DotRecordBasedJavaFxNode {
 	 * @param zestNodeLabelCssStyle
 	 *            The zestNodeLabelCssStyle set for the text of the record-based
 	 *            node
+	 * @param lineCssStyle
+	 *            The css style set for the lines of the record-based node
 	 */
 	public DotRecordBasedJavaFxNode(String dotLabel, Rankdir rankdir,
-			String zestNodeLabelCssStyle) {
+			String zestNodeLabelCssStyle, String lineCssStyle) {
 		root = rootNodeConstructor(rankdir).get().rootNode();
 		this.zestNodeLabelCssStyle = zestNodeLabelCssStyle;
+		this.lineCssStyle = lineCssStyle;
 		addToFx(parseLabel(dotLabel), root);
 	}
 
@@ -131,7 +136,7 @@ public class DotRecordBasedJavaFxNode {
 		}
 	}
 
-	private static abstract class LabelNode {
+	private abstract class LabelNode {
 		private boolean firstField = true;
 
 		abstract public Pane getFxElement();
@@ -183,7 +188,7 @@ public class DotRecordBasedJavaFxNode {
 		abstract protected void setGrow(Node node);
 	}
 
-	private static class HorizontalLabelNode extends LabelNode {
+	private class HorizontalLabelNode extends LabelNode {
 		private HBox fxElement = new HBox();
 
 		public HorizontalLabelNode() {
@@ -216,7 +221,7 @@ public class DotRecordBasedJavaFxNode {
 		}
 	}
 
-	private static class VerticalLabelNode extends LabelNode {
+	private class VerticalLabelNode extends LabelNode {
 		private VBox fxElement = new VBox();
 
 		public VerticalLabelNode() {
@@ -354,7 +359,7 @@ public class DotRecordBasedJavaFxNode {
 		}
 	}
 
-	private static class RecordBasedLabelLine extends GeometryNode<Line> {
+	private class RecordBasedLabelLine extends GeometryNode<Line> {
 		private final Line line;
 
 		public RecordBasedLabelLine(Orientation orientation) {
@@ -368,6 +373,8 @@ public class DotRecordBasedJavaFxNode {
 				line = new Line(0, 0, 0, 1);
 			}
 			setGeometry(line);
+			if (lineCssStyle != null && !lineCssStyle.isEmpty())
+				setStyle(lineCssStyle);
 		}
 	}
 }
