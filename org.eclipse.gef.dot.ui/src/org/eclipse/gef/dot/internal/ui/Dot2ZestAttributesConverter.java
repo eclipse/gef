@@ -129,11 +129,16 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setCssId(zest, dotId);
 		}
 
+		String edgeLabelCssStyle = computeZestEdgeLabelCssStyle(dot);
+
 		String dotLabel = DotAttributes.getLabel(dot);
 		if (dotLabel != null) {
 			dotLabel = decodeEscString(dotLabel, dot);
 			dotLabel = decodeLineBreak(dotLabel);
 			ZestProperties.setLabel(zest, dotLabel);
+			if (edgeLabelCssStyle != null) {
+				ZestProperties.setLabelCssStyle(zest, edgeLabelCssStyle);
+			}
 		}
 
 		// external label (xlabel)
@@ -142,6 +147,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			dotXLabel = decodeEscString(dotXLabel, dot);
 			dotXLabel = decodeLineBreak(dotXLabel);
 			ZestProperties.setExternalLabel(zest, dotXLabel);
+			if (edgeLabelCssStyle != null) {
+				ZestProperties.setExternalLabelCssStyle(zest,
+						edgeLabelCssStyle);
+			}
 		}
 
 		// head and tail labels (headlabel, taillabel)
@@ -150,12 +159,18 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			dotHeadLabel = decodeEscString(dotHeadLabel, dot);
 			dotHeadLabel = decodeLineBreak(dotHeadLabel);
 			ZestProperties.setTargetLabel(zest, dotHeadLabel);
+			if (edgeLabelCssStyle != null) {
+				ZestProperties.setTargetLabelCssStyle(zest, edgeLabelCssStyle);
+			}
 		}
 		String dotTailLabel = DotAttributes.getTaillabel(dot);
 		if (dotTailLabel != null) {
 			dotTailLabel = decodeEscString(dotTailLabel, dot);
 			dotTailLabel = decodeLineBreak(dotTailLabel);
 			ZestProperties.setSourceLabel(zest, dotTailLabel);
+			if (edgeLabelCssStyle != null) {
+				ZestProperties.setSourceLabelCssStyle(zest, edgeLabelCssStyle);
+			}
 		}
 
 		// convert edge style
@@ -448,6 +463,19 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					(options().invertYAxis ? -1 : 1) * endp.getY()));
 		}
 		return controlPoints;
+	}
+
+	private String computeZestEdgeLabelCssStyle(Edge dot) {
+		Color dotColor = DotAttributes.getFontcolorParsed(dot);
+		if (dotColor != null) {
+			String dotColorScheme = DotAttributes.getColorscheme(dot);
+			String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
+					dotColor);
+			if (javaFxColor != null) {
+				return "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return null;
 	}
 
 	protected void convertAttributes(Node dot, Node zest) {

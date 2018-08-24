@@ -253,6 +253,27 @@ class Dot2ZestEdgeAttributesConversionTests {
 		'''.assertEdgeLabel("1->2 samplegraph")
 	}
 	
+	@Test def edge_label006() {
+		'''
+			digraph {
+				1->2[fontcolor=red label=l]
+			}
+		'''.assertEdgeLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def edge_label007() {
+		'''
+			digraph {
+				edge[fontcolor=red]
+				1->2[label=l]
+			}
+		'''.assertEdgeLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
 	@Test def edge_externalLabel001() {
 		'''
 			digraph {
@@ -285,6 +306,27 @@ class Dot2ZestEdgeAttributesConversionTests {
 		'''.assertEdgeExternalLabel("g: testedGraphName e:1->2 h:2 t:1")
 	}
 	
+	@Test def edge_externalLabel005() {
+		'''
+			digraph {
+				1->2[fontcolor=red xlabel=x]
+			}
+		'''.assertEdgeExternalLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def edge_externalLabel006() {
+		'''
+			digraph {
+				edge[fontcolor=red]
+				1->2[xlabel=x]
+			}
+		'''.assertEdgeExternalLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
 	@Test def edge_sourceLabel001() {
 		'''
 			digraph {
@@ -315,6 +357,27 @@ class Dot2ZestEdgeAttributesConversionTests {
 				1->2[taillabel="g: \G e:\E h:\H t:\T"]
 			}
 		'''.assertEdgeSourceLabel("g: testedGraphName e:1->2 h:2 t:1")
+	}
+	
+	@Test def edge_sourceLabel005() {
+		'''
+			digraph {
+				1->2[fontcolor=red taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def edge_sourceLabel006() {
+		'''
+			digraph {
+				edge[fontcolor=red]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
 	}
 
 	@Test def edge_targetLabel001() {
@@ -356,6 +419,47 @@ class Dot2ZestEdgeAttributesConversionTests {
 				1->2[headlabel="\G\L"]
 			}
 		'''.assertEdgeTargetLabel("")
+	}
+	
+	@Test def edge_targetLabel006() {
+		'''
+			digraph {
+				1->2[fontcolor=red headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def edge_targetLabel007() {
+		'''
+			digraph {
+				edge[fontcolor=red]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	private def assertEdgeExternalLabelCssStyle(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.externalLabelCssStyle.split
+		expected.assertEquals(actual)
+	}
+	
+	private def assertEdgeLabelCssStyle(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.labelCssStyle.split
+		expected.assertEquals(actual)
+	}
+	
+	private def assertEdgeSourceLabelCssStyle(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.sourceLabelCssStyle.split
+		expected.assertEquals(actual)
+	}
+	
+	private def assertEdgeTargetLabelCssStyle(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.targetLabelCssStyle.split
+		expected.assertEquals(actual)
 	}
 	
 	private def assertEdgeStyle(CharSequence dotText, String expected) {

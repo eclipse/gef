@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -70,21 +70,18 @@ public class DotGraphViewModule extends MvcFxModule {
 	protected void bindEdgeLabelPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// selection link feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// selection feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// hover feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// hover on-hover policy
@@ -112,27 +109,23 @@ public class DotGraphViewModule extends MvcFxModule {
 				.to(DotEdgeLayoutBehavior.class);
 
 		// selection link feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 
 		// selection feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 
 		// hover feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 
 		// geometry provider for focus feedback
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 
 		// clickable area behavior
@@ -148,8 +141,7 @@ public class DotGraphViewModule extends MvcFxModule {
 	 * Binds {@link IContentPartFactory} to {@link ZestFxContentPartFactory}.
 	 */
 	protected void bindIContentPartFactory() {
-		binder().bind(IContentPartFactory.class)
-				.to(ZestFxContentPartFactory.class)
+		binder().bind(IContentPartFactory.class).to(DotContentPartFactory.class)
 				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
@@ -183,21 +175,18 @@ public class DotGraphViewModule extends MvcFxModule {
 	protected void bindNodeLabelPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// selection link feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// selection feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// hover feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// hover on-hover policy
@@ -250,9 +239,8 @@ public class DotGraphViewModule extends MvcFxModule {
 				.to(DotAnchorProvider.class);
 
 		// selection feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -261,9 +249,8 @@ public class DotGraphViewModule extends MvcFxModule {
 				});
 
 		// selection link feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
@@ -272,15 +259,13 @@ public class DotGraphViewModule extends MvcFxModule {
 				});
 
 		// hover feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// focus feedback provider
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(
+				DefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
