@@ -61,7 +61,7 @@ public class DotReferenceFinder extends ReferenceFinder {
 			Acceptor acceptor, IProgressMonitor monitor) {
 		super.findReferences(targetURIs, resource, acceptor, monitor);
 
-		// add DOT speficic references
+		// add DOT specific references
 		for (URI targetURI : targetURIs) {
 			EObject target = resource.getEObject(targetURI.fragment());
 			// currently, only a selection of a nodeId is supported
