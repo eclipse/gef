@@ -12,34 +12,56 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
+import java.util.List
+import org.eclipse.core.runtime.NullProgressMonitor
+import org.eclipse.core.runtime.jobs.Job
+import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
+import org.eclipse.search.ui.NewSearchUI
+import org.eclipse.search2.internal.ui.SearchView
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.ui.AbstractEditorTest
+import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.findrefs.ReferenceQueryExecutor
+import org.eclipse.xtext.ui.editor.findrefs.ReferenceSearchResult
+import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
+import org.eclipse.xtext.ui.resource.IResourceSetProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.junit.Assert.assertEquals
+import static org.eclipse.gef.dot.tests.DotTestUtils.createTestProjectWithXtextNature
+
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotReferenceFinderTests {
+class DotReferenceFinderTests extends AbstractEditorTest {
 
-	@Inject extension ParseHelper<DotAst>
-	@Inject extension ReferenceQueryExecutor
+	@Inject extension SyncUtil
+	@Inject XtextEditorInfo editorInfo
+	@Inject IResourceSetProvider resourceSetProvider
+	@Inject ReferenceQueryExecutor referenceQueryExecutor
+
+	override setUp() {
+		super.setUp
+		createTestProjectWithXtextNature
+	}
 
 	@Test def testFindingReferences001() {
 		'''
 			graph {
 				1
 			}
-		'''.testFindReferencesLabel([firstNode], "DOT References to node '1'")
+		'''.testFindingReferences([firstNode], "DOT References to node '1' (/dottestproject/test.dot)", #[
+			[firstNode]
+		])
 	}
 
 	@Test def testFindingReferences002() {
@@ -48,7 +70,9 @@ class DotReferenceFinderTests {
 				1
 				2
 			}
-		'''.testFindReferencesLabel([secondNode], "DOT References to node '2'")
+		'''.testFindingReferences([secondNode], "DOT References to node '2' (/dottestproject/test.dot)", #[
+			[secondNode]
+		])
 	}
 
 	@Test def testFindingReferences003() {
@@ -57,16 +81,22 @@ class DotReferenceFinderTests {
 				1
 				1--2
 			}
-		'''.testFindReferencesLabel([sourceNodeOfFirstEdge], "DOT References to node '1'")
+		'''.testFindingReferences([firstNode], "DOT References to node '1' (/dottestproject/test.dot)", #[
+			[firstNode],
+			[sourceNodeOfFirstEdge]
+		])
 	}
 
 	@Test def testFindingReferences004() {
 		'''
 			graph {
+				1
 				1--2
-				3--4
 			}
-		'''.testFindReferencesLabel([sourceNodeOfSecondEdge], "DOT References to node '3'")
+		'''.testFindingReferences([sourceNodeOfFirstEdge], "DOT References to node '1' (/dottestproject/test.dot)", #[
+			[firstNode],
+			[sourceNodeOfFirstEdge]
+		])
 	}
 
 	@Test def testFindingReferences005() {
@@ -75,7 +105,9 @@ class DotReferenceFinderTests {
 				1--2
 				3--4
 			}
-		'''.testFindReferencesLabel([targetNodeOfFirstEdge], "DOT References to node '2'")
+		'''.testFindingReferences([sourceNodeOfSecondEdge], "DOT References to node '3' (/dottestproject/test.dot)", #[
+			[sourceNodeOfSecondEdge]
+		])
 	}
 
 	@Test def testFindingReferences006() {
@@ -84,12 +116,118 @@ class DotReferenceFinderTests {
 				1--2
 				3--4
 			}
-		'''.testFindReferencesLabel([targetNodeOfSecondEdge], "DOT References to node '4'")
+		'''.testFindingReferences([targetNodeOfFirstEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
+			[targetNodeOfFirstEdge]
+		])
 	}
 
-	private def testFindReferencesLabel(CharSequence it, (DotAst)=>EObject elementProvider, String expectedLabel) {
-		val actualLabel = elementProvider.apply(parse).label
-		expectedLabel.assertEquals(actualLabel)
+	@Test def testFindingReferences007() {
+		'''
+			graph {
+				1--2
+				3--4
+			}
+		'''.testFindingReferences([targetNodeOfSecondEdge], "DOT References to node '4' (/dottestproject/test.dot)", #[
+			[targetNodeOfSecondEdge]
+		])
+	}
+
+	@Test def testFindingReferences008() {
+		'''
+			graph {
+				1--2
+				2--2
+			}
+		'''.testFindingReferences([targetNodeOfFirstEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
+			[targetNodeOfFirstEdge],
+			[sourceNodeOfSecondEdge],
+			[targetNodeOfSecondEdge]
+		])
+	}
+
+	@Test def testFindingReferences009() {
+		'''
+			graph {
+				1--2
+				2--2
+			}
+		'''.testFindingReferences([sourceNodeOfSecondEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
+			[targetNodeOfFirstEdge],
+			[sourceNodeOfSecondEdge],
+			[targetNodeOfSecondEdge]
+		])
+	}
+	@Test def testFindingReferences010() {
+		'''
+			graph {
+				1--2
+				2--2
+			}
+		'''.testFindingReferences([targetNodeOfSecondEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
+			[targetNodeOfFirstEdge],
+			[sourceNodeOfSecondEdge],
+			[targetNodeOfSecondEdge]
+		])
+	}
+
+	private def testFindingReferences(CharSequence it, (DotAst)=>EObject element, String label, List<(DotAst)=>EObject> elements) {
+		// given
+		dslFile.
+		// when
+		searchingReferencesOn(element).
+		// then
+		searchViewDisplays(label).
+		// and
+		searchViewContains(elements)
+	}
+
+	private def dslFile(CharSequence it) {
+		val testFile = toString.createTestFile
+		
+		val project = testFile.project
+		val resourceSet = resourceSetProvider.get(project)
+		val projectFullPath = project.fullPath.toString
+		
+		val uri = URI.createPlatformResourceURI(projectFullPath + "/" + testFile.name , true)
+		val resource = resourceSet.createResource(uri)
+		resource.load(newHashMap)
+		resource
+	}
+
+	private def searchingReferencesOn(Resource resource, (DotAst)=>EObject elementProvider) {
+		val dotAst = resource.contents.head as DotAst
+		
+		val element = elementProvider.apply(dotAst)
+		
+		waitForBuild(new NullProgressMonitor)
+		
+		referenceQueryExecutor.init(element)
+		
+		referenceQueryExecutor.execute
+		
+		waitForSearchJob
+		
+		element
+	}
+
+	private def searchViewDisplays(EObject element, String label) {
+		val actualLabel = referenceQueryExecutor.getLabel(element)
+		label.assertEquals(actualLabel)
+		element
+	}
+
+	private def searchViewContains(EObject element, List<(DotAst)=>EObject> expectedReferences) {
+		val searchResultView = NewSearchUI.getSearchResultView as SearchView
+		val searchResult = searchResultView.currentSearchResult as ReferenceSearchResult
+		val matchingReferences = searchResult.matchingReferences
+		
+		val resource = element.eResource
+		val dotAst = resource.contents.head as DotAst
+		
+		val actual = matchingReferences.map[sourceEObjectUri.fragment].sort.join(System.lineSeparator)
+		val expected = expectedReferences.map[resource.getURIFragment(apply(dotAst))].sort.join(System.lineSeparator)
+		
+		expected.assertEquals(actual)
 	}
 
 	private def getFirstNode(DotAst it) {
@@ -130,6 +268,14 @@ class DotReferenceFinderTests {
 
 	private def targetNode(EdgeStmtNode it) {
 		(edgeRHS.head as EdgeRhsNode).node
+	}
+
+	private def void waitForSearchJob() {
+		Job.jobManager.find(null).findFirst[name.startsWith("DOT References to")]?.join
+	}
+
+	override protected getEditorId() {
+		editorInfo.editorId
 	}
 
 }
