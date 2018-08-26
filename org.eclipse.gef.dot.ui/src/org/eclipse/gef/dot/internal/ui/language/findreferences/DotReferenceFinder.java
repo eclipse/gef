@@ -24,6 +24,7 @@ import org.eclipse.xtext.findReferences.IReferenceFinder;
 import org.eclipse.xtext.findReferences.ReferenceFinder;
 import org.eclipse.xtext.findReferences.TargetURIs;
 
+import com.google.common.base.Predicate;
 import com.google.inject.Injector;
 
 public class DotReferenceFinder extends ReferenceFinder {
@@ -51,16 +52,17 @@ public class DotReferenceFinder extends ReferenceFinder {
 	}
 
 	/**
-	 * Using the @Override notation leads to a compile error on some platforms,
-	 * since this internal Xtext API has been changed over time. Thus, it is not
-	 * guaranted that this custom method implementation will be invoked on all
-	 * supported platforms. TODO: find a general solution to provide this
-	 * functionality on all supported platforms.
-	 **/
+	 * Using the @Override notation leads to a compile error on some (e.g NEON,
+	 * OXYGEN, PHOTON, ...) platforms, since this internal Xtext API has been
+	 * changed over time.
+	 * 
+	 * see
+	 * https://github.com/eclipse/xtext-core/commit/69064ac12f0144b60d8c7511d41c834db44a67f2
+	 * 
+	 * This method will be invoked on ...LUNA, MARS, platforms
+	 */
 	public void findReferences(TargetURIs targetURIs, Resource resource,
 			Acceptor acceptor, IProgressMonitor monitor) {
-		super.findReferences(targetURIs, resource, acceptor, monitor);
-
 		// add DOT specific references
 		for (URI targetURI : targetURIs) {
 			EObject target = resource.getEObject(targetURI.fragment());
@@ -77,5 +79,18 @@ public class DotReferenceFinder extends ReferenceFinder {
 				}
 			}
 		}
+	}
+
+	/**
+	 * This method will be invoked on NEON, OXYGEN, PHOTON... platforms
+	 */
+	public void findReferences(Predicate<URI> targetURIs, EObject scope,
+			Acceptor acceptor, IProgressMonitor monitor) {
+
+		if (targetURIs instanceof TargetURIs) {
+			findReferences((TargetURIs) targetURIs, scope.eResource(), acceptor,
+					monitor);
+		}
+
 	}
 }
