@@ -584,6 +584,7 @@ class Dot2ZestGraphCopierTests {
 				}
 				Node32 {
 					element-label : none
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node33 {

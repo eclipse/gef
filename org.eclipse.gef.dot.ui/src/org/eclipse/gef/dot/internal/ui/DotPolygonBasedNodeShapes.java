@@ -40,6 +40,7 @@ class DotPolygonBasedNodeShapes {
 		// (0,100) (100,100)
 		switch (polygonShape) {
 		case BOX:
+		case NONE: // none is converted to a rectangle with no stroke
 		case RECT:
 		case RECTANGLE:
 		case SQUARE:
@@ -129,7 +130,6 @@ class DotPolygonBasedNodeShapes {
 		case MCIRCLE:
 		case MDIAMOND:
 		case MSQUARE:
-		case NONE:
 		case NOTE:
 		case NOVERHANG:
 		case PLAIN:

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.dot.internal.DotAttributes;
@@ -676,11 +677,14 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		String dotColorScheme = DotAttributes.getColorscheme(dot);
 		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
 				dotColor);
-		if (javaFxColor != null) {
-			if (isRecordBasedShape) {
+		if (isRecordBasedShape) {
+			if (javaFxColor != null) {
 				zestStyle.append("-fx-border-color: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		} else {
+			String stroke = isNoneShape(dotShape) ? "none" : javaFxColor; //$NON-NLS-1$
+			if (stroke != null) {
+				zestStyle.append("-fx-stroke: " + stroke + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -715,6 +719,19 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		}
 		return zestStyle;
+	}
+
+	private boolean isNoneShape(
+			org.eclipse.gef.dot.internal.language.shape.Shape dotShape) {
+		if (dotShape != null) {
+			EObject shape = dotShape.getShape();
+			if (shape instanceof PolygonBasedShape) {
+				return ((PolygonBasedShape) shape)
+						.getShape() == PolygonBasedNodeShape.NONE;
+			}
+		}
+
+		return false;
 	}
 
 	private StringBuilder computeRecordBasedShapeLineStyle(Node dot) {

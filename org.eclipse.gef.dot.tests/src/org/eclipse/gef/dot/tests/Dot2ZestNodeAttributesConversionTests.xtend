@@ -468,6 +468,26 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodePolygonBasedShape(new RoundedRectangle(new Rectangle, 25, 25))
 	}
 	
+	@Test def node_polygonbasedshape032() {
+		'''
+			graph{
+				1[shape=none]
+			}
+		'''.assertNodeStyle('''
+			-fx-stroke: none;
+		''')
+	}
+	
+	@Test def node_polygonbasedshape033() {
+		'''
+			graph{
+				1[shape=none color=red]
+			}
+		'''.assertNodeStyle('''
+			-fx-stroke: none;
+		''')
+	}
+	
 	@Test def node_style001() {
 		'''
 			digraph{
