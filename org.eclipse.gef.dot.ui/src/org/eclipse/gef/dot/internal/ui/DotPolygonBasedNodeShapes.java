@@ -58,6 +58,9 @@ class DotPolygonBasedNodeShapes {
 		case DIAMOND:
 			geometry = new Polygon(0, 50, 50, 0, 100, 50, 50, 100);
 			break;
+		case DOUBLECIRCLE:
+			geometry = new Ellipse(0, 0, 100, 100);
+			break;
 		case FOLDER:
 			geometry = new Polygon(0, 100, 0, 10, 50, 10, 55, 0, 95, 0, 100, 10,
 					100, 100);
@@ -122,7 +125,6 @@ class DotPolygonBasedNodeShapes {
 		case BOX3D:
 		case COMPONENT:
 		case CYLINDER:
-		case DOUBLECIRCLE:
 		case DOUBLEOCTAGON:
 		case EGG:
 		case FIVEPOVERHANG:
@@ -153,6 +155,43 @@ class DotPolygonBasedNodeShapes {
 			return null;
 		}
 		return new GeometryNode<>(geometry);
+	}
+
+	/**
+	 * Returns an inner JavaFX node corresponding to the <i>polygonShape</i>
+	 * parameter.
+	 * 
+	 * @param polygonShape
+	 *            The polygon shape for which the inner JavaFX node should be
+	 *            determined.
+	 * 
+	 * @return The inner JavaFX node.
+	 */
+	static Node getInner(PolygonBasedNodeShape polygonShape) {
+		IGeometry geometry = null;
+		// (0,0) (100,0)
+		// (0,100) (100,100)
+		if (polygonShape == PolygonBasedNodeShape.DOUBLECIRCLE) {
+			geometry = new Ellipse(0, 0, 100, 100);
+		}
+		return new GeometryNode<>(geometry);
+	}
+
+	/**
+	 * Returns the distance that should be preserved between the outer and inner
+	 * shapes.
+	 * 
+	 * @param polygonShape
+	 *            The {@link PolygonBasedNodeShape} for which to retrieve the
+	 *            inner distance.
+	 * @return the distance that should be preserved between the outer and inner
+	 *         shapes.
+	 */
+	static double getInnerDistance(PolygonBasedNodeShape polygonShape) {
+		if (polygonShape == PolygonBasedNodeShape.DOUBLECIRCLE) {
+			return 5d;
+		}
+		return 0d;
 	}
 
 	/**

@@ -57,7 +57,6 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Ellipse;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.Point;
-import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
@@ -526,16 +525,22 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				.getShapeParsed(dot);
 		// style and color
 		StringBuilder zestShapeStyle = computeZestStyle(dot, dotShape);
+
 		javafx.scene.Node zestShape = null;
+		javafx.scene.Node innerShape = null;
+		double innerDistance = 0;
 		if (dotShape == null) {
 			// ellipse is default shape
-			zestShape = new GeometryNode<>(new Ellipse(new Rectangle()));
+			zestShape = new GeometryNode<>(new Ellipse(0, 0, 0, 0));
 		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
 			PolygonBasedNodeShape polygonShape = ((PolygonBasedShape) dotShape
 					.getShape()).getShape();
 			zestShape = hasStyle(dot, NodeStyle.ROUNDED)
 					? DotPolygonBasedNodeShapes.getRoundedStyled(polygonShape)
 					: DotPolygonBasedNodeShapes.get(polygonShape);
+			innerShape = DotPolygonBasedNodeShapes.getInner(polygonShape);
+			innerDistance = DotPolygonBasedNodeShapes
+					.getInnerDistance(polygonShape);
 		} else if (dotShape.getShape() instanceof RecordBasedShape
 				&& !isHtmlLabel) {
 			// TODO record shapes that have HTML labels
@@ -574,9 +579,23 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 		if (zestShape != null) {
 			if (zestShapeStyle.length() > 0) {
-				zestShape.setStyle(zestShapeStyle.toString());
+				if (innerShape != null) {
+					String style = zestShapeStyle.toString();
+					innerShape.setStyle(style);
+					zestShape.setStyle(style.replaceAll("-fx-fill[^;]+;", "")); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					zestShape.setStyle(zestShapeStyle.toString());
+				}
 			}
 			ZestProperties.setShape(zest, zestShape);
+			if (innerShape != null) {
+				// TODO: enhance zest capabilities
+				zest.attributesProperty().put(
+						DotNodePart.DOT_PROPERTY_INNER_SHAPE__N, innerShape);
+				zest.attributesProperty().put(
+						DotNodePart.DOT_PROPERTY_INNER_SHAPE_DISTANCE__N,
+						innerDistance);
+			}
 		}
 
 		if (hasStyle(dot, NodeStyle.INVIS)) {
@@ -960,27 +979,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				(label != null ? label : "\\N").replaceAll("\\\\", //$NON-NLS-1$ //$NON-NLS-2$
 						"\\\\\\\\")) //$NON-NLS-1$
 				.replaceAll("\\\\N", nodeName != null ? nodeName : "") //$NON-NLS-1$ //$NON-NLS-2$
-				.replaceAll("\\\\G", graphName != null ? graphName : ""); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	private String decodeEscString(String escString, Graph graph) {
-		String label = DotAttributes.getLabel(graph);
-
-		String graphName = DotAttributes._getName(graph);
-
-		/*
-		 * \L is replaced first using the raw Label, such that we can avoid a
-		 * loop if a label contains \L. As such, we need to double all
-		 * backslashes as single backslashes are consumed by replace all.
-		 * 
-		 * Graphviz behaviour differs slightly for unset names and error
-		 * handling, however we cannot reproduce this (i.e. an internally used
-		 * variable is produced and for escape sequences invalid in this
-		 * context, e.g. \N, graphviz removes the backslash.)
-		 */
-		return escString.replaceAll("\\\\L", //$NON-NLS-1$
-				(label != null ? label : "").replaceAll("\\\\", //$NON-NLS-1$ //$NON-NLS-2$
-						"\\\\\\\\")) //$NON-NLS-1$
 				.replaceAll("\\\\G", graphName != null ? graphName : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

@@ -22,7 +22,6 @@ import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.EdgePart;
 import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.parts.NodeLabelPart;
-import org.eclipse.gef.zest.fx.parts.NodePart;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -49,7 +48,7 @@ public class DotContentPartFactory implements IContentPartFactory {
 		if (content instanceof Graph) {
 			part = new GraphPart();
 		} else if (content instanceof org.eclipse.gef.graph.Node) {
-			part = new NodePart();
+			part = new DotNodePart();
 		} else if (content instanceof Edge) {
 			part = new EdgePart();
 		} else if (content instanceof Pair
@@ -70,9 +69,9 @@ public class DotContentPartFactory implements IContentPartFactory {
 			part = new NodeLabelPart();
 		}
 		if (part != null) {
+			// TODO: use injector to create parts
 			injector.injectMembers(part);
 		}
 		return part;
 	}
-
 }
