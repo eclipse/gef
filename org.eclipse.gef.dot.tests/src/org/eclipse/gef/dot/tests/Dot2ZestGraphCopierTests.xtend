@@ -524,7 +524,10 @@ class Dot2ZestGraphCopierTests {
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node19 {
+					dotInnerShapeDistance__n : 5.0
+					dotInnerShape__n : GeometryNode
 					element-label : doublecircle
+					node-shape : Ellipse (0.0, 0.0, 100.0, 100.0)
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node20 {

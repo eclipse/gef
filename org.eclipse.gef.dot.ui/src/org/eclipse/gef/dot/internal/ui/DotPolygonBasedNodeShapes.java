@@ -168,13 +168,12 @@ class DotPolygonBasedNodeShapes {
 	 * @return The inner JavaFX node.
 	 */
 	static Node getInner(PolygonBasedNodeShape polygonShape) {
-		IGeometry geometry = null;
 		// (0,0) (100,0)
 		// (0,100) (100,100)
 		if (polygonShape == PolygonBasedNodeShape.DOUBLECIRCLE) {
-			geometry = new Ellipse(0, 0, 100, 100);
+			return new GeometryNode<>(new Ellipse(0, 0, 100, 100));
 		}
-		return new GeometryNode<>(geometry);
+		return null;
 	}
 
 	/**
