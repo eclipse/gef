@@ -50,6 +50,7 @@ class DotPolygonBasedNodeShapes {
 			geometry = new Polygon(0, 100, 0, 0, 70, 0, 100, 50, 70, 100);
 			break;
 		case CIRCLE:
+		case DOUBLECIRCLE:
 		case ELLIPSE:
 		case OVAL:
 		case POINT:
@@ -57,9 +58,6 @@ class DotPolygonBasedNodeShapes {
 			break;
 		case DIAMOND:
 			geometry = new Polygon(0, 50, 50, 0, 100, 50, 50, 100);
-			break;
-		case DOUBLECIRCLE:
-			geometry = new Ellipse(0, 0, 100, 100);
 			break;
 		case FOLDER:
 			geometry = new Polygon(0, 100, 0, 10, 50, 10, 55, 0, 95, 0, 100, 10,
@@ -89,6 +87,7 @@ class DotPolygonBasedNodeShapes {
 			geometry = new Polygon(0, 50, 40, 0, 40, 15, 100, 15, 100, 100, 70,
 					100, 70, 85, 40, 85, 40, 100);
 			break;
+		case DOUBLEOCTAGON:
 		case OCTAGON:
 			geometry = new Polygon(0, 70, 0, 30, 30, 0, 70, 0, 100, 30, 100, 70,
 					70, 100, 30, 100);
@@ -125,7 +124,6 @@ class DotPolygonBasedNodeShapes {
 		case BOX3D:
 		case COMPONENT:
 		case CYLINDER:
-		case DOUBLEOCTAGON:
 		case EGG:
 		case FIVEPOVERHANG:
 		case INSULATOR:
@@ -168,12 +166,20 @@ class DotPolygonBasedNodeShapes {
 	 * @return The inner JavaFX node.
 	 */
 	static Node getInner(PolygonBasedNodeShape polygonShape) {
+		IGeometry geometry = null;
 		// (0,0) (100,0)
 		// (0,100) (100,100)
-		if (polygonShape == PolygonBasedNodeShape.DOUBLECIRCLE) {
-			return new GeometryNode<>(new Ellipse(0, 0, 100, 100));
+		switch (polygonShape) {
+		case DOUBLECIRCLE:
+			geometry = new Ellipse(0, 0, 100, 100);
+			break;
+		case DOUBLEOCTAGON:
+			geometry = new Polygon(0, 70, 0, 30, 30, 0, 70, 0, 100, 30, 100, 70,
+					70, 100, 30, 100);
+			break;
 		}
-		return null;
+
+		return geometry != null ? new GeometryNode<>(geometry) : null;
 	}
 
 	/**
@@ -187,7 +193,9 @@ class DotPolygonBasedNodeShapes {
 	 *         shapes.
 	 */
 	static double getInnerDistance(PolygonBasedNodeShape polygonShape) {
-		if (polygonShape == PolygonBasedNodeShape.DOUBLECIRCLE) {
+		switch (polygonShape) {
+		case DOUBLECIRCLE:
+		case DOUBLEOCTAGON:
 			return 5d;
 		}
 		return 0d;

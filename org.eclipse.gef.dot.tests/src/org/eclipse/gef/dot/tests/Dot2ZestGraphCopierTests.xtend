@@ -17,6 +17,7 @@ import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.ui.Dot2ZestGraphCopier
+import org.eclipse.gef.dot.internal.ui.DotNodePart
 import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
@@ -363,12 +364,14 @@ class Dot2ZestGraphCopierTests {
 		prettyPrinter = new DotGraphPrettyPrinter {
 			
 			override protected prettyPrint(String attrKey, Object attrValue) {
-				if (attrKey == ZestProperties.SHAPE__N
-							&& attrValue instanceof GeometryNode<?>) {
+				return if (#[
+					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+					ZestProperties.SHAPE__N
+				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
 					val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
-					return attrKey + " : " + geometry
+					attrKey + " : " + geometry
 				} else {
-					return super.prettyPrint(attrKey, attrValue)
+					super.prettyPrint(attrKey, attrValue)
 				}
 			}
 		}
@@ -525,13 +528,16 @@ class Dot2ZestGraphCopierTests {
 				}
 				Node19 {
 					dotInnerShapeDistance__n : 5.0
-					dotInnerShape__n : GeometryNode
+					dotInnerShape__n : Ellipse (0.0, 0.0, 100.0, 100.0)
 					element-label : doublecircle
-					node-shape : Ellipse (0.0, 0.0, 100.0, 100.0)
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node20 {
+					dotInnerShapeDistance__n : 5.0
+					dotInnerShape__n : Polygon: (0.0, 70.0) -> (0.0, 30.0) -> (30.0, 0.0) -> (70.0, 0.0) -> (100.0, 30.0) -> (100.0, 70.0) -> (70.0, 100.0) -> (30.0, 100.0) -> (0.0, 70.0)
 					element-label : doubleoctagon
+					node-shape : Polygon: (0.0, 70.0) -> (0.0, 30.0) -> (30.0, 0.0) -> (70.0, 0.0) -> (100.0, 30.0) -> (100.0, 70.0) -> (70.0, 100.0) -> (30.0, 100.0) -> (0.0, 70.0)
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node21 {
