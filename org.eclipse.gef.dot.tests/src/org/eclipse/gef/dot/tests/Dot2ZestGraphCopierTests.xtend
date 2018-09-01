@@ -65,12 +65,24 @@ class Dot2ZestGraphCopierTests {
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
 	}
-	
+
 	@Before
 	def void before() {
 		prettyPrinter = new DotGraphPrettyPrinter
 	}
-	
+
+	@Test def void edge_arrowhead() {
+		// TODO: implement
+	}
+
+	@Test def void edge_arrowsize() {
+		// TODO: implement
+	}
+
+	@Test def void edge_arrowtail() { 
+		// TODO: implement
+	}
+
 	@Test def edge_color() {
 		'''
 			digraph {
@@ -96,7 +108,43 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
+	@Test def void edge_colorscheme() {
+		// TODO: implement
+	}
+
+	@Test def void edge_dir() {
+		// TODO: implement
+	}
+
+	@Test def void edge_edgetooltip() {
+		// TODO: implement
+	}
+
+	@Test def void edge_fillcolor() {
+		// TODO: implement
+	}
+
+	@Test def void edge_fontcolor() {
+		// TODO: implement
+	}
+
+	@Test def void edge_headlabel() {
+		// TODO: implement
+	}
+
+	@Test def void edge_headlp() {
+		// TODO: implement
+	}
+
+	@Test def void edge_headport() {
+		// TODO: implement
+	}
+
+	@Test def void edge_headtooltip() {
+		// TODO: implement
+	}
+
 	@Test def edge_id() {
 		'''
 			graph {
@@ -122,7 +170,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def edge_label() {
 		// undirected edge label
 		'''
@@ -226,7 +274,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def edge_label_and_id() {
 		'''
 			graph {
@@ -279,6 +327,170 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
+	@Test def void edge_labelfontcolor() {
+		// TODO: implement
+	}
+
+	@Test def void edge_labeltooltip() {
+		// TODO: implement
+	}
+
+	@Test def void edge_lp() {
+		// TODO: implement
+	}
+
+	@Test def void edge_name() {
+		// TODO: implement
+	}
+
+	@Test def void edge_pos() {
+		// TODO: implement
+	}
+
+	@Test def void edge_style() {
+		// TODO: implement
+	}
+
+	@Test def void edge_taillabel() {
+		// TODO: implement
+	}
+
+	@Test def void edge_taillp() {
+		// TODO: implement
+	}
+
+	@Test def void edge_tailport() {
+		// TODO: implement
+	}
+
+	@Test def void edge_tailtooltip() {
+		// TODO: implement
+	}
+
+	@Test def void edge_tooltip() {
+		// TODO: implement
+	}
+
+	@Test def void edge_xlabel() {
+		// TODO: implement
+	}
+
+	@Test def void edge_xlp() {
+		// TODO: implement
+	}
+	
+	@Test def void graph_bb() {
+		// TODO: implement
+	}
+
+	@Test def void graph_bgcolor() {
+		// TODO: implement
+	}
+
+	@Test def void graph_clusterrank() {
+		// TODO: implement
+	}
+
+	@Test def void cluster_color() {
+		// TODO: implement
+	}
+
+	@Test def void graph_colorscheme() {
+		// TODO: implement
+	}
+
+	@Test def void graph_fillcolor() {
+		// TODO: implement
+	}
+
+	@Test def void graph_fontcolor() {
+		// TODO: implement
+	}
+
+	@Test def void graph_forcelabels() {
+		// TODO: implement
+	}
+
+	@Test def void graph_id() {
+		// TODO: implement
+	}
+
+	@Test def void graph_label() {
+		// TODO: implement
+	}
+
+	@Test def void graph_layout() {
+		// TODO: implement
+	}
+
+	@Test def void graph_lp() {
+		// TODO: implement
+	}
+
+	@Test def void graph_name() {
+		// TODO: implement
+	}
+
+	@Test def void graph_nodesep() {
+		// TODO: implement
+	}
+
+	@Test def void graph_outputorder() {
+		// TODO: implement
+	}
+
+	@Test def void graph_pagedir() {
+		// TODO: implement
+	}
+
+	@Test def void graph_rankdir() {
+		// TODO: implement
+	}
+
+	@Test def void graph_splines() {
+		// TODO: implement
+	}
+
+	@Test def void graph_style() {
+		// TODO: implement
+	}
+
+	@Test def void cluster_tooltip() {
+		// TODO: implement
+	}
+
+	@Test def void graph_type() {
+		// TODO: implement
+	}
+
+	@Test def void node_color() {
+		// TODO: implement
+	}
+
+	@Test def void node_colorscheme() {
+		// TODO: implement
+	}
+
+	@Test def void node_distortion() {
+		// TODO: implement
+	}
+
+	@Test def void node_fillcolor() {
+		// TODO: implement
+	}
+
+	@Test def void node_fixedsize() {
+		// TODO: implement
+	}
+
+	@Test def void node_fontcolor() {
+		// TODO: implement
+	}
+
+	@Test def void node_height() {
+		// TODO: implement
+	}
+
 	@Test def node_id() {
 		'''
 			graph {
@@ -295,7 +507,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def node_label() {
 		'''
 			graph {
@@ -326,7 +538,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def node_label_and_id() {
 		'''
 			graph {
@@ -358,7 +570,11 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
+	@Test def void node_pos() {
+		// TODO: implement
+	}
+
 	@Test def node_shape() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
 		prettyPrinter = new DotGraphPrettyPrinter {
@@ -713,7 +929,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def node_shape_rounded_and_filled_styled() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
 		prettyPrinter = new DotGraphPrettyPrinter {
@@ -762,7 +978,31 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
+	@Test def void node_sides() {
+		// TODO: implement
+	}
+
+	@Test def void node_skew() {
+		// TODO: implement
+	}
+
+	@Test def void node_style() {
+		// TODO: implement
+	}
+
+	@Test def void node_tooltip() {
+		// TODO: implement
+	}
+
+	@Test def void node_width() {
+		// TODO: implement
+	}
+
+	@Test def void node_xlp() {
+		// TODO: implement
+	}
+
 	@Test def node_xlabel(){
 		'''
 			graph {
@@ -779,7 +1019,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_xlabel_with_layout_information(){
 		'''
@@ -805,6 +1045,10 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
+	}
+
+	@Test def void subgraph_rank() {
+		// TODO: implement
 	}
 
 	@Test def simpleGraph() {
@@ -999,7 +1243,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def dotClusterGraphPrettyPrintTest() {
 		val dot = DotTestUtils.clusteredGraph
 		'''
@@ -1055,7 +1299,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
 	}
-	
+
 	@Test def dotNestedClusterGraphPrettyPrintTest() {
 		val dot = DotTestUtils.nestedClusteredGraph
 		'''
@@ -1116,7 +1360,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
 	}
-	
+
 	@Test def simpleGraphWithAdditionalInformation() {
 		val dot = DotTestUtils.simpleGraphWithAdditionalInformation
 		val zest = dot.copy
@@ -1384,7 +1628,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def subgraph() {
 		'''
 			graph {
@@ -1403,7 +1647,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	private def assertZestConversion(CharSequence dotText, CharSequence expectedZestGraphText) {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = dotText.parse
@@ -1418,17 +1662,17 @@ class Dot2ZestGraphCopierTests {
 		// compare the string representation removing the objectIDs
 		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
-	
+
 	private def test(Node actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
 		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
-	
+
 	private def test(Edge actual, CharSequence expected) {
 		// compare the string representation removing the objectIDs
 		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
-	
+
 	private def removeObjectIDs(String text){
 		// recognize substrings between '@' and the end of the line
 		val nl = System.lineSeparator
