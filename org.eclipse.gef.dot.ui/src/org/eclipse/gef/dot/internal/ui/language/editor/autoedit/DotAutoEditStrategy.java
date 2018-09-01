@@ -100,10 +100,13 @@ public class DotAutoEditStrategy implements IAutoEditStrategy {
 		HtmlLabel htmlLabel = (HtmlLabel) htmlLabelParser
 				.parse(new StringReader(htmlLabelText)).getRootASTElement();
 
-		HtmlContent result = findContentAtOffset(htmlLabel.getParts(), offset);
+		if (htmlLabel != null) {
+			HtmlContent result = findContentAtOffset(htmlLabel.getParts(),
+					offset);
 
-		if (result != null) {
-			return result.getTag();
+			if (result != null) {
+				return result.getTag();
+			}
 		}
 
 		return null;

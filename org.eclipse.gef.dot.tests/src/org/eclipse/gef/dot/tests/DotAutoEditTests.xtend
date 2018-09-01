@@ -145,6 +145,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			}
 		''')
 	}
+
 	@Test def testAutoEdit011() {
 		'''
 			graph {
@@ -196,7 +197,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 			}
 		''')
 	}
-	
+
 	@Test def testAutoEdit015() {
 		'''
 			digraph {
@@ -211,6 +212,22 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 					<b>|</b>
 				>]
 				1->2
+			}
+		''')
+	}
+
+	@Test def testAutoEdit016() {
+		'''
+			graph {
+				1[label=<
+			<!--	comment --|
+				>]
+			}
+		'''.testAutoEdit('>', '''
+			graph {
+				1[label=<
+			<!--	comment -->|
+				>]
 			}
 		''')
 	}
