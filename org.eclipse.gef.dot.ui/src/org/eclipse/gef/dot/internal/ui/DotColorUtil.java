@@ -74,6 +74,21 @@ public class DotColorUtil {
 		return javaFxColor;
 	}
 
+	public javafx.scene.paint.Color computeGraphBackgroundColor(
+			String colorScheme, Color dotColor) {
+		if (dotColor instanceof HSVColor) {
+			HSVColor hsvColor = (HSVColor) dotColor;
+			return javafx.scene.paint.Color.hsb(
+					Double.parseDouble(hsvColor.getH()) * 360,
+					Double.parseDouble(hsvColor.getS()),
+					Double.parseDouble(hsvColor.getV()));
+		} else {
+			return javafx.scene.paint.Color
+					.web(computeZestColor(colorScheme, dotColor));
+		}
+
+	}
+
 	/**
 	 * Returns the java Fx representation of a HTML-like label color attribute
 	 * 

@@ -98,7 +98,6 @@ import javafx.scene.Scene;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorInput;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 /**
@@ -358,9 +357,10 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 				&& bgcolorList.getColorValues().size() > 0) {
 			// FIXME: apply all colors. Currently, only the first one is
 			// applied.
-			addGraphBackground(Color.web(colorUtil.computeZestColor(
+			Paint backgroundColor = colorUtil.computeGraphBackgroundColor(
 					DotAttributes.getColorscheme(graph),
-					bgcolorList.getColorValues().get(0).getColor())));
+					bgcolorList.getColorValues().get(0).getColor());
+			addGraphBackground(backgroundColor);
 		} else {
 			removeGraphBackground();
 		}
