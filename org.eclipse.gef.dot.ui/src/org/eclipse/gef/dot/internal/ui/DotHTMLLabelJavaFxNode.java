@@ -66,9 +66,9 @@ import javafx.scene.text.Text;
  */
 public class DotHTMLLabelJavaFxNode {
 
-	HtmlLabel root;
+	final private HtmlLabel root;
 
-	DotColorUtil colorUtil = new DotColorUtil();
+	final private DotColorUtil colorUtil = new DotColorUtil();
 
 	/**
 	 * Creates a DotHTMLLabelJavaNode creator
