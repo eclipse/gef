@@ -359,7 +359,11 @@ public class DotHTMLLabelJavaFxNode {
 		GridPane wrapper = new GridPane();
 		wrapper.add(unstyled, 0, 0);
 
-		applyAlignAttributesOnTdPane(wrapper, td);
+		if (!isTableCase(tag.getChildren())) {
+			applyTextAlignAttributesOnTdPane(wrapper, td);
+		} else {
+			applyTableAlignAttributesOnTdPane(wrapper);
+		}
 		applyCssAttributesOnTdPane(wrapper, td, tag);
 
 		return wrapper;
@@ -568,7 +572,8 @@ public class DotHTMLLabelJavaFxNode {
 		}
 	}
 
-	private void applyAlignAttributesOnTdPane(GridPane wrapper, HtmlTag td) {
+	private void applyTextAlignAttributesOnTdPane(GridPane wrapper,
+			HtmlTag td) {
 		String hAlign = unquotedValueForAttr(
 				DotHtmlLabelHelper.getAttributeForTag(td, "align")); //$NON-NLS-1$
 		String vAlign = unquotedValueForAttr(
@@ -579,6 +584,24 @@ public class DotHTMLLabelJavaFxNode {
 		}
 
 		wrapper.setAlignment(posForTd(hAlign, vAlign));
+	}
+
+	private void applyTableAlignAttributesOnTdPane(GridPane wrapper) {
+		/*
+		 * Graphviz documentation specifies for the ALIGN attribute on cells: If
+		 * the cell does not contain text, then the contained image or table is
+		 * centered.
+		 * 
+		 * Further, by observation, unless the fixedsize attribute is set, in
+		 * graphviz the inner table grows in both horizontal and vertical
+		 * direction.
+		 * 
+		 * TODO: revise these settings when the align attribute on table tags is
+		 * implemented, as this may change some behaviour.
+		 */
+		GridPane.setHgrow(wrapper.getChildren().get(0), Priority.ALWAYS);
+		GridPane.setVgrow(wrapper.getChildren().get(0), Priority.ALWAYS);
+		wrapper.setAlignment(Pos.CENTER);
 	}
 
 	private Pos posForTd(String hAlign, String vAlign) {
@@ -646,7 +669,8 @@ public class DotHTMLLabelJavaFxNode {
 			case U:
 				return "-fx-underline: true;"; //$NON-NLS-1$
 			case O:
-				// TODO Not supported by JavaFX, find workaround using border. Consider text color. 
+				// TODO Not supported by JavaFX, find workaround using border.
+				// Consider text color.
 				return ""; //$NON-NLS-1$
 			case SUB:
 				return "-fx-font-size: .83em; -fx-vertical-align: sub"; //$NON-NLS-1$
