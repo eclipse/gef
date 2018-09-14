@@ -126,51 +126,70 @@ public class DotHTMLLabelJavaFxNode {
 		if (contents.size() <= 0)
 			return new Pane(); // an empty HTML label, ought not to occur
 
-		// if there is more than one label, this is, strictly speaking a dot
-		// syntax error; however, the grammar does not recognize this.
-		// hence, we need to check if the first tag is a table and else treat
-		// contents as text.
-		HtmlContent content0 = contents.get(0);
-
-		// we need to ignore leading whitespace
-		if (isWhitespaceOnlyTag(content0) && contents.size() > 1)
-			content0 = contents.get(1);
-
-		HtmlTag tag = content0.getTag();
-
-		if (tag != null && tag.getName().equalsIgnoreCase("table")) //$NON-NLS-1$
-			return drawTable(tag, parentStyle);
-
-		// FONT is a special case where it could be either a textitem or a table
-		// The documented graphviz grammar specifies the table rule as follows
-		// > table : [ <FONT> ] <TABLE> rows </TABLE> [ </FONT> ]
-		// We need to differentiate between the FONT keyword in table and
-		// in textitem because the tag could have multiple children in the
-		// latter case. Hence, to avoid reimplementing a loop here, we hand this
-		// down to the text handling.
-
-		// TODO implement styleTag support as grammar now allows these to occur
-		// before tables (changes described in the #23 comment on 321775) which
-		// is in line with (undocumented) graphviz behaviour.
-		else if (tag != null && tag.getName().equalsIgnoreCase("font")) { //$NON-NLS-1$
-			if (tag.getChildren().size() != 1
-					|| tag.getChildren().get(0).getTag() == null
-					|| !tag.getChildren().get(0).getTag().getName()
-							.equalsIgnoreCase("table")) //$NON-NLS-1$
-				return drawText(contents, parentStyle, bAlign);
-			return drawTable(tag.getChildren().get(0).getTag(),
-					fontTagStyleContainer(tag, parentStyle));
+		/*
+		 * if there is more than one label, this is, strictly speaking a dot
+		 * syntax error; however, the grammar does not recognize this. hence, we
+		 * need to check if the first tag is a table (or a parent, parent of
+		 * parent, ...) and else treat contents as text.
+		 *
+		 * StyleTags are a special case where it could be either a textitem or a
+		 * table The documented graphviz grammar only specifies this for font
+		 * tags, but (undocumented) graphviz behaviour allows other style tags
+		 * (B, I, ...) to occur before tables, too.
+		 *
+		 * The table rule is as follows:
+		 * 
+		 * table : [ <FONT> ] <TABLE> rows </TABLE> [ </FONT> ]
+		 *
+		 * We need to differentiate between the the table and textitem cases.
+		 * The tag could have multiple children in the latter case.
+		 */
+		if (isTableCase(contents)) {
+			return drawTableParents(firstTagWhitespaceIgnored(contents),
+					parentStyle);
 		}
-		// by the grammar we assume it's all text, if the first non-FONT-tag
-		// does not indicate a table
-		else
-			return drawText(contents, parentStyle, bAlign);
+
+		// by the grammar we assume it's all text, if the in the line of first
+		// children no table tag indicates a table
+		return drawText(contents, parentStyle, bAlign);
+	}
+
+	private boolean isTableCase(List<HtmlContent> contents) {
+		HtmlTag tag = firstTagWhitespaceIgnored(contents);
+		// Text (exit) case
+		if (tag == null) {
+			return false;
+		}
+		if (tag.getName().equalsIgnoreCase("table")) { //$NON-NLS-1$
+			return true;
+		}
+		return isTableCase(tag.getChildren());
+	}
+
+	private HtmlTag firstTagWhitespaceIgnored(List<HtmlContent> contents) {
+		if (contents.size() <= 0) {
+			return null;
+		}
+		HtmlContent content0 = contents.get(0);
+		// all whitespace would be grouped into a single tag by the grammar
+		if (isWhitespaceOnlyTag(content0) && contents.size() > 1) {
+			content0 = contents.get(1);
+		}
+		return content0.getTag();
 	}
 
 	private boolean isWhitespaceOnlyTag(HtmlContent content) {
 		return content.getTag() == null && content.getText() != null
 				&& content.getText().matches("\\A\\s*\\z") //$NON-NLS-1$
 		;
+	}
+
+	private Pane drawTableParents(HtmlTag tag, TagStyleContainer parentStyle) {
+		if (tag.getName().equalsIgnoreCase("table")) { //$NON-NLS-1$
+			return drawTable(tag, parentStyle);
+		}
+		return drawTableParents(firstTagWhitespaceIgnored(tag.getChildren()),
+				tagStyleContainer(tag, parentStyle));
 	}
 
 	private Pane drawText(List<HtmlContent> contents,
@@ -200,16 +219,26 @@ public class DotHTMLLabelJavaFxNode {
 		case "table": //$NON-NLS-1$
 			// table tags in this place are illegal
 			return;
-		case "font": //$NON-NLS-1$
-			tagStyleContainer = fontTagStyleContainer(tag, parentStyle);
-			break;
-		// we can assume it's a style Tag
+		// we can assume it's a style (including font) Tag
 		default:
-			tagStyleContainer = simpleTagStyleContainer(tag, parentStyle);
+			tagStyleContainer = tagStyleContainer(tag, parentStyle);
 			break;
 		}
 		for (HtmlContent child : tag.getChildren())
 			handleTextContent(builder, child, tagStyleContainer);
+	}
+
+	/*
+	 * A non-style tag supplied (cases of illegal grammar) is ignored
+	 */
+	private TagStyleContainer tagStyleContainer(HtmlTag tag,
+			TagStyleContainer parentStyle) {
+		switch (tag.getName().toLowerCase()) {
+		case "font": //$NON-NLS-1$
+			return fontTagStyleContainer(tag, parentStyle);
+		default:
+			return simpleTagStyleContainer(tag, parentStyle);
+		}
 	}
 
 	private TagStyleContainer simpleTagStyleContainer(HtmlTag tag,
@@ -615,15 +644,16 @@ public class DotHTMLLabelJavaFxNode {
 			case B:
 				return "-fx-font-weight: bold;"; //$NON-NLS-1$
 			case U:
-				return "-fx-text-decoration: underline;"; //$NON-NLS-1$
+				return "-fx-underline: true;"; //$NON-NLS-1$
 			case O:
-				return "-fx-text-decoration: overline;"; //$NON-NLS-1$
+				// TODO Not supported by JavaFX, find workaround using border. Consider text color. 
+				return ""; //$NON-NLS-1$
 			case SUB:
 				return "-fx-font-size: .83em; -fx-vertical-align: sub"; //$NON-NLS-1$
 			case SUP:
 				return "-fx-font-size: .83em; -fx-vertical-align: super"; //$NON-NLS-1$
 			case S:
-				return "-fx-text-decoration: line-through;"; //$NON-NLS-1$
+				return "-fx-strikethrough: true;"; //$NON-NLS-1$
 			default:
 				return ""; //$NON-NLS-1$
 			}
