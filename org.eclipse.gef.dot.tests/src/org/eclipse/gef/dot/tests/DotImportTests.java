@@ -7,9 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg - initial API and implementation (see bug #277380)
- *     Tamas Miklossy  (itemis AG) - implement additional test cases (bug #493136)
- *                                 - merge DotInterpreter into DotImport (bug #491261)
+ *     Fabian Steeg                   - initial API and implementation (see bug #277380)
+ *     Tamas Miklossy  (itemis AG)    - implement additional test cases (bug #493136)
+ *                                    - merge DotInterpreter into DotImport (bug #491261)
+ *     Zoey Gerrit Prigge (itemis AG) - implement additional dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
@@ -772,6 +773,70 @@ public final class DotImportTests {
 	}
 
 	@Test
+	public void edge_fontname() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setFontname, "Font1") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setFontname, "Font1") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTNAME_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontname(e1, "Font1");
+		DotAttributes.setFontname(e2, "Font2");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTNAME_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontname(e1, "Font3");
+		DotAttributes.setFontname(e2, "Font4");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTNAME_OVERRIDE);
+	}
+
+	@Test
+	public void edge_fontsize() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setFontsize, "1.1") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setFontsize, "1.1") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTSIZE_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontsize(e1, "1.1");
+		DotAttributes.setFontsize(e2, "1.2");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTSIZE_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontsize(e1, "1.3");
+		DotAttributes.setFontsize(e2, "1.4");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_FONTSIZE_OVERRIDE);
+	}
+
+	@Test
 	public void edge_headlabel() {
 		// test global attribute
 		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
@@ -963,6 +1028,70 @@ public final class DotImportTests {
 		DotAttributes.setLabelfontcolor(e2, "0.482 0.714 0.878");
 		expected = graph.nodes(nodes).edges(e1, e2).build();
 		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTCOLOR_OVERRIDE);
+	}
+
+	@Test
+	public void edge_labelfontname() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setLabelfontname, "Font1") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setLabelfontname, "Font1") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTNAME_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setLabelfontname(e1, "Font1");
+		DotAttributes.setLabelfontname(e2, "Font2");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTNAME_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setLabelfontname(e1, "Font3");
+		DotAttributes.setLabelfontname(e2, "Font4");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTNAME_OVERRIDE);
+	}
+
+	@Test
+	public void edge_labelfontsize() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node[] nodes = createNodes();
+		Edge e1 = new Edge.Builder(nodes[0], nodes[1])
+				.attr(DotAttributes::setLabelfontsize, "1.1") //$NON-NLS-1$
+				.buildEdge();
+		Edge e2 = new Edge.Builder(nodes[2], nodes[3])
+				.attr(DotAttributes::setLabelfontsize, "1.1") //$NON-NLS-1$
+				.buildEdge();
+		Graph expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTSIZE_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setLabelfontsize(e1, "1.1");
+		DotAttributes.setLabelfontsize(e2, "1.2");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTSIZE_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setLabelfontsize(e1, "1.3");
+		DotAttributes.setLabelfontsize(e2, "1.4");
+		expected = graph.nodes(nodes).edges(e1, e2).build();
+		testStringImport(expected, DotTestGraphs.EDGE_LABELFONTSIZE_OVERRIDE);
 	}
 
 	@Test
@@ -1469,6 +1598,72 @@ public final class DotImportTests {
 		DotAttributes.setFontcolor(n2, "0.3, .8, .7");
 		expected = graph.nodes(n1, n2).build();
 		testStringImport(expected, DotTestGraphs.NODE_FONTCOLOR_OVERRIDE);
+	}
+
+	@Test
+	public void node_fontname() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1")
+				// $NON-NLS-1$
+				.attr(DotAttributes::setFontname, "Font1") //$NON-NLS-1$
+				.buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2")
+				// $NON-NLS-1$
+				.attr(DotAttributes::setFontname, "Font1") //$NON-NLS-1$
+				.buildNode();
+		Graph expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTNAME_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontname(n1, "Font1");
+		DotAttributes.setFontname(n2, "Font2");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTNAME_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontname(n1, "Font3");
+		DotAttributes.setFontname(n2, "Font4");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTNAME_OVERRIDE);
+	}
+
+	@Test
+	public void node_fontsize() {
+		// test global attribute
+		Graph.Builder graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		Node n1 = new Node.Builder().attr(DotAttributes::_setName, "1")
+				// $NON-NLS-1$
+				.attr(DotAttributes::setFontsize, "1.1") //$NON-NLS-1$
+				.buildNode();
+		Node n2 = new Node.Builder().attr(DotAttributes::_setName, "2")
+				// $NON-NLS-1$
+				.attr(DotAttributes::setFontsize, "1.1") //$NON-NLS-1$
+				.buildNode();
+		Graph expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTSIZE_GLOBAL);
+
+		// test local attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontsize(n1, "1.1");
+		DotAttributes.setFontsize(n2, "1.2");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTSIZE_LOCAL);
+
+		// test override attribute
+		graph = new Graph.Builder().attr(DotAttributes::_setType,
+				GraphType.GRAPH);
+		DotAttributes.setFontsize(n1, "1.3");
+		DotAttributes.setFontsize(n2, "1.4");
+		expected = graph.nodes(n1, n2).build();
+		testStringImport(expected, DotTestGraphs.NODE_FONTSIZE_OVERRIDE);
 	}
 
 	@Test
