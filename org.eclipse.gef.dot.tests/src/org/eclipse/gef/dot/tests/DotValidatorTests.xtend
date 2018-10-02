@@ -10,6 +10,7 @@
  *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)
  *                                - Add support for polygon-based node shapes (bug #441352)
  *     Zoey G. Prigge (itemis AG) - Add support for record-based node shapes (bug #454629)
+ *                                - implement additional dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -126,6 +127,18 @@ class DotValidatorTests {
 		dotAst.assertError(ATTRIBUTE, ARROWSIZE__E, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
 		dotAst.assertError(ATTRIBUTE, ARROWSIZE__E, "The double value '-2.0' is not semantically correct: Value may not be smaller than 0.0.")
 	}
+	
+	@Test def testWrongEdgeFontsize() {
+		val dotAst = '''graph { 1--2[fontsize=large] 3--4[fontsize=0.3]}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
+		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
+	}
+		
+	@Test def testWrongEdgeLabelfontsize() {
+		val dotAst = '''graph { 1--2[labelfontsize=large] 3--4[labelfontsize=0.3]}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertError(ATTRIBUTE, LABELFONTSIZE__E, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
+		dotAst.assertError(ATTRIBUTE, LABELFONTSIZE__E, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
+	}
 
 	@Test def testNoneIsTheLastArrowShape() {
 		'''digraph { 1->2[arrowhead=boxnone] }'''.parse.assertNumberOfIssues(1).
@@ -145,6 +158,13 @@ class DotValidatorTests {
 	@Test def testGraphBackgroundColorDoesNotCorrespondToGlobalColorScheme() {
 		'''graph { graph[colorscheme=brbg10] bgcolor=blue}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, BGCOLOR__GC, "The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
+	}
+	
+	@Test def testWrongGraphFontsize() {
+		'''graph {fontsize=large}'''.parse.assertNumberOfIssues(1).
+		assertError(ATTRIBUTE, FONTSIZE__GCNE, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
+		'''graph {fontsize=0.3}'''.parse.assertNumberOfIssues(1).
+		assertError(ATTRIBUTE, FONTSIZE__GCNE, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
 	}
 
 	@Test def testWrongNodeColor() {
@@ -181,6 +201,12 @@ class DotValidatorTests {
 		val dotAst = '''graph { 1[distortion=foo] 2[distortion="-100.0001"]}'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, DISTORTION__N, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
 		dotAst.assertError(ATTRIBUTE, DISTORTION__N, "The double value '-100.0001' is not semantically correct: Value may not be smaller than -100.0.")
+	}
+	
+	@Test def testWrongNodeFontsize() {
+		val dotAst = '''graph { 1[fontsize=large] 2[fontsize=0.3]}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
+		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
 	}
 
 	@Test def testWrongNodeShape() {

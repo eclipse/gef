@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy     (itemis AG) - initial implementation (bug #498324)
- *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - Add support for additional dot attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -214,8 +214,8 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				edge[«c»]
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
-			"dir", "edgetooltip", "fillcolor", "fontcolor", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labeltooltip", "lp", "pos", "style",
+			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "pos", "style",
 			"taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowhead", '''
 			graph {
@@ -229,8 +229,8 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				1--2[ «c» ]
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
-			"dir", "edgetooltip", "fillcolor", "fontcolor", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labeltooltip", "lp", "pos", "style",
+			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "pos", "style",
 			"taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowtail", '''
 			graph {
@@ -1305,7 +1305,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph", "node", "subgraph",
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph", "node", "subgraph",
 									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
 									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -1319,7 +1319,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				1
 				«c»
 			}
-		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph",
+		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph",
 									"node", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
 									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -1334,7 +1334,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			digraph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph", "node", "subgraph",
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph", "node", "subgraph",
 									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
 									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -1348,7 +1348,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				1
 				«c»
 			}
-		'''.testContentAssistant(#["->", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph",
+		'''.testContentAssistant(#["->", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "fontname", "fontsize", "graph",
 									"node", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
 									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -1462,7 +1462,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				graph[«c»]
 			}
-		'''.testContentAssistant(#["]", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "forcelabels",
+		'''.testContentAssistant(#["]", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "forcelabels",
 								"id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir", "rankdir",
 								"splines", "style"], "forcelabels",
 		'''
@@ -1476,7 +1476,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "graph",
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph",
 									"node",	"subgraph", "{", "}", "forcelabels", "id", "label",	"layout", "lp",
 									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "rankdir",
 		'''
@@ -1762,7 +1762,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				colorscheme=brbg11 fontcolor=1«c»
 			}
 		'''.testContentAssistant(#["1", "10", "11", ",", ";", "{", "}", "bb", "bgcolor", "colorscheme", "clusterrank",
-									"edge", "fontcolor", "forcelabels", "graph", "id", "label", "layout", "lp", "node",
+									"edge", "fontcolor", "fontname", "fontsize", "forcelabels", "graph", "id", "label", "layout", "lp", "node",
 									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "edge - Insert a template"], "11",
 		'''
 			graph {
@@ -2207,7 +2207,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				node[«c»]
 			}
-		'''.testContentAssistant(#["]", "color", "colorscheme", "distortion", "fillcolor", "fixedsize", "fontcolor",
+		'''.testContentAssistant(#["]", "color", "colorscheme", "distortion", "fillcolor", "fixedsize", "fontcolor", "fontname", "fontsize",
 								"height", "id", "label", "pos", "shape", "sides", "skew", "style", "tooltip", "width",
 								"xlabel", "xlp"], "distortion",
 		'''
@@ -2221,7 +2221,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				1[ «c» ]
 			}
-		'''.testContentAssistant(#["]", "color", "colorscheme", "distortion", "fillcolor", "fixedsize", "fontcolor",
+		'''.testContentAssistant(#["]", "color", "colorscheme", "distortion", "fillcolor", "fixedsize", "fontcolor", "fontname", "fontsize",
 								"height", "id", "label", "pos", "shape", "sides", "skew", "style", "tooltip", "width",
 								"xlabel", "xlp"], "fixedsize",
 		'''

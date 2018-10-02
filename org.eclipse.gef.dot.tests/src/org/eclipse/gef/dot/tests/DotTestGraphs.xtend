@@ -8,6 +8,8 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
+ *     Zoey G. Prigge (itemis AG) - implement additional dot attributes (bug #461506)
+ * 
  *******************************************************************************/
 
 package org.eclipse.gef.dot.tests
@@ -663,6 +665,52 @@ class DotTestGraphs {
 			3--4
 		}
 	'''
+	
+	public static val EDGE_FONTNAME_GLOBAL = '''
+		graph {
+			edge[fontname=Font1]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_FONTNAME_LOCAL = '''
+		graph {
+			1--2[fontname=Font1]
+			3--4[fontname=Font2]
+		}
+	'''
+	
+	public static val EDGE_FONTNAME_OVERRIDE = '''
+		graph {
+			edge[fontname=Font4]
+			1--2[fontname=Font3]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_FONTSIZE_GLOBAL = '''
+		graph {
+			edge[fontsize=1.1]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_FONTSIZE_LOCAL = '''
+		graph {
+			1--2[fontsize=1.1]
+			3--4[fontsize=1.2]
+		}
+	'''
+	
+	public static val EDGE_FONTSIZE_OVERRIDE = '''
+		graph {
+			edge[fontsize=1.4]
+			1--2[fontsize=1.3]
+			3--4
+		}
+	'''
 		
 	public static val EDGE_HEADLABEL_GLOBAL = '''
 		graph {
@@ -789,6 +837,52 @@ class DotTestGraphs {
 		graph {
 			edge[labelfontcolor="0.482 0.714 0.878"]
 			1--2[labelfontcolor=turquoise]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELFONTNAME_GLOBAL = '''
+		graph {
+			edge[labelfontname=Font1]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELFONTNAME_LOCAL = '''
+		graph {
+			1--2[labelfontname=Font1]
+			3--4[labelfontname=Font2]
+		}
+	'''
+	
+	public static val EDGE_LABELFONTNAME_OVERRIDE = '''
+		graph {
+			edge[labelfontname=Font4]
+			1--2[labelfontname=Font3]
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELFONTSIZE_GLOBAL = '''
+		graph {
+			edge[labelfontsize=1.1]
+			1--2
+			3--4
+		}
+	'''
+	
+	public static val EDGE_LABELFONTSIZE_LOCAL = '''
+		graph {
+			1--2[labelfontsize=1.1]
+			3--4[labelfontsize=1.2]
+		}
+	'''
+	
+	public static val EDGE_LABELFONTSIZE_OVERRIDE = '''
+		graph {
+			edge[labelfontsize=1.4]
+			1--2[labelfontsize=1.3]
 			3--4
 		}
 	'''
@@ -1137,6 +1231,52 @@ class DotTestGraphs {
 		graph {
 			node[fontcolor="0.3, .8, .7"]
 			1[fontcolor="/brbg11/10"]
+			2
+		}
+	'''
+	
+	public static val NODE_FONTNAME_GLOBAL = '''
+		graph {
+			node[fontname=Font1]
+			1
+			2
+		}
+	'''
+	
+	public static val NODE_FONTNAME_LOCAL = '''
+		graph {
+			1[fontname=Font1]
+			2[fontname=Font2]
+		}
+	'''
+	
+	public static val NODE_FONTNAME_OVERRIDE = '''
+		graph {
+			node[fontname=Font4]
+			1[fontname=Font3]
+			2
+		}
+	'''
+	
+	public static val NODE_FONTSIZE_GLOBAL = '''
+		graph {
+			node[fontsize=1.1]
+			1
+			2
+		}
+	'''
+	
+	public static val NODE_FONTSIZE_LOCAL = '''
+		graph {
+			1[fontsize=1.1]
+			2[fontsize=1.2]
+		}
+	'''
+	
+	public static val NODE_FONTSIZE_OVERRIDE = '''
+		graph {
+			node[fontsize=1.4]
+			1[fontsize=1.3]
 			2
 		}
 	'''

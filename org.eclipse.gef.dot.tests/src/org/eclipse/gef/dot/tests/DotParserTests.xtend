@@ -7,10 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)
- *                                - Add support for polygon-based node shapes (bug #441352)
- *                                - modify grammar to allow empty attribute lists (bug #461506)
- *                                - Add support for all dot attributes (bug #461506)
+ *     Tamas Miklossy (itemis AG)     - initial implementation (bug #477980)
+ *                                    - Add support for polygon-based node shapes (bug #441352)
+ *                                    - modify grammar to allow empty attribute lists (bug #461506)
+ *                                    - Add support for all dot attributes (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - implement additional attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -84,6 +85,7 @@ class DotParserTests {
 	@Test def testCpattlPie() { "cpattl-pie.dot".dslFileHasNoError }
 	@Test def testER() { "er.dot".dslFileHasNoError }
 	@Test def testFancyGraph() { "fancy_graph.dot".dslFileHasNoError }
+	@Test def testFontnameFontsize() {"fontname_fontsize.dot".dslFileHasNoError}
 	@Test def testGrdangles() { "grdangles.dot".dslFileHasNoError }
 	@Test def testGrdcluster() { "grdcluster.dot".dslFileHasNoError }
 	@Test def testGrdcolors() { "grdcolors.dot".dslFileHasNoError }

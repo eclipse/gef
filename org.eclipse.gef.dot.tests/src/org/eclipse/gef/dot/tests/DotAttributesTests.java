@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Tamas Miklossy  (itemis AG) - implement additional test cases (bug #461506)
+ *     Alexander Nyßen (itemis AG)    - initial API and implementation
+ *     Tamas Miklossy  (itemis AG)    - implement additional test cases (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - implement additional attributes (bug #461506)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
@@ -679,6 +680,80 @@ public class DotAttributesTests {
 	}
 
 	@Test
+	public void edge_fontname() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontnameRaw(edge));
+		assertNull(DotAttributes.getFontname(edge));
+
+		// set valid string values
+		final String validEdgeFontname = "Times New Roman";
+		DotAttributes.setFontname(edge, validEdgeFontname);
+		assertEquals(validEdgeFontname, DotAttributes.getFontname(edge));
+	}
+
+	@Test
+	public void edge_fontsize() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontsizeRaw(edge));
+		assertNull(DotAttributes.getFontsize(edge));
+		assertNull(DotAttributes.getFontsizeParsed(edge));
+
+		// set valid string values
+		String validFontsize = "22.5";
+		DotAttributes.setFontsize(edge, validFontsize);
+		assertEquals(validFontsize, DotAttributes.getFontsize(edge));
+
+		// set valid parsed values
+		Double validFontsizeParsed = new Double(5);
+		DotAttributes.setFontsizeParsed(edge, validFontsizeParsed);
+		assertEquals(validFontsizeParsed,
+				DotAttributes.getFontsizeParsed(edge));
+
+		// set valid parsed values
+		validFontsizeParsed = new Double(1.0);
+		DotAttributes.setFontsizeParsed(edge, validFontsizeParsed);
+		assertEquals(validFontsizeParsed,
+				DotAttributes.getFontsizeParsed(edge));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setFontsize(edge, "2,5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'fontsize' to '2,5'. The value '2,5' is not a syntactically correct double: For input string: \"2,5\".",
+					e.getMessage());
+		}
+
+		try {
+			DotAttributes.setFontsize(edge, "foo");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'fontsize' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setFontsize(edge, "0.5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'fontsize' to '0.5'. The double value '0.5' is not semantically correct: Value may not be smaller than 1.0.",
+					e.getMessage());
+		}
+	}
+
+	@Test
 	public void edge_headlabel() {
 		Node n1 = new Node.Builder().buildNode();
 		Node n2 = new Node.Builder().buildNode();
@@ -930,6 +1005,81 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set edge attribute 'labelfontcolor' to '_'. The value '_' is not a syntactically correct color: No viable alternative at character '_'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void edge_labelfontname() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLabelfontnameRaw(edge));
+		assertNull(DotAttributes.getLabelfontname(edge));
+
+		// set valid string values
+		final String validEdgeLabelfontname = "Times New Roman";
+		DotAttributes.setLabelfontname(edge, validEdgeLabelfontname);
+		assertEquals(validEdgeLabelfontname,
+				DotAttributes.getLabelfontname(edge));
+	}
+
+	@Test
+	public void edge_labelfontsize() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getLabelfontsizeRaw(edge));
+		assertNull(DotAttributes.getLabelfontsize(edge));
+		assertNull(DotAttributes.getLabelfontsizeParsed(edge));
+
+		// set valid string values
+		String validLabelfontsize = "22.5";
+		DotAttributes.setLabelfontsize(edge, validLabelfontsize);
+		assertEquals(validLabelfontsize, DotAttributes.getLabelfontsize(edge));
+
+		// set valid parsed values
+		Double validLabelfontsizeParsed = new Double(5);
+		DotAttributes.setLabelfontsizeParsed(edge, validLabelfontsizeParsed);
+		assertEquals(validLabelfontsizeParsed,
+				DotAttributes.getLabelfontsizeParsed(edge));
+
+		// set valid parsed values
+		validLabelfontsizeParsed = new Double(1.0);
+		DotAttributes.setLabelfontsizeParsed(edge, validLabelfontsizeParsed);
+		assertEquals(validLabelfontsizeParsed,
+				DotAttributes.getLabelfontsizeParsed(edge));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setLabelfontsize(edge, "2,5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'labelfontsize' to '2,5'. The value '2,5' is not a syntactically correct double: For input string: \"2,5\".",
+					e.getMessage());
+		}
+
+		try {
+			DotAttributes.setLabelfontsize(edge, "foo");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'labelfontsize' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setLabelfontsize(edge, "0.5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'labelfontsize' to '0.5'. The double value '0.5' is not semantically correct: Value may not be smaller than 1.0.",
 					e.getMessage());
 		}
 	}
@@ -1917,6 +2067,76 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set graph attribute 'fontcolor' to '/white'. The value '/white' is not a syntactically correct color: Mismatched input '<EOF>' expecting '/'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void graph_fontname() {
+		Graph graph = new Graph.Builder().build();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontnameRaw(graph));
+		assertNull(DotAttributes.getFontname(graph));
+
+		// set valid string values
+		final String validGraphFontname = "Times New Roman";
+		DotAttributes.setFontname(graph, validGraphFontname);
+		assertEquals(validGraphFontname, DotAttributes.getFontname(graph));
+	}
+
+	@Test
+	public void graph_fontsize() {
+		Graph graph = new Graph.Builder().build();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontsizeRaw(graph));
+		assertNull(DotAttributes.getFontsize(graph));
+		assertNull(DotAttributes.getFontsizeParsed(graph));
+
+		// set valid string values
+		String validFontsize = "22.5";
+		DotAttributes.setFontsize(graph, validFontsize);
+		assertEquals(validFontsize, DotAttributes.getFontsize(graph));
+
+		// set valid parsed values
+		Double validFontsizeParsed = new Double(5);
+		DotAttributes.setFontsizeParsed(graph, validFontsizeParsed);
+		assertEquals(validFontsizeParsed,
+				DotAttributes.getFontsizeParsed(graph));
+
+		// set valid parsed values
+		validFontsizeParsed = new Double(1.0);
+		DotAttributes.setFontsizeParsed(graph, validFontsizeParsed);
+		assertEquals(validFontsizeParsed,
+				DotAttributes.getFontsizeParsed(graph));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setFontsize(graph, "2,5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'fontsize' to '2,5'. The value '2,5' is not a syntactically correct double: For input string: \"2,5\".",
+					e.getMessage());
+		}
+
+		try {
+			DotAttributes.setFontsize(graph, "foo");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'fontsize' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setFontsize(graph, "0.5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set graph attribute 'fontsize' to '0.5'. The double value '0.5' is not semantically correct: Value may not be smaller than 1.0.",
 					e.getMessage());
 		}
 	}
@@ -3072,6 +3292,76 @@ public class DotAttributesTests {
 		} catch (IllegalArgumentException e) {
 			assertEquals(
 					"Cannot set node attribute 'fontcolor' to '///'. The value '///' is not a syntactically correct color: No viable alternative at input '/'.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_fontname() {
+		Node node = new Node.Builder().buildNode();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontnameRaw(node));
+		assertNull(DotAttributes.getFontname(node));
+
+		// set valid string values
+		final String validNodeFontname = "Times New Roman";
+		DotAttributes.setFontname(node, validNodeFontname);
+		assertEquals(validNodeFontname, DotAttributes.getFontname(node));
+	}
+
+	@Test
+	public void node_fontsize() {
+		Node node = new Node.Builder().buildNode();
+
+		// test getters if no explicit value is set
+		assertNull(DotAttributes.getFontsizeRaw(node));
+		assertNull(DotAttributes.getFontsize(node));
+		assertNull(DotAttributes.getFontsizeParsed(node));
+
+		// set valid string values
+		String validFontsize = "22.5";
+		DotAttributes.setFontsize(node, validFontsize);
+		assertEquals(validFontsize, DotAttributes.getFontsize(node));
+
+		// set valid parsed values
+		Double validFontsizeParsed = new Double(5);
+		DotAttributes.setFontsizeParsed(node, validFontsizeParsed);
+		assertEquals(validFontsizeParsed,
+				DotAttributes.getFontsizeParsed(node));
+
+		// set valid parsed values
+		validFontsizeParsed = new Double(1.0);
+		DotAttributes.setFontsizeParsed(node, validFontsizeParsed);
+		assertEquals(validFontsizeParsed,
+				DotAttributes.getFontsizeParsed(node));
+
+		// set syntactically invalid values
+		try {
+			DotAttributes.setFontsize(node, "2,5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'fontsize' to '2,5'. The value '2,5' is not a syntactically correct double: For input string: \"2,5\".",
+					e.getMessage());
+		}
+
+		try {
+			DotAttributes.setFontsize(node, "foo");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'fontsize' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\".",
+					e.getMessage());
+		}
+
+		// set syntactically correct, but semantically invalid values
+		try {
+			DotAttributes.setFontsize(node, "0.5");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'fontsize' to '0.5'. The double value '0.5' is not semantically correct: Value may not be smaller than 1.0.",
 					e.getMessage());
 		}
 	}

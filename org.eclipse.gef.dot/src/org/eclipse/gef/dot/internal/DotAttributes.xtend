@@ -442,6 +442,7 @@ class DotAttributes {
 				}else
 					Collections.emptyList
 			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FONTSIZE__GCNE: validateAttributeRawValue(DOUBLE_PARSER, FONTSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case HEADPORT__E: validateAttributeRawValue(PORTPOS_PARSER, PORTPOS_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -456,6 +457,7 @@ class DotAttributes {
 					Collections.emptyList
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LABELTOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LABELFONTSIZE__E: validateAttributeRawValue(DOUBLE_PARSER, FONTSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LP__GCE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case NODESEP__G: validateAttributeRawValue(DOUBLE_PARSER, NODESEP_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -1051,6 +1053,11 @@ class DotAttributes {
 	 * A validator for nodesep {@link Double} attribute values.
 	 */
 	static val NODESEP_VALIDATOR = new DoubleValidator(0)
+	
+	/**
+	 * The validator for fontsize {@link Double} attribute values.
+	 */
+	static val FONTSIZE_VALIDATOR = new DoubleValidator(1.0)
 
 	static val Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration
@@ -1460,6 +1467,12 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=Color)
 	public static val FONTCOLOR__GCNE = "fontcolor"
+	
+	@DotAttribute(parsedType=String)
+	public static val FONTNAME__GCNE = "fontname"
+	
+	@DotAttribute(rawType="NUMERAL", parsedType=Double)
+	public static val FONTSIZE__GCNE = "fontsize"
 
 	@DotAttribute(rawType="STRING", parsedType=Boolean)
 	public static val FORCELABELS__G = "forcelabels"
@@ -1487,7 +1500,13 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=Color)
 	public static val LABELFONTCOLOR__E = "labelfontcolor"
-
+	
+	@DotAttribute(parsedType=String)
+	public static val LABELFONTNAME__E = "labelfontname"
+	
+	@DotAttribute(rawType="NUMERAL", parsedType=Double)
+	public static val LABELFONTSIZE__E = "labelfontsize"
+	
 	@DotAttribute(parsedType=EscString)
 	public static val LABELTOOLTIP__E = "labeltooltip"
 
