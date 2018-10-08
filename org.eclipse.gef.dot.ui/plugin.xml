@@ -148,6 +148,7 @@
               class="org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage"
               id="org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage"
               name="Graphviz">
+              <keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
         </page>
     </extension>
     <extension
