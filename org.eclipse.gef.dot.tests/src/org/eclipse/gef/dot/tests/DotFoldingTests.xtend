@@ -50,6 +50,35 @@ class DotFoldingTests {
 		DotTestGraphs.GRAPH_LABEL_HTML_LIKE(DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG).
 		assertFoldingRegions(1, 15, 2, 14, 7, 13, 8, 12, 9, 11, 4, 6)
 	}
+	
+	@Test def testDotAttributeListFolding01() {
+		'''
+			graph {
+				node[
+				]
+			}
+		'''.assertFoldingRegions(1, 4, 2, 3)
+	}
+	
+	@Test def testDotAttributeListFolding02() {
+		'''
+			graph {
+				node
+				[
+				]
+			}
+		'''.assertFoldingRegions(1, 5, 2, 4, 3, 4)
+	}
+	
+	@Test def testDotAttributeListFolding03() {
+		DotTestGraphs.COLORLIST_COLOR_E.
+		assertFoldingRegions(1, 5, 2, 4)
+	}
+	
+	@Test def testDotAttributeListFolding04() {
+		DotTestGraphs.COLORLIST_FILLCOLOR_N.
+		assertFoldingRegions(1, 6, 2, 5)
+	}
 
 	@Test def testIncompleteAttributeStatement() {
 		'''graph {1[color= ]}'''.assertFoldingRegions

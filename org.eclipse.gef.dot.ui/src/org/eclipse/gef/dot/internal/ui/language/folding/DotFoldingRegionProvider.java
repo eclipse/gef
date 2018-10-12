@@ -14,6 +14,7 @@ package org.eclipse.gef.dot.internal.ui.language.folding;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -26,6 +27,7 @@ import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.folding.DefaultFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.folding.FoldedPosition;
@@ -33,13 +35,22 @@ import org.eclipse.xtext.ui.editor.folding.IFoldingRegionAcceptor;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.ITextRegion;
+import org.eclipse.xtext.util.ITextRegionWithLineInformation;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 
+	@Inject
+	private ILocationInFileProvider locationInFileProvider;
+
+	private List<ITextRegionWithLineInformation> acceptedRegions = new LinkedList<ITextRegionWithLineInformation>();
+
 	protected void computeObjectFolding(XtextResource xtextResource,
 			IFoldingRegionAcceptor<ITextRegion> foldingRegionAcceptor) {
+		acceptedRegions.clear();
+
 		IParseResult parseResult = xtextResource.getParseResult();
 		if (parseResult != null) {
 			EObject rootASTElement = parseResult.getRootASTElement();
@@ -61,6 +72,41 @@ public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected void computeObjectFolding(EObject eObject,
+			IFoldingRegionAcceptor<ITextRegion> foldingRegionAcceptor) {
+		ITextRegion region = locationInFileProvider.getFullTextRegion(eObject);
+		ITextRegionWithLineInformation regionWithLineInformation = (ITextRegionWithLineInformation) region;
+		if (region != null) {
+			ITextRegion significant = locationInFileProvider
+					.getSignificantTextRegion(eObject);
+			if (significant == null)
+				throw new NullPointerException(
+						"significant region may not be null"); //$NON-NLS-1$
+			if (!isAlreadyAccepted(regionWithLineInformation)) {
+				foldingRegionAcceptor.accept(region.getOffset(),
+						region.getLength(), significant);
+				acceptedRegions.add(regionWithLineInformation);
+			}
+		}
+	}
+
+	private boolean isAlreadyAccepted(
+			ITextRegionWithLineInformation regionWithLineInformation) {
+		for (ITextRegionWithLineInformation acceptedRegion : acceptedRegions) {
+			if (equals(regionWithLineInformation, acceptedRegion)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean equals(ITextRegionWithLineInformation region1,
+			ITextRegionWithLineInformation region2) {
+		return region1.getLineNumber() == region2.getLineNumber()
+				&& region1.getEndLineNumber() == region2.getEndLineNumber();
 	}
 
 	/**
