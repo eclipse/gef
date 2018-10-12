@@ -38,8 +38,6 @@ import com.google.inject.Injector;
 
 public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 
-	private Injector injector;
-
 	protected void computeObjectFolding(XtextResource xtextResource,
 			IFoldingRegionAcceptor<ITextRegion> foldingRegionAcceptor) {
 		IParseResult parseResult = xtextResource.getParseResult();
@@ -77,7 +75,7 @@ public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 		if (attribute.getValue() != null
 				&& attribute.getValue().getType() == ID.Type.HTML_STRING) {
 			String htmlLabelValue = attribute.getValue().toValue();
-			injector = DotActivator.getInstance().getInjector(
+			Injector injector = DotActivator.getInstance().getInjector(
 					DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
 			IFoldingRegionProvider htmlLabelFoldingRegionProvider = injector
 					.getInstance(IFoldingRegionProvider.class);
