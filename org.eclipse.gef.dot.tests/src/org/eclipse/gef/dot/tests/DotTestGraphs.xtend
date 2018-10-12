@@ -215,7 +215,6 @@ class DotTestGraphs {
 			1->2->3->4
 		}
 	'''	
-
 	
 	public static val NEW_LINES_IN_LABELS = '''
 		graph {
@@ -366,7 +365,6 @@ class DotTestGraphs {
  * Test dot graphs with different dot attribute valid values
  ************************************************************************************************************
  */
-
 	public static val GRAPH_LAYOUT_DOT = '''
 		digraph {
 			graph[layout=dot]
