@@ -42,7 +42,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		editorInfo.editorId
 	}
 
-	@Test def testMarkingOccurrences01() {
+	@Test def marking_occurrences001() {
 		val text = '''
 			graph {
 				1;2
@@ -52,7 +52,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.first("1"), #[text.second("1")])
 	}
 
-	@Test def testMarkingOccurrences02() {
+	@Test def marking_occurrences002() {
 		val text = '''
 			graph {
 				1;2
@@ -62,7 +62,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.second("1"), #[text.first("1")])
 	}
 
-	@Test def testMarkingOccurrences03() {
+	@Test def marking_occurrences003() {
 		val text = '''
 			graph {
 				1
@@ -73,7 +73,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.first("2"), #[text.second("2")])
 	}
 
-	@Test def testMarkingOccurrences04() {
+	@Test def marking_occurrences004() {
 		val text = '''
 			graph {
 				1
@@ -84,7 +84,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.second("2"), #[text.first("2")])
 	}
 
-	@Test def testMarkingOccurrences05() {
+	@Test def marking_occurrences005() {
 		val text = '''
 			graph {
 				1
@@ -97,7 +97,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.first("4"), #[text.second("4")])
 	}
 
-	@Test def testMarkingOccurrences06() {
+	@Test def marking_occurrences006() {
 		val text = '''
 			graph {
 				1;
@@ -110,7 +110,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences( text.second("4"), #[text.first("4")])
 	}
 
-	@Test def testMarkingOccurrences07() {
+	@Test def marking_occurrences007() {
 		val text = '''
 			graph {
 				1;2;4
@@ -121,7 +121,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.first("1"), #[text.second("1"), text.third("1")])
 	}
 
-	@Test def testMarkingOccurrences08() {
+	@Test def marking_occurrences008() {
 		val text = '''
 			graph {
 				1;2;4
@@ -132,7 +132,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		text.verifyOccurrences(text.second("1"), #[text.first("1"), text.third("1")])
 	}
 
-	@Test def testMarkingOccurrences09() {
+	@Test def marking_occurrences009() {
 		val text = '''
 			graph {
 				1;
@@ -172,15 +172,15 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		Collections.sort(sortedAnnotationPositions, [Position o1, Position o2|o1.offset - o2.offset])
 		sortedAnnotationPositions
 	}
-	
+
 	private def first(String text, String substring){
 		text.indexOf(substring)
 	}	
-	
+
 	private def second(String text, String substring){
 		text.indexOf(substring, text.first(substring) + 1)
 	}
-	
+
 	private def third(String text, String substring){
 		text.indexOf(substring, text.second(substring) + 1)
 	}	

@@ -46,28 +46,27 @@ class DotExecutableUtilsTests {
 		Assume.assumeTrue(!dotExecutablePath.nullOrEmpty)
 	}
 
-	@Test def simpleGraph() {
+	@Test def simple_graph() {
 		"simple_graph.dot".testImageExport
 	}
 
-	@Test def directedGraph() {
+	@Test def directed_graph() {
 		"simple_digraph.dot".testImageExport
 	}
 
-	@Test def labeledGraph() {
+	@Test def labeled_graph() {
 		"labeled_graph.dot".testImageExport
 	}
 
-	@Test def styledGraph() {
+	@Test def styled_graph() {
 		"styled_graph.dot".testImageExport
 	}
 
-	@Test(timeout=2000)
-	def testComplexDot() {
+	@Test(timeout=2000) def test_complex_dot() {
 		"arrowshapes_direction_both.dot".inputFile.executeDot.assertNotNull
 	}
 
-	@Test def testSupportedExportFormatCalculation() {
+	@Test def supported_export_format_calculation() {
 		#[
 			"bmp", "canon", "cmap", "cmapx", "cmapx_np", "dot", "emf", "emfplus", "eps", "fig",
 			"gd", "gd2", "gif", "gv", "imap", "imap_np", "ismap", "jpe", "jpeg", "jpg", "metafile",

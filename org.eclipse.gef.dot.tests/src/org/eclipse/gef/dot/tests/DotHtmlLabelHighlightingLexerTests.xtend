@@ -30,5 +30,5 @@ class DotHtmlLabelHighlightingLexerTests extends AbstractDotHtmlLabelLexerTest {
 	override lexer() {
 		lexer
 	}
-	
+
 }

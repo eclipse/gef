@@ -485,7 +485,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def edge_colorscheme() {		
+	@Test def edge_colorscheme() {
 		val expectedDotColorSchemes = copyExpectedDotColorSchemes
 		
 		// test global attribute values
@@ -3093,7 +3093,6 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			builder.applyProposal(cursorPosition, proposalToApply).expectContent(expectedContent)
 		}
 	}
-	
 
 	/** 
 	 * Since the Content Assists Test Cases sorts the expectations array, the
@@ -3121,7 +3120,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 
 	override protected newBuilder() {
 		return new ContentAssistProcessorTestBuilder(injector, this) {
-			
+
 			override protected applyProposal(ICompletionProposal proposal, IXtextDocument document) {
 				return applyProposal(proposal, cursorPosition, document)
 			}
@@ -3148,7 +3147,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 					shell.dispose
 				}
 			}
-			
+
 			// TODO: remove this workaround			
 			override expectContent(String expectation) {
 				val actual = model.replaceAll("\r?\n", System.lineSeparator)

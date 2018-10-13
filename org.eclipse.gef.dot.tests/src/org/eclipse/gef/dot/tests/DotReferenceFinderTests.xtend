@@ -56,7 +56,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		createTestProjectWithXtextNature
 	}
 
-	@Test def testFindingReferences001() {
+	@Test def finding_references_001() {
 		'''
 			graph {
 				1
@@ -66,7 +66,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences002() {
+	@Test def finding_references_002() {
 		'''
 			graph {
 				1
@@ -77,7 +77,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences003() {
+	@Test def finding_references_003() {
 		'''
 			graph {
 				1
@@ -89,7 +89,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences004() {
+	@Test def finding_references_004() {
 		'''
 			graph {
 				1
@@ -101,7 +101,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences005() {
+	@Test def finding_references_005() {
 		'''
 			graph {
 				1--2
@@ -112,7 +112,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences006() {
+	@Test def finding_references_006() {
 		'''
 			graph {
 				1--2
@@ -123,7 +123,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences007() {
+	@Test def finding_references_007() {
 		'''
 			graph {
 				1--2
@@ -134,7 +134,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences008() {
+	@Test def finding_references_008() {
 		'''
 			graph {
 				1--2
@@ -147,7 +147,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		))
 	}
 
-	@Test def testFindingReferences009() {
+	@Test def finding_references_009() {
 		'''
 			graph {
 				1--2
@@ -159,8 +159,8 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 			[targetNodeOfSecondEdge]
 		))
 	}
-	
-	@Test def testFindingReferences010() {
+
+	@Test def finding_references_010() {
 		'''
 			graph {
 				1--2
@@ -276,15 +276,13 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	private def void waitForSearchJob() {
 		Job.jobManager.find(null).findFirst[name.startsWith("DOT References to")]?.join
 	}
-	
+
 	// TODO: remove this workaround
-	def list(Function1<? super DotAst, ? extends EObject>... initial) {		
+	def list(Function1<? super DotAst, ? extends EObject>... initial) {
 		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
 	}
-	
 
 	override protected getEditorId() {
 		editorInfo.editorId
 	}
-
 }

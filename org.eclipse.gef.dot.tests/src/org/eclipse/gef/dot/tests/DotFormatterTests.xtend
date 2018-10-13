@@ -28,11 +28,11 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotInjectorProvider)
 class DotFormatterTests {
-	
+
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension INodeModelFormatter
 
-	@Test def testFormatting001(){
+	@Test def formatting001(){
 		'''
 			graph {}
 		'''.assertFormattedAs('''
@@ -40,8 +40,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting002(){
+
+	@Test def formatting002(){
 		'''
 			digraph {}
 		'''.assertFormattedAs('''
@@ -49,8 +49,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting003(){
+
+	@Test def formatting003(){
 		'''
 			graph{}
 		'''.assertFormattedAs('''
@@ -58,8 +58,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting004(){
+
+	@Test def formatting004(){
 		'''
 			digraph{}
 		'''.assertFormattedAs('''
@@ -67,8 +67,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting005(){
+
+	@Test def formatting005(){
 		'''
 			digraph{1}
 		'''.assertFormattedAs('''
@@ -78,7 +78,7 @@ class DotFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting006(){
+	@Test def formatting006(){
 		'''
 			digraph {
 				1
@@ -89,25 +89,10 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting007(){
+
+	@Test def formatting007(){
 		'''
 			digraph {
-				
-				1
-			}
-		'''.assertFormattedAs('''
-			digraph {
-			
-				1
-			}
-		''')
-	}
-	
-	@Test def testFormatting008(){
-		'''
-			digraph {
-				
 				
 				1
 			}
@@ -118,8 +103,23 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting009(){
+
+	@Test def formatting008(){
+		'''
+			digraph {
+				
+				
+				1
+			}
+		'''.assertFormattedAs('''
+			digraph {
+			
+				1
+			}
+		''')
+	}
+
+	@Test def formatting009(){
 		'''
 			digraph {
 			1
@@ -130,8 +130,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting010(){
+
+	@Test def formatting010(){
 		'''
 			digraph {
 				1
@@ -146,8 +146,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting011(){
+
+	@Test def formatting011(){
 		'''
 			digraph {
 				1
@@ -168,7 +168,7 @@ class DotFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting012(){
+	@Test def formatting012(){
 		'''
 			digraph {
 				1
@@ -186,8 +186,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting013(){
+
+	@Test def formatting013(){
 		'''
 			digraph {
 				1
@@ -202,8 +202,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting014(){
+
+	@Test def formatting014(){
 		'''
 			digraph {
 				1
@@ -221,8 +221,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting015(){
+
+	@Test def formatting015(){
 		'''
 			digraph{randir="LR"}
 		'''.assertFormattedAs('''
@@ -231,8 +231,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting016(){
+
+	@Test def formatting016(){
 		'''
 			digraph{graph[]}
 		'''.assertFormattedAs('''
@@ -241,8 +241,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting017(){
+
+	@Test def formatting017(){
 		'''
 			digraph{node[]}
 		'''.assertFormattedAs('''
@@ -251,8 +251,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting018(){
+
+	@Test def formatting018(){
 		'''
 			digraph{edge[]}
 		'''.assertFormattedAs('''
@@ -261,8 +261,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting019(){
+
+	@Test def formatting019(){
 		'''
 			digraph {
 				1  ;   
@@ -273,8 +273,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting020(){
+
+	@Test def formatting020(){
 		'''
 			digraph {
 				1[shape=diamond]
@@ -285,8 +285,8 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
-	@Test def testFormatting021(){
+
+	@Test def formatting021(){
 		'''
 			digraph {
 				1[shape=circle   ,xlabel="external node label"style="bold, dashed"]
@@ -298,7 +298,7 @@ class DotFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting022(){
+	@Test def formatting022(){
 		'''
 			digraph {
 				7 -> 8[ arrowhead=diamond arrowsize=2.0 arrowtail=odiamond dir=both label="diamond" ]
@@ -310,7 +310,7 @@ class DotFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting023(){
+	@Test def formatting023(){
 		'''
 			digraph{ subgraph a{} subgraph b{    }}
 		'''.assertFormattedAs('''
@@ -325,7 +325,7 @@ class DotFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting024(){
+	@Test def formatting024(){
 		'''
 			graph{1[label=<<B>bold text</B>>]}
 		'''.assertFormattedAs('''
@@ -339,7 +339,7 @@ class DotFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting025(){
+	@Test def formatting025(){
 		'''
 			graph{1[label= <<B>bold text</B>>]}
 		'''.assertFormattedAs('''
@@ -353,7 +353,7 @@ class DotFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting026(){
+	@Test def formatting026(){
 		'''
 			graph {
 				1[ label= <<TABLE><TR><TD>text1</TD><TD>text2</TD></TR></TABLE>>]
@@ -375,11 +375,11 @@ class DotFormatterTests {
 			}
 		''')
 	}
-	
+
 	private def assertFormattedAs(CharSequence input, CharSequence expected){
 		expected.toString.trim.assertEquals(input.formattedText)
 	}
-	
+
 	private def formattedText(CharSequence unformattedText){
 		val rootNode = (unformattedText.parse.eResource as XtextResource).parseResult.rootNode
 		rootNode.format(0, unformattedText.length).formattedText

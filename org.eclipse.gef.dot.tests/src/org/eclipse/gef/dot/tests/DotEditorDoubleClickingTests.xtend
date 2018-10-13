@@ -27,21 +27,21 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 	 * therefore the usage of a more complex special symbols is desired.
 	 */
 	override String c() '''<|>'''
-	
+
 	@Test def empty_graph() {
 		'''
 			grap«c»h {
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''graph''')
 	}
-	
+
 	@Test def empty_digraph() {
 		'''
 			d«c»igraph {
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''digraph''')
 	}
-	
+
 	@Test def clicking_on_middle_letters_001() {
 		'''
 			digraph xyz {
@@ -92,7 +92,6 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 
 	@Test def clicking_on_middle_letters_012() {
 		'''graph { 1[shape=none«c»] }'''.assertSelectedTextAfterDoubleClicking("none")
-
 	}
 
 	@Test def edge_operator() {
@@ -102,7 +101,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''->''')
 	}
-	
+
 	@Test def edge_arrowhead_001() {
 		'''
 			digraph {
@@ -110,7 +109,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''box''')
 	}
-	
+
 	@Test def edge_arrowhead_002() {
 		'''
 			digraph {
@@ -118,7 +117,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''noneobox''')
 	}
-	
+
 	@Test def edge_arrowsize_001() {
 		'''
 			digraph {
@@ -126,7 +125,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''1.5''')
 	}
-	
+
 	@Test def edge_arrowsize_002() {
 		'''
 			digraph {
@@ -134,7 +133,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''1.5''')
 	}
-	
+
 	@Test def edge_arrowsize_003() {
 		'''
 			digraph {
@@ -142,7 +141,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''1.5''')
 	}
-	
+
 	@Test def edge_arrowsize_004() {
 		'''
 			digraph {
@@ -150,7 +149,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''1.5''')
 	}
-	
+
 	@Test def edge_arrowsize_005() {
 		'''
 			digraph {
@@ -158,7 +157,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''1.5''')
 	}
-	
+
 	@Test def edge_arrowsize_006() {
 		'''
 			digraph {
@@ -166,7 +165,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''1''')
 	}
-	
+
 	@Test def edge_arrowsize_007() {
 		'''
 			digraph {
@@ -174,7 +173,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''.''')
 	}
-	
+
 	@Test def edge_arrowsize_008() {
 		'''
 			digraph {
@@ -182,133 +181,133 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''1.5''')
 	}
-	
+
 	@Test def edge_color_001() {
 		'''
 			digraph { 1->2[c«c»olor=aliceblue] }
 		'''.assertSelectedTextAfterDoubleClicking('''color''')
 	}
-	
+
 	@Test def edge_color_002() {
 		'''
 			digraph { 1->2[colo«c»r=aliceblue] }
 		'''.assertSelectedTextAfterDoubleClicking('''color''')
 	}
-	
+
 	@Test def edge_color_003() {
 		'''
 			digraph { 1->2[color«c»=aliceblue] }
 		'''.assertSelectedTextAfterDoubleClicking('''color''')
 	}
-	
+
 	@Test def edge_color_004() {
 		'''
 			digraph { 1->2[color=«c»aliceblue] }
 		'''.assertSelectedTextAfterDoubleClicking('''aliceblue''')
 	}
-	
+
 	@Test def edge_color_005() {
 		'''
 			digraph { 1->2[color=aliceblue«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''aliceblue''')
 	}
-	
+
 	@Test def edge_color_006() {
 		'''
 			digraph { 1->2[color=«c»"#abcdef89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''"#abcdef89"''')
 	}
-	
+
 	@Test def edge_color_007() {
 		'''
 			digraph { 1->2[color="«c»#abcdef89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''#abcdef89''')
 	}
-	
+
 	@Test def edge_color_008() {
 		'''
 			digraph { 1->2[color="#«c»abcdef89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_009() {
 		'''
 			digraph { 1->2[color="#a«c»bcdef89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_010() {
 		'''
 			digraph { 1->2[color="#ab«c»cdef89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_011() {
 		'''
 			digraph { 1->2[color="#abc«c»def89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_012() {
 		'''
 			digraph { 1->2[color="#abcd«c»ef89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_013() {
 		'''
 			digraph { 1->2[color="#abcde«c»f89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_014() {
 		'''
 			digraph { 1->2[color="#abcdef«c»89"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_015() {
 		'''
 			digraph { 1->2[color="#abcdef8«c»9"] }
 		'''.assertSelectedTextAfterDoubleClicking('''abcdef89''')
 	}
-	
+
 	@Test def edge_color_016() {
 		'''
 			digraph { 1->2[color="#abcdef89«c»"] }
 		'''.assertSelectedTextAfterDoubleClicking('''#abcdef89''')
 	}
-	
+
 	@Test def edge_color_017() {
 		'''
 			digraph { 1->2[color="#abcdef89"«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''"#abcdef89"''')
 	}
-	
+
 	@Test def edge_color_018() {
 		'''
 			digraph { 1->2[color=«c»"0.200 0.300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''"0.200 0.300 0.500"''')
 	}
-	
+
 	@Test def edge_color_019() {
 		'''
 			digraph { 1->2[color="«c»0.200 0.300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''0.200 0.300 0.500''')
 	}
-	
+
 	@Test def edge_color_020() {
 		'''
 			digraph { 1->2[color="0«c».200 0.300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''0''')
 	}
-	
+
 	@Test def edge_color_021() {
 		'''
 			digraph { 1->2[color="0.«c»200 0.300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''200''')
 	}
-	
+
 	@Test def edge_color_022() {
 		'''
 			digraph { 1->2[color="0.2«c»00 0.300 0.500"] }
@@ -320,61 +319,61 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			digraph { 1->2[color="0.20«c»0 0.300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''200''')
 	}
-	
+
 	@Test def edge_color_024() {
 		'''
 			digraph { 1->2[color="0.200«c» 0.300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''200''')
 	}
-	
+
 	@Test def edge_color_025() {
 		'''
 			digraph { 1->2[color="0.200 «c»0.300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking(''' ''')
 	}
-	
+
 	@Test def edge_color_026() {
 		'''
 			digraph { 1->2[color="0.200 0«c».300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''0''')
 	}
-	
+
 	@Test def edge_color_027() {
 		'''
 			digraph { 1->2[color="0.200 0.«c»300 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''300''')
 	}
-	
+
 	@Test def edge_color_028() {
 		'''
 			digraph { 1->2[color="0.200 0.3«c»00 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''300''')
 	}
-	
+
 	@Test def edge_color_029() {
 		'''
 			digraph { 1->2[color="0.200 0.30«c»0 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''300''')
 	}
-	
+
 	@Test def edge_color_030() {
 		'''
 			digraph { 1->2[color="0.200 0.300«c» 0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''300''')
 	}
-	
+
 	@Test def edge_color_031() {
 		'''
 			digraph { 1->2[color="0.200 0.300 «c»0.500"] }
 		'''.assertSelectedTextAfterDoubleClicking(''' ''')
 	}
-	
+
 	@Test def edge_color_032() {
 		'''
 			digraph { 1->2[color="0.200 0.300 0«c».500"] }
 		'''.assertSelectedTextAfterDoubleClicking('''0''')
 	}
-	
+
 	@Test def edge_color_033() {
 		'''
 			digraph { 1->2[color="0.200 0.300 0.«c»500"] }
@@ -386,7 +385,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			digraph { 1->2[color="0.200 0.300 0.5«c»00"] }
 		'''.assertSelectedTextAfterDoubleClicking('''500''')
 	}
-	
+
 	@Test def edge_color_035() {
 		'''
 			digraph { 1->2[color="0.200 0.300 0.50«c»0"] }
@@ -404,81 +403,81 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			digraph { 1->2[color="0.200 0.300 0.500"«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''"0.200 0.300 0.500"''')
 	}
-	
+
 	@Test def edge_colorscheme_001() {
 		'''
 			digraph { 1->2[«c»colorscheme=x11]}
 		'''.assertSelectedTextAfterDoubleClicking('''colorscheme=x11''')
 	}
-	
+
 	@Test def edge_colorscheme_002() {
 		'''
 			digraph { 1->2[colorscheme=«c»x11]}
 		'''.assertSelectedTextAfterDoubleClicking('''x11''')
 	}
-	
+
 	@Test def edge_colorscheme_003() {
 		'''
 			digraph { 1->2[colorscheme=x«c»11]}
 		'''.assertSelectedTextAfterDoubleClicking('''x11''')
 	}
-	
+
 	@Test def edge_colorscheme_004() {
 		'''
 			digraph { 1->2[colorscheme=x1«c»1]}
 		'''.assertSelectedTextAfterDoubleClicking('''x11''')
 	}
-	
+
 	@Test def edge_colorscheme_005() {
 		'''
 			digraph { 1->2[colorscheme=x11«c»]}
 		'''.assertSelectedTextAfterDoubleClicking('''x11''')
 	}
-	
+
 	@Test def edge_colorscheme_006() {
 		'''
 			digraph { 1->2[«c»colorscheme="x11"]}
 		'''.assertSelectedTextAfterDoubleClicking('''colorscheme="x11"''')
 	}
-	
+
 	@Test def edge_colorscheme_007() {
 		'''
 			digraph { 1->2[colorscheme=«c»"x11"]}
 		'''.assertSelectedTextAfterDoubleClicking('''"x11"''')
 	}
-	
+
 	@Test def edge_colorscheme_008() {
 		'''
 			digraph { 1->2[colorscheme="x«c»11"]}
 		'''.assertSelectedTextAfterDoubleClicking('''x11''')
 	}
-	
+
 	@Test def edge_colorscheme_009() {
 		'''
 			digraph { 1->2[colorscheme="x1«c»1"]}
 		'''.assertSelectedTextAfterDoubleClicking('''x11''')
 	}
-	
+
 	@Test def edge_colorscheme_010() {
 		'''
 			digraph { 1->2[colorscheme="x11«c»"]}
 		'''.assertSelectedTextAfterDoubleClicking('''x11''')
 	}
-	
+
 	@Test def edge_colorscheme_011() {
 		'''
 			digraph { 1->2[colorscheme="x11"«c»]}
 		'''.assertSelectedTextAfterDoubleClicking('''"x11"''')
 	}
-	
+
 	@Test def edge_html_label_001() {
 		'''
 			digraph {
 				1->2[label=<<b>bold Te«c»xt</b>>]
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''Text''')
-		}
-	
+	}
+
 	@Test def edge_html_label_002() {
 		'''
 			digraph {
@@ -486,7 +485,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''b''')
 	}
-	
+
 	@Test def edge_html_label_003() {
 		'''
 			digraph {
@@ -494,7 +493,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''<''')
 	}
-	
+
 	@Test def edge_html_label_004() {
 		'''
 			digraph {
@@ -502,7 +501,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''="''')
 	}
-	
+
 	@Test def edge_html_label_005() {
 		'''
 			digraph {
@@ -510,7 +509,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''Times''')
 	}
-	
+
 	@Test def edge_html_label_006() {
 		'''
 			digraph {
@@ -518,7 +517,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''face''')
 	}
-	
+
 	@Test def edge_html_label_007() {
 		'''
 			digraph {
@@ -526,7 +525,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''face''')
 	}
-	
+
 	@Test def edge_html_label_008() {
 		'''
 			digraph {
@@ -534,7 +533,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''font''')
 	}
-	
+
 	@Test def edge_html_label_009() {
 		'''
 			digraph {
@@ -542,127 +541,127 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''<<font face="Times">serif Text</b>>''')
 	}
-	
+
 	@Test def edge_html_label_010() {
 		'''
 			digraph{1->2[label=<«c»text>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_011() {
 		'''
 			digraph{1->2[label=<t«c»ext>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_012() {
 		'''
 			digraph{1->2[label=<te«c»xt>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_013() {
 		'''
 			digraph{1->2[label=<tex«c»t>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_014() {
 		'''
 			digraph{1->2[label=<text«c»>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_015() {
 		'''
 			digraph{1->2[label=< «c»text >]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_016() {
 		'''
 			digraph{1->2[label=< t«c»ext >]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_017() {
 		'''
 			digraph{1->2[label=< te«c»xt >]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_018() {
 		'''
 			digraph{1->2[label=< tex«c»t >]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_019() {
 		'''
 			digraph{1->2[label=< text«c» >]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_020() {
 		'''
 			digraph{1->2[label=<<B>«c»text</B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_021() {
 		'''
 			digraph{1->2[label=<<B>t«c»ext</B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_022() {
 		'''
 			digraph{1->2[label=<<B>te«c»xt</B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_023() {
 		'''
 			digraph{1->2[label=<<B>tex«c»t</B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_024() {
 		'''
 			digraph{1->2[label=<<B>text«c»</B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_025() {
 		'''
 			digraph{1->2[label=<<B> «c»text </B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_026() {
 		'''
 			digraph{1->2[label=<<B> t«c»ext </B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_027() {
 		'''
 			digraph{1->2[label=<<B> te«c»xt </B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_028() {
 		'''
 			digraph{1->2[label=<<B> tex«c»t </B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_html_label_029() {
 		'''
 			digraph{1->2[label=<<B> text«c» </B>>]}
 		'''.assertSelectedTextAfterDoubleClicking('''text''')
 	}
-	
+
 	@Test def edge_style_001() {
 		'''
 			graph{
@@ -670,7 +669,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''bold''')
 	}
-	
+
 	@Test def graph_bgcolor_001() {
 		'''
 			digraph {
@@ -680,7 +679,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"orange:black"''')
 	}
-	
+
 	@Test def graph_bgcolor_002() {
 		'''
 			digraph {
@@ -700,7 +699,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''orange''')
 	}
-	
+
 	@Test def graph_bgcolor_004() {
 		'''
 			digraph {
@@ -710,7 +709,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''orange''')
 	}
-	
+
 	@Test def graph_bgcolor_005() {
 		'''
 			digraph {
@@ -720,7 +719,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''orange''')
 	}
-	
+
 	@Test def graph_bgcolor_006() {
 		'''
 			digraph {
@@ -730,7 +729,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''orange''')
 	}
-	
+
 	@Test def graph_bgcolor_007() {
 		'''
 			digraph {
@@ -740,7 +739,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''orange''')
 	}
-	
+
 	@Test def graph_bgcolor_008() {
 		'''
 			digraph {
@@ -750,7 +749,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''orange''')
 	}
-	
+
 	@Test def graph_bgcolor_009() {
 		'''
 			digraph {
@@ -760,7 +759,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''black''')
 	}
-	
+
 	@Test def graph_bgcolor_010() {
 		'''
 			digraph {
@@ -770,7 +769,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''black''')
 	}
-	
+
 	@Test def graph_bgcolor_011() {
 		'''
 			digraph {
@@ -780,7 +779,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''black''')
 	}
-	
+
 	@Test def graph_bgcolor_012() {
 		'''
 			digraph {
@@ -790,7 +789,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''black''')
 	}
-	
+
 	@Test def graph_bgcolor_013() {
 		'''
 			digraph {
@@ -800,7 +799,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''black''')
 	}
-	
+
 	@Test def graph_bgcolor_014() {
 		'''
 			digraph {
@@ -810,7 +809,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''orange:black''')
 	}
-	
+
 	@Test def graph_bgcolor_015() {
 		'''
 			digraph {
@@ -820,55 +819,55 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"orange:black"''')
 	}
-	
+
 	@Test def graph_nodesep_001() {
 		'''
 			graph { nodesep=«c»0.7 ]}
 		'''.assertSelectedTextAfterDoubleClicking('''0.7''')
 	}
-	
+
 	@Test def graph_nodesep_002() {
 		'''
 			graph { nodesep=0«c».7 ]}
 		'''.assertSelectedTextAfterDoubleClicking('''0.7''')
 	}
-	
+
 	@Test def graph_nodesep_003() {
 		'''
 			graph { nodesep=0.«c»7 ]}
 		'''.assertSelectedTextAfterDoubleClicking('''0.7''')
 	}
-	
+
 	@Test def graph_nodesep_004() {
 		'''
 			graph { nodesep=0.7«c» ]}
 		'''.assertSelectedTextAfterDoubleClicking('''0.7''')
 	}
-	
+
 	@Test def graph_nodesep_005() {
 		'''
 			graph { nodesep="«c»0.7" ]}
 		'''.assertSelectedTextAfterDoubleClicking('''0.7''')
 	}
-	
+
 	@Test def graph_nodesep_006() {
 		'''
 			graph { nodesep="0«c».7" ]}
 		'''.assertSelectedTextAfterDoubleClicking('''0''')
 	}
-	
+
 	@Test def graph_nodesep_007() {
 		'''
 			graph { nodesep="0.«c»7" ]}
 		'''.assertSelectedTextAfterDoubleClicking('''.''')
 	}
-	
+
 	@Test def graph_nodesep_008() {
 		'''
 			graph { nodesep="0.7«c»" ]}
 		'''.assertSelectedTextAfterDoubleClicking('''0.7''')
 	}
-	
+
 	@Test def graph_style_001() {
 		'''
 			graph {
@@ -878,7 +877,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"filled, radial"''')
 	}
-	
+
 	@Test def graph_style_002() {
 		'''
 			graph {
@@ -888,7 +887,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''filled, radial''')
 	}
-	
+
 	@Test def graph_style_003() {
 		'''
 			graph {
@@ -898,7 +897,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''filled''')
 	}
-	
+
 	@Test def graph_style_004() {
 		'''
 			graph {
@@ -918,7 +917,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''filled''')
 	}
-	
+
 	@Test def graph_style_006() {
 		'''
 			graph {
@@ -928,7 +927,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''filled''')
 	}
-	
+
 	@Test def graph_style_007() {
 		'''
 			graph {
@@ -938,7 +937,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''filled''')
 	}
-	
+
 	@Test def graph_style_008() {
 		'''
 			graph {
@@ -948,7 +947,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''filled''')
 	}
-	
+
 	@Test def graph_style_009() {
 		'''
 			graph {
@@ -958,7 +957,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking(''',''')
 	}
-	
+
 	@Test def graph_style_010() {
 		'''
 			graph {
@@ -968,7 +967,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''radial''')
 	}
-	
+
 	@Test def graph_style_011() {
 		'''
 			graph {
@@ -978,7 +977,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''radial''')
 	}
-	
+
 	@Test def graph_style_012() {
 		'''
 			graph {
@@ -988,7 +987,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''radial''')
 	}
-	
+
 	@Test def graph_style_013() {
 		'''
 			graph {
@@ -998,7 +997,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''radial''')
 	}
-	
+
 	@Test def graph_style_014() {
 		'''
 			graph {
@@ -1008,7 +1007,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''radial''')
 	}
-	
+
 	@Test def graph_style_015() {
 		'''
 			graph {
@@ -1018,7 +1017,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''radial''')
 	}
-	
+
 	@Test def graph_style_016() {
 		'''
 			graph {
@@ -1028,7 +1027,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''filled, radial''')
 	}
-	
+
 	@Test def graph_style_017() {
 		'''
 			graph {
@@ -1038,121 +1037,121 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"filled, radial"''')
 	}
-	
+
 	@Test def node_color_001() {
 		'''
 			graph {	1[color=«c»"/accent3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''"/accent3/2"''')
 	}
-	
+
 	@Test def node_color_002() {
 		'''
 			graph {	1[color="«c»/accent3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''/accent3/2''')
 	}
-	
+
 	@Test def node_color_003() {
 		'''
 			graph {	1[color="/«c»accent3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_004() {
 		'''
 			graph {	1[color="/a«c»ccent3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_005() {
 		'''
 			graph {	1[color="/ac«c»cent3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_006() {
 		'''
 			graph {	1[color="/acc«c»ent3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_007() {
 		'''
 			graph {	1[color="/acce«c»nt3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_008() {
 		'''
 			graph {	1[color="/accen«c»t3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_009() {
 		'''
 			graph {	1[color="/accent«c»3/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_010() {
 		'''
 			graph {	1[color="/accent3«c»/2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''accent3''')
 	}
-	
+
 	@Test def node_color_011() {
 		'''
 			graph {	1[color="/accent3/«c»2"] }
 		'''.assertSelectedTextAfterDoubleClicking('''/''')
 	}
-	
+
 	@Test def node_color_012() {
 		'''
 			graph {	1[color="/accent3/2«c»"] }
 		'''.assertSelectedTextAfterDoubleClicking('''/accent3/2''')
 	}
-	
+
 	@Test def node_color_013() {
 		'''
 			graph {	1[color="/accent3/2"«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''"/accent3/2"''')
 	}
-	
+
 	@Test def node_height_001() {
 		'''
 			graph {	1[height=«c»2.3] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_height_002() {
 		'''
 			graph {	1[height=2«c».3] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_height_003() {
 		'''
 			graph {	1[height=2.«c»3] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_height_004() {
 		'''
 			graph {	1[height=2.3«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_height_005() {
 		'''
 			graph {	1[height=«c»"2.3"] }
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
 	}
-	
+
 	@Test def node_height_006() {
 		'''
 			graph {	1[height="«c»2.3"] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_height_007() {
 		'''
 			graph {	1[height="2«c».3"] }
@@ -1164,19 +1163,19 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			graph {	1[height="2.«c»3"] }
 		'''.assertSelectedTextAfterDoubleClicking('''.''')
 	}
-	
+
 	@Test def node_height_009() {
 		'''
 			graph {	1[height="2.3«c»"] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_height_010() {
 		'''
 			graph {	1[height="2.3"«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
 	}
-	
+
 	@Test def node_html_label_001() {
 		'''
 			graph {
@@ -1190,7 +1189,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''Category''')
 	}
-	
+
 	@Test def node_html_label_002() {
 		'''
 			graph {
@@ -1204,7 +1203,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''Category''') 
 	}
-	
+
 	@Test def node_html_label_003() {
 		'''
 			graph {
@@ -1218,7 +1217,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''Category''')
 	}
-	
+
 	@Test def node_html_label_004() {
 		'''
 			graph {
@@ -1232,7 +1231,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''One''')
 	}
-	
+
 	@Test def node_html_label_005() {
 		'''
 			graph {
@@ -1246,7 +1245,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''align''')
 	}
-	
+
 	@Test def node_html_label_006() {
 		'''
 			graph {
@@ -1260,7 +1259,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''center''')
 	}
-	
+
 	@Test def node_html_label_007() {
 		'''
 			graph {
@@ -1274,7 +1273,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''td''')
 	}
-	
+
 	@Test def node_html_label_008() {
 		'''
 			graph {
@@ -1288,7 +1287,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''tr''')
 	}
-	
+
 	@Test def node_html_label_009() {
 		'''
 			graph {
@@ -1302,7 +1301,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''Category''')
 	}
-	
+
 	@Test def node_record_label_001() {
 		'''
 			graph{
@@ -1310,7 +1309,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''text2''')
 	}
-	
+
 	@Test def node_record_label_002() {
 		'''
 			graph{
@@ -1318,7 +1317,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''port123''')
 	}
-	
+
 	@Test def node_record_label_003() {
 		'''
 			graph{
@@ -1326,7 +1325,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''rt123''')
 	}
-	
+
 	@Test def node_record_label_004() {
 		'''
 			graph{
@@ -1334,7 +1333,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''port123''')
 	}
-	
+
 	@Test def node_record_label_005() {
 		'''
 			graph{
@@ -1342,7 +1341,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''{''')
 	}
-	
+
 	@Test def node_record_label_006() {
 		'''
 			graph{
@@ -1350,7 +1349,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''text2''')
 	}
-	
+
 	@Test def node_record_label_007() {
 		'''
 			graph{
@@ -1358,7 +1357,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''{''')
 	}
-	
+
 	@Test def node_record_label_008() {
 		'''
 			graph{
@@ -1366,7 +1365,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''text2''')
 	}
-	
+
 	@Test def node_record_label_009() {
 		'''
 			graph{
@@ -1374,7 +1373,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''text2''')
 	}
-	
+
 	@Test def node_record_label_010() {
 		'''
 			graph{
@@ -1382,7 +1381,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''text2''')
 	}
-	
+
 	@Test def node_record_label_011() {
 		'''
 			graph{
@@ -1390,7 +1389,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking(''' ''')
 	}
-	
+
 	@Test def node_record_label_012() {
 		'''
 			graph{
@@ -1406,7 +1405,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking(''' ''')
 	}
-	
+
 	@Test def node_record_label_hidden_token() {
 		'''
 			graph{
@@ -1422,7 +1421,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''bold''')
 	}
-	
+
 	@Test def node_style_002() {
 		'''
 			graph{
@@ -1430,7 +1429,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"bold"''')
 	}
-	
+
 	@Test def node_style_003() {
 		'''
 			graph{
@@ -1438,7 +1437,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''bold''')
 	}
-	
+
 	@Test def node_style_004() {
 		'''
 			graph{
@@ -1446,7 +1445,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''dotted''')
 	}
-	
+
 	@Test def node_style_005() {
 		'''
 			graph{
@@ -1454,7 +1453,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"bold, dotted"''')
 	}
-	
+
 	@Test def node_style_006() {
 		'''
 			graph{
@@ -1462,7 +1461,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''bold''')
 	}
-	
+
 	@Test def node_style_007() {
 		'''
 			graph{
@@ -1470,7 +1469,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''bold''')
 	}
-	
+
 	@Test def node_style_008() {
 		'''
 			graph{
@@ -1478,7 +1477,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking(''',''')
 	}
-	
+
 	@Test def node_style_009() {
 		'''
 			graph{
@@ -1486,7 +1485,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''dotted''')
 	}
-	
+
 	@Test def node_style_010() {
 		'''
 			graph{
@@ -1494,7 +1493,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''dotted''')
 	}
-	
+
 	@Test def node_style_011() {
 		'''
 			graph{
@@ -1502,7 +1501,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''bold, dotted''')
 	}
-	
+
 	@Test def node_style_012() {
 		'''
 			graph{
@@ -1510,43 +1509,43 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"bold, dotted"''') 
 	}
-	
+
 	@Test def node_width_001() {
 		'''
 			graph {	1[width=«c»2.3] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_width_002() {
 		'''
 			graph {	1[width=2«c».3] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_width_003() {
 		'''
 			graph {	1[width=2.«c»3] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_width_004() {
 		'''
 			graph {	1[width=2.3«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_width_005() {
 		'''
 			graph {	1[width=«c»"2.3"] }
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
 	}
-	
+
 	@Test def node_width_006() {
 		'''
 			graph {	1[width="«c»2.3"] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_width_007() {
 		'''
 			graph {	1[width="2«c».3"] }
@@ -1558,19 +1557,19 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			graph {	1[width="2.«c»3"] }
 		'''.assertSelectedTextAfterDoubleClicking('''.''')
 	}
-	
+
 	@Test def node_width_009() {
 		'''
 			graph {	1[width="2.3«c»"] }
 		'''.assertSelectedTextAfterDoubleClicking('''2.3''')
 	}
-	
+
 	@Test def node_width_010() {
 		'''
 			graph {	1[width="2.3"«c»] }
 		'''.assertSelectedTextAfterDoubleClicking('''"2.3"''')
 	}
-	
+
 	@Test def other_attributes_001() {
 		'''
 			digraph {
@@ -1581,7 +1580,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''color''')
 	}
-	
+
 	@Test def other_attributes_002() {
 		'''
 			digraph {
@@ -1592,7 +1591,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''red''')
 	}
-	
+
 	@Test def other_attributes_003() {
 		'''
 			digraph {
@@ -1603,7 +1602,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''red''')
 	}
-	
+
 	@Test def other_attributes_004() {
 		'''
 			digraph {
@@ -1614,7 +1613,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''red''')
 	}
-	
+
 	@Test def other_attributes_005() {
 		'''
 			digraph {
@@ -1625,7 +1624,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''tailport''')
 	}
-	
+
 	@Test def other_attributes_clicking_before_quotes() {
 		'''
 			digraph {
@@ -1636,7 +1635,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			}
 		'''.assertSelectedTextAfterDoubleClicking('''"w"''')
 	}
-	
+
 	@Test def other_attributes_equals_sign_throws_no_exception() {
 		'''
 			digraph {

@@ -28,13 +28,12 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotInjectorProvider)
 class DotAstTests {
-	
+
 	@Inject extension ParseHelper<DotAst>
 
 	@Inject extension DotEObjectFormatter
-	
-	@Test
-	def testEmptyGraph() {
+
+	@Test def empty_graph() {
 		DotTestGraphs.EMPTY.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -49,9 +48,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testEmptyDirectedGraph() {
+
+	@Test def empty_directed_graph() {
 		DotTestGraphs.EMPTY_DIRECTED.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -66,9 +64,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testEmptyStrictGraph() {
+
+	@Test def empty_strict_graph() {
 		DotTestGraphs.EMPTY_STRICT.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -83,9 +80,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testEmptyStrictDirectedGraph() {
+
+	@Test def empty_strict_directed_graph() {
 		DotTestGraphs.EMPTY_STRICT_DIRECTED.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -100,9 +96,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testGraphWithOneNode() {
+
+	@Test def graph_with_one_node() {
 		DotTestGraphs.ONE_NODE.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -125,9 +120,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testGraphWithOneNodeAndEmptyNodeAttributeList() {
+
+	@Test def graph_with_one_node_and_empty_node_attribute_list() {
 		DotTestGraphs.EMPTY_NODE_ATTRIBUTE_LIST.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -154,9 +148,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testGraphWithOneEdge() {
+
+	@Test def graph_with_one_edge() {
 		DotTestGraphs.ONE_EDGE.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -188,9 +181,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testDirectedGraphWithOneEdge() {
+
+	@Test def directed_graph_with_one_edge() {
 		DotTestGraphs.ONE_DIRECTED_EDGE.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -222,9 +214,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testGraphWithOneEdgeAndEmptyEdgeAttributeList() {
+
+	@Test def graph_with_one_edge_and_empty_edge_attribute_list() {
 		DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_LIST.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -260,9 +251,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testDirectedGraphWithOneEdgeAndEmptyEdgeAttributeList() {
+
+	@Test def directed_graph_with_one_edge_and_empty_edge_attribute_list() {
 		DotTestGraphs.EMPTY_DIRECTED_EDGE_ATTRIBUTE_LIST.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -298,9 +288,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testGraphWithEmptyGraphAttributeStatement() {
+
+	@Test def graph_with_empty_graph_attribute_statement() {
 		DotTestGraphs.EMPTY_GRAPH_ATTRIBUTE_STATEMENT.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -324,9 +313,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testGraphWithEmptyNodeAttributeStatement() {
+
+	@Test def graph_with_empty_node_attribute_statement() {
 		DotTestGraphs.EMPTY_NODE_ATTRIBUTE_STATEMENT.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -350,9 +338,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testGraphWithEmptyEdgeAttributeStatement() {
+
+	@Test def graph_with_empty_edge_attribute_statement() {
 		DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_STATEMENT.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -376,9 +363,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testNodeGroups() {
+
+	@Test def test_node_groups() {
 		DotTestGraphs.NODE_GROUPS.assertDotAst('''
 			DotAst {
 				graphs = [
@@ -491,9 +477,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testLabeledGraph() {
+
+	@Test def labeled_graph() {
 		"labeled_graph.dot".assertDotAstFromFile('''
 			DotAst {
 				graphs = [
@@ -623,9 +608,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testSimpleDigraph() {
+
+	@Test def simple_digraph() {
 		"simple_digraph.dot".assertDotAstFromFile('''
 			DotAst {
 				graphs = [
@@ -698,9 +682,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testSimpleGraph() {
+
+	@Test def simple_graph() {
 		"simple_graph.dot".assertDotAstFromFile('''
 			DotAst {
 				graphs = [
@@ -773,9 +756,8 @@ class DotAstTests {
 			}
 		''')
 	}
-	
-	@Test
-	def testStyledGraph() {
+
+	@Test def styled_graph() {
 		"styled_graph.dot".assertDotAstFromFile('''
 			DotAst {
 				graphs = [
@@ -959,13 +941,13 @@ class DotAstTests {
 			}
 		''')
 	}
-	
+
 	private def assertDotAstFromFile(String fileName, CharSequence expected) {
 		val fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName))
 		fileContents.assertDotAst(expected)
 	}
-	
+
 	private def assertDotAst(CharSequence modelAsText,
 			CharSequence expected) {
 		val dotAst = modelAsText.parse

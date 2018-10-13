@@ -34,28 +34,27 @@ import static extension org.junit.Assert.*
  */
 class DotExportTests {
 
-	@Rule 
-	public val outputFolder = new TemporaryFolder
+	@Rule public val outputFolder = new TemporaryFolder
 
 	extension DotExport = new DotExport
 
-	@Test def simpleGraph() {
+	@Test def simple_graph() {
 		DotTestUtils.getSimpleGraph.assertExportedTo("simple_graph.dot")
 	}
 
-	@Test def directedGraph() {
+	@Test def directed_graph() {
 		DotTestUtils.getSimpleDiGraph.assertExportedTo("simple_digraph.dot")
 	}
 
-	@Test def labeledGraph() {
+	@Test def labeled_graph() {
 		DotTestUtils.getLabeledGraph.assertExportedTo("labeled_graph.dot")
 	}
 
-	@Test def styledGraph() {
+	@Test def styled_graph() {
 		DotTestUtils.getStyledGraph.assertExportedTo("styled_graph.dot")
 	}
 
-	@Test def clusteredGraph() {
+	@Test def clustered_graph() {
 		DotTestUtils.getClusteredGraph.assertExportedTo("clustered_graph.dot")
 	}
 

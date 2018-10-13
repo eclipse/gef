@@ -27,12 +27,12 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotColorListInjectorProvider)
 class DotColorListTests {
-	
+
 	@Inject extension ParseHelper<ColorList>
 	@Inject extension ValidationTestHelper
 	@Inject extension DotEObjectFormatter
-	
-	@Test def oneColorValueWithoutWeight01() {
+
+	@Test def one_color_value_without_weight_01() {
 		"#E0E0E0".assertAst('''
 			ColorList {
 				colorValues = [
@@ -49,8 +49,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def oneColorValueWithoutWeight02() {
+
+	@Test def one_color_value_without_weight_02() {
 		"#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -67,8 +67,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def oneColorValueWithWeight01() {
+
+	@Test def one_color_value_with_weight_01() {
 		"#3030FF;1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -85,8 +85,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def oneColorValueWithWeight02() {
+
+	@Test def one_color_value_with_weight_02() {
 		"#C0C0C0;1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -103,8 +103,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def oneColorValueWithWeight03() {
+
+	@Test def one_color_value_with_weight_03() {
 		"#C0C0C0;0.5".assertAst('''
 			ColorList {
 				colorValues = [
@@ -121,8 +121,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def oneColorValueWithWeight04() {
+
+	@Test def one_color_value_with_weight_04() {
 		"#C0C0C0;0.99408284".assertAst('''
 			ColorList {
 				colorValues = [
@@ -139,8 +139,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def oneColorValueWithWeight05() {
+
+	@Test def one_color_value_with_weight_05() {
 		"#3030FF;0.0213903743".assertAst('''
 			ColorList {
 				colorValues = [
@@ -157,8 +157,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def twoColorValuesWithoutWeight01() {
+
+	@Test def two_color_values_without_weight_01() {
 		"#C0C0C0:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -185,7 +185,7 @@ class DotColorListTests {
 		''')
 	}
 
-	@Test def twoColorValuesWithWeight01() {
+	@Test def two_color_values_with_weight_01() {
 		"#3030FF;0.0213903743:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -211,8 +211,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def twoColorValuesWithWeight02() {
+
+	@Test def two_color_values_with_weight_02() {
 		"#C0C0C0;1:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -238,8 +238,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def twoColorValuesWithWeight03() {
+
+	@Test def two_color_values_with_weight_03() {
 		"#3030FF;1:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -265,8 +265,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def twoColorValuesWithWeight04() {
+
+	@Test def two_color_values_with_weight_04() {
 		"#C0C0C0;0.5:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -292,8 +292,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def twoColorValuesWithWeight05() {
+
+	@Test def two_color_values_with_weight_05() {
 		"#C0C0C0;0.99408284:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -320,7 +320,7 @@ class DotColorListTests {
 		''')
 	}
 
-	@Test def threeColorValuesWithWeight01() {
+	@Test def three_color_values_with_weight_01() {
 		"#3030FF;0.5:#C0C0C0;0.5:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -355,8 +355,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight02() {
+
+	@Test def three_color_values_with_weight_02() {
 		"#3030FF;1:#C0C0C0;1:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -391,8 +391,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight03() {
+
+	@Test def three_color_values_with_weight_03() {
 		"#3030FF;0.36:#C0C0C0;0.08:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -427,8 +427,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight04() {
+
+	@Test def three_color_values_with_weight_04() {
 		"#3030FF;0.0119926199:#C0C0C0;0.73800738:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -463,8 +463,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight05() {
+
+	@Test def three_color_values_with_weight_05() {
 		"#3030FF;0.0555555556:#C0C0C0;0.037037037:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -499,8 +499,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight06() {
+
+	@Test def three_color_values_with_weight_06() {
 		"#3030FF;0.0105485232:#C0C0C0;0.723628692:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -535,8 +535,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight07() {
+
+	@Test def three_color_values_with_weight_07() {
 		"#3030FF;0.0186915888:#C0C0C0;0.981308411:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -571,8 +571,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight08() {
+
+	@Test def three_color_values_with_weight_08() {
 		"#3030FF;0.0107719928:#C0C0C0;0.854578097:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -607,8 +607,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight09() {
+
+	@Test def three_color_values_with_weight_09() {
 		"#3030FF;0.0498812352:#C0C0C0;0.250593824:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -643,8 +643,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight10() {
+
+	@Test def three_color_values_with_weight_10() {
 		"#3030FF;0.0416666667:#C0C0C0;0.958333333:#8080FF".assertAst('''
 			ColorList {
 				colorValues = [
@@ -679,8 +679,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight11() {
+
+	@Test def three_color_values_with_weight_11() {
 		"#3030FF;0.1:#C0C0C0;0.2:#8080FF;0.7".assertAst('''
 			ColorList {
 				colorValues = [
@@ -715,8 +715,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight12() {
+
+	@Test def three_color_values_with_weight_12() {
 		"#3030FF;0.2:#C0C0C0;0.2:#8080FF;0.6".assertAst('''
 			ColorList {
 				colorValues = [
@@ -751,8 +751,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight13() {
+
+	@Test def three_color_values_with_weight_13() {
 		"#3030FF;0.3:#8080FF;0.2:#C0C0C0;0.5".assertAst('''
 			ColorList {
 				colorValues = [
@@ -787,8 +787,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight14() {
+
+	@Test def three_color_values_with_weight_14() {
 		"#3030FF;0.4:#C0C0C0;0.2:#8080FF;0.4".assertAst('''
 			ColorList {
 				colorValues = [
@@ -823,8 +823,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight15() {
+
+	@Test def three_color_values_with_weight_15() {
 		"#3030FF;0.5:#C0C0C0;0.2:#8080FF;0.3".assertAst('''
 			ColorList {
 				colorValues = [
@@ -859,8 +859,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight16() {
+
+	@Test def three_color_values_with_weight_16() {
 		"#3030FF;0.6:#C0C0C0;0.2:#8080FF;0.2".assertAst('''
 			ColorList {
 				colorValues = [
@@ -895,8 +895,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight17() {
+
+	@Test def three_color_values_with_weight_17() {
 		"#313233;0.7:#C0C1C2;0.2:#8080FF;0.1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -931,8 +931,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight18() {
+
+	@Test def three_color_values_with_weight_18() {
 		"#3030FF;0.8:#C0C0C0;0.1:#8080FF;0.1".assertAst('''
 			ColorList {
 				colorValues = [
@@ -967,8 +967,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight19() {
+
+	@Test def three_color_values_with_weight_19() {
 		"#3030FF;0.1:#C0C0C0;0.3:#8080FF;0.6".assertAst('''
 			ColorList {
 				colorValues = [
@@ -1003,8 +1003,8 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
-	@Test def threeColorValuesWithWeight20() {
+
+	@Test def three_color_values_with_weight_20() {
 		"#3030FF;0.2:#C0C0C0;0.4:#8080FF;0.4".assertAst('''
 			ColorList {
 				colorValues = [
@@ -1039,7 +1039,7 @@ class DotColorListTests {
 			}
 		''')
 	}
-	
+
 	private def assertAst(CharSequence modelAsText,
 			CharSequence expected) {
 		val ast = modelAsText.parse

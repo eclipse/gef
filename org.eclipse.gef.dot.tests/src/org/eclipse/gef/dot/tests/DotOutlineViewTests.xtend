@@ -27,16 +27,14 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 
 	@Inject XtextEditorInfo editorInfo
 
-	@Test
-	def testEmptyGraph() {
+	@Test def empty_graph() {
 		DotTestGraphs.EMPTY.assertAllLabels('''
 		test.dot: File
 			<?>: Graph
 		''')
 	}
 
-	@Test
-	def testSubgraph() {
+	@Test def subgraph() {
 		DotTestGraphs.CLUSTER_SCOPE.assertAllLabels('''
 		test.dot: File
 			<?>: Graph
@@ -56,9 +54,8 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 					c: Node
 		''')
 	}
-	
-	@Test
-	def testCompleteEdge(){
+
+	@Test def complete_edge(){
 		'''
 			graph {
 				1--2
@@ -71,9 +68,8 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 						undirected -- 2: Node
 		''')
 	}
-	
-	@Test
-	def testIncompleteEdge(){
+
+	@Test def incomplete_edge(){
 		// The outline view should be able to cope with incomplete statements
 		'''
 			graph {
@@ -86,9 +82,8 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 						1: Node
 		''')
 	}
-	
-	@Test
-	def testIncompleteHtmlLikeLabels(){
+
+	@Test def incomplete_html_like_labels(){
 		// The outline view should be able to cope with incomplete statements
 		'''
 			graph {
@@ -103,9 +98,8 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 						label = <HTML-Label>: Attribute
 		''')
 	}
-	
-	@Test
-	def testHtmlLikeLabels1() {
+
+	@Test def html_like_labels001() {
 		"html_like_labels1.dot".testFile('''
 		test.dot: File
 			structs: Graph
@@ -187,8 +181,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
-	@Test
-	def testHtmlLikeLabels2() {
+	@Test def html_like_labels002() {
 		"html_like_labels2.dot".testFile('''
 		test.dot: File
 			G: Graph
@@ -306,8 +299,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
-	@Test
-	def testHtmlLikeLabels3() {
+	@Test def html_like_labels003() {
 		"html_like_labels3.dot".testFile('''
 		test.dot: File
 			structs: Graph
@@ -354,8 +346,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
-	@Test
-	def testHtmlLikeLabels4() {
+	@Test def html_like_labels004() {
 		"html_like_labels4.dot".testFile('''
 		test.dot: File
 			<?>: Graph
@@ -420,5 +411,4 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 			buffer.append("\t")
 		}
 	}
-
 }

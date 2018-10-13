@@ -24,8 +24,8 @@ import org.junit.Test
  * @author Fabian Steeg (fsteeg)
  */
 class DotExtractorTests {
-	
-	@Test def testDotExtraction01() {
+
+	@Test def dot_extraction_01() {
 		'''
 			/** 
 				Javadoc stuff 
@@ -47,7 +47,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def testDotExtraction02() {
+	@Test def dot_extraction_02() {
 		'''
 			/** Javadoc stuff 
 			graph long_name {
@@ -66,7 +66,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def testDotExtraction03() {
+	@Test def dot_extraction_03() {
 		'''
 			/* Java block comment 
 				stuff 
@@ -86,7 +86,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def testDotExtraction04() {
+	@Test def dot_extraction_04() {
 		'''
 			Stuff about a graph and then 
 			graph {
@@ -105,7 +105,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def testDotExtraction05() {
+	@Test def dot_extraction_05() {
 		'''
 			Stuff about a graph and then with breaks 
 				graph{
@@ -124,7 +124,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def testDotExtraction06() {
+	@Test def dot_extraction_06() {
 		'''
 			Stuff about a graph and then digraph{a;b;a->b} and more 
 		'''
@@ -134,7 +134,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def testDotExtraction07() {
+	@Test def dot_extraction_07() {
 		'''
 			Stuff about a graph and then 
 			digraph {
@@ -155,7 +155,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	@Test def testDotExtraction08() {
+	@Test def dot_extraction_08() {
 		'''
 			Stuff about a graph then 
 				graph {

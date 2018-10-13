@@ -28,39 +28,39 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelInjectorProvider)
 class DotHtmlLabelFormatterTests {
-	
+
 	@Inject extension ParseHelper<HtmlLabel>
 	@Inject extension INodeModelFormatter
 
-	@Test def testFormatting001(){
+	@Test def formatting001(){
 		'''<BR/>'''
 		.assertFormattedAs('''
 			<BR/>
 		''')
 	}
 
-	@Test def testFormatting002(){
+	@Test def formatting002(){
 		'''<BR />'''
 		.assertFormattedAs('''
 			<BR/>
 		''')
 	}
 
-	@Test def testFormatting003(){
+	@Test def formatting003(){
 		'''<BR  />'''
 		.assertFormattedAs('''
 			<BR/>
 		''')
 	}
 
-	@Test def testFormatting004(){
+	@Test def formatting004(){
 		'''<BR ALIGN="LEFT"/>'''
 		.assertFormattedAs('''
 			<BR ALIGN="LEFT" />
 		''')
 	}
-	
-	@Test def testFormatting005(){
+
+	@Test def formatting005(){
 		'''<S>strike-through</S>'''
 		.assertFormattedAs('''
 			<S>
@@ -68,8 +68,8 @@ class DotHtmlLabelFormatterTests {
 			</S>
 		''')
 	}
-	
-	@Test def testFormatting006(){
+
+	@Test def formatting006(){
 		'''
 			<S>strike-through</S><B>bold text</B>'''
 		.assertFormattedAs('''
@@ -81,8 +81,8 @@ class DotHtmlLabelFormatterTests {
 			</B>
 		''')
 	}
-	
-	@Test def testFormatting007(){
+
+	@Test def formatting007(){
 		'''
 			<S>strike-through</S><BR/>'''
 		.assertFormattedAs('''
@@ -92,8 +92,8 @@ class DotHtmlLabelFormatterTests {
 			<BR/>
 		''')
 	}
-	
-	@Test def testFormatting008(){
+
+	@Test def formatting008(){
 		'''
 			<BR/><BR/>'''
 		.assertFormattedAs('''
@@ -101,8 +101,8 @@ class DotHtmlLabelFormatterTests {
 			<BR/>
 		''')
 	}
-	
-	@Test def testFormatting009(){
+
+	@Test def formatting009(){
 		'''
 			<BR/><S>strike-through</S>'''
 		.assertFormattedAs('''
@@ -112,8 +112,8 @@ class DotHtmlLabelFormatterTests {
 			</S>
 		''')
 	}
-	
-	@Test def testFormatting010(){
+
+	@Test def formatting010(){
 		'''<TABLE><TR><TD>text</TD></TR></TABLE>'''
 		.assertFormattedAs('''
 			<TABLE>
@@ -126,7 +126,7 @@ class DotHtmlLabelFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting011(){
+	@Test def formatting011(){
 		'''<FONT color="green"><TABLE><TR><TD>text</TD></TR></TABLE></FONT>'''
 		.assertFormattedAs('''
 			<FONT color="green">
@@ -141,7 +141,7 @@ class DotHtmlLabelFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting012(){
+	@Test def formatting012(){
 		'''<FONT POINT-SIZE="24.0">line</FONT>'''
 		.assertFormattedAs('''
 			<FONT POINT-SIZE="24.0">
@@ -149,8 +149,8 @@ class DotHtmlLabelFormatterTests {
 			</FONT>
 		''')
 	}
-	
-	@Test def testFormatting013(){
+
+	@Test def formatting013(){
 		'''<FONT POINT-SIZE="24.0"  COLOR="blue" >line</FONT>'''
 		.assertFormattedAs('''
 			<FONT POINT-SIZE="24.0" COLOR="blue">
@@ -159,7 +159,7 @@ class DotHtmlLabelFormatterTests {
 		''')
 	}
 
-	@Test def testFormatting014(){
+	@Test def formatting014(){
 		'''<table><tr><td>first</td></tr><tr><td><table><tr><td><b>second</b></td></tr></table></td></tr></table>'''
 		.assertFormattedAs('''
 			<table>
@@ -184,8 +184,8 @@ class DotHtmlLabelFormatterTests {
 			</table>
 		''')
 	}
-	
-	@Test def testFormatting015(){
+
+	@Test def formatting015(){
 		'''<TABLE><TR><TD>nord<BR/>west</TD><VR/><TD>nord<BR/>east</TD></TR><HR/><TR><TD>south<BR/>west</TD><VR/><TD>south<BR/>east</TD></TR></TABLE>'''
 		.assertFormattedAs('''
 			<TABLE>
@@ -219,8 +219,8 @@ class DotHtmlLabelFormatterTests {
 			</TABLE>
 		''')
 	}
-	
-	@Test def testFormatting016(){
+
+	@Test def formatting016(){
 		'''<font>font</font><i>i</i><b>b</b><u>u</u><o>o</o><sub>sub</sub><sup>sup</sup><s>s</s>'''
 		.assertFormattedAs('''
 			<font>
@@ -249,11 +249,11 @@ class DotHtmlLabelFormatterTests {
 			</s>
 		''')
 	}	
-	
+
 	private def assertFormattedAs(CharSequence input, CharSequence expected){
 		expected.toString.trim.assertEquals(input.formattedText)
 	}
-	
+
 	private def formattedText(CharSequence unformattedText){
 		val rootNode = (unformattedText.parse.eResource as XtextResource).parseResult.rootNode
 		rootNode.format(0, unformattedText.length).formattedText

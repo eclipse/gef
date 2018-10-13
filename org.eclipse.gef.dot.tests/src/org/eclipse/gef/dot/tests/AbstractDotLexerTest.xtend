@@ -101,7 +101,7 @@ abstract class AbstractDotLexerTest extends AbstractLexerTest {
 		".6"	.assertLexing("RULE_NUMERAL '.6'"	)
 		"12"	.assertLexing("RULE_NUMERAL '12'"	)
 	}
-	
+
 	@Test def lexing_mRULE_COMPASS_PT() {
 		"n"	.assertLexing("RULE_COMPASS_PT 'n'"	)
 		"ne".assertLexing("RULE_COMPASS_PT 'ne'")
@@ -150,7 +150,7 @@ abstract class AbstractDotLexerTest extends AbstractLexerTest {
 			RULE_QUOTED_STRING '"\\"!\\"'
 		''')
 	}
-	
+
 	@Test def lexing_mRULE_HTML_STRING() {
 		'''<>'''					.assertLexing("RULE_HTML_STRING '<>'"						)
 		'''<	>'''				.assertLexing("RULE_HTML_STRING '<	>'"						)

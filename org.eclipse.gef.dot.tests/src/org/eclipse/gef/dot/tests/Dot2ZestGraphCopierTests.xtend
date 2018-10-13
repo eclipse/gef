@@ -378,7 +378,7 @@ class Dot2ZestGraphCopierTests {
 	@Test def void edge_xlp() {
 		// TODO: implement
 	}
-	
+
 	@Test def void graph_bb() {
 		// TODO: implement
 	}
@@ -1051,7 +1051,7 @@ class Dot2ZestGraphCopierTests {
 		// TODO: implement
 	}
 
-	@Test def simpleGraph() {
+	@Test def simple_graph() {
 		val dot = DotTestUtils.simpleGraph
 		val zest = dot.copy
 
@@ -1102,7 +1102,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def directedGraph() {
+	@Test def directed_graph() {
 		val dot = DotTestUtils.simpleDiGraph
 		val zest = dot.copy
 
@@ -1137,7 +1137,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def labeledGraph() {
+	@Test def labeled_graph() {
 		val dot = DotTestUtils.labeledGraph
 		val zest = dot.copy
 
@@ -1184,7 +1184,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def styledGraph() {
+	@Test def styled_graph() {
 		val dot = DotTestUtils.styledGraph
 		val zest = dot.copy
 
@@ -1244,7 +1244,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def dotClusterGraphPrettyPrintTest() {
+	@Test def dot_cluster_graph_pretty_print() {
 		val dot = DotTestUtils.clusteredGraph
 		'''
 			Graph {
@@ -1300,7 +1300,7 @@ class Dot2ZestGraphCopierTests {
 		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
 	}
 
-	@Test def dotNestedClusterGraphPrettyPrintTest() {
+	@Test def dot_nested_cluster_graph_pretty_print() {
 		val dot = DotTestUtils.nestedClusteredGraph
 		'''
 			Graph {
@@ -1361,7 +1361,7 @@ class Dot2ZestGraphCopierTests {
 		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
 	}
 
-	@Test def simpleGraphWithAdditionalInformation() {
+	@Test def simple_graph_with_additional_information() {
 		val dot = DotTestUtils.simpleGraphWithAdditionalInformation
 		val zest = dot.copy
 
@@ -1410,7 +1410,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def directedGraphWithAdditionalInformation() {
+	@Test def directed_graph_with_additional_information() {
 		val dot = DotTestUtils.simpleDiGraphWithAdditionalInformation
 		val zest = dot.copy
 
@@ -1462,7 +1462,7 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Ignore("Failing on Travis/Jenkins")
-	@Test def labeledGraphWithAdditionalInformation() {
+	@Test def labeled_graph_with_additional_information() {
 		val dot = DotTestUtils.labeledGraphWithAdditionalInformation
 		val zest = dot.copy
 
@@ -1534,7 +1534,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def styledGraphWithAdditionalInformation() {
+	@Test def styled_graph_with_additional_information() {
 		val dot = DotTestUtils.styledGraphWithAdditionalInformation
 		val zest = dot.copy
 

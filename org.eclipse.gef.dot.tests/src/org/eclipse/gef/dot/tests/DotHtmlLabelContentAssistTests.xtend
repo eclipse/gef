@@ -33,7 +33,7 @@ import static org.junit.Assert.fail
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelUiInjectorProvider)
 class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
-	
+
 	@Inject Injector injector
 	@Inject IResourceFactory resourceFactory
 
@@ -83,7 +83,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagFONT() {
+	@Test def children_tag_of_tag_FONT() {
 		'''
 			<FONT>«c»</FONT>
 		'''
@@ -103,7 +103,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagI() {
+	@Test def children_tag_of_tag_I() {
 		'''
 			<I>«c»</I>
 		'''.testContentAssistant(#[
@@ -122,7 +122,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagB() {
+	@Test def children_tag_of_tag_B() {
 		'''
 			<B>«c»</B>
 		'''.testContentAssistant(#[
@@ -141,7 +141,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagU() {
+	@Test def children_tag_of_tag_U() {
 		'''
 			<U>«c»</U>
 		'''.testContentAssistant(#[
@@ -160,7 +160,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagO() {
+	@Test def children_tag_of_tag_O() {
 		'''
 			<O>«c»</O>
 		'''.testContentAssistant(#[
@@ -179,7 +179,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagSUB() {
+	@Test def children_tag_of_tag_SUB() {
 		'''
 			<SUB>«c»</SUB>
 		'''.testContentAssistant(#[
@@ -197,7 +197,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagSUP() {
+	@Test def children_tag_of_tag_SUP() {
 		'''
 			<SUP>«c»</SUP>
 		'''.testContentAssistant(#[
@@ -215,7 +215,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagS() {
+	@Test def children_tag_of_tag_S() {
 		'''
 			<S>«c»</S>
 		'''.testContentAssistant(#[
@@ -233,7 +233,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagTABLE() {
+	@Test def children_tag_of_tag_TABLE() {
 		'''
 			<TABLE>«c»</TABLE>
 		'''.testContentAssistant(#[
@@ -244,7 +244,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagTR() {
+	@Test def children_tag_of_tag_TR() {
 		'''
 			<TR>«c»</TR>
 		'''.testContentAssistant(#[
@@ -255,7 +255,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def childrenTagOfTagTD() {
+	@Test def children_tag_of_tag_TD() {
 		'''
 			<TD>«c»</TD>
 		'''.testContentAssistant(#[
@@ -275,7 +275,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributesOfTagTABLE() {
+	@Test def attributes_of_tag_TABLE() {
 		'''
 			<TABLE «c»></TABLE>
 		'''.testContentAssistant(#[
@@ -306,7 +306,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributesOfTagTD() {
+	@Test def attributes_of_tag_TD() {
 		'''
 			<TD «c»></TD>
 		'''.testContentAssistant(#[
@@ -337,7 +337,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributesOfTagFONT() {
+	@Test def attributes_of_tag_FONT() {
 		'''
 			<FONT «c»></FONT>
 		'''.testContentAssistant(#[
@@ -349,7 +349,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributesOfTagBR() {
+	@Test def attributes_of_tag_BR() {
 		'''
 			<BR «c»/>
 		'''.testContentAssistant(#[
@@ -359,7 +359,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributesOfTagIMG() {
+	@Test def attributes_of_tag_IMG() {
 		'''
 			<IMG «c»/>
 		'''.testContentAssistant(#[
@@ -370,47 +370,47 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributesOfTagB() {
+	@Test def attributes_of_tag_B() {
 		'''<B «c»></B>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagHR() {
+	@Test def attributes_of_tag_HR() {
 		'''<HR «c»/>'''.testEmptyContentAssistant // no attributes are allowed 
 	}
 
-	@Test def attributesOfTagI() {
+	@Test def attributes_of_tag_I() {
 		'''<I «c»></I>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagO() {
+	@Test def attributes_of_tag_O() {
 		'''<O «c»></O>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagS() {
+	@Test def attributes_of_tag_S() {
 		'''<S «c»></S>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagSUB() {
+	@Test def attributes_of_tag_SUB() {
 		'''<SUB «c»></SUB>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagSUP() {
+	@Test def attributes_of_tag_SUP() {
 		'''<SUP «c»></SUP>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagTR() {
+	@Test def attributes_of_tag_TR() {
 		'''<TR «c»></TR>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagU() {
+	@Test def attributes_of_tag_U() {
 		'''<U «c»></U>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributesOfTagVR() {
+	@Test def attributes_of_tag_VR() {
 		'''<VR «c»/>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
-	@Test def attributeValuesOfTagBR_ALIGN() {
+	@Test def attribute_values_of_tag_BR_ALIGN() {
 		'''
 			<BR ALIGN="«c»" />
 		'''.testContentAssistant(#[
@@ -422,7 +422,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagBR_ALIGN_single_quoted() {
+	@Test def attribute_values_of_tag_BR_ALIGN_single_quoted() {
 		'''
 			<BR ALIGN='«c»' />
 		'''.testContentAssistant(#[
@@ -434,19 +434,19 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagFONT_COLOR() {
+	@Test def attribute_values_of_tag_FONT_COLOR() {
 		'''<FONT COLOR="«c»" ></FONT>'''.testEmptyContentAssistant // TODO implement "color"
 	}
 
-	@Test def attributeValuesOfTagFONT_FACE() {
+	@Test def attribute_values_of_tag_FONT_FACE() {
 		'''<FONT FACE="«c»" ></FONT>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagFONT_POINTSIZE() {
+	@Test def attribute_values_of_tag_FONT_POINTSIZE() {
 		'''<FONT POINT-SIZE="«c»" ></FONT>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagIMG_SCALE() {
+	@Test def attribute_values_of_tag_IMG_SCALE() {
 		'''
 			<IMG SCALE="«c»" />
 		'''.testContentAssistant(#[
@@ -460,11 +460,11 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagIMG_SRC() {
+	@Test def attribute_values_of_tag_IMG_SRC() {
 		'''<IMG SRC="«c»" />'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_ALIGN() {
+	@Test def attribute_values_of_tag_TABLE_ALIGN() {
 		'''
 			<TABLE ALIGN="«c»" ></TABLE>
 		'''.testContentAssistant(#[
@@ -476,31 +476,31 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTABLE_BGCOLOR() {
+	@Test def attribute_values_of_tag_TABLE_BGCOLOR() {
 		'''<TABLE BGCOLOR="«c»" ></TABLE>'''.testEmptyContentAssistant // TODO implement "color"
 	}
 
-	@Test def attributeValuesOfTagTABLE_BORDER() {
+	@Test def attribute_values_of_tag_TABLE_BORDER() {
 		'''<TABLE BORDER="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_CELLBORDER() {
+	@Test def attribute_values_of_tag_TABLE_CELLBORDER() {
 		'''<TABLE CELLBORDER="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_CELLPADDING() {
+	@Test def attribute_values_of_tag_TABLE_CELLPADDING() {
 		'''<TABLE CELLPADDING="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_CELLSPACING() {
+	@Test def attribute_values_of_tag_TABLE_CELLSPACING() {
 		'''<TABLE CELLSPACING="«c»" ></TABLE>"'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_COLOR() {
+	@Test def attribute_values_of_tag_TABLE_COLOR() {
 		'''<TABLE COLOR="«c»" ></TABLE>"'''.testEmptyContentAssistant // TODO implement "color"
 	}
 
-	@Test def attributeValuesOfTagTABLE_COLUMNS() {
+	@Test def attribute_values_of_tag_TABLE_COLUMNS() {
 		'''
 			<TABLE COLUMNS="«c»" ></TABLE>
 		'''.testContentAssistant(#[
@@ -510,7 +510,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTABLE_FIXEDSIZE() {
+	@Test def attribute_values_of_tag_TABLE_FIXEDSIZE() {
 		'''
 			<TABLE FIXEDSIZE="«c»" ></TABLE>
 		'''.testContentAssistant(#[
@@ -521,27 +521,27 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTABLE_GRADIENTANGLE() {
+	@Test def attribute_values_of_tag_TABLE_GRADIENTANGLE() {
 		'''<TABLE GRADIENTANGLE="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_HEIGHT() {
+	@Test def attribute_values_of_tag_TABLE_HEIGHT() {
 		'''<TABLE HEIGHT="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_HREF() {
+	@Test def attribute_values_of_tag_TABLE_HREF() {
 		'''<TABLE HREF="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_ID() {
+	@Test def attribute_values_of_tag_TABLE_ID() {
 		'''<TABLE ID="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_PORT() {
+	@Test def attribute_values_of_tag_TABLE_PORT() {
 		'''<TABLE PORT="«c»" ></TABLE>'''.testEmptyContentAssistant // TODO implement "portName"
 	}
 
-	@Test def attributeValuesOfTagTABLE_ROWS() {
+	@Test def attribute_values_of_tag_TABLE_ROWS() {
 		'''
 			<TABLE ROWS="«c»" ></TABLE>
 		'''.testContentAssistant(#[
@@ -551,7 +551,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTABLE_SIDES() {
+	@Test def attribute_values_of_tag_TABLE_SIDES() {
 		'''
 			<TABLE SIDES="«c»" ></TABLE>
 		'''.testContentAssistant(#[
@@ -575,23 +575,23 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTABLE_STYLE() {
+	@Test def attribute_values_of_tag_TABLE_STYLE() {
 		'''<TABLE STYLE="«c»" ></TABLE>'''.testEmptyContentAssistant // TODO implement "value"
 	}
 
-	@Test def attributeValuesOfTagTABLE_TARGET() {
+	@Test def attribute_values_of_tag_TABLE_TARGET() {
 		'''<TABLE TARGET="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_TITLE() {
+	@Test def attribute_values_of_tag_TABLE_TITLE() {
 		'''<TABLE TITLE="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_TOOLTIP() {
+	@Test def attribute_values_of_tag_TABLE_TOOLTIP() {
 		'''<TABLE TOOLTIP="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTABLE_VALIGN() {
+	@Test def attribute_values_of_tag_TABLE_VALIGN() {
 		'''
 			<TABLE VALIGN="«c»" ></TABLE>
 		'''.testContentAssistant(#[
@@ -603,11 +603,11 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTABLE_WIDTH() {
+	@Test def attribute_values_of_tag_TABLE_WIDTH() {
 		'''<TABLE WIDTH="«c»" ></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_ALIGN() {
+	@Test def attribute_values_of_tag_TD_ALIGN() {
 		'''
 			<TD ALIGN="«c»" ></TD>
 		'''.testContentAssistant(#[
@@ -620,7 +620,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTD_BALIGN() {
+	@Test def attribute_values_of_tag_TD_BALIGN() {
 		'''
 			<TD BALIGN="«c»" ></TD>
 		'''.testContentAssistant(#[
@@ -632,31 +632,31 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTD_BGCOLOR() {
+	@Test def attribute_values_of_tag_TD_BGCOLOR() {
 		'''<TD BGCOLOR="«c»" ></TD>'''.testEmptyContentAssistant // TODO implement "color"
 	}
 
-	@Test def attributeValuesOfTagTD_BORDER() {
+	@Test def attribute_values_of_tag_TD_BORDER() {
 		'''<TD BORDER="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_CELLPADDING() {
+	@Test def attribute_values_of_tag_TD_CELLPADDING() {
 		'''<TD CELLPADDING="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_CELLSPACING() {
+	@Test def attribute_values_of_tag_TD_CELLSPACING() {
 		'''<TD CELLSPACING="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_COLOR() {
+	@Test def attribute_values_of_tag_TD_COLOR() {
 		'''<TD COLOR="«c»" ></TD>'''.testEmptyContentAssistant // TODO implement "color"
 	}
 
-	@Test def attributeValuesOfTagTD_COLSPAN() {
+	@Test def attribute_values_of_tag_TD_COLSPAN() {
 		'''<TD COLSPAN="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_FIXEDSIZE() {
+	@Test def attribute_values_of_tag_TD_FIXEDSIZE() {
 		'''
 			<TD FIXEDSIZE="«c»" ></TD>
 		'''.testContentAssistant(#[
@@ -667,31 +667,31 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTD_GRADIENTANGLE() {
+	@Test def attribute_values_of_tag_TD_GRADIENTANGLE() {
 		'''<TD GRADIENTANGLE="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_HEIGHT() {
+	@Test def attribute_values_of_tag_TD_HEIGHT() {
 		'''<TD HEIGHT="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_HREF() {
+	@Test def attribute_values_of_tag_TD_HREF() {
 		'''<TD HREF="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_ID() {
+	@Test def attribute_values_of_tag_TD_ID() {
 		'''<TD ID="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_PORT() {
+	@Test def attribute_values_of_tag_TD_PORT() {
 		'''<TD PORT="«c»" ></TD>'''.testEmptyContentAssistant // TODO implement "portName"
 	}
 
-	@Test def attributeValuesOfTagTD_ROWSPAN() {
+	@Test def attribute_values_of_tag_TD_ROWSPAN() {
 		'''<TD ROWSPAN="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_SIDES() {
+	@Test def attribute_values_of_tag_TD_SIDES() {
 		'''
 			<TD SIDES="«c»" ></TD>
 		'''.testContentAssistant(#[
@@ -715,23 +715,23 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTD_STYLE() {
+	@Test def attribute_values_of_tag_TD_STYLE() {
 		'''<TD STYLE="«c»" ></TD>'''.testEmptyContentAssistant // TODO implement "value"
 	}
 
-	@Test def attributeValuesOfTagTD_TARGET() {
+	@Test def attribute_values_of_tag_TD_TARGET() {
 		'''<TD TARGET="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_TITLE() {
+	@Test def attribute_values_of_tag_TD_TITLE() {
 		'''<TD TITLE="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_TOOLTIP() {
+	@Test def attribute_values_of_tag_TD_TOOLTIP() {
 		'''<TD TOOLTIP="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def attributeValuesOfTagTD_VALIGN() {
+	@Test def attribute_values_of_tag_TD_VALIGN() {
 		'''
 			<TD VALIGN="«c»" ></TD>
 		'''.testContentAssistant(#[
@@ -743,23 +743,23 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def attributeValuesOfTagTD_WIDTH() {
+	@Test def attribute_values_of_tag_TD_WIDTH() {
 		'''<TD WIDTH="«c»" ></TD>'''.testEmptyContentAssistant
 	}
 
-	@Test def siblingOfTableTagOnTheRootLevel() {
+	@Test def sibling_of_table_tag_on_the_root_level() {
 		// do not offer any tags
 		'''«c»<TABLE></TABLE>'''.testEmptyContentAssistant
 		'''<TABLE></TABLE>«c»'''.testEmptyContentAssistant
 	}
 
-	@Test def siblingOfTableTagOnANestedLevel() {
+	@Test def sibling_of_table_tag_on_a_nested_level() {
 		// do not offer any tags
 		'''<TABLE><TR><TD>«c»<TABLE></TABLE></TD></TR></TABLE>'''.testEmptyContentAssistant
 		'''<TABLE><TR><TD><TABLE></TABLE>«c»</TD></TR></TABLE>'''.testEmptyContentAssistant
 	}
 
-	@Test def siblingOfTextOnTheRootLevel() {
+	@Test def sibling_of_text_on_the_root_level() {
 		val testData = #["text", "<B>b</B>", "<BR/>", "<FONT>font</FONT>", "<I>i</I>",
 			"<O>o</O>", "<S>s</S>", "<SUB>sub</SUB>", "<SUP>sup</SUP>", "<U>u</U>"]
 		
@@ -773,7 +773,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 		]
 	}
 
-	@Test def siblingOfTextOnANestedLevel() {
+	@Test def sibling_of_text_on_a_nested_level() {
 		val testData = #["text", "<B>b</B>", "<BR/>", "<FONT>font</FONT>", "<I>i</I>",
 			"<O>o</O>", "<S>s</S>", "<SUB>sub</SUB>", "<SUP>sup</SUP>", "<U>u</U>"]
 		

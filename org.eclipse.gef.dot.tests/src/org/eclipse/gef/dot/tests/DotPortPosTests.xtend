@@ -34,23 +34,23 @@ class DotPortPosTests {
 	@Inject extension ParseHelper<PortPos>
 	@Inject extension ValidationTestHelper
 
-	@Test def compassPointAsName() {
+	@Test def compass_point_as_name() {
 		"w:sw".hasNoErrors
 	}
 
-	@Test def noCompassPoint() {
+	@Test def no_compass_point() {
 		"hello".hasNoErrors
 	}
 
-	@Test def justCompassPoint() {
+	@Test def just_compass_point() {
 		"ne".hasNoErrors
 	}
 
-	@Test def testTwoColons() {
+	@Test def two_colons() {
 		"port:w:w".hasOneSyntaxErrorOn("':'")
 	}
 
-	@Test def testInvalidCompassPoint() {
+	@Test def invalid_compass_point() {
 		"king:r".hasOneSyntaxErrorOn("'r'")
 	}
 

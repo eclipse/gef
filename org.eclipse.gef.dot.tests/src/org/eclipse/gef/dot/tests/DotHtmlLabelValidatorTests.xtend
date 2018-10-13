@@ -36,17 +36,15 @@ class DotHtmlLabelValidatorTests {
 	@Inject extension ParseHelper<HtmlLabel>
 	@Inject extension ValidationTestHelper
 
-	@Test(timeout=2000)
-	def void test_incomplete_tag01() {
+	@Test(timeout=2000) def void incomplete_tag01() {
 		'''<TABLE</TABLE>'''.parse
 	}
 
-	@Test(timeout=2000)
-	def void test_incomplete_tag02() {
+	@Test(timeout=2000) def void incomplete_tag02() {
 		'''<T</TABLE>'''.parse
 	}
 
-	@Test def test_invalid_comment() {
+	@Test def invalid_comment() {
 		// HTML comments are not allowed inside a tag
 		val htmlLabel = '''<B <!--HTML comment--> >string</B>'''.parse.assertNumberOfIssues(8)
 		htmlLabel.assertError(HTML_TAG, Diagnostic.SYNTAX_DIAGNOSTIC, "no viable alternative at input '<'")
@@ -59,40 +57,40 @@ class DotHtmlLabelValidatorTests {
 		htmlLabel.assertHtmlAttributeError("Attribute 'comment--' is not allowed inside '<HTML>'.")
 	}
 
-	@Test def test_tag_wrongly_closed() {
+	@Test def tag_wrongly_closed() {
 		val htmlLabel = '''<test>string</B>'''.parse.assertNumberOfIssues(2)
 		htmlLabel.assertHtmlTagError("Tag '<test>' is not closed (expected '</test>' but got '</B>').")
 		htmlLabel.assertHtmlTagError("Tag '<test>' is not supported.")
 	}
 
-	@Test def test_unknown_parent() {
+	@Test def unknown_parent() {
 		val htmlLabel = '''<foo><tr></tr></foo>'''.parse.assertNumberOfIssues(2)
 		htmlLabel.assertHtmlTagError("Tag '<foo>' is not supported.")
 		htmlLabel.assertHtmlTagError("Tag '<tr>' is not allowed inside '<foo>', but only inside '<TABLE>'.")
 	}
 
-	@Test def test_invalid_parent1() {
+	@Test def invalid_parent1() {
 		'''<tr></tr>'''.parse.assertNumberOfIssues(1).
 		assertHtmlTagError("Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.")
 	}
 
-	@Test def test_invalid_parent2() {
+	@Test def invalid_parent2() {
 		'''<table><U></U></table>'''.parse.assertNumberOfIssues(1).
 		assertHtmlTagError("Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<SUB>', '<B>', '<S>', '<ROOT>', '<U>', '<I>', '<FONT>', '<O>', '<SUP>'.")
 	}
 
-	@Test def test_invalid_attribute_in_valid_tag() {
+	@Test def invalid_attribute_in_valid_tag() {
 		'''<table foo="bar"></table>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("Attribute 'foo' is not allowed inside '<table>'.")
 	}
 
-	@Test def test_invalid_attribute_in_invalid_tag() {
+	@Test def invalid_attribute_in_invalid_tag() {
 		val htmlLabel = '''<foo bar="baz"></foo>'''.parse.assertNumberOfIssues(2)
 		htmlLabel.assertHtmlTagError("Tag '<foo>' is not supported.")
 		htmlLabel.assertHtmlAttributeError("Attribute 'bar' is not allowed inside '<foo>'.")
 	}
 
-	@Test def test_string_literal_is_not_allowed() {
+	@Test def string_literal_is_not_allowed() {
 		'''<BR>string</BR>'''.parse.assertNumberOfIssues(1).assertStringLiteralError
 		'''<TABLE>string</TABLE>'''.parse.assertNumberOfIssues(1).assertStringLiteralError
 		'''<TABLE><HR>string</HR></TABLE>'''.parse.assertNumberOfIssues(1).assertStringLiteralError("HR")
@@ -101,7 +99,7 @@ class DotHtmlLabelValidatorTests {
 		'''<TABLE><TR><TD><IMG>string</IMG></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).assertStringLiteralError("IMG")
 	}
 
-	@Test def test_invalid_siblings() {
+	@Test def invalid_siblings() {
 		// The graphviz DOT HTML-Like Label grammar does not allow text and
 		// table or multiple tables on the same (root or nested) level.
 
@@ -195,7 +193,7 @@ class DotHtmlLabelValidatorTests {
 		}
 	}
 
-	@Test def test_self_closing_is_not_allowed() {
+	@Test def self_closing_is_not_allowed() {
 		'''<FONT/>'''.parse.assertNumberOfIssues(1).assertSelfClosingTagError
 		'''<I/>'''.parse.assertNumberOfIssues(1).assertSelfClosingTagError
 		'''<B/>'''.parse.assertNumberOfIssues(1).assertSelfClosingTagError
@@ -209,7 +207,7 @@ class DotHtmlLabelValidatorTests {
 		'''<TABLE><TR><TD/></TR></TABLE>'''.parse.assertNumberOfIssues(1).assertSelfClosingTagError("TD")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_BR_ALIGN() {
+	@Test def invalid_attribute_value_of_tag_BR_ALIGN() {
 		'''<BR ALIGN=""/>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 
@@ -217,30 +215,30 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_FONT_COLOR() {
+	@Test def void invalid_attribute_value_of_tag_FONT_COLOR() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_FONT_FACE() {
+	@Test def void invalid_attribute_value_of_tag_FONT_FACE() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_FONT_POINTSIZE() {
+	@Test def void invalid_attribute_value_of_tag_FONT_POINTSIZE() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_IMG_SCALE() {
+	@Test def invalid_attribute_value_of_tag_IMG_SCALE() {
 		'''<TABLE><TR><TD><IMG SCALE=""/></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.")
 		'''<TABLE><TR><TD><IMG SCALE="foo"/></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value 'foo' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_IMG_SRC() {
+	@Test def void invalid_attribute_value_of_tag_IMG_SRC() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_ALIGN() {
+	@Test def invalid_attribute_value_of_tag_TABLE_ALIGN() {
 		'''<TABLE ALIGN=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 		
@@ -248,11 +246,11 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_BGCOLOR() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_BGCOLOR() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_BORDER() {
+	@Test def invalid_attribute_value_of_tag_TABLE_BORDER() {
 		'''<TABLE BORDER=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct BORDER: Value has to be between 0 and 255.")
 
@@ -272,7 +270,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '257' is not a correct BORDER: Value has to be between 0 and 255.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_CELLBORDER() {
+	@Test def invalid_attribute_value_of_tag_TABLE_CELLBORDER() {
 		'''<TABLE CELLBORDER=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 
@@ -292,7 +290,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '129' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_CELLPADDING() {
+	@Test def invalid_attribute_value_of_tag_TABLE_CELLPADDING() {
 		'''<TABLE CELLPADDING=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
@@ -312,7 +310,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_CELLSPACING() {
+	@Test def invalid_attribute_value_of_tag_TABLE_CELLSPACING() {
 		'''<TABLE CELLSPACING=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
@@ -332,11 +330,11 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_COLOR() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_COLOR() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_COLUMNS() {
+	@Test def invalid_attribute_value_of_tag_TABLE_COLUMNS() {
 		'''<TABLE ROWS=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct ROWS: Value has to be '*'.")
 
@@ -344,7 +342,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct ROWS: Value has to be '*'.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_FIXEDSIZE() {
+	@Test def invalid_attribute_value_of_tag_TABLE_FIXEDSIZE() {
 		'''<TABLE FIXEDSIZE=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
 
@@ -352,11 +350,11 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_GRADIENTANGLE() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_GRADIENTANGLE() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_HEIGHT() {
+	@Test def invalid_attribute_value_of_tag_TABLE_HEIGHT() {
 		'''<TABLE HEIGHT=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
@@ -376,19 +374,19 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_HREF() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_HREF() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_ID() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_ID() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_PORT() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_PORT() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_ROWS() {
+	@Test def invalid_attribute_value_of_tag_TABLE_ROWS() {
 		'''<TABLE ROWS=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct ROWS: Value has to be '*'.")
 		
@@ -396,7 +394,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct ROWS: Value has to be '*'.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_SIDES() {
+	@Test def invalid_attribute_value_of_tag_TABLE_SIDES() {
 		'''<TABLE SIDES=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 		
@@ -404,23 +402,23 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_STYLE() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_STYLE() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_TARGET() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_TARGET() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_TITLE() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_TITLE() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TABLE_TOOLTIP() {
+	@Test def void invalid_attribute_value_of_tag_TABLE_TOOLTIP() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_VALIGN() {
+	@Test def invalid_attribute_value_of_tag_TABLE_VALIGN() {
 		'''<TABLE VALIGN=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 
@@ -428,7 +426,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TABLE_WIDTH() {
+	@Test def invalid_attribute_value_of_tag_TABLE_WIDTH() {
 		'''<TABLE WIDTH=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
@@ -448,7 +446,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '65537' is not a correct WIDTH: Value has to be between 0 and 65535.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_ALIGN() {
+	@Test def invalid_attribute_value_of_tag_TD_ALIGN() {
 		'''<TABLE><TR><TD ALIGN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.")
 
@@ -456,7 +454,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_BALIGN() {
+	@Test def invalid_attribute_value_of_tag_TD_BALIGN() {
 		'''<TABLE><TR><TD BALIGN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 
@@ -464,11 +462,11 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_BGCOLOR() {
+	@Test def void invalid_attribute_value_of_tag_TD_BGCOLOR() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_BORDER() {
+	@Test def invalid_attribute_value_of_tag_TD_BORDER() {
 		'''<TABLE><TR><TD BORDER=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct BORDER: Value has to be between 0 and 255.")
 
@@ -488,7 +486,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '257' is not a correct BORDER: Value has to be between 0 and 255.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_CELLPADDING() {
+	@Test def invalid_attribute_value_of_tag_TD_CELLPADDING() {
 		'''<TABLE><TR><TD CELLPADDING=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
@@ -508,7 +506,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_CELLSPACING() {
+	@Test def invalid_attribute_value_of_tag_TD_CELLSPACING() {
 		'''<TABLE><TR><TD CELLSPACING=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
@@ -528,11 +526,11 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_COLOR() {
+	@Test def void invalid_attribute_value_of_tag_TD_COLOR() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_COLSPAN() {
+	@Test def invalid_attribute_value_of_tag_TD_COLSPAN() {
 		'''<TABLE><TR><TD COLSPAN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 
@@ -552,7 +550,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '65537' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_FIXEDSIZE() {
+	@Test def invalid_attribute_value_of_tag_TD_FIXEDSIZE() {
 		'''<TABLE><TR><TD FIXEDSIZE=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
 
@@ -560,11 +558,11 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_GRADIENTANGLE() {
+	@Test def void invalid_attribute_value_of_tag_TD_GRADIENTANGLE() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_HEIGHT() {
+	@Test def invalid_attribute_value_of_tag_TD_HEIGHT() {
 		'''<TABLE><TR><TD HEIGHT=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
@@ -584,19 +582,19 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_HREF() {
+	@Test def void invalid_attribute_value_of_tag_TD_HREF() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_ID() {
+	@Test def void invalid_attribute_value_of_tag_TD_ID() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_PORT() {
+	@Test def void invalid_attribute_value_of_tag_TD_PORT() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_ROWSPAN() {
+	@Test def invalid_attribute_value_of_tag_TD_ROWSPAN() {
 		'''<TABLE><TR><TD ROWSPAN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 
@@ -616,7 +614,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value '65537' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_SIDES() {
+	@Test def invalid_attribute_value_of_tag_TD_SIDES() {
 		'''<TABLE><TR><TD SIDES=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 
@@ -624,23 +622,23 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_STYLE() {
+	@Test def void invalid_attribute_value_of_tag_TD_STYLE() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_TARGET() {
+	@Test def void invalid_attribute_value_of_tag_TD_TARGET() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_TITLE() {
+	@Test def void invalid_attribute_value_of_tag_TD_TITLE() {
 		// TODO implement
 	}
 
-	@Test def void test_invalid_attribute_value_of_tag_TD_TOOLTIP() {
+	@Test def void invalid_attribute_value_of_tag_TD_TOOLTIP() {
 		// TODO implement
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_VALIGN() {
+	@Test def invalid_attribute_value_of_tag_TD_VALIGN() {
 		'''<TABLE><TR><TD VALIGN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 
@@ -648,7 +646,7 @@ class DotHtmlLabelValidatorTests {
 		assertHtmlAttributeError("The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 	}
 
-	@Test def test_invalid_attribute_value_of_tag_TD_WIDTH() {
+	@Test def invalid_attribute_value_of_tag_TD_WIDTH() {
 		'''<TABLE><TR><TD WIDTH=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeError("The value '' is not a correct WIDTH: Value has to be between 0 and 65535.")
 

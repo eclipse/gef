@@ -30,5 +30,5 @@ class DotHighlightingLexerTests extends AbstractDotLexerTest {
 	override lexer() {
 		lexer
 	}
-	
+
 }

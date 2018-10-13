@@ -38,7 +38,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		createTestProjectWithXtextNature
 	}
 
-	@Test def testAutoEdit001() {
+	@Test def autoedit_001() {
 		'''
 			graph |
 		'''.testAutoEdit('{', '''
@@ -46,7 +46,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit002() {
+	@Test def autoedit_002() {
 		'''
 			digraph |
 		'''.testAutoEdit('{', '''
@@ -54,7 +54,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit003() {
+	@Test def autoedit_003() {
 		'''
 			graph {
 				node|
@@ -66,7 +66,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit004() {
+	@Test def autoedit_004() {
 		'''
 			graph {
 				1|
@@ -78,7 +78,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit005() {
+	@Test def autoedit_005() {
 		'''
 			digraph {
 				1-->2|
@@ -90,7 +90,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit006() {
+	@Test def autoedit_006() {
 		'''
 			graph {
 				1[label=|]
@@ -102,7 +102,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit007() {
+	@Test def autoedit_007() {
 		'''
 			graph {
 				1[label=|]
@@ -114,7 +114,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit008() {
+	@Test def autoedit_008() {
 		'''
 			graph {
 				1[label=<|>]
@@ -126,7 +126,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit009() {
+	@Test def autoedit_009() {
 		'''
 			graph {1[label=<<table|>]}
 		'''.testAutoEdit('>', '''
@@ -134,7 +134,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit010() {
+	@Test def autoedit_010() {
 		'''
 			graph {
 				1[label=<<table|>]
@@ -146,7 +146,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit011() {
+	@Test def autoedit_011() {
 		'''
 			graph {
 				1[label=<
@@ -162,7 +162,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit012() {
+	@Test def autoedit_012() {
 		'''
 			graph{1[label=<<table><tr|</table>>]}
 		'''.testAutoEdit('>', '''
@@ -170,7 +170,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit013() {
+	@Test def autoedit_013() {
 		'''
 			graph {
 				1[label=<
@@ -186,7 +186,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit014() {
+	@Test def autoedit_014() {
 		'''
 			graph {
 				1[label=<|]
@@ -198,7 +198,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit015() {
+	@Test def autoedit_015() {
 		'''
 			digraph {
 				1[label=<
@@ -216,7 +216,7 @@ class DotAutoEditTests extends AbstractAutoEditTest {
 		''')
 	}
 
-	@Test def testAutoEdit016() {
+	@Test def autoedit_016() {
 		'''
 			graph {
 				1[label=<

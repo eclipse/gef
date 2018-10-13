@@ -47,7 +47,7 @@ class DotHighlightingCalculatorTests implements IHighlightedPositionAcceptor {
 
 	@Inject extension DotSemanticHighlightingCalculator
 	@Inject extension ParseHelper<DotAst>
-	
+
 	Multimap<TextRegion, String> expectedRegions
 
 	@Before def void setUp() {
@@ -59,17 +59,17 @@ class DotHighlightingCalculatorTests implements IHighlightedPositionAcceptor {
 	}
 
 	// semantic highlighting test cases
-	@Test def nullGuardTest() {
+	@Test def null_guard() {
 		null.provideHighlightingFor(this)
 	}
 
-	@Test def graphName() {
+	@Test def graph_name() {
 		DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME.assertHightlightingIDs(
 			"G" -> GRAPH_NAME_ID
 		)
 	}
 
-	@Test def nodeName() {
+	@Test def node_name() {
 		DotTestGraphs.ONE_NODE.assertHightlightingIDs(
 			"1" -> NODE_NAME_ID
 		)
@@ -82,25 +82,25 @@ class DotHighlightingCalculatorTests implements IHighlightedPositionAcceptor {
 		)
 	}
 
-	@Test def attributeName() {
+	@Test def attribute_name() {
 		DotTestGraphs.GRAPH_LAYOUT_DOT.assertHightlightingIDs(
 			"layout" -> ATTRIBUTE_NAME_ID
 		)
 	}
 
-	@Test def edgeOperatorDirected() {
+	@Test def edge_operator_directed() {
 		DotTestGraphs.ONE_DIRECTED_EDGE.assertHightlightingIDs(
 			"->" -> EDGE_OP_ID
 		)
 	}
 
-	@Test def edgeOperatorUnDirected() {
+	@Test def edge_operator_undirected() {
 		DotTestGraphs.ONE_EDGE.assertHightlightingIDs(
 			"--" -> EDGE_OP_ID
 		)
 	}
 
-	@Test def htmlLabel() {
+	@Test def html_label() {
 		DotTestGraphs.NODE_LABEL_HTML_LIKE(DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG).assertHightlightingIDs(
 			
 			"<" -> HTML_TAG,

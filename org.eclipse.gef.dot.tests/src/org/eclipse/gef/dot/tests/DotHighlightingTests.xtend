@@ -49,15 +49,15 @@ class DotHighlightingTests extends AbstractEditorTest {
 		DotTestGraphs.EDGE_ARROWSIZE_GLOBAL.assertHighlighting("1.5", SWT.NORMAL, 125, 125, 125)
 	}
 
-	@Test def quotedAttributeValue() {
+	@Test def quoted_attribute_value() {
 		 DotTestGraphs.QUOTED_LABELS.assertHighlighting("node 1", SWT.NORMAL, 255, 0, 0)
 	}
 
-	@Test def unquotedAttributeValue() {
+	@Test def unquoted_attribute_value() {
 		DotTestGraphs.GRAPH_LAYOUT_DOT.assertHighlighting("dot", SWT.NORMAL, 153, 76, 0)
 	}
 
-	@Test def void compassPt() {
+	@Test def void compass_pt() {
 		DotTestGraphs.PORTS => [
 			assertHighlighting("ne", SWT.NORMAL, 153, 76, 0)
 			assertHighlighting("_", SWT.NORMAL, 153, 76, 0)
@@ -87,11 +87,11 @@ class DotHighlightingTests extends AbstractEditorTest {
 	}
 
 	// semantic highlighting test cases
-	@Test def graphName() {
+	@Test def graph_name() {
 		DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME.assertHighlighting("G", SWT.NORMAL, 0, 0, 0)
 	}
 
-	@Test def nodeName() {
+	@Test def node_name() {
 		DotTestGraphs.ONE_NODE.assertHighlighting("1", SWT.NORMAL, 0, 0, 0)
 	}
 
@@ -102,19 +102,19 @@ class DotHighlightingTests extends AbstractEditorTest {
 		]
 	}
 
-	@Test def attributeName() {
+	@Test def attribute_name() {
 		DotTestGraphs.GRAPH_LAYOUT_DOT.assertHighlighting("layout", SWT.NORMAL, 0, 76, 153)
 	}
 
-	@Test def edgeOperatorDirected() {
+	@Test def edge_operator_directed() {
 		DotTestGraphs.ONE_DIRECTED_EDGE.assertHighlighting("->", SWT.NORMAL, 0, 153, 0)
 	}
 
-	@Test def edgeOperatorUnDirected() {
+	@Test def edge_operator_undirected() {
 		DotTestGraphs.ONE_EDGE.assertHighlighting("--", SWT.NORMAL, 0, 153, 0)
 	}
 
-	@Test def void htmlLabel() {
+	@Test def void html_label() {
 		DotTestGraphs.NODE_LABEL_HTML_LIKE(DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG) => [
 			
 			// test highlighting of Html tag
@@ -147,7 +147,7 @@ class DotHighlightingTests extends AbstractEditorTest {
 		]
 	}
 
-	@Test def incomplete_htmlLabel() {
+	@Test def incomplete_html_label() {
 		// test highlighting of Html tag
 		DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL.assertHighlighting("<", SWT.NORMAL, 63, 127, 127)
 	}

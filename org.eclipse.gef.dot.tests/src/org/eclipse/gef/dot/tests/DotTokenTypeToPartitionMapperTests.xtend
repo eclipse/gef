@@ -104,7 +104,7 @@ class DotTokenTypeToPartitionMapperTests {
 	private def hasCommentPartition(String tokenName) {
 		tokenName.hasPartition(TerminalsTokenTypeToPartitionMapper.COMMENT_PARTITION)
 	}
-	
+
 	private def hasHtmlStringPartition(String tokenName) {
 		tokenName.hasPartition(DotTerminalsTokenTypeToPartitionMapper.HTML_STRING_PARTITION)
 	}
@@ -117,5 +117,4 @@ class DotTokenTypeToPartitionMapperTests {
 	private def tokenType(String tokenName) {
 		tokenDefMap.entrySet().findFirst(e|e.value==tokenName).key
 	}
-	
 }

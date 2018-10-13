@@ -29,29 +29,29 @@ class DotFoldingTests {
 
 	@Inject extension IFoldingRegionProvider
 
-	@Test def testComments() {
+	@Test def comments() {
 		DotTestGraphs.EMPTY_WITH_COMMENTS.assertFoldingRegions(1, 10, 4, 7)
 	}
 
-	@Test def testGraphWithOneNode() {
+	@Test def graph_with_one_node() {
 		DotTestGraphs.ONE_NODE.assertFoldingRegions(1, 3)
 	}
 
-	@Test def testClusters() {
+	@Test def clusters() {
 		DotTestGraphs.CLUSTERS.assertFoldingRegions(1, 21, 2, 6, 7, 18)
 	}
 
-	@Test def testGraphLabelHTMLLike1() {
+	@Test def graph_label_HTML_like_01() {
 		DotTestGraphs.GRAPH_LABEL_HTML_LIKE(DotTestHtmlLabels.FONT_TAG_WITH_POINT_SIZE_ATTRIBUTE).
 		assertFoldingRegions(1, 8, 2, 7, 4, 6)
 	}
 
-	@Test def testGraphLabelHTMLLike2() {
+	@Test def graph_label_HTML_like_02() {
 		DotTestGraphs.GRAPH_LABEL_HTML_LIKE(DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG).
 		assertFoldingRegions(1, 15, 2, 14, 7, 13, 8, 12, 9, 11, 4, 6)
 	}
-	
-	@Test def testDotAttributeListFolding01() {
+
+	@Test def attribute_list_01() {
 		'''
 			graph {
 				node[
@@ -59,8 +59,8 @@ class DotFoldingTests {
 			}
 		'''.assertFoldingRegions(1, 4, 2, 3)
 	}
-	
-	@Test def testDotAttributeListFolding02() {
+
+	@Test def attribute_list_02() {
 		'''
 			graph {
 				node
@@ -69,22 +69,22 @@ class DotFoldingTests {
 			}
 		'''.assertFoldingRegions(1, 5, 2, 4, 3, 4)
 	}
-	
-	@Test def testDotAttributeListFolding03() {
+
+	@Test def attribute_list_03() {
 		DotTestGraphs.COLORLIST_COLOR_E.
 		assertFoldingRegions(1, 5, 2, 4)
 	}
-	
-	@Test def testDotAttributeListFolding04() {
+
+	@Test def attribute_list_04() {
 		DotTestGraphs.COLORLIST_FILLCOLOR_N.
 		assertFoldingRegions(1, 6, 2, 5)
 	}
 
-	@Test def testIncompleteAttributeStatement() {
+	@Test def incomplete_attribute_statement() {
 		'''graph {1[color= ]}'''.assertFoldingRegions
 	}
 
-	@Test def testIncompleteAttributeStatementWithLineBreaks() {
+	@Test def incomplete_attribute_statement_with_line_breaks() {
 		'''
 			graph {
 				1[color=]

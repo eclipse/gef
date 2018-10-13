@@ -34,23 +34,23 @@ class DotHtmlLabelTokenTypeToPartitionMapperTests {
 	@Inject extension ITokenTypeToPartitionTypeMapper
 
 	@Test def RULE_HTML_COMMENT() { "RULE_HTML_COMMENT".hasCommentPartition }
-	
+
 	@Test def RULE_TAG_START_CLOSE() { "RULE_TAG_START_CLOSE".hasDefaultPartition }
-	
+
 	@Test def RULE_TAG_START() { "RULE_TAG_START".hasDefaultPartition }
-	
+
 	@Test def RULE_TAG_END() { "RULE_TAG_END".hasDefaultPartition }
-	
+
 	@Test def RULE_TAG_END_CLOSE() { "RULE_TAG_END_CLOSE".hasDefaultPartition }
-	
+
 	@Test def RULE_ASSIGN() { "RULE_ASSIGN".hasDefaultPartition }
-	
+
 	@Test def RULE_ATTR_VALUE() { "RULE_ATTR_VALUE".hasStringLiteralPartition }
-	
+
 	@Test def RULE_ID() { "RULE_ID".hasDefaultPartition }
-	
+
 	@Test def RULE_WS() { "RULE_WS".hasDefaultPartition }
-	
+
 	@Test def RULE_TEXT() { "RULE_TEXT".hasTextPartition }
 
 	private def hasDefaultPartition(String tokenName) {
@@ -64,7 +64,7 @@ class DotHtmlLabelTokenTypeToPartitionMapperTests {
 	private def hasCommentPartition(String tokenName) {
 		tokenName.hasPartition(TerminalsTokenTypeToPartitionMapper.COMMENT_PARTITION)
 	}
-	
+
 	private def hasTextPartition(String tokenName) {
 		tokenName.hasPartition(DotHtmlLabelTerminalsTokenTypeToPartitionMapper.TEXT_PARTITION)
 	}
@@ -77,5 +77,5 @@ class DotHtmlLabelTokenTypeToPartitionMapperTests {
 	private def tokenType(String tokenName) {
 		tokenDefMap.entrySet().findFirst(e|e.value==tokenName).key
 	}
-	
+
 }

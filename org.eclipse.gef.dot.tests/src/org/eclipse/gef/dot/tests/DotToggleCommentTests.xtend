@@ -27,7 +27,7 @@ class DotToggleCommentTests extends AbstractEditorTest {
 
 	@Inject XtextEditorInfo xtextEditorInfo
 
-	@Test def test001() {
+	@Test def toggling_comment_001() {
 		'''
 			graph {
 			}
@@ -39,7 +39,7 @@ class DotToggleCommentTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def test002() {
+	@Test def toggling_comment_002() {
 		'''
 			graph {
 			}
@@ -49,7 +49,7 @@ class DotToggleCommentTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def test003() {
+	@Test def toggling_comment_003() {
 		'''
 			graph {
 			}
@@ -62,7 +62,7 @@ class DotToggleCommentTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def test004() {
+	@Test def toggling_comment_004() {
 		'''
 			//graph {
 			//}
@@ -75,7 +75,7 @@ class DotToggleCommentTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def test005() {
+	@Test def toggling_comment_005() {
 		'''
 			//graph {
 			//}
@@ -132,5 +132,4 @@ class DotToggleCommentTests extends AbstractEditorTest {
 	override protected getEditorId() {
 		xtextEditorInfo.editorId
 	}
-
 }

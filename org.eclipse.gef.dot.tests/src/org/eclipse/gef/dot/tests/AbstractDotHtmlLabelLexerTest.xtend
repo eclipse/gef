@@ -16,7 +16,7 @@ import org.junit.Test
 
 abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 
-	@Test def testLexing01() {
+	@Test def lexing01() {
 		'''
 			<TABLE>
 			</TABLE>
@@ -33,7 +33,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 
-	@Test def testLexing02() {
+	@Test def lexing02() {
 		'''
 			<font>text</font>
 		'''
@@ -48,7 +48,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 
-	@Test def testLexing03() {
+	@Test def lexing03() {
 		'''
 			<font><text</font>
 		'''
@@ -64,7 +64,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 
-	@Test def testLexing04() {
+	@Test def lexing04() {
 		'''
 		<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" bgcolor="blue">
 			<TR>
@@ -126,14 +126,14 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 
-	@Test def testLexing05() {
+	@Test def lexing05() {
 		'''"text"'''
 		.assertLexing('''
 			RULE_TEXT '"text"'
 		''')
 	}
 
-	@Test def testLexing06() {
+	@Test def lexing06() {
 		'''<a b="c"/>'''
 		.assertLexing('''
 			RULE_TAG_START '<'
@@ -146,7 +146,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 
-	@Test def testLexing07() {
+	@Test def lexing07() {
 		'''<BR ALIGN="LEFT"/>'''
 		.assertLexing('''
 			RULE_TAG_START '<'
@@ -159,7 +159,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 
-	@Test def testLexing08() {
+	@Test def lexing08() {
 		'''<a b="'''
 		.assertLexing(
 		'''
@@ -172,7 +172,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 	
-	@Test def testLexing09() {
+	@Test def lexing09() {
 		'''<TABLE ALIGN="'''
 		.assertLexing(
 		'''
@@ -185,7 +185,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		''')
 	}
 
-	@Test def testLexing10() {
+	@Test def lexing10() {
 		'''<TABLE ALIGN=""></TABLE>'''
 		.assertLexing(
 		'''

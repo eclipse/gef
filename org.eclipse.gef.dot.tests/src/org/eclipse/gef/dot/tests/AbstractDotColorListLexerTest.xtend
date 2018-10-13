@@ -16,7 +16,7 @@ import org.junit.Test
 
 abstract class AbstractDotColorListLexerTest extends AbstractLexerTest {
 
-	@Test def oneColorValueWithWeightLexerTest() {
+	@Test def one_color_value_with_weight() {
 		"#3030FF;1".assertLexing('''
 			'#' '#'
 			RULE_HEXADECIMAL_DIGIT '3'

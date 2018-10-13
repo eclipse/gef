@@ -48,15 +48,15 @@ class DotValidatorTests {
 
 	val l = System.getProperty("line.separator").length
 
-	@Test def testSingleArrowShapes() {
+	@Test def arrowshapes_single() {
 		"arrowshapes_single.dot".readFile.assertNoIssues
 	}
 
-	@Test def testMultipleArrowShapes() {
+	@Test def arrowshapes_multiple() {
 		"arrowshapes_multiple.dot".readFile.assertNoIssues
 	}
 
-	@Test def testDeprecatedArrowType() {
+	@Test def arrowshapes_deprecated() {
 		val dotAst = "arrowshapes_deprecated.dot".readFile.assertNumberOfIssues(8)
 		dotAst.assertArrowTypeWarning("The arrowType value 'ediamond' is not semantically correct: The shape 'ediamond' is deprecated.")
 		dotAst.assertArrowTypeWarning("The arrowType value 'open' is not semantically correct: The shape 'open' is deprecated.")
@@ -68,7 +68,7 @@ class DotValidatorTests {
 		dotAst.assertArrowTypeWarning(1311 + 28 * l, 4, "The arrowType value 'openbox' is not semantically correct: The shape 'open' is deprecated.")
 	}
 
-	@Test def testDeprecatedStyle() {
+	@Test def deprecated_style() {
 		val dotAst = DotTestGraphs.DEPRECATED_STYLES.parse.assertNumberOfIssues(5)
 		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 113 + 5 * l, 12, "The style value 'setlinewidth(1)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
 		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 140 + 6 * l, 12, "The style value 'setlinewidth(2)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
@@ -77,11 +77,11 @@ class DotValidatorTests {
 		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 249 + 11 * l, 12,"The style value 'setlinewidth(5), dotted' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
 	}
 
-	@Test def testArrowshapesDirectionBoth() {
+	@Test def arrowshapes_direction_both() {
 		"arrowshapes_direction_both.dot".readFile.assertNoIssues
 	}
 
-	@Test def testArrowShapesInvalidModifiers() {
+	@Test def arrowshapes_invalid_modifiers() {
 		val dotAst = "arrowshapes_invalid_modifiers.dot".readFile.assertNumberOfIssues(26)
 		dotAst.assertArrowTypeWarning("The arrowType value 'ocrow' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'crow'.")
 		dotAst.assertArrowTypeWarning("The arrowType value 'olcrow' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'crow'.")
@@ -111,132 +111,132 @@ class DotValidatorTests {
 		dotAst.assertArrowTypeWarning("The arrowType value 'oricurve' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'icurve'.")
 	}
 
-	@Test def testWrongArrowType() {
+	@Test def invalid_arrowtype() {
 		val dotAst = '''digraph testGraph { 1->2[arrowhead=fooBar arrowtail=fooBar2] }'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, ARROWHEAD__E, 35, 6, "The value 'fooBar' is not a syntactically correct arrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.")
 		dotAst.assertError(ATTRIBUTE, ARROWTAIL__E, 52, 7, "The value 'fooBar2' is not a syntactically correct arrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at character '2'.")
 	}
 
-	@Test def testWrongEdgeDirection() {
+	@Test def invalid_edge_direction() {
 		'''digraph testGraph { 1->2[dir=foo] }'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, DIR__E, 29, 3, "The value 'foo' is not a syntactically correct dirType: Value has to be one of 'forward', 'back', 'both', 'none'.")
 	}
 
-	@Test def testWrongEdgeArrowSize() {
+	@Test def invalid_edge_arrowsize() {
 		val dotAst = '''digraph testGraph { 1->2[arrowsize=foo] 3->4[arrowsize="-2.0"]}'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, ARROWSIZE__E, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
 		dotAst.assertError(ATTRIBUTE, ARROWSIZE__E, "The double value '-2.0' is not semantically correct: Value may not be smaller than 0.0.")
 	}
-	
-	@Test def testWrongEdgeFontsize() {
+
+	@Test def invalid_edge_fontsize() {
 		val dotAst = '''graph { 1--2[fontsize=large] 3--4[fontsize=0.3]}'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
 		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
 	}
-		
-	@Test def testWrongEdgeLabelfontsize() {
+
+	@Test def invalid_edge_labelfontsize() {
 		val dotAst = '''graph { 1--2[labelfontsize=large] 3--4[labelfontsize=0.3]}'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, LABELFONTSIZE__E, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
 		dotAst.assertError(ATTRIBUTE, LABELFONTSIZE__E, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
 	}
 
-	@Test def testNoneIsTheLastArrowShape() {
+	@Test def none_is_the_last_arrowshape() {
 		'''digraph { 1->2[arrowhead=boxnone] }'''.parse.assertNumberOfIssues(1).
 		assertArrowTypeWarning("The arrowType value 'boxnone' is not semantically correct: The shape 'none' may not be the last shape.")
 	}
 
-	@Test def testWrongGraphBackgroundColor() {
+	@Test def invalid_graph_background_color() {
 		'''graph { bgcolor=grsy }'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, BGCOLOR__GC, "The colorList value 'grsy' is not semantically correct: The 'grsy' color is not valid within the 'x11' color scheme.")
 	}
 
-	@Test def testGraphBackgroundColorDoesNotCorrespondToLocalColorScheme() {
+	@Test def graph_background_color_does_not_correspond_to_local_colorscheme() {
 		'''graph { colorscheme=brbg10 bgcolor=blue}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, BGCOLOR__GC, "The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
 
-	@Test def testGraphBackgroundColorDoesNotCorrespondToGlobalColorScheme() {
+	@Test def graph_background_color_does_not_correspond_to_global_colorscheme() {
 		'''graph { graph[colorscheme=brbg10] bgcolor=blue}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, BGCOLOR__GC, "The colorList value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
-	
-	@Test def testWrongGraphFontsize() {
+
+	@Test def invalid_graph_fontsize() {
 		'''graph {fontsize=large}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, FONTSIZE__GCNE, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
 		'''graph {fontsize=0.3}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, FONTSIZE__GCNE, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
 	}
 
-	@Test def testWrongNodeColor() {
+	@Test def invalid_node_color() {
 		'''graph { 1[color="#fffff"]}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, COLOR__CNE, "The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.")
 	}
 
-	@Test def testNodeColorDoesNotCorrespondToLocalColorScheme() {
+	@Test def node_color_does_not_correspond_to_local_colorscheme() {
 		'''graph { 1[colorscheme=brbg10 color=blue]}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, COLOR__CNE, "The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
 
-	@Test def testNodeColorDoesNotCorrespondToGlobalColorScheme() {
+	@Test def node_color_does_not_correspond_to_global_colorscheme() {
 		'''graph { node[colorscheme=brbg10] 1[color=blue]}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, COLOR__CNE, "The color value 'blue' is not semantically correct: The 'blue' color is not valid within the 'brbg10' color scheme.")
 	}
 
-	@Test def testWrongEdgeFillColor() {
+	@Test def invalid_edge_fillcolor() {
 		'''digraph { 1->2[fillcolor="#fffff"]}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, FILLCOLOR__CNE, "The value '#fffff' is not a syntactically correct color: Mismatched input '<EOF>' expecting RULE_HEXADECIMAL_DIGIT.")
 	}
 
-	@Test def testEdgeFillColorDoesNotCorrespondToLocalColorScheme() {
+	@Test def edge_fillcolor_does_not_correspond_to_local_colorscheme() {
 		'''digraph { 1->2[colorscheme=brbg10 fillcolor=white]}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, FILLCOLOR__CNE, "The color value 'white' is not semantically correct: The 'white' color is not valid within the 'brbg10' color scheme.")
 	}
 
-	@Test def testEdgeFillColorDoesNotCorrespondToGlobalColorScheme() {
+	@Test def edge_fillcolor_does_not_correspond_to_global_colorscheme() {
 		'''digraph { edge[colorscheme=brbg10] 1->2[fillcolor=red]}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, FILLCOLOR__CNE, "The color value 'red' is not semantically correct: The 'red' color is not valid within the 'brbg10' color scheme.")
 	}
 
-	@Test def testWrongNodeDistortion() {
+	@Test def invalid_node_distortion() {
 		val dotAst = '''graph { 1[distortion=foo] 2[distortion="-100.0001"]}'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, DISTORTION__N, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
 		dotAst.assertError(ATTRIBUTE, DISTORTION__N, "The double value '-100.0001' is not semantically correct: Value may not be smaller than -100.0.")
 	}
-	
-	@Test def testWrongNodeFontsize() {
+
+	@Test def invalid_node_fontsize() {
 		val dotAst = '''graph { 1[fontsize=large] 2[fontsize=0.3]}'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
 		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
 	}
 
-	@Test def testWrongNodeShape() {
+	@Test def invalid_node_shape() {
 		'''graph { 1[shape=foo] }'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, SHAPE__N, "The value 'foo' is not a syntactically correct shape: Extraneous input 'foo' expecting EOF.")
 	}
 
-	@Test def testWrongNodeSides() {
+	@Test def invalid_node_sides() {
 		val dotAst = "graph { 1[sides=foo] 2[sides=\"-1\"]}".parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, SIDES__N, "The value 'foo' is not a syntactically correct int: For input string: \"foo\".")
 		dotAst.assertError(ATTRIBUTE, SIDES__N, "The int value '-1' is not semantically correct: Value may not be smaller than 0.")
 	}
 
-	@Test def testWrongNodeSkew() {
+	@Test def invalid_node_skew() {
 		val dotAst = "graph { 1[skew=foo] 2[skew=\"-100.1\"]}".parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, SKEW__N, "The value 'foo' is not a syntactically correct double: For input string: \"foo\".")
 		dotAst.assertError(ATTRIBUTE, SKEW__N, "The double value '-100.1' is not semantically correct: Value may not be smaller than -100.0.")
 	}
 
-	@Test def testDirectedGraphWithNonDirectedEdge() {
+	@Test def directed_graph_with_non_directed_edge() {
 		'''digraph {1--2}'''.parse.assertNumberOfIssues(1).
 		assertError(EDGE_RHS_NODE, null, "EdgeOp '--' may only be used in undirected graphs.")
 	}
 
-	@Test def testNonDirectedGraphWithDirectedEdge() {
+	@Test def non_directed_graph_with_directed_edge() {
 		'''graph {1->2}'''.parse.assertNumberOfIssues(1).
 		assertError(EDGE_RHS_NODE, null, "EdgeOp '->' may only be used in directed graphs.")
 	}
 
-	@Test def testInvalidCombinationOfNodeShapeAndStyle() {
+	@Test def invalid_combination_of_node_shape_and_style() {
 		/*
 		 * The 'striped' node style is only supported with clusters and
 		 * rectangularly-shaped nodes('box', 'rect', 'rectangle' and 'square').
@@ -259,12 +259,12 @@ class DotValidatorTests {
 		// text = "graph {node[shape=ellipse] 1[style=striped]}";
 	}
 
-	@Test def testInvalidHtmlLikeLabel01() {
+	@Test def invalid_html_like_label_01() {
 		'''graph {1[label = <<BR/><FONT>>]}'''.assertHtmlLikeLabelError("<<BR/><FONT>>",
 			"The value '<BR/><FONT>' is not a syntactically correct htmlLabel: Mismatched input '<EOF>' expecting RULE_TAG_START_CLOSE.")
 	}
 
-	@Test def testInvalidHtmlLikeLabel02() {
+	@Test def invalid_html_like_label_02() {
 		val text = '''graph {1[label = <<TABLE</TABLE>>]}'''
 		val errorProneText = "<<TABLE</TABLE>>]}"
 		val errorMessage = "mismatched character '<EOF>' expecting '>'"
@@ -274,46 +274,46 @@ class DotValidatorTests {
 		assertError(DOT_AST, SYNTAX_DIAGNOSTIC, offset, length, errorMessage)
 	}
 
-	@Test(timeout=2000) def testInvalidHtmlLikeLabel03() {
+	@Test(timeout=2000) def invalid_html_like_label_03() {
 		Assert.assertTrue(DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL.parse.validate.size > 0)
 	}
 
-	@Test def testInvalidHtmlLikeLabelTagIsNotClosedProperly() {
+	@Test def invalid_html_like_label_tag_is_not_closed_properly() {
 		'''graph {1[label = <<BR/><FONT/>>]}'''.assertHtmlLikeLabelError("FONT",
 		"The htmlLabel value '<BR/><FONT/>' is not semantically correct: Tag '<FONT/>' cannot be self closing.")
 	}
 
-	@Test def testInvalidHtmlLikeLabelTagCannotBeSelfClosing() {
+	@Test def invalid_html_like_label_tag_cannot_be_self_closing() {
 		'''graph {1[label = <  <FONT></foo>  >]}'''.assertHtmlLikeLabelError("foo",
 		"The htmlLabel value '  <FONT></foo>  ' is not semantically correct: Tag '<FONT>' is not closed (expected '</FONT>' but got '</foo>').")
 	}
 
-	@Test def testInvalidHtmlLikeLabelStringLiteralIsNotAllowed() {
+	@Test def invalid_html_like_label_string_literal_is_not_allowed() {
 		'''graph {1[label = <  <BR>string</BR>  >]}'''.assertHtmlLikeLabelError("BR", 
 		"The htmlLabel value '  <BR>string</BR>  ' is not semantically correct: Tag '<BR>' cannot contain a string literal.")
 	}
 
-	@Test def testInvalidHtmlLikeLabelUnsupportedTag() {
+	@Test def invalid_html_like_label_unsupported_tag() {
 		'''graph {1[label = <  <test>string</test>  >]}'''.assertHtmlLikeLabelError("test",
 		"The htmlLabel value '  <test>string</test>  ' is not semantically correct: Tag '<test>' is not supported.")
 	}
 
-	@Test def testInvalidHtmlLikeLabelInvalidParentTag() {
+	@Test def invalid_html_like_label_invalid_parent_tag() {
 		'''graph {1[label = <  <tr></tr>  >]}'''.assertHtmlLikeLabelError("tr", 
 		"The htmlLabel value '  <tr></tr>  ' is not semantically correct: Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.")
 	}
 
-	@Test def testInvalidHtmlLikeLabelInvalidAttribute() {
+	@Test def invalid_html_like_label_invalid_attribute() {
 		'''graph {1[label = <  <table foo="bar"></table>  >]}'''.assertHtmlLikeLabelError("foo", 
 		'''The htmlLabel value '  <table foo="bar"></table>  ' is not semantically correct: Attribute 'foo' is not allowed inside '<table>'.''')
 	}
 
-	@Test def testInvalidHtmlLikeLabelInvalidAttributeValue() {
+	@Test def invalid_html_like_label_invalid_attribute_value() {
 		'''graph {1[label = <  <table align="foo"></table>  >]}'''.assertHtmlLikeLabelError('"foo"', 
 		'''The htmlLabel value '  <table align="foo"></table>  ' is not semantically correct: The value 'foo' is not a correct align: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.''')
 	}
 
-	@Test def testInvalidHtmlLikeLabelInvalidSiblings() {
+	@Test def invalid_html_like_label_invalid_siblings() {
 		/*
 		 * The graphviz DOT HTML-Like Label grammar does not allow text and
 		 * table or multiple tables on the same (root or nested) level.
@@ -412,7 +412,7 @@ class DotValidatorTests {
 		}
 	}
 
-	@Test def testInvalidNodeStyle() {
+	@Test def invalid_node_style() {
 		'''graph {1[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth", 
 		'''The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.''')
 
@@ -421,7 +421,7 @@ class DotValidatorTests {
 		)
 	}
 
-	@Test def testInvalidEdgeStyle() {
+	@Test def invalid_edge_style() {
 		'''graph {1--2[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth", 
 		'''The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.''')
 
@@ -429,32 +429,32 @@ class DotValidatorTests {
 		'''The style value 'dashed, foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'invis', 'solid', 'tapered'.''')
 	}
 
-	@Test def testInvalidSubgraphRankAttribute() {
+	@Test def invalid_subgraph_rank_attribute() {
 		'''graph{subgraph{rank=foo}}'''.parse.assertNumberOfIssues(1).
 		assertError(ATTRIBUTE, RANK__S, '''The value 'foo' is not a syntactically correct rankType: Value has to be one of 'same', 'min', 'source', 'max', 'sink'.''')
 	}
 
-	@Test def testRecordShapeLabel() {
+	@Test def record_shape_node1() {
 		"record_shape_node1.dot".readFile.assertNoIssues
 	}
 
-	@Test def testInvalidPortAssignedSameNameRecordLabel() {
+	@Test def invalid_port_assigned_same_name_record_label() {
 		val dotAst = '''digraph{ node [shape=record]; myNode [label="<here> foo | <here> more foo"]; }'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, PORT_NAME_DUPLICATE, 46, 4, "The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here")
 		dotAst.assertError(ATTRIBUTE, PORT_NAME_DUPLICATE, 59, 4, "The record-based label '<here> foo | <here> more foo' is not semantically correct: Port name not unique: here")
 	}
 
-	@Test def testInvalidPortNotAssignedNameRecordLabel() {
+	@Test def invalid_port_not_assigned_name_record_label() {
 		'''digraph{ node [shape=record]; myNode [label="<> foo | <here> more foo"]; }'''.parse.assertNumberOfIssues(1).
 		assertWarning(ATTRIBUTE, PORT_NAME_NOT_SET, 45, 6, "The record-based label '<> foo | <here> more foo' is not semantically correct: Port unnamed: port cannot be referenced")
 	}
 
-	@Test def testInvalidSyntaxErrorRecordLabel() {
+	@Test def invalid_syntax_error_record_label() {
 		'''digraph{ node [shape=record]; myNode [label="<}> foo | <here> more foo"]; }'''.parse.
 		assertError(ATTRIBUTE, SYNTAX_DIAGNOSTIC, 46, 1, "The value '<}> foo | <here> more foo' is not a syntactically correct record-based label: extraneous input '}' expecting '>'")
 	}
 
-	@Test def testIncompleteModel() {
+	@Test def incomplete_model() {
 		'''graph{1[c]}'''.parse.
 		assertError(ATTR_LIST, SYNTAX_DIAGNOSTIC, 9, 1, "mismatched input ']' expecting '='")
 	}
@@ -505,7 +505,7 @@ class DotValidatorTests {
 		val length = errorProneText.length
 		text.parse.assertNumberOfIssues(1).assertError(ATTRIBUTE, STYLE__GCNE, offset, length, message)
 	}
-	
+
 	private def assertNumberOfIssues(DotAst dotAst, int expectedNumberOfIssues) {
 		expectedNumberOfIssues.assertEquals(dotAst.validate.size)
 		dotAst

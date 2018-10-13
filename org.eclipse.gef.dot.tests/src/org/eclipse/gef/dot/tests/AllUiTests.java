@@ -50,5 +50,4 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotReferenceFinderTests.class, DotRenameRefactoringTests.class,
 		DotToggleCommentTests.class, DotTokenTypeToPartitionMapperTests.class })
 public class AllUiTests {
-
 }

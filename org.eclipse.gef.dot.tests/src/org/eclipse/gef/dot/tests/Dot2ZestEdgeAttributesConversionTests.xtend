@@ -38,12 +38,12 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotInjectorProvider)
 class Dot2ZestEdgeAttributesConversionTests {
-	
+
 	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
-	
+
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
-	
+
 	extension DotImport = new DotImport
 	extension Dot2ZestAttributesConverter = new Dot2ZestAttributesConverter
 
@@ -67,7 +67,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-stroke: #00ff00;
 		''')
 	}
-	
+
 	@Test def edge_style003() {
 		'''
 			graph {
@@ -77,7 +77,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-stroke-width: 2;
 		''')
 	}
-	
+
 	@Test def edge_style004() {
 		'''
 			graph {
@@ -87,7 +87,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-stroke-dash-array: 7 7;
 		''')
 	}
-	
+
 	@Test def edge_style005() {
 		'''
 			graph {
@@ -97,7 +97,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-stroke-dash-array: 1 7;
 		''')
 	}
-	
+
 	@Test def edge_style006() {
 		'''
 			graph {
@@ -107,7 +107,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-stroke-line-cap: butt;
 		''')
 	}
-	
+
 	@Test def edge_sourceDecorationStyle001() {
 		'''
 			digraph {
@@ -118,7 +118,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #000000;
 		''')
 	}
-	
+
 	@Test def edge_sourceDecorationStyle002() {
 		'''
 			digraph {
@@ -129,7 +129,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #00ff00;
 		''')
 	}
-	
+
 	@Test def edge_sourceDecorationStyle003() {
 		'''
 			digraph {
@@ -138,7 +138,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		'''.assertEdgeSourceDecorationStyles('''
 		''')
 	}
-	
+
 	@Test def edge_sourceDecorationStyle004() {
 		'''
 			digraph {
@@ -149,7 +149,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #00ff00;
 		''')
 	}
-	
+
 	@Test def edge_sourceDecorationStyle005() {
 		'''
 			digraph {
@@ -159,7 +159,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-stroke: #00ff00;
 		''')
 	}
-	
+
 	@Test def edge_targetDecorationStyle001() {
 		'''
 			digraph {
@@ -170,7 +170,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #000000;
 		''')
 	}
-	
+
 	@Test def edge_targetDecorationStyle002() {
 		'''
 			digraph {
@@ -181,7 +181,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #00ff00;
 		''')
 	}
-	
+
 	@Test def edge_targetDecorationStyle003() {
 		'''
 			digraph {
@@ -190,7 +190,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		'''.assertEdgeTargetDecorationStyles('''
 		''')
 	}
-	
+
 	@Test def edge_targetDecorationStyle004() {
 		'''
 			digraph {
@@ -202,7 +202,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #00ff00;
 		''')
 	}
-	
+
 	@Test def edge_targetDecorationStyle005() {
 		'''
 			digraph {
@@ -220,7 +220,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeLabel("foobar")
 	}
-	
+
 	@Test def edge_label002() {
 		'''
 			digraph {
@@ -228,7 +228,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeLabel("foo\nbar")
 	}
-	
+
 	@Test def edge_label003() {
 		'''
 			digraph {
@@ -236,7 +236,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeLabel("foo\nbar\nbaz")
 	}
-	
+
 	@Test def edge_label004() {
 		'''
 			digraph {
@@ -244,7 +244,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeLabel("Test 1->2")
 	}
-	
+
 	@Test def edge_label005() {
 		'''
 			digraph samplegraph {
@@ -252,7 +252,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeLabel("1->2 samplegraph")
 	}
-	
+
 	@Test def edge_label006() {
 		'''
 			digraph {
@@ -262,7 +262,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_label007() {
 		'''
 			digraph {
@@ -273,7 +273,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_externalLabel001() {
 		'''
 			digraph {
@@ -281,7 +281,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeExternalLabel("foobar")
 	}
-	
+
 	@Test def edge_externalLabel002() {
 		'''
 			digraph {
@@ -289,7 +289,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeExternalLabel("foo\nbar")
 	}
-	
+
 	@Test def edge_externalLabel003() {
 		'''
 			digraph {
@@ -297,7 +297,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeExternalLabel("foo\nbar\nbaz")
 	}
-	
+
 	@Test def edge_externalLabel004() {
 		'''
 			digraph testedGraphName {
@@ -305,7 +305,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeExternalLabel("g: testedGraphName e:1->2 h:2 t:1")
 	}
-	
+
 	@Test def edge_externalLabel005() {
 		'''
 			digraph {
@@ -315,7 +315,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_externalLabel006() {
 		'''
 			digraph {
@@ -326,7 +326,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_sourceLabel001() {
 		'''
 			digraph {
@@ -334,7 +334,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeSourceLabel("foobar")
 	}
-	
+
 	@Test def edge_sourceLabel002() {
 		'''
 			digraph {
@@ -342,7 +342,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeSourceLabel("foo\nbar")
 	}
-	
+
 	@Test def edge_sourceLabel003() {
 		'''
 			digraph {
@@ -350,7 +350,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeSourceLabel("foo\nbar\nbaz")
 	}
-	
+
 	@Test def edge_sourceLabel004() {
 		'''
 			digraph testedGraphName {
@@ -358,7 +358,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeSourceLabel("g: testedGraphName e:1->2 h:2 t:1")
 	}
-	
+
 	@Test def edge_sourceLabel005() {
 		'''
 			digraph {
@@ -368,7 +368,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_sourceLabel006() {
 		'''
 			digraph {
@@ -387,7 +387,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabel("foobar")
 	}
-	
+
 	@Test def edge_targetLabel002() {
 		'''
 			digraph {
@@ -395,7 +395,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabel("foo\nbar")
 	}
-	
+
 	@Test def edge_targetLabel003() {
 		'''
 			digraph {
@@ -403,7 +403,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabel("foo\nbar\nbaz")
 	}
-	
+
 	@Test def edge_targetLabel004() {
 		'''
 			digraph testedGraphName {
@@ -411,7 +411,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabel("g: testedGraphName e:1->2 h:2 t:1")
 	}
-	
+
 	@Test def edge_targetLabel005() {
 		//test against null pointer exception
 		'''
@@ -420,7 +420,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabel("")
 	}
-	
+
 	@Test def edge_targetLabel006() {
 		'''
 			digraph {
@@ -430,7 +430,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_targetLabel007() {
 		'''
 			digraph {
@@ -441,36 +441,36 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	private def assertEdgeExternalLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.externalLabelCssStyle.split
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.labelCssStyle.split
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeSourceLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.sourceLabelCssStyle.split
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeTargetLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.targetLabelCssStyle.split
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.curveCssStyle.split
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeSourceDecorationStyles(CharSequence dotText, String... expected) {
 		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecorationStyles(expected)
 	}
-	
+
 	private def assertEdgeTargetDecorationStyles(CharSequence dotText, String... expected) {
 		dotText.firstEdge.convert.targetDecoration.assertEdgeDecorationStyles(expected)
 	}
@@ -479,7 +479,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		val actual = dotText.firstEdge.convert.label
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeExternalLabel(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.externalLabel
 		expected.assertEquals(actual)
@@ -489,12 +489,12 @@ class Dot2ZestEdgeAttributesConversionTests {
 		val actual = dotText.firstEdge.convert.sourceLabel
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeTargetLabel(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.targetLabel
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertEdgeDecorationStyles(javafx.scene.Node decoration, String... expectedStyles) {
 		decoration.hasSameNumberOfDecorationStylesAs(expectedStyles)
 		
@@ -506,11 +506,11 @@ class Dot2ZestEdgeAttributesConversionTests {
 			decoration.hasStyle(expectedStyles.get(0))
 		}
 	}
-	
+
 	private def hasStyle(javafx.scene.Node decoration, String expectedStyle) {
 		expectedStyle.assertEquals(decoration.style.split)
 	}
-		
+
 	private def hasSameNumberOfDecorationStylesAs(javafx.scene.Node decoration, String... expected) {
 		val numberOfActualDecorations = if(decoration instanceof Group) decoration.children.size else 1
 		val numberOfExpectedDecorations = expected.size
@@ -520,11 +520,11 @@ class Dot2ZestEdgeAttributesConversionTests {
 			numberOfExpectedDecorations, numberOfActualDecorations
 		)
 	}
-	
+
 	private def firstEdge(CharSequence dotText) {
 		dotText.graph.edges.head
 	}
-	
+
 	private def graph(CharSequence dotText) {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = dotText.parse
@@ -532,7 +532,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		
 		dotAst.importDot.get(0)
 	}
-	
+
 	private def convert(Edge dotEdge) {
 		val zestEdge = new Edge(new Node, new Node)
 		dotEdge.copy(zestEdge)

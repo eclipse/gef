@@ -50,10 +50,10 @@ import static extension org.junit.Assert.*
 class Dot2ZestNodeAttributesConversionTests {
 
 	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
-	
+
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
-	
+
 	extension DotImport = new DotImport
 	static extension Dot2ZestAttributesConverter converter = new Dot2ZestAttributesConverter
 	
@@ -61,7 +61,7 @@ class Dot2ZestNodeAttributesConversionTests {
 	def static void before() {
 		converter.options.emulateLayout=false //TODO remove once FX tests work
 	}
-	
+
 	@Test def node_fontcolor001() {
 		'''
 			graph {
@@ -71,7 +71,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def node_fontcolor002() {
 		'''
 			graph {
@@ -81,7 +81,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-fill: #76eec6;
 		''')
 	}
-	
+
 	@Test def node_fontcolor003() {
 		'''
 			graph {
@@ -91,7 +91,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-fill: #fdc086;
 		''')
 	}
-	
+
 	@Test def node_fontcolor004() {
 		'''
 			graph {
@@ -101,7 +101,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-fill: #beaed4;
 		''')
 	}
-	
+
 	@Test def node_fontcolor005() {
 		'''
 			graph {
@@ -119,7 +119,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeHeight(0.5*72)
 	}
-	
+
 	@Test def node_height002() {
 		'''
 			digraph {
@@ -127,7 +127,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeHeight(0.4*72)
 	}
-	
+
 	@Test def node_width001() {
 		'''
 			digraph {
@@ -135,7 +135,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeWidth(1.0*72)
 	}
-	
+
 	@Test def node_width002() {
 		'''
 			digraph {
@@ -143,7 +143,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeWidth(0.4*72)
 	}
-	
+
 	@Test def node_width003() {
 		'''
 			digraph {
@@ -151,7 +151,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeWidth(0.75*72)
 	}
-	
+
 	@Test def node_label001() {
 		'''
 			digraph {
@@ -159,7 +159,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("1")
 	}
-	
+
 	@Test def node_label002() {
 		'''
 			digraph {
@@ -167,7 +167,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("1")
 	}
-	
+
 	@Test def node_label003() {
 		'''
 			digraph {
@@ -175,7 +175,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("2")
 	}
-	
+
 	@Test def node_label004() {
 		'''
 			digraph {
@@ -183,7 +183,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("fun")
 	}
-	
+
 	@Test def node_label005() {
 		'''
 			digraph {
@@ -191,7 +191,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("label")
 	}
-	
+
 	@Test def node_label006() {
 		'''
 			digraph {
@@ -199,7 +199,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("a\nb")
 	}
-	
+
 	@Test def node_label007() {
 			'''
 				digraph {
@@ -207,7 +207,7 @@ class Dot2ZestNodeAttributesConversionTests {
 				}
 			'''.assertNodeLabel("label 1")
 	}
-	
+
 	@Test def node_label008() {
 		'''
 			digraph {
@@ -215,7 +215,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("sample")
 	}
-	
+
 	@Test def node_label009() {
 		'''
 			graph mygraph {
@@ -223,7 +223,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("graph: mygraph, node no. a")
 	}
-	
+
 	@Test def node_label010() {
 		//test to ascertain no loop is reached 
 		'''
@@ -232,7 +232,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("\\L")
 	}
-	
+
 	@Test def node_label011() {
 		//test to ascertain no NPE is reached 
 		'''
@@ -241,7 +241,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeLabel("")
 	}
-	
+
 	@Test def node_id001() {
 		'''
 			digraph {
@@ -257,7 +257,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeId(null)
 	}
-	
+
 	@Test def node_id003() {
 		'''
 			digraph {
@@ -265,7 +265,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeId("stuff")
 	}
-	
+
 	@Test def node_xlabel001() {
 		'''
 			digraph {
@@ -273,7 +273,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeXLabel(null)
 	}
-	
+
 	@Test def node_xlabel002() { 
 		'''
 			digraph {
@@ -281,7 +281,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeXLabel("fantastic label")
 	}
-	
+
 	@Test def node_xlabel003() { 
 		'''
 			digraph testedGraphName {
@@ -289,7 +289,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeXLabel("node:1 graph:testedGraphName")
 	}
-	
+
 	@Test def node_polygonbasedshape001() { 
 		'''
 			digraph {
@@ -297,7 +297,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodePolygonBasedShape(new Rectangle)
 	}
-	
+
 	@Test def node_polygonbasedshape002() { 
 		'''
 			digraph {
@@ -305,169 +305,169 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodePolygonBasedShape(new Rectangle)
 	}
-	
+
 	@Test def node_polygonbasedshape003() {
 		'''
 			digraph{1[shape=rectangle]}
 		'''.assertNodePolygonBasedShape(new Rectangle)
 	}
-	
+
 	@Test def node_polygonbasedshape004() {
 		'''
 			digraph{1[shape=square]}
 		'''.assertNodePolygonBasedShape(new Rectangle)
 	}
-	
+
 	@Test def node_polygonbasedshape007() {
 		'''
 			digraph{1[shape=cds]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 100, 0, 0, 70, 0, 100, 50, 70, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape008() {
 		'''
 			digraph{1[shape=ellipse]}
 		'''.assertNodePolygonBasedShape(new Ellipse(new Rectangle))
 	}
-	
+
 	@Test def node_polygonbasedshape009() {
 		'''
 			digraph{1[shape=circle]}
 		'''.assertNodePolygonBasedShape(new Ellipse(new Rectangle))
 	}
-	
+
 	@Test def node_polygonbasedshape010() {
 		'''
 			digraph{1[shape=oval]}
 		'''.assertNodePolygonBasedShape(new Ellipse(new Rectangle))
 	}
-	
+
 	@Test def node_polygonbasedshape011() {
 		'''
 			digraph{1[shape=point]}
 		'''.assertNodePolygonBasedShape(new Ellipse(new Rectangle))
 	}
-	
+
 	@Test def node_polygonbasedshape012() {
 		'''
 			digraph{1[shape=diamond]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 50, 50, 0, 100, 50, 50, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape013() {
 		'''
 			digraph{1[shape=folder]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 100, 0, 10, 50, 10, 55, 0, 95, 0, 100, 10, 100, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape014() {
 		'''
 			digraph{1[shape=house]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 100, 0, 40, 50, 0, 100, 40, 100, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape015() {
 		'''
 			digraph{1[shape=invhouse]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 0, 100, 0, 100, 60, 50, 100, 0, 60))
 	}
-	
+
 	@Test def node_polygonbasedshape016() {
 		'''
 			digraph{1[shape=invtrapezium]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 0, 100, 0, 75, 100, 25, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape017() {
 		'''
 			digraph{1[shape=invtriangle]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 10, 100, 10, 50, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape018() {
 		'''
 			digraph{1[shape=hexagon]}
 		'''.assertNodePolygonBasedShape(new Polygon(25, 100, 0, 50, 25, 0, 75, 0, 100, 50, 75, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape019() {
 		'''
 			digraph{1[shape=larrow]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 50, 40, 0, 40, 15, 100, 15, 100, 85, 40, 85, 40, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape020() {
 		'''
 			digraph{1[shape=lpromoter]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 50, 40, 0, 40, 15, 100, 15, 100, 100, 70, 100, 70, 85, 40, 85, 40, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape021() {
 		'''
 			digraph{1[shape=octagon]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 70, 0, 30, 30, 0, 70, 0, 100, 30, 100, 70, 70, 100, 30, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape022() {
 		'''
 			digraph{1[shape=parallelogram]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 100, 25, 0, 100, 0, 75, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape023() {
 		'''
 			digraph{1[shape=pentagon]}
 		'''.assertNodePolygonBasedShape(new Polygon(25, 100, 0, 40, 50, 0, 100, 40, 75, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape024() {
 		'''
 			digraph{1[shape=rarrow]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 85, 0, 15, 60, 15, 60, 0, 100, 50, 60, 100, 60, 85))
 	}
-	
+
 	@Test def node_polygonbasedshape025() {
 		'''
 			digraph{1[shape=rpromoter]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 100, 0, 15, 60, 15, 60, 0, 100, 50, 60, 100, 60, 85, 30, 85, 30, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape026() {
 		'''
 			digraph{1[shape=septagon]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 60, 15, 15, 50, 0, 85, 15, 100, 60, 75, 100, 25, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape027() {
 		'''
 			digraph{1[shape=star]}
 		'''.assertNodePolygonBasedShape(new Polygon(15, 100, 30, 60, 0, 40, 40, 40, 50, 0, 60, 40, 100, 40, 70, 60, 85, 100, 50, 75))
 	}
-	
+
 	@Test def node_polygonbasedshape028() {
 		'''
 			digraph{1[shape=trapezium]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 100, 25, 0, 75, 0, 100, 100))
 	}
-	
+
 	@Test def node_polygonbasedshape029() {
 		'''
 			digraph{1[shape=triangle]}
 		'''.assertNodePolygonBasedShape(new Polygon(0, 50, 50, 0, 100, 50))
 	}
-	
+
 	@Test def node_polygonbasedshape030() {
 		'''
 			digraph{1}
 		'''.assertNodePolygonBasedShape(new Ellipse(new Rectangle))
 	}
-	
+
 	@Test def node_polygonbasedshape031() {
 		'''
 			graph{1[shape=box style=rounded]}
 		'''.assertNodePolygonBasedShape(new RoundedRectangle(new Rectangle, 25, 25))
 	}
-	
+
 	@Test def node_polygonbasedshape032() {
 		'''
 			graph{
@@ -477,7 +477,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke: none;
 		''')
 	}
-	
+
 	@Test def node_polygonbasedshape033() {
 		'''
 			graph{
@@ -487,7 +487,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke: none;
 		''')
 	}
-	
+
 	@Test def node_style001() {
 		'''
 			digraph{
@@ -495,7 +495,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeStyle("")
 	}
-	
+
 	@Test def node_style002() {
 		'''
 			digraph{
@@ -505,7 +505,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke: #ff0000;
 		''')
 	}
-	
+
 	@Test def node_style003() {
 		'''
 			digraph{
@@ -515,7 +515,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke-width:2;
 		''')
 	}
-	
+
 	@Test def node_style004() {
 		'''
 			digraph{
@@ -525,7 +525,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke-width: 1;
 		''')
 	}
-	
+
 	@Test def node_style005() {
 		'''
 			digraph{
@@ -535,7 +535,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke-dash-array: 7 7;
 		''')
 	}
-	
+
 	@Test def node_style006() {
 		'''
 			digraph{
@@ -545,7 +545,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke-dash-array: 1 6;
 		''')
 	}
-	
+
 	@Test def node_style007() {
 		'''
 			graph {
@@ -555,7 +555,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-fill: #00ff00;
 		''')
 	}
-	
+
 	@Test def node_fill001() {
 		'''
 			digraph{
@@ -566,7 +566,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def node_colorscheme001() { //The aqua color is not part of the default x11 colorscheme
 		'''
 			digraph{
@@ -576,7 +576,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-fill: #00ffff;
 		''')
 	}	
-	
+
 	@Test def node_colorscheme002() { //The aqua color is not part of the default x11 colorscheme
 		'''
 			digraph{
@@ -586,7 +586,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			-fx-stroke: #00ffff;
 		''')
 	}
-	
+
 	@Test def node_visibility001() {
 		'''
 			digraph{
@@ -594,7 +594,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeVisibility(true)
 	}
-	
+
 	@Test def node_visibility002() {
 		'''
 			digraph{
@@ -602,7 +602,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeVisibility(false)
 	}
-	
+
 	@Test def node_tooltip001() {
 		'''
 			digraph{
@@ -610,7 +610,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeTooltip("test")
 	}
-	
+
 	@Test def node_tooltip002() {
 		'''
 			digraph{
@@ -618,7 +618,7 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeTooltip("testing\nis\nfun")
 	}
-	
+
 	@Test def node_tooltip003() {
 		'''
 			digraph testing{
@@ -626,37 +626,37 @@ class Dot2ZestNodeAttributesConversionTests {
 			}
 		'''.assertNodeTooltip("l:label of nodename n:nodename g:testing")
 	}
-	
+
 	private def assertNodeLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.labelCssStyle
 		expected.assertEquals(actual.split)
 	}
-			
+
 	private def assertNodeWidth(CharSequence dotText, double expected) {
 		val actual = dotText.firstNode.convert.size.width
 		expected.assertEquals(actual, 0)
 	}
-	
+
 	private def assertNodeHeight(CharSequence dotText, double expected) {
 		val actual = dotText.firstNode.convert.size.height
 		expected.assertEquals(actual, 0)
 	}
-	
+
 	private def assertNodeId(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.cssId
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertNodeLabel(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.label
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertNodeXLabel(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.externalLabel
 		expected.assertEquals(actual)
 	}
-		
+
 	private def assertNodePolygonBasedShape(CharSequence dotText, IGeometry expected) {
 		val zestShape = dotText.firstNode.convert.shape
 		if (zestShape instanceof GeometryNode<?>) {
@@ -665,28 +665,28 @@ class Dot2ZestNodeAttributesConversionTests {
 		}
 		else fail("GeometryNode expected, got " + zestShape.class)
 	}
-	
+
 	private def assertNodeStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.shape.style
 		expected.assertEquals(actual.split)
 	}
-	
+
 	private def assertNodeTooltip(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.tooltip
 		expected.assertEquals(actual)
 	}
-	
+
 	private def assertNodeVisibility(CharSequence dotText, boolean expected) {
 		val invisible = dotText.firstNode.convert.invisible
 		// assert on visibility, not on invisibility
 		val actual = if(invisible===null) true else !invisible
 		expected.assertEquals(actual)
 	}
-	
+
 	private def firstNode(CharSequence dotText) {
 		dotText.graph.nodes.head
 	}
-	
+
 	private def graph(CharSequence dotText) {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = dotText.parse
@@ -694,7 +694,7 @@ class Dot2ZestNodeAttributesConversionTests {
 		
 		dotAst.importDot.get(0)
 	}
-	
+
 	private def convert(Node dotNode) {
 		val zestNode = new Node
 		dotNode.copy(zestNode)

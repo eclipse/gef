@@ -38,7 +38,7 @@ import static extension org.junit.Assert.*
 class DotParserTests {
 
 	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
-	
+
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
 
@@ -50,69 +50,69 @@ class DotParserTests {
 	}
 
 // Test cases with string input
-	@Test def testEmptyString() { "".parse.assertNull }
-	@Test def testEmptyGraph() { DotTestGraphs.EMPTY.hasNoErrors }
-	@Test def testEmptyDirectedGraph() { DotTestGraphs.EMPTY_DIRECTED.hasNoErrors }
-	@Test def testEmptyStrictGraph() { DotTestGraphs.EMPTY_STRICT.hasNoErrors } 
-	@Test def testEmptyStrictDirectedGraph() { DotTestGraphs.EMPTY_STRICT_DIRECTED.hasNoErrors }
-	@Test def testGraphWithOneNode() { DotTestGraphs.ONE_NODE.hasNoErrors }
-	@Test def testGraphWithOneNodeAndEmptyNodeAttributeList() {	DotTestGraphs.EMPTY_NODE_ATTRIBUTE_LIST.hasNoErrors }
-	@Test def testGraphWithOneEdge() { DotTestGraphs.ONE_EDGE.hasNoErrors }
-	@Test def testDirectedGraphWithOneEdge() { DotTestGraphs.ONE_DIRECTED_EDGE.hasNoErrors }
-	@Test def testGraphWithOneEdgeAndEmptyEdgeAttributeList() { DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_LIST.hasNoErrors }
-	@Test def testDirectedGraphWithOneEdgeAndEmptyEdgeAttributeList() { DotTestGraphs.EMPTY_DIRECTED_EDGE_ATTRIBUTE_LIST.hasNoErrors }
-	@Test def testGraphWithEmptyGraphAttributeStatement() { DotTestGraphs.EMPTY_GRAPH_ATTRIBUTE_STATEMENT.hasNoErrors }
-	@Test def testGraphWithEmptyNodeAttributeStatement() { DotTestGraphs.EMPTY_NODE_ATTRIBUTE_STATEMENT.hasNoErrors }
-	@Test def testGraphWithEmptyEdgeAttributeStatement() { DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_STATEMENT.hasNoErrors }
-	@Test def testNodeGroups() { DotTestGraphs.NODE_GROUPS.hasNoErrors }
-	@Test def testGlobalEdgeNodeColorScheme() { DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME.hasNoErrors }
-	@Test def testColorList_BGCOLOR_G() { DotTestGraphs.COLORLIST_BGCOLOR_G.hasNoErrors }
-	@Test def testColorList_BGCOLOR_C() { DotTestGraphs.COLORLIST_BGCOLOR_C.hasNoErrors }
-	@Test def testColorList_COLOR_E() { DotTestGraphs.COLORLIST_COLOR_E.hasNoErrors }
-	@Test def testColorList_FILLCOLOR_N() { DotTestGraphs.COLORLIST_FILLCOLOR_N.hasNoErrors }
-	@Test def testColorList_FILLCOLOR_C() { DotTestGraphs.COLORLIST_FILLCOLOR_C.hasNoErrors }
+	@Test def empty_string() { "".parse.assertNull }
+	@Test def empty_graph() { DotTestGraphs.EMPTY.hasNoErrors }
+	@Test def empty_directed_graph() { DotTestGraphs.EMPTY_DIRECTED.hasNoErrors }
+	@Test def empty_strict_graph() { DotTestGraphs.EMPTY_STRICT.hasNoErrors } 
+	@Test def empty_strict_directed_graph() { DotTestGraphs.EMPTY_STRICT_DIRECTED.hasNoErrors }
+	@Test def graph_with_one_node() { DotTestGraphs.ONE_NODE.hasNoErrors }
+	@Test def graph_with_one_node_and_empty_node_attribute_list() {	DotTestGraphs.EMPTY_NODE_ATTRIBUTE_LIST.hasNoErrors }
+	@Test def graph_with_one_edge() { DotTestGraphs.ONE_EDGE.hasNoErrors }
+	@Test def directed_graph_with_one_edge() { DotTestGraphs.ONE_DIRECTED_EDGE.hasNoErrors }
+	@Test def graph_with_one_edge_and_empty_edge_attribute_list() { DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_LIST.hasNoErrors }
+	@Test def directed_graph_with_one_edge_and_empty_edge_attribute_list() { DotTestGraphs.EMPTY_DIRECTED_EDGE_ATTRIBUTE_LIST.hasNoErrors }
+	@Test def graph_with_empty_graph_attribute_statement() { DotTestGraphs.EMPTY_GRAPH_ATTRIBUTE_STATEMENT.hasNoErrors }
+	@Test def graph_with_empty_node_attribute_statement() { DotTestGraphs.EMPTY_NODE_ATTRIBUTE_STATEMENT.hasNoErrors }
+	@Test def graph_with_empty_edge_attribute_statement() { DotTestGraphs.EMPTY_EDGE_ATTRIBUTE_STATEMENT.hasNoErrors }
+	@Test def node_groups() { DotTestGraphs.NODE_GROUPS.hasNoErrors }
+	@Test def global_edge_node_color_scheme() { DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME.hasNoErrors }
+	@Test def color_list_BGCOLOR_G() { DotTestGraphs.COLORLIST_BGCOLOR_G.hasNoErrors }
+	@Test def color_list_BGCOLOR_C() { DotTestGraphs.COLORLIST_BGCOLOR_C.hasNoErrors }
+	@Test def color_list_COLOR_E() { DotTestGraphs.COLORLIST_COLOR_E.hasNoErrors }
+	@Test def color_list_FILLCOLOR_N() { DotTestGraphs.COLORLIST_FILLCOLOR_N.hasNoErrors }
+	@Test def color_list_FILLCOLOR_C() { DotTestGraphs.COLORLIST_FILLCOLOR_C.hasNoErrors }
 
 // Test cases with file input
-	@Test def testArrowShapesDeprecated() { "arrowshapes_deprecated.dot".dslFileHasNoError}
-	@Test def testArrowShapesDirectionBoth() { "arrowshapes_direction_both.dot".dslFileHasNoError }
-	@Test def testArrowShapesInvalidModifiers() { "arrowshapes_invalid_modifiers.dot".dslFileHasNoError}
-	@Test def testArrowShapesMultiple() { "arrowshapes_multiple.dot".dslFileHasNoError }
-	@Test def testArrowShapesSingle() { "arrowshapes_single.dot".dslFileHasNoError }
-	@Test def testClusteredGraph() { "clustered_graph.dot".dslFileHasNoError } //
-	@Test def testColor() { "color.dot".dslFileHasNoError }
-	@Test def testColoredGraph() { "colored_graph.dot".dslFileHasNoError }
-	@Test def testColorSchemeGraph() { "colorscheme.dot".dslFileHasNoError }
-	@Test def testCpattlPie() { "cpattl-pie.dot".dslFileHasNoError }
-	@Test def testER() { "er.dot".dslFileHasNoError }
-	@Test def testFancyGraph() { "fancy_graph.dot".dslFileHasNoError }
-	@Test def testFontnameFontsize() {"fontname_fontsize.dot".dslFileHasNoError}
-	@Test def testGrdangles() { "grdangles.dot".dslFileHasNoError }
-	@Test def testGrdcluster() { "grdcluster.dot".dslFileHasNoError }
-	@Test def testGrdcolors() { "grdcolors.dot".dslFileHasNoError }
-	@Test def testGrdfillcolor() { "grdfillcolor.dot".dslFileHasNoError }
-	@Test def testGrdlinear_angle() { "grdlinear_angle.dot".dslFileHasNoError }
-	@Test def testGrdlinear_node() { "grdlinear_node.dot".dslFileHasNoError }
-	@Test def testGrdlinear() { "grdlinear.dot".dslFileHasNoError }
-	@Test def testGrdradial_angle() { "grdradial_angle.dot".dslFileHasNoError }
-	@Test def testGrdradial_node() { "grdradial_node.dot".dslFileHasNoError }
-	@Test def testGrdradial() { "grdradial.dot".dslFileHasNoError }
-	@Test def testGrdshapes() { "grdshapes.dot".dslFileHasNoError }
-	@Test def testHtmlLikeLabels1() { "html_like_labels1.dot".dslFileHasNoError }
-	@Test def testHtmlLikeLabels2() { "html_like_labels2.dot".dslFileHasNoError }
-	@Test def testHtmlLikeLabels3() { "html_like_labels3.dot".dslFileHasNoError }
-	@Test def testHtmlLikeLabels4() { "html_like_labels4.dot".dslFileHasNoError }
-	@Test def testLabeledGraph() { "labeled_graph.dot".dslFileHasNoError }
-	@Test def testNodeShapesPolygonBased() { "nodeshapes_polygon_based.dot".dslFileHasNoError}
-	@Test def testPhilo() { "philo.dot".dslFileHasNoError }
-	@Test def testRecordShapeNode1() { "record_shape_node1.dot".dslFileHasNoError }
-	@Test def testSimpleDigraph() { "simple_digraph.dot".dslFileHasNoError }
-	@Test def testSimpleGraph() { "simple_graph.dot".dslFileHasNoError }
-	@Test def testStyledGraph() { "styled_graph.dot".dslFileHasNoError }
-	@Test def testStyledGraph2() { "styled_graph2.dot".dslFileHasNoError }
-	@Test def testSwitch() { "switch.dot".dslFileHasNoError }
+	@Test def arrowshapes_deprecated() { "arrowshapes_deprecated.dot".dslFileHasNoError}
+	@Test def arrowshapes_direction_both() { "arrowshapes_direction_both.dot".dslFileHasNoError }
+	@Test def arrowshapes_invalid_modifiers() { "arrowshapes_invalid_modifiers.dot".dslFileHasNoError}
+	@Test def arrowshapes_multiple() { "arrowshapes_multiple.dot".dslFileHasNoError }
+	@Test def arrowshapes_single() { "arrowshapes_single.dot".dslFileHasNoError }
+	@Test def clustered_graph() { "clustered_graph.dot".dslFileHasNoError } //
+	@Test def color() { "color.dot".dslFileHasNoError }
+	@Test def colored_graph() { "colored_graph.dot".dslFileHasNoError }
+	@Test def colorscheme() { "colorscheme.dot".dslFileHasNoError }
+	@Test def cpattl_pie() { "cpattl-pie.dot".dslFileHasNoError }
+	@Test def er() { "er.dot".dslFileHasNoError }
+	@Test def fancy_graph() { "fancy_graph.dot".dslFileHasNoError }
+	@Test def fontname_fontsize() {"fontname_fontsize.dot".dslFileHasNoError}
+	@Test def grdangles() { "grdangles.dot".dslFileHasNoError }
+	@Test def grdcluster() { "grdcluster.dot".dslFileHasNoError }
+	@Test def grdcolors() { "grdcolors.dot".dslFileHasNoError }
+	@Test def grdfillcolor() { "grdfillcolor.dot".dslFileHasNoError }
+	@Test def grdlinear_angle() { "grdlinear_angle.dot".dslFileHasNoError }
+	@Test def grdlinear_node() { "grdlinear_node.dot".dslFileHasNoError }
+	@Test def grdlinear() { "grdlinear.dot".dslFileHasNoError }
+	@Test def grdradial_angle() { "grdradial_angle.dot".dslFileHasNoError }
+	@Test def grdradial_node() { "grdradial_node.dot".dslFileHasNoError }
+	@Test def grdradial() { "grdradial.dot".dslFileHasNoError }
+	@Test def grdshapes() { "grdshapes.dot".dslFileHasNoError }
+	@Test def html_like_labels1() { "html_like_labels1.dot".dslFileHasNoError }
+	@Test def html_like_labels2() { "html_like_labels2.dot".dslFileHasNoError }
+	@Test def html_like_labels3() { "html_like_labels3.dot".dslFileHasNoError }
+	@Test def html_like_labels4() { "html_like_labels4.dot".dslFileHasNoError }
+	@Test def labeled_graph() { "labeled_graph.dot".dslFileHasNoError }
+	@Test def nodeshapes_polygon_based() { "nodeshapes_polygon_based.dot".dslFileHasNoError}
+	@Test def philo() { "philo.dot".dslFileHasNoError }
+	@Test def record_shape_node1() { "record_shape_node1.dot".dslFileHasNoError }
+	@Test def simple_digraph() { "simple_digraph.dot".dslFileHasNoError }
+	@Test def simple_graph() { "simple_graph.dot".dslFileHasNoError }
+	@Test def styled_graph() { "styled_graph.dot".dslFileHasNoError }
+	@Test def styled_graph2() { "styled_graph2.dot".dslFileHasNoError }
+	@Test def switch_() { "switch.dot".dslFileHasNoError }
 
 // Test cases with multi-line templates	
-	@Test def testGraphColorWithCustomColorScheme() {
+	@Test def graph_color_with_custom_color_scheme() {
 		'''
 			graph {
 				graph[colorscheme=brbg10]
@@ -130,7 +130,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testNodeColorWithCustomColorScheme() {
+	@Test def node_color_with_custom_color_scheme() {
 		'''
 			graph {
 				node[colorscheme=brbg10]
@@ -145,7 +145,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testEdgeColorWithCustomColorScheme() {
+	@Test def edge_color_with_custom_color_scheme() {
 		'''
 			graph {
 				edge[colorscheme=brbg10]
@@ -160,7 +160,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testColorCaseInsensitivity() {
+	@Test def color_case_insensitivity() {
 		'''
 			graph {
 				1[color=Red, fontcolor=BLUE]
@@ -168,7 +168,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testCompassPtAsID() {
+	@Test def compass_pt_as_id() {
 		// it is legal to have a portname the same as one of the compass points.
 		'''
 			digraph {
@@ -189,7 +189,7 @@ class DotParserTests {
 		'''graph{ y:_:n }'''.hasNoErrors
 	}
 
-	@Test def testRecordLabelMixedWithHtmlLabel() {
+	@Test def record_label_mixed_with_html_label() {
 		'''
 			digraph {
 				1[
@@ -200,7 +200,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testEmptyArrowhead() {
+	@Test def empty_arrowhead() {
 		'''
 			digraph {
 				1->2 [arrowhead=""]
@@ -208,7 +208,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testEmptyArrowtail() {
+	@Test def empty_arrowtail() {
 		'''
 			digraph {
 				1->2 [arrowtail=""]
@@ -216,7 +216,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testEmptyEdgeDir() {
+	@Test def empty_edge_dir() {
 		'''
 			digraph {
 				1->2 [dir=""]
@@ -224,7 +224,7 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
-	@Test def testNodesepIsZero() {
+	@Test def zero_nodesep() {
 		'''
 			digraph {
 				nodesep=0
@@ -235,14 +235,14 @@ class DotParserTests {
 	}
 
 // Test cases with parameterized multi-line templates
-	@Test def testClusterLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.CLUSTER_LABEL_HTML_LIKE(it).hasNoErrors] }
-	@Test def testEdgeHeadLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.EDGE_HEADLABEL_HTML_LIKE(it).hasNoErrors] }
-	@Test def testEdgeLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.EDGE_LABEL_HTML_LIKE(it).hasNoErrors] }
-	@Test def testEdgeTailLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.EDGE_TAILLABEL_HTML_LIKE(it).hasNoErrors] }
-	@Test def testEdgeXLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.EDGE_XLABEL_HTML_LIKE(it).hasNoErrors] }
-	@Test def testGraphLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.GRAPH_LABEL_HTML_LIKE(it).hasNoErrors]}
-	@Test def testNodeLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.NODE_LABEL_HTML_LIKE(it).hasNoErrors] }
-	@Test def testNodeXLabelHTMLLike() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.NODE_XLABEL_HTML_LIKE(it).hasNoErrors] }
+	@Test def cluster_label_html_like() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.CLUSTER_LABEL_HTML_LIKE(it).hasNoErrors] }
+	@Test def edgehead_label_html_like() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.EDGE_HEADLABEL_HTML_LIKE(it).hasNoErrors] }
+	@Test def edge_label_html_like() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.EDGE_LABEL_HTML_LIKE(it).hasNoErrors] }
+	@Test def edge_tail_label_html_like() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.EDGE_TAILLABEL_HTML_LIKE(it).hasNoErrors] }
+	@Test def edge_xlabel_html_like() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.EDGE_XLABEL_HTML_LIKE(it).hasNoErrors] }
+	@Test def graph_label_html_like() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.GRAPH_LABEL_HTML_LIKE(it).hasNoErrors]}
+	@Test def node_label_html_like() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.NODE_LABEL_HTML_LIKE(it).hasNoErrors] }
+	@Test def node_xlabel_html_like() { dotTestHtmlLikeLabels.forEach[DotTestGraphs.NODE_XLABEL_HTML_LIKE(it).hasNoErrors] }
 
 	private def hasNoErrors(CharSequence text) {
 		text.toString.hasNoErrors

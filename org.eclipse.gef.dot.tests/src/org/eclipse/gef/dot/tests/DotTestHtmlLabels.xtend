@@ -13,7 +13,7 @@
 package org.eclipse.gef.dot.tests
 
 class DotTestHtmlLabels {
-	
+
 	public static val COMMENT = '''
 		<!-- This is a bold label -->
 			<B>Bold Label</B>
@@ -43,7 +43,7 @@ class DotTestHtmlLabels {
 		<!-- <tags> -->
 		<B>Bold Label</B>
 	'''
-	
+
 	public static val COMMENT_WITHIN_TABLE_TAG = '''
 			<TABLE>
 				<!-- HTML comment-->
@@ -52,7 +52,7 @@ class DotTestHtmlLabels {
 				</TR>
 			</TABLE>
 	'''
-	
+
 	public static val COMMENT_WITHIN_TEXT= '''
 			<TABLE>
 				<TR>
@@ -77,7 +77,7 @@ class DotTestHtmlLabels {
 			</table>
 		</font>
 	'''
-	
+
 	public static val I_TAG_CONTAINS_TABLE_TAG = '''
 		<!--
 			Html table with italic syled text
@@ -90,7 +90,7 @@ class DotTestHtmlLabels {
 			</table>
 		</i>
 	'''
-	
+
 	public static val B_TAG_CONTAINS_TABLE_TAG = '''
 		<!--
 			Html table with bold syled text
@@ -103,7 +103,7 @@ class DotTestHtmlLabels {
 			</table>
 		</b>
 	'''
-	
+
 	public static val U_TAG_CONTAINS_TABLE_TAG = '''
 		<!--
 			Html table with underlined text
@@ -279,7 +279,7 @@ class DotTestHtmlLabels {
 			</TR>
 		</TABLE>
 	'''
-	
+
 	public static val TAG_WITH_SINGLE_QUTOED_ATTRIBUTE_VALUE = '''
 		<BR ALIGN='LEFT'/>
 	'''

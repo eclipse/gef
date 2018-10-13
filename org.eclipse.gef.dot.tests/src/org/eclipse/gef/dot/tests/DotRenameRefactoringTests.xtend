@@ -57,7 +57,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		createTestProjectWithXtextNature
 	}
 
-	@Test def testRenameRefactoring01() {
+	@Test def rename_refactoring01() {
 		'''
 			graph {
 				1
@@ -70,7 +70,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring02() {
+	@Test def rename_refactoring02() {
 		'''
 			digraph {
 				1
@@ -85,7 +85,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring03() {
+	@Test def rename_refactoring03() {
 		'''
 			digraph {
 				1
@@ -100,7 +100,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring04() {
+	@Test def rename_refactoring04() {
 		'''
 			digraph {
 				1
@@ -116,7 +116,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 
 	}
 
-	@Test def testRenameRefactoring05() {
+	@Test def rename_refactoring05() {
 		'''
 			digraph {
 				1
@@ -132,7 +132,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		
 	}
 
-	@Test def testRenameRefactoring06() {
+	@Test def rename_refactoring06() {
 		'''
 			digraph {
 				1
@@ -149,7 +149,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring07() {
+	@Test def rename_refactoring07() {
 		'''
 			digraph {
 				1
@@ -166,7 +166,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring08() {
+	@Test def rename_refactoring08() {
 		'''
 			digraph {
 				1
@@ -183,7 +183,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring09() {
+	@Test def rename_refactoring09() {
 		'''
 			digraph {
 				1
@@ -200,7 +200,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring10() {
+	@Test def rename_refactoring10() {
 		'''
 			graph {
 				1--1
@@ -213,7 +213,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring11() {
+	@Test def rename_refactoring11() {
 		'''
 			graph {
 				1--1
@@ -226,7 +226,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 		''')
 	}
 
-	@Test def testRenameRefactoring12() {
+	@Test def rename_refactoring12() {
 		'''
 			digraph {
 				1

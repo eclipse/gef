@@ -37,20 +37,20 @@ class DotRecordLabelTests {
 	@Inject extension ParseHelper<RLabel>
 	@Inject extension ValidationTestHelper
 
-	// good Syntax
-	@Test def emptyString() {
+	// good syntax
+	@Test def empty_string() {
 		''''''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField(null))
 		)
 	}
 
-	@Test def singleLetter() {
+	@Test def single_letter() {
 		'''F'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("F"))
 		)
 	}
 
-	@Test def specialSign() {
+	@Test def special_sign() {
 		'''§'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("§"))
 		)
@@ -62,31 +62,31 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def escapedCharacter() {
+	@Test def escaped_character() {
 		'''Please\ read\ §146'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''Please\ read\ §146'''))
 		)
 	}
 
-	@Test def escapedBraceInText() {
+	@Test def escaped_brace_in_text() {
 		'''Ple\}se146read'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''Ple\}se146read'''))
 		)
 	}
 
-	@Test def escapedBackslash() {
+	@Test def escaped_backslash() {
 		'''\\'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''\\'''))
 		)
 	}
 
-	@Test def whiteSpaceBetweenLetters() {
+	@Test def whitespace_between_letters() {
 		'''k D'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField('''k D'''))
 		)
 	}
 
-	@Test def separatorSign() {
+	@Test def separator_sign() {
 		'''abc|def'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("abc"),
@@ -95,7 +95,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def threeFields() {
+	@Test def three_fields() {
 		'''abc | def | gh4i'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("abc"),
@@ -105,12 +105,12 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def simpleFourFields() {
+	@Test def simple_four_fields() {
 		'''A | B | C | D'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("A"), fieldIDinField("B"), fieldIDinField("C"), fieldIDinField("D")))
 	}
 
-	@Test def emptyRotatedLabel() {
+	@Test def empty_rotated_label() {
 		'''{}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField(null)
@@ -118,7 +118,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def simpleRotation() {
+	@Test def simple_rotation() {
 		'''{ Hi }'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Hi")
@@ -126,7 +126,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def rotatedFourFieldsLabel() {
+	@Test def rotated_four_fields_label() {
 		'''{ Hi | This | Is | Awesome }'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Hi"),
@@ -137,7 +137,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def rotatedMoreComplexLabel() {
+	@Test def rotated_more_complex_label() {
 		'''Hi | {Test | Section 2 } | xyz'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("Hi"),
@@ -150,13 +150,13 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def fieldId() {
+	@Test def field_id() {
 		'''<fgh> someField'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("fgh", "someField"))
 		)
 	}
 
-	@Test def emptyPortname() {
+	@Test def empty_portname() {
 		'''<>'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("", null)
@@ -164,7 +164,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def emptyPortnameWithText() {
+	@Test def empty_portname_with_text() {
 		'''<> kids'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("", "kids")
@@ -172,13 +172,13 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def namedPort() {
+	@Test def named_port() {
 		'''<Label>'''.hasNoErrors.assertTreeEquals(
 			rlabel(fieldIDinField("Label", null))
 		)
 	}
 
-	@Test def portInHField() {
+	@Test def port_in_hfield() {
 		'''{<Label>}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(
 				rlabel(fieldIDinField("Label", null))
@@ -186,7 +186,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def portInHFieldWithText() {
+	@Test def port_in_hfield_with_text() {
 		'''{<Label> Coolstuff!}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(
 				rlabel(fieldIDinField("Label", "Coolstuff!"))
@@ -194,7 +194,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def portWithEscapedCharInName() {
+	@Test def port_with_escaped_char_in_name() {
 		'''<some_weans\{>'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField('''some_weans\{''', null)
@@ -202,15 +202,15 @@ class DotRecordLabelTests {
 		)
 	}
 
-	// complex Parse Tests
-	@Test def parseTreeSimple() {
+	// complex parse tests
+	@Test def parsetree_simple() {
 		'''hello word | <port> cool stuff going on '''.assertTreeEquals(rlabel(
 			fieldIDinField("hello word"),
 			fieldIDinField("port", "cool stuff going on")
 		))
 	}
 
-	@Test def parseTreeComplex() {
+	@Test def parsetree_complex() {
 		'''
 		hello word | cool stuff going on | { <free> free beer here |
 		wine there } | sad it's just a test'''.assertTreeEquals(
@@ -223,7 +223,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def documentationExampleLine1() {
+	@Test def documentation_example_line1() {
 		'''<f0> left|<f1> mid&#92; dle|<f2> right'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("f0", "left"),
@@ -233,7 +233,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def documentationExampleLine3() {
+	@Test def documentation_example_line3() {
 		'''hello&#92;nworld |{ b |{c|<here> d|e}| f}| g | h'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("hello&#92;nworld"),
@@ -252,7 +252,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def complexExampleLineBreak() {
+	@Test def complex_example_linebreak() {
 		'''
 		hello&#92;nworld |{ b |{c|<here>
 		 d
@@ -275,7 +275,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def complexLineBreakInString() {
+	@Test def complex_linebreak_in_string() {
 		'''
 		hello
 		world |{ b |{c|<here>
@@ -301,7 +301,7 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def complexExampleUsingSpecialSignsRotated() {
+	@Test def complex_example_using_special_signs_rotated() {
 		'''{Animal|+ name : string\l+ age : int\l|+ die() : void\l}'''.hasNoErrors.assertTreeEquals(
 			rlabel(rotationWrapper(rlabel(
 				fieldIDinField("Animal"),
@@ -312,7 +312,7 @@ class DotRecordLabelTests {
 
 	}
 
-	@Test def fieldIDsWithNoEntry() {
+	@Test def field_ids_with_no_entry() {
 		'''<f0> (nil)| | |-1'''.hasNoErrors.assertTreeEquals(
 			rlabel(
 				fieldIDinField("f0", "(nil)"),
@@ -323,51 +323,51 @@ class DotRecordLabelTests {
 		)
 	}
 
-	// bad Syntax
-	@Test def void singleClosePortFails() { '''>'''.hasSyntaxErrorOnLabel(">") }
+	// bad syntax
+	@Test def void single_close_port_fails() { '''>'''.hasSyntaxErrorOnLabel(">") }
 
-	@Test def void singleCloseBraceFails() { '''}'''.hasSyntaxErrorOnLabel("}") }
+	@Test def void single_close_brace_fails() { '''}'''.hasSyntaxErrorOnLabel("}") }
 
-	@Test def void missingOpenBraceFails() { '''}asas'''.hasSyntaxErrorOnLabel("}") }
+	@Test def void missing_open_brace_fails() { '''}asas'''.hasSyntaxErrorOnLabel("}") }
 
-	@Test def void escapedOpeningBraceFails() { '''\{ Hello }'''.hasSyntaxErrorOnLabel("}") }
+	@Test def void escaped_opening_brace_fails() { '''\{ Hello }'''.hasSyntaxErrorOnLabel("}") }
 
-	@Test def void escapedClosingBraceFails() { '''{ Hello \}'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
+	@Test def void escaped_closing_brace_fails() { '''{ Hello \}'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
 
-	@Test def void escapedOpeningPortFails() { '''\< Hello >'''.hasSyntaxErrorOnLabel(">") }
+	@Test def void escaped_opening_port_fails() { '''\< Hello >'''.hasSyntaxErrorOnLabel(">") }
 
-	@Test def void escapedClosingPortFails() { '''< Hello \>'''.hasSyntaxErrorOnPort("<EOF>") }
+	@Test def void escaped_closing_port_fails() { '''< Hello \>'''.hasSyntaxErrorOnPort("<EOF>") }
 
-	@Test def void missingClosingPortFails() { '''< Hello'''.hasSyntaxErrorOnPort("<EOF>") }
+	@Test def void missing_closing_port_fails() { '''< Hello'''.hasSyntaxErrorOnPort("<EOF>") }
 
-	@Test def void portWithBraceFails() { '''< Hello }>'''.hasSyntaxErrorOnPort(">") }
+	@Test def void port_with_brace_fails() { '''< Hello }>'''.hasSyntaxErrorOnPort(">") }
 
-	@Test def void braceUnclosedFirstFieldFails() { '''{ Hello | MoreHi'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
+	@Test def void brace_unclosed_first_field_fails() { '''{ Hello | MoreHi'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
 
-	@Test def void braceUnclosedSecondFieldFails() { '''hello|{ hslnh'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
+	@Test def void brace_unclosed_second_field_fails() { '''hello|{ hslnh'''.hasSyntaxErrorOnFieldIDinField("<EOF>") }
 
-	@Test def void wrongPosLabelFails() { '''sdsdsdsd<>'''.hasSyntaxErrorOnLabel("<") }
+	@Test def void wrong_pos_label_fails() { '''sdsdsdsd<>'''.hasSyntaxErrorOnLabel("<") }
 
-	@Test def void bracesInFieldFail() { '''This{Is}Illegal'''.hasSyntaxErrorOnLabel("{") }
+	@Test def void braces_in_field_fails() { '''This{Is}Illegal'''.hasSyntaxErrorOnLabel("{") }
 
-	@Test def void bracesInMiddleFail() { '''This{Is}Illegal'''.hasSyntaxErrorOnLabel("{") }
+	@Test def void braces_in_middle_fails() { '''This{Is}Illegal'''.hasSyntaxErrorOnLabel("{") }
 
-	@Test def void bracesAfterPortNameFail() { '''<Port1>{Stuff}'''.hasSyntaxErrorOnLabel("{") }
+	@Test def void braces_after_portname_fails() { '''<Port1>{Stuff}'''.hasSyntaxErrorOnLabel("{") }
 
-	@Test def void complexBracesMistaken() { '''<f0> left|{ middle|<f2> right} boo'''.hasSyntaxErrorOnLabel("boo") }
+	@Test def void complex_braces_mistaken() { '''<f0> left|{ middle|<f2> right} boo'''.hasSyntaxErrorOnLabel("boo") }
 
-	@Test def void missingABraceMiddle() {
+	@Test def void missing_a_brace_middle() {
 		'''
 		hello word | cool stuff going on | { <free> free beer here |
 		<expensive wine there } | sad its just a test'''.hasSyntaxErrorOnRotationWrapper(">")
 	}
 
 	// validation tests
-	@Test def void sameNamePortsSameLevel() {
+	@Test def void same_name_ports_same_level() {
 		'''<here>|<here>'''.hasValidationErrorOnFieldIDinField(DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE)
 	}
 
-	@Test def void sameNamePortsDifferentLevel() {
+	@Test def void same_name_ports_different_level() {
 		'''a | <b> c | { <d> f | <b> f } | x'''.hasValidationErrorOnFieldID(
 			DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE,
 			5,
@@ -379,25 +379,25 @@ class DotRecordLabelTests {
 		)
 	}
 
-	@Test def void twoEmptyPortNamesNoError() {
+	@Test def void two_empty_portnames_no_error() {
 		'''<> a | <> b'''.hasNoErrors
 	}
 
-	@Test def void emptyPortNameWarning() {
+	@Test def void empty_portname_warning() {
 		'''<>'''.parse.assertWarning(
 			FIELD_ID,
 			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
 		)
 	}
 
-	@Test def complexEmptyPortNameWarning() {
+	@Test def complex_empty_portname_warning() {
 		'''a | <b> c | { <d> f | <> f } | x'''.parse.assertWarning(
 			FIELD_ID,
 			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
 		)
 	}
 
-	@Test def noWhitespaceWarning() {
+	@Test def no_whitespace_warning() {
 		'''a | <b> coolstuff | { <d> f\ kinds | <f> f\nbut } | x'''.hasNoIssues
 	}
 

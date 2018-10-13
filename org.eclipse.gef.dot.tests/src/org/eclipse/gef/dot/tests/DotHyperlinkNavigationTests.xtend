@@ -37,13 +37,13 @@ class DotHyperlinkNavigationTests {
 	@Inject Injector injector
 	@Inject extension IHyperlinkHelper
 
-	@Test def testHyperlinkLeftSideOfAnEdge() {
+	@Test def hyperlink_left_side_of_an_edge() {
 		'''
 			graph {1;2 1--2}
 		'''.verifyHyperlinkOn("1")
 	}
 
-	@Test def testHyperlinkRightSideOfAnEdge() {
+	@Test def hyperlink_right_side_of_an_edge() {
 		'''
 			graph {
 				1;2
