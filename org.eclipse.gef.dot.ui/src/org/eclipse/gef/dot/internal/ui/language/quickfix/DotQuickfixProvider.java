@@ -24,6 +24,9 @@ import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
+import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
+import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode;
+import org.eclipse.gef.dot.internal.language.dot.EdgeRhsSubgraph;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
@@ -35,6 +38,7 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
+import org.eclipse.gef.dot.internal.language.validation.DotJavaValidator;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -49,6 +53,34 @@ import org.eclipse.xtext.validation.Issue;
  * @author anyssen
  */
 public class DotQuickfixProvider extends DefaultQuickfixProvider {
+
+	@Fix(DotJavaValidator.INVALID_EDGE_OPERATOR)
+	public void fixInvalidEdgeOperator(final Issue issue,
+			IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		if (issueData != null && issueData.length > 0) {
+			String invalidEdgeOperator = issueData[0];
+			EdgeOp validEdgeOperator = invalidEdgeOperator
+					.equals(EdgeOp.DIRECTED.toString()) ? EdgeOp.UNDIRECTED
+							: EdgeOp.DIRECTED;
+			provideQuickfix(validEdgeOperator.toString(), "edge operator", //$NON-NLS-1$
+					issue, acceptor, new ISemanticModification() {
+
+						@Override
+						public void apply(EObject element,
+								IModificationContext context) {
+							if (element instanceof EdgeRhsNode) {
+								EdgeRhsNode edge = (EdgeRhsNode) element;
+								edge.setOp(validEdgeOperator);
+							}
+							if (element instanceof EdgeRhsSubgraph) {
+								EdgeRhsSubgraph edge = (EdgeRhsSubgraph) element;
+								edge.setOp(validEdgeOperator);
+							}
+						}
+					});
+		}
+	}
 
 	@Fix(DotAttributes.ARROWHEAD__E)
 	public void fixArrowheadAttributeValue(final Issue issue,
@@ -206,13 +238,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
 	private void provideQuickfix(String validValue, String suffix, Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		acceptor.accept(issue,
-				"Replace '" + issue.getData()[0] + "' with '" + validValue //$NON-NLS-1$ //$NON-NLS-2$
-						+ "'.", //$NON-NLS-1$
-				"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
-						+ issue.getData()[0] + "' " + suffix + ".", //$NON-NLS-1$ //$NON-NLS-2$
-				null, new ISemanticModification() {
-
+		provideQuickfix(validValue, suffix, issue, acceptor,
+				new ISemanticModification() {
 					@Override
 					public void apply(EObject element,
 							IModificationContext context) {
@@ -222,5 +249,16 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 						attribute.setValue(validValueAsID);
 					}
 				});
+	}
+
+	private void provideQuickfix(String validValue, String suffix, Issue issue,
+			IssueResolutionAcceptor acceptor,
+			ISemanticModification semanticModification) {
+		acceptor.accept(issue,
+				"Replace '" + issue.getData()[0] + "' with '" + validValue //$NON-NLS-1$ //$NON-NLS-2$
+						+ "'.", //$NON-NLS-1$
+				"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
+						+ issue.getData()[0] + "' " + suffix + ".", //$NON-NLS-1$ //$NON-NLS-2$
+				null, semanticModification);
 	}
 }

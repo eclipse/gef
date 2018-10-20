@@ -30,6 +30,8 @@ import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.INVALID_EDGE_OPERATOR
+
 import static extension org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils.getDocument
 import static extension org.junit.Assert.assertEquals
 
@@ -41,6 +43,186 @@ class DotQuickfixTests {
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
 	@Inject extension IssueResolutionProvider
+
+	@Test def graph_contains_directed_edge_to_node() {
+		'''
+			graph {
+				1->2
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '->' with '--'.", "Use valid '--' instead of invalid '->' edge operator.", '''
+			graph {
+				1--2
+			}
+		''')
+		)
+	}
+
+	@Test def graph_contains_directed_multi_edge_to_node_1() {
+		'''
+			graph {
+				1->2--3
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '->' with '--'.", "Use valid '--' instead of invalid '->' edge operator.", '''
+			graph {
+				1--2--3
+			}
+		''')
+		)
+	}
+
+	@Test def graph_contains_directed_multi_edge_to_node_2() {
+		'''
+			graph {
+				1--2->3
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '->' with '--'.", "Use valid '--' instead of invalid '->' edge operator.", '''
+			graph {
+				1--2--3
+			}
+		''')
+		)
+	}
+
+	@Test def graph_contains_directed_edge_to_subgraph() {
+		'''
+			graph {
+				1 -> subgraph {
+					2 3
+				}
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '->' with '--'.", "Use valid '--' instead of invalid '->' edge operator.", '''
+			graph {
+				1 -- subgraph {
+					2 3
+				}
+			}
+		''')
+		)
+	}
+
+	@Test def graph_contains_directed_multi_edge_to_subgraph_1() {
+		'''
+			graph {
+				1 -> subgraph {
+					2 3
+				} -- subgraph { 4 }
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '->' with '--'.", "Use valid '--' instead of invalid '->' edge operator.", '''
+			graph {
+				1 -- subgraph {
+					2 3
+				} -- subgraph { 4 }
+			}
+		''')
+		)
+	}
+
+	@Test def graph_contains_directed_multi_edge_to_subgraph_2() {
+		'''
+			graph {
+				1 -- subgraph {
+					2 3
+				} -> subgraph { 4 }
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '->' with '--'.", "Use valid '--' instead of invalid '->' edge operator.", '''
+			graph {
+				1 -- subgraph {
+					2 3
+				} -- subgraph { 4 }
+			}
+		''')
+		)
+	}
+
+	@Test def digraph_contains_undirected_edge_to_node() {
+		'''
+			digraph {
+				1--2
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '--' with '->'.", "Use valid '->' instead of invalid '--' edge operator.", '''
+			digraph {
+				1->2
+			}
+		''')
+		)
+	}
+
+	@Test def digraph_contains_undirected_multi_edge_to_node_1() {
+		'''
+			digraph {
+				1--2->3
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '--' with '->'.", "Use valid '->' instead of invalid '--' edge operator.", '''
+			digraph {
+				1->2->3
+			}
+		''')
+		)
+	}
+
+	@Test def digraph_contains_undirected_multi_edge_to_node_2() {
+		'''
+			digraph {
+				1->2--3
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '--' with '->'.", "Use valid '->' instead of invalid '--' edge operator.", '''
+			digraph {
+				1->2->3
+			}
+		''')
+		)
+	}
+
+	@Test def digraph_contains_undirected_edge_to_subgraph() {
+		'''
+			digraph {
+				1 -- subgraph {
+					2 3
+				}
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '--' with '->'.", "Use valid '->' instead of invalid '--' edge operator.", '''
+			digraph {
+				1 -> subgraph {
+					2 3
+				}
+			}
+		''')
+		)
+	}
+
+	@Test def digraph_contains_undirected_multi_edge_to_subgraph_1() {
+		'''
+			digraph {
+				1 -- subgraph {
+					2 3
+				} -> subgraph { 4 }
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '--' with '->'.", "Use valid '->' instead of invalid '--' edge operator.", '''
+			digraph {
+				1 -> subgraph {
+					2 3
+				} -> subgraph { 4 }
+			}
+		''')
+		)
+	}
+
+	@Test def digraph_contains_undirected_multi_edge_to_subgraph_2() {
+		'''
+			digraph {
+				1 -> subgraph {
+					2 3
+				} -- subgraph { 4 }
+			}
+		'''.testQuickfixesOn(INVALID_EDGE_OPERATOR, new Quickfix("Replace '--' with '->'.", "Use valid '->' instead of invalid '--' edge operator.", '''
+			digraph {
+				1 -> subgraph {
+					2 3
+				} -> subgraph { 4 }
+			}
+		''')
+		)
+	}
 
 	@Test def edge_arrowhead() {
 		val deprecatedArrowShapes = #["ediamond", "open", "halfopen", "empty", "invempty"]
