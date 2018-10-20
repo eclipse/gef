@@ -66,6 +66,15 @@ import com.google.inject.Injector;
 public class DotJavaValidator extends AbstractDotJavaValidator {
 
 	/**
+	 * Issue Code to indicate the usage of an invalid edge operator:
+	 * <ol>
+	 * <li>Usage of the directed edge operator in undirected graphs</li>
+	 * <li>Usage of the undirected edge operator in directed graphs</li>
+	 * </ol>
+	 */
+	public static final String INVALID_EDGE_OPERATOR = "invalid-edge-operator";
+
+	/**
 	 * Checks that within an {@link Attribute} only valid attribute values are
 	 * used (dependent on context, in which the attribute is specified).
 	 * 
@@ -251,11 +260,13 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		boolean graphDirected = graphType.equals(GraphType.DIGRAPH);
 		if (graphDirected && !edgeDirected) {
 			error("EdgeOp '--' may only be used in undirected graphs.",
-					DotPackage.eINSTANCE.getEdgeRhs_Op());
+					DotPackage.eINSTANCE.getEdgeRhs_Op(), INVALID_EDGE_OPERATOR,
+					edgeOp.toString());
 
 		} else if (!graphDirected && edgeDirected) {
 			error("EdgeOp '->' may only be used in directed graphs.",
-					DotPackage.eINSTANCE.getEdgeRhs_Op());
+					DotPackage.eINSTANCE.getEdgeRhs_Op(), INVALID_EDGE_OPERATOR,
+					edgeOp.toString());
 		}
 	}
 

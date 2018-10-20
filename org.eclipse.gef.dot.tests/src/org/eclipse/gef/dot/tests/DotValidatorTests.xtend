@@ -31,6 +31,7 @@ import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.DotAttributes.*
 import static org.eclipse.gef.dot.internal.language.dot.DotPackage.Literals.*
+import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.INVALID_EDGE_OPERATOR
 import static org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator.*
 import static org.eclipse.xtext.diagnostics.Diagnostic.*
 
@@ -228,12 +229,12 @@ class DotValidatorTests {
 
 	@Test def directed_graph_with_non_directed_edge() {
 		'''digraph {1--2}'''.parse.assertNumberOfIssues(1).
-		assertError(EDGE_RHS_NODE, null, "EdgeOp '--' may only be used in undirected graphs.")
+		assertError(EDGE_RHS_NODE, INVALID_EDGE_OPERATOR, "EdgeOp '--' may only be used in undirected graphs.")
 	}
 
 	@Test def non_directed_graph_with_directed_edge() {
 		'''graph {1->2}'''.parse.assertNumberOfIssues(1).
-		assertError(EDGE_RHS_NODE, null, "EdgeOp '->' may only be used in directed graphs.")
+		assertError(EDGE_RHS_NODE, INVALID_EDGE_OPERATOR, "EdgeOp '->' may only be used in directed graphs.")
 	}
 
 	@Test def invalid_combination_of_node_shape_and_style() {
