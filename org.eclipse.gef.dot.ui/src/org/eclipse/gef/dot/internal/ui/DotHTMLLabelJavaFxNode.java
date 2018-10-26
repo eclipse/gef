@@ -295,13 +295,16 @@ public class DotHTMLLabelJavaFxNode {
 	 */
 	private void handleTextContent(TextFXBuilder builder, HtmlContent content,
 			TagStyleContainer parentStyle) {
-		if (content.getTag() != null)
+		if (content.getTag() != null) {
 			handleTextTag(builder, content.getTag(), parentStyle);
-		else
+		} else {
+			String unescapedText = StringEscapeUtils.unescapeHtml(
+					content.getText().replaceAll("[\\t\\n\\x0B\\f\\r]", "")); //$NON-NLS-1$ //$NON-NLS-2$
 			builder.addFormattedString(new FormattedString(
 					parentStyle != null ? parentStyle
 							: new TagStyleContainer(null, null),
-					StringEscapeUtils.unescapeHtml(content.getText())));
+					unescapedText));
+		}
 	}
 
 	private Pos getPosForBr(HtmlTag brTag) {
