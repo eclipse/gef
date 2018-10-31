@@ -44,6 +44,7 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 		return (Dot2ZestAttributesConverter) super.getAttributeCopier();
 	}
 
+	@Override
 	public Graph copy(Graph graph) {
 		Graph copiedGraph = super.copy(graph);
 		// post-process graph to 'flatten' non-cluster subgraphs
