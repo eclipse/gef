@@ -60,7 +60,6 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -86,6 +85,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -284,23 +284,10 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 						List<Graph> importDot = new DotImport().importDot(dot);
 						setGraph(importDot.isEmpty() ? null : importDot.get(0));
 					} catch (Exception e) {
-						e.printStackTrace();
-						String message = String.format(
-								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
-								e.getMessage(), dot);
-						DotActivator.getInstance().getLog()
-								.log(new Status(
-										Status.ERROR, DotActivator.getInstance()
-												.getBundle().getSymbolicName(),
-										message));
-						// whenever the dot file could not be imported,
-						// show the exception information to the user within an
-						// error dialog (not only in the error log)
 						MultiStatus status = createMultiStatus(
 								e.getLocalizedMessage(), e);
-						ErrorDialog.openError(getViewSite().getShell(), "Error", //$NON-NLS-1$
-								"Could not import DOT", status); //$NON-NLS-1$
-
+						int style = StatusManager.LOG | StatusManager.SHOW;
+						StatusManager.getManager().handle(status, style);
 						return;
 					}
 					if (!resourceLabel.isDisposed()) {
