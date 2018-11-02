@@ -715,7 +715,57 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def void edge_labelfontcolor() {
-		// TODO: implement
+		// If unset, the fontcolor value is used.
+		'''
+			digraph {
+				1->2[fontcolor="blue", labelfontcolor=red, label="foo", headlabel="baa"]
+				1->3[labelfontcolor=red, headlabel="baa"]
+				2->3[fontcolor="blue", label="foo", headlabel="baa"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : 3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-fill: #ff0000;
+					element-label : foo
+					element-label-css-style : -fx-fill: #0000ff;
+				}
+				Edge2 from Node1 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-fill: #ff0000;
+				}
+				Edge3 from Node2 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-fill: #0000ff;
+					element-label : foo
+					element-label-css-style : -fx-fill: #0000ff;
+				}
+			}
+		''')
 	}
 
 	@Test def edge_labeltooltip() {
