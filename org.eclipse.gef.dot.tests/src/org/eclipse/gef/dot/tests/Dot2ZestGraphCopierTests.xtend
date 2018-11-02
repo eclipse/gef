@@ -7,12 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG) - initial API and implementation
+ *     Tamas Miklossy (itemis AG)     - initial API and implementation
+ *     Zoey Gerrit Prigge (itemis AG) - additional test cases
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
 
 import com.google.inject.Inject
+import javafx.scene.shape.Shape
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
@@ -71,16 +73,132 @@ class Dot2ZestGraphCopierTests {
 		prettyPrinter = new DotGraphPrettyPrinter
 	}
 
-	@Test def void edge_arrowhead() {
-		// TODO: implement
+	@Test def edge_arrowhead() {
+		'''
+			digraph {
+			1->2[arrowhead=vee]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Group
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_arrowsize() {
-		// TODO: implement
+	@Test def edge_arrowsize() {
+		'''
+			digraph {
+				1->2[arrowsize=50]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 500.0, -166.66666666666666, 500.0, 166.66666666666666], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_arrowtail() { 
-		// TODO: implement
+	@Test def edge_arrowtail() { 
+		// If no dir is set this attribute is ignored.
+		'''
+			digraph {
+				1->2[arrowtail=vee]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+		
+		'''
+			digraph {
+				1->2[arrowtail=box, dir=back]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-source-decoration : Group
+				}
+			}
+		''')
+		
+		'''
+			digraph {
+				1->2[arrowtail=box, dir=both]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-source-decoration : Group
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')	
 	}
 
 	@Test def edge_color() {
@@ -109,40 +227,309 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def void edge_colorscheme() {
-		// TODO: implement
+	@Test def edge_colorscheme() {
+		//The colorscheme itself is not a Zest property, but we can check, it is not ignored. Aqua is not a default x11 colour.
+		'''
+			digraph {
+				1->2[color=aqua, colorscheme=svg]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;-fx-stroke: #00ffff;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+		}
+
+	@Test def edge_dir() {
+		'''
+			digraph {
+				1->2[dir=back]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-source-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+		
+		'''
+			digraph {
+				1->2[dir=both]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-source-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+		
+		'''
+			digraph {
+				1->2[dir=none]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_dir() {
-		// TODO: implement
+	@Test def edge_edgetooltip() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[edgetooltip="lorem ipsum"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_edgetooltip() {
-		// TODO: implement
+	@Test def edge_fillcolor() {
+		// use a custom pretty printer to access stroke fill
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				return if (ZestProperties.TARGET_DECORATION__E.equals(attrKey) && attrValue instanceof Shape) {
+					val shape = attrValue as Shape
+					super.prettyPrint(attrKey, attrValue) + ", style: " + shape.style
+				} else {
+					super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		'''
+			digraph {
+				1->2[fillcolor=red]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #ff0000;
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_fillcolor() {
-		// TODO: implement
+	@Test def edge_fontcolor() {
+		'''
+			digraph {
+				1->2[fontcolor=red, label="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-label : foo
+					element-label-css-style : -fx-fill: #ff0000;
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_fontcolor() {
-		// TODO: implement
+	@Test def edge_headlabel() {
+		'''
+			digraph {
+				1->2[headlabel="cool"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : cool
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_headlabel() {
-		// TODO: implement
+	@Ignore("Failing on Travis/Jenkins")
+	@Test def edge_headlp() {
+		'''
+			digraph {
+				1->2[headlabel="foo", head_lp="80,80"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : foo
+					edge-target-label-position : Point(70.348388671875, 71.3544921875)
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_headlp() {
-		// TODO: implement
+	@Test def edge_headport() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[headport=w]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_headport() {
-		// TODO: implement
-	}
-
-	@Test def void edge_headtooltip() {
-		// TODO: implement
+	@Test def edge_headtooltip() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[headtooltip="some text"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
 	@Test def edge_id() {
@@ -331,52 +718,311 @@ class Dot2ZestGraphCopierTests {
 		// TODO: implement
 	}
 
-	@Test def void edge_labeltooltip() {
-		// TODO: implement
+	@Test def edge_labeltooltip() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[label="foo", labeltooltip="baa"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-label : foo
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_lp() {
-		// TODO: implement
+	@Ignore("Failing on Travis/Jenkins")
+	@Test def edge_lp() {
+		'''
+			digraph {
+				1->2[label="foo", lp="80,80"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-label-position : Point(70.348388671875, 71.3544921875)
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-label : foo
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_name() {
-		// TODO: implement
+	@Test def edge_name() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[name="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
 	@Test def void edge_pos() {
 		// TODO: implement
 	}
 
-	@Test def void edge_style() {
-		// TODO: implement
+	@Test def edge_style() {
+		'''
+			digraph {
+				1->2[style=dotted]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-dash-array: 1 7;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_taillabel() {
-		// TODO: implement
+	@Test def edge_taillabel() {
+		'''
+			digraph {
+				1->2[taillabel="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-source-label : foo
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_taillp() {
-		// TODO: implement
+	@Ignore("Failing on Travis/Jenkins")
+	@Test def edge_taillp() {
+		'''
+			digraph {
+				1->2[taillabel="foo", tail_lp="80,80"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-source-label : foo
+					edge-source-label-position : Point(70.348388671875, 71.3544921875)
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_tailport() {
-		// TODO: implement
+	@Test def edge_tailport() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[tailport="n"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_tailtooltip() {
-		// TODO: implement
+	@Test def edge_tailtooltip() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[tailtooltip="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_tooltip() {
-		// TODO: implement
+	@Test def edge_tooltip() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				1->2[tooltip="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_xlabel() {
-		// TODO: implement
+	@Test def edge_xlabel() {
+		'''
+			digraph {
+				1->2[xlabel="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-external-label : foo
+				}
+			}
+		''')
 	}
 
-	@Test def void edge_xlp() {
-		// TODO: implement
+	@Ignore("Failing on Travis/Jenkins")
+	@Test def edge_xlp() {
+		'''
+			digraph {
+				1->2[xlabel="foo", xlp="80,80"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-external-label : foo
+					element-external-label-position : Point(70.348388671875, 71.3544921875)
+				}
+			}
+		''')
 	}
 
 	@Test def void graph_bb() {
