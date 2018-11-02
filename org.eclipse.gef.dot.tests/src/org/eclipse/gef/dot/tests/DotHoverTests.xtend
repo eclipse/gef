@@ -13,18 +13,20 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
+import org.eclipse.core.resources.IFile
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.jface.text.Region
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.hover.AbstractEObjectHover
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover
 import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControlInput
 import org.junit.Test
 import org.junit.runner.RunWith
+
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -386,21 +388,28 @@ class DotHoverTests extends AbstractEditorTest {
 		''')
 	}
 
-	override protected getEditorId() {
-		editorInfo.editorId
+	private def assertHoveringResult(CharSequence it, String textUnderHover, String expected){
+		// given
+		dslFile.
+		// when
+		hoveringOver(textUnderHover).
+		// then
+		hoverPopupHasContent(expected)
 	}
 
-	private def assertHoveringResult(CharSequence text, String textUnderHover, String expected){
-		// given
-		val file = IResourcesSetupUtil.createFile("test/test.dot", text.toString)
-		val editor = file.openEditor
+	private def dslFile(CharSequence it) {
+		toString.createTestFile
+	}
+
+	private def hoveringOver(IFile testFile, String textUnderHover) {
+		val editor = testFile.openEditor
 		val viewer = editor.internalSourceViewer
-		val region = new Region(text.toString.indexOf(textUnderHover), textUnderHover.length)
+		val region = new Region(viewer.document.get.indexOf(textUnderHover), textUnderHover.length)
+		val hoverInfo = (eObjectHover as AbstractEObjectHover).getHoverInfo2(viewer, region)
+		hoverInfo  as XtextBrowserInformationControlInput
+	}
 
-		// when
-		val hoverInfo = (eObjectHover as AbstractEObjectHover).getHoverInfo2(viewer, region) as XtextBrowserInformationControlInput
-
-		// then
+	private def hoverPopupHasContent(XtextBrowserInformationControlInput hoverInfo, String expected) {
 		val actual = hoverInfo.html.table
 		expected.assertEquals(actual)
 	}
@@ -409,5 +418,9 @@ class DotHoverTests extends AbstractEditorTest {
 		val beginIndex = html.indexOf("<table")
 		val endIndex = html.indexOf("</body>")
 		html.substring(beginIndex, endIndex)
+	}
+
+	override protected getEditorId() {
+		editorInfo.editorId
 	}
 }
