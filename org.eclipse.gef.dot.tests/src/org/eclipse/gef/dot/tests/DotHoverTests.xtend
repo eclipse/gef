@@ -34,17 +34,13 @@ class DotHoverTests extends AbstractEditorTest {
 	@Inject XtextEditorInfo editorInfo
 
 	@Test def edge_color() {
-		val text = '''
+		'''
 			digraph {
 				1->2[
 					color=green4
 				]
 			}
-		'''
-		
-		val textUnderHover = "green4"
-		
-		val expected = '''
+		'''.assertHoveringResult("green4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -59,24 +55,18 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#008b00</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def edge_color_custom_global_color_scheme() {
-		val text = '''
+		'''
 			digraph {
 				a->b[
 					colorscheme=blues3
 					color=2
 				]
 			}
-		'''
-		
-		val textUnderHover = "2"
-		
-		val expected = '''
+		'''.assertHoveringResult("2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -91,23 +81,17 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#9ecae1</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def edge_color_custom_local_color_scheme() {
-		val text = '''
+		'''
 			digraph {
 				a->b[
 					color="/blues3/2"
 				]
 			}
-		'''
-		
-		val textUnderHover = "2"
-		
-		val expected = '''
+		'''.assertHoveringResult("2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -122,23 +106,17 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#9ecae1</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def edge_color_rgb_value() {
-		val text = '''
+		'''
 			digraph {
 				a->b[
 					color="#fdc086"
 				]
 			}
-		'''
-		
-		val textUnderHover = "#fdc086"
-		
-		val expected = '''
+		'''.assertHoveringResult("#fdc086", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -149,23 +127,17 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#fdc086</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def edge_fillcolor() {
-		val text = '''
+		'''
 			digraph {
 				1->2[
 					fillcolor=blueviolet
 				]
 			}
-		'''
-		
-		val textUnderHover = "blueviolet"
-		
-		val expected = '''
+		'''.assertHoveringResult("blueviolet", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -180,24 +152,18 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#8a2be2</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def edge_fontcolor() {
-		val text = '''
+		'''
 			digraph {
 				1->2[
 					label=edgeLabel
 					fontcolor=bisque2
 				]
 			}
-		'''
-		
-		val textUnderHover = "bisque2"
-		
-		val expected = '''
+		'''.assertHoveringResult("bisque2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -212,13 +178,11 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#eed5b7</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def edge_labelfontcolor() {
-		val text = '''
+		'''
 			digraph {
 				1->2[
 					headlabel=edgeHeadLabel
@@ -226,11 +190,7 @@ class DotHoverTests extends AbstractEditorTest {
 					labelfontcolor=cadetblue
 				]
 			}
-		'''
-		
-		val textUnderHover = "cadetblue"
-		
-		val expected = '''
+		'''.assertHoveringResult("cadetblue", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -245,22 +205,16 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#5f9ea0</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def graph_bgcolor() {
-		val text = '''
+		'''
 			digraph {
 				bgcolor=darkgoldenrod2
 				1
 			}
-		'''
-		
-		val textUnderHover = "darkgoldenrod2"
-		
-		val expected = '''
+		'''.assertHoveringResult("darkgoldenrod2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -275,23 +229,17 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#eead0e</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def graph_fontcolor() {
-		val text = '''
+		'''
 			digraph {
 				fontcolor=firebrick
 				label=graphLabel
 				1
 			}
-		'''
-		
-		val textUnderHover = "firebrick"
-		
-		val expected = '''
+		'''.assertHoveringResult("firebrick", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -306,21 +254,15 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#b22222</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def node_color() {
-		val text = '''
+		'''
 			digraph {
 				1[color=aquamarine4]
 			}
-		'''
-		
-		val textUnderHover = "aquamarine4"
-		
-		val expected = '''
+		'''.assertHoveringResult("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -335,24 +277,18 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#458b74</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def node_fillcolor() {
-		val text = '''
+		'''
 			digraph {
 				1[
 					fillcolor=yellow
 					style=filled
 				]
 			}
-		'''
-		
-		val textUnderHover = "yellow"
-		
-		val expected = '''
+		'''.assertHoveringResult("yellow", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -367,23 +303,17 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#ffff00</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def node_fontcolor() {
-		val text = '''
+		'''
 			digraph {
 				1[
 					fontcolor=goldenrod
 				]
 			}
-		'''
-		
-		val textUnderHover = "goldenrod"
-		
-		val expected = '''
+		'''.assertHoveringResult("goldenrod", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -398,13 +328,11 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#daa520</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def cluster_color() {
-		val text = '''
+		'''
 			digraph {
 				1
 				subgraph cluster1{
@@ -412,11 +340,7 @@ class DotHoverTests extends AbstractEditorTest {
 					color=honeydew3
 				}
 			}
-		'''
-		
-		val textUnderHover = "honeydew3"
-		
-		val expected = '''
+		'''.assertHoveringResult("honeydew3", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -431,13 +355,11 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#c1cdc1</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	@Test def cluster_fillcolor() {
-		val text = '''
+		'''
 			digraph {
 				1
 				subgraph cluster1{
@@ -446,11 +368,7 @@ class DotHoverTests extends AbstractEditorTest {
 					style=filled
 				}
 			}
-		'''
-		
-		val textUnderHover = "indigo"
-		
-		val expected = '''
+		'''.assertHoveringResult("indigo",  '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -465,27 +383,25 @@ class DotHoverTests extends AbstractEditorTest {
 					<td align="center">#4b0082</td>
 				</tr>
 			</table>
-		'''
-		
-		text.assertHoveringResult(textUnderHover, expected)
+		''')
 	}
 
 	override protected getEditorId() {
 		editorInfo.editorId
 	}
 
-	private def assertHoveringResult(String text, String textUnderHover, String expected){
-		val file = IResourcesSetupUtil.createFile("test/test.dot", text)
-		val editor = openEditor(file)
-
+	private def assertHoveringResult(CharSequence text, String textUnderHover, String expected){
+		// given
+		val file = IResourcesSetupUtil.createFile("test/test.dot", text.toString)
+		val editor = file.openEditor
 		val viewer = editor.internalSourceViewer
+		val region = new Region(text.toString.indexOf(textUnderHover), textUnderHover.length)
 
-		val region = new Region(text.indexOf(textUnderHover), textUnderHover.length())
-
+		// when
 		val hoverInfo = (eObjectHover as AbstractEObjectHover).getHoverInfo2(viewer, region) as XtextBrowserInformationControlInput
 
+		// then
 		val actual = hoverInfo.html.table
-
 		expected.assertEquals(actual)
 	}
 
