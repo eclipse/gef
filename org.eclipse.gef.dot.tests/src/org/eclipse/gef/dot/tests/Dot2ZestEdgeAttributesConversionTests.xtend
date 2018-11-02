@@ -9,6 +9,7 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
  *     Zoey Gerrit Prigge (itemis AG) - test cases for \E, \T, ... replacement (bug #534707)
+ *                                    - test cases for labelfontcolor (bug #540958)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -379,6 +380,28 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
+	
+	@Test def edge_sourceLabel007() {
+		'''
+			digraph {
+				edge[labelfontcolor=red]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def edge_sourceLabel008() {
+		'''
+			digraph {
+				edge[labelfontcolor=blue, fontcolor=red]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-fill: #0000ff;
+		''')
+	}
 
 	@Test def edge_targetLabel001() {
 		'''
@@ -439,6 +462,28 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabelCssStyle('''
 			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def edge_targetLabel008() {
+		'''
+			digraph {
+				edge[labelfontcolor=red]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-fill: #ff0000;
+		''')
+	}
+	
+	@Test def edge_targetLabel009() {
+		'''
+			digraph {
+				edge[labelfontcolor=blue, fontcolor=red]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-fill: #0000ff;
 		''')
 	}
 

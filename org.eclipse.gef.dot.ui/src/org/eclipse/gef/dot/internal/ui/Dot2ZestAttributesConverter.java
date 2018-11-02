@@ -15,6 +15,7 @@
  *     Zoey Gerrit Prigge (itemis AG) - Add support for record-based node shapes (bug #454629)
  *                                    - Add support for HTML labels (bug #321775)
  *                                    - Fix handling of "\N", "\E", "\G" in labels (bug #534707)
+ *                                    - Add support for labelfontcolor attribute (bug #540958)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -130,6 +131,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		String edgeLabelCssStyle = computeZestEdgeLabelCssStyle(dot);
+		String targetSourceLabelCssStyle = computeZestTargetSourceLabelCssStyle(
+				dot);
 
 		String dotLabel = DotAttributes.getLabel(dot);
 		if (dotLabel != null) {
@@ -159,8 +162,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			dotHeadLabel = decodeEscString(dotHeadLabel, dot);
 			dotHeadLabel = decodeLineBreak(dotHeadLabel);
 			ZestProperties.setTargetLabel(zest, dotHeadLabel);
-			if (edgeLabelCssStyle != null) {
-				ZestProperties.setTargetLabelCssStyle(zest, edgeLabelCssStyle);
+			if (targetSourceLabelCssStyle != null) {
+				ZestProperties.setTargetLabelCssStyle(zest,
+						targetSourceLabelCssStyle);
 			}
 		}
 		String dotTailLabel = DotAttributes.getTaillabel(dot);
@@ -168,8 +172,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			dotTailLabel = decodeEscString(dotTailLabel, dot);
 			dotTailLabel = decodeLineBreak(dotTailLabel);
 			ZestProperties.setSourceLabel(zest, dotTailLabel);
-			if (edgeLabelCssStyle != null) {
-				ZestProperties.setSourceLabelCssStyle(zest, edgeLabelCssStyle);
+			if (targetSourceLabelCssStyle != null) {
+				ZestProperties.setSourceLabelCssStyle(zest,
+						targetSourceLabelCssStyle);
 			}
 		}
 
@@ -467,6 +472,22 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 	private String computeZestEdgeLabelCssStyle(Edge dot) {
 		Color dotColor = DotAttributes.getFontcolorParsed(dot);
+		if (dotColor != null) {
+			String dotColorScheme = DotAttributes.getColorscheme(dot);
+			String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
+					dotColor);
+			if (javaFxColor != null) {
+				return "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return null;
+	}
+
+	private String computeZestTargetSourceLabelCssStyle(Edge dot) {
+		Color dotColor = DotAttributes.getLabelfontcolorParsed(dot);
+		if (dotColor == null) {
+			dotColor = DotAttributes.getFontcolorParsed(dot);
+		}
 		if (dotColor != null) {
 			String dotColorScheme = DotAttributes.getColorscheme(dot);
 			String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
