@@ -463,32 +463,184 @@ class Dot2ZestGraphCopierTests {
 		// TODO: implement
 	}
 
-	@Test def void node_color() {
-		// TODO: implement
+	@Test def node_color() {
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				return if (#[
+					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+					ZestProperties.SHAPE__N
+				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+					val node = attrValue as GeometryNode<?>
+					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
+				} else {
+					super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		'''
+			graph {
+				1[color="green"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: -fx-stroke: #00ff00;
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')	
 	}
 
-	@Test def void node_colorscheme() {
-		// TODO: implement
+	@Test def node_colorscheme() {
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				return if (#[
+					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+					ZestProperties.SHAPE__N
+				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+					val node = attrValue as GeometryNode<?>
+					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
+				} else {
+					super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		// Fontcolor
+		'''
+			graph {
+				1[fontcolor="aqua", colorscheme="svg"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					element-label-css-style : -fx-fill: #00ffff;
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: 
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+		
+		// Fillcolor
+		'''
+			graph {
+				1[fillcolor="aqua", colorscheme="svg", style=filled]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: -fx-fill: #00ffff;
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_distortion() {
-		// TODO: implement
+	@Test def node_distortion() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		// TODO: use custom pretty printer
+		'''
+			graph {
+				1[shape=rectangle, distortion=20]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_fillcolor() {
-		// TODO: implement
+	@Test def node_fillcolor() {
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				return if (#[
+					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+					ZestProperties.SHAPE__N
+				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+					val node = attrValue as GeometryNode<?>
+					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
+				} else {
+					super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		'''
+			graph {
+				1[fillcolor=blue, style=filled]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: -fx-fill: #0000ff;
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_fixedsize() {
-		// TODO: implement
+	@Test def node_fixedsize() {
+		'''
+			graph {
+				1[fixedsize="true", height=1, width=1]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(72.0, 72.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_fontcolor() {
-		// TODO: implement
+	@Test def node_fontcolor() {
+		'''
+			graph {
+				1[fontcolor="green"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					element-label-css-style : -fx-fill: #00ff00;
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_height() {
-		// TODO: implement
+	@Test def node_height() {
+		'''
+			graph {
+				1[height="22"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 1584.0)
+				}
+			}
+		''')
 	}
 
 	@Test def node_id() {
@@ -571,8 +723,22 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def void node_pos() {
-		// TODO: implement
+	@Test def node_pos() {
+		'''
+			graph {
+				1[pos="10,10"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					element-layout-irrelevant : false
+					node-position : Point(-17.0, -8.0)
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
 	@Test def node_shape() {
@@ -979,28 +1145,122 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def void node_sides() {
-		// TODO: implement
+	@Test def node_sides() {
+		// TODO Once the sides attribute is implemented, a customized pretty printer must be used.
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			graph {
+				1[shape=polygon, sides=10]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_skew() {
-		// TODO: implement
+	@Test def node_skew() {
+		// TODO Once the sides attribute is implemented, a customized pretty printer must be used.
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			graph {
+				1[shape=polygon, skew=10]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_style() {
-		// TODO: implement
+	@Test def node_style() {
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				return if (#[
+					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+					ZestProperties.SHAPE__N
+				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+					val node = attrValue as GeometryNode<?>
+					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
+				} else {
+					super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		'''
+			graph {
+				1[style=dashed]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: -fx-stroke-dash-array: 7 7;
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_tooltip() {
-		// TODO: implement
+	@Test def node_tooltip() {
+		'''
+			graph {
+				1[tooltip="Sports are fun!"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+					node-tooltip : Sports are fun!
+				}
+			}
+		''')
 	}
 
-	@Test def void node_width() {
-		// TODO: implement
+	@Test def node_width() {
+		'''
+			graph {
+				1[width=100]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(7200.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void node_xlp() {
-		// TODO: implement
+	@Ignore("Failing on Travis/Jenkins")
+	@Test def node_xlp() {
+		'''
+			graph {
+				1[xlp="20,20", xlabel=foo]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : foo
+					element-external-label-position : Point(10.348388671875, 11.3544921875)
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
 	@Test def node_xlabel(){
