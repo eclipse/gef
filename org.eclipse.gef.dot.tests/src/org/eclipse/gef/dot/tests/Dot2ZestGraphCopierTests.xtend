@@ -387,20 +387,182 @@ class Dot2ZestGraphCopierTests {
 		// TODO: implement
 	}
 
-	@Test def void graph_clusterrank() {
-		// TODO: implement
+	@Test def graph_clusterrank() {	
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				return if (#[
+					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+					ZestProperties.SHAPE__N
+				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+					val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
+					attrKey + " : " + geometry
+				} else {
+					super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
+		'''
+			digraph {
+				graph [clusterrank=global];
+				subgraph clusterName {
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+		
+		'''
+			digraph {
+				graph [clusterrank=none];
+				subgraph clusterName {
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+		
+		'''
+			digraph {
+				graph [clusterrank=local];
+				subgraph clusterName {
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+		
+		'''
+			digraph {
+				subgraph clusterName {
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void cluster_color() {
-		// TODO: implement
+	@Test def cluster_color() {
+		// This test shows current behaviour, it needs adaptation once the attribute is FULLY supported.
+		
+		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
+		prettyPrinter = new DotGraphPrettyPrinter {
+			
+			override protected prettyPrint(String attrKey, Object attrValue) {
+				return if (#[
+					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+					ZestProperties.SHAPE__N
+				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+					val node = attrValue as GeometryNode<?>
+					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
+				} else {
+					super.prettyPrint(attrKey, attrValue)
+				}
+			}
+		}
+		
+		'''
+			digraph {
+				subgraph clusterName {
+					graph [color=yellow];
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0), style: 
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: 
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
 	@Test def void graph_colorscheme() {
 		// TODO: implement
 	}
 
-	@Test def void graph_fillcolor() {
-		// TODO: implement
+	@Test def graph_fillcolor() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				subgraph clusterName {
+					graph [fillcolor=green, style=filled];
+					2
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
 	@Test def void graph_fontcolor() {
@@ -451,12 +613,54 @@ class Dot2ZestGraphCopierTests {
 		// TODO: implement
 	}
 
-	@Test def void graph_style() {
-		// TODO: implement
+	@Test def graph_style() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				subgraph clusterName {
+					graph [style="rounded"]
+					2
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
-	@Test def void cluster_tooltip() {
-		// TODO: implement
+	@Test def cluster_tooltip() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				subgraph clusterName {
+					graph [tooltip="foo"]
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node {
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
 	}
 
 	@Test def void graph_type() {
@@ -1307,8 +1511,37 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def void subgraph_rank() {
-		// TODO: implement
+	@Test def subgraph_rank() {
+		// TODO check This test shows current behaviour, it needs adaptation once the attribute is supported.
+		// If there were no edge in the following test case, the nodes would be on the same rank regardless of the attribute setting.
+		'''
+			digraph {
+				subgraph {
+					graph [rank=same]
+					2
+					3
+				}
+				2->3
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
 	}
 
 	@Test def simple_graph() {
