@@ -198,10 +198,10 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		super.createPartControl(parent);
 
 		// actions
-		Action updateToggleAction = new UpdateToggle().action(this);
+		Action linkWithDotEditorAction = new LinkWithDotEditor().action(this);
 		Action linkWithSelectionAction = new LinkWithSelection().action(this);
 		Action loadFileAction = new LoadFile().action(this);
-		add(updateToggleAction, ISharedImages.IMG_ELCL_SYNCED);
+		add(linkWithDotEditorAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(linkWithSelectionAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
 
@@ -224,7 +224,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));
-		initResourceLabel(parent, loadFileAction, updateToggleAction);
+		initResourceLabel(parent, loadFileAction, linkWithDotEditorAction);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// scene
@@ -582,7 +582,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		}
 	}
 
-	private class UpdateToggle {
+	private class LinkWithDotEditor {
 
 		/** Listener that passes a visitor if a resource is changed. */
 		private IResourceChangeListener resourceChangeListener;
