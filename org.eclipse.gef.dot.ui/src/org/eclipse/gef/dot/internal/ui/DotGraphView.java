@@ -117,11 +117,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			.getResource("styles.css") //$NON-NLS-1$
 			.toExternalForm();
 	private static final String EXTENSION = "dot"; //$NON-NLS-1$
-	private static final String LOAD_DOT_FILE = DotUiMessages.DotGraphView_0;
-	private static final String SYNC_IMPORT_DOT = DotUiMessages.DotGraphView_1;
-	private static final String GRAPH_NONE = DotUiMessages.DotGraphView_2;
-	private static final String GRAPH_RESOURCE = DotUiMessages.DotGraphView_3;
-	private static final String LINK_WITH_SELECTION = DotUiMessages.DotGraphView_4;
+	private static final String GRAPH_NONE = DotUiMessages.DotGraphView_0;
 	private boolean listenToDotContent = false;
 	private boolean listenToSelectionChanges = false;
 	private String currentDot = "digraph{}"; //$NON-NLS-1$
@@ -298,10 +294,10 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 						return;
 					}
 					if (!resourceLabel.isDisposed()) {
-						resourceLabel.setText(
-								String.format(GRAPH_RESOURCE, file.getName())
-										+ (isNativeMode() ? " [native]" //$NON-NLS-1$
-												: " [emulated]")); //$NON-NLS-1$
+						resourceLabel.setText(String.format(
+								DotUiMessages.DotGraphView_4, file.getName())
+								+ (isNativeMode() ? " [native]" //$NON-NLS-1$
+										: " [emulated]")); //$NON-NLS-1$
 						resourceLabel.setToolTipText(file.getAbsolutePath());
 					}
 				}
@@ -502,7 +498,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		private String lastSelection = null;
 
 		Action action(final DotGraphView view) {
-			return new Action(DotGraphView.LOAD_DOT_FILE) {
+			return new Action(DotUiMessages.DotGraphView_3) {
 				@Override
 				public void run() {
 					FileDialog dialog = new FileDialog(
@@ -551,7 +547,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		Action action(final DotGraphView view) {
 			Action linkWithSelectionAction = new Action(
-					DotGraphView.LINK_WITH_SELECTION, SWT.TOGGLE) {
+					DotUiMessages.DotGraphView_2, SWT.TOGGLE) {
 
 				@Override
 				public void run() {
@@ -600,7 +596,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		Action action(final DotGraphView view) {
 
 			Action toggleUpdateModeAction = new Action(
-					DotGraphView.SYNC_IMPORT_DOT, SWT.TOGGLE) {
+					DotUiMessages.DotGraphView_1, SWT.TOGGLE) {
 
 				@Override
 				public void run() {
