@@ -31,6 +31,7 @@ public class DotUiMessages extends NLS {
 	public static String DotGraphView_1;
 	public static String DotGraphView_2;
 	public static String DotGraphView_3;
+	public static String DotGraphView_4;
 	public static String DotReferenceFinder;
 
 	static {

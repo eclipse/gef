@@ -18,6 +18,8 @@ package org.eclipse.gef.dot.internal.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +65,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -118,7 +121,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	private static final String SYNC_IMPORT_DOT = DotUiMessages.DotGraphView_1;
 	private static final String GRAPH_NONE = DotUiMessages.DotGraphView_2;
 	private static final String GRAPH_RESOURCE = DotUiMessages.DotGraphView_3;
+	private static final String LINK_WITH_SELECTION = DotUiMessages.DotGraphView_4;
 	private boolean listenToDotContent = false;
+	private boolean listenToSelectionChanges = false;
 	private String currentDot = "digraph{}"; //$NON-NLS-1$
 	private File currentFile = null;
 	private Link resourceLabel = null;
@@ -198,8 +203,10 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		// actions
 		Action updateToggleAction = new UpdateToggle().action(this);
+		Action linkWithSelectionAction = new LinkWithSelection().action(this);
 		Action loadFileAction = new LoadFile().action(this);
 		add(updateToggleAction, ISharedImages.IMG_ELCL_SYNCED);
+		add(linkWithSelectionAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
 
 		IActionBars actionBars = getViewSite().getActionBars();
@@ -401,6 +408,27 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		return input;
 	}
 
+	private boolean updateGraph(IFile file) {
+		if (file != null) {
+			URI locationURI = file.getLocationURI();
+			if (locationURI != null) {
+				URL url = null;
+				try {
+					url = locationURI.toURL();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+					return false;
+				}
+				if (url != null) {
+					File dotFile = DotFileUtils.resolve(url);
+					return updateGraph(dotFile);
+				}
+			}
+		}
+
+		return false;
+	}
+
 	private boolean updateGraph(File file) {
 		if (file == null || !file.exists()) {
 			return false;
@@ -497,6 +525,65 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			};
 		}
 
+	}
+
+	private class LinkWithSelection {
+		private ISelectionListener listener = new ISelectionListener() {
+
+			@Override
+			public void selectionChanged(IWorkbenchPart part,
+					ISelection selection) {
+				if (!listenToSelectionChanges) {
+					return;
+				}
+				if (!(selection instanceof IStructuredSelection))
+					return;
+				IStructuredSelection structured = (IStructuredSelection) selection;
+				if (structured.size() != 1)
+					return;
+				Object selected = structured.getFirstElement();
+				IFile file = (IFile) org.eclipse.core.runtime.Platform
+						.getAdapterManager().getAdapter(selected, IFile.class);
+				updateGraph(file);
+			}
+
+		};
+
+		Action action(final DotGraphView view) {
+			Action linkWithSelectionAction = new Action(
+					DotGraphView.LINK_WITH_SELECTION, SWT.TOGGLE) {
+
+				@Override
+				public void run() {
+					listenToSelectionChanges = toggle(this,
+							listenToSelectionChanges);
+					toggleSelectionChangeListener();
+				}
+
+				private void toggleSelectionChangeListener() {
+					if (view.listenToSelectionChanges) {
+						addSelectionChangeListener();
+					} else {
+						removeSelectionChangeListener();
+					}
+				}
+
+				private void addSelectionChangeListener() {
+					getSelectionService().addSelectionListener(listener);
+				}
+
+				private void removeSelectionChangeListener() {
+					getSelectionService().removeSelectionListener(listener);
+				}
+
+				private ISelectionService getSelectionService() {
+					return getSite().getWorkbenchWindow().getSelectionService();
+				}
+
+			};
+
+			return linkWithSelectionAction;
+		}
 	}
 
 	private class UpdateToggle {
@@ -622,24 +709,15 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	@Override
 	public boolean show(ShowInContext context) {
-		File dotFile = null;
 		Object input = context.getInput();
 
 		if (input instanceof File) {
-			dotFile = (File) input;
+			File dotFile = (File) input;
+			return updateGraph(dotFile);
 		} else if (input instanceof FileEditorInput) {
 			FileEditorInput fileEditorInput = (FileEditorInput) input;
-			IFile file = fileEditorInput.getFile();
-			try {
-				dotFile = DotFileUtils.resolve(file.getLocationURI().toURL());
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (dotFile != null) {
-			updateGraph(dotFile);
-			return true;
+			IFile dotFile = fileEditorInput.getFile();
+			return updateGraph(dotFile);
 		}
 
 		return false;
