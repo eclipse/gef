@@ -11,6 +11,7 @@
  *                                - Add support for polygon-based node shapes (bug #441352)
  *     Zoey G. Prigge (itemis AG) - Add support for record-based node shapes (bug #454629)
  *                                - implement additional dot attributes (bug #461506)
+ *                                - implement redundant attribute validation (bug #540330)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -31,7 +32,7 @@ import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.DotAttributes.*
 import static org.eclipse.gef.dot.internal.language.dot.DotPackage.Literals.*
-import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.INVALID_EDGE_OPERATOR
+import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.*
 import static org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator.*
 import static org.eclipse.xtext.diagnostics.Diagnostic.*
 
@@ -460,6 +461,34 @@ class DotValidatorTests {
 		assertError(ATTR_LIST, SYNTAX_DIAGNOSTIC, 9, 1, "mismatched input ']' expecting '='")
 	}
 
+	@Test def redundant_attribute_single() {
+		'''graph{1[label="foo", label="faa"]}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'foo' for attribute 'label' is ignored.")
+	}
+
+	@Test def redundant_attribute_mixed() {
+		'''graph{1[label="foo", style="rounded", label="faa"]}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'foo' for attribute 'label' is ignored.")
+	}
+
+	@Test def redundant_attribute_multiple() {
+		val dotAst = '''graph{1[label="foo", label=fee, label="faa"]}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertRedundantAttributeWarning("Redundant attribute value 'foo' for attribute 'label' is ignored.")
+		dotAst.assertRedundantAttributeWarning("Redundant attribute value 'fee' for attribute 'label' is ignored.")
+	}
+
+	@Test def redundant_attribute_multiple_mixed() {
+		val dotAst = '''graph{1[label="foo", xlabel="lorem ipsum", label=fee, label="faa"]}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertRedundantAttributeWarning("Redundant attribute value 'foo' for attribute 'label' is ignored.")
+		dotAst.assertRedundantAttributeWarning("Redundant attribute value 'fee' for attribute 'label' is ignored.")
+	}
+
+	@Test def redundant_attribute_edge() {
+		'''graph{1--2[style="dotted", style="dashed"]}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'dotted' for attribute 'style' is ignored.")
+	}
+
+	@Test def redundant_attribute_attr_stmt() {
+		'''graph{graph[label="dotted", label="dashed"]1}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'dotted' for attribute 'label' is ignored.")
+	}
+
 	private def assertArrowTypeWarning(DotAst dotAst, String message) {
 		dotAst.assertWarning(ATTRIBUTE, ARROWHEAD__E, message)
 	}
@@ -505,6 +534,10 @@ class DotValidatorTests {
 		val offset = text.toString.indexOf(errorProneText)
 		val length = errorProneText.length
 		text.parse.assertNumberOfIssues(1).assertError(ATTRIBUTE, STYLE__GCNE, offset, length, message)
+	}
+
+	private def assertRedundantAttributeWarning(DotAst dotAst, String message) {
+		dotAst.assertWarning(ATTRIBUTE, REDUNDANT_ATTRIBUTE, message)
 	}
 
 	private def assertNumberOfIssues(DotAst dotAst, int expectedNumberOfIssues) {
