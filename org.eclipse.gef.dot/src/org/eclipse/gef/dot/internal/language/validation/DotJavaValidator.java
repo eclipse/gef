@@ -13,6 +13,7 @@
  *                     - Add support for polygon-based node shapes (bug #441352)
  *                     - Add support for all dot attributes (bug #461506)
  *     Zoey Gerrit Prigge - Add support for record label attributes (bug #454629)
+ *                        - Add redundant attribute validation (bug #540330)
  *
  *******************************************************************************/
 
@@ -20,9 +21,11 @@ package org.eclipse.gef.dot.internal.language.validation;
 
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
@@ -73,6 +76,11 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * </ol>
 	 */
 	public static final String INVALID_EDGE_OPERATOR = "invalid-edge-operator";
+
+	/**
+	 * Issue Code to indicate a redundant attribute
+	 */
+	public static final String REDUNDANT_ATTRIBUTE = "redundant-attribute";
 
 	/**
 	 * Checks that within an {@link Attribute} only valid attribute values are
@@ -325,5 +333,28 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					validationContext);
 
 		validator.validate(result.getRootASTElement(), null, validationContext);
+	}
+
+	/**
+	 * Checks that attribute lists do not contain the same attribute multiple
+	 * times; issues a warning for redundant attribute values.
+	 * 
+	 * @param attrList
+	 *            An attribute list being checked.
+	 */
+	@Check
+	public void checkRedundantAttribute(AttrList attrList) {
+		Set<ID> definedAttributes = new HashSet<ID>();
+		// iterate backwards as the last attribute value will be used
+		for (int i = attrList.getAttributes().size() - 1; i >= 0; i--) {
+			Attribute attribute = attrList.getAttributes().get(i);
+			if (!definedAttributes.add(attribute.getName())) {
+				warning("Redundant attribute value '"
+						+ attribute.getValue().toValue() + "' for attribute '"
+						+ attribute.getName() + "' is ignored.", attribute,
+						DotPackage.eINSTANCE.getAttribute_Name(),
+						REDUNDANT_ATTRIBUTE, attribute.getName().toString());
+			}
+		}
 	}
 }
