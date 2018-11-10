@@ -1125,7 +1125,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -1147,7 +1147,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -1169,7 +1169,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -1190,7 +1190,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -1232,7 +1232,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0), style: 
 					node-size : Dimension(54.0, 36.0)
@@ -1261,7 +1261,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
@@ -2060,7 +2060,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
@@ -2085,7 +2085,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		'''.assertZestConversion('''
 			Graph {
-				Node {
+				Node1 {
 					element-label : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)

@@ -133,7 +133,7 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 			}
 		}
 		// add cluster nodes as lowest in z-order
-		copiedGraph.getNodes().setAll(replacementNodes);
-		return copiedGraph;
+		return new Graph(copiedGraph.attributesProperty(), replacementNodes,
+				copiedGraph.edgesProperty());
 	}
 }
