@@ -3712,6 +3712,198 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
+	@Test def subgraphs007() {
+		'''
+			digraph {
+				a1
+				{
+					a2
+					{
+						a3
+					}
+				}
+				a1 -> a2 -> a3
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : a1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : a2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : a3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+				Edge2 from Node2 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+	}
+
+	@Test def subgraphs008() {
+		'''
+			digraph {
+				a1
+				subgraph cluster {
+					a2
+					{
+						a3
+					}
+				}
+				a1 -> a2 -> a3
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : a1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : a2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node4 {
+					element-label : a3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node2 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+				Edge2 from Node3 to Node4 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+	}
+
+	@Test def subgraphs009() {
+		'''
+			digraph {
+				a1
+				{
+					a2
+					subgraph cluster {
+						a3
+					}
+				}
+				a1 -> a2 -> a3
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : a1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : a2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node4 {
+					element-label : a3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node2 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+				Edge2 from Node3 to Node4 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+	}
+
+	@Test def subgraphs010() {
+		'''
+			digraph {
+				a1
+				subgraph cluster1 {
+					a2
+					subgraph cluster2 {
+						a3
+					}
+				}
+				a1 -> a2 -> a3
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : a1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node4 {
+					element-label : a2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node5 {
+					element-label : a3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node3 to Node4 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+				Edge2 from Node4 to Node5 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+	}
+
 	private def assertZestConversion(CharSequence dotText, CharSequence expectedZestGraphText) {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = dotText.parse

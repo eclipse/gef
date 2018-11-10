@@ -14,6 +14,7 @@
 package org.eclipse.gef.dot.internal.ui;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +32,11 @@ import org.eclipse.gef.zest.fx.ZestProperties;
 
 public class Dot2ZestGraphCopier extends GraphCopier {
 
+	private List<Node> clusterNodes;
+
 	public Dot2ZestGraphCopier() {
 		this(new Dot2ZestAttributesConverter());
+		clusterNodes = new LinkedList<Node>();
 	}
 
 	public Dot2ZestGraphCopier(
@@ -50,12 +54,15 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 		Graph zestGraph = super.copy(dotGraph);
 
 		// post-process graph to handle nested graphs
+		clusterNodes.clear();
 		List<Node> zestNodeReplacements = new ArrayList<>();
 		for (Node zestNode : zestGraph.getNodes()) {
 			processZestNode(zestNode, zestGraph, zestNodeReplacements);
 		}
 
 		// add cluster nodes as lowest in z-order
+		zestNodeReplacements.addAll(0, clusterNodes);
+
 		return new Graph(zestGraph.attributesProperty(), zestNodeReplacements,
 				zestGraph.edgesProperty());
 	}
@@ -78,16 +85,19 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 		// only support clusters in native mode
 		if (DotAttributes.isCluster(dotNode)
 				&& !getAttributeCopier().options().emulateLayout) {
-			processCluster(dotNode, zestNode, zestNodeReplacements);
+			processCluster(dotNode, zestNode);
 		}
 		processSubgraph(zestNode, zestGraph, zestNodeReplacements);
+
+		for (Node nestedNode : zestNode.getNestedGraph().getNodes()) {
+			processZestNode(nestedNode, zestGraph, zestNodeReplacements);
+		}
 
 		zestNode.setNestedGraph(null);
 	}
 
-	protected void processCluster(Node dotNode, Node zestNode,
-			List<Node> zestNodeReplacements) {
-		zestNodeReplacements.add(0, zestNode);
+	protected void processCluster(Node dotNode, Node zestNode) {
+		clusterNodes.add(zestNode);
 
 		// initialize a rectangle shape
 		ZestProperties.setShape(zestNode, new GeometryNode<>(new Rectangle()));
@@ -145,7 +155,6 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 				zestGraph.getEdges().add(edgeCopy);
 			}
 		}
-		zestNodeReplacements.addAll(subgraph.getNodes());
 		zestGraph.getEdges().addAll(subgraph.getEdges());
 	}
 
