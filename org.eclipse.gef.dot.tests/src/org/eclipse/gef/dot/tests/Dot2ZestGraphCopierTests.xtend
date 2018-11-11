@@ -76,7 +76,7 @@ class Dot2ZestGraphCopierTests {
 	@Test def edge_arrowhead() {
 		'''
 			digraph {
-			1->2[arrowhead=vee]
+				1->2[arrowhead=vee]
 			}
 		'''.assertZestConversion('''
 			Graph {
@@ -198,7 +198,7 @@ class Dot2ZestGraphCopierTests {
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
-		''')	
+		''')
 	}
 
 	@Test def edge_color() {
@@ -252,7 +252,7 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		}
+	}
 
 	@Test def edge_dir() {
 		'''
@@ -357,17 +357,7 @@ class Dot2ZestGraphCopierTests {
 
 	@Test def edge_fillcolor() {
 		// use a custom pretty printer to access stroke fill
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (ZestProperties.TARGET_DECORATION__E.equals(attrKey) && attrValue instanceof Shape) {
-					val shape = attrValue as Shape
-					super.prettyPrint(attrKey, attrValue) + ", style: " + shape.style
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new EdgeDecorationPrettyPrinter
 		
 		'''
 			digraph {
@@ -714,7 +704,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def void edge_labelfontcolor() {
+	@Test def edge_labelfontcolor() {
 		// If unset, the fontcolor value is used.
 		'''
 			digraph {
@@ -1097,22 +1087,9 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def graph_clusterrank() {	
+	@Test def graph_clusterrank() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (#[
-					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
-					ZestProperties.SHAPE__N
-				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-					val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
-					attrKey + " : " + geometry
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapePrettyPrinter
 		
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
@@ -1208,20 +1185,7 @@ class Dot2ZestGraphCopierTests {
 		// This test shows current behaviour, it needs adaptation once the attribute is FULLY supported.
 		
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (#[
-					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
-					ZestProperties.SHAPE__N
-				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-					val node = attrValue as GeometryNode<?>
-					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapeWithStylePrettyPrinter
 		
 		'''
 			digraph {
@@ -1504,7 +1468,6 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
 	}
 
 	@Test def graph_pagedir() {
@@ -2105,20 +2068,7 @@ class Dot2ZestGraphCopierTests {
 
 	@Test def node_color() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (#[
-					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
-					ZestProperties.SHAPE__N
-				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-					val node = attrValue as GeometryNode<?>
-					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapeWithStylePrettyPrinter
 		
 		'''
 			graph {
@@ -2132,27 +2082,14 @@ class Dot2ZestGraphCopierTests {
 					node-size : Dimension(54.0, 36.0)
 				}
 			}
-		''')	
+		''')
 	}
 
 	@Test def node_colorscheme() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (#[
-					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
-					ZestProperties.SHAPE__N
-				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-					val node = attrValue as GeometryNode<?>
-					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapeWithStylePrettyPrinter
 		
-		// Fontcolor
+		// fontcolor
 		'''
 			graph {
 				1[fontcolor="aqua", colorscheme="svg"]
@@ -2168,7 +2105,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 		
-		// Fillcolor
+		// fillcolor
 		'''
 			graph {
 				1[fillcolor="aqua", colorscheme="svg", style=filled]
@@ -2204,20 +2141,7 @@ class Dot2ZestGraphCopierTests {
 
 	@Test def node_fillcolor() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (#[
-					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
-					ZestProperties.SHAPE__N
-				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-					val node = attrValue as GeometryNode<?>
-					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapeWithStylePrettyPrinter
 		
 		'''
 			graph {
@@ -2383,20 +2307,7 @@ class Dot2ZestGraphCopierTests {
 
 	@Test def node_shape() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (#[
-					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
-					ZestProperties.SHAPE__N
-				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-					val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
-					attrKey + " : " + geometry
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapePrettyPrinter
 		
 		'''
 			graph PolygonBasedNodeShapes {
@@ -2738,18 +2649,7 @@ class Dot2ZestGraphCopierTests {
 
 	@Test def node_shape_rounded_and_filled_styled() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				if (attrKey == ZestProperties.SHAPE__N
-							&& attrValue instanceof GeometryNode<?>) {
-					val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
-					return attrKey + " : " + geometry
-				} else {
-					return super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapePrettyPrinter
 		
 		'''
 			graph RoundedStyledPolygonBasedNodeShapes {
@@ -2821,20 +2721,7 @@ class Dot2ZestGraphCopierTests {
 
 	@Test def node_style() {
 		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new DotGraphPrettyPrinter {
-			
-			override protected prettyPrint(String attrKey, Object attrValue) {
-				return if (#[
-					DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
-					ZestProperties.SHAPE__N
-				].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-					val node = attrValue as GeometryNode<?>
-					attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
-				} else {
-					super.prettyPrint(attrKey, attrValue)
-				}
-			}
-		}
+		prettyPrinter = new NodeShapeWithStylePrettyPrinter
 		
 		'''
 			graph {
@@ -3174,8 +3061,7 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def dot_cluster_graph_pretty_print() {
-		val dot = DotTestUtils.clusteredGraph
-		'''
+		DotTestUtils.clusteredGraph.test('''
 			Graph {
 				_type : digraph
 				Node1 {
@@ -3226,12 +3112,11 @@ class Dot2ZestGraphCopierTests {
 				Edge2 from Node2.5 to Node1.1 {
 				}
 			}
-		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
+		''')
 	}
 
 	@Test def dot_nested_cluster_graph_pretty_print() {
-		val dot = DotTestUtils.nestedClusteredGraph
-		'''
+		DotTestUtils.nestedClusteredGraph.test('''
 			Graph {
 				_type : digraph
 				Node1 {
@@ -3287,7 +3172,7 @@ class Dot2ZestGraphCopierTests {
 				Edge2 from Node2.5 to Node1.1.1 {
 				}
 			}
-		'''.toString.assertEquals(prettyPrinter.prettyPrint(dot))
+		''')
 	}
 
 	@Test def simple_graph_with_additional_information() {
@@ -3935,5 +3820,44 @@ class Dot2ZestGraphCopierTests {
 		val regex = '''(@[^\\«nl»]*)'''
 		
 		text.replaceAll(regex, "")
+	}
+
+	private static class NodeShapePrettyPrinter extends DotGraphPrettyPrinter {
+		override protected prettyPrint(String attrKey, Object attrValue) {
+			return if (#[
+				DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+				ZestProperties.SHAPE__N
+			].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+				val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
+				attrKey + " : " + geometry
+			} else {
+				super.prettyPrint(attrKey, attrValue)
+			}
+		}
+	}
+
+	private static class NodeShapeWithStylePrettyPrinter extends DotGraphPrettyPrinter {
+		override protected prettyPrint(String attrKey, Object attrValue) {
+			return if (#[
+				DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+				ZestProperties.SHAPE__N
+			].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
+				val node = attrValue as GeometryNode<?>
+				attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
+			} else {
+				super.prettyPrint(attrKey, attrValue)
+			}
+		}
+	}
+
+	private static class EdgeDecorationPrettyPrinter extends DotGraphPrettyPrinter {
+		override protected prettyPrint(String attrKey, Object attrValue) {
+			return if (ZestProperties.TARGET_DECORATION__E.equals(attrKey) && attrValue instanceof Shape) {
+				val shape = attrValue as Shape
+				super.prettyPrint(attrKey, attrValue) + ", style: " + shape.style
+			} else {
+				super.prettyPrint(attrKey, attrValue)
+			}
+		}
 	}
 }
