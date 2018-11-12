@@ -557,12 +557,12 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	private def hasSameNumberOfDecorationStylesAs(javafx.scene.Node decoration, String... expected) {
-		val numberOfActualDecorations = if(decoration instanceof Group) decoration.children.size else 1
-		val numberOfExpectedDecorations = expected.size
+		val numberOfActualDecorationStyles = if(decoration instanceof Group) decoration.children.size else 1
+		val numberOfExpectedDecorationStyles = expected.size
 		
 		assertEquals(
 			"The number of expected decoration styles does not match the number of actual decoration styles.", 
-			numberOfExpectedDecorations, numberOfActualDecorations
+			numberOfExpectedDecorationStyles, numberOfActualDecorationStyles
 		)
 	}
 
