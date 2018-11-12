@@ -29,7 +29,6 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Ignore
 import org.junit.Rule
@@ -58,7 +57,6 @@ class Dot2ZestGraphCopierTests {
 
 	static extension DotImport dotImport
 	static extension Dot2ZestGraphCopier dot2ZestGraphCopier
-	extension DotGraphPrettyPrinter prettyPrinter
 
 	@BeforeClass
 	def static void beforeClass() {
@@ -66,11 +64,6 @@ class Dot2ZestGraphCopierTests {
 		
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
-	}
-
-	@Before
-	def void before() {
-		prettyPrinter = new DotGraphPrettyPrinter
 	}
 
 	@Test def edge_arrowhead() {
@@ -356,14 +349,11 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def edge_fillcolor() {
-		// use a custom pretty printer to access stroke fill
-		prettyPrinter = new EdgeDecorationPrettyPrinter
-		
 		'''
 			digraph {
 				1->2[fillcolor=red]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new EdgeDecorationPrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -1088,9 +1078,6 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def graph_clusterrank() {
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapePrettyPrinter
-		
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
 		'''
@@ -1100,7 +1087,7 @@ class Dot2ZestGraphCopierTests {
 					1
 				}
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 
@@ -1122,7 +1109,7 @@ class Dot2ZestGraphCopierTests {
 					1
 				}
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 
@@ -1144,7 +1131,7 @@ class Dot2ZestGraphCopierTests {
 					1
 				}
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 
@@ -1165,7 +1152,7 @@ class Dot2ZestGraphCopierTests {
 					1
 				}
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 
@@ -1183,10 +1170,6 @@ class Dot2ZestGraphCopierTests {
 
 	@Test def cluster_color() {
 		// This test shows current behaviour, it needs adaptation once the attribute is FULLY supported.
-		
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapeWithStylePrettyPrinter
-		
 		'''
 			digraph {
 				subgraph clusterName {
@@ -1194,7 +1177,7 @@ class Dot2ZestGraphCopierTests {
 					1
 				}
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 
@@ -2067,14 +2050,11 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def node_color() {
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapeWithStylePrettyPrinter
-		
 		'''
 			graph {
 				1[color="green"]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -2086,15 +2066,12 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def node_colorscheme() {
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapeWithStylePrettyPrinter
-		
 		// fontcolor
 		'''
 			graph {
 				1[fontcolor="aqua", colorscheme="svg"]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -2110,7 +2087,7 @@ class Dot2ZestGraphCopierTests {
 			graph {
 				1[fillcolor="aqua", colorscheme="svg", style=filled]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -2140,14 +2117,11 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def node_fillcolor() {
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapeWithStylePrettyPrinter
-		
 		'''
 			graph {
 				1[fillcolor=blue, style=filled]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -2306,9 +2280,6 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def node_shape() {
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapePrettyPrinter
-		
 		'''
 			graph PolygonBasedNodeShapes {
 				box[shape=box]
@@ -2371,7 +2342,7 @@ class Dot2ZestGraphCopierTests {
 				laarrow[shape=larrow]
 				lpromoter[shape=lpromoter]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : box
@@ -2648,9 +2619,6 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def node_shape_rounded_and_filled_styled() {
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapePrettyPrinter
-		
 		'''
 			graph RoundedStyledPolygonBasedNodeShapes {
 				node[style=rounded]
@@ -2659,7 +2627,7 @@ class Dot2ZestGraphCopierTests {
 				rectangle[shape=rectangle]
 				square[shape=square]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : box
@@ -2720,14 +2688,11 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def node_style() {
-		// use a customized pretty printer to provide a better formatted string representation of certain attributes property
-		prettyPrinter = new NodeShapeWithStylePrettyPrinter
-		
 		'''
 			graph {
 				1[style=dashed]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -2868,11 +2833,13 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def simple_graph() {
+		val dotGraphPrettyPrinter = new DotGraphPrettyPrinter
+		
 		val dot = DotTestUtils.simpleGraph
 		val zest = dot.copy
-
+		
 		// test graph
-		zest.test('''
+		zest.test(dotGraphPrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -2901,7 +2868,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 		
 		// test node
-		zest.nodes.get(0).test('''
+		zest.nodes.get(0).test(dotGraphPrettyPrinter, '''
 			Node1 {
 				element-label : 1
 				node-shape : GeometryNode
@@ -2910,7 +2877,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 		
 		// test edge
-		zest.edges.get(0).test('''
+		zest.edges.get(0).test(dotGraphPrettyPrinter, '''
 			Edge1 from Node1 to Node2 {
 				edge-curve : GeometryNode
 				edge-curve-css-style : -fx-stroke-line-cap: butt;
@@ -3789,27 +3756,38 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	private def assertZestConversion(CharSequence dotText, CharSequence expectedZestGraphText) {
+	private def assertZestConversion(CharSequence it, CharSequence expectedZestGraphText) {
+		assertZestConversion(new DotGraphPrettyPrinter, expectedZestGraphText)
+	}
+
+	/**
+	 * use a customized {@link DotGraphPrettyPrinter} to provide a better formatted string representation of certain attributes property
+	 */
+	private def assertZestConversion(CharSequence it, DotGraphPrettyPrinter prettyPrinter, CharSequence expectedZestGraphText) {
 		// ensure that the input text can be parsed and the ast can be created
-		val dotAst = dotText.parse
+		val dotAst = parse
 		dotAst.assertNoErrors
 		
 		val dotGraph = dotAst.importDot.get(0)
 		val zestGraph = dotGraph.copy
-		zestGraph.test(expectedZestGraphText)
+		zestGraph.test(prettyPrinter, expectedZestGraphText)
 	}
 
 	private def test(Graph actual, CharSequence expected) {
+		test(actual, new DotGraphPrettyPrinter, expected)
+	}
+
+	private def test(Graph actual, extension DotGraphPrettyPrinter prettyPrinter, CharSequence expected) {
 		// compare the string representation removing the objectIDs
 		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
 
-	private def test(Node actual, CharSequence expected) {
+	private def test(Node actual, extension DotGraphPrettyPrinter prettyPrinter, CharSequence expected) {
 		// compare the string representation removing the objectIDs
 		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
 
-	private def test(Edge actual, CharSequence expected) {
+	private def test(Edge actual, extension DotGraphPrettyPrinter prettyPrinter, CharSequence expected) {
 		// compare the string representation removing the objectIDs
 		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
