@@ -118,7 +118,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def edge_arrowtail() { 
+	@Test def edge_arrowtail001() {
 		// If no dir is set this attribute is ignored.
 		'''
 			digraph {
@@ -143,7 +143,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def edge_arrowtail002() {
 		'''
 			digraph {
 				1->2[arrowtail=box, dir=back]
@@ -167,7 +169,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def edge_arrowtail003() {
 		'''
 			digraph {
 				1->2[arrowtail=box, dir=both]
@@ -247,7 +251,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def edge_dir() {
+	@Test def edge_dir001() {
 		'''
 			digraph {
 				1->2[dir=back]
@@ -271,7 +275,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def edge_dir002() {
 		'''
 			digraph {
 				1->2[dir=both]
@@ -296,7 +302,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def edge_dir003() {
 		'''
 			digraph {
 				1->2[dir=none]
@@ -538,7 +546,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def edge_label() {
+	@Test def edge_label001() {
 		// undirected edge label
 		'''
 			graph {
@@ -563,7 +571,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def edge_label002() {
 		// undirected edge label indicating that the edge's name becomes its label
 		'''
 			graph {
@@ -588,7 +598,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def edge_label003() {
 		// directed edge label
 		'''
 			digraph {
@@ -614,7 +626,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
+	}
 
+	@Test def edge_label004() {
 		// directed edge label indicating that the edge's name becomes its label
 		'''
 			digraph {
@@ -642,7 +656,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def edge_label_and_id() {
+	@Test def edge_label_and_id001() {
 		'''
 			graph {
 				1--2[id="edgeID" label="edgeLabel"]
@@ -667,7 +681,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def edge_label_and_id002() {
 		'''
 			graph {
 				1--2[id="edgeID" label="\E"]
@@ -1077,7 +1093,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def graph_clusterrank() {
+	@Test def graph_clusterrank001() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
 		'''
@@ -1101,7 +1117,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_clusterrank002() {
 		'''
 			digraph {
 				graph [clusterrank=none];
@@ -1123,7 +1141,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_clusterrank003() {
 		'''
 			digraph {
 				graph [clusterrank=local];
@@ -1145,7 +1165,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_clusterrank004() {
 		'''
 			digraph {
 				subgraph clusterName {
@@ -1240,7 +1262,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def graph_forcelabels() {
+	@Test def graph_forcelabels001() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		// The tested graph needs to have very close elements for this attribute to have an effect.
 		// Note: forcelabels defaults to true.
@@ -1274,6 +1296,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
+	}
+
+	@Test def graph_forcelabels002() {
 		
 		'''
 			digraph {
@@ -1405,7 +1430,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 		}
 
-	@Test def graph_outputorder() {
+	@Test def graph_outputorder001() {
 		// This test shows current behaviour, if this attribute is relevant for Gef Dot, the test may have to be adapted.
 		'''
 			digraph {
@@ -1421,7 +1446,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+		}
+
+	@Test def graph_outputorder002() {
 		'''
 			digraph {
 				graph [outputorder=nodesfirst];
@@ -1436,7 +1463,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+		}
+
+	@Test def graph_outputorder003() {
 		'''
 			digraph {
 				graph [outputorder=edgesfirst];
@@ -1453,7 +1482,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def graph_pagedir() {
+	@Test def graph_pagedir001() {
 		// This test shows current behaviour, if this attribute is relevant for Gef Dot, the test may have to be adapted.
 		'''
 			digraph {
@@ -1469,7 +1498,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_pagedir002() {
 		'''
 			digraph {
 				graph [pagedir=BR];
@@ -1484,7 +1515,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_pagedir003() {
 		'''
 			digraph {
 				graph [pagedir=TL];
@@ -1499,7 +1532,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_pagedir004() {
 		'''
 			digraph {
 				graph [pagedir=TR];
@@ -1514,7 +1549,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_pagedir005() {
 		'''
 			digraph {
 				graph [pagedir=RB];
@@ -1529,7 +1566,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_pagedir006() {
 		'''
 			digraph {
 				graph [pagedir=RT];
@@ -1544,7 +1583,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_pagedir007() {
 		'''
 			digraph {
 				graph [pagedir=LB];
@@ -1559,7 +1600,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_pagedir008() {
 		'''
 			digraph {
 				graph [pagedir=LT];
@@ -1576,7 +1619,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def graph_rankdir() {
+	@Test def graph_rankdir001() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		'''
 			digraph {
@@ -1602,7 +1645,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_rankdir002() {
 		'''
 			digraph {
 				graph [rankdir=RL];
@@ -1627,7 +1672,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_rankdir003() {
 		'''
 			digraph {
 				graph [rankdir=TB];
@@ -1652,7 +1699,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_rankdir004() {
 		'''
 			digraph {
 				graph [rankdir=BT];
@@ -1679,7 +1728,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def graph_splines() {
+	@Test def graph_splines001() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		
 		'''
@@ -1707,7 +1756,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines002() {
 		'''
 			digraph {
 				graph [splines=none];
@@ -1733,7 +1784,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines003() {
 		'''
 			digraph {
 				graph [splines=false];
@@ -1758,7 +1811,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines004() {
 		'''
 			digraph {
 				graph [splines=line];
@@ -1783,7 +1838,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines005() {
 		'''
 			digraph {
 				graph [splines=curved];
@@ -1825,7 +1882,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines006() {
 		'''
 			digraph {
 				graph [splines=polyline];
@@ -1867,7 +1926,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines007() {
 		'''
 			digraph {
 				graph [splines=ortho];
@@ -1909,7 +1970,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines008() {
 		'''
 			digraph {
 				graph [splines=spline];
@@ -1951,7 +2014,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def graph_splines009() {
 		'''
 			digraph {
 				graph [splines=true];
@@ -2065,8 +2130,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def node_colorscheme() {
-		// fontcolor
+	@Test def node_colorscheme_fontcolor() {
 		'''
 			graph {
 				1[fontcolor="aqua", colorscheme="svg"]
@@ -2081,8 +2145,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
-		// fillcolor
+	}
+
+	@Test def node_colorscheme_fillcolor() {
 		'''
 			graph {
 				1[fillcolor="aqua", colorscheme="svg", style=filled]
@@ -2198,7 +2263,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def node_label() {
+	@Test def node_label001() {
 		'''
 			graph {
 				1[label="node label"]
@@ -2212,7 +2277,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def node_label002() {
 		// node label indicating that the node's name becomes its label
 		'''
 			graph {
@@ -2229,7 +2296,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def node_label_and_id() {
+	@Test def node_label_and_id001() {
 		'''
 			graph {
 				1[id="nodeID" label="nodeLabel"]
@@ -2244,7 +2311,9 @@ class Dot2ZestGraphCopierTests {
 				}
 			}
 		''')
-		
+	}
+
+	@Test def node_label_and_id002() {
 		'''
 			graph {
 				1[id="nodeID" label="\N"]
