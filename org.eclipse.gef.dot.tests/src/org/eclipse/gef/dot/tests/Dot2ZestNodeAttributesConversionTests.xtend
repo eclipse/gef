@@ -56,7 +56,7 @@ class Dot2ZestNodeAttributesConversionTests {
 
 	extension DotImport = new DotImport
 	static extension Dot2ZestAttributesConverter converter = new Dot2ZestAttributesConverter
-	
+
 	@BeforeClass
 	def static void before() {
 		converter.options.emulateLayout=false //TODO remove once FX tests work
@@ -201,11 +201,11 @@ class Dot2ZestNodeAttributesConversionTests {
 	}
 
 	@Test def node_label007() {
-			'''
-				digraph {
-					1[label="label \N"]
-				}
-			'''.assertNodeLabel("label 1")
+		'''
+			digraph {
+				1[label="label \N"]
+			}
+		'''.assertNodeLabel("label 1")
 	}
 
 	@Test def node_label008() {
@@ -567,7 +567,8 @@ class Dot2ZestNodeAttributesConversionTests {
 		''')
 	}
 
-	@Test def node_colorscheme001() { //The aqua color is not part of the default x11 colorscheme
+	@Test def node_colorscheme001() {
+		// The aqua color is not part of the default x11 colorscheme
 		'''
 			digraph{
 				1[colorscheme=svg, fillcolor="aqua", style=filled]
@@ -575,9 +576,10 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodeStyle('''
 			-fx-fill: #00ffff;
 		''')
-	}	
+	}
 
-	@Test def node_colorscheme002() { //The aqua color is not part of the default x11 colorscheme
+	@Test def node_colorscheme002() {
+		// The aqua color is not part of the default x11 colorscheme
 		'''
 			digraph{
 				1[colorscheme=svg, color="aqua"]

@@ -391,7 +391,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_sourceLabel008() {
 		'''
 			digraph {
@@ -464,7 +464,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_targetLabel008() {
 		'''
 			digraph {
@@ -475,7 +475,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_targetLabel009() {
 		'''
 			digraph {
