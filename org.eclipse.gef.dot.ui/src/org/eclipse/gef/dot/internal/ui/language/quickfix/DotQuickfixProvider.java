@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 itemis AG and others.
+ * Copyright (c) 2010, 2018 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,14 +10,18 @@
  *     Fabian Steeg    - intial Xtext generation (see bug #277380)
  *     Alexander Nyßen - initial implementation
  *     Tamas Miklossy (itemis AG) - Add quickfix support for all dot attributes (bug #513196)
+ *     Zoey Gerrit Prigge (itemis AG) - quickfix to remove redundant attributes (bug #540330)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.quickfix;
+
+import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.REDUNDANT_ATTRIBUTE;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedShape;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
@@ -81,6 +85,24 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 						}
 					});
 		}
+	}
+
+	@Fix(REDUNDANT_ATTRIBUTE)
+	public void fixRedundantAttribute(final Issue issue,
+			IssueResolutionAcceptor acceptor) {
+		if (issue.getData() == null || issue.getData().length == 0) {
+			return;
+		}
+
+		String attributeName = issue.getData()[0];
+
+		ISemanticModification semanticModification = (EObject element,
+				IModificationContext context) -> EcoreUtil.remove(element);
+		String label = "Remove '" + attributeName + "' attribute."; //$NON-NLS-1$ //$NON-NLS-2$
+		String description = "Remove the redundant '" + attributeName //$NON-NLS-1$
+				+ "' attribute."; //$NON-NLS-1$
+
+		acceptor.accept(issue, label, description, null, semanticModification);
 	}
 
 	@Fix(DotAttributes.ARROWHEAD__E)

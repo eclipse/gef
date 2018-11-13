@@ -8,6 +8,7 @@
  *
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *    Zoey G. Prigge (itemis AG) - quickfix to remove redundant attributes (bug #540330)
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -31,6 +32,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.INVALID_EDGE_OPERATOR
+import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.REDUNDANT_ATTRIBUTE
 
 import static extension org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils.getDocument
 import static extension org.junit.Assert.assertEquals
@@ -596,6 +598,30 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="rounded"}}'''),
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="solid"}}'''),
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped"}}''')
+		)
+	}
+
+	@Test def redundant_attribute_single() {
+		'''graph{1[label="foo", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
+			new Quickfix("Remove 'label' attribute.",	"Remove the redundant 'label' attribute.",	'''graph{1[label="faa"]}''')
+		)
+	}
+
+	@Test def redundant_attribute_mixed() {
+		'''graph{1[label="foo", style="rounded", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
+			new Quickfix("Remove 'label' attribute.", 	"Remove the redundant 'label' attribute.",	'''graph{1[style="rounded", label="faa"]}''')
+		)
+	}
+
+	@Test def redundant_attribute_edge() {
+		'''graph{1--2[style="dotted", style="dashed"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
+			new Quickfix("Remove 'style' attribute.",	"Remove the redundant 'style' attribute.",	'''graph{1--2[style="dashed"]}''')
+		)
+	}
+
+	@Test def redundant_attribute_attr_stmt() {
+		'''graph{graph[label="dotted", label="dashed"]1}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
+			new Quickfix("Remove 'label' attribute.",	"Remove the redundant 'label' attribute.",	'''graph{graph[label="dashed"]1}''')
 		)
 	}
 
