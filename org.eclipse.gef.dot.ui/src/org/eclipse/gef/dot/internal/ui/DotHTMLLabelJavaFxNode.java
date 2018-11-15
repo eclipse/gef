@@ -24,13 +24,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.parser.antlr.DotHtmlLabelParser;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.xtext.parser.IParseResult;
 
 import com.google.inject.Injector;
@@ -129,8 +129,8 @@ public class DotHTMLLabelJavaFxNode {
 	}
 
 	private HtmlLabel parseLabel(final String label) {
-		Injector labelInjector = new DotHtmlLabelStandaloneSetup()
-				.createInjectorAndDoEMFRegistration();
+		Injector labelInjector = DotActivator.getInstance().getInjector(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
 		DotHtmlLabelParser parser = labelInjector
 				.getInstance(DotHtmlLabelParser.class);
 		IParseResult result = parser

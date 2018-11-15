@@ -17,7 +17,6 @@ import java.io.StringReader;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.DotAstHelper;
-import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup;
 import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.HSVColor;
@@ -25,6 +24,7 @@ import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
@@ -81,8 +81,8 @@ public class DotHoverProvider extends DefaultEObjectHoverProvider {
 	}
 
 	private Color parse(String attributeValue) {
-		Injector dotColorInjector = new DotColorStandaloneSetup()
-				.createInjectorAndDoEMFRegistration();
+		Injector dotColorInjector = DotActivator.getInstance().getInjector(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLOR);
 		IParser parser = dotColorInjector.getInstance(IParser.class);
 
 		IParseResult result = parser.parse(new StringReader(attributeValue));
