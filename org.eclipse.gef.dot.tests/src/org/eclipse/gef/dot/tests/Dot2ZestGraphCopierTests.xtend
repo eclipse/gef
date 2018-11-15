@@ -14,6 +14,8 @@
 package org.eclipse.gef.dot.tests;
 
 import com.google.inject.Inject
+import javafx.beans.property.ReadOnlyMapProperty
+import javafx.scene.Group
 import javafx.scene.shape.Shape
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
@@ -66,12 +68,12 @@ class Dot2ZestGraphCopierTests {
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
 	}
 
-	@Test def edge_arrowhead() {
+	@Test def edge_arrowhead001() {
 		'''
 			digraph {
-				1->2[arrowhead=vee]
+				1->2
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new EdgeDecorationPrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -86,7 +88,64 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Group
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
+				}
+			}
+		''')
+	}
+
+	@Test def edge_arrowhead002() {
+		'''
+			digraph {
+				1->2[arrowhead=vee]
+			}
+		'''.assertZestConversion(new EdgeDecorationPrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Group[
+						Polygon[points=[0.0, 0.0, 10.0, -5.0, 6.666666666666667, 0.0, 10.0, 5.0], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
+					]
+				}
+			}
+		''')
+	}
+
+	@Test def edge_arrowhead003() {
+		'''
+			digraph {
+				1->2[arrowhead=teevee]
+			}
+		'''.assertZestConversion(new EdgeDecorationPrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Group[
+						Polygon[points=[0.0, -5.0, 2.5, -5.0, 2.5, 5.0, 0.0, 5.0], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
+						Polygon[points=[0.0, 0.0, 10.0, -5.0, 6.666666666666667, 0.0, 10.0, 5.0], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
+					]
 				}
 			}
 		''')
@@ -96,6 +155,7 @@ class Dot2ZestGraphCopierTests {
 		'''
 			digraph {
 				1->2[arrowsize=50]
+				2->3
 			}
 		'''.assertZestConversion('''
 			Graph {
@@ -109,10 +169,20 @@ class Dot2ZestGraphCopierTests {
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
+				Node3 {
+					element-label : 3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 500.0, -166.66666666666666, 500.0, 166.66666666666666], fill=0x000000ff]
+				}
+				Edge2 from Node2 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')
@@ -124,7 +194,7 @@ class Dot2ZestGraphCopierTests {
 			digraph {
 				1->2[arrowtail=vee]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new EdgeDecorationPrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -139,7 +209,7 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
 				}
 			}
 		''')
@@ -150,7 +220,7 @@ class Dot2ZestGraphCopierTests {
 			digraph {
 				1->2[arrowtail=box, dir=back]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new EdgeDecorationPrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -165,7 +235,9 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-source-decoration : Group
+					edge-source-decoration : Group[
+						Polygon[points=[0.0, 5.0, 0.0, -5.0, 10.0, -5.0, 10.0, 5.0], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
+					]
 				}
 			}
 		''')
@@ -176,7 +248,7 @@ class Dot2ZestGraphCopierTests {
 			digraph {
 				1->2[arrowtail=box, dir=both]
 			}
-		'''.assertZestConversion('''
+		'''.assertZestConversion(new EdgeDecorationPrettyPrinter, '''
 			Graph {
 				Node1 {
 					element-label : 1
@@ -191,8 +263,10 @@ class Dot2ZestGraphCopierTests {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-source-decoration : Group
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-source-decoration : Group[
+						Polygon[points=[0.0, 5.0, 0.0, -5.0, 10.0, -5.0, 10.0, 5.0], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
+					]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff], style: -fx-stroke: #000000;-fx-fill: #000000;
 				}
 			}
 		''')
@@ -3875,8 +3949,8 @@ class Dot2ZestGraphCopierTests {
 				DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
 				ZestProperties.SHAPE__N
 			].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
-				val geometry = (attrValue as GeometryNode<?>).geometryProperty.get
-				attrKey + " : " + geometry
+				val node = attrValue as GeometryNode<?>
+				'''«attrKey» : «node.geometryProperty.get»'''
 			} else {
 				super.prettyPrint(attrKey, attrValue)
 			}
@@ -3890,7 +3964,7 @@ class Dot2ZestGraphCopierTests {
 				ZestProperties.SHAPE__N
 			].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
 				val node = attrValue as GeometryNode<?>
-				attrKey + " : " + node.geometryProperty.get + ", style: " + node.style
+				'''«attrKey» : «node.geometryProperty.get», style: «node.style»'''
 			} else {
 				super.prettyPrint(attrKey, attrValue)
 			}
@@ -3898,13 +3972,34 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	private static class EdgeDecorationPrettyPrinter extends DotGraphPrettyPrinter {
+		String startIndent
+		
+		override protected String prettyPrint(
+			ReadOnlyMapProperty<String, Object> attributesProperty,
+			String startIndent) {
+				this.startIndent = startIndent
+				super.prettyPrint(attributesProperty, startIndent)
+		}
+		
 		override protected prettyPrint(String attrKey, Object attrValue) {
-			return if (ZestProperties.TARGET_DECORATION__E.equals(attrKey) && attrValue instanceof Shape) {
-				val shape = attrValue as Shape
-				super.prettyPrint(attrKey, attrValue) + ", style: " + shape.style
+			return if (#[
+				ZestProperties.SOURCE_DECORATION__E,
+				ZestProperties.TARGET_DECORATION__E
+			].contains(attrKey)) {
+				switch attrValue {
+					Shape : '''«super.prettyPrint(attrKey, attrValue)», style: «attrValue.style»'''
+					Group : '''«attrKey» : «attrValue.prettyPrint»''' 
+				}
 			} else {
 				super.prettyPrint(attrKey, attrValue)
 			}
 		}
+		
+		private def prettyPrint(Group it) '''
+			Group[
+				«FOR child : children»
+					«startIndent»«child», style: «child.style»
+				«ENDFOR»
+			«startIndent»]'''
 	}
 }
