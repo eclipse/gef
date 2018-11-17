@@ -462,12 +462,12 @@ class DotValidatorTests {
 	}
 
 	@Test def redundant_attribute_single() {
-		'''graph{1[label="foo", label="faa"]}'''.assertRedundantAttributeWarning('''label''',
+		'''graph{1[label="foo", label="faa"]}'''.assertRedundantAttributeWarning('''label="foo"''',
 		"Redundant attribute value 'foo' for attribute 'label' is ignored.")
 	}
 
 	@Test def redundant_attribute_mixed() {
-		'''graph{1[label="foo", style="rounded", label="faa"]}'''.assertRedundantAttributeWarning('''label''',
+		'''graph{1[label="foo", style="rounded", label="faa"]}'''.assertRedundantAttributeWarning('''label="foo"''',
 			"Redundant attribute value 'foo' for attribute 'label' is ignored."
 		)
 	}
@@ -485,13 +485,13 @@ class DotValidatorTests {
 	}
 
 	@Test def redundant_attribute_edge() {
-		'''graph{1--2[style="dotted", style="dashed"]}'''.assertRedundantAttributeWarning('''style''',
+		'''graph{1--2[style="dotted", style="dashed"]}'''.assertRedundantAttributeWarning('''style="dotted"''',
 			"Redundant attribute value 'dotted' for attribute 'style' is ignored."
 		)
 	}
 
 	@Test def redundant_attribute_attr_stmt() {
-		'''graph{graph[label="dotted", label="dashed"]1}'''.assertRedundantAttributeWarning('''label''',
+		'''graph{graph[label="dotted", label="dashed"]1}'''.assertRedundantAttributeWarning('''label="dotted"''',
 			"Redundant attribute value 'dotted' for attribute 'label' is ignored."
 		)
 	}

@@ -352,8 +352,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				warning("Redundant attribute value '"
 						+ attribute.getValue().toValue() + "' for attribute '"
 						+ attribute.getName() + "' is ignored.", attribute,
-						DotPackage.eINSTANCE.getAttribute_Name(),
-						REDUNDANT_ATTRIBUTE, attribute.getName().toString());
+						null, REDUNDANT_ATTRIBUTE,
+						attribute.getName().toString());
 			}
 		}
 	}
