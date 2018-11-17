@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,22 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - implement additional validation rules
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
+import org.eclipse.gef.dot.internal.language.style.Style;
 import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.dot.internal.language.style.StylePackage;
 import org.eclipse.xtext.nodemodel.INode;
@@ -90,6 +95,30 @@ public class DotStyleJavaValidator extends
 			reportRangeBasedWarning(
 					"The usage of setlinewidth is deprecated, use the penwidth attribute instead.",
 					styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
+		}
+	}
+
+	/**
+	 * Validates that the used {@link Style} does not contains duplicates.
+	 * Generates warnings in case of the usage of duplicated style items.
+	 *
+	 * @param style
+	 *            The {@link Style} to check.
+	 */
+	@Check
+	public void checkDuplicatedStyleItem(Style style) {
+		Set<String> definedStyles = new HashSet<>();
+
+		EList<StyleItem> styleItems = style.getStyleItems();
+		// iterate backwards as the last styleItem value will be used
+		for (int i = styleItems.size() - 1; i >= 0; i--) {
+			StyleItem styleItem = styleItems.get(i);
+			String name = styleItem.getName();
+			if (!definedStyles.add(name)) {
+				reportRangeBasedWarning(
+						"The style value '" + name + "' is duplicated.",
+						styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
+			}
 		}
 	}
 

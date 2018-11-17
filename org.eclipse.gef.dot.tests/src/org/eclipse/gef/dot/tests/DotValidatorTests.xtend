@@ -79,6 +79,22 @@ class DotValidatorTests {
 		dotAst.assertWarning(ATTRIBUTE, STYLE__GCNE, 249 + 11 * l, 12,"The style value 'setlinewidth(5), dotted' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.")
 	}
 
+	@Test def duplicated_style1() {
+		'''
+			graph {
+				1[style="bold, bold"]
+			}
+		'''.assertStyleWarning("bold", "The style value 'bold, bold' is not semantically correct: The style value 'bold' is duplicated.")
+	}
+
+	@Test def duplicated_style2() {
+		'''
+			graph {
+				1--2 [style="dashed, dashed"]
+			}
+		'''.assertStyleWarning("dashed", "The style value 'dashed, dashed' is not semantically correct: The style value 'dashed' is duplicated.")
+	}
+
 	@Test def arrowshapes_direction_both() {
 		"arrowshapes_direction_both.dot".readFile.assertNoIssues
 	}
