@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
@@ -48,14 +47,15 @@ public class DotStyleJavaValidator extends
 	@Check
 	public void checkStyleItemConformsToContext(StyleItem styleItem) {
 		// The use of setlinewidth is deprecated, but still valid
-		if (styleItem.getName().equals("setlinewidth")) {
+		String name = styleItem.getName();
+		if (name.equals("setlinewidth")) {
 			return;
 		}
 
 		Context attributeContext = getAttributeContext();
 		if (Context.NODE.equals(attributeContext)) {
 			for (Object validValue : NodeStyle.values()) {
-				if (validValue.toString().equals(styleItem.getName())) {
+				if (validValue.toString().equals(name)) {
 					return;
 				}
 			}
@@ -63,11 +63,10 @@ public class DotStyleJavaValidator extends
 			reportRangeBaseError(
 					"Value should be one of "
 							+ getFormattedValues(NodeStyle.values()) + ".",
-					styleItem, StylePackage.Literals.STYLE_ITEM__NAME,
-					attributeContext);
+					styleItem, attributeContext);
 		} else if (Context.EDGE.equals(attributeContext)) {
 			for (Object validValue : EdgeStyle.values()) {
-				if (validValue.toString().equals(styleItem.getName())) {
+				if (validValue.toString().equals(name)) {
 					return;
 				}
 			}
@@ -75,8 +74,7 @@ public class DotStyleJavaValidator extends
 			reportRangeBaseError(
 					"Value should be one of "
 							+ getFormattedValues(EdgeStyle.values()) + ".",
-					styleItem, StylePackage.Literals.STYLE_ITEM__NAME,
-					attributeContext);
+					styleItem, attributeContext);
 		}
 		// do nothing if the DOT attribute context cannot be determined. In such
 		// cases this validation rule should have no effect.
@@ -94,7 +92,7 @@ public class DotStyleJavaValidator extends
 		if (styleItem.getName().equals("setlinewidth")) {
 			reportRangeBasedWarning(
 					"The usage of setlinewidth is deprecated, use the penwidth attribute instead.",
-					styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
+					styleItem);
 		}
 	}
 
@@ -117,16 +115,15 @@ public class DotStyleJavaValidator extends
 			if (!definedStyles.add(name)) {
 				reportRangeBasedWarning(
 						"The style value '" + name + "' is duplicated.",
-						styleItem, StylePackage.Literals.STYLE_ITEM__NAME);
+						styleItem);
 			}
 		}
 	}
 
-	private void reportRangeBasedWarning(String message, StyleItem styleItem,
-			EStructuralFeature feature) {
+	private void reportRangeBasedWarning(String message, StyleItem styleItem) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(styleItem,
-				feature);
+				StylePackage.Literals.STYLE_ITEM__NAME);
 
 		if (nodes.size() != 1) {
 			throw new IllegalStateException(
@@ -146,10 +143,10 @@ public class DotStyleJavaValidator extends
 	}
 
 	private void reportRangeBaseError(String message, StyleItem styleItem,
-			EStructuralFeature feature, Context attributeContext) {
+			Context attributeContext) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(styleItem,
-				feature);
+				StylePackage.Literals.STYLE_ITEM__NAME);
 
 		if (nodes.size() != 1) {
 			throw new IllegalStateException(
