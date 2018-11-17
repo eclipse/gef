@@ -462,11 +462,14 @@ class DotValidatorTests {
 	}
 
 	@Test def redundant_attribute_single() {
-		'''graph{1[label="foo", label="faa"]}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'foo' for attribute 'label' is ignored.")
+		'''graph{1[label="foo", label="faa"]}'''.assertRedundantAttributeWarning('''label''',
+		"Redundant attribute value 'foo' for attribute 'label' is ignored.")
 	}
 
 	@Test def redundant_attribute_mixed() {
-		'''graph{1[label="foo", style="rounded", label="faa"]}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'foo' for attribute 'label' is ignored.")
+		'''graph{1[label="foo", style="rounded", label="faa"]}'''.assertRedundantAttributeWarning('''label''',
+			"Redundant attribute value 'foo' for attribute 'label' is ignored."
+		)
 	}
 
 	@Test def redundant_attribute_multiple() {
@@ -482,11 +485,15 @@ class DotValidatorTests {
 	}
 
 	@Test def redundant_attribute_edge() {
-		'''graph{1--2[style="dotted", style="dashed"]}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'dotted' for attribute 'style' is ignored.")
+		'''graph{1--2[style="dotted", style="dashed"]}'''.assertRedundantAttributeWarning('''style''',
+			"Redundant attribute value 'dotted' for attribute 'style' is ignored."
+		)
 	}
 
 	@Test def redundant_attribute_attr_stmt() {
-		'''graph{graph[label="dotted", label="dashed"]1}'''.parse.assertRedundantAttributeWarning("Redundant attribute value 'dotted' for attribute 'label' is ignored.")
+		'''graph{graph[label="dotted", label="dashed"]1}'''.assertRedundantAttributeWarning('''label''',
+			"Redundant attribute value 'dotted' for attribute 'label' is ignored."
+		)
 	}
 
 	private def assertArrowTypeWarning(DotAst dotAst, String message) {
@@ -538,6 +545,12 @@ class DotValidatorTests {
 
 	private def assertRedundantAttributeWarning(DotAst dotAst, String message) {
 		dotAst.assertWarning(ATTRIBUTE, REDUNDANT_ATTRIBUTE, message)
+	}
+
+	private def assertRedundantAttributeWarning(CharSequence text, String errorProneText, String message) {
+		val offset = text.toString.indexOf(errorProneText)
+		val length = errorProneText.length
+		text.parse.assertWarning(ATTRIBUTE, REDUNDANT_ATTRIBUTE, offset, length, message)
 	}
 
 	private def assertNumberOfIssues(DotAst dotAst, int expectedNumberOfIssues) {
