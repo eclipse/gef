@@ -150,6 +150,15 @@ class DotAstHelper {
 				return dependedOnValue.toValue
 			}
 		}
+		
+		// attribute nested below Subgraph
+		val subgraph = dependentAttribute.getContainerOfType(Subgraph)
+		if(subgraph !== null) {
+			val dependedOnValue = subgraph.getAttributeValue(attributeName)
+			if (dependedOnValue !== null) {
+				return dependedOnValue.toValue
+			}
+		}
 
 		// attribute nested below Graph
 		val dotGraph = dependentAttribute.getContainerOfType(DotGraph)

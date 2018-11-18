@@ -387,6 +387,32 @@ class DotHoverTests extends AbstractEditorTest {
 			</table>
 		''')
 	}
+	
+	@Test def cluster_bgcolor() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent3 bgcolor=2
+					1
+				}
+			}
+		'''.assertHoveringResult("2",  '''
+			<table border=1>
+				<tr>
+					<td><b>color preview</b></td>
+					<td><b>color scheme</b></td>
+					<td><b>color name</b></td>
+					<td><b>color code</b></td>
+				</tr>
+				<tr>
+					<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:#beaed4;"</div></td>
+					<td align="center">accent3</td>
+					<td align="center">2</td>
+					<td align="center">#beaed4</td>
+				</tr>
+			</table>
+		''')
+	}
 
 	private def assertHoveringResult(CharSequence it, String textUnderHover, String expected){
 		// given
