@@ -37,12 +37,12 @@ import static extension org.eclipse.xtext.EcoreUtil2.*
  * This class provides helper methods for walking the DOT abstract syntax tree.
  */
 class DotAstHelper {
-	
-	def static NodeId getNodeId(NodeId nodeId){
+
+	def static NodeId getNodeId(NodeId nodeId) {
 		val dotGraph = nodeId.getContainerOfType(DotGraph)
 		
 		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
-			if(nodeStmt.node!==null && nodeStmt.node.name == nodeId.name){
+			if(nodeStmt.node!==null && nodeStmt.node.name == nodeId.name) {
 				return nodeStmt.node
 			}
 		}
@@ -53,15 +53,15 @@ class DotAstHelper {
 	/*
 	 * Collects all nodeId EObjects having the same name as the baseNodeId
 	 */
-	def static List<NodeId> getAllNodeIds(NodeId baseNodeId){
+	def static List<NodeId> getAllNodeIds(NodeId baseNodeId) {
 		val result = newLinkedList
 		val dotGraph = baseNodeId.getContainerOfType(DotGraph)
 		
 		// consider nodes
 		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
 			val nodeId = nodeStmt.node
-			if(nodeId!==null && nodeId.name == baseNodeId.name && nodeId!=baseNodeId){
-				result.add(nodeId)
+			if(nodeId !== null && nodeId.name == baseNodeId.name && nodeId != baseNodeId) {
+				result += nodeId
 			}
 		}
 		
@@ -70,23 +70,23 @@ class DotAstHelper {
 			
 			// consider the left side of the edges
 			var nodeId = edgeStmtNode.node
-			if(nodeId!==null && nodeId.name == baseNodeId.name && nodeId!==baseNodeId){
-				result.add(nodeId)
+			if(nodeId !== null && nodeId.name == baseNodeId.name && nodeId !== baseNodeId) {
+				result += nodeId
 			}
 			
 			// consider the right side of the edges
 			val edgeRHS = edgeStmtNode.edgeRHS.head
 			if (edgeRHS instanceof EdgeRhsNode){
 				nodeId = edgeRHS.node
-				if(nodeId!==null && nodeId.name == baseNodeId.name && nodeId!==baseNodeId){
-					result.add(nodeId)
+				if(nodeId !== null && nodeId.name == baseNodeId.name && nodeId !== baseNodeId) {
+					result += nodeId
 				}
 			}
 		}
 		
 		result
 	}
-	
+
 	/**
 	 * Returns the color scheme attribute value that is set for the given
 	 * attribute.
@@ -100,7 +100,7 @@ class DotAstHelper {
 	def static String getColorSchemeAttributeValue(Attribute attribute) {
 		getDependedOnAttributeValue(attribute, DotAttributes.COLORSCHEME__GCNE)
 	}
-	
+
 	/**
 	 * 
 	 * Returns an attribute value specified by attributeName that is set for given attribute
@@ -110,20 +110,20 @@ class DotAstHelper {
 	 * @param attributeName
 	 * 			The name of the attribute that the dependentAttribute depends on.
 	 * @return The attribute value set for the attribute specified by attributeName
-	 */ 
+	 */
 	def static String getDependedOnAttributeValue(Attribute dependentAttribute, String attributeName) {
 		// attribute nested below EdgeStmtNode
-		var edgeStmtNode = dependentAttribute.getContainerOfType(EdgeStmtNode)
+		val edgeStmtNode = dependentAttribute.getContainerOfType(EdgeStmtNode)
 		if (edgeStmtNode !== null) {
 			// look for a locally defined 'dependedOnValue' attribute
-			var ID dependedOnValue = edgeStmtNode.attrLists.getAttributeValue(attributeName)
+			var dependedOnValue = edgeStmtNode.attrLists.getAttributeValue(attributeName)
 			if (dependedOnValue !== null) {
-				return dependedOnValue.toValue()
+				return dependedOnValue.toValue
 			}
 			// look for a globally defined 'dependedOnValue' attribute
 			dependedOnValue = edgeStmtNode.getGlobalDependedOnValue(AttributeType.EDGE, attributeName)
 			if (dependedOnValue !== null) {
-				return dependedOnValue.toValue()
+				return dependedOnValue.toValue
 			}
 		}
 
@@ -131,59 +131,58 @@ class DotAstHelper {
 		val nodeStmt = dependentAttribute.getContainerOfType(NodeStmt)
 		if (nodeStmt !== null) {
 			// look for a locally defined 'dependedOnValue' attribute
-			var ID dependedOnValue = nodeStmt.attrLists.getAttributeValue(attributeName)
+			var dependedOnValue = nodeStmt.attrLists.getAttributeValue(attributeName)
 			if (dependedOnValue !== null) {
-				return dependedOnValue.toValue()
+				return dependedOnValue.toValue
 			}
 			// look for a globally defined 'dependedOnValue' attribute
 			dependedOnValue = nodeStmt.getGlobalDependedOnValue(AttributeType.NODE, attributeName)
 			if (dependedOnValue !== null) {
-				return dependedOnValue.toValue()
+				return dependedOnValue.toValue
 			}
 		}
 
 		// attribute nested below AttrStmt
 		val attrStmt = dependentAttribute.getContainerOfType(AttrStmt)
 		if (attrStmt !== null) {
-			var ID dependedOnValue = attrStmt.attrLists.getAttributeValue(attributeName)
+			val dependedOnValue = attrStmt.attrLists.getAttributeValue(attributeName)
 			if (dependedOnValue !== null) {
-				return dependedOnValue.toValue()
+				return dependedOnValue.toValue
 			}
 		}
 
 		// attribute nested below Graph
 		val dotGraph = dependentAttribute.getContainerOfType(DotGraph)
 		if (dotGraph !== null) {
-			var ID dependedOnValue = dotGraph.getAttributeValueAll(attributeName)
+			var dependedOnValue = dotGraph.getAttributeValueAll(attributeName)
 			if (dependedOnValue !== null) {
-				return dependedOnValue.toValue()
+				return dependedOnValue.toValue
 			}
 			// look for a globally defined 'dependedOnValue' attribute
 			dependedOnValue = dotGraph.getGlobalDependedOnValue(AttributeType.GRAPH, attributeName)
 			if (dependedOnValue !== null) {
-				return dependedOnValue.toValue()
+				return dependedOnValue.toValue
 			}
 		}
 
-		return null
+		null
 	}
-	
-	private def static ID getGlobalDependedOnValue(EObject eObject, 
-			AttributeType attributeType, String attributeName) {
+
+	private def static ID getGlobalDependedOnValue(EObject eObject, AttributeType attributeType, String attributeName) {
 		// consider subgraph first
-		var EObject container = eObject.getContainerOfType(Subgraph)
-		if(container!==null){
-			val value = (container as Subgraph).stmts.getAttributeValue(attributeType, attributeName)
-			if (value!==null){
+		val subgraph = eObject.getContainerOfType(Subgraph)
+		if(subgraph !== null) {
+			val value = subgraph.stmts.getAttributeValue(attributeType, attributeName)
+			if (value !== null) {
 				return value
 			}
 		}
 		
 		// consider graph second
-		container = eObject.getContainerOfType(DotGraph)
-		if(container!==null){
-			val value = (container as DotGraph).stmts.getAttributeValue(attributeType, attributeName)
-			if (value!==null){
+		val dotGraph = eObject.getContainerOfType(DotGraph)
+		if(dotGraph !== null){
+			val value = dotGraph.stmts.getAttributeValue(attributeType, attributeName)
+			if (value !== null) {
 				return value
 			}
 		}
@@ -204,7 +203,7 @@ class DotAstHelper {
 
 	def static ID getAttributeValue(DotGraph graph, String name) {
 		for (stmt : graph.stmts) {
-			var ID value = switch stmt {
+			val value = switch stmt {
 				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
 				Attribute:
 					stmt.getAttributeValue(name)
@@ -218,7 +217,7 @@ class DotAstHelper {
 
 	def static ID getAttributeValueAll(DotGraph graph, String name) {
 		for (stmt : graph.stmts) {
-			var ID value = switch stmt {
+			val value = switch stmt {
 				AttrStmt:
 					stmt.attrLists.getAttributeValue(name)
 				Attribute:
@@ -230,10 +229,10 @@ class DotAstHelper {
 		}
 		null
 	}
-	
+
 	def static ID getAttributeValue(Subgraph subgraph, String name) {
 		for (stmt : subgraph.stmts) {
-			var ID value = switch stmt {
+			val value = switch stmt {
 				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
 				Attribute:
 					stmt.getAttributeValue(name)
@@ -276,5 +275,4 @@ class DotAstHelper {
 		}
 		null
 	}
-	
 }
