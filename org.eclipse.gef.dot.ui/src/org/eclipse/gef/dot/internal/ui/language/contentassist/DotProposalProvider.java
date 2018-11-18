@@ -215,8 +215,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
 				case DotAttributes.COLORSCHEME__GCNE:
-					proposeAttributeValues(DotColors.getColorSchemes(), context,
-							acceptor);
+					proposeColorSchemeAttributeValues(context, acceptor);
 					break;
 				case DotAttributes.DIR__E:
 					proposeAttributeValues(DirType.values(), context, acceptor);
@@ -269,8 +268,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				case DotAttributes.COLORSCHEME__GCNE:
-					proposeAttributeValues(DotColors.getColorSchemes(), context,
-							acceptor);
+					proposeColorSchemeAttributeValues(context, acceptor);
 					break;
 				case DotAttributes.FORCELABELS__G:
 					proposeAttributeValues(booleanAttributeValuesProposals,
@@ -319,8 +317,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
 				case DotAttributes.COLORSCHEME__GCNE:
-					proposeAttributeValues(DotColors.getColorSchemes(), context,
-							acceptor);
+					proposeColorSchemeAttributeValues(context, acceptor);
 					break;
 				case DotAttributes.FIXEDSIZE__N:
 					proposeAttributeValues(booleanAttributeValuesProposals,
@@ -364,8 +361,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
 				case DotAttributes.COLORSCHEME__GCNE:
-					proposeAttributeValues(DotColors.getColorSchemes(), context,
-							acceptor);
+					proposeColorSchemeAttributeValues(context, acceptor);
 					break;
 				case DotAttributes.FILLCOLOR__CNE:
 					proposeColorListAttributeValues(attribute, context,
@@ -482,6 +478,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 		// reset the state of the DotColorProposalProvider
 		DotColorProposalProvider.globalColorScheme = null;
+	}
+
+	private void proposeColorSchemeAttributeValues(ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		proposeAttributeValues(DotColors.getColorSchemes(), context, acceptor);
 	}
 
 	private void proposeHtmlLabelAttributeValues(Attribute attribute,
