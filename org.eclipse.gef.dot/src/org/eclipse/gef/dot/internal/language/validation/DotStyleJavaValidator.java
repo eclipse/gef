@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,43 +53,37 @@ public class DotStyleJavaValidator extends
 		}
 
 		Context attributeContext = getAttributeContext();
-		if (Context.NODE.equals(attributeContext)) {
-			for (Object validValue : NodeStyle.values()) {
-				if (validValue.toString().equals(name)) {
-					return;
-				}
-			}
-			// check each style item with the corresponding parser
-			reportRangeBaseError(
-					"Value should be one of "
-							+ getFormattedValues(NodeStyle.values()) + ".",
-					styleItem, attributeContext);
-		} else if (Context.EDGE.equals(attributeContext)) {
-			for (Object validValue : EdgeStyle.values()) {
-				if (validValue.toString().equals(name)) {
-					return;
-				}
-			}
-			// check each style item with the corresponding parser
-			reportRangeBaseError(
-					"Value should be one of "
-							+ getFormattedValues(EdgeStyle.values()) + ".",
-					styleItem, attributeContext);
-		} else if (Context.GRAPH.equals(attributeContext)
-				|| Context.CLUSTER.equals(attributeContext)) {
-			for (Object validValue : ClusterStyle.values()) {
-				if (validValue.toString().equals(name)) {
-					return;
-				}
-			}
-			// check each style item with the corresponding parser
-			reportRangeBaseError(
-					"Value should be one of "
-							+ getFormattedValues(ClusterStyle.values()) + ".",
-					styleItem, attributeContext);
+
+		switch (attributeContext) {
+		case GRAPH:
+		case CLUSTER:
+			validateStyleItem(styleItem, ClusterStyle.VALUES, attributeContext);
+			break;
+		case NODE:
+			validateStyleItem(styleItem, NodeStyle.VALUES, attributeContext);
+			break;
+		case EDGE:
+			validateStyleItem(styleItem, EdgeStyle.VALUES, attributeContext);
+			break;
+		default:
+			// do nothing if the DOT attribute context cannot be determined. In
+			// such
+			// cases this validation rule should have no effect.
+			break;
 		}
-		// do nothing if the DOT attribute context cannot be determined. In such
-		// cases this validation rule should have no effect.
+	}
+
+	private void validateStyleItem(StyleItem styleItem, List<?> validValues,
+			Context attributeContext) {
+		for (Object validValue : validValues) {
+			if (validValue.toString().equals(styleItem.getName())) {
+				return;
+			}
+		}
+		// check each style item with the corresponding parser
+		reportRangeBaseError("Value should be one of "
+				+ getFormattedValues(validValues) + ".", styleItem,
+				attributeContext);
 	}
 
 	/**
@@ -186,9 +179,9 @@ public class DotStyleJavaValidator extends
 		return attributeContext;
 	}
 
-	private String getFormattedValues(Object[] values) {
+	private String getFormattedValues(List<?> values) {
 		StringBuilder sb = new StringBuilder();
-		for (Object value : new TreeSet<>(Arrays.asList(values))) {
+		for (Object value : new TreeSet<>(values)) {
 			if (sb.length() > 0) {
 				sb.append(", ");
 			}
