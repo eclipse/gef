@@ -356,6 +356,24 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					|| DotAttributes
 							.getContext(attribute) == Context.SUBGRAPH) {
 				switch (attribute.getName().toValue()) {
+				case DotAttributes.BGCOLOR__GC:
+					proposeColorListAttributeValues(attribute, context,
+							acceptor);
+					break;
+				case DotAttributes.COLOR__CNE:
+					proposeColorAttributeValues(attribute, context, acceptor);
+					break;
+				case DotAttributes.COLORSCHEME__GCNE:
+					proposeAttributeValues(DotColors.getColorSchemes(), context,
+							acceptor);
+					break;
+				case DotAttributes.FILLCOLOR__CNE:
+					proposeColorListAttributeValues(attribute, context,
+							acceptor);
+					break;
+				case DotAttributes.FONTCOLOR__GCNE:
+					proposeColorAttributeValues(attribute, context, acceptor);
+					break;
 				case DotAttributes.LABEL__GCNE:
 					proposeHtmlLabelAttributeValues(attribute, context,
 							acceptor);

@@ -3018,6 +3018,102 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		// no use to test local attribute values with prefix
 	}
 
+	@Test def subgraph_bgcolor() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent3 bgcolor=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(#["1", "2", "3", "#", "/", ":", ";"], "2", '''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent3 bgcolor=2
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def subgraph_color() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					color=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "green", '''
+			graph {
+				subgraph cluster_0 {
+					color=green
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def subgraph_colorscheme() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(copyExpectedDotColorSchemes, "svg", '''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=svg
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def subgraph_fillcolor() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent8
+					fillcolor=«c»
+					style=filled
+					1 2 3
+				}
+			}
+		'''.testContentAssistant(#["1", "2", "3", "4", "5", "6", "7", "8", "#", "/", ":", ";"], "4", '''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent8
+					fillcolor=4
+					style=filled
+					1 2 3
+				}
+			}
+		''')
+	}
+
+	@Test def subgraph_fontcolor() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					label=CLUSTER
+					fontcolor=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "red", '''
+			graph {
+				subgraph cluster_0 {
+					label=CLUSTER
+					fontcolor=red
+					1
+				}
+			}
+		''')
+	}
+
 	@Test def subgraph_label() {
 		'''
 			graph {
