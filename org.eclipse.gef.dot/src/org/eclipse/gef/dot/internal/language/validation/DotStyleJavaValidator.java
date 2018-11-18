@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.dot.internal.DotAttributes.Context;
+import org.eclipse.gef.dot.internal.language.style.ClusterStyle;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.style.Style;
@@ -74,6 +75,18 @@ public class DotStyleJavaValidator extends
 			reportRangeBaseError(
 					"Value should be one of "
 							+ getFormattedValues(EdgeStyle.values()) + ".",
+					styleItem, attributeContext);
+		} else if (Context.GRAPH.equals(attributeContext)
+				|| Context.CLUSTER.equals(attributeContext)) {
+			for (Object validValue : ClusterStyle.values()) {
+				if (validValue.toString().equals(name)) {
+					return;
+				}
+			}
+			// check each style item with the corresponding parser
+			reportRangeBaseError(
+					"Value should be one of "
+							+ getFormattedValues(ClusterStyle.values()) + ".",
 					styleItem, attributeContext);
 		}
 		// do nothing if the DOT attribute context cannot be determined. In such

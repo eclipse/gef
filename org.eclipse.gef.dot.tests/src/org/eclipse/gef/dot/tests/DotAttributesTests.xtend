@@ -2177,6 +2177,52 @@ class DotAttributesTests {
 		// TODO: set syntactically correct, but semantically invalid values
 	}
 
+	@Test def cluster_style() {
+		val it = new Graph.Builder().build
+		_setName("cluster_0")
+		
+		// test getters if no explicit value is set
+		styleRaw.assertNull
+		style.assertNull
+		styleParsed.assertNull
+		
+		// set valid string values
+		for(validClusterStyleItem : #["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped"]) {
+			style = validClusterStyleItem
+			validClusterStyleItem.assertEquals(style)
+			val expected = createStyle => [
+				styleItems += createStyleItem => [
+					name = validClusterStyleItem
+				]
+			]
+			EcoreUtil.equals(expected, styleParsed).assertTrue
+		}
+		
+		val validEdgeStyle = ""
+		style = validEdgeStyle
+		validEdgeStyle.assertEquals(style)
+		
+		// set valid parsed values
+		styleParsed = createStyle => [
+			styleItems += createStyleItem => [name="bold"]
+			styleItems += createStyleItem => [name="dashed"]
+		]
+		"bold , dashed".assertEquals(style)
+		
+		// set syntactically invalid values
+		invalidValue([style = "bold, "],
+			"Cannot set graph attribute 'style' to 'bold, '. The value 'bold, ' is not a syntactically correct style: Mismatched input '<EOF>' expecting RULE_NAME."
+		)
+
+		// set syntactically correct, but semantically invalid values
+		invalidValue([style = "foo"],
+			"Cannot set graph attribute 'style' to 'foo'. The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'radial', 'rounded', 'solid', 'striped'."
+		)
+		invalidValue([style = "diagonals"],
+			"Cannot set graph attribute 'style' to 'diagonals'. The style value 'diagonals' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'radial', 'rounded', 'solid', 'striped'."
+		)
+	}
+
 	@Test def cluster_tooltip() {
 		val it = new Graph.Builder().build
 		

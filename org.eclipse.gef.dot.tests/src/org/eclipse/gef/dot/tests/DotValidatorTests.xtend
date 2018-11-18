@@ -472,6 +472,17 @@ class DotValidatorTests {
 		assertError(ATTRIBUTE, SYNTAX_DIAGNOSTIC, 46, 1, "The value '<}> foo | <here> more foo' is not a syntactically correct record-based label: extraneous input '}' expecting '>'")
 	}
 
+	@Test def invalid_cluster_style() {
+		'''
+			graph {
+				subgraph cluster {
+					style = foo
+					1
+				}
+			}
+		'''.assertStyleError("foo", "The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'radial', 'rounded', 'solid', 'striped'.")
+	}
+
 	@Test def incomplete_model() {
 		'''graph{1[c]}'''.parse.
 		assertError(ATTR_LIST, SYNTAX_DIAGNOSTIC, 9, 1, "mismatched input ']' expecting '='")

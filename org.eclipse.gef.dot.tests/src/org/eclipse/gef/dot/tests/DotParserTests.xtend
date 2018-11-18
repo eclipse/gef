@@ -245,6 +245,21 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
+	@Test def cluster_style() {
+		
+		for(validClusterStyle : #["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped",
+			"bold, dashed", "bold, filled", "bold, rounded", "bold, striped", "filled, dashed"]) {
+			'''
+				graph {
+					subgraph cluster_0 {
+						style="«validClusterStyle»"
+						1
+					}
+				}
+			'''.hasNoErrors
+		}
+	}
+
 // Test cases with parameterized multi-line templates
 	@Test def cluster_label_html_like() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.CLUSTER_LABEL_HTML_LIKE(it).hasNoErrors] }
 	@Test def edgehead_label_html_like() { dotTestHtmlLikeLabels.forEach[ DotTestGraphs.EDGE_HEADLABEL_HTML_LIKE(it).hasNoErrors] }

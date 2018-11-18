@@ -34,6 +34,7 @@ import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.ranktype.RankType;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
+import org.eclipse.gef.dot.internal.language.style.ClusterStyle;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
@@ -194,7 +195,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		case GRAPH:
 		case SUBGRAPH:
 		case CLUSTER:
-			// TODO: implement
+			provideQuickfixes(ClusterStyle.VALUES, "graph style", issue, //$NON-NLS-1$
+					acceptor);
 			break;
 		case NODE:
 			provideQuickfixes(NodeStyle.VALUES, "node style", issue, acceptor); //$NON-NLS-1$

@@ -42,6 +42,7 @@ import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess;
 import org.eclipse.gef.dot.internal.language.splines.Splines;
+import org.eclipse.gef.dot.internal.language.style.ClusterStyle;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
@@ -372,6 +373,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					break;
 				case DotAttributes.LABEL__GCNE:
 					proposeHtmlLabelAttributeValues(attribute, context,
+							acceptor);
+					break;
+				case DotAttributes.STYLE__GCNE:
+					proposeAttributeValues(ClusterStyle.VALUES, context,
 							acceptor);
 					break;
 				case DotAttributes.TOOLTIP__CNE:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -32,3 +32,6 @@ enum NodeStyle:
 
 enum EdgeStyle:
 	bold | dashed | dotted | invis | solid | tapered;
+	
+enum ClusterStyle:
+	bold | dashed | dotted | filled | radial | rounded | solid |striped;

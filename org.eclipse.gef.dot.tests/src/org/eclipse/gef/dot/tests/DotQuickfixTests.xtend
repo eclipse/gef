@@ -573,6 +573,32 @@ class DotQuickfixTests {
 		)
 	}
 
+	@Test def cluster_style() {
+		// test unquoted attribute value
+		'''graph{subgraph cluster_0{style=foo}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=bold}}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=dashed}}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=dotted}}'''),
+			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=filled}}'''),
+			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=radial}}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style=rounded}}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=solid}}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style=striped}}''')
+		)
+
+		// test quoted attribute value
+		'''graph{subgraph cluster_0{style="foo"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="bold"}}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="dashed"}}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="dotted"}}'''),
+			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="filled"}}'''),
+			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="radial"}}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="rounded"}}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="solid"}}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped"}}''')
+		)
+	}
+
 	/**
 	  * Test that the expected quickfixes are offered on a given validation issue in a given DSL text.
 	  * 

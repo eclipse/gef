@@ -3153,6 +3153,36 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
+	@Test def cluster_style() {
+		'''
+			graph {
+				subgraph cluster {
+					style = «c»
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped"], "bold", '''
+			graph {
+				subgraph cluster {
+					style = bold
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				subgraph cluster {
+					style="«c»"
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped"], "dashed", '''
+			graph {
+				subgraph cluster {
+					style="dashed"
+				}
+			}
+		''')
+	}
+
 	@Test def subgraph_tooltip() {
 		'''
 			graph {
