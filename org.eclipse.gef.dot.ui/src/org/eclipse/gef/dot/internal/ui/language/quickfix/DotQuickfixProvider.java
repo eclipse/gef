@@ -183,8 +183,13 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			return;
 		}
 
+		String[] issueData = issue.getData();
+		if (issueData == null || issueData.length < 2) {
+			return;
+		}
+
 		DotAttributes.Context attributeContext = DotAttributes.Context
-				.valueOf(issue.getData()[1]);
+				.valueOf(issueData[1]);
 		switch (attributeContext) {
 		case GRAPH:
 		case SUBGRAPH:

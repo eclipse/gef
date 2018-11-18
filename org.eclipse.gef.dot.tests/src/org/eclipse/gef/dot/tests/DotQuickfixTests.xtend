@@ -544,6 +544,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="striped"]}'''),
 			new Quickfix("Replace 'foo' with 'wedged'.", 	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="wedged"]}''')
 		)
+		
+		// test incomplete attribute value - no quickfixes should be offered
+		'''graph{1[style="bold, "]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE)
 
 		// test deprecated attribute value
 		// TODO: provide quickfixes for deprecated node style attribute values
