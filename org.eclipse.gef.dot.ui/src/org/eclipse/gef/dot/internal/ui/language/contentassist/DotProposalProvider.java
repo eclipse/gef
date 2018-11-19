@@ -56,7 +56,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.Keyword;
-import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
@@ -88,31 +87,31 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			StyledString displayString, Image image, int priority,
 			String prefix, ContentAssistContext context) {
 
-		if (context.getCurrentModel() instanceof DotGraph
-				&& ((DotGraph) context.getCurrentModel())
-						.getType() == GraphType.DIGRAPH
-				&& proposal.equals(EdgeOp.UNDIRECTED.toString())) {
-			// do not propose the undirected edge operator in case of a directed
-			// graph
-			return null;
+		EObject currentModel = context.getCurrentModel();
+		if (currentModel instanceof DotGraph) {
+			DotGraph dotGraph = (DotGraph) currentModel;
+			GraphType graphType = dotGraph.getType();
+			if (graphType == GraphType.DIGRAPH
+					&& proposal.equals(EdgeOp.UNDIRECTED.toString())) {
+				// do not propose the undirected edge operator in case of a
+				// directed graph
+				return null;
+			}
+			if (graphType == GraphType.GRAPH
+					&& proposal.equals(EdgeOp.DIRECTED.toString())) {
+				// do not propose the directed edge operator in case of an
+				// undirected graph
+				return null;
+			}
 		}
 
-		if (context.getCurrentModel() instanceof DotGraph
-				&& ((DotGraph) context.getCurrentModel())
-						.getType() == GraphType.GRAPH
-				&& proposal.equals(EdgeOp.DIRECTED.toString())) {
-			// do not propose the directed edge operator in case of an
-			// undirected graph
-			return null;
-		}
-
-		if (context.getPrefix().equals("=") && proposal.equals("=")) { //$NON-NLS-1$//$NON-NLS-2$
+		if (prefix.equals("=") && proposal.equals("=")) { //$NON-NLS-1$//$NON-NLS-2$
 			// do not propose the "=" symbol if it is already included in the
 			// text as prefix
 			return null;
 		}
 
-		if (context.getPrefix().equals("[") && proposal.equals("[")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (prefix.equals("[") && proposal.equals("[")) { //$NON-NLS-1$ //$NON-NLS-2$
 			// do not propose the "[" symbol if it is already included in the
 			// text as prefix
 			return null;
@@ -121,41 +120,43 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		ICompletionProposal completionProposal = super.createCompletionProposal(
 				proposal, displayString, image, priority, prefix, context);
 
-		// ensure that an empty attribute list is created by after the 'graph',
-		// 'node', 'edge' attribute statements when applying the proposal
-		if (completionProposal instanceof ConfigurableCompletionProposal
-				&& (context.getCurrentModel() instanceof DotGraph
-						|| context.getCurrentModel() instanceof Subgraph)) {
-			if (AttributeType.get(proposal) != null && !context
-					.getLastCompleteNode().getText().equals("strict")) { //$NON-NLS-1$
-				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
-				configurableCompletionProposal.setDisplayString(
-						configurableCompletionProposal.getDisplayString()
-								+ "[]");
-				configurableCompletionProposal.setReplacementString(
-						configurableCompletionProposal.getReplacementString()
-								+ "[]");
-				configurableCompletionProposal.setCursorPosition(
-						configurableCompletionProposal.getCursorPosition() + 1);
+		if (completionProposal instanceof ConfigurableCompletionProposal) {
+			ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+
+			// ensure that an empty attribute list is created by after the
+			// 'graph', 'node', 'edge' attribute statements when applying the
+			// proposal
+			if (currentModel instanceof DotGraph
+					|| currentModel instanceof Subgraph) {
+				if (AttributeType.get(proposal) != null && !context
+						.getLastCompleteNode().getText().equals("strict")) { //$NON-NLS-1$
+					configurableCompletionProposal.setDisplayString(
+							configurableCompletionProposal.getDisplayString()
+									+ "[]"); //$NON-NLS-1$
+					configurableCompletionProposal
+							.setReplacementString(configurableCompletionProposal
+									.getReplacementString() + "[]"); //$NON-NLS-1$
+					configurableCompletionProposal.setCursorPosition(
+							configurableCompletionProposal.getCursorPosition()
+									+ 1);
+				}
+			}
+
+			// ensure that the double quote at the beginning of an attribute
+			// value is not overridden when applying the proposal
+			if (currentModel instanceof Attribute) {
+				String text = context.getCurrentNode().getText();
+				if (text.trim().startsWith("\"")) { //$NON-NLS-1$
+					configurableCompletionProposal
+							.setReplacementOffset(configurableCompletionProposal
+									.getReplacementOffset() + 1);
+					configurableCompletionProposal
+							.setReplacementLength(configurableCompletionProposal
+									.getReplacementLength() - 1);
+				}
 			}
 		}
 
-		// ensure that the double quote at the beginning of an attribute value
-		// is not overridden when applying the proposal
-		if (completionProposal instanceof ConfigurableCompletionProposal
-				&& context.getCurrentModel() instanceof Attribute) {
-			INode currentNode = context.getCurrentNode();
-			String text = currentNode.getText();
-			if (text.trim().startsWith("\"")) { //$NON-NLS-1$
-				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
-				configurableCompletionProposal.setReplacementOffset(
-						configurableCompletionProposal.getReplacementOffset()
-								+ 1);
-				configurableCompletionProposal.setReplacementLength(
-						configurableCompletionProposal.getReplacementLength()
-								- 1);
-			}
-		}
 		return completionProposal;
 	}
 
