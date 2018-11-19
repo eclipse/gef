@@ -207,6 +207,20 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
+	@Test def edge_attribute_statement() {
+		'''
+			graph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
+			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
+		], "edge[]", '''
+			graph {
+				edge[]
+			}
+		''')
+	}
+
 	@Test def edge_attributes() {
 		// test global attribute names
 		'''
@@ -1305,7 +1319,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph", "node", "subgraph",
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph",
 									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
 									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -1319,8 +1333,8 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				1
 				«c»
 			}
-		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph",
-									"node", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
+									"node[]", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
 									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
 			graph {
@@ -1334,7 +1348,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			digraph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph", "node", "subgraph",
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph",
 									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
 									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -1348,8 +1362,8 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				1
 				«c»
 			}
-		'''.testContentAssistant(#["->", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge", "fontname", "fontsize", "graph",
-									"node", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+		'''.testContentAssistant(#["->", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge[]", "fontname", "fontsize", "graph[]",
+									"node[]", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
 									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
 			digraph {
@@ -1456,6 +1470,20 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		// no use to test local attribute values with prefix
 	}
 
+	@Test def graph_attribute_statement() {
+		'''
+			graph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
+			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
+		], "graph[]", '''
+			graph {
+				graph[]
+			}
+		''')
+	}
+
 	@Test def graph_attributes() {
 		// test global attribute names
 		'''
@@ -1476,8 +1504,8 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge", "graph",
-									"node",	"subgraph", "{", "}", "forcelabels", "id", "label",	"layout", "lp",
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
+									"node[]",	"subgraph", "{", "}", "forcelabels", "id", "label",	"layout", "lp",
 									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "rankdir",
 		'''
 			graph {
@@ -1762,7 +1790,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				colorscheme=brbg11 fontcolor=1«c»
 			}
 		'''.testContentAssistant(#["1", "10", "11", ",", ";", "{", "}", "bb", "bgcolor", "colorscheme", "clusterrank",
-									"edge", "fontcolor", "fontname", "fontsize", "forcelabels", "graph", "id", "label", "layout", "lp", "node",
+									"edge[]", "fontcolor", "fontname", "fontsize", "forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]",
 									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "edge - Insert a template"], "11",
 		'''
 			graph {
@@ -2197,6 +2225,20 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		'''.testContentAssistant(#["compound", "curved"], "curved", '''
 			graph {
 				splines="curved"
+			}
+		''')
+	}
+
+	@Test def node_attribute_statement() {
+		'''
+			graph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
+			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
+		], "node[]", '''
+			graph {
+				node[]
 			}
 		''')
 	}
@@ -3016,6 +3058,57 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		'''.testEmptyContentAssistant
 		
 		// no use to test local attribute values with prefix
+	}
+
+	@Test def subgraph_edge_attribute_statement() {
+		'''
+			graph {
+				{
+					«c»
+				}
+			}
+		'''.testContentAssistant(#["edge[]","graph[]", "node[]", "subgraph", "{", "}"
+		], "edge[]", '''
+			graph {
+				{
+					edge[]
+				}
+			}
+		''')
+	}
+
+	@Test def subgraph_graph_attribute_statement() {
+		'''
+			graph {
+				{
+					«c»
+				}
+			}
+		'''.testContentAssistant(#["edge[]","graph[]", "node[]", "subgraph", "{", "}"
+		], "graph[]", '''
+			graph {
+				{
+					graph[]
+				}
+			}
+		''')
+	}
+
+	@Test def subgraph_node_attribute_statement() {
+		'''
+			graph {
+				{
+					«c»
+				}
+			}
+		'''.testContentAssistant(#["edge[]","graph[]", "node[]", "subgraph", "{", "}"
+		], "node[]", '''
+			graph {
+				{
+					node[]
+				}
+			}
+		''')
 	}
 
 	@Test def subgraph_bgcolor() {

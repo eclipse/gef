@@ -32,10 +32,12 @@ import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.AttrList;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
+import org.eclipse.gef.dot.internal.language.dot.AttributeType;
 import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
+import org.eclipse.gef.dot.internal.language.dot.Subgraph;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
@@ -118,6 +120,25 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 		ICompletionProposal completionProposal = super.createCompletionProposal(
 				proposal, displayString, image, priority, prefix, context);
+
+		// ensure that an empty attribute list is created by after the 'graph',
+		// 'node', 'edge' attribute statements when applying the proposal
+		if (completionProposal instanceof ConfigurableCompletionProposal
+				&& (context.getCurrentModel() instanceof DotGraph
+						|| context.getCurrentModel() instanceof Subgraph)) {
+			if (AttributeType.get(proposal) != null && !context
+					.getLastCompleteNode().getText().equals("strict")) { //$NON-NLS-1$
+				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+				configurableCompletionProposal.setDisplayString(
+						configurableCompletionProposal.getDisplayString()
+								+ "[]");
+				configurableCompletionProposal.setReplacementString(
+						configurableCompletionProposal.getReplacementString()
+								+ "[]");
+				configurableCompletionProposal.setCursorPosition(
+						configurableCompletionProposal.getCursorPosition() + 1);
+			}
+		}
 
 		// ensure that the double quote at the beginning of an attribute value
 		// is not overridden when applying the proposal
