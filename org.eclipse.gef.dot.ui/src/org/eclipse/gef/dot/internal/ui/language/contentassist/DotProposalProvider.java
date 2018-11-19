@@ -125,7 +125,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				&& context.getCurrentModel() instanceof Attribute) {
 			INode currentNode = context.getCurrentNode();
 			String text = currentNode.getText();
-			if (text.startsWith("\"")) { //$NON-NLS-1$
+			if (text.trim().startsWith("\"")) { //$NON-NLS-1$
 				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
 				configurableCompletionProposal.setReplacementOffset(
 						configurableCompletionProposal.getReplacementOffset()
