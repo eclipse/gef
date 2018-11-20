@@ -112,6 +112,80 @@ class Dot2ZestNodeAttributesConversionTests {
 		''')
 	}
 
+	@Test def node_fontcolor006() {
+		'''
+			graph {
+				1[xlabel="x", fontcolor="0.482 0.714 0.878"]
+			}
+		'''.assertNodeXLabelCssStyle('''
+			-fx-fill: hsb(173.51999999999998, 71.39999999999999%, 87.8%);
+		''')
+	}
+
+	@Test def node_fontname001() {
+		'''
+			graph {
+				1[fontname=Arial]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-font-family: "Arial";
+		''')
+	}
+
+	@Test def node_fontname002() {
+		'''
+			graph {
+				1[xlabel="x", fontname=Arial]
+			}
+		'''.assertNodeXLabelCssStyle('''
+			-fx-font-family: "Arial";
+		''')
+	}
+
+	@Test def node_fontsize001() {
+		'''
+			graph {
+				1[fontsize="5"]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-font-size: 5.0;
+		''')
+	}
+
+	@Test def node_fontsize002() {
+		'''
+			graph {
+				1[xlabel="x", fontsize="5"]
+			}
+		'''.assertNodeXLabelCssStyle('''
+			-fx-font-size: 5.0;
+		''')
+	}
+
+	@Test def node_fontstyles_combined001() {
+		'''
+			graph {
+				1[fontcolor=red, fontname="Arial", fontsize="3.5"]
+			}
+		'''.assertNodeLabelCssStyle('''
+			-fx-fill: #ff0000;
+			-fx-font-family: "Arial";
+			-fx-font-size: 3.5;
+		''')
+	}
+
+	@Test def node_fontstyles_combined002() {
+		'''
+			graph {
+				1[xlabel="x", fontcolor=red, fontname="Arial", fontsize="3.5"]
+			}
+		'''.assertNodeXLabelCssStyle('''
+			-fx-fill: #ff0000;
+			-fx-font-family: "Arial";
+			-fx-font-size: 3.5;
+		''')
+	}
+
 	@Test def node_height001() {
 		'''
 			digraph {
@@ -631,6 +705,11 @@ class Dot2ZestNodeAttributesConversionTests {
 
 	private def assertNodeLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.labelCssStyle
+		expected.assertEquals(actual.split)
+	}
+	
+	private def assertNodeXLabelCssStyle(CharSequence dotText, String expected) {
+		val actual = dotText.firstNode.convert.externalLabelCssStyle
 		expected.assertEquals(actual.split)
 	}
 

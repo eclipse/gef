@@ -16,6 +16,7 @@
  *                                    - Add support for HTML labels (bug #321775)
  *                                    - Fix handling of "\N", "\E", "\G" in labels (bug #534707)
  *                                    - Add support for labelfontcolor attribute (bug #540958)
+ *                                    - Add support for (label)fontsize/name (bug #541056)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -472,15 +473,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 	private String computeZestEdgeLabelCssStyle(Edge dot) {
 		Color dotColor = DotAttributes.getFontcolorParsed(dot);
-		if (dotColor != null) {
-			String dotColorScheme = DotAttributes.getColorscheme(dot);
-			String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
-					dotColor);
-			if (javaFxColor != null) {
-				return "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		return null;
+		String dotColorScheme = DotAttributes.getColorscheme(dot);
+		String dotFont = DotAttributes.getFontname(dot);
+		Double dotSize = DotAttributes.getFontsizeParsed(dot);
+		return computeZestLabelCssStyle(dotColor, dotColorScheme, dotFont, dotSize);
 	}
 
 	private String computeZestTargetSourceLabelCssStyle(Edge dot) {
@@ -488,15 +484,41 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotColor == null) {
 			dotColor = DotAttributes.getFontcolorParsed(dot);
 		}
+		String dotColorScheme = DotAttributes.getColorscheme(dot);
+		String dotFont = DotAttributes.getLabelfontname(dot);
+		if (dotFont == null) {
+			dotFont = DotAttributes.getFontname(dot);
+		}
+		Double dotSize = DotAttributes.getLabelfontsizeParsed(dot);
+		if (dotSize == null) {
+			dotSize = DotAttributes.getFontsizeParsed(dot);
+		}
+		return computeZestLabelCssStyle(dotColor, dotColorScheme, dotFont, dotSize);
+	}
+
+	private String computeZestLabelCssStyle(Color dotColor, String dotColorScheme,
+			String dotFont, Double dotSize) {
+		StringBuilder zestStyle = new StringBuilder();
 		if (dotColor != null) {
-			String dotColorScheme = DotAttributes.getColorscheme(dot);
 			String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
 					dotColor);
 			if (javaFxColor != null) {
-				return "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+				zestStyle.append("-fx-fill: "); //$NON-NLS-1$
+				zestStyle.append(javaFxColor);
+				zestStyle.append(";"); //$NON-NLS-1$
 			}
 		}
-		return null;
+		if (dotFont != null && dotFont.length() > 0) {
+			zestStyle.append("-fx-font-family: \""); //$NON-NLS-1$
+			zestStyle.append(dotFont);
+			zestStyle.append("\";"); //$NON-NLS-1$
+		}
+		if (dotSize != null) {
+			zestStyle.append("-fx-font-size: "); //$NON-NLS-1$
+			zestStyle.append(dotSize);
+			zestStyle.append(";"); //$NON-NLS-1$
+		}
+		return zestStyle.length() > 0 ? zestStyle.toString() : null;
 	}
 
 	protected void convertAttributes(Node dot, Node zest) {
@@ -536,7 +558,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 						.getType() == ID.Type.HTML_STRING
 				: false;
 
-		// label fontcolor
+		// label fontcolor, fontsize, fontname
 		String zestNodeLabelCssStyle = computeZestNodeLabelCssStyle(dot);
 		if (zestNodeLabelCssStyle != null) {
 			ZestProperties.setLabelCssStyle(zest, zestNodeLabelCssStyle);
@@ -654,6 +676,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotXLabel != null) {
 			dotXLabel = decodeEscString(dotXLabel, dot);
 			ZestProperties.setExternalLabel(zest, dotXLabel);
+			if (zestNodeLabelCssStyle != null) {
+				ZestProperties.setExternalLabelCssStyle(zest,
+						zestNodeLabelCssStyle);
+			}
 		}
 
 		// In case of a record based node shape the label is consumed by the
@@ -824,15 +850,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 	private String computeZestNodeLabelCssStyle(Node dot) {
 		Color dotColor = DotAttributes.getFontcolorParsed(dot);
-		if (dotColor != null) {
-			String dotColorScheme = DotAttributes.getColorscheme(dot);
-			String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
-					dotColor);
-			if (javaFxColor != null) {
-				return "-fx-fill: " + javaFxColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		return null;
+		String dotColorScheme = DotAttributes.getColorscheme(dot);
+		String dotFont = DotAttributes.getFontname(dot);
+		Double dotSize = DotAttributes.getFontsizeParsed(dot);
+		return computeZestLabelCssStyle(dotColor, dotColorScheme, dotFont, dotSize);
 	}
 
 	/**

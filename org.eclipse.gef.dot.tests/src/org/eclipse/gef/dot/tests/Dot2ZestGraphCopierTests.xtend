@@ -484,6 +484,62 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
+	@Test def edge_fontname() {
+		'''
+			digraph {
+				1->2[fontname="Comic Sans", label="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-label : foo
+					element-label-css-style : -fx-font-family: "Comic Sans";
+				}
+			}
+		''')
+	}
+
+	@Test def edge_fontsize() {
+		'''
+			digraph {
+				1->2[fontsize=5.5, label="foo"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-label : foo
+					element-label-css-style : -fx-font-size: 5.5;
+				}
+			}
+		''')
+	}
+
 	@Test def edge_headlabel() {
 		'''
 			digraph {
@@ -833,6 +889,114 @@ class Dot2ZestGraphCopierTests {
 					edge-target-label-css-style : -fx-fill: #0000ff;
 					element-label : foo
 					element-label-css-style : -fx-fill: #0000ff;
+				}
+			}
+		''')
+	}
+
+	@Test def edge_labelfontname() {
+		// If unset, the fontcolor value is used.
+		'''
+			digraph {
+				1->2[fontname="Arial", labelfontname="Courier New", label="foo", headlabel="baa"]
+				1->3[labelfontname="Times New Roman", headlabel="baa"]
+				2->3[fontname="Comic Sans", label="foo", headlabel="baa"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : 3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-font-family: "Courier New";
+					element-label : foo
+					element-label-css-style : -fx-font-family: "Arial";
+				}
+				Edge2 from Node1 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-font-family: "Times New Roman";
+				}
+				Edge3 from Node2 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-font-family: "Comic Sans";
+					element-label : foo
+					element-label-css-style : -fx-font-family: "Comic Sans";
+				}
+			}
+		''')
+	}
+
+	@Test def edge_labelfontsize() {
+		// If unset, the fontcolor value is used.
+		'''
+			digraph {
+				1->2[fontsize=5, labelfontsize=6, label="foo", headlabel="baa"]
+				1->3[labelfontsize=7, headlabel="baa"]
+				2->3[fontsize=8, label="foo", headlabel="baa"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : 3
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-font-size: 6.0;
+					element-label : foo
+					element-label-css-style : -fx-font-size: 5.0;
+				}
+				Edge2 from Node1 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-font-size: 7.0;
+				}
+				Edge3 from Node2 to Node3 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-target-label : baa
+					edge-target-label-css-style : -fx-font-size: 8.0;
+					element-label : foo
+					element-label-css-style : -fx-font-size: 8.0;
 				}
 			}
 		''')
@@ -1336,6 +1500,42 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
+	@Test def graph_fontname() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				graph [label="foo", fontname="Times New Roman"];
+				1
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def graph_fontsize() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				graph [label="foo", fontsize=13];
+				1
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
 	@Test def graph_forcelabels001() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		// The tested graph needs to have very close elements for this attribute to have an effect.
@@ -2297,6 +2497,40 @@ class Dot2ZestGraphCopierTests {
 				Node1 {
 					element-label : 1
 					element-label-css-style : -fx-fill: #00ff00;
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def node_fontname() {
+		'''
+			graph {
+				1[fontname="Helvetica"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					element-label-css-style : -fx-font-family: "Helvetica";
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def node_fontsize() {
+		'''
+			graph {
+				1[fontsize=13]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					element-label-css-style : -fx-font-size: 13.0;
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
