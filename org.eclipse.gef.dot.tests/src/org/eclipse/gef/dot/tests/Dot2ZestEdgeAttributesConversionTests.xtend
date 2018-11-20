@@ -8,8 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
- *     Zoey Gerrit Prigge (itemis AG) - test cases for \E, \T, ... replacement (bug #534707)
- *                                    - test cases for labelfontcolor (bug #540958)
+ *     Zoey Gerrit Prigge (itemis AG) - additional test cases
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -275,6 +274,40 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 
+	@Test def edge_label008() {
+		'''
+			digraph {
+				edge[fontname=Helvetica]
+				1->2[label=l]
+			}
+		'''.assertEdgeLabelCssStyle('''
+			-fx-font-family: "Helvetica";
+		''')
+	}
+
+	@Test def edge_label009() {
+		'''
+			digraph {
+				edge[fontsize=16]
+				1->2[label=l]
+			}
+		'''.assertEdgeLabelCssStyle('''
+			-fx-font-size: 16.0;
+		''')
+	}
+
+	@Test def edge_label010() {
+		'''
+			digraph {
+				1->2[label=l, fontcolor=red, fontname=Helvetica, fontsize=16]
+			}
+		'''.assertEdgeLabelCssStyle('''
+			-fx-fill: #ff0000;
+			-fx-font-family: "Helvetica";
+			-fx-font-size: 16.0;
+		''')
+	}
+
 	@Test def edge_externalLabel001() {
 		'''
 			digraph {
@@ -325,6 +358,41 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeExternalLabelCssStyle('''
 			-fx-fill: #ff0000;
+		''')
+	}
+
+	@Test def edge_externalLabel007() {
+		'''
+			digraph {
+				edge[fontname=Helvetica]
+				1->2[xlabel=x]
+			}
+		'''.assertEdgeExternalLabelCssStyle('''
+			-fx-font-family: "Helvetica";
+		''')
+	}
+
+	@Test def edge_externalLabel008() {
+		'''
+			digraph {
+				edge[fontsize=16]
+				1->2[xlabel=x]
+			}
+		'''.assertEdgeExternalLabelCssStyle('''
+			-fx-font-size: 16.0;
+		''')
+	}
+
+	@Test def edge_externalLabel009() {
+		'''
+			digraph {
+				edge[fontcolor=red, fontname=Helvetica, fontsize=16]
+				1->2[xlabel=x]
+			}
+		'''.assertEdgeExternalLabelCssStyle('''
+			-fx-fill: #ff0000;
+			-fx-font-family: "Helvetica";
+			-fx-font-size: 16.0;
 		''')
 	}
 
@@ -400,6 +468,63 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeSourceLabelCssStyle('''
 			-fx-fill: #0000ff;
+		''')
+	}
+
+	@Test def edge_sourceLabel010() {
+		'''
+			digraph {
+				edge[fontname=Arial]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-font-family: "Arial";
+		''')
+	}
+
+	@Test def edge_sourceLabel011() {
+		'''
+			digraph {
+				edge[labelfontname="Times New Roman", fontname=Arial]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-font-family: "Times New Roman";
+		''')
+	}
+
+	@Test def edge_sourceLabel012() {
+		'''
+			digraph {
+				edge[fontsize=12]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-font-size: 12.0;
+		''')
+	}
+
+	@Test def edge_sourceLabel013() {
+		'''
+			digraph {
+				edge[labelfontsize=14, fontsize=12]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-font-size: 14.0;
+		''')
+	}
+
+	@Test def edge_sourceLabel014() {
+		'''
+			digraph {
+				edge[labelfontsize=14, fontsize=12, fontcolor=green, fontname="Courier New"]
+				1->2[taillabel=t]
+			}
+		'''.assertEdgeSourceLabelCssStyle('''
+			-fx-fill: #00ff00;
+			-fx-font-family: "Courier New";
+			-fx-font-size: 14.0;
 		''')
 	}
 
@@ -484,6 +609,63 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabelCssStyle('''
 			-fx-fill: #0000ff;
+		''')
+	}
+
+	@Test def edge_targetLabel010() {
+		'''
+			digraph {
+				edge[fontname=Arial]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-font-family: "Arial";
+		''')
+	}
+
+	@Test def edge_targetLabel011() {
+		'''
+			digraph {
+				edge[labelfontname="Times New Roman", fontname=Arial]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-font-family: "Times New Roman";
+		''')
+	}
+
+	@Test def edge_targetLabel012() {
+		'''
+			digraph {
+				edge[fontsize=12]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-font-size: 12.0;
+		''')
+	}
+
+	@Test def edge_targetLabel013() {
+		'''
+			digraph {
+				edge[labelfontsize=14, fontsize=12]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-font-size: 14.0;
+		''')
+	}
+
+	@Test def edge_targetLabel014() {
+		'''
+			digraph {
+				edge[labelfontsize=14, fontsize=12, fontcolor=green, fontname="Courier New"]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-fill: #00ff00;
+			-fx-font-family: "Courier New";
+			-fx-font-size: 14.0;
 		''')
 	}
 
