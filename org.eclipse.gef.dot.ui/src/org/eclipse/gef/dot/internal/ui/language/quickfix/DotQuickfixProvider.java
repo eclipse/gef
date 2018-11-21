@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.quickfix;
 
+import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.INVALID_EDGE_OPERATOR;
 import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.REDUNDANT_ATTRIBUTE;
 
 import java.util.Arrays;
@@ -43,7 +44,6 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
-import org.eclipse.gef.dot.internal.language.validation.DotJavaValidator;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -59,7 +59,7 @@ import org.eclipse.xtext.validation.Issue;
  */
 public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
-	@Fix(DotJavaValidator.INVALID_EDGE_OPERATOR)
+	@Fix(INVALID_EDGE_OPERATOR)
 	public void fixInvalidEdgeOperator(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		String[] issueData = issue.getData();
@@ -96,11 +96,11 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
 		String attributeName = issue.getData()[0];
 
-		ISemanticModification semanticModification = (EObject element,
-				IModificationContext context) -> EcoreUtil.remove(element);
 		String label = "Remove '" + attributeName + "' attribute."; //$NON-NLS-1$ //$NON-NLS-2$
 		String description = "Remove the redundant '" + attributeName //$NON-NLS-1$
 				+ "' attribute."; //$NON-NLS-1$
+		ISemanticModification semanticModification = (EObject element,
+				IModificationContext context) -> EcoreUtil.remove(element);
 
 		acceptor.accept(issue, label, description, null, semanticModification);
 	}

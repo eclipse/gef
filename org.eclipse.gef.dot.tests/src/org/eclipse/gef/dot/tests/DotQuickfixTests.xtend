@@ -603,25 +603,25 @@ class DotQuickfixTests {
 
 	@Test def redundant_attribute_single() {
 		'''graph{1[label="foo", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'label' attribute.",	"Remove the redundant 'label' attribute.",	'''graph{1[label="faa"]}''')
+			new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{1[label="faa"]}''')
 		)
 	}
 
 	@Test def redundant_attribute_mixed() {
 		'''graph{1[label="foo", style="rounded", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'label' attribute.", 	"Remove the redundant 'label' attribute.",	'''graph{1[style="rounded", label="faa"]}''')
+			new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{1[style="rounded", label="faa"]}''')
 		)
 	}
 
 	@Test def redundant_attribute_edge() {
 		'''graph{1--2[style="dotted", style="dashed"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'style' attribute.",	"Remove the redundant 'style' attribute.",	'''graph{1--2[style="dashed"]}''')
+			new Quickfix("Remove 'style' attribute.", "Remove the redundant 'style' attribute.", '''graph{1--2[style="dashed"]}''')
 		)
 	}
 
 	@Test def redundant_attribute_attr_stmt() {
 		'''graph{graph[label="dotted", label="dashed"]1}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'label' attribute.",	"Remove the redundant 'label' attribute.",	'''graph{graph[label="dashed"]1}''')
+			new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{graph[label="dashed"]1}''')
 		)
 	}
 
