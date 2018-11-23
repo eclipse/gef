@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -123,22 +123,28 @@ class Dot2ZestNodeAttributesConversionTests {
 	}
 
 	@Test def node_fontname001() {
+		mockAvailableFonts("Arial")
 		'''
 			graph {
 				1[fontname=Arial]
 			}
 		'''.assertNodeLabelCssStyle('''
 			-fx-font-family: "Arial";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 		''')
 	}
 
 	@Test def node_fontname002() {
+		mockAvailableFonts("Arial")
 		'''
 			graph {
 				1[xlabel="x", fontname=Arial]
 			}
 		'''.assertNodeXLabelCssStyle('''
 			-fx-font-family: "Arial";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 		''')
 	}
 
@@ -163,6 +169,7 @@ class Dot2ZestNodeAttributesConversionTests {
 	}
 
 	@Test def node_fontstyles_combined001() {
+		mockAvailableFonts("Arial")
 		'''
 			graph {
 				1[fontcolor=red, fontname="Arial", fontsize="3.5"]
@@ -170,11 +177,14 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodeLabelCssStyle('''
 			-fx-fill: #ff0000;
 			-fx-font-family: "Arial";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 			-fx-font-size: 3.5;
 		''')
 	}
 
 	@Test def node_fontstyles_combined002() {
+		mockAvailableFonts("Arial")
 		'''
 			graph {
 				1[xlabel="x", fontcolor=red, fontname="Arial", fontsize="3.5"]
@@ -182,6 +192,8 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodeXLabelCssStyle('''
 			-fx-fill: #ff0000;
 			-fx-font-family: "Arial";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 			-fx-font-size: 3.5;
 		''')
 	}
@@ -800,5 +812,9 @@ class Dot2ZestNodeAttributesConversionTests {
 
 	private def split(String text) {
 		text.replaceAll(";", ";" + System.lineSeparator)
+	}
+	
+	private def mockAvailableFonts(String... availableFonts) {
+		fontUtil.systemFontAccess = new DotFontAccessMock(availableFonts)
 	}
 }

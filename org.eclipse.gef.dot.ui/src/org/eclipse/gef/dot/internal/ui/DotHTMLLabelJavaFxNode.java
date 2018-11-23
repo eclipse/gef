@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge - Initial API and implementation (bug #321775)
+ *                        - support for FontName grammar (bug #541056)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -24,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.eclipse.gef.dot.internal.language.fontname.FontName;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
@@ -63,24 +65,14 @@ import javafx.scene.text.Text;
  * - consider implementing Port attribute on TD
  */
 public class DotHTMLLabelJavaFxNode {
+	final private DotColorUtil colorUtil;
+	final private DotFontUtil fontUtil;
 
-	final private TagStyleContainer defaultStyle = new TagStyleContainer(null,
-			"Times New Roman", "14", "black"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	final private TagStyleContainer defaultStyle;
 	final private TagStyleContainer nodeStyle;
 
 	final private HtmlLabel root;
 	final private String colorscheme;
-	final private DotColorUtil colorUtil = new DotColorUtil();
-
-	/**
-	 * Creates a DotHTMLLabelJavaNode creator
-	 * 
-	 * @param label
-	 *            HTML label attribute as string
-	 */
-	public DotHTMLLabelJavaFxNode(final String label) {
-		this(label, null, null, null, null);
-	}
 
 	/**
 	 * Creates a DotHTMLLabelJavaNode creator with default styles
@@ -95,12 +87,24 @@ public class DotHTMLLabelJavaFxNode {
 	 *            Default font color
 	 * @param colorscheme
 	 *            The colorscheme in use
+	 * @param fontUtil
+	 *            A DotFontUtil instance.
+	 * @param colorUtil
+	 *            A DotColorUtil instance.
 	 */
 	public DotHTMLLabelJavaFxNode(final String label, String face, String size,
-			String color, String colorscheme) {
-		root = parseLabel(label);
-		nodeStyle = new TagStyleContainer(defaultStyle, face, size, color);
+			String color, String colorscheme, DotColorUtil colorUtil,
+			DotFontUtil fontUtil) {
+		this.colorUtil = colorUtil;
+		this.fontUtil = fontUtil;
+
 		this.colorscheme = colorscheme;
+
+		root = parseLabel(label);
+
+		defaultStyle = new TagStyleContainer(null, "Times-Roman", "14", //$NON-NLS-1$ //$NON-NLS-2$
+				"black"); //$NON-NLS-1$
+		nodeStyle = new TagStyleContainer(defaultStyle, face, size, color);
 	}
 
 	/**
@@ -709,7 +713,7 @@ public class DotHTMLLabelJavaFxNode {
 	private class TagStyleContainer {
 		final private TagStyleContainer parent;
 		final private TagStyle style;
-		final private String face;
+		final private FontName face;
 		final private String size;
 		final private String color;
 
@@ -725,12 +729,12 @@ public class DotHTMLLabelJavaFxNode {
 				String size, String color) {
 			this.parent = parent;
 			this.style = null;
-			this.face = face;
+			this.face = fontUtil.parseHtmlFontFace(face);
 			this.size = size;
 			this.color = color;
 		}
 
-		private String face() {
+		private FontName face() {
 			if (face != null)
 				return face;
 			if (parent != null)
@@ -756,11 +760,22 @@ public class DotHTMLLabelJavaFxNode {
 
 		private String fontCss() {
 			StringBuilder css = new StringBuilder();
-			String face = face();
+			FontName face = face();
 			if (face != null) {
 				css.append("-fx-font-family:\""); //$NON-NLS-1$
-				css.append(face);
+				css.append(fontUtil.cssLocalFontFamily(face));
 				css.append("\";"); //$NON-NLS-1$
+				// B, I tags supersede any style/weight info in FontName
+				if (!tagStyles().contains(TagStyle.B)) {
+					css.append("-fx-font-weight: "); //$NON-NLS-1$
+					css.append(fontUtil.cssWeight(face));
+					css.append(";"); //$NON-NLS-1$
+				}
+				if (!tagStyles().contains(TagStyle.I)) {
+					css.append("-fx-font-style: "); //$NON-NLS-1$
+					css.append(fontUtil.cssStyle(face));
+					css.append(";"); //$NON-NLS-1$
+				}
 			}
 
 			String size = size();
@@ -793,7 +808,6 @@ public class DotHTMLLabelJavaFxNode {
 			tagStyles().forEach(
 					style -> stringBuilder.append(style.cssStringForTag()));
 			stringBuilder.append(fontCss());
-
 			return stringBuilder.toString();
 		}
 	}
