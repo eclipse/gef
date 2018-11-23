@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -485,6 +485,7 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def edge_fontname() {
+		mockAvailableFonts("Comic Sans")
 		'''
 			digraph {
 				1->2[fontname="Comic Sans", label="foo"]
@@ -506,7 +507,7 @@ class Dot2ZestGraphCopierTests {
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : foo
-					element-label-css-style : -fx-font-family: "Comic Sans";
+					element-label-css-style : -fx-font-family: "Comic Sans";-fx-font-weight: 400;-fx-font-style: normal;
 				}
 			}
 		''')
@@ -895,12 +896,14 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def edge_labelfontname() {
+		mockAvailableFonts("Arial", "Comic Sans", "Times New Roman")
 		// If unset, the fontcolor value is used.
 		'''
 			digraph {
 				1->2[fontname="Arial", labelfontname="Courier New", label="foo", headlabel="baa"]
 				1->3[labelfontname="Times New Roman", headlabel="baa"]
 				2->3[fontname="Comic Sans", label="foo", headlabel="baa"]
+				3->4[fontname="Times-Bold", label="faa"]
 			}
 		'''.assertZestConversion('''
 			Graph {
@@ -919,30 +922,42 @@ class Dot2ZestGraphCopierTests {
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
+				Node4 {
+					element-label : 4
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					edge-target-label : baa
-					edge-target-label-css-style : -fx-font-family: "Courier New";
+					edge-target-label-css-style : -fx-font-family: "System";-fx-font-weight: 400;-fx-font-style: normal;
 					element-label : foo
-					element-label-css-style : -fx-font-family: "Arial";
+					element-label-css-style : -fx-font-family: "Arial";-fx-font-weight: 400;-fx-font-style: normal;
 				}
 				Edge2 from Node1 to Node3 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					edge-target-label : baa
-					edge-target-label-css-style : -fx-font-family: "Times New Roman";
+					edge-target-label-css-style : -fx-font-family: "System";-fx-font-weight: 400;-fx-font-style: normal;
 				}
 				Edge3 from Node2 to Node3 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					edge-target-label : baa
-					edge-target-label-css-style : -fx-font-family: "Comic Sans";
+					edge-target-label-css-style : -fx-font-family: "Comic Sans";-fx-font-weight: 400;-fx-font-style: normal;
 					element-label : foo
-					element-label-css-style : -fx-font-family: "Comic Sans";
+					element-label-css-style : -fx-font-family: "Comic Sans";-fx-font-weight: 400;-fx-font-style: normal;
+				}
+				Edge4 from Node3 to Node4 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					element-label : faa
+					element-label-css-style : -fx-font-family: "Times New Roman";-fx-font-weight: 700;-fx-font-style: normal;
 				}
 			}
 		''')
@@ -1501,10 +1516,11 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def graph_fontname() {
+		//replaceFontAccess("Times New Roman")
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		'''
 			digraph {
-				graph [label="foo", fontname="Times New Roman"];
+				graph [label="foo", fontname="Times-Roman"];
 				1
 			}
 		'''.assertZestConversion('''
@@ -2504,7 +2520,8 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def node_fontname() {
+	@Test def node_fontname001() {
+		mockAvailableFonts("Arial", "Helvetica")
 		'''
 			graph {
 				1[fontname="Helvetica"]
@@ -2513,7 +2530,25 @@ class Dot2ZestGraphCopierTests {
 			Graph {
 				Node1 {
 					element-label : 1
-					element-label-css-style : -fx-font-family: "Helvetica";
+					element-label-css-style : -fx-font-family: "Helvetica";-fx-font-weight: 400;-fx-font-style: normal;
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
+	@Test def node_fontname002() {
+		mockAvailableFonts("Arial")
+		'''
+			graph {
+				1[fontname="Helvetica"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					element-label-css-style : -fx-font-family: "Arial";-fx-font-weight: 400;-fx-font-style: normal;
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4175,6 +4210,10 @@ class Dot2ZestGraphCopierTests {
 		val regex = '''(@[^\\«nl»]*)'''
 		
 		text.replaceAll(regex, "")
+	}
+	
+	private def mockAvailableFonts(String... availableFonts) {
+		dot2ZestGraphCopier.attributeCopier.fontUtil.systemFontAccess = new DotFontAccessMock(availableFonts)
 	}
 
 	private static class NodeShapePrettyPrinter extends DotGraphPrettyPrinter {

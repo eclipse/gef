@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -275,13 +275,16 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_label008() {
+		mockAvailableFonts("Bitstream Vera Sans")
 		'''
 			digraph {
 				edge[fontname=Helvetica]
 				1->2[label=l]
 			}
 		'''.assertEdgeLabelCssStyle('''
-			-fx-font-family: "Helvetica";
+			-fx-font-family: "Bitstream Vera Sans";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 		''')
 	}
 
@@ -297,13 +300,16 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_label010() {
+		mockAvailableFonts("Bitstream Vera Sans")
 		'''
 			digraph {
 				1->2[label=l, fontcolor=red, fontname=Helvetica, fontsize=16]
 			}
 		'''.assertEdgeLabelCssStyle('''
 			-fx-fill: #ff0000;
-			-fx-font-family: "Helvetica";
+			-fx-font-family: "Bitstream Vera Sans";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 			-fx-font-size: 16.0;
 		''')
 	}
@@ -362,13 +368,16 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_externalLabel007() {
+		mockAvailableFonts("Arial")
 		'''
 			digraph {
 				edge[fontname=Helvetica]
 				1->2[xlabel=x]
 			}
 		'''.assertEdgeExternalLabelCssStyle('''
-			-fx-font-family: "Helvetica";
+			-fx-font-family: "Arial";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 		''')
 	}
 
@@ -384,6 +393,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_externalLabel009() {
+		mockAvailableFonts("Arial")
 		'''
 			digraph {
 				edge[fontcolor=red, fontname=Helvetica, fontsize=16]
@@ -391,7 +401,9 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeExternalLabelCssStyle('''
 			-fx-fill: #ff0000;
-			-fx-font-family: "Helvetica";
+			-fx-font-family: "Arial";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 			-fx-font-size: 16.0;
 		''')
 	}
@@ -472,24 +484,30 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_sourceLabel010() {
+		mockAvailableFonts("Times New Roman", "Helvetica")
 		'''
 			digraph {
-				edge[fontname=Arial]
+				edge[fontname=Helvetica]
 				1->2[taillabel=t]
 			}
 		'''.assertEdgeSourceLabelCssStyle('''
-			-fx-font-family: "Arial";
+			-fx-font-family: "Helvetica";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 		''')
 	}
 
 	@Test def edge_sourceLabel011() {
+		mockAvailableFonts("Times New Roman", "Helvetica")
 		'''
 			digraph {
-				edge[labelfontname="Times New Roman", fontname=Arial]
+				edge[labelfontname="Times-Roman", fontname=Helvetica]
 				1->2[taillabel=t]
 			}
 		'''.assertEdgeSourceLabelCssStyle('''
 			-fx-font-family: "Times New Roman";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 		''')
 	}
 
@@ -516,14 +534,17 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_sourceLabel014() {
+		mockAvailableFonts("Courier New")
 		'''
 			digraph {
-				edge[labelfontsize=14, fontsize=12, fontcolor=green, fontname="Courier New"]
+				edge[labelfontsize=14, fontsize=12, fontcolor=green, fontname="Courier"]
 				1->2[taillabel=t]
 			}
 		'''.assertEdgeSourceLabelCssStyle('''
 			-fx-fill: #00ff00;
 			-fx-font-family: "Courier New";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 			-fx-font-size: 14.0;
 		''')
 	}
@@ -613,6 +634,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_targetLabel010() {
+		mockAvailableFonts("Arial")
 		'''
 			digraph {
 				edge[fontname=Arial]
@@ -620,17 +642,22 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetLabelCssStyle('''
 			-fx-font-family: "Arial";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 		''')
 	}
 
 	@Test def edge_targetLabel011() {
+		mockAvailableFonts("Liberation Serif", "Liberation Sans")
 		'''
 			digraph {
-				edge[labelfontname="Times New Roman", fontname=Arial]
+				edge[labelfontname="Times-BoldItalic", fontname=Helvetica]
 				1->2[headlabel=h]
 			}
 		'''.assertEdgeTargetLabelCssStyle('''
-			-fx-font-family: "Times New Roman";
+			-fx-font-family: "Liberation Serif";
+			-fx-font-weight: 700;
+			-fx-font-style: italic;
 		''')
 	}
 
@@ -657,6 +684,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 	}
 
 	@Test def edge_targetLabel014() {
+		mockAvailableFonts("Courier New")
 		'''
 			digraph {
 				edge[labelfontsize=14, fontsize=12, fontcolor=green, fontname="Courier New"]
@@ -665,7 +693,23 @@ class Dot2ZestEdgeAttributesConversionTests {
 		'''.assertEdgeTargetLabelCssStyle('''
 			-fx-fill: #00ff00;
 			-fx-font-family: "Courier New";
+			-fx-font-weight: 400;
+			-fx-font-style: normal;
 			-fx-font-size: 14.0;
+		''')
+	}
+	
+	@Test def edge_targetLabel015() {
+		mockAvailableFonts("Serif")
+		'''
+			digraph {
+				edge[fontname="Bookman-Light"]
+				1->2[headlabel=h]
+			}
+		'''.assertEdgeTargetLabelCssStyle('''
+			-fx-font-family: "serif";
+			-fx-font-weight: 300;
+			-fx-font-style: normal;
 		''')
 	}
 
@@ -769,5 +813,8 @@ class Dot2ZestEdgeAttributesConversionTests {
 	private def split(String text) {
 		text.replaceAll(";", ";" + System.lineSeparator)
 	}
-
+	
+	private def mockAvailableFonts(String... availableFonts) {
+		fontUtil.systemFontAccess = new DotFontAccessMock(availableFonts)
+	}
 }
