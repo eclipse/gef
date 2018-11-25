@@ -316,6 +316,22 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodeLabel("")
 	}
 
+	@Test def node_label012() {
+		'''
+			graph "$" {
+				a[label="\G"]
+			}
+		'''.assertNodeLabel("$")
+	}
+
+	@Test def node_label013() {
+		'''
+			graph {
+				"$"[label="\N"]
+			}
+		'''.assertNodeLabel("$")
+	}
+
 	@Test def node_id001() {
 		'''
 			digraph {

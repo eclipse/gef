@@ -23,6 +23,7 @@ package org.eclipse.gef.dot.internal.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
@@ -1026,8 +1027,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		return escString.replaceAll("\\\\L", //$NON-NLS-1$
 				(label != null ? label : "\\N").replaceAll("\\\\", //$NON-NLS-1$ //$NON-NLS-2$
 						"\\\\\\\\")) //$NON-NLS-1$
-				.replaceAll("\\\\N", nodeName != null ? nodeName : "") //$NON-NLS-1$ //$NON-NLS-2$
-				.replaceAll("\\\\G", graphName != null ? graphName : ""); //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("\\\\N", //$NON-NLS-1$
+						nodeName != null ? Matcher.quoteReplacement(nodeName)
+								: "") //$NON-NLS-1$
+				.replaceAll("\\\\G", //$NON-NLS-1$
+						graphName != null ? Matcher.quoteReplacement(graphName)
+								: ""); //$NON-NLS-1$
 	}
 
 	private Options options;
