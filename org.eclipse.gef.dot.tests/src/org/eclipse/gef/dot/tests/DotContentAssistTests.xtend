@@ -3253,7 +3253,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 					style = «c»
 				}
 			}
-		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped"], "bold", '''
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "bold", '''
 			graph {
 				subgraph cluster {
 					style = bold
@@ -3267,7 +3267,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 					style="«c»"
 				}
 			}
-		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped"], "dashed", '''
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "dashed", '''
 			graph {
 				subgraph cluster {
 					style="dashed"
@@ -3281,7 +3281,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 					style = "«c»"
 				}
 			}
-		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped"], "dotted", '''
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "dotted", '''
 			graph {
 				subgraph cluster {
 					style = "dotted"

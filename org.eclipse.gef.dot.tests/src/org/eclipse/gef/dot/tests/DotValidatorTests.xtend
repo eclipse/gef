@@ -480,7 +480,7 @@ class DotValidatorTests {
 					1
 				}
 			}
-		'''.assertStyleError("foo", "The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'radial', 'rounded', 'solid', 'striped'.")
+		'''.assertStyleError("foo", "The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped'.")
 	}
 
 	@Test def incomplete_model() {

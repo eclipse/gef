@@ -2187,7 +2187,7 @@ class DotAttributesTests {
 		styleParsed.assertNull
 		
 		// set valid string values
-		for(validClusterStyleItem : #["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped"]) {
+		for(validClusterStyleItem : #["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"]) {
 			style = validClusterStyleItem
 			validClusterStyleItem.assertEquals(style)
 			val expected = createStyle => [
@@ -2216,10 +2216,10 @@ class DotAttributesTests {
 
 		// set syntactically correct, but semantically invalid values
 		invalidValue([style = "foo"],
-			"Cannot set graph attribute 'style' to 'foo'. The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'radial', 'rounded', 'solid', 'striped'."
+			"Cannot set graph attribute 'style' to 'foo'. The style value 'foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped'."
 		)
 		invalidValue([style = "diagonals"],
-			"Cannot set graph attribute 'style' to 'diagonals'. The style value 'diagonals' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'radial', 'rounded', 'solid', 'striped'."
+			"Cannot set graph attribute 'style' to 'diagonals'. The style value 'diagonals' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped'."
 		)
 	}
 

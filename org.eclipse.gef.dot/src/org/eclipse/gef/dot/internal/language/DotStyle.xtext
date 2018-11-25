@@ -34,4 +34,4 @@ enum EdgeStyle:
 	bold | dashed | dotted | invis | solid | tapered;
 	
 enum ClusterStyle:
-	bold | dashed | dotted | filled | radial | rounded | solid |striped;
+	bold | dashed | dotted | filled | invis | radial | rounded | solid |striped;

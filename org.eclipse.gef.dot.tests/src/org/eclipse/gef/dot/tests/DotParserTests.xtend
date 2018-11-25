@@ -247,7 +247,7 @@ class DotParserTests {
 
 	@Test def cluster_style() {
 		
-		for(validClusterStyle : #["bold", "dashed", "dotted", "filled", "radial", "rounded", "solid", "striped",
+		for(validClusterStyle : #["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped",
 			"bold, dashed", "bold, filled", "bold, rounded", "bold, striped", "filled, dashed"]) {
 			'''
 				graph {
