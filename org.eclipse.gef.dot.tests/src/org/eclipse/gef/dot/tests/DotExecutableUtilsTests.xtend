@@ -120,7 +120,7 @@ class DotExecutableUtilsTests {
 	}
 
 	private def inputFile(String fileName) {
-		val dotFile = new File(DotTestUtils.RESOURCES_TESTS + fileName)
+		val dotFile = DotTestUtils.file(fileName)
 		dotFile.exists.assertTrue
 		dotFile
 	}

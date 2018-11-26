@@ -34,9 +34,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static org.eclipse.gef.dot.tests.DotTestUtils.RESOURCES_TESTS
-
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.file
 import static extension org.junit.Assert.assertEquals
 import static extension org.junit.Assert.assertNotNull
 
@@ -1762,8 +1761,7 @@ class DotImportTests {
 	}
 
 	private def assertFileImportedTo(String fileName, Graph expected) {
-		val file = new File(RESOURCES_TESTS + fileName)
-		val actual = file.importFile
+		val actual = fileName.file.importFile
 		actual.assertGraph(expected)
 	}
 

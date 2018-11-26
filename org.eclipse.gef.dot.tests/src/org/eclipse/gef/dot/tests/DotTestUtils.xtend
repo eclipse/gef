@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
+import java.io.File
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.IFolder
 import org.eclipse.core.resources.IProject
@@ -33,6 +34,7 @@ import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.util.StringInputStream
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
+import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
 import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.addNature
 import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.createProject
 
@@ -41,10 +43,17 @@ import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.cre
  * @author Fabian Steeg (fsteeg)
  */
 final class DotTestUtils {
-	public static val RESOURCES_TESTS = "resources/"
 
 	private new() {
 		/* Enforce non-instantiability */
+	}
+	
+	def static content(String fileName) {
+		fileName.file.read
+	}
+	
+	def static file(String fileName) {
+		new File("resources/" + fileName)
 	}
 
 	def static getLabeledGraph() {

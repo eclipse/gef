@@ -12,8 +12,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.io.File
-import org.eclipse.gef.dot.internal.DotFileUtils
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -21,7 +19,7 @@ import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.content
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -398,11 +396,7 @@ class DotOutlineViewTests extends AbstractOutlineTest {
 	}
 
 	private def testFile(String fileName, CharSequence expected) {
-		fileName.file.read.assertAllLabels(expected)
-	}
-
-	private def file(String fileName) {
-		new File(DotTestUtils.RESOURCES_TESTS + fileName)
+		fileName.content.assertAllLabels(expected)
 	}
 
 	override protected getEditorId() {

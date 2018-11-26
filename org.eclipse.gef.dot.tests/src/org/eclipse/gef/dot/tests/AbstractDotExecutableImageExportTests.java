@@ -49,7 +49,7 @@ public abstract class AbstractDotExecutableImageExportTests
 
 	protected void dotImageExport(String fileName, String format) {
 		if (dotExecutablePath != null) {
-			File inputFile = new File(DotTestUtils.RESOURCES_TESTS + fileName);
+			File inputFile = DotTestUtils.file(fileName);
 			File outputFile = null;
 			try {
 				outputFile = File.createTempFile("tmp_"

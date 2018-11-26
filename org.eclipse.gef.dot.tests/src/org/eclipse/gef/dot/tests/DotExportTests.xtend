@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import java.io.File
 import java.util.Scanner
 import org.eclipse.gef.dot.internal.DotExport
 import org.eclipse.gef.graph.Graph
@@ -22,9 +21,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static org.eclipse.gef.dot.tests.DotTestUtils.RESOURCES_TESTS
-
 import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.content
 import static extension org.junit.Assert.*
 
 /**
@@ -59,7 +57,7 @@ class DotExportTests {
 	}
 
 	private def assertExportedTo(Graph graph, String expectedFileName) {
-		val expected = expectedFileName.file.content
+		val expected = expectedFileName.content
 		
 		graph.exportDot.assertResult(expected)
 		graph.exportDotToFile.assertResult(expected)
@@ -76,7 +74,7 @@ class DotExportTests {
 		assertTrue(
 			'''Generated file «outputFile.name» must exist!''', // $NON-NLS-1$
 			outputFile.exists)
-		outputFile.content
+		outputFile.read
 	}
 
 	private def hasNoBlankLines(String dot) {
@@ -87,13 +85,5 @@ class DotExportTests {
 			}
 		}
 		scanner.close
-	}
-
-	private def file(String fileName) {
-		new File(RESOURCES_TESTS + fileName)
-	}
-
-	private def content(File file) {
-		file.read
 	}
 }

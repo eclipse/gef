@@ -17,7 +17,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.io.File
 import java.util.List
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
@@ -30,7 +29,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.content
 import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
@@ -275,15 +274,11 @@ class DotParserTests {
 	}
 
 	private def dslFileHasNoError(String fileName) {
-		fileName.file.read.hasNoErrors
+		fileName.content.hasNoErrors
 	}
 
 	private def hasNoErrors(String text) {
 		text.parse.assertNoErrors
-	}
-
-	private def file(String fileName) {
-		new File(DotTestUtils.RESOURCES_TESTS + fileName)
 	}
 
 	private def static initializeDotTestHtmlLikeLabels() {

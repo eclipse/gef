@@ -65,7 +65,7 @@ public class DotExecutableLayoutingTests extends AbstractDotExecutableTests {
 
 	private String dotLayout(String dotExecutablePath, String fileName) {
 		verifyDotExecutablePath(dotExecutablePath);
-		File inputFile = new File(DotTestUtils.RESOURCES_TESTS + fileName);
+		File inputFile = DotTestUtils.file(fileName);
 		String[] dotResult = DotExecutableUtils.executeDot(
 				new File(dotExecutablePath), true, inputFile, null, null);
 		// if (!dotResult[1].isEmpty()) {

@@ -13,8 +13,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.io.File
-import org.eclipse.gef.dot.internal.DotFileUtils
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.xtext.junit4.InjectWith
@@ -23,6 +21,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.content
 import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
@@ -943,9 +942,7 @@ class DotAstTests {
 	}
 
 	private def assertDotAstFromFile(String fileName, CharSequence expected) {
-		val fileContents = DotFileUtils
-				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName))
-		fileContents.assertDotAst(expected)
+		fileName.content.assertDotAst(expected)
 	}
 
 	private def assertDotAst(CharSequence modelAsText,

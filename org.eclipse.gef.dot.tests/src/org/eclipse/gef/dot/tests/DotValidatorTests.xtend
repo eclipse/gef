@@ -17,7 +17,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.io.File
 import java.util.List
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
@@ -36,7 +35,7 @@ import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.
 import static org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator.*
 import static org.eclipse.xtext.diagnostics.Diagnostic.*
 
-import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.content
 import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
@@ -586,10 +585,7 @@ class DotValidatorTests {
 	}
 
 	private def readFile(String fileName) {
-		fileName.file.read.parse
+		fileName.content.parse
 	}
 
-	private def file(String fileName) {
-		new File(DotTestUtils.RESOURCES_TESTS + fileName)
-	}
 }
