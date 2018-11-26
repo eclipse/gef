@@ -36,9 +36,7 @@ class DotExtractorTests {
 					} 
 				and more 
 			*/
-	 	'''
-	 	.testDotExtraction(
-	 	'''
+	 	'''.assertExtractedTo('''
 			graph name {
 						a;
 						b;
@@ -55,9 +53,7 @@ class DotExtractorTests {
 				b;
 				a--b
 			} and more */
-		'''
-		.testDotExtraction(
-		'''
+		'''.assertExtractedTo('''
 			graph long_name {
 				a;
 				b;
@@ -74,10 +70,8 @@ class DotExtractorTests {
 				a;
 				b;
 				a->b
-			} and more */
-		'''
-		.testDotExtraction(
-		'''
+			} and more */'''
+		.assertExtractedTo('''
 			digraph {
 				a;
 				b;
@@ -94,9 +88,7 @@ class DotExtractorTests {
 				b;
 				a--b
 			} and more 
-		'''
-	.testDotExtraction(
-		'''
+		'''.assertExtractedTo('''
 			graph {
 				a;
 				b;
@@ -113,9 +105,7 @@ class DotExtractorTests {
 					b
 					a--b
 				} and more 
-		'''
-		.testDotExtraction(
-		'''
+		'''.assertExtractedTo('''
 			graph{
 					a
 					b
@@ -127,9 +117,7 @@ class DotExtractorTests {
 	@Test def dot_extraction_06() {
 		'''
 			Stuff about a graph and then digraph{a;b;a->b} and more 
-		'''
-		.testDotExtraction(
-		'''
+		'''.assertExtractedTo('''
 			digraph{a;b;a->b}
 		''')
 	}
@@ -143,9 +131,7 @@ class DotExtractorTests {
 				}; 
 				1->3
 			} and more 
-		'''
-		.testDotExtraction(
-		'''
+		'''.assertExtractedTo('''
 			digraph {
 				subgraph cluster_0 {
 					1->2
@@ -162,9 +148,7 @@ class DotExtractorTests {
 					node[shape=record];
 					1[label="{Text|Text}"]
 				} and more
-		'''
-		.testDotExtraction(
-		'''
+		'''.assertExtractedTo('''
 			graph {
 					node[shape=record];
 					1[label="{Text|Text}"]
@@ -172,7 +156,7 @@ class DotExtractorTests {
 		''')
 	}
 
-	private def testDotExtraction(CharSequence embedded, CharSequence expected) {
+	private def assertExtractedTo(CharSequence embedded, CharSequence expected) {
 		var extracted = new DotExtractor(embedded.toString).dotString
 		Assert.assertEquals(String.format("Incorrect DOT extraction for '%s';", embedded), expected.toString.trim, extracted)
 	}
