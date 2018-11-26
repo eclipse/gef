@@ -21,9 +21,11 @@ import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
+
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotOutlineViewTests extends AbstractOutlineTest{
+class DotOutlineViewTests extends AbstractOutlineTest {
 
 	@Inject XtextEditorInfo editorInfo
 
@@ -55,7 +57,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
-	@Test def complete_edge(){
+	@Test def complete_edge() {
 		'''
 			graph {
 				1--2
@@ -69,7 +71,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
-	@Test def incomplete_edge(){
+	@Test def incomplete_edge() {
 		// The outline view should be able to cope with incomplete statements
 		'''
 			graph {
@@ -83,7 +85,7 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 		''')
 	}
 
-	@Test def incomplete_html_like_labels(){
+	@Test def incomplete_html_like_labels() {
 		// The outline view should be able to cope with incomplete statements
 		'''
 			graph {
@@ -396,9 +398,11 @@ class DotOutlineViewTests extends AbstractOutlineTest{
 	}
 
 	private def testFile(String fileName, CharSequence expected) {
-		val fileContents = DotFileUtils
-				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
-		fileContents.assertAllLabels(expected)
+		fileName.file.read.assertAllLabels(expected)
+	}
+
+	private def file(String fileName) {
+		new File(DotTestUtils.RESOURCES_TESTS + fileName)
 	}
 
 	override protected getEditorId() {
