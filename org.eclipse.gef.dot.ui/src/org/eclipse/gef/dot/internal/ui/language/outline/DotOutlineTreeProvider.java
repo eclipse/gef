@@ -51,7 +51,6 @@ import com.google.inject.Injector;
  */
 public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	private Injector injector;
 	private int attributeValueStartOffset;
 
 	/**
@@ -77,7 +76,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	/**
-	 * Consider an attribute having a HTML_STRING value as non-leaf.
+	 * Consider an attribute having an HTML_STRING value as non-leaf.
 	 * 
 	 * @param attribute
 	 * @return
@@ -117,7 +116,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	protected void _createChildren(IOutlineNode parent, Attribute attribute) {
 		if (attribute.getValue().getType() == ID.Type.HTML_STRING) {
 			String htmlLabelValue = attribute.getValue().toValue();
-			injector = DotActivator.getInstance().getInjector(
+			Injector injector = DotActivator.getInstance().getInjector(
 					DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
 
 			IOutlineTreeStructureProvider outlineTreeStructureProvider = injector
