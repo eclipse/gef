@@ -3355,7 +3355,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		return new ContentAssistProcessorTestBuilder(injector, this) {
 
 			override protected applyProposal(ICompletionProposal proposal, IXtextDocument document) {
-				return applyProposal(proposal, cursorPosition, document)
+				return _applyProposal(proposal, cursorPosition, document)
 			}
 
 			override applyProposal(int position, String proposalString) {
@@ -3364,13 +3364,13 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				try {
 					val proposals = computeCompletionProposals(document, position, shell)
 					val proposal = findProposal(proposalString, proposals)
-					return applyProposal(proposal, position, document)
+					return _applyProposal(proposal, position, document)
 				} finally {
 					shell.dispose
 				}
 			}
 
-			protected def applyProposal(ICompletionProposal proposal, int position,	IXtextDocument document) {
+			protected def _applyProposal(ICompletionProposal proposal, int position, IXtextDocument document) {
 				val shell = new Shell
 				try {
 					val configuration = injector.getInstance(XtextSourceViewerConfiguration)

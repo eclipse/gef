@@ -24,6 +24,41 @@
 	</properties>
 	<profiles>
 		<profile>
+			<id>PHOTON.target</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>${build-helper-version}</version>
+						<executions>
+							<!-- make target file available for incremental builds -->
+							<execution>
+								<id>attach-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<!-- note: the file name must be ${classifier}.target -->
+											<file>PHOTON.target</file>
+											<type>target</type>
+											<classifier>PHOTON</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>OXYGEN.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -154,5 +189,6 @@
 				</plugins>
 			</build>
 		</profile>
+		
 	</profiles>
 </project>
