@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 itemis AG and others.
+ * Copyright (c) 2010, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse def License v1.0
@@ -100,43 +100,46 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	Object text(DotAst model) {
-		return styled(model.eResource().getURI().lastSegment() + ": File"); //$NON-NLS-1$
+		String format = "%s: File"; //$NON-NLS-1$
+		return styled(format, model.eResource().getURI().lastSegment());
 	}
 
 	Object text(DotGraph graph) {
+		String format = "%s: Graph"; //$NON-NLS-1$
 		ID name = graph.getName();
-		return styled((name != null ? name.toValue() : "<?>") + ": Graph"); //$NON-NLS-1$ //$NON-NLS-2$
+		return styled(format, name != null ? name.toValue() : "<?>"); //$NON-NLS-1$
 	}
 
 	Object text(Subgraph graph) {
+		String format = "%s: Subgraph"; //$NON-NLS-1$
 		ID name = graph.getName();
-		return styled((name != null ? name.toValue() : "<?>") + ": Subgraph"); //$NON-NLS-1$ //$NON-NLS-2$
+		return styled(format, (name != null ? name.toValue() : "<?>")); //$NON-NLS-1$
 	}
 
 	Object text(NodeStmt node) {
-		return styled(node.getNode().getName() + ": Node"); //$NON-NLS-1$
+		return text(node.getNode());
 	}
 
 	Object text(EdgeStmtNode edge) {
-		String format = "%s %s [%s %s]: Edges"; //$NON-NLS-1$
-		String sourceNode = edge.getNode().getName().toValue();
 		EList<EdgeRhs> edgeRHS = edge.getEdgeRHS();
 		// The label provider (used e.g. within the outline view) should be able
 		// to cope with incomplete statements
 		if (edgeRHS != null && edgeRHS.size() > 0) {
+			String format = "%s %s [%s %s]: Edges"; //$NON-NLS-1$
+			String sourceNode = edge.getNode().getName().toValue();
 			String opLiteral = edge.getEdgeRHS().get(0).getOp().getLiteral();
 			int targetNodeCount = edge.getEdgeRHS().size();
-			return styled(String.format(format, sourceNode, opLiteral,
-					targetNodeCount, targetNodeCount > 1 ? "Nodes" : "Node")); //$NON-NLS-1$//$NON-NLS-2$
+			return styled(format, sourceNode, opLiteral, targetNodeCount,
+					targetNodeCount > 1 ? "Nodes" : "Node"); //$NON-NLS-1$//$NON-NLS-2$
 		} else {
-			return "<?>: Edges"; //$NON-NLS-1$
+			return styled("<?>: Edges"); //$NON-NLS-1$
 		}
 	}
 
 	Object text(AttrStmt attr) {
 		String format = "%s: Attributes"; //$NON-NLS-1$
 		String attrLiteral = attr.getType().getLiteral();
-		return styled(String.format(format, attrLiteral));
+		return styled(format, attrLiteral);
 	}
 
 	Object text(Attribute attr) {
@@ -145,41 +148,41 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		String displayValue = attributeValue.getType() == ID.Type.HTML_STRING
 				? "<HTML-Label>" //$NON-NLS-1$
 				: attributeValue.toString();
-		return styled(String.format(format, attr.getName(), displayValue));
+		return styled(format, attr.getName(), displayValue);
 	}
 
 	Object text(AttrList attrs) {
 		String format = "%s %s: Attributes"; //$NON-NLS-1$
 		int attrCount = attrs.getAttributes().size();
-		return styled(String.format(format, attrCount,
-				attrCount > 1 ? "Attributes" : "Attribute")); //$NON-NLS-1$//$NON-NLS-2$
+		return styled(format, attrCount,
+				attrCount > 1 ? "Attributes" : "Attribute"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	Object text(NodeId id) {
-		return styled(id.getName() + ": Node"); //$NON-NLS-1$
+		String format = "%s: Node"; //$NON-NLS-1$
+		return styled(format, id.getName());
 	}
 
 	Object text(EdgeRhs rhs) {
-		if (!(rhs instanceof EdgeRhsNode)) {
-			return super.text(rhs);
+		if (rhs instanceof EdgeRhsNode) {
+			String format = "%s %s %s"; //$NON-NLS-1$
+			String name = rhs.getOp().getName();
+			String literal = rhs.getOp().getLiteral();
+			Object targetNodeText = text(((EdgeRhsNode) rhs).getNode());
+			return styled(format, name, literal, targetNodeText);
 		}
-		String format = "%s %s %s"; //$NON-NLS-1$
-		String name = rhs.getOp().getName();
-		String literal = rhs.getOp().getLiteral();
-		Object targetNodeText = text(((EdgeRhsNode) rhs).getNode());
-		return styled(String.format(format, name, literal, targetNodeText));
+		return super.text(rhs);
 	}
 
 	Object text(HtmlTag htmlTag) {
 		String format = htmlTag.isSelfClosing() ? "<%s/>: Tag" //$NON-NLS-1$
 				: "<%s>: Tag"; //$NON-NLS-1$
-		return styled(String.format(format, htmlTag.getName()));
+		return styled(format, htmlTag.getName());
 	}
 
 	Object text(HtmlAttr htmlAttr) {
 		String format = "%s = %s: Attribute"; //$NON-NLS-1$
-		return styled(
-				String.format(format, htmlAttr.getName(), htmlAttr.getValue()));
+		return styled(format, htmlAttr.getName(), htmlAttr.getValue());
 	}
 
 	Object text(HtmlContent htmlContent) {
@@ -187,13 +190,14 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		String text = htmlContent.getText() == null ? "" //$NON-NLS-1$
 				: htmlContent.getText().trim();
 
-		return styled(String.format(format, text));
+		return styled(format, text);
 	}
 
-	static StyledString styled(String format) {
-		StyledString styled = new StyledString(format);
-		int offset = format.indexOf(':');
-		styled.setStyle(offset, format.length() - offset,
+	static StyledString styled(String format, Object... args) {
+		String text = String.format(format, args);
+		StyledString styled = new StyledString(text);
+		int offset = text.indexOf(':');
+		styled.setStyle(offset, text.length() - offset,
 				StyledString.DECORATIONS_STYLER);
 		return styled;
 	}
