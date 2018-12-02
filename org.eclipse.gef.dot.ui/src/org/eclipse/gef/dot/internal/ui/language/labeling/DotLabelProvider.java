@@ -52,7 +52,7 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String image(DotGraph graph) {
-		return "graph_outline.png"; //$NON-NLS-1$
+		return "graph.png"; //$NON-NLS-1$
 	}
 
 	String image(Subgraph graph) {

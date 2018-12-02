@@ -50,7 +50,7 @@ class DotLabelProviderTests {
 	}
 
 	@Test def image_DotGraph() {
-		createDotGraph.hasImage('graph_outline.png')
+		createDotGraph.hasImage('graph.png')
 	}
 
 	@Test def image_AttrStmt() {
