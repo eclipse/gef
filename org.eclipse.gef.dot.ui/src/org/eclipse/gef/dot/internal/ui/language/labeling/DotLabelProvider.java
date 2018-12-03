@@ -47,6 +47,18 @@ import com.google.inject.Inject;
  */
 public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
+	private static final String IMAGE_ATTRIBUTE = "attribute.png"; //$NON-NLS-1$
+	private static final String IMAGE_ATTRIBUTES = "attributes.png"; //$NON-NLS-1$
+	private static final String IMAGE_EDGE = "edge.png"; //$NON-NLS-1$
+	private static final String IMAGE_FILE = "file.png"; //$NON-NLS-1$
+	private static final String IMAGE_GRAPH = "graph.png"; //$NON-NLS-1$
+	private static final String IMAGE_HTML_TAG = "html_tag.png"; //$NON-NLS-1$
+	private static final String IMAGE_HTML_TEXT = "html_text.png"; //$NON-NLS-1$
+	private static final String IMAGE_ID = "id.png"; //$NON-NLS-1$
+	private static final String IMAGE_NODE = "node.png"; //$NON-NLS-1$
+	private static final String IMAGE_RHS = "rhs.png"; //$NON-NLS-1$
+	private static final String IMAGE_SUBGRAPH = "subgraph.png"; //$NON-NLS-1$
+
 	@Inject
 	private DotGrammarAccess grammarAccess;
 
@@ -56,55 +68,55 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String image(DotAst ast) {
-		return "file.png"; //$NON-NLS-1$
+		return IMAGE_FILE;
 	}
 
 	String image(DotGraph graph) {
-		return "graph.png"; //$NON-NLS-1$
+		return IMAGE_GRAPH;
 	}
 
 	String image(Subgraph graph) {
-		return "subgraph.png"; //$NON-NLS-1$
+		return IMAGE_SUBGRAPH;
 	}
 
 	String image(NodeStmt node) {
-		return "node.png"; //$NON-NLS-1$
+		return IMAGE_NODE;
 	}
 
 	String image(EdgeStmtNode edge) {
-		return "edge.png"; //$NON-NLS-1$
+		return IMAGE_EDGE;
 	}
 
 	String image(AttrStmt attr) {
-		return "attributes.png"; //$NON-NLS-1$
+		return IMAGE_ATTRIBUTES;
 	}
 
 	String image(Attribute attr) {
-		return "attribute.png"; //$NON-NLS-1$
+		return IMAGE_ATTRIBUTE;
 	}
 
 	String image(AttrList attrs) {
-		return "attributes.png"; //$NON-NLS-1$
+		return IMAGE_ATTRIBUTES;
 	}
 
 	String image(NodeId attrs) {
-		return "id.png"; //$NON-NLS-1$
+		return IMAGE_ID;
 	}
 
 	String image(EdgeRhs rhs) {
-		return "rhs.png"; //$NON-NLS-1$
+		return IMAGE_RHS;
 	}
 
 	String image(HtmlTag htmlTag) {
-		return "html_tag.png"; //$NON-NLS-1$
+		return IMAGE_HTML_TAG;
 	}
 
 	String image(HtmlAttr htmlAttr) {
-		return "attribute.png"; //$NON-NLS-1$
+		return IMAGE_ATTRIBUTE;
 	}
 
 	String image(HtmlContent htmlContent) {
-		return "html_text.png"; //$NON-NLS-1$
+		return IMAGE_HTML_TEXT;
 	}
 
 	Object image(Keyword keyword) {
@@ -117,16 +129,17 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		if (keyword == graphTypeElements.getGraphGraphKeyword_0_0()
 				|| keyword == graphTypeElements
 						.getDigraphDigraphKeyword_1_0()) {
-			return "graph.png"; //$NON-NLS-1$
+			return IMAGE_GRAPH;
 		}
 
 		if (keyword == attributeTypeElements.getGraphGraphKeyword_0_0()
 				|| keyword == attributeTypeElements.getNodeNodeKeyword_1_0()
 				|| keyword == attributeTypeElements.getEdgeEdgeKeyword_2_0()) {
-			return "attributes.png"; //$NON-NLS-1$
+			return IMAGE_ATTRIBUTES;
 		}
+
 		if (keyword == subgraphElements.getSubgraphKeyword_1_0()) {
-			return "subgraph.png"; //$NON-NLS-1$
+			return IMAGE_SUBGRAPH;
 		}
 		return super.image(keyword);
 	}
