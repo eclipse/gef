@@ -20,6 +20,7 @@ import org.eclipse.gef.dot.internal.language.dot.AttributeType
 import org.eclipse.gef.dot.internal.language.dot.DotFactory
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelFactory
+import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess
 import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.dot.internal.ui.language.labeling.DotLabelProvider
 import org.eclipse.jface.viewers.ILabelProvider
@@ -41,6 +42,7 @@ class DotLabelProviderTests {
 
 	@Inject ILabelProvider labelProvider
 	@Inject IImageHelper imageHelper
+	@Inject extension DotGrammarAccess
 
 	val extension DotFactory = DotFactory.eINSTANCE
 	val extension HtmllabelFactory = HtmllabelFactory.eINSTANCE
@@ -95,6 +97,30 @@ class DotLabelProviderTests {
 
 	@Test def image_HtmlContent() {
 		createHtmlContent.hasImage('html_text.png')
+	}
+
+	@Test def image_keyword_graph() {
+		graphTypeAccess.graphGraphKeyword_0_0.hasImage('graph.png')
+	}
+
+	@Test def image_keyword_digraph() {
+		graphTypeAccess.digraphDigraphKeyword_1_0.hasImage('graph.png')
+	}
+
+	@Test def image_keyword_graph_attributes() {
+		attributeTypeAccess.graphGraphKeyword_0_0.hasImage('attributes.png')
+	}
+
+	@Test def image_keyword_node_attributes() {
+		attributeTypeAccess.nodeNodeKeyword_1_0.hasImage('attributes.png')
+	}
+
+	@Test def image_keyword_edge_attributes() {
+		attributeTypeAccess.edgeEdgeKeyword_2_0.hasImage('attributes.png')
+	}
+
+	@Test def image_keyword_subgraph() {
+		subgraphAccess.subgraphKeyword_1_0.hasImage('subgraph.png')
 	}
 
 	@Test def text_DotAst() {

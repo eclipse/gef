@@ -28,8 +28,13 @@ import org.eclipse.gef.dot.internal.language.dot.Subgraph;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
+import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess;
+import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.AttributeTypeElements;
+import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.GraphTypeElements;
+import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.SubgraphElements;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 
 import com.google.inject.Inject;
@@ -41,6 +46,9 @@ import com.google.inject.Inject;
  * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  */
 public class DotLabelProvider extends DefaultEObjectLabelProvider {
+
+	@Inject
+	private DotGrammarAccess grammarAccess;
 
 	@Inject
 	public DotLabelProvider(AdapterFactoryLabelProvider delegate) {
@@ -97,6 +105,30 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
 	String image(HtmlContent htmlContent) {
 		return "html_text.png"; //$NON-NLS-1$
+	}
+
+	Object image(Keyword keyword) {
+		GraphTypeElements graphTypeElements = grammarAccess
+				.getGraphTypeAccess();
+		AttributeTypeElements attributeTypeElements = grammarAccess
+				.getAttributeTypeAccess();
+		SubgraphElements subgraphElements = grammarAccess.getSubgraphAccess();
+
+		if (keyword == graphTypeElements.getGraphGraphKeyword_0_0()
+				|| keyword == graphTypeElements
+						.getDigraphDigraphKeyword_1_0()) {
+			return "graph.png"; //$NON-NLS-1$
+		}
+
+		if (keyword == attributeTypeElements.getGraphGraphKeyword_0_0()
+				|| keyword == attributeTypeElements.getNodeNodeKeyword_1_0()
+				|| keyword == attributeTypeElements.getEdgeEdgeKeyword_2_0()) {
+			return "attributes.png"; //$NON-NLS-1$
+		}
+		if (keyword == subgraphElements.getSubgraphKeyword_1_0()) {
+			return "subgraph.png"; //$NON-NLS-1$
+		}
+		return super.image(keyword);
 	}
 
 	Object text(DotAst model) {
