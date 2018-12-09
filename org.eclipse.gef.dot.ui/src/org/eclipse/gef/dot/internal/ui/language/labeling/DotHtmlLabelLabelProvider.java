@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2018 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse def License v1.0
@@ -46,14 +46,13 @@ public class DotHtmlLabelLabelProvider
 	Object text(HtmlTag htmlTag) {
 		String format = htmlTag.isSelfClosing() ? "<%s/>: Tag" //$NON-NLS-1$
 				: "<%s>: Tag"; //$NON-NLS-1$
-		return DotLabelProvider
-				.styled(String.format(format, htmlTag.getName()));
+		return DotLabelProvider.styled(format, htmlTag.getName());
 	}
 
 	Object text(HtmlAttr htmlAttr) {
 		String format = "%s = %s: Attribute"; //$NON-NLS-1$
-		return DotLabelProvider.styled(
-				String.format(format, htmlAttr.getName(), htmlAttr.getValue()));
+		return DotLabelProvider.styled(format, htmlAttr.getName(),
+				htmlAttr.getValue());
 	}
 
 	Object text(HtmlContent htmlContent) {
@@ -61,6 +60,6 @@ public class DotHtmlLabelLabelProvider
 		String text = htmlContent.getText() == null ? "" //$NON-NLS-1$
 				: htmlContent.getText().trim();
 
-		return DotLabelProvider.styled(String.format(format, text));
+		return DotLabelProvider.styled(format, text);
 	}
 }
