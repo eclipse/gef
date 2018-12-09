@@ -19,6 +19,7 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode;
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode;
 import org.eclipse.gef.dot.internal.language.dot.NodeId;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.xtext.resource.IReferenceDescription;
 
 /**
@@ -92,7 +93,7 @@ public class DotDescriptionLabelProvider
 
 		String resultText = result.toString();
 
-		return !resultText.isEmpty() ? DotLabelProvider.styled(resultText)
+		return !resultText.isEmpty() ? DotEditorUtils.style(resultText)
 				: super.text(referenceDescription);
 	}
 

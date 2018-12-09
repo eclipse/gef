@@ -17,6 +17,7 @@ import java.io.InputStream;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.XtextResource;
@@ -46,6 +47,15 @@ public class DotEditorUtils {
 		}
 
 		return false;
+	}
+
+	public static StyledString style(String format, Object... args) {
+		String text = String.format(format, args);
+		StyledString styled = new StyledString(text);
+		int offset = text.indexOf(':');
+		styled.setStyle(offset, text.length() - offset,
+				StyledString.DECORATIONS_STYLER);
+		return styled;
 	}
 
 	/**

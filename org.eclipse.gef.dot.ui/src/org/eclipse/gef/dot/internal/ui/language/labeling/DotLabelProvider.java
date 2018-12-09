@@ -33,7 +33,7 @@ import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.Attribute
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.GraphTypeElements;
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.SubgraphElements;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
-import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 
@@ -146,19 +146,22 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
 	Object text(DotAst model) {
 		String format = "%s: File"; //$NON-NLS-1$
-		return styled(format, model.eResource().getURI().lastSegment());
+		return DotEditorUtils.style(format,
+				model.eResource().getURI().lastSegment());
 	}
 
 	Object text(DotGraph graph) {
 		String format = "%s: Graph"; //$NON-NLS-1$
 		ID name = graph.getName();
-		return styled(format, name != null ? name.toValue() : "<?>"); //$NON-NLS-1$
+		return DotEditorUtils.style(format,
+				name != null ? name.toValue() : "<?>"); //$NON-NLS-1$
 	}
 
 	Object text(Subgraph graph) {
 		String format = "%s: Subgraph"; //$NON-NLS-1$
 		ID name = graph.getName();
-		return styled(format, (name != null ? name.toValue() : "<?>")); //$NON-NLS-1$
+		return DotEditorUtils.style(format,
+				(name != null ? name.toValue() : "<?>")); //$NON-NLS-1$
 	}
 
 	Object text(NodeStmt node) {
@@ -174,17 +177,17 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 			String sourceNode = edge.getNode().getName().toValue();
 			String opLiteral = edge.getEdgeRHS().get(0).getOp().getLiteral();
 			int targetNodeCount = edge.getEdgeRHS().size();
-			return styled(format, sourceNode, opLiteral, targetNodeCount,
-					targetNodeCount > 1 ? "Nodes" : "Node"); //$NON-NLS-1$//$NON-NLS-2$
+			return DotEditorUtils.style(format, sourceNode, opLiteral,
+					targetNodeCount, targetNodeCount > 1 ? "Nodes" : "Node"); //$NON-NLS-1$//$NON-NLS-2$
 		} else {
-			return styled("<?>: Edges"); //$NON-NLS-1$
+			return DotEditorUtils.style("<?>: Edges"); //$NON-NLS-1$
 		}
 	}
 
 	Object text(AttrStmt attr) {
 		String format = "%s: Attributes"; //$NON-NLS-1$
 		String attrLiteral = attr.getType().getLiteral();
-		return styled(format, attrLiteral);
+		return DotEditorUtils.style(format, attrLiteral);
 	}
 
 	Object text(Attribute attr) {
@@ -193,19 +196,19 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		String displayValue = attributeValue.getType() == ID.Type.HTML_STRING
 				? "<HTML-Label>" //$NON-NLS-1$
 				: attributeValue.toString();
-		return styled(format, attr.getName(), displayValue);
+		return DotEditorUtils.style(format, attr.getName(), displayValue);
 	}
 
 	Object text(AttrList attrs) {
 		String format = "%s %s: Attributes"; //$NON-NLS-1$
 		int attrCount = attrs.getAttributes().size();
-		return styled(format, attrCount,
+		return DotEditorUtils.style(format, attrCount,
 				attrCount > 1 ? "Attributes" : "Attribute"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	Object text(NodeId id) {
 		String format = "%s: Node"; //$NON-NLS-1$
-		return styled(format, id.getName());
+		return DotEditorUtils.style(format, id.getName());
 	}
 
 	Object text(EdgeRhs rhs) {
@@ -214,7 +217,7 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 			String name = rhs.getOp().getName();
 			String literal = rhs.getOp().getLiteral();
 			Object targetNodeText = text(((EdgeRhsNode) rhs).getNode());
-			return styled(format, name, literal, targetNodeText);
+			return DotEditorUtils.style(format, name, literal, targetNodeText);
 		}
 		return super.text(rhs);
 	}
@@ -222,28 +225,19 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	Object text(HtmlTag htmlTag) {
 		String format = htmlTag.isSelfClosing() ? "<%s/>: Tag" //$NON-NLS-1$
 				: "<%s>: Tag"; //$NON-NLS-1$
-		return styled(format, htmlTag.getName());
+		return DotEditorUtils.style(format, htmlTag.getName());
 	}
 
 	Object text(HtmlAttr htmlAttr) {
 		String format = "%s = %s: Attribute"; //$NON-NLS-1$
-		return styled(format, htmlAttr.getName(), htmlAttr.getValue());
+		return DotEditorUtils.style(format, htmlAttr.getName(),
+				htmlAttr.getValue());
 	}
 
 	Object text(HtmlContent htmlContent) {
 		String format = "%s: Text"; //$NON-NLS-1$
 		String text = htmlContent.getText() == null ? "" //$NON-NLS-1$
 				: htmlContent.getText().trim();
-
-		return styled(format, text);
-	}
-
-	static StyledString styled(String format, Object... args) {
-		String text = String.format(format, args);
-		StyledString styled = new StyledString(text);
-		int offset = text.indexOf(':');
-		styled.setStyle(offset, text.length() - offset,
-				StyledString.DECORATIONS_STYLER);
-		return styled;
+		return DotEditorUtils.style(format, text);
 	}
 }

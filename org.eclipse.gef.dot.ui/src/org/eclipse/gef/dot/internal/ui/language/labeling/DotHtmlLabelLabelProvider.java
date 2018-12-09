@@ -14,6 +14,7 @@ package org.eclipse.gef.dot.internal.ui.language.labeling;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 
 import com.google.inject.Inject;
 
@@ -46,12 +47,12 @@ public class DotHtmlLabelLabelProvider
 	Object text(HtmlTag htmlTag) {
 		String format = htmlTag.isSelfClosing() ? "<%s/>: Tag" //$NON-NLS-1$
 				: "<%s>: Tag"; //$NON-NLS-1$
-		return DotLabelProvider.styled(format, htmlTag.getName());
+		return DotEditorUtils.style(format, htmlTag.getName());
 	}
 
 	Object text(HtmlAttr htmlAttr) {
 		String format = "%s = %s: Attribute"; //$NON-NLS-1$
-		return DotLabelProvider.styled(format, htmlAttr.getName(),
+		return DotEditorUtils.style(format, htmlAttr.getName(),
 				htmlAttr.getValue());
 	}
 
@@ -59,7 +60,6 @@ public class DotHtmlLabelLabelProvider
 		String format = "%s: Text"; //$NON-NLS-1$
 		String text = htmlContent.getText() == null ? "" //$NON-NLS-1$
 				: htmlContent.getText().trim();
-
-		return DotLabelProvider.styled(format, text);
+		return DotEditorUtils.style(format, text);
 	}
 }
