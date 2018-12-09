@@ -25,7 +25,6 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration
-import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal
 import org.eclipse.xtext.ui.editor.model.IXtextDocument
 import org.eclipse.xtext.xbase.junit.ui.AbstractContentAssistTest
 import org.junit.BeforeClass
@@ -2377,42 +2376,6 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				1[color=10]
 			}
 		''')
-		
-		val proposals = newBuilder.append('''graph{1[color=]}''').computeCompletionProposals(14)
-		for (proposal : proposals) {
-			if (proposal instanceof ConfigurableCompletionProposal) {
-				val proposalDisplayString = proposal.displayString
-				// consider only color names proposals
-				if (!"#/".contains(proposalDisplayString)) {
-					// verify that an image (filled by the corresponding color) is generated to the color names
-					var assertionErrorMessage = "Proposal image is missing for the '" + proposalDisplayString + "' color!"
-					assertNotNull(assertionErrorMessage, proposal.image)
-					// verify that a color description (as additional proposal information) is provided to the color names
-					val colorScheme = "x11"
-					val colorName = proposalDisplayString
-					val colorCode = DotColors.get(colorScheme, colorName)
-					val expectedAdditionalProposalInfo = '''
-						<table border=1>
-							<tr>
-								<td><b>color preview</b></td>
-								<td><b>color scheme</b></td>
-								<td><b>color name</b></td>
-								<td><b>color code</b></td>
-							</tr>
-							<tr>
-								<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:«colorCode»;"</div></td>
-								<td align="center">«colorScheme»</td>
-								<td align="center">«colorName»</td>
-								<td align="center">«colorCode»</td>
-							</tr>
-						</table>
-					'''
-					val actualAdditionalProposalInfo = proposal.additionalProposalInfo
-					assertionErrorMessage = "Color description as additional proposal information for the '"+proposalDisplayString+"' color does not match!"
-					assertEquals(assertionErrorMessage, expectedAdditionalProposalInfo, actualAdditionalProposalInfo)
-				}
-			}
-		}
 	}
 
 	@Test def node_colorscheme() {
