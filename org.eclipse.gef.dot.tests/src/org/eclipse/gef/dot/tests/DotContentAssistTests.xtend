@@ -17,7 +17,7 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import java.util.List
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
-import org.eclipse.gef.dot.internal.language.color.DotColors
+import org.eclipse.gef.dot.internal.ui.language.contentassist.DotProposalProvider
 import org.eclipse.jface.text.contentassist.ICompletionProposal
 import org.eclipse.swt.widgets.Shell
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry
@@ -32,9 +32,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.fail
 
+/**
+ * Test cases for the {@link DotProposalProvider} class.
+ */
 @SuppressWarnings("restriction")
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -139,11 +141,11 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		"thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"]
 
 	@BeforeClass def static void initializeStatusHandlerRegistry() {
-		/** 
+		/**
 		 * Initialize the
-		 * org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry before
-		 * executing the test cases, otherwise it will be initialized after the
-		 * test case executions resulting in a NullPointerException.
+		 * {@link org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry}
+		 * before executing the test cases, otherwise it will be initialized
+		 * after the test case executions resulting in a NullPointerException.
 		 * For more information, see
 		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=460996
 		 */
@@ -206,7 +208,31 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def edge_attribute_statement() {
+	@Test def graph_multi_edge() {
+		'''
+			graph {
+				1--2«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "{", "}"], "--", '''
+			graph {
+				1--2--
+			}
+		''')
+	}
+
+	@Test def digraph_multi_edge() {
+		'''
+			digraph {
+				1->2«c»
+			}
+		'''.testContentAssistant(#["->", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "{", "}"], "->", '''
+			digraph {
+				1->2->
+			}
+		''')
+	}
+
+	@Test def edge_attribute_statement001() {
 		'''
 			graph {
 				«c»
@@ -215,6 +241,20 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
 		], "edge[]", '''
 			graph {
+				edge[]
+			}
+		''')
+	}
+
+	@Test def edge_attribute_statement002() {
+		'''
+			graph {
+				1--2
+				«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "[" ,"edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph","{","}"], "edge[]", '''
+			graph {
+				1--2
 				edge[]
 			}
 		''')
@@ -232,7 +272,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			"taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowhead", '''
 			graph {
-				edge[arrowhead]
+				edge[arrowhead=]
 			}
 		''')
 		
@@ -247,7 +287,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			"taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowtail", '''
 			graph {
-				1--2[ arrowtail ]
+				1--2[ arrowtail= ]
 			}
 		''')
 		
@@ -258,7 +298,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["=", "arrowhead", "arrowsize", "arrowtail"], "arrowsize", '''
 			graph {
-				1--2[ arrowsize ]
+				1--2[ arrowsize= ]
 			}
 		''')
 	}
@@ -1469,7 +1509,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		// no use to test local attribute values with prefix
 	}
 
-	@Test def graph_attribute_statement() {
+	@Test def graph_attribute_statement001() {
 		'''
 			graph {
 				«c»
@@ -1478,6 +1518,20 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
 		], "graph[]", '''
 			graph {
+				graph[]
+			}
+		''')
+	}
+
+	@Test def graph_attribute_statement002() {
+		'''
+			graph {
+				1--2
+				«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph","{","}"], "graph[]", '''
+			graph {
+				1--2
 				graph[]
 			}
 		''')
@@ -1494,7 +1548,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 								"splines", "style"], "forcelabels",
 		'''
 			graph {
-				graph[forcelabels]
+				graph[forcelabels=]
 			}
 		''')
 		
@@ -1508,7 +1562,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "rankdir",
 		'''
 			graph {
-				rankdir
+				rankdir=
 			}
 		''')
 
@@ -1519,7 +1573,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["label", "layout", "--", ":", ";", "=", "[", "{", "}", "edge - Insert a template"], "layout", '''
 			graph {
-				layout
+				layout=
 			}
 		''')
 		
@@ -1529,7 +1583,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["label", "layout", "->", ":", ";", "=", "[", "{", "}", "edge - Insert a template"], "label", '''
 			digraph {
-				label
+				label=
 			}
 		''')
 	}
@@ -2228,7 +2282,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
-	@Test def node_attribute_statement() {
+	@Test def node_attribute_statement001() {
 		'''
 			graph {
 				«c»
@@ -2237,6 +2291,20 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
 		], "node[]", '''
 			graph {
+				node[]
+			}
+		''')
+	}
+
+	@Test def node_attribute_statement002() {
+		'''
+			graph {
+				1--2
+				«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "{", "}"], "node[]", '''
+			graph {
+				1--2
 				node[]
 			}
 		''')
@@ -2253,7 +2321,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 								"xlabel", "xlp"], "distortion",
 		'''
 			graph {
-				node[distortion]
+				node[distortion=]
 			}
 		''')
 
@@ -2267,7 +2335,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 								"xlabel", "xlp"], "fixedsize",
 		'''
 			graph {
-				1[ fixedsize ]
+				1[ fixedsize= ]
 			}
 		''')
 
@@ -2278,7 +2346,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["=", "shape", "sides", "skew", "style"], "shape", '''
 			graph {
-				1[ shape ]
+				1[ shape= ]
 			}
 		''')
 	}
@@ -3342,6 +3410,19 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				} finally {
 					shell.dispose
 				}
+			}
+			
+			/*
+			 * Configure the ContentAssistProcessorTestBuilder to consider only
+			 * the first part of the displayString of a proposal and ignore its
+			 * replacement strings when determining the proposed text.
+			 */
+			override protected getProposedText(ICompletionProposal proposal) {
+				val displayString = proposal.displayString
+				if(":".equals(displayString)) {
+					displayString
+				}
+				else displayString.split(":").head
 			}
 
 			// TODO: remove this workaround			

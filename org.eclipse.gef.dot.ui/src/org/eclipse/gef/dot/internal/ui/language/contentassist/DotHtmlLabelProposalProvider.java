@@ -25,13 +25,18 @@ import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelFactory;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+
+import com.google.inject.Inject;
 
 /**
  * See
@@ -40,6 +45,9 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
  */
 public class DotHtmlLabelProposalProvider extends
 		org.eclipse.gef.dot.internal.ui.language.contentassist.AbstractDotHtmlLabelProposalProvider {
+
+	@Inject
+	private IImageHelper imageHelper;
 
 	@Override
 	public void complete_HtmlTag(EObject model, RuleCall ruleCall,
@@ -63,20 +71,22 @@ public class DotHtmlLabelProposalProvider extends
 			}
 		}
 
+		Image image = imageHelper.getImage("html_tag.png"); //$NON-NLS-1$
 		for (String tagName : DotHtmlLabelHelper.getValidTags()
 				.get(parentName)) {
 			if (isValidSibling(tagName, siblings)) {
 
 				String proposal = calculateProposalString(tagName);
-				String displayString = proposal;
-				Image image = null;
+				String format = "%s: Tag"; //$NON-NLS-1$
+				StyledString displayString = DotEditorUtils.style(format,
+						proposal);
 
 				ICompletionProposal completionProposal = createCompletionProposal(
 						proposal, displayString, image, context);
 
 				if (completionProposal instanceof ConfigurableCompletionProposal) {
 					ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
-					int cursorPosition = calculateCursorPosition(displayString);
+					int cursorPosition = calculateCursorPosition(proposal);
 					String tagDescription = DotHtmlLabelHelper
 							.getTagDescription(tagName);
 					// place the cursor between the opening and the closing html
@@ -105,11 +115,17 @@ public class DotHtmlLabelProposalProvider extends
 			Map<String, Set<String>> validAttributes = DotHtmlLabelHelper
 					.getValidAttributes();
 			if (validAttributes.containsKey(htmlTagName)) {
+				Image image = imageHelper.getImage("attribute.png"); //$NON-NLS-1$
 				Set<String> validAttributeNames = validAttributes
 						.get(htmlTagName);
 				for (String validAttributeName : validAttributeNames) {
+					String proposal = validAttributeName;
+					String format = "%s: Attribute"; //$NON-NLS-1$
+					StyledString displayString = DotEditorUtils.style(format,
+							proposal);
+
 					ICompletionProposal completionProposal = createCompletionProposal(
-							validAttributeName, context);
+							proposal, displayString, image, context);
 
 					// insert the ="" symbols after the html attribute name and
 					// place the cursor between the two "" symbols

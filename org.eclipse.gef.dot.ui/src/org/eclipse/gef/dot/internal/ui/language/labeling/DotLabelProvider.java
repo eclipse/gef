@@ -30,6 +30,7 @@ import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess;
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.AttributeTypeElements;
+import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.EdgeOpElements;
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.GraphTypeElements;
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess.SubgraphElements;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
@@ -125,6 +126,7 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		AttributeTypeElements attributeTypeElements = grammarAccess
 				.getAttributeTypeAccess();
 		SubgraphElements subgraphElements = grammarAccess.getSubgraphAccess();
+		EdgeOpElements edgeOpElements = grammarAccess.getEdgeOpAccess();
 
 		if (keyword == graphTypeElements.getGraphGraphKeyword_0_0()
 				|| keyword == graphTypeElements
@@ -140,6 +142,13 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
 		if (keyword == subgraphElements.getSubgraphKeyword_1_0()) {
 			return IMAGE_SUBGRAPH;
+		}
+
+		if (keyword == edgeOpElements
+				.getDirectedHyphenMinusGreaterThanSignKeyword_0_0()
+				|| keyword == edgeOpElements
+						.getUndirectedHyphenMinusHyphenMinusKeyword_1_0()) {
+			return IMAGE_EDGE;
 		}
 		return super.image(keyword);
 	}

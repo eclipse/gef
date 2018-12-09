@@ -37,7 +37,6 @@ import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
-import org.eclipse.gef.dot.internal.language.dot.Subgraph;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
@@ -49,6 +48,7 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
@@ -56,6 +56,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.Keyword;
+import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
@@ -71,6 +72,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 	@Inject
 	private DotGrammarAccess dotGrammarAccess;
+
+	@Inject
+	private IImageHelper imageHelper;
 
 	private static Map<Context, List<String>> dotAttributeNames;
 	private String[] booleanAttributeValuesProposals = { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -88,20 +92,26 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			String prefix, ContentAssistContext context) {
 
 		EObject currentModel = context.getCurrentModel();
-		if (currentModel instanceof DotGraph) {
-			DotGraph dotGraph = (DotGraph) currentModel;
+		DotGraph dotGraph = EcoreUtil2.getContainerOfType(currentModel,
+				DotGraph.class);
+
+		if (currentModel != null && dotGraph != null) {
 			GraphType graphType = dotGraph.getType();
-			if (graphType == GraphType.DIGRAPH
-					&& proposal.equals(EdgeOp.UNDIRECTED.toString())) {
-				// do not propose the undirected edge operator in case of a
-				// directed graph
-				return null;
-			}
-			if (graphType == GraphType.GRAPH
-					&& proposal.equals(EdgeOp.DIRECTED.toString())) {
-				// do not propose the directed edge operator in case of an
-				// undirected graph
-				return null;
+			if (EdgeOp.get(proposal) != null) {
+				if (graphType == GraphType.DIGRAPH
+						&& proposal.equals(EdgeOp.UNDIRECTED.toString())) {
+					// do not propose the undirected edge operator in case of a
+					// directed graph
+					return null;
+				}
+				if (graphType == GraphType.GRAPH
+						&& proposal.equals(EdgeOp.DIRECTED.toString())) {
+					// do not propose the directed edge operator in case of an
+					// undirected graph
+					return null;
+				}
+				String format = "%s: Edge"; //$NON-NLS-1$
+				displayString = DotEditorUtils.style(format, proposal);
 			}
 		}
 
@@ -117,6 +127,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			return null;
 		}
 
+		if ("subgraph".equals(proposal)) { //$NON-NLS-1$
+			String format = "%s: Subgraph"; //$NON-NLS-1$
+			displayString = DotEditorUtils.style(format, proposal);
+		}
+
 		ICompletionProposal completionProposal = super.createCompletionProposal(
 				proposal, displayString, image, priority, prefix, context);
 
@@ -126,13 +141,14 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			// ensure that an empty attribute list is created by after the
 			// 'graph', 'node', 'edge' attribute statements when applying the
 			// proposal
-			if (currentModel instanceof DotGraph
-					|| currentModel instanceof Subgraph) {
+			if (currentModel != null) {
 				if (AttributeType.get(proposal) != null && !context
 						.getLastCompleteNode().getText().equals("strict")) { //$NON-NLS-1$
-					configurableCompletionProposal.setDisplayString(
-							configurableCompletionProposal.getDisplayString()
-									+ "[]"); //$NON-NLS-1$
+					String format = "%s[]: Attributes"; //$NON-NLS-1$
+					StyledString newDisplayString = DotEditorUtils.style(format,
+							displayString);
+					configurableCompletionProposal
+							.setDisplayString(newDisplayString);
 					configurableCompletionProposal
 							.setReplacementString(configurableCompletionProposal
 									.getReplacementString() + "[]"); //$NON-NLS-1$
@@ -421,9 +437,26 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ContentAssistContext contentAssistContext,
 			ICompletionProposalAcceptor acceptor) {
 
+		Image attributeImage = imageHelper.getImage("attribute.png"); //$NON-NLS-1$
+		String format = "%s: Attribute"; //$NON-NLS-1$
+
 		for (String attributeName : dotAttributeNames.get(attributeContext)) {
+			StyledString displayString = DotEditorUtils.style(format,
+					attributeName);
 			ICompletionProposal completionProposal = createCompletionProposal(
-					attributeName, contentAssistContext);
+					attributeName, displayString, attributeImage,
+					contentAssistContext);
+			if (completionProposal instanceof ConfigurableCompletionProposal) {
+				ConfigurableCompletionProposal configurableCompletionProposal = (ConfigurableCompletionProposal) completionProposal;
+
+				// ensure that the '=' symbol is inserted after the attribute
+				// name when applying the proposal
+				configurableCompletionProposal.setReplacementString(
+						configurableCompletionProposal.getReplacementString()
+								+ "="); //$NON-NLS-1$
+				configurableCompletionProposal.setCursorPosition(
+						configurableCompletionProposal.getCursorPosition() + 1);
+			}
 			acceptor.accept(completionProposal);
 		}
 	}

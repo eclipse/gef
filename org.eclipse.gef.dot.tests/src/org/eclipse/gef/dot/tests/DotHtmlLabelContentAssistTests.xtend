@@ -822,12 +822,12 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 	override protected ContentAssistProcessorTestBuilder newBuilder() {
 		return new ContentAssistProcessorTestBuilder(injector, this) {
 			/*
-			 * configure the ContentAssistProcessorTestBuilder to consider only
-			 * the displayString of a proposal and ignore its replacement
-			 * strings when determining the proposed text.
+			 * Configure the ContentAssistProcessorTestBuilder to consider only
+			 * the first part of the displayString of a proposal and ignore its
+			 * replacement strings when determining the proposed text.
 			 */
 			override protected getProposedText(ICompletionProposal proposal) {
-				return proposal.displayString
+				return proposal.displayString.split(":").head
 			}
 		}
 	}
