@@ -436,7 +436,7 @@ class DotLabelProviderTests {
 
 	private def hasImage(EObject eObject, String image) {
 		val actual = labelProvider.getImage(eObject)
-		val expected = imageHelper.getImage(image) 
+		val expected = imageHelper.getImage(image)
 		expected.assertEquals(actual)
 	}
 
