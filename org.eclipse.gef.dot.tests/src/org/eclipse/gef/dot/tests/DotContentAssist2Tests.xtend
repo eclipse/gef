@@ -125,7 +125,6 @@ class DotContentAssist2Tests extends AbstractContentAssistTest {
 		'''
 			graph {
 				1--2«c»
-				
 			}
 		'''.testContentAssistant(#[
 			new CompletionProposal("--: Edge", "--", IMAGE_EDGE),
@@ -274,9 +273,13 @@ class DotContentAssist2Tests extends AbstractContentAssistTest {
 
 	private def dispatch assertEquals(TemplateProposal actual, CompletionProposal expected) {
 		expected.displayString.assertEquals(actual.displayString)
-		expected.replacementString.assertEquals(actual.additionalProposalInfo)
+		expected.replacementString.assertEquals(actual.additionalProposalInfo.convertLineEndings)
 		if (expected.image !== null) {
 			expected.image.getImage.assertEquals(actual.image)
 		}
+	}
+
+	private def convertLineEndings(String text) {
+		text.replaceAll("\r?\n", System.lineSeparator)
 	}
 }
