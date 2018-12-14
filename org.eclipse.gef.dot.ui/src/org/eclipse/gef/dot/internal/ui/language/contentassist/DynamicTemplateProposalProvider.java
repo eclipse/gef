@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
+import org.eclipse.gef.dot.internal.language.dot.DotAst;
 import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
@@ -46,7 +47,7 @@ public class DynamicTemplateProposalProvider
 			TemplateContext templateContext, ContentAssistContext context,
 			Image image, int relevance) {
 		EObject currentModel = context.getCurrentModel();
-		if (currentModel == null) {
+		if (currentModel == null || currentModel instanceof DotAst) {
 			return super.doCreateProposal(template, templateContext, context,
 					image, relevance);
 		}

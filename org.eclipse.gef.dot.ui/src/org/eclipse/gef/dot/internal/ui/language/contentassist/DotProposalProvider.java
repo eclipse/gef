@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 itemis AG and others.
+ * Copyright (c) 2010, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -95,7 +95,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		DotGraph dotGraph = EcoreUtil2.getContainerOfType(currentModel,
 				DotGraph.class);
 
-		if (currentModel != null && dotGraph != null) {
+		if (dotGraph != null) {
 			GraphType graphType = dotGraph.getType();
 			if (EdgeOp.get(proposal) != null) {
 				if (graphType == GraphType.DIGRAPH
@@ -141,7 +141,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			// ensure that an empty attribute list is created by after the
 			// 'graph', 'node', 'edge' attribute statements when applying the
 			// proposal
-			if (currentModel != null) {
+			if (dotGraph != null) {
 				if (AttributeType.get(proposal) != null && !context
 						.getLastCompleteNode().getText().equals("strict")) { //$NON-NLS-1$
 					String format = "%s[]: Attributes"; //$NON-NLS-1$

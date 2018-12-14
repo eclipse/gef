@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -70,6 +70,49 @@ class DotContentAssist2Tests extends AbstractContentAssistTest {
 
 	@Test def empty() {
 		'''
+			«c»
+		'''.testContentAssistant(#[
+				new CompletionProposal("digraph", "digraph", IMAGE_GRAPH),
+				new CompletionProposal("graph", "graph", IMAGE_GRAPH),
+				new CompletionProposal("strict", "strict", IMAGE_DEFAULT),
+				new CompletionProposal("digraph - Insert a template", '''
+					digraph {
+						
+					}''', IMAGE_DEFAULT),
+				new CompletionProposal("graph - Insert a template", '''
+					graph {
+						
+					}''', IMAGE_DEFAULT)
+			]
+		)
+	}
+
+	@Test def graph001() {
+		'''
+			«c»graph {
+				
+			}
+		'''.testContentAssistant(#[
+				new CompletionProposal("digraph", "digraph", IMAGE_GRAPH),
+				new CompletionProposal("graph", "graph", IMAGE_GRAPH),
+				new CompletionProposal("strict", "strict", IMAGE_DEFAULT),
+				new CompletionProposal("digraph - Insert a template", '''
+					digraph {
+						
+					}''', IMAGE_DEFAULT),
+				new CompletionProposal("graph - Insert a template", '''
+					graph {
+						
+					}''', IMAGE_DEFAULT)
+			]
+		)
+	}
+
+	@Test def graph002() {
+		'''
+			graph {
+				
+			}
 			«c»
 		'''.testContentAssistant(#[
 				new CompletionProposal("digraph", "digraph", IMAGE_GRAPH),
