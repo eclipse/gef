@@ -16,6 +16,7 @@ package org.eclipse.gef.mvc.fx.behaviors;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,6 +34,7 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ListChangeListener;
@@ -150,13 +152,12 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	};
 
 	@SuppressWarnings("unchecked")
-	private List<IContentPart<? extends Node>> addAll(
-			IVisualPart<? extends Node> parent,
-			List<? extends Object> contentChildren) {
+	private void addAll(IVisualPart<? extends Node> parent,
+			List<? extends Object> contentChildren,
+			List<IContentPart<? extends Node>> added) {
 		List<IContentPart<? extends Node>> childContentParts = PartUtils
 				.filterParts(parent.getChildrenUnmodifiable(),
 						IContentPart.class);
-		List<IContentPart<? extends Node>> added = new ArrayList<>();
 		// store the existing content parts in a map using the contents as keys
 		Map<Object, IContentPart<? extends Node>> contentPartMap = new HashMap<>();
 		// find all content parts for which no content element exists in
@@ -201,34 +202,38 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				}
 				parent.addChild(contentPart, i);
 				added.add(contentPart);
-				added.addAll(addAll(contentPart,
-						contentPart.getContentChildrenUnmodifiable()));
+				addAll(contentPart,
+						contentPart.getContentChildrenUnmodifiable(), added);
 			}
 		}
-		return added;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<IContentPart<? extends Node>> detachAll(
-			IVisualPart<? extends Node> parent,
-			final List<? extends Object> contentChildren) {
-		List<IContentPart<? extends Node>> toRemove = new ArrayList<>();
+	private void detachAll(IVisualPart<? extends Node> parent,
+			final Set<? extends Object> contentChildren,
+			List<IContentPart<? extends Node>> toRemove,
+			Map<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> removalsPerParent) {
 		// only synchronize IContentPart children
 		// find all content parts for which no content element exists in
 		// contentChildren, and therefore have to be removed
+
+		List<IContentPart<? extends Node>> childrenToRemove = new ArrayList<>();
 		for (IContentPart<? extends Node> contentPart : (List<IContentPart<? extends Node>>) PartUtils
 				.filterParts(parent.getChildrenUnmodifiable(),
 						IContentPart.class)) {
 			// mark for removal
 			if (!contentChildren.contains(contentPart.getContent())) {
-				toRemove.addAll(
-						detachAll(contentPart, Collections.emptyList()));
+				detachAll(contentPart, Collections.emptySet(), toRemove,
+						removalsPerParent);
+				childrenToRemove.add(contentPart);
 				toRemove.add(contentPart);
 				synchronizeContentPartAnchorages(contentPart,
 						HashMultimap.create());
 			}
 		}
-		return toRemove;
+		if (!childrenToRemove.isEmpty()) {
+			removalsPerParent.put(parent, childrenToRemove);
+		}
 	}
 
 	@Override
@@ -407,8 +412,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			IContentPart<? extends Node> anchorage = findOrCreatePartFor(
 					e.getKey());
 			if (!anchorages.containsEntry(anchorage, e.getValue())) {
-				toAdd.add(
-						Maps.<IVisualPart<? extends Node>, String> immutableEntry(
+				toAdd.add(Maps
+						.<IVisualPart<? extends Node>, String> immutableEntry(
 								anchorage, e.getValue()));
 			}
 		}
@@ -445,15 +450,19 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 					"contentChildren may not be null");
 		}
 
-		List<IContentPart<? extends Node>> toRemove = detachAll(parent,
-				contentChildren);
+		List<IContentPart<? extends Node>> toRemove = new ArrayList<>();
+		Map<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> removalsPerParent = new LinkedHashMap<>();
+		detachAll(parent, Sets.newHashSet(contentChildren), toRemove,
+				removalsPerParent);
+		removalsPerParent.forEach((removeFrom, removeUs) -> {
+			removeFrom.removeChildren(removeUs);
+		});
 		for (IContentPart<? extends Node> contentPart : toRemove) {
-			contentPart.getParent().removeChild(contentPart);
 			disposeIfObsolete(contentPart);
 		}
 
-		List<IContentPart<? extends Node>> added = addAll(parent,
-				contentChildren);
+		List<IContentPart<? extends Node>> added = new ArrayList<>();
+		addAll(parent, contentChildren, added);
 		for (IContentPart<? extends Node> cp : added) {
 			synchronizeContentPartAnchorages(cp,
 					cp.getContentAnchoragesUnmodifiable());
