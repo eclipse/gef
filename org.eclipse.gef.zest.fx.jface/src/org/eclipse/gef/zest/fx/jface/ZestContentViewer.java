@@ -84,14 +84,12 @@ public class ZestContentViewer extends ContentViewer {
 	private Map<Object, Node> contentNodeMap = new IdentityHashMap<>();
 
 	/**
-	 * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
-	 * saved so that it can be later used to create an {@link Injector} that is
-	 * later used for the injection of members and the construction of the
-	 * {@link IDomain}.
+	 * Constructs a new {@link ZestContentViewer}. The given {@link Module} is saved
+	 * so that it can be later used to create an {@link Injector} that is later used
+	 * for the injection of members and the construction of the {@link IDomain}.
 	 *
-	 * @param module
-	 *            The {@link Module} from which an {@link Injector} is created
-	 *            later.
+	 * @param module The {@link Module} from which an {@link Injector} is created
+	 *               later.
 	 */
 	public ZestContentViewer(Module module) {
 		injector = Guice.createInjector(module);
@@ -103,10 +101,8 @@ public class ZestContentViewer extends ContentViewer {
 	 * {@link Composite}. The {@link FXCanvas} serves acs the container for the
 	 * JavaFX {@link Scene} which renders the contents.
 	 *
-	 * @param parent
-	 *            The parent {@link Composite}.
-	 * @param style
-	 *            The SWT style bits to be used for the to be created canvas.
+	 * @param parent The parent {@link Composite}.
+	 * @param style  The SWT style bits to be used for the to be created canvas.
 	 * @return An {@link FXCanvas} inside of the given <i>parent</i>.
 	 */
 	protected FXCanvas createCanvas(final Composite parent, int style) {
@@ -115,14 +111,12 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	/**
-	 * Creates the control for this {@link ZestContentViewer} inside of the
-	 * given <i>parent</i> {@link Composite}.
+	 * Creates the control for this {@link ZestContentViewer} inside of the given
+	 * <i>parent</i> {@link Composite}.
 	 *
-	 * @param parent
-	 *            The parent {@link Composite}.
-	 * @param style
-	 *            The SWT style for this {@link ZestContentViewer}, which will
-	 *            be forwarded to its {@link FXCanvas} control.
+	 * @param parent The parent {@link Composite}.
+	 * @param style  The SWT style for this {@link ZestContentViewer}, which will be
+	 *               forwarded to its {@link FXCanvas} control.
 	 */
 	public void createControl(Composite parent, int style) {
 		// create viewer and canvas only after toolkit has been initialized
@@ -144,21 +138,21 @@ public class ZestContentViewer extends ContentViewer {
 	/**
 	 * Constructs and returns a new {@link Edge} connecting the given
 	 * <i>sourceNode</i> and <i>targetNode</i>. If the <i>labelProvider</i>
-	 * implements {@link IGraphAttributesProvider}, then attributes for the edge
-	 * are determined using the
-	 * {@link IGraphAttributesProvider#getEdgeAttributes(Object, Object)}
-	 * methods and inserted into the edge.
+	 * implements {@link IGraphAttributesProvider}, then attributes for the edge are
+	 * determined using the
+	 * {@link IGraphAttributesProvider#getEdgeAttributes(Object, Object)} methods
+	 * and inserted into the edge.
 	 *
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @param contentSourceNode
-	 *            The content element representing the source node of this edge.
-	 * @param sourceNode
-	 *            The already created source {@link Node} of this edge.
-	 * @param contentTargetNode
-	 *            The content element representing the target node of this edge.
-	 * @param targetNode
-	 *            The already created target {@link Node} of this edge.
+	 * @param labelProvider     This viewer's {@link ILabelProvider} for
+	 *                          convenience.
+	 * @param contentSourceNode The content element representing the source node of
+	 *                          this edge.
+	 * @param sourceNode        The already created source {@link Node} of this
+	 *                          edge.
+	 * @param contentTargetNode The content element representing the target node of
+	 *                          this edge.
+	 * @param targetNode        The already created target {@link Node} of this
+	 *                          edge.
 	 * @return The new {@link Edge}.
 	 */
 	protected Edge createEdge(ILabelProvider labelProvider, Object contentSourceNode, Node sourceNode,
@@ -196,12 +190,12 @@ public class ZestContentViewer extends ContentViewer {
 	 * Creates a {@link Graph} nested in the node represented by the given
 	 * <i>contentNestingNode</i>.
 	 *
-	 * @param contentNestingNode
-	 *            The content {@link Object} that represents the nesting node.
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
+	 * @param contentNestingNode   The content {@link Object} that represents the
+	 *                             nesting node.
+	 * @param graphContentProvider This viewer's {@link IGraphContentProvider} for
+	 *                             convenience.
+	 * @param labelProvider        This viewer's {@link ILabelProvider} for
+	 *                             convenience.
 	 * @return The new {@link Graph}.
 	 */
 	protected Graph createNestedGraph(Object contentNestingNode, IGraphContentProvider graphContentProvider,
@@ -224,15 +218,15 @@ public class ZestContentViewer extends ContentViewer {
 
 	/**
 	 * Creates a {@link Node} for the specified <i>contentNode</i> using the
-	 * {@link IContentProvider} and {@link ILabelProvider}. Moreover, the new
-	 * node is put into the given <i>contentToGraphMap</i>.
+	 * {@link IContentProvider} and {@link ILabelProvider}. Moreover, the new node
+	 * is put into the given <i>contentToGraphMap</i>.
 	 *
-	 * @param contentNode
-	 *            The content {@link Object} that represents the node.
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
+	 * @param contentNode          The content {@link Object} that represents the
+	 *                             node.
+	 * @param graphContentProvider This viewer's {@link IGraphContentProvider} for
+	 *                             convenience.
+	 * @param labelProvider        This viewer's {@link ILabelProvider} for
+	 *                             convenience.
 	 * @return The new {@link Node}.
 	 */
 	protected Node createNode(final Object contentNode, IGraphContentProvider graphContentProvider,
@@ -337,27 +331,30 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	/**
-	 * Creates graph {@link Node nodes} and {@link Edge edges} from the given
-	 * array of <i>contentNodes</i>.
+	 * Creates graph {@link Node nodes} and {@link Edge edges} from the given array
+	 * of <i>contentNodes</i>.
 	 *
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @param graph
-	 *            The {@link Graph} for which nodes and edges are created.
-	 * @param contentNodes
-	 *            Content elements which represent nodes that are to be created
-	 *            together with the edges between them.
+	 * @param graphContentProvider This viewer's {@link IGraphContentProvider} for
+	 *                             convenience.
+	 * @param labelProvider        This viewer's {@link ILabelProvider} for
+	 *                             convenience.
+	 * @param graph                The {@link Graph} for which nodes and edges are
+	 *                             created.
+	 * @param contentNodes         Content elements which represent nodes that are
+	 *                             to be created together with the edges between
+	 *                             them.
 	 */
 	protected void createNodesAndEdges(IGraphContentProvider graphContentProvider, ILabelProvider labelProvider,
 			Graph graph, Object[] contentNodes) {
 		// create nodes
+		List<Node> allNodes = new ArrayList<>();
 		for (Object node : contentNodes) {
 			Node graphNode = createNode(node, graphContentProvider, labelProvider);
-			graph.getNodes().add(graphNode);
+			allNodes.add(graphNode);
 		}
+		graph.getNodes().addAll(allNodes);
 		// create edges
+		List<Edge> allEdges = new ArrayList<>();
 		for (Object contentSourceNode : contentNodes) {
 			Node sourceNode = contentNodeMap.get(contentSourceNode);
 			Object[] connectedTo = graphContentProvider.getAdjacentNodes(contentSourceNode);
@@ -365,22 +362,20 @@ public class ZestContentViewer extends ContentViewer {
 				for (Object contentTargetNode : connectedTo) {
 					Node targetNode = contentNodeMap.get(contentTargetNode);
 					Edge edge = createEdge(labelProvider, contentSourceNode, sourceNode, contentTargetNode, targetNode);
-					graph.getEdges().add(edge);
+					allEdges.add(edge);
 				}
 			}
 		}
+		graph.getEdges().addAll(allEdges);
 	}
 
 	/**
-	 * Creates a complete {@link Graph} using the given {@link IContentProvider}
-	 * and {@link ILabelProvider}.
+	 * Creates a complete {@link Graph} using the given {@link IContentProvider} and
+	 * {@link ILabelProvider}.
 	 *
-	 * @param contentProvider
-	 *            The {@link IContentProvider} for this viewer.
-	 * @param labelProvider
-	 *            The {@link ILabelProvider} for this viewer.
-	 * @return A complete {@link Graph} constructed by using the given
-	 *         providers.
+	 * @param contentProvider The {@link IContentProvider} for this viewer.
+	 * @param labelProvider   The {@link ILabelProvider} for this viewer.
+	 * @return A complete {@link Graph} constructed by using the given providers.
 	 */
 	protected Graph createRootGraph(IContentProvider contentProvider, ILabelProvider labelProvider) {
 		Graph graph = createEmptyGraph();
@@ -490,11 +485,10 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	/**
-	 * Changes the {@link ILayoutAlgorithm} that is used for laying out the
-	 * contents to the given value.
+	 * Changes the {@link ILayoutAlgorithm} that is used for laying out the contents
+	 * to the given value.
 	 *
-	 * @param layoutAlgorithm
-	 *            The new {@link ILayoutAlgorithm} to use.
+	 * @param layoutAlgorithm The new {@link ILayoutAlgorithm} to use.
 	 */
 	public void setLayoutAlgorithm(ILayoutAlgorithm layoutAlgorithm) {
 		this.layoutAlgorithm = layoutAlgorithm;
@@ -534,8 +528,7 @@ public class ZestContentViewer extends ContentViewer {
 	 * Converts the given {@link Color} into a CSS string:
 	 * <code>"rgb(red,green,blue)"</code>.
 	 *
-	 * @param color
-	 *            The {@link Color} to convert.
+	 * @param color The {@link Color} to convert.
 	 * @return The corresponding CSS string.
 	 */
 	protected String toCssRgb(Color color) {
