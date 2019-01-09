@@ -184,6 +184,42 @@ class DotContentAssist2Tests extends AbstractContentAssistTest {
 		])
 	}
 
+	@Test def subgraph_directed_edge_template() {
+		'''
+			digraph {
+				{
+					«c»
+				}
+			}
+		'''.testContentAssistant(#[
+			new CompletionProposal("edge[]: Attributes", "edge[]", IMAGE_ATTRIBUTES),
+			new CompletionProposal("graph[]: Attributes", "graph[]", IMAGE_ATTRIBUTES),
+			new CompletionProposal("node[]: Attributes", "node[]", IMAGE_ATTRIBUTES),
+			new CompletionProposal("subgraph: Subgraph", "subgraph", IMAGE_SUBGRAPH),
+			new CompletionProposal("{", "{", IMAGE_DEFAULT),
+			new CompletionProposal("}","}", IMAGE_DEFAULT),
+			new CompletionProposal("edge - Insert a template", '''source -> target''', IMAGE_DEFAULT)
+		])
+	}
+
+	@Test def subgraph_undirected_edge_template() {
+		'''
+			graph {
+				{
+					«c»
+				}
+			}
+		'''.testContentAssistant(#[
+			new CompletionProposal("edge[]: Attributes", "edge[]", IMAGE_ATTRIBUTES),
+			new CompletionProposal("graph[]: Attributes", "graph[]", IMAGE_ATTRIBUTES),
+			new CompletionProposal("node[]: Attributes", "node[]", IMAGE_ATTRIBUTES),
+			new CompletionProposal("subgraph: Subgraph", "subgraph", IMAGE_SUBGRAPH),
+			new CompletionProposal("{", "{", IMAGE_DEFAULT),
+			new CompletionProposal("}","}", IMAGE_DEFAULT),
+			new CompletionProposal("edge - Insert a template", '''source -- target''', IMAGE_DEFAULT)
+		])
+	}
+
 	@Test def html_like_label_tags() {
 		'''
 			graph { 

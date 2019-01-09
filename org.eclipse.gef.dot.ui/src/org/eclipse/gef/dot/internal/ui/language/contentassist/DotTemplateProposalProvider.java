@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
-import org.eclipse.gef.dot.internal.language.dot.DotAst;
 import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
@@ -28,6 +27,7 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 import org.eclipse.xtext.ui.editor.templates.DefaultTemplateProposalProvider;
@@ -47,34 +47,34 @@ public class DotTemplateProposalProvider
 			TemplateContext templateContext, ContentAssistContext context,
 			Image image, int relevance) {
 		EObject currentModel = context.getCurrentModel();
-		if (currentModel == null || currentModel instanceof DotAst) {
-			return super.doCreateProposal(template, templateContext, context,
-					image, relevance);
+
+		if (isEdgeTemplate(template)) {
+			template = replaceOpVariable(currentModel, template);
 		}
 
-		if (currentModel instanceof DotGraph && isEdgeTemplate(template)) {
-			template = replaceOpVariable(template, (DotGraph) currentModel);
-			return super.doCreateProposal(template, templateContext, context,
-					image, relevance);
-		}
-
-		if (currentModel instanceof Attribute
-				&& isHtmlLabelTemplate(template)) {
-			ID attributeNameID = ((Attribute) currentModel).getName();
-			if (attributeNameID != null) {
-				String attributeName = attributeNameID.toValue();
-				switch (attributeName) {
-				case DotAttributes.HEADLABEL__E:
-				case DotAttributes.LABEL__GCNE:
-				case DotAttributes.TAILLABEL__E:
-				case DotAttributes.XLABEL__NE:
-					return super.doCreateProposal(template, templateContext,
-							context, image, relevance);
+		if (isHtmlLabelTemplate(template)) {
+			if (currentModel instanceof Attribute) {
+				ID attributeNameID = ((Attribute) currentModel).getName();
+				if (attributeNameID != null) {
+					String attributeName = attributeNameID.toValue();
+					switch (attributeName) {
+					case DotAttributes.HEADLABEL__E:
+					case DotAttributes.LABEL__GCNE:
+					case DotAttributes.TAILLABEL__E:
+					case DotAttributes.XLABEL__NE:
+						return super.doCreateProposal(template, templateContext,
+								context, image, relevance);
+					default:
+						return null;
+					}
 				}
+			} else {
+				return null;
 			}
 		}
 
-		return null;
+		return super.doCreateProposal(template, templateContext, context, image,
+				relevance);
 	}
 
 	private boolean isEdgeTemplate(Template template) {
@@ -85,8 +85,10 @@ public class DotTemplateProposalProvider
 		return "HTMLLabel".equals(template.getName()); //$NON-NLS-1$
 	}
 
-	private Template replaceOpVariable(Template edgeTemplate,
-			DotGraph dotGraph) {
+	private Template replaceOpVariable(EObject currentModel,
+			Template edgeTemplate) {
+		DotGraph dotGraph = EcoreUtil2.getContainerOfType(currentModel,
+				DotGraph.class);
 		boolean isDirected = dotGraph.getType() == GraphType.DIGRAPH;
 		String edgeOp = isDirected ? EdgeOp.DIRECTED.toString()
 				: EdgeOp.UNDIRECTED.toString();
