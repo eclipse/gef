@@ -34,11 +34,11 @@ import org.eclipse.xtext.ui.editor.templates.DefaultTemplateProposalProvider;
 
 import com.google.inject.Inject;
 
-public class DynamicTemplateProposalProvider
+public class DotTemplateProposalProvider
 		extends DefaultTemplateProposalProvider {
 
 	@Inject
-	public DynamicTemplateProposalProvider(TemplateStore templateStore,
+	public DotTemplateProposalProvider(TemplateStore templateStore,
 			ContextTypeRegistry registry, ContextTypeIdHelper helper) {
 		super(templateStore, registry, helper);
 	}
