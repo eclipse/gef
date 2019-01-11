@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 itemis AG and others.
+ * Copyright (c) 2013, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -47,5 +47,4 @@ public abstract class AbstractFxSwtExample {
 	}
 
 	public abstract Scene createScene();
-
 }
