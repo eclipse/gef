@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -257,6 +257,20 @@ class DotQuickfixTests {
 				)
 			)
 		}
+
+		// test quoted attribute value with multiple arrowtypes (one of them is invalid)
+		for (i : 0..< deprecatedArrowShapes.length) {
+			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
+			val validArrowShape = validArrowShapes.get(i)
+
+			'''digraph{1->2[arrowhead="onormal«deprecatedArrowShape»"]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+				new Quickfix(
+					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
+					'''Use valid '«validArrowShape»' instead of invalid '«deprecatedArrowShape»' edge arrowhead.''',
+					'''digraph{1->2[arrowhead="onormal«validArrowShape»"]}'''
+				)
+			)
+		}
 	}
 
 	@Test def edge_arrowtail() {
@@ -287,6 +301,20 @@ class DotQuickfixTests {
 					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
 					'''Use valid '«validArrowShape»' instead of invalid '«deprecatedArrowShape»' edge arrowtail.''',
 					'''digraph{1->2[arrowtail="«validArrowShape»"]}'''
+				)
+			)
+		}
+
+		// test quoted attribute value with multiple arrowtypes (one of them is invalid)
+		for (i : 0..< deprecatedArrowShapes.length) {
+			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
+			val validArrowShape = validArrowShapes.get(i)
+
+			'''digraph{1->2[arrowtail="«deprecatedArrowShape»dot"]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+				new Quickfix(
+					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
+					'''Use valid '«validArrowShape»' instead of invalid '«deprecatedArrowShape»' edge arrowtail.''',
+					'''digraph{1->2[arrowtail="«validArrowShape»dot"]}'''
 				)
 			)
 		}
@@ -346,9 +374,54 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'tapered'.",	"Use valid 'tapered' instead of invalid 'foo' edge style.",	'''graph{1--2[style="tapered"]}''')
 		)
 
+		// test quoted attribute value with multiple styles
+		'''graph{1--2[style="bold, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'bold' style attribute value.", "Remove the redundant 'bold' style attribute value.", '''graph{1--2[style="bold"]}''')
+		)
+
+		'''graph{1--2[style="dashed,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1--2[style="dashed"]}''')
+		)
+
+		'''graph{1--2[style="dashed,bold,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1--2[style="bold,dashed"]}''')
+		)
+
+		// test quoted attribute value with multiple styles (one of them is invalid)
+		'''graph{1--2[style="foo, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' edge style.",	'''graph{1--2[style="dashed, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' edge style.",	'''graph{1--2[style="dotted, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' edge style.",	'''graph{1--2[style="invis, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' edge style.",	'''graph{1--2[style="solid, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'tapered'.",	"Use valid 'tapered' instead of invalid 'foo' edge style.",	'''graph{1--2[style="tapered, bold"]}''')
+		)
+
+		'''graph{1--2[style="bold, foo"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, dashed"]}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, dotted"]}'''),
+			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, invis"]}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, solid"]}'''),
+			new Quickfix("Replace 'foo' with 'tapered'.",	"Use valid 'tapered' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, tapered"]}''')
+		)
+
 		// test deprecated attribute value
-		// TODO: provide quickfixes for deprecated edge style attribute values
-		'''graph{1--2[style="setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE)
+		'''graph{1--2[style="setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[ penwidth="3" ]}''')
+		)
+
+		'''graph{1--2[style="dotted, setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dotted" penwidth="3" ]}''')
+		)
+
+		'''graph{1--2[style="setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dotted" penwidth="3" ]}''')
+		)
+
+		'''graph{1--2[style="dashed, setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dashed, dotted" penwidth="3" ]}''')
+		)
 	}
 
 	@Test def graph_colorscheme() {
@@ -546,13 +619,68 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="striped"]}'''),
 			new Quickfix("Replace 'foo' with 'wedged'.", 	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="wedged"]}''')
 		)
-		
+
+		// test quoted attribute value with multiple styles
+		'''graph{1[style="dashed, dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1[style="dashed"]}''')
+		)
+
+		'''graph{1[style="dotted,dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'dotted' style attribute value.", "Remove the redundant 'dotted' style attribute value.", '''graph{1[style="dotted"]}''')
+		)
+
+		'''graph{1[style="dashed,bold,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1[style="bold,dashed"]}''')
+		)
+
+		// test quoted attribute value with multiple styles (one of them is invalid)
+		'''graph{1[style="foo, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.", 		"Use valid 'bold' instead of invalid 'foo' node style.", 		'''graph{1[style="bold, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.", 	"Use valid 'dashed' instead of invalid 'foo' node style.", 		'''graph{1[style="dashed, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	'''graph{1[style="diagonals, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.", 	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="dotted, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'filled'.", 	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="filled, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'invis'.", 	"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="invis, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'radial'.", 	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="radial, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' node style.",		'''graph{1[style="rounded, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'solid'.", 	"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="solid, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="striped, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'wedged'.", 	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="wedged, bold"]}''')
+		)
+
+		'''graph{1[style="bold, foo"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.", 		"Use valid 'bold' instead of invalid 'foo' node style.", 		'''graph{1[style="bold, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.", 	"Use valid 'dashed' instead of invalid 'foo' node style.", 		'''graph{1[style="bold, dashed"]}'''),
+			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	'''graph{1[style="bold, diagonals"]}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.", 	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="bold, dotted"]}'''),
+			new Quickfix("Replace 'foo' with 'filled'.", 	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="bold, filled"]}'''),
+			new Quickfix("Replace 'foo' with 'invis'.", 	"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="bold, invis"]}'''),
+			new Quickfix("Replace 'foo' with 'radial'.", 	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="bold, radial"]}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' node style.",		'''graph{1[style="bold, rounded"]}'''),
+			new Quickfix("Replace 'foo' with 'solid'.", 	"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="bold, solid"]}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="bold, striped"]}'''),
+			new Quickfix("Replace 'foo' with 'wedged'.", 	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="bold, wedged"]}''')
+		)
+
 		// test incomplete attribute value - no quickfixes should be offered
 		'''graph{1[style="bold, "]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE)
 
 		// test deprecated attribute value
-		// TODO: provide quickfixes for deprecated node style attribute values
-		'''graph{1[style="setlinewidth(4)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE)
+		'''graph{1[style="setlinewidth(4)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(4)' with 'penwidth=4'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[ penwidth="4" ]}''')
+		)
+
+		'''graph{1[style="dotted, setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dotted" penwidth="3" ]}''')
+		)
+
+		'''graph{1[style="setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dotted" penwidth="3" ]}''')
+		)
+
+		'''graph{1[style="dashed, setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dashed, dotted" penwidth="3" ]}''')
+		)
 	}
 
 	@Test def subgraph_rank() {
@@ -601,6 +729,104 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="solid"}}'''),
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped"}}''')
 		)
+
+		// test quoted attribute value with multiple styles
+		'''graph{subgraph cluster_0{style="bold, bold"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'bold' style attribute value.", "Remove the redundant 'bold' style attribute value.", '''graph{subgraph cluster_0{style="bold"}}''')
+		)
+
+		'''graph{subgraph cluster_0{style="radial,radial"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'radial' style attribute value.", "Remove the redundant 'radial' style attribute value.", '''graph{subgraph cluster_0{style="radial"}}''')
+		)
+
+		'''graph{subgraph cluster_0{style="dashed,bold,dashed"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{subgraph cluster_0{style="bold,dashed"}}''')
+		)
+
+		// test quoted attribute value with multiple styles (one of them is invalid)
+		'''graph{subgraph cluster_0{style="foo, striped"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="bold, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="dashed, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="dotted, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="filled, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="invis, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="radial, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="rounded, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="solid, striped"}}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped, striped"}}''')
+		)
+
+		'''graph{subgraph cluster_0{style="striped, foo"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, bold"}}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, dashed"}}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, dotted"}}'''),
+			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, filled"}}'''),
+			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, invis"}}'''),
+			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, radial"}}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped, rounded"}}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, solid"}}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped, striped"}}''')
+		)
+	
+		// test deprecated attribute value
+		'''
+			graph {
+				subgraph clustser_0 {
+					style="setlinewidth(4)"
+				}
+			}
+		'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(4)' with 'penwidth=4'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''
+			graph {
+				subgraph clustser_0 {
+				penwidth="4"
+				}
+			}
+		'''))
+
+		'''
+			graph {
+				subgraph clustser_0 {
+					style="dotted, setlinewidth(3)"
+				}
+			}
+		'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''
+			graph {
+				subgraph clustser_0 {
+					style="dotted"
+				penwidth="3"
+			}
+			}
+		'''))
+
+		'''
+			graph {
+				subgraph clustser_0 {
+					style="setlinewidth(3), dotted"
+				}
+			}
+		'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''
+			graph {
+				subgraph clustser_0 {
+					style="dotted"
+				penwidth="3"
+			}
+			}
+		'''))
+
+		'''
+			graph {
+				subgraph clustser_0 {
+					style="dashed, setlinewidth(3), dotted"
+				}
+			}
+		'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''
+			graph {
+				subgraph clustser_0 {
+					style="dashed, dotted"
+				penwidth="3"
+			}
+			}
+		'''))
 	}
 
 	@Test def redundant_attribute_single() {

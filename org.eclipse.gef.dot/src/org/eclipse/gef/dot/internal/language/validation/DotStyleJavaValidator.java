@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,21 @@ import org.eclipse.xtext.validation.Check;
  */
 public class DotStyleJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotStyleJavaValidator {
+
+	/**
+	 * Issue code for a deprecated style item.
+	 */
+	public static final String DEPRECATED_STYLE_ITEM = "deprecated_style_item";
+
+	/**
+	 * Issue code for a duplicated style item.
+	 */
+	public static final String DUPLICATED_STYLE_ITEM = "duplicated_style_item";
+
+	/**
+	 * Issue code for an invalid style item.
+	 */
+	public static final String INVALID_STYLE_ITEM = "invalid_style_item";
 
 	/**
 	 * Validates that the used {@link StyleItem}s are applicable in the
@@ -81,9 +97,10 @@ public class DotStyleJavaValidator extends
 			}
 		}
 		// check each style item with the corresponding parser
-		reportRangeBaseError("Value should be one of "
-				+ getFormattedValues(validValues) + ".", styleItem,
-				attributeContext);
+		reportRangeBaseError(
+				INVALID_STYLE_ITEM, "Value should be one of "
+						+ getFormattedValues(validValues) + ".",
+				styleItem, attributeContext);
 	}
 
 	/**
@@ -96,7 +113,7 @@ public class DotStyleJavaValidator extends
 	@Check
 	public void checkDeprecatedStyleItem(StyleItem styleItem) {
 		if (styleItem.getName().equals("setlinewidth")) {
-			reportRangeBasedWarning(
+			reportRangeBasedWarning(DEPRECATED_STYLE_ITEM,
 					"The usage of setlinewidth is deprecated, use the penwidth attribute instead.",
 					styleItem);
 		}
@@ -119,14 +136,15 @@ public class DotStyleJavaValidator extends
 			StyleItem styleItem = styleItems.get(i);
 			String name = styleItem.getName();
 			if (!definedStyles.add(name)) {
-				reportRangeBasedWarning(
+				reportRangeBasedWarning(DUPLICATED_STYLE_ITEM,
 						"The style value '" + name + "' is duplicated.",
 						styleItem);
 			}
 		}
 	}
 
-	private void reportRangeBasedWarning(String message, StyleItem styleItem) {
+	private void reportRangeBasedWarning(String issueCode, String message,
+			StyleItem styleItem) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(styleItem,
 				StylePackage.Literals.STYLE_ITEM__NAME);
@@ -143,13 +161,17 @@ public class DotStyleJavaValidator extends
 
 		String code = null;
 		// the issueData will be evaluated by the quickfixes
-		String[] issueData = { styleItem.getName() };
+		List<String> issueData = new ArrayList<>();
+		issueData.add(issueCode);
+		issueData.add(styleItem.getName());
+		issueData.addAll(styleItem.getArgs());
+
 		getMessageAcceptor().acceptWarning(message, styleItem, offset, length,
-				code, issueData);
+				code, issueData.toArray(new String[0]));
 	}
 
-	private void reportRangeBaseError(String message, StyleItem styleItem,
-			Context attributeContext) {
+	private void reportRangeBaseError(String issueCode, String message,
+			StyleItem styleItem, Context attributeContext) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(styleItem,
 				StylePackage.Literals.STYLE_ITEM__NAME);
@@ -166,7 +188,7 @@ public class DotStyleJavaValidator extends
 
 		String code = null;
 		// the issueData will be evaluated by the quickfixes
-		String[] issueData = { styleItem.getName(),
+		String[] issueData = { issueCode, styleItem.getName(),
 				attributeContext.toString() };
 		getMessageAcceptor().acceptError(message, styleItem, offset, length,
 				code, issueData);
