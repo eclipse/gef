@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 KDM Analytics Inc.
+ * Copyright (c) 2018, 2019 KDM Analytics Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Kyle Girard (KDM Analytics Inc.) - initial API and implementation
+ *     Matthias Wienand (itemis AG)     - Javadoc adjustments
  *
  *******************************************************************************/
 
@@ -19,12 +20,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.mvc.fx.gestures.AbstractGesture;
-import org.eclipse.gef.mvc.fx.gestures.IGesture;
+import org.eclipse.gef.mvc.fx.handlers.IOnDragDropHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
-import org.eclipse.gef.mvc.fx.handlers.IOnDragDropHandler;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -37,21 +37,24 @@ import javafx.scene.input.DragEvent;
  * An {@link IGesture} to handle drag & drop interaction gestures.
  *
  * @author kgirard
+ * @since 5.1
  */
 public class DragDropGesture extends AbstractGesture {
 
 	/**
-	 * The typeKey used to retrieve those policies that are able to handle the dragdrop gesture.
+	 * The typeKey used to retrieve those policies that are able to handle the
+	 * dragdrop gesture.
 	 */
-	public static final Class<IOnDragDropHandler> ON_DRAGDROP_POLICY_KEY = IOnDragDropHandler.class;
+	public static final Class<IOnDragDropHandler> ON_DRAGDROP_HANDLER_KEY = IOnDragDropHandler.class;
 
 	private IViewer activeViewer;
 
-	private final Set<Scene> scenes = Collections.newSetFromMap(new IdentityHashMap<>());
+	private final Set<Scene> scenes = Collections
+			.newSetFromMap(new IdentityHashMap<>());
 
 	/**
-	 * This {@link EventHandler} is registered as an event filter on the {@link Scene} to handle
-	 * dragEntered events.
+	 * This {@link EventHandler} is registered as an event filter on the
+	 * {@link Scene} to handle dragEntered events.
 	 */
 	private final EventHandler<DragEvent> dragEnteredFilter = new EventHandler<DragEvent>() {
 
@@ -65,8 +68,8 @@ public class DragDropGesture extends AbstractGesture {
 	};
 
 	/**
-	 * This {@link EventHandler} is registered as an event filter on the {@link Scene} to handle
-	 * dragExited events.
+	 * This {@link EventHandler} is registered as an event filter on the
+	 * {@link Scene} to handle dragExited events.
 	 */
 	private final EventHandler<DragEvent> dragExitedFilter = new EventHandler<DragEvent>() {
 
@@ -80,16 +83,16 @@ public class DragDropGesture extends AbstractGesture {
 	};
 
 	/**
-	 * This {@link EventHandler} is registered as an event filter on the {@link Scene} to handle
-	 * dragOver events.
+	 * This {@link EventHandler} is registered as an event filter on the
+	 * {@link Scene} to handle dragOver events.
 	 */
 	private final EventHandler<DragEvent> dragOverFilter = new EventHandler<DragEvent>() {
 
 		@Override
 		public void handle(final DragEvent event) {
 			final EventTarget target = event.getTarget();
-			if (event.getGestureSource() != target &&
-					(target instanceof Node)) {
+			if (event.getGestureSource() != target
+					&& (target instanceof Node)) {
 				final Node targetNode = (Node) target;
 				dragOver(targetNode, event);
 			}
@@ -97,8 +100,8 @@ public class DragDropGesture extends AbstractGesture {
 	};
 
 	/**
-	 * This {@link EventHandler} is registered as an event filter on the {@link Scene} to handle
-	 * dragDropped events.
+	 * This {@link EventHandler} is registered as an event filter on the
+	 * {@link Scene} to handle dragDropped events.
 	 */
 	private final EventHandler<DragEvent> dragDroppedFilter = new EventHandler<DragEvent>() {
 
@@ -135,7 +138,8 @@ public class DragDropGesture extends AbstractGesture {
 		super.doActivate();
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
-			viewer.viewerFocusedProperty().addListener(viewerFocusChangeListener);
+			viewer.viewerFocusedProperty()
+					.addListener(viewerFocusChangeListener);
 
 			final Scene scene = viewer.getCanvas().getScene();
 			if (scenes.contains(scene)) {
@@ -143,23 +147,89 @@ public class DragDropGesture extends AbstractGesture {
 				continue;
 			}
 
-			// register a drag entered filter for forwarding event to drag/drop policies
+			// register a drag entered filter for forwarding event to drag/drop
+			// policies
 			scene.addEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
-			// register a drag exited filter for forwarding event to drag/drop policies
+			// register a drag exited filter for forwarding event to drag/drop
+			// policies
 			scene.addEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
-			// register a drag over filter for forwarding event to drag/drop policies
+			// register a drag over filter for forwarding event to drag/drop
+			// policies
 			scene.addEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
-			// register a drag dropped filter for forwarding event to drag/drop policies
+			// register a drag dropped filter for forwarding event to drag/drop
+			// policies
 			scene.addEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
 
 			scenes.add(scene);
 		}
 	}
 
+	@Override
+	protected void doDeactivate() {
+		for (final Scene scene : new ArrayList<>(scenes)) {
+			scene.removeEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
+			scene.removeEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
+			scene.removeEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
+			scene.removeEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
+		}
+		for (final IViewer viewer : getDomain().getViewers().values()) {
+			viewer.viewerFocusedProperty()
+					.removeListener(viewerFocusChangeListener);
+		}
+		super.doDeactivate();
+	}
+
+	/**
+	 * @param event
+	 *            The original {@link DragEvent}
+	 */
+	protected void dragDropped(final DragEvent event) {
+		if (activeViewer == null) {
+			return;
+		}
+
+		// enable indication cursor event filters outside of
+		// press-drag-release gesture
+		final Scene scene = activeViewer.getRootPart().getVisual().getScene();
+		if (scene == null) {
+			throw new IllegalStateException(
+					"Active viewer's root part visual is not in Scene.");
+		}
+
+		final List<IOnDragDropHandler> handlers = getActiveHandlers(
+				activeViewer);
+
+		// abort processing of this gesture if no policies could be
+		// found that can process it
+		if (handlers.isEmpty()) {
+			activeViewer = null;
+			return;
+		}
+		getDomain().openExecutionTransaction(DragDropGesture.this);
+
+		// send dragDropped() to all dragDrop policies
+		for (final IOnDragDropHandler policy : handlers) {
+			policy.dragDropped(event);
+		}
+		// clear active policies before processing drop
+		clearActiveHandlers(activeViewer);
+		activeViewer = null;
+
+		// remove this tool from the domain's execution transaction
+		getDomain().closeExecutionTransaction(DragDropGesture.this);
+	}
+
+	/**
+	 * @param target
+	 *            The targeted {@link Node}
+	 * @param event
+	 *            The original {@link DragEvent}
+	 */
 	protected void dragEntered(final Node target, final DragEvent event) {
 		final IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
 		final List<? extends IOnDragDropHandler> dragDropPolicies = getHandlerResolver()
-				.resolve(DragDropGesture.this, target, viewer, ON_DRAGDROP_POLICY_KEY);
+				.resolve(DragDropGesture.this, target, viewer,
+						ON_DRAGDROP_HANDLER_KEY);
 		if (dragDropPolicies != null && !dragDropPolicies.isEmpty()) {
 			for (final IOnDragDropHandler dragDropPolicy : dragDropPolicies) {
 				dragDropPolicy.dragEntered(event);
@@ -167,10 +237,17 @@ public class DragDropGesture extends AbstractGesture {
 		}
 	}
 
+	/**
+	 * @param target
+	 *            The targeted {@link Node}
+	 * @param event
+	 *            The original {@link DragEvent}
+	 */
 	protected void dragExited(final Node target, final DragEvent event) {
 		final IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
 		final List<? extends IOnDragDropHandler> dragDropPolicies = getHandlerResolver()
-				.resolve(DragDropGesture.this, target, viewer, ON_DRAGDROP_POLICY_KEY);
+				.resolve(DragDropGesture.this, target, viewer,
+						ON_DRAGDROP_HANDLER_KEY);
 		if (dragDropPolicies != null && !dragDropPolicies.isEmpty()) {
 			for (final IOnDragDropHandler dragDropPolicy : dragDropPolicies) {
 				dragDropPolicy.dragExited(event);
@@ -178,6 +255,12 @@ public class DragDropGesture extends AbstractGesture {
 		}
 	}
 
+	/**
+	 * @param target
+	 *            The targeted {@link Node}
+	 * @param event
+	 *            The original {@link DragEvent}
+	 */
 	protected void dragOver(final Node target, final DragEvent event) {
 
 		final IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
@@ -186,7 +269,8 @@ public class DragDropGesture extends AbstractGesture {
 		}
 
 		if (viewer instanceof InfiniteCanvasViewer) {
-			final InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer).getCanvas();
+			final InfiniteCanvas canvas = ((InfiniteCanvasViewer) viewer)
+					.getCanvas();
 			// if any node in the target hierarchy is a scrollbar,
 			// do not process the event
 			if (event.getTarget() instanceof Node) {
@@ -209,7 +293,8 @@ public class DragDropGesture extends AbstractGesture {
 		// determine viewer that contains the given target part
 		activeViewer = PartUtils.retrieveViewer(getDomain(), target);
 		final List<? extends IOnDragDropHandler> dragDropPolicies = getHandlerResolver()
-				.resolve(DragDropGesture.this, target, activeViewer, ON_DRAGDROP_POLICY_KEY);
+				.resolve(DragDropGesture.this, target, activeViewer,
+						ON_DRAGDROP_HANDLER_KEY);
 		setActiveHandlers(activeViewer, dragDropPolicies);
 		if (dragDropPolicies != null && !dragDropPolicies.isEmpty()) {
 			for (final IOnDragDropHandler dragDropPolicy : dragDropPolicies) {
@@ -217,55 +302,6 @@ public class DragDropGesture extends AbstractGesture {
 			}
 		}
 
-	}
-
-	protected void dragDropped(final DragEvent event) {
-		if (activeViewer == null) {
-			return;
-		}
-
-		// enable indication cursor event filters outside of
-		// press-drag-release gesture
-		final Scene scene = activeViewer.getRootPart().getVisual().getScene();
-		if (scene == null) {
-			throw new IllegalStateException("Active viewer's root part visual is not in Scene.");
-		}
-
-		final List<IOnDragDropHandler> handlers = getActiveHandlers(activeViewer);
-
-		// abort processing of this gesture if no policies could be
-		// found that can process it
-		if (handlers.isEmpty()) {
-			activeViewer = null;
-			return;
-		}
-		getDomain().openExecutionTransaction(DragDropGesture.this);
-
-		// send dragDropped() to all dragDrop policies
-		for (final IOnDragDropHandler policy : handlers) {
-			policy.dragDropped(event);
-		}
-		// clear active policies before processing drop
-		clearActiveHandlers(activeViewer);
-		activeViewer = null;
-
-		// remove this tool from the domain's execution transaction
-		getDomain().closeExecutionTransaction(DragDropGesture.this);
-	}
-
-	@Override
-	protected void doDeactivate() {
-		for (final Scene scene : new ArrayList<>(scenes)) {
-			scene.removeEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
-			scene.removeEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
-			scene.removeEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
-			scene.removeEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
-		}
-		for (final IViewer viewer : getDomain().getViewers().values()) {
-			viewer.viewerFocusedProperty()
-						.removeListener(viewerFocusChangeListener);
-		}
-		super.doDeactivate();
 	}
 
 	@SuppressWarnings("unchecked")
