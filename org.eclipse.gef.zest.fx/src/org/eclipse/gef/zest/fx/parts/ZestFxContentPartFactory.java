@@ -66,4 +66,16 @@ public class ZestFxContentPartFactory implements IContentPartFactory {
 		return part;
 	}
 
+	/**
+	 * Access to the injector that is used to initialize the result objects of
+	 * {@link #createContentPart(Object, Map)}.
+	 *
+	 * @return the injector.
+	 *
+	 * @since 5.1
+	 */
+	protected Injector getInjector() {
+		return injector;
+	}
+
 }
