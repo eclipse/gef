@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="fontname" nsURI="http://www.eclipse.org/gef/dot/internal/language/DotFontName"
+    nsPrefix="fontname">
+  <eClassifiers xsi:type="ecore:EClass" name="FontName" abstract="true" interface="true">
+    <eOperations name="getWeight" eType="#//Weight"/>
+    <eOperations name="getStyle" eType="#//Style"/>
+    <eOperations name="getVariant" eType="#//Variant"/>
+    <eOperations name="getStretch" eType="#//Stretch"/>
+    <eOperations name="getGravity" eType="#//Gravity"/>
+    <eOperations name="getFontFamilies">
+      <eGenericType eClassifier="#//List">
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eGenericType>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PostScriptFontName" eSuperTypes="#//FontName">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="alias" eType="#//PostScriptFontAlias"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PangoFontName" eSuperTypes="#//FontName">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="styleOptionsList" upperBound="-1"
+        eType="#//StyleOptionsElement" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="families" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="finalFamily" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StyleOptionsElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StyleOption" eSuperTypes="#//StyleOptionsElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" eType="#//Style"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VariantOption" eSuperTypes="#//StyleOptionsElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="variant" eType="#//Variant"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WeightOption" eSuperTypes="#//StyleOptionsElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weight" eType="#//Weight"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StretchOption" eSuperTypes="#//StyleOptionsElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="stretch" eType="#//Stretch"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GravityOption" eSuperTypes="#//StyleOptionsElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gravity" eType="#//Gravity"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Style">
+    <eLiterals name="NORMAL" literal="roman"/>
+    <eLiterals name="OBLIQUE" value="1" literal="oblique"/>
+    <eLiterals name="ITALIC" value="2" literal="italic"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Variant">
+    <eLiterals name="NORMAL" literal="NORMAL"/>
+    <eLiterals name="SMALL_CAPS" value="1" literal="SMALL_CAPS"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Weight">
+    <eLiterals name="NORMAL" literal="Regular"/>
+    <eLiterals name="THIN" value="1" literal="Thin"/>
+    <eLiterals name="ULTRALIGHT" value="2" literal="Ultra-Light"/>
+    <eLiterals name="LIGHT" value="3" literal="Light"/>
+    <eLiterals name="SEMILIGHT" value="4" literal="Semi-Light"/>
+    <eLiterals name="BOOK" value="5" literal="Book"/>
+    <eLiterals name="MEDIUM" value="6" literal="Medium"/>
+    <eLiterals name="SEMIBOLD" value="7" literal="Semi-Bold"/>
+    <eLiterals name="BOLD" value="8" literal="Bold"/>
+    <eLiterals name="ULTRABOLD" value="9" literal="Ultra-Bold"/>
+    <eLiterals name="HEAVY" value="10" literal="Heavy"/>
+    <eLiterals name="ULTRAHEAVY" value="11" literal="Ultra-Heavy"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Stretch">
+    <eLiterals name="NORMAL" literal="NORMAL"/>
+    <eLiterals name="ULTRA_CONDENSED" value="1" literal="ULTRA_CONDENSED"/>
+    <eLiterals name="EXTRA_CONDENSED" value="2" literal="EXTRA_CONDENSED"/>
+    <eLiterals name="CONDENSED" value="3" literal="CONDENSED"/>
+    <eLiterals name="SEMI_CONDENSED" value="4" literal="SEMI_CONDENSED"/>
+    <eLiterals name="SEMI_EXPANDED" value="5" literal="SEMI_EXPANDED"/>
+    <eLiterals name="EXPANDED" value="6" literal="EXPANDED"/>
+    <eLiterals name="EXTRA_EXPANDED" value="7" literal="EXTRA_EXPANDED"/>
+    <eLiterals name="ULTRA_EXPANDED" value="8" literal="ULTRA_EXPANDED"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Gravity">
+    <eLiterals name="SOUTH" literal="Not-Rotated"/>
+    <eLiterals name="NORTH" value="1" literal="Upside-Down"/>
+    <eLiterals name="EAST" value="2" literal="Rotated-Left"/>
+    <eLiterals name="WEST" value="3" literal="Rotated-Right"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="PostScriptFontAlias" instanceClassName="org.eclipse.gef.dot.internal.language.fontname.PostScriptFontAlias"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List"
+      serializable="false">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
+</ecore:EPackage>

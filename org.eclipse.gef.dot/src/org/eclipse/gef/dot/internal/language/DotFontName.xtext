@@ -1,0 +1,161 @@
+/*******************************************************************************
+ * Copyright (c) 2019 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #542663)
+ *     
+ *******************************************************************************/
+grammar org.eclipse.gef.dot.internal.language.DotFontName hidden(OTHER_WS, SPACE)
+
+import "http://www.eclipse.org/gef/dot/internal/language/DotFontName"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+FontName:
+	PostScriptFontName | PangoFontName;
+
+PostScriptFontName:
+	alias=PostScriptAlias;
+
+/*
+ * Due to a dangling NFA state, we cannot move the final family into a datatype rule.
+ * This results in the case of multiple sequential spaces in the final family name to be unrecognized.
+ * The grammar will still parse, however.
+ */
+PangoFontName:
+	=>(
+		(families+=PangoFamily ',' )+ 
+			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)* 
+			finalFamily+=(NAME|PSALIAS) 
+		| finalFamily+=(INT|NAME|PSALIAS|StyleOptionString) 
+			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)* 
+			finalFamily+=(NAME|PSALIAS)
+		| finalFamily+=NAME
+	)
+	| =>(
+		(families+=PangoFamily ',' )* 
+			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)* 
+			finalFamily+=(INT|NAME|PSALIAS) 
+			styleOptionsList+=StyleOptionsElement* 
+			(styleOptionsList+=StyleOptionsElement|INT)
+	) 
+	| {PangoFontName} =>(
+		(families+=PangoFamily ',')* 
+			styleOptionsList+=StyleOptionsElement* 
+			INT?
+	);
+
+PangoFamily:
+	(INT|NAME|PSALIAS|StyleOptionString|SPACE)*;
+
+StyleOptionsElement:
+	StyleOption | VariantOption | WeightOption | StretchOption | GravityOption;
+
+StyleOption:
+	style=Style;
+
+VariantOption:
+	variant=SmallCapsSetting;
+
+WeightOption:
+	weight=Weight;
+
+StretchOption:
+	stretch=StretchSetting;
+
+GravityOption:
+	gravity=Gravity;
+
+enum Style:
+	NORMAL="roman" | OBLIQUE="oblique" | ITALIC="italic";
+
+enum Variant:
+	NORMAL | SMALL_CAPS;
+
+// "Normal" is not a legal value, hence we need a rule that does not allow parsing this
+enum SmallCapsSetting returns Variant:
+	SMALL_CAPS="small-caps";
+
+enum Weight:
+	NORMAL="Regular" 
+	| THIN="Thin"
+	| ULTRALIGHT="Ultra-Light"
+	| ULTRALIGHT="Extra-Light"
+	| LIGHT="Light"
+	| SEMILIGHT="Semi-Light"
+	| SEMILIGHT="Demi-Light"
+	| BOOK="Book"
+	| MEDIUM="Medium"
+	| SEMIBOLD="Semi-Bold"
+	| SEMIBOLD="Demi-Bold"
+	| BOLD="Bold"
+	| ULTRABOLD="Ultra-Bold"
+	| ULTRABOLD="Extra-Bold"
+	| HEAVY="Heavy"
+	| HEAVY="Black"
+	| ULTRAHEAVY="Ultra-Heavy"
+	| ULTRAHEAVY="Extra-Heavy"
+	| ULTRAHEAVY="Ultra-Black"
+	| ULTRAHEAVY="Extra-Black";
+
+enum Stretch:
+	NORMAL | ULTRA_CONDENSED | EXTRA_CONDENSED | CONDENSED | SEMI_CONDENSED | SEMI_EXPANDED | EXPANDED | EXTRA_EXPANDED |
+	ULTRA_EXPANDED;
+
+// "Normal" is not a legal value, hence we need a rule that does not allow parsing this
+enum StretchSetting returns Stretch:
+	ULTRA_CONDENSED="Ultra-Condensed"
+	| EXTRA_CONDENSED="Extra-Condensed"
+	| CONDENSED="Condensed"
+	| SEMI_CONDENSED="Semi-Condensed"
+	| SEMI_EXPANDED="Semi-Expanded"
+	| EXPANDED="Expanded"
+	| EXTRA_EXPANDED="Extra-Expanded"
+	| ULTRA_EXPANDED="Ultra-Expanded";
+
+enum Gravity:
+	SOUTH="Not-Rotated" | SOUTH="South" | 
+	NORTH="Upside-Down" | NORTH="North" | 
+	EAST="Rotated-Left" | EAST="East" | 
+	WEST="Rotated-Right" | WEST="West";
+
+PostScriptAlias returns PostScriptFontAlias:
+	PSALIAS;
+
+terminal PSALIAS:
+	 "AvantGarde-Book" | "AvantGarde-BookOblique" | "AvantGarde-Demi" | "AvantGarde-DemiOblique" | "Bookman-Demi" | "Bookman-DemiItalic" | 
+	"Bookman-Light" | "Bookman-LightItalic" | "Courier" | "Courier-Bold" | "Courier-BoldOblique" | "Courier-Oblique" | "Helvetica" | 
+	"Helvetica-Bold" | "Helvetica-BoldOblique" | "Helvetica-Narrow" | "Helvetica-Narrow-Bold" | "Helvetica-Narrow-BoldOblique" |
+	"Helvetica-Narrow-Oblique" | "Helvetica-Oblique" | "NewCenturySchlbk-Bold" | "NewCenturySchlbk-BoldItalic" | "NewCenturySchlbk-Italic" | 
+	"NewCenturySchlbk-Roman" | "Palatino-Bold" | "Palatino-BoldItalic" | "Palatino-Italic" | "Palatino-Roman" | "Symbol" | "Times-Bold" | 
+	"Times-BoldItalic" | "Times-Italic" | "Times-Roman" | "ZapfChancery-MediumItalic" | "ZapfDingbats";
+
+StyleOptionString:
+	//Style
+	"roman" | "oblique" | "italic" | 
+	//Variant
+	"small-caps" | 
+	//Weight
+	"Regular" | "Thin" | "Ultra-Light" | "Extra-Light" | "Light" | "Semi-Light" | "Demi-Light" 
+	| "Book"| "Medium" | "Semi-Bold" | "Demi-Bold" | "Bold" | "Ultra-Bold" | "Extra-Bold" | "Heavy"
+	| "Black" | "Ultra-Heavy" | "Extra-Heavy" | "Ultra-Black" | "Extra-Black" | 
+	//Stretch
+	"Ultra-Condensed" | "Extra-Condensed" | "Condensed" | "Semi-Condensed" | "Semi-Expanded"
+	| "Expanded" | "Extra-Expanded" | "Ultra-Expanded" |
+	//Gravity
+	 "Not-Rotated" | "South" | "Upside-Down" | "North" | "Rotated-Left" | "East" | "Rotated-Right" | "West";
+
+terminal SPACE:
+	(' ');
+	
+terminal OTHER_WS:
+	('\t' | '\r' | '\n' | '\f');
+	
+terminal INT:
+	(('0'..'9')+ ('.' ('0'..'9')*)? | '.' ('0'..'9')+) "px"?;
+
+terminal NAME:
+	(!(SPACE | OTHER_WS | ','))+;
