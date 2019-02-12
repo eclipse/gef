@@ -145,4 +145,12 @@
 
 
 
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated DotFontName -->
+      <package
+            uri="http://www.eclipse.org/gef/dot/internal/language/DotFontName"
+            class="org.eclipse.gef.dot.internal.language.fontname.FontnamePackage"
+            genModel="model/DotFontName.genmodel"/>
+   </extension>
+
 </plugin>
