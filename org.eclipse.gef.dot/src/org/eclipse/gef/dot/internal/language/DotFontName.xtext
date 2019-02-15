@@ -58,69 +58,52 @@ StyleOption:
 	style=Style;
 
 VariantOption:
-	variant=SmallCapsSetting;
+	variant=Variant;
 
 WeightOption:
 	weight=Weight;
 
 StretchOption:
-	stretch=StretchSetting;
+	stretch=Stretch;
 
 GravityOption:
 	gravity=Gravity;
+	
+Style returns Style:
+	STYLE_KEY;
 
-enum Style:
-	NORMAL="roman" | OBLIQUE="oblique" | ITALIC="italic";
+terminal STYLE_KEY:
+	"roman" | "oblique" | "italic";
 
-enum Variant:
-	NORMAL | SMALL_CAPS;
+Variant returns Variant:
+	VARIANT_KEY;
 
-// "Normal" is not a legal value, hence we need a rule that does not allow parsing this
-enum SmallCapsSetting returns Variant:
-	SMALL_CAPS="small-caps";
+terminal VARIANT_KEY:
+	"small-caps";
 
-enum Weight:
-	NORMAL="Regular" 
-	| THIN="Thin"
-	| ULTRALIGHT="Ultra-Light"
-	| ULTRALIGHT="Extra-Light"
-	| LIGHT="Light"
-	| SEMILIGHT="Semi-Light"
-	| SEMILIGHT="Demi-Light"
-	| BOOK="Book"
-	| MEDIUM="Medium"
-	| SEMIBOLD="Semi-Bold"
-	| SEMIBOLD="Demi-Bold"
-	| BOLD="Bold"
-	| ULTRABOLD="Ultra-Bold"
-	| ULTRABOLD="Extra-Bold"
-	| HEAVY="Heavy"
-	| HEAVY="Black"
-	| ULTRAHEAVY="Ultra-Heavy"
-	| ULTRAHEAVY="Extra-Heavy"
-	| ULTRAHEAVY="Ultra-Black"
-	| ULTRAHEAVY="Extra-Black";
+Weight returns Weight:
+	WEIGHT_KEY;
 
-enum Stretch:
-	NORMAL | ULTRA_CONDENSED | EXTRA_CONDENSED | CONDENSED | SEMI_CONDENSED | SEMI_EXPANDED | EXPANDED | EXTRA_EXPANDED |
-	ULTRA_EXPANDED;
+terminal WEIGHT_KEY:
+	"Regular" | "Thin" | "Ultra-Light" | "Extra-Light" | "Light" | "Semi-Light" | "Demi-Light"
+	| "Book" | "Medium" | "Semi-Bold" | "Demi-Bold" | "Bold" | "Ultra-Bold" | "Extra-Bold"
+	| "Heavy" | "Black" | "Ultra-Heavy" | "Extra-Heavy" | "Ultra-Black" | "Extra-Black";
 
-// "Normal" is not a legal value, hence we need a rule that does not allow parsing this
-enum StretchSetting returns Stretch:
-	ULTRA_CONDENSED="Ultra-Condensed"
-	| EXTRA_CONDENSED="Extra-Condensed"
-	| CONDENSED="Condensed"
-	| SEMI_CONDENSED="Semi-Condensed"
-	| SEMI_EXPANDED="Semi-Expanded"
-	| EXPANDED="Expanded"
-	| EXTRA_EXPANDED="Extra-Expanded"
-	| ULTRA_EXPANDED="Ultra-Expanded";
+Stretch returns Stretch:
+	STRETCH_KEY;
+	
+terminal STRETCH_KEY:
+	"Ultra-Condensed" | "Extra-Condensed" | "Condensed" | "Semi-Condensed"
+	| "Semi-Expanded" | "Expanded" | "Extra-Expanded" | "Ultra-Expanded";
 
-enum Gravity:
-	SOUTH="Not-Rotated" | SOUTH="South" | 
-	NORTH="Upside-Down" | NORTH="North" | 
-	EAST="Rotated-Left" | EAST="East" | 
-	WEST="Rotated-Right" | WEST="West";
+Gravity returns Gravity: 
+	GRAVITY_KEY;
+
+terminal GRAVITY_KEY:
+	"Not-Rotated" | "South" | 
+	"Upside-Down" | "North" | 
+	"Rotated-Left" | "East" | 
+	"Rotated-Right" | "West";
 
 PostScriptAlias returns PostScriptFontAlias:
 	PSALIAS;
@@ -134,20 +117,8 @@ terminal PSALIAS:
 	"Times-BoldItalic" | "Times-Italic" | "Times-Roman" | "ZapfChancery-MediumItalic" | "ZapfDingbats";
 
 StyleOptionString:
-	//Style
-	"roman" | "oblique" | "italic" | 
-	//Variant
-	"small-caps" | 
-	//Weight
-	"Regular" | "Thin" | "Ultra-Light" | "Extra-Light" | "Light" | "Semi-Light" | "Demi-Light" 
-	| "Book"| "Medium" | "Semi-Bold" | "Demi-Bold" | "Bold" | "Ultra-Bold" | "Extra-Bold" | "Heavy"
-	| "Black" | "Ultra-Heavy" | "Extra-Heavy" | "Ultra-Black" | "Extra-Black" | 
-	//Stretch
-	"Ultra-Condensed" | "Extra-Condensed" | "Condensed" | "Semi-Condensed" | "Semi-Expanded"
-	| "Expanded" | "Extra-Expanded" | "Ultra-Expanded" |
-	//Gravity
-	 "Not-Rotated" | "South" | "Upside-Down" | "North" | "Rotated-Left" | "East" | "Rotated-Right" | "West";
-
+	STYLE_KEY | VARIANT_KEY | WEIGHT_KEY | STRETCH_KEY | GRAVITY_KEY;
+	
 terminal SPACE:
 	(' ');
 	
