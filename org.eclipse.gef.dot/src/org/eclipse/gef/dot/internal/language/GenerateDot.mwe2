@@ -436,8 +436,11 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {
+				antlrParam = "-Xconversiontimeout"
+				antlrParam = "10000"
 				options = {
 					ignoreCase = true
+					classSplitting = true
 				}
 			}
 
@@ -446,8 +449,11 @@ Workflow {
 
 			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
 			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				antlrParam = "-Xconversiontimeout"
+				antlrParam = "10000"
 				options = {
 					ignoreCase = true
+					classSplitting = true
 				}
 			}
 
