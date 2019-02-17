@@ -248,9 +248,13 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
 	private void provideQuickfixesForDeprecatedStyleItem(Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		final String styleItemName = issue.getData()[1];
-		final String penwidthValue = issue.getData()[2];
-		final String styleItem = styleItemName + "(" + penwidthValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		String[] issueData = issue.getData();
+		String styleItemName = issueData[1];
+
+		final String penwidthValue = issueData.length > 2 ? issueData[2] : ""; //$NON-NLS-1$
+
+		final String styleItem = styleItemName + (penwidthValue == "" ? "" //$NON-NLS-1$ //$NON-NLS-2$
+				: "(" + penwidthValue + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String label = "Replace '" + styleItem + "' with 'penwidth=" //$NON-NLS-1$ //$NON-NLS-2$
 				+ penwidthValue + "'."; //$NON-NLS-1$

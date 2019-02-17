@@ -681,6 +681,10 @@ class DotQuickfixTests {
 		'''graph{1[style="dashed, setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dashed, dotted" penwidth="3" ]}''')
 		)
+
+		'''graph{1[style="setlinewidth"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'setlinewidth' with 'penwidth='.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[ penwidth="" ]}''')
+		)
 	}
 
 	@Test def subgraph_rank() {
