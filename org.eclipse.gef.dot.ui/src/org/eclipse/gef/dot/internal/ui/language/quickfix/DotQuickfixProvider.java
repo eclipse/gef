@@ -62,6 +62,8 @@ import org.eclipse.xtext.validation.Issue;
  */
 public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
+	private static final String DELETE_IMAGE = "delete.png"; //$NON-NLS-1$
+
 	@Fix(INVALID_EDGE_OPERATOR)
 	public void fixInvalidEdgeOperator(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
@@ -106,7 +108,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		ISemanticModification semanticModification = (EObject element,
 				IModificationContext context) -> EcoreUtil.remove(element);
 
-		acceptor.accept(issue, label, description, null, semanticModification);
+		acceptor.accept(issue, label, description, DELETE_IMAGE,
+				semanticModification);
 	}
 
 	@Fix(DotAttributes.ARROWHEAD__E)
@@ -317,7 +320,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			}
 		};
 
-		acceptor.accept(issue, label, description, null, semanticModification);
+		acceptor.accept(issue, label, description, DELETE_IMAGE,
+				semanticModification);
 	}
 
 	private void provideQuickfixesForInvalidStyleItem(Issue issue,
