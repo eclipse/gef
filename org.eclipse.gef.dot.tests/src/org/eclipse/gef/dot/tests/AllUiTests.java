@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,6 +10,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Tamas Miklossy  (itemis AG) - merge DotInterpreter into DotImport (bug #491261)
  *                                 - implement additional test cases
+ *     Zoey Prigge (itemis AG)     - implement additional test cases
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
@@ -29,11 +30,11 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotColorUtilTests.class, DotEscStringTests.class,
 		DotExecutableUtilsTests.class, DotExportTests.class,
 		DotExtractorTests.class, DotFormatterTests.class,
-		DotHtmlLabelFormatterTests.class, DotHtmlLabelLexerTests.class,
-		DotHtmlLabelParserTests.class, DotHtmlLabelValidatorTests.class,
-		DotImportTests.class, DotLexerTests.class, DotParserTests.class,
-		DotPortPosTests.class, DotRecordLabelTests.class, DotStyleTests.class,
-		DotValidatorTests.class,
+		DotFontNameTests.class, DotHtmlLabelFormatterTests.class,
+		DotHtmlLabelLexerTests.class, DotHtmlLabelParserTests.class,
+		DotHtmlLabelValidatorTests.class, DotImportTests.class,
+		DotLexerTests.class, DotParserTests.class, DotPortPosTests.class,
+		DotRecordLabelTests.class, DotStyleTests.class, DotValidatorTests.class,
 
 		// JUnit Plug-in Tests
 		DotAutoEditTests.class, DotColorListContentAssistLexerTests.class,
