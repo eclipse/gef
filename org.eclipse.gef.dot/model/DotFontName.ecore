@@ -47,8 +47,8 @@
     <eLiterals name="ITALIC" value="2" literal="italic"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Variant">
-    <eLiterals name="NORMAL" literal="NORMAL"/>
-    <eLiterals name="SMALL_CAPS" value="1" literal="SMALL_CAPS"/>
+    <eLiterals name="NORMAL" literal=""/>
+    <eLiterals name="SMALL_CAPS" value="1" literal="Small-Caps"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Weight">
     <eLiterals name="NORMAL" literal="Regular"/>
@@ -65,15 +65,15 @@
     <eLiterals name="ULTRAHEAVY" value="11" literal="Ultra-Heavy"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Stretch">
-    <eLiterals name="NORMAL" literal="NORMAL"/>
-    <eLiterals name="ULTRA_CONDENSED" value="1" literal="ULTRA_CONDENSED"/>
-    <eLiterals name="EXTRA_CONDENSED" value="2" literal="EXTRA_CONDENSED"/>
-    <eLiterals name="CONDENSED" value="3" literal="CONDENSED"/>
-    <eLiterals name="SEMI_CONDENSED" value="4" literal="SEMI_CONDENSED"/>
-    <eLiterals name="SEMI_EXPANDED" value="5" literal="SEMI_EXPANDED"/>
-    <eLiterals name="EXPANDED" value="6" literal="EXPANDED"/>
-    <eLiterals name="EXTRA_EXPANDED" value="7" literal="EXTRA_EXPANDED"/>
-    <eLiterals name="ULTRA_EXPANDED" value="8" literal="ULTRA_EXPANDED"/>
+    <eLiterals name="NORMAL" literal=""/>
+    <eLiterals name="ULTRA_CONDENSED" value="1" literal="Ultra-Condensed"/>
+    <eLiterals name="EXTRA_CONDENSED" value="2" literal="Extra-Condensed"/>
+    <eLiterals name="CONDENSED" value="3" literal="Condensed"/>
+    <eLiterals name="SEMI_CONDENSED" value="4" literal="Semi-Condensed"/>
+    <eLiterals name="SEMI_EXPANDED" value="5" literal="Semi-Expanded"/>
+    <eLiterals name="EXPANDED" value="6" literal="Expanded"/>
+    <eLiterals name="EXTRA_EXPANDED" value="7" literal="Extra-Expanded"/>
+    <eLiterals name="ULTRA_EXPANDED" value="8" literal="Ultra-Expanded"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Gravity">
     <eLiterals name="SOUTH" literal="Not-Rotated"/>

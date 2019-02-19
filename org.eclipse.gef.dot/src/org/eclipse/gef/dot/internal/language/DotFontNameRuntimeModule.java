@@ -12,8 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
-import org.eclipse.gef.dot.internal.language.fontname.DotFontnameConverters;
+import org.eclipse.gef.dot.internal.language.fontname.DotFontNameConverters;
+import org.eclipse.gef.dot.internal.language.fontname.DotFontNameParserCustom;
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.parser.IParser;
 
 /**
  * Use this class to register components to be used at runtime / without the
@@ -23,6 +25,11 @@ public class DotFontNameRuntimeModule extends
 		org.eclipse.gef.dot.internal.language.AbstractDotFontNameRuntimeModule {
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
-		return DotFontnameConverters.class;
+		return DotFontNameConverters.class;
+	}
+
+	@Override
+	public Class<? extends IParser> bindIParser() {
+		return DotFontNameParserCustom.class;
 	}
 }
