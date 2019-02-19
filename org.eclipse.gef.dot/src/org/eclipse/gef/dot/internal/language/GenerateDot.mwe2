@@ -435,11 +435,13 @@ Workflow {
 			}
 
 			// The antlr parser generator fragment
-			fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {
-				options = {
-					ignoreCase = true
-				}
-			}
+			/* 
+			 * NOTE: 
+			 * The language is fully case-indifferent (including terminals). 
+			 * Hence, we cannot use ignoreCase=true, because this setting only applies to keywords.
+			 * Instead, we pass a modified CharStream to the lexer that returns lowercase chars only.
+			 */
+			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
 
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}

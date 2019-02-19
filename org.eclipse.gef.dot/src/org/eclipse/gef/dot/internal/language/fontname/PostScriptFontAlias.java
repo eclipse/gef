@@ -24,175 +24,188 @@ public enum PostScriptFontAlias {
 	/**
 	 * The AvantGarde-Book fontname
 	 */
-	AVANTGARDE_BOOK(Family.AVANTGARDE_FAMILY, Weight.BOOK, null, null),
+	AVANTGARDE_BOOK("AvantGarde-Book", Family.AVANTGARDE_FAMILY, Weight.BOOK,
+			null, null),
 	/**
 	 * The AvantGarde-BookOblique fontname
 	 */
-	AVANTGARDE_BOOKOBLIQUE(Family.AVANTGARDE_FAMILY, Weight.BOOK, Style.OBLIQUE,
-			null),
+	AVANTGARDE_BOOKOBLIQUE("AvantGarde-BookOblique", Family.AVANTGARDE_FAMILY,
+			Weight.BOOK, Style.OBLIQUE, null),
 	/**
 	 * The AvantGarde-Demi fontname
 	 */
-	AVANTGARDE_DEMI(Family.AVANTGARDE_FAMILY, Weight.SEMILIGHT /* DEMI */, null,
-			null),
+	AVANTGARDE_DEMI("AvantGarde-Demi", Family.AVANTGARDE_FAMILY,
+			Weight.SEMILIGHT /* DEMI */, null, null),
 	/**
 	 * The AvantGarde-DemiOblique fontname
 	 */
-	AVANTGARDE_DEMIOBLIQUE(Family.AVANTGARDE_FAMILY,
+	AVANTGARDE_DEMIOBLIQUE("AvantGarde-DemiOblique", Family.AVANTGARDE_FAMILY,
 			Weight.SEMILIGHT /* DEMI */, Style.OBLIQUE, null),
 	/**
 	 * The Bookman-Demi fontname
 	 */
-	BOOKMAN_DEMI(Family.BOOKMAN_FAMILY, Weight.SEMILIGHT /* DEMI */, null,
-			null),
+	BOOKMAN_DEMI("Bookman-Demi", Family.BOOKMAN_FAMILY,
+			Weight.SEMILIGHT /* DEMI */, null, null),
 	/**
 	 * The Bookman-DemiItalic fontname
 	 */
-	BOOKMAN_DEMIITALIC(Family.BOOKMAN_FAMILY, Weight.SEMILIGHT /* DEMI */,
-			Style.ITALIC, null),
+	BOOKMAN_DEMIITALIC("Bookman-DemiItalic", Family.BOOKMAN_FAMILY,
+			Weight.SEMILIGHT /* DEMI */, Style.ITALIC, null),
 	/**
 	 * The Bookman-Light fontname
 	 */
-	BOOKMAN_LIGHT(Family.BOOKMAN_FAMILY, Weight.LIGHT, null, null),
+	BOOKMAN_LIGHT("Bookman-Light", Family.BOOKMAN_FAMILY, Weight.LIGHT, null,
+			null),
 	/**
 	 * The Bookman-LightItalic fontname
 	 */
-	BOOKMAN_LIGHTITALIC(Family.BOOKMAN_FAMILY, Weight.LIGHT, Style.ITALIC,
-			null),
+	BOOKMAN_LIGHTITALIC("Bookman-LightItalic", Family.BOOKMAN_FAMILY,
+			Weight.LIGHT, Style.ITALIC, null),
 	/**
 	 * The Courier fontname
 	 */
-	COURIER(Family.COURIER_FAMILY, null, null, null),
+	COURIER("Courier", Family.COURIER_FAMILY, null, null, null),
 	/**
 	 * The Courier-Bold fontname
 	 */
-	COURIER_BOLD(Family.COURIER_FAMILY, Weight.BOLD, null, null),
+	COURIER_BOLD("Courier-Bold", Family.COURIER_FAMILY, Weight.BOLD, null,
+			null),
 	/**
 	 * The Courier-BoldOblique fontname
 	 */
-	COURIER_BOLDOBLIQUE(Family.COURIER_FAMILY, Weight.BOLD, Style.OBLIQUE,
-			null),
+	COURIER_BOLDOBLIQUE("Courier-BoldOblique", Family.COURIER_FAMILY,
+			Weight.BOLD, Style.OBLIQUE, null),
 	/**
 	 * The Courier-Oblique fontname
 	 */
-	COURIER_OBLIQUE(Family.COURIER_FAMILY, null, Style.OBLIQUE, null),
+	COURIER_OBLIQUE("Courier-Oblique", Family.COURIER_FAMILY, null,
+			Style.OBLIQUE, null),
 	/**
 	 * The Helvetica fontname
 	 */
-	HELVETICA(Family.HELVETICA_FAMILY, null, null, null),
+	HELVETICA("Helvetica", Family.HELVETICA_FAMILY, null, null, null),
 	/**
 	 * The Helvetica-Bold fontname
 	 */
-	HELVETICA_BOLD(Family.HELVETICA_FAMILY, Weight.BOLD, null, null),
+	HELVETICA_BOLD("Helvetica-Bold", Family.HELVETICA_FAMILY, Weight.BOLD, null,
+			null),
 	/**
 	 * The Helvetica-BoldOblique fontname
 	 */
-	HELVETICA_BOLDOBLIQUE(Family.HELVETICA_FAMILY, Weight.BOLD, Style.OBLIQUE,
-			null),
+	HELVETICA_BOLDOBLIQUE("Helvetica-BoldOblique", Family.HELVETICA_FAMILY,
+			Weight.BOLD, Style.OBLIQUE, null),
 	/**
 	 * The Helvetica-Narrow fontname
 	 */
-	HELVETICA_NARROW(Family.HELVETICA_FAMILY, null, null, Stretch.CONDENSED),
+	HELVETICA_NARROW("Helvetica-Narrow", Family.HELVETICA_FAMILY, null, null,
+			Stretch.CONDENSED),
 	/**
 	 * The Helvetica-Narrow-Bold fontname
 	 */
-	HELVETICA_NARROW_BOLD(Family.HELVETICA_FAMILY, Weight.BOLD, null,
-			Stretch.CONDENSED),
+	HELVETICA_NARROW_BOLD("Helvetica-Narrow-Bold", Family.HELVETICA_FAMILY,
+			Weight.BOLD, null, Stretch.CONDENSED),
 	/**
 	 * The Helvetica-Narrow-BoldOblique fontname
 	 */
-	HELVETICA_NARROW_BOLDOBLIQUE(Family.HELVETICA_FAMILY, Weight.BOLD, null,
+	HELVETICA_NARROW_BOLDOBLIQUE("Helvetica-NarrowBoldOblique",
+			Family.HELVETICA_FAMILY, Weight.BOLD, Style.OBLIQUE,
 			Stretch.CONDENSED),
 	/**
 	 * The Helvetica-Narrow-Oblique fontname
 	 */
-	HELVETICA_NARROW_OBLIQUE(Family.HELVETICA_FAMILY, null, Style.OBLIQUE,
-			Stretch.CONDENSED),
+	HELVETICA_NARROW_OBLIQUE("Helvetica-Narrow-Oblique",
+			Family.HELVETICA_FAMILY, null, Style.OBLIQUE, Stretch.CONDENSED),
 	/**
 	 * The Helvetica-Oblique fontname
 	 */
-	HELVETICA_OBLIQUE(Family.HELVETICA_FAMILY, null, Style.OBLIQUE, null),
+	HELVETICA_OBLIQUE("Helvetica-Oblique", Family.HELVETICA_FAMILY, null,
+			Style.OBLIQUE, null),
 	/**
 	 * The NewCenturySchoolbk-Bold fontname
 	 */
-	NEWCENTURYSCHLBK_BOLD(Family.NEWCENTURYSCHLBK_FAMILY, Weight.BOLD, null,
-			null),
+	NEWCENTURYSCHLBK_BOLD("NewCenturySchlbk-Bold",
+			Family.NEWCENTURYSCHLBK_FAMILY, Weight.BOLD, null, null),
 	/**
 	 * The NewCenturySchoolbk-BoldItalic fontname
 	 */
-	NEWCENTURYSCHLBK_BOLDITALIC(Family.NEWCENTURYSCHLBK_FAMILY, Weight.BOLD,
-			Style.ITALIC, null),
+	NEWCENTURYSCHLBK_BOLDITALIC("NewCenturySchlbk-BoldItalic",
+			Family.NEWCENTURYSCHLBK_FAMILY, Weight.BOLD, Style.ITALIC, null),
 	/**
 	 * The NewCenturySchoolbk-Italic fontname
 	 */
-	NEWCENTURYSCHLBK_ITALIC(Family.NEWCENTURYSCHLBK_FAMILY, null, Style.ITALIC,
-			null),
+	NEWCENTURYSCHLBK_ITALIC("NewCenturySchoolbk-Italic",
+			Family.NEWCENTURYSCHLBK_FAMILY, null, Style.ITALIC, null),
 	/**
 	 * The NewCenturySchoolbk-Roman fontname
 	 */
-	NEWCENTURYSCHLBK_ROMAN(Family.NEWCENTURYSCHLBK_FAMILY,
-			Weight.NORMAL /* ROMAN */, null, null),
+	NEWCENTURYSCHLBK_ROMAN("NewCenturySchoolbk-Roman",
+			Family.NEWCENTURYSCHLBK_FAMILY, Weight.NORMAL /* ROMAN */, null,
+			null),
 	/**
 	 * The Palatino-Bold fontname
 	 */
-	PALATINO_BOLD(Family.PALATINO_FAMILY, Weight.BOLD, null, null),
+	PALATINO_BOLD("Palatino-Bold", Family.PALATINO_FAMILY, Weight.BOLD, null,
+			null),
 	/**
 	 * The Palatino-BoldItalic fontname
 	 */
-	PALATINO_BOLDITALIC(Family.PALATINO_FAMILY, Weight.BOLD, Style.ITALIC,
-			null),
+	PALATINO_BOLDITALIC("Palatino-BoldItalic", Family.PALATINO_FAMILY,
+			Weight.BOLD, Style.ITALIC, null),
 	/**
 	 * The Palatino-Italic fontname
 	 */
-	PALATINO_ITALIC(Family.PALATINO_FAMILY, null, Style.ITALIC, null),
+	PALATINO_ITALIC("Palatino-Italic", Family.PALATINO_FAMILY, null,
+			Style.ITALIC, null),
 	/**
 	 * The Palatino-Roman fontname
 	 */
-	PALATINO_ROMAN(Family.PALATINO_FAMILY, Weight.NORMAL /* ROMAN */, null,
-			null),
+	PALATINO_ROMAN("Palatino-Roman", Family.PALATINO_FAMILY,
+			Weight.NORMAL /* ROMAN */, null, null),
 	/**
 	 * The Symbol fontname
 	 */
-	SYMBOL(Family.SYMBOL_FAMILY, null, null, null),
+	SYMBOL("Symbol", Family.SYMBOL_FAMILY, null, null, null),
 	/**
 	 * The Times-Bold fontname
 	 */
-	TIMES_BOLD(Family.TIMES_FAMILY, Weight.BOLD, null, null),
+	TIMES_BOLD("Times-Bold", Family.TIMES_FAMILY, Weight.BOLD, null, null),
 	/**
 	 * The Times-BoldItalic fontname
 	 */
-	TIMES_BOLDITALIC(Family.TIMES_FAMILY, Weight.BOLD, Style.ITALIC, null),
+	TIMES_BOLDITALIC("Times-BoldItalic", Family.TIMES_FAMILY, Weight.BOLD,
+			Style.ITALIC, null),
 	/**
 	 * The Times-Italic fontname
 	 */
-	TIMES_ITALIC(Family.TIMES_FAMILY, null, Style.ITALIC, null),
+	TIMES_ITALIC("Times-Italic", Family.TIMES_FAMILY, null, Style.ITALIC, null),
 	/**
 	 * The Times-Roman fontname
 	 */
-	TIMES_ROMAN(Family.TIMES_FAMILY, null, null, null),
+	TIMES_ROMAN("Times-Roman", Family.TIMES_FAMILY, null, null, null),
 	/**
 	 * The ZapfChancery-MediumItalic fontname
 	 */
-	ZAPFCHANCERY_MEDIUMITALIC(Family.CHANCERY_FAMILY, Weight.MEDIUM,
-			Style.ITALIC, null),
+	ZAPFCHANCERY_MEDIUMITALIC("ZapfChancery-MediumItalic",
+			Family.CHANCERY_FAMILY, Weight.MEDIUM, Style.ITALIC, null),
 	/**
 	 * The ZapfDingbats fontname
 	 */
-	ZAPFDINGBATS(Family.DINGBATS_FAMILY, null, null, null);
+	ZAPFDINGBATS("ZapfDingbats", Family.DINGBATS_FAMILY, null, null, null);
 
+	private final String literal;
+	private final Family family;
 	private final Weight weight;
 	private final Style style;
 	private final Stretch stretch;
 
-	private PostScriptFontAlias(Family family, Weight weight, Style style,
-			Stretch stretch) {
+	private PostScriptFontAlias(String literal, Family family, Weight weight,
+			Style style, Stretch stretch) {
+		this.literal = literal;
 		this.family = family;
 		this.weight = weight;
 		this.style = style;
 		this.stretch = stretch;
 	}
-
-	private final Family family;
 
 	/**
 	 * @return The font's font family
@@ -220,6 +233,13 @@ public enum PostScriptFontAlias {
 	 */
 	public Stretch getStretch() {
 		return stretch;
+	}
+
+	/**
+	 * @return The literal PostScriptFontAlias
+	 */
+	public String getLiteral() {
+		return literal;
 	}
 
 	/**

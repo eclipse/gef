@@ -76,7 +76,10 @@ public class PangoFontNameImplCustom extends PangoFontNameImpl {
 
 	public List<String> getFontFamilies() {
 		ArrayList<String> list = new ArrayList<>(getFamilies());
-		list.add(getFinalFamily().stream().collect(Collectors.joining(" ")));
+		if (getFinalFamily().size() > 0) {
+			list.add(
+					getFinalFamily().stream().collect(Collectors.joining(" ")));
+		}
 		return list;
 	}
 }

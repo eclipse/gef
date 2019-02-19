@@ -68,7 +68,11 @@ StretchOption:
 
 GravityOption:
 	gravity=Gravity;
-	
+
+/*
+ * This grammar is case insensitive (including terminal symbols), hence lexing is done on a lowercase string!
+ */
+
 Style returns Style:
 	STYLE_KEY;
 
@@ -85,36 +89,36 @@ Weight returns Weight:
 	WEIGHT_KEY;
 
 terminal WEIGHT_KEY:
-	"Regular" | "Thin" | "Ultra-Light" | "Extra-Light" | "Light" | "Semi-Light" | "Demi-Light"
-	| "Book" | "Medium" | "Semi-Bold" | "Demi-Bold" | "Bold" | "Ultra-Bold" | "Extra-Bold"
-	| "Heavy" | "Black" | "Ultra-Heavy" | "Extra-Heavy" | "Ultra-Black" | "Extra-Black";
+	"regular" | "thin" | "ultra-light" | "extra-light" | "light" | "semi-light" | "demi-light"
+	| "book" | "medium" | "semi-bold" | "demi-bold" | "bold" | "ultra-bold" | "extra-bold"
+	| "heavy" | "black" | "ultra-heavy" | "extra-heavy" | "ultra-black" | "extra-black";
 
 Stretch returns Stretch:
 	STRETCH_KEY;
 	
 terminal STRETCH_KEY:
-	"Ultra-Condensed" | "Extra-Condensed" | "Condensed" | "Semi-Condensed"
-	| "Semi-Expanded" | "Expanded" | "Extra-Expanded" | "Ultra-Expanded";
+	"ultra-condensed" | "extra-condensed" | "condensed" | "semi-condensed"
+	| "semi-expanded" | "expanded" | "extra-expanded" | "ultra-expanded";
 
 Gravity returns Gravity: 
 	GRAVITY_KEY;
 
 terminal GRAVITY_KEY:
-	"Not-Rotated" | "South" | 
-	"Upside-Down" | "North" | 
-	"Rotated-Left" | "East" | 
-	"Rotated-Right" | "West";
+	"not-rotated" | "south" | 
+	"upside-down" | "north" | 
+	"rotated-left" | "east" | 
+	"rotated-right" | "west";
 
 PostScriptAlias returns PostScriptFontAlias:
 	PSALIAS;
 
 terminal PSALIAS:
-	 "AvantGarde-Book" | "AvantGarde-BookOblique" | "AvantGarde-Demi" | "AvantGarde-DemiOblique" | "Bookman-Demi" | "Bookman-DemiItalic" | 
-	"Bookman-Light" | "Bookman-LightItalic" | "Courier" | "Courier-Bold" | "Courier-BoldOblique" | "Courier-Oblique" | "Helvetica" | 
-	"Helvetica-Bold" | "Helvetica-BoldOblique" | "Helvetica-Narrow" | "Helvetica-Narrow-Bold" | "Helvetica-Narrow-BoldOblique" |
-	"Helvetica-Narrow-Oblique" | "Helvetica-Oblique" | "NewCenturySchlbk-Bold" | "NewCenturySchlbk-BoldItalic" | "NewCenturySchlbk-Italic" | 
-	"NewCenturySchlbk-Roman" | "Palatino-Bold" | "Palatino-BoldItalic" | "Palatino-Italic" | "Palatino-Roman" | "Symbol" | "Times-Bold" | 
-	"Times-BoldItalic" | "Times-Italic" | "Times-Roman" | "ZapfChancery-MediumItalic" | "ZapfDingbats";
+	"avantgarde-book" | "avantgarde-bookoblique" | "avantgarde-demi" | "avantgarde-demioblique" | "bookman-demi" | "bookman-demiitalic" | 
+	"bookman-light" | "bookman-lightitalic" | "courier" | "courier-bold" | "courier-boldoblique" | "courier-oblique" | "helvetica" | 
+	"helvetica-bold" | "helvetica-boldoblique" | "helvetica-narrow" | "helvetica-narrow-bold" | "helvetica-narrow-boldoblique" |
+	"helvetica-narrow-oblique" | "helvetica-oblique" | "newcenturyschlbk-bold" | "newcenturyschlbk-bolditalic" | "newcenturyschlbk-italic" | 
+	"newcenturyschlbk-roman" | "palatino-bold" | "palatino-bolditalic" | "palatino-italic" | "palatino-roman" | "symbol" | "times-bold" | 
+	"times-bolditalic" | "times-italic" | "times-roman" | "zapfchancery-mediumitalic" | "zapfdingbats";
 
 StyleOptionString:
 	STYLE_KEY | VARIANT_KEY | WEIGHT_KEY | STRETCH_KEY | GRAVITY_KEY;
