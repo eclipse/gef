@@ -32,6 +32,7 @@ import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
@@ -154,7 +155,9 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	@SuppressWarnings("unchecked")
 	private void addAll(IVisualPart<? extends Node> parent,
 			List<? extends Object> contentChildren,
-			List<IContentPart<? extends Node>> added) {
+			List<IContentPart<? extends Node>> added,
+			LinkedHashMap<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> addsPerParent) {
+
 		List<IContentPart<? extends Node>> childContentParts = PartUtils
 				.filterParts(parent.getChildrenUnmodifiable(),
 						IContentPart.class);
@@ -168,6 +171,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 		int contentChildrenSize = contentChildren.size();
 		int childContentPartsSize = childContentParts.size();
+		List<IContentPart<? extends Node>> childrenToAdd = new ArrayList<>();
 		for (int i = 0; i < contentChildrenSize; i++) {
 			Object content = contentChildren.get(i);
 			// Do a quick check to see if the existing content part is at
@@ -200,11 +204,15 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 					throw new IllegalStateException(
 							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.");
 				}
-				parent.addChild(contentPart, i);
 				added.add(contentPart);
+				childrenToAdd.add(contentPart);
 				addAll(contentPart,
-						contentPart.getContentChildrenUnmodifiable(), added);
+						contentPart.getContentChildrenUnmodifiable(), added,
+						addsPerParent);
 			}
+		}
+		if (!childrenToAdd.isEmpty()) {
+			addsPerParent.put(parent, childrenToAdd);
 		}
 	}
 
@@ -457,15 +465,26 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		removalsPerParent.forEach((removeFrom, removeUs) -> {
 			removeFrom.removeChildren(removeUs);
 		});
-		for (IContentPart<? extends Node> contentPart : toRemove) {
-			disposeIfObsolete(contentPart);
+		for (IContentPart<? extends Node> cp : toRemove) {
+			disposeIfObsolete(cp);
 		}
 
-		List<IContentPart<? extends Node>> added = new ArrayList<>();
-		addAll(parent, contentChildren, added);
-		for (IContentPart<? extends Node> cp : added) {
+		LinkedHashMap<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> addsPerParent = new LinkedHashMap<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>>();
+		ArrayList<IContentPart<? extends Node>> added = Lists.newArrayList();
+		addAll(parent, contentChildren, added, addsPerParent);
+
+		ArrayList<IVisualPart<? extends Node>> keyList = new ArrayList<IVisualPart<? extends Node>>(
+				addsPerParent.keySet());
+
+		for (int i = keyList.size() - 1; i >= 0; i--) {
+			IVisualPart<? extends Node> key = keyList.get(i);
+			List<IContentPart<? extends Node>> value = addsPerParent.get(key);
+			key.addChildren(value);
+
+		}
+		added.forEach(cp -> {
 			synchronizeContentPartAnchorages(cp,
 					cp.getContentAnchoragesUnmodifiable());
-		}
+		});
 	}
 }
