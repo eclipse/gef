@@ -42,6 +42,7 @@ import javafx.collections.SetChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 /**
  * The {@link GraphLayoutBehavior} is responsible for initiating layout passes.
@@ -356,7 +357,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 */
 	protected void updateBounds() {
 		// XXX: Prevent bounds updates when the scene is not rendered.
-		if (getHost().getVisual().getScene().getWindow() == null) {
+		Scene scene = getHost().getVisual().getScene();
+		if (scene == null || scene.getWindow() == null) {
 			return;
 		}
 

@@ -196,9 +196,19 @@ public abstract class AbstractVisualPart<V extends Node>
 							+ " because the following are already children: "
 							+ alreadyContainedChildren + ".");
 		}
-		for (int i = 0; i < children.size(); i++) {
-			addChild(children.get(i), index + i);
-		}
+		this.children.addAll(children);
+		boolean isActive = isActive();
+		children.forEach(child -> {
+			if (child.getParent() != this) {
+				child.setParent(this);
+			}
+			child.refreshVisual();
+			doAddChildVisual(child, this.children.indexOf(child));
+			if (isActive) {
+				child.activate();
+			}
+		});
+		refreshVisual();
 	}
 
 	@Override
@@ -717,6 +727,15 @@ public abstract class AbstractVisualPart<V extends Node>
 							+ notContainedChildren + ".");
 		}
 		// TODO: use children.removeAll and perform the de-registration here
+		// boolean active = isActive();
+		// children.forEach(child -> {
+		// if (active) {
+		// child.deactivate();
+		// }
+		// doRemoveChildVisual(child, this.children.indexOf(child));
+		// child.setParent(null);
+		// });
+		// this.children.removeAll(children);
 		for (IVisualPart<? extends Node> child : children) {
 			removeChild(child);
 		}
