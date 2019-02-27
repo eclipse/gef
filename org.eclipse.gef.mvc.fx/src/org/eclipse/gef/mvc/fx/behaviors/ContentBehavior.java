@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Robert Rudi (itemis AG) - optimized content synchronization
  *
  * Note: Parts of this class have been transferred from org.eclipse.gef.editparts.AbstractEditPart.
  *
@@ -156,7 +157,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	private void addAll(IVisualPart<? extends Node> parent,
 			List<? extends Object> contentChildren,
 			List<IContentPart<? extends Node>> added,
-			LinkedHashMap<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> addsPerParent) {
+			LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>> addsPerParent) {
 
 		List<IContentPart<? extends Node>> childContentParts = PartUtils
 				.filterParts(parent.getChildrenUnmodifiable(),
@@ -171,7 +172,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 		int contentChildrenSize = contentChildren.size();
 		int childContentPartsSize = childContentParts.size();
-		List<IContentPart<? extends Node>> childrenToAdd = new ArrayList<>();
+		HashMultimap<Integer, IContentPart<? extends Node>> childrenToAdd = HashMultimap
+				.create();
 		for (int i = 0; i < contentChildrenSize; i++) {
 			Object content = contentChildren.get(i);
 			// Do a quick check to see if the existing content part is at
@@ -191,21 +193,20 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				// the visual parts in between
 				parent.reorderChild(contentPart, i);
 			} else {
-				// A ContentPart for this model does not exist yet. Create
-				// and insert one.
-				if (contentPart.getParent() != null) {
+				if (contentPart.getViewer() != null) {
 					// TODO: Up to now a model element may only be
 					// controlled by a single content part; unless we
 					// differentiate content elements by context (which is not
 					// covered by the current content part map implementation)
 					// it is an illegal state if we locate a content part, which
-					// is already bound to a parent and whose content is equal
+					// is already bound to a viewer and whose content is equal
 					// to the one we are processing here.
 					throw new IllegalStateException(
-							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.");
+							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a viewer. A content element may only be controlled by a single ContentPart.");
 				}
+				contentPart.setParent(parent);
 				added.add(contentPart);
-				childrenToAdd.add(contentPart);
+				childrenToAdd.put(i, contentPart);
 				addAll(contentPart,
 						contentPart.getContentChildrenUnmodifiable(), added,
 						addsPerParent);
@@ -469,22 +470,26 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			disposeIfObsolete(cp);
 		}
 
-		LinkedHashMap<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> addsPerParent = new LinkedHashMap<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>>();
+		LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>> addsPerParent = new LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>>();
 		ArrayList<IContentPart<? extends Node>> added = Lists.newArrayList();
 		addAll(parent, contentChildren, added, addsPerParent);
 
-		ArrayList<IVisualPart<? extends Node>> keyList = new ArrayList<IVisualPart<? extends Node>>(
+		ArrayList<IVisualPart<? extends Node>> parents = new ArrayList<IVisualPart<? extends Node>>(
 				addsPerParent.keySet());
 
-		for (int i = keyList.size() - 1; i >= 0; i--) {
-			IVisualPart<? extends Node> key = keyList.get(i);
-			List<IContentPart<? extends Node>> value = addsPerParent.get(key);
-			key.addChildren(value);
-
+		for (int i = parents.size() - 1; i >= 0; i--) {
+			IVisualPart<? extends Node> parentContentPart = parents.get(i);
+			HashMultimap<Integer, IContentPart<? extends Node>> childContentParts = addsPerParent
+					.get(parentContentPart);
+			childContentParts.keySet().forEach(cp -> {
+				ArrayList<IContentPart<? extends Node>> children = Lists
+						.newArrayList(childContentParts.get(cp));
+				parentContentPart.addChildren(children, cp);
+				children.forEach(contentPart -> {
+					synchronizeContentPartAnchorages(contentPart,
+							contentPart.getContentAnchoragesUnmodifiable());
+				});
+			});
 		}
-		added.forEach(cp -> {
-			synchronizeContentPartAnchorages(cp,
-					cp.getContentAnchoragesUnmodifiable());
-		});
 	}
 }
