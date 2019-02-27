@@ -13,19 +13,16 @@
 language: java
 
 os:
- - linux
+  - linux
 
 jdk:
- - oraclejdk8
+  - oraclejdk8
 
 cache:
   directories:
   - $HOME/.m2
 
 before_script:
-  - echo $TRAVIS_OS_NAME
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update           ; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libgtk-3-dev ; fi
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3
@@ -33,4 +30,4 @@ before_script:
 script:
 - cd org.eclipse.gef.releng
 # skip wikidoc generation, which does not affect build result, but generate javadoc and ensure test failures are respected.
-- mvn clean verify -Dmaven.test.failure.ignore=false -Dwikidoc.skip=true -PPHOTON.target
+- mvn clean verify -Dmaven.test.failure.ignore=false -Dwikidoc.skip=true -PNEON.target
