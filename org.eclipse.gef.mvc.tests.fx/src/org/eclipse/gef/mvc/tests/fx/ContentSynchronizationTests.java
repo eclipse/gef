@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Robert Rudi (itemis AG) - adopted exception message for bulk changes
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.tests.fx;
@@ -82,8 +83,8 @@ public class ContentSynchronizationTests {
 	}
 
 	/**
-	 * This scenario tests if the synchronization works correctly, when the
-	 * contents are replaced with a previously nested content element.
+	 * This scenario tests if the synchronization works correctly, when the contents
+	 * are replaced with a previously nested content element.
 	 */
 	@Test
 	public void replaceContentsWithNested() throws Throwable {
@@ -110,8 +111,8 @@ public class ContentSynchronizationTests {
 	}
 
 	/**
-	 * This scenario tests if the synchronization correctly identifies contents
-	 * for which parts are already created in other places of the content part
+	 * This scenario tests if the synchronization correctly identifies contents for
+	 * which parts are already created in other places of the content part
 	 * hierarchy.
 	 */
 	@Test
@@ -133,7 +134,7 @@ public class ContentSynchronizationTests {
 		// check if the exception is thrown when the contents are set
 		assertNotNull(exceptionRef.get());
 		assertEquals(
-				"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.",
+				"Located a ContentPart which controls the same (or an equal) content element but is already bound to a viewer. A content element may only be controlled by a single ContentPart.",
 				exceptionRef.get().getMessage());
 	}
 }

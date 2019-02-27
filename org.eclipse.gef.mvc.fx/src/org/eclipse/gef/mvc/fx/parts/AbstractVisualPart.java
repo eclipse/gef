@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - skip feedback and handles when determining viewer (bug #498298)
+ *     Robert Rudi (itemis AG) - introduce addChildren API for bulk changes on content synchronization
  *
  * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
  *
@@ -196,18 +197,19 @@ public abstract class AbstractVisualPart<V extends Node>
 							+ " because the following are already children: "
 							+ alreadyContainedChildren + ".");
 		}
-		this.children.addAll(children);
+		this.children.addAll(index, children);
 		boolean isActive = isActive();
-		children.forEach(child -> {
+		for (int i = 0; i < children.size(); i++) {
+			IVisualPart<? extends Node> child = children.get(i);
 			if (child.getParent() != this) {
 				child.setParent(this);
 			}
 			child.refreshVisual();
-			doAddChildVisual(child, this.children.indexOf(child));
+			doAddChildVisual(child, index + i);
 			if (isActive) {
 				child.activate();
 			}
-		});
+		}
 		refreshVisual();
 	}
 
