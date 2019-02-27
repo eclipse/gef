@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,6 +189,7 @@ class DotImport {
 		setter.apply(HEIGHT__N, [n, value|n.setHeightRaw(value)])
 		setter.apply(ID__GCNE, [n, value|n.setIdRaw(value)])
 		setter.apply(LABEL__GCNE, [n, value|n.setLabelRaw(value)])
+		setter.apply(PENWIDTH__CNE, [g, value|g.setPenwidthRaw(value)])
 		setter.apply(POS__NE, [n, value|n.setPosRaw(value)])
 		setter.apply(SHAPE__N, [n, value|n.setShapeRaw(value)])
 		setter.apply(SIDES__N, [n, value|n.setSidesRaw(value)])
@@ -316,6 +317,7 @@ class DotImport {
 		setter.apply(FONTSIZE__GCNE, [g, value|g.setFontsizeRaw(value)])
 		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])
 		setter.apply(RANK__S, [g, value|g.setRankRaw(value)])
+		setter.apply(PENWIDTH__CNE, [g, value|g.setPenwidthRaw(value)])
 		setter.apply(TOOLTIP__CNE, [g, value|g.setTooltipRaw(value)])
 	}
 
@@ -360,6 +362,7 @@ class DotImport {
 		setter.apply(LABELFONTSIZE__E, [e, value|e.setLabelfontsizeRaw(value)])
 		setter.apply(LABELTOOLTIP__E, [e, value|e.setLabeltooltipRaw(value)])
 		setter.apply(LP__GCE, [e, value|e.setLpRaw(value)])
+		setter.apply(PENWIDTH__CNE, [g, value|g.setPenwidthRaw(value)])
 		setter.apply(POS__NE, [e, value|e.setPosRaw(value)])
 		setter.apply(STYLE__GCNE, [e, value|e.setStyleRaw(value)])
 		setter.apply(TAILLABEL__E, [e, value|e.setTaillabelRaw(value)])

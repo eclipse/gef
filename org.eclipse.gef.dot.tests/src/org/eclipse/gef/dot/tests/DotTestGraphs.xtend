@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -394,6 +394,15 @@ class DotTestGraphs {
 			graph[layout=twopi]
 			1;2;3;4;
 			1->2; 2->3; 2->4;
+		}
+	''' 
+	
+	public static val CLUSTER_PENWIDTH = '''
+		graph {
+			subgraph clusterName {
+				graph [penwidth=2];
+				1
+			}
 		}
 	''' 
 
@@ -915,6 +924,29 @@ class DotTestGraphs {
 		}
 	'''
 
+	public static val EDGE_PENWIDTH_GLOBAL = '''
+		graph {
+			edge[penwidth=1.5]
+			1--2
+			3--4
+		}
+	'''
+
+	public static val EDGE_PENWIDTH_LOCAL = '''
+		graph {
+			1--2[penwidth=2.5]
+			3--4[penwidth=3.0]
+		}
+	'''
+
+	public static val EDGE_PENWIDTH_OVERRIDE = '''
+		graph {
+			edge[penwidth=4.0]
+			1--2[penwidth=3.5]
+			3--4
+		}
+	'''
+
 	public static val EDGE_POS_LOCAL = '''
 		graph {
 			1--2[pos="0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0"]
@@ -1360,6 +1392,29 @@ class DotTestGraphs {
 			4
 			1->2
 			2->3
+		}
+	'''
+
+	public static val NODE_PENWIDTH_GLOBAL = '''
+		graph {
+			node[penwidth=1.5]
+			1
+			2
+		}
+	'''
+
+	public static val NODE_PENWIDTH_LOCAL = '''
+		graph {
+			1[penwidth=2.5]
+			2[penwidth=3.0]
+		}
+	'''
+
+	public static val NODE_PENWIDTH_OVERRIDE = '''
+		graph {
+			node[penwidth=4.0]
+			1[penwidth=3.5]
+			2
 		}
 	'''
 
