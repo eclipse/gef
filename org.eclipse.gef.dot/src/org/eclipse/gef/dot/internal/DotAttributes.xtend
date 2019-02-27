@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -463,6 +463,7 @@ class DotAttributes {
 			case NODESEP__G: validateAttributeRawValue(DOUBLE_PARSER, NODESEP_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue) 
 			case PAGEDIR__G: validateAttributeRawValue(PAGEDIR_PARSER, null, attributeContext, attributeName, attributeValue)
+			case PENWIDTH__CNE: validateAttributeRawValue(DOUBLE_PARSER, PENWIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case POS__NE:
 				if (attributeContext == Context.NODE)
 					validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -1053,11 +1054,16 @@ class DotAttributes {
 	 * A validator for nodesep {@link Double} attribute values.
 	 */
 	static val NODESEP_VALIDATOR = new DoubleValidator(0)
-	
+
 	/**
 	 * The validator for fontsize {@link Double} attribute values.
 	 */
 	static val FONTSIZE_VALIDATOR = new DoubleValidator(1.0)
+
+	/**
+	 * The validator for fontsize {@link Double} attribute values.
+	 */
+	static val PENWIDTH_VALIDATOR = new DoubleValidator(0.0)
 
 	static val Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup().
 		createInjectorAndDoEMFRegistration
@@ -1524,6 +1530,9 @@ class DotAttributes {
 
 	@DotAttribute(rawType="STRING", parsedType=Pagedir)
 	public static val PAGEDIR__G = "pagedir"
+
+	@DotAttribute(rawType="NUMERAL", parsedType=Double)
+	public static val PENWIDTH__CNE = "penwidth"
 
 	/**
 	 * pos is a special case, where different parsed values for Node and Edge 
