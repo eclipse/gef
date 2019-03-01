@@ -241,6 +241,9 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		case DotArrowTypeJavaValidator.DEPRECATED_ARROW_SHAPE:
 			provideQuickfixesForDeprecatedArrowShape(issue, suffix, acceptor);
 			break;
+		case DotArrowTypeJavaValidator.INVALID_ARROW_SHAPE_MODIFIER:
+			provideQuickfixesInvalidArrowShapeModifier(issue, suffix, acceptor);
+			break;
 		default:
 			return;
 		}
@@ -255,6 +258,30 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			provideQuickfixForMultipleAttributeValue(deprecatedShapeString,
 					validArrowShape, suffix, issue, acceptor);
 		}
+	}
+
+	private void provideQuickfixesInvalidArrowShapeModifier(Issue issue,
+			String suffix, IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		String modifier = issueData[1];
+		final int modifierIndex = Integer.parseInt(issueData[2]);
+
+		acceptor.accept(issue, "Remove the '" + modifier + "' modifier.", //$NON-NLS-1$ //$NON-NLS-2$
+				"Remove the invalid '" + modifier + "' modifier.", DELETE_IMAGE, //$NON-NLS-1$ //$NON-NLS-2$
+				new ISemanticModification() {
+					@Override
+					public void apply(EObject element,
+							IModificationContext context) {
+						Attribute attribute = (Attribute) element;
+						ID value = attribute.getValue();
+						Type type = value.getType();
+						String currentValue = value.toValue();
+						String validValue = new StringBuilder(currentValue)
+								.deleteCharAt(modifierIndex).toString();
+						ID validValueAsID = ID.fromValue(validValue, type);
+						attribute.setValue(validValueAsID);
+					}
+				});
 	}
 
 	private void provideQuickfixesForDeprecatedStyleItem(Issue issue,

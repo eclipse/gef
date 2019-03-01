@@ -154,6 +154,14 @@ public class DotArrowTypeJavaValidator extends
 			DeprecatedArrowShape arrowShape = (DeprecatedArrowShape) object;
 			issueData.add(arrowShape.getShape().toString());
 			break;
+		case INVALID_ARROW_SHAPE_MODIFIER:
+			if (ArrowtypePackage.Literals.ARROW_SHAPE__OPEN == feature) {
+				issueData.add("o");
+			}
+			if (ArrowtypePackage.Literals.ARROW_SHAPE__SIDE == feature) {
+				issueData.add(((ArrowShape) object).getSide());
+			}
+			issueData.add(Integer.toString(offset));
 		default:
 			break;
 		}
