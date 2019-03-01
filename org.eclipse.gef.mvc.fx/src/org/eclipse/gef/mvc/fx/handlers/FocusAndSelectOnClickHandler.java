@@ -165,12 +165,10 @@ public class FocusAndSelectOnClickHandler extends AbstractHandler
 								new ChangeFocusOperation(viewer, null),
 								new NullProgressMonitor());
 					}
-					viewer.getDomain()
-							.execute(
-									new DeselectOperation(viewer,
-											selectionModel
-													.getSelectionUnmodifiable()),
-									new NullProgressMonitor());
+					viewer.getDomain().execute(
+							new DeselectOperation(viewer,
+									selectionModel.getSelectionUnmodifiable()),
+							new NullProgressMonitor());
 				} catch (ExecutionException e1) {
 					throw new IllegalStateException(e1);
 				}

@@ -244,14 +244,16 @@ public class BendableTests {
 		ctx.mousePress();
 		ctx.mouseRelease();
 
+		SelectionModel selectionModel = p0.getViewer().getAdapter(SelectionModel.class);
+		assertTrue(selectionModel.isSelected(p0));
+
 		// select second part
 		// XXX: Set <CTRL> modifier so that the selection is appended.
 		ctx.mouseMove(v1, 40, 70);
-		ctx.mousePress(Modifiers.NONE.control(true));
+		ctx.mousePress(Modifiers.NONE.shortcut(true));
 		ctx.mouseRelease(Modifiers.NONE);
 
 		// check selection
-		SelectionModel selectionModel = p0.getViewer().getAdapter(SelectionModel.class);
 		assertTrue(selectionModel.isSelected(p0));
 		assertTrue(selectionModel.isSelected(p1));
 

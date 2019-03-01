@@ -17,6 +17,8 @@ import java.awt.BorderLayout;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,6 +34,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -159,6 +162,16 @@ public class FXNonApplicationThreadRule implements TestRule {
 			return copy;
 		}
 
+		public Modifiers shortcut(boolean shortcut) {
+			Modifiers copy = getCopy();
+			if (System.getProperty("os.name").startsWith("Mac")) {
+				copy.meta = shortcut;
+			} else {
+				copy.control = shortcut;
+			}
+			return copy;
+		}
+
 		public Modifiers talt() {
 			return alt(!alt);
 		}
@@ -248,6 +261,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			});
 			latch.await();
 			initializedJavaFxToolkit = true;
+
 		}
 	}
 
@@ -256,6 +270,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	private Scene scene;
 	private JFXPanel panel;
 	private JFrame jFrame;
+	private Set<Event> testEvents = new HashSet<>();
 
 	@Override
 	public Statement apply(final Statement base, Description description) {
@@ -330,7 +345,19 @@ public class FXNonApplicationThreadRule implements TestRule {
 				return scene;
 			}
 		});
+		scene.addEventFilter(Event.ANY, e -> {
+			if (!testEvents.contains(e)) {
+				e.consume();
+			} else {
+				testEvents.remove(e);
+			}
+		});
 		return scene;
+	}
+
+	private void fireEvent(EventTarget target, Event event) {
+		testEvents.add(event);
+		Event.fireEvent(target, event);
 	}
 
 	public JFXPanel getPanel() {
@@ -371,8 +398,8 @@ public class FXNonApplicationThreadRule implements TestRule {
 		lastKeyInteraction.target = target;
 		lastKeyInteraction.keyCode = key;
 		run(() -> {
-			Event.fireEvent(target, new KeyEvent(target, target, KeyEvent.KEY_PRESSED, key.toString(), key.toString(),
-					key, mods.shift, mods.control, mods.alt, mods.meta));
+			fireEvent(target, new KeyEvent(target, target, KeyEvent.KEY_PRESSED, key.toString(), key.toString(), key,
+					mods.shift, mods.control, mods.alt, mods.meta));
 		});
 		waitForIdle();
 	}
@@ -401,7 +428,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 	public void keyRelease(final Modifiers mods) {
 		waitForIdle();
 		run(() -> {
-			Event.fireEvent(lastKeyInteraction.target,
+			fireEvent(lastKeyInteraction.target,
 					new KeyEvent(lastKeyInteraction.target, lastKeyInteraction.target, KeyEvent.KEY_RELEASED,
 							lastKeyInteraction.keyCode.toString(), lastKeyInteraction.keyCode.toString(),
 							lastKeyInteraction.keyCode, mods.shift, mods.control, mods.alt, mods.meta));
@@ -441,7 +468,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		run(() -> {
 			Point2D local = lastMouseInteraction.target.sceneToLocal(sceneX, sceneY);
 			Point2D screen = lastMouseInteraction.target.localToScreen(local.getX(), local.getY());
-			Event.fireEvent(lastMouseInteraction.target,
+			fireEvent(lastMouseInteraction.target,
 					new MouseEvent(lastMouseInteraction.target, lastMouseInteraction.target, MouseEvent.MOUSE_DRAGGED,
 							local.getX(), local.getY(), screen.getX(), screen.getY(), MouseButton.PRIMARY, 0,
 							mods.shift, mods.control, mods.alt, mods.meta, true, false, false, false, false, false,
@@ -476,7 +503,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 		run(() -> {
 			Point2D local = target.sceneToLocal(sceneX, sceneY);
 			Point2D screen = target.localToScreen(local.getX(), local.getY());
-			Event.fireEvent(target,
+			fireEvent(target,
 					new MouseEvent(target, target, MouseEvent.MOUSE_MOVED, local.getX(), local.getY(), screen.getX(),
 							screen.getY(), MouseButton.NONE, 0, mods.shift, mods.control, mods.alt, mods.meta, false,
 							false, false, false, false, false, new PickResult(target, sceneX, sceneY)));
@@ -516,7 +543,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			Point2D local = lastMouseInteraction.target.sceneToLocal(lastMouseInteraction.sceneX,
 					lastMouseInteraction.sceneY);
 			Point2D screen = lastMouseInteraction.target.localToScreen(local.getX(), local.getY());
-			Event.fireEvent(lastMouseInteraction.target,
+			fireEvent(lastMouseInteraction.target,
 					new MouseEvent(lastMouseInteraction.target, lastMouseInteraction.target, MouseEvent.MOUSE_PRESSED,
 							local.getX(), local.getY(), screen.getX(), screen.getY(), MouseButton.PRIMARY, 1,
 							mods.shift, mods.control, mods.alt, mods.meta, true, false, false, false, false, false,
@@ -551,7 +578,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			Point2D local = lastMouseInteraction.target.sceneToLocal(lastMouseInteraction.sceneX,
 					lastMouseInteraction.sceneY);
 			Point2D screen = lastMouseInteraction.target.localToScreen(local.getX(), local.getY());
-			Event.fireEvent(lastMouseInteraction.target,
+			fireEvent(lastMouseInteraction.target,
 					new MouseEvent(lastMouseInteraction.target, lastMouseInteraction.target, MouseEvent.MOUSE_RELEASED,
 							local.getX(), local.getY(), screen.getX(), screen.getY(), MouseButton.PRIMARY, 1,
 							mods.shift, mods.control, mods.alt, mods.meta, false, false, false, false, false, false,
@@ -710,7 +737,7 @@ public class FXNonApplicationThreadRule implements TestRule {
 			scene.addEventFilter(SyncEvent.SYNC, eventFilter);
 		});
 		run(() -> {
-			Event.fireEvent(scene, new SyncEvent());
+			fireEvent(scene, new SyncEvent());
 		});
 		wait(latch);
 		run(() -> {
