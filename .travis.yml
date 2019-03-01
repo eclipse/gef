@@ -10,10 +10,9 @@
 #     Matthias Wienand (itemis AG) - add OS, update target, & install GTK3
 ###############################################################################
 
-language: java
+sudo: false
 
-os:
-  - linux
+language: java
 
 jdk:
   - oraclejdk8
