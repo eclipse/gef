@@ -286,7 +286,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 				// add a new pendwidth attribute
 				Attribute penwidthAttribute = DotFactory.eINSTANCE
 						.createAttribute();
-				penwidthAttribute.setName(ID.fromValue("penwidth")); //$NON-NLS-1$
+				penwidthAttribute
+						.setName(ID.fromValue(DotAttributes.PENWIDTH__CNE));
 				penwidthAttribute.setValue(
 						ID.fromValue(penwidthValue, ID.Type.QUOTED_STRING));
 
