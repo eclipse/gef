@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Robert Rudi (itemis AG) - optimized content synchronization
  *
  * Note: Parts of this class have been transferred from org.eclipse.gef.editparts.AbstractEditPart.
  *
@@ -32,6 +33,7 @@ import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
@@ -154,7 +156,9 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	@SuppressWarnings("unchecked")
 	private void addAll(IVisualPart<? extends Node> parent,
 			List<? extends Object> contentChildren,
-			List<IContentPart<? extends Node>> added) {
+			List<IContentPart<? extends Node>> added,
+			LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>> addsPerParent) {
+
 		List<IContentPart<? extends Node>> childContentParts = PartUtils
 				.filterParts(parent.getChildrenUnmodifiable(),
 						IContentPart.class);
@@ -168,6 +172,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 		int contentChildrenSize = contentChildren.size();
 		int childContentPartsSize = childContentParts.size();
+		HashMultimap<Integer, IContentPart<? extends Node>> childrenToAdd = HashMultimap
+				.create();
 		for (int i = 0; i < contentChildrenSize; i++) {
 			Object content = contentChildren.get(i);
 			// Do a quick check to see if the existing content part is at
@@ -187,24 +193,27 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				// the visual parts in between
 				parent.reorderChild(contentPart, i);
 			} else {
-				// A ContentPart for this model does not exist yet. Create
-				// and insert one.
-				if (contentPart.getParent() != null) {
+				if (contentPart.getViewer() != null) {
 					// TODO: Up to now a model element may only be
 					// controlled by a single content part; unless we
 					// differentiate content elements by context (which is not
 					// covered by the current content part map implementation)
 					// it is an illegal state if we locate a content part, which
-					// is already bound to a parent and whose content is equal
+					// is already bound to a viewer and whose content is equal
 					// to the one we are processing here.
 					throw new IllegalStateException(
-							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.");
+							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a viewer. A content element may only be controlled by a single ContentPart.");
 				}
-				parent.addChild(contentPart, i);
+				contentPart.setParent(parent);
 				added.add(contentPart);
+				childrenToAdd.put(i, contentPart);
 				addAll(contentPart,
-						contentPart.getContentChildrenUnmodifiable(), added);
+						contentPart.getContentChildrenUnmodifiable(), added,
+						addsPerParent);
 			}
+		}
+		if (!childrenToAdd.isEmpty()) {
+			addsPerParent.put(parent, childrenToAdd);
 		}
 	}
 
@@ -374,54 +383,61 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	public void synchronizeContentPartAnchorages(
 			IVisualPart<? extends Node> anchored,
 			SetMultimap<? extends Object, ? extends String> contentAnchorages) {
-		if (contentAnchorages == null) {
-			throw new IllegalArgumentException(
-					"contentAnchorages may not be null");
-		}
-		SetMultimap<IVisualPart<? extends Node>, String> anchorages = anchored
-				.getAnchoragesUnmodifiable();
-
-		// find anchorages whose content vanished
-		List<Entry<IVisualPart<? extends Node>, String>> toRemove = new ArrayList<>();
-		Set<Entry<IVisualPart<? extends Node>, String>> entries = anchorages
-				.entries();
-		for (Entry<IVisualPart<? extends Node>, String> e : entries) {
-			if (!(e.getKey() instanceof IContentPart)) {
-				continue;
+		getAdaptable().getViewer().getCanvas()
+				.fireEvent(SynchronizationEvent.startSyncAnchorages(anchored));
+		try {
+			if (contentAnchorages == null) {
+				throw new IllegalArgumentException(
+						"contentAnchorages may not be null");
 			}
-			Object content = ((IContentPart<? extends Node>) e.getKey())
-					.getContent();
-			if (!contentAnchorages.containsEntry(content, e.getValue())) {
-				toRemove.add(e);
+			SetMultimap<IVisualPart<? extends Node>, String> anchorages = anchored
+					.getAnchoragesUnmodifiable();
+
+			// find anchorages whose content vanished
+			List<Entry<IVisualPart<? extends Node>, String>> toRemove = new ArrayList<>();
+			Set<Entry<IVisualPart<? extends Node>, String>> entries = anchorages
+					.entries();
+			for (Entry<IVisualPart<? extends Node>, String> e : entries) {
+				if (!(e.getKey() instanceof IContentPart)) {
+					continue;
+				}
+				Object content = ((IContentPart<? extends Node>) e.getKey())
+						.getContent();
+				if (!contentAnchorages.containsEntry(content, e.getValue())) {
+					toRemove.add(e);
+				}
 			}
-		}
 
-		// Correspondingly remove the anchorages. This is done in a separate
-		// step to prevent ConcurrentModificationException.
-		for (Entry<IVisualPart<? extends Node>, String> contentPart : toRemove) {
-			anchored.detachFromAnchorage(contentPart.getKey(),
-					contentPart.getValue());
-			disposeIfObsolete(
-					(IContentPart<? extends Node>) contentPart.getKey());
-		}
-
-		// find content for which no anchorages exist
-		List<Entry<IVisualPart<? extends Node>, String>> toAdd = new ArrayList<>();
-		for (Entry<? extends Object, ? extends String> e : contentAnchorages
-				.entries()) {
-			IContentPart<? extends Node> anchorage = findOrCreatePartFor(
-					e.getKey());
-			if (!anchorages.containsEntry(anchorage, e.getValue())) {
-				toAdd.add(Maps
-						.<IVisualPart<? extends Node>, String> immutableEntry(
-								anchorage, e.getValue()));
+			// Correspondingly remove the anchorages. This is done in a separate
+			// step to prevent ConcurrentModificationException.
+			for (Entry<IVisualPart<? extends Node>, String> contentPart : toRemove) {
+				anchored.detachFromAnchorage(contentPart.getKey(),
+						contentPart.getValue());
+				disposeIfObsolete(
+						(IContentPart<? extends Node>) contentPart.getKey());
 			}
-		}
 
-		// Correspondingly add the anchorages. This is done in a separate
-		// step to prevent ConcurrentModificationException.
-		for (Entry<IVisualPart<? extends Node>, String> e : toAdd) {
-			anchored.attachToAnchorage(e.getKey(), e.getValue());
+			// find content for which no anchorages exist
+			List<Entry<IVisualPart<? extends Node>, String>> toAdd = new ArrayList<>();
+			for (Entry<? extends Object, ? extends String> e : contentAnchorages
+					.entries()) {
+				IContentPart<? extends Node> anchorage = findOrCreatePartFor(
+						e.getKey());
+				if (!anchorages.containsEntry(anchorage, e.getValue())) {
+					toAdd.add(Maps
+							.<IVisualPart<? extends Node>, String> immutableEntry(
+									anchorage, e.getValue()));
+				}
+			}
+
+			// Correspondingly add the anchorages. This is done in a separate
+			// step to prevent ConcurrentModificationException.
+			for (Entry<IVisualPart<? extends Node>, String> e : toAdd) {
+				anchored.attachToAnchorage(e.getKey(), e.getValue());
+			}
+		} finally {
+			getAdaptable().getViewer().getCanvas().fireEvent(
+					SynchronizationEvent.finishSyncAnchorages(anchored));
 		}
 	}
 
@@ -445,27 +461,52 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	public void synchronizeContentPartChildren(
 			IVisualPart<? extends Node> parent,
 			final List<? extends Object> contentChildren) {
-		if (contentChildren == null) {
-			throw new IllegalArgumentException(
-					"contentChildren may not be null");
-		}
+		getAdaptable().getViewer().getCanvas()
+				.fireEvent(SynchronizationEvent.startSyncChildren(parent));
+		try {
 
-		List<IContentPart<? extends Node>> toRemove = new ArrayList<>();
-		Map<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> removalsPerParent = new LinkedHashMap<>();
-		detachAll(parent, Sets.newHashSet(contentChildren), toRemove,
-				removalsPerParent);
-		removalsPerParent.forEach((removeFrom, removeUs) -> {
-			removeFrom.removeChildren(removeUs);
-		});
-		for (IContentPart<? extends Node> contentPart : toRemove) {
-			disposeIfObsolete(contentPart);
-		}
+			if (contentChildren == null) {
+				throw new IllegalArgumentException(
+						"contentChildren may not be null");
+			}
 
-		List<IContentPart<? extends Node>> added = new ArrayList<>();
-		addAll(parent, contentChildren, added);
-		for (IContentPart<? extends Node> cp : added) {
-			synchronizeContentPartAnchorages(cp,
-					cp.getContentAnchoragesUnmodifiable());
+			List<IContentPart<? extends Node>> toRemove = new ArrayList<>();
+			Map<IVisualPart<? extends Node>, List<IContentPart<? extends Node>>> removalsPerParent = new LinkedHashMap<>();
+			detachAll(parent, Sets.newHashSet(contentChildren), toRemove,
+					removalsPerParent);
+			removalsPerParent.forEach((removeFrom, removeUs) -> {
+				removeFrom.removeChildren(removeUs);
+			});
+			for (IContentPart<? extends Node> cp : toRemove) {
+				disposeIfObsolete(cp);
+			}
+
+			LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>> addsPerParent = new LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>>();
+			ArrayList<IContentPart<? extends Node>> added = Lists
+					.newArrayList();
+			addAll(parent, contentChildren, added, addsPerParent);
+
+			ArrayList<IVisualPart<? extends Node>> parents = new ArrayList<IVisualPart<? extends Node>>(
+					addsPerParent.keySet());
+
+			for (int i = parents.size() - 1; i >= 0; i--) {
+				IVisualPart<? extends Node> parentContentPart = parents.get(i);
+				HashMultimap<Integer, IContentPart<? extends Node>> childContentParts = addsPerParent
+						.get(parentContentPart);
+				childContentParts.keySet().forEach(cp -> {
+					ArrayList<IContentPart<? extends Node>> children = Lists
+							.newArrayList(childContentParts.get(cp));
+					parentContentPart.addChildren(children, cp);
+					children.forEach(contentPart -> {
+						synchronizeContentPartAnchorages(contentPart,
+								contentPart.getContentAnchoragesUnmodifiable());
+					});
+				});
+
+			}
+		} finally {
+			getAdaptable().getViewer().getCanvas()
+					.fireEvent(SynchronizationEvent.finishSyncChildren(parent));
 		}
 	}
 }

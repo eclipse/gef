@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Robert Rudi (itemis AG) - added further test implementation for content synchronization events
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.tests.fx;
@@ -15,7 +16,9 @@ package org.eclipse.gef.mvc.tests.fx;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +27,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
+import org.eclipse.gef.mvc.fx.behaviors.SynchronizationEvent;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.stubs.Cell;
@@ -79,6 +84,66 @@ public class ContentSynchronizationTests {
 			viewer.getContents().clear();
 			domain.deactivate();
 		});
+	}
+
+	@Test
+	public void ensureSynchronizationEventsAreFired() throws Throwable {
+		// define data
+		List<Cell> firstContents = Arrays.asList(new Cell("0", new Cell("1")));
+		List<Cell> secondContents = Arrays.asList(firstContents.get(0).children.get(0));
+
+		// no parts in the beginning
+		Map<Object, IContentPart<? extends Node>> contentPartMap = viewer.getContentPartMap();
+		assertNull(contentPartMap.get(firstContents.get(0)));
+		assertNull(contentPartMap.get(secondContents.get(0)));
+
+		int[] syncChildrenStarted = new int[] { 0 };
+		int[] syncChildrenFinished = new int[] { 0 };
+		int[] syncAnchoragesStarted = new int[] { 0 };
+		int[] syncAnchoragesFinished = new int[] { 0 };
+		List<IVisualPart<?>> syncChildrenParts = new ArrayList<>();
+		List<IVisualPart<?>> syncAnchoragesParts = new ArrayList<>();
+		viewer.getCanvas().addEventHandler(SynchronizationEvent.SYNC_CHILDREN_STARTED, e -> {
+			syncChildrenStarted[0]++;
+			syncChildrenParts.add(e.getSynchronizedPart());
+		});
+		viewer.getCanvas().addEventHandler(SynchronizationEvent.SYNC_CHILDREN_FINISHED, e -> {
+			syncChildrenFinished[0]++;
+			syncChildrenParts.add(e.getSynchronizedPart());
+		});
+		viewer.getCanvas().addEventHandler(SynchronizationEvent.SYNC_ANCHORAGES_STARTED, e -> {
+			syncAnchoragesStarted[0]++;
+			syncAnchoragesParts.add(e.getSynchronizedPart());
+		});
+		viewer.getCanvas().addEventHandler(SynchronizationEvent.SYNC_ANCHORAGES_FINISHED, e -> {
+			syncAnchoragesFinished[0]++;
+			syncAnchoragesParts.add(e.getSynchronizedPart());
+		});
+
+		ctx.runAndWait(() -> {
+			viewer.getContents().setAll(firstContents);
+		});
+		// both parts created now
+		IContentPart<? extends Node> firstContentPart = contentPartMap.get(firstContents.get(0));
+		assertNotNull(firstContentPart);
+		IContentPart<? extends Node> secondContentPart = contentPartMap.get(secondContents.get(0));
+		assertNotNull(secondContentPart);
+
+		assertEquals(1, syncChildrenStarted[0]);
+		assertEquals(1, syncChildrenFinished[0]);
+		assertEquals(2, syncAnchoragesStarted[0]);
+		assertEquals(2, syncAnchoragesFinished[0]);
+
+		assertEquals(2, syncChildrenParts.size());
+		assertEquals(4, syncAnchoragesParts.size());
+
+		assertSame(syncChildrenParts.get(0), syncChildrenParts.get(1));
+		assertSame(syncAnchoragesParts.get(0), syncAnchoragesParts.get(1));
+		assertSame(syncAnchoragesParts.get(2), syncAnchoragesParts.get(3));
+
+		assertSame(viewer.getRootPart(), syncChildrenParts.get(0));
+		assertSame(firstContentPart, syncAnchoragesParts.get(0));
+		assertSame(secondContentPart, syncAnchoragesParts.get(2));
 	}
 
 	/**
