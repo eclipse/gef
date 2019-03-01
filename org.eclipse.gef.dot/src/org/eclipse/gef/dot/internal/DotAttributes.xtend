@@ -1061,7 +1061,7 @@ class DotAttributes {
 	static val FONTSIZE_VALIDATOR = new DoubleValidator(1.0)
 
 	/**
-	 * The validator for fontsize {@link Double} attribute values.
+	 * The validator for pendwidth {@link Double} attribute values.
 	 */
 	static val PENWIDTH_VALIDATOR = new DoubleValidator(0.0)
 
