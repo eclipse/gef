@@ -135,8 +135,8 @@ public class NodePart extends AbstractContentPart<Group>
 			* DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
 
 	/**
-	 * The default height for the outer most layout container of this node in
-	 * the case of nested content.
+	 * The default height for the outer most layout container of this node in the
+	 * case of nested content.
 	 */
 	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING = DEFAULT_CHILDREN_PANE_HEIGHT
 			* DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
@@ -149,20 +149,18 @@ public class NodePart extends AbstractContentPart<Group>
 	public static final String CSS_CLASS = "node";
 
 	/**
-	 * The CSS class that is applied to the {@link Rectangle} that displays
-	 * border and background.
+	 * The CSS class that is applied to the {@link Rectangle} that displays border
+	 * and background.
 	 */
 	public static final String CSS_CLASS_SHAPE = "shape";
 
 	/**
-	 * The CSS class that is applied to the {@link Text} that displays the
-	 * label.
+	 * The CSS class that is applied to the {@link Text} that displays the label.
 	 */
 	public static final String CSS_CLASS_LABEL = "label";
 
 	/**
-	 * The CSS class that is applied to the {@link Image} that displays the
-	 * icon.
+	 * The CSS class that is applied to the {@link Image} that displays the icon.
 	 */
 	public static final String CSS_CLASS_ICON = "icon";
 
@@ -511,8 +509,8 @@ public class NodePart extends AbstractContentPart<Group>
 	}
 
 	/**
-	 * Returns the {@link StackPane} that either displays nested content or an
-	 * icon indicating that nested content exists for this {@link NodePart}.
+	 * Returns the {@link StackPane} that either displays nested content or an icon
+	 * indicating that nested content exists for this {@link NodePart}.
 	 *
 	 * @return The {@link StackPane} that wraps nested content.
 	 */
@@ -553,8 +551,8 @@ public class NodePart extends AbstractContentPart<Group>
 	}
 
 	/**
-	 * If the given <i>icon</i> is an {@link Image}, that {@link Image} will be
-	 * used as the icon of this {@link NodePart}.
+	 * If the given <i>icon</i> is an {@link Image}, that {@link Image} will be used
+	 * as the icon of this {@link NodePart}.
 	 */
 	protected void refreshIcon() {
 		Image icon = ZestProperties.getIcon(getContent());
@@ -579,7 +577,7 @@ public class NodePart extends AbstractContentPart<Group>
 	private void refreshShape() {
 		Node shape = ZestProperties.getShape(getContent());
 		if (this.shape != shape && shape != null) {
-			getVisual().getChildren().remove(shape);
+			getVisual().getChildren().remove(this.shape);
 			this.shape = shape;
 			if (shape instanceof GeometryNode) {
 				((GeometryNode<?>) shape).setStrokeType(StrokeType.INSIDE);
