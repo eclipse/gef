@@ -47,6 +47,7 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
+import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -115,31 +116,13 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(DotAttributes.ARROWHEAD__E)
 	public void fixArrowheadAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		String[] issueData = issue.getData();
-		if (issueData != null && issueData.length > 0) {
-			String deprecatedShapeString = issueData[0];
-			String validArrowShape = getValidArrowShape(deprecatedShapeString);
-			if (validArrowShape != null) {
-				provideQuickfixForMultipleAttributeValue(deprecatedShapeString,
-						validArrowShape, "edge arrowhead", //$NON-NLS-1$
-						issue, acceptor);
-			}
-		}
+		fixArrowType(issue, "edge arrowhead", acceptor); //$NON-NLS-1$
 	}
 
 	@Fix(DotAttributes.ARROWTAIL__E)
 	public void fixArrowtailAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		String[] issueData = issue.getData();
-		if (issueData != null && issueData.length > 0) {
-			String deprecatedShapeString = issueData[0];
-			String validArrowShape = getValidArrowShape(deprecatedShapeString);
-			if (validArrowShape != null) {
-				provideQuickfixForMultipleAttributeValue(deprecatedShapeString,
-						validArrowShape, "edge arrowtail", //$NON-NLS-1$
-						issue, acceptor);
-			}
-		}
+		fixArrowType(issue, "edge arrowtail", acceptor); //$NON-NLS-1$
 	}
 
 	@Fix(DotAttributes.CLUSTERRANK__G)
@@ -243,6 +226,34 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			provideQuickfixesForInvalidStyleItem(issue, acceptor);
 		default:
 			return;
+		}
+	}
+
+	private void fixArrowType(Issue issue, String suffix,
+			IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		if (issueData == null || issueData.length < 2) {
+			return;
+		}
+		String issueCode = issueData[0];
+
+		switch (issueCode) {
+		case DotArrowTypeJavaValidator.DEPRECATED_ARROW_SHAPE:
+			provideQuickfixesForDeprecatedArrowShape(issue, suffix, acceptor);
+			break;
+		default:
+			return;
+		}
+	}
+
+	private void provideQuickfixesForDeprecatedArrowShape(Issue issue,
+			String suffix, IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		String deprecatedShapeString = issueData[1];
+		String validArrowShape = getValidArrowShape(deprecatedShapeString);
+		if (validArrowShape != null) {
+			provideQuickfixForMultipleAttributeValue(deprecatedShapeString,
+					validArrowShape, suffix, issue, acceptor);
 		}
 	}
 
