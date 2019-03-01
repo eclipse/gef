@@ -46,6 +46,16 @@ class DotQuickfixTests {
 	@Inject extension ValidationTestHelper
 	@Inject extension IssueResolutionProvider
 
+	val deprecatedArrowShapes = #["ediamond", "open", "halfopen", "empty", "invempty"]
+	val validArrowShapes = #["odiamond", "vee", "lvee", "onormal", "oinv"]
+
+	val validNodeShapes = #[ "box", "polygon", "ellipse", "oval", "circle", "point", "egg", "triangle", "plaintext", "plain",
+		"diamond", "trapezium", "parallelogram", "house", "pentagon", "hexagon", "septagon", "octagon", "doublecircle", "doubleoctagon",
+		"tripleoctagon", "invtriangle", "invtrapezium", "invhouse", "Mdiamond", "Msquare", "Mcircle", "rect", "rectangle", "square", "star",
+		"none", "underline", "cylinder", "note", "tab", "folder", "box3d", "component", "promoter", "cds", "terminator", "utr", "primersite",
+		"restrictionsite", "fivepoverhang", "threepoverhang", "noverhang", "assembly", "signature", "insulator", "ribosite", "rnastab",
+		"proteasesite", "proteinstab", "rpromoter", "rarrow", "larrow", "lpromoter", "record", "Mrecord"]
+
 	@Test def graph_contains_directed_edge_to_node() {
 		'''
 			graph {
@@ -55,8 +65,7 @@ class DotQuickfixTests {
 			graph {
 				1--2
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def graph_contains_directed_multi_edge_to_node_1() {
@@ -68,8 +77,7 @@ class DotQuickfixTests {
 			graph {
 				1--2--3
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def graph_contains_directed_multi_edge_to_node_2() {
@@ -81,8 +89,7 @@ class DotQuickfixTests {
 			graph {
 				1--2--3
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def graph_contains_directed_edge_to_subgraph() {
@@ -98,8 +105,7 @@ class DotQuickfixTests {
 					2 3
 				}
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def graph_contains_directed_multi_edge_to_subgraph_1() {
@@ -115,8 +121,7 @@ class DotQuickfixTests {
 					2 3
 				} -- subgraph { 4 }
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def graph_contains_directed_multi_edge_to_subgraph_2() {
@@ -132,8 +137,7 @@ class DotQuickfixTests {
 					2 3
 				} -- subgraph { 4 }
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def digraph_contains_undirected_edge_to_node() {
@@ -145,8 +149,7 @@ class DotQuickfixTests {
 			digraph {
 				1->2
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def digraph_contains_undirected_multi_edge_to_node_1() {
@@ -158,8 +161,7 @@ class DotQuickfixTests {
 			digraph {
 				1->2->3
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def digraph_contains_undirected_multi_edge_to_node_2() {
@@ -171,8 +173,7 @@ class DotQuickfixTests {
 			digraph {
 				1->2->3
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def digraph_contains_undirected_edge_to_subgraph() {
@@ -188,8 +189,7 @@ class DotQuickfixTests {
 					2 3
 				}
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def digraph_contains_undirected_multi_edge_to_subgraph_1() {
@@ -205,8 +205,7 @@ class DotQuickfixTests {
 					2 3
 				} -> subgraph { 4 }
 			}
-		''')
-		)
+		'''))
 	}
 
 	@Test def digraph_contains_undirected_multi_edge_to_subgraph_2() {
@@ -222,14 +221,10 @@ class DotQuickfixTests {
 					2 3
 				} -> subgraph { 4 }
 			}
-		''')
-		)
+		'''))
 	}
 
-	@Test def edge_arrowhead() {
-		val deprecatedArrowShapes = #["ediamond", "open", "halfopen", "empty", "invempty"]
-		val validArrowShapes = #["odiamond", "vee", "lvee", "onormal", "oinv"]
-
+	@Test def edge_arrowhead_001() {
 		// test unquoted attribute value
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
@@ -243,7 +238,9 @@ class DotQuickfixTests {
 				)
 			)
 		}
+	}
 
+	@Test def edge_arrowhead_002() {
 		// test quoted attribute value
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
@@ -257,7 +254,9 @@ class DotQuickfixTests {
 				)
 			)
 		}
+	}
 
+	@Test def edge_arrowhead_003() {
 		// test quoted attribute value with multiple arrowtypes (one of them is invalid)
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
@@ -271,91 +270,57 @@ class DotQuickfixTests {
 				)
 			)
 		}
-
-		// test invalid open modifier (unquoted)
-		'''graph {1--2[ arrowhead=ocrow ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead=crow ]}'''
-			)
-		)
-
-		'''graph {1--2[ arrowhead=dotoicurve ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead=doticurve ]}'''
-			)
-		)
-
-		// test invalid open modifier (quoted)
-		'''graph {1--2[ arrowhead="ocrow" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead="crow" ]}'''
-			)
-		)
-
-		'''graph {1--2[ arrowhead="dotoicurve" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead="doticurve" ]}'''
-			)
-		)
-
-		// test invalid side modifier (unquoted)
-		'''graph {1--2[ arrowhead=ldot ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowhead=dot ]}'''
-			)
-		)
-
-		'''graph {1--2[ arrowhead=dotldot ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowhead=dotdot ]}'''
-			)
-		)
-
-		// test invalid side modifier (quoted)
-		'''graph {1--2[ arrowhead="rdot" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowhead="dot" ]}'''
-			)
-		)
-
-		'''graph {1--2[ arrowhead="boxrdot" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowhead="boxdot" ]}'''
-			)
-		)
-
-		// test none is the last arrow shape (unquoted)
-		'''graph {1--2[ arrowhead=boxnone ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead=box ]}'''
-			)
-		)
-
-		'''graph {1--2[ arrowhead=nonenone ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead=none ]}'''
-			)
-		)
-
-		// test none is the last arrow shape (quoted)
-		'''graph {1--2[ arrowhead="dotnone" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead="dot" ]}'''
-			)
-		)
-
-		'''graph {1--2[ arrowhead="nonenone" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead="none" ]}'''
-			)
-		)
 	}
 
-	@Test def edge_arrowtail() {
-		val deprecatedArrowShapes = #[ "ediamond", "open", "halfopen", "empty", "invempty" ]
-		val validArrowShapes = #[ "odiamond", "vee", "lvee", "onormal", "oinv" ]
+	@Test def edge_arrowhead_004() {
+		'''graph {1--2[ arrowhead=ocrow ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead=crow ]}'''))
+	}
 
-		// test unquoted attribute value
+	@Test def edge_arrowhead_005() {
+		'''graph {1--2[ arrowhead=dotoicurve ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead=doticurve ]}'''))
+	}
+
+	@Test def edge_arrowhead_006() {
+		'''graph {1--2[ arrowhead="ocrow" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead="crow" ]}'''))
+	}
+
+	@Test def edge_arrowhead_007() {
+		'''graph {1--2[ arrowhead="dotoicurve" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead="doticurve" ]}'''))
+	}
+
+	@Test def edge_arrowhead_008() {
+		'''graph {1--2[ arrowhead=ldot ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowhead=dot ]}'''))
+	}
+
+	@Test def edge_arrowhead_009() {
+		'''graph {1--2[ arrowhead=dotldot ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowhead=dotdot ]}'''))
+	}
+
+	@Test def edge_arrowhead_010() {
+		'''graph {1--2[ arrowhead="rdot" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowhead="dot" ]}'''))
+	}
+
+	@Test def edge_arrowhead_011() {
+		'''graph {1--2[ arrowhead="boxrdot" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowhead="boxdot" ]}'''))
+	}
+
+	@Test def edge_arrowhead_012() {
+		'''graph {1--2[ arrowhead=boxnone ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead=box ]}'''))
+	}
+
+	@Test def edge_arrowhead_013() {
+		'''graph {1--2[ arrowhead=nonenone ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead=none ]}'''))
+	}
+
+	@Test def edge_arrowhead_014() {
+		'''graph {1--2[ arrowhead="dotnone" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead="dot" ]}'''))
+	}
+
+	@Test def edge_arrowhead_015() {
+		'''graph {1--2[ arrowhead="nonenone" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead="none" ]}'''))
+	}
+
+	@Test def edge_arrowtail_001() {
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
@@ -368,8 +333,9 @@ class DotQuickfixTests {
 				)
 			)
 		}
+	}
 
-		// test quoted attribute value
+	@Test def edge_arrowtail_002() {
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
@@ -382,7 +348,9 @@ class DotQuickfixTests {
 				)
 			)
 		}
+	}
 
+	@Test def edge_arrowtail_003() {
 		// test quoted attribute value with multiple arrowtypes (one of them is invalid)
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
@@ -396,84 +364,54 @@ class DotQuickfixTests {
 				)
 			)
 		}
-		
-		// test invalid open modifier (unquoted)
-		'''graph {1--2[ arrowtail=ovee ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail=vee ]}'''
-			)
-		)
+	}
 
-		'''graph {1--2[ arrowtail=dototee ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail=dottee ]}'''
-			)
-		)
+	@Test def edge_arrowtail_004() {
+		'''graph {1--2[ arrowtail=ovee ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail=vee ]}'''))
+	}
 
-		// test invalid open modifier (quoted)
-		'''graph {1--2[ arrowtail="ononebox" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail="nonebox" ]}'''
-			)
-		)
+	@Test def edge_arrowtail_005() {
+		'''graph {1--2[ arrowtail=dototee ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail=dottee ]}'''))
+	}
 
-		'''graph {1--2[ arrowtail="ononedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail="nonedot" ]}'''
-			)
-		)
+	@Test def edge_arrowtail_006() {
+		'''graph {1--2[ arrowtail="ononebox" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail="nonebox" ]}'''))
+	}
 
-		// test invalid side modifier (unquoted)
-		'''graph {1--2[ arrowtail=lnonedot ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowtail=nonedot ]}'''
-			)
-		)
+	@Test def edge_arrowtail_007() {
+		'''graph {1--2[ arrowtail="ononedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail="nonedot" ]}'''))
+	}
 
-		'''graph {1--2[ arrowtail=dotlnonedot ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowtail=dotnonedot ]}'''
-			)
-		)
+	@Test def edge_arrowtail_008() {
+		'''graph {1--2[ arrowtail=lnonedot ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowtail=nonedot ]}'''))
+	}
 
-		// test invalid side modifier (quoted)
-		'''graph {1--2[ arrowtail="rnonedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowtail="nonedot" ]}'''
-			)
-		)
+	@Test def edge_arrowtail_009() {
+		'''graph {1--2[ arrowtail=dotlnonedot ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowtail=dotnonedot ]}'''))
+	}
 
-		'''graph {1--2[ arrowtail="boxrnonedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowtail="boxnonedot" ]}'''
-			)
-		)
-		
-		// test none is the last arrow shape (unquoted)
-		'''digraph {1->2[ arrowtail=boxnone ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail=box ]}'''
-			)
-		)
+	@Test def edge_arrowtail_010() {
+		'''graph {1--2[ arrowtail="rnonedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowtail="nonedot" ]}'''))
+	}
 
-		'''digraph {1->2[ arrowtail=nonenone ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail=none ]}'''
-			)
-		)
+	@Test def edge_arrowtail_011() {
+		'''graph {1--2[ arrowtail="boxrnonedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowtail="boxnonedot" ]}'''))
+	}
 
-		// test none is the last arrow shape (quoted)
-		'''digraph {1->2[ arrowtail="dotnone" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail="dot" ]}'''
-			)
-		)
+	@Test def edge_arrowtail_012() {
+		'''digraph {1->2[ arrowtail=boxnone ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail=box ]}'''))
+	}
 
-		'''digraph {1->2[ arrowtail="nonenone" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
-			new Quickfix(
-				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail="none" ]}'''
-			)
-		)
+	@Test def edge_arrowtail_013() {
+		'''digraph {1->2[ arrowtail=nonenone ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail=none ]}'''))
+	}
+
+	@Test def edge_arrowtail_014() {
+		'''digraph {1->2[ arrowtail="dotnone" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail="dot" ]}'''))
+	}
+
+	@Test def edge_arrowtail_015() {
+		'''digraph {1->2[ arrowtail="nonenone" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail="none" ]}'''))
 	}
 
 	@Test def edge_colorscheme() {
@@ -491,16 +429,16 @@ class DotQuickfixTests {
 		'''graph{1--2[colorscheme=foo]}'''.testQuickfixesOn(DotAttributes.COLORSCHEME__GCNE, expectedQuickfixes)
 	}
 
-	@Test def edge_dir() {
-		// test unquoted attribute value
+	@Test def edge_dir_001() {
 		'''graph{1--2[dir=foo]}'''.testQuickfixesOn(DotAttributes.DIR__E,
 			new Quickfix("Replace 'foo' with 'forward'.",	"Use valid 'forward' instead of invalid 'foo' edge dir.",	"graph{1--2[dir=forward]}"),
 			new Quickfix("Replace 'foo' with 'back'.",		"Use valid 'back' instead of invalid 'foo' edge dir.",		"graph{1--2[dir=back]}"),
 			new Quickfix("Replace 'foo' with 'both'.",		"Use valid 'both' instead of invalid 'foo' edge dir.",		"graph{1--2[dir=both]}"),
 			new Quickfix("Replace 'foo' with 'none'.",		"Use valid 'none' instead of invalid 'foo' edge dir.",		"graph{1--2[dir=none]}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def edge_dir_002() {
 		'''graph{1--2[dir="foo"]}'''.testQuickfixesOn(DotAttributes.DIR__E,
 			new Quickfix("Replace 'foo' with 'forward'.",	"Use valid 'forward' instead of invalid 'foo' edge dir.",	'''graph{1--2[dir="forward"]}'''),
 			new Quickfix("Replace 'foo' with 'back'.",		"Use valid 'back' instead of invalid 'foo' edge dir.",		'''graph{1--2[dir="back"]}'''),
@@ -509,8 +447,7 @@ class DotQuickfixTests {
 		)
 	}
 
-	@Test def edge_style() {
-		// test unquoted attribute value
+	@Test def edge_style_001() {
 		'''graph{1--2[style=foo]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' edge style.",	"graph{1--2[style=bold]}"),
 			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' edge style.",	"graph{1--2[style=dashed]}"),
@@ -519,8 +456,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' edge style.",	"graph{1--2[style=solid]}"),
 			new Quickfix("Replace 'foo' with 'tapered'.",	"Use valid 'tapered' instead of invalid 'foo' edge style.",	"graph{1--2[style=tapered]}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def edge_style_002() {
 		'''graph{1--2[style="foo"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold"]}'''),
 			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' edge style.",	'''graph{1--2[style="dashed"]}'''),
@@ -529,20 +467,21 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' edge style.",	'''graph{1--2[style="solid"]}'''),
 			new Quickfix("Replace 'foo' with 'tapered'.",	"Use valid 'tapered' instead of invalid 'foo' edge style.",	'''graph{1--2[style="tapered"]}''')
 		)
+	}
 
-		// test quoted attribute value with multiple styles
-		'''graph{1--2[style="bold, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'bold' style attribute value.", "Remove the redundant 'bold' style attribute value.", '''graph{1--2[style="bold"]}''')
-		)
+	@Test def edge_style_003() {
+		'''graph{1--2[style="bold, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'bold' style attribute value.", "Remove the redundant 'bold' style attribute value.", '''graph{1--2[style="bold"]}'''))
+	}
 
-		'''graph{1--2[style="dashed,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1--2[style="dashed"]}''')
-		)
+	@Test def edge_style_004() {
+		'''graph{1--2[style="dashed,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1--2[style="dashed"]}'''))
+	}
 
-		'''graph{1--2[style="dashed,bold,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1--2[style="bold,dashed"]}''')
-		)
+	@Test def edge_style_005() {
+		'''graph{1--2[style="dashed,bold,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1--2[style="bold,dashed"]}'''))
+	}
 
+	@Test def edge_style_006() {
 		// test quoted attribute value with multiple styles (one of them is invalid)
 		'''graph{1--2[style="foo, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, bold"]}'''),
@@ -552,7 +491,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' edge style.",	'''graph{1--2[style="solid, bold"]}'''),
 			new Quickfix("Replace 'foo' with 'tapered'.",	"Use valid 'tapered' instead of invalid 'foo' edge style.",	'''graph{1--2[style="tapered, bold"]}''')
 		)
+	}
 
+	@Test def edge_style_007() {
 		'''graph{1--2[style="bold, foo"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, bold"]}'''),
 			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, dashed"]}'''),
@@ -561,23 +502,22 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, solid"]}'''),
 			new Quickfix("Replace 'foo' with 'tapered'.",	"Use valid 'tapered' instead of invalid 'foo' edge style.",	'''graph{1--2[style="bold, tapered"]}''')
 		)
+	}
 
-		// test deprecated attribute value
-		'''graph{1--2[style="setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[ penwidth="3" ]}''')
-		)
+	@Test def edge_style_008() {
+		'''graph{1--2[style="setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[ penwidth="3" ]}'''))
+	}
 
-		'''graph{1--2[style="dotted, setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dotted" penwidth="3" ]}''')
-		)
+	@Test def edge_style_009() {
+		'''graph{1--2[style="dotted, setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dotted" penwidth="3" ]}'''))
+	}
 
-		'''graph{1--2[style="setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dotted" penwidth="3" ]}''')
-		)
+	@Test def edge_style_010() {
+		'''graph{1--2[style="setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dotted" penwidth="3" ]}'''))
+	}
 
-		'''graph{1--2[style="dashed, setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dashed, dotted" penwidth="3" ]}''')
-		)
+	@Test def edge_style_011() {
+		'''graph{1--2[style="dashed, setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1--2[style="dashed, dotted" penwidth="3" ]}'''))
 	}
 
 	@Test def graph_colorscheme() {
@@ -595,15 +535,15 @@ class DotQuickfixTests {
 		'''graph{colorscheme=foo}'''.testQuickfixesOn(DotAttributes.COLORSCHEME__GCNE, expectedQuickfixes)
 	}
 
-	@Test def graph_clusterrank() {
-		// test unquoted attribute value
+	@Test def graph_clusterrank_001() {
 		'''graph{clusterrank=foo}'''.testQuickfixesOn(DotAttributes.CLUSTERRANK__G,
 			new Quickfix("Replace 'foo' with 'local'.",		"Use valid 'local' instead of invalid 'foo' graph clusterMode.",	"graph{clusterrank=local}"),
 			new Quickfix("Replace 'foo' with 'global'.",	"Use valid 'global' instead of invalid 'foo' graph clusterMode.",	"graph{clusterrank=global}"),
 			new Quickfix("Replace 'foo' with 'none'.",		"Use valid 'none' instead of invalid 'foo' graph clusterMode.",		"graph{clusterrank=none}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def graph_clusterrank_002() {
 		'''graph{clusterrank="foo"}'''.testQuickfixesOn(DotAttributes.CLUSTERRANK__G,
 			new Quickfix("Replace 'foo' with 'local'.",		"Use valid 'local' instead of invalid 'foo' graph clusterMode.",	'''graph{clusterrank="local"}'''),
 			new Quickfix("Replace 'foo' with 'global'.",	"Use valid 'global' instead of invalid 'foo' graph clusterMode.",	'''graph{clusterrank="global"}'''),
@@ -611,8 +551,7 @@ class DotQuickfixTests {
 		)
 	}
 
-	@Test def graph_layout() {
-		// test unquoted attribute value
+	@Test def graph_layout_001() {
 		'''graph{layout=foo}'''.testQuickfixesOn(DotAttributes.LAYOUT__G,
 			new Quickfix("Replace 'foo' with 'circo'.",		"Use valid 'circo' instead of invalid 'foo' graph layout.",	"graph{layout=circo}"),
 			new Quickfix("Replace 'foo' with 'dot'.",		"Use valid 'dot' instead of invalid 'foo' graph layout.",	"graph{layout=dot}"),
@@ -622,8 +561,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'sfdp'.",		"Use valid 'sfdp' instead of invalid 'foo' graph layout.",	"graph{layout=sfdp}"),
 			new Quickfix("Replace 'foo' with 'twopi'.",		"Use valid 'twopi' instead of invalid 'foo' graph layout.",	"graph{layout=twopi}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def graph_layout_002() {
 		'''graph{layout="foo"}'''.testQuickfixesOn(DotAttributes.LAYOUT__G,
 			new Quickfix("Replace 'foo' with 'circo'.",		"Use valid 'circo' instead of invalid 'foo' graph layout.",	'''graph{layout="circo"}'''),
 			new Quickfix("Replace 'foo' with 'dot'.",		"Use valid 'dot' instead of invalid 'foo' graph layout.",	'''graph{layout="dot"}'''),
@@ -635,15 +575,15 @@ class DotQuickfixTests {
 		)
 	}
 
-	@Test def graph_outputorder() {
-		// test unquoted attribute value
+	@Test def graph_outputorder_001() {
 		'''graph{outputorder=foo}'''.testQuickfixesOn(DotAttributes.OUTPUTORDER__G,
 			new Quickfix("Replace 'foo' with 'breadthfirst'.",	"Use valid 'breadthfirst' instead of invalid 'foo' graph outputMode.", 	"graph{outputorder=breadthfirst}"),
 			new Quickfix("Replace 'foo' with 'nodesfirst'.", 	"Use valid 'nodesfirst' instead of invalid 'foo' graph outputMode.", 	"graph{outputorder=nodesfirst}"),
 			new Quickfix("Replace 'foo' with 'edgesfirst'.", 	"Use valid 'edgesfirst' instead of invalid 'foo' graph outputMode.", 	"graph{outputorder=edgesfirst}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def graph_outputorder_002() {
 		'''graph{outputorder="foo"}'''.testQuickfixesOn(DotAttributes.OUTPUTORDER__G,
 			new Quickfix("Replace 'foo' with 'breadthfirst'.",	"Use valid 'breadthfirst' instead of invalid 'foo' graph outputMode.", 	'''graph{outputorder="breadthfirst"}'''),
 			new Quickfix("Replace 'foo' with 'nodesfirst'.",  	"Use valid 'nodesfirst' instead of invalid 'foo' graph outputMode.", 	'''graph{outputorder="nodesfirst"}'''),
@@ -651,8 +591,7 @@ class DotQuickfixTests {
 		)
 	}
 
-	@Test def graph_pagedir() {
-		// test unquoted attribute value
+	@Test def graph_pagedir_001() {
 		'''graph{pagedir=foo}'''.testQuickfixesOn(DotAttributes.PAGEDIR__G,
 			new Quickfix("Replace 'foo' with 'BL'.", 	"Use valid 'BL' instead of invalid 'foo' graph pagedir.",	"graph{pagedir=BL}"),
 			new Quickfix("Replace 'foo' with 'BR'.", 	"Use valid 'BR' instead of invalid 'foo' graph pagedir.",	"graph{pagedir=BR}"),
@@ -663,8 +602,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'LB'.", 	"Use valid 'LB' instead of invalid 'foo' graph pagedir.",	"graph{pagedir=LB}"),
 			new Quickfix("Replace 'foo' with 'LT'.", 	"Use valid 'LT' instead of invalid 'foo' graph pagedir.",	"graph{pagedir=LT}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def graph_pagedir_002() {
 		'''graph{pagedir="foo"}'''.testQuickfixesOn(DotAttributes.PAGEDIR__G,
 			new Quickfix("Replace 'foo' with 'BL'.", 	"Use valid 'BL' instead of invalid 'foo' graph pagedir.",	'''graph{pagedir="BL"}'''),
 			new Quickfix("Replace 'foo' with 'BR'.", 	"Use valid 'BR' instead of invalid 'foo' graph pagedir.",	'''graph{pagedir="BR"}'''),
@@ -677,16 +617,16 @@ class DotQuickfixTests {
 		)
 	}
 
-	@Test def graph_rankdir() {
-		// test unquoted attribute value
+	@Test def graph_rankdir_001() {
 		'''graph{rankdir=foo}'''.testQuickfixesOn(DotAttributes.RANKDIR__G,
 			new Quickfix("Replace 'foo' with 'TB'.", "Use valid 'TB' instead of invalid 'foo' graph rankdir.", "graph{rankdir=TB}"),
 			new Quickfix("Replace 'foo' with 'LR'.", "Use valid 'LR' instead of invalid 'foo' graph rankdir.", "graph{rankdir=LR}"),
 			new Quickfix("Replace 'foo' with 'BT'.", "Use valid 'BT' instead of invalid 'foo' graph rankdir.", "graph{rankdir=BT}"),
 			new Quickfix("Replace 'foo' with 'RL'.", "Use valid 'RL' instead of invalid 'foo' graph rankdir.", "graph{rankdir=RL}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def graph_rankdir_002() {
 		'''graph{rankdir="foo"}'''.testQuickfixesOn(DotAttributes.RANKDIR__G,
 			new Quickfix("Replace 'foo' with 'TB'.", "Use valid 'TB' instead of invalid 'foo' graph rankdir.", '''graph{rankdir="TB"}'''),
 			new Quickfix("Replace 'foo' with 'LR'.", "Use valid 'LR' instead of invalid 'foo' graph rankdir.", '''graph{rankdir="LR"}'''),
@@ -696,7 +636,6 @@ class DotQuickfixTests {
 	}
 
 	@Test def node_colorscheme() {
-		// test unquoted attribute value
 		val validColorSchemes = DotTestUtils.expectedDotColorSchemes
 		val List<Quickfix> expectedQuickfixes = newArrayList
 
@@ -711,16 +650,7 @@ class DotQuickfixTests {
 		'''graph{node[colorscheme=foo]}'''.testQuickfixesOn(DotAttributes.COLORSCHEME__GCNE, expectedQuickfixes)
 	}
 
-	@Test def node_shape() {
-		val validNodeShapes = #[ "box", "polygon", "ellipse", "oval", "circle", "point", "egg", "triangle",
-				"plaintext", "plain", "diamond", "trapezium", "parallelogram", "house", "pentagon", "hexagon", "septagon",
-				"octagon", "doublecircle", "doubleoctagon", "tripleoctagon", "invtriangle", "invtrapezium", "invhouse", "Mdiamond",
-				"Msquare", "Mcircle", "rect", "rectangle", "square", "star", "none", "underline", "cylinder", "note", "tab", "folder",
-				"box3d", "component", "promoter", "cds", "terminator", "utr", "primersite", "restrictionsite", "fivepoverhang",
-				"threepoverhang", "noverhang", "assembly", "signature", "insulator", "ribosite", "rnastab", "proteasesite", "proteinstab",
-				"rpromoter", "rarrow", "larrow", "lpromoter", "record", "Mrecord" ]
-
-		// test unquoted attribute value
+	@Test def node_shape_001() {
 		val List<Quickfix> expectedQuickfixes = newArrayList
 		for (validNodeShape : validNodeShapes) {
 			expectedQuickfixes.add(new Quickfix(
@@ -730,10 +660,11 @@ class DotQuickfixTests {
 			))
 		}
 
-		'''graph{1[shape=foo]}'''.testQuickfixesOn(DotAttributes.SHAPE__N,expectedQuickfixes)
+		'''graph{1[shape=foo]}'''.testQuickfixesOn(DotAttributes.SHAPE__N, expectedQuickfixes)
+	}
 
-		// test quoted attribute value
-		expectedQuickfixes.clear
+	@Test def node_shape_002() {
+		val List<Quickfix> expectedQuickfixes = newArrayList
 		for (validNodeShape : validNodeShapes) {
 			expectedQuickfixes.add(new Quickfix(
 				'''Replace 'foo' with '«validNodeShape»'.''',
@@ -745,13 +676,12 @@ class DotQuickfixTests {
 		'''graph{1[shape="foo"]}'''.testQuickfixesOn(DotAttributes.SHAPE__N, expectedQuickfixes)
 	}
 
-	@Test def node_style() {
-		// test unquoted attribute value
+	@Test def node_style_001() {
 		'''graph{1[style=foo]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' node style.", 		"graph{1[style=bold]}"),
-			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' node style.", 		"graph{1[style=dashed]}"),
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' node style.",		"graph{1[style=bold]}"),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' node style.",		"graph{1[style=dashed]}"),
 			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	"graph{1[style=diagonals]}"),
-			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' node style.", 		"graph{1[style=dotted]}"),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' node style.",		"graph{1[style=dotted]}"),
 			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' node style.",		"graph{1[style=filled]}"),
 			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' node style.",		"graph{1[style=invis]}"),
 			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' node style.",		"graph{1[style=radial]}"),
@@ -760,99 +690,105 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		"graph{1[style=striped]}"),
 			new Quickfix("Replace 'foo' with 'wedged'.",	"Use valid 'wedged' instead of invalid 'foo' node style.",		"graph{1[style=wedged]}")
 		)
+	}
 
-		// test quoted attribute value
+	@Test def node_style_002() {
 		'''graph{1[style="foo"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'foo' with 'bold'.", 		"Use valid 'bold' instead of invalid 'foo' node style.", 		'''graph{1[style="bold"]}'''),
-			new Quickfix("Replace 'foo' with 'dashed'.", 	"Use valid 'dashed' instead of invalid 'foo' node style.", 		'''graph{1[style="dashed"]}'''),
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' node style.",		'''graph{1[style="bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' node style.",		'''graph{1[style="dashed"]}'''),
 			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	'''graph{1[style="diagonals"]}'''),
-			new Quickfix("Replace 'foo' with 'dotted'.", 	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="dotted"]}'''),
-			new Quickfix("Replace 'foo' with 'filled'.", 	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="filled"]}'''),
-			new Quickfix("Replace 'foo' with 'invis'.", 	"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="invis"]}'''),
-			new Quickfix("Replace 'foo' with 'radial'.", 	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="radial"]}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="dotted"]}'''),
+			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="filled"]}'''),
+			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="invis"]}'''),
+			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="radial"]}'''),
 			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' node style.",		'''graph{1[style="rounded"]}'''),
-			new Quickfix("Replace 'foo' with 'solid'.", 	"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="solid"]}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="solid"]}'''),
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="striped"]}'''),
-			new Quickfix("Replace 'foo' with 'wedged'.", 	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="wedged"]}''')
-		)
-
-		// test quoted attribute value with multiple styles
-		'''graph{1[style="dashed, dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1[style="dashed"]}''')
-		)
-
-		'''graph{1[style="dotted,dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'dotted' style attribute value.", "Remove the redundant 'dotted' style attribute value.", '''graph{1[style="dotted"]}''')
-		)
-
-		'''graph{1[style="dashed,bold,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1[style="bold,dashed"]}''')
-		)
-
-		// test quoted attribute value with multiple styles (one of them is invalid)
-		'''graph{1[style="foo, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'foo' with 'bold'.", 		"Use valid 'bold' instead of invalid 'foo' node style.", 		'''graph{1[style="bold, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'dashed'.", 	"Use valid 'dashed' instead of invalid 'foo' node style.", 		'''graph{1[style="dashed, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	'''graph{1[style="diagonals, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'dotted'.", 	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="dotted, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'filled'.", 	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="filled, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'invis'.", 	"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="invis, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'radial'.", 	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="radial, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' node style.",		'''graph{1[style="rounded, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'solid'.", 	"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="solid, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="striped, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'wedged'.", 	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="wedged, bold"]}''')
-		)
-
-		'''graph{1[style="bold, foo"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'foo' with 'bold'.", 		"Use valid 'bold' instead of invalid 'foo' node style.", 		'''graph{1[style="bold, bold"]}'''),
-			new Quickfix("Replace 'foo' with 'dashed'.", 	"Use valid 'dashed' instead of invalid 'foo' node style.", 		'''graph{1[style="bold, dashed"]}'''),
-			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	'''graph{1[style="bold, diagonals"]}'''),
-			new Quickfix("Replace 'foo' with 'dotted'.", 	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="bold, dotted"]}'''),
-			new Quickfix("Replace 'foo' with 'filled'.", 	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="bold, filled"]}'''),
-			new Quickfix("Replace 'foo' with 'invis'.", 	"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="bold, invis"]}'''),
-			new Quickfix("Replace 'foo' with 'radial'.", 	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="bold, radial"]}'''),
-			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' node style.",		'''graph{1[style="bold, rounded"]}'''),
-			new Quickfix("Replace 'foo' with 'solid'.", 	"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="bold, solid"]}'''),
-			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="bold, striped"]}'''),
-			new Quickfix("Replace 'foo' with 'wedged'.", 	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="bold, wedged"]}''')
-		)
-
-		// test incomplete attribute value - no quickfixes should be offered
-		'''graph{1[style="bold, "]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE)
-
-		// test deprecated attribute value
-		'''graph{1[style="setlinewidth(4)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(4)' with 'penwidth=4'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[ penwidth="4" ]}''')
-		)
-
-		'''graph{1[style="dotted, setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dotted" penwidth="3" ]}''')
-		)
-
-		'''graph{1[style="setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dotted" penwidth="3" ]}''')
-		)
-
-		'''graph{1[style="dashed, setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dashed, dotted" penwidth="3" ]}''')
-		)
-
-		'''graph{1[style="setlinewidth"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Replace 'setlinewidth' with 'penwidth='.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[ penwidth="" ]}''')
+			new Quickfix("Replace 'foo' with 'wedged'.",	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="wedged"]}''')
 		)
 	}
 
-	@Test def subgraph_rank() {
+	@Test def node_style_003() {
+		'''graph{1[style="dashed, dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1[style="dashed"]}'''))
+	}
+
+	@Test def node_style_004() {
+		'''graph{1[style="dotted,dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'dotted' style attribute value.", "Remove the redundant 'dotted' style attribute value.", '''graph{1[style="dotted"]}'''))
+	}
+
+	@Test def node_style_005() {
+		'''graph{1[style="dashed,bold,dashed"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{1[style="bold,dashed"]}'''))
+	}
+
+	@Test def node_style_006() {
+		'''graph{1[style="foo, bold"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' node style.",		'''graph{1[style="bold, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' node style.",		'''graph{1[style="dashed, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	'''graph{1[style="diagonals, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="dotted, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="filled, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="invis, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="radial, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' node style.",		'''graph{1[style="rounded, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="solid, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="striped, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'wedged'.",	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="wedged, bold"]}''')
+		)
+	}
+
+	@Test def node_style_007() {
+		'''graph{1[style="bold, foo"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
+			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' node style.",		'''graph{1[style="bold, bold"]}'''),
+			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' node style.",		'''graph{1[style="bold, dashed"]}'''),
+			new Quickfix("Replace 'foo' with 'diagonals'.",	"Use valid 'diagonals' instead of invalid 'foo' node style.",	'''graph{1[style="bold, diagonals"]}'''),
+			new Quickfix("Replace 'foo' with 'dotted'.",	"Use valid 'dotted' instead of invalid 'foo' node style.",		'''graph{1[style="bold, dotted"]}'''),
+			new Quickfix("Replace 'foo' with 'filled'.",	"Use valid 'filled' instead of invalid 'foo' node style.",		'''graph{1[style="bold, filled"]}'''),
+			new Quickfix("Replace 'foo' with 'invis'.",		"Use valid 'invis' instead of invalid 'foo' node style.",		'''graph{1[style="bold, invis"]}'''),
+			new Quickfix("Replace 'foo' with 'radial'.",	"Use valid 'radial' instead of invalid 'foo' node style.",		'''graph{1[style="bold, radial"]}'''),
+			new Quickfix("Replace 'foo' with 'rounded'.",	"Use valid 'rounded' instead of invalid 'foo' node style.",		'''graph{1[style="bold, rounded"]}'''),
+			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' node style.",		'''graph{1[style="bold, solid"]}'''),
+			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' node style.",		'''graph{1[style="bold, striped"]}'''),
+			new Quickfix("Replace 'foo' with 'wedged'.",	"Use valid 'wedged' instead of invalid 'foo' node style.",		'''graph{1[style="bold, wedged"]}''')
+		)
+	}
+
+	@Test def node_style_008() {
+		// test incomplete attribute value - no quickfixes should be offered
+		'''graph{1[style="bold, "]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE)
+	}
+
+	@Test def node_style_009() {
+		'''graph{1[style="setlinewidth(4)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(4)' with 'penwidth=4'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[ penwidth="4" ]}'''))
+	}
+
+	@Test def node_style_010() {
+		'''graph{1[style="dotted, setlinewidth(3)"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dotted" penwidth="3" ]}'''))
+	}
+
+	@Test def node_style_011() {
+		'''graph{1[style="setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dotted" penwidth="3" ]}'''))
+	}
+
+	@Test def node_style_012() {
+		'''graph{1[style="dashed, setlinewidth(3), dotted"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth(3)' with 'penwidth=3'.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[style="dashed, dotted" penwidth="3" ]}'''))
+	}
+
+	@Test def node_style_013() {
+		'''graph{1[style="setlinewidth"]}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Replace 'setlinewidth' with 'penwidth='.", "Use the 'penwidth' attribute instead of the deprecated 'setlinewidth' style.", '''graph{1[ penwidth="" ]}'''))
+	}
+
+	@Test def subgraph_rank_001() {
 		// test unquoted attribute value
 		'''graph{subgraph{rank=foo}}'''.testQuickfixesOn(DotAttributes.RANK__S,
 			new Quickfix("Replace 'foo' with 'same'.",		"Use valid 'same' instead of invalid 'foo' subgraph rankType.",		"graph{subgraph{rank=same}}"),
-			new Quickfix("Replace 'foo' with 'min'.", 		"Use valid 'min' instead of invalid 'foo' subgraph rankType.", 		"graph{subgraph{rank=min}}"),
+			new Quickfix("Replace 'foo' with 'min'.",		"Use valid 'min' instead of invalid 'foo' subgraph rankType.", 		"graph{subgraph{rank=min}}"),
 			new Quickfix("Replace 'foo' with 'source'.",	"Use valid 'source' instead of invalid 'foo' subgraph rankType.",	"graph{subgraph{rank=source}}"),
 			new Quickfix("Replace 'foo' with 'max'.",		"Use valid 'max' instead of invalid 'foo' subgraph rankType.",		"graph{subgraph{rank=max}}"),
 			new Quickfix("Replace 'foo' with 'sink'.",		"Use valid 'sink' instead of invalid 'foo' subgraph rankType.",		"graph{subgraph{rank=sink}}")
 		)
+	}
 
+	@Test def subgraph_rank_002() {
 		// test quoted attribute value
 		'''graph{subgraph{rank="foo"}}'''.testQuickfixesOn(DotAttributes.RANK__S,
 			new Quickfix("Replace 'foo' with 'same'.",		"Use valid 'same' instead of invalid 'foo' subgraph rankType.",		'''graph{subgraph{rank="same"}}'''),
@@ -863,7 +799,7 @@ class DotQuickfixTests {
 		)
 	}
 
-	@Test def cluster_style() {
+	@Test def cluster_style_001() {
 		// test unquoted attribute value
 		'''graph{subgraph cluster_0{style=foo}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=bold}}'''),
@@ -876,7 +812,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style=solid}}'''),
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style=striped}}''')
 		)
+	}
 
+	@Test def cluster_style_002() {
 		// test quoted attribute value
 		'''graph{subgraph cluster_0{style="foo"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="bold"}}'''),
@@ -889,20 +827,22 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="solid"}}'''),
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped"}}''')
 		)
+	}
 
+	@Test def cluster_style_003() {
 		// test quoted attribute value with multiple styles
-		'''graph{subgraph cluster_0{style="bold, bold"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'bold' style attribute value.", "Remove the redundant 'bold' style attribute value.", '''graph{subgraph cluster_0{style="bold"}}''')
-		)
+		'''graph{subgraph cluster_0{style="bold, bold"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'bold' style attribute value.", "Remove the redundant 'bold' style attribute value.", '''graph{subgraph cluster_0{style="bold"}}'''))
+	}
 
-		'''graph{subgraph cluster_0{style="radial,radial"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'radial' style attribute value.", "Remove the redundant 'radial' style attribute value.", '''graph{subgraph cluster_0{style="radial"}}''')
-		)
+	@Test def cluster_style_004() {
+		'''graph{subgraph cluster_0{style="radial,radial"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'radial' style attribute value.", "Remove the redundant 'radial' style attribute value.", '''graph{subgraph cluster_0{style="radial"}}'''))
+	}
 
-		'''graph{subgraph cluster_0{style="dashed,bold,dashed"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
-			new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{subgraph cluster_0{style="bold,dashed"}}''')
-		)
+	@Test def cluster_style_005() {
+		'''graph{subgraph cluster_0{style="dashed,bold,dashed"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE, new Quickfix("Remove 'dashed' style attribute value.", "Remove the redundant 'dashed' style attribute value.", '''graph{subgraph cluster_0{style="bold,dashed"}}'''))
+	}
 
+	@Test def cluster_style_006() {
 		// test quoted attribute value with multiple styles (one of them is invalid)
 		'''graph{subgraph cluster_0{style="foo, striped"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="bold, striped"}}'''),
@@ -915,7 +855,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="solid, striped"}}'''),
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped, striped"}}''')
 		)
+	}
 
+	@Test def cluster_style_007() {	
 		'''graph{subgraph cluster_0{style="striped, foo"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, bold"}}'''),
 			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, dashed"}}'''),
@@ -927,7 +869,9 @@ class DotQuickfixTests {
 			new Quickfix("Replace 'foo' with 'solid'.",		"Use valid 'solid' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, solid"}}'''),
 			new Quickfix("Replace 'foo' with 'striped'.",	"Use valid 'striped' instead of invalid 'foo' graph style.",'''graph{subgraph cluster_0{style="striped, striped"}}''')
 		)
-	
+	}
+
+	@Test def cluster_style_008() {
 		// test deprecated attribute value
 		'''
 			graph {
@@ -942,7 +886,9 @@ class DotQuickfixTests {
 				}
 			}
 		'''))
+	}
 
+	@Test def cluster_style_009() {
 		'''
 			graph {
 				subgraph clustser_0 {
@@ -957,7 +903,9 @@ class DotQuickfixTests {
 			}
 			}
 		'''))
+	}
 
+	@Test def cluster_style_010() {
 		'''
 			graph {
 				subgraph clustser_0 {
@@ -972,7 +920,9 @@ class DotQuickfixTests {
 			}
 			}
 		'''))
+	}
 
+	@Test def cluster_style_011() {
 		'''
 			graph {
 				subgraph clustser_0 {
@@ -990,27 +940,19 @@ class DotQuickfixTests {
 	}
 
 	@Test def redundant_attribute_single() {
-		'''graph{1[label="foo", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{1[label="faa"]}''')
-		)
+		'''graph{1[label="foo", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE, new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{1[label="faa"]}'''))
 	}
 
 	@Test def redundant_attribute_mixed() {
-		'''graph{1[label="foo", style="rounded", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{1[style="rounded", label="faa"]}''')
-		)
+		'''graph{1[label="foo", style="rounded", label="faa"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE, new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{1[style="rounded", label="faa"]}'''))
 	}
 
 	@Test def redundant_attribute_edge() {
-		'''graph{1--2[style="dotted", style="dashed"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'style' attribute.", "Remove the redundant 'style' attribute.", '''graph{1--2[style="dashed"]}''')
-		)
+		'''graph{1--2[style="dotted", style="dashed"]}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE, new Quickfix("Remove 'style' attribute.", "Remove the redundant 'style' attribute.", '''graph{1--2[style="dashed"]}'''))
 	}
 
 	@Test def redundant_attribute_attr_stmt() {
-		'''graph{graph[label="dotted", label="dashed"]1}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE,
-			new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{graph[label="dashed"]1}''')
-		)
+		'''graph{graph[label="dotted", label="dashed"]1}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE, new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{graph[label="dashed"]1}'''))
 	}
 
 	/**
