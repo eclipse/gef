@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -101,7 +101,8 @@ class DotParserTests {
 	@Test def html_like_labels3() { "html_like_labels3.dot".dslFileHasNoError }
 	@Test def html_like_labels4() { "html_like_labels4.dot".dslFileHasNoError }
 	@Test def labeled_graph() { "labeled_graph.dot".dslFileHasNoError }
-	@Test def nodeshapes_polygon_based() { "nodeshapes_polygon_based.dot".dslFileHasNoError}
+	@Test def nodeshapes_polygon_based() { "nodeshapes_polygon_based.dot".dslFileHasNoError }
+	@Test def penwidth() { "penwidth.dot".dslFileHasNoError }
 	@Test def philo() { "philo.dot".dslFileHasNoError }
 	@Test def record_shape_node1() { "record_shape_node1.dot".dslFileHasNoError }
 	@Test def simple_digraph() { "simple_digraph.dot".dslFileHasNoError }

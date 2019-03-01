@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@
  */
 package org.eclipse.gef.dot.internal.language.validation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -41,6 +42,16 @@ public class DotArrowTypeJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotArrowTypeJavaValidator {
 
 	/**
+	 * Issue code for a deprecated arrow shape.
+	 */
+	public static final String DEPRECATED_ARROW_SHAPE = "deprecated_arrow_shape";
+
+	/**
+	 * Issue code for an invalid modifier.
+	 */
+	public static final String INVALID_ARROW_SHAPE_MODIFIER = "invalid_arrow_shape_modifier";
+
+	/**
 	 * Checks that the open modifier is not used in combination with illegal
 	 * primitive shapes.
 	 * 
@@ -56,7 +67,7 @@ public class DotArrowTypeJavaValidator extends
 				|| PrimitiveShape.NONE.equals(shape)
 				|| PrimitiveShape.TEE.equals(shape)
 				|| PrimitiveShape.VEE.equals(shape))) {
-			reportRangeBasedWarning(
+			reportRangeBasedWarning(INVALID_ARROW_SHAPE_MODIFIER,
 					"The open modifier 'o' may not be combined with primitive shape '"
 							+ shape + "'.",
 					arrowShape, ArrowtypePackage.Literals.ARROW_SHAPE__OPEN);
@@ -75,7 +86,7 @@ public class DotArrowTypeJavaValidator extends
 		PrimitiveShape shape = arrowShape.getShape();
 		if (arrowShape.getSide() != null && (PrimitiveShape.DOT.equals(shape)
 				|| PrimitiveShape.NONE.equals(shape))) {
-			reportRangeBasedWarning(
+			reportRangeBasedWarning(INVALID_ARROW_SHAPE_MODIFIER,
 					"The side modifier '" + arrowShape.getSide()
 							+ "' may not be combined with primitive shape '"
 							+ shape + "'.",
@@ -91,7 +102,7 @@ public class DotArrowTypeJavaValidator extends
 	 */
 	@Check
 	public void checkDeprecatedArrowShape(DeprecatedArrowShape arrowShape) {
-		reportRangeBasedWarning(
+		reportRangeBasedWarning(DEPRECATED_ARROW_SHAPE,
 				"The shape '" + arrowShape.getShape() + "' is deprecated.",
 				arrowShape,
 				ArrowtypePackage.Literals.DEPRECATED_ARROW_SHAPE__SHAPE);
@@ -119,8 +130,8 @@ public class DotArrowTypeJavaValidator extends
 		}
 	}
 
-	private void reportRangeBasedWarning(String message, EObject object,
-			EStructuralFeature feature) {
+	private void reportRangeBasedWarning(String issueCode, String message,
+			EObject object, EStructuralFeature feature) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
 
@@ -135,13 +146,27 @@ public class DotArrowTypeJavaValidator extends
 		int length = node.getLength();
 
 		String code = null;
-		String[] issueData = null;
-		if (object instanceof DeprecatedArrowShape) {
+		// the issueData will be evaluated by the quickfixes
+		List<String> issueData = new ArrayList<>();
+		issueData.add(issueCode);
+		switch (issueCode) {
+		case DEPRECATED_ARROW_SHAPE:
 			DeprecatedArrowShape arrowShape = (DeprecatedArrowShape) object;
-			issueData = new String[] { arrowShape.getShape().toString() };
+			issueData.add(arrowShape.getShape().toString());
+			break;
+		case INVALID_ARROW_SHAPE_MODIFIER:
+			if (ArrowtypePackage.Literals.ARROW_SHAPE__OPEN == feature) {
+				issueData.add("o");
+			}
+			if (ArrowtypePackage.Literals.ARROW_SHAPE__SIDE == feature) {
+				issueData.add(((ArrowShape) object).getSide());
+			}
+			issueData.add(Integer.toString(offset));
+		default:
+			break;
 		}
 
 		getMessageAcceptor().acceptWarning(message, object, offset, length,
-				code, issueData);
+				code, issueData.toArray(new String[0]));
 	}
 }

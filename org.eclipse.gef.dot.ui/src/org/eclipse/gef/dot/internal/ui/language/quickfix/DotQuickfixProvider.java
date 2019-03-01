@@ -47,6 +47,7 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
+import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -115,31 +116,13 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(DotAttributes.ARROWHEAD__E)
 	public void fixArrowheadAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		String[] issueData = issue.getData();
-		if (issueData != null && issueData.length > 0) {
-			String deprecatedShapeString = issueData[0];
-			String validArrowShape = getValidArrowShape(deprecatedShapeString);
-			if (validArrowShape != null) {
-				provideQuickfixForMultipleAttributeValue(deprecatedShapeString,
-						validArrowShape, "edge arrowhead", //$NON-NLS-1$
-						issue, acceptor);
-			}
-		}
+		fixArrowType(issue, "edge arrowhead", acceptor); //$NON-NLS-1$
 	}
 
 	@Fix(DotAttributes.ARROWTAIL__E)
 	public void fixArrowtailAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		String[] issueData = issue.getData();
-		if (issueData != null && issueData.length > 0) {
-			String deprecatedShapeString = issueData[0];
-			String validArrowShape = getValidArrowShape(deprecatedShapeString);
-			if (validArrowShape != null) {
-				provideQuickfixForMultipleAttributeValue(deprecatedShapeString,
-						validArrowShape, "edge arrowtail", //$NON-NLS-1$
-						issue, acceptor);
-			}
-		}
+		fixArrowType(issue, "edge arrowtail", acceptor); //$NON-NLS-1$
 	}
 
 	@Fix(DotAttributes.CLUSTERRANK__G)
@@ -246,6 +229,61 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		}
 	}
 
+	private void fixArrowType(Issue issue, String suffix,
+			IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		if (issueData == null || issueData.length < 2) {
+			return;
+		}
+		String issueCode = issueData[0];
+
+		switch (issueCode) {
+		case DotArrowTypeJavaValidator.DEPRECATED_ARROW_SHAPE:
+			provideQuickfixesForDeprecatedArrowShape(issue, suffix, acceptor);
+			break;
+		case DotArrowTypeJavaValidator.INVALID_ARROW_SHAPE_MODIFIER:
+			provideQuickfixesInvalidArrowShapeModifier(issue, suffix, acceptor);
+			break;
+		default:
+			return;
+		}
+	}
+
+	private void provideQuickfixesForDeprecatedArrowShape(Issue issue,
+			String suffix, IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		String deprecatedShapeString = issueData[1];
+		String validArrowShape = getValidArrowShape(deprecatedShapeString);
+		if (validArrowShape != null) {
+			provideQuickfixForMultipleAttributeValue(deprecatedShapeString,
+					validArrowShape, suffix, issue, acceptor);
+		}
+	}
+
+	private void provideQuickfixesInvalidArrowShapeModifier(Issue issue,
+			String suffix, IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		String modifier = issueData[1];
+		final int modifierIndex = Integer.parseInt(issueData[2]);
+
+		acceptor.accept(issue, "Remove the '" + modifier + "' modifier.", //$NON-NLS-1$ //$NON-NLS-2$
+				"Remove the invalid '" + modifier + "' modifier.", DELETE_IMAGE, //$NON-NLS-1$ //$NON-NLS-2$
+				new ISemanticModification() {
+					@Override
+					public void apply(EObject element,
+							IModificationContext context) {
+						Attribute attribute = (Attribute) element;
+						ID value = attribute.getValue();
+						Type type = value.getType();
+						String currentValue = value.toValue();
+						String validValue = new StringBuilder(currentValue)
+								.deleteCharAt(modifierIndex).toString();
+						ID validValueAsID = ID.fromValue(validValue, type);
+						attribute.setValue(validValueAsID);
+					}
+				});
+	}
+
 	private void provideQuickfixesForDeprecatedStyleItem(Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		String[] issueData = issue.getData();
@@ -286,7 +324,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 				// add a new pendwidth attribute
 				Attribute penwidthAttribute = DotFactory.eINSTANCE
 						.createAttribute();
-				penwidthAttribute.setName(ID.fromValue("penwidth")); //$NON-NLS-1$
+				penwidthAttribute
+						.setName(ID.fromValue(DotAttributes.PENWIDTH__CNE));
 				penwidthAttribute.setValue(
 						ID.fromValue(penwidthValue, ID.Type.QUOTED_STRING));
 

@@ -268,8 +268,8 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
 			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "pos", "style",
-			"taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos", 
+			"style", "taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowhead", '''
 			graph {
 				edge[arrowhead=]
@@ -283,8 +283,8 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
 			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "pos", "style",
-			"taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos", 
+			"style", "taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowtail", '''
 			graph {
 				1--2[ arrowtail= ]
@@ -2317,7 +2317,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				node[«c»]
 			}
 		'''.testContentAssistant(#["]", "color", "colorscheme", "distortion", "fillcolor", "fixedsize", "fontcolor", "fontname", "fontsize",
-								"height", "id", "label", "pos", "shape", "sides", "skew", "style", "tooltip", "width",
+								"height", "id", "label", "penwidth", "pos", "shape", "sides", "skew", "style", "tooltip", "width",
 								"xlabel", "xlp"], "distortion",
 		'''
 			graph {
@@ -2331,7 +2331,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				1[ «c» ]
 			}
 		'''.testContentAssistant(#["]", "color", "colorscheme", "distortion", "fillcolor", "fixedsize", "fontcolor", "fontname", "fontsize",
-								"height", "id", "label", "pos", "shape", "sides", "skew", "style", "tooltip", "width",
+								"height", "id", "label", "penwidth", "pos", "shape", "sides", "skew", "style", "tooltip", "width",
 								"xlabel", "xlp"], "fixedsize",
 		'''
 			graph {

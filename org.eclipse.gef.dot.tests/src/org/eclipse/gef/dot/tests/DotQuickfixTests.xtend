@@ -271,6 +271,58 @@ class DotQuickfixTests {
 				)
 			)
 		}
+
+		// test invalid open modifier (unquoted)
+		'''graph {1--2[ arrowhead=ocrow ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead=crow ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowhead=dotoicurve ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead=doticurve ]}'''
+			)
+		)
+
+		// test invalid open modifier (quoted)
+		'''graph {1--2[ arrowhead="ocrow" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead="crow" ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowhead="dotoicurve" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowhead="doticurve" ]}'''
+			)
+		)
+
+		// test invalid side modifier (unquoted)
+		'''graph {1--2[ arrowhead=ldot ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowhead=dot ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowhead=dotldot ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowhead=dotdot ]}'''
+			)
+		)
+
+		// test invalid side modifier (quoted)
+		'''graph {1--2[ arrowhead="rdot" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowhead="dot" ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowhead="boxrdot" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowhead="boxdot" ]}'''
+			)
+		)
 	}
 
 	@Test def edge_arrowtail() {
@@ -318,6 +370,58 @@ class DotQuickfixTests {
 				)
 			)
 		}
+		
+		// test invalid open modifier (unquoted)
+		'''graph {1--2[ arrowtail=ovee ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail=vee ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowtail=dototee ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail=dottee ]}'''
+			)
+		)
+
+		// test invalid open modifier (quoted)
+		'''graph {1--2[ arrowtail="ononebox" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail="nonebox" ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowtail="ononedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'o' modifier.", "Remove the invalid 'o' modifier.", '''graph {1--2[ arrowtail="nonedot" ]}'''
+			)
+		)
+
+		// test invalid side modifier (unquoted)
+		'''graph {1--2[ arrowtail=lnonedot ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowtail=nonedot ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowtail=dotlnonedot ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'l' modifier.", "Remove the invalid 'l' modifier.", '''graph {1--2[ arrowtail=dotnonedot ]}'''
+			)
+		)
+
+		// test invalid side modifier (quoted)
+		'''graph {1--2[ arrowtail="rnonedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowtail="nonedot" ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowtail="boxrnonedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowtail="boxnonedot" ]}'''
+			)
+		)
 	}
 
 	@Test def edge_colorscheme() {

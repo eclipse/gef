@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 itemis AG and others.
+ * Copyright (c) 2009, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -936,6 +936,33 @@ class DotImportTests {
 		DotTestGraphs.EDGE_POS_LOCAL.assertImportedTo(expected)
 	}
 
+	@Test def edge_penwidth() {
+		// test global attribute
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		val nodes = createNodes
+		val e1 = new Edge.Builder(nodes.get(0), nodes.get(1)).attr([p1,p2|p1.penwidth=p2], "1.5").buildEdge
+		val e2 = new Edge.Builder(nodes.get(2), nodes.get(3)).attr([p1,p2|p1.penwidth=p2], "1.5").buildEdge
+		var expected = graph.nodes(nodes).edges(e1, e2).build
+		
+		DotTestGraphs.EDGE_PENWIDTH_GLOBAL.assertImportedTo(expected)
+		
+		// test local attribute
+		graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		e1.penwidth = "2.5"
+		e2.penwidth = "3.0"
+		expected = graph.nodes(nodes).edges(e1, e2).build
+		
+		DotTestGraphs.EDGE_PENWIDTH_LOCAL.assertImportedTo(expected)
+		
+		// test override attribute
+		graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		e1.penwidth = "3.5"
+		e2.penwidth = "4.0"
+		expected = graph.nodes(nodes).edges(e1, e2).build
+		
+		DotTestGraphs.EDGE_PENWIDTH_OVERRIDE.assertImportedTo(expected)
+	}
+
 	@Test def edge_style() {
 		// test global attribute
 		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
@@ -1450,6 +1477,32 @@ class DotImportTests {
 		DotTestGraphs.NODE_LABEL_OVERRIDE4.assertImportedTo(expected)
 	}
 
+	@Test def node_penwidth() {
+		// test global attribute
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		val n1 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").attr([p1,p2|p1.penwidth=p2], "1.5").buildNode
+		val n2 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "2").attr([p1,p2|p1.penwidth=p2], "1.5").buildNode
+		var expected = graph.nodes(n1, n2).build
+		
+		DotTestGraphs.NODE_PENWIDTH_GLOBAL.assertImportedTo(expected)
+		
+		// test local attribute
+		graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		n1.penwidth = "2.5"
+		n2.penwidth = "3.0"
+		expected = graph.nodes(n1, n2).build
+		
+		DotTestGraphs.NODE_PENWIDTH_LOCAL.assertImportedTo(expected)
+		
+		// test override attribute
+		graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		n1.penwidth = "3.5"
+		n2.penwidth = "4.0"
+		expected = graph.nodes(n1, n2).build
+		
+		DotTestGraphs.NODE_PENWIDTH_OVERRIDE.assertImportedTo(expected)
+	}
+
 	@Test def node_pos() {
 		// no global/override attribute tests, since they do not make sense
 		// test local attribute
@@ -1652,6 +1705,19 @@ class DotImportTests {
 		val expected = graph.nodes(n1, n2).build
 		
 		DotTestGraphs.NODE_XLP_LOCAL.assertImportedTo(expected)
+	}
+
+	@Test def cluster_penwidth() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.penwidth=p2], "2")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_PENWIDTH.assertImportedTo(expected)
 	}
 
 	@Test def clusters() {

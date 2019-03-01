@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -157,9 +157,21 @@ class DotValidatorTests {
 		dotAst.assertError(ATTRIBUTE, LABELFONTSIZE__E, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
 	}
 
+	@Test def invalid_edge_penwidth() {
+		val dotAst = '''graph { 1--2[penwidth=thin] 3--4[penwidth=-0.9]}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertError(ATTRIBUTE, PENWIDTH__CNE, "The value 'thin' is not a syntactically correct double: For input string: \"thin\".")
+		dotAst.assertError(ATTRIBUTE, PENWIDTH__CNE, "The double value '-0.9' is not semantically correct: Value may not be smaller than 0.0.")
+	}
+
 	@Test def none_is_the_last_arrowshape() {
 		'''digraph { 1->2[arrowhead=boxnone] }'''.parse.assertNumberOfIssues(1).
 		assertArrowTypeWarning("The arrowType value 'boxnone' is not semantically correct: The shape 'none' may not be the last shape.")
+	}
+
+	@Test def invalid_graph_penwidth() {
+		val dotAst = '''graph { subgraph clusterName { graph[penwidth=thin] 1 } subgraph clusterOtherName {graph[penwidth=-.5] 2}}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertError(ATTRIBUTE, PENWIDTH__CNE, "The value 'thin' is not a syntactically correct double: For input string: \"thin\".")
+		dotAst.assertError(ATTRIBUTE, PENWIDTH__CNE, "The double value '-.5' is not semantically correct: Value may not be smaller than 0.0.")
 	}
 
 	@Test def invalid_graph_background_color() {
@@ -224,6 +236,12 @@ class DotValidatorTests {
 		val dotAst = '''graph { 1[fontsize=large] 2[fontsize=0.3]}'''.parse.assertNumberOfIssues(2)
 		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The value 'large' is not a syntactically correct double: For input string: \"large\".")
 		dotAst.assertError(ATTRIBUTE, FONTSIZE__GCNE, "The double value '0.3' is not semantically correct: Value may not be smaller than 1.0.")
+	}
+
+	@Test def invalid_node_penwidth() {
+		val dotAst = '''graph { 1[penwidth=bold] 2[penwidth=-0.3]}'''.parse.assertNumberOfIssues(2)
+		dotAst.assertError(ATTRIBUTE, PENWIDTH__CNE, "The value 'bold' is not a syntactically correct double: For input string: \"bold\".")
+		dotAst.assertError(ATTRIBUTE, PENWIDTH__CNE, "The double value '-0.3' is not semantically correct: Value may not be smaller than 0.0.")
 	}
 
 	@Test def invalid_node_shape() {

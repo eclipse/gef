@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -876,6 +876,45 @@ class DotAttributesTests {
 		"1--2".assertEquals(e._getName)
 	}
 
+	@Test def edge_penwidth() {
+		val n1 = new Node.Builder().buildNode
+		val n2 = new Node.Builder().buildNode
+		val it = new Edge.Builder(n1, n2).buildEdge
+		
+		// test getters if no explicit value is set
+		penwidthRaw.assertNull
+		penwidth.assertNull
+		penwidthParsed.assertNull
+		
+		// set valid string values
+		var validPenwidth = "22.5"
+		penwidth = validPenwidth
+		validPenwidth.assertEquals(penwidth)
+		
+		// set valid parsed values
+		var validPenwidthParsed = new Double(5)
+		penwidthParsed = validPenwidthParsed
+		validPenwidthParsed.assertEquals(penwidthParsed)
+		
+		// set minimum parsed values
+		validPenwidthParsed = new Double(0.0)
+		penwidthParsed = validPenwidthParsed
+		validPenwidthParsed.assertEquals(penwidthParsed)
+		
+		// set syntactically invalid values
+		invalidValue([penwidth = "2,5"],
+			"Cannot set edge attribute 'penwidth' to '2,5'. The value '2,5' is not a syntactically correct double: For input string: \"2,5\"."
+		)
+		invalidValue([penwidth = "foo"],
+			"Cannot set edge attribute 'penwidth' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\"."
+		)
+
+		// set syntactically correct, but semantically invalid values
+		invalidValue([penwidth = "-0.5"],
+			"Cannot set edge attribute 'penwidth' to '-0.5'. The double value '-0.5' is not semantically correct: Value may not be smaller than 0.0."
+		)
+	}
+
 	@Test def edge_pos() {
 		val n1 = new Node.Builder().buildNode
 		val n2 = new Node.Builder().buildNode
@@ -1603,6 +1642,43 @@ class DotAttributesTests {
 		// set syntactically correct, but semantically invalid values
 		invalidValue([fontsize = "0.5"],
 			"Cannot set graph attribute 'fontsize' to '0.5'. The double value '0.5' is not semantically correct: Value may not be smaller than 1.0."
+		)
+	}
+
+	@Test def cluster_penwidth() {
+		val it = new Graph.Builder().build
+		
+		// test getters if no explicit value is set
+		penwidthRaw.assertNull
+		penwidth.assertNull
+		penwidthParsed.assertNull
+		
+		// set valid string values
+		var validPenwidth = "22.5"
+		penwidth = validPenwidth
+		validPenwidth.assertEquals(validPenwidth)
+		
+		// set valid parsed values
+		var validPenwidthParsed = new Double(5)
+		penwidthParsed = validPenwidthParsed
+		validPenwidthParsed.assertEquals(validPenwidthParsed)
+		
+		// set minimum parsed values
+		validPenwidthParsed = new Double(0.0)
+		penwidthParsed = validPenwidthParsed
+		validPenwidthParsed.assertEquals(validPenwidthParsed)
+		
+		// set syntactically invalid values
+		invalidValue([penwidth = "2,5"],
+			"Cannot set graph attribute 'penwidth' to '2,5'. The value '2,5' is not a syntactically correct double: For input string: \"2,5\"."
+		)
+		invalidValue([penwidth = "foo"],
+			"Cannot set graph attribute 'penwidth' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\"."
+		)
+
+		// set syntactically correct, but semantically invalid values
+		invalidValue([penwidth = "-0.5"],
+			"Cannot set graph attribute 'penwidth' to '-0.5'. The double value '-0.5' is not semantically correct: Value may not be smaller than 0.0."
 		)
 	}
 
@@ -2690,6 +2766,43 @@ class DotAttributesTests {
 		_setName("TestNode")
 		"TestNode".assertEquals(_getName)
 		ID.fromString("TestNode").assertEquals(_getNameRaw)
+	}
+
+	@Test def node_penwidth() {
+		val it = new Node.Builder().buildNode
+		
+		// test getters if no explicit value is set
+		penwidthRaw.assertNull
+		penwidth.assertNull
+		penwidthParsed.assertNull
+		
+		// set valid string values
+		var validPenwidth = "22.5"
+		penwidth = validPenwidth
+		validPenwidth.assertEquals(validPenwidth)
+		
+		// set valid parsed values
+		var validPenwidthParsed = new Double(5)
+		penwidthParsed = validPenwidthParsed
+		validPenwidthParsed.assertEquals(validPenwidthParsed)
+		
+		// set minimum parsed values
+		validPenwidthParsed = new Double(0.0)
+		penwidthParsed = validPenwidthParsed
+		validPenwidthParsed.assertEquals(validPenwidthParsed)
+		
+		// set syntactically invalid values
+		invalidValue([penwidth = "2,5"],
+			"Cannot set node attribute 'penwidth' to '2,5'. The value '2,5' is not a syntactically correct double: For input string: \"2,5\"."
+		)
+		invalidValue([penwidth = "foo"],
+			"Cannot set node attribute 'penwidth' to 'foo'. The value 'foo' is not a syntactically correct double: For input string: \"foo\"."
+		)
+
+		// set syntactically correct, but semantically invalid values
+		invalidValue([penwidth = "-0.5"],
+			"Cannot set node attribute 'penwidth' to '-0.5'. The double value '-0.5' is not semantically correct: Value may not be smaller than 0.0."
+		)
 	}
 
 	@Test def node_pos() {
