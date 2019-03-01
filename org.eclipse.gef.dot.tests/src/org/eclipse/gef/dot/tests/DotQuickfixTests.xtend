@@ -323,6 +323,32 @@ class DotQuickfixTests {
 				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowhead="boxdot" ]}'''
 			)
 		)
+
+		// test none is the last arrow shape (unquoted)
+		'''graph {1--2[ arrowhead=boxnone ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead=box ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowhead=nonenone ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead=none ]}'''
+			)
+		)
+
+		// test none is the last arrow shape (quoted)
+		'''graph {1--2[ arrowhead="dotnone" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead="dot" ]}'''
+			)
+		)
+
+		'''graph {1--2[ arrowhead="nonenone" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead="none" ]}'''
+			)
+		)
 	}
 
 	@Test def edge_arrowtail() {
@@ -420,6 +446,32 @@ class DotQuickfixTests {
 		'''graph {1--2[ arrowtail="boxrnonedot" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
 			new Quickfix(
 				"Remove the 'r' modifier.", "Remove the invalid 'r' modifier.", '''graph {1--2[ arrowtail="boxnonedot" ]}'''
+			)
+		)
+		
+		// test none is the last arrow shape (unquoted)
+		'''digraph {1->2[ arrowtail=boxnone ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail=box ]}'''
+			)
+		)
+
+		'''digraph {1->2[ arrowtail=nonenone ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail=none ]}'''
+			)
+		)
+
+		// test none is the last arrow shape (quoted)
+		'''digraph {1->2[ arrowtail="dotnone" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail="dot" ]}'''
+			)
+		)
+
+		'''digraph {1->2[ arrowtail="nonenone" ]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
+			new Quickfix(
+				"Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''digraph {1->2[ arrowtail="none" ]}'''
 			)
 		)
 	}

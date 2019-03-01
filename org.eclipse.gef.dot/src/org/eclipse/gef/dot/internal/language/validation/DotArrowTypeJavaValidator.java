@@ -52,6 +52,12 @@ public class DotArrowTypeJavaValidator extends
 	public static final String INVALID_ARROW_SHAPE_MODIFIER = "invalid_arrow_shape_modifier";
 
 	/**
+	 * Issue code for an invalid arrow shape (none should not be the last arrow
+	 * shape).
+	 */
+	public static final String INVALID_ARROW_SHAPE_NONE_IS_THE_LAST = "invalid_arrow_shape_none_is_the_last";
+
+	/**
 	 * Checks that the open modifier is not used in combination with illegal
 	 * primitive shapes.
 	 * 
@@ -123,8 +129,10 @@ public class DotArrowTypeJavaValidator extends
 					.get(numberOfArrowShapes - 1);
 			if (lastShape instanceof ArrowShape && ((ArrowShape) lastShape)
 					.getShape() == PrimitiveShape.NONE) {
-				warning("The shape '" + PrimitiveShape.NONE
-						+ "' may not be the last shape.", lastShape,
+				reportRangeBasedWarning(INVALID_ARROW_SHAPE_NONE_IS_THE_LAST,
+						"The shape '" + PrimitiveShape.NONE
+								+ "' may not be the last shape.",
+						lastShape,
 						ArrowtypePackage.Literals.ARROW_SHAPE__SHAPE);
 			}
 		}

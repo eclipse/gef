@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedShape;
+import org.eclipse.gef.dot.internal.language.arrowtype.PrimitiveShape;
 import org.eclipse.gef.dot.internal.language.clustermode.ClusterMode;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
@@ -232,7 +233,7 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	private void fixArrowType(Issue issue, String suffix,
 			IssueResolutionAcceptor acceptor) {
 		String[] issueData = issue.getData();
-		if (issueData == null || issueData.length < 2) {
+		if (issueData == null || issueData.length < 1) {
 			return;
 		}
 		String issueCode = issueData[0];
@@ -243,6 +244,10 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			break;
 		case DotArrowTypeJavaValidator.INVALID_ARROW_SHAPE_MODIFIER:
 			provideQuickfixesInvalidArrowShapeModifier(issue, suffix, acceptor);
+			break;
+		case DotArrowTypeJavaValidator.INVALID_ARROW_SHAPE_NONE_IS_THE_LAST:
+			provideQuickfixesInvalidArrowShapeNoneIsTheLast(issue, suffix,
+					acceptor);
 			break;
 		default:
 			return;
@@ -278,6 +283,27 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 						String currentValue = value.toValue();
 						String validValue = new StringBuilder(currentValue)
 								.deleteCharAt(modifierIndex).toString();
+						ID validValueAsID = ID.fromValue(validValue, type);
+						attribute.setValue(validValueAsID);
+					}
+				});
+	}
+
+	private void provideQuickfixesInvalidArrowShapeNoneIsTheLast(Issue issue,
+			String suffix, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Remove the 'none' arrow shape.", //$NON-NLS-1$
+				"Remove the last 'none' arrow shape.", //$NON-NLS-1$
+				DELETE_IMAGE, new ISemanticModification() {
+					@Override
+					public void apply(EObject element,
+							IModificationContext context) {
+						Attribute attribute = (Attribute) element;
+						ID value = attribute.getValue();
+						Type type = value.getType();
+						String currentValue = value.toValue();
+						String validValue = currentValue.substring(0,
+								currentValue.lastIndexOf(
+										PrimitiveShape.NONE.getName()));
 						ID validValueAsID = ID.fromValue(validValue, type);
 						attribute.setValue(validValueAsID);
 					}
