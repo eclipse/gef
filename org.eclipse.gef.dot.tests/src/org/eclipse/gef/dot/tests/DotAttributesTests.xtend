@@ -27,6 +27,8 @@ import org.eclipse.gef.dot.internal.language.dir.DirType
 import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.escstring.EscstringFactory
 import org.eclipse.gef.dot.internal.language.escstring.Justification
+import org.eclipse.gef.dot.internal.language.fontname.FontnameFactory
+import org.eclipse.gef.dot.internal.language.fontname.PostScriptFontAlias
 import org.eclipse.gef.dot.internal.language.layout.Layout
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir
@@ -69,6 +71,7 @@ class DotAttributesTests {
 	val extension ColorFactory = ColorFactory.eINSTANCE
 	val extension ColorlistFactory = ColorlistFactory.eINSTANCE
 	val extension EscstringFactory = EscstringFactory.eINSTANCE
+	val extension FontnameFactory = FontnameFactory.eINSTANCE
 	val extension PointFactory = PointFactory.eINSTANCE
 	val extension PortposFactory = PortposFactory.eINSTANCE
 	val extension RectFactory = RectFactory.eINSTANCE
@@ -512,11 +515,31 @@ class DotAttributesTests {
 		// test getters if no explicit value is set
 		fontnameRaw.assertNull
 		fontname.assertNull
+		fontnameParsed.assertNull
 		
-		// set valid string values
-		val validEdgeFontname = "Times New Roman"
-		fontname = validEdgeFontname
-		validEdgeFontname.assertEquals(fontname)
+		val validPostScriptParsed = createPostScriptFontName => [ alias = PostScriptFontAlias.TIMES_ROMAN]
+		val validPostScriptString = "Times-Roman"
+		
+		//String setter
+		fontname = validPostScriptString
+		validPostScriptString.assertEquals(fontname)
+		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
+		//Parsed setter
+		fontnameParsed = validPostScriptParsed
+		validPostScriptString.assertEquals(fontname)
+		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
+		
+		val validPangoParsed = createPangoFontName => [ families += "Times"]
+		val validPangoString = "Times,"
+		
+		//String setter
+		fontname = validPangoString
+		validPangoString.assertEquals(fontname)
+		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
+		//Parsed setter
+		fontnameParsed = validPangoParsed
+		validPangoString.assertEquals(fontname)
+		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
 	}
 
 	@Test def edge_fontsize() {
@@ -761,11 +784,31 @@ class DotAttributesTests {
 		// test getters if no explicit value is set
 		labelfontnameRaw.assertNull
 		labelfontname.assertNull
+		labelfontnameParsed.assertNull
 		
-		// set valid string values
-		val validEdgeLabelfontname = "Times New Roman"
-		labelfontname = validEdgeLabelfontname
-		validEdgeLabelfontname.assertEquals(labelfontname)
+		val validPostScriptParsed = createPostScriptFontName => [ alias = PostScriptFontAlias.TIMES_ROMAN]
+		val validPostScriptString = "Times-Roman"
+		
+		//String setter
+		labelfontname = validPostScriptString
+		validPostScriptString.assertEquals(labelfontname)
+		EcoreUtil.equals(validPostScriptParsed, labelfontnameParsed).assertTrue
+		//Parsed setter
+		labelfontnameParsed = validPostScriptParsed
+		validPostScriptString.assertEquals(labelfontname)
+		EcoreUtil.equals(validPostScriptParsed, labelfontnameParsed).assertTrue
+		
+		val validPangoParsed = createPangoFontName => [ families += "Times"]
+		val validPangoString = "Times,"
+		
+		//String setter
+		labelfontname = validPangoString
+		validPangoString.assertEquals(labelfontname)
+		EcoreUtil.equals(validPangoParsed, labelfontnameParsed).assertTrue
+		//Parsed setter
+		labelfontnameParsed = validPangoParsed
+		validPangoString.assertEquals(labelfontname)
+		EcoreUtil.equals(validPangoParsed, labelfontnameParsed).assertTrue
 	}
 
 	@Test def edge_labelfontsize() {
@@ -1601,11 +1644,31 @@ class DotAttributesTests {
 		// test getters if no explicit value is set
 		fontnameRaw.assertNull
 		fontname.assertNull
+		fontnameParsed.assertNull
 		
-		// set valid string values
-		val validGraphFontname = "Times New Roman"
-		fontname = validGraphFontname
-		validGraphFontname.assertEquals(fontname)
+		val validPostScriptParsed = createPostScriptFontName => [ alias = PostScriptFontAlias.TIMES_ROMAN]
+		val validPostScriptString = "Times-Roman"
+		
+		//String setter
+		fontname = validPostScriptString
+		validPostScriptString.assertEquals(fontname)
+		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
+		//Parsed setter
+		fontnameParsed = validPostScriptParsed
+		validPostScriptString.assertEquals(fontname)
+		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
+		
+		val validPangoParsed = createPangoFontName => [ families += "Times"]
+		val validPangoString = "Times,"
+		
+		//String setter
+		fontname = validPangoString
+		validPangoString.assertEquals(fontname)
+		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
+		//Parsed setter
+		fontnameParsed = validPangoParsed
+		validPangoString.assertEquals(fontname)
+		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
 	}
 
 	@Test def graph_fontsize() {
@@ -2644,11 +2707,31 @@ class DotAttributesTests {
 		// test getters if no explicit value is set
 		fontnameRaw.assertNull
 		fontname.assertNull
+		fontnameParsed.assertNull
 		
-		// set valid string values
-		val validNodeFontname = "Times New Roman"
-		fontname = validNodeFontname
-		validNodeFontname.assertEquals(fontname)
+		val validPostScriptParsed = createPostScriptFontName => [ alias = PostScriptFontAlias.TIMES_ROMAN]
+		val validPostScriptString = "Times-Roman"
+		
+		//String setter
+		fontname = validPostScriptString
+		validPostScriptString.assertEquals(fontname)
+		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
+		//Parsed setter
+		fontnameParsed = validPostScriptParsed
+		validPostScriptString.assertEquals(fontname)
+		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
+		
+		val validPangoParsed = createPangoFontName => [ families += "Times"]
+		val validPangoString = "Times,"
+		
+		//String setter
+		fontname = validPangoString
+		validPangoString.assertEquals(fontname)
+		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
+		//Parsed setter
+		fontnameParsed = validPangoParsed
+		validPangoString.assertEquals(fontname)
+		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
 	}
 
 	@Test def node_fontsize() {
