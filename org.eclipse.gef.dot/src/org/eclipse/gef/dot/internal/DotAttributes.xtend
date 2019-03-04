@@ -30,6 +30,7 @@ import org.eclipse.gef.dot.internal.language.DotArrowTypeStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotColorListStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotColorStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotEscStringStandaloneSetup
+import org.eclipse.gef.dot.internal.language.DotFontNameStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotPointStandaloneSetup
 import org.eclipse.gef.dot.internal.language.DotPortPosStandaloneSetup
@@ -52,6 +53,7 @@ import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.gef.dot.internal.language.dot.Subgraph
 import org.eclipse.gef.dot.internal.language.escstring.EscString
+import org.eclipse.gef.dot.internal.language.fontname.FontName
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
 import org.eclipse.gef.dot.internal.language.layout.Layout
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode
@@ -442,6 +444,7 @@ class DotAttributes {
 				}else
 					Collections.emptyList
 			case FONTCOLOR__GCNE: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case FONTNAME__GCNE: validateAttributeRawValue(FONTNAME_PARSER, null, attributeContext, attributeName, attributeValue)
 			case FONTSIZE__GCNE: validateAttributeRawValue(DOUBLE_PARSER, FONTSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case FORCELABELS__G: validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FORCELABELS__G, attributeValue)
 			case HEAD_LP__E: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -456,8 +459,9 @@ class DotAttributes {
 				else
 					Collections.emptyList
 			case LABELFONTCOLOR__E: validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case LABELTOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LABELFONTNAME__E: validateAttributeRawValue(FONTNAME_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LABELFONTSIZE__E: validateAttributeRawValue(DOUBLE_PARSER, FONTSIZE_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case LABELTOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LP__GCE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case NODESEP__G: validateAttributeRawValue(DOUBLE_PARSER, NODESEP_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -1137,6 +1141,18 @@ class DotAttributes {
 	static val ESCSTRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
 		DotEscStringJavaValidator)
 
+	static val Injector fontNameInjector = new DotFontNameStandaloneSetup().createInjectorAndDoEMFRegistration
+
+	/**
+	 * The parser for fontname attribute values.
+	 */
+	static val FONTNAME_PARSER = new EObjectParser<FontName>(fontNameInjector)
+
+	/**
+	 * The serializer for fontname attribute values.
+	 */
+	static val FONTNAME_SERIALIZER = new EObjectSerializer<FontName>(fontNameInjector)
+
 	static val Injector rectInjector = new DotRectStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
@@ -1474,7 +1490,7 @@ class DotAttributes {
 	@DotAttribute(parsedType=Color)
 	public static val FONTCOLOR__GCNE = "fontcolor"
 	
-	@DotAttribute(parsedType=String)
+	@DotAttribute(parsedType=FontName)
 	public static val FONTNAME__GCNE = "fontname"
 	
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
@@ -1507,7 +1523,7 @@ class DotAttributes {
 	@DotAttribute(parsedType=Color)
 	public static val LABELFONTCOLOR__E = "labelfontcolor"
 	
-	@DotAttribute(parsedType=String)
+	@DotAttribute(parsedType=FontName)
 	public static val LABELFONTNAME__E = "labelfontname"
 	
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
