@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 itemis AG and others.
+ * Copyright (c) 2009, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -57,10 +57,17 @@ class DotExportTests {
 	}
 
 	private def assertExportedTo(Graph graph, String expectedFileName) {
-		val expected = expectedFileName.content
+		val expected = expectedFileName.content.removeMultiLineComments
 		
 		graph.exportDot.assertResult(expected)
 		graph.exportDotToFile.assertResult(expected)
+	}
+	
+	private def removeMultiLineComments(String text) {
+		// Regex taken from https://blog.ostermiller.org/find-comment
+		text.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","").
+		// Remove leading white spaces 
+		replaceAll("^\\s+", "")
 	}
 
 	private def assertResult(String actual, String expected) {
