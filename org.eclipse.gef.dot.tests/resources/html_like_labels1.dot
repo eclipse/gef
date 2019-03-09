@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,9 +13,9 @@
 
 
 // Sample graph from http://www.graphviz.org/doc/info/shapes.html
-digraph structs { 
-	node [shape=plaintext] 
-	
+digraph structs {
+	node [shape=plaintext]
+
 	struct1 [label=
 		<
 			<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
@@ -26,8 +26,8 @@ digraph structs {
 				</TR>
 			</TABLE>
 		>
-	]; 
-	
+	];
+
 	struct2 [label=
 		<
 			<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
@@ -37,10 +37,10 @@ digraph structs {
 				</TR>
 			</TABLE>
 		>
-	]; 
-	
+	];
+
 	struct3 [label=
-		< 
+		<
 			<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
 				<TR>
 					<TD ROWSPAN="3">hello<BR/>world</TD>
@@ -58,8 +58,8 @@ digraph structs {
 				</TR>
 			</TABLE>
 		>
-	]; 
-	
+	];
+
 	struct1:f1 -> struct2:f0;
 	struct1:f2 -> struct3:here;
 }
