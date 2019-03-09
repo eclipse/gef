@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
  * @author zgerritprigge
  *
  */
-public class ConvertingValidationMessageAcceptor
+public class DotSubgrammarValidationMessageAcceptor
 		implements ValidationMessageAcceptor {
 
 	private final Attribute attribute;
@@ -54,7 +54,7 @@ public class ConvertingValidationMessageAcceptor
 	 * @param internalOffset
 	 *            Offset from begin of feature
 	 */
-	public ConvertingValidationMessageAcceptor(Attribute attribute,
+	public DotSubgrammarValidationMessageAcceptor(Attribute attribute,
 			EStructuralFeature hostingFeature, String userReadableIdentifier,
 			ValidationMessageAcceptor hostMessageAcceptor, int internalOffset) {
 
