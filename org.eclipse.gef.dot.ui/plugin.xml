@@ -300,4 +300,15 @@
             restorable="true">
         </view>
     </extension>
+    <extension
+        point="org.eclipse.ui.perspectiveExtensions">
+        <!-- Add Show In -> DOT Graph View Context Menu to the Project Explorer -->
+        <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
+            <showInPart id="org.eclipse.gef.dot.internal.ui.DotGraphView"/>
+        </perspectiveExtension>
+        <!-- Add Show In -> DOT Graph View Context Menu to the Package Explorer -->
+        <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+            <showInPart id="org.eclipse.gef.dot.internal.ui.DotGraphView"/>
+        </perspectiveExtension>
+    </extension>
 </plugin>

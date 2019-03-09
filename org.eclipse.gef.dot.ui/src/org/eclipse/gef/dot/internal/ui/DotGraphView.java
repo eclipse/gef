@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -66,6 +66,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -705,8 +706,16 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	@Override
 	public boolean show(ShowInContext context) {
+		/**
+		 * The show in context for an editor is typically its input element. For
+		 * a view, the context is typically its selection. Both a selection and
+		 * an input element are provided in a ShowInContext to give the target
+		 * flexibility in determining how to show the source.
+		 */
 		Object input = context.getInput();
+		ISelection selection = context.getSelection();
 
+		// the show-in action is coming from an editor (e.g. DOT Editor)
 		if (input instanceof File) {
 			File dotFile = (File) input;
 			return updateGraph(dotFile);
@@ -714,6 +723,17 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			FileEditorInput fileEditorInput = (FileEditorInput) input;
 			IFile dotFile = fileEditorInput.getFile();
 			return updateGraph(dotFile);
+		}
+
+		// the show-in action is coming from a view (e.g. Package Explorer,
+		// Project Explorer, ...)
+		if (selection instanceof TreeSelection) {
+			TreeSelection treeSelection = (TreeSelection) selection;
+			Object firstElement = treeSelection.getFirstElement();
+
+			IFile dotFile = (IFile) org.eclipse.core.runtime.Platform
+					.getAdapterManager().getAdapter(firstElement, IFile.class);
+			updateGraph(dotFile);
 		}
 
 		return false;
