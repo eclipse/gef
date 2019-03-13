@@ -132,7 +132,7 @@
    <feature url="features/org.eclipse.gef.zest.fx.compatibility.equinox_5.0.2.qualifier.jar" id="org.eclipse.gef.zest.fx.compatibility.equinox" version="5.0.2.qualifier">
       <category name="Equinox Compatibility Patches (GEF FX, GEF MVC, GEF MVC.FX, GEF Zest.FX)"/>
    </feature>
-   <feature url="features/org.eclipse.fx.runtime.min.feature_2.4.0.201605100504.jar" id="org.eclipse.fx.runtime.min.feature" version="2.4.0.201605100504"/>
+   <feature url="features/org.eclipse.fx.runtime.min.feature_3.5.0.201902220600.jar" id="org.eclipse.fx.runtime.min.feature" version="3.5.0.201902220600"/>
    <bundle id="com.google.guava" />
    <bundle id="com.google.inject" />
    <bundle id="com.google.inject.assistedinject" />
