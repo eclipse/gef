@@ -7,7 +7,7 @@
 #
 # Contributors:
 #     Alexander Nyßen (itemis AG) - initial API and implementation
-#     Matthias Wienand (itemis AG) - add OS, update target, & install GTK3
+#     Matthias Wienand (itemis AG) - formatting, update target
 ###############################################################################
 
 sudo: false
@@ -15,18 +15,18 @@ sudo: false
 language: java
 
 jdk:
-  - oraclejdk8
+- oraclejdk8
 
 cache:
   directories:
   - $HOME/.m2
 
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3
+- "export DISPLAY=:99.0"
+- "sh -e /etc/init.d/xvfb start"
+- sleep 3
 
 script:
 - cd org.eclipse.gef.releng
 # skip wikidoc generation, which does not affect build result, but generate javadoc and ensure test failures are respected.
-- mvn clean verify -Dmaven.test.failure.ignore=false -Dwikidoc.skip=true -PNEON.target
+- mvn clean verify -Dmaven.test.failure.ignore=false -Dwikidoc.skip=true -P2019-03.target
