@@ -4,7 +4,7 @@ location "http://download.eclipse.org/efxclipse/runtime-released/3.5.0/site/" {
 	org.eclipse.fx.runtime.min.feature.feature.group
 }
 
-location "http://download.eclipse.org/releases/2019-03" {
+location "http://download.eclipse.org/releases/photon" {
 	org.eclipse.sdk.ide
 	org.eclipse.emf.mwe2.runtime.sdk.feature.group
 	org.eclipse.xtext.sdk.feature.group
