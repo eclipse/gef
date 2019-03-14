@@ -22,6 +22,7 @@ import org.eclipse.gef.mvc.fx.handlers.IOnPinchSpreadHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
+import javafx.beans.binding.ObjectExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -143,7 +144,8 @@ public class PinchSpreadGesture extends AbstractGesture {
 							getHandlerResolver().resolve(
 									PinchSpreadGesture.this,
 									eventTarget instanceof Node
-											? (Node) eventTarget : null,
+											? (Node) eventTarget
+											: null,
 									activeViewer, ON_PINCH_SPREAD_POLICY_KEY));
 
 					// send event to the policies
@@ -171,6 +173,22 @@ public class PinchSpreadGesture extends AbstractGesture {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+
+		ChangeListener<? super Scene> sceneListener = (exp, oldScene,
+				newScene) -> {
+			if (oldScene != null) {
+				// Check that no other viewer still uses that scene before
+				// unhooking it
+				if (getDomain().getViewers().values().stream()
+						.noneMatch(v -> v.getCanvas().getScene() == oldScene)) {
+					unhookScene(oldScene);
+				}
+			}
+			if (newScene != null) {
+				hookScene(newScene);
+			}
+		};
+
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
 			ChangeListener<Boolean> viewerFocusChangeListener = createFocusChangeListener(
@@ -179,25 +197,19 @@ public class PinchSpreadGesture extends AbstractGesture {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
-			// check if we already registered zoom listeners at the viewer's
-			// scene (in case two viewer's share a single scene)
-			Scene scene = viewer.getCanvas().getScene();
-			if (zoomFilters.containsKey(scene)) {
-				// we are already listening for events of this scene
-				continue;
+			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
+					.sceneProperty();
+			sceneProperty.addListener(sceneListener);
+			if (sceneProperty.get() != null) {
+				sceneListener.changed(sceneProperty, null, sceneProperty.get());
 			}
-
-			// register zoom filter
-			EventHandler<ZoomEvent> zoomFilter = createZoomFilter(scene);
-			scene.addEventFilter(ZoomEvent.ANY, zoomFilter);
-			zoomFilters.put(scene, zoomFilter);
 		}
 	}
 
 	@Override
 	protected void doDeactivate() {
 		for (Scene scene : new ArrayList<>(zoomFilters.keySet())) {
-			scene.removeEventFilter(ZoomEvent.ANY, zoomFilters.remove(scene));
+			unhookScene(scene);
 		}
 		for (final IViewer viewer : new ArrayList<>(
 				viewerFocusChangeListeners.keySet())) {
@@ -212,5 +224,23 @@ public class PinchSpreadGesture extends AbstractGesture {
 	public List<? extends IOnPinchSpreadHandler> getActiveHandlers(
 			IViewer viewer) {
 		return (List<IOnPinchSpreadHandler>) super.getActiveHandlers(viewer);
+	}
+
+	private void hookScene(Scene scene) {
+		// check if we already registered zoom listeners at the viewer's
+		// scene (in case two viewer's share a single scene)
+		if (zoomFilters.containsKey(scene)) {
+			// we are already listening for events of this scene
+			return;
+		}
+
+		// register zoom filter
+		EventHandler<ZoomEvent> zoomFilter = createZoomFilter(scene);
+		scene.addEventFilter(ZoomEvent.ANY, zoomFilter);
+		zoomFilters.put(scene, zoomFilter);
+	}
+
+	private void unhookScene(Scene scene) {
+		scene.removeEventFilter(ZoomEvent.ANY, zoomFilters.remove(scene));
 	}
 }

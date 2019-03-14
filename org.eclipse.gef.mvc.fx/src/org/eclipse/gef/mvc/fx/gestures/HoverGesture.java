@@ -22,6 +22,8 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.animation.Animation.Status;
 import javafx.animation.PauseTransition;
+import javafx.beans.binding.ObjectExpression;
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -30,8 +32,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 /**
- * The {@link HoverGesture} is an {@link AbstractGesture} that handles mouse hover
- * changes.
+ * The {@link HoverGesture} is an {@link AbstractGesture} that handles mouse
+ * hover changes.
  *
  * @author mwienand
  *
@@ -104,14 +106,30 @@ public class HoverGesture extends AbstractGesture {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+
+		ChangeListener<? super Scene> sceneListener = (exp, oldScene,
+				newScene) -> {
+			if (oldScene != null) {
+				// Check that no other viewer still uses that scene before
+				// unhooking it
+				if (getDomain().getViewers().values().stream()
+						.noneMatch(v -> v.getCanvas().getScene() == oldScene)) {
+					unhookScene(oldScene);
+				}
+			}
+			if (newScene != null) {
+				hookScene(newScene);
+			}
+		};
+
 		for (IViewer viewer : getDomain().getViewers().values()) {
 			// XXX: Filter is only registered once per scene. The IViewer is
 			// determined for each input event individually.
-			Scene scene = viewer.getCanvas().getScene();
-			if (!hoverFilters.containsKey(scene)) {
-				EventHandler<MouseEvent> hoverFilter = createHoverFilter();
-				scene.addEventFilter(MouseEvent.ANY, hoverFilter);
-				hoverFilters.put(scene, hoverFilter);
+			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
+					.sceneProperty();
+			sceneProperty.addListener(sceneListener);
+			if (sceneProperty.get() != null) {
+				sceneListener.changed(sceneProperty, null, sceneProperty.get());
 			}
 		}
 	}
@@ -120,7 +138,7 @@ public class HoverGesture extends AbstractGesture {
 	protected void doDeactivate() {
 		hoverIntentDelay.stop();
 		for (Scene scene : hoverFilters.keySet()) {
-			scene.removeEventFilter(MouseEvent.ANY, hoverFilters.remove(scene));
+			unhookScene(scene);
 		}
 		super.doDeactivate();
 	}
@@ -145,6 +163,14 @@ public class HoverGesture extends AbstractGesture {
 	 */
 	protected double getHoverIntentMouseMoveThreshold() {
 		return HOVER_INTENT_MOUSE_MOVE_THRESHOLD;
+	}
+
+	private void hookScene(Scene scene) {
+		if (!hoverFilters.containsKey(scene)) {
+			EventHandler<MouseEvent> hoverFilter = createHoverFilter();
+			scene.addEventFilter(MouseEvent.ANY, hoverFilter);
+			hoverFilters.put(scene, hoverFilter);
+		}
 	}
 
 	/**
@@ -218,6 +244,10 @@ public class HoverGesture extends AbstractGesture {
 		if (viewer != null) {
 			notifyHoverIntent(viewer, hoverIntent);
 		}
+	}
+
+	private void unhookScene(Scene scene) {
+		scene.removeEventFilter(MouseEvent.ANY, hoverFilters.remove(scene));
 	}
 
 	/**

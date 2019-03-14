@@ -22,6 +22,7 @@ import org.eclipse.gef.mvc.fx.handlers.IOnRotateHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
+import javafx.beans.binding.ObjectExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -122,16 +123,17 @@ public class RotateGesture extends AbstractGesture {
 						// underlying gesture
 						// finish event may not properly occur in all cases; we
 						// may continue to use the still open transaction
-						getDomain().openExecutionTransaction(RotateGesture.this);
+						getDomain()
+								.openExecutionTransaction(RotateGesture.this);
 					}
 
 					// determine target policies
 					EventTarget eventTarget = event.getTarget();
 					setActiveHandlers(viewer,
-							getHandlerResolver().resolve(
-									RotateGesture.this,
+							getHandlerResolver().resolve(RotateGesture.this,
 									eventTarget instanceof Node
-											? (Node) eventTarget : null,
+											? (Node) eventTarget
+											: null,
 									viewer, ON_ROTATE_POLICY_KEY));
 
 					// send event to the policies
@@ -153,6 +155,22 @@ public class RotateGesture extends AbstractGesture {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+
+		ChangeListener<? super Scene> sceneListener = (exp, oldScene,
+				newScene) -> {
+			if (oldScene != null) {
+				// Check that no other viewer still uses that scene before
+				// unhooking it
+				if (getDomain().getViewers().values().stream()
+						.noneMatch(v -> v.getCanvas().getScene() == oldScene)) {
+					unhookScene(oldScene);
+				}
+			}
+			if (newScene != null) {
+				hookScene(newScene);
+			}
+		};
+
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
 			ChangeListener<Boolean> viewerFocusChangeListener = createFocusChangeListener(
@@ -161,26 +179,19 @@ public class RotateGesture extends AbstractGesture {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
-			// check if we already registered zoom listeners at the viewer's
-			// scene (in case two viewer's share a single scene)
-			Scene scene = viewer.getCanvas().getScene();
-			if (rotateFilters.containsKey(scene)) {
-				// we are already listening for events of this scene
-				continue;
+			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
+					.sceneProperty();
+			sceneProperty.addListener(sceneListener);
+			if (sceneProperty.get() != null) {
+				sceneListener.changed(sceneProperty, null, sceneProperty.get());
 			}
-
-			// register zoom filter
-			EventHandler<RotateEvent> rotateFilter = createRotateFilter(scene);
-			scene.addEventFilter(RotateEvent.ANY, rotateFilter);
-			rotateFilters.put(scene, rotateFilter);
 		}
 	}
 
 	@Override
 	protected void doDeactivate() {
 		for (Scene scene : new ArrayList<>(rotateFilters.keySet())) {
-			scene.removeEventFilter(RotateEvent.ANY,
-					rotateFilters.remove(scene));
+			unhookScene(scene);
 		}
 		for (final IViewer viewer : new ArrayList<>(
 				viewerFocusChangeListeners.keySet())) {
@@ -194,5 +205,23 @@ public class RotateGesture extends AbstractGesture {
 	@Override
 	public List<? extends IOnRotateHandler> getActiveHandlers(IViewer viewer) {
 		return (List<IOnRotateHandler>) super.getActiveHandlers(viewer);
+	}
+
+	private void hookScene(Scene scene) {
+		// check if we already registered zoom listeners at the viewer's
+		// scene (in case two viewer's share a single scene)
+		if (rotateFilters.containsKey(scene)) {
+			// we are already listening for events of this scene
+			return;
+		}
+
+		// register zoom filter
+		EventHandler<RotateEvent> rotateFilter = createRotateFilter(scene);
+		scene.addEventFilter(RotateEvent.ANY, rotateFilter);
+		rotateFilters.put(scene, rotateFilter);
+	}
+
+	private void unhookScene(Scene scene) {
+		scene.removeEventFilter(RotateEvent.ANY, rotateFilters.remove(scene));
 	}
 }

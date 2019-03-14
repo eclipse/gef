@@ -24,6 +24,7 @@ import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.animation.PauseTransition;
+import javafx.beans.binding.ObjectExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -34,8 +35,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.util.Duration;
 
 /**
- * The {@link ScrollGesture} is an {@link AbstractGesture} that handles mouse scroll
- * events.
+ * The {@link ScrollGesture} is an {@link AbstractGesture} that handles mouse
+ * scroll events.
  *
  * @author mwienand
  *
@@ -126,6 +127,7 @@ public class ScrollGesture extends AbstractGesture {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
 			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
@@ -142,12 +144,22 @@ public class ScrollGesture extends AbstractGesture {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
-			// register scroll filter
-			Scene scene = viewer.getCanvas().getScene();
-			EventHandler<ScrollEvent> scrollFilter = createScrollFilter(viewer);
-			scrollFilters.put(viewer, scrollFilter);
-			scrollFilterScenes.put(scrollFilter, scene);
-			scene.addEventFilter(ScrollEvent.SCROLL, scrollFilter);
+			ChangeListener<? super Scene> sceneListener = (exp, oldScene,
+					newScene) -> {
+				if (oldScene != null) {
+					unhookScene(viewer);
+				}
+				if (newScene != null) {
+					hookScene(newScene, viewer);
+				}
+			};
+
+			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
+					.sceneProperty();
+			sceneProperty.addListener(sceneListener);
+			if (sceneProperty.get() != null) {
+				sceneListener.changed(sceneProperty, null, sceneProperty.get());
+			}
 		}
 	}
 
@@ -159,9 +171,7 @@ public class ScrollGesture extends AbstractGesture {
 			if (finishDelayTransitions.containsKey(viewer)) {
 				finishDelayTransitions.remove(viewer).stop();
 			}
-			EventHandler<ScrollEvent> filter = scrollFilters.remove(viewer);
-			scrollFilterScenes.remove(filter)
-					.removeEventFilter(ScrollEvent.SCROLL, filter);
+			unhookScene(viewer);
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 		}
@@ -184,6 +194,14 @@ public class ScrollGesture extends AbstractGesture {
 	 */
 	protected long getFinishDelayMillis() {
 		return DEFAULT_FINISH_DELAY_MILLIS;
+	}
+
+	private void hookScene(Scene scene, IViewer viewer) {
+		// register scroll filter
+		EventHandler<ScrollEvent> scrollFilter = createScrollFilter(viewer);
+		scrollFilters.put(viewer, scrollFilter);
+		scrollFilterScenes.put(scrollFilter, scene);
+		scene.addEventFilter(ScrollEvent.SCROLL, scrollFilter);
 	}
 
 	/**
@@ -253,5 +271,11 @@ public class ScrollGesture extends AbstractGesture {
 		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {
 			policy.startScroll(event);
 		}
+	}
+
+	private void unhookScene(IViewer viewer) {
+		EventHandler<ScrollEvent> filter = scrollFilters.remove(viewer);
+		scrollFilterScenes.remove(filter).removeEventFilter(ScrollEvent.SCROLL,
+				filter);
 	}
 }
