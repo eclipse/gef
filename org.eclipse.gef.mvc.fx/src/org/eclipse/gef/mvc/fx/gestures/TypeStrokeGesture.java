@@ -24,6 +24,7 @@ import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
+import javafx.beans.binding.ObjectExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -34,7 +35,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link TypeStrokeGesture} is an {@link AbstractGesture} that handles keyboard input.
+ * The {@link TypeStrokeGesture} is an {@link AbstractGesture} that handles
+ * keyboard input.
  *
  * @author mwienand
  *
@@ -97,7 +99,8 @@ public class TypeStrokeGesture extends AbstractGesture {
 					clearActiveHandlers(activeViewer);
 					activeViewer = null;
 					// close execution transaction
-					getDomain().closeExecutionTransaction(TypeStrokeGesture.this);
+					getDomain()
+							.closeExecutionTransaction(TypeStrokeGesture.this);
 					// unset pressed keys
 					pressedKeys.clear();
 				}
@@ -106,160 +109,27 @@ public class TypeStrokeGesture extends AbstractGesture {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
-			// XXX: Input filters are only registered once per Scene. The
-			// IViewer is determined from the individual events.
-			Scene scene = viewer.getRootPart().getVisual().getScene();
-			if (pressedFilterMap.containsKey(scene)) {
-				continue;
+			ChangeListener<? super Scene> sceneListener = (exp, oldScene,
+					newScene) -> {
+				if (oldScene != null) {
+					// Check that no other viewer still uses that scene before
+					// unhooking it
+					if (getDomain().getViewers().values().stream().noneMatch(
+							v -> v.getCanvas().getScene() == oldScene)) {
+						unhookScene(oldScene);
+					}
+				}
+				if (newScene != null) {
+					hookScene(newScene, pressedKeys);
+				}
+			};
+
+			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
+					.sceneProperty();
+			sceneProperty.addListener(sceneListener);
+			if (sceneProperty.get() != null) {
+				sceneListener.changed(sceneProperty, null, sceneProperty.get());
 			}
-
-			// generate event handlers
-			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent event) {
-					boolean isInitialPress = false;
-					if (pressedKeys.isEmpty()) {
-						// determine viewer that contains the given target part
-						Node targetNode = null;
-						EventTarget target = event.getTarget();
-						if (target instanceof Node) {
-							targetNode = (Node) target;
-							activeViewer = PartUtils.retrieveViewer(getDomain(),
-									targetNode);
-						} else if (target instanceof Scene) {
-							// first focused viewer in that scene
-							for (IViewer v : getDomain().getViewers()
-									.values()) {
-								if (v.getRootPart().getVisual()
-										.getScene() == target) {
-									if (v.isViewerFocused()) {
-										activeViewer = v;
-										break;
-									}
-								}
-							}
-							if (activeViewer != null) {
-								targetNode = activeViewer.getRootPart()
-										.getVisual();
-							}
-						} else {
-							throw new IllegalStateException(
-									"Unsupported event target: " + target);
-						}
-
-						if (activeViewer == null) {
-							// no focused viewer could be found for the target
-							// scene
-							return;
-						}
-
-						// open execution transaction
-						getDomain().openExecutionTransaction(TypeStrokeGesture.this);
-						isInitialPress = true;
-
-						// determine target policies on first key press
-						setActiveHandlers(activeViewer,
-								getHandlerResolver().resolve(
-										TypeStrokeGesture.this, targetNode, activeViewer,
-										ON_STROKE_POLICY_KEY));
-					}
-
-					// store initially pressed key
-					pressedKeys.add(event.getCode());
-
-					// notify target policies
-					for (IOnStrokeHandler handler : getActiveHandlers(
-							activeViewer)) {
-						if (isInitialPress) {
-							handler.initialPress(event);
-						} else {
-							handler.press(event);
-						}
-					}
-				}
-			};
-			pressedFilterMap.put(scene, pressedFilter);
-
-			EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent event) {
-					boolean isFinalRelease = pressedKeys.size() == 1
-							&& pressedKeys.contains(event.getCode());
-
-					// notify target policies
-					for (IOnStrokeHandler policy : getActiveHandlers(
-							activeViewer)) {
-						if (isFinalRelease) {
-							policy.finalRelease(event);
-						} else {
-							policy.release(event);
-						}
-					}
-
-					// check if the last pressed key is released now
-					if (isFinalRelease) {
-						// clear active policies and close execution transaction
-						// only when the initially pressed key is released
-						clearActiveHandlers(activeViewer);
-						activeViewer = null;
-						getDomain().closeExecutionTransaction(TypeStrokeGesture.this);
-					}
-					pressedKeys.remove(event.getCode());
-				}
-			};
-			releasedFilterMap.put(scene, releasedFilter);
-
-			EventHandler<KeyEvent> typedFilter = new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent event) {
-					// System.out.println("typed " + event);
-					if (pressedKeys.isEmpty()) {
-						getDomain().openExecutionTransaction(TypeStrokeGesture.this);
-					}
-
-					// determine viewer that contains the given target part
-					EventTarget target = event.getTarget();
-					Node targetNode = null;
-					if (target instanceof Node) {
-						targetNode = (Node) target;
-					} else if (target instanceof Scene) {
-						// first focused viewer in that scene
-						for (IViewer v : getDomain().getViewers().values()) {
-							if (v.getRootPart().getVisual()
-									.getScene() == target) {
-								if (v.isViewerFocused()) {
-									targetNode = v.getRootPart().getVisual();
-									break;
-								}
-							}
-						}
-					} else {
-						throw new IllegalStateException(
-								"Unsupported event target: " + target);
-					}
-
-					IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
-							targetNode);
-					if (targetViewer != null) {
-						Collection<? extends IOnTypeHandler> policies = getHandlerResolver()
-								.resolve(TypeStrokeGesture.this, targetNode,
-										targetViewer, ON_TYPE_POLICY_KEY);
-						// active policies are unnecessary because TYPED is not a
-						// gesture, just one event at one point in time
-						for (IOnTypeHandler policy : policies) {
-							policy.type(event, pressedKeys);
-						}
-					}
-					if (pressedKeys.isEmpty()) {
-						getDomain().closeExecutionTransaction(TypeStrokeGesture.this);
-					}
-				}
-			};
-			typedFilterMap.put(scene, typedFilter);
-
-			scene.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
-			scene.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
-			scene.addEventFilter(KeyEvent.KEY_TYPED, typedFilter);
 		}
 	}
 
@@ -269,18 +139,7 @@ public class TypeStrokeGesture extends AbstractGesture {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 			Scene scene = viewer.getRootPart().getVisual().getScene();
-			if (pressedFilterMap.containsKey(scene)) {
-				scene.removeEventFilter(KeyEvent.KEY_PRESSED,
-						pressedFilterMap.remove(scene));
-			}
-			if (releasedFilterMap.containsKey(scene)) {
-				scene.removeEventFilter(KeyEvent.KEY_RELEASED,
-						releasedFilterMap.remove(scene));
-			}
-			if (typedFilterMap.containsKey(scene)) {
-				scene.removeEventFilter(KeyEvent.KEY_TYPED,
-						typedFilterMap.remove(scene));
-			}
+			unhookScene(scene);
 		}
 	}
 
@@ -288,5 +147,177 @@ public class TypeStrokeGesture extends AbstractGesture {
 	@Override
 	public List<? extends IOnStrokeHandler> getActiveHandlers(IViewer viewer) {
 		return (List<IOnStrokeHandler>) super.getActiveHandlers(viewer);
+	}
+
+	private void hookScene(Scene scene, Set<KeyCode> pressedKeys) {
+		// XXX: Input filters are only registered once per Scene. The
+		// IViewer is determined from the individual events.
+		if (pressedFilterMap.containsKey(scene)) {
+			return;
+		}
+
+		// generate event handlers
+		EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				boolean isInitialPress = false;
+				if (pressedKeys.isEmpty()) {
+					// determine viewer that contains the given target part
+					Node targetNode = null;
+					EventTarget target = event.getTarget();
+					if (target instanceof Node) {
+						targetNode = (Node) target;
+						activeViewer = PartUtils.retrieveViewer(getDomain(),
+								targetNode);
+					} else if (target instanceof Scene) {
+						// first focused viewer in that scene
+						for (IViewer v : getDomain().getViewers().values()) {
+							if (v.getRootPart().getVisual()
+									.getScene() == target) {
+								if (v.isViewerFocused()) {
+									activeViewer = v;
+									break;
+								}
+							}
+						}
+						if (activeViewer != null) {
+							targetNode = activeViewer.getRootPart().getVisual();
+						}
+					} else {
+						throw new IllegalStateException(
+								"Unsupported event target: " + target);
+					}
+
+					if (activeViewer == null) {
+						// no focused viewer could be found for the target
+						// scene
+						return;
+					}
+
+					// open execution transaction
+					getDomain()
+							.openExecutionTransaction(TypeStrokeGesture.this);
+					isInitialPress = true;
+
+					// determine target policies on first key press
+					setActiveHandlers(activeViewer,
+							getHandlerResolver().resolve(TypeStrokeGesture.this,
+									targetNode, activeViewer,
+									ON_STROKE_POLICY_KEY));
+				}
+
+				// store initially pressed key
+				pressedKeys.add(event.getCode());
+
+				// notify target policies
+				for (IOnStrokeHandler handler : getActiveHandlers(
+						activeViewer)) {
+					if (isInitialPress) {
+						handler.initialPress(event);
+					} else {
+						handler.press(event);
+					}
+				}
+			}
+		};
+		pressedFilterMap.put(scene, pressedFilter);
+
+		EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				boolean isFinalRelease = pressedKeys.size() == 1
+						&& pressedKeys.contains(event.getCode());
+
+				// notify target policies
+				for (IOnStrokeHandler policy : getActiveHandlers(
+						activeViewer)) {
+					if (isFinalRelease) {
+						policy.finalRelease(event);
+					} else {
+						policy.release(event);
+					}
+				}
+
+				// check if the last pressed key is released now
+				if (isFinalRelease) {
+					// clear active policies and close execution transaction
+					// only when the initially pressed key is released
+					clearActiveHandlers(activeViewer);
+					activeViewer = null;
+					getDomain()
+							.closeExecutionTransaction(TypeStrokeGesture.this);
+				}
+				pressedKeys.remove(event.getCode());
+			}
+		};
+		releasedFilterMap.put(scene, releasedFilter);
+
+		EventHandler<KeyEvent> typedFilter = new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				// System.out.println("typed " + event);
+				if (pressedKeys.isEmpty()) {
+					getDomain()
+							.openExecutionTransaction(TypeStrokeGesture.this);
+				}
+
+				// determine viewer that contains the given target part
+				EventTarget target = event.getTarget();
+				Node targetNode = null;
+				if (target instanceof Node) {
+					targetNode = (Node) target;
+				} else if (target instanceof Scene) {
+					// first focused viewer in that scene
+					for (IViewer v : getDomain().getViewers().values()) {
+						if (v.getRootPart().getVisual().getScene() == target) {
+							if (v.isViewerFocused()) {
+								targetNode = v.getRootPart().getVisual();
+								break;
+							}
+						}
+					}
+				} else {
+					throw new IllegalStateException(
+							"Unsupported event target: " + target);
+				}
+
+				IViewer targetViewer = PartUtils.retrieveViewer(getDomain(),
+						targetNode);
+				if (targetViewer != null) {
+					Collection<? extends IOnTypeHandler> policies = getHandlerResolver()
+							.resolve(TypeStrokeGesture.this, targetNode,
+									targetViewer, ON_TYPE_POLICY_KEY);
+					// active policies are unnecessary because TYPED is not a
+					// gesture, just one event at one point in time
+					for (IOnTypeHandler policy : policies) {
+						policy.type(event, pressedKeys);
+					}
+				}
+				if (pressedKeys.isEmpty()) {
+					getDomain()
+							.closeExecutionTransaction(TypeStrokeGesture.this);
+				}
+			}
+		};
+		typedFilterMap.put(scene, typedFilter);
+
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
+		scene.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
+		scene.addEventFilter(KeyEvent.KEY_TYPED, typedFilter);
+	}
+
+	private void unhookScene(Scene scene) {
+		if (pressedFilterMap.containsKey(scene)) {
+			scene.removeEventFilter(KeyEvent.KEY_PRESSED,
+					pressedFilterMap.remove(scene));
+		}
+		if (releasedFilterMap.containsKey(scene)) {
+			scene.removeEventFilter(KeyEvent.KEY_RELEASED,
+					releasedFilterMap.remove(scene));
+		}
+		if (typedFilterMap.containsKey(scene)) {
+			scene.removeEventFilter(KeyEvent.KEY_TYPED,
+					typedFilterMap.remove(scene));
+		}
 	}
 }
