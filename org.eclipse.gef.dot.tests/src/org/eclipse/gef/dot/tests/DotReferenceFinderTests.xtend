@@ -26,6 +26,7 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.search.ui.NewSearchUI
 import org.eclipse.search2.internal.ui.SearchView
+import org.eclipse.swt.widgets.Display
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
@@ -275,11 +276,16 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 
 	private def void waitForSearchJob() {
 		Job.jobManager.find(null).findFirst[name.startsWith("DOT References to")]?.join
+		waitForEventProcessing
 	}
 
 	// TODO: remove this workaround
-	def list(Function1<? super DotAst, ? extends EObject>... initial) {
+	private def list(Function1<? super DotAst, ? extends EObject>... initial) {
 		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
+	}
+	
+	private def void waitForEventProcessing() {
+		while(Display.^default.readAndDispatch) {}
 	}
 
 	override protected getEditorId() {
