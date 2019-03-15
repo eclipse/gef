@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,19 +13,15 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.util.Collections
 import java.util.List
-import java.util.Map
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.core.runtime.SubMonitor
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.jface.text.Position
 import org.eclipse.jface.text.TextSelection
-import org.eclipse.jface.text.source.Annotation
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.ui.editor.XtextEditor
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.occurrences.IOccurrenceComputer
 import org.junit.Test
@@ -146,19 +142,13 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 	}
 
 	private def verifyOccurrences(CharSequence content, int selectionOffset, List<Integer> expected) {
-		var XtextEditor editor = null
-		try {
-			editor = openEditor(DotTestUtils.createTestFile(content.toString))
-		} catch (Exception e) {
-			e.printStackTrace
-			fail(e.message)
-		}
-
+		val editor = openEditor(DotTestUtils.createTestFile(content.toString))
 		val selection = new TextSelection(selectionOffset, 1)
+
 		val annotationMap = editor.createAnnotationMap(selection, SubMonitor.convert(new NullProgressMonitor))
 		assertEquals("The number of the marked occurrences does not match: ", expected.size, annotationMap.size)
 		// sort the annotation map values ascending according to their offset
-		val sortedAnnotationPositions = sortAnnotationMap(annotationMap)
+		val sortedAnnotationPositions = annotationMap.values.sortWith[Position o1, Position o2|o1.offset - o2.offset]
 		var i = 0
 		for (Position position : sortedAnnotationPositions) {
 			assertEquals("The position offset does not match: ", expected.get(i), position.offset)
@@ -167,21 +157,15 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 		}
 	}
 
-	private def List<Position> sortAnnotationMap(Map<Annotation, Position> annotationMap) {
-		val List<Position> sortedAnnotationPositions = newArrayList(annotationMap.values)
-		Collections.sort(sortedAnnotationPositions, [Position o1, Position o2|o1.offset - o2.offset])
-		sortedAnnotationPositions
+	private def first(String text, String substring) {
+		text.indexOf(substring)
 	}
 
-	private def first(String text, String substring){
-		text.indexOf(substring)
-	}	
-
-	private def second(String text, String substring){
+	private def second(String text, String substring) {
 		text.indexOf(substring, text.first(substring) + 1)
 	}
 
-	private def third(String text, String substring){
+	private def third(String text, String substring) {
 		text.indexOf(substring, text.second(substring) + 1)
-	}	
+	}
 }
