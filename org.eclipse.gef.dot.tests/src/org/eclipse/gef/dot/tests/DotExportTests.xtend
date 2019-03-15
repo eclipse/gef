@@ -62,11 +62,11 @@ class DotExportTests {
 		graph.exportDot.assertResult(expected)
 		graph.exportDotToFile.assertResult(expected)
 	}
-	
+
 	private def removeMultiLineComments(String text) {
 		// Regex taken from https://blog.ostermiller.org/find-comment
 		text.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","").
-		// Remove leading white spaces 
+		// Remove leading white spaces
 		replaceAll("^\\s+", "")
 	}
 

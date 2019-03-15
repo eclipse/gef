@@ -47,11 +47,11 @@ final class DotTestUtils {
 	private new() {
 		/* Enforce non-instantiability */
 	}
-	
+
 	def static content(String fileName) {
 		fileName.file.read
 	}
-	
+
 	def static file(String fileName) {
 		new File("resources/" + fileName)
 	}
@@ -120,13 +120,13 @@ final class DotTestUtils {
 		val e3 = new Edge.Builder(n3, n4).attr([p1,p2|p1.style=p2], EdgeStyle.DASHED.toString).buildEdge
 		val e4 = new Edge.Builder(n3, n5).attr([p1,p2|p1.style=p2], EdgeStyle.DASHED.toString).buildEdge
 		val e5 = new Edge.Builder(n4, n5).attr([p1,p2|p1.style=p2], EdgeStyle.SOLID.toString).buildEdge
-		
+
 		graph.nodes(n1, n2, n3, n4, n5).edges(e1, e2, e3, e4, e5).build
 	}
 
 	def static getClusteredGraph() {
 		/*
-		 * digraph { 
+		 * digraph {
 		 * 	subgraph cluster1 { a; b; a -> b; }
 		 * 	subgraph cluster2 {
 		 * 		p; q; r; s; t;
@@ -144,7 +144,7 @@ final class DotTestUtils {
 			nodes(a, b).
 			edge(a, b).
 		build
-		
+
 		val cluster2 = new Node.Builder().buildNode
 		val p = new Node.Builder().attr([p1,p2|p1._setName(p2)], "p").buildNode
 		val q = new Node.Builder().attr([p1,p2|p1._setName(p2)], "q").buildNode
@@ -201,14 +201,14 @@ final class DotTestUtils {
 	def static getSimpleGraphWithAdditionalInformation() {
 		val graph = simpleGraph
 		graph.bb = "0,108,126,0"
-		
+
 		val nodes = graph.nodes
 		nodes.get(0) => [
 			label = "\\N"
 			height = "0.5"
 			pos = "63,18"
 			width = "0.75"
-		]		
+		]
 		nodes.get(1) => [
 			label = "\\N"
 			height = "0.5"
@@ -221,15 +221,15 @@ final class DotTestUtils {
 			pos = "99,90"
 			width = "0.75"
 		]
-		
+
 		val edges = graph.edges
 		edges.get(0).pos = "54.65,35.235 48.835,46.544 41.11,61.563 35.304,72.853"
 		edges.get(1).pos = "71.35,35.235 77.165,46.544 84.89,61.563 90.696,72.853"
-		
+
 		graph
 	}
 
-	/** 
+	/**
 	 * Enhances the graph with additional Dot Attributes such as
 	 * default Dot attributes values, position, width, height, bounding box
 	 * produced by the Dot Executable.
@@ -237,7 +237,7 @@ final class DotTestUtils {
 	def static getSimpleDiGraphWithAdditionalInformation() {
 		val graph = simpleDiGraph
 		graph.bb = "0,180,54,0"
-		
+
 		val nodes = graph.nodes
 		nodes.get(0) => [
 			label = "\\N"
@@ -257,15 +257,15 @@ final class DotTestUtils {
 			pos = "27,162"
 			width = "0.75"
 		]
-		
+
 		val edges = graph.edges
 		edges.get(0).pos = "e,27,71.896 27,36.303 27,44.017 27,53.288 27,61.888"
 		edges.get(1).pos = "e,27,143.9 27,108.3 27,116.02 27,125.29 27,133.89"
-		
+
 		graph
 	}
 
-	/** 
+	/**
 	 * Enhances the graph with additional Dot Attributes such as
 	 * default Dot attributes values, position, width, height, bounding box
 	 * produced by the Dot Executable.
@@ -273,7 +273,7 @@ final class DotTestUtils {
 	def static getLabeledGraphWithAdditionalInformation() {
 		val graph = labeledGraph
 		graph.bb = "0,196,126,0"
-		
+
 		val nodes = graph.nodes
 		nodes.get(0) => [
 			height = "0.5"
@@ -289,7 +289,7 @@ final class DotTestUtils {
 			label = "\\N"
 			height = "0.5"
 			pos = "99,105"
-			width = "0.75"	
+			width = "0.75"
 		]
 		nodes.get(3) => [
 			label = "\\N"
@@ -297,7 +297,7 @@ final class DotTestUtils {
 			pos = "99,178"
 			width = "0.75"
 		]
-		
+
 		val edges = graph.edges
 		edges.get(0) => [
 			lp = "50,61.5"
@@ -310,7 +310,7 @@ final class DotTestUtils {
 		edges.get(2) => [
 			pos = "e,99,159.97 99,123.19 99,131.21 99,140.95 99,149.93"
 		]
-		
+
 		graph
 	}
 
@@ -325,7 +325,7 @@ final class DotTestUtils {
 			bb = "0,324,81,0"
 			layout = "dot"
 		]
-		
+
 		val nodes = graph.nodes
 		nodes.get(0) => [
 			label = "\\N"
@@ -357,7 +357,7 @@ final class DotTestUtils {
 			pos = "54,306"
 			width = "0.75"
 		]
-		
+
 		val edges = graph.edges
 		edges.get(0) => [
 			pos = "e,54,71.896 54,36.303 54,44.017 54,53.288 54,61.888"
@@ -379,11 +379,11 @@ final class DotTestUtils {
 			pos = "e,47.46,288.04 33.399,251.59 36.514,259.66 40.334,269.57 43.835,278.65"
 			style = "solid"
 		]
-		
+
 		graph
 	}
 
-	/** 
+	/**
 	 * Enhances the graph with additional Dot Attributes (such as default Dot
 	 * attributes values, position, width, height, bounding box) produced by the
 	 * Dot Executable.
@@ -412,7 +412,7 @@ final class DotTestUtils {
 
 		val cluster1Edges = cluster1.edges
 		cluster1Edges.get(0).pos = "e,63,447.9 63,412.3 63,420.02 63,429.29 63,437.89"
-		
+
 		val cluster2 = clusters.get(1).nestedGraph
 		cluster2.bb = "8,348,98,8"
 
@@ -458,7 +458,7 @@ final class DotTestUtils {
 		val edges = graph.edges
 		edges.get(0).pos = "e,75.748,122.3 75.748,449.7 83.559,439.59 93.148,425.71 99,412 114.88,374.8 118,363.45 118,323 118,249 118,249 118,249 118,208.55 114.88,197.2 99,160 94.611,149.72 88.12,139.34 81.853,130.53"
 		edges.get(1).pos = "e,63,375.9 63,340.3 63,348.02 63,357.29 63,365.89"
-		
+
 		graph
 	}
 
@@ -489,7 +489,7 @@ final class DotTestUtils {
 		"ylorbr3", "ylorbr4", "ylorbr5", "ylorbr6", "ylorbr7", "ylorbr8", "ylorbr9", "ylorrd3", "ylorrd4", "ylorrd5",
 		"ylorrd6", "ylorrd7", "ylorrd8", "ylorrd9"]
 
-	/** 
+	/**
 	 * The implementation of the following helper methods is mainly taken from
 	 * the {@link IResourcesSetupUtil} java class.
 	 */

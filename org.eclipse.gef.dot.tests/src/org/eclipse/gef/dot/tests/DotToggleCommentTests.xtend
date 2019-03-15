@@ -92,7 +92,7 @@ class DotToggleCommentTests extends AbstractEditorTest {
 		dslFile.openEditor.select(text).
 		// when
 		toggleComment.
-		// then		
+		// then
 		dslFileHasContent(newContent)
 	}
 

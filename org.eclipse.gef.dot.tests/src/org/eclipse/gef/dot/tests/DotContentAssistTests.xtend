@@ -268,7 +268,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
 			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos", 
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos",
 			"style", "taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowhead", '''
 			graph {
@@ -283,7 +283,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
 			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos", 
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos",
 			"style", "taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowtail", '''
 			graph {
@@ -911,7 +911,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				1--2[ headtooltip="line1\r" ]
 			}
-		''')		
+		''')
 	}
 
 	@Test def edge_label() {
@@ -970,7 +970,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 					labelfontcolor=#
 				]
 			}
-		''')		
+		''')
 		
 		// test local attribute values
 		'''
@@ -988,7 +988,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				]
 			}
 		''')
-	
+
 		// test local attribute values (case insensitive color scheme)
 		'''
 			digraph {
@@ -1351,7 +1351,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		''')
 	}
-	
+
 	@Test def edge_template() {
 		// test edge template in non-directed graphs
 		'''
@@ -1673,13 +1673,13 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 
 		// test local attribute value with global color scheme value
 		'''
-			graph { 
+			graph {
 				graph[colorscheme=brbg10]
 				bgcolor=«c»
 				1
 			}
 		'''.testContentAssistant(#["#", "/", ":", ";", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], "10", '''
-			graph { 
+			graph {
 				graph[colorscheme=brbg10]
 				bgcolor=10
 				1
@@ -3336,11 +3336,11 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		''')
 	}
-	
+
 	private def testEmptyContentAssistant(CharSequence it) {
 		testContentAssistant(#[], null, null)
 	}
-	
+
 	private def void testContentAssistant(CharSequence text, List<String> expectedProposals,
 		String proposalToApply, String expectedContent) {
 		
@@ -3425,7 +3425,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				else displayString.split(":").head
 			}
 
-			// TODO: remove this workaround			
+			// TODO: remove this workaround
 			override expectContent(String expectation) {
 				val actual = model.replaceAll("\r?\n", System.lineSeparator)
 				assertEquals(expectation, actual)

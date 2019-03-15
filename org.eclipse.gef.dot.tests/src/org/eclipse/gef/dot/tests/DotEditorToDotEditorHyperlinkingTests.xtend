@@ -33,7 +33,7 @@ class DotEditorToDotEditorHyperlinkingTests extends AbstractHyperlinkingTest {
 		'''
 			graph {
 				1;2
-			    «c»1«c»--2
+				«c»1«c»--2
 			}
 		'''.hasHyperlinkTo("1")
 	}
@@ -46,7 +46,7 @@ class DotEditorToDotEditorHyperlinkingTests extends AbstractHyperlinkingTest {
 			}
 		'''.hasHyperlinkTo("2")
 	}
-	
+
 	override protected hyperlinkIsOffered(IHyperlink[] hyperlinks, IRegion expectedRegion, String expectedHyperlinkTarget) {
 		super.hyperlinkIsOffered(hyperlinks.filter(XtextHyperlink), expectedRegion, expectedHyperlinkTarget)
 	}
@@ -54,5 +54,4 @@ class DotEditorToDotEditorHyperlinkingTests extends AbstractHyperlinkingTest {
 	override protected getEditorId() {
 		editorInfo.getEditorId
 	}
-	
 }

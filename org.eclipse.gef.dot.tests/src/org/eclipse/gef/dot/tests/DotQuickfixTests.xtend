@@ -857,7 +857,7 @@ class DotQuickfixTests {
 		)
 	}
 
-	@Test def cluster_style_007() {	
+	@Test def cluster_style_007() {
 		'''graph{subgraph cluster_0{style="striped, foo"}}'''.testQuickfixesOn(DotAttributes.STYLE__GCNE,
 			new Quickfix("Replace 'foo' with 'bold'.",		"Use valid 'bold' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, bold"}}'''),
 			new Quickfix("Replace 'foo' with 'dashed'.",	"Use valid 'dashed' instead of invalid 'foo' graph style.",	'''graph{subgraph cluster_0{style="striped, dashed"}}'''),

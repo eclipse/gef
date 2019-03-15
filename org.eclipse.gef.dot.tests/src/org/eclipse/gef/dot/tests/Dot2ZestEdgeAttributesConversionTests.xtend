@@ -460,7 +460,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-fill: #ff0000;
 		''')
 	}
-	
+
 	@Test def edge_sourceLabel007() {
 		'''
 			digraph {
@@ -698,7 +698,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 			-fx-font-size: 14.0;
 		''')
 	}
-	
+
 	@Test def edge_targetLabel015() {
 		mockAvailableFonts("Serif")
 		'''
@@ -768,7 +768,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 
 	private def assertEdgeDecorationStyles(javafx.scene.Node decoration, String... expectedStyles) {
 		decoration.hasSameNumberOfDecorationStylesAs(expectedStyles)
-		
+
 		if(decoration instanceof Group) {
 			for(var i=0; i<decoration.children.size; i++) {
 				decoration.children.get(i).hasStyle(expectedStyles.get(i))
@@ -785,9 +785,9 @@ class Dot2ZestEdgeAttributesConversionTests {
 	private def hasSameNumberOfDecorationStylesAs(javafx.scene.Node decoration, String... expected) {
 		val numberOfActualDecorationStyles = if(decoration instanceof Group) decoration.children.size else 1
 		val numberOfExpectedDecorationStyles = expected.size
-		
+
 		assertEquals(
-			"The number of expected decoration styles does not match the number of actual decoration styles.", 
+			"The number of expected decoration styles does not match the number of actual decoration styles.",
 			numberOfExpectedDecorationStyles, numberOfActualDecorationStyles
 		)
 	}
@@ -800,7 +800,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = dotText.parse
 		dotAst.assertNoErrors
-		
+
 		dotAst.importDot.get(0)
 	}
 
@@ -813,7 +813,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 	private def split(String text) {
 		text.replaceAll(";", ";" + System.lineSeparator)
 	}
-	
+
 	private def mockAvailableFonts(String... availableFonts) {
 		fontUtil.systemFontAccess = new DotFontAccessMock(availableFonts)
 	}

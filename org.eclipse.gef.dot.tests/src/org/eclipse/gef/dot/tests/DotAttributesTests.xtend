@@ -371,7 +371,7 @@ class DotAttributesTests {
 		edgetooltip = "line1\\nline2"
 		"line1\\nline2".assertEquals(edgetooltip)
 		val expected = createEscString => [
-			lines += createJustifiedText => [text="line1"] 
+			lines += createJustifiedText => [text="line1"]
 			lines += createJustifiedText => [text="line2"]
 		]
 		EcoreUtil.equals(expected, edgetooltipParsed).assertTrue
@@ -1169,7 +1169,7 @@ class DotAttributesTests {
 		tailtooltip = "line1\\nline2"
 		"line1\\nline2".assertEquals(tailtooltip)
 		val expected = createEscString => [
-			lines += createJustifiedText => [text="line1"] 
+			lines += createJustifiedText => [text="line1"]
 			lines += createJustifiedText => [text="line2"]
 		]
 		EcoreUtil.equals(expected, tailtooltipParsed).assertTrue
@@ -1177,7 +1177,7 @@ class DotAttributesTests {
 		// set valid parsed values
 		tailtooltipParsed = createEscString => [
 			lines += createJustifiedText => [text="a" justification=Justification.LEFT]
-			lines += createJustifiedText => [text="b" justification=Justification.RIGHT] 
+			lines += createJustifiedText => [text="b" justification=Justification.RIGHT]
 		]
 		"a\\lb\\r".assertEquals(tailtooltip)
 	}
@@ -1197,7 +1197,7 @@ class DotAttributesTests {
 		"line1\\nline2".assertEquals(tooltip)
 		val expected = createEscString => [
 			lines += createJustifiedText => [text="line1"]
-			lines += createJustifiedText => [text="line2"] 
+			lines += createJustifiedText => [text="line2"]
 		]
 		EcoreUtil.equals(expected, tooltipParsed).assertTrue
 		

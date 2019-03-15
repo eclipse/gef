@@ -41,11 +41,11 @@ import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.add
  * org.eclipse.xtext.ui.testing.AbstractHyperlinkingTest class,
  * available from Xtext Version 2.17 (2019-03). As long as older
  * platforms are supported, this class should reside here.
- * 
+ *
  * TODO: drop this class as soon as 2019-03 will be the minimum supported platform.
  */
 abstract class AbstractHyperlinkingTest extends AbstractEditorTest {
-	
+
 	@Inject protected extension IHyperlinkHelper
 	@Inject protected extension FileExtensionProvider
 	@Inject protected extension IQualifiedNameProvider
@@ -106,7 +106,7 @@ abstract class AbstractHyperlinkingTest extends AbstractEditorTest {
 	protected def IHyperlink[] hyperlinkingOn(IFile dslFile, int offset) {
 		val editor = dslFile.openInEditor
 		val document = editor.internalSourceViewer.document as IXtextDocument
-		val resource = document.readOnly(new IUnitOfWork<XtextResource, XtextResource>(){
+		val resource = document.readOnly(new IUnitOfWork<XtextResource, XtextResource>() {
 
 			override exec(XtextResource state) {
 				state

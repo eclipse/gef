@@ -52,7 +52,7 @@ class DotParserTests {
 	@Test def empty_string() { "".parse.assertNull }
 	@Test def empty_graph() { DotTestGraphs.EMPTY.hasNoErrors }
 	@Test def empty_directed_graph() { DotTestGraphs.EMPTY_DIRECTED.hasNoErrors }
-	@Test def empty_strict_graph() { DotTestGraphs.EMPTY_STRICT.hasNoErrors } 
+	@Test def empty_strict_graph() { DotTestGraphs.EMPTY_STRICT.hasNoErrors }
 	@Test def empty_strict_directed_graph() { DotTestGraphs.EMPTY_STRICT_DIRECTED.hasNoErrors }
 	@Test def graph_with_one_node() { DotTestGraphs.ONE_NODE.hasNoErrors }
 	@Test def graph_with_one_node_and_empty_node_attribute_list() {	DotTestGraphs.EMPTY_NODE_ATTRIBUTE_LIST.hasNoErrors }
@@ -111,7 +111,7 @@ class DotParserTests {
 	@Test def styled_graph2() { "styled_graph2.dot".dslFileHasNoError }
 	@Test def switch_() { "switch.dot".dslFileHasNoError }
 
-// Test cases with multi-line templates	
+// Test cases with multi-line templates
 	@Test def graph_color_with_custom_color_scheme() {
 		'''
 			graph {

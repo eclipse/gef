@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public abstract class AbstractOutlineTest extends AbstractEditorTest {
 	 * string representation of the tree is built where children are indented of
 	 * TAB_INDENT number of tabs; this string representation is then compared
 	 * with the expected representation.
-	 * 
+	 *
 	 * @param modelAsText
 	 * @param expected
 	 * @throws Exception
@@ -100,7 +100,7 @@ public abstract class AbstractOutlineTest extends AbstractEditorTest {
 	 * The outline node is expanded and a string representation of the tree is
 	 * built where children are indented of TAB_INDENT number of tabs; this
 	 * string representation is then compared with the expected representation.
-	 * 
+	 *
 	 * @param rootNode
 	 * @param expected
 	 */

@@ -173,7 +173,7 @@ class DotHighlightingTests extends AbstractEditorTest {
 		 * to apply the semantic highlighting executed asynchronously
 		 */
 		waitForEventProcessing
-	
+
 		editor.internalSourceViewer.textWidget
 	}
 

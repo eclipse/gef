@@ -1551,7 +1551,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def graph_forcelabels001() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		// The tested graph needs to have very close elements for this attribute to have an effect.
@@ -2537,7 +2537,7 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
-	
+
 	@Test def node_fontname002() {
 		mockAvailableFonts("Arial")
 		'''
@@ -3167,7 +3167,7 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
-	@Test def node_xlabel(){
+	@Test def node_xlabel() {
 		'''
 			graph {
 				1[xlabel=foo]
@@ -3185,7 +3185,7 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Ignore("Failing on Travis/Jenkins")
-	@Test def node_xlabel_with_layout_information(){
+	@Test def node_xlabel_with_layout_information() {
 		'''
 			graph {
 				graph [bb="0,51,81,0"];
@@ -4204,14 +4204,14 @@ class Dot2ZestGraphCopierTests {
 		expected.toString.assertEquals(actual.prettyPrint.removeObjectIDs)
 	}
 
-	private def removeObjectIDs(String text){
+	private def removeObjectIDs(String text) {
 		// recognize substrings between '@' and the end of the line
 		val nl = System.lineSeparator
 		val regex = '''(@[^\\«nl»]*)'''
 		
 		text.replaceAll(regex, "")
 	}
-	
+
 	private def mockAvailableFonts(String... availableFonts) {
 		dot2ZestGraphCopier.attributeCopier.fontUtil.systemFontAccess = new DotFontAccessMock(availableFonts)
 	}

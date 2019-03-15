@@ -735,7 +735,7 @@ class Dot2ZestNodeAttributesConversionTests {
 		val actual = dotText.firstNode.convert.labelCssStyle
 		expected.assertEquals(actual.split)
 	}
-	
+
 	private def assertNodeXLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstNode.convert.externalLabelCssStyle
 		expected.assertEquals(actual.split)
@@ -813,7 +813,7 @@ class Dot2ZestNodeAttributesConversionTests {
 	private def split(String text) {
 		text.replaceAll(";", ";" + System.lineSeparator)
 	}
-	
+
 	private def mockAvailableFonts(String... availableFonts) {
 		fontUtil.systemFontAccess = new DotFontAccessMock(availableFonts)
 	}

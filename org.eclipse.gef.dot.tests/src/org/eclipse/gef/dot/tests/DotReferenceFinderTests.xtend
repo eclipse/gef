@@ -283,7 +283,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	private def list(Function1<? super DotAst, ? extends EObject>... initial) {
 		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
 	}
-	
+
 	private def void waitForEventProcessing() {
 		while(Display.^default.readAndDispatch) {}
 	}

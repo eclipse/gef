@@ -324,7 +324,7 @@ class DotValidatorTests {
 	}
 
 	@Test def invalid_html_like_label_string_literal_is_not_allowed() {
-		'''graph {1[label = <  <BR>string</BR>  >]}'''.assertHtmlLikeLabelError("BR", 
+		'''graph {1[label = <  <BR>string</BR>  >]}'''.assertHtmlLikeLabelError("BR",
 		"The htmlLabel value '  <BR>string</BR>  ' is not semantically correct: Tag '<BR>' cannot contain a string literal.")
 	}
 
@@ -334,17 +334,17 @@ class DotValidatorTests {
 	}
 
 	@Test def invalid_html_like_label_invalid_parent_tag() {
-		'''graph {1[label = <  <tr></tr>  >]}'''.assertHtmlLikeLabelError("tr", 
+		'''graph {1[label = <  <tr></tr>  >]}'''.assertHtmlLikeLabelError("tr",
 		"The htmlLabel value '  <tr></tr>  ' is not semantically correct: Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.")
 	}
 
 	@Test def invalid_html_like_label_invalid_attribute() {
-		'''graph {1[label = <  <table foo="bar"></table>  >]}'''.assertHtmlLikeLabelError("foo", 
+		'''graph {1[label = <  <table foo="bar"></table>  >]}'''.assertHtmlLikeLabelError("foo",
 		'''The htmlLabel value '  <table foo="bar"></table>  ' is not semantically correct: Attribute 'foo' is not allowed inside '<table>'.''')
 	}
 
 	@Test def invalid_html_like_label_invalid_attribute_value() {
-		'''graph {1[label = <  <table align="foo"></table>  >]}'''.assertHtmlLikeLabelError('"foo"', 
+		'''graph {1[label = <  <table align="foo"></table>  >]}'''.assertHtmlLikeLabelError('"foo"',
 		'''The htmlLabel value '  <table align="foo"></table>  ' is not semantically correct: The value 'foo' is not a correct align: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.''')
 	}
 
@@ -403,7 +403,7 @@ class DotValidatorTests {
 			#["<u>text</u><table></table>", "u", "0", "table", "0"],
 			#["text<table></table>", "text", "0", "table", "0"],
 			#["<table></table>text<table></table>", "table", "0", "text", "0", "table", "20"],
-			
+
 			// nested level
 			#["<table><tr><td><table></table><b></b></td></tr></table>", "table", "15", "b", "30"],
 			#["<table><tr><td><table></table><br></br></td></tr></table>", "table", "15", "br", "15"],
@@ -428,7 +428,7 @@ class DotValidatorTests {
 			#["<table><tr><td>text<table></table></td></tr></table>", "text", "15", "table", "15"],
 			#["<table><tr><td><table></table>text<table></table></td></tr></table>", "table", "15", "text", "15", "table", "34"]
 		]
-		
+
 		for (testData : testDataList) {
 			val htmlLabel = testData.get(0)
 			val numberOfErrorProneText = (testData.length - 1) / 2
@@ -448,7 +448,7 @@ class DotValidatorTests {
 	}
 
 	@Test def invalid_node_style() {
-		'''graph {1[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth", 
+		'''graph {1[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth",
 		'''The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.''')
 
 		'''graph {1[style="dashed, foo"]}'''.assertStyleError("foo", 
@@ -457,7 +457,7 @@ class DotValidatorTests {
 	}
 
 	@Test def invalid_edge_style() {
-		'''graph {1--2[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth", 
+		'''graph {1--2[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth",
 		'''The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.''')
 
 		'''graph {1--2[style="dashed, foo"]}'''.assertStyleError("foo", 
@@ -568,7 +568,7 @@ class DotValidatorTests {
 				throw new IllegalArgumentException(''''«errorProneText»' cannot be found in the input string from index «fromIndex»''')
 			}
 			val length = errorProneText.length
-			
+
 			text.parse
 			.assertNumberOfIssues(errorMessages.length)
 			.assertError(ATTRIBUTE, LABEL__GCNE, offset, length, errorMessage)

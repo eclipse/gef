@@ -15,7 +15,7 @@ import org.junit.rules.Timeout
 import static extension com.google.common.io.CharStreams.readLines
 import static extension org.junit.Assert.assertEquals
 
-/** 
+/**
  * The implementation of the following helper methods is mainly taken from
  * the org.eclipse.xpect.tests.LexerTest class of the Eclipse Xpect project.
  */

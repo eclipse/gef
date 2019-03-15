@@ -171,7 +171,7 @@ abstract class AbstractDotHtmlLabelLexerTest extends AbstractLexerTest {
 		0 '"'
 		''')
 	}
-	
+
 	@Test def lexing09() {
 		'''<TABLE ALIGN="'''
 		.assertLexing(

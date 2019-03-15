@@ -113,8 +113,8 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 			"<U></U>",
 			"<O></O>",
 			"<SUB></SUB>",
-			"<SUP></SUP>",		
-			"<S></S>",		
+			"<SUP></SUP>",
+			"<S></S>",
 			"<TABLE></TABLE>"
 		], "<BR/>",	'''
 			<I><BR/></I>
@@ -374,7 +374,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test def attributes_of_tag_HR() {
-		'''<HR «c»/>'''.testEmptyContentAssistant // no attributes are allowed 
+		'''<HR «c»/>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
 	@Test def attributes_of_tag_I() {

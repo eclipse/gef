@@ -23,7 +23,7 @@ class DotAttributeActiveAnnotationTests {
 
 	extension XtendCompilerTesterEx = XtendCompilerTesterEx.newXtendCompilerTesterEx(class.classLoader)
 
-	@Test def subgraph_rank(){
+	@Test def subgraph_rank() {
 		'''
 			import org.eclipse.gef.dot.internal.generator.DotAttribute
 			import org.eclipse.gef.dot.internal.language.ranktype.RankType

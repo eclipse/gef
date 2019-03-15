@@ -22,7 +22,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 
 /**
- * The implementation of this class is mainly taken from the 
+ * The implementation of this class is mainly taken from the
  * org.eclipse.xtext.ui.testing.AbstractEditorDoubleClickTextSelectionTest class,
  * available from Xtext Version 2.14 (PHOTON). As long as older platforms are
  * supported, this class should reside here.
@@ -47,11 +47,11 @@ abstract class AbstractEditorDoubleClickTextSelectionTest extends AbstractEditor
 	 *	clicking in the Xtext editor on the current cursor position.
 	 */
 	def assertSelectedTextAfterDoubleClicking(CharSequence it, String expected) {
-		
+
 		content.createFile.openEditor.
-		
+
 		doubleClick(cursorPosition).
-		
+
 		assertSelectedText(expected)
 	}
 
@@ -86,10 +86,10 @@ abstract class AbstractEditorDoubleClickTextSelectionTest extends AbstractEditor
 
 	protected def XtextEditor doubleClick(XtextEditor xtextEditor, int cursorPosition) {
 		val viewer = xtextEditor.internalSourceViewer
-		
+
 		// set the cursor position
 		viewer.setSelectedRange(cursorPosition, 0)
-		
+
 		// fire a mouse down event with the left mouse button
 		viewer.textWidget.notifyListeners(
 			SWT.MouseDown,
@@ -97,7 +97,7 @@ abstract class AbstractEditorDoubleClickTextSelectionTest extends AbstractEditor
 				button = 1
 			]
 		)
-		
+
 		xtextEditor
 	}
 
