@@ -455,7 +455,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	protected void doAttachToAnchorageVisual(
 			IVisualPart<? extends Node> anchorage, String role) {
 		throw new UnsupportedOperationException(
-				"Need to implement attachToAnchorageVisual(IVisualPart, String) for "
+				"Need to implement doAttachToAnchorageVisual(IVisualPart, String) for "
 						+ this.getClass());
 	}
 
