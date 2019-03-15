@@ -45,7 +45,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--2
 			}
 		'''
-		text.verifyOccurrences(text.first("1"), #[text.second("1")])
+		text.verifyOccurrences(text.first("1"), #[text.first("1"), text.second("1")])
 	}
 
 	@Test def marking_occurrences002() {
@@ -55,7 +55,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--2
 			}
 		'''
-		text.verifyOccurrences(text.second("1"), #[text.first("1")])
+		text.verifyOccurrences(text.second("1"), #[text.first("1"), text.second("1")])
 	}
 
 	@Test def marking_occurrences003() {
@@ -66,7 +66,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--2
 			}
 		'''
-		text.verifyOccurrences(text.first("2"), #[text.second("2")])
+		text.verifyOccurrences(text.first("2"), #[text.first("2"), text.second("2")])
 	}
 
 	@Test def marking_occurrences004() {
@@ -77,7 +77,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--2
 			}
 		'''
-		text.verifyOccurrences(text.second("2"), #[text.first("2")])
+		text.verifyOccurrences(text.second("2"), #[text.first("2"), text.second("2")])
 	}
 
 	@Test def marking_occurrences005() {
@@ -90,7 +90,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--4
 			}
 		'''
-		text.verifyOccurrences(text.first("4"), #[text.second("4")])
+		text.verifyOccurrences(text.first("4"), #[text.first("4"), text.second("4")])
 	}
 
 	@Test def marking_occurrences006() {
@@ -103,7 +103,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--4
 			}
 		'''
-		text.verifyOccurrences( text.second("4"), #[text.first("4")])
+		text.verifyOccurrences(text.second("4"), #[text.first("4"), text.second("4")])
 	}
 
 	@Test def marking_occurrences007() {
@@ -114,7 +114,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--4
 			}
 		'''
-		text.verifyOccurrences(text.first("1"), #[text.second("1"), text.third("1")])
+		text.verifyOccurrences(text.first("1"), #[text.first("1"), text.second("1"), text.third("1")])
 	}
 
 	@Test def marking_occurrences008() {
@@ -125,7 +125,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--4
 			}
 		'''
-		text.verifyOccurrences(text.second("1"), #[text.first("1"), text.third("1")])
+		text.verifyOccurrences(text.second("1"), #[text.first("1"), text.second("1"), text.third("1")])
 	}
 
 	@Test def marking_occurrences009() {
@@ -138,7 +138,7 @@ class DotMarkingOccurrencesTests extends AbstractEditorTest {
 				1--4
 			}
 		'''
-		text.verifyOccurrences(text.third("1"), #[text.first("1"), text.second("1")])
+		text.verifyOccurrences(text.third("1"), #[text.first("1"), text.second("1"), text.third("1")])
 	}
 
 	private def verifyOccurrences(CharSequence content, int selectionOffset, List<Integer> expected) {

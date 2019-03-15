@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 itemis AG and others.
+ * Copyright (c) 2010, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,15 +11,18 @@
  *     Alexander Nyßen (itemis AG) - initial implementation (value converter binding)
  *     Tamas Miklossy  (itemis AG) - request for static injection (#498324)
  *                                 - add binding for node model streamer (bug #532216)
+ *                                 - add binding for qualified name provider (bug #545441)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
 import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.language.formatting.DotNodeModelStreamer;
+import org.eclipse.gef.dot.internal.language.naming.DotQualifiedNameProvider;
 import org.eclipse.gef.dot.internal.language.terminals.DotTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.formatting.INodeModelStreamer;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
 import com.google.inject.Binder;
 
@@ -43,5 +46,10 @@ public class DotRuntimeModule
 	public void configure(Binder binder) {
 		super.configure(binder);
 		binder.requestStaticInjection(DotImport.class);
+	}
+
+	@Override
+	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+		return DotQualifiedNameProvider.class;
 	}
 }
