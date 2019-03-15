@@ -41,17 +41,17 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotAutoEditTests.class, DotColorListContentAssistLexerTests.class,
 		DotColorListHighlightingLexerTests.class, DotContentAssist2Tests.class,
 		DotContentAssistTests.class, DotContentAssistLexerTests.class,
-		DotEditorDoubleClickingTests.class, DotFoldingTests.class,
+		DotEditorDoubleClickingTests.class,
+		DotEditorToDotEditorHyperlinkingTests.class, DotFoldingTests.class,
 		DotHighlightingCalculatorTests.class, DotHighlightingLexerTests.class,
 		DotHighlightingTests.class, DotHoverTests.class,
 		DotHtmlLabelContentAssistLexerTests.class,
 		DotHtmlLabelContentAssistTests.class,
 		DotHtmlLabelHighlightingLexerTests.class,
 		DotHtmlLabelTokenTypeToPartitionMapperTests.class,
-		DotHyperlinkNavigationTests.class, DotLabelProviderTests.class,
-		DotMarkingOccurrencesTests.class, DotOutlineViewTests.class,
-		DotQuickfixTests.class, DotReferenceFinderTests.class,
-		DotRenameRefactoringTests.class, DotToggleCommentTests.class,
-		DotTokenTypeToPartitionMapperTests.class })
+		DotLabelProviderTests.class, DotMarkingOccurrencesTests.class,
+		DotOutlineViewTests.class, DotQuickfixTests.class,
+		DotReferenceFinderTests.class, DotRenameRefactoringTests.class,
+		DotToggleCommentTests.class, DotTokenTypeToPartitionMapperTests.class })
 public class AllUiTests {
 }

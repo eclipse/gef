@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotHyperlinkNavigationTests extends AbstractHyperlinkingTest {
+class DotEditorToDotEditorHyperlinkingTests extends AbstractHyperlinkingTest {
 
 	@Inject XtextEditorInfo editorInfo
 
