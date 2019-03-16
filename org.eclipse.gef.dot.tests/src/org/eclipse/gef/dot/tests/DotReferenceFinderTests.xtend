@@ -281,7 +281,12 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		waitForEventProcessing
 	}
 
-	// TODO: remove this workaround
+	/**
+	 * This workaround is necessary when using the xtend compiler in a version less than 2.8.0, otherwise, the generated code cannot be compiled. The error messages:
+	 * The method testFindingReferences(CharSequence,        Functions.Function1<? super DotAst,? extends EObject>, String, List<Functions.Function1<? super DotAst,? extends EObject>>) in the type DotReferenceFinderTests is not applicable for the arguments
+	 *                                 (StringConcatenation, Functions.Function1<DotAst,EObject>,                   String, List<Functions.Function1<DotAst,EObject>>)
+	 * TODO: remove this workaround as soon as at least the xtend-maven plugin 2.8.0 is used in the build process.
+	 */
 	private def list(Function1<? super DotAst, ? extends EObject>... initial) {
 		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
 	}
