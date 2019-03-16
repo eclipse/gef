@@ -33,6 +33,7 @@ import org.eclipse.gef.common.beans.property.SimpleListPropertyEx;
 import org.eclipse.gef.common.collections.CollectionUtils;
 import org.eclipse.gef.common.collections.ListListenerHelperEx.AtomicChange;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -636,6 +637,7 @@ public class ObservableListTests {
 		// }
 	}
 
+	@Ignore("See #518221")
 	@Test
 	public void listenersNotProperlyIterating() {
 		// ensure assumption exceptions can be properly handled by JUnit
