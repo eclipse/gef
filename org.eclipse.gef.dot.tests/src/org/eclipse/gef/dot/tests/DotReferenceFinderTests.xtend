@@ -12,7 +12,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import java.util.Collections
 import java.util.List
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.NullProgressMonitor
@@ -36,7 +35,6 @@ import org.eclipse.xtext.ui.editor.findrefs.ReferenceQueryExecutor
 import org.eclipse.xtext.ui.editor.findrefs.ReferenceSearchResult
 import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
 import org.eclipse.xtext.ui.resource.IResourceSetProvider
-import org.eclipse.xtext.xbase.lib.Functions.Function1
 import org.junit.AfterClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -64,9 +62,9 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 			graph {
 				1
 			}
-		'''.testFindingReferences([firstNode], "DOT References to node '1' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([firstNode], "DOT References to node '1' (/dottestproject/test.dot)", #[
 			[firstNode]
-		))
+		])
 	}
 
 	@Test def finding_references_002() {
@@ -75,9 +73,9 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1
 				2
 			}
-		'''.testFindingReferences([secondNode], "DOT References to node '2' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([secondNode], "DOT References to node '2' (/dottestproject/test.dot)", #[
 			[secondNode]
-		))
+		])
 	}
 
 	@Test def finding_references_003() {
@@ -86,10 +84,10 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1
 				1--2
 			}
-		'''.testFindingReferences([firstNode], "DOT References to node '1' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([firstNode], "DOT References to node '1' (/dottestproject/test.dot)", #[
 			[firstNode],
 			[sourceNodeOfFirstEdge]
-		))
+		])
 	}
 
 	@Test def finding_references_004() {
@@ -98,10 +96,10 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1
 				1--2
 			}
-		'''.testFindingReferences([sourceNodeOfFirstEdge], "DOT References to node '1' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([sourceNodeOfFirstEdge], "DOT References to node '1' (/dottestproject/test.dot)", #[
 			[firstNode],
 			[sourceNodeOfFirstEdge]
-		))
+		])
 	}
 
 	@Test def finding_references_005() {
@@ -110,9 +108,9 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1--2
 				3--4
 			}
-		'''.testFindingReferences([sourceNodeOfSecondEdge], "DOT References to node '3' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([sourceNodeOfSecondEdge], "DOT References to node '3' (/dottestproject/test.dot)", #[
 			[sourceNodeOfSecondEdge]
-		))
+		])
 	}
 
 	@Test def finding_references_006() {
@@ -121,9 +119,9 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1--2
 				3--4
 			}
-		'''.testFindingReferences([targetNodeOfFirstEdge], "DOT References to node '2' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([targetNodeOfFirstEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
 			[targetNodeOfFirstEdge]
-		))
+		])
 	}
 
 	@Test def finding_references_007() {
@@ -132,9 +130,9 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1--2
 				3--4
 			}
-		'''.testFindingReferences([targetNodeOfSecondEdge], "DOT References to node '4' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([targetNodeOfSecondEdge], "DOT References to node '4' (/dottestproject/test.dot)", #[
 			[targetNodeOfSecondEdge]
-		))
+		])
 	}
 
 	@Test def finding_references_008() {
@@ -143,11 +141,11 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1--2
 				2--2
 			}
-		'''.testFindingReferences([targetNodeOfFirstEdge], "DOT References to node '2' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([targetNodeOfFirstEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
 			[targetNodeOfFirstEdge],
 			[sourceNodeOfSecondEdge],
 			[targetNodeOfSecondEdge]
-		))
+		])
 	}
 
 	@Test def finding_references_009() {
@@ -156,11 +154,11 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1--2
 				2--2
 			}
-		'''.testFindingReferences([sourceNodeOfSecondEdge], "DOT References to node '2' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([sourceNodeOfSecondEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
 			[targetNodeOfFirstEdge],
 			[sourceNodeOfSecondEdge],
 			[targetNodeOfSecondEdge]
-		))
+		])
 	}
 
 	@Test def finding_references_010() {
@@ -169,11 +167,11 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 				1--2
 				2--2
 			}
-		'''.testFindingReferences([targetNodeOfSecondEdge], "DOT References to node '2' (/dottestproject/test.dot)", list(
+		'''.testFindingReferences([targetNodeOfSecondEdge], "DOT References to node '2' (/dottestproject/test.dot)", #[
 			[targetNodeOfFirstEdge],
 			[sourceNodeOfSecondEdge],
-			[targetNodeOfSecondEdge]
-		))
+			[targetNodeOfSecondEdge]]
+		)
 	}
 
 	private def testFindingReferences(CharSequence it, (DotAst)=>EObject element, String label, List<(DotAst)=>EObject> elements) {
@@ -279,11 +277,6 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	private def void waitForSearchJob() {
 		Job.jobManager.find(null).findFirst[name.startsWith("DOT References to")]?.join
 		waitForEventProcessing
-	}
-
-	// TODO: remove this workaround
-	private def list(Function1<? super DotAst, ? extends EObject>... initial) {
-		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
 	}
 
 	private def void waitForEventProcessing() {
