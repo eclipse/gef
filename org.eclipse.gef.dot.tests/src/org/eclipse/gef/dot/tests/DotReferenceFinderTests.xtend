@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,6 +14,7 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import java.util.Collections
 import java.util.List
+import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.common.util.URI
@@ -36,6 +37,7 @@ import org.eclipse.xtext.ui.editor.findrefs.ReferenceSearchResult
 import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
 import org.eclipse.xtext.ui.resource.IResourceSetProvider
 import org.eclipse.xtext.xbase.lib.Functions.Function1
+import org.junit.AfterClass
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -290,5 +292,15 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 
 	override protected getEditorId() {
 		editorInfo.editorId
+	}
+
+	@AfterClass def static void cleanup() {
+		/**
+		 * The Eclipse workspace needs to be explicitly saved after the test execution
+		 * otherwise, the test case executions are resulting in a NullPointerException.
+		 * For more information, see
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=460996
+		 */
+		ResourcesPlugin.getWorkspace().save(true, null)
 	}
 }
