@@ -16,7 +16,6 @@ import java.util.Collections
 import java.util.List
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.NullProgressMonitor
-import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
@@ -25,9 +24,10 @@ import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
+import org.eclipse.search.ui.IQueryListener
+import org.eclipse.search.ui.ISearchQuery
+import org.eclipse.search.ui.ISearchResult
 import org.eclipse.search.ui.NewSearchUI
-import org.eclipse.search2.internal.ui.SearchView
-import org.eclipse.swt.widgets.Display
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
@@ -53,6 +53,8 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	@Inject XtextEditorInfo editorInfo
 	@Inject IResourceSetProvider resourceSetProvider
 	@Inject ReferenceQueryExecutor referenceQueryExecutor
+	
+	ISearchResult searchResult = null
 
 	override setUp() {
 		super.setUp
@@ -209,9 +211,28 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		
 		referenceQueryExecutor.init(element)
 		
+		NewSearchUI.addQueryListener( new IQueryListener() {
+			
+			override queryAdded(ISearchQuery query) {
+			}
+			
+			override queryFinished(ISearchQuery query) {
+				searchResult = query.searchResult
+			}
+			
+			override queryRemoved(ISearchQuery query) {
+			}
+			
+			override queryStarting(ISearchQuery query) {
+			}
+			
+		});
+		
 		referenceQueryExecutor.execute
 		
-		waitForSearchJob
+		while(searchResult===null) {
+			Thread.sleep(100)
+		}
 		
 		element
 	}
@@ -223,9 +244,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	}
 
 	private def searchViewContains(EObject element, List<(DotAst)=>EObject> expectedReferences) {
-		val searchResultView = NewSearchUI.getSearchResultView as SearchView
-		val searchResult = searchResultView.currentSearchResult as ReferenceSearchResult
-		val matchingReferences = searchResult.matchingReferences
+		val matchingReferences = (searchResult as ReferenceSearchResult).matchingReferences
 		
 		val resource = element.eResource
 		val dotAst = resource.contents.head as DotAst
@@ -276,11 +295,6 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		(edgeRHS.head as EdgeRhsNode).node
 	}
 
-	private def void waitForSearchJob() {
-		Job.jobManager.find(null).findFirst[name.startsWith("DOT References to")]?.join
-		waitForEventProcessing
-	}
-
 	/**
 	 * This workaround is necessary when using the xtend compiler in a version less than 2.8.0, otherwise, the generated code cannot be compiled. The error messages:
 	 * The method testFindingReferences(CharSequence,        Functions.Function1<? super DotAst,? extends EObject>, String, List<Functions.Function1<? super DotAst,? extends EObject>>) in the type DotReferenceFinderTests is not applicable for the arguments
@@ -289,10 +303,6 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	 */
 	private def list(Function1<? super DotAst, ? extends EObject>... initial) {
 		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
-	}
-
-	private def void waitForEventProcessing() {
-		while(Display.^default.readAndDispatch) {}
 	}
 
 	override protected getEditorId() {
