@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
-<!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="LUNA" sequenceNumber="1539943764">
+<!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
+<target name="LUNA" sequenceNumber="1553244343">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.sdk.ide" version="4.4.2.M20150204-1700"/>
