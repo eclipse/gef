@@ -2862,17 +2862,17 @@ class DotAttributesTests {
 		// set valid string values
 		var validPenwidth = "22.5"
 		penwidth = validPenwidth
-		validPenwidth.assertEquals(validPenwidth)
+		validPenwidth.assertEquals(penwidth)
 		
 		// set valid parsed values
 		var validPenwidthParsed = new Double(5)
 		penwidthParsed = validPenwidthParsed
-		validPenwidthParsed.assertEquals(validPenwidthParsed)
+		validPenwidthParsed.assertEquals(penwidthParsed)
 		
 		// set minimum parsed values
 		validPenwidthParsed = new Double(0.0)
 		penwidthParsed = validPenwidthParsed
-		validPenwidthParsed.assertEquals(validPenwidthParsed)
+		validPenwidthParsed.assertEquals(penwidthParsed)
 		
 		// set syntactically invalid values
 		invalidValue([penwidth = "2,5"],
