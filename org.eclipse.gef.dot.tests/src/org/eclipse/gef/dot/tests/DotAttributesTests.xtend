@@ -933,7 +933,11 @@ class DotAttributesTests {
 		var validPenwidth = "22.5"
 		penwidth = validPenwidth
 		validPenwidth.assertEquals(penwidth)
-		
+
+		validPenwidth = ""
+		penwidth = validPenwidth
+		validPenwidth.assertEquals(penwidth)
+
 		// set valid parsed values
 		var validPenwidthParsed = new Double(5)
 		penwidthParsed = validPenwidthParsed
@@ -2861,6 +2865,10 @@ class DotAttributesTests {
 		
 		// set valid string values
 		var validPenwidth = "22.5"
+		penwidth = validPenwidth
+		validPenwidth.assertEquals(penwidth)
+		
+		validPenwidth = ""
 		penwidth = validPenwidth
 		validPenwidth.assertEquals(penwidth)
 		

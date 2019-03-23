@@ -224,6 +224,17 @@ class DotParserTests {
 		'''.hasNoErrors
 	}
 
+	@Test def empty_penwidth() {
+		'''
+			digraph {
+				subgraph clusterName {
+					graph [penwidth=2];
+					1 [penwidth=""];
+				}
+			}
+		'''.hasNoErrors
+	}
+
 	@Test def zero_nodesep() {
 		'''
 			digraph {

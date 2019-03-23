@@ -467,7 +467,12 @@ class DotAttributes {
 			case NODESEP__G: validateAttributeRawValue(DOUBLE_PARSER, NODESEP_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue) 
 			case PAGEDIR__G: validateAttributeRawValue(PAGEDIR_PARSER, null, attributeContext, attributeName, attributeValue)
-			case PENWIDTH__CNE: validateAttributeRawValue(DOUBLE_PARSER, PENWIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
+			case PENWIDTH__CNE: 
+				if(attributeValue!==null && !attributeValue.toValue.isEmpty) {
+					validateAttributeRawValue(DOUBLE_PARSER, PENWIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
+				} else {
+					Collections.emptyList
+				}
 			case POS__NE:
 				if (attributeContext == Context.NODE)
 					validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
