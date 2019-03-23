@@ -285,8 +285,8 @@
     <extension
         point="org.eclipse.ui.views">
         <category
-            id="org.eclipse.gef.visualization"
-            name="Visualization">
+            id="org.eclipse.gef"
+            name="GEF">
         </category>
     </extension>
     <extension
@@ -295,8 +295,8 @@
             class="org.eclipse.gef.dot.internal.ui.DotGraphView"
             id="org.eclipse.gef.dot.internal.ui.DotGraphView"
             icon="icons/graph_view.png"
-            category="org.eclipse.gef.visualization"
-            name="DOT Graph"
+            category="org.eclipse.gef"
+            name="GEF DOT"
             restorable="true">
         </view>
     </extension>

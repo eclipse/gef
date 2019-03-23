@@ -36,8 +36,8 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            id="org.eclipse.gef.visualization"
-            name="Visualization">
+            id="org.eclipse.gef"
+            name="GEF">
       </category>
    </extension>
    <extension
@@ -45,8 +45,8 @@
       <view
             class="org.eclipse.gef.cloudio.internal.ui.view.TagCloudView"
             id="org.eclipse.gef.cloudio.internal.ui.view.TagCloud"
-            category="org.eclipse.gef.visualization"
-            name="Tag Cloud"
+            category="org.eclipse.gef"
+            name="GEF Tag Cloud"
             restorable="true">
       </view>
    </extension>

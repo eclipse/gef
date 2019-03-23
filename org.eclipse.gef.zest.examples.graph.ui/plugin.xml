@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <!--
-    Copyright (c) 2016 itemis AG and others.
+    Copyright (c) 2016, 2019 itemis AG and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -9,11 +9,20 @@
    
     Contributors:
         Alexander Nyßen (itemis AG) - initial API and implementation
+        Tamas Miklossy  (itemis AG) - add the 'GEF Zest Graph Example' View to the 'GEF' category
  -->
 <plugin>
+	<extension
+        point="org.eclipse.ui.views">
+        <category
+            id="org.eclipse.gef"
+            name="GEF">
+        </category>
+    </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="org.eclipse.gef"
             class="org.eclipse.gef.zest.examples.graph.ui.view.ZestGraphExampleView"
             id="org.eclipse.gef.zest.fx.ui.example.view.ZestFxExampleView"
             name="GEF Zest Graph Example"
