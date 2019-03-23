@@ -365,7 +365,7 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 		((GridData) dotExportHintLabel.getLayoutData()).exclude = true;
 	}
 
-	protected void showHideDotExportHintLabel() {
+	protected void showDotExportHintLabel() {
 		// show the dot export hint label
 		dotExportHintLabel.setVisible(true);
 		((GridData) dotExportHintLabel.getLayoutData()).exclude = false;
@@ -378,7 +378,7 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 				radioButton.dispose();
 			}
 
-			showHideDotExportHintLabel();
+			showDotExportHintLabel();
 			// do synchronous layout
 			Display.getDefault().syncExec(new Runnable() {
 
