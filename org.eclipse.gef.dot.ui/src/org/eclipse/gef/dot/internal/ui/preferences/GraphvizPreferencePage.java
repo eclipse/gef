@@ -65,15 +65,15 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	}
 
 	public static String getDotExecutablePath() {
-		return dotUiPrefs().get(DOT_PATH_PREF_KEY, "");//$NON-NLS-1$
+		return dotUiPreferences().get(DOT_PATH_PREF_KEY, "");//$NON-NLS-1$
 	}
 
 	public static String getDotExportFormat() {
-		return dotUiPrefs().get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
+		return dotUiPreferences().get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
 	}
 
 	public static boolean getDotOpenExportedFileAutomaticallyValue() {
-		return dotUiPrefs().getBoolean(
+		return dotUiPreferences().getBoolean(
 				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY, true);
 	}
 
@@ -87,20 +87,20 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	}
 
 	// TODO: move to activator
-	public static Preferences dotUiPrefs() {
+	public static Preferences dotUiPreferences() {
 		return ConfigurationScope.INSTANCE.getNode(
 				DotActivator.getInstance().getBundle().getSymbolicName());
 	}
 
 	// TODO: move to activator
-	public static IPreferenceStore dotUiPrefStore() {
+	public static IPreferenceStore dotUiPreferenceStore() {
 		return new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
 				DotActivator.getInstance().getBundle().getSymbolicName());
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
-		IPreferenceStore dotUiPreferenceStore = dotUiPrefStore();
+		IPreferenceStore dotUiPreferenceStore = dotUiPreferenceStore();
 		// initialize the default value 'true'
 		if (!dotUiPreferenceStore
 				.contains(DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY)) {
@@ -247,7 +247,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 			String defaultExportFormat = getDefaultExportFormat(
 					supportedExportFormats);
 			if (defaultExportFormat != null) {
-				dotUiPrefs().put(DOT_EXPORTFORMAT_PREF_KEY,
+				dotUiPreferences().put(DOT_EXPORTFORMAT_PREF_KEY,
 						defaultExportFormat);
 			}
 		}
@@ -270,7 +270,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 				supportedExportFormats);
 		String[][] labelsAndValues = getLabelsAndValues(supportedExportFormats);
 
-		dotUiPrefs().put(DOT_EXPORTFORMAT_PREF_KEY, defaultExportFormat);
+		dotUiPreferences().put(DOT_EXPORTFORMAT_PREF_KEY, defaultExportFormat);
 
 		radioGroupFieldEditor.update(labelsAndValues);
 	}
@@ -278,7 +278,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private void removeDotExportUI() {
 		if (radioGroupFieldEditor != null) {
 			radioGroupFieldEditor.clear();
-			dotUiPrefs().remove(DOT_EXPORTFORMAT_PREF_KEY);
+			dotUiPreferences().remove(DOT_EXPORTFORMAT_PREF_KEY);
 		}
 	}
 

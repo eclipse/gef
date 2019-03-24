@@ -159,7 +159,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		GraphvizPreferencePage.dotUiPrefStore()
+		GraphvizPreferencePage.dotUiPreferenceStore()
 				.addPropertyChangeListener(preferenceChangeListener);
 	}
 
@@ -169,7 +169,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	@Override
 	public void dispose() {
-		GraphvizPreferencePage.dotUiPrefStore()
+		GraphvizPreferencePage.dotUiPreferenceStore()
 				.removePropertyChangeListener(preferenceChangeListener);
 		currentDot = null;
 		currentFile = null;
