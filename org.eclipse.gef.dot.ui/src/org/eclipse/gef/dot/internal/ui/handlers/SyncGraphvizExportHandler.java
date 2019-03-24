@@ -35,10 +35,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
+import org.eclipse.gef.dot.internal.ui.preferences.GraphvizConfigurationDialog;
 import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
@@ -69,7 +71,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 
 			// check if Graphviz is configured properly
 			if (!GraphvizPreferencePage.isGraphvizConfigured()) {
-				GraphvizPreferencePage.showGraphvizConfigurationDialog();
+				showGraphvizConfigurationDialog();
 			}
 
 			// if Graphviz is still not configured properly, do not export
@@ -89,6 +91,12 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 		}
 
 		return null;
+	}
+
+	private void showGraphvizConfigurationDialog() {
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getShell();
+		new GraphvizConfigurationDialog(shell).open();
 	}
 
 	private void addListeners() {

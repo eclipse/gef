@@ -22,26 +22,13 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.ui.DotUiMessages;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.Preferences;
 
@@ -57,8 +44,6 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private static final String DOT_SELECT_SHORT = DotUiMessages.GraphvizPreference_0;
 	private static final String DOT_SELECT_LONG = DotUiMessages.GraphvizPreference_1;
 	private static final String INVALID_DOT_EXECUTABLE = DotUiMessages.GraphvizPreference_2;
-	private static final String INVALID_GRAPHVIZ_CONF = DotUiMessages.GraphvizPreference_3;
-	private static final String GRAPHVIZ_CONF_HINT = DotUiMessages.GraphvizPreference_4;
 	private static final String DOT_EXPORT_FORMAT = DotUiMessages.GraphvizPreference_5;
 	private static final String DOT_EXPORT_FORMAT_HINT = DotUiMessages.GraphvizPreference_6;
 	private static final String DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY = DotUiMessages.GraphvizPreference_7;
@@ -77,12 +62,6 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 
 	public static boolean isGraphvizConfigured() {
 		return isValidDotExecutable(getDotExecutablePath());
-	}
-
-	public static void showGraphvizConfigurationDialog() {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getShell();
-		new GraphvizConfigurationDialog(shell).open();
 	}
 
 	public static String getDotExecutablePath() {
@@ -309,45 +288,6 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		// Defaults" button
 		super.performDefaults();
 		removeDotExportUI();
-	}
-
-	public static class GraphvizConfigurationDialog extends MessageDialog {
-
-		public GraphvizConfigurationDialog(Shell parentShell) {
-			super(parentShell, INVALID_GRAPHVIZ_CONF, null, GRAPHVIZ_CONF_HINT,
-					WARNING, new String[] { IDialogConstants.CANCEL_LABEL }, 0);
-		}
-
-		@Override
-		protected Control createMessageArea(Composite composite) {
-			// prevent creation of messageLabel by super implementation
-			String linkText = message;
-			message = null;
-			super.createMessageArea(composite);
-			message = linkText;
-
-			Link messageLink = new Link(composite, SWT.WRAP);
-			messageLink.setText(message);
-			GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-					.grab(true, false).applyTo(messageLink);
-			messageLink.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					Shell shell = PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell();
-					PreferenceDialog pref = PreferencesUtil
-							.createPreferenceDialogOn(shell,
-									"org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage", //$NON-NLS-1$
-									null, null);
-					if (pref != null) {
-						close();
-						pref.open();
-					}
-				}
-			});
-			return composite;
-		}
-
 	}
 
 }
