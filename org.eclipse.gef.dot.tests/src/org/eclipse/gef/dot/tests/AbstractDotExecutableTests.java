@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage;
+import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

@@ -10,7 +10,7 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #521329)
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.swt.widgets.Button;

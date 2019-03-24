@@ -13,13 +13,14 @@
  *                                - Add 'Open the exported file automatically' option (bug #521329)
  *
  *********************************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.preferences;
 
 import java.io.File;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
+import org.eclipse.gef.dot.internal.ui.DotUiMessages;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -107,13 +108,13 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	}
 
 	// TODO: move to activator
-	protected static Preferences dotUiPrefs() {
+	public static Preferences dotUiPrefs() {
 		return ConfigurationScope.INSTANCE.getNode(
 				DotActivator.getInstance().getBundle().getSymbolicName());
 	}
 
 	// TODO: move to activator
-	protected static IPreferenceStore dotUiPrefStore() {
+	public static IPreferenceStore dotUiPrefStore() {
 		return new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
 				DotActivator.getInstance().getBundle().getSymbolicName());
 	}

@@ -10,7 +10,7 @@
  *     Tamas Miklossy (itemis AG) - Exporting *.dot files in different formats (bug #446647)
  *
  *********************************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.preferences;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 itemis AG and others.
+ * Copyright (c) 2009, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,7 +21,7 @@ import java.io.File
 import java.util.List
 import java.util.Properties
 import org.eclipse.gef.dot.internal.DotExecutableUtils
-import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage
+import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage
 import org.junit.Assert
 import org.junit.Assume
 import org.junit.BeforeClass

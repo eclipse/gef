@@ -46,6 +46,7 @@ import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
