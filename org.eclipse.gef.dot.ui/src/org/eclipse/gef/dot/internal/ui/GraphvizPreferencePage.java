@@ -1,5 +1,5 @@
 /********************************************************************************************
- * Copyright (c) 2014, 2018 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,6 +10,7 @@
  *     Fabian Steeg   (hbz)       - initial API & implementation
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - Exporting *.dot files in different formats (bug #446647)
+ *                                - Add 'Open the exported file automatically' option (bug #521329)
  *
  *********************************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -59,9 +60,11 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private static final String GRAPHVIZ_CONF_HINT = DotUiMessages.GraphvizPreference_4;
 	private static final String DOT_EXPORT_FORMAT = DotUiMessages.GraphvizPreference_5;
 	private static final String DOT_EXPORT_FORMAT_HINT = DotUiMessages.GraphvizPreference_6;
+	private static final String DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY = DotUiMessages.GraphvizPreference_7;
 
 	public static final String DOT_PATH_PREF_KEY = "dotpath"; //$NON-NLS-1$
 	public static final String DOT_EXPORTFORMAT_PREF_KEY = "dotexportformat"; //$NON-NLS-1$
+	public static final String DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY = "dot_open_exported_file_automatically"; //$NON-NLS-1$
 
 	private static final String DOT_EXPORTFORMAT_DEFAULT = "pdf"; //$NON-NLS-1$
 
@@ -89,6 +92,11 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		return dotUiPrefs().get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
 	}
 
+	public static boolean getDotOpenExportedFileAutomaticallyValue() {
+		return dotUiPrefs().getBoolean(
+				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY, true);
+	}
+
 	private static boolean isValidDotExecutable(String path) {
 		if (path == null || path.isEmpty()) {
 			return false;
@@ -112,7 +120,14 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(dotUiPrefStore());
+		IPreferenceStore dotUiPreferenceStore = dotUiPrefStore();
+		// initialize the default value 'true'
+		if (!dotUiPreferenceStore
+				.contains(DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY)) {
+			dotUiPreferenceStore.setDefault(
+					DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY, true);
+		}
+		setPreferenceStore(dotUiPreferenceStore);
 		setDescription(DOT_SELECT_LONG);
 	}
 
@@ -257,6 +272,15 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 			}
 		}
 		addField(radioGroupFieldEditor);
+		BooleanFieldEditor2 openExportedFileBooleanFieldEditor = new BooleanFieldEditor2(
+				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY,
+				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY, getFieldEditorParent());
+		addField(openExportedFileBooleanFieldEditor);
+		radioGroupFieldEditor.addOpenExportedFileBooleanFieldEditor(
+				openExportedFileBooleanFieldEditor);
+		if (dotExecutablePath.isEmpty()) {
+			radioGroupFieldEditor.hideOpenExportedFileBooleanFieldEditor();
+		}
 	}
 
 	private void updateDotExportUI(String dotExecutablePath) {

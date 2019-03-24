@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 itemis AG and others.
+ * Copyright (c) 2010, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,6 +11,7 @@
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - Refactoring of DOT Graph view live update/live export (bug #337644)
  *                                - Add 'Find References' support (bug #531049)
+ *                                - Add 'Open the exported file automatically' option (bug #521329)
  *
  *******************************************************************************/
 
@@ -27,6 +28,7 @@ public class DotUiMessages extends NLS {
 	public static String GraphvizPreference_4;
 	public static String GraphvizPreference_5;
 	public static String GraphvizPreference_6;
+	public static String GraphvizPreference_7;
 	public static String DotGraphView_0;
 	public static String DotGraphView_1;
 	public static String DotGraphView_2;

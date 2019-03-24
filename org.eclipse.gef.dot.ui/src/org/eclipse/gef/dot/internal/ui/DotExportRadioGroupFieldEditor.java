@@ -78,6 +78,8 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 
 	private String dotExportHintText;
 
+	private BooleanFieldEditor2 openExportedFileBooleanFieldEditor;
+
 	/**
 	 * Creates a new radio group field editor
 	 */
@@ -352,6 +354,7 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 					}
 					load();
 					hideDotExportHintLabel();
+					showOpenExportedFileBooleanFieldEditor();
 					parent.layout();
 				}
 			}
@@ -371,6 +374,27 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 		((GridData) dotExportHintLabel.getLayoutData()).exclude = false;
 	}
 
+	protected void hideOpenExportedFileBooleanFieldEditor() {
+		// hide the open exported file automatically boolean field editor
+		Button checkBox = openExportedFileBooleanFieldEditor
+				.getChangeControl(parent);
+		checkBox.setVisible(false);
+		((GridData) checkBox.getLayoutData()).exclude = true;
+	}
+
+	protected void showOpenExportedFileBooleanFieldEditor() {
+		// show the open exported file automatically boolean field editor
+		Button checkBox = openExportedFileBooleanFieldEditor
+				.getChangeControl(parent);
+		checkBox.setVisible(true);
+		((GridData) checkBox.getLayoutData()).exclude = false;
+	}
+
+	protected void addOpenExportedFileBooleanFieldEditor(
+			BooleanFieldEditor2 openExportedFileBooleanFieldEditor) {
+		this.openExportedFileBooleanFieldEditor = openExportedFileBooleanFieldEditor;
+	}
+
 	public void clear() {
 		this.labelsAndValues = null;
 		if (radioButtons != null) {
@@ -379,6 +403,7 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 			}
 
 			showDotExportHintLabel();
+			hideOpenExportedFileBooleanFieldEditor();
 			// do synchronous layout
 			Display.getDefault().syncExec(new Runnable() {
 
