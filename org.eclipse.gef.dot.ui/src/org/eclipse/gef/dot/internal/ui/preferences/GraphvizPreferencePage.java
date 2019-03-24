@@ -18,10 +18,9 @@ package org.eclipse.gef.dot.internal.ui.preferences;
 import java.io.File;
 import java.util.Arrays;
 
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.ui.DotUiMessages;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -29,7 +28,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -54,7 +52,15 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 
 	private static final String DOT_EXPORTFORMAT_DEFAULT = "pdf"; //$NON-NLS-1$
 
+	private static Preferences dotUiPreferences;
+	private static IPreferenceStore dotUiPreferenceStore;
+
 	private DotExportRadioGroupFieldEditor radioGroupFieldEditor;
+
+	static {
+		dotUiPreferences = DotActivatorEx.dotUiPreferences();
+		dotUiPreferenceStore = DotActivatorEx.dotUiPreferenceStore();
+	}
 
 	public GraphvizPreferencePage() {
 		super(GRID);
@@ -65,15 +71,15 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	}
 
 	public static String getDotExecutablePath() {
-		return dotUiPreferences().get(DOT_PATH_PREF_KEY, "");//$NON-NLS-1$
+		return dotUiPreferences.get(DOT_PATH_PREF_KEY, "");//$NON-NLS-1$
 	}
 
 	public static String getDotExportFormat() {
-		return dotUiPreferences().get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
+		return dotUiPreferences.get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
 	}
 
 	public static boolean getDotOpenExportedFileAutomaticallyValue() {
-		return dotUiPreferences().getBoolean(
+		return dotUiPreferences.getBoolean(
 				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY, true);
 	}
 
@@ -86,21 +92,8 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 				|| file.getName().equals("dot.exe")); //$NON-NLS-1$
 	}
 
-	// TODO: move to activator
-	public static Preferences dotUiPreferences() {
-		return ConfigurationScope.INSTANCE.getNode(
-				DotActivator.getInstance().getBundle().getSymbolicName());
-	}
-
-	// TODO: move to activator
-	public static IPreferenceStore dotUiPreferenceStore() {
-		return new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
-				DotActivator.getInstance().getBundle().getSymbolicName());
-	}
-
 	@Override
 	public void init(IWorkbench workbench) {
-		IPreferenceStore dotUiPreferenceStore = dotUiPreferenceStore();
 		// initialize the default value 'true'
 		if (!dotUiPreferenceStore
 				.contains(DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY)) {
@@ -247,7 +240,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 			String defaultExportFormat = getDefaultExportFormat(
 					supportedExportFormats);
 			if (defaultExportFormat != null) {
-				dotUiPreferences().put(DOT_EXPORTFORMAT_PREF_KEY,
+				dotUiPreferences.put(DOT_EXPORTFORMAT_PREF_KEY,
 						defaultExportFormat);
 			}
 		}
@@ -270,7 +263,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 				supportedExportFormats);
 		String[][] labelsAndValues = getLabelsAndValues(supportedExportFormats);
 
-		dotUiPreferences().put(DOT_EXPORTFORMAT_PREF_KEY, defaultExportFormat);
+		dotUiPreferences.put(DOT_EXPORTFORMAT_PREF_KEY, defaultExportFormat);
 
 		radioGroupFieldEditor.update(labelsAndValues);
 	}
@@ -278,7 +271,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private void removeDotExportUI() {
 		if (radioGroupFieldEditor != null) {
 			radioGroupFieldEditor.clear();
-			dotUiPreferences().remove(DOT_EXPORTFORMAT_PREF_KEY);
+			dotUiPreferences.remove(DOT_EXPORTFORMAT_PREF_KEY);
 		}
 	}
 

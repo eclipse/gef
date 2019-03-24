@@ -46,6 +46,7 @@ import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
@@ -159,7 +160,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		GraphvizPreferencePage.dotUiPreferenceStore()
+		DotActivatorEx.dotUiPreferenceStore()
 				.addPropertyChangeListener(preferenceChangeListener);
 	}
 
@@ -169,7 +170,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	@Override
 	public void dispose() {
-		GraphvizPreferencePage.dotUiPreferenceStore()
+		DotActivatorEx.dotUiPreferenceStore()
 				.removePropertyChangeListener(preferenceChangeListener);
 		currentDot = null;
 		currentFile = null;
