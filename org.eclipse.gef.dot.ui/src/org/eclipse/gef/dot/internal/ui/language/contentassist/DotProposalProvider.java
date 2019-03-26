@@ -12,6 +12,7 @@
  *     Tamas Miklossy (itemis AG) - Add support for all dot attributes (bug #461506)
  *                                - Improve the content assistant support (bug #498324)
  *     Zoey Prigge (itemis AG)    - Improve quoted attribute CA support (bug #545801)
+ *                                - Add FontName content assist support (bug #542663)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
@@ -38,6 +39,7 @@ import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
+import org.eclipse.gef.dot.internal.language.fontname.PostScriptFontAlias;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
@@ -341,6 +343,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				case DotAttributes.DIR__E:
 					proposeAttributeValues(DirType.values(), context, acceptor);
 					break;
+				case DotAttributes.FONTNAME__GCNE:
+				case DotAttributes.LABELFONTNAME__E:
+					proposeFontNameAttributeValues(context, acceptor);
+					break;
 				case DotAttributes.HEAD_LP__E:
 				case DotAttributes.LP__GCE:
 				case DotAttributes.TAIL_LP__E:
@@ -390,6 +396,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					break;
 				case DotAttributes.COLORSCHEME__GCNE:
 					proposeColorSchemeAttributeValues(context, acceptor);
+					break;
+				case DotAttributes.FONTNAME__GCNE:
+					proposeFontNameAttributeValues(context, acceptor);
 					break;
 				case DotAttributes.FORCELABELS__G:
 					proposeAttributeValues(booleanAttributeValuesProposals,
@@ -444,6 +453,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeAttributeValues(booleanAttributeValuesProposals,
 							context, acceptor);
 					break;
+				case DotAttributes.FONTNAME__GCNE:
+					proposeFontNameAttributeValues(context, acceptor);
+					break;
 				case DotAttributes.LABEL__GCNE:
 				case DotAttributes.XLABEL__NE:
 					proposeHtmlLabelAttributeValues(attribute, context,
@@ -490,6 +502,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					break;
 				case DotAttributes.FONTCOLOR__GCNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
+					break;
+				case DotAttributes.FONTNAME__GCNE:
+					proposeFontNameAttributeValues(context, acceptor);
 					break;
 				case DotAttributes.LABEL__GCNE:
 					proposeHtmlLabelAttributeValues(attribute, context,
@@ -617,6 +632,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 		// reset the state of the DotColorProposalProvider
 		DotColorProposalProvider.globalColorScheme = null;
+	}
+
+	private void proposeFontNameAttributeValues(ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		proposeAttributeValues(PostScriptFontAlias.values(), context, acceptor);
 	}
 
 	private void proposeColorSchemeAttributeValues(ContentAssistContext context,
