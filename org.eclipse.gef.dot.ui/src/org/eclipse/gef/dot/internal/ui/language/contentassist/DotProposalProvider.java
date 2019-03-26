@@ -11,6 +11,7 @@
  *     Alexander Nyßen - initial implementation
  *     Tamas Miklossy (itemis AG) - Add support for all dot attributes (bug #461506)
  *                                - Improve the content assistant support (bug #498324)
+ *     Zoey Prigge (itemis AG)    - Improve quoted attribute CA support (bug #545801)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
@@ -50,6 +51,8 @@ import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
@@ -58,8 +61,10 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal.IReplacementTextApplier;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 
 import com.google.inject.Inject;
 
@@ -158,18 +163,95 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				}
 			}
 
-			// ensure that the double quote at the beginning of an attribute
-			// value is not overridden when applying the proposal
 			if (currentModel instanceof Attribute) {
-				String text = context.getCurrentNode().getText();
-				if (text.trim().startsWith("\"")) { //$NON-NLS-1$
-					configurableCompletionProposal
-							.setReplacementOffset(configurableCompletionProposal
-									.getReplacementOffset() + 1);
-					configurableCompletionProposal
-							.setReplacementLength(configurableCompletionProposal
-									.getReplacementLength() - 1);
+				// avoid confusing empty proposal display string
+				if (configurableCompletionProposal.getReplacementString()
+						.length() == 0) {
+					configurableCompletionProposal.setDisplayString("\"\""); //$NON-NLS-1$
 				}
+
+				configurableCompletionProposal
+						.setTextApplier(new IReplacementTextApplier() {
+							final private IReplacementTextApplier initialTextApplier = configurableCompletionProposal
+									.getTextApplier();
+
+							@Override
+							public void apply(IDocument document,
+									ConfigurableCompletionProposal proposal)
+									throws BadLocationException {
+								String original = document.get(
+										proposal.getReplacementOffset(),
+										proposal.getReplacementLength());
+
+								String replacement = proposal
+										.getReplacementString();
+								int replacementOffset = proposal
+										.getReplacementOffset();
+								int replacementLength = proposal
+										.getReplacementLength();
+
+								// ensure that the double quote at the beginning
+								// of an attribute value is not overridden when
+								// applying the proposal
+								// However, if final quote is to be overridden,
+								// too (text selection), ignore.
+								if (original.startsWith("\"") //$NON-NLS-1$
+										&& (original.length() == 1
+												|| !original.endsWith("\""))) { //$NON-NLS-1$
+									proposal.setReplacementOffset(
+											replacementOffset + 1);
+									proposal.setReplacementLength(
+											replacementLength - 1);
+								} else {
+									String idValue = ID.fromValue(replacement)
+											.toString();
+									boolean idIsQuoted = idValue
+											.startsWith("\""); //$NON-NLS-1$
+									// Check if ID representation is quoted to
+									// account for valid DOT grammar
+									if (idIsQuoted) {
+										proposal.setReplacementString(idValue);
+										proposal.setCursorPosition(
+												idValue.length());
+									}
+								}
+								if (initialTextApplier == null) {
+									// adapted from
+									// ConfigurableCompletionProposal::apply
+									document.replace(
+											proposal.getReplacementOffset(),
+											proposal.getReplacementLength(),
+											proposal.getReplacementString());
+								} else {
+									initialTextApplier.apply(document,
+											proposal);
+								}
+							}
+						});
+
+				configurableCompletionProposal.setMatcher(new PrefixMatcher() {
+					private PrefixMatcher originalMatcher = configurableCompletionProposal
+							.getMatcher();
+
+					@Override
+					public boolean isCandidateMatchingPrefix(String name,
+							String prefix) {
+						if (prefix.trim().startsWith("\"")) { //$NON-NLS-1$
+							return quoteMatch(name, prefix);
+						}
+						return standardMatch(name, prefix);
+					}
+
+					private boolean standardMatch(String name, String prefix) {
+						return originalMatcher.isCandidateMatchingPrefix(name,
+								prefix);
+					}
+
+					private boolean quoteMatch(String name, String prefix) {
+						return originalMatcher.isCandidateMatchingPrefix(name,
+								prefix.substring(1));
+					}
+				});
 			}
 		}
 
@@ -501,11 +583,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 	private void proposeAttributeValues(List<?> values,
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		for (Object value : values) {
-			final String proposedValue = ID.fromValue(value.toString())
-					.toString();
-			acceptor.accept(createCompletionProposal(proposedValue, context));
-		}
+		values.forEach(value -> acceptor
+				.accept(createCompletionProposal(value.toString(), context)));
 	}
 
 	private void proposeColorAttributeValues(Attribute attribute,

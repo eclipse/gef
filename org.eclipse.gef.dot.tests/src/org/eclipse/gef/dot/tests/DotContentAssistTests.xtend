@@ -9,6 +9,7 @@
  * Contributors:
  *     Tamas Miklossy     (itemis AG) - initial implementation (bug #498324)
  *     Zoey Gerrit Prigge (itemis AG) - Add support for additional dot attributes (bug #461506)
+ *                                    - Improve CA support for quoted attributes (bug #545801)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -3406,7 +3407,9 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				try {
 					val configuration = injector.getInstance(XtextSourceViewerConfiguration)
 					val sourceViewer = getSourceViewer(shell, document, configuration)
-					return appendAndApplyProposal(proposal, sourceViewer, getModel(), position)
+					// use appendAndApplyProposal as a workaround (also see comment above)
+					// use null model, as document already contains model
+					return appendAndApplyProposal(proposal, sourceViewer, null, position)
 				} finally {
 					shell.dispose
 				}
