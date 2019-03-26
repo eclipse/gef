@@ -67,7 +67,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.BOOK).
 		hasFamilyList(
-			"AvantGarde,sans,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"AvantGarde,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def avantgarde_book_oblique() {
@@ -78,7 +78,7 @@ class DotFontNameTests {
 		hasWeight(Weight.BOOK).
 		hasStyle(Style.OBLIQUE).
 		hasFamilyList(
-			"AvantGarde,sans,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"AvantGarde,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def avantgarde_demi() {
@@ -88,7 +88,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.SEMILIGHT).
 		hasFamilyList(
-			"AvantGarde,sans,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"AvantGarde,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def avantgarde_demi_oblique() {
@@ -99,7 +99,7 @@ class DotFontNameTests {
 		hasWeight(Weight.SEMILIGHT).
 		hasStyle(Style.OBLIQUE).
 		hasFamilyList(
-			"AvantGarde,sans,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"AvantGarde,URW Gothic L,Charcoal,Nimbus Sans L,Verdana,Helvetica,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def bookman_demi() {
@@ -109,7 +109,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.SEMILIGHT).
 		hasFamilyList(
-			"Bookman,serif,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Bookman,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def bookman_demi_italic() {
@@ -120,7 +120,7 @@ class DotFontNameTests {
 		hasWeight(Weight.SEMILIGHT).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"Bookman,serif,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Bookman,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def bookman_light() {
@@ -130,7 +130,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.LIGHT).
 		hasFamilyList(
-			"Bookman,serif,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Bookman,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def bookman_light_italic() {
@@ -141,7 +141,7 @@ class DotFontNameTests {
 		hasWeight(Weight.LIGHT).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"Bookman,serif,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Bookman,URW Bookman L,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def courier() {
@@ -150,7 +150,7 @@ class DotFontNameTests {
 			postScriptFontName(PostScriptFontAlias.COURIER)
 		).
 		hasFamilyList(
-			"Courier,monospace,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono")
+			"Courier,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono,monospace")
 	}
 
 	@Test def courier_bold() {
@@ -160,7 +160,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.BOLD).
 		hasFamilyList(
-			"Courier,monospace,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono")
+			"Courier,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono,monospace")
 	}
 
 	@Test def courier_bold_oblique() {
@@ -171,7 +171,7 @@ class DotFontNameTests {
 		hasWeight(Weight.BOLD).
 		hasStyle(Style.OBLIQUE).
 		hasFamilyList(
-			"Courier,monospace,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono")
+			"Courier,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono,monospace")
 	}
 
 	@Test def courier_oblique() {
@@ -181,7 +181,7 @@ class DotFontNameTests {
 		).
 		hasStyle(Style.OBLIQUE).
 		hasFamilyList(
-			"Courier,monospace,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono")
+			"Courier,Nimbus Mono L,Inconsolata,Courier New,Bitstream Vera Sans Mono,DejaVu Sans Mono,Liberation Mono,Luxi Mono,FreeMono,monospace")
 	}
 
 	@Test def helvetica() {
@@ -190,7 +190,7 @@ class DotFontNameTests {
 			postScriptFontName(PostScriptFontAlias.HELVETICA)
 		).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def helvetica_bold() {
@@ -200,7 +200,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.BOLD).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def helvetica_bold_oblique() {
@@ -211,7 +211,7 @@ class DotFontNameTests {
 		hasWeight(Weight.BOLD).
 		hasStyle(Style.OBLIQUE).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def helvetica_narrow() {
@@ -221,7 +221,7 @@ class DotFontNameTests {
 		).
 		hasStretch(Stretch.CONDENSED).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def helvetica_narrow_bold() {
@@ -232,7 +232,7 @@ class DotFontNameTests {
 		hasWeight(Weight.BOLD).
 		hasStretch(Stretch.CONDENSED).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def helvetica_narrow_boldoblique() {
@@ -244,7 +244,7 @@ class DotFontNameTests {
 		hasStretch(Stretch.CONDENSED).
 		hasStyle(Style.OBLIQUE).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def helvetica_narrow_oblique() {
@@ -255,7 +255,7 @@ class DotFontNameTests {
 		hasStyle(Style.OBLIQUE).
 		hasStretch(Stretch.CONDENSED).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def helvetica_oblique() {
@@ -265,7 +265,7 @@ class DotFontNameTests {
 		).
 		hasStyle(Style.OBLIQUE).
 		hasFamilyList(
-			"Helvetica,sans,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans")
+			"Helvetica,Nimbus Sans L,Arial,Verdana,Bitstream Vera Sans,DejaVu Sans,Liberation Sans,Luxi Sans,FreeSans,sans")
 	}
 
 	@Test def newcenturyschlbk_bold() {
@@ -275,7 +275,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.BOLD).
 		hasFamilyList(
-			"NewCenturySchlbk,serif,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"NewCenturySchlbk,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def newcenturyschlbk_bold_italic() {
@@ -286,7 +286,7 @@ class DotFontNameTests {
 		hasWeight(Weight.BOLD).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"NewCenturySchlbk,serif,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"NewCenturySchlbk,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def newcenturyschlbk_italic() {
@@ -296,7 +296,7 @@ class DotFontNameTests {
 		).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"NewCenturySchlbk,serif,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"NewCenturySchlbk,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def newcenturyschlbk_roman() {
@@ -306,7 +306,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.NORMAL).
 		hasFamilyList(
-			"NewCenturySchlbk,serif,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"NewCenturySchlbk,URW Bookman L,Times New Roman,Times,Georgia,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def palatino_bold() {
@@ -316,7 +316,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.BOLD).
 		hasFamilyList(
-			"Palatino,serif,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Palatino,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def palatino_bold_italic() {
@@ -327,7 +327,7 @@ class DotFontNameTests {
 		hasWeight(Weight.BOLD).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"Palatino,serif,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Palatino,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def palatino_italic() {
@@ -337,7 +337,7 @@ class DotFontNameTests {
 		).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"Palatino,serif,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Palatino,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def palatino_roman() {
@@ -346,7 +346,7 @@ class DotFontNameTests {
 			postScriptFontName(PostScriptFontAlias.PALATINO_ROMAN)
 		).
 		hasFamilyList(
-			"Palatino,serif,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Palatino,Times New Roman,Times,Nimbus Roman No9 L,Norasi,Rekha,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def symbol() {
@@ -354,7 +354,7 @@ class DotFontNameTests {
 		assertTreeEquals(
 			postScriptFontName(PostScriptFontAlias.SYMBOL)
 		).
-		hasFamilyList("Symbol,fantasy,Impact,Copperplate Gothic Std,Cooper Std,Bauhaus Std")
+		hasFamilyList("Symbol,Impact,Copperplate Gothic Std,Cooper Std,Bauhaus Std,fantasy")
 	}
 
 	@Test def times_bold() {
@@ -364,7 +364,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.BOLD).
 		hasFamilyList(
-			"Times,serif,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Times,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def times_bold_italic() {
@@ -375,7 +375,7 @@ class DotFontNameTests {
 		hasWeight(Weight.BOLD).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"Times,serif,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Times,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def times_italic() {
@@ -385,7 +385,7 @@ class DotFontNameTests {
 		).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"Times,serif,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Times,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def times_roman() {
@@ -394,7 +394,7 @@ class DotFontNameTests {
 			postScriptFontName(PostScriptFontAlias.TIMES_ROMAN)
 		).
 		hasFamilyList(
-			"Times,serif,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Times,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def zapfchancery_medium_italic() {
@@ -405,7 +405,7 @@ class DotFontNameTests {
 		hasWeight(Weight.MEDIUM).
 		hasStyle(Style.ITALIC).
 		hasFamilyList(
-			"ZapfChancery,serif,URW Chancery L,Charcoal,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"ZapfChancery,URW Chancery L,Charcoal,Times New Roman,Times,Nimbus Roman No9 L,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	@Test def zapfdingbats() {
@@ -413,7 +413,7 @@ class DotFontNameTests {
 		assertTreeEquals(
 			postScriptFontName(PostScriptFontAlias.ZAPFDINGBATS)
 		).
-		hasFamilyList("ZapfDingbats,fantasy,Dingbats,Impact,Copperplate Gothic Std,Cooper Std,Bauhaus Std")
+		hasFamilyList("ZapfDingbats,Dingbats,Impact,Copperplate Gothic Std,Cooper Std,Bauhaus Std,fantasy")
 	}
 
 	@Test def times_bold_variedCase() {
@@ -423,7 +423,7 @@ class DotFontNameTests {
 		).
 		hasWeight(Weight.BOLD).
 		hasFamilyList(
-			"Times,serif,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif")
+			"Times,Nimbus Roman No9 L,Times New Roman,Charcoal,Bitstream Vera Serif,DejaVu Serif,Liberation Serif,Luxi Serif,FreeSerif,serif")
 	}
 
 	/*

@@ -107,7 +107,7 @@ public enum PostScriptFontAlias {
 	/**
 	 * The Helvetica-Narrow-BoldOblique fontname
 	 */
-	HELVETICA_NARROW_BOLDOBLIQUE("Helvetica-NarrowBoldOblique",
+	HELVETICA_NARROW_BOLDOBLIQUE("Helvetica-Narrow-BoldOblique",
 			Family.HELVETICA_FAMILY, Weight.BOLD, Style.OBLIQUE,
 			Stretch.CONDENSED),
 	/**
@@ -133,12 +133,12 @@ public enum PostScriptFontAlias {
 	/**
 	 * The NewCenturySchoolbk-Italic fontname
 	 */
-	NEWCENTURYSCHLBK_ITALIC("NewCenturySchoolbk-Italic",
+	NEWCENTURYSCHLBK_ITALIC("NewCenturySchlbk-Italic",
 			Family.NEWCENTURYSCHLBK_FAMILY, null, Style.ITALIC, null),
 	/**
 	 * The NewCenturySchoolbk-Roman fontname
 	 */
-	NEWCENTURYSCHLBK_ROMAN("NewCenturySchoolbk-Roman",
+	NEWCENTURYSCHLBK_ROMAN("NewCenturySchlbk-Roman",
 			Family.NEWCENTURYSCHLBK_FAMILY, Weight.NORMAL /* ROMAN */, null,
 			null),
 	/**
@@ -236,9 +236,10 @@ public enum PostScriptFontAlias {
 	}
 
 	/**
-	 * @return The literal PostScriptFontAlias
+	 * @return The literal PostScriptFontAlias string representation
 	 */
-	public String getLiteral() {
+	@Override
+	public String toString() {
 		return literal;
 	}
 
@@ -249,63 +250,67 @@ public enum PostScriptFontAlias {
 		/**
 		 * The AvantGarde postscript font family
 		 */
-		AVANTGARDE_FAMILY("AvantGarde", "sans", "URW Gothic L", "Charcoal",
+		AVANTGARDE_FAMILY("AvantGarde", "URW Gothic L", "Charcoal",
 				"Nimbus Sans L", "Verdana", "Helvetica", "Bitstream Vera Sans",
-				"DejaVu Sans", "Liberation Sans", "Luxi Sans", "FreeSans"),
+				"DejaVu Sans", "Liberation Sans", "Luxi Sans", "FreeSans",
+				"sans"),
 		/**
 		 * The Bookman postscript font family
 		 */
-		BOOKMAN_FAMILY("Bookman", "serif", "URW Bookman L", "Times New Roman",
-				"Times", "Nimbus Roman No9 L", "Bitstream Vera Serif",
-				"DejaVu Serif", "Liberation Serif", "Luxi Serif", "FreeSerif"),
+		BOOKMAN_FAMILY("Bookman", "URW Bookman L", "Times New Roman", "Times",
+				"Nimbus Roman No9 L", "Bitstream Vera Serif", "DejaVu Serif",
+				"Liberation Serif", "Luxi Serif", "FreeSerif", "serif"),
 		/**
 		 * The Courier postscript font family
 		 */
-		COURIER_FAMILY("Courier", "monospace", "Nimbus Mono L", "Inconsolata",
-				"Courier New", "Bitstream Vera Sans Mono", "DejaVu Sans Mono",
-				"Liberation Mono", "Luxi Mono", "FreeMono"),
+		COURIER_FAMILY("Courier", "Nimbus Mono L", "Inconsolata", "Courier New",
+				"Bitstream Vera Sans Mono", "DejaVu Sans Mono",
+				"Liberation Mono", "Luxi Mono", "FreeMono", "monospace"),
 		/**
 		 * The Helvetica postscript font family
 		 */
-		HELVETICA_FAMILY("Helvetica", "sans", "Nimbus Sans L", "Arial",
-				"Verdana", "Bitstream Vera Sans", "DejaVu Sans",
-				"Liberation Sans", "Luxi Sans", "FreeSans"),
+		HELVETICA_FAMILY("Helvetica", "Nimbus Sans L", "Arial", "Verdana",
+				"Bitstream Vera Sans", "DejaVu Sans", "Liberation Sans",
+				"Luxi Sans", "FreeSans", "sans"),
 		/**
 		 * The NewCenturySchoolbook postscript font family
 		 */
-		NEWCENTURYSCHLBK_FAMILY("NewCenturySchlbk", "serif", "URW Bookman L",
+		NEWCENTURYSCHLBK_FAMILY("NewCenturySchlbk", "URW Bookman L",
 				"Times New Roman", "Times", "Georgia", "Bitstream Vera Serif",
-				"DejaVu Serif", "Liberation Serif", "Luxi Serif", "FreeSerif"),
+				"DejaVu Serif", "Liberation Serif", "Luxi Serif", "FreeSerif",
+				"serif"),
 		/**
 		 * The Palatino postscript font family
 		 */
-		PALATINO_FAMILY("Palatino", "serif", "Times New Roman", "Times",
+		PALATINO_FAMILY("Palatino", "Times New Roman", "Times",
 				"Nimbus Roman No9 L", "Norasi", "Rekha", "Bitstream Vera Serif",
-				"DejaVu Serif", "Liberation Serif", "Luxi Serif", "FreeSerif"),
+				"DejaVu Serif", "Liberation Serif", "Luxi Serif", "FreeSerif",
+				"serif"),
 		/**
 		 * The Symbol postscript font family
 		 */
-		SYMBOL_FAMILY("Symbol", "fantasy", "Impact", "Copperplate Gothic Std",
-				"Cooper Std", "Bauhaus Std"),
+		SYMBOL_FAMILY("Symbol", "Impact", "Copperplate Gothic Std",
+				"Cooper Std", "Bauhaus Std", "fantasy"),
 		/**
 		 * The Times postscript font family
 		 */
-		TIMES_FAMILY("Times", "serif", "Nimbus Roman No9 L", "Times New Roman",
+		TIMES_FAMILY("Times", "Nimbus Roman No9 L", "Times New Roman",
 				"Charcoal", "Bitstream Vera Serif", "DejaVu Serif",
-				"Liberation Serif", "Luxi Serif", "FreeSerif"),
+				"Liberation Serif", "Luxi Serif", "FreeSerif", "serif"),
 
 		/**
 		 * The ZapfChancery postscript font family
 		 */
-		CHANCERY_FAMILY("ZapfChancery", "serif", "URW Chancery L", "Charcoal",
+		CHANCERY_FAMILY("ZapfChancery", "URW Chancery L", "Charcoal",
 				"Times New Roman", "Times", "Nimbus Roman No9 L",
 				"Bitstream Vera Serif", "DejaVu Serif", "Liberation Serif",
-				"Luxi Serif", "FreeSerif"),
+				"Luxi Serif", "FreeSerif", "serif"),
 		/**
 		 * The ZapfDingbats postscript font family
 		 */
-		DINGBATS_FAMILY("ZapfDingbats", "fantasy", "Dingbats", "Impact",
-				"Copperplate Gothic Std", "Cooper Std", "Bauhaus Std");
+		DINGBATS_FAMILY("ZapfDingbats", "Dingbats", "Impact",
+				"Copperplate Gothic Std", "Cooper Std", "Bauhaus Std",
+				"fantasy");
 
 		private final List<String> families;
 
