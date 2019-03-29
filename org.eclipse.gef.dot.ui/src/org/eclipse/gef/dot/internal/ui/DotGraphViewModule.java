@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,6 +13,8 @@ package org.eclipse.gef.dot.internal.ui;
 
 import org.eclipse.gef.common.adapt.AdapterKey;
 import org.eclipse.gef.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport;
+import org.eclipse.gef.common.adapt.inject.AdapterInjectionSupport.LoggingMode;
 import org.eclipse.gef.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
@@ -285,6 +287,11 @@ public class DotGraphViewModule extends MvcFxModule {
 				.addBinding(AdapterKey.role(IDomain.CONTENT_VIEWER_ROLE))
 				.to(ZestFxRootPart.class)
 				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	@Override
+	protected void enableAdapterMapInjection() {
+		install(new AdapterInjectionSupport(LoggingMode.PRODUCTION));
 	}
 
 	@Override
