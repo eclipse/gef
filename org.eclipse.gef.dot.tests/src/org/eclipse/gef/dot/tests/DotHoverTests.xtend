@@ -387,7 +387,7 @@ class DotHoverTests extends AbstractEditorTest {
 			</table>
 		''')
 	}
-	
+
 	@Test def cluster_bgcolor() {
 		'''
 			graph {
@@ -414,7 +414,7 @@ class DotHoverTests extends AbstractEditorTest {
 		''')
 	}
 
-	private def assertHoveringResult(CharSequence it, String textUnderHover, String expected){
+	private def assertHoveringResult(CharSequence it, String textUnderHover, String expected) {
 		// given
 		dslFile.
 		// when

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *       Zoey Gerrit Prigge (itemis AG) - Initial text (bug #461506)
+ *                                      - Add pango font name (bug #542663)
  *
  *******************************************************************************/
  
@@ -18,36 +19,41 @@
 digraph{
 	9 -> 10 -> 11 -> 12 [labelfontname="Times", labelfontsize=10];
 
-9[ fontname="Courier" fontsize=11 shape=box width=0 height=0 margin="0,0"
-	label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-	<TR><TD>"Courier"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
-	<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	</TABLE>>];
+	PangoTestNode [fontname="One Font, Second Font Bold"];
 
-10[ fontname="Courier-Bold" fontsize="12" shape=box width=0 height=0 margin="0,0"
-	label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-	<TR><TD>"Courier-Bold"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
-	<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	</TABLE>>];
+	9[ fontname="Courier" fontsize=11 shape=box width=0 height=0 margin="0,0" label=<
+		<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+			<TR><TD>"Courier"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
+			<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
+		</TABLE>>
+	];
 
-11[ fontname="Courier-BoldOblique" shape=box width=0 height=0 margin="0,0"
-	label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-	<TR><TD>"Courier-BoldOblique"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
-	<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	</TABLE>>];
+	10[ fontname="Courier-Bold" fontsize="12" shape=box width=0 height=0 margin="0,0" label=<
+		<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+			<TR><TD>"Courier-Bold"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
+			<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
+		</TABLE>>
+	];
 
-12[ fontname="Courier-Oblique" shape=box width=0 height=0 margin="0,0"
-	label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-	<TR><TD>"Courier-Oblique"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
-	<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
-	</TABLE>>];
+	11[ fontname="Courier-BoldOblique" shape=box width=0 height=0 margin="0,0" label=<
+		<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+			<TR><TD>"Courier-BoldOblique"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
+			<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
+		</TABLE>>
+	];
 
+	12[ fontname="Courier-Oblique" shape=box width=0 height=0 margin="0,0" label=<
+		<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+			<TR><TD>"Courier-Oblique"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ"</TD></TR>
+			<TR><TD>"abcdefghijlklmnopqrstuvwxyz"</TD></TR>
+			<TR><TD>"ABCDEFGHIJLKLMNOPQRSTUVWXYZ\nabcdefghijlklmnopqrstuvwxyz"</TD></TR>
+		</TABLE>>
+	];
 }

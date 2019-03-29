@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,8 +14,8 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import java.util.Collections
 import java.util.List
+import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.NullProgressMonitor
-import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
@@ -24,8 +24,10 @@ import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
+import org.eclipse.search.ui.IQueryListener
+import org.eclipse.search.ui.ISearchQuery
+import org.eclipse.search.ui.ISearchResult
 import org.eclipse.search.ui.NewSearchUI
-import org.eclipse.search2.internal.ui.SearchView
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
@@ -35,6 +37,7 @@ import org.eclipse.xtext.ui.editor.findrefs.ReferenceSearchResult
 import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
 import org.eclipse.xtext.ui.resource.IResourceSetProvider
 import org.eclipse.xtext.xbase.lib.Functions.Function1
+import org.junit.AfterClass
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -50,6 +53,8 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	@Inject XtextEditorInfo editorInfo
 	@Inject IResourceSetProvider resourceSetProvider
 	@Inject ReferenceQueryExecutor referenceQueryExecutor
+	
+	ISearchResult searchResult = null
 
 	override setUp() {
 		super.setUp
@@ -206,9 +211,28 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		
 		referenceQueryExecutor.init(element)
 		
+		NewSearchUI.addQueryListener( new IQueryListener() {
+			
+			override queryAdded(ISearchQuery query) {
+			}
+			
+			override queryFinished(ISearchQuery query) {
+				searchResult = query.searchResult
+			}
+			
+			override queryRemoved(ISearchQuery query) {
+			}
+			
+			override queryStarting(ISearchQuery query) {
+			}
+			
+		});
+		
 		referenceQueryExecutor.execute
 		
-		waitForSearchJob
+		while(searchResult===null) {
+			Thread.sleep(100)
+		}
 		
 		element
 	}
@@ -220,9 +244,7 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 	}
 
 	private def searchViewContains(EObject element, List<(DotAst)=>EObject> expectedReferences) {
-		val searchResultView = NewSearchUI.getSearchResultView as SearchView
-		val searchResult = searchResultView.currentSearchResult as ReferenceSearchResult
-		val matchingReferences = searchResult.matchingReferences
+		val matchingReferences = (searchResult as ReferenceSearchResult).matchingReferences
 		
 		val resource = element.eResource
 		val dotAst = resource.contents.head as DotAst
@@ -273,16 +295,27 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		(edgeRHS.head as EdgeRhsNode).node
 	}
 
-	private def void waitForSearchJob() {
-		Job.jobManager.find(null).findFirst[name.startsWith("DOT References to")]?.join
-	}
-
-	// TODO: remove this workaround
-	def list(Function1<? super DotAst, ? extends EObject>... initial) {
+	/**
+	 * This workaround is necessary when using the xtend compiler in a version less than 2.8.0, otherwise, the generated code cannot be compiled. The error messages:
+	 * The method testFindingReferences(CharSequence,        Functions.Function1<? super DotAst,? extends EObject>, String, List<Functions.Function1<? super DotAst,? extends EObject>>) in the type DotReferenceFinderTests is not applicable for the arguments
+	 *                                 (StringConcatenation, Functions.Function1<DotAst,EObject>,                   String, List<Functions.Function1<DotAst,EObject>>)
+	 * TODO: remove this workaround as soon as at least the xtend-maven plugin 2.8.0 is used in the build process.
+	 */
+	private def list(Function1<? super DotAst, ? extends EObject>... initial) {
 		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
 	}
 
 	override protected getEditorId() {
 		editorInfo.editorId
+	}
+
+	@AfterClass def static void cleanup() {
+		/**
+		 * The Eclipse workspace needs to be explicitly saved after the test execution
+		 * otherwise, the test case executions are resulting in a NullPointerException.
+		 * For more information, see
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=460996
+		 */
+		ResourcesPlugin.getWorkspace().save(true, null)
 	}
 }

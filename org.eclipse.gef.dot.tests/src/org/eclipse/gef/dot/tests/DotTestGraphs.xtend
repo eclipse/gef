@@ -396,7 +396,7 @@ class DotTestGraphs {
 			1->2; 2->3; 2->4;
 		}
 	''' 
-	
+
 	public static val CLUSTER_PENWIDTH = '''
 		graph {
 			subgraph clusterName {
@@ -1680,7 +1680,7 @@ class DotTestGraphs {
 					>
 			]
 		}
-	'''	
+	'''
 
 	static def EDGE_LABEL_HTML_LIKE(String htmlLabel)'''
 		graph {

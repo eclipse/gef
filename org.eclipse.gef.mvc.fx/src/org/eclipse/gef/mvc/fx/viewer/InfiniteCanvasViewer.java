@@ -280,9 +280,9 @@ public class InfiniteCanvasViewer implements IViewer {
 			throw new IllegalStateException(
 					"RootPart has to be set before activation.");
 		}
-		if (infiniteCanvas == null || infiniteCanvas.getScene() == null) {
+		if (infiniteCanvas == null) {
 			throw new IllegalStateException(
-					"Viewer controls have to be hooked (to scene) before activation.");
+					"Viewer controls have to be hooked before activation.");
 		}
 		activateAdapters();
 	}

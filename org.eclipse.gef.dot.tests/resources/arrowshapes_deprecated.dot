@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,19 +10,19 @@
  *       Tamas Miklossy  (itemis AG) - Initial text 
  *******************************************************************************/
  
-/* 
+/*
  * The ArrowShapes_Deprecated directed graph represents the deprecated arrow shapes 
  * which can not be expressed by the arrow shape sub-grammar.
  */
 digraph ArrowShapes_Deprecated {
-	 rankdir=LR
-     1-> 2[arrowhead=ediamond, label="ediamond"] // deprecated, use odiamond instead
-     3-> 4[arrowhead=open,     label="open"    ] // deprecated, use vee instead
-     5-> 6[arrowhead=halfopen, label="halfopen"] // deprecated, use lvee instead
-     7-> 8[arrowhead=empty,    label="empty"   ] // deprecated, use onormal instead     
-     9->10[arrowhead=invempty, label="invempty"] // deprecated, use oinv instead
-     
-     // deprecated multiple arrow shapes
+	rankdir=LR
+	1-> 2[arrowhead=ediamond, label="ediamond"] // deprecated, use odiamond instead
+	3-> 4[arrowhead=open,     label="open"    ] // deprecated, use vee instead
+	5-> 6[arrowhead=halfopen, label="halfopen"] // deprecated, use lvee instead
+	7-> 8[arrowhead=empty,    label="empty"   ] // deprecated, use onormal instead
+	9->10[arrowhead=invempty, label="invempty"] // deprecated, use oinv instead
+
+	// deprecated multiple arrow shapes
 	11->12[arrowhead=ediamondinvempty, label="ediamondinvempty"]
 
 	// mixing deprecated and non-deprecated multiple arrow shapes

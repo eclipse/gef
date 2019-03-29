@@ -464,7 +464,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		getAdaptable().getViewer().getCanvas()
 				.fireEvent(SynchronizationEvent.startSyncChildren(parent));
 		try {
-
 			if (contentChildren == null) {
 				throw new IllegalArgumentException(
 						"contentChildren may not be null");

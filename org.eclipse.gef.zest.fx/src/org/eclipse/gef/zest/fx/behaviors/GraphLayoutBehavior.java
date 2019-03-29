@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
+ *     Robert Rudi (itemis AG) - added further checks for updating bounds
  *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.behaviors;
@@ -42,6 +43,7 @@ import javafx.collections.SetChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 /**
  * The {@link GraphLayoutBehavior} is responsible for initiating layout passes.
@@ -102,14 +104,12 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	private boolean skipNextLayout;
 
 	/**
-	 * Performs one layout pass using the static layout algorithm that is
-	 * configured for the layout context.
+	 * Performs one layout pass using the static layout algorithm that is configured
+	 * for the layout context.
 	 *
-	 * @param clean
-	 *            Whether to fully re-compute the layout or not.
-	 * @param extra
-	 *            An extra {@link Object} that is passed-on to the
-	 *            {@link ILayoutAlgorithm}.
+	 * @param clean Whether to fully re-compute the layout or not.
+	 * @param extra An extra {@link Object} that is passed-on to the
+	 *              {@link ILayoutAlgorithm}.
 	 */
 	@SuppressWarnings("unchecked")
 	public void applyLayout(boolean clean, Object extra) {
@@ -192,8 +192,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		// register listener for bounds changes
 		if (getHost().getParent() == getHost().getRoot()) {
 			/*
-			 * Our graph is the root graph, therefore we listen to viewport
-			 * changes to update the layout bounds in the context accordingly.
+			 * Our graph is the root graph, therefore we listen to viewport changes to
+			 * update the layout bounds in the context accordingly.
 			 */
 			// XXX: Window can be null when the viewportBoundsChangeListener is
 			// notified about a bounds change. Unfortunately, the corresponding
@@ -203,8 +203,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 			getInfiniteCanvas().scrollableBoundsProperty().addListener(viewportBoundsChangeListener);
 		} else {
 			/*
-			 * Our graph is nested inside a node of another graph, therefore we
-			 * listen to changes of that node's layout-bounds.
+			 * Our graph is nested inside a node of another graph, therefore we listen to
+			 * changes of that node's layout-bounds.
 			 */
 			nestingVisual = getHost().getVisual().getParent();
 			nestingVisual.layoutBoundsProperty().addListener(nestingVisualLayoutBoundsChangeListener);
@@ -356,7 +356,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 */
 	protected void updateBounds() {
 		// XXX: Prevent bounds updates when the scene is not rendered.
-		if (getHost().getVisual().getScene().getWindow() == null) {
+		Scene scene = getHost().getVisual().getScene();
+		if (scene == null || scene.getWindow() == null) {
 			return;
 		}
 

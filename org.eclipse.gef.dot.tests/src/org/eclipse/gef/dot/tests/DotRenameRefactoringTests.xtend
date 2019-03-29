@@ -113,7 +113,6 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 				4->2
 			}
 		''')
-
 	}
 
 	@Test def rename_refactoring05() {
@@ -122,14 +121,13 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 				1
 				1->2
 			}
-		'''.		
+		'''.
 		testRenameRefactoring([targetNodeOfFirstEdge], "3", '''
 			digraph {
 				1
 				1->3
 			}
 		''')
-		
 	}
 
 	@Test def rename_refactoring06() {
@@ -279,7 +277,7 @@ class DotRenameRefactoringTests extends AbstractEditorTest {
 
 		val change = processor.createChange(new NullProgressMonitor)
 		assertNotNull("RenameElementProcessor created changes", change)
-		
+
 		val operation = [IProgressMonitor monitor|change.perform(monitor)] as WorkspaceModifyOperation
 		operation.run(null)
 		testFile

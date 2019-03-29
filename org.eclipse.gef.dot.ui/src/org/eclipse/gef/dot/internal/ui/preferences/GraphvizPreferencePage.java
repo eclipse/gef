@@ -1,5 +1,5 @@
 /********************************************************************************************
- * Copyright (c) 2014, 2018 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,37 +10,24 @@
  *     Fabian Steeg   (hbz)       - initial API & implementation
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - Exporting *.dot files in different formats (bug #446647)
+ *                                - Add 'Open the exported file automatically' option (bug #521329)
  *
  *********************************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.preferences;
 
 import java.io.File;
 import java.util.Arrays;
 
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.gef.dot.internal.ui.DotUiMessages;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -55,17 +42,25 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private static final String DOT_SELECT_SHORT = DotUiMessages.GraphvizPreference_0;
 	private static final String DOT_SELECT_LONG = DotUiMessages.GraphvizPreference_1;
 	private static final String INVALID_DOT_EXECUTABLE = DotUiMessages.GraphvizPreference_2;
-	private static final String INVALID_GRAPHVIZ_CONF = DotUiMessages.GraphvizPreference_3;
-	private static final String GRAPHVIZ_CONF_HINT = DotUiMessages.GraphvizPreference_4;
 	private static final String DOT_EXPORT_FORMAT = DotUiMessages.GraphvizPreference_5;
 	private static final String DOT_EXPORT_FORMAT_HINT = DotUiMessages.GraphvizPreference_6;
+	private static final String DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY = DotUiMessages.GraphvizPreference_7;
 
 	public static final String DOT_PATH_PREF_KEY = "dotpath"; //$NON-NLS-1$
 	public static final String DOT_EXPORTFORMAT_PREF_KEY = "dotexportformat"; //$NON-NLS-1$
+	public static final String DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY = "dot_open_exported_file_automatically"; //$NON-NLS-1$
 
 	private static final String DOT_EXPORTFORMAT_DEFAULT = "pdf"; //$NON-NLS-1$
 
+	private static Preferences dotUiPreferences;
+	private static IPreferenceStore dotUiPreferenceStore;
+
 	private DotExportRadioGroupFieldEditor radioGroupFieldEditor;
+
+	static {
+		dotUiPreferences = DotActivatorEx.dotUiPreferences();
+		dotUiPreferenceStore = DotActivatorEx.dotUiPreferenceStore();
+	}
 
 	public GraphvizPreferencePage() {
 		super(GRID);
@@ -75,18 +70,17 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		return isValidDotExecutable(getDotExecutablePath());
 	}
 
-	public static void showGraphvizConfigurationDialog() {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getShell();
-		new GraphvizConfigurationDialog(shell).open();
-	}
-
 	public static String getDotExecutablePath() {
-		return dotUiPrefs().get(DOT_PATH_PREF_KEY, "");//$NON-NLS-1$
+		return dotUiPreferences.get(DOT_PATH_PREF_KEY, "");//$NON-NLS-1$
 	}
 
 	public static String getDotExportFormat() {
-		return dotUiPrefs().get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
+		return dotUiPreferences.get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
+	}
+
+	public static boolean getDotOpenExportedFileAutomaticallyValue() {
+		return dotUiPreferences.getBoolean(
+				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY, true);
 	}
 
 	private static boolean isValidDotExecutable(String path) {
@@ -98,21 +92,15 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 				|| file.getName().equals("dot.exe")); //$NON-NLS-1$
 	}
 
-	// TODO: move to activator
-	protected static Preferences dotUiPrefs() {
-		return ConfigurationScope.INSTANCE.getNode(
-				DotActivator.getInstance().getBundle().getSymbolicName());
-	}
-
-	// TODO: move to activator
-	protected static IPreferenceStore dotUiPrefStore() {
-		return new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
-				DotActivator.getInstance().getBundle().getSymbolicName());
-	}
-
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(dotUiPrefStore());
+		// initialize the default value 'true'
+		if (!dotUiPreferenceStore
+				.contains(DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY)) {
+			dotUiPreferenceStore.setDefault(
+					DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY, true);
+		}
+		setPreferenceStore(dotUiPreferenceStore);
 		setDescription(DOT_SELECT_LONG);
 	}
 
@@ -252,11 +240,20 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 			String defaultExportFormat = getDefaultExportFormat(
 					supportedExportFormats);
 			if (defaultExportFormat != null) {
-				dotUiPrefs().put(DOT_EXPORTFORMAT_PREF_KEY,
+				dotUiPreferences.put(DOT_EXPORTFORMAT_PREF_KEY,
 						defaultExportFormat);
 			}
 		}
 		addField(radioGroupFieldEditor);
+		BooleanFieldEditor2 openExportedFileBooleanFieldEditor = new BooleanFieldEditor2(
+				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY_PREF_KEY,
+				DOT_OPEN_EXPORTED_FILE_AUTOMATICALLY, getFieldEditorParent());
+		addField(openExportedFileBooleanFieldEditor);
+		radioGroupFieldEditor.addOpenExportedFileBooleanFieldEditor(
+				openExportedFileBooleanFieldEditor);
+		if (dotExecutablePath.isEmpty()) {
+			radioGroupFieldEditor.hideOpenExportedFileBooleanFieldEditor();
+		}
 	}
 
 	private void updateDotExportUI(String dotExecutablePath) {
@@ -266,7 +263,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 				supportedExportFormats);
 		String[][] labelsAndValues = getLabelsAndValues(supportedExportFormats);
 
-		dotUiPrefs().put(DOT_EXPORTFORMAT_PREF_KEY, defaultExportFormat);
+		dotUiPreferences.put(DOT_EXPORTFORMAT_PREF_KEY, defaultExportFormat);
 
 		radioGroupFieldEditor.update(labelsAndValues);
 	}
@@ -274,7 +271,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private void removeDotExportUI() {
 		if (radioGroupFieldEditor != null) {
 			radioGroupFieldEditor.clear();
-			dotUiPrefs().remove(DOT_EXPORTFORMAT_PREF_KEY);
+			dotUiPreferences.remove(DOT_EXPORTFORMAT_PREF_KEY);
 		}
 	}
 
@@ -284,45 +281,6 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		// Defaults" button
 		super.performDefaults();
 		removeDotExportUI();
-	}
-
-	public static class GraphvizConfigurationDialog extends MessageDialog {
-
-		public GraphvizConfigurationDialog(Shell parentShell) {
-			super(parentShell, INVALID_GRAPHVIZ_CONF, null, GRAPHVIZ_CONF_HINT,
-					WARNING, new String[] { IDialogConstants.CANCEL_LABEL }, 0);
-		}
-
-		@Override
-		protected Control createMessageArea(Composite composite) {
-			// prevent creation of messageLabel by super implementation
-			String linkText = message;
-			message = null;
-			super.createMessageArea(composite);
-			message = linkText;
-
-			Link messageLink = new Link(composite, SWT.WRAP);
-			messageLink.setText(message);
-			GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-					.grab(true, false).applyTo(messageLink);
-			messageLink.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					Shell shell = PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell();
-					PreferenceDialog pref = PreferencesUtil
-							.createPreferenceDialogOn(shell,
-									"org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage", //$NON-NLS-1$
-									null, null);
-					if (pref != null) {
-						close();
-						pref.open();
-					}
-				}
-			});
-			return composite;
-		}
-
 	}
 
 }

@@ -222,7 +222,7 @@ class DotContentAssist2Tests extends AbstractContentAssistTest {
 
 	@Test def html_like_label_tags() {
 		'''
-			graph { 
+			graph {
 				1 [label=<
 					«c»
 				>]
@@ -243,7 +243,7 @@ class DotContentAssist2Tests extends AbstractContentAssistTest {
 
 	@Test def html_like_label_attributes() {
 		'''
-			graph { 
+			graph {
 				1 [label=<
 					<TABLE «c»></TABLE>
 				>]
@@ -327,9 +327,9 @@ class DotContentAssist2Tests extends AbstractContentAssistTest {
 		if(cursorPosition == -1) {
 			fail("Can't locate cursor position symbols '" + c + "' in the input text.")
 		}
-		
+
 		val content = text.toString.replace(c, "")
-		
+
 		newBuilder.append(content).computeCompletionProposals(cursorPosition)
 	}
 

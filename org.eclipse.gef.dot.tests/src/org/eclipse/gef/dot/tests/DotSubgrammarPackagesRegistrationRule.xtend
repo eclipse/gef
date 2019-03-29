@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@ import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage
 import org.eclipse.gef.dot.internal.language.color.ColorPackage
 import org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage
 import org.eclipse.gef.dot.internal.language.escstring.EscstringPackage
+import org.eclipse.gef.dot.internal.language.fontname.FontnamePackage
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage
 import org.eclipse.gef.dot.internal.language.point.PointPackage
 import org.eclipse.gef.dot.internal.language.portpos.PortposPackage
@@ -49,6 +50,7 @@ class DotSubgrammarPackagesRegistrationRule implements TestRule {
 		registerEPackage(ColorPackage.eNS_URI, ColorPackage.eINSTANCE)
 		registerEPackage(ColorlistPackage.eNS_URI, ColorlistPackage.eINSTANCE)
 		registerEPackage(EscstringPackage.eNS_URI, EscstringPackage.eINSTANCE)
+		registerEPackage(FontnamePackage.eNS_URI, FontnamePackage.eINSTANCE)
 		registerEPackage(HtmllabelPackage.eNS_URI, HtmllabelPackage.eINSTANCE)
 		registerEPackage(PointPackage.eNS_URI, PointPackage.eINSTANCE)
 		registerEPackage(PortposPackage.eNS_URI, PortposPackage.eINSTANCE)

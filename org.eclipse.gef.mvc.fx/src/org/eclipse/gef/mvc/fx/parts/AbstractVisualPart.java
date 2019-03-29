@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - skip feedback and handles when determining viewer (bug #498298)
+ *     Robert Rudi (itemis AG) - introduce addChildren API for bulk changes on content synchronization
  *
  * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
  *
@@ -196,9 +197,20 @@ public abstract class AbstractVisualPart<V extends Node>
 							+ " because the following are already children: "
 							+ alreadyContainedChildren + ".");
 		}
+		this.children.addAll(index, children);
+		boolean isActive = isActive();
 		for (int i = 0; i < children.size(); i++) {
-			addChild(children.get(i), index + i);
+			IVisualPart<? extends Node> child = children.get(i);
+			if (child.getParent() != this) {
+				child.setParent(this);
+			}
+			child.refreshVisual();
+			doAddChildVisual(child, index + i);
+			if (isActive) {
+				child.activate();
+			}
 		}
+		refreshVisual();
 	}
 
 	@Override
@@ -443,7 +455,7 @@ public abstract class AbstractVisualPart<V extends Node>
 	protected void doAttachToAnchorageVisual(
 			IVisualPart<? extends Node> anchorage, String role) {
 		throw new UnsupportedOperationException(
-				"Need to implement attachToAnchorageVisual(IVisualPart, String) for "
+				"Need to implement doAttachToAnchorageVisual(IVisualPart, String) for "
 						+ this.getClass());
 	}
 
@@ -717,6 +729,15 @@ public abstract class AbstractVisualPart<V extends Node>
 							+ notContainedChildren + ".");
 		}
 		// TODO: use children.removeAll and perform the de-registration here
+		// boolean active = isActive();
+		// children.forEach(child -> {
+		// if (active) {
+		// child.deactivate();
+		// }
+		// doRemoveChildVisual(child, this.children.indexOf(child));
+		// child.setParent(null);
+		// });
+		// this.children.removeAll(children);
 		for (IVisualPart<? extends Node> child : children) {
 			removeChild(child);
 		}

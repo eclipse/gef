@@ -125,7 +125,7 @@ abstract class AbstractDotLexerTest extends AbstractLexerTest {
 		"foo1"	.assertLexing("RULE_STRING 'foo1'"	)
 	}
 
-	@Test def lexing_mRULE_QUOTED_STRING(){
+	@Test def lexing_mRULE_QUOTED_STRING() {
 		'''""'''.assertLexing('''
 			RULE_QUOTED_STRING '""'
 		''')
@@ -133,19 +133,19 @@ abstract class AbstractDotLexerTest extends AbstractLexerTest {
 		'''"foo"'''.assertLexing('''
 			RULE_QUOTED_STRING '"foo"'
 		''')
-		
+
 		'''"foo\"bar\"baz"'''.assertLexing('''
 			RULE_QUOTED_STRING '"foo\"bar\"baz"'
 		''')
-		
+
 		'''"foo\bar\baz"'''.assertLexing('''
 			RULE_QUOTED_STRING '"foo\bar\baz"'
 		''')
-		
+
 		'''"!"'''.assertLexing('''
 			RULE_QUOTED_STRING '"!"'
 		''')
-		
+
 		'''"\\"!\\"'''.assertLexing('''
 			RULE_QUOTED_STRING '"\\"!\\"'
 		''')

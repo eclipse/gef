@@ -363,7 +363,7 @@ class DotImportTests {
 			attr([p1,p2|p1._setName(p2)], "bar").
 			attr([p1,p2|p1.shape=p2], "box").buildNode
 		val n6 = new Node.Builder().
-			attr([p1,p2|p1._setName(p2)], "baz"). 
+			attr([p1,p2|p1._setName(p2)], "baz").
 			attr([p1,p2|p1.shape=p2], "box").buildNode
 		val expected = graph.nodes(n1, n2, n3, n4, n5, n6).build
 		
@@ -761,7 +761,7 @@ class DotImportTests {
 		e1.headtooltip = "e"
 		e2.headtooltip = "d"
 		expected = graph.nodes(nodes).edges(e1, e2).build
-	
+
 		DotTestGraphs.EDGE_HEADTOOLTIP_OVERRIDE.assertImportedTo(expected)
 	}
 

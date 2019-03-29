@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
-<!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="PHOTON" sequenceNumber="1539959357">
+<!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
+<target name="PHOTON" sequenceNumber="1553244447">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.3.0.201805280500"/>

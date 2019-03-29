@@ -34,23 +34,25 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotHtmlLabelLexerTests.class, DotHtmlLabelParserTests.class,
 		DotHtmlLabelValidatorTests.class, DotImportTests.class,
 		DotLexerTests.class, DotParserTests.class, DotPortPosTests.class,
-		DotRecordLabelTests.class, DotStyleTests.class, DotValidatorTests.class,
+		DotQualifiedNameProviderTests.class, DotRecordLabelTests.class,
+		DotStyleTests.class, DotValidatorTests.class,
+		GraphvizConfigurationDialogTests.class,
 
 		// JUnit Plug-in Tests
 		DotAutoEditTests.class, DotColorListContentAssistLexerTests.class,
 		DotColorListHighlightingLexerTests.class, DotContentAssist2Tests.class,
 		DotContentAssistTests.class, DotContentAssistLexerTests.class,
-		DotEditorDoubleClickingTests.class, DotFoldingTests.class,
+		DotEditorDoubleClickingTests.class,
+		DotEditorToDotEditorHyperlinkingTests.class, DotFoldingTests.class,
 		DotHighlightingCalculatorTests.class, DotHighlightingLexerTests.class,
 		DotHighlightingTests.class, DotHoverTests.class,
 		DotHtmlLabelContentAssistLexerTests.class,
 		DotHtmlLabelContentAssistTests.class,
 		DotHtmlLabelHighlightingLexerTests.class,
 		DotHtmlLabelTokenTypeToPartitionMapperTests.class,
-		DotHyperlinkNavigationTests.class, DotLabelProviderTests.class,
-		DotMarkingOccurrencesTests.class, DotOutlineViewTests.class,
-		DotQuickfixTests.class, DotReferenceFinderTests.class,
-		DotRenameRefactoringTests.class, DotToggleCommentTests.class,
-		DotTokenTypeToPartitionMapperTests.class })
+		DotLabelProviderTests.class, DotMarkingOccurrencesTests.class,
+		DotOutlineViewTests.class, DotQuickfixTests.class,
+		DotReferenceFinderTests.class, DotRenameRefactoringTests.class,
+		DotToggleCommentTests.class, DotTokenTypeToPartitionMapperTests.class })
 public class AllUiTests {
 }

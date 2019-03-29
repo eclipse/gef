@@ -35,7 +35,7 @@ public class DotFontNameConverters
 
 			@Override
 			protected String internalToString(PostScriptFontAlias value) {
-				return value.getLiteral();
+				return value.toString();
 			}
 
 			@Override

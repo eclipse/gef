@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - remove checkCursor()
  *
  *******************************************************************************/
 package org.eclipse.gef.common.collections;
@@ -47,7 +48,6 @@ public class ListListenerHelperEx<E> {
 
 		private int cursor = -1;
 		private ElementarySubChange<E>[] elementarySubChanges;
-
 		private List<E> previousContents;
 
 		/**
@@ -129,53 +129,28 @@ public class ListListenerHelperEx<E> {
 					.toArray(new ElementarySubChange[] {});
 		}
 
-		private void checkCursor() {
-			checkCursor("");
-		}
-
-		private void checkCursor(String args) {
-			String methodName = Thread.currentThread().getStackTrace()[2]
-					.getMethodName();
-			if (methodName.equals("checkCursor")) {
-				methodName = Thread.currentThread().getStackTrace()[3]
-						.getMethodName();
-			}
-			if (cursor == -1) {
-				throw new IllegalStateException("Need to call next() before "
-						+ methodName + "(" + args + ") can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException("May only call " + methodName
-						+ "(" + args + ") if next() returned true.");
-			}
-		}
-
 		@Override
 		public int getAddedSize() {
-			checkCursor();
 			return super.getAddedSize();
 		}
 
 		@Override
 		public List<E> getAddedSubList() {
-			checkCursor();
 			return elementarySubChanges[cursor].getAdded();
 		}
 
 		@Override
 		public int getFrom() {
-			checkCursor();
 			return elementarySubChanges[cursor].getFrom();
 		}
 
 		@Override
 		public int[] getPermutation() {
-			checkCursor();
 			return elementarySubChanges[cursor].getPermutation();
 		}
 
 		@Override
 		public int getPermutation(int i) {
-			checkCursor("int");
 			return super.getPermutation(i);
 		}
 
@@ -192,19 +167,16 @@ public class ListListenerHelperEx<E> {
 
 		@Override
 		public List<E> getRemoved() {
-			checkCursor();
 			return elementarySubChanges[cursor].getRemoved();
 		}
 
 		@Override
 		public int getRemovedSize() {
-			checkCursor();
 			return super.getRemovedSize();
 		}
 
 		@Override
 		public int getTo() {
-			checkCursor();
 			return elementarySubChanges[cursor].getTo();
 		}
 
@@ -233,31 +205,26 @@ public class ListListenerHelperEx<E> {
 
 		@Override
 		public boolean wasAdded() {
-			checkCursor();
 			return !getAddedSubList().isEmpty();
 		}
 
 		@Override
 		public boolean wasPermutated() {
-			checkCursor();
 			return super.wasPermutated();
 		}
 
 		@Override
 		public boolean wasRemoved() {
-			checkCursor();
 			return super.wasRemoved();
 		}
 
 		@Override
 		public boolean wasReplaced() {
-			checkCursor();
 			return super.wasReplaced();
 		}
 
 		@Override
 		public boolean wasUpdated() {
-			checkCursor();
 			return super.wasUpdated();
 		}
 	}

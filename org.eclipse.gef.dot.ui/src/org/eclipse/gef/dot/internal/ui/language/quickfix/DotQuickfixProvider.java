@@ -273,18 +273,11 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
 		acceptor.accept(issue, "Remove the '" + modifier + "' modifier.", //$NON-NLS-1$ //$NON-NLS-2$
 				"Remove the invalid '" + modifier + "' modifier.", DELETE_IMAGE, //$NON-NLS-1$ //$NON-NLS-2$
-				new ISemanticModification() {
+				new ChangingDotAttributeValueSemanticModification() {
 					@Override
-					public void apply(EObject element,
-							IModificationContext context) {
-						Attribute attribute = (Attribute) element;
-						ID value = attribute.getValue();
-						Type type = value.getType();
-						String currentValue = value.toValue();
-						String validValue = new StringBuilder(currentValue)
+					public String getNewValue(String currentValue) {
+						return new StringBuilder(currentValue)
 								.deleteCharAt(modifierIndex).toString();
-						ID validValueAsID = ID.fromValue(validValue, type);
-						attribute.setValue(validValueAsID);
 					}
 				});
 	}
@@ -293,19 +286,12 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			String suffix, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Remove the 'none' arrow shape.", //$NON-NLS-1$
 				"Remove the last 'none' arrow shape.", //$NON-NLS-1$
-				DELETE_IMAGE, new ISemanticModification() {
+				DELETE_IMAGE,
+				new ChangingDotAttributeValueSemanticModification() {
 					@Override
-					public void apply(EObject element,
-							IModificationContext context) {
-						Attribute attribute = (Attribute) element;
-						ID value = attribute.getValue();
-						Type type = value.getType();
-						String currentValue = value.toValue();
-						String validValue = currentValue.substring(0,
-								currentValue.lastIndexOf(
-										PrimitiveShape.NONE.getName()));
-						ID validValueAsID = ID.fromValue(validValue, type);
-						attribute.setValue(validValueAsID);
+					public String getNewValue(String currentValue) {
+						return currentValue.substring(0, currentValue
+								.lastIndexOf(PrimitiveShape.NONE.getName()));
 					}
 				});
 	}
@@ -324,27 +310,19 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 				+ penwidthValue + "'."; //$NON-NLS-1$
 		String description = "Use the 'penwidth' attribute instead of the deprecated '" //$NON-NLS-1$
 				+ styleItemName + "' style."; //$NON-NLS-1$
-		ISemanticModification semanticModification = new ISemanticModification() {
-			@Override
-			public void apply(EObject element, IModificationContext context) {
+
+		ISemanticModification semanticModification = new ChangingDotAttributeValueSemanticModification() {
+			private String newValue;
+
+			public void apply(EObject element, IModificationContext context)
+					throws Exception {
+				super.apply(element, context);
 				EObject container = element.eContainer();
-				Attribute attribute = (Attribute) element;
-				ID value = attribute.getValue();
-				Type type = value.getType();
-				String currentValue = value.toValue();
-				String validValue = currentValue.replace(styleItem, "") //$NON-NLS-1$
-						.trim();
-				// trim the unnecessary ',' if any is left over
-				validValue = validValue.replaceAll("^,", "") //$NON-NLS-1$ //$NON-NLS-2$
-						.replaceAll(",$", "").replace(", ,", ",").trim(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 				// if the valid style attribute value is empty, remove the
 				// entire style attribute
-				if (validValue.isEmpty()) {
-					EcoreUtil.remove(attribute);
-				} else {
-					ID validValueAsID = ID.fromValue(validValue, type);
-					attribute.setValue(validValueAsID);
+				if (newValue.isEmpty()) {
+					EcoreUtil.remove(element);
 				}
 
 				// add a new pendwidth attribute
@@ -354,7 +332,6 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 						.setName(ID.fromValue(DotAttributes.PENWIDTH__CNE));
 				penwidthAttribute.setValue(
 						ID.fromValue(penwidthValue, ID.Type.QUOTED_STRING));
-
 				if (container instanceof AttrList) {
 					AttrList attrList = (AttrList) container;
 					attrList.getAttributes().add(penwidthAttribute);
@@ -362,6 +339,15 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 					Subgraph subgraph = (Subgraph) container;
 					subgraph.getStmts().add(penwidthAttribute);
 				}
+			}
+
+			@Override
+			public String getNewValue(String currentValue) {
+				newValue = currentValue.replace(styleItem, "").trim(). //$NON-NLS-1$
+				// trim the unnecessary ',' if any is left over
+				replaceAll("^,", "") //$NON-NLS-1$ //$NON-NLS-2$
+						.replaceAll(",$", "").replace(", ,", ",").trim(); //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-1$
+				return newValue;
 			}
 		};
 
@@ -375,17 +361,11 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		String label = "Remove '" + styleItem + "' style attribute value."; //$NON-NLS-1$ //$NON-NLS-2$
 		String description = "Remove the redundant '" + styleItem //$NON-NLS-1$
 				+ "' style attribute value."; //$NON-NLS-1$
-		ISemanticModification semanticModification = new ISemanticModification() {
+
+		ISemanticModification semanticModification = new ChangingDotAttributeValueSemanticModification() {
 			@Override
-			public void apply(EObject element, IModificationContext context) {
-				Attribute attribute = (Attribute) element;
-				ID value = attribute.getValue();
-				Type type = value.getType();
-				String currentValue = value.toValue();
-				String validValue = currentValue
-						.replaceFirst(styleItem + ",", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-				ID validValueAsID = ID.fromValue(validValue, type);
-				attribute.setValue(validValueAsID);
+			public String getNewValue(String currentValue) {
+				return currentValue.replaceFirst(styleItem + ",", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		};
 
@@ -460,19 +440,11 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			IssueResolutionAcceptor acceptor) {
 
 		provideQuickfix(invalidValue, validValue, suffix, issue, acceptor,
-				new ISemanticModification() {
+				new ChangingDotAttributeValueSemanticModification() {
 					@Override
-					public void apply(EObject element,
-							IModificationContext context) {
-						Attribute attribute = (Attribute) element;
-						ID invalidAttributeValue = attribute.getValue();
-						String validAttributeValue = invalidAttributeValue
-								.toValue().replaceAll(invalidValue, validValue);
-						Type attributeValueType = invalidAttributeValue
-								.getType();
-						ID validValueAsID = ID.fromValue(validAttributeValue,
-								attributeValueType);
-						attribute.setValue(validValueAsID);
+					public String getNewValue(String currentValue) {
+						return currentValue.replaceAll(invalidValue,
+								validValue);
 					}
 				});
 	}
@@ -494,14 +466,10 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	private void provideQuickfix(String invalidValue, String validValue,
 			String suffix, Issue issue, IssueResolutionAcceptor acceptor) {
 		provideQuickfix(invalidValue, validValue, suffix, issue, acceptor,
-				new ISemanticModification() {
+				new ChangingDotAttributeValueSemanticModification() {
 					@Override
-					public void apply(EObject element,
-							IModificationContext context) {
-						Attribute attribute = (Attribute) element;
-						Type type = attribute.getValue().getType();
-						ID validValueAsID = ID.fromValue(validValue, type);
-						attribute.setValue(validValueAsID);
+					public String getNewValue(String currentValue) {
+						return validValue;
 					}
 				});
 	}
@@ -515,5 +483,24 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 				"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
 						+ invalidValue + "' " + suffix + ".", //$NON-NLS-1$ //$NON-NLS-2$
 				null, semanticModification);
+	}
+
+	private abstract class ChangingDotAttributeValueSemanticModification
+			implements ISemanticModification {
+
+		@Override
+		public void apply(EObject element, IModificationContext context)
+				throws Exception {
+			Attribute attribute = (Attribute) element;
+			ID value = attribute.getValue();
+			String currentValue = value.toValue();
+			Type type = value.getType();
+			String newValue = getNewValue(currentValue);
+			ID newValueAsID = ID.fromValue(newValue, type);
+			attribute.setValue(newValueAsID);
+		}
+
+		protected abstract String getNewValue(String currentValue);
+
 	}
 }

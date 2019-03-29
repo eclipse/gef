@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -29,7 +29,6 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.fail
 
-@SuppressWarnings("restriction")
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelUiInjectorProvider)
 class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
@@ -114,8 +113,8 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 			"<U></U>",
 			"<O></O>",
 			"<SUB></SUB>",
-			"<SUP></SUP>",		
-			"<S></S>",		
+			"<SUP></SUP>",
+			"<S></S>",
 			"<TABLE></TABLE>"
 		], "<BR/>",	'''
 			<I><BR/></I>
@@ -375,7 +374,7 @@ class DotHtmlLabelContentAssistTests extends AbstractContentAssistTest {
 	}
 
 	@Test def attributes_of_tag_HR() {
-		'''<HR «c»/>'''.testEmptyContentAssistant // no attributes are allowed 
+		'''<HR «c»/>'''.testEmptyContentAssistant // no attributes are allowed
 	}
 
 	@Test def attributes_of_tag_I() {

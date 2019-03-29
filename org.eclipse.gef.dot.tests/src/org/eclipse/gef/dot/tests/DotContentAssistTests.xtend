@@ -9,6 +9,8 @@
  * Contributors:
  *     Tamas Miklossy     (itemis AG) - initial implementation (bug #498324)
  *     Zoey Gerrit Prigge (itemis AG) - Add support for additional dot attributes (bug #461506)
+ *                                    - Improve CA support for quoted attributes (bug #545801)
+ *                                    - Add DotFontName content assist support (bug #542663)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -140,6 +142,16 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		"silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal",
 		"thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"]
 
+	val expectedPostScriptFontNames = #["AvantGarde-Book", "AvantGarde-BookOblique", "AvantGarde-Demi",
+		"AvantGarde-DemiOblique", "Bookman-Demi", "Bookman-DemiItalic", "Bookman-Light", "Bookman-LightItalic",
+		"Courier", "Courier-Bold", "Courier-BoldOblique", "Courier-Oblique", "Helvetica", "Helvetica-Bold",
+		"Helvetica-BoldOblique", "Helvetica-Narrow", "Helvetica-Narrow-Bold", "Helvetica-Narrow-BoldOblique",
+		"Helvetica-Narrow-Oblique", "Helvetica-Oblique", "NewCenturySchlbk-Bold", "NewCenturySchlbk-BoldItalic",
+		"NewCenturySchlbk-Italic", "NewCenturySchlbk-Roman", "Palatino-Bold", "Palatino-BoldItalic", "Palatino-Italic",
+		"Palatino-Roman", "Symbol", "Times-Bold", "Times-BoldItalic", "Times-Italic", "Times-Roman",
+		"ZapfChancery-MediumItalic", "ZapfDingbats"]
+		
+
 	@BeforeClass def static void initializeStatusHandlerRegistry() {
 		/**
 		 * Initialize the
@@ -268,7 +280,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
 			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos", 
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos",
 			"style", "taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowhead", '''
 			graph {
@@ -283,7 +295,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		'''.testContentAssistant(#["]", "arrowhead", "arrowsize", "arrowtail", "color", "colorscheme",
 			"dir", "edgetooltip", "fillcolor", "fontcolor", "fontname", "fontsize", "headlabel", "headport", "headtooltip",
-			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos", 
+			"head_lp", "id", "label", "labelfontcolor", "labelfontname", "labelfontsize", "labeltooltip", "lp", "penwidth", "pos",
 			"style", "taillabel", "tailport", "tailtooltip", "tail_lp", "tooltip", "xlabel", "xlp"
 		], "arrowtail", '''
 			graph {
@@ -803,6 +815,63 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
+	@Test def edge_fontname() {
+		// test global attribute values
+		'''
+			digraph {
+				edge[ fontname=«c» ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Helvetica", '''
+			digraph {
+				edge[ fontname=Helvetica ]
+			}
+		''')
+		
+		// test local attribute values
+		'''
+			digraph {
+				1->2[ fontname=«c» ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Courier-Bold", '''
+			digraph {
+				1->2[ fontname="Courier-Bold" ]
+			}
+		''')
+
+		// test local attribute values with quotes
+		'''
+			digraph {
+				1->2[ fontname="«c»" ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Times-Roman", '''
+			digraph {
+				1->2[ fontname="Times-Roman" ]
+			}
+		''')
+
+		// test local attribute values with prefix
+		'''
+			digraph {
+				1->2[ fontname=Zapf«c» ]
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic", ",", ";", "]"], "ZapfDingbats", '''
+			digraph {
+				1->2[ fontname=ZapfDingbats ]
+			}
+		''')
+
+		// test local attribute values with quotes and prefix
+		'''
+			digraph {
+				1->2[ fontname="zapf«c»" ]
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic"], "ZapfChancery-MediumItalic", '''
+			digraph {
+				1->2[ fontname="ZapfChancery-MediumItalic" ]
+			}
+		''')
+	}
+
 	@Test def edge_headlabel() {
 		// test global attribute values
 		'''
@@ -911,7 +980,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			graph {
 				1--2[ headtooltip="line1\r" ]
 			}
-		''')		
+		''')
 	}
 
 	@Test def edge_label() {
@@ -970,7 +1039,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 					labelfontcolor=#
 				]
 			}
-		''')		
+		''')
 		
 		// test local attribute values
 		'''
@@ -988,7 +1057,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				]
 			}
 		''')
-	
+
 		// test local attribute values (case insensitive color scheme)
 		'''
 			digraph {
@@ -1066,6 +1135,63 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		'''
 			digraph {
 				1->2 [labelfontcolor="gray99"]
+			}
+		''')
+	}
+
+	@Test def edge_labelfontname() {
+		// test global attribute values
+		'''
+			digraph {
+				edge[ labelfontname=«c» ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Helvetica", '''
+			digraph {
+				edge[ labelfontname=Helvetica ]
+			}
+		''')
+		
+		// test local attribute values
+		'''
+			digraph {
+				1->2[ labelfontname=«c» ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Courier-Bold", '''
+			digraph {
+				1->2[ labelfontname="Courier-Bold" ]
+			}
+		''')
+
+		// test local attribute values with quotes
+		'''
+			digraph {
+				1->2[ labelfontname="«c»" ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Times-Roman", '''
+			digraph {
+				1->2[ labelfontname="Times-Roman" ]
+			}
+		''')
+
+		// test local attribute values with prefix
+		'''
+			digraph {
+				1->2[ labelfontname=Zapf«c» ]
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic", ",", ";", "]"], "ZapfDingbats", '''
+			digraph {
+				1->2[ labelfontname=ZapfDingbats ]
+			}
+		''')
+
+		// test local attribute values with quotes and prefix
+		'''
+			digraph {
+				1->2[ labelfontname="zapf«c»" ]
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic"], "ZapfChancery-MediumItalic", '''
+			digraph {
+				1->2[ labelfontname="ZapfChancery-MediumItalic" ]
 			}
 		''')
 	}
@@ -1351,7 +1477,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		''')
 	}
-	
+
 	@Test def edge_template() {
 		// test edge template in non-directed graphs
 		'''
@@ -1673,13 +1799,13 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 
 		// test local attribute value with global color scheme value
 		'''
-			graph { 
+			graph {
 				graph[colorscheme=brbg10]
 				bgcolor=«c»
 				1
 			}
 		'''.testContentAssistant(#["#", "/", ":", ";", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], "10", '''
-			graph { 
+			graph {
 				graph[colorscheme=brbg10]
 				bgcolor=10
 				1
@@ -1859,6 +1985,63 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		'''.testContentAssistant(#["1", "10", "11", ","], "11", '''
 			graph {
 				colorscheme=brbg11 fontcolor="11"
+			}
+		''')
+	}
+
+	@Test def graph_fontname() {
+		// test global attribute values
+		'''
+			digraph {
+				graph[ fontname=«c» ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Helvetica", '''
+			digraph {
+				graph[ fontname=Helvetica ]
+			}
+		''')
+		
+		// test local attribute values
+		'''
+			digraph {
+				fontname=«c»
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Courier-Bold", '''
+			digraph {
+				fontname="Courier-Bold"
+			}
+		''')
+
+		// test local attribute values with quotes
+		'''
+			digraph {
+				fontname="«c»"
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Times-Roman", '''
+			digraph {
+				fontname="Times-Roman"
+			}
+		''')
+
+		// test local attribute values with prefix
+		'''
+			digraph {
+				fontname=Zapf«c»
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic", ";", "{", "}", "edge - Insert a template"], "ZapfDingbats", '''
+			digraph {
+				fontname=ZapfDingbats
+			}
+		''')
+
+		// test local attribute values with quotes and prefix
+		'''
+			digraph {
+				fontname="zapf«c»"
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic"], "ZapfChancery-MediumItalic", '''
+			digraph {
+				fontname="ZapfChancery-MediumItalic"
 			}
 		''')
 	}
@@ -2693,6 +2876,63 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 		''')
 	}
 
+	@Test def node_fontname() {
+		// test global attribute values
+		'''
+			digraph {
+				node[ fontname=«c» ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Helvetica", '''
+			digraph {
+				node[ fontname=Helvetica ]
+			}
+		''')
+		
+		// test local attribute values
+		'''
+			digraph {
+				1[ fontname=«c» ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Courier-Bold", '''
+			digraph {
+				1[ fontname="Courier-Bold" ]
+			}
+		''')
+
+		// test local attribute values with quotes
+		'''
+			digraph {
+				1[ fontname="«c»" ]
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Times-Roman", '''
+			digraph {
+				1[ fontname="Times-Roman" ]
+			}
+		''')
+
+		// test local attribute values with prefix
+		'''
+			digraph {
+				1[ fontname=Zapf«c» ]
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic", ",", ";", "]"], "ZapfDingbats", '''
+			digraph {
+				1[ fontname=ZapfDingbats ]
+			}
+		''')
+
+		// test local attribute values with quotes and prefix
+		'''
+			digraph {
+				1[ fontname="zapf«c»" ]
+			}
+		'''.testContentAssistant(#["ZapfDingbats", "ZapfChancery-MediumItalic"], "ZapfChancery-MediumItalic", '''
+			digraph {
+				1[ fontname="ZapfChancery-MediumItalic" ]
+			}
+		''')
+	}
+
 	@Test def node_label() {
 		// test global attribute values
 		'''
@@ -3336,11 +3576,11 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 			}
 		''')
 	}
-	
+
 	private def testEmptyContentAssistant(CharSequence it) {
 		testContentAssistant(#[], null, null)
 	}
-	
+
 	private def void testContentAssistant(CharSequence text, List<String> expectedProposals,
 		String proposalToApply, String expectedContent) {
 		
@@ -3406,7 +3646,9 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				try {
 					val configuration = injector.getInstance(XtextSourceViewerConfiguration)
 					val sourceViewer = getSourceViewer(shell, document, configuration)
-					return appendAndApplyProposal(proposal, sourceViewer, getModel(), position)
+					// use appendAndApplyProposal as a workaround (also see comment above)
+					// use null model, as document already contains model
+					return appendAndApplyProposal(proposal, sourceViewer, null, position)
 				} finally {
 					shell.dispose
 				}
@@ -3425,7 +3667,7 @@ class DotContentAssistTests extends AbstractContentAssistTest {
 				else displayString.split(":").head
 			}
 
-			// TODO: remove this workaround			
+			// TODO: remove this workaround
 			override expectContent(String expectation) {
 				val actual = model.replaceAll("\r?\n", System.lineSeparator)
 				assertEquals(expectation, actual)

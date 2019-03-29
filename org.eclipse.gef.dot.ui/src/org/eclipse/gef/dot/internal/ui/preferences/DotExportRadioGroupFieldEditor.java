@@ -1,5 +1,5 @@
 /********************************************************************************************
- * Copyright (c) 2015, 2016 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,7 +10,7 @@
  *     Tamas Miklossy (itemis AG) - Exporting *.dot files in different formats (bug #446647)
  *
  *********************************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.preferences;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -77,6 +77,8 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 	private Label dotExportHintLabel;
 
 	private String dotExportHintText;
+
+	private BooleanFieldEditor2 openExportedFileBooleanFieldEditor;
 
 	/**
 	 * Creates a new radio group field editor
@@ -352,6 +354,7 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 					}
 					load();
 					hideDotExportHintLabel();
+					showOpenExportedFileBooleanFieldEditor();
 					parent.layout();
 				}
 			}
@@ -365,10 +368,31 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 		((GridData) dotExportHintLabel.getLayoutData()).exclude = true;
 	}
 
-	protected void showHideDotExportHintLabel() {
+	protected void showDotExportHintLabel() {
 		// show the dot export hint label
 		dotExportHintLabel.setVisible(true);
 		((GridData) dotExportHintLabel.getLayoutData()).exclude = false;
+	}
+
+	protected void hideOpenExportedFileBooleanFieldEditor() {
+		// hide the open exported file automatically boolean field editor
+		Button checkBox = openExportedFileBooleanFieldEditor
+				.getChangeControl(parent);
+		checkBox.setVisible(false);
+		((GridData) checkBox.getLayoutData()).exclude = true;
+	}
+
+	protected void showOpenExportedFileBooleanFieldEditor() {
+		// show the open exported file automatically boolean field editor
+		Button checkBox = openExportedFileBooleanFieldEditor
+				.getChangeControl(parent);
+		checkBox.setVisible(true);
+		((GridData) checkBox.getLayoutData()).exclude = false;
+	}
+
+	protected void addOpenExportedFileBooleanFieldEditor(
+			BooleanFieldEditor2 openExportedFileBooleanFieldEditor) {
+		this.openExportedFileBooleanFieldEditor = openExportedFileBooleanFieldEditor;
 	}
 
 	public void clear() {
@@ -378,7 +402,8 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 				radioButton.dispose();
 			}
 
-			showHideDotExportHintLabel();
+			showDotExportHintLabel();
+			hideOpenExportedFileBooleanFieldEditor();
 			// do synchronous layout
 			Display.getDefault().syncExec(new Runnable() {
 

@@ -25,6 +25,7 @@ import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
+import javafx.beans.binding.ObjectExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -136,41 +137,40 @@ public class DragDropGesture extends AbstractGesture {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+
+		ChangeListener<? super Scene> sceneListener = (exp, oldScene,
+				newScene) -> {
+			if (oldScene != null) {
+				// Check that no other viewer still uses that scene before
+				// unhooking it
+				if (getDomain().getViewers().values().stream()
+						.noneMatch(v -> v.getCanvas().getScene() == oldScene)) {
+					unhookScene(oldScene);
+				}
+			}
+			if (newScene != null) {
+				hookScene(newScene);
+			}
+		};
+
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
 			viewer.viewerFocusedProperty()
 					.addListener(viewerFocusChangeListener);
 
-			final Scene scene = viewer.getCanvas().getScene();
-			if (scenes.contains(scene)) {
-				// already registered for this scene
-				continue;
+			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
+					.sceneProperty();
+			sceneProperty.addListener(sceneListener);
+			if (sceneProperty.get() != null) {
+				sceneListener.changed(sceneProperty, null, sceneProperty.get());
 			}
-
-			// register a drag entered filter for forwarding event to drag/drop
-			// policies
-			scene.addEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
-			// register a drag exited filter for forwarding event to drag/drop
-			// policies
-			scene.addEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
-			// register a drag over filter for forwarding event to drag/drop
-			// policies
-			scene.addEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
-			// register a drag dropped filter for forwarding event to drag/drop
-			// policies
-			scene.addEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
-
-			scenes.add(scene);
 		}
 	}
 
 	@Override
 	protected void doDeactivate() {
 		for (final Scene scene : new ArrayList<>(scenes)) {
-			scene.removeEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
-			scene.removeEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
-			scene.removeEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
-			scene.removeEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
+			unhookScene(scene);
 		}
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			viewer.viewerFocusedProperty()
@@ -308,5 +308,34 @@ public class DragDropGesture extends AbstractGesture {
 	@Override
 	public List<IOnDragDropHandler> getActiveHandlers(final IViewer viewer) {
 		return (List<IOnDragDropHandler>) super.getActiveHandlers(viewer);
+	}
+
+	private void hookScene(Scene scene) {
+		if (scenes.contains(scene)) {
+			// already registered for this scene
+			return;
+		}
+
+		// register a drag entered filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
+		// register a drag exited filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
+		// register a drag over filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
+		// register a drag dropped filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
+
+		scenes.add(scene);
+	}
+
+	private void unhookScene(Scene scene) {
+		scene.removeEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
+		scene.removeEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
+		scene.removeEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
+		scene.removeEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
 	}
 }

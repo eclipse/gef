@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,17 +21,13 @@ public class DotFindReferencesQueryExecutor extends ReferenceQueryExecutor {
 
 	@Override
 	protected String getElementName(EObject primaryTarget) {
-		/**
-		 * The default implementation determines the name of an element by
-		 * searching for a 'name' EAttribute with type 'EString'. In case of a
-		 * NodeId, customization is needed, since its 'name' EAttribute has the
-		 * type 'ID' instead of 'EString'.
-		 */
+		String elementName = super.getElementName(primaryTarget);
+
 		if (primaryTarget instanceof NodeId) {
-			return " node '" + ((NodeId) primaryTarget).getName().toString() //$NON-NLS-1$
-					+ "'"; //$NON-NLS-1$
+			return " node '" + elementName + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return super.getElementName(primaryTarget);
+
+		return elementName;
 	}
 
 	@Override

@@ -106,7 +106,7 @@ class DotFoldingTests {
 			val actualStartLine = document.getLineOfOffset(actualFoldingRegion.offset) + 1 // line numbering should start by 1
 			val expectedStartLine = expectedFoldingRegions.get(i)
 			assertEquals("The start line does not match:", expectedStartLine, actualStartLine)
-			
+
 			val actualEndLine = document.getLineOfOffset(actualFoldingRegion.offset + actualFoldingRegion.length)
 			val expectedEndLine = expectedFoldingRegions.get(i + 1)
 			assertEquals("The end line does not match:", expectedEndLine, actualEndLine)

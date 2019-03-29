@@ -1201,7 +1201,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 					</table>
 				>]
 			}
-		'''.assertSelectedTextAfterDoubleClicking('''Category''') 
+		'''.assertSelectedTextAfterDoubleClicking('''Category''')
 	}
 
 	@Test def node_html_label_003() {
@@ -1507,7 +1507,7 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 			graph{
 				1[style="bold, dotted"«c»]
 			}
-		'''.assertSelectedTextAfterDoubleClicking('''"bold, dotted"''') 
+		'''.assertSelectedTextAfterDoubleClicking('''"bold, dotted"''')
 	}
 
 	@Test def node_width_001() {
@@ -1644,6 +1644,6 @@ class DotEditorDoubleClickingTests extends AbstractEditorDoubleClickTextSelectio
 				2
 				1 -> 2 [color=red, tailport=w, headport«c»=w]
 			}
-		'''.assertSelectedTextAfterDoubleClicking('''headport''') 
+		'''.assertSelectedTextAfterDoubleClicking('''headport''')
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Alexander Nyßen (itemis AG) - contribution for Bugzilla #451852
+ *     Robert Rudi (itemis AG) - changed adding of feedback to be done as bulk change
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.handlers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -190,7 +192,7 @@ public class MarqueeOnDragHandler extends AbstractHandler
 				visual.setHeight(bbox[3] - bbox[1]);
 			}
 		};
-		getHost().getRoot().addChild(feedback);
+		getHost().getRoot().addChildren(Collections.singletonList(feedback));
 	}
 
 	@Override

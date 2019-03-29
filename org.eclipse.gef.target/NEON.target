@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
-<!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="NEON" sequenceNumber="1539944287">
+<!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
+<target name="NEON" sequenceNumber="1553244413">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.4.0.201605100504"/>

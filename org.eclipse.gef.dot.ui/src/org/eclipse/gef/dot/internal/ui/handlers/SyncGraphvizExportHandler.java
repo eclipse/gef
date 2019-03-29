@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG) - Refactoring of DOT Graph view live update/live export (bug #337644)		
+ *     Tamas Miklossy (itemis AG) - Refactoring of DOT Graph view live update/live export (bug #337644)
+ *                                - Add 'Open the exported file automatically' option (bug #521329)                                                                
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.handlers;
@@ -33,11 +34,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
-import org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
+import org.eclipse.gef.dot.internal.ui.preferences.GraphvizConfigurationDialog;
+import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
@@ -68,7 +71,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 
 			// check if Graphviz is configured properly
 			if (!GraphvizPreferencePage.isGraphvizConfigured()) {
-				GraphvizPreferencePage.showGraphvizConfigurationDialog();
+				showGraphvizConfigurationDialog();
 			}
 
 			// if Graphviz is still not configured properly, do not export
@@ -88,6 +91,12 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 		}
 
 		return null;
+	}
+
+	private void showGraphvizConfigurationDialog() {
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getShell();
+		new GraphvizConfigurationDialog(shell).open();
 	}
 
 	private void addListeners() {
@@ -263,7 +272,10 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 			IFile outputEclipseFile = convertToEclipseFile(outputFile);
 			if (outputEclipseFile != null) {
 				refreshParent(outputEclipseFile);
-				openFile(outputEclipseFile);
+				if (GraphvizPreferencePage
+						.getDotOpenExportedFileAutomaticallyValue()) {
+					openFile(outputEclipseFile);
+				}
 			}
 		}
 	}

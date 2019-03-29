@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 itemis AG and others.
+ * Copyright (c) 2009, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -309,7 +309,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				.getInstance(DotRecordLabelJavaValidator.class);
 		IParser parser = recordLabelInjector.getInstance(IParser.class);
 
-		ConvertingValidationMessageAcceptor messageAcceptor = new ConvertingValidationMessageAcceptor(
+		DotSubgrammarValidationMessageAcceptor messageAcceptor = new DotSubgrammarValidationMessageAcceptor(
 				attribute, DotPackage.Literals.ATTRIBUTE__VALUE,
 				"record-based label", getMessageAcceptor(), "\"".length());
 
