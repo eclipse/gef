@@ -179,6 +179,10 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		currentDot = null;
 		currentFile = null;
 
+		linkWithDotEditorAction.dispose();
+		linkWithSelectionAction.dispose();
+		loadFileAction.dispose();
+
 		if (fitToViewportActionGroup != null) {
 			getContentViewer().unsetAdapter(fitToViewportActionGroup);
 			fitToViewportActionGroup.dispose();
@@ -558,6 +562,13 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			toggleResourceListener();
 		}
 
+		public void dispose() {
+			ResourcesPlugin.getWorkspace()
+					.removeResourceChangeListener(resourceChangeListener);
+			getSite().getWorkbenchWindow().getSelectionService()
+					.removeSelectionListener(selectionChangeListener);
+		}
+
 		private void toggleResourceListener() {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			ISelectionService service = getSite().getWorkbenchWindow()
@@ -654,6 +665,10 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		private ISelectionService getSelectionService() {
 			return getSite().getWorkbenchWindow().getSelectionService();
 		}
+
+		public void dispose() {
+			removeSelectionChangeListener();
+		}
 	}
 
 	private class LoadFileAction extends Action {
@@ -686,6 +701,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			}
 		}
 
+		public void dispose() {
+			// no action is necessary on dispose
+		}
 	}
 
 	@Override
