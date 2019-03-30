@@ -201,9 +201,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		super.createPartControl(parent);
 
 		// actions
-		Action linkWithDotEditorAction = new LinkWithDotEditor().action(this);
-		Action linkWithSelectionAction = new LinkWithSelection().action(this);
-		Action loadFileAction = new LoadFile().action(this);
+		Action linkWithDotEditorAction = new LinkWithDotEditor().action();
+		Action linkWithSelectionAction = new LinkWithSelection().action();
+		Action loadFileAction = new LoadFile().action();
 		add(linkWithDotEditorAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(linkWithSelectionAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
@@ -500,12 +500,12 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		private String lastSelection = null;
 
-		Action action(final DotGraphView view) {
+		Action action() {
 			return new Action(DotUiMessages.DotGraphView_3) {
 				@Override
 				public void run() {
-					FileDialog dialog = new FileDialog(
-							view.getViewSite().getShell(), SWT.OPEN);
+					FileDialog dialog = new FileDialog(getViewSite().getShell(),
+							SWT.OPEN);
 					dialog.setFileName(lastSelection);
 					String dotFileNamePattern = "*." + EXTENSION; //$NON-NLS-1$
 					String embeddedDotFileNamePattern = "*.*"; //$NON-NLS-1$
@@ -518,7 +518,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 					String selection = dialog.open();
 					if (selection != null) {
 						lastSelection = selection;
-						view.updateGraph(new File(selection));
+						updateGraph(new File(selection));
 					}
 				}
 			};
@@ -548,7 +548,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		};
 
-		Action action(final DotGraphView view) {
+		Action action() {
 			Action linkWithSelectionAction = new Action(
 					DotUiMessages.DotGraphView_2, SWT.TOGGLE) {
 
@@ -560,7 +560,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 				}
 
 				private void toggleSelectionChangeListener() {
-					if (view.listenToSelectionChanges) {
+					if (listenToSelectionChanges) {
 						addSelectionChangeListener();
 					} else {
 						removeSelectionChangeListener();
@@ -596,7 +596,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		/** Listen to selection changes and update graph in view. */
 		protected ISelectionListener selectionChangeListener = null;
 
-		Action action(final DotGraphView view) {
+		Action action() {
 
 			Action toggleUpdateModeAction = new Action(
 					DotUiMessages.DotGraphView_1, SWT.TOGGLE) {
@@ -611,7 +611,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 					IWorkspace workspace = ResourcesPlugin.getWorkspace();
 					ISelectionService service = getSite().getWorkbenchWindow()
 							.getSelectionService();
-					if (view.listenToDotContent) {
+					if (listenToDotContent) {
 						IWorkbenchPart activeEditor = PlatformUI.getWorkbench()
 								.getActiveWorkbenchWindow().getActivePage()
 								.getActiveEditor();
@@ -664,8 +664,8 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 									.endsWith(EXTENSION)) {
 						try {
 							final IFile f = (IFile) resource;
-							IWorkspaceRunnable workspaceRunnable = view
-									.updateGraphRunnable(DotFileUtils.resolve(
+							IWorkspaceRunnable workspaceRunnable = updateGraphRunnable(
+									DotFileUtils.resolve(
 											f.getLocationURI().toURL()));
 							IWorkspace workspace = ResourcesPlugin
 									.getWorkspace();
