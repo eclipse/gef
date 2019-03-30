@@ -64,6 +64,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -201,15 +202,15 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		super.createPartControl(parent);
 
 		// actions
-		Action linkWithDotEditorAction = new LinkWithDotEditor().action();
-		Action linkWithSelectionAction = new LinkWithSelection().action();
-		Action loadFileAction = new LoadFile().action();
-		add(linkWithDotEditorAction, ISharedImages.IMG_ELCL_SYNCED);
-		add(linkWithSelectionAction, ISharedImages.IMG_ELCL_SYNCED);
-		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
-
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager mgr = actionBars.getToolBarManager();
+		Action linkWithDotEditorAction = new LinkWithDotEditorAction();
+		Action linkWithSelectionAction = new LinkWithSelectionAction();
+		Action loadFileAction = new LoadFileAction();
+		mgr.add(linkWithDotEditorAction);
+		mgr.add(linkWithSelectionAction);
+		mgr.add(loadFileAction);
+
 		mgr.add(new Separator());
 
 		zoomActionGroup = new ZoomActionGroup();
@@ -270,14 +271,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		resourceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
-	private void add(Action action, String imageName) {
-		action.setId(action.getText());
-		if (imageName != null) {
-			action.setImageDescriptor(PlatformUI.getWorkbench()
-					.getSharedImages().getImageDescriptor(imageName));
-		}
-		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
-		mgr.add(action);
+	private ImageDescriptor determineImageDescriptor(String imageName) {
+		return PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(imageName);
 	}
 
 	private void setGraphAsync(final String dot, final File file) {
@@ -496,104 +492,90 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		return workspaceRunnable;
 	}
 
-	private class LinkWithDotEditor {
-	
+	private class LinkWithDotEditorAction extends Action {
+
 		/** Listener that passes a visitor if a resource is changed. */
-		private IResourceChangeListener resourceChangeListener;
-	
+		private IResourceChangeListener resourceChangeListener = new IResourceChangeListener() {
+			@Override
+			public void resourceChanged(final IResourceChangeEvent event) {
+				if (event.getType() != IResourceChangeEvent.POST_BUILD && event
+						.getType() != IResourceChangeEvent.POST_CHANGE) {
+					return;
+				}
+				IResourceDelta rootDelta = event.getDelta();
+				try {
+					rootDelta.accept(resourceVisitor);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
 		/** If a *.dot file is visited, update the graph. */
-		private IResourceDeltaVisitor resourceVisitor;
-	
-		/** Listen to selection changes and update graph in view. */
-		protected ISelectionListener selectionChangeListener = null;
-	
-		Action action() {
-	
-			Action toggleUpdateModeAction = new Action(
-					DotUiMessages.DotGraphView_1, SWT.TOGGLE) {
-	
-				@Override
-				public void run() {
-					listenToDotContent = toggle(this, listenToDotContent);
-					toggleResourceListener();
-				}
-	
-				private void toggleResourceListener() {
-					IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					ISelectionService service = getSite().getWorkbenchWindow()
-							.getSelectionService();
-					if (listenToDotContent) {
-						IWorkbenchPart activeEditor = PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getActivePage()
-								.getActiveEditor();
-						checkActiveEditorAndUpdateGraph(activeEditor);
-						workspace.addResourceChangeListener(
-								resourceChangeListener,
-								IResourceChangeEvent.POST_BUILD
-										| IResourceChangeEvent.POST_CHANGE);
-						service.addSelectionListener(selectionChangeListener);
-					} else {
-						workspace.removeResourceChangeListener(
-								resourceChangeListener);
-						service.removeSelectionListener(
-								selectionChangeListener);
-					}
-				}
-	
-			};
-	
-			selectionChangeListener = new ISelectionListener() {
-				@Override
-				public void selectionChanged(IWorkbenchPart part,
-						ISelection selection) {
-					checkActiveEditorAndUpdateGraph(part);
-				}
-			};
-	
-			resourceChangeListener = new IResourceChangeListener() {
-				@Override
-				public void resourceChanged(final IResourceChangeEvent event) {
-					if (event.getType() != IResourceChangeEvent.POST_BUILD
-							&& event.getType() != IResourceChangeEvent.POST_CHANGE) {
-						return;
-					}
-					IResourceDelta rootDelta = event.getDelta();
+		private IResourceDeltaVisitor resourceVisitor = new IResourceDeltaVisitor() {
+			@Override
+			public boolean visit(final IResourceDelta delta) {
+				IResource resource = delta.getResource();
+				if (resource.getType() == IResource.FILE
+						&& ((IFile) resource).getName().endsWith(EXTENSION)) {
 					try {
-						rootDelta.accept(resourceVisitor);
-					} catch (CoreException e) {
+						final IFile f = (IFile) resource;
+						IWorkspaceRunnable workspaceRunnable = updateGraphRunnable(
+								DotFileUtils
+										.resolve(f.getLocationURI().toURL()));
+						IWorkspace workspace = ResourcesPlugin.getWorkspace();
+						if (!workspace.isTreeLocked()) {
+							workspace.run(workspaceRunnable, null);
+						}
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
-			};
-	
-			resourceVisitor = new IResourceDeltaVisitor() {
-				@Override
-				public boolean visit(final IResourceDelta delta) {
-					IResource resource = delta.getResource();
-					if (resource.getType() == IResource.FILE
-							&& ((IFile) resource).getName()
-									.endsWith(EXTENSION)) {
-						try {
-							final IFile f = (IFile) resource;
-							IWorkspaceRunnable workspaceRunnable = updateGraphRunnable(
-									DotFileUtils.resolve(
-											f.getLocationURI().toURL()));
-							IWorkspace workspace = ResourcesPlugin
-									.getWorkspace();
-							if (!workspace.isTreeLocked()) {
-								workspace.run(workspaceRunnable, null);
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					return true;
-				}
-	
-			};
-			return toggleUpdateModeAction;
+				return true;
+			}
+		};
+
+		/** Listen to selection changes and update graph in view. */
+		private ISelectionListener selectionChangeListener = new ISelectionListener() {
+			@Override
+			public void selectionChanged(IWorkbenchPart part,
+					ISelection selection) {
+				checkActiveEditorAndUpdateGraph(part);
+			}
+		};
+
+		public LinkWithDotEditorAction() {
+			super(DotUiMessages.DotGraphView_1, SWT.TOGGLE);
+			setId(getText());
+			setImageDescriptor(
+					determineImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 		}
-	
+
+		@Override
+		public void run() {
+			listenToDotContent = toggle(this, listenToDotContent);
+			toggleResourceListener();
+		}
+
+		private void toggleResourceListener() {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			ISelectionService service = getSite().getWorkbenchWindow()
+					.getSelectionService();
+			if (listenToDotContent) {
+				IWorkbenchPart activeEditor = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getActivePage()
+						.getActiveEditor();
+				checkActiveEditorAndUpdateGraph(activeEditor);
+				workspace.addResourceChangeListener(resourceChangeListener,
+						IResourceChangeEvent.POST_BUILD
+								| IResourceChangeEvent.POST_CHANGE);
+				service.addSelectionListener(selectionChangeListener);
+			} else {
+				workspace.removeResourceChangeListener(resourceChangeListener);
+				service.removeSelectionListener(selectionChangeListener);
+			}
+		}
+
 		/**
 		 * if the active editor is the DOT Editor, update the graph, otherwise
 		 * do nothing
@@ -617,9 +599,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		}
 	}
 
-	private class LinkWithSelection {
+	private class LinkWithSelectionAction extends Action {
 		private ISelectionListener listener = new ISelectionListener() {
-	
+
 			@Override
 			public void selectionChanged(IWorkbenchPart part,
 					ISelection selection) {
@@ -636,72 +618,71 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 						.getAdapterManager().getAdapter(selected, IFile.class);
 				updateGraph(file);
 			}
-	
+
 		};
-	
-		Action action() {
-			Action linkWithSelectionAction = new Action(
-					DotUiMessages.DotGraphView_2, SWT.TOGGLE) {
-	
-				@Override
-				public void run() {
-					listenToSelectionChanges = toggle(this,
-							listenToSelectionChanges);
-					toggleSelectionChangeListener();
-				}
-	
-				private void toggleSelectionChangeListener() {
-					if (listenToSelectionChanges) {
-						addSelectionChangeListener();
-					} else {
-						removeSelectionChangeListener();
-					}
-				}
-	
-				private void addSelectionChangeListener() {
-					getSelectionService().addSelectionListener(listener);
-				}
-	
-				private void removeSelectionChangeListener() {
-					getSelectionService().removeSelectionListener(listener);
-				}
-	
-				private ISelectionService getSelectionService() {
-					return getSite().getWorkbenchWindow().getSelectionService();
-				}
-	
-			};
-	
-			return linkWithSelectionAction;
+
+		public LinkWithSelectionAction() {
+			super(DotUiMessages.DotGraphView_2, SWT.TOGGLE);
+			setId(getText());
+			setImageDescriptor(
+					determineImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		}
+
+		@Override
+		public void run() {
+			listenToSelectionChanges = toggle(this, listenToSelectionChanges);
+			toggleSelectionChangeListener();
+		}
+
+		private void toggleSelectionChangeListener() {
+			if (listenToSelectionChanges) {
+				addSelectionChangeListener();
+			} else {
+				removeSelectionChangeListener();
+			}
+		}
+
+		private void addSelectionChangeListener() {
+			getSelectionService().addSelectionListener(listener);
+		}
+
+		private void removeSelectionChangeListener() {
+			getSelectionService().removeSelectionListener(listener);
+		}
+
+		private ISelectionService getSelectionService() {
+			return getSite().getWorkbenchWindow().getSelectionService();
 		}
 	}
 
-	private class LoadFile {
+	private class LoadFileAction extends Action {
 
 		private String lastSelection = null;
 
-		Action action() {
-			return new Action(DotUiMessages.DotGraphView_3) {
-				@Override
-				public void run() {
-					FileDialog dialog = new FileDialog(getViewSite().getShell(),
-							SWT.OPEN);
-					dialog.setFileName(lastSelection);
-					String dotFileNamePattern = "*." + EXTENSION; //$NON-NLS-1$
-					String embeddedDotFileNamePattern = "*.*"; //$NON-NLS-1$
-					dialog.setFilterExtensions(new String[] {
-							dotFileNamePattern, embeddedDotFileNamePattern });
-					dialog.setFilterNames(new String[] {
-							String.format("DOT file (%s)", dotFileNamePattern), //$NON-NLS-1$
-							String.format("Embedded DOT Graph (%s)", //$NON-NLS-1$
-									embeddedDotFileNamePattern) });
-					String selection = dialog.open();
-					if (selection != null) {
-						lastSelection = selection;
-						updateGraph(new File(selection));
-					}
-				}
-			};
+		public LoadFileAction() {
+			super(DotUiMessages.DotGraphView_3,
+					determineImageDescriptor(ISharedImages.IMG_OBJ_FILE));
+			setId(getText());
+		}
+
+		@Override
+		public void run() {
+			FileDialog dialog = new FileDialog(getViewSite().getShell(),
+					SWT.OPEN);
+			dialog.setFileName(lastSelection);
+			String dotFileNamePattern = "*." + EXTENSION; //$NON-NLS-1$
+			String embeddedDotFileNamePattern = "*.*"; //$NON-NLS-1$
+			dialog.setFilterExtensions(new String[] { dotFileNamePattern,
+					embeddedDotFileNamePattern });
+			dialog.setFilterNames(new String[] {
+					String.format("DOT file (%s)", dotFileNamePattern), //$NON-NLS-1$
+					String.format("Embedded DOT Graph (%s)", //$NON-NLS-1$
+							embeddedDotFileNamePattern) });
+			String selection = dialog.open();
+			if (selection != null) {
+				lastSelection = selection;
+				updateGraph(new File(selection));
+			}
 		}
 
 	}
