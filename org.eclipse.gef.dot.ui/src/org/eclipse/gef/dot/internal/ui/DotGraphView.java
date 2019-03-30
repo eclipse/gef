@@ -142,6 +142,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		}
 	};
 
+	private LinkWithDotEditorAction linkWithDotEditorAction;
+	private LinkWithSelectionAction linkWithSelectionAction;
+	private LoadFileAction loadFileAction;
 	private ZoomActionGroup zoomActionGroup;
 	private FitToViewportActionGroup fitToViewportActionGroup;
 	private ScrollActionGroup scrollActionGroup;
@@ -204,9 +207,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		// actions
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager mgr = actionBars.getToolBarManager();
-		Action linkWithDotEditorAction = new LinkWithDotEditorAction();
-		Action linkWithSelectionAction = new LinkWithSelectionAction();
-		Action loadFileAction = new LoadFileAction();
+		linkWithDotEditorAction = new LinkWithDotEditorAction();
+		linkWithSelectionAction = new LinkWithSelectionAction();
+		loadFileAction = new LoadFileAction();
 		mgr.add(linkWithDotEditorAction);
 		mgr.add(linkWithSelectionAction);
 		mgr.add(loadFileAction);
@@ -228,7 +231,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));
-		initResourceLabel(parent, loadFileAction, linkWithDotEditorAction);
+		initResourceLabel(parent);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// scene
@@ -236,24 +239,21 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		scene.getStylesheets().add(STYLES_CSS_FILE);
 	}
 
-	private void initResourceLabel(final Composite parent,
-			final Action loadAction, final Action toggleAction) {
+	private void initResourceLabel(final Composite parent) {
 		resourceLabel = new Link(parent, SWT.WRAP);
 		resourceLabel.setText(GRAPH_NONE);
 		resourceLabel.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				processEvent(loadAction, toggleAction, GRAPH_NONE, e);
+				processEvent(GRAPH_NONE, e);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				processEvent(loadAction, toggleAction, GRAPH_NONE, e);
+				processEvent(GRAPH_NONE, e);
 			}
 
-			private void processEvent(final Action loadFileAction,
-					final Action toggleAction, final String label,
-					SelectionEvent e) {
+			private void processEvent(final String label, SelectionEvent e) {
 				/*
 				 * As we use a single string for the links for localization, we
 				 * don't compare specific strings but say the first link
@@ -263,8 +263,9 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 					loadFileAction.run();
 				} else {
 					// toggle as if the button was pressed, then run the action:
-					toggleAction.setChecked(!toggleAction.isChecked());
-					toggleAction.run();
+					linkWithDotEditorAction
+							.setChecked(!linkWithDotEditorAction.isChecked());
+					linkWithDotEditorAction.run();
 				}
 			}
 		});
