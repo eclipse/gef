@@ -496,6 +496,186 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		return workspaceRunnable;
 	}
 
+	private class LinkWithDotEditor {
+	
+		/** Listener that passes a visitor if a resource is changed. */
+		private IResourceChangeListener resourceChangeListener;
+	
+		/** If a *.dot file is visited, update the graph. */
+		private IResourceDeltaVisitor resourceVisitor;
+	
+		/** Listen to selection changes and update graph in view. */
+		protected ISelectionListener selectionChangeListener = null;
+	
+		Action action() {
+	
+			Action toggleUpdateModeAction = new Action(
+					DotUiMessages.DotGraphView_1, SWT.TOGGLE) {
+	
+				@Override
+				public void run() {
+					listenToDotContent = toggle(this, listenToDotContent);
+					toggleResourceListener();
+				}
+	
+				private void toggleResourceListener() {
+					IWorkspace workspace = ResourcesPlugin.getWorkspace();
+					ISelectionService service = getSite().getWorkbenchWindow()
+							.getSelectionService();
+					if (listenToDotContent) {
+						IWorkbenchPart activeEditor = PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getActivePage()
+								.getActiveEditor();
+						checkActiveEditorAndUpdateGraph(activeEditor);
+						workspace.addResourceChangeListener(
+								resourceChangeListener,
+								IResourceChangeEvent.POST_BUILD
+										| IResourceChangeEvent.POST_CHANGE);
+						service.addSelectionListener(selectionChangeListener);
+					} else {
+						workspace.removeResourceChangeListener(
+								resourceChangeListener);
+						service.removeSelectionListener(
+								selectionChangeListener);
+					}
+				}
+	
+			};
+	
+			selectionChangeListener = new ISelectionListener() {
+				@Override
+				public void selectionChanged(IWorkbenchPart part,
+						ISelection selection) {
+					checkActiveEditorAndUpdateGraph(part);
+				}
+			};
+	
+			resourceChangeListener = new IResourceChangeListener() {
+				@Override
+				public void resourceChanged(final IResourceChangeEvent event) {
+					if (event.getType() != IResourceChangeEvent.POST_BUILD
+							&& event.getType() != IResourceChangeEvent.POST_CHANGE) {
+						return;
+					}
+					IResourceDelta rootDelta = event.getDelta();
+					try {
+						rootDelta.accept(resourceVisitor);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+	
+			resourceVisitor = new IResourceDeltaVisitor() {
+				@Override
+				public boolean visit(final IResourceDelta delta) {
+					IResource resource = delta.getResource();
+					if (resource.getType() == IResource.FILE
+							&& ((IFile) resource).getName()
+									.endsWith(EXTENSION)) {
+						try {
+							final IFile f = (IFile) resource;
+							IWorkspaceRunnable workspaceRunnable = updateGraphRunnable(
+									DotFileUtils.resolve(
+											f.getLocationURI().toURL()));
+							IWorkspace workspace = ResourcesPlugin
+									.getWorkspace();
+							if (!workspace.isTreeLocked()) {
+								workspace.run(workspaceRunnable, null);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					return true;
+				}
+	
+			};
+			return toggleUpdateModeAction;
+		}
+	
+		/**
+		 * if the active editor is the DOT Editor, update the graph, otherwise
+		 * do nothing
+		 */
+		private void checkActiveEditorAndUpdateGraph(IWorkbenchPart part) {
+			if (DotEditorUtils.isDotEditor(part)) {
+				IEditorInput editorInput = ((EditorPart) part).getEditorInput();
+				if (editorInput instanceof FileEditorInput) {
+					IFile file = ((FileEditorInput) editorInput).getFile();
+					try {
+						File resolvedFile = DotFileUtils
+								.resolve(file.getLocationURI().toURL());
+						if (!resolvedFile.equals(currentFile)) {
+							updateGraph(resolvedFile);
+						}
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	private class LinkWithSelection {
+		private ISelectionListener listener = new ISelectionListener() {
+	
+			@Override
+			public void selectionChanged(IWorkbenchPart part,
+					ISelection selection) {
+				if (!listenToSelectionChanges) {
+					return;
+				}
+				if (!(selection instanceof IStructuredSelection))
+					return;
+				IStructuredSelection structured = (IStructuredSelection) selection;
+				if (structured.size() != 1)
+					return;
+				Object selected = structured.getFirstElement();
+				IFile file = (IFile) org.eclipse.core.runtime.Platform
+						.getAdapterManager().getAdapter(selected, IFile.class);
+				updateGraph(file);
+			}
+	
+		};
+	
+		Action action() {
+			Action linkWithSelectionAction = new Action(
+					DotUiMessages.DotGraphView_2, SWT.TOGGLE) {
+	
+				@Override
+				public void run() {
+					listenToSelectionChanges = toggle(this,
+							listenToSelectionChanges);
+					toggleSelectionChangeListener();
+				}
+	
+				private void toggleSelectionChangeListener() {
+					if (listenToSelectionChanges) {
+						addSelectionChangeListener();
+					} else {
+						removeSelectionChangeListener();
+					}
+				}
+	
+				private void addSelectionChangeListener() {
+					getSelectionService().addSelectionListener(listener);
+				}
+	
+				private void removeSelectionChangeListener() {
+					getSelectionService().removeSelectionListener(listener);
+				}
+	
+				private ISelectionService getSelectionService() {
+					return getSite().getWorkbenchWindow().getSelectionService();
+				}
+	
+			};
+	
+			return linkWithSelectionAction;
+		}
+	}
+
 	private class LoadFile {
 
 		private String lastSelection = null;
@@ -524,186 +704,6 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			};
 		}
 
-	}
-
-	private class LinkWithSelection {
-		private ISelectionListener listener = new ISelectionListener() {
-
-			@Override
-			public void selectionChanged(IWorkbenchPart part,
-					ISelection selection) {
-				if (!listenToSelectionChanges) {
-					return;
-				}
-				if (!(selection instanceof IStructuredSelection))
-					return;
-				IStructuredSelection structured = (IStructuredSelection) selection;
-				if (structured.size() != 1)
-					return;
-				Object selected = structured.getFirstElement();
-				IFile file = (IFile) org.eclipse.core.runtime.Platform
-						.getAdapterManager().getAdapter(selected, IFile.class);
-				updateGraph(file);
-			}
-
-		};
-
-		Action action() {
-			Action linkWithSelectionAction = new Action(
-					DotUiMessages.DotGraphView_2, SWT.TOGGLE) {
-
-				@Override
-				public void run() {
-					listenToSelectionChanges = toggle(this,
-							listenToSelectionChanges);
-					toggleSelectionChangeListener();
-				}
-
-				private void toggleSelectionChangeListener() {
-					if (listenToSelectionChanges) {
-						addSelectionChangeListener();
-					} else {
-						removeSelectionChangeListener();
-					}
-				}
-
-				private void addSelectionChangeListener() {
-					getSelectionService().addSelectionListener(listener);
-				}
-
-				private void removeSelectionChangeListener() {
-					getSelectionService().removeSelectionListener(listener);
-				}
-
-				private ISelectionService getSelectionService() {
-					return getSite().getWorkbenchWindow().getSelectionService();
-				}
-
-			};
-
-			return linkWithSelectionAction;
-		}
-	}
-
-	private class LinkWithDotEditor {
-
-		/** Listener that passes a visitor if a resource is changed. */
-		private IResourceChangeListener resourceChangeListener;
-
-		/** If a *.dot file is visited, update the graph. */
-		private IResourceDeltaVisitor resourceVisitor;
-
-		/** Listen to selection changes and update graph in view. */
-		protected ISelectionListener selectionChangeListener = null;
-
-		Action action() {
-
-			Action toggleUpdateModeAction = new Action(
-					DotUiMessages.DotGraphView_1, SWT.TOGGLE) {
-
-				@Override
-				public void run() {
-					listenToDotContent = toggle(this, listenToDotContent);
-					toggleResourceListener();
-				}
-
-				private void toggleResourceListener() {
-					IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					ISelectionService service = getSite().getWorkbenchWindow()
-							.getSelectionService();
-					if (listenToDotContent) {
-						IWorkbenchPart activeEditor = PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getActivePage()
-								.getActiveEditor();
-						checkActiveEditorAndUpdateGraph(activeEditor);
-						workspace.addResourceChangeListener(
-								resourceChangeListener,
-								IResourceChangeEvent.POST_BUILD
-										| IResourceChangeEvent.POST_CHANGE);
-						service.addSelectionListener(selectionChangeListener);
-					} else {
-						workspace.removeResourceChangeListener(
-								resourceChangeListener);
-						service.removeSelectionListener(
-								selectionChangeListener);
-					}
-				}
-
-			};
-
-			selectionChangeListener = new ISelectionListener() {
-				@Override
-				public void selectionChanged(IWorkbenchPart part,
-						ISelection selection) {
-					checkActiveEditorAndUpdateGraph(part);
-				}
-			};
-
-			resourceChangeListener = new IResourceChangeListener() {
-				@Override
-				public void resourceChanged(final IResourceChangeEvent event) {
-					if (event.getType() != IResourceChangeEvent.POST_BUILD
-							&& event.getType() != IResourceChangeEvent.POST_CHANGE) {
-						return;
-					}
-					IResourceDelta rootDelta = event.getDelta();
-					try {
-						rootDelta.accept(resourceVisitor);
-					} catch (CoreException e) {
-						e.printStackTrace();
-					}
-				}
-			};
-
-			resourceVisitor = new IResourceDeltaVisitor() {
-				@Override
-				public boolean visit(final IResourceDelta delta) {
-					IResource resource = delta.getResource();
-					if (resource.getType() == IResource.FILE
-							&& ((IFile) resource).getName()
-									.endsWith(EXTENSION)) {
-						try {
-							final IFile f = (IFile) resource;
-							IWorkspaceRunnable workspaceRunnable = updateGraphRunnable(
-									DotFileUtils.resolve(
-											f.getLocationURI().toURL()));
-							IWorkspace workspace = ResourcesPlugin
-									.getWorkspace();
-							if (!workspace.isTreeLocked()) {
-								workspace.run(workspaceRunnable, null);
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					return true;
-				}
-
-			};
-			return toggleUpdateModeAction;
-		}
-
-		/**
-		 * if the active editor is the DOT Editor, update the graph, otherwise
-		 * do nothing
-		 */
-		private void checkActiveEditorAndUpdateGraph(IWorkbenchPart part) {
-			if (DotEditorUtils.isDotEditor(part)) {
-				IEditorInput editorInput = ((EditorPart) part).getEditorInput();
-				if (editorInput instanceof FileEditorInput) {
-					IFile file = ((FileEditorInput) editorInput).getFile();
-					try {
-						File resolvedFile = DotFileUtils
-								.resolve(file.getLocationURI().toURL());
-						if (!resolvedFile.equals(currentFile)) {
-							updateGraph(resolvedFile);
-						}
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
 	}
 
 	@Override
