@@ -220,7 +220,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		mgr.add(new Separator());
 
-		zoomActionGroup = new ZoomActionGroup();
+		zoomActionGroup = new ZoomActionGroup(new FitToViewportAction());
 		getContentViewer().setAdapter(zoomActionGroup);
 		fitToViewportActionGroup = new FitToViewportActionGroup();
 		getContentViewer().setAdapter(fitToViewportActionGroup);
