@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -44,15 +44,20 @@ public class DotHyperlinkHelper extends HyperlinkHelper {
 			// if the node is either left or right part of an edge
 			if (container instanceof EdgeStmtNode
 					|| container instanceof EdgeRhsNode) {
-				NodeId targetSemanticObject = DotAstHelper.getNodeId(nodeId);
-
-				if (targetSemanticObject != null) {
-					INode sourceNode = NodeModelUtils.findActualNodeFor(nodeId);
-
-					createHyperlinksTo(resource, sourceNode,
-							targetSemanticObject, acceptor);
-				}
+				createHyperlinkToNodeDefinition(resource, acceptor, nodeId);
 			}
+		}
+	}
+
+	private void createHyperlinkToNodeDefinition(XtextResource resource,
+			IHyperlinkAcceptor acceptor, NodeId nodeId) {
+		NodeId targetSemanticObject = DotAstHelper.getNodeId(nodeId);
+
+		if (targetSemanticObject != null) {
+			INode sourceNode = NodeModelUtils.findActualNodeFor(nodeId);
+
+			createHyperlinksTo(resource, sourceNode, targetSemanticObject,
+					acceptor);
 		}
 	}
 
