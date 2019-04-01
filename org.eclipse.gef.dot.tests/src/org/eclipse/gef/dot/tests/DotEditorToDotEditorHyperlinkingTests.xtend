@@ -68,6 +68,7 @@ class DotEditorToDotEditorHyperlinkingTests extends AbstractHyperlinkingTest {
 	}
 
 	override protected hyperlinkIsOffered(IHyperlink[] hyperlinks, IRegion expectedRegion, String expectedHyperlinkTarget) {
+		assertNotNull("No hyperlinks found!", hyperlinks)
 		super.hyperlinkIsOffered(hyperlinks.filter(XtextHyperlink), expectedRegion, expectedHyperlinkTarget)
 	}
 
