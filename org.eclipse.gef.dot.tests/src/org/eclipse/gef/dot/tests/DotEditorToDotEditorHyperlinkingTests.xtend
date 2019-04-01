@@ -47,6 +47,26 @@ class DotEditorToDotEditorHyperlinkingTests extends AbstractHyperlinkingTest {
 		'''.hasHyperlinkTo("2")
 	}
 
+	@Test def hyperlink_on_the_left_side_of_an_edge_quoted_node() {
+		'''
+			digraph {
+				"org.eclipse.gef.dot.ui"
+				"org.eclipse.gef.dot"
+				"«c»org.eclipse.gef.dot.ui«c»" -> "org.eclipse.gef.dot"
+			}
+		'''.hasHyperlinkTo("org.eclipse.gef.dot.ui")
+	}
+
+	@Test def hyperlink_on_the_right_side_of_an_edge_quoted_node() {
+		'''
+			digraph {
+				"org.eclipse.gef.dot.ui"
+				"org.eclipse.gef.dot"
+				"org.eclipse.gef.dot.ui" -> "«c»org.eclipse.gef.dot«c»"
+			}
+		'''.hasHyperlinkTo("org.eclipse.gef.dot")
+	}
+
 	override protected hyperlinkIsOffered(IHyperlink[] hyperlinks, IRegion expectedRegion, String expectedHyperlinkTarget) {
 		super.hyperlinkIsOffered(hyperlinks.filter(XtextHyperlink), expectedRegion, expectedHyperlinkTarget)
 	}
