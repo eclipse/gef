@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
  *     Zoey Gerrit Prigge         - Generalized dependent attribute method 
- * 									to use with recordBased Node shapes (bug #454629)
+ *                                  to use with recordBased Node shapes (bug #454629)
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language
@@ -40,13 +40,13 @@ class DotAstHelper {
 
 	def static NodeId getNodeId(NodeId nodeId) {
 		val dotGraph = nodeId.getContainerOfType(DotGraph)
-		
+
 		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
-			if(nodeStmt.node!==null && nodeStmt.node.name == nodeId.name) {
+			if (nodeStmt.node !== null && nodeStmt.node.name == nodeId.name) {
 				return nodeStmt.node
 			}
 		}
-		
+
 		null
 	}
 
@@ -56,34 +56,34 @@ class DotAstHelper {
 	def static List<NodeId> getAllNodeIds(NodeId baseNodeId) {
 		val result = newLinkedList
 		val dotGraph = baseNodeId.getContainerOfType(DotGraph)
-		
+
 		// consider nodes
 		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
 			val nodeId = nodeStmt.node
-			if(nodeId !== null && nodeId.name == baseNodeId.name && nodeId != baseNodeId) {
+			if (nodeId !== null && nodeId.name == baseNodeId.name && nodeId != baseNodeId) {
 				result += nodeId
 			}
 		}
-		
+
 		// consider edges
 		for (edgeStmtNode : dotGraph.stmts.filter(EdgeStmtNode)) {
-			
+
 			// consider the left side of the edges
 			var nodeId = edgeStmtNode.node
-			if(nodeId !== null && nodeId.name == baseNodeId.name && nodeId !== baseNodeId) {
+			if (nodeId !== null && nodeId.name == baseNodeId.name && nodeId !== baseNodeId) {
 				result += nodeId
 			}
-			
+
 			// consider the right side of the edges
 			val edgeRHS = edgeStmtNode.edgeRHS.head
-			if (edgeRHS instanceof EdgeRhsNode){
+			if (edgeRHS instanceof EdgeRhsNode) {
 				nodeId = edgeRHS.node
-				if(nodeId !== null && nodeId.name == baseNodeId.name && nodeId !== baseNodeId) {
+				if (nodeId !== null && nodeId.name == baseNodeId.name && nodeId !== baseNodeId) {
 					result += nodeId
 				}
 			}
 		}
-		
+
 		result
 	}
 
@@ -150,10 +150,10 @@ class DotAstHelper {
 				return dependedOnValue.toValue
 			}
 		}
-		
+
 		// attribute nested below Subgraph
 		val subgraph = dependentAttribute.getContainerOfType(Subgraph)
-		if(subgraph !== null) {
+		if (subgraph !== null) {
 			val dependedOnValue = subgraph.getAttributeValue(attributeName)
 			if (dependedOnValue !== null) {
 				return dependedOnValue.toValue
@@ -180,26 +180,26 @@ class DotAstHelper {
 	private def static ID getGlobalDependedOnValue(EObject eObject, AttributeType attributeType, String attributeName) {
 		// consider subgraph first
 		val subgraph = eObject.getContainerOfType(Subgraph)
-		if(subgraph !== null) {
+		if (subgraph !== null) {
 			val value = subgraph.stmts.getAttributeValue(attributeType, attributeName)
 			if (value !== null) {
 				return value
 			}
 		}
-		
+
 		// consider graph second
 		val dotGraph = eObject.getContainerOfType(DotGraph)
-		if(dotGraph !== null){
+		if (dotGraph !== null) {
 			val value = dotGraph.stmts.getAttributeValue(attributeType, attributeName)
 			if (value !== null) {
 				return value
 			}
 		}
-		
+
 		null
 	}
 
-	private def static ID getAttributeValue(EList<Stmt> stmts, AttributeType attributeType, String attributeName){
+	private def static ID getAttributeValue(EList<Stmt> stmts, AttributeType attributeType, String attributeName) {
 		for (stmt : stmts) {
 			if (stmt instanceof AttrStmt) {
 				if (stmt.type == attributeType) {
@@ -213,7 +213,7 @@ class DotAstHelper {
 	def static ID getAttributeValue(DotGraph graph, String name) {
 		for (stmt : graph.stmts) {
 			val value = switch stmt {
-				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
+				// no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
 				Attribute:
 					stmt.getAttributeValue(name)
 			}
@@ -242,7 +242,7 @@ class DotAstHelper {
 	def static ID getAttributeValue(Subgraph subgraph, String name) {
 		for (stmt : subgraph.stmts) {
 			val value = switch stmt {
-				//no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
+				// no need to consider AttrStmt here, because the global graph attributes are evaluated somewhere else
 				Attribute:
 					stmt.getAttributeValue(name)
 			}
