@@ -41,7 +41,7 @@ class DotAstHelper {
 	def static NodeId getNodeId(NodeId nodeId) {
 		val dotGraph = nodeId.getContainerOfType(DotGraph)
 
-		for (nodeStmt : dotGraph.stmts.filter(NodeStmt)) {
+		for (nodeStmt : dotGraph.allNodeStatements) {
 			if (nodeStmt.node !== null && nodeStmt.node.name == nodeId.name) {
 				return nodeStmt.node
 			}
@@ -283,5 +283,27 @@ class DotAstHelper {
 			return attribute.value
 		}
 		null
+	}
+
+	/**
+	 * Collects all node statements residing in the dot graph or in its subgraphs.
+	 */
+	private static def getAllNodeStatements(DotGraph dotGraph) {
+		val nodeStamentsInDotGraph = dotGraph.stmts.filter(NodeStmt)
+
+		val nodeStatementsInSubgraphs = newLinkedList
+		dotGraph.stmts.filter(Subgraph).forEach [
+			nodeStatementsInSubgraphs += allNodeStatementsInSubgraph
+		]
+
+		nodeStamentsInDotGraph + nodeStatementsInSubgraphs
+	}
+
+	private static def List<NodeStmt> getAllNodeStatementsInSubgraph(Subgraph subgraph) {
+		val nodeStatementInSubgraph = subgraph.stmts.filter(NodeStmt).toList
+		subgraph.stmts.filter(Subgraph).forEach [
+			nodeStatementInSubgraph += allNodeStatementsInSubgraph
+		]
+		nodeStatementInSubgraph
 	}
 }

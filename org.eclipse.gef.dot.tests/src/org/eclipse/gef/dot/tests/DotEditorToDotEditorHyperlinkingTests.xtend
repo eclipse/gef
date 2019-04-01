@@ -67,6 +67,62 @@ class DotEditorToDotEditorHyperlinkingTests extends AbstractHyperlinkingTest {
 		'''.hasHyperlinkTo("org.eclipse.gef.dot")
 	}
 
+	@Test def hyperlink_on_the_left_side_of_an_edge_to_a_node_in_subgraph() {
+		'''
+			digraph {
+				{
+					1
+					2
+				}
+				«c»1«c»->2
+			}
+		'''.hasHyperlinkTo("1")
+	}
+
+	@Test def hyperlink_on_the_right_side_of_an_edge_to_a_node_in_subgraph() {
+		'''
+			digraph {
+				{
+					1
+					2
+				}
+				1->«c»2«c»
+			}
+		'''.hasHyperlinkTo("2")
+	}
+
+	@Test def hyperlink_on_the_left_side_of_an_edge_to_a_node_in_nested_subgraph() {
+		'''
+			digraph {
+				{
+					1 2
+					{
+						3 4
+					}
+				}
+				
+				1->2
+				«c»3«c»->4
+			}
+		'''.hasHyperlinkTo("3")
+	}
+
+	@Test def hyperlink_on_the_right_side_of_an_edge_to_a_node_in_nested_subgraph() {
+		'''
+			digraph {
+				{
+					1 2
+					{
+						3 4
+					}
+				}
+				
+				1->2
+				3->«c»4«c»
+			}
+		'''.hasHyperlinkTo("4")
+	}
+
 	override protected hyperlinkIsOffered(IHyperlink[] hyperlinks, IRegion expectedRegion, String expectedHyperlinkTarget) {
 		assertNotNull("No hyperlinks found!", hyperlinks)
 		super.hyperlinkIsOffered(hyperlinks.filter(XtextHyperlink), expectedRegion, expectedHyperlinkTarget)
