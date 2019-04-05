@@ -1,5 +1,5 @@
 /************************************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #538226)
+ *     Zoey Prigge    (itemis AG) - DotGraphView: FontName support (bug #541056)
  *
  ***********************************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -21,7 +22,6 @@ import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.zest.fx.ZestProperties;
 import org.eclipse.gef.zest.fx.parts.EdgePart;
 import org.eclipse.gef.zest.fx.parts.GraphPart;
-import org.eclipse.gef.zest.fx.parts.NodeLabelPart;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -66,7 +66,7 @@ public class DotContentPartFactory implements IContentPartFactory {
 						.getKey() instanceof org.eclipse.gef.graph.Node
 				&& ZestProperties.EXTERNAL_LABEL__NE
 						.equals(((Pair) content).getValue())) {
-			part = new NodeLabelPart();
+			part = new DotNodeLabelPart();
 		}
 		if (part != null) {
 			// TODO: use injector to create parts

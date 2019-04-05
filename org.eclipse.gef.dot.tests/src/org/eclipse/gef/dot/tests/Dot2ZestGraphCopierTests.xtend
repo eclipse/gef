@@ -1516,7 +1516,7 @@ class Dot2ZestGraphCopierTests {
 	}
 
 	@Test def graph_fontname() {
-		//replaceFontAccess("Times New Roman")
+		//mockAvailableFonts("Times New Roman")
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		'''
 			digraph {
@@ -1533,6 +1533,41 @@ class Dot2ZestGraphCopierTests {
 			}
 		''')
 	}
+
+	@Test def cluster_fontname() {
+		mockAvailableFonts("Times New Roman")
+		'''
+			digraph {
+				subgraph clusterName {
+					label="foo"
+					fontname="Times-Bold"
+					1
+				}
+				2
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : foo
+					element-external-label-css-style : -fx-font-family: "Times New Roman";-fx-font-weight: 700;-fx-font-style: normal;
+					element-label : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+	
 
 	@Test def graph_fontsize() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
@@ -2547,6 +2582,26 @@ class Dot2ZestGraphCopierTests {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
+					element-label : 1
+					element-label-css-style : -fx-font-family: "Arial";-fx-font-weight: 400;-fx-font-style: normal;
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def node_fontname003() {
+		mockAvailableFonts("Arial")
+		'''
+			graph {
+				1[fontname="Helvetica", xlabel="Gotcha"]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : Gotcha
+					element-external-label-css-style : -fx-font-family: "Arial";-fx-font-weight: 400;-fx-font-style: normal;
 					element-label : 1
 					element-label-css-style : -fx-font-family: "Arial";-fx-font-weight: 400;-fx-font-style: normal;
 					node-shape : GeometryNode

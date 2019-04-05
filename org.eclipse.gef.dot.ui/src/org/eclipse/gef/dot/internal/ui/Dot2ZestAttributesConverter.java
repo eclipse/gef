@@ -483,6 +483,15 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				dotSize);
 	}
 
+	String computeZestGraphLabelCssStyle(Graph dot) {
+		Color dotColor = DotAttributes.getFontcolorParsed(dot);
+		String dotColorScheme = DotAttributes.getColorscheme(dot);
+		FontName dotFont = DotAttributes.getFontnameParsed(dot);
+		Double dotSize = DotAttributes.getFontsizeParsed(dot);
+		return computeZestLabelCssStyle(dotColor, dotColorScheme, dotFont,
+				dotSize);
+	}
+
 	private String computeZestTargetSourceLabelCssStyle(Edge dot) {
 		Color dotColor = DotAttributes.getLabelfontcolorParsed(dot);
 		if (dotColor == null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *    Alexander Nyßen (itemis AG) - initial API and implementation
  *    Tamas Miklossy  (itemis AG) - minor improvements, refactoring
+ *    Zoey Prigge     (itemis AG) - DotGraphView: FontName support (bug #541056)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -114,6 +115,14 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 					bb.getLly() - bb.getUry());
 			ZestProperties.setPosition(zestNode, zestPosition);
 			ZestProperties.setSize(zestNode, zestSize);
+		}
+
+		// label fontcolor, fontsize, fontname
+		String zestNodeLabelCssStyle = getAttributeCopier()
+				.computeZestGraphLabelCssStyle(dotNode.getNestedGraph());
+		if (zestNodeLabelCssStyle != null) {
+			ZestProperties.setExternalLabelCssStyle(zestNode,
+					zestNodeLabelCssStyle);
 		}
 
 		// determine label for cluster
