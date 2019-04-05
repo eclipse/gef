@@ -60,9 +60,11 @@ public class DotFontUtil {
 		case LIGHT:
 			return 300;
 		case SEMILIGHT:
-			return 350;
+			// JavaFX does not support 350
+			return 300;
 		case BOOK:
-			return 380;
+			// JavaFX does not support 380
+			return 400;
 		case MEDIUM:
 			return 500;
 		case SEMIBOLD:
