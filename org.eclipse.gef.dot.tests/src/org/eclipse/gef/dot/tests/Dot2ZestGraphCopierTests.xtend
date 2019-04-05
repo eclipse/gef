@@ -1101,6 +1101,33 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
+	@Test def void edge_penwidth() {
+		// color and style=bold can interfere with penwidth, hence these are tested too.
+		'''
+			digraph {
+				1->2[style=bold penwidth=0.5 color=green]
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Edge1 from Node1 to Node2 {
+					edge-curve : GeometryNode
+					edge-curve-css-style : -fx-stroke-line-cap: butt;-fx-stroke: #00ff00;-fx-stroke-width:0.5;
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+				}
+			}
+		''')
+	}
+
 	@Test def void edge_pos() {
 		// TODO: implement
 	}
@@ -2722,6 +2749,23 @@ class Dot2ZestGraphCopierTests {
 					element-css-id : nodeID
 					element-label : 1
 					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def node_penwidth() {
+		// color and style=bold can interfere with penwidth, hence these are tested too.
+		'''
+			graph {
+				1[penwidth=4 style=bold color="green"]
+			}
+		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: -fx-stroke: #00ff00;-fx-stroke-width:4.0;
 					node-size : Dimension(54.0, 36.0)
 				}
 			}

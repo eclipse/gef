@@ -392,6 +392,26 @@ class Dot2ZestNodeAttributesConversionTests {
 		'''.assertNodeXLabel("node:1 graph:testedGraphName")
 	}
 
+	@Test def node_penwidth001() {
+		'''
+			digraph{
+				1[style=bold, penwidth=3]
+			}
+		'''.assertNodeStyle('''
+			-fx-stroke-width:3.0;
+		''')
+	}
+	
+	@Test def node_penwidth002() {
+		'''
+			digraph{
+				1[penwidth=0.5]
+			}
+		'''.assertNodeStyle('''
+			-fx-stroke-width:0.5;
+		''')
+	}
+
 	@Test def node_polygonbasedshape001() { 
 		'''
 			digraph {

@@ -17,6 +17,7 @@
  *                                    - Fix handling of "\N", "\E", "\G" in labels (bug #534707)
  *                                    - Add support for labelfontcolor attribute (bug #540958)
  *                                    - Add support for (label)fontsize/name (bug #541056)
+ *                                    - Add penwidth support (bug #541106)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -183,13 +184,17 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		// convert edge style
-		String dotStyle = DotAttributes.getStyle(dot);
 		String connectionCssStyle = null;
+		Double penwidth = DotAttributes.getPenwidthParsed(dot);
+
+		// style attribute
+		String dotStyle = DotAttributes.getStyle(dot);
 		if (EdgeStyle.DASHED.toString().equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-dash-array: 7 7;"; //$NON-NLS-1$
 		} else if (EdgeStyle.DOTTED.toString().equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
-		} else if (EdgeStyle.BOLD.toString().equals(dotStyle)) {
+		} else if (EdgeStyle.BOLD.toString().equals(dotStyle)
+				&& penwidth == null) {
 			connectionCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
 		} else if (EdgeStyle.INVIS.toString().equals(dotStyle)) {
 			// mark as invisible
@@ -226,6 +231,11 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			connectionCssStyle += zestStroke;
 		}
 
+		// penwidth
+		if (penwidth != null) {
+			connectionCssStyle += "-fx-stroke-width:" + penwidth + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		ZestProperties.setCurveCssStyle(zest, connectionCssStyle);
 
 		// fillcolor
@@ -247,11 +257,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			if (GraphType.DIGRAPH.equals(DotAttributes
 					._getType(dot.getGraph().getRootGraph().getRootGraph()))) {
 				zestEdgeTargetDecoration = DotArrowShapeDecorations.getDefault(
-						arrowSize, true, javaFxColor, javaFxFillColor);
+						arrowSize, true, penwidth, javaFxColor,
+						javaFxFillColor);
 			}
 		} else {
 			zestEdgeTargetDecoration = computeZestDecoration(
-					DotAttributes.getArrowheadParsed(dot), arrowSize,
+					DotAttributes.getArrowheadParsed(dot), arrowSize, penwidth,
 					javaFxColor, javaFxFillColor);
 		}
 
@@ -271,11 +282,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			if (GraphType.DIGRAPH.equals(DotAttributes
 					._getType(dot.getGraph().getRootGraph().getRootGraph()))) {
 				zestEdgeSourceDecoration = DotArrowShapeDecorations.getDefault(
-						arrowSize, true, javaFxColor, javaFxFillColor);
+						arrowSize, true, penwidth, javaFxColor,
+						javaFxFillColor);
 			}
 		} else {
 			zestEdgeSourceDecoration = computeZestDecoration(
-					DotAttributes.getArrowtailParsed(dot), arrowSize,
+					DotAttributes.getArrowtailParsed(dot), arrowSize, penwidth,
 					javaFxColor, javaFxFillColor);
 		}
 
@@ -432,9 +444,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	}
 
 	private javafx.scene.Node computeZestDecoration(ArrowType arrowType,
-			double arrowSize, String javaFxColor, String javaFxFillColor) {
-		return DotArrowShapeDecorations.get(arrowType, arrowSize, javaFxColor,
-				javaFxFillColor);
+			double arrowSize, Double penwidth, String javaFxColor,
+			String javaFxFillColor) {
+		return DotArrowShapeDecorations.get(arrowType, arrowSize, penwidth,
+				javaFxColor, javaFxFillColor);
 	}
 
 	private List<Point> computeZestBSplineControlPoints(Edge dot) {
@@ -641,7 +654,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 
 		if (zestShape != null) {
-			if (zestShapeStyle.length() > 0) {
+			if (!isHtmlLabel && zestShapeStyle.length() > 0) {
 				if (innerShape != null) {
 					String style = zestShapeStyle.toString();
 					innerShape.setStyle(style);
@@ -766,14 +779,24 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		String dotColorScheme = DotAttributes.getColorscheme(dot);
 		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
 				dotColor);
-		if (isRecordBasedShape) {
-			if (javaFxColor != null) {
-				zestStyle.append("-fx-border-color: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+		// penwidth
+		Double penwidth = DotAttributes.getPenwidthParsed(dot);
+
+		if (isNoneShape(dotShape)) {
+			zestStyle.append("-fx-stroke: none;"); //$NON-NLS-1$
 		} else {
-			String stroke = isNoneShape(dotShape) ? "none" : javaFxColor; //$NON-NLS-1$
-			if (stroke != null) {
-				zestStyle.append("-fx-stroke: " + stroke + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (javaFxColor != null) {
+				zestStyle.append(isRecordBasedShape ? "-fx-border-color: " //$NON-NLS-1$
+						: "-fx-stroke: "); //$NON-NLS-1$
+				zestStyle.append(javaFxColor);
+				zestStyle.append(";"); //$NON-NLS-1$
+			}
+
+			if (penwidth != null) {
+				zestStyle.append(isRecordBasedShape ? "-fx-border-width:" //$NON-NLS-1$
+						: "-fx-stroke-width:"); //$NON-NLS-1$
+				zestStyle.append(penwidth);
+				zestStyle.append(";"); //$NON-NLS-1$
 			}
 		}
 
@@ -783,7 +806,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			for (StyleItem styleItem : style.getStyleItems()) {
 				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
 				if (nodeStyle != null) {
-					addNodeStyle(zestStyle, nodeStyle, isRecordBasedShape);
+					addNodeStyle(zestStyle, nodeStyle, penwidth == null,
+							isRecordBasedShape);
 				}
 			}
 		}
@@ -807,8 +831,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			if (javaFxFillColor != null) {
 				zestStyle.append("-fx-fill: " + javaFxFillColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
 		}
+
 		return zestStyle;
 	}
 
@@ -836,13 +860,22 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
+		// penwidth
+		Double penwidth = DotAttributes.getPenwidthParsed(dot);
+		if (penwidth != null) {
+			zestStyle.append("-fx-stroke-width:"); //$NON-NLS-1$
+			zestStyle.append(penwidth);
+			zestStyle.append(";"); //$NON-NLS-1$
+		}
+
 		Style style = DotAttributes.getStyleParsed(dot);
 		if (style != null) {
 			for (StyleItem styleItem : style.getStyleItems()) {
 				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
-				addNodeStyle(zestStyle, nodeStyle, false);
+				addNodeStyle(zestStyle, nodeStyle, penwidth == null, false);
 			}
 		}
+
 		return zestStyle;
 	}
 
@@ -884,12 +917,13 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	 * polygon-based nodes and differently for record-based nodes
 	 */
 	private void addNodeStyle(StringBuilder zestStyle, NodeStyle style,
-			boolean isRecordBasedNode) {
+			boolean penwidthUnset, boolean isRecordBasedNode) {
 		if (isRecordBasedNode) {
 			// in case of record based nodes shapes use 'border'
 			switch (style) {
 			case BOLD:
-				zestStyle.append("-fx-border-width: 2;"); //$NON-NLS-1$
+				if (penwidthUnset)
+					zestStyle.append("-fx-border-width: 2;"); //$NON-NLS-1$
 				break;
 			case DASHED:
 				zestStyle.append("-fx-border-style:dashed;"); //$NON-NLS-1$
@@ -920,7 +954,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			// in case of polygon-based nodes shapes use 'stroke'
 			switch (style) {
 			case BOLD:
-				zestStyle.append("-fx-stroke-width:2;"); //$NON-NLS-1$
+				if (penwidthUnset)
+					zestStyle.append("-fx-stroke-width:2;"); //$NON-NLS-1$
 				break;
 			case DASHED:
 				zestStyle.append("-fx-stroke-dash-array: 7 7;"); //$NON-NLS-1$

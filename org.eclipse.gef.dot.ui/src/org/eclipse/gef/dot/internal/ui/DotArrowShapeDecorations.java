@@ -1,5 +1,5 @@
 /************************************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - Add support for arrowType edge decorations (bug #477980)
+ *     Zoey Prigge (itemis AG)    - Add penwidth visualization support (bug #541106)
  *
  ***********************************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -39,6 +40,9 @@ class DotArrowShapeDecorations {
 	 * 
 	 * @param isGraphDirected
 	 *            true if the graph is directed, false otherwise
+	 * 
+	 * @param penwidth
+	 *            The (pen)width of the shape's drawn lines.
 	 *
 	 * @param color
 	 *            the color to use for the arrow shape decoration outline
@@ -49,10 +53,10 @@ class DotArrowShapeDecorations {
 	 * @return The default dot arrow shape decoration
 	 */
 	static Node getDefault(double arrowSize, boolean isGraphDirected,
-			String color, String fillColor) {
+			Double penwidth, String color, String fillColor) {
 
 		Shape shape = isGraphDirected ? new Normal(arrowSize) : null;
-		setStroke(shape, color, fillColor);
+		setStroke(shape, penwidth, color, fillColor);
 		return shape;
 	}
 
@@ -66,6 +70,9 @@ class DotArrowShapeDecorations {
 	 *
 	 * @param arrowSize
 	 *            The size of the arrow shape decoration.
+	 *
+	 * @param penwidth
+	 *            The (pen)width of the shape's drawn lines.
 	 * 
 	 * @param color
 	 *            The color to use for the arrow shape decoration outline.
@@ -75,13 +82,14 @@ class DotArrowShapeDecorations {
 	 * 
 	 * @return The dot arrow shape decoration.
 	 */
-	static Node get(ArrowType arrowType, double arrowSize, String color,
-			String fillColor) {
+	static Node get(ArrowType arrowType, double arrowSize, Double penwidth,
+			String color, String fillColor) {
 		// The first arrow shape specified should occur closest to the node.
 		double offset = 0.0;
 		Group group = new Group();
 		for (AbstractArrowShape arrowShape : arrowType.getArrowShapes()) {
-			Shape currentShape = get(arrowShape, arrowSize, color, fillColor);
+			Shape currentShape = get(arrowShape, arrowSize, penwidth, color,
+					fillColor);
 			if (currentShape == null) {
 				// represent the "none" arrow shape with a transparent box with
 				// the corresponding size
@@ -107,7 +115,7 @@ class DotArrowShapeDecorations {
 	}
 
 	private static Shape get(AbstractArrowShape abstractArrowShape,
-			double arrowSize, String color, String fillColor) {
+			double arrowSize, Double penwidth, String color, String fillColor) {
 		Shape shape = null;
 
 		if (abstractArrowShape instanceof DeprecatedArrowShape) {
@@ -115,28 +123,28 @@ class DotArrowShapeDecorations {
 			case EDIAMOND:
 				// "ediamond" is deprecated, use "odiamond"
 				shape = new Diamond(arrowSize);
-				setOpen(shape, color);
+				setOpen(shape, penwidth, color);
 				break;
 			case OPEN:
 				// "open" is deprecated, use "vee"
 				shape = new Vee(arrowSize);
-				setStroke(shape, color, fillColor);
+				setStroke(shape, penwidth, color, fillColor);
 				break;
 			case HALFOPEN:
 				// "halfopen" is deprecated, use "lvee"
 				shape = new Vee(arrowSize);
 				setSide(shape, "l"); //$NON-NLS-1$
-				setStroke(shape, color, fillColor);
+				setStroke(shape, penwidth, color, fillColor);
 				break;
 			case EMPTY:
 				// "empty" is deprecated, use "onormal"
 				shape = new Normal(arrowSize);
-				setOpen(shape, color);
+				setOpen(shape, penwidth, color);
 				break;
 			case INVEMPTY:
 				// "invempty" is deprecated, use "oinv"
 				shape = new Inv(arrowSize);
-				setOpen(shape, color);
+				setOpen(shape, penwidth, color);
 				break;
 			default:
 				break;
@@ -145,9 +153,9 @@ class DotArrowShapeDecorations {
 			ArrowShape arrowShape = (ArrowShape) abstractArrowShape;
 			shape = getPrimitiveShape(arrowShape.getShape(), arrowSize);
 			if (arrowShape.isOpen()) {
-				setOpen(shape, color);
+				setOpen(shape, penwidth, color);
 			} else {
-				setStroke(shape, color, fillColor);
+				setStroke(shape, penwidth, color, fillColor);
 			}
 
 			if (arrowShape.getSide() != null) {
@@ -158,7 +166,8 @@ class DotArrowShapeDecorations {
 		return shape;
 	}
 
-	private static void setStroke(Shape shape, String color, String fillColor) {
+	private static void setStroke(Shape shape, Double penwidth, String color,
+			String fillColor) {
 		if (shape != null) {
 			String style = ""; //$NON-NLS-1$
 
@@ -172,21 +181,17 @@ class DotArrowShapeDecorations {
 			}
 			style += "-fx-fill: " + fillColor + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 
+			if (penwidth != null) {
+				style += "-fx-stroke-width: " + penwidth + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
 			shape.setStyle(style);
 			shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
 		}
 	}
 
-	private static void setOpen(Shape shape, String color) {
-		if (shape != null) {
-			if (color == null) {
-				shape.setStroke(Color.BLACK);
-			} else {
-				shape.setStyle("-fx-stroke: " + color + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			shape.setFill(Color.WHITE);
-			shape.setStrokeLineJoin(StrokeLineJoin.ROUND);
-		}
+	private static void setOpen(Shape shape, Double penwidth, String color) {
+		setStroke(shape, penwidth, color, "#ffffff"); //$NON-NLS-1$
 	}
 
 	private static void setSide(Shape shape, String side) {
