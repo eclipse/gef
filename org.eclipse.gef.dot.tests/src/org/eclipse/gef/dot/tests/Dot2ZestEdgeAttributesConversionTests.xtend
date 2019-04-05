@@ -81,6 +81,17 @@ class Dot2ZestEdgeAttributesConversionTests {
 	@Test def edge_style004() {
 		'''
 			graph {
+				1--2 [style=bold penwidth=0.5]
+			}
+		'''.assertEdgeStyle('''
+			-fx-stroke-line-cap: butt;
+			-fx-stroke-width:0.5;
+		''')
+	}
+
+	@Test def edge_style005() {
+		'''
+			graph {
 				1--2 [style=dashed]
 			}
 		'''.assertEdgeStyle('''
@@ -88,7 +99,7 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 
-	@Test def edge_style005() {
+	@Test def edge_style006() {
 		'''
 			graph {
 				1--2 [style=dotted]
@@ -98,13 +109,38 @@ class Dot2ZestEdgeAttributesConversionTests {
 		''')
 	}
 
-	@Test def edge_style006() {
+	@Test def edge_style007() {
 		'''
 			graph {
 				1--2 [style=solid]
 			}
 		'''.assertEdgeStyle('''
 			-fx-stroke-line-cap: butt;
+		''')
+	}
+	
+	@Test def edge_style008() {
+		'''
+			graph {
+				1--2 [penwidth=3]
+			}
+		'''.assertEdgeStyle('''
+			-fx-stroke-line-cap: butt;
+			-fx-stroke-width:3.0;
+		''')
+	}
+	
+	@Test def edge_style009() {
+		// test css attribute order
+		// -fx-stroke-width needs to follow after -fx-stroke
+		'''
+			graph {
+				1--2 [penwidth=3 color=yellow]
+			}
+		'''.assertEdgeStyle('''
+			-fx-stroke-line-cap: butt;
+			-fx-stroke: #ffff00;
+			-fx-stroke-width:3.0;
 		''')
 	}
 
@@ -157,7 +193,36 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeSourceDecorationStyles('''''', '''
 			-fx-stroke: #00ff00;
+			-fx-fill: #ffffff;
 		''')
+	}
+	
+	@Test def edge_sourceDecorationStyle006() {
+		// test css attribute order
+		// -fx-stroke-width needs to follow after -fx-stroke
+		'''
+			digraph {
+				1->2[dir=both color=green arrowtail=obox penwidth=0.5]
+			}
+		'''.assertEdgeSourceDecorationStyles('''
+			-fx-stroke: #00ff00;
+			-fx-fill: #ffffff;
+			-fx-stroke-width: 0.5;
+		''') 
+	}
+	
+	@Test def edge_sourceDecorationStyle007() {
+		// test css attribute order
+		// -fx-stroke-width needs to follow after -fx-stroke
+		'''
+			digraph {
+				1->2[dir=both arrowtail=normal penwidth=0.5]
+			}
+		'''.assertEdgeSourceDecorationStyles('''
+			-fx-stroke: #000000;
+			-fx-fill: #000000;
+			-fx-stroke-width: 0.5;
+		''') 
 	}
 
 	@Test def edge_targetDecorationStyle001() {
@@ -210,6 +275,35 @@ class Dot2ZestEdgeAttributesConversionTests {
 			}
 		'''.assertEdgeTargetDecorationStyles('''
 			-fx-stroke: #00ff00;
+			-fx-fill: #ffffff;
+		''')
+	}
+	
+	@Test def edge_targetDecorationStyle006() {
+		// test css attribute order
+		// -fx-stroke-width needs to follow after -fx-stroke
+		'''
+			digraph {
+				1->2[color=green arrowhead=onormal penwidth=0.5]
+			}
+		'''.assertEdgeTargetDecorationStyles('''
+			-fx-stroke: #00ff00;
+			-fx-fill: #ffffff;
+			-fx-stroke-width: 0.5;
+		''')
+	}
+
+	@Test def edge_targetDecorationStyle007() {
+		// test css attribute order
+		// -fx-stroke-width needs to follow after -fx-stroke
+		'''
+			digraph {
+				1->2[arrowhead=onormal penwidth=0.5]
+			}
+		'''.assertEdgeTargetDecorationStyles('''
+			-fx-stroke: #000000;
+			-fx-fill: #ffffff;
+			-fx-stroke-width: 0.5;
 		''')
 	}
 
