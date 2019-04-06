@@ -862,7 +862,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				labelSize.getHeight());
 	}
 
-	static Dimension computeZestLabelSize(String labelText) {
+	Dimension computeZestLabelSize(String labelText) {
 		// TODO: respect font settings (font name and size)
 		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
 		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());

@@ -117,8 +117,10 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 			ZestProperties.setSize(zestNode, zestSize);
 		}
 
+		Dot2ZestAttributesConverter attributesCopier = getAttributeCopier();
+
 		// label fontcolor, fontsize, fontname
-		String zestNodeLabelCssStyle = getAttributeCopier()
+		String zestNodeLabelCssStyle = attributesCopier
 				.computeZestGraphLabelCssStyle(dotNode.getNestedGraph());
 		if (zestNodeLabelCssStyle != null) {
 			ZestProperties.setExternalLabelCssStyle(zestNode,
@@ -137,9 +139,8 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 			// TODO: change this as soon as different label
 			// positions are supported by Zest
 			if (zestPosition != null && zestSize != null) {
-				double xOffset = 0.5
-						* (zestSize.width - Dot2ZestAttributesConverter
-								.computeZestLabelSize(dotLabel).width);
+				double xOffset = 0.5 * (zestSize.width - attributesCopier
+						.computeZestLabelSize(dotLabel).width);
 				double yOffset = 4;
 				ZestProperties.setExternalLabelPosition(zestNode,
 						zestPosition.getTranslated(xOffset, yOffset));
