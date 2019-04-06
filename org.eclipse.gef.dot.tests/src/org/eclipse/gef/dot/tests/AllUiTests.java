@@ -42,7 +42,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotAutoEditTests.class, DotColorListContentAssistLexerTests.class,
 		DotColorListHighlightingLexerTests.class, DotContentAssist2Tests.class,
 		DotContentAssistTests.class, DotContentAssistLexerTests.class,
-		DotEditorDoubleClickingTests.class,
+		DotEditorTests.class, DotEditorDoubleClickingTests.class,
 		DotEditorToDotEditorHyperlinkingTests.class, DotFoldingTests.class,
 		DotHighlightingCalculatorTests.class, DotHighlightingLexerTests.class,
 		DotHighlightingTests.class, DotHoverTests.class,
