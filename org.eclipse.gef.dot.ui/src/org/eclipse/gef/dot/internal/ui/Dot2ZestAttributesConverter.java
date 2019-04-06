@@ -782,7 +782,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (style != null) {
 			for (StyleItem styleItem : style.getStyleItems()) {
 				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
-				addNodeStyle(zestStyle, nodeStyle, isRecordBasedShape);
+				if (nodeStyle != null) {
+					addNodeStyle(zestStyle, nodeStyle, isRecordBasedShape);
+				}
 			}
 		}
 

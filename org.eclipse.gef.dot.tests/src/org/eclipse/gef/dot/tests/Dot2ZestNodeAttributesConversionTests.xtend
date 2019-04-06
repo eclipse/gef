@@ -658,6 +658,14 @@ class Dot2ZestNodeAttributesConversionTests {
 		''')
 	}
 
+	@Test def node_style008() {
+		'''
+			digraph {
+				1[style="setlinewidth(2)"]
+			}
+		'''.assertNodeStyle("")
+	}
+
 	@Test def node_fill001() {
 		'''
 			digraph{
