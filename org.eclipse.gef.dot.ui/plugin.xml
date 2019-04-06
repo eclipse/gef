@@ -297,7 +297,7 @@
             id="org.eclipse.gef.dot.internal.ui.DotGraphView"
             icon="icons/graph_view.png"
             category="org.eclipse.gef"
-            name="GEF DOT"
+            name="GEF DOT Graph"
             restorable="true">
         </view>
     </extension>
