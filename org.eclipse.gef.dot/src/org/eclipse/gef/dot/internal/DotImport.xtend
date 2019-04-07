@@ -209,7 +209,7 @@ class DotImport {
 	********************************************************************************************************************************
 	*/
 	private def dispatch void transformStmt(Stmt it, Graph.Builder graphBuilder) {
-		System.err.println("DotImport cannot transform Stmt: " + it);
+		System.err.println("DotImport cannot transform Stmt: " + it)
 	}
 
 	private def dispatch void transformStmt(AttrStmt it, Graph.Builder graphBuilder) {
@@ -260,7 +260,7 @@ class DotImport {
 					sourceNode = targetNode
 				}
 				default: {
-					System.err.println("DotImport cannot transform EdgeStmtNode: " + it);
+					System.err.println("DotImport cannot transform EdgeStmtNode: " + it)
 				}
 			}
 		}
