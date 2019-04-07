@@ -316,6 +316,6 @@ class DotReferenceFinderTests extends AbstractEditorTest {
 		 * For more information, see
 		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=460996
 		 */
-		ResourcesPlugin.getWorkspace().save(true, null)
+		ResourcesPlugin.workspace.save(true, null)
 	}
 }
