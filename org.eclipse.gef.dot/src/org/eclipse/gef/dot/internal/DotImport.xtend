@@ -282,8 +282,8 @@ class DotImport {
 		globalNodeAttributes(subgraphBuilder).putAll(globalNodeAttributes(graphBuilder))
 		globalEdgeAttributes(subgraphBuilder).putAll(globalEdgeAttributes(graphBuilder))
 		
-		// process all statements
-		stmts.forEach[transformStmt(subgraphBuilder)]
+		// process all statements except for subgraph/cluster attributes, they will be processed later
+		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt(subgraphBuilder)]
 
 		val subgraph = subgraphBuilder.build
 
@@ -309,7 +309,7 @@ class DotImport {
 			}
 		]
 
-		// cluster and subgraph attributes
+		// subgraph/cluster attributes
 		setter.apply(BB__GC, [g, value|g.setBbRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
