@@ -48,14 +48,12 @@ import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
-import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
 import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
@@ -76,7 +74,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IActionBars;
@@ -359,17 +356,11 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			removeGraphBackground();
 		}
 
-		// adjust viewport to scroll to top-left
+		// adjust viewport
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				InfiniteCanvas canvas = ((InfiniteCanvasViewer) getContentViewer())
-						.getCanvas();
-				canvas.setHorizontalScrollOffset(
-						canvas.getHorizontalScrollOffset()
-								- canvas.getContentBounds().getMinX());
-				canvas.setVerticalScrollOffset(canvas.getVerticalScrollOffset()
-						- canvas.getContentBounds().getMinY());
+				fitToViewPort();
 			}
 		});
 	}
@@ -470,12 +461,6 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			// System.out.println("[DOT Output] [" + currentDot + "]");
 		}
 		setGraphAsync(currentDot, currentFile);
-
-		// wait for the view to set the graph content executed
-		// asynchronously
-		waitForEventProcessing();
-		// call fit to viewport
-		fitToViewPort();
 
 		return true;
 	}
@@ -748,14 +733,8 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			if (contributions != null && contributions.size() > 1) {
 				FitToViewportAction fitToViewportAction = (FitToViewportAction) contributions
 						.get(0);
-				waitForEventProcessing();
 				fitToViewportAction.runWithEvent(null);
 			}
-		}
-	}
-
-	private void waitForEventProcessing() {
-		while (Display.getDefault().readAndDispatch()) {
 		}
 	}
 }
