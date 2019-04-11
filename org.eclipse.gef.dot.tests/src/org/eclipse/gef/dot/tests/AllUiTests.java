@@ -53,6 +53,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotLabelProviderTests.class, DotMarkingOccurrencesTests.class,
 		DotOutlineViewTests.class, DotQuickfixTests.class,
 		DotReferenceFinderTests.class, DotRenameRefactoringTests.class,
-		DotToggleCommentTests.class, DotTokenTypeToPartitionMapperTests.class })
+		DotToggleCommentTests.class, DotTokenTypeToPartitionMapperTests.class,
+		SyncGraphvizExportHandlerTests.class })
 public class AllUiTests {
 }
