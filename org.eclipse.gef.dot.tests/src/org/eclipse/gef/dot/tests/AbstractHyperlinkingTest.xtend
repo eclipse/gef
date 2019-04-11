@@ -89,14 +89,14 @@ abstract class AbstractHyperlinkingTest extends AbstractEditorTest {
 
 	protected def IFile dslFile(CharSequence text) {
 		val content = text.toString.replace(c, "")
-		val file = IResourcesSetupUtil.createFile(projectName+"/"+fileName+"."+fileExtension, content.toString)
+		val file = IResourcesSetupUtil.createFile(projectName + "/" + fileName + "." + fileExtension, content.toString)
 
 		/*
 		 * TODO: find a better (with good performance) solution
 		 * to set the Xtext nature on the test project.
 		 */
 		val project = file.project
-		if(!project.hasNature(XtextProjectHelper.NATURE_ID)) {
+		if (!project.hasNature(XtextProjectHelper.NATURE_ID)) {
 			project.addNature(XtextProjectHelper.NATURE_ID)
 		}
 
@@ -111,7 +111,7 @@ abstract class AbstractHyperlinkingTest extends AbstractEditorTest {
 			override exec(XtextResource state) {
 				state
 			}
-			
+
 		})
 
 		resource.createHyperlinksByOffset(offset, true)
@@ -129,7 +129,7 @@ abstract class AbstractHyperlinkingTest extends AbstractEditorTest {
 		assertNotNull("No hyperlinks found!", hyperlinks)
 		assertEquals(1, hyperlinks.length)
 		val hyperlink = hyperlinks.head
-		
+
 		expectedRegion.assertEquals(hyperlink.hyperlinkRegion)
 		expectedHyperlinkTarget.assertEquals(hyperlink.target)
 	}
@@ -166,11 +166,11 @@ abstract class AbstractHyperlinkingTest extends AbstractEditorTest {
 	protected def IRegion hyperlinkRegion(CharSequence input) {
 		val text = input.toString
 		val first = text.indexOf(c)
-		if (first==-1) {
+		if (first == -1) {
 			fail('''Can't locate the first position symbol '«c»' in the input text''')
 		}
 		val second = text.lastIndexOf(c)
-		if (first==second) {
+		if (first == second) {
 			fail('''Can't locate the second position symbol '«c»' in the input text''')
 		}
 		val offset = first
