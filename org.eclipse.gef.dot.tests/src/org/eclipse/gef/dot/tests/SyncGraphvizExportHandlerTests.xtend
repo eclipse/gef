@@ -18,6 +18,7 @@ import java.util.List
 import org.eclipse.core.commands.ExecutionEvent
 import org.eclipse.core.expressions.EvaluationContext
 import org.eclipse.core.resources.IFile
+import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler
 import org.eclipse.swt.SWT
@@ -34,6 +35,7 @@ import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
 import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
+import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -49,6 +51,7 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 
 	@Inject XtextEditorInfo editorInfo
 	@Inject extension FileExtensionProvider
+	@Inject extension SyncUtil
 
 	ToolItem syncGraphvizExportToolbarItem
 
@@ -110,8 +113,9 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 	}
 
 	private def openInEditor(IFile it) {
+		waitForBuild(new NullProgressMonitor)
 		val editor = openEditor
-		waitForEventProcessing
+		flushPendingEvents
 		editor
 	}
 
@@ -123,7 +127,7 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 		val result = new SyncGraphvizExportHandler().execute(syncGraphvizExportExecutionEvent)
 		result.assertNull
 	
-		waitForEventProcessing
+		flushPendingEvents
 	
 		dialogContent
 	}
@@ -134,7 +138,7 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 				while (getGraphvizConfigurationDialog === null || getGraphvizConfigurationDialog.isDisposed) {
 					Thread.sleep(500)
 				}
-				graphvizConfigurationDialog.display.asyncExec [
+				getGraphvizConfigurationDialog.display.asyncExec [
 					dialogContent  += graphvizConfigurationDialog.text
 
 					val children = graphvizConfigurationDialog.children
@@ -161,8 +165,8 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 				while (getGraphvizPreferencePage === null || getGraphvizPreferencePage.isDisposed) {
 					Thread.sleep(500)
 				}
-				graphvizPreferencePage.display.asyncExec [
-					dialogContent  += graphvizPreferencePage.text
+				getGraphvizPreferencePage.display.asyncExec [
+					dialogContent += graphvizPreferencePage.text
 
 					val children = graphvizPreferencePage.children
 					assertEquals("The number of the Graphviz preference page's children does not match !", 1, children.length)
@@ -242,8 +246,11 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 		editorInfo.editorId
 	}
 
-	private def waitForEventProcessing() {
-		while(Display.^default.readAndDispatch) {}
+	private def flushPendingEvents() {
+		while(Display.current !== null &&
+			!Display.current.isDisposed &&
+			 Display.current.readAndDispatch) {
+		}
 	}
 
 }
