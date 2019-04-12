@@ -182,13 +182,13 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 
 	Shell graphvizConfigurationDialog = null
 	private def getGraphvizConfigurationDialog() {
-		Display.^default.asyncExec [graphvizConfigurationDialog = Display.current.activeShell]
+		Display.^default.asyncExec [graphvizConfigurationDialog = Display.^default.activeShell]
 		graphvizConfigurationDialog
 	}
 
 	Shell graphvizPreferencePage = null
 	private def getGraphvizPreferencePage() {
-		Display.^default.asyncExec [graphvizPreferencePage = Display.current.activeShell]
+		Display.^default.asyncExec [graphvizPreferencePage = Display.^default.activeShell]
 		graphvizPreferencePage
 	}
 
