@@ -60,6 +60,7 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 		syncGraphvizExportToolbarItem = getDummyToolItem
 	}
 
+	@Ignore("Hanging on the CI servers")
 	@Test def show_graphviz_configuration_dialog() {
 		'''
 			graph {
@@ -138,7 +139,7 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 		new Thread("Sync Graphviz Export - waiting for the Graphviz configuration dialog to become active") {
 			override run() {
 				while (getGraphvizConfigurationDialog === null) {
-					Thread.sleep(500)
+					Thread.sleep(10000)
 				}
 				getGraphvizConfigurationDialog.display.asyncExec [
 					dialogContent  += graphvizConfigurationDialog.text
