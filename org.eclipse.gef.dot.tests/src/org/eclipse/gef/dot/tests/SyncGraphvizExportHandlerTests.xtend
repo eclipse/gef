@@ -135,7 +135,7 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 	private def waitForTheGraphvizConfigurationDialog(List<String> dialogContent, boolean clickOnLink) {
 		new Thread("Sync Graphviz Export - waiting for the Graphviz configuration dialog to become active") {
 			override run() {
-				while (getGraphvizConfigurationDialog === null || getGraphvizConfigurationDialog.isDisposed) {
+				while (getGraphvizConfigurationDialog === null) {
 					Thread.sleep(500)
 				}
 				getGraphvizConfigurationDialog.display.asyncExec [
