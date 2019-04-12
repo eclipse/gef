@@ -15,8 +15,11 @@ package org.eclipse.gef.dot.tests
 import org.eclipse.gef.dot.internal.ui.preferences.GraphvizConfigurationDialog
 import org.eclipse.swt.widgets.Link
 import org.eclipse.swt.widgets.Shell
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
+import static org.junit.Assert.assertTrue
 
 import static extension org.junit.Assert.assertEquals
 
@@ -43,5 +46,10 @@ class GraphvizConfigurationDialogTest {
 	@Test def dialog_has_message() {
 		val link = dialog.shell.children.get(1) as Link
 		"Please specify the location of the 'dot' executable via the <a>Graphviz preference page</a>.".assertEquals(link.text)
+	}
+
+	@After def tearDown() {
+		val result = dialog.close
+		assertTrue("The dialog is still open but should have already been closed", result)
 	}
 }
