@@ -162,7 +162,7 @@ class SyncGraphvizExportHandlerTests extends AbstractEditorTest {
 	private def waitForTheGraphvizPreferencePage(List<String> dialogContent) {
 		new Thread("Sync Graphviz Export - waiting for the Graphviz preference page to become active") {
 			override run() {
-				while (getGraphvizPreferencePage === null || getGraphvizPreferencePage.isDisposed) {
+				while (getGraphvizPreferencePage === null) {
 					Thread.sleep(500)
 				}
 				getGraphvizPreferencePage.display.asyncExec [
