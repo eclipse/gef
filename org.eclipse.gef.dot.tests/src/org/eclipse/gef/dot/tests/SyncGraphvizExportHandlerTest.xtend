@@ -37,7 +37,6 @@ import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -60,7 +59,6 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 		syncGraphvizExportToolbarItem = getDummyToolItem
 	}
 
-	@Ignore("Hanging on the CI servers")
 	@Test def show_graphviz_configuration_dialog() {
 		'''
 			graph {
@@ -69,7 +67,6 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 		'''.startSyncGraphvizExport
 	}
 
-	@Ignore("Hanging on the CI servers")
 	@Test def show_graphviz_configuration_dialog_and_open_graphviz_preference_page() {
 		'''
 			graph {
@@ -185,14 +182,28 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 
 	Shell graphvizConfigurationDialog = null
 	private def getGraphvizConfigurationDialog() {
-		Display.^default.syncExec [graphvizConfigurationDialog = Display.^default.activeShell]
+		Display.^default.syncExec [
+			"Graphviz is not configured properly".activateShell
+			graphvizConfigurationDialog = Display.^default.activeShell
+		]
 		graphvizConfigurationDialog
 	}
 
 	Shell graphvizPreferencePage = null
 	private def getGraphvizPreferencePage() {
-		Display.^default.syncExec [graphvizPreferencePage = Display.^default.activeShell]
+		Display.^default.syncExec [
+			"Preferences".activateShell
+			graphvizPreferencePage = Display.^default.activeShell
+		]
 		graphvizPreferencePage
+	}
+	
+	/*
+	 * Ensures that the shell with the given title (if present) is activated.
+	 * This is needed to make the tests pass on the CI Linux server. 
+	 */
+	private def activateShell(String title) {
+		Display.^default.shells.findFirst[text == title]?.forceActive
 	}
 
 	private def getSyncGraphvizExportExecutionEvent() {
