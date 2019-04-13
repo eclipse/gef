@@ -605,7 +605,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		javafx.scene.Node zestShape = null;
 		javafx.scene.Node innerShape = null;
 		double innerDistance = 0;
-		if (dotShape == null) {
+		if (dotShape == null || dotShape.getShape() == null) {
 			// ellipse is default shape
 			zestShape = new GeometryNode<>(new Ellipse(0, 0, 0, 0));
 		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
