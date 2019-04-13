@@ -4267,6 +4267,62 @@ class Dot2ZestGraphCopierTests {
 		''')
 	}
 
+	@Test def subgraphs011() {
+		'''
+			graph {
+				{
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def subgraphs012() {
+		'''
+			graph {
+				node [shape=box]
+				{
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def subgraphs013() {
+		'''
+			graph {
+				node [shape=box]
+				{
+					1 [shape=ellipse]
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
 	private def assertZestConversion(CharSequence it, CharSequence expectedZestGraphText) {
 		assertZestConversion(new DotGraphPrettyPrinter, expectedZestGraphText)
 	}
