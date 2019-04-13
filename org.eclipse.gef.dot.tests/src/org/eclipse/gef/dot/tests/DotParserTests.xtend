@@ -296,8 +296,17 @@ class DotParserTests {
 	private def static initializeDotTestHtmlLikeLabels() {
 		dotTestHtmlLikeLabels = newLinkedList
 		for (field : DotTestHtmlLabels.declaredFields) {
-			val dotTestHtmlLikeLabel = field.get(null) as String
-			dotTestHtmlLikeLabels.add(dotTestHtmlLikeLabel)
+			/*
+			 * Ignore syntetic fields to ensure that the test cases can be run under JaCoCo code coverage.
+			 * JaCoCo instrumentation adds a static field to every class holding a reference with the probes for this class.
+			 * This field is flagged as synthetic. Your reflection code should ignore synthetic fields.
+			 * See also: https://groups.google.com/forum/#!topic/jacoco/jz9APFSELIs
+			 */
+			if (!field.synthetic) {
+				val dotTestHtmlLikeLabel = field.get(null) as String
+				dotTestHtmlLikeLabels.add(dotTestHtmlLikeLabel)
+			}
 		}
+		assertTrue(dotTestHtmlLikeLabels.length > 0)
 	}
 }
