@@ -950,68 +950,68 @@ class Dot2ZestEdgeAttributesConversionTest {
 	}
 
 	private def assertEdgeCssId(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.cssId
+		val actual = dotText.convertFirstEdge.cssId
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeExternalLabelCssStyle(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.externalLabelCssStyle.split
+		val actual = dotText.convertFirstEdge.externalLabelCssStyle.split
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeLabelCssStyle(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.labelCssStyle.split
+		val actual = dotText.convertFirstEdge.labelCssStyle.split
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeSourceLabelCssStyle(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.sourceLabelCssStyle.split
+		val actual = dotText.convertFirstEdge.sourceLabelCssStyle.split
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeTargetLabelCssStyle(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.targetLabelCssStyle.split
+		val actual = dotText.convertFirstEdge.targetLabelCssStyle.split
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeStyle(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.curveCssStyle.split
+		val actual = dotText.convertFirstEdge.curveCssStyle.split
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeSourceDecoration(CharSequence dotText, String expected) {
-		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecoration(expected)
+		dotText.convertFirstEdge.sourceDecoration.assertEdgeDecoration(expected)
 	}
 
 	private def assertEdgeSourceDecorationStyles(CharSequence dotText, String... expected) {
-		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecorationStyles(expected)
+		dotText.convertFirstEdge.sourceDecoration.assertEdgeDecorationStyles(expected)
 	}
 
 	private def assertEdgeTargetDecoration(CharSequence dotText, String expected) {
-		dotText.firstEdge.convert.targetDecoration.assertEdgeDecoration(expected)
+		dotText.convertFirstEdge.targetDecoration.assertEdgeDecoration(expected)
 	}
 
 	private def assertEdgeTargetDecorationStyles(CharSequence dotText, String... expected) {
-		dotText.firstEdge.convert.targetDecoration.assertEdgeDecorationStyles(expected)
+		dotText.convertFirstEdge.targetDecoration.assertEdgeDecorationStyles(expected)
 	}
 
 	private def assertEdgeLabel(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.label
+		val actual = dotText.convertFirstEdge.label
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeExternalLabel(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.externalLabel
+		val actual = dotText.convertFirstEdge.externalLabel
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeSourceLabel(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.sourceLabel
+		val actual = dotText.convertFirstEdge.sourceLabel
 		expected.assertEquals(actual)
 	}
 
 	private def assertEdgeTargetLabel(CharSequence dotText, String expected) {
-		val actual = dotText.firstEdge.convert.targetLabel
+		val actual = dotText.convertFirstEdge.targetLabel
 		expected.assertEquals(actual)
 	}
 
@@ -1037,7 +1037,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 	}
 
 	private def assertEdgeVisibility(CharSequence dotText, boolean expected) {
-		val invisible = dotText.firstEdge.convert.invisible
+		val invisible = dotText.convertFirstEdge.invisible
 		// assert on visibility, not on invisibility
 		val actual = if (invisible===null) true else !invisible
 		expected.assertEquals(actual)
@@ -1057,8 +1057,8 @@ class Dot2ZestEdgeAttributesConversionTest {
 		)
 	}
 
-	private def firstEdge(CharSequence dotText) {
-		dotText.graph.edges.head
+	private def convertFirstEdge(CharSequence dotText) {
+		dotText.graph.edges.head.convert
 	}
 
 	private def graph(CharSequence dotText) {
