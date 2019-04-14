@@ -21,16 +21,16 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ // JUnit Tests
-		Dot2ZestGraphCopierTests.class,
 		Dot2ZestEdgeAttributesConversionTests.class,
+		Dot2ZestGraphCopierTests.class,
 		Dot2ZestNodeAttributesConversionTests.class, DotArrowTypeTests.class,
 		DotAstTests.class, DotAttributeActiveAnnotationTests.class,
 		DotAttributesTests.class, DotBSplineInterpolatorTests.class,
 		DotColorListLexerTests.class, DotColorListTests.class,
 		DotColorUtilTests.class, DotEscStringTests.class,
 		DotExecutableUtilsTests.class, DotExportTests.class,
-		DotExtractorTests.class, DotFormatterTests.class,
-		DotFontNameTests.class, DotHtmlLabelFormatterTests.class,
+		DotExtractorTests.class, DotFontNameTests.class,
+		DotFormatterTests.class, DotHtmlLabelFormatterTests.class,
 		DotHtmlLabelLexerTests.class, DotHtmlLabelParserTests.class,
 		DotHtmlLabelValidatorTests.class, DotImportTests.class,
 		DotLexerTests.class, DotParserTests.class, DotPortPosTests.class,
@@ -41,8 +41,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		// JUnit Plug-in Tests
 		DotAutoEditTests.class, DotColorListContentAssistLexerTests.class,
 		DotColorListHighlightingLexerTests.class, DotContentAssist2Tests.class,
-		DotContentAssistTests.class, DotContentAssistLexerTests.class,
-		DotEditorTests.class, DotEditorDoubleClickingTests.class,
+		DotContentAssistLexerTests.class, DotContentAssistTests.class,
+		DotEditorDoubleClickingTests.class, DotEditorTests.class,
 		DotEditorToDotEditorHyperlinkingTests.class, DotFoldingTests.class,
 		DotGraphViewTests.class, DotHighlightingCalculatorTests.class,
 		DotHighlightingLexerTests.class, DotHighlightingTests.class,
