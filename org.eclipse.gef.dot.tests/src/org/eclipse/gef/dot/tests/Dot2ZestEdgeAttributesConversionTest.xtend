@@ -47,6 +47,22 @@ class Dot2ZestEdgeAttributesConversionTest {
 	extension DotImport = new DotImport
 	extension Dot2ZestAttributesConverter = new Dot2ZestAttributesConverter
 
+	@Test def edge_id001() {
+		'''
+			digraph {
+				1->2 [id="ID"]
+			}
+		'''.assertEdgeCssId('''ID''')
+	}
+
+	@Test def edge_id002() {
+		'''
+			digraph {
+				1->2
+			}
+		'''.assertEdgeCssId(null)
+	}
+
 	@Test def edge_style001() {
 		'''
 			digraph {
@@ -118,7 +134,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-stroke-line-cap: butt;
 		''')
 	}
-	
+
 	@Test def edge_style008() {
 		'''
 			graph {
@@ -129,7 +145,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-stroke-width:3.0;
 		''')
 	}
-	
+
 	@Test def edge_style009() {
 		// test css attribute order
 		// -fx-stroke-width needs to follow after -fx-stroke
@@ -141,6 +157,94 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-stroke-line-cap: butt;
 			-fx-stroke: #ffff00;
 			-fx-stroke-width:3.0;
+		''')
+	}
+
+	@Test def edge_style010() {
+		'''
+			digraph {
+				1->2 [style=invis]
+			}
+		'''.assertEdgeVisibility(false)
+	}
+
+	@Test def edge_style011() {
+		'''
+			digraph {
+				1->2[color=red]
+			}
+		'''.assertEdgeStyle('''
+			-fx-stroke-line-cap: butt;
+			-fx-stroke: #ff0000;
+		''')
+	}
+
+	@Test def edge_style012() {
+		'''
+			digraph {
+				edge[color=red]
+				1->2
+			}
+		'''.assertEdgeStyle('''
+			-fx-stroke-line-cap: butt;
+			-fx-stroke: #ff0000;
+		''')
+	}
+
+	@Test def edge_style013() {
+		'''
+			digraph {
+				edge[color=red]
+				1->2[color=""]
+			}
+		'''.assertEdgeStyle('''
+			-fx-stroke-line-cap: butt;
+		''')
+	}
+
+	@Test def edge_sourceDecoration001() {
+		'''
+			graph {
+				1--2
+			}
+		'''.assertEdgeSourceDecoration(null) 
+	}
+
+	@Test def edge_sourceDecoration002() {
+		'''
+			digraph {
+				1->2
+			}
+		'''.assertEdgeSourceDecoration(null)
+	}
+
+	@Test def edge_sourceDecoration003() {
+		'''
+			digraph {
+				1->2[dir=both]
+			}
+		'''.assertEdgeSourceDecoration('''
+			Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+		''')
+	}
+
+	@Test def edge_sourceDecoration004() {
+		'''
+			digraph {
+				1->2[dir=both arrowsize=2.5]
+			}
+		'''.assertEdgeSourceDecoration('''
+			Polygon[points=[0.0, 0.0, 25.0, -8.333333333333334, 25.0, 8.333333333333334], fill=0x000000ff]
+		''')
+	}
+
+	@Test def edge_sourceDecoration005() {
+		'''
+			digraph {
+				1->2[dir=both arrowtail=""]
+			}
+		'''.assertEdgeSourceDecoration('''
+			Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 		''')
 	}
 
@@ -196,7 +300,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-fill: #ffffff;
 		''')
 	}
-	
+
 	@Test def edge_sourceDecorationStyle006() {
 		// test css attribute order
 		// -fx-stroke-width needs to follow after -fx-stroke
@@ -210,7 +314,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-stroke-width: 0.5;
 		''') 
 	}
-	
+
 	@Test def edge_sourceDecorationStyle007() {
 		// test css attribute order
 		// -fx-stroke-width needs to follow after -fx-stroke
@@ -223,6 +327,44 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-fill: #000000;
 			-fx-stroke-width: 0.5;
 		''') 
+	}
+
+	@Test def edge_targetDecoration001() {
+		'''
+			graph {
+				1--2
+			}
+		'''.assertEdgeTargetDecoration(null) 
+	}
+
+	@Test def edge_targetDecoration002() {
+		'''
+			digraph {
+				1->2
+			}
+		'''.assertEdgeTargetDecoration('''
+			Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+		''')
+	}
+
+	@Test def edge_targetDecoration003() {
+		'''
+			digraph {
+				1->2[arrowsize=2.5]
+			}
+		'''.assertEdgeTargetDecoration('''
+			Polygon[points=[0.0, 0.0, 25.0, -8.333333333333334, 25.0, 8.333333333333334], fill=0x000000ff]
+		''')
+	}
+	
+	@Test def edge_targetDecoration004() {
+		'''
+			digraph {
+				1->2[arrowhead=""]
+			}
+		'''.assertEdgeTargetDecoration('''
+			Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+		''')
 	}
 
 	@Test def edge_targetDecorationStyle001() {
@@ -278,7 +420,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-fill: #ffffff;
 		''')
 	}
-	
+
 	@Test def edge_targetDecorationStyle006() {
 		// test css attribute order
 		// -fx-stroke-width needs to follow after -fx-stroke
@@ -807,6 +949,11 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
+	private def assertEdgeCssId(CharSequence dotText, String expected) {
+		val actual = dotText.firstEdge.convert.cssId
+		expected.assertEquals(actual)
+	}
+
 	private def assertEdgeExternalLabelCssStyle(CharSequence dotText, String expected) {
 		val actual = dotText.firstEdge.convert.externalLabelCssStyle.split
 		expected.assertEquals(actual)
@@ -832,8 +979,16 @@ class Dot2ZestEdgeAttributesConversionTest {
 		expected.assertEquals(actual)
 	}
 
+	private def assertEdgeSourceDecoration(CharSequence dotText, String expected) {
+		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecoration(expected)
+	}
+
 	private def assertEdgeSourceDecorationStyles(CharSequence dotText, String... expected) {
 		dotText.firstEdge.convert.sourceDecoration.assertEdgeDecorationStyles(expected)
+	}
+
+	private def assertEdgeTargetDecoration(CharSequence dotText, String expected) {
+		dotText.firstEdge.convert.targetDecoration.assertEdgeDecoration(expected)
 	}
 
 	private def assertEdgeTargetDecorationStyles(CharSequence dotText, String... expected) {
@@ -860,6 +1015,15 @@ class Dot2ZestEdgeAttributesConversionTest {
 		expected.assertEquals(actual)
 	}
 
+	private def assertEdgeDecoration(javafx.scene.Node decoration, String expected) {
+		if (expected === null) {
+			decoration.assertNull
+		} else {
+			val actual = decoration.toString 
+			expected.trim.assertEquals(actual)
+		}
+	}
+
 	private def assertEdgeDecorationStyles(javafx.scene.Node decoration, String... expectedStyles) {
 		decoration.hasSameNumberOfDecorationStylesAs(expectedStyles)
 
@@ -870,6 +1034,13 @@ class Dot2ZestEdgeAttributesConversionTest {
 		} else {
 			decoration.hasStyle(expectedStyles.get(0))
 		}
+	}
+
+	private def assertEdgeVisibility(CharSequence dotText, boolean expected) {
+		val invisible = dotText.firstEdge.convert.invisible
+		// assert on visibility, not on invisibility
+		val actual = if (invisible===null) true else !invisible
+		expected.assertEquals(actual)
 	}
 
 	private def hasStyle(javafx.scene.Node decoration, String expectedStyle) {
