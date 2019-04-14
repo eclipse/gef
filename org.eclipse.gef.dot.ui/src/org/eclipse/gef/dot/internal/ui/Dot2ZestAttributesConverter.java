@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
@@ -35,6 +36,7 @@ import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
+import org.eclipse.gef.dot.internal.language.colorlist.WC;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.escstring.EscString;
@@ -218,9 +220,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// color
 		Color dotColor = null;
 		ColorList colorList = DotAttributes.getColorParsed(dot);
-		if (colorList != null && !colorList.getColorValues().isEmpty()) {
-			// TODO: add support for colorList
-			dotColor = colorList.getColorValues().get(0).getColor();
+		if (colorList != null) {
+			EList<WC> colorValues = colorList.getColorValues();
+			if (!colorValues.isEmpty()) {
+				// TODO: add support for colorList
+				dotColor = colorValues.get(0).getColor();
+			}
 		}
 
 		String dotColorScheme = DotAttributes.getColorscheme(dot);
