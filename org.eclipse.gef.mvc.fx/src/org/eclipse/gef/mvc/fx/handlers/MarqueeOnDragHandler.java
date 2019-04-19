@@ -193,6 +193,7 @@ public class MarqueeOnDragHandler extends AbstractHandler
 			}
 		};
 		getHost().getRoot().addChildren(Collections.singletonList(feedback));
+		feedback.refreshVisual();
 	}
 
 	@Override
