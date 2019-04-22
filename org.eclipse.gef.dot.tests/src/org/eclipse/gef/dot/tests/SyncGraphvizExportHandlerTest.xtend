@@ -53,6 +53,9 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	@Inject extension FileExtensionProvider
 	@Inject extension SyncUtil
 
+	val GRAPHVIZ_CONFIGURATION_DIALOG_TITLE = "Graphviz is not configured properly"
+	val GRAPHVIZ_PREFERENCE_PAGE_TITLE = "Preferences"
+
 	ToolItem syncGraphvizExportToolbarItem
 
 	@Before def void setup() {
@@ -136,7 +139,7 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 		new Thread("Sync Graphviz Export - waiting for the Graphviz configuration dialog to become active") {
 			override run() {
 				while (getGraphvizConfigurationDialog === null) {
-					Thread.sleep(10000)
+					Thread.sleep(500)
 				}
 				getGraphvizConfigurationDialog.display.asyncExec [
 					dialogContent  += graphvizConfigurationDialog.text
@@ -183,7 +186,7 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	Shell graphvizConfigurationDialog = null
 	private def getGraphvizConfigurationDialog() {
 		Display.^default.syncExec [
-			"Graphviz is not configured properly".activateShell
+			GRAPHVIZ_CONFIGURATION_DIALOG_TITLE.activateShell
 			graphvizConfigurationDialog = Display.^default.activeShell
 		]
 		graphvizConfigurationDialog
@@ -192,15 +195,15 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	Shell graphvizPreferencePage = null
 	private def getGraphvizPreferencePage() {
 		Display.^default.syncExec [
-			"Preferences".activateShell
+			GRAPHVIZ_PREFERENCE_PAGE_TITLE.activateShell
 			graphvizPreferencePage = Display.^default.activeShell
 		]
 		graphvizPreferencePage
 	}
-	
+
 	/*
 	 * Ensures that the shell with the given title (if present) is activated.
-	 * This is needed to make the tests pass on the CI Linux server. 
+	 * This is needed to make the tests pass on the CI Linux server.
 	 */
 	private def activateShell(String title) {
 		Display.^default.shells.findFirst[text == title]?.forceActive
@@ -226,8 +229,8 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	private def graphvizConfigurationDialogIsPresent(List<String> actualGraphvizConfigurationDialogContent) {
 		val actualDialogTitle = actualGraphvizConfigurationDialogContent.head
 		val actualDialogMessage = actualGraphvizConfigurationDialogContent.last
-	
-		val expectedDialogTitle = "Graphviz is not configured properly"
+
+		val expectedDialogTitle = GRAPHVIZ_CONFIGURATION_DIALOG_TITLE
 		val expectedDialogMessage = "Please specify the location of the 'dot' executable via the <a>Graphviz preference page</a>."
 
 		expectedDialogTitle.assertEquals(actualDialogTitle)
@@ -236,7 +239,7 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 
 	private def graphvizPreferencePageIsPresent(List<String> actualGraphvizPreferencePageContent) {
 		val actualDialogTitle = actualGraphvizPreferencePageContent.head
-		val expectedDialogTitle = "Preferences"
+		val expectedDialogTitle = GRAPHVIZ_PREFERENCE_PAGE_TITLE
 		expectedDialogTitle.assertEquals(actualDialogTitle)
 	}
 
