@@ -15,6 +15,7 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotColorInjectorProvider
 import org.eclipse.gef.dot.internal.language.color.Color
+import org.eclipse.gef.dot.internal.language.color.StringColor
 import org.eclipse.gef.dot.internal.ui.conversion.DotColorUtil
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -24,7 +25,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.assertEquals
+import static extension org.junit.Assert.assertNull
 
+/*
+ * Test cases for the {@link DotColorUtil} class.
+ */
 @RunWith(XtextRunner)
 @InjectWith(DotColorInjectorProvider)
 class DotColorUtilTest {
@@ -32,6 +37,11 @@ class DotColorUtilTest {
 	@Inject extension ParseHelper<Color>
 	@Inject extension ValidationTestHelper
 	val dotColorUtil = new DotColorUtil
+
+	@Test def null_to_zest_color() {
+		val actual = dotColorUtil.computeZestColor(null, null)
+		actual.assertNull
+	}
 
 	@Test def rgb_color_white_to_zest_color() {
 		"#ffffff".testZestColor("#ffffff")
@@ -51,6 +61,10 @@ class DotColorUtilTest {
 
 	@Test def rgb_color_sienna_to_zest_color() {
 		"#a0522d".testZestColor("#a0522d")
+	}
+
+	@Test def rgba_color_sienna_to_zest_color() {
+		"#a0522d55".testZestColor("#a0522d55")
 	}
 
 	@Test def hsv_color_white_to_zest_color() {
@@ -91,6 +105,30 @@ class DotColorUtilTest {
 
 	@Test def string_color_sienna_to_zest_color() {
 		"sienna".testZestColor("#a0522d")
+	}
+
+	@Test def string_color_with_color_scheme_to_zest_color001() {
+		"/accent3/1".testZestColor("#7fc97f")
+	}
+
+	@Test def string_color_with_color_scheme_to_zest_color002() {
+		"//grey".testZestColor("#c0c0c0")
+	}
+
+	@Test def string_color_with_empty_color_scheme_to_zest_color003() {
+		"/x11/grey".testZestColor("#c0c0c0")
+	}
+
+	@Test def string_color_with_empty_color_scheme_to_zest_color004() {
+		"/svg/grey".testZestColor("#808080")
+	}
+
+	@Test def string_color_with_empty_color_scheme_to_zest_color005() {
+		"grey".testZestColor("svg", "#808080")
+	}
+
+	@Test def string_color_with_empty_color_scheme_to_zest_color006() {
+		"/svg/grey".testZestColor("x11", "#808080")
 	}
 
 	@Test def rgb_color_white_to_graph_background_color() {
@@ -157,26 +195,41 @@ class DotColorUtilTest {
 
 	private def testZestColor(String dotColorText, String expected) {
 		// given
-		val dotColor = dotColorText.parse
-		dotColor.assertNoErrors
-		
+		val dotColor = dotColorText.parseColor
+		val colorScheme = if (dotColor instanceof StringColor) dotColor.scheme else null
+	
 		// when
-		val actual = dotColorUtil.computeZestColor(null, dotColor)
-		
+		val actual = dotColorUtil.computeZestColor(colorScheme, dotColor)
+	
+		// then
+		expected.assertEquals(actual)
+	}
+
+	private def testZestColor(String dotColorText, String colorScheme, String expected) {
+		// given
+		val dotColor = dotColorText.parseColor
+
+		// when
+		val actual = dotColorUtil.computeZestColor(colorScheme, dotColor)
+
 		// then
 		expected.assertEquals(actual)
 	}
 
 	private def testGraphBackgroundColor(String dotColorText, String expected) {
 		// given
-		val dotColor = dotColorText.parse
-		dotColor.assertNoErrors
-		
+		val dotColor = dotColorText.parseColor
+
 		// when
 		val actual = dotColorUtil.computeGraphBackgroundColor(null, dotColor)
-		
+
 		// then
 		expected.assertEquals(actual.toString)
 	}
 
+	private def parseColor(String dotColorText) {
+		val dotColor = dotColorText.parse
+		dotColor.assertNoErrors
+		dotColor
+	}
 }
