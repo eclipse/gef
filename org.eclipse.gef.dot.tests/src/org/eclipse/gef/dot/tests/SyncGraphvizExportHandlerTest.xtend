@@ -53,9 +53,11 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	val GRAPHVIZ_CONFIGURATION_DIALOG_TITLE = "Graphviz is not configured properly"
 	val GRAPHVIZ_PREFERENCE_PAGE_TITLE = "Preferences"
 
+	val operatingSystem = System.getProperty("os.name")
 	ToolItem syncGraphvizExportToolbarItem
 
 	@Before def void setup() {
+		println("Operating System: " + operatingSystem)
 		syncGraphvizExportToolbarItem = getDummyToolItem
 	}
 
@@ -202,7 +204,10 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	 * This is needed to make the tests pass on the CI Linux server.
 	 */
 	private def activateShell(String title) {
-		Display.^default.shells.findFirst[text == title]?.forceActive
+		val runningOnLinux = operatingSystem.startsWith("Linux")
+		if (runningOnLinux) {
+			Display.^default.shells.findFirst[text == title]?.forceActive
+		}
 	}
 
 	private def getSyncGraphvizExportExecutionEvent() {
