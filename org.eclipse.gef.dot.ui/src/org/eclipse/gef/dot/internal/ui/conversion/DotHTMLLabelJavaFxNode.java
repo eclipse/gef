@@ -11,7 +11,7 @@
  *                        - support for FontName grammar (bug #541056)
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ import javafx.scene.text.Text;
  * - check default padding
  * - consider implementing Port attribute on TD
  */
-public class DotHTMLLabelJavaFxNode {
+class DotHTMLLabelJavaFxNode {
 	final private DotColorUtil colorUtil;
 	final private DotFontUtil fontUtil;
 

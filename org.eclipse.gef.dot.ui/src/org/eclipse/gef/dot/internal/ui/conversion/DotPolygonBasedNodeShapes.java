@@ -10,7 +10,7 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #441352)
  *
  ***********************************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.fx.nodes.GeometryNode;

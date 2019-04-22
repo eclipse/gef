@@ -10,7 +10,7 @@
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #541056)
  *     
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import java.io.StringReader;
 import java.util.Locale;

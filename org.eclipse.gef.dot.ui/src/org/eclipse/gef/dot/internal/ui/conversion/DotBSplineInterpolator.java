@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,12 +11,12 @@
  *     Tamas Miklossy  (itemis AG) - Add support for arrowType edge decorations (bug #477980)
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef.dot.internal.ui.DotArrowShapeDecorations.IPrimitiveShape;
+import org.eclipse.gef.dot.internal.ui.conversion.DotArrowShapeDecorations.IPrimitiveShape;
 import org.eclipse.gef.fx.anchors.AnchorKey;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;

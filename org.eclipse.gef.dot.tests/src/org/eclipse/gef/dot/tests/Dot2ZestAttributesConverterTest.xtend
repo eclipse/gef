@@ -13,7 +13,7 @@
 package org.eclipse.gef.dot.tests
 
 import org.eclipse.gef.common.attributes.IAttributeStore
-import org.eclipse.gef.dot.internal.ui.Dot2ZestAttributesConverter
+import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestAttributesConverter
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node

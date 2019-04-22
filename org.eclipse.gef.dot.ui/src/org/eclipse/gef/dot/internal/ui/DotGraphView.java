@@ -44,6 +44,8 @@ import org.eclipse.gef.dot.internal.DotExtractor;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.DotImport;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
+import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestGraphCopier;
+import org.eclipse.gef.dot.internal.ui.conversion.DotColorUtil;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;

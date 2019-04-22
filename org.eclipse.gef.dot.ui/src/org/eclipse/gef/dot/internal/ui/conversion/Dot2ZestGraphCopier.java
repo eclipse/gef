@@ -12,7 +12,7 @@
  *    Zoey Prigge     (itemis AG) - DotGraphView: FontName support (bug #541056)
  *
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -18,7 +18,7 @@ import javafx.scene.Group
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
-import org.eclipse.gef.dot.internal.ui.Dot2ZestAttributesConverter
+import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestAttributesConverter
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Node
 import org.eclipse.xtext.junit4.InjectWith

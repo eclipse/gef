@@ -16,7 +16,7 @@ import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
-import org.eclipse.gef.dot.internal.ui.Dot2ZestAttributesConverter
+import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestAttributesConverter
 import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.geometry.planar.Ellipse
 import org.eclipse.gef.geometry.planar.IGeometry

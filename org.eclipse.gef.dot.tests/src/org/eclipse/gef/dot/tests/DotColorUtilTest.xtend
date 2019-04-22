@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,7 +15,7 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.DotColorInjectorProvider
 import org.eclipse.gef.dot.internal.language.color.Color
-import org.eclipse.gef.dot.internal.ui.DotColorUtil
+import org.eclipse.gef.dot.internal.ui.conversion.DotColorUtil
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper

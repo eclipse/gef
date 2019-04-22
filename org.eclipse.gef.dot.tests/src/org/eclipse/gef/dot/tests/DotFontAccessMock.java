@@ -15,8 +15,8 @@ package org.eclipse.gef.dot.tests;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.eclipse.gef.dot.internal.ui.DotFontUtil;
-import org.eclipse.gef.dot.internal.ui.DotFontUtil.Font;
+import org.eclipse.gef.dot.internal.ui.conversion.DotFontUtil;
+import org.eclipse.gef.dot.internal.ui.conversion.DotFontUtil.Font;
 
 public class DotFontAccessMock implements DotFontUtil.SystemFontAccess {
 	private final String[] availableFonts;

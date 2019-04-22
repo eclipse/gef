@@ -6,6 +6,7 @@ Bundle-Version: 5.0.400.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.dot.internal.ui;x-friends:="org.eclipse.gef.dot.tests",
+ org.eclipse.gef.dot.internal.ui.conversion;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.handlers;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.language;x-friends:="org.eclipse.gef.dot.tests",
  org.eclipse.gef.dot.internal.ui.language.contentassist;x-friends:="org.eclipse.gef.dot.tests",

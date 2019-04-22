@@ -20,8 +20,8 @@ import javafx.scene.shape.Shape
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
-import org.eclipse.gef.dot.internal.ui.Dot2ZestGraphCopier
 import org.eclipse.gef.dot.internal.ui.DotNodePart
+import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestGraphCopier
 import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
@@ -3685,7 +3685,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(35.304, 72.853)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(54.65, 35.235)
 				}
@@ -3694,7 +3694,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(90.696, 72.853)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(71.35, 35.235)
 				}
@@ -3734,7 +3734,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(27.0, 71.896)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(27.0, 36.303)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
@@ -3744,7 +3744,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(27.0, 143.9)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(27.0, 108.3)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
@@ -3872,7 +3872,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 7 7;
 					edge-end-point : Point(54.0, 71.896)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(54.0, 36.303)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
@@ -3882,7 +3882,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 1 7;
 					edge-end-point : Point(54.0, 143.9)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(54.0, 108.3)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
@@ -3892,7 +3892,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 7 7;
 					edge-end-point : Point(33.54, 216.04)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(47.601, 179.59)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
@@ -3902,7 +3902,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-dash-array: 7 7;
 					edge-end-point : Point(57.654, 287.91)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(57.654, 180.09)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
@@ -3912,7 +3912,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(47.46, 288.04)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(33.399, 251.59)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]

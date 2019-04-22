@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #454629)
  *    
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ import javafx.scene.text.Text;
  * Class wrapping a JavaFX node for visualizing a record based node shape,
  * including label.
  */
-public class DotRecordBasedJavaFxNode {
+class DotRecordBasedJavaFxNode {
 
 	private static Insets TEXT_MARGINS = new Insets(1.5f, 7, 1.5f, 7);
 

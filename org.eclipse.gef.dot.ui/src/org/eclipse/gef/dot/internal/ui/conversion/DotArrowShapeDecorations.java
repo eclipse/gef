@@ -11,7 +11,7 @@
  *     Zoey Prigge (itemis AG)    - Add penwidth visualization support (bug #541106)
  *
  ***********************************************************************************************/
-package org.eclipse.gef.dot.internal.ui;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import org.eclipse.gef.dot.internal.language.arrowtype.AbstractArrowShape;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowShape;
