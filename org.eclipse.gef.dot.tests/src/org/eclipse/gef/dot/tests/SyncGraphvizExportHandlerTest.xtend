@@ -18,7 +18,6 @@ import java.util.List
 import org.eclipse.core.commands.ExecutionEvent
 import org.eclipse.core.expressions.EvaluationContext
 import org.eclipse.core.resources.IFile
-import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler
 import org.eclipse.swt.SWT
@@ -35,7 +34,6 @@ import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
 import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
-import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,7 +49,6 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 
 	@Inject XtextEditorInfo editorInfo
 	@Inject extension FileExtensionProvider
-	@Inject extension SyncUtil
 
 	val GRAPHVIZ_CONFIGURATION_DIALOG_TITLE = "Graphviz is not configured properly"
 	val GRAPHVIZ_PREFERENCE_PAGE_TITLE = "Preferences"
@@ -116,7 +113,6 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	}
 
 	private def openInEditor(IFile it) {
-		waitForBuild(new NullProgressMonitor)
 		val editor = openEditor
 		flushPendingEvents
 		editor
