@@ -57,7 +57,6 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	ToolItem syncGraphvizExportToolbarItem
 
 	@Before def void setup() {
-		println("Operating System: " + operatingSystem)
 		syncGraphvizExportToolbarItem = getDummyToolItem
 	}
 
@@ -204,8 +203,7 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 	 * This is needed to make the tests pass on the CI Linux server.
 	 */
 	private def activateShell(String title) {
-		val runningOnLinux = operatingSystem.startsWith("Linux")
-		if (runningOnLinux) {
+		if (operatingSystem == "Linux") {
 			Display.^default.shells.findFirst[text == title]?.forceActive
 		}
 	}
