@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.gef.dot.internal.ui.preferences.GraphvizConfigurationDialog;
 import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -169,7 +170,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 			try {
 				rootDelta.accept(resourceDeltaVisitor);
 			} catch (CoreException e) {
-				e.printStackTrace();
+				DotActivatorEx.logError(e);
 			}
 		}
 	};
@@ -238,7 +239,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 			resolvedInputFile = DotFileUtils
 					.resolve(inputFile.getLocationURI().toURL());
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 			return;
 		}
 
@@ -291,7 +292,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 		try {
 			file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 		}
 	}
 
@@ -314,7 +315,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 						page.openEditor(new FileEditorInput(file),
 								IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 					} catch (PartInitException e) {
-						e.printStackTrace();
+						DotActivatorEx.logError(e);
 					}
 				}
 			});

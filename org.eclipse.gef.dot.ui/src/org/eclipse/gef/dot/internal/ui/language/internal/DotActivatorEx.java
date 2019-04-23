@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.internal;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
+import org.eclipse.gef.dot.internal.ui.DotUiMessages;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
@@ -40,6 +43,22 @@ public class DotActivatorEx extends DotActivator {
 	public static IPreferenceStore dotUiPreferenceStore() {
 		return new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
 				getInstance().getBundle().getSymbolicName());
+	}
+
+	/**
+	 * Creates an entry on the Eclipse Error Log view.
+	 */
+	public static void logError(Exception exception) {
+		String message = DotUiMessages.DotErrorPrefix;
+		String exceptionMessage = exception.getMessage();
+		if (exceptionMessage != null) {
+			message += " - " + exceptionMessage; //$NON-NLS-1$
+		}
+		String pluginID = getInstance().getBundle().getSymbolicName();
+		IStatus status = new Status(IStatus.ERROR, pluginID, message,
+				exception);
+		getInstance().getLog().log(status);
+		exception.printStackTrace();
 	}
 
 	@Override

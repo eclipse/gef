@@ -35,6 +35,7 @@ public class DotUiMessages extends NLS {
 	public static String DotGraphView_3;
 	public static String DotGraphView_4;
 	public static String DotReferenceFinder;
+	public static String DotErrorPrefix;
 
 	static {
 		// initialize resource bundle

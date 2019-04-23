@@ -409,7 +409,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 				try {
 					url = locationURI.toURL();
 				} catch (MalformedURLException e) {
-					e.printStackTrace();
+					DotActivatorEx.logError(e);
 					return false;
 				}
 				if (url != null) {
@@ -498,7 +498,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 				try {
 					rootDelta.accept(resourceVisitor);
 				} catch (CoreException e) {
-					e.printStackTrace();
+					DotActivatorEx.logError(e);
 				}
 			}
 		};
@@ -520,7 +520,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 							workspace.run(workspaceRunnable, null);
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						DotActivatorEx.logError(e);
 					}
 				}
 				return true;
@@ -591,7 +591,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 							updateGraph(resolvedFile);
 						}
 					} catch (MalformedURLException e) {
-						e.printStackTrace();
+						DotActivatorEx.logError(e);
 					}
 				}
 			}

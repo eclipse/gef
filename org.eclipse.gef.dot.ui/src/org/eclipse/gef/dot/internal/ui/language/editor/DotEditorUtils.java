@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@ import java.io.InputStream;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.resource.IResourceFactory;
@@ -79,8 +80,8 @@ public class DotEditorUtils {
 							Strings.emptyIfNull(currentModelToParse)),
 					// creating an in-memory EMF Resource
 					URI.createURI("")); //$NON-NLS-1$
-		} catch (Exception exception) {
-			exception.printStackTrace();
+		} catch (Exception e) {
+			DotActivatorEx.logError(e);
 		}
 
 		return xtextResource;

@@ -53,6 +53,7 @@ import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -682,7 +683,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 						dotAttributeName = (String) field.get(null);
 					} catch (IllegalArgumentException
 							| IllegalAccessException e) {
-						e.printStackTrace();
+						DotActivatorEx.logError(e);
 					}
 					if (dotAttributeName != null) {
 						if (dotClassifier.contains("E")) { //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -65,7 +66,7 @@ public class DotProposalProviderDelegator {
 			completionProposals = computeCompletionProposals(text,
 					cursorPosition);
 		} catch (Exception e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 		}
 
 		// convert the completionProposals into configurableCompletionProposals

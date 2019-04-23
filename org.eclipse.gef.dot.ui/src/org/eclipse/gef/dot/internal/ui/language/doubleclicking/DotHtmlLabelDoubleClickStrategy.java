@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -37,7 +38,7 @@ public class DotHtmlLabelDoubleClickStrategy
 		try {
 			region = document.getPartition(offset);
 		} catch (BadLocationException e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 			return null;
 		}
 
@@ -54,7 +55,7 @@ public class DotHtmlLabelDoubleClickStrategy
 		try {
 			htmlLabel = document.get(htmlLabelStartOffset, htmlLabelLength);
 		} catch (BadLocationException e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 			return null;
 		}
 
@@ -65,7 +66,7 @@ public class DotHtmlLabelDoubleClickStrategy
 		try {
 			htmlDocument = DotEditorUtils.getDocument(injector, htmlLabel);
 		} catch (Exception e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 			return null;
 		}
 
@@ -81,7 +82,7 @@ public class DotHtmlLabelDoubleClickStrategy
 							htmlDocument.getContentType(htmlLabelClickOffset),
 							XtextDocument.DEFAULT_PARTITIONING);
 		} catch (BadLocationException e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 			return null;
 		}
 
@@ -176,7 +177,7 @@ public class DotHtmlLabelDoubleClickStrategy
 					htmlDocument, htmlLabelClickOffset);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | ClassCastException e) {
-			e.printStackTrace();
+			DotActivatorEx.logError(e);
 			return null;
 		}
 		return htmlRegion;

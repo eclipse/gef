@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -24,6 +24,7 @@ import org.eclipse.gef.dot.internal.language.dot.DotPackage;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.parser.IParseResult;
@@ -131,7 +132,7 @@ public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 				xtextDocument = DotEditorUtils.getDocument(injector,
 						htmlLabelValue);
 			} catch (Exception e) {
-				e.printStackTrace();
+				DotActivatorEx.logError(e);
 			}
 
 			if (xtextDocument != null) {
