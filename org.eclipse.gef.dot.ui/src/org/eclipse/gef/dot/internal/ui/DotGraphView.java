@@ -91,7 +91,6 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.util.Modules;
 
-import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -325,14 +324,6 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		} else {
 			removeGraphBackground();
 		}
-
-		// adjust viewport
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				fitToViewPort();
-			}
-		});
 	}
 
 	private void removeGraphBackground() {
@@ -694,18 +685,5 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		}
 
 		return false;
-	}
-
-	private void fitToViewPort() {
-		// if (getFitToViewportActionGroup() != null) {
-		// List<Bound<IViewer>> contributions = getFitToViewportActionGroup()
-		// .getContributions();
-		// if (contributions != null && contributions.size() > 1) {
-		// FitToViewportAction fitToViewportAction = (FitToViewportAction)
-		// contributions
-		// .get(0);
-		// fitToViewportAction.runWithEvent(null);
-		// }
-		// }
 	}
 }
