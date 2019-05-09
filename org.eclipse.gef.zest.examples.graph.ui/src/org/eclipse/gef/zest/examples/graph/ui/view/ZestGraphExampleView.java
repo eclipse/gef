@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,72 +12,18 @@
  *******************************************************************************/
 package org.eclipse.gef.zest.examples.graph.ui.view;
 
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
 import org.eclipse.gef.zest.examples.graph.ZestGraphExample;
 import org.eclipse.gef.zest.examples.graph.ZestGraphExampleModule;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
 public class ZestGraphExampleView extends ZestFxUiView {
 
-	private ZoomActionGroup zoomActionGroup;
-	private FitToViewportActionGroup fitToViewportActionGroup;
-	private ScrollActionGroup scrollActionGroup;
-
 	public ZestGraphExampleView() {
 		super(Guice.createInjector(Modules.override(new ZestGraphExampleModule()).with(new ZestFxUiModule())));
 		setGraph(ZestGraphExample.createDefaultGraph());
-	}
-
-	@Override
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-		// create actions
-		zoomActionGroup = new ZoomActionGroup(new FitToViewportAction());
-		getContentViewer().setAdapter(zoomActionGroup);
-		fitToViewportActionGroup = new FitToViewportActionGroup();
-		getContentViewer().setAdapter(fitToViewportActionGroup);
-		scrollActionGroup = new ScrollActionGroup();
-		getContentViewer().setAdapter(scrollActionGroup);
-
-		// contribute to toolbar
-		IActionBars actionBars = getViewSite().getActionBars();
-		IToolBarManager mgr = actionBars.getToolBarManager();
-		zoomActionGroup.fillActionBars(actionBars);
-		mgr.add(new Separator());
-		fitToViewportActionGroup.fillActionBars(actionBars);
-		mgr.add(new Separator());
-		scrollActionGroup.fillActionBars(actionBars);
-	}
-
-	@Override
-	public void dispose() {
-		// dispose actions
-		if (zoomActionGroup != null) {
-			getContentViewer().unsetAdapter(zoomActionGroup);
-			zoomActionGroup.dispose();
-			zoomActionGroup = null;
-		}
-		if (scrollActionGroup != null) {
-			getContentViewer().unsetAdapter(scrollActionGroup);
-			scrollActionGroup.dispose();
-			scrollActionGroup = null;
-		}
-		if (fitToViewportActionGroup != null) {
-			getContentViewer().unsetAdapter(fitToViewportActionGroup);
-			fitToViewportActionGroup.dispose();
-			fitToViewportActionGroup = null;
-		}
-		super.dispose();
 	}
 }

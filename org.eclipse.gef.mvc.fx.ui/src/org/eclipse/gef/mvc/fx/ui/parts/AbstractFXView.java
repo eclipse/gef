@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - pull up actions
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.parts;
@@ -18,15 +19,23 @@ import org.eclipse.gef.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.ui.actions.DeleteAction;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
+import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
+import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
 import org.eclipse.gef.mvc.fx.ui.actions.SelectAllAction;
+import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
 import org.eclipse.gef.mvc.fx.ui.properties.IPropertySheetPageFactory;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.IDisposable;
@@ -65,6 +74,10 @@ public abstract class AbstractFXView extends ViewPart {
 	private DeleteAction deleteAction;
 	private SelectAllAction selectAllAction;
 
+	private ZoomActionGroup zoomActionGroup;
+	private FitToViewportActionGroup fitToViewportActionGroup;
+	private ScrollActionGroup scrollActionGroup;
+
 	/**
 	 * Constructs a new {@link AbstractFXView} that uses the given
 	 * {@link Injector} to inject its members.
@@ -92,19 +105,34 @@ public abstract class AbstractFXView extends ViewPart {
 	 */
 	protected void createActions() {
 		IViewSite site = getViewSite();
+		IActionBars actionBars = site.getActionBars();
 		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
 				(IUndoContext) getAdapter(IUndoContext.class), true);
-		undoRedoActionGroup.fillActionBars(site.getActionBars());
+		undoRedoActionGroup.fillActionBars(actionBars);
 
 		deleteAction = new DeleteAction();
 		getContentViewer().setAdapter(deleteAction);
-		site.getActionBars().setGlobalActionHandler(
-				ActionFactory.DELETE.getId(), deleteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
+				deleteAction);
 
 		selectAllAction = new SelectAllAction();
 		getContentViewer().setAdapter(selectAllAction);
-		site.getActionBars().setGlobalActionHandler(
-				ActionFactory.SELECT_ALL.getId(), selectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
+				selectAllAction);
+
+		zoomActionGroup = new ZoomActionGroup(new FitToViewportAction());
+		getContentViewer().setAdapter(zoomActionGroup);
+		fitToViewportActionGroup = new FitToViewportActionGroup();
+		getContentViewer().setAdapter(fitToViewportActionGroup);
+		scrollActionGroup = new ScrollActionGroup();
+		getContentViewer().setAdapter(scrollActionGroup);
+
+		IToolBarManager mgr = actionBars.getToolBarManager();
+		zoomActionGroup.fillActionBars(actionBars);
+		mgr.add(new Separator());
+		fitToViewportActionGroup.fillActionBars(actionBars);
+		mgr.add(new Separator());
+		scrollActionGroup.fillActionBars(actionBars);
 	}
 
 	private FXCanvas createCanvas(final Composite parent) {
@@ -199,6 +227,22 @@ public abstract class AbstractFXView extends ViewPart {
 			getContentViewer().unsetAdapter(selectAllAction);
 			selectAllAction = null;
 		}
+
+		if (fitToViewportActionGroup != null) {
+			getContentViewer().unsetAdapter(fitToViewportActionGroup);
+			fitToViewportActionGroup.dispose();
+			fitToViewportActionGroup = null;
+		}
+		if (zoomActionGroup != null) {
+			getContentViewer().unsetAdapter(zoomActionGroup);
+			zoomActionGroup.dispose();
+			zoomActionGroup = null;
+		}
+		if (scrollActionGroup != null) {
+			getContentViewer().unsetAdapter(scrollActionGroup);
+			scrollActionGroup.dispose();
+			scrollActionGroup = null;
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -267,6 +311,16 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
+	 * Returns the {@link ActionGroup} that manages the fit-to-viewport actions.
+	 *
+	 * @return the {@link ActionGroup} that manages the fit-to-viewport actions.
+	 * @since 5.0
+	 */
+	protected FitToViewportActionGroup getFitToViewportActionGroup() {
+		return fitToViewportActionGroup;
+	}
+
+	/**
 	 * Hooks all viewers that are part of this {@link AbstractFXView} into the
 	 * {@link FXCanvas} that was previously created by the injected
 	 * {@link IFXCanvasFactory}.
@@ -294,5 +348,4 @@ public abstract class AbstractFXView extends ViewPart {
 	protected void unhookViewers() {
 		// TODO: What about taking the visuals out of the canvas?
 	}
-
 }

@@ -75,7 +75,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 				showGraphvizConfigurationDialog();
 			}
 
-			// if Graphviz is still not configured properly, do not export
+			// if Graphviz is still not configured properly, do not exportd
 			if (!GraphvizPreferencePage.isGraphvizConfigured()) {
 				toolItem.setSelection(false);
 				return null;

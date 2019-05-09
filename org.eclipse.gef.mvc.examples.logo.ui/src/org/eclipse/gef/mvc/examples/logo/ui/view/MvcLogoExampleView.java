@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - pull up actions
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.examples.logo.ui.view;
@@ -41,19 +42,11 @@ import org.eclipse.gef.mvc.fx.operations.AbstractCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportLockAction;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
 import org.eclipse.gef.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef.mvc.fx.ui.properties.SetPropertyValueOperation;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.mvc.fx.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -110,9 +103,6 @@ public class MvcLogoExampleView extends AbstractFXView {
 	}
 
 	private UndoablePropertySheetEntry rootEntry;
-	private ZoomActionGroup zoomActionGroup;
-	private ScrollActionGroup scrollActionGroup;
-	private FitToViewportLockAction fitToViewportLockAction;
 
 	// TODO: create AbstractFXView via an executable extension factory
 	// (obtaining the injector via the bundle)
@@ -138,48 +128,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 		getPaletteViewer().getAdapter(HoverModel.class).clearHover();
 		getPaletteViewer().getAdapter(FocusModel.class).setFocus(null);
 		getPaletteViewer().contentsProperty().clear();
-
-		// dispose actions
-		if (zoomActionGroup != null) {
-			getContentViewer().unsetAdapter(zoomActionGroup);
-			zoomActionGroup.dispose();
-			zoomActionGroup = null;
-		}
-		if (scrollActionGroup != null) {
-			getContentViewer().unsetAdapter(scrollActionGroup);
-			scrollActionGroup.dispose();
-			scrollActionGroup = null;
-		}
-		if (fitToViewportLockAction != null) {
-			getContentViewer().unsetAdapter(fitToViewportLockAction);
-			fitToViewportLockAction = null;
-		}
-
+		
 		super.dispose();
-	}
-
-	@Override
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-		
-		// create actions
-		zoomActionGroup = new ZoomActionGroup(new FitToViewportAction());
-		getContentViewer().setAdapter(zoomActionGroup);
-		
-		fitToViewportLockAction = new FitToViewportLockAction();
-		getContentViewer().setAdapter(fitToViewportLockAction);
-		
-		scrollActionGroup = new ScrollActionGroup();
-		getContentViewer().setAdapter(scrollActionGroup);
-		
-		// contribute to toolbar
-		IActionBars actionBars = getViewSite().getActionBars();
-		IToolBarManager mgr = actionBars.getToolBarManager();
-		zoomActionGroup.fillActionBars(actionBars);
-		mgr.add(new Separator());
-		mgr.add(fitToViewportLockAction);
-		mgr.add(new Separator());
-		scrollActionGroup.fillActionBars(actionBars);
 	}
 
 	/**
@@ -349,5 +299,4 @@ public class MvcLogoExampleView extends AbstractFXView {
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(viewersComposite.getComposite()));
 	}
-
 }

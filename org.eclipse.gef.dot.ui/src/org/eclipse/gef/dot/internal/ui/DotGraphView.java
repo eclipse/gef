@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef.common.adapt.IAdaptable.Bound;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotExtractor;
@@ -51,11 +50,6 @@ import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportAction;
-import org.eclipse.gef.mvc.fx.ui.actions.FitToViewportActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.ScrollActionGroup;
-import org.eclipse.gef.mvc.fx.ui.actions.ZoomActionGroup;
-import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.zest.fx.parts.GraphPart;
 import org.eclipse.gef.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef.zest.fx.ui.parts.ZestFxUiView;
@@ -144,9 +138,6 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	private LinkWithDotEditorAction linkWithDotEditorAction;
 	private LinkWithSelectionAction linkWithSelectionAction;
 	private LoadFileAction loadFileAction;
-	private ZoomActionGroup zoomActionGroup;
-	private FitToViewportActionGroup fitToViewportActionGroup;
-	private ScrollActionGroup scrollActionGroup;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
@@ -178,36 +169,21 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		currentDot = null;
 		currentFile = null;
 
-		linkWithDotEditorAction.dispose();
-		linkWithSelectionAction.dispose();
-		loadFileAction.dispose();
-
-		if (fitToViewportActionGroup != null) {
-			getContentViewer().unsetAdapter(fitToViewportActionGroup);
-			fitToViewportActionGroup.dispose();
-			fitToViewportActionGroup = null;
-		}
-		if (zoomActionGroup != null) {
-			getContentViewer().unsetAdapter(zoomActionGroup);
-			zoomActionGroup.dispose();
-			zoomActionGroup = null;
-		}
-		if (scrollActionGroup != null) {
-			getContentViewer().unsetAdapter(scrollActionGroup);
-			scrollActionGroup.dispose();
-			scrollActionGroup = null;
-		}
-
 		getContentViewer().contentsProperty().clear();
 
 		super.dispose();
 	}
 
 	@Override
-	public void createPartControl(final Composite parent) {
-		super.createPartControl(parent);
+	protected void disposeActions() {
+		linkWithDotEditorAction.dispose();
+		linkWithSelectionAction.dispose();
+		loadFileAction.dispose();
+		super.disposeActions();
+	}
 
-		// actions
+	@Override
+	protected void createActions() {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager mgr = actionBars.getToolBarManager();
 		linkWithDotEditorAction = new LinkWithDotEditorAction();
@@ -216,21 +192,13 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		mgr.add(linkWithDotEditorAction);
 		mgr.add(linkWithSelectionAction);
 		mgr.add(loadFileAction);
-
 		mgr.add(new Separator());
+		super.createActions();
+	}
 
-		zoomActionGroup = new ZoomActionGroup(new FitToViewportAction());
-		getContentViewer().setAdapter(zoomActionGroup);
-		fitToViewportActionGroup = new FitToViewportActionGroup();
-		getContentViewer().setAdapter(fitToViewportActionGroup);
-		scrollActionGroup = new ScrollActionGroup();
-		getContentViewer().setAdapter(scrollActionGroup);
-
-		zoomActionGroup.fillActionBars(actionBars);
-		mgr.add(new Separator());
-		fitToViewportActionGroup.fillActionBars(actionBars);
-		mgr.add(new Separator());
-		scrollActionGroup.fillActionBars(actionBars);
+	@Override
+	public void createPartControl(final Composite parent) {
+		super.createPartControl(parent);
 
 		// controls
 		parent.setLayout(new GridLayout(1, true));
@@ -729,14 +697,15 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	}
 
 	private void fitToViewPort() {
-		if (fitToViewportActionGroup != null) {
-			List<Bound<IViewer>> contributions = fitToViewportActionGroup
-					.getContributions();
-			if (contributions != null && contributions.size() > 1) {
-				FitToViewportAction fitToViewportAction = (FitToViewportAction) contributions
-						.get(0);
-				fitToViewportAction.runWithEvent(null);
-			}
-		}
+		// if (getFitToViewportActionGroup() != null) {
+		// List<Bound<IViewer>> contributions = getFitToViewportActionGroup()
+		// .getContributions();
+		// if (contributions != null && contributions.size() > 1) {
+		// FitToViewportAction fitToViewportAction = (FitToViewportAction)
+		// contributions
+		// .get(0);
+		// fitToViewportAction.runWithEvent(null);
+		// }
+		// }
 	}
 }
