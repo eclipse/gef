@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.zest.fx.jface"
       label="GEF Zest.FX.JFace"
-      version="5.0.2.qualifier"
+      version="5.1.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.zest.fx.jface"
       license-feature="org.eclipse.license"
