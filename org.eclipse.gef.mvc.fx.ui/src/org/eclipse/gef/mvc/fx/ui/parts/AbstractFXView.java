@@ -314,7 +314,7 @@ public abstract class AbstractFXView extends ViewPart {
 	 * Returns the {@link ActionGroup} that manages the fit-to-viewport actions.
 	 *
 	 * @return the {@link ActionGroup} that manages the fit-to-viewport actions.
-	 * @since 5.0
+	 * @since 5.1
 	 */
 	protected FitToViewportActionGroup getFitToViewportActionGroup() {
 		return fitToViewportActionGroup;
