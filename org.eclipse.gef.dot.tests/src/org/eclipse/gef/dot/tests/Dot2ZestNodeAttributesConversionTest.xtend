@@ -24,6 +24,7 @@ import org.eclipse.gef.geometry.planar.Polygon
 import org.eclipse.gef.geometry.planar.Rectangle
 import org.eclipse.gef.geometry.planar.RoundedRectangle
 import org.eclipse.gef.graph.Node
+import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -48,6 +49,13 @@ import static extension org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(DotInjectorProvider)
 class Dot2ZestNodeAttributesConversionTest {
+	
+	/**
+	 * Ensure the JavaFX toolkit is properly initialized.
+	 */
+	@Rule
+	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
+	
 
 	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
 

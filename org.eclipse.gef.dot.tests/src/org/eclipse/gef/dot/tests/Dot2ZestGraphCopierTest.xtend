@@ -16,6 +16,7 @@ package org.eclipse.gef.dot.tests;
 import com.google.inject.Inject
 import javafx.beans.property.ReadOnlyMapProperty
 import javafx.scene.Group
+import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
@@ -26,6 +27,7 @@ import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
+import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule
 import org.eclipse.gef.zest.fx.ZestProperties
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -38,8 +40,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
-import javafx.scene.layout.Pane
-import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule
 
 /*
  * Test class containing test cases for the {@link Dot2ZestGraphCopier} class.
