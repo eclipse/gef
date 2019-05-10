@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #518417)
+ *     Zoey Prigge    (itemis AG) - internal API change prettyPrinting attributes
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests;
@@ -283,16 +284,40 @@ class DotGraphPrettyPrinter {
 		sortedAttributes.putAll(attributesProperty);
 		for (String attrKey : sortedAttributes.keySet()) {
 			Object attrValue = attributesProperty.get(attrKey);
-			sb.append(startIndent);
-			sb.append(prettyPrint(attrKey, attrValue));
-			sb.append(lineSeparator);
+			sb.append(prettyPrint(attrKey, attrValue, startIndent));
 		}
 
 		return sb.toString();
 	}
 
 	/**
-	 * Creates a formatted string representation of a given attribute.
+	 * Creates a formatted string representation of a given attribute with a
+	 * startIndent.
+	 * 
+	 * @param attrKey
+	 *            The key of the attribute for which to create a formatted
+	 *            string representation.
+	 * @param attrValue
+	 *            The value of the attribute for which to create a formatted
+	 *            string representation.
+	 * @param startIndent
+	 *            The indentation to use when creating the formatted string
+	 *            representation.
+	 * @return The formatted string representation (with line separation and
+	 *         indentation) of the given attribute.
+	 */
+	protected String prettyPrint(String attrKey, Object attrValue,
+			String startIndent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(startIndent);
+		sb.append(prettyPrint(attrKey, attrValue));
+		sb.append(lineSeparator);
+		return sb.toString();
+	}
+
+	/**
+	 * Creates a formatted string representation of a given attribute
+	 * (unindented on single line).
 	 *
 	 * @param attrKey
 	 *            The key of the attribute for which to create a formatted
@@ -300,8 +325,8 @@ class DotGraphPrettyPrinter {
 	 * @param attrValue
 	 *            The value of the attribute for which to create a formatted
 	 *            string representation.
-	 * @return The formatted string representation (with line separation and
-	 *         indentation) of the given attribute.
+	 * @return The formatted unindented, single-line string representation of
+	 *         the given attribute.
 	 */
 	protected String prettyPrint(String attrKey, Object attrValue) {
 		return attrKey + " : " + attrValue;
