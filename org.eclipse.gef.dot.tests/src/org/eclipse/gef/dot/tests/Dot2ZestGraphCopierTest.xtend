@@ -2908,7 +2908,7 @@ class Dot2ZestGraphCopierTest {
 				}
 				Node4 {
 					VBox {
-						style : -fx-border-width:2;-fx-border-style:solid;
+						style : -fx-border-width: 2;-fx-border-style:solid;
 						VBox {
 							HBox {
 								Text {
@@ -2931,7 +2931,7 @@ class Dot2ZestGraphCopierTest {
 				}
 				Node5 {
 					VBox {
-						style : -fx-background-color:#ff0000;-fx-border-style:solid;
+						style : -fx-background-color: #ff0000;-fx-border-style:solid;
 						VBox {
 							HBox {
 								Text {
