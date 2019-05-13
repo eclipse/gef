@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
+ *     Tamas Miklossy   (itemis AG) - edge tooltip support (bug #530658)
  *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.parts;
@@ -35,6 +36,7 @@ import com.google.common.collect.SetMultimap;
 
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 
 /**
  * The {@link EdgePart} is the controller for an {@link Edge} content object. It
@@ -60,6 +62,8 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 	 * CSS class assigned to the decorations.
 	 */
 	public static final String CSS_CLASS_DECORATION = "decoration";
+
+	private Tooltip tooltipNode;
 
 	private MapChangeListener<String, Object> edgeAttributesObserver = new MapChangeListener<String, Object>() {
 
@@ -285,6 +289,8 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 		if (!visual.getControlPoints().equals(controlPoints)) {
 			visual.setControlPoints(controlPoints);
 		}
+
+		refreshTooltip();
 	}
 
 	@Override
@@ -348,6 +354,28 @@ public class EdgePart extends AbstractContentPart<Connection> implements IBendab
 			getVisual().setCurve(curve);
 			if (!curve.getStyleClass().contains(CSS_CLASS_CURVE)) {
 				curve.getStyleClass().add(CSS_CLASS_CURVE);
+			}
+		}
+	}
+
+	/**
+	 * Changes the tooltip of this {@link EdgePart} to the given value.
+	 *
+	 * @since 5.1
+	 *
+	 */
+	protected void refreshTooltip() {
+		String tooltip = ZestProperties.getTooltip(getContent());
+		if (tooltip != null && !tooltip.isEmpty()) {
+			if (tooltipNode == null) {
+				tooltipNode = new Tooltip(tooltip);
+				Tooltip.install(getVisual(), tooltipNode);
+			} else {
+				tooltipNode.setText(tooltip);
+			}
+		} else {
+			if (tooltipNode != null) {
+				Tooltip.uninstall(getVisual(), tooltipNode);
 			}
 		}
 	}
