@@ -16,6 +16,7 @@ package org.eclipse.gef.dot.tests;
 import com.google.inject.Inject
 import javafx.beans.property.ReadOnlyMapProperty
 import javafx.scene.Group
+import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
@@ -26,6 +27,7 @@ import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
+import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule
 import org.eclipse.gef.zest.fx.ZestProperties
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -51,8 +53,8 @@ class Dot2ZestGraphCopierTest {
 	/**
 	 * Ensure the JavaFX toolkit is properly initialized.
 	 */
-	//@Rule
-	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
+	@Rule
+	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
 
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
@@ -2721,6 +2723,294 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
+	@Test def node_label_recordbased001() {
+		'''
+			graph {
+				1[shape=record label="Hi | {Test | Section 2 } | xyz"]
+				2[shape=Mrecord label="Hi | Test"]
+			}
+		'''.assertZestConversion(new RecordBasedShapePrettyPrinter,'''
+			Graph {
+				Node1 {
+					HBox {
+						style : -fx-border-style:solid;
+						VBox {
+							HBox {
+								Text {
+									text : Hi
+								}
+							}
+						}
+						RecordBasedLabelLine
+						VBox {
+							VBox {
+								HBox {
+									Text {
+										text : Test
+									}
+								}
+							}
+							RecordBasedLabelLine
+							VBox {
+								HBox {
+									Text {
+										text : Section 2
+									}
+								}
+							}
+						}
+						RecordBasedLabelLine
+						VBox {
+							HBox {
+								Text {
+									text : xyz
+								}
+							}
+						}
+					}
+					node-size : Dimension(132.0, 42.0)
+				}
+				Node2 {
+					HBox {
+						style : -fx-background-radius:10px;-fx-border-radius:10px;-fx-border-style:solid;
+						VBox {
+							HBox {
+								Text {
+									text : Hi
+								}
+							}
+						}
+						RecordBasedLabelLine
+						VBox {
+							HBox {
+								Text {
+									text : Test
+								}
+							}
+						}
+					}
+					node-size : Dimension(68.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def node_label_recordbased002() {
+		'''
+			graph {
+				rankdir=LR
+				1[shape=record label="{ Hi | Test } | Section 2 | xyz" fontsize=25 color=green]
+				2[shape=Mrecord label="Hi | Test" fontsize=25 color=green]
+				4[shape=record label="Hi | Test" style=dashed penwidth=2]
+				5[shape=record label="Hi | Test" style=bold]
+				6[shape=record label="Hi | Test" style=filled fillcolor=red]
+			}
+		'''.assertZestConversion(new RecordBasedShapePrettyPrinter,'''
+			Graph {
+				Node1 {
+					element-label-css-style : -fx-font-size: 25.0;
+					VBox {
+						style : -fx-border-color: #00ff00;-fx-border-style:solid;
+						HBox {
+							VBox {
+								HBox {
+									Text {
+										style : -fx-font-size: 25.0;
+										text : Hi
+									}
+								}
+							}
+							RecordBasedLabelLine {
+								style : -fx-stroke: #00ff00;
+							}
+							VBox {
+								HBox {
+									Text {
+										style : -fx-font-size: 25.0;
+										text : Test
+									}
+								}
+							}
+						}
+						RecordBasedLabelLine {
+							style : -fx-stroke: #00ff00;
+						}
+						VBox {
+							HBox {
+								Text {
+									style : -fx-font-size: 25.0;
+									text : Section 2
+								}
+							}
+						}
+						RecordBasedLabelLine {
+							style : -fx-stroke: #00ff00;
+						}
+						VBox {
+							HBox {
+								Text {
+									style : -fx-font-size: 25.0;
+									text : xyz
+								}
+							}
+						}
+					}
+					node-size : Dimension(109.0, 98.5)
+				}
+				Node2 {
+					element-label-css-style : -fx-font-size: 25.0;
+					VBox {
+						style : -fx-border-color: #00ff00;-fx-background-radius:10px;-fx-border-radius:10px;-fx-border-style:solid;
+						VBox {
+							HBox {
+								Text {
+									style : -fx-font-size: 25.0;
+									text : Hi
+								}
+							}
+						}
+						RecordBasedLabelLine {
+							style : -fx-stroke: #00ff00;
+						}
+						VBox {
+							HBox {
+								Text {
+									style : -fx-font-size: 25.0;
+									text : Test
+								}
+							}
+						}
+					}
+					node-size : Dimension(59.0, 65.0)
+				}
+				Node3 {
+					VBox {
+						style : -fx-border-width:2.0;-fx-border-style:dashed;
+						VBox {
+							HBox {
+								Text {
+									text : Hi
+								}
+							}
+						}
+						RecordBasedLabelLine {
+							style : -fx-stroke-width:2.0;-fx-stroke-dash-array: 7 7;
+						}
+						VBox {
+							HBox {
+								Text {
+									text : Test
+								}
+							}
+						}
+					}
+					node-size : Dimension(54.0, 42.0)
+				}
+				Node4 {
+					VBox {
+						style : -fx-border-width: 2;-fx-border-style:solid;
+						VBox {
+							HBox {
+								Text {
+									text : Hi
+								}
+							}
+						}
+						RecordBasedLabelLine {
+							style : -fx-stroke-width:2;
+						}
+						VBox {
+							HBox {
+								Text {
+									text : Test
+								}
+							}
+						}
+					}
+					node-size : Dimension(54.0, 42.0)
+				}
+				Node5 {
+					VBox {
+						style : -fx-background-color: #ff0000;-fx-border-style:solid;
+						VBox {
+							HBox {
+								Text {
+									text : Hi
+								}
+							}
+						}
+						RecordBasedLabelLine
+						VBox {
+							HBox {
+								Text {
+									text : Test
+								}
+							}
+						}
+					}
+					node-size : Dimension(54.0, 41.0)
+				}
+			}
+		''')
+	}
+
+	@Test def node_label_recordbased003() {
+		'''
+			graph {
+				1[shape=record label=" Hi | Test \n Right \r Left \l Center | Section 2"]
+			}
+		'''.assertZestConversion(new RecordBasedShapePrettyPrinter,'''
+			Graph {
+				Node1 {
+					HBox {
+						style : -fx-border-style:solid;
+						VBox {
+							HBox {
+								Text {
+									text : Hi
+								}
+							}
+						}
+						RecordBasedLabelLine
+						VBox {
+							HBox {
+								Text {
+									text : Test 
+								}
+							}
+							HBox {
+								alignment : CENTER_RIGHT
+								Text {
+									text :  Right 
+								}
+							}
+							HBox {
+								alignment : CENTER_LEFT
+								Text {
+									text :  Left 
+								}
+							}
+							HBox {
+								Text {
+									text :  Center
+								}
+							}
+						}
+						RecordBasedLabelLine
+						VBox {
+							HBox {
+								Text {
+									text : Section 2
+								}
+							}
+						}
+					}
+					node-size : Dimension(152.0, 69.0)
+				}
+			}
+		''')
+	}
+
 	@Test def node_label_and_id001() {
 		'''
 			graph {
@@ -4437,6 +4727,20 @@ class Dot2ZestGraphCopierTest {
 				'''«attrKey» : «node.geometryProperty.get»'''
 			} else {
 				super.prettyPrint(attrKey, attrValue)
+			}
+		}
+	}
+
+	private static class RecordBasedShapePrettyPrinter extends DotGraphPrettyPrinter {
+		override protected prettyPrint(String attrKey, Object attrValue, String startIndent) {
+			return if (#[
+				DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+				ZestProperties.SHAPE__N
+			].contains(attrKey) && attrValue instanceof Pane) {
+				val node = attrValue as Pane
+				'''«(new DotRecordLabelVisualizationPrettyPrinter).prettyPrint(node,startIndent)»'''
+			} else {
+				super.prettyPrint(attrKey, attrValue, startIndent)
 			}
 		}
 	}
