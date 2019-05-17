@@ -702,102 +702,102 @@
 		<module>../org.eclipse.gef.target</module>
 
 		<module>../org.eclipse.gef.common</module>
-		<module>../org.eclipse.gef.common-feature</module>
-		<module>../org.eclipse.gef.common.tests</module>
-		<module>../org.eclipse.gef.common.doc</module>
-		<module>../org.eclipse.gef.common.doc-feature</module>
-		<module>../org.eclipse.gef.common.sdk-feature</module>
+<!-- 		<module>../org.eclipse.gef.common-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.common.tests</module> -->
+<!-- 		<module>../org.eclipse.gef.common.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.common.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.common.sdk-feature</module> -->
 		<module>../org.eclipse.gef.geometry</module>
-		<module>../org.eclipse.gef.geometry-feature</module>
+<!-- 		<module>../org.eclipse.gef.geometry-feature</module> -->
 		<module>../org.eclipse.gef.geometry.convert.swt</module>
-		<module>../org.eclipse.gef.geometry.convert.swt-feature</module>
+<!-- 		<module>../org.eclipse.gef.geometry.convert.swt-feature</module> -->
 		<module>../org.eclipse.gef.geometry.convert.fx</module>
-		<module>../org.eclipse.gef.geometry.convert.fx-feature</module>
-		<module>../org.eclipse.gef.geometry.tests</module>
-		<module>../org.eclipse.gef.geometry.tests.convert.swt</module>
-		<module>../org.eclipse.gef.geometry.tests.convert.fx</module>
-		<module>../org.eclipse.gef.geometry.doc</module>
-		<module>../org.eclipse.gef.geometry.doc-feature</module>
-		<module>../org.eclipse.gef.geometry.sdk-feature</module>
+<!-- 		<module>../org.eclipse.gef.geometry.convert.fx-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.geometry.tests</module> -->
+<!-- 		<module>../org.eclipse.gef.geometry.tests.convert.swt</module> -->
+<!-- 		<module>../org.eclipse.gef.geometry.tests.convert.fx</module> -->
+<!-- 		<module>../org.eclipse.gef.geometry.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.geometry.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.geometry.sdk-feature</module> -->
 		<module>../org.eclipse.gef.fx</module>
-		<module>../org.eclipse.gef.fx-feature</module>
+<!-- 		<module>../org.eclipse.gef.fx-feature</module> -->
 		<module>../org.eclipse.gef.fx.swt</module>
-		<module>../org.eclipse.gef.fx.swt-feature</module>
+<!-- 		<module>../org.eclipse.gef.fx.swt-feature</module> -->
 		<module>../org.eclipse.gef.fx.jface</module>
-		<module>../org.eclipse.gef.fx.jface-feature</module>
-		<module>../org.eclipse.gef.fx.tests</module>
-		<module>../org.eclipse.gef.fx.doc</module>
-		<module>../org.eclipse.gef.fx.doc-feature</module>
-		<module>../org.eclipse.gef.fx.sdk-feature</module>
+<!-- 		<module>../org.eclipse.gef.fx.jface-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.fx.tests</module> -->
+<!-- 		<module>../org.eclipse.gef.fx.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.fx.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.fx.sdk-feature</module> -->
 		<module>../org.eclipse.gef.fx.compatibility.equinox</module>
-		<module>../org.eclipse.gef.fx.compatibility.equinox-feature</module>
+<!-- 		<module>../org.eclipse.gef.fx.compatibility.equinox-feature</module> -->
 		<module>../org.eclipse.gef.mvc.fx</module>
-		<module>../org.eclipse.gef.mvc.fx-feature</module>
+<!-- 		<module>../org.eclipse.gef.mvc.fx-feature</module> -->
 		<module>../org.eclipse.gef.mvc.fx.ui</module>
-		<module>../org.eclipse.gef.mvc.fx.ui-feature</module>
+<!-- 		<module>../org.eclipse.gef.mvc.fx.ui-feature</module> -->
 		<module>../org.eclipse.gef.mvc.tests.fx</module>
-		<module>../org.eclipse.gef.mvc.tests.fx.ui</module>
-		<module>../org.eclipse.gef.mvc.doc</module>
-		<module>../org.eclipse.gef.mvc.doc-feature</module>
-		<module>../org.eclipse.gef.mvc.sdk-feature</module>
-		<module>../org.eclipse.gef.mvc.examples</module>
-		<module>../org.eclipse.gef.mvc.examples.logo</module>
-		<module>../org.eclipse.gef.mvc.examples.logo.ui</module>
-		<module>../org.eclipse.gef.mvc.examples-feature</module>
-		<module>../org.eclipse.gef.mvc.examples.logo.web</module>
-		<module>../org.eclipse.gef.mvc.examples.logo.web.repository</module>
+<!-- 		<module>../org.eclipse.gef.mvc.tests.fx.ui</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.sdk-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.examples</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.examples.logo</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.examples.logo.ui</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.examples-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.examples.logo.web</module> -->
+<!-- 		<module>../org.eclipse.gef.mvc.examples.logo.web.repository</module> -->
 		<module>../org.eclipse.gef.mvc.fx.compatibility.equinox</module>
-		<module>../org.eclipse.gef.mvc.fx.compatibility.equinox-feature</module>
-		<module>../org.eclipse.gef.cloudio.ui</module>
-		<module>../org.eclipse.gef.cloudio.ui-feature</module>
-		<module>../org.eclipse.gef.cloudio.tests.ui</module>
-		<module>../org.eclipse.gef.cloudio.doc</module>
-		<module>../org.eclipse.gef.cloudio.doc-feature</module>
-		<module>../org.eclipse.gef.cloudio.sdk-feature</module>
-		<module>../org.eclipse.gef.cloudio.doc.user</module>
-		<module>../org.eclipse.gef.cloudio.doc.user-feature</module>
-		<module>../org.eclipse.gef.cloudio.user-feature</module>
+<!-- 		<module>../org.eclipse.gef.mvc.fx.compatibility.equinox-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.ui</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.ui-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.tests.ui</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.sdk-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.doc.user</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.doc.user-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.cloudio.user-feature</module> -->
 		<module>../org.eclipse.gef.graph</module>
-		<module>../org.eclipse.gef.graph-feature</module>
-		<module>../org.eclipse.gef.graph.tests</module>
-		<module>../org.eclipse.gef.graph.doc</module>
-		<module>../org.eclipse.gef.graph.doc-feature</module>
-		<module>../org.eclipse.gef.graph.sdk-feature</module>
+<!-- 		<module>../org.eclipse.gef.graph-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.graph.tests</module> -->
+<!-- 		<module>../org.eclipse.gef.graph.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.graph.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.graph.sdk-feature</module> -->
 		<module>../org.eclipse.gef.dot.generator</module>
 		<module>../org.eclipse.gef.dot</module>
-		<module>../org.eclipse.gef.dot-feature</module>
+<!-- 		<module>../org.eclipse.gef.dot-feature</module> -->
 		<module>../org.eclipse.gef.dot.ui</module>
-		<module>../org.eclipse.gef.dot.ui-feature</module>
+<!-- 		<module>../org.eclipse.gef.dot.ui-feature</module> -->
 		<module>../org.eclipse.gef.dot.tests</module>
-		<module>../org.eclipse.gef.dot.doc</module>
-		<module>../org.eclipse.gef.dot.doc-feature</module>
-		<module>../org.eclipse.gef.dot.sdk-feature</module>
-		<module>../org.eclipse.gef.dot.doc.user</module>
-		<module>../org.eclipse.gef.dot.doc.user-feature</module>
-		<module>../org.eclipse.gef.dot.user-feature</module>
+<!-- 		<module>../org.eclipse.gef.dot.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.dot.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.dot.sdk-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.dot.doc.user</module> -->
+<!-- 		<module>../org.eclipse.gef.dot.doc.user-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.dot.user-feature</module> -->
 		<module>../org.eclipse.gef.layout</module>
-		<module>../org.eclipse.gef.layout-feature</module>
-		<module>../org.eclipse.gef.layout.tests</module>
-		<module>../org.eclipse.gef.layout.doc</module>
-		<module>../org.eclipse.gef.layout.doc-feature</module>
-		<module>../org.eclipse.gef.layout.sdk-feature</module>
+<!-- 		<module>../org.eclipse.gef.layout-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.layout.tests</module> -->
+<!-- 		<module>../org.eclipse.gef.layout.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.layout.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.layout.sdk-feature</module> -->
 		<module>../org.eclipse.gef.zest.fx</module>
-		<module>../org.eclipse.gef.zest.fx-feature</module>
-		<module>../org.eclipse.gef.zest.fx.jface</module>
-		<module>../org.eclipse.gef.zest.fx.jface-feature</module>
+<!-- 		<module>../org.eclipse.gef.zest.fx-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.fx.jface</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.fx.jface-feature</module> -->
 		<module>../org.eclipse.gef.zest.fx.ui</module>
-		<module>../org.eclipse.gef.zest.fx.ui-feature</module>
-		<module>../org.eclipse.gef.zest.tests.fx</module>
-		<module>../org.eclipse.gef.zest.tests.fx.jface</module>
-		<module>../org.eclipse.gef.zest.doc</module>
-		<module>../org.eclipse.gef.zest.doc-feature</module>
-		<module>../org.eclipse.gef.zest.sdk-feature</module>
-		<module>../org.eclipse.gef.zest.examples</module>
-		<module>../org.eclipse.gef.zest.examples.graph</module>
-		<module>../org.eclipse.gef.zest.examples.graph.ui</module>
-		<module>../org.eclipse.gef.zest.examples-feature</module>
-		<module>../org.eclipse.gef.zest.fx.compatibility.equinox</module>
-		<module>../org.eclipse.gef.zest.fx.compatibility.equinox-feature</module>
-		<module>../org.eclipse.gef.repository</module>
+<!-- 		<module>../org.eclipse.gef.zest.fx.ui-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.tests.fx</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.tests.fx.jface</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.doc</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.doc-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.sdk-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.examples</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.examples.graph</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.examples.graph.ui</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.examples-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.fx.compatibility.equinox</module> -->
+<!-- 		<module>../org.eclipse.gef.zest.fx.compatibility.equinox-feature</module> -->
+<!-- 		<module>../org.eclipse.gef.repository</module> -->
 	</modules>
 </project>

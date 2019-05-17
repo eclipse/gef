@@ -20,41 +20,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ // JUnit Tests
-		Dot2ZestAttributesConverterTest.class,
-		Dot2ZestEdgeAttributesConversionTest.class,
-		Dot2ZestGraphCopierTest.class,
-		Dot2ZestNodeAttributesConversionTest.class, DotArrowTypeTest.class,
-		DotAstTest.class, DotAttributeActiveAnnotationTest.class,
-		DotAttributesTest.class, DotBSplineInterpolatorTest.class,
-		DotColorListLexerTest.class, DotColorListTest.class,
-		DotColorUtilTest.class, DotEscStringTest.class,
-		DotExecutableUtilsTest.class, DotExportTest.class,
-		DotExtractorTest.class, DotFontNameTest.class,
-		DotFormatterTest.class, DotHtmlLabelFormatterTest.class,
-		DotHtmlLabelLexerTest.class, DotHtmlLabelParserTest.class,
-		DotHtmlLabelValidatorTest.class, DotImportTest.class,
-		DotLexerTest.class, DotParserTest.class, DotPortPosTest.class,
-		DotQualifiedNameProviderTest.class, DotRecordLabelTest.class,
-		DotStyleTest.class, DotValidatorTest.class,
-		GraphvizConfigurationDialogTest.class,
-
-		// JUnit Plug-in Tests
-		DotAutoEditTest.class, DotColorListContentAssistLexerTest.class,
-		DotColorListHighlightingLexerTest.class, DotContentAssist2Test.class,
-		DotContentAssistLexerTest.class, DotContentAssistTest.class,
-		DotEditorDoubleClickingTest.class, DotEditorTest.class,
-		DotEditorToDotEditorHyperlinkingTest.class, DotFoldingTest.class,
-		DotGraphViewTest.class, DotHighlightingCalculatorTest.class,
-		DotHighlightingLexerTest.class, DotHighlightingTest.class,
-		DotHoverTest.class, DotHtmlLabelContentAssistLexerTest.class,
-		DotHtmlLabelContentAssistTest.class,
-		DotHtmlLabelHighlightingLexerTest.class,
-		DotHtmlLabelTokenTypeToPartitionMapperTest.class,
-		DotLabelProviderTest.class, DotMarkingOccurrencesTest.class,
-		DotOutlineViewTest.class, DotQuickfixTest.class,
-		DotReferenceFinderTest.class, DotRenameRefactoringTest.class,
-		DotToggleCommentTest.class, DotTokenTypeToPartitionMapperTest.class,
-		SyncGraphvizExportHandlerTest.class })
+@SuiteClasses({ Dot2ZestGraphCopierTest.class })
 public class AllUiTests {
 }
