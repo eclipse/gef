@@ -39,19 +39,8 @@ import javafx.util.Pair;
  *
  */
 public class EdgeLabelPart extends AbstractLabelPart {
-	/**
-	 * Array containing the {@link Tooltip} nodes of this {@link EdgeLabelPart} in
-	 * the following order:
-	 * <ul>
-	 * <li>[0]: tooltip node on the label of the edge.
-	 * <li>[1]: tooltip node on the source label of the edge.
-	 * <li>[2]: tootlip node on the target label of the edge.
-	 * <li>[3]: tooltip node on the external label of the edge.
-	 * </ul>
-	 *
-	 * @since 5.1
-	 */
-	protected Tooltip[] tooltipNodes = new Tooltip[4];
+
+	private Tooltip[] tooltipNodes = new Tooltip[4];
 
 	@Override
 	public Point computeLabelPosition() {
@@ -146,8 +135,8 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Computes the end position for placing a label. The position is
-	 * interpreted in the parent coordinate system of this part's visual.
+	 * Computes the end position for placing a label. The position is interpreted in
+	 * the parent coordinate system of this part's visual.
 	 *
 	 * @return The end position for placing a label.
 	 */
@@ -176,8 +165,8 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Computes the middle position for placing a label. The position is
-	 * interpreted in the parent coordinate system of this part's visual.
+	 * Computes the middle position for placing a label. The position is interpreted
+	 * in the parent coordinate system of this part's visual.
 	 *
 	 * @return The middle position for placing a label.
 	 */
@@ -188,8 +177,8 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Computes the start position for placing a label. The position is
-	 * interpreted in the parent coordinate system of this part's visual.
+	 * Computes the start position for placing a label. The position is interpreted
+	 * in the parent coordinate system of this part's visual.
 	 *
 	 * @return The start position for placing a label.
 	 */
@@ -202,6 +191,23 @@ public class EdgeLabelPart extends AbstractLabelPart {
 		}
 		return NodeUtils.sceneToLocal(getVisual().getParent(),
 				NodeUtils.localToScene(connection, startPoint.getTranslated(v.x, v.y)));
+	}
+
+	/**
+	 * Array containing the {@link Tooltip} nodes of this {@link EdgeLabelPart} in
+	 * the following order:
+	 * <ul>
+	 * <li>[0]: tooltip node on the label of the edge.
+	 * <li>[1]: tooltip node on the source label of the edge.
+	 * <li>[2]: tootlip node on the target label of the edge.
+	 * <li>[3]: tooltip node on the external label of the edge.
+	 * </ul>
+	 *
+	 * @return Array of {@link Tooltip}s.
+	 * @since 5.1
+	 */
+	protected Tooltip[] getTooltipNodes() {
+		return tooltipNodes;
 	}
 
 	/**
@@ -234,8 +240,10 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	/**
 	 * Changes the tooltip of this {@link EdgeLabelPart} to the given value.
 	 *
-	 * @param tooltipNode the tooltip node
-	 * @param tooltip     the tooltip text
+	 * @param tooltipNode
+	 *            the tooltip node
+	 * @param tooltip
+	 *            the tooltip text
 	 * @since 5.1
 	 */
 	protected void refreshTooltip(Tooltip tooltipNode, String tooltip) {
