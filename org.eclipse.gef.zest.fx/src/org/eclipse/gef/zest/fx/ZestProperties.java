@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     Tamas Miklossy   (itemis AG) - documentation improvements
+ *                                  - edge tooltip support (bug #530658)
  *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx;
@@ -270,6 +271,58 @@ public class ZestProperties {
 	 * @see #setTooltip(Node, String)
 	 */
 	public static final String TOOLTIP__N = "node-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an edge. This attribute does not
+	 * have a default value.
+	 *
+	 * @see #getTooltip(Edge)
+	 * @see #setTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String TOOLTIP__E = "edge-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an edge label. This attribute does
+	 * not have a default value.
+	 *
+	 * @see #getLabelTooltip(Edge)
+	 * @see #setLabelTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String LABEL_TOOLTIP__E = "edge-label-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an edge source label. This attribute does
+	 * not have a default value.
+	 *
+	 * @see #getSourceLabelTooltip(Edge)
+	 * @see #setSourceLabelTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String SOURCE_LABEL_TOOLTIP__E = "edge-source-label-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an edge target label. This attribute does
+	 * not have a default value.
+	 *
+	 * @see #getTargetLabelTooltip(Edge)
+	 * @see #setTargetLabelTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String TARGET_LABEL_TOOLTIP__E = "edge-target-label-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an element (node/edge) external label. This attribute does
+	 * not have a default value.
+	 *
+	 * @see #getExternalLabelTooltip(Edge)
+	 * @see #getExternalLabelTooltip(Node)
+	 * @see #setExternalLabelTooltip(Edge, String)
+	 * @see #setExternalLabelTooltip(Node, String)
+	 * @since 5.1
+	 */
+	public static final String EXTERNAL_LABEL_TOOLTIP__NE = "element-external-label-tooltip";
 
 	/**
 	 * This attribute determines the target decoration for an edge. This
@@ -566,6 +619,44 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the external label tooltip is determined.
+	 * @return The tooltip of the given {@link Edge} external label. If a {@link Provider} is
+	 *         set for {@link #EXTERNAL_LABEL_TOOLTIP__NE}, the value will be retrieved from it
+	 *         using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getExternalLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(EXTERNAL_LABEL_TOOLTIP__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the given
+	 * {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the external label tooltip is determined.
+	 * @return The tooltip of the given {@link Node} extrnal label. If a {@link Provider} is
+	 *         set for {@link #EXTERNAL_LABEL_TOOLTIP__NE}, the value will be retrieved from it
+	 *         using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getExternalLabelTooltip(Node node) {
+		Object value = node.attributesProperty().get(EXTERNAL_LABEL_TOOLTIP__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
 	 * Returns the value of the {@link #ICON__N} attribute of the given
 	 * {@link Node}.
 	 *
@@ -716,6 +807,25 @@ public class ZestProperties {
 			return (Point) ((Provider<?>) value).get();
 		}
 		return (Point) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label tooltip is determined.
+	 * @return The tooltip of the given {@link Edge} label. If a {@link Provider} is
+	 *         set for {@link #LABEL_TOOLTIP__E}, the value will be retrieved from it
+	 *         using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(LABEL_TOOLTIP__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -940,6 +1050,25 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #SOURCE_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label tooltip is determined.
+	 * @return The tooltip of the given {@link Edge} source label. If a {@link Provider} is
+	 *         set for {@link #SOURCE_LABEL_TOOLTIP__E}, the value will be retrieved from it
+	 *         using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getSourceLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(SOURCE_LABEL_TOOLTIP__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
 	 * Returns the value of the {@link #START_POINT__E} attribute of the given
 	 * {@link Edge}.
 	 *
@@ -1041,6 +1170,25 @@ public class ZestProperties {
 		}
 		return (Point) value;
 	}
+	
+	/**
+	 * Returns the value of the {@link #TARGET_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label tooltip is determined.
+	 * @return The tooltip of the given {@link Edge} target label. If a {@link Provider} is
+	 *         set for {@link #TARGET_LABEL_TOOLTIP__E}, the value will be retrieved from it
+	 *         using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getTargetLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(TARGET_LABEL_TOOLTIP__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
 
 	/**
 	 * Returns the value of the {@link #TOOLTIP__N} attribute of the given
@@ -1054,6 +1202,25 @@ public class ZestProperties {
 	 */
 	public static String getTooltip(Node node) {
 		Object value = node.attributesProperty().get(TOOLTIP__N);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #TOOLTIP__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the tooltip is determined.
+	 * @return The tooltip of the given {@link Edge}. If a {@link Provider} is
+	 *         set for {@link #TOOLTIP__E}, the value will be retrieved from it
+	 *         using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(TOOLTIP__E);
 		if (value instanceof Provider) {
 			return (String) ((Provider<?>) value).get();
 		}
@@ -1553,6 +1720,80 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the given
+	 * {@link Node} to the given provider.
+	 *
+	 * @param node
+	 *            The {@link Node} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #EXTERNAL_LABEL_TOOLTIP__NE} value.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Node node, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			node.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the external label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Node}'s external label.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Node node, String tooltip) {
+		if (tooltip == null) {
+			node.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltip);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #EXTERNAL_LABEL_TOOLTIP__NE} value.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the external label tooltip is changed.
+	 * @param tooltip
+	 *            The new external label tooltip for the given {@link Edge}.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltip);
+		}
+	}
+
+	/**
 	 * Sets the value of the {@link #ICON__N} attribute of the given
 	 * {@link Node} to the given value.
 	 *
@@ -1867,6 +2108,43 @@ public class ZestProperties {
 			edge.getAttributes().remove(LABEL_POSITION__E);
 		} else {
 			edge.attributesProperty().put(LABEL_POSITION__E, labelPositionProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #LABEL_TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(LABEL_TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge} label.
+	 * @since 5.1
+	 */
+	public static void setLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(LABEL_TOOLTIP__E, tooltip);
 		}
 	}
 
@@ -2332,6 +2610,43 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #SOURCE_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #SOURCE_LABEL_TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setSourceLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SOURCE_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge} source label.
+	 * @since 5.1
+	 */
+	public static void setSourceLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_TOOLTIP__E, tooltip);
+		}
+	}
+
+	/**
 	 * Sets the value of the {@link #START_POINT__E} attribute of the given
 	 * {@link Edge} to the given value.
 	 *
@@ -2547,6 +2862,43 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #TARGET_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #TARGET_LABEL_TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setTargetLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge} target label.
+	 * @since 5.1
+	 */
+	public static void setTargetLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_TOOLTIP__E, tooltip);
+		}
+	}
+
+	/**
 	 * Sets the value of the {@link #TOOLTIP__N} attribute of the given
 	 * {@link Node} to the given provider.
 	 *
@@ -2578,6 +2930,43 @@ public class ZestProperties {
 			node.attributesProperty().remove(TOOLTIP__N);
 		} else {
 			node.attributesProperty().put(TOOLTIP__N, tooltip);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge}.
+	 * @since 5.1
+	 */
+	public static void setTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TOOLTIP__E, tooltip);
 		}
 	}
 }
