@@ -28,13 +28,11 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.common.attributes.IAttributeCopier;
 import org.eclipse.gef.common.attributes.IAttributeStore;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowType;
 import org.eclipse.gef.dot.internal.language.color.Color;
-import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.language.colorlist.WC;
 import org.eclipse.gef.dot.internal.language.dir.DirType;
@@ -46,15 +44,12 @@ import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.PolygonBasedShape;
-import org.eclipse.gef.dot.internal.language.shape.RecordBasedNodeShape;
 import org.eclipse.gef.dot.internal.language.shape.RecordBasedShape;
 import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.splinetype.Spline;
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType;
 import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
-import org.eclipse.gef.dot.internal.language.style.Style;
-import org.eclipse.gef.dot.internal.language.style.StyleItem;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.ui.DotNodePart;
 import org.eclipse.gef.fx.nodes.GeometryNode;
@@ -578,7 +573,14 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 	protected void convertAttributes(Node dot, Node zest) {
 		// for record shape (where Label is consumed by the Zest shape)
-		boolean isRecordBasedShape = false;
+		org.eclipse.gef.dot.internal.language.shape.Shape dotShape = DotAttributes
+				.getShapeParsed(dot);
+		boolean isRecordBasedShape = dotShape != null
+				&& dotShape.getShape() instanceof RecordBasedShape;
+		DotNodeStyleUtil nodeStyleUtil = isRecordBasedShape
+				? new DotRecordBasedNodeStyleUtil(colorUtil, dot)
+				: new DotDefaultNodeStyleUtil(colorUtil, dot);
+
 		// id
 		String dotId = DotAttributes.getId(dot);
 		if (dotId != null) {
@@ -619,10 +621,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setLabelCssStyle(zest, zestNodeLabelCssStyle);
 		}
 
-		org.eclipse.gef.dot.internal.language.shape.Shape dotShape = DotAttributes
-				.getShapeParsed(dot);
 		// style and color
-		StringBuilder zestShapeStyle = computeZestStyle(dot, dotShape);
+		StringBuilder zestShapeStyle = nodeStyleUtil.computeZestStyle();
 
 		javafx.scene.Node zestShape = null;
 		javafx.scene.Node innerShape = null;
@@ -633,33 +633,16 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
 			PolygonBasedNodeShape polygonShape = ((PolygonBasedShape) dotShape
 					.getShape()).getShape();
-			zestShape = hasStyle(dot, NodeStyle.ROUNDED)
+			zestShape = nodeStyleUtil.hasStyle(NodeStyle.ROUNDED)
 					? DotPolygonBasedNodeShapes.getRoundedStyled(polygonShape)
 					: DotPolygonBasedNodeShapes.get(polygonShape);
 			innerShape = DotPolygonBasedNodeShapes.getInner(polygonShape);
 			innerDistance = DotPolygonBasedNodeShapes
 					.getInnerDistance(polygonShape);
-		} else if (dotShape.getShape() instanceof RecordBasedShape
-				&& !isHtmlLabel) {
+		} else if (isRecordBasedShape && !isHtmlLabel) {
 			// TODO record shapes that have HTML labels
-
-			RecordBasedNodeShape recordBasedShape = ((RecordBasedShape) dotShape
-					.getShape()).getShape();
-
-			zestShapeStyle = new StringBuilder(
-					zestShapeStyle.toString().replaceAll("-fx-fill", //$NON-NLS-1$
-							"-fx-background-color")); //$NON-NLS-1$
-			// Mrecord shape has rounded edges (for border and fill)
-			if (RecordBasedNodeShape.MRECORD.equals(recordBasedShape))
-				zestShapeStyle.append(
-						"-fx-background-radius:10px;-fx-border-radius:10px;"); //$NON-NLS-1$
-			// If a border is set, we don't change this, but per default, there
-			// is a solid border in graphviz
-			if (!zestShapeStyle.toString().contains("-fx-border-style:")) //$NON-NLS-1$
-				zestShapeStyle.append("-fx-border-style:solid;"); //$NON-NLS-1$
-
-			StringBuilder recordBasedShapeLineStyle = computeRecordBasedShapeLineStyle(
-					dot);
+			StringBuilder recordBasedShapeLineStyle = ((DotRecordBasedNodeStyleUtil) nodeStyleUtil)
+					.computeLineStyle();
 
 			DotRecordBasedJavaFxNode node = new DotRecordBasedJavaFxNode(
 					dotLabel, DotAttributes.getRankdirParsed(dot.getGraph()),
@@ -696,7 +679,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			}
 		}
 
-		if (hasStyle(dot, NodeStyle.INVIS)) {
+		if (nodeStyleUtil.hasStyle(NodeStyle.INVIS)) {
 			ZestProperties.setInvisible(zest, true);
 		}
 
@@ -791,119 +774,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				.collect(Collectors.joining(System.lineSeparator()));
 	}
 
-	private StringBuilder computeZestStyle(Node dot,
-			org.eclipse.gef.dot.internal.language.shape.Shape dotShape) {
-		StringBuilder zestStyle = new StringBuilder();
-
-		boolean isRecordBasedShape = dotShape != null
-				? dotShape.getShape() instanceof RecordBasedShape
-				: false;
-
-		// color
-		Color dotColor = DotAttributes.getColorParsed(dot);
-		String dotColorScheme = DotAttributes.getColorscheme(dot);
-		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
-				dotColor);
-		// penwidth
-		Double penwidth = DotAttributes.getPenwidthParsed(dot);
-
-		if (isNoneShape(dotShape)) {
-			zestStyle.append("-fx-stroke: none;"); //$NON-NLS-1$
-		} else {
-			if (javaFxColor != null) {
-				zestStyle.append(isRecordBasedShape ? "-fx-border-color: " //$NON-NLS-1$
-						: "-fx-stroke: "); //$NON-NLS-1$
-				zestStyle.append(javaFxColor);
-				zestStyle.append(";"); //$NON-NLS-1$
-			}
-
-			if (penwidth != null) {
-				zestStyle.append(isRecordBasedShape ? "-fx-border-width:" //$NON-NLS-1$
-						: "-fx-stroke-width:"); //$NON-NLS-1$
-				zestStyle.append(penwidth);
-				zestStyle.append(";"); //$NON-NLS-1$
-			}
-		}
-
-		// style
-		Style style = DotAttributes.getStyleParsed(dot);
-		if (style != null) {
-			for (StyleItem styleItem : style.getStyleItems()) {
-				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
-				if (nodeStyle != null) {
-					addNodeStyle(zestStyle, nodeStyle, penwidth == null,
-							isRecordBasedShape);
-				}
-			}
-		}
-
-		// fillcolor: evaluate only if the node style is set to 'filled'.
-		if (hasStyle(dot, NodeStyle.FILLED)) {
-			Color dotFillColor = null;
-			ColorList fillColor = DotAttributes.getFillcolorParsed(dot);
-			if (fillColor != null && !fillColor.getColorValues().isEmpty()) {
-				// TODO: add support for colorList
-				dotFillColor = fillColor.getColorValues().get(0).getColor();
-			} else {
-				// if the style is filled, but fillcolor is not specified, use
-				// the color attribute value. If neither the fillcolor nor the
-				// color attribute is specified, used the default value.
-				dotFillColor = dotColor != null ? dotColor
-						: DotColors.getDefaultNodeFillColor();
-			}
-			String javaFxFillColor = colorUtil.computeZestColor(dotColorScheme,
-					dotFillColor);
-			if (javaFxFillColor != null) {
-				zestStyle.append("-fx-fill: " + javaFxFillColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-
-		return zestStyle;
-	}
-
-	private boolean isNoneShape(
-			org.eclipse.gef.dot.internal.language.shape.Shape dotShape) {
-		if (dotShape != null) {
-			EObject shape = dotShape.getShape();
-			if (shape instanceof PolygonBasedShape) {
-				return ((PolygonBasedShape) shape)
-						.getShape() == PolygonBasedNodeShape.NONE;
-			}
-		}
-
-		return false;
-	}
-
-	private StringBuilder computeRecordBasedShapeLineStyle(Node dot) {
-		StringBuilder zestStyle = new StringBuilder();
-		// color
-		Color dotColor = DotAttributes.getColorParsed(dot);
-		String dotColorScheme = DotAttributes.getColorscheme(dot);
-		String javaFxColor = colorUtil.computeZestColor(dotColorScheme,
-				dotColor);
-		if (javaFxColor != null) {
-			zestStyle.append("-fx-stroke: " + javaFxColor + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		// penwidth
-		Double penwidth = DotAttributes.getPenwidthParsed(dot);
-		if (penwidth != null) {
-			zestStyle.append("-fx-stroke-width:"); //$NON-NLS-1$
-			zestStyle.append(penwidth);
-			zestStyle.append(";"); //$NON-NLS-1$
-		}
-
-		Style style = DotAttributes.getStyleParsed(dot);
-		if (style != null) {
-			for (StyleItem styleItem : style.getStyleItems()) {
-				NodeStyle nodeStyle = NodeStyle.get(styleItem.getName());
-				addNodeStyle(zestStyle, nodeStyle, penwidth == null, false);
-			}
-		}
-
-		return zestStyle;
-	}
-
 	private Point computeZestPosition(
 			org.eclipse.gef.dot.internal.language.point.Point dotPosition,
 			double widthInPixel, double heightInPixel) {
@@ -935,91 +805,6 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		Double dotSize = DotAttributes.getFontsizeParsed(dot);
 		return computeZestLabelCssStyle(dotColor, dotColorScheme, dotFont,
 				dotSize);
-	}
-
-	/**
-	 * The node styles have to be translated from dot to zest differently for
-	 * polygon-based nodes and differently for record-based nodes
-	 */
-	private void addNodeStyle(StringBuilder zestStyle, NodeStyle style,
-			boolean penwidthUnset, boolean isRecordBasedNode) {
-		if (isRecordBasedNode) {
-			// in case of record based nodes shapes use 'border'
-			switch (style) {
-			case BOLD:
-				if (penwidthUnset)
-					zestStyle.append("-fx-border-width: 2;"); //$NON-NLS-1$
-				break;
-			case DASHED:
-				zestStyle.append("-fx-border-style:dashed;"); //$NON-NLS-1$
-				break;
-			case DIAGONALS:
-				// TODO: add support for 'diagonals' styled nodes
-				break;
-			case DOTTED:
-				zestStyle.append("-fx-border-style:dotted;"); //$NON-NLS-1$
-				break;
-			case RADIAL:
-				// TODO: add support for 'radial' styled nodes
-				break;
-			case ROUNDED:
-				// TODO: add support for 'rounded' styled nodes
-				break;
-			case SOLID:
-				zestStyle.append("-fx-border-style:solid;"); //$NON-NLS-1$
-				break;
-			case STRIPED:
-				// TODO: add support for 'striped' styled nodes
-				break;
-			case WEDGED:
-				// TODO: add support for 'wedged' styled nodes
-				break;
-			}
-		} else {
-			// in case of polygon-based nodes shapes use 'stroke'
-			switch (style) {
-			case BOLD:
-				if (penwidthUnset)
-					zestStyle.append("-fx-stroke-width:2;"); //$NON-NLS-1$
-				break;
-			case DASHED:
-				zestStyle.append("-fx-stroke-dash-array: 7 7;"); //$NON-NLS-1$
-				break;
-			case DIAGONALS:
-				// TODO: add support for 'diagonals' styled nodes
-				break;
-			case DOTTED:
-				zestStyle.append("-fx-stroke-dash-array: 1 6;"); //$NON-NLS-1$
-				break;
-			case RADIAL:
-				// TODO: add support for 'radial' styled nodes
-				break;
-			case ROUNDED:
-				// TODO: add support for 'rounded' styled nodes
-				break;
-			case SOLID:
-				zestStyle.append("-fx-stroke-width: 1;"); //$NON-NLS-1$
-				break;
-			case STRIPED:
-				// TODO: add support for 'striped' styled nodes
-				break;
-			case WEDGED:
-				// TODO: add support for 'wedged' styled nodes
-				break;
-			}
-		}
-	}
-
-	private boolean hasStyle(Node dot, NodeStyle nodeStyle) {
-		Style nodeStyleParsed = DotAttributes.getStyleParsed(dot);
-		if (nodeStyleParsed != null) {
-			for (StyleItem styleItem : nodeStyleParsed.getStyleItems()) {
-				if (styleItem.getName().equals(nodeStyle.toString())) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	protected void convertAttributes(Graph dot, Graph zest) {

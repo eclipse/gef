@@ -741,7 +741,7 @@ class Dot2ZestNodeAttributesConversionTest {
 				1[shape="record",color=red]
 			}
 		'''.assertNodeStyle('''
-			-fx-border-color: #ff0000;
+			-fx-border-color:#ff0000;
 			-fx-border-style:solid;
 		''')
 	}
@@ -753,7 +753,7 @@ class Dot2ZestNodeAttributesConversionTest {
 				1[shape="record",style=bold]
 			}
 		'''.assertNodeStyle('''
-			-fx-border-width: 2;
+			-fx-border-width:2;
 			-fx-border-style:solid;
 		''')
 	}
@@ -798,18 +798,20 @@ class Dot2ZestNodeAttributesConversionTest {
 				1[shape="record" style="rounded, filled" fillcolor=green]
 			}
 		'''.assertNodeStyle('''
-			-fx-background-color: #00ff00;
+			-fx-background-color:#00ff00;
 			-fx-border-style:solid;
 		''')
 	}
 
-	@Ignore("NPE thrown")
+	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record008() {
 		'''
 			digraph {
 				1[shape="record",style="setlinewidth(2)"]
 			}
-		'''.assertNodeStyle("")
+		'''.assertNodeStyle('''
+			-fx-border-style:solid;
+		''')
 	}
 
 	@Ignore("Failing on Travis/Jenkins")

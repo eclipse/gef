@@ -2811,7 +2811,7 @@ class Dot2ZestGraphCopierTest {
 				Node1 {
 					element-label-css-style : -fx-font-size: 25.0;
 					VBox {
-						style : -fx-border-color: #00ff00;-fx-border-style:solid;
+						style : -fx-border-color:#00ff00;-fx-border-style:solid;
 						HBox {
 							VBox {
 								HBox {
@@ -2822,7 +2822,7 @@ class Dot2ZestGraphCopierTest {
 								}
 							}
 							RecordBasedLabelLine {
-								style : -fx-stroke: #00ff00;
+								style : -fx-stroke:#00ff00;
 							}
 							VBox {
 								HBox {
@@ -2834,7 +2834,7 @@ class Dot2ZestGraphCopierTest {
 							}
 						}
 						RecordBasedLabelLine {
-							style : -fx-stroke: #00ff00;
+							style : -fx-stroke:#00ff00;
 						}
 						VBox {
 							HBox {
@@ -2845,7 +2845,7 @@ class Dot2ZestGraphCopierTest {
 							}
 						}
 						RecordBasedLabelLine {
-							style : -fx-stroke: #00ff00;
+							style : -fx-stroke:#00ff00;
 						}
 						VBox {
 							HBox {
@@ -2861,7 +2861,7 @@ class Dot2ZestGraphCopierTest {
 				Node2 {
 					element-label-css-style : -fx-font-size: 25.0;
 					VBox {
-						style : -fx-border-color: #00ff00;-fx-background-radius:10px;-fx-border-radius:10px;-fx-border-style:solid;
+						style : -fx-border-color:#00ff00;-fx-background-radius:10px;-fx-border-radius:10px;-fx-border-style:solid;
 						VBox {
 							HBox {
 								Text {
@@ -2871,7 +2871,7 @@ class Dot2ZestGraphCopierTest {
 							}
 						}
 						RecordBasedLabelLine {
-							style : -fx-stroke: #00ff00;
+							style : -fx-stroke:#00ff00;
 						}
 						VBox {
 							HBox {
@@ -2909,7 +2909,7 @@ class Dot2ZestGraphCopierTest {
 				}
 				Node4 {
 					VBox {
-						style : -fx-border-width: 2;-fx-border-style:solid;
+						style : -fx-border-width:2;-fx-border-style:solid;
 						VBox {
 							HBox {
 								Text {
@@ -2932,7 +2932,7 @@ class Dot2ZestGraphCopierTest {
 				}
 				Node5 {
 					VBox {
-						style : -fx-background-color: #ff0000;-fx-border-style:solid;
+						style : -fx-background-color:#ff0000;-fx-border-style:solid;
 						VBox {
 							HBox {
 								Text {
