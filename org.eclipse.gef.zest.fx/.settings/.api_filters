@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.gef.zest.fx" version="2">
+    <resource path="src/org/eclipse/gef/zest/fx/ZestProperties.java" type="org.eclipse.gef.zest.fx.ZestProperties">
+        <filter comment="constant added" id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.gef.zest.fx.ZestProperties"/>
+                <message_argument value="EXTERNAL_LABEL_TOOLTIP__NE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="constant added" id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.gef.zest.fx.ZestProperties"/>
+                <message_argument value="LABEL_TOOLTIP__E"/>
+            </message_arguments>
+        </filter>
+        <filter comment="constant added" id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.gef.zest.fx.ZestProperties"/>
+                <message_argument value="SOURCE_LABEL_TOOLTIP__E"/>
+            </message_arguments>
+        </filter>
+        <filter comment="constant added" id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.gef.zest.fx.ZestProperties"/>
+                <message_argument value="TARGET_LABEL_TOOLTIP__E"/>
+            </message_arguments>
+        </filter>
+        <filter comment="constant added" id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.gef.zest.fx.ZestProperties"/>
+                <message_argument value="TOOLTIP__E"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

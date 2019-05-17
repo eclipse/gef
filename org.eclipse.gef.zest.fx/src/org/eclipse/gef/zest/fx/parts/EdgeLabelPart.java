@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
+ *     Tamas Miklossy   (itemis AG) - edge tooltip support (bug #530658)
  *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx.parts;
@@ -26,6 +27,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 import javafx.scene.Group;
+import javafx.scene.control.Tooltip;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
@@ -37,6 +39,8 @@ import javafx.util.Pair;
  *
  */
 public class EdgeLabelPart extends AbstractLabelPart {
+
+	private Tooltip[] tooltipNodes = new Tooltip[4];
 
 	@Override
 	public Point computeLabelPosition() {
@@ -120,6 +124,8 @@ public class EdgeLabelPart extends AbstractLabelPart {
 		}
 
 		refreshPosition(getVisual(), getLabelPosition());
+
+		refreshTooltip();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -129,8 +135,8 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Computes the end position for placing a label. The position is
-	 * interpreted in the parent coordinate system of this part's visual.
+	 * Computes the end position for placing a label. The position is interpreted in
+	 * the parent coordinate system of this part's visual.
 	 *
 	 * @return The end position for placing a label.
 	 */
@@ -159,8 +165,8 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Computes the middle position for placing a label. The position is
-	 * interpreted in the parent coordinate system of this part's visual.
+	 * Computes the middle position for placing a label. The position is interpreted
+	 * in the parent coordinate system of this part's visual.
 	 *
 	 * @return The middle position for placing a label.
 	 */
@@ -171,8 +177,8 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Computes the start position for placing a label. The position is
-	 * interpreted in the parent coordinate system of this part's visual.
+	 * Computes the start position for placing a label. The position is interpreted
+	 * in the parent coordinate system of this part's visual.
 	 *
 	 * @return The start position for placing a label.
 	 */
@@ -185,5 +191,73 @@ public class EdgeLabelPart extends AbstractLabelPart {
 		}
 		return NodeUtils.sceneToLocal(getVisual().getParent(),
 				NodeUtils.localToScene(connection, startPoint.getTranslated(v.x, v.y)));
+	}
+
+	/**
+	 * Array containing the {@link Tooltip} nodes of this {@link EdgeLabelPart} in
+	 * the following order:
+	 * <ul>
+	 * <li>[0]: tooltip node on the label of the edge.
+	 * <li>[1]: tooltip node on the source label of the edge.
+	 * <li>[2]: tootlip node on the target label of the edge.
+	 * <li>[3]: tooltip node on the external label of the edge.
+	 * </ul>
+	 *
+	 * @return Array of {@link Tooltip}s.
+	 * @since 5.1
+	 */
+	protected Tooltip[] getTooltipNodes() {
+		return tooltipNodes;
+	}
+
+	/**
+	 * Changes the tooltip of this {@link EdgeLabelPart} to the given value.
+	 *
+	 * @since 5.1
+	 */
+	protected void refreshTooltip() {
+		Pair<Edge, String> content = getContent();
+		Edge edge = content.getKey();
+		String zestProperty = content.getValue();
+		switch (zestProperty) {
+		case ZestProperties.LABEL__NE:
+			refreshTooltip(tooltipNodes[0], ZestProperties.getLabelTooltip(edge));
+			break;
+		case ZestProperties.SOURCE_LABEL__E:
+			refreshTooltip(tooltipNodes[1], ZestProperties.getSourceLabelTooltip(edge));
+			break;
+		case ZestProperties.TARGET_LABEL__E:
+			refreshTooltip(tooltipNodes[2], ZestProperties.getTargetLabelTooltip(edge));
+			break;
+		case ZestProperties.EXTERNAL_LABEL__NE:
+			refreshTooltip(tooltipNodes[3], ZestProperties.getExternalLabelTooltip(edge));
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * Changes the tooltip of this {@link EdgeLabelPart} to the given value.
+	 *
+	 * @param tooltipNode
+	 *            the tooltip node
+	 * @param tooltip
+	 *            the tooltip text
+	 * @since 5.1
+	 */
+	protected void refreshTooltip(Tooltip tooltipNode, String tooltip) {
+		if (tooltip != null && !tooltip.isEmpty()) {
+			if (tooltipNode == null) {
+				tooltipNode = new Tooltip(tooltip);
+				Tooltip.install(getVisual(), tooltipNode);
+			} else {
+				tooltipNode.setText(tooltip);
+			}
+		} else {
+			if (tooltipNode != null) {
+				Tooltip.uninstall(getVisual(), tooltipNode);
+			}
+		}
 	}
 }

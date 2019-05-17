@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     Tamas Miklossy   (itemis AG) - documentation improvements
+ *                                  - edge tooltip support (bug #530658)
  *
  *******************************************************************************/
 package org.eclipse.gef.zest.fx;
@@ -42,8 +43,8 @@ import javafx.scene.image.Image;
 public class ZestProperties {
 
 	/**
-	 * This attribute determines if an element (node/edge) should be ignored by
-	 * the automatic layout.
+	 * This attribute determines if an element (node/edge) should be ignored by the
+	 * automatic layout.
 	 *
 	 * @see #getLayoutIrrelevant(Edge)
 	 * @see #getLayoutIrrelevant(Node)
@@ -96,26 +97,25 @@ public class ZestProperties {
 	public static final String LABEL__NE = "element-label";
 
 	/**
-	 * This attribute determines the curve being used for visualization of the
-	 * edge.
+	 * This attribute determines the curve being used for visualization of the edge.
 	 */
 	public static final String CURVE__E = "edge-curve";
 
 	/**
-	 * This attribute determines the start point being used for the
-	 * visualization of the edge.
+	 * This attribute determines the start point being used for the visualization of
+	 * the edge.
 	 */
 	public static final String START_POINT__E = "edge-start-point";
 
 	/**
-	 * This attribute determines the end point being used for the visualization
-	 * of the edge.
+	 * This attribute determines the end point being used for the visualization of
+	 * the edge.
 	 */
 	public static final String END_POINT__E = "edge-end-point";
 
 	/**
-	 * This attribute determines the CSS style for an edge. This attribute does
-	 * not have a default value.
+	 * This attribute determines the CSS style for an edge. This attribute does not
+	 * have a default value.
 	 *
 	 * @see #getCurveCssStyle(Edge)
 	 * @see #setCurveCssStyle(Edge, String)
@@ -123,8 +123,8 @@ public class ZestProperties {
 	public static final String CURVE_CSS_STYLE__E = "edge-curve-css-style";
 
 	/**
-	 * This attribute determines the CSS style for the source decoration of an
-	 * edge. This attribute does not have a default value.
+	 * This attribute determines the CSS style for the source decoration of an edge.
+	 * This attribute does not have a default value.
 	 *
 	 * @see #getSourceDecorationCssStyle(Edge)
 	 * @see #setSourceDecorationCssStyle(Edge, String)
@@ -132,8 +132,8 @@ public class ZestProperties {
 	public static final String SOURCE_DECORATION_CSS_STYLE__E = "edge-source-decoration-css-style";
 
 	/**
-	 * This attribute determines the CSS style for the target decoration of an
-	 * edge. This attribute does not have a default value.
+	 * This attribute determines the CSS style for the target decoration of an edge.
+	 * This attribute does not have a default value.
 	 *
 	 * @see #getTargetDecorationCssStyle(Edge)
 	 * @see #setTargetDecorationCssStyle(Edge, String)
@@ -142,10 +142,9 @@ public class ZestProperties {
 
 	/**
 	 * This attribute determines the way points that are passed along to the
-	 * {@link #ROUTER__E} in addition to the start and end point, which are
-	 * provided by the {@link Connection} and computed by {@link IAnchor}s at
-	 * the source and target node of the {@link Edge} (and not included in the
-	 * list of way points).
+	 * {@link #ROUTER__E} in addition to the start and end point, which are provided
+	 * by the {@link Connection} and computed by {@link IAnchor}s at the source and
+	 * target node of the {@link Edge} (and not included in the list of way points).
 	 *
 	 * @see #getControlPoints(Edge)
 	 * @see #setControlPoints(Edge, List)
@@ -159,8 +158,8 @@ public class ZestProperties {
 	public static final String SHAPE__N = "node-shape";
 
 	/**
-	 * This attribute determines the CSS style for a node shape. This attribute
-	 * does not have a default value.
+	 * This attribute determines the CSS style for a node shape. This attribute does
+	 * not have a default value.
 	 *
 	 * @see #getShapeCssStyle(Node)
 	 * @see #setShapeCssStyle(Node, String)
@@ -197,8 +196,8 @@ public class ZestProperties {
 	public static final String TARGET_LABEL_CSS_STYLE__E = "edge-target-label-css-style";
 
 	/**
-	 * This attribute determines the CSS style for an external label of an
-	 * element (node/edge). This attribute does not have a default value.
+	 * This attribute determines the CSS style for an external label of an element
+	 * (node/edge). This attribute does not have a default value.
 	 *
 	 * @see #getExternalLabelCssStyle(Node)
 	 * @see #getExternalLabelCssStyle(Edge)
@@ -214,8 +213,8 @@ public class ZestProperties {
 	public static final String EXTERNAL_LABEL__NE = "element-external-label";
 
 	/**
-	 * This attribute determines the position of an element (node/edge)'s
-	 * external label (in case it exists).
+	 * This attribute determines the position of an element (node/edge)'s external
+	 * label (in case it exists).
 	 */
 	public static final String EXTERNAL_LABEL_POSITION__NE = "element-external-label-position";
 
@@ -226,20 +225,20 @@ public class ZestProperties {
 	public static final String LABEL_POSITION__E = "edge-label-position";
 
 	/**
-	 * This attribute determines the position of an edge's source label (in case
-	 * it exists).
+	 * This attribute determines the position of an edge's source label (in case it
+	 * exists).
 	 */
 	public static final String SOURCE_LABEL_POSITION__E = "edge-source-label-position";
 
 	/**
-	 * This attribute determines the position of an edge's target label (in case
-	 * it exists).
+	 * This attribute determines the position of an edge's target label (in case it
+	 * exists).
 	 */
 	public static final String TARGET_LABEL_POSITION__E = "edge-target-label-position";
 
 	/**
-	 * This attribute determines the icon for a node. This attribute does not
-	 * have a default value.
+	 * This attribute determines the icon for a node. This attribute does not have a
+	 * default value.
 	 *
 	 * @see #getIcon(Node)
 	 * @see #setIcon(Node, Image)
@@ -272,8 +271,60 @@ public class ZestProperties {
 	public static final String TOOLTIP__N = "node-tooltip";
 
 	/**
-	 * This attribute determines the target decoration for an edge. This
+	 * This attribute determines the tooltip for an edge. This attribute does not
+	 * have a default value.
+	 *
+	 * @see #getTooltip(Edge)
+	 * @see #setTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String TOOLTIP__E = "edge-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an edge label. This attribute does
+	 * not have a default value.
+	 *
+	 * @see #getLabelTooltip(Edge)
+	 * @see #setLabelTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String LABEL_TOOLTIP__E = "edge-label-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an edge source label. This
 	 * attribute does not have a default value.
+	 *
+	 * @see #getSourceLabelTooltip(Edge)
+	 * @see #setSourceLabelTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String SOURCE_LABEL_TOOLTIP__E = "edge-source-label-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an edge target label. This
+	 * attribute does not have a default value.
+	 *
+	 * @see #getTargetLabelTooltip(Edge)
+	 * @see #setTargetLabelTooltip(Edge, String)
+	 * @since 5.1
+	 */
+	public static final String TARGET_LABEL_TOOLTIP__E = "edge-target-label-tooltip";
+
+	/**
+	 * This attribute determines the tooltip for an element (node/edge) external
+	 * label. This attribute does not have a default value.
+	 *
+	 * @see #getExternalLabelTooltip(Edge)
+	 * @see #getExternalLabelTooltip(Node)
+	 * @see #setExternalLabelTooltip(Edge, String)
+	 * @see #setExternalLabelTooltip(Node, String)
+	 * @since 5.1
+	 */
+	public static final String EXTERNAL_LABEL_TOOLTIP__NE = "element-external-label-tooltip";
+
+	/**
+	 * This attribute determines the target decoration for an edge. This attribute
+	 * does not have a default value.
 	 *
 	 * @see #getTargetDecoration(Edge)
 	 * @see #setTargetDecoration(Edge, javafx.scene.Node)
@@ -281,8 +332,8 @@ public class ZestProperties {
 	public static final String TARGET_DECORATION__E = "edge-target-decoration";
 
 	/**
-	 * This attribute determines the source decoration for an edge. This
-	 * attribute does not have a default value.
+	 * This attribute determines the source decoration for an edge. This attribute
+	 * does not have a default value.
 	 *
 	 * @see #getSourceDecoration(Edge)
 	 * @see #setSourceDecoration(Edge, javafx.scene.Node)
@@ -290,8 +341,8 @@ public class ZestProperties {
 	public static final String SOURCE_DECORATION__E = "edge-source-decoration";
 
 	/**
-	 * This attribute determines the target label for an edge. This attribute
-	 * does not have a default value.
+	 * This attribute determines the target label for an edge. This attribute does
+	 * not have a default value.
 	 *
 	 * @see #getTargetLabel(Edge)
 	 * @see #setTargetLabel(Edge, String)
@@ -299,8 +350,8 @@ public class ZestProperties {
 	public static final String TARGET_LABEL__E = "edge-target-label";
 
 	/**
-	 * This attribute determines the source label for an edge. This attribute
-	 * does not have a default value.
+	 * This attribute determines the source label for an edge. This attribute does
+	 * not have a default value.
 	 *
 	 * @see #getSourceLabel(Edge)
 	 * @see #setSourceLabel(Edge, String)
@@ -317,9 +368,8 @@ public class ZestProperties {
 	public static final String ROUTER__E = "edge-router";
 
 	/**
-	 * This attribute determines the {@link IConnectionInterpolator} used to
-	 * infer a geometry for an edge. This attribute does not have a default
-	 * value.
+	 * This attribute determines the {@link IConnectionInterpolator} used to infer a
+	 * geometry for an edge. This attribute does not have a default value.
 	 *
 	 * @see #getInterpolator(Edge)
 	 * @see #setInterpolator(Edge, IConnectionInterpolator)
@@ -336,13 +386,13 @@ public class ZestProperties {
 	public static final String LAYOUT_ALGORITHM__G = "graph-layout-algorithm";
 
 	/**
-	 * Returns the value of the {@link #CONTROL_POINTS__E} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #CONTROL_POINTS__E} attribute of the given
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} for which to determine the router points.
-	 * @return The value of the {@link #CONTROL_POINTS__E} attribute of the
-	 *         given {@link Edge}, or an empty list, if the attribute is unset.
+	 * @return The value of the {@link #CONTROL_POINTS__E} attribute of the given
+	 *         {@link Edge}, or an empty list, if the attribute is unset.
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Point> getControlPoints(Edge edge) {
@@ -424,8 +474,8 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of its
 	 *            {@link #CURVE__E} attribute.
-	 * @return A {@link javafx.scene.Node} that represents the visualization of
-	 *         the edge.
+	 * @return A {@link javafx.scene.Node} that represents the visualization of the
+	 *         edge.
 	 */
 	public static javafx.scene.Node getCurve(Edge edge) {
 		Object value = edge.attributesProperty().get(CURVE__E);
@@ -436,8 +486,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #CURVE_CSS_STYLE__E} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #CURVE_CSS_STYLE__E} attribute of the given
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the curve CSS style is determined.
@@ -468,8 +518,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EXTERNAL_LABEL__NE} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL__NE} attribute of the given
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the label is determined.
@@ -484,8 +534,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EXTERNAL_LABEL__NE} attribute of the
-	 * given {@link Node}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL__NE} attribute of the given
+	 * {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the label is determined.
@@ -500,8 +550,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute
-	 * of the given {@link Edge}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
+	 * the given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the label CSS style is determined.
@@ -516,8 +566,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute
-	 * of the given {@link Node}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
+	 * the given {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the label CSS style is determined.
@@ -532,13 +582,13 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute
-	 * of the given {@link Edge}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
+	 * the given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the position is determined.
-	 * @return The value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute
-	 *         of the given {@link Edge}.
+	 * @return The value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
+	 *         the given {@link Edge}.
 	 */
 	public static Point getExternalLabelPosition(Edge edge) {
 		Object value = edge.getAttributes().get(EXTERNAL_LABEL_POSITION__NE);
@@ -549,13 +599,13 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute
-	 * of the given {@link Node}.
+	 * Returns the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
+	 * the given {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the position is determined.
-	 * @return The value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute
-	 *         of the given {@link Node}.
+	 * @return The value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
+	 *         the given {@link Node}.
 	 */
 	public static Point getExternalLabelPosition(Node node) {
 		Object value = node.getAttributes().get(EXTERNAL_LABEL_POSITION__NE);
@@ -563,6 +613,46 @@ public class ZestProperties {
 			return (Point) ((Provider<?>) value).get();
 		}
 		return (Point) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the external label tooltip is
+	 *            determined.
+	 * @return The tooltip of the given {@link Edge} external label. If a
+	 *         {@link Provider} is set for {@link #EXTERNAL_LABEL_TOOLTIP__NE}, the
+	 *         value will be retrieved from it using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getExternalLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(EXTERNAL_LABEL_TOOLTIP__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the
+	 * given {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the external label tooltip is
+	 *            determined.
+	 * @return The tooltip of the given {@link Node} extrnal label. If a
+	 *         {@link Provider} is set for {@link #EXTERNAL_LABEL_TOOLTIP__NE}, the
+	 *         value will be retrieved from it using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getExternalLabelTooltip(Node node) {
+		Object value = node.attributesProperty().get(EXTERNAL_LABEL_TOOLTIP__NE);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -640,8 +730,8 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} whose attribute value is to be retrieved.
 	 * @return The value of the {@link #LABEL__NE} attribute {@link Edge}. If a
-	 *         {@link Provider} was set for the attribute, the value is
-	 *         retrieved from the provider using {@link Provider#get()}.
+	 *         {@link Provider} was set for the attribute, the value is retrieved
+	 *         from the provider using {@link Provider#get()}.
 	 */
 	public static String getLabel(Edge edge) {
 		Object value = edge.attributesProperty().get(LABEL__NE);
@@ -658,8 +748,8 @@ public class ZestProperties {
 	 * @param node
 	 *            The {@link Node} whose attribute value is to be retrieved.
 	 * @return The value of the {@link #LABEL__NE} attribute {@link Node}. If a
-	 *         {@link Provider} was set for the attribute, the value is
-	 *         retrieved from the provider using {@link Provider#get()}.
+	 *         {@link Provider} was set for the attribute, the value is retrieved
+	 *         from the provider using {@link Provider#get()}.
 	 */
 	public static String getLabel(Node node) {
 		Object value = node.attributesProperty().get(LABEL__NE);
@@ -670,8 +760,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the given
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the label CSS style is determined.
@@ -686,8 +776,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the
-	 * given {@link Node}.
+	 * Returns the value of the {@link #LABEL_CSS_STYLE__NE} attribute of the given
+	 * {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the label CSS style is determined.
@@ -702,13 +792,13 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #LABEL_POSITION__E} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #LABEL_POSITION__E} attribute of the given
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the position is determined.
-	 * @return The value of the {@link #LABEL_POSITION__E} attribute of the
-	 *         given {@link Edge}.
+	 * @return The value of the {@link #LABEL_POSITION__E} attribute of the given
+	 *         {@link Edge}.
 	 */
 	public static Point getLabelPosition(Edge edge) {
 		Object value = edge.attributesProperty().get(LABEL_POSITION__E);
@@ -719,8 +809,27 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #LAYOUT_ALGORITHM__G} attribute of the
-	 * given {@link Graph}.
+	 * Returns the value of the {@link #LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label tooltip is determined.
+	 * @return The tooltip of the given {@link Edge} label. If a {@link Provider} is
+	 *         set for {@link #LABEL_TOOLTIP__E}, the value will be retrieved from
+	 *         it using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(LABEL_TOOLTIP__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #LAYOUT_ALGORITHM__G} attribute of the given
+	 * {@link Graph}.
 	 *
 	 * @param graph
 	 *            The {@link Graph} of which the layout algorithm is determined.
@@ -808,8 +917,8 @@ public class ZestProperties {
 	 * @param node
 	 *            The {@link Node} for which to return the value of its
 	 *            {@link #SHAPE__N} attribute.
-	 * @return A {@link javafx.scene.Node} that represents the shape, which is
-	 *         used for rendering background and outline of the node.
+	 * @return A {@link javafx.scene.Node} that represents the shape, which is used
+	 *         for rendering background and outline of the node.
 	 */
 	public static javafx.scene.Node getShape(Node node) {
 		Object value = node.attributesProperty().get(SHAPE__N);
@@ -820,8 +929,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #SHAPE_CSS_STYLE__N} attribute of the
-	 * given {@link Node}.
+	 * Returns the value of the {@link #SHAPE_CSS_STYLE__N} attribute of the given
+	 * {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the node rectangle CSS style is
@@ -854,8 +963,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #SOURCE_DECORATION__E} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #SOURCE_DECORATION__E} attribute of the given
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration is determined.
@@ -870,8 +979,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E}
-	 * attribute of the given {@link Edge}.
+	 * Returns the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E} attribute of
+	 * the given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration CSS style is
@@ -893,8 +1002,8 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration is determined.
 	 * @return The value of the {@link #SOURCE_LABEL__E} attribute. In case a
-	 *         provider is set for the attribute, the value will be retrieved
-	 *         from the provider using {@link Provider#get()}.
+	 *         provider is set for the attribute, the value will be retrieved from
+	 *         the provider using {@link Provider#get()}.
 	 */
 	public static String getSourceLabel(Edge edge) {
 		Object value = edge.attributesProperty().get(SOURCE_LABEL__E);
@@ -905,8 +1014,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #SOURCE_LABEL_CSS_STYLE__E} attribute of
-	 * the given {@link Edge}.
+	 * Returns the value of the {@link #SOURCE_LABEL_CSS_STYLE__E} attribute of the
+	 * given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source label CSS style is
@@ -922,14 +1031,13 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #SOURCE_LABEL_POSITION__E} attribute of
-	 * the given {@link Edge}.
+	 * Returns the value of the {@link #SOURCE_LABEL_POSITION__E} attribute of the
+	 * given {@link Edge}.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the source label position is
-	 *            determined.
-	 * @return The value of the {@link #SOURCE_LABEL_POSITION__E} attribute of
-	 *         the given {@link Edge}.
+	 *            The {@link Edge} of which the source label position is determined.
+	 * @return The value of the {@link #SOURCE_LABEL_POSITION__E} attribute of the
+	 *         given {@link Edge}.
 	 */
 	public static Point getSourceLabelPosition(Edge edge) {
 		Object value = edge.attributesProperty().get(SOURCE_LABEL_POSITION__E);
@@ -940,12 +1048,30 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #SOURCE_LABEL_TOOLTIP__E} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label tooltip is determined.
+	 * @return The tooltip of the given {@link Edge} source label. If a
+	 *         {@link Provider} is set for {@link #SOURCE_LABEL_TOOLTIP__E}, the
+	 *         value will be retrieved from it using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getSourceLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(SOURCE_LABEL_TOOLTIP__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
 	 * Returns the value of the {@link #START_POINT__E} attribute of the given
 	 * {@link Edge}.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the start {@link Point} is
-	 *            determined.
+	 *            The {@link Edge} of which the start {@link Point} is determined.
 	 * @return The start {@link Point} of the given {@link Edge}.
 	 */
 	public static Point getStartPoint(Edge edge) {
@@ -957,8 +1083,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #TARGET_DECORATION__E} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #TARGET_DECORATION__E} attribute of the given
+	 * {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration is determined.
@@ -973,8 +1099,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #TARGET_DECORATION_CSS_STYLE__E}
-	 * attribute of the given {@link Edge}.
+	 * Returns the value of the {@link #TARGET_DECORATION_CSS_STYLE__E} attribute of
+	 * the given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration CSS style is
@@ -996,8 +1122,8 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration is determined.
 	 * @return The value of the {@link #TARGET_LABEL__E} attribute. In case a
-	 *         provider is set for the attribute, the value will be retrieved
-	 *         from the provider using {@link Provider#get()}.
+	 *         provider is set for the attribute, the value will be retrieved from
+	 *         the provider using {@link Provider#get()}.
 	 */
 	public static String getTargetLabel(Edge edge) {
 		Object value = edge.attributesProperty().get(TARGET_LABEL__E);
@@ -1008,8 +1134,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #TARGET_LABEL_CSS_STYLE__E} attribute of
-	 * the given {@link Edge}.
+	 * Returns the value of the {@link #TARGET_LABEL_CSS_STYLE__E} attribute of the
+	 * given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target label CSS style is
@@ -1025,14 +1151,13 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #TARGET_LABEL_POSITION__E} attribute of
-	 * the given {@link Edge}.
+	 * Returns the value of the {@link #TARGET_LABEL_POSITION__E} attribute of the
+	 * given {@link Edge}.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the target label position is
-	 *            determined.
-	 * @return The value of the {@link #TARGET_LABEL_POSITION__E} attribute of
-	 *         the given {@link Edge}.
+	 *            The {@link Edge} of which the target label position is determined.
+	 * @return The value of the {@link #TARGET_LABEL_POSITION__E} attribute of the
+	 *         given {@link Edge}.
 	 */
 	public static Point getTargetLabelPosition(Edge edge) {
 		Object value = edge.attributesProperty().get(TARGET_LABEL_POSITION__E);
@@ -1043,14 +1168,52 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #TARGET_LABEL_TOOLTIP__E} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label tooltip is determined.
+	 * @return The tooltip of the given {@link Edge} target label. If a
+	 *         {@link Provider} is set for {@link #TARGET_LABEL_TOOLTIP__E}, the
+	 *         value will be retrieved from it using {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getTargetLabelTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(TARGET_LABEL_TOOLTIP__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #TOOLTIP__E} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the tooltip is determined.
+	 * @return The tooltip of the given {@link Edge}. If a {@link Provider} is set
+	 *         for {@link #TOOLTIP__E}, the value will be retrieved from it using
+	 *         {@link Provider#get()}.
+	 * @since 5.1
+	 */
+	public static String getTooltip(Edge edge) {
+		Object value = edge.attributesProperty().get(TOOLTIP__E);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
+	}
+
+	/**
 	 * Returns the value of the {@link #TOOLTIP__N} attribute of the given
 	 * {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the tooltip is determined.
-	 * @return The tooltip of the given {@link Node}. If a {@link Provider} is
-	 *         set for {@link #TOOLTIP__N}, the value will be retrieved from it
-	 *         using {@link Provider#get()}.
+	 * @return The tooltip of the given {@link Node}. If a {@link Provider} is set
+	 *         for {@link #TOOLTIP__N}, the value will be retrieved from it using
+	 *         {@link Provider#get()}.
 	 */
 	public static String getTooltip(Node node) {
 		Object value = node.attributesProperty().get(TOOLTIP__N);
@@ -1065,8 +1228,8 @@ public class ZestProperties {
 	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the {@link #CONTROL_POINTS__E}
-	 *            attribute is changed.
+	 *            The {@link Edge} of which the {@link #CONTROL_POINTS__E} attribute
+	 *            is changed.
 	 * @param controlPoints
 	 *            The new {@link List} of control {@link Point}s for the given
 	 *            {@link Edge}.
@@ -1084,8 +1247,8 @@ public class ZestProperties {
 	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the {@link #CONTROL_POINTS__E}
-	 *            attribute is changed.
+	 *            The {@link Edge} of which the {@link #CONTROL_POINTS__E} attribute
+	 *            is changed.
 	 * @param controlPointsProvider
 	 *            The new {@link List} of control {@link Point}s for the given
 	 *            {@link Edge}.
@@ -1167,8 +1330,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given {@link Edge}
+	 * to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the CSS id is changed.
@@ -1184,8 +1347,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given {@link Edge}
+	 * to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the CSS id is changed.
@@ -1201,8 +1364,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given {@link Node}
+	 * to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the CSS id is changed.
@@ -1218,8 +1381,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #CSS_ID__NE} attribute of the given {@link Node}
+	 * to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the CSS id is changed.
@@ -1235,8 +1398,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SHAPE__N} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the value of the {@link #SHAPE__N} attribute of the given {@link Edge}
+	 * to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge}, for which to set the value of the
@@ -1254,8 +1417,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #CURVE__E} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the value of the {@link #CURVE__E} attribute of the given {@link Edge}
+	 * to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge}, for which to set the value of the
@@ -1413,8 +1576,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
-	 * the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of the
+	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the label CSS style is changed.
@@ -1430,8 +1593,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
-	 * the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of the
+	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the label CSS style is changed.
@@ -1447,8 +1610,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
-	 * the given {@link Node} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of the
+	 * given {@link Node} to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the node label CSS style is changed.
@@ -1464,8 +1627,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of
-	 * the given {@link Node} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_CSS_STYLE__NE} attribute of the
+	 * given {@link Node} to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the node label CSS style is changed.
@@ -1481,12 +1644,12 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
-	 * the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of the
+	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the
-	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
+	 *            The {@link Edge} of which the {@link #EXTERNAL_LABEL_POSITION__NE}
+	 *            attribute is changed.
 	 * @param externalLabelPosition
 	 *            The new external label position.
 	 */
@@ -1499,12 +1662,12 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
-	 * the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of the
+	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the
-	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
+	 *            The {@link Edge} of which the {@link #EXTERNAL_LABEL_POSITION__NE}
+	 *            attribute is changed.
 	 * @param externalLabelPositionProvider
 	 *            The new external label position.
 	 */
@@ -1517,12 +1680,12 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
-	 * the given {@link Node} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of the
+	 * given {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the
-	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
+	 *            The {@link Node} of which the {@link #EXTERNAL_LABEL_POSITION__NE}
+	 *            attribute is changed.
 	 * @param externalLabelPosition
 	 *            The new external label position.
 	 */
@@ -1535,12 +1698,12 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of
-	 * the given {@link Node} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_POSITION__NE} attribute of the
+	 * given {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the
-	 *            {@link #EXTERNAL_LABEL_POSITION__NE} attribute is changed.
+	 *            The {@link Node} of which the {@link #EXTERNAL_LABEL_POSITION__NE}
+	 *            attribute is changed.
 	 * @param externalLabelPositionProvider
 	 *            The new external label position.
 	 */
@@ -1553,8 +1716,82 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #ICON__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the
+	 * given {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #EXTERNAL_LABEL_TOOLTIP__NE} value.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the external label tooltip is changed.
+	 * @param tooltip
+	 *            The new external label tooltip for the given {@link Edge}.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			edge.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltip);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the
+	 * given {@link Node} to the given provider.
+	 *
+	 * @param node
+	 *            The {@link Node} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #EXTERNAL_LABEL_TOOLTIP__NE} value.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Node node, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			node.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #EXTERNAL_LABEL_TOOLTIP__NE} attribute of the
+	 * given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the external label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Node}'s external label.
+	 * @since 5.1
+	 */
+	public static void setExternalLabelTooltip(Node node, String tooltip) {
+		if (tooltip == null) {
+			node.attributesProperty().remove(EXTERNAL_LABEL_TOOLTIP__NE);
+		} else {
+			node.attributesProperty().put(EXTERNAL_LABEL_TOOLTIP__NE, tooltip);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #ICON__N} attribute of the given {@link Node} to
+	 * the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the icon is changed.
@@ -1570,8 +1807,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #ICON__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #ICON__N} attribute of the given {@link Node} to
+	 * the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the icon is changed.
@@ -1593,8 +1830,8 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the interpolator is changed.
 	 * @param interpolator
-	 *            The new {@link IConnectionInterpolator} for the given
-	 *            {@link Edge} .
+	 *            The new {@link IConnectionInterpolator} for the given {@link Edge}
+	 *            .
 	 */
 	public static void setInterpolator(Edge edge, IConnectionInterpolator interpolator) {
 		if (interpolator == null) {
@@ -1611,8 +1848,8 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the interpolator is changed.
 	 * @param interpolatorProvider
-	 *            The new {@link IConnectionInterpolator} for the given
-	 *            {@link Edge} .
+	 *            The new {@link IConnectionInterpolator} for the given {@link Edge}
+	 *            .
 	 */
 	public static void setInterpolator(Edge edge, Provider<IConnectionInterpolator> interpolatorProvider) {
 		if (interpolatorProvider == null) {
@@ -1699,8 +1936,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the {@link #LABEL__NE} attribute of the given {@link Edge} to the
-	 * given provider.
+	 * Sets the {@link #LABEL__NE} attribute of the given {@link Edge} to the given
+	 * provider.
 	 *
 	 * @param edge
 	 *            The {@link Edge} whose attribute is to be changed.
@@ -1717,8 +1954,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the {@link #LABEL__NE} attribute of the given {@link Edge} to the
-	 * given value.
+	 * Sets the {@link #LABEL__NE} attribute of the given {@link Edge} to the given
+	 * value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} whose attribute is to be changed.
@@ -1734,8 +1971,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the {@link #LABEL__NE} attribute of the given {@link Node} to the
-	 * given provider.
+	 * Sets the {@link #LABEL__NE} attribute of the given {@link Node} to the given
+	 * provider.
 	 *
 	 * @param node
 	 *            The {@link Node} whose attribute is to be changed.
@@ -1752,8 +1989,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the {@link #LABEL__NE} attribute of the given {@link Node} to the
-	 * given value.
+	 * Sets the {@link #LABEL__NE} attribute of the given {@link Node} to the given
+	 * value.
 	 *
 	 * @param node
 	 *            The {@link Node} whose attribute is to be changed.
@@ -1871,6 +2108,43 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #LABEL_TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(LABEL_TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge} label.
+	 * @since 5.1
+	 */
+	public static void setLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(LABEL_TOOLTIP__E, tooltip);
+		}
+	}
+
+	/**
 	 * Sets the value of the {@link #LAYOUT_ALGORITHM__G} attribute of the given
 	 * {@link Graph} to the given value.
 	 *
@@ -1905,12 +2179,11 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
-	 * given {@link Edge} to the given value.
+	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the given
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the layout irrelevant flag is
-	 *            changed.
+	 *            The {@link Edge} of which the layout irrelevant flag is changed.
 	 * @param layoutIrrelevant
 	 *            The new layout irrelevant flag for the given {@link Edge}.
 	 */
@@ -1923,12 +2196,11 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
-	 * given {@link Edge} to the given value.
+	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the given
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the layout irrelevant flag is
-	 *            changed.
+	 *            The {@link Edge} of which the layout irrelevant flag is changed.
 	 * @param layoutIrrelevantProvider
 	 *            The new layout irrelevant flag for the given {@link Edge}.
 	 */
@@ -1941,12 +2213,11 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
-	 * given {@link Node} to the given value.
+	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the given
+	 * {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the layout irrelevant flag is
-	 *            changed.
+	 *            The {@link Node} of which the layout irrelevant flag is changed.
 	 * @param layoutIrrelevant
 	 *            The new layout irrelevant flag for the given {@link Node}.
 	 */
@@ -1959,12 +2230,11 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the
-	 * given {@link Node} to the given value.
+	 * Sets the value of the {@link #LAYOUT_IRRELEVANT__NE} attribute of the given
+	 * {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the layout irrelevant flag is
-	 *            changed.
+	 *            The {@link Node} of which the layout irrelevant flag is changed.
 	 * @param layoutIrrelevantProvider
 	 *            The new layout irrelevant flag for the given {@link Node}.
 	 */
@@ -1981,8 +2251,8 @@ public class ZestProperties {
 	 * {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the {@link #POSITION__N} attribute
-	 *            is changed.
+	 *            The {@link Node} of which the {@link #POSITION__N} attribute is
+	 *            changed.
 	 * @param position
 	 *            The new node position.
 	 */
@@ -1999,8 +2269,8 @@ public class ZestProperties {
 	 * {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the {@link #POSITION__N} attribute
-	 *            is changed.
+	 *            The {@link Node} of which the {@link #POSITION__N} attribute is
+	 *            changed.
 	 * @param positionProvider
 	 *            The new node position.
 	 */
@@ -2013,8 +2283,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #ROUTER__E} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the value of the {@link #ROUTER__E} attribute of the given {@link Edge}
+	 * to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the router is changed.
@@ -2030,8 +2300,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #ROUTER__E} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the value of the {@link #ROUTER__E} attribute of the given {@link Edge}
+	 * to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the router is changed.
@@ -2047,8 +2317,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SHAPE__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #SHAPE__N} attribute of the given {@link Node}
+	 * to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node}, for which to set the value of the
@@ -2066,8 +2336,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SHAPE__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #SHAPE__N} attribute of the given {@link Node}
+	 * to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node}, for which to set the value of the
@@ -2089,8 +2359,7 @@ public class ZestProperties {
 	 * {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the node rectangle CSS style is
-	 *            changed.
+	 *            The {@link Node} of which the node rectangle CSS style is changed.
 	 * @param rectCssStyleProvider
 	 *            The new node rectangle CSS style for the given {@link Node}.
 	 */
@@ -2107,8 +2376,7 @@ public class ZestProperties {
 	 * {@link Node} to the given value.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the node rectangle CSS style is
-	 *            changed.
+	 *            The {@link Node} of which the node rectangle CSS style is changed.
 	 * @param rectCssStyle
 	 *            The new node rectangle CSS style for the given {@link Node}.
 	 */
@@ -2121,8 +2389,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SIZE__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #SIZE__N} attribute of the given {@link Node} to
+	 * the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} for which to return the {@link #SIZE__N}.
@@ -2139,8 +2407,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SIZE__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #SIZE__N} attribute of the given {@link Node} to
+	 * the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} for which to return the {@link #SIZE__N}.
@@ -2157,8 +2425,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SOURCE_DECORATION__E} attribute of the
-	 * given {@link Edge} to the given value.
+	 * Sets the value of the {@link #SOURCE_DECORATION__E} attribute of the given
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration is changed.
@@ -2174,8 +2442,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SOURCE_DECORATION__E} attribute of the
-	 * given {@link Edge} to the given value.
+	 * Sets the value of the {@link #SOURCE_DECORATION__E} attribute of the given
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration is changed.
@@ -2191,30 +2459,28 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E} attribute
-	 * of the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E} attribute of
+	 * the given {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration CSS style is
 	 *            changed.
 	 * @param sourceDecorationCssStyleProvider
-	 *            The new source decoration CSS style for the given {@link Edge}
-	 *            .
+	 *            The new source decoration CSS style for the given {@link Edge} .
 	 */
 	public static void setSourceDecorationCssStyle(Edge edge, Provider<String> sourceDecorationCssStyleProvider) {
 		edge.attributesProperty().put(SOURCE_DECORATION_CSS_STYLE__E, sourceDecorationCssStyleProvider);
 	}
 
 	/**
-	 * Sets the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E} attribute
-	 * of the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #SOURCE_DECORATION_CSS_STYLE__E} attribute of
+	 * the given {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration CSS style is
 	 *            changed.
 	 * @param sourceDecorationCssStyle
-	 *            The new source decoration CSS style for the given {@link Edge}
-	 *            .
+	 *            The new source decoration CSS style for the given {@link Edge} .
 	 */
 	public static void setSourceDecorationCssStyle(Edge edge, String sourceDecorationCssStyle) {
 		if (sourceDecorationCssStyle == null) {
@@ -2264,8 +2530,7 @@ public class ZestProperties {
 	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the source label CSS style is
-	 *            changed.
+	 *            The {@link Edge} of which the source label CSS style is changed.
 	 * @param sourceLabelCssStyleProvider
 	 *            The new source label CSS style for the given {@link Edge} .
 	 */
@@ -2282,8 +2547,7 @@ public class ZestProperties {
 	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the source label CSS style is
-	 *            changed.
+	 *            The {@link Edge} of which the source label CSS style is changed.
 	 * @param sourceLabelCssStyle
 	 *            The new source label CSS style for the given {@link Edge} .
 	 */
@@ -2302,8 +2566,7 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the source label is changed.
 	 * @param labelPosition
-	 *            The new position for the source label of the given
-	 *            {@link Edge}.
+	 *            The new position for the source label of the given {@link Edge}.
 	 */
 	public static void setSourceLabelPosition(Edge edge, Point labelPosition) {
 		if (labelPosition == null) {
@@ -2320,14 +2583,50 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the source label is changed.
 	 * @param labelPositionProvider
-	 *            The new position for the source label of the given
-	 *            {@link Edge}.
+	 *            The new position for the source label of the given {@link Edge}.
 	 */
 	public static void setSourceLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
 		if (labelPositionProvider == null) {
 			edge.attributesProperty().remove(SOURCE_LABEL_POSITION__E);
 		} else {
 			edge.attributesProperty().put(SOURCE_LABEL_POSITION__E, labelPositionProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SOURCE_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #SOURCE_LABEL_TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setSourceLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #SOURCE_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge} source label.
+	 * @since 5.1
+	 */
+	public static void setSourceLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(SOURCE_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(SOURCE_LABEL_TOOLTIP__E, tooltip);
 		}
 	}
 
@@ -2368,8 +2667,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #TARGET_DECORATION__E} attribute of the
-	 * given {@link Edge} to the given value.
+	 * Sets the value of the {@link #TARGET_DECORATION__E} attribute of the given
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration is changed.
@@ -2385,8 +2684,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #TARGET_DECORATION__E} attribute of the
-	 * given {@link Edge} to the given value.
+	 * Sets the value of the {@link #TARGET_DECORATION__E} attribute of the given
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration is changed.
@@ -2402,15 +2701,14 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #TARGET_DECORATION_CSS_STYLE__E} attribute
-	 * of the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #TARGET_DECORATION_CSS_STYLE__E} attribute of
+	 * the given {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration CSS style is
 	 *            changed.
 	 * @param targetDecorationCssStyleProvider
-	 *            The new target decoration CSS style for the given {@link Edge}
-	 *            .
+	 *            The new target decoration CSS style for the given {@link Edge} .
 	 */
 	public static void setTargetDecorationCssStyle(Edge edge, Provider<String> targetDecorationCssStyleProvider) {
 		if (targetDecorationCssStyleProvider == null) {
@@ -2421,15 +2719,14 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #TARGET_DECORATION_CSS_STYLE__E} attribute
-	 * of the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #TARGET_DECORATION_CSS_STYLE__E} attribute of
+	 * the given {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration CSS style is
 	 *            changed.
 	 * @param targetDecorationCssStyle
-	 *            The new target decoration CSS style for the given {@link Edge}
-	 *            .
+	 *            The new target decoration CSS style for the given {@link Edge} .
 	 */
 	public static void setTargetDecorationCssStyle(Edge edge, String targetDecorationCssStyle) {
 		if (targetDecorationCssStyle == null) {
@@ -2479,8 +2776,7 @@ public class ZestProperties {
 	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the target label CSS style is
-	 *            changed.
+	 *            The {@link Edge} of which the target label CSS style is changed.
 	 * @param targetLabelCssStyleProvider
 	 *            The new target label CSS style for the given {@link Edge} .
 	 */
@@ -2497,8 +2793,7 @@ public class ZestProperties {
 	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the target label CSS style is
-	 *            changed.
+	 *            The {@link Edge} of which the target label CSS style is changed.
 	 * @param targetLabelCssStyle
 	 *            The new target label CSS style for the given {@link Edge} .
 	 */
@@ -2517,8 +2812,7 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the target label is changed.
 	 * @param labelPosition
-	 *            The new position for the target label of the given
-	 *            {@link Edge}.
+	 *            The new position for the target label of the given {@link Edge}.
 	 */
 	public static void setTargetLabelPosition(Edge edge, Point labelPosition) {
 		if (labelPosition == null) {
@@ -2535,8 +2829,7 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the target label is changed.
 	 * @param labelPositionProvider
-	 *            The new position for the target label of the given
-	 *            {@link Edge}.
+	 *            The new position for the target label of the given {@link Edge}.
 	 */
 	public static void setTargetLabelPosition(Edge edge, Provider<Point> labelPositionProvider) {
 		if (labelPositionProvider == null) {
@@ -2547,8 +2840,82 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #TOOLTIP__N} attribute of the given
-	 * {@link Node} to the given provider.
+	 * Sets the value of the {@link #TARGET_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #TARGET_LABEL_TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setTargetLabelTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TARGET_LABEL_TOOLTIP__E} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge} target label.
+	 * @since 5.1
+	 */
+	public static void setTargetLabelTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(TARGET_LABEL_TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TARGET_LABEL_TOOLTIP__E, tooltip);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TOOLTIP__E} attribute of the given {@link Edge}
+	 * to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #TOOLTIP__E} value.
+	 * @since 5.1
+	 */
+	public static void setTooltip(Edge edge, Provider<String> tooltipProvider) {
+		if (tooltipProvider == null) {
+			edge.attributesProperty().remove(TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TOOLTIP__E, tooltipProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TOOLTIP__E} attribute of the given {@link Edge}
+	 * to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the tooltip is changed.
+	 * @param tooltip
+	 *            The new tooltip for the given {@link Edge}.
+	 * @since 5.1
+	 */
+	public static void setTooltip(Edge edge, String tooltip) {
+		if (tooltip == null) {
+			edge.attributesProperty().remove(TOOLTIP__E);
+		} else {
+			edge.attributesProperty().put(TOOLTIP__E, tooltip);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #TOOLTIP__N} attribute of the given {@link Node}
+	 * to the given provider.
 	 *
 	 * @param node
 	 *            The {@link Node} whose attribute is change.
@@ -2565,8 +2932,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #TOOLTIP__N} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #TOOLTIP__N} attribute of the given {@link Node}
+	 * to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the tooltip is changed.
