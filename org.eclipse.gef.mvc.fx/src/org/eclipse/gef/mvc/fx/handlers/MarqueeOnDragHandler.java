@@ -193,6 +193,8 @@ public class MarqueeOnDragHandler extends AbstractHandler
 			}
 		};
 		getHost().getRoot().addChildren(Collections.singletonList(feedback));
+		// XXX: refresh immediately so that scrollbars do not have to be
+		// displayed unless necessary
 		feedback.refreshVisual();
 	}
 
