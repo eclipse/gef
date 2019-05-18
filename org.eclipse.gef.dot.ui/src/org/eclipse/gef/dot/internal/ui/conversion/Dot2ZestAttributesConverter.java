@@ -753,10 +753,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// tooltip
 		EscString dotTooltip = DotAttributes.getTooltipParsed(dot);
 		if (dotTooltip != null) {
-			// TODO: consider EscString Justification
-			String stringTooltip = dotTooltip.getLines().stream()
-					.map(JustifiedText::getText)
-					.collect(Collectors.joining("\n")); //$NON-NLS-1$
+			String stringTooltip = computeTooltip(dotTooltip);
 			String zestTooltip = decodeEscString(stringTooltip, dot);
 			ZestProperties.setTooltip(zest, zestTooltip);
 		}
@@ -770,6 +767,12 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					computeZestLabelPosition(dotXlpParsed, dotXLabel));
 		}
 
+	}
+
+	private String computeTooltip(EscString dotTooltip) {
+		// TODO: consider EscString Justification
+		return dotTooltip.getLines().stream().map(JustifiedText::getText)
+				.collect(Collectors.joining(System.lineSeparator()));
 	}
 
 	private StringBuilder computeZestStyle(Node dot,
