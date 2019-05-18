@@ -908,7 +908,11 @@ class Dot2ZestNodeAttributesConversionTest {
 			digraph{
 				1[tooltip="testing\nis\nfun"]
 			}
-		'''.assertNodeTooltip("testing\nis\nfun")
+		'''.assertNodeTooltip('''
+			testing
+			is
+			fun'''
+		)
 	}
 
 	@Test def node_tooltip003() {

@@ -63,6 +63,33 @@ class Dot2ZestEdgeAttributesConversionTest {
 		'''.assertEdgeCssId(null)
 	}
 
+	@Test def edge_labelTooltip001() {
+		'''
+			graph {
+				1--2 [labeltooltip="test"]
+			}
+		'''.assertEdgeLabelTooltip("test")
+	}
+
+	@Test def edge_labelTooltip002() {
+		'''
+			graph {
+				1--2 [labeltooltip="\E"]
+			}
+		'''.assertEdgeLabelTooltip("1--2")
+	}
+
+	@Test def edge_labelTooltip003() {
+		'''
+			graph {
+				1--2 [labeltooltip="Label tooltip of edge\n\E"]
+			}
+		'''.assertEdgeLabelTooltip('''
+			Label tooltip of edge
+			1--2'''
+		)
+	}
+
 	@Test def edge_style001() {
 		'''
 			digraph {
@@ -949,6 +976,33 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
+	@Test def edge_tooltip001() {
+		'''
+			digraph {
+				1->2 [tooltip="test"]
+			}
+		'''.assertEdgeTooltip("test")
+	}
+
+	@Test def edge_tooltip002() {
+		'''
+			digraph {
+				1->2 [tooltip="\E"]
+			}
+		'''.assertEdgeTooltip("1->2")
+	}
+
+	@Test def edge_tooltip003() {
+		'''
+			digraph {
+				1->2 [tooltip="Edge tooltip of\n \E"]
+			}
+		'''.assertEdgeTooltip('''
+			Edge tooltip of
+			 1->2'''
+		)
+	}
+
 	private def assertEdgeCssId(CharSequence dotText, String expected) {
 		val actual = dotText.convertFirstEdge.cssId
 		expected.assertEquals(actual)
@@ -1040,6 +1094,16 @@ class Dot2ZestEdgeAttributesConversionTest {
 		val invisible = dotText.convertFirstEdge.invisible
 		// assert on visibility, not on invisibility
 		val actual = if (invisible===null) true else !invisible
+		expected.assertEquals(actual)
+	}
+
+	private def assertEdgeTooltip(CharSequence dotText, String expected) {
+		val actual = dotText.convertFirstEdge.tooltip
+		expected.assertEquals(actual)
+	}
+
+	private def assertEdgeLabelTooltip(CharSequence dotText, String expected) {
+		val actual = dotText.convertFirstEdge.labelTooltip
 		expected.assertEquals(actual)
 	}
 

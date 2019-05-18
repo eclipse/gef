@@ -1019,7 +1019,6 @@ class Dot2ZestGraphCopierTest {
 	}
 
 	@Test def edge_labeltooltip() {
-		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		'''
 			digraph {
 				1->2[label="foo", labeltooltip="baa"]
@@ -1039,6 +1038,7 @@ class Dot2ZestGraphCopierTest {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
+					edge-label-tooltip : baa
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : foo
 				}
@@ -1270,7 +1270,6 @@ class Dot2ZestGraphCopierTest {
 	}
 
 	@Test def edge_tooltip() {
-		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		'''
 			digraph {
 				1->2[tooltip="foo"]
@@ -1291,6 +1290,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
+					edge-tooltip : foo
 				}
 			}
 		''')

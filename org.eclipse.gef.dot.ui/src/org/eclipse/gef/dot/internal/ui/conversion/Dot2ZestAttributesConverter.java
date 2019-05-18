@@ -303,6 +303,22 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
 		}
 
+		// convert tooltip
+		EscString dotTooltip = DotAttributes.getTooltipParsed(dot);
+		if (dotTooltip != null) {
+			String stringTooltip = computeTooltip(dotTooltip);
+			String zestTooltip = decodeEscString(stringTooltip, dot);
+			ZestProperties.setTooltip(zest, zestTooltip);
+		}
+
+		// convert label tooltip
+		EscString dotLabelTooltip = DotAttributes.getLabeltooltipParsed(dot);
+		if (dotLabelTooltip != null) {
+			String stringTooltip = computeTooltip(dotLabelTooltip);
+			String zestLabelTooltip = decodeEscString(stringTooltip, dot);
+			ZestProperties.setLabelTooltip(zest, zestLabelTooltip);
+		}
+
 		// create edge curve
 		GeometryNode<ICurve> curve = new GeometryNode<>();
 		ZestProperties.setCurve(zest, curve);
