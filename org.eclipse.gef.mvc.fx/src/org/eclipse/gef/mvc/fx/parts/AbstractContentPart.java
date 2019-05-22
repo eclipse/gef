@@ -99,7 +99,7 @@ public abstract class AbstractContentPart<V extends Node>
 	 * overwritten by subclasses.
 	 */
 	@Override
-	public final void addContentChild(Object contentChild, int index) {
+	public void addContentChild(Object contentChild, int index) {
 		List<Object> oldContentChildren = new ArrayList<>(
 				doGetContentChildren());
 		if (oldContentChildren.contains(contentChild)) {
