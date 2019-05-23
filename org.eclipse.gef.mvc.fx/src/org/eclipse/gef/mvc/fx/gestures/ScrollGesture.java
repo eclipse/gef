@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Shawn Kleese (IT.UV Software GmbH) - bugfixing
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.gestures;
@@ -30,6 +31,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.ScrollEvent;
 import javafx.util.Duration;
@@ -160,6 +162,21 @@ public class ScrollGesture extends AbstractGesture {
 			if (sceneProperty.get() != null) {
 				sceneListener.changed(sceneProperty, null, sceneProperty.get());
 			}
+
+			// register on every Viewers-Canvas scene-Property a Change-Listener
+			// to detect Scene-Changes. For example: Detaching Viewparts
+			Parent canvas = viewer.getCanvas();
+			canvas.sceneProperty().addListener((obs, ov, nv) -> {
+
+				if ((ov != null)) {
+					unhookScene(viewer);
+				}
+
+				if ((nv != null)) {
+					hookScene(nv, viewer);
+				}
+			});
+
 		}
 	}
 
@@ -274,6 +291,9 @@ public class ScrollGesture extends AbstractGesture {
 	}
 
 	private void unhookScene(IViewer viewer) {
+		if (!scrollFilters.containsKey(viewer)) {
+			return;
+		}
 		EventHandler<ScrollEvent> filter = scrollFilters.remove(viewer);
 		scrollFilterScenes.remove(filter).removeEventFilter(ScrollEvent.SCROLL,
 				filter);
