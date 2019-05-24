@@ -312,12 +312,18 @@ class DotImport {
 		// subgraph/cluster attributes
 		setter.apply(BB__GC, [g, value|g.setBbRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
+		setter.apply(COLOR__CNE, [g, value|g.setColorRaw(value)])
+		setter.apply(COLORSCHEME__GCNE, [g, value|g.setColorschemeRaw(value)])
+		setter.apply(FILLCOLOR__CNE, [g, value|g.setFillcolorRaw(value)])
 		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
-		setter.apply(FONTNAME__GCNE, [g, value|g.setFontnameRaw(value)])		
+		setter.apply(FONTNAME__GCNE, [g, value|g.setFontnameRaw(value)])
 		setter.apply(FONTSIZE__GCNE, [g, value|g.setFontsizeRaw(value)])
+		setter.apply(ID__GCNE, [g, value|g.setIdRaw(value)])
 		setter.apply(LABEL__GCNE, [g, value|g.setLabelRaw(value)])
+		setter.apply(LP__GCE, [g, value|g.setLpRaw(value)])
 		setter.apply(RANK__S, [g, value|g.setRankRaw(value)])
 		setter.apply(PENWIDTH__CNE, [g, value|g.setPenwidthRaw(value)])
+		setter.apply(STYLE__GCNE, [g, value|g.setStyleRaw(value)])
 		setter.apply(TOOLTIP__CNE, [g, value|g.setTooltipRaw(value)])
 	}
 
