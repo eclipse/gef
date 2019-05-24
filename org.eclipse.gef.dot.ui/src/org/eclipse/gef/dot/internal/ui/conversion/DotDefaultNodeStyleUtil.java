@@ -77,7 +77,7 @@ public class DotDefaultNodeStyleUtil implements DotNodeStyleUtil {
 		}
 
 		// fillcolor: evaluate only if the node style is set to 'filled'.
-		if (hasStyle(NodeStyle.FILLED)) {
+		if (fillCondition()) {
 			Color dotFillColor = null;
 			ColorList fillColor = fillcolorAttribute();
 			if (fillColor != null && !fillColor.getColorValues().isEmpty()) {
@@ -149,7 +149,8 @@ public class DotDefaultNodeStyleUtil implements DotNodeStyleUtil {
 			// TODO: add support for 'rounded' styled nodes
 			break;
 		case SOLID:
-			zestStyle.append("-fx-stroke-width: 1;"); //$NON-NLS-1$
+			if (penwidthUnset)
+				zestStyle.append("-fx-stroke-width:1;"); //$NON-NLS-1$
 			break;
 		case STRIPED:
 			// TODO: add support for 'striped' styled nodes
@@ -190,6 +191,10 @@ public class DotDefaultNodeStyleUtil implements DotNodeStyleUtil {
 
 	protected ColorList fillcolorAttribute() {
 		return DotAttributes.getFillcolorParsed(dot);
+	}
+
+	protected boolean fillCondition() {
+		return hasStyle(NodeStyle.FILLED);
 	}
 
 	protected Style styleAttribute() {

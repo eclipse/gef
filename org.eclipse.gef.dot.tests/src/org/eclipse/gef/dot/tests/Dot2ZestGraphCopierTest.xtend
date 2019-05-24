@@ -69,6 +69,536 @@ class Dot2ZestGraphCopierTest {
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
 	}
 
+	@Test def cluster_bgcolor001() {
+		'''
+			digraph {
+				subgraph clusterName {
+					bgcolor=yellow;
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-fill: #ffff00;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_bgcolor002() {
+		'''
+			digraph {
+				subgraph clusterName {
+					bgcolor=yellow fillcolor=green;
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-fill: #ffff00;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_color() {
+		'''
+			digraph {
+				subgraph clusterName {
+					color=yellow;
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke: #ffff00;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_colorscheme() {
+		//The colorscheme itself is not a Zest property, but we can check, it is not ignored. Aqua is not a default x11 colour.
+		'''
+			digraph {
+				subgraph clusterName {
+					color=aqua colorscheme=svg;
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke: #00ffff;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fillcolor001() {
+		'''
+			digraph {
+				subgraph clusterName {
+					fillcolor=green;
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-fill: #00ff00;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fillcolor002() {
+		'''
+			digraph {
+				subgraph clusterName {
+					graph [fillcolor=green, style=filled];
+					2
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-fill: #00ff00;
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fontcolor() {
+		'''
+			digraph {
+				subgraph clusterName {
+					fontcolor=green label=foo;
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : foo
+					element-external-label-css-style : -fx-fill: #00ff00;
+					element-label : 
+					node-rect-css-style : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fontname() {
+		mockAvailableFonts("Times New Roman")
+		'''
+			digraph {
+				subgraph clusterName {
+					label="foo"
+					fontname="Times-Bold"
+					1
+				}
+				2
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : foo
+					element-external-label-css-style : -fx-font-family: "Times New Roman";-fx-font-weight: 700;-fx-font-style: normal;
+					element-label : 
+					node-rect-css-style : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fontsize() {
+		'''
+			digraph {
+				subgraph clusterName {
+					label="foo"
+					fontsize="4"
+					1
+				}
+				2
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-external-label : foo
+					element-external-label-css-style : -fx-font-size: 4.0;
+					element-label : 
+					node-rect-css-style : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node3 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_id() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				subgraph clusterName {
+					id="EASTEREGG"
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_label() {
+		'''
+			digraph {
+				subgraph clusterName {
+					label=green;
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-external-label : green
+					element-label : 
+					node-rect-css-style : 
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+
+	@Test def cluster_lp() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				subgraph clusterName {
+					lp="80,80";
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : 
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_penwidth001() {
+		'''
+			digraph {
+				subgraph clusterName {
+					penwidth=2
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke-width:2.0;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_penwidth002() {
+		'''
+			digraph {
+				subgraph clusterName {
+					style=bold
+					penwidth=2
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke-width:2.0;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_penwidth003() {
+		'''
+			digraph {
+				subgraph clusterName {
+					style=solid
+					penwidth=2
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke-width:2.0;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_style001() {
+		'''
+			digraph {
+				subgraph clusterName {
+					style=dashed
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke-dash-array: 7 7;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_style002() {
+		'''
+			digraph {
+				subgraph clusterName {
+					style=dotted
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke-dash-array: 1 6;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_style003() {
+		'''
+			digraph {
+				subgraph clusterName {
+					style=bold
+					1
+				}
+			}
+		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : -fx-stroke-width:2;
+					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_style004() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				subgraph clusterName {
+					graph [style="rounded"]
+					2
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 2
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_tooltip() {
+		// This test shows current behaviour, it needs adaptation once the attribute is supported.
+		'''
+			digraph {
+				subgraph clusterName {
+					tooltip="foo"
+					1
+				}
+			}
+		'''.assertZestConversion('''
+			Graph {
+				Node1 {
+					element-label : 
+					node-rect-css-style : 
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+				Node2 {
+					element-label : 1
+					node-shape : GeometryNode
+					node-size : Dimension(54.0, 36.0)
+				}
+			}
+		''')
+	}
+
 	@Test def edge_arrowhead001() {
 		'''
 			digraph {
@@ -1388,6 +1918,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -1412,6 +1943,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -1436,6 +1968,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -1459,6 +1992,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -1471,58 +2005,8 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Test def cluster_color() {
-		// This test shows current behaviour, it needs adaptation once the attribute is FULLY supported.
-		'''
-			digraph {
-				subgraph clusterName {
-					graph [color=yellow];
-					1
-				}
-			}
-		'''.assertZestConversion(new NodeShapeWithStylePrettyPrinter, '''
-			Graph {
-				Node1 {
-					element-label : 
-					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0), style: 
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node2 {
-					element-label : 1
-					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: 
-					node-size : Dimension(54.0, 36.0)
-				}
-			}
-		''')
-	}
-
 	@Test def void graph_colorscheme() {
 		// TODO: implement once the issue with attribute support is resolved (bug 540508)
-	}
-
-	@Test def graph_fillcolor() {
-		// This test shows current behaviour, it needs adaptation once the attribute is supported.
-		'''
-			digraph {
-				subgraph clusterName {
-					graph [fillcolor=green, style=filled];
-					2
-				}
-			}
-		'''.assertZestConversion('''
-			Graph {
-				Node1 {
-					element-label : 
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node2 {
-					element-label : 2
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-			}
-		''')
 	}
 
 	@Test def graph_fontcolor() {
@@ -1561,41 +2045,6 @@ class Dot2ZestGraphCopierTest {
 			}
 		''')
 	}
-
-	@Test def cluster_fontname() {
-		mockAvailableFonts("Times New Roman")
-		'''
-			digraph {
-				subgraph clusterName {
-					label="foo"
-					fontname="Times-Bold"
-					1
-				}
-				2
-			}
-		'''.assertZestConversion('''
-			Graph {
-				Node1 {
-					element-external-label : foo
-					element-external-label-css-style : -fx-font-family: "Times New Roman";-fx-font-weight: 700;-fx-font-style: normal;
-					element-label : 
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node2 {
-					element-label : 1
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node3 {
-					element-label : 2
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-			}
-		''')
-	}
-	
 
 	@Test def graph_fontsize() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
@@ -2408,56 +2857,6 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
-				}
-			}
-		''')
-	}
-
-	@Test def graph_style() {
-		// This test shows current behaviour, it needs adaptation once the attribute is supported.
-		'''
-			digraph {
-				subgraph clusterName {
-					graph [style="rounded"]
-					2
-				}
-			}
-		'''.assertZestConversion('''
-			Graph {
-				Node1 {
-					element-label : 
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node2 {
-					element-label : 2
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-			}
-		''')
-	}
-
-	@Test def cluster_tooltip() {
-		// This test shows current behaviour, it needs adaptation once the attribute is supported.
-		'''
-			digraph {
-				subgraph clusterName {
-					graph [tooltip="foo"]
-					1
-				}
-			}
-		'''.assertZestConversion('''
-			Graph {
-				Node1 {
-					element-label : 
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node2 {
-					element-label : 1
-					node-shape : GeometryNode
-					node-size : Dimension(54.0, 36.0)
 				}
 			}
 		''')
@@ -4260,6 +4659,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4345,6 +4745,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4426,6 +4827,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4474,6 +4876,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4522,11 +4925,13 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node2 {
 					element-label : 
+					node-rect-css-style : 
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}

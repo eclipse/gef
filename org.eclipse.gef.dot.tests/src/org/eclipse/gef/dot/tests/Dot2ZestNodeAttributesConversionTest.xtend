@@ -673,7 +673,7 @@ class Dot2ZestNodeAttributesConversionTest {
 				1[style=solid]
 			}
 		'''.assertNodeStyle('''
-			-fx-stroke-width: 1;
+			-fx-stroke-width:1;
 		''')
 	}
 
