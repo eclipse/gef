@@ -119,6 +119,11 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 
 		Dot2ZestAttributesConverter attributesCopier = getAttributeCopier();
 
+		// cluster node style
+		ZestProperties.setShapeCssStyle(zestNode,
+				new DotClusterStyleUtil(attributesCopier.colorUtil, dotNode)
+						.computeZestStyle().toString());
+
 		// label fontcolor, fontsize, fontname
 		String zestNodeLabelCssStyle = attributesCopier
 				.computeZestGraphLabelCssStyle(dotNode.getNestedGraph());

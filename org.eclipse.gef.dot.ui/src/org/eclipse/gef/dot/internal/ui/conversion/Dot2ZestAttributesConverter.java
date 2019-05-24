@@ -110,7 +110,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		public boolean invertYAxis = false;
 	}
 
-	private DotColorUtil colorUtil = new DotColorUtil();
+	DotColorUtil colorUtil = new DotColorUtil();
 	public final DotFontUtil fontUtil = new DotFontUtil();
 
 	@Override

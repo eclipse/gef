@@ -11,7 +11,7 @@
  */
 
 .node .shape {
-	-fx-fill: white;
+	-fx-fill: transparent;
 	-fx-stroke: black;
 }
 
