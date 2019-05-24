@@ -1707,6 +1707,136 @@ class DotImportTest {
 		DotTestGraphs.NODE_XLP_LOCAL.assertImportedTo(expected)
 	}
 
+	@Test def cluster_bgcolor() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.bgcolor=p2], "red")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_BGCOLOR.assertImportedTo(expected)
+	}
+
+	@Test def cluster_color() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.color=p2], "red")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_COLOR.assertImportedTo(expected)
+	}
+
+	@Test def cluster_colorscheme() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.colorscheme=p2], "svg")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_COLORSCHEME.assertImportedTo(expected)
+	}
+
+	@Test def cluster_fillcolor() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.fillcolor=p2], "red")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_FILLCOLOR.assertImportedTo(expected)
+	}
+
+	@Test def cluster_fontcolor() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.fontcolor=p2], "red")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_FONTCOLOR.assertImportedTo(expected)
+	}
+
+	@Test def cluster_fontname() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.fontname=p2], "Helvetica")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_FONTNAME.assertImportedTo(expected)
+	}
+
+	@Test def cluster_fontsize() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.fontsize=p2], "2")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_FONTSIZE.assertImportedTo(expected)
+	}
+
+	@Test def cluster_id() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.id=p2], "FOO")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_ID.assertImportedTo(expected)
+	}
+
+	@Test def cluster_label() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.label=p2], "foo")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_LABEL.assertImportedTo(expected)
+	}
+
+	@Test def cluster_lp() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.lp=p2], "-4.5,-6.7")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_LP.assertImportedTo(expected)
+	}
+
 	@Test def cluster_penwidth() {
 		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
 		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.penwidth=p2], "2")
@@ -1718,6 +1848,32 @@ class DotImportTest {
 		var expected = graph.nodes(n1).build
 		
 		DotTestGraphs.CLUSTER_PENWIDTH.assertImportedTo(expected)
+	}
+
+	@Test def cluster_style() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.style=p2], "dashed")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_STYLE.assertImportedTo(expected)
+	}
+
+	@Test def cluster_tooltip() {
+		var graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
+		var nestedGraph = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterName").attr([p1,p2|p1.tooltip=p2], "foo")
+		
+		val n1 = new Node.Builder().buildNode
+		val n11 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		
+		n1.nestedGraph = nestedGraph.nodes(n11).build
+		var expected = graph.nodes(n1).build
+		
+		DotTestGraphs.CLUSTER_TOOLTIP.assertImportedTo(expected)
 	}
 
 	@Test def clusters() {

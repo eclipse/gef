@@ -379,7 +379,7 @@ class DotTestGraphs {
 			1;2;3;4;
 			1->2; 2->3; 2->4;
 		}
-	'''	
+	'''
 
 	public static val GRAPH_LAYOUT_OSAGE = '''
 		digraph {
@@ -395,7 +395,97 @@ class DotTestGraphs {
 			1;2;3;4;
 			1->2; 2->3; 2->4;
 		}
-	''' 
+	'''
+
+	public static val CLUSTER_BGCOLOR = '''
+		graph {
+			subgraph clusterName {
+				graph [bgcolor=red];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_COLOR = '''
+		graph {
+			subgraph clusterName {
+				graph [color=red];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_COLORSCHEME = '''
+		graph {
+			subgraph clusterName {
+				graph [colorscheme=svg];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_FILLCOLOR = '''
+		graph {
+			subgraph clusterName {
+				graph [fillcolor=red];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_FONTCOLOR = '''
+		graph {
+			subgraph clusterName {
+				graph [fontcolor=red];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_FONTNAME = '''
+		graph {
+			subgraph clusterName {
+				graph [fontname=Helvetica];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_FONTSIZE = '''
+		graph {
+			subgraph clusterName {
+				graph [fontsize=2];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_ID = '''
+		graph {
+			subgraph clusterName {
+				graph [id=FOO];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_LABEL = '''
+		graph {
+			subgraph clusterName {
+				graph [label=foo];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_LP = '''
+		graph {
+			subgraph clusterName {
+				graph [lp="-4.5,-6.7"];
+				1
+			}
+		}
+	'''
 
 	public static val CLUSTER_PENWIDTH = '''
 		graph {
@@ -404,7 +494,25 @@ class DotTestGraphs {
 				1
 			}
 		}
-	''' 
+	'''
+
+	public static val CLUSTER_STYLE = '''
+		graph {
+			subgraph clusterName {
+				graph [style=dashed];
+				1
+			}
+		}
+	'''
+
+	public static val CLUSTER_TOOLTIP = '''
+		graph {
+			subgraph clusterName {
+				graph [tooltip=foo];
+				1
+			}
+		}
+	'''
 
 	public static val GRAPH_RANKDIR_LR = '''
 		graph {
