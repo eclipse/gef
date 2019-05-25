@@ -49,6 +49,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotHoverTest.class, DotHtmlLabelContentAssistLexerTest.class,
 		DotHtmlLabelContentAssistTest.class,
 		DotHtmlLabelHighlightingLexerTest.class,
+		DotHtmlLabelRenameRefactoringTest.class,
 		DotHtmlLabelTokenTypeToPartitionMapperTest.class,
 		DotLabelProviderTest.class, DotMarkingOccurrencesTest.class,
 		DotOutlineViewTest.class, DotQuickfixTest.class,

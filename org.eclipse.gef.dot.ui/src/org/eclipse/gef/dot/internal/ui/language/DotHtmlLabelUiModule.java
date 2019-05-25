@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand   (itemis AG) - initial API and implementation
- *     Tamas Miklossy     (itemis AG) - improve html-label highlighting/folding
+ *     Tamas Miklossy     (itemis AG) - improve html-label highlighting/folding/refactoring
  *     Zoey Gerrit Prigge (itemis AG) - bind double click strategy provider (bug #532244)
  *     
  *******************************************************************************/
@@ -18,11 +18,13 @@ import org.eclipse.gef.dot.internal.ui.language.doubleclicking.DotHtmlLabelDoubl
 import org.eclipse.gef.dot.internal.ui.language.editor.DotHtmlLabelTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.folding.DotHtmlLabelFoldingRegionProvider;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotHtmlLabelSemanticHighlightingCalculator;
+import org.eclipse.gef.dot.internal.ui.language.renaming.DotHtmlLabelRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.doubleClicking.DoubleClickStrategyProvider;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.model.ITokenTypeToPartitionTypeMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.refactoring.IRenameStrategy;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -49,4 +51,8 @@ public class DotHtmlLabelUiModule extends
 		return DotHtmlLabelDoubleClickStrategyProvider.class;
 	}
 
+	@Override
+	public Class<? extends IRenameStrategy> bindIRenameStrategy() {
+		return DotHtmlLabelRenameStrategy.class;
+	}
 }
