@@ -165,6 +165,7 @@ Workflow {
 				highlighting = true
 			}
 
+			// generates rename refactoring support classes
 			fragment = refactoring.RefactorElementNameFragment {}
 
 			// generates junit test support classes into Generator#pathTestProject
