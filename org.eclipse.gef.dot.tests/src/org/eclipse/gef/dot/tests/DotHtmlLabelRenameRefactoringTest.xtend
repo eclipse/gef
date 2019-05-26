@@ -19,10 +19,10 @@ import org.eclipse.core.resources.IncrementalProjectBuilder
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.NullProgressMonitor
-import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage
 import org.eclipse.ui.actions.WorkspaceModifyOperation
 import org.eclipse.xtext.junit4.InjectWith
@@ -64,7 +64,7 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 		'''
 			<B>text</B>
 		'''.
-		testRenameRefactoring([firstHtmlTag], "I", '''
+		testRenameRefactoring([firstHtmlTag], "B" -> "I", '''
 			<I>text</I>
 		''')
 	}
@@ -73,7 +73,7 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 		'''
 			<SUB>text</SUB>
 		'''.
-		testRenameRefactoring([firstHtmlTag], "SUP", '''
+		testRenameRefactoring([firstHtmlTag], "SUB" -> "SUP", '''
 			<SUP>text</SUP>
 		''')
 	}
@@ -82,7 +82,7 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 		'''
 			<HR/>
 		'''.
-		testRenameRefactoring([firstHtmlTag], "VR", '''
+		testRenameRefactoring([firstHtmlTag], "HR" -> "VR", '''
 			<VR/>
 		''')
 	}
@@ -91,16 +91,16 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 		'''
 			<B><I>text</I></B>
 		'''.
-		testRenameRefactoring([firstHtmlTag], "O", '''
+		testRenameRefactoring([firstHtmlTag], "B" -> "O", '''
 			<O><I>text</I></O>
 		''')
 	}
 
-	private def testRenameRefactoring(CharSequence it, (HtmlLabel)=>EObject element, String newName, CharSequence newContent) {
+	private def testRenameRefactoring(CharSequence it, (HtmlLabel)=>HtmlTag element, Pair<String, String> names, CharSequence newContent) {
 		// given
 		dslFile.
 		// when
-		rename(target(element), newName).
+		rename(target(element), names).
 		// then
 		dslFileHasContent(newContent)
 	}
@@ -109,12 +109,19 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 		toString.createTestFile(primaryFileExtension)
 	}
 
-	private def target(CharSequence it, extension (HtmlLabel)=>EObject elementProvider) {
+	private def target(CharSequence it, extension (HtmlLabel)=>HtmlTag elementProvider) {
 		parse.apply
 	}
 
-	private def rename(IFile testFile, EObject targetElement, String newName) {
+	private def rename(IFile testFile, HtmlTag targetElement, Pair<String, String> names) {
 		waitForBuild
+		
+		// ensure the right element is selected
+		val currentName = names.key
+		assertEquals("Wrong target element is selected!", currentName, targetElement.name)
+		
+		val newName = names.value
+		
 		val targetElementFragment = targetElement.URI.fragment
 		val targetElementURI = testFile.fullPath.toString.createPlatformResourceURI(true).appendFragment(targetElementFragment)
 
