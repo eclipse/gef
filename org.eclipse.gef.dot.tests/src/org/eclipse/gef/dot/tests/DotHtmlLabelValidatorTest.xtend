@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -26,6 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage.Literals.*
+import static org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator.*
 
 import static extension org.junit.Assert.assertEquals
 
@@ -52,42 +53,42 @@ class DotHtmlLabelValidatorTest {
 		htmlLabel.assertError(HTML_TAG, Diagnostic.SYNTAX_DIAGNOSTIC, "no viable alternative at character '-'")
 		htmlLabel.assertError(HTML_TAG, Diagnostic.SYNTAX_DIAGNOSTIC, "no viable alternative at character '-'")
 		htmlLabel.assertError(HTML_TAG, Diagnostic.SYNTAX_DIAGNOSTIC, "mismatched input '>' expecting RULE_ASSIGN")
-		htmlLabel.assertHtmlTagError("Tag '<HTML>' is not closed (expected '</HTML>' but got '</B>').")
-		htmlLabel.assertHtmlTagError("Tag '<HTML>' is not supported.")
-		htmlLabel.assertHtmlAttributeError("Attribute 'comment--' is not allowed inside '<HTML>'.")
+		htmlLabel.assertHtmlTagError(HTML_TAG_IS_NOT_PROPERLY_CLOSED, "Tag '<HTML>' is not closed (expected '</HTML>' but got '</B>').")
+		htmlLabel.assertHtmlTagError(HTML_TAG_INVALID_TAG_NAME, "Tag '<HTML>' is not supported.")
+		htmlLabel.assertHtmlAttributeError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME, "Attribute 'comment--' is not allowed inside '<HTML>'.")
 	}
 
 	@Test def tag_wrongly_closed() {
 		val htmlLabel = '''<test>string</B>'''.parse.assertNumberOfIssues(2)
-		htmlLabel.assertHtmlTagError("Tag '<test>' is not closed (expected '</test>' but got '</B>').")
-		htmlLabel.assertHtmlTagError("Tag '<test>' is not supported.")
+		htmlLabel.assertHtmlTagError(HTML_TAG_IS_NOT_PROPERLY_CLOSED, "Tag '<test>' is not closed (expected '</test>' but got '</B>').")
+		htmlLabel.assertHtmlTagError(HTML_TAG_INVALID_TAG_NAME, "Tag '<test>' is not supported.")
 	}
 
 	@Test def unknown_parent() {
 		val htmlLabel = '''<foo><tr></tr></foo>'''.parse.assertNumberOfIssues(2)
-		htmlLabel.assertHtmlTagError("Tag '<foo>' is not supported.")
-		htmlLabel.assertHtmlTagError("Tag '<tr>' is not allowed inside '<foo>', but only inside '<TABLE>'.")
+		htmlLabel.assertHtmlTagError(HTML_TAG_INVALID_TAG_NAME, "Tag '<foo>' is not supported.")
+		htmlLabel.assertHtmlTagError(HTML_TAG_INVALID_TAG_NAME, "Tag '<tr>' is not allowed inside '<foo>', but only inside '<TABLE>'.")
 	}
 
 	@Test def invalid_parent1() {
 		'''<tr></tr>'''.parse.assertNumberOfIssues(1).
-		assertHtmlTagError("Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.")
+		assertHtmlTagError(HTML_TAG_INVALID_TAG_NAME, "Tag '<tr>' is not allowed inside '<ROOT>', but only inside '<TABLE>'.")
 	}
 
 	@Test def invalid_parent2() {
 		'''<table><U></U></table>'''.parse.assertNumberOfIssues(1).
-		assertHtmlTagError("Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<SUB>', '<B>', '<S>', '<ROOT>', '<U>', '<I>', '<FONT>', '<O>', '<SUP>'.")
+		assertHtmlTagError(HTML_TAG_INVALID_TAG_NAME, "Tag '<U>' is not allowed inside '<table>', but only inside '<TD>', '<SUB>', '<B>', '<S>', '<ROOT>', '<U>', '<I>', '<FONT>', '<O>', '<SUP>'.")
 	}
 
 	@Test def invalid_attribute_in_valid_tag() {
 		'''<table foo="bar"></table>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("Attribute 'foo' is not allowed inside '<table>'.")
+		assertHtmlAttributeError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME, "Attribute 'foo' is not allowed inside '<table>'.")
 	}
 
 	@Test def invalid_attribute_in_invalid_tag() {
 		val htmlLabel = '''<foo bar="baz"></foo>'''.parse.assertNumberOfIssues(2)
-		htmlLabel.assertHtmlTagError("Tag '<foo>' is not supported.")
-		htmlLabel.assertHtmlAttributeError("Attribute 'bar' is not allowed inside '<foo>'.")
+		htmlLabel.assertHtmlTagError(HTML_TAG_INVALID_TAG_NAME, "Tag '<foo>' is not supported.")
+		htmlLabel.assertHtmlAttributeError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME, "Attribute 'bar' is not allowed inside '<foo>'.")
 	}
 
 	@Test def string_literal_is_not_allowed() {
@@ -209,10 +210,10 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_BR_ALIGN() {
 		'''<BR ALIGN=""/>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
+		assertHtmlAttributeValueError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 
 		'''<BR ALIGN="foo"/>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_FONT_COLOR() {
@@ -229,9 +230,9 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_IMG_SCALE() {
 		'''<TABLE><TR><TD><IMG SCALE=""/></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.")
+		assertHtmlAttributeValueError("The value '' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.")
 		'''<TABLE><TR><TD><IMG SCALE="foo"/></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct SCALE: Value has to be one of 'FALSE', 'TRUE', 'WIDTH', 'HEIGHT', 'BOTH'.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_IMG_SRC() {
@@ -240,10 +241,10 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TABLE_ALIGN() {
 		'''<TABLE ALIGN=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
+		assertHtmlAttributeValueError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 		
 		'''<TABLE ALIGN="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TABLE_BGCOLOR() {
@@ -252,82 +253,82 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TABLE_BORDER() {
 		'''<TABLE BORDER=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE BORDER="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE BORDER="-2"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE BORDER="-1"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE BORDER="256"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '256' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '256' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE BORDER="257"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '257' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '257' is not a correct BORDER: Value has to be between 0 and 255.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TABLE_CELLBORDER() {
 		'''<TABLE CELLBORDER=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct CELLBORDER: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLBORDER="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct CELLBORDER: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLBORDER="-2"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct CELLBORDER: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLBORDER="-1"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct CELLBORDER: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLBORDER="128"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '128' is not a correct CELLBORDER: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '128' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLBORDER="129"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '129' is not a correct CELLBORDER: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '129' is not a correct CELLBORDER: Value has to be between 0 and 127.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TABLE_CELLPADDING() {
 		'''<TABLE CELLPADDING=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE CELLPADDING="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE CELLPADDING="-2"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE CELLPADDING="-1"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE CELLPADDING="256"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '256' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '256' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE CELLPADDING="257"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TABLE_CELLSPACING() {
 		'''<TABLE CELLSPACING=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLSPACING="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLSPACING="-2"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLSPACING="-1"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLSPACING="128"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '128' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '128' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE CELLSPACING="129"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TABLE_COLOR() {
@@ -336,18 +337,18 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TABLE_COLUMNS() {
 		'''<TABLE ROWS=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct ROWS: Value has to be '*'.")
+		assertHtmlAttributeValueError("The value '' is not a correct ROWS: Value has to be '*'.")
 
 		'''<TABLE ROWS="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct ROWS: Value has to be '*'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct ROWS: Value has to be '*'.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TABLE_FIXEDSIZE() {
 		'''<TABLE FIXEDSIZE=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
+		assertHtmlAttributeValueError("The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
 
 		'''<TABLE FIXEDSIZE="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TABLE_GRADIENTANGLE() {
@@ -356,22 +357,22 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TABLE_HEIGHT() {
 		'''<TABLE HEIGHT=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE HEIGHT="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE HEIGHT="-2"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE HEIGHT="-1"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE HEIGHT="65536"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65536' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65536' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE HEIGHT="65537"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TABLE_HREF() {
@@ -388,18 +389,18 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TABLE_ROWS() {
 		'''<TABLE ROWS=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct ROWS: Value has to be '*'.")
+		assertHtmlAttributeValueError("The value '' is not a correct ROWS: Value has to be '*'.")
 		
 		'''<TABLE ROWS="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct ROWS: Value has to be '*'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct ROWS: Value has to be '*'.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TABLE_SIDES() {
 		'''<TABLE SIDES=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
+		assertHtmlAttributeValueError("The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 		
 		'''<TABLE SIDES="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TABLE_STYLE() {
@@ -420,46 +421,46 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TABLE_VALIGN() {
 		'''<TABLE VALIGN=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
+		assertHtmlAttributeValueError("The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 
 		'''<TABLE VALIGN="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TABLE_WIDTH() {
 		'''<TABLE WIDTH=""></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE WIDTH="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE WIDTH="-2"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE WIDTH="-1"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE WIDTH="65536"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65536' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65536' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE WIDTH="65537"></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65537' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65537' is not a correct WIDTH: Value has to be between 0 and 65535.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TD_ALIGN() {
 		'''<TABLE><TR><TD ALIGN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.")
+		assertHtmlAttributeValueError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.")
 
 		'''<TABLE><TR><TD ALIGN="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT', 'TEXT'.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TD_BALIGN() {
 		'''<TABLE><TR><TD BALIGN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
+		assertHtmlAttributeValueError("The value '' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 
 		'''<TABLE><TR><TD BALIGN="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct BALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TD_BGCOLOR() {
@@ -468,62 +469,62 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TD_BORDER() {
 		'''<TABLE><TR><TD BORDER=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD BORDER="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD BORDER="-2"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD BORDER="-1"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD BORDER="256"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '256' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '256' is not a correct BORDER: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD BORDER="257"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '257' is not a correct BORDER: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '257' is not a correct BORDER: Value has to be between 0 and 255.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TD_CELLPADDING() {
 		'''<TABLE><TR><TD CELLPADDING=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD CELLPADDING="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD CELLPADDING="-2"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD CELLPADDING="-1"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD CELLPADDING="256"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '256' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '256' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 
 		'''<TABLE><TR><TD CELLPADDING="257"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.")
+		assertHtmlAttributeValueError("The value '257' is not a correct CELLPADDING: Value has to be between 0 and 255.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TD_CELLSPACING() {
 		'''<TABLE><TR><TD CELLSPACING=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE><TR><TD CELLSPACING="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE><TR><TD CELLSPACING="-2"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE><TR><TD CELLSPACING="-1"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE><TR><TD CELLSPACING="128"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '128' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '128' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 
 		'''<TABLE><TR><TD CELLSPACING="129"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.")
+		assertHtmlAttributeValueError("The value '129' is not a correct CELLSPACING: Value has to be between 0 and 127.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TD_COLOR() {
@@ -532,30 +533,30 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TD_COLSPAN() {
 		'''<TABLE><TR><TD COLSPAN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct COLSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD COLSPAN="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct COLSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD COLSPAN="-1"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct COLSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD COLSPAN="0"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '0' is not a correct COLSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '0' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD COLSPAN="65536"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65536' is not a correct COLSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '65536' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD COLSPAN="65537"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65537' is not a correct COLSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '65537' is not a correct COLSPAN: Value has to be between 1 and 65535.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TD_FIXEDSIZE() {
 		'''<TABLE><TR><TD FIXEDSIZE=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
+		assertHtmlAttributeValueError("The value '' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'.")
 
 		'''<TABLE><TR><TD FIXEDSIZE="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct FIXEDSIZE: Value has to be one of 'FALSE', 'TRUE'")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TD_GRADIENTANGLE() {
@@ -564,22 +565,22 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TD_HEIGHT() {
 		'''<TABLE><TR><TD HEIGHT=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD HEIGHT="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD HEIGHT="-2"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD HEIGHT="-1"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD HEIGHT="65536"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65536' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65536' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD HEIGHT="65537"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65537' is not a correct HEIGHT: Value has to be between 0 and 65535.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TD_HREF() {
@@ -596,30 +597,30 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TD_ROWSPAN() {
 		'''<TABLE><TR><TD ROWSPAN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD ROWSPAN="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD ROWSPAN="-1"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD ROWSPAN="0"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '0' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '0' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD ROWSPAN="65536"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65536' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '65536' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 
 		'''<TABLE><TR><TD ROWSPAN="65537"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65537' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
+		assertHtmlAttributeValueError("The value '65537' is not a correct ROWSPAN: Value has to be between 1 and 65535.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TD_SIDES() {
 		'''<TABLE><TR><TD SIDES=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
+		assertHtmlAttributeValueError("The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 
 		'''<TABLE><TR><TD SIDES="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 	}
 
 	@Test def void invalid_attribute_value_of_tag_TD_STYLE() {
@@ -640,30 +641,30 @@ class DotHtmlLabelValidatorTest {
 
 	@Test def invalid_attribute_value_of_tag_TD_VALIGN() {
 		'''<TABLE><TR><TD VALIGN=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
+		assertHtmlAttributeValueError("The value '' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 
 		'''<TABLE><TR><TD VALIGN="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct VALIGN: Value has to be one of 'MIDDLE', 'BOTTOM', 'TOP'.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_TD_WIDTH() {
 		'''<TABLE><TR><TD WIDTH=""></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD WIDTH="foo"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value 'foo' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value 'foo' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD WIDTH="-2"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-2' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-2' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD WIDTH="-1"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '-1' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '-1' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD WIDTH="65536"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65536' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65536' is not a correct WIDTH: Value has to be between 0 and 65535.")
 
 		'''<TABLE><TR><TD WIDTH="65537"></TD></TR></TABLE>'''.parse.assertNumberOfIssues(1).
-		assertHtmlAttributeError("The value '65537' is not a correct WIDTH: Value has to be between 0 and 65535.")
+		assertHtmlAttributeValueError("The value '65537' is not a correct WIDTH: Value has to be between 0 and 65535.")
 	}
 
 	private def assertStringLiteralError(HtmlLabel htmlLabel, String... text) {
@@ -673,15 +674,23 @@ class DotHtmlLabelValidatorTest {
 
 	private def assertSelfClosingTagError(HtmlLabel htmlLabel, String... text) {
 		val tagName = if(text.length > 0) text.get(0) else htmlLabel.parts.head.tag.name
-		htmlLabel.assertHtmlTagError('''Tag '<«tagName»/>' cannot be self closing.''')
+		htmlLabel.assertHtmlTagError(HTML_TAG_SELF_CLOSING_IS_NOT_ALLOWED, '''Tag '<«tagName»/>' cannot be self closing.''')
 	}
 
 	private def assertHtmlTagError(HtmlLabel htmlLabel, String message) {
-		htmlLabel.assertError(HTML_TAG, null, message)
+		htmlLabel.assertHtmlTagError(null, message)
+	}
+	
+	private def assertHtmlTagError(HtmlLabel htmlLabel, String issueCode, String message) {
+		htmlLabel.assertError(HTML_TAG, issueCode, message)
+	}
+	
+	private def assertHtmlAttributeValueError(HtmlLabel htmlLabel, String message) {
+		htmlLabel.assertHtmlAttributeError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_VALUE, message)
 	}
 
-	private def assertHtmlAttributeError(HtmlLabel htmlLabel, String message) {
-		htmlLabel.assertError(HTML_ATTR, null, message)
+	private def assertHtmlAttributeError(HtmlLabel htmlLabel, String issueCode, String message) {
+		htmlLabel.assertError(HTML_ATTR, issueCode, message)
 	}
 
 	private def assertNumberOfIssues(HtmlLabel htmlLabel, int expectedNumberOfIssues) {

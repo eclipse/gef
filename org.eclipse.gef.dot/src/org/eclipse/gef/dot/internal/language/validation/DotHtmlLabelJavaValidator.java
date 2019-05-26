@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -41,6 +41,31 @@ public class DotHtmlLabelJavaValidator extends
 		org.eclipse.gef.dot.internal.language.validation.AbstractDotHtmlLabelJavaValidator {
 
 	/**
+	 * Issue code for a non-properly-closed html tag.
+	 */
+	public static final String HTML_TAG_IS_NOT_PROPERLY_CLOSED = "html_tag_is_not_properly_closed";
+
+	/**
+	 * Issue code for a html tag where self-closing is not allowed.
+	 */
+	public static final String HTML_TAG_SELF_CLOSING_IS_NOT_ALLOWED = "html_tag_self_closing_is_not_allowed";
+
+	/**
+	 * Issue code for an invalid html tag name.
+	 */
+	public static final String HTML_TAG_INVALID_TAG_NAME = "html_tag_invalid_tag_name";
+
+	/**
+	 * Issue code for an invalid html attribute name.
+	 */
+	public static final String HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME = "html_attribute_invalid_attribute_name";
+
+	/**
+	 * Issue code for an invalid html attribute value.
+	 */
+	public static final String HTML_ATTRIBUTE_INVALID_ATTRIBUTE_VALUE = "html_attribute_invalid_attribute_value";
+
+	/**
 	 * Checks if the given {@link HtmlLabel}'s parts are valid siblings to each
 	 * other. Generates errors if the label's parts contains invalid siblings.
 	 * 
@@ -75,7 +100,7 @@ public class DotHtmlLabelJavaValidator extends
 	public void checkTagIsClosed(HtmlTag tag) {
 		if (!tag.isSelfClosing() && !tag.getName().toUpperCase()
 				.equals(tag.getCloseName().toUpperCase())) {
-			reportRangeBasedError(
+			reportRangeBasedError(HTML_TAG_IS_NOT_PROPERLY_CLOSED,
 					"Tag '<" + tag.getName() + ">' is not closed (expected '</"
 							+ tag.getName() + ">' but got '</"
 							+ tag.getCloseName() + ">').",
@@ -97,7 +122,7 @@ public class DotHtmlLabelJavaValidator extends
 
 		if (tag.isSelfClosing() && DotHtmlLabelHelper.getNonSelfClosingTags()
 				.contains(tagNameUpperCase)) {
-			reportRangeBasedError(
+			reportRangeBasedError(HTML_TAG_SELF_CLOSING_IS_NOT_ALLOWED,
 					"Tag '<" + tag.getName() + "/>' cannot be self closing.",
 					tag, HtmllabelPackage.Literals.HTML_TAG__NAME);
 		}
@@ -126,7 +151,7 @@ public class DotHtmlLabelJavaValidator extends
 				// TODO: verify why white spaces is stored as text
 				String text = child.getText();
 				if (text != null && !text.trim().isEmpty()) {
-					reportRangeBasedError(
+					reportRangeBasedError(null,
 							"Tag '<" + tag.getName()
 									+ ">' cannot contain a string literal.",
 							tag, HtmllabelPackage.Literals.HTML_TAG__NAME);
@@ -147,8 +172,9 @@ public class DotHtmlLabelJavaValidator extends
 	public void checkTagNameIsValid(HtmlTag tag) {
 		String tagName = tag.getName();
 		if (!DotHtmlLabelHelper.getAllTags().contains(tagName.toUpperCase())) {
-			reportRangeBasedError("Tag '<" + tagName + ">' is not supported.",
-					tag, HtmllabelPackage.Literals.HTML_TAG__NAME);
+			reportRangeBasedError(HTML_TAG_INVALID_TAG_NAME,
+					"Tag '<" + tagName + ">' is not supported.", tag,
+					HtmllabelPackage.Literals.HTML_TAG__NAME);
 		} else {
 			// find parent tag
 			EObject container = tag.eContainer().eContainer();
@@ -167,7 +193,7 @@ public class DotHtmlLabelJavaValidator extends
 			if (!validTags.containsKey(parentName.toUpperCase())
 					|| !validTags.get(parentName.toUpperCase())
 							.contains(tagName.toUpperCase())) {
-				reportRangeBasedError(
+				reportRangeBasedError(HTML_TAG_INVALID_TAG_NAME,
 						"Tag '<" + tagName + ">' is not allowed inside '<"
 								+ parentName + ">', but only inside '<"
 								+ String.join(">', '<",
@@ -200,7 +226,7 @@ public class DotHtmlLabelJavaValidator extends
 			if (!validAttributes.containsKey(tagName.toUpperCase())
 					|| !validAttributes.get(tagName.toUpperCase())
 							.contains(attrName.toUpperCase())) {
-				reportRangeBasedError(
+				reportRangeBasedError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME,
 						"Attribute '" + attrName + "' is not allowed inside '<"
 								+ tagName + ">'.",
 						attr, HtmllabelPackage.Literals.HTML_ATTR__NAME);
@@ -228,7 +254,7 @@ public class DotHtmlLabelJavaValidator extends
 			String message = getAttributeValueErrorMessage(htmlTagName,
 					htmlAttributeName, htmlAttributeValue);
 			if (message != null) {
-				reportRangeBasedError(
+				reportRangeBasedError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_VALUE,
 						"The value '" + htmlAttributeValue
 								+ "' is not a correct " + htmlAttributeName
 								+ ": " + message,
@@ -243,12 +269,12 @@ public class DotHtmlLabelJavaValidator extends
 				if (htmlText.getTag() != null) {
 					// if the htmlContent has a tag, mark the tag name as error
 					// prone text
-					reportRangeBasedError("Invalid siblings.",
+					reportRangeBasedError(null, "Invalid siblings.",
 							htmlText.getTag(),
 							HtmllabelPackage.Literals.HTML_TAG__NAME);
 				} else {
 					// otherwise, mark the text as error prone text
-					reportRangeBasedError("Invalid siblings.", htmlText,
+					reportRangeBasedError(null, "Invalid siblings.", htmlText,
 							HtmllabelPackage.Literals.HTML_CONTENT__TEXT);
 				}
 			}
@@ -437,8 +463,8 @@ public class DotHtmlLabelJavaValidator extends
 		return null;
 	}
 
-	private void reportRangeBasedError(String message, EObject object,
-			EStructuralFeature feature) {
+	private void reportRangeBasedError(String issueCode, String message,
+			EObject object, EStructuralFeature feature) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
 
@@ -452,9 +478,8 @@ public class DotHtmlLabelJavaValidator extends
 		int offset = node.getTotalOffset();
 		int length = node.getLength();
 
-		String code = null;
 		String[] issueData = null;
-		getMessageAcceptor().acceptError(message, object, offset, length, code,
-				issueData);
+		getMessageAcceptor().acceptError(message, object, offset, length,
+				issueCode, issueData);
 	}
 }
