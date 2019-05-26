@@ -60,12 +60,39 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 		createTestProjectWithXtextNature
 	}
 
-	@Test def rename_refactoring01() {
+	@Test def rename_refactoring001() {
 		'''
 			<B>text</B>
 		'''.
 		testRenameRefactoring([firstHtmlTag], "I", '''
 			<I>text</I>
+		''')
+	}
+
+	@Test def rename_refactoring002() {
+		'''
+			<SUB>text</SUB>
+		'''.
+		testRenameRefactoring([firstHtmlTag], "SUP", '''
+			<SUP>text</SUP>
+		''')
+	}
+
+	@Test def rename_refactoring003() {
+		'''
+			<HR/>
+		'''.
+		testRenameRefactoring([firstHtmlTag], "VR", '''
+			<VR/>
+		''')
+	}
+
+	@Test def rename_refactoring004() {
+		'''
+			<B><I>text</I></B>
+		'''.
+		testRenameRefactoring([firstHtmlTag], "O", '''
+			<O><I>text</I></O>
 		''')
 	}
 
