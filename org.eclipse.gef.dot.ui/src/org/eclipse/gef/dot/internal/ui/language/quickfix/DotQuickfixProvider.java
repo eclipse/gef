@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg    - intial Xtext generation (see bug #277380)
+ *     Fabian Steeg    - initial Xtext generation (see bug #277380)
  *     Alexander Nyßen - initial implementation
  *     Tamas Miklossy (itemis AG) - Add quickfix support for all dot attributes (bug #513196)
  *     Zoey Gerrit Prigge (itemis AG) - quickfix to remove redundant attributes (bug #540330)

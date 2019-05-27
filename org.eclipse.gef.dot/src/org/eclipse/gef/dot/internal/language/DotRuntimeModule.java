@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg    - intial Xtext generation (see bug #277380)
+ *     Fabian Steeg    - initial Xtext generation (see bug #277380)
  *     Alexander Nyßen (itemis AG) - initial implementation (value converter binding)
  *     Tamas Miklossy  (itemis AG) - request for static injection (#498324)
  *                                 - add binding for node model streamer (bug #532216)

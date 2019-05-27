@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg    - intial Xtext generation (see bug #277380)
+ *     Fabian Steeg    - initial Xtext generation (see bug #277380)
  *     Alexander Nyßen - initial implementation
  *     Tamas Miklossy  - Add support for arrowType edge decorations (bug #477980)
  *                     - Add support for polygon-based node shapes (bug #441352)
