@@ -33,7 +33,7 @@ public class DotTerminalConverters
 	/**
 	 * A value converter for the ID data type rule.
 	 * 
-	 * @return An {@link DotIDValueConverter}.
+	 * @return A {@link DotIDValueConverter}.
 	 */
 	@ValueConverter(rule = "ID")
 	public IValueConverter<ID> ID() {
