@@ -104,7 +104,8 @@ public class DotHtmlLabelJavaValidator extends
 					"Tag '<" + tag.getName() + ">' is not closed (expected '</"
 							+ tag.getName() + ">' but got '</"
 							+ tag.getCloseName() + ">').",
-					tag, HtmllabelPackage.Literals.HTML_TAG__CLOSE_NAME);
+					tag, HtmllabelPackage.Literals.HTML_TAG__CLOSE_NAME,
+					new String[] { tag.getName(), tag.getCloseName() });
 		}
 	}
 
@@ -465,6 +466,11 @@ public class DotHtmlLabelJavaValidator extends
 
 	private void reportRangeBasedError(String issueCode, String message,
 			EObject object, EStructuralFeature feature) {
+		reportRangeBasedError(issueCode, message, object, feature, null);
+	}
+
+	private void reportRangeBasedError(String issueCode, String message,
+			EObject object, EStructuralFeature feature, String[] issueData) {
 
 		List<INode> nodes = NodeModelUtils.findNodesForFeature(object, feature);
 
@@ -478,7 +484,6 @@ public class DotHtmlLabelJavaValidator extends
 		int offset = node.getTotalOffset();
 		int length = node.getLength();
 
-		String[] issueData = null;
 		getMessageAcceptor().acceptError(message, object, offset, length,
 				issueCode, issueData);
 	}

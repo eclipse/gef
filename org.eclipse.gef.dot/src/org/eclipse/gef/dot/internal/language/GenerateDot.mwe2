@@ -483,6 +483,9 @@ Workflow {
 			// outline API
 			fragment = outline.OutlineTreeProviderFragment auto-inject {}
 
+			// quickfix API
+			fragment = quickfix.QuickfixProviderFragment auto-inject {}
+
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
