@@ -21,24 +21,18 @@ import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkHelper;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkAcceptor;
 import org.eclipse.xtext.util.ITextRegion;
 
-import com.google.inject.Inject;
-
 public class DotHyperlinkHelper extends HyperlinkHelper {
-
-	@Inject
-	private EObjectAtOffsetHelper eObjectAtOffsetHelper;
 
 	@Override
 	public void createHyperlinksByOffset(XtextResource resource, int offset,
 			IHyperlinkAcceptor acceptor) {
 
-		EObject eObject = eObjectAtOffsetHelper.resolveElementAt(resource,
+		EObject eObject = getEObjectAtOffsetHelper().resolveElementAt(resource,
 				offset);
 		if (eObject instanceof NodeId) {
 			NodeId nodeId = (NodeId) eObject;
