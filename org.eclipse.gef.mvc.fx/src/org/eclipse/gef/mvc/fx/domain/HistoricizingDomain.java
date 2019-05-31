@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - API adjustments
  *
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.domain;
@@ -85,9 +86,9 @@ public class HistoricizingDomain implements IDomain {
 					if (transaction.getOperations().isEmpty()) {
 						// XXX: Copy transaction context to prevent CME when an
 						// interaction is started while performing undo.
-						for (IGesture tool : new ArrayList<>(
+						for (IGesture gesture : new ArrayList<>(
 								transactionContext)) {
-							closeExecutionTransaction(tool);
+							closeExecutionTransaction(gesture);
 						}
 					} else {
 						// XXX: Need a test case. I think it might be fine to
@@ -154,26 +155,22 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public void closeExecutionTransaction(IGesture tool) {
-		// if (!transactionContext.contains(tool)) {
-		// throw new IllegalStateException(
-		// "No transaction active for tool " + tool + ".");
-		// }
-		if (!transactionContext.contains(tool)) {
+	public void closeExecutionTransaction(IGesture gesture) {
+		if (!transactionContext.contains(gesture)) {
 			return; // TODO: is this legal?
 		}
 
-		// remove tool from the transaction context and close the transaction in
-		// case the tool was the last one
+		// remove gesture from the transaction context and close the transaction
+		// in case the gesture was the last one
 		if (transactionContext.size() == 1
-				&& transactionContext.contains(tool)) {
+				&& transactionContext.contains(gesture)) {
 			// Close transaction by adding it to the operation history in case
 			// it has an effect; all its nested operations have already been
 			// executed, thus it does not have to be executed again
 			if (transaction == null) {
 				throw new IllegalStateException(
-						"No transaction is currently active, while the transaction context sill contained tool "
-								+ tool + ".");
+						"No transaction is currently active, while the transaction context sill contained gesture "
+								+ gesture + ".");
 			}
 			List<ITransactionalOperation> operations = transaction
 					.getOperations();
@@ -195,7 +192,7 @@ public class HistoricizingDomain implements IDomain {
 			}
 			transaction = null;
 		}
-		transactionContext.remove(tool);
+		transactionContext.remove(gesture);
 	}
 
 	/**
@@ -340,6 +337,11 @@ public class HistoricizingDomain implements IDomain {
 		return ads.getAdapters(key);
 	}
 
+	@Override
+	public Map<AdapterKey<? extends IGesture>, IGesture> getGestures() {
+		return ads.getAdapters(IGesture.class);
+	}
+
 	/**
 	 * Returns the {@link IOperationHistory} used by this
 	 * {@link HistoricizingDomain} to execute transactions.
@@ -350,9 +352,16 @@ public class HistoricizingDomain implements IDomain {
 		return operationHistory;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @deprecated Will be removed in 6.0.0. Please use {@link #getGestures()}
+	 *             instead.
+	 */
 	@Override
+	@Deprecated
 	public Map<AdapterKey<? extends IGesture>, IGesture> getTools() {
-		return ads.getAdapters(IGesture.class);
+		return getGestures();
 	}
 
 	/**
@@ -387,27 +396,23 @@ public class HistoricizingDomain implements IDomain {
 	}
 
 	@Override
-	public boolean isExecutionTransactionOpen(IGesture tool) {
-		return transactionContext.contains(tool);
+	public boolean isExecutionTransactionOpen(IGesture gesture) {
+		return transactionContext.contains(gesture);
 	}
 
 	@Override
-	public void openExecutionTransaction(IGesture tool) {
-		// if (transactionContext.contains(tool)) {
-		// throw new IllegalStateException(
-		// "A transaction is already active for tool " + tool + ".");
-		// }
-		// Create a new transaction in case the tool is the first one to open a
-		// transaction.
-		if (transactionContext.contains(tool)) {
+	public void openExecutionTransaction(IGesture gesture) {
+		// Create a new transaction in case the gesture is the first one to open
+		// a transaction.
+		if (transactionContext.contains(gesture)) {
 			return; // TODO: is this legal??
 		}
-		transactionContext.add(tool);
+		transactionContext.add(gesture);
 		if (transactionContext.size() == 1
-				&& transactionContext.contains(tool)) {
+				&& transactionContext.contains(gesture)) {
 			if (transaction != null) {
 				throw new IllegalStateException(
-						"A transaction is already active, while this is the first tool within the transaction context.");
+						"A transaction is already active, while this is the first gesture within the transaction context.");
 			}
 			transaction = createExecutionTransaction();
 		}
@@ -482,5 +487,4 @@ public class HistoricizingDomain implements IDomain {
 	public <T> void unsetAdapter(T adapter) {
 		ads.unsetAdapter(adapter);
 	}
-
 }
