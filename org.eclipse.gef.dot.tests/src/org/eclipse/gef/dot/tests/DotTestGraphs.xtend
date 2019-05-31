@@ -568,7 +568,13 @@ class DotTestGraphs {
 			}
 		}
 	'''
-
+	
+	public static val GRAPH_COLORSCHEME_SVG = '''
+		graph {
+			colorscheme=svg
+			1
+		}
+	'''
 /*
  ************************************************************************************************************
  * Test dot graphs with global/local/override dot attributes

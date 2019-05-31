@@ -1158,6 +1158,16 @@ class DotImportTest {
 		DotTestGraphs.GRAPH_BGCOLOR_LOCAL.assertImportedTo(expected)
 	}
 
+	@Test def graph_colorscheme() {
+		// test local attribute
+		val graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH).
+			attr([p1,p2|p1.colorscheme=p2], "svg")
+		val n1 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
+		val expected = graph.nodes(n1).build
+		
+		DotTestGraphs.GRAPH_COLORSCHEME_SVG.assertImportedTo(expected)
+	}
+
 	@Test def graph_fontcolor() {
 		// test global attribute
 		val graph = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH).
