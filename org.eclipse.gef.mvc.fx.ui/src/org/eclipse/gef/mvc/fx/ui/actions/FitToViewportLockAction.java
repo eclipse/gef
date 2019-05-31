@@ -15,13 +15,17 @@ package org.eclipse.gef.mvc.fx.ui.actions;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.gestures.IGesture;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -45,6 +49,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	private ReadOnlyObjectProperty<Bounds> contentBoundsProperty;
 	private Affine contentTransform;
 	private InfiniteCanvas infiniteCanvas;
+	private boolean needsExec = false;
 	private EventHandler<TransformChangedEvent> trafoChangeListener = new EventHandler<TransformChangedEvent>() {
 		@Override
 		public void handle(TransformChangedEvent event) {
@@ -56,7 +61,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
-			onContentBoundsChanged();
+			needsExec = true;
 		}
 	};
 	private ChangeListener<? super Number> scrollOffsetChangeListener = new ChangeListener<Number>() {
@@ -71,7 +76,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
-			onSizeChanged();
+			needsExec = true;
 		}
 	};
 
@@ -117,6 +122,25 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		contentBoundsProperty.addListener(contentBoundsChangeListener);
 		infiniteCanvas.widthProperty().addListener(sizeChangeListener);
 		infiniteCanvas.heightProperty().addListener(sizeChangeListener);
+
+		IDomain domain = getViewer().getDomain();
+
+		if (domain instanceof HistoricizingDomain) {
+			IOperationHistory history = ((HistoricizingDomain) domain)
+					.getOperationHistory();
+			history.addOperationHistoryListener(ev -> {
+				if (needsExec) {
+					if (ev.getEventType() == OperationHistoryEvent.OPERATION_ADDED
+							|| ev.getEventType() == OperationHistoryEvent.OPERATION_REMOVED) {
+						needsExec = false;
+						Platform.runLater(() -> Platform
+								.runLater(() -> Platform.runLater(() -> {
+									runIfEnabled();
+								})));
+					}
+				}
+			});
+		}
 	}
 
 	/**
@@ -151,12 +175,9 @@ public class FitToViewportLockAction extends FitToViewportAction {
 			IGesture gesture = (IGesture) it.next();
 			isTransactionOpen = domain.isExecutionTransactionOpen(gesture);
 		}
+		// prevent fit-to-viewport during interaction
 		if (!isTransactionOpen) {
-			// fit to viewport if content (bounds) changes
 			runIfEnabled();
-		} else {
-			// manual interaction unlocks this action
-			setChecked(false);
 		}
 	}
 
@@ -195,6 +216,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 
 	@Override
 	public void runWithEvent(Event event) {
+		needsExec = false;
 		if (isChecked()) {
 			disableViewportListeners();
 			super.runWithEvent(event);
@@ -222,7 +244,6 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	protected void unlock() {
 		if (infiniteCanvas != null) {
 			disableViewportListeners();
-
 		}
 	}
 

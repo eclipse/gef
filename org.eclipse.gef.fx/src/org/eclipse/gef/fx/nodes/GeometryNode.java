@@ -97,8 +97,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 
 				// XXX: We need to clear the size caches; even if we use
 				// computed sizes in the following, if not doing so the
-				// super
-				// call will use stale values.
+				// super call will use stale values.
 				requestLayout();
 
 				// update layoutX, layoutY, as well as layout bounds
@@ -188,21 +187,14 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		// stroke width and type affect the layout bounds, so we have to react
 		// to changes
 		strokeWidthProperty().addListener(new ChangeListener<Number>() {
+
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
-				T geometry = geometryProperty.get();
-				if (geometry == null) {
-					return;
-				}
-
-				resize(prefWidth(-1), prefHeight(-1));
-				Rectangle geometricBounds = geometry.getBounds();
-				relocate(
-						geometricBounds.getX() - getStrokeOffset()
-								- getInsets().getLeft(),
-						geometricBounds.getY() - getStrokeOffset()
-								- getInsets().getTop());
+				// Platform.runLater(
+				// () -> Platform.runLater(() -> Platform.runLater(() -> {
+				reactToStrokeChanges();
+				// })));
 			}
 		});
 		strokeTypeProperty().addListener(new ChangeListener<StrokeType>() {
@@ -211,21 +203,9 @@ public class GeometryNode<T extends IGeometry> extends Region {
 			public void changed(
 					ObservableValue<? extends StrokeType> observable,
 					StrokeType oldValue, StrokeType newValue) {
-				T geometry = geometryProperty.get();
-				if (geometry == null) {
-					return;
-				}
-
-				resize(prefWidth(-1), prefHeight(-1));
-				Rectangle geometricBounds = geometry.getBounds();
-				relocate(
-						geometricBounds.getX() - getStrokeOffset()
-								- getInsets().getLeft(),
-						geometricBounds.getY() - getStrokeOffset()
-								- getInsets().getTop());
+				reactToStrokeChanges();
 			}
 		});
-
 		insetsProperty().addListener(new ChangeListener<Insets>() {
 
 			@Override
@@ -495,7 +475,8 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		if (geometricShape.getStroke() != null
 				&& geometricShape.getStrokeType() != StrokeType.INSIDE) {
 			offset = (geometricShape.getStrokeType() == StrokeType.CENTERED
-					? 0.5 : 1) * geometricShape.getStrokeWidth();
+					? 0.5
+					: 1) * geometricShape.getStrokeWidth();
 		}
 		return offset;
 	}
@@ -535,6 +516,25 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	 */
 	public final boolean isSmooth() {
 		return geometricShape.isSmooth();
+	}
+
+	/**
+	 * Preserves layout-bounds after stroke is changed.
+	 *
+	 * @since 5.1
+	 */
+	protected void reactToStrokeChanges() {
+		T geometry = geometryProperty.get();
+		if (geometry == null) {
+			return;
+		}
+		resize(prefWidth(-1), prefHeight(-1));
+		Rectangle geometricBounds = geometry.getBounds();
+		relocate(
+				geometricBounds.getX() - getStrokeOffset()
+						- getInsets().getLeft(),
+				geometricBounds.getY() - getStrokeOffset()
+						- getInsets().getTop());
 	}
 
 	@Override
@@ -665,7 +665,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 				// apply transform to path
 				Point boundsOrigin = new Point(geometricBounds.getX(),
 						geometricBounds.getY());
-				geometryProperty.setValue((T) geometry
+				geometryProperty.set((T) geometry
 						.getTransformed(new AffineTransform(1, 0, 0, 1,
 								-boundsOrigin.x, -boundsOrigin.y))
 						.getTransformed(new AffineTransform(sx, 0, 0, sy, 0, 0))
@@ -705,6 +705,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		if (geometryHeight < geometryMinHeight) {
 			geometryHeight = geometryMinHeight;
 		}
+
 		// System.out.println(
 		// "Resize Geometry to " + geometryWidth + ", " + geometryHeight);
 		resizeGeometry(geometryWidth, geometryHeight);
