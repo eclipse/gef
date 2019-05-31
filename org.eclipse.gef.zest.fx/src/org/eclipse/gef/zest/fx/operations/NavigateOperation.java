@@ -110,10 +110,9 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	private UpdateViewportStateOperation updateViewportStateOperation;
 
 	/**
-	 * Creates a new {@link NavigateOperation} that saves the layout and
-	 * viewport for the currently displayed {@link Graph}. The final state for
-	 * the operation can later be set using
-	 * {@link #setFinalState(Graph, boolean)}.
+	 * Creates a new {@link NavigateOperation} that saves the layout and viewport
+	 * for the currently displayed {@link Graph}. The final state for the operation
+	 * can later be set using {@link #setFinalState(Graph, boolean)}.
 	 *
 	 * @param viewer
 	 *            The {@link InfiniteCanvasViewer} of which the contents and
@@ -128,6 +127,7 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 		navigationModel = viewer.getAdapter(NavigationModel.class);
 
 		// create operations to clear the selection and focus models
+		// TODO: prevent losing current focus and selection due to regular scrolling
 		add(new ChangeSelectionOperation(viewer, Collections.emptyList()));
 		add(new ChangeFocusOperation(viewer, null));
 
@@ -143,12 +143,12 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	}
 
 	/**
-	 * Creates a new {@link NavigateOperation} that saves the layout and
-	 * viewport for the currently displayed {@link Graph}, loads the layout and
-	 * viewport of the <i>finalGraph</i>, and changes the viewer contents. If
-	 * the <i>isNestedGraph</i> flag is set to <code>true</code>, then the
-	 * viewport that was saved for <i>finalGraph</i> will not be restored, but
-	 * instead it will be reset.
+	 * Creates a new {@link NavigateOperation} that saves the layout and viewport
+	 * for the currently displayed {@link Graph}, loads the layout and viewport of
+	 * the <i>finalGraph</i>, and changes the viewer contents. If the
+	 * <i>isNestedGraph</i> flag is set to <code>true</code>, then the viewport that
+	 * was saved for <i>finalGraph</i> will not be restored, but instead it will be
+	 * reset.
 	 *
 	 * @param viewer
 	 *            The {@link InfiniteCanvasViewer} of which the contents and
@@ -157,8 +157,8 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	 *            The final {@link Graph} to be displayed within the given
 	 *            {@link InfiniteCanvasViewer}.
 	 * @param isNestedGraph
-	 *            Specifies whether or not the given <i>finalGraph</i> is a
-	 *            nested {@link Graph}.
+	 *            Specifies whether or not the given <i>finalGraph</i> is a nested
+	 *            {@link Graph}.
 	 */
 	public NavigateOperation(IViewer viewer, Graph targetGraph, boolean isNestedGraph) {
 		this(viewer);
@@ -197,8 +197,8 @@ public class NavigateOperation extends ForwardUndoCompositeOperation {
 	 * @param targetGraph
 	 *            The {@link Graph} that is to be displayed.
 	 * @param isNestedGraph
-	 *            Specifies whether or not the given <i>finalGraph</i> is a
-	 *            nested {@link Graph}.
+	 *            Specifies whether or not the given <i>finalGraph</i> is a nested
+	 *            {@link Graph}.
 	 */
 	public void setFinalState(Graph targetGraph, boolean isNestedGraph) {
 		// persist the state of the current graph (before zooming in)
