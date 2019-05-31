@@ -36,6 +36,15 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src-gen/org/eclipse/gef/dot/internal/language/DotFontNameInjectorProvider.java" type="org.eclipse.gef.dot.internal.language.DotFontNameInjectorProvider">
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="DotFontNameRuntimeModule"/>
+                <message_argument value="DotFontNameInjectorProvider"/>
+                <message_argument value="createRuntimeModule()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src-gen/org/eclipse/gef/dot/internal/language/DotHtmlLabelInjectorProvider.java" type="org.eclipse.gef.dot.internal.language.DotHtmlLabelInjectorProvider">
         <filter id="643842064">
             <message_arguments>
