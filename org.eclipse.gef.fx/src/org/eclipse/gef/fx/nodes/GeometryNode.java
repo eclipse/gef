@@ -85,6 +85,8 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty();
 	private ObjectProperty<T> geometryProperty = new SimpleObjectProperty<>();
 
+	private int listeningCount = 0;
+
 	private ChangeListener<T> geometryChangeListener = new ChangeListener<T>() {
 		@Override
 		public void changed(ObservableValue<? extends T> observable, T oldValue,
@@ -132,10 +134,12 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
+			listeningCount--;
 			geometryProperty.removeListener(geometryChangeListener);
 			resizeGeometryToMatchLayoutBoundsSize(newValue.doubleValue(),
 					getHeight());
 			geometryProperty.addListener(geometryChangeListener);
+			listeningCount++;
 		}
 	};
 	private ChangeListener<Number> heightListener = new ChangeListener<Number>() {
@@ -143,10 +147,12 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
+			listeningCount--;
 			geometryProperty.removeListener(geometryChangeListener);
 			resizeGeometryToMatchLayoutBoundsSize(getWidth(),
 					newValue.doubleValue());
 			geometryProperty.addListener(geometryChangeListener);
+			listeningCount++;
 		}
 	};
 	private ChangeListener<Number> layoutXListener = new ChangeListener<Number>() {
@@ -154,10 +160,12 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
+			listeningCount--;
 			geometryProperty.removeListener(geometryChangeListener);
 			relocateGeometryToMatchLayoutXY(newValue.doubleValue(),
 					getLayoutY());
 			geometryProperty.addListener(geometryChangeListener);
+			listeningCount++;
 		}
 	};
 	private ChangeListener<Number> layoutYListener = new ChangeListener<Number>() {
@@ -165,10 +173,12 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
+			listeningCount--;
 			geometryProperty.removeListener(geometryChangeListener);
 			relocateGeometryToMatchLayoutXY(getLayoutX(),
 					newValue.doubleValue());
 			geometryProperty.addListener(geometryChangeListener);
+			listeningCount++;
 		}
 	};
 
@@ -182,6 +192,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		setGeometricShape(geometricShape);
 
 		// update path elements whenever the geometry property is changed
+		listeningCount++;
 		geometryProperty.addListener(geometryChangeListener);
 
 		// stroke width and type affect the layout bounds, so we have to react
@@ -191,10 +202,19 @@ public class GeometryNode<T extends IGeometry> extends Region {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
-				// Platform.runLater(
-				// () -> Platform.runLater(() -> Platform.runLater(() -> {
-				reactToStrokeChanges();
-				// })));
+				T geometry = geometryProperty.get();
+				if (geometry == null) {
+					return;
+				}
+
+				// GeometryNode.super.resize(prefWidth(-1), prefHeight(-1));
+				resize(prefWidth(-1), prefHeight(-1));
+				Rectangle geometricBounds = geometry.getBounds();
+				relocate(
+						geometricBounds.getX() - getStrokeOffset()
+								- getInsets().getLeft(),
+						geometricBounds.getY() - getStrokeOffset()
+								- getInsets().getTop());
 			}
 		});
 		strokeTypeProperty().addListener(new ChangeListener<StrokeType>() {
@@ -203,7 +223,19 @@ public class GeometryNode<T extends IGeometry> extends Region {
 			public void changed(
 					ObservableValue<? extends StrokeType> observable,
 					StrokeType oldValue, StrokeType newValue) {
-				reactToStrokeChanges();
+				T geometry = geometryProperty.get();
+				if (geometry == null) {
+					return;
+				}
+
+				// GeometryNode.super.resize(prefWidth(-1), prefHeight(-1));
+				resize(prefWidth(-1), prefHeight(-1));
+				Rectangle geometricBounds = geometry.getBounds();
+				relocate(
+						geometricBounds.getX() - getStrokeOffset()
+								- getInsets().getLeft(),
+						geometricBounds.getY() - getStrokeOffset()
+								- getInsets().getTop());
 			}
 		});
 		insetsProperty().addListener(new ChangeListener<Insets>() {
@@ -518,25 +550,6 @@ public class GeometryNode<T extends IGeometry> extends Region {
 		return geometricShape.isSmooth();
 	}
 
-	/**
-	 * Preserves layout-bounds after stroke is changed.
-	 *
-	 * @since 5.1
-	 */
-	protected void reactToStrokeChanges() {
-		T geometry = geometryProperty.get();
-		if (geometry == null) {
-			return;
-		}
-		resize(prefWidth(-1), prefHeight(-1));
-		Rectangle geometricBounds = geometry.getBounds();
-		relocate(
-				geometricBounds.getX() - getStrokeOffset()
-						- getInsets().getLeft(),
-				geometricBounds.getY() - getStrokeOffset()
-						- getInsets().getTop());
-	}
-
 	@Override
 	public void relocate(double x, double y) {
 		// prevent unnecessary updates
@@ -581,10 +594,17 @@ public class GeometryNode<T extends IGeometry> extends Region {
 
 		// geometry has to reflect final position relative to layout bounds,
 		// which are based on (0, 0)
-		geometryProperty.removeListener(geometryChangeListener);
+		boolean reAdd = listeningCount >= 1;
+		if (reAdd) {
+			geometryProperty.removeListener(geometryChangeListener);
+			listeningCount--;
+		}
 		relocateGeometry(layoutX + getStrokeOffset() + getInsets().getLeft(),
 				layoutY + getStrokeOffset() + getInsets().getTop());
-		geometryProperty.addListener(geometryChangeListener);
+		if (reAdd) {
+			geometryProperty.addListener(geometryChangeListener);
+			listeningCount++;
+		}
 		updateShapes();
 	}
 
@@ -686,7 +706,11 @@ public class GeometryNode<T extends IGeometry> extends Region {
 
 		// Disable listening to geometry changes while determine new geometry
 		// size (to match given visual bounds size)
-		geometryProperty.removeListener(geometryChangeListener);
+		boolean reAdd = listeningCount >= 1;
+		if (reAdd) {
+			geometryProperty.removeListener(geometryChangeListener);
+			listeningCount--;
+		}
 
 		// System.out.println("Resizing to " + width + ", " + height);
 
@@ -713,7 +737,10 @@ public class GeometryNode<T extends IGeometry> extends Region {
 
 		// update geometry of underlying path (which should invalidate the
 		// layout bounds)
-		geometryProperty.addListener(geometryChangeListener);
+		if (reAdd) {
+			geometryProperty.addListener(geometryChangeListener);
+			listeningCount++;
+		}
 		updateShapes();
 	}
 
