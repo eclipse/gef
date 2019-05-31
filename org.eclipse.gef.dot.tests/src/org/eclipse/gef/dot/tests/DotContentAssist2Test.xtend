@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial implementation
+ *     Zoey Prigge (itemis AG)    - Add cluster content assist support (bug #547639)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -192,6 +193,7 @@ class DotContentAssist2Test extends AbstractContentAssistTest {
 				}
 			}
 		'''.testContentAssistant(#[
+			new CompletionProposal("rank: Attribute", "rank=", IMAGE_ATTRIBUTE),
 			new CompletionProposal("edge[]: Attributes", "edge[]", IMAGE_ATTRIBUTES),
 			new CompletionProposal("graph[]: Attributes", "graph[]", IMAGE_ATTRIBUTES),
 			new CompletionProposal("node[]: Attributes", "node[]", IMAGE_ATTRIBUTES),
@@ -210,6 +212,7 @@ class DotContentAssist2Test extends AbstractContentAssistTest {
 				}
 			}
 		'''.testContentAssistant(#[
+			new CompletionProposal("rank: Attribute", "rank=", IMAGE_ATTRIBUTE),
 			new CompletionProposal("edge[]: Attributes", "edge[]", IMAGE_ATTRIBUTES),
 			new CompletionProposal("graph[]: Attributes", "graph[]", IMAGE_ATTRIBUTES),
 			new CompletionProposal("node[]: Attributes", "node[]", IMAGE_ATTRIBUTES),
