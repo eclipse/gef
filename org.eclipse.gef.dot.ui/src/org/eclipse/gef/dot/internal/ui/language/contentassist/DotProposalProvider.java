@@ -13,6 +13,7 @@
  *                                - Improve the content assistant support (bug #498324)
  *     Zoey Prigge (itemis AG)    - Improve quoted attribute CA support (bug #545801)
  *                                - Add FontName content assist support (bug #542663)
+ *                                - Add subgraph content assist support (bug #547639)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
@@ -39,11 +40,13 @@ import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp;
 import org.eclipse.gef.dot.internal.language.dot.GraphType;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
+import org.eclipse.gef.dot.internal.language.dot.Subgraph;
 import org.eclipse.gef.dot.internal.language.fontname.PostScriptFontAlias;
 import org.eclipse.gef.dot.internal.language.layout.Layout;
 import org.eclipse.gef.dot.internal.language.outputmode.OutputMode;
 import org.eclipse.gef.dot.internal.language.pagedir.Pagedir;
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir;
+import org.eclipse.gef.dot.internal.language.ranktype.RankType;
 import org.eclipse.gef.dot.internal.language.services.DotGrammarAccess;
 import org.eclipse.gef.dot.internal.language.splines.Splines;
 import org.eclipse.gef.dot.internal.language.style.ClusterStyle;
@@ -294,12 +297,14 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		super.completeAttribute_Name(model, assignment, contentAssistContext,
 				acceptor);
 
-		if (model instanceof AttrList) {
-			Context attributeContext = DotAttributes.getContext(model);
+		EObject modelCompleted = model instanceof NodeStmt ? model.eContainer()
+				: model;
+
+		if (modelCompleted instanceof AttrList
+				|| modelCompleted instanceof DotGraph
+				|| modelCompleted instanceof Subgraph) {
+			Context attributeContext = DotAttributes.getContext(modelCompleted);
 			proposeAttributeNames(attributeContext, contentAssistContext,
-					acceptor);
-		} else if (model instanceof DotGraph || model instanceof NodeStmt) {
-			proposeAttributeNames(Context.GRAPH, contentAssistContext,
 					acceptor);
 		}
 	}
@@ -483,9 +488,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				default:
 					break;
 				}
-			} else if (DotAttributes.getContext(attribute) == Context.CLUSTER
-					|| DotAttributes
-							.getContext(attribute) == Context.SUBGRAPH) {
+			} else if (DotAttributes.getContext(attribute) == Context.CLUSTER) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.BGCOLOR__GC:
 					proposeColorListAttributeValues(attribute, context,
@@ -519,6 +522,14 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					proposeAttributeValues(
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTESCSTRING,
 							context, acceptor);
+				}
+			} else if (DotAttributes
+					.getContext(attribute) == Context.SUBGRAPH) {
+				switch (attribute.getName().toValue()) {
+				case DotAttributes.RANK__S:
+					proposeAttributeValues(RankType.values(), context,
+							acceptor);
+					break;
 				}
 			}
 
@@ -664,9 +675,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 	 *         to the valid dot attribute names.
 	 */
 	private Map<Context, List<String>> getDotAttributeNames() {
+		List<String> clusterAttributeNames = new ArrayList<>();
 		List<String> edgeAttributeNames = new ArrayList<>();
 		List<String> graphAttributeNames = new ArrayList<>();
 		List<String> nodeAttributeNames = new ArrayList<>();
+		List<String> subgraphAttributeNames = new ArrayList<>();
 
 		Field[] declaredFields = DotAttributes.class.getDeclaredFields();
 		for (Field field : declaredFields) {
@@ -686,6 +699,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 						DotActivatorEx.logError(e);
 					}
 					if (dotAttributeName != null) {
+						if (dotClassifier.contains("C")) { //$NON-NLS-1$
+							clusterAttributeNames.add(dotAttributeName);
+						}
 						if (dotClassifier.contains("E")) { //$NON-NLS-1$
 							edgeAttributeNames.add(dotAttributeName);
 						}
@@ -695,15 +711,20 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 						if (dotClassifier.contains("N")) { //$NON-NLS-1$
 							nodeAttributeNames.add(dotAttributeName);
 						}
+						if (dotClassifier.contains("S")) { //$NON-NLS-1$
+							subgraphAttributeNames.add(dotAttributeName);
+						}
 					}
 				}
 			}
 		}
 
 		Map<Context, List<String>> dotAttributeNames = new HashMap<>();
+		dotAttributeNames.put(Context.CLUSTER, clusterAttributeNames);
 		dotAttributeNames.put(Context.EDGE, edgeAttributeNames);
 		dotAttributeNames.put(Context.GRAPH, graphAttributeNames);
 		dotAttributeNames.put(Context.NODE, nodeAttributeNames);
+		dotAttributeNames.put(Context.SUBGRAPH, subgraphAttributeNames);
 		return dotAttributeNames;
 	}
 }

@@ -11,6 +11,7 @@
  *     Zoey Gerrit Prigge (itemis AG) - Add support for additional dot attributes (bug #461506)
  *                                    - Improve CA support for quoted attributes (bug #545801)
  *                                    - Add DotFontName content assist support (bug #542663)
+ *                                    - Add cluster content assist support (bug #547639)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -240,6 +241,491 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		'''.testContentAssistant(#["->", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "{", "}"], "->", '''
 			digraph {
 				1->2->
+			}
+		''')
+	}
+
+	@Test def cluster_attribute_statement001() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					«c»
+				}
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+									"id", "label", "lp", "penwidth", "style", "tooltip", "edge[]", "graph[]",
+									"node[]", "subgraph", "{", "}", "edge - Insert a template"], "graph[]", '''
+			graph {
+				subgraph cluster_0 {
+					graph[]
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_attribute_statement002() {
+		'''
+			graph {
+				subgraph cluster_0 {
+					1--2
+					«c»
+				}
+			}
+		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph","{","}"], "graph[]", '''
+			graph {
+				subgraph cluster_0 {
+					1--2
+					graph[]
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_attributes() {
+		// test global attribute names
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[«c»]
+				}
+			}
+		'''.testContentAssistant(#["]", "bb", "bgcolor", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+									"id", "label", "lp", "penwidth", "style", "tooltip"], "fontcolor",
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[fontcolor=]
+				}
+			}
+		''')
+		
+		// test local attribute names
+		'''
+			graph {
+				subgraph cluster_0 {
+					«c»
+				}
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+									"id", "label", "lp", "penwidth", "style", "tooltip", "edge[]", "graph[]",
+									"node[]", "subgraph", "{", "}", "edge - Insert a template"], "tooltip",
+		'''
+			graph {
+				subgraph cluster_0 {
+					tooltip=
+				}
+			}
+		''')
+		
+		// test local attribute names with prefix
+		'''
+			graph {
+				subgraph cluster_0 {
+					co«c»
+				}
+			}
+		'''.testContentAssistant(#["color", "colorscheme", "--", ":", ";", "=", "[", "{", "}", "edge - Insert a template"], "color", '''
+			graph {
+				subgraph cluster_0 {
+					color=
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				subgraph cluster_0 {
+					co«c»
+				}
+			}
+		'''.testContentAssistant(#["color", "colorscheme", "--", ":", ";", "=", "[", "{", "}", "edge - Insert a template"], "colorscheme", '''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_bgcolor() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[colorscheme=accent3 bgcolor=«c»]
+					1
+				}
+			}
+		'''.testContentAssistant(#["1", "2", "3", "#", "/", ":", ";"], "2", '''
+			graph {
+				subgraph cluster_0 {
+					graph[colorscheme=accent3 bgcolor=2]
+					1
+				}
+			}
+		''')
+		
+		//test local attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent3 bgcolor=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(#["1", "2", "3", "#", "/", ":", ";"], "2", '''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent3 bgcolor=2
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_color() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[color=«c»]
+					1
+				}
+			}
+		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "red", '''
+			graph {
+				subgraph cluster_0 {
+					graph[color=red]
+					1
+				}
+			}
+		''')
+		
+		//test local attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					color=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "green", '''
+			graph {
+				subgraph cluster_0 {
+					color=green
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_colorscheme() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[colorscheme=«c»]
+					1
+				}
+			}
+		'''.testContentAssistant(copyExpectedDotColorSchemes, "svg", '''
+			graph {
+				subgraph cluster_0 {
+					graph[colorscheme=svg]
+					1
+				}
+			}
+		''')
+		
+		//test local attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(copyExpectedDotColorSchemes, "svg", '''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=svg
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fillcolor() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[colorscheme=accent8
+					fillcolor=«c»
+					style=filled]
+					1 2 3
+				}
+			}
+		'''.testContentAssistant(#["1", "2", "3", "4", "5", "6", "7", "8", "#", "/", ":", ";"], "4", '''
+			graph {
+				subgraph cluster_0 {
+					graph[colorscheme=accent8
+					fillcolor=4
+					style=filled]
+					1 2 3
+				}
+			}
+		''')
+		
+		//test local attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent8
+					fillcolor=«c»
+					style=filled
+					1 2 3
+				}
+			}
+		'''.testContentAssistant(#["1", "2", "3", "4", "5", "6", "7", "8", "#", "/", ":", ";"], "4", '''
+			graph {
+				subgraph cluster_0 {
+					colorscheme=accent8
+					fillcolor=4
+					style=filled
+					1 2 3
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fontcolor() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[label=CLUSTER
+					fontcolor=«c»]
+					1
+				}
+			}
+		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "red", '''
+			graph {
+				subgraph cluster_0 {
+					graph[label=CLUSTER
+					fontcolor=red]
+					1
+				}
+			}
+		''')
+		
+		//test local attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					label=CLUSTER
+					fontcolor=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "red", '''
+			graph {
+				subgraph cluster_0 {
+					label=CLUSTER
+					fontcolor=red
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_fontname() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					graph[label=CLUSTER
+					fontname=«c»]
+					1
+				}
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Helvetica", '''
+			graph {
+				subgraph cluster_0 {
+					graph[label=CLUSTER
+					fontname=Helvetica]
+					1
+				}
+			}
+		''')
+		
+		//test local attribute value
+		'''
+			graph {
+				subgraph cluster_0 {
+					label=CLUSTER
+					fontname=«c»
+					1
+				}
+			}
+		'''.testContentAssistant(expectedPostScriptFontNames, "Helvetica", '''
+			graph {
+				subgraph cluster_0 {
+					label=CLUSTER
+					fontname=Helvetica
+					1
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_label() {
+		'''
+			graph {
+				subgraph cluster {
+					label = «c»
+				}
+			}
+		'''.testContentAssistant(#["HTMLLabel - Insert a template"], "HTMLLabel - Insert a template", '''
+			graph {
+				subgraph cluster {
+					label = <
+						
+					>
+				}
+			}
+		''')
+		
+		// test html-like label attribute
+		'''
+			graph {
+				subgraph cluster {
+					label = <
+						«c»
+					>
+				}
+			}
+		'''.testContentAssistant(#["<B></B>", "<BR/>", "<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>", "<SUB></SUB>",
+									"<SUP></SUP>", "<TABLE></TABLE>", "<U></U>"], "<U></U>",
+		'''
+			graph {
+				subgraph cluster {
+					label = <
+						<U></U>
+					>
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_lp() {
+		'''
+			graph {
+				subgraph cluster {
+					lp = «c»
+				}
+			}
+		'''.testEmptyContentAssistant
+	}
+
+	@Test def cluster_penwidth() {
+		'''
+			graph {
+				subgraph cluster {
+					penwidth = «c»
+				}
+			}
+		'''.testEmptyContentAssistant
+	}
+
+	@Test def cluster_style() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster {
+					graph[style = «c»]
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "dotted", '''
+			graph {
+				subgraph cluster {
+					graph[style = dotted]
+				}
+			}
+		''')
+		
+		//test local attribute values
+		'''
+			graph {
+				subgraph cluster {
+					style = «c»
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "bold", '''
+			graph {
+				subgraph cluster {
+					style = bold
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				subgraph cluster {
+					style="«c»"
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "dashed", '''
+			graph {
+				subgraph cluster {
+					style="dashed"
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				subgraph cluster {
+					style = "«c»"
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "dotted", '''
+			graph {
+				subgraph cluster {
+					style = "dotted"
+				}
+			}
+		''')
+	}
+
+	@Test def cluster_tooltip() {
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster {
+					graph[tooltip ="«c»"]
+				}
+			}
+		'''.testContentAssistant(#["\\n", "\\l", "\\r"], "\\l", '''
+			graph {
+				subgraph cluster {
+					graph[tooltip ="\l"]
+				}
+			}
+		''')
+		
+		//test global attribute value
+		'''
+			graph {
+				subgraph cluster {
+					tooltip ="«c»"
+				}
+			}
+		'''.testContentAssistant(#["\\n", "\\l", "\\r"], "\\l", '''
+			graph {
+				subgraph cluster {
+					tooltip ="\l"
+				}
 			}
 		''')
 	}
@@ -3338,7 +3824,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "subgraph", "{", "}"
+		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
 		], "edge[]", '''
 			graph {
 				{
@@ -3355,7 +3841,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "subgraph", "{", "}"
+		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
 		], "graph[]", '''
 			graph {
 				{
@@ -3372,7 +3858,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "subgraph", "{", "}"
+		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
 		], "node[]", '''
 			graph {
 				{
@@ -3381,197 +3867,96 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			}
 		''')
 	}
-
-	@Test def subgraph_bgcolor() {
+	
+	@Test def subgraph_rank001() {
 		'''
 			graph {
-				subgraph cluster_0 {
-					colorscheme=accent3 bgcolor=«c»
-					1
+				{
+					«c»
 				}
 			}
-		'''.testContentAssistant(#["1", "2", "3", "#", "/", ":", ";"], "2", '''
+		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
+		], "rank", '''
 			graph {
-				subgraph cluster_0 {
-					colorscheme=accent3 bgcolor=2
-					1
+				{
+					rank=
 				}
 			}
 		''')
 	}
-
-	@Test def subgraph_color() {
+	
+	@Test def subgraph_rank002() {
+		//test global attribute value
 		'''
 			graph {
-				subgraph cluster_0 {
-					color=«c»
-					1
+				{
+					graph[rank=«c»]
 				}
 			}
-		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "green", '''
+		'''.testContentAssistant(#["max", "min", "same", "sink", "source"], "same", '''
 			graph {
-				subgraph cluster_0 {
-					color=green
-					1
-				}
-			}
-		''')
-	}
-
-	@Test def subgraph_colorscheme() {
-		'''
-			graph {
-				subgraph cluster_0 {
-					colorscheme=«c»
-					1
-				}
-			}
-		'''.testContentAssistant(copyExpectedDotColorSchemes, "svg", '''
-			graph {
-				subgraph cluster_0 {
-					colorscheme=svg
-					1
-				}
-			}
-		''')
-	}
-
-	@Test def subgraph_fillcolor() {
-		'''
-			graph {
-				subgraph cluster_0 {
-					colorscheme=accent8
-					fillcolor=«c»
-					style=filled
-					1 2 3
-				}
-			}
-		'''.testContentAssistant(#["1", "2", "3", "4", "5", "6", "7", "8", "#", "/", ":", ";"], "4", '''
-			graph {
-				subgraph cluster_0 {
-					colorscheme=accent8
-					fillcolor=4
-					style=filled
-					1 2 3
-				}
-			}
-		''')
-	}
-
-	@Test def subgraph_fontcolor() {
-		'''
-			graph {
-				subgraph cluster_0 {
-					label=CLUSTER
-					fontcolor=«c»
-					1
-				}
-			}
-		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "red", '''
-			graph {
-				subgraph cluster_0 {
-					label=CLUSTER
-					fontcolor=red
-					1
-				}
-			}
-		''')
-	}
-
-	@Test def subgraph_label() {
-		'''
-			graph {
-				subgraph cluster {
-					label = «c»
-				}
-			}
-		'''.testContentAssistant(#["HTMLLabel - Insert a template"], "HTMLLabel - Insert a template", '''
-			graph {
-				subgraph cluster {
-					label = <
-						
-					>
+				{
+					graph[rank=same]
 				}
 			}
 		''')
 		
-		// test html-like label attribute
+		//test local attribute value
 		'''
 			graph {
-				subgraph cluster {
-					label = <
-						«c»
-					>
+				{
+					rank=«c»
 				}
 			}
-		'''.testContentAssistant(#["<B></B>", "<BR/>", "<FONT></FONT>", "<I></I>", "<O></O>", "<S></S>", "<SUB></SUB>",
-									"<SUP></SUP>", "<TABLE></TABLE>", "<U></U>"], "<U></U>",
-		'''
+		'''.testContentAssistant(#["max", "min", "same", "sink", "source"], "sink", '''
 			graph {
-				subgraph cluster {
-					label = <
-						<U></U>
-					>
-				}
-			}
-		''')
-	}
-
-	@Test def cluster_style() {
-		'''
-			graph {
-				subgraph cluster {
-					style = «c»
-				}
-			}
-		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "bold", '''
-			graph {
-				subgraph cluster {
-					style = bold
+				{
+					rank=sink
 				}
 			}
 		''')
 		
+		//test local attribute value with quotes
 		'''
 			graph {
-				subgraph cluster {
-					style="«c»"
+				{
+					rank="«c»"
 				}
 			}
-		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "dashed", '''
+		'''.testContentAssistant(#["max", "min", "same", "sink", "source"], "source", '''
 			graph {
-				subgraph cluster {
-					style="dashed"
+				{
+					rank="source"
 				}
 			}
 		''')
 		
+		//test local attribute value with prefix
 		'''
 			graph {
-				subgraph cluster {
-					style = "«c»"
+				{
+					rank=m«c»
 				}
 			}
-		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "dotted", '''
+		'''.testContentAssistant(#[";", "edge - Insert a template", "max", "min", "{", "}"], "min", '''
 			graph {
-				subgraph cluster {
-					style = "dotted"
+				{
+					rank=min
 				}
 			}
 		''')
-	}
-
-	@Test def subgraph_tooltip() {
+		
+		//test local attribute value with prefix and quotes
 		'''
 			graph {
-				subgraph cluster {
-					tooltip ="«c»"
+				{
+					rank="m«c»"
 				}
 			}
-		'''.testContentAssistant(#["\\n", "\\l", "\\r"], "\\l", '''
+		'''.testContentAssistant(#["max", "min"], "max", '''
 			graph {
-				subgraph cluster {
-					tooltip ="\l"
+				{
+					rank="max"
 				}
 			}
 		''')
