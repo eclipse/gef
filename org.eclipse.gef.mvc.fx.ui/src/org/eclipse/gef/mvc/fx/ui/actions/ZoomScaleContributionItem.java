@@ -221,7 +221,7 @@ public class ZoomScaleContributionItem extends AbstractViewerContributionItem {
 	 *            The zoom factor to show in the scale.
 	 */
 	protected void updateScaleValue(double zoomFactor) {
-		if (zoomScale != null) {
+		if (zoomScale != null && !zoomScale.isDisposed()) {
 			zoomScale.setSelection(computeScaleValue(zoomFactor));
 		}
 	}
