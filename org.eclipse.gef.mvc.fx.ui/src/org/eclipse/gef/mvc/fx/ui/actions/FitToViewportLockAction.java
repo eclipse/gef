@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
@@ -25,7 +26,6 @@ import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
 
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -62,6 +62,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
 			needsExec = true;
+			onContentBoundsChanged();
 		}
 	};
 	private ChangeListener<? super Number> scrollOffsetChangeListener = new ChangeListener<Number>() {
@@ -77,7 +78,21 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
 			needsExec = true;
+			onSizeChanged();
 		}
+	};
+
+	private IOperationHistoryListener operationHistoryListener = ev -> {
+		if (!needsExec) {
+			return;
+		}
+		if (!(ev.getEventType() == OperationHistoryEvent.OPERATION_ADDED || ev
+				.getEventType() == OperationHistoryEvent.OPERATION_REMOVED)) {
+			return;
+		}
+
+		needsExec = false;
+		runIfEnabled();
 	};
 
 	/**
@@ -103,6 +118,13 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		contentBoundsProperty.removeListener(contentBoundsChangeListener);
 		infiniteCanvas.widthProperty().removeListener(sizeChangeListener);
 		infiniteCanvas.heightProperty().removeListener(sizeChangeListener);
+
+		IDomain domain = getViewer().getDomain();
+		if (domain instanceof HistoricizingDomain) {
+			IOperationHistory history = ((HistoricizingDomain) domain)
+					.getOperationHistory();
+			history.removeOperationHistoryListener(operationHistoryListener);
+		}
 	}
 
 	/**
@@ -124,22 +146,10 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		infiniteCanvas.heightProperty().addListener(sizeChangeListener);
 
 		IDomain domain = getViewer().getDomain();
-
 		if (domain instanceof HistoricizingDomain) {
 			IOperationHistory history = ((HistoricizingDomain) domain)
 					.getOperationHistory();
-			history.addOperationHistoryListener(ev -> {
-				if (needsExec) {
-					if (ev.getEventType() == OperationHistoryEvent.OPERATION_ADDED
-							|| ev.getEventType() == OperationHistoryEvent.OPERATION_REMOVED) {
-						needsExec = false;
-						Platform.runLater(() -> Platform
-								.runLater(() -> Platform.runLater(() -> {
-									runIfEnabled();
-								})));
-					}
-				}
-			});
+			history.addOperationHistoryListener(operationHistoryListener);
 		}
 	}
 
@@ -157,16 +167,7 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		}
 	}
 
-	/**
-	 * This method is invoked in response to content bounds changes.
-	 * <p>
-	 * It either unlocks this action or performs the fit-to-viewport action
-	 * depending on whether user interaction is in progress (unlock) or not
-	 * (fit-to-viewport).
-	 *
-	 * @since 5.1
-	 */
-	protected void onContentBoundsChanged() {
+	private void onContentBoundsChanged() {
 		IDomain domain = getViewer().getDomain();
 		Collection<IGesture> gestures = domain.getGestures().values();
 		boolean isTransactionOpen = false;
@@ -176,6 +177,9 @@ public class FitToViewportLockAction extends FitToViewportAction {
 			isTransactionOpen = domain.isExecutionTransactionOpen(gesture);
 		}
 		// prevent fit-to-viewport during interaction
+		// XXX: fit-to-viewport will be performed later on when the gesture
+		// commits operations on the domain's history in the case of an open
+		// transaction
 		if (!isTransactionOpen) {
 			runIfEnabled();
 		}
