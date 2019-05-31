@@ -140,6 +140,7 @@ class DotImport {
 		setter.apply(BB__GC, [g, value|g.setBbRaw(value)])
 		setter.apply(BGCOLOR__GC, [g, value|g.setBgcolorRaw(value)])
 		setter.apply(CLUSTERRANK__G, [g, value|g.setClusterrankRaw(value)])
+		setter.apply(COLORSCHEME__GCNE, [g, value|g.setColorschemeRaw(value)])
 		setter.apply(FONTCOLOR__GCNE, [g, value|g.setFontcolorRaw(value)])
 		setter.apply(FONTNAME__GCNE, [g, value|g.setFontnameRaw(value)])
 		setter.apply(FONTSIZE__GCNE, [g, value|g.setFontsizeRaw(value)])

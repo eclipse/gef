@@ -12,6 +12,7 @@
  *     Alexander Nyßen (itemis AG) - Refactorings and cleanups
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - Render embedded dot graphs in native mode (bug #493694)
+ *     Zoey Prigge (itemis AG)    - Avoid NPE when setting ungrammatical bgcolor (bug #540508)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -309,17 +310,20 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 		// apply graph background color
 		// TODO: add Zest property for background color
-		// TODO: convert bgcolorList (Dot) to backgroubd color (Zest) within
+		// TODO: convert bgcolorList (Dot) to background color (Zest) within
 		// Dot2ZestAttributesConverter
 		DotColorUtil colorUtil = new DotColorUtil();
 		ColorList bgcolorList = DotAttributes.getBgcolorParsed(graph);
+		Paint backgroundColor = null;
 		if (bgcolorList != null && bgcolorList.getColorValues() != null
 				&& bgcolorList.getColorValues().size() > 0) {
 			// FIXME: apply all colors. Currently, only the first one is
 			// applied.
-			Paint backgroundColor = colorUtil.computeGraphBackgroundColor(
+			backgroundColor = colorUtil.computeGraphBackgroundColor(
 					DotAttributes.getColorscheme(graph),
 					bgcolorList.getColorValues().get(0).getColor());
+		}
+		if (backgroundColor != null) {
 			addGraphBackground(backgroundColor);
 		} else {
 			removeGraphBackground();

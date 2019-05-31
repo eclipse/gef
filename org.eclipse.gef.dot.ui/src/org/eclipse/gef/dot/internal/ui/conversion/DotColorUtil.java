@@ -10,6 +10,7 @@
  *     Matthias Wienand   (itemis AG) - Initial API and contribution
  *     Tamas Miklossy     (itemis AG) - Initial API and contribution
  *     Zoey Gerrit Prigge (itemis AG) - compute HTML color (bug #321775)
+ *                                    - avoid ungrammatical color causing NPE (bug #540508)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.conversion;
@@ -83,10 +84,13 @@ public class DotColorUtil {
 					Double.parseDouble(hsvColor.getS()),
 					Double.parseDouble(hsvColor.getV()));
 		} else {
-			return javafx.scene.paint.Color
-					.web(computeZestColor(colorScheme, dotColor));
+			String javaFxStringColor = computeZestColor(colorScheme, dotColor);
+			// avoid ungrammatical color attribute causing NPE (bug #540508)
+			if (javaFxStringColor != null) {
+				return javafx.scene.paint.Color.web(javaFxStringColor);
+			}
 		}
-
+		return null;
 	}
 
 	/**
