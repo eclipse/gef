@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License v1.0 which
@@ -12,10 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.ui.actions;
 
-import org.eclipse.core.commands.operations.IOperationHistoryListener;
-import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef.mvc.fx.domain.HistoricizingDomain;
+import org.eclipse.gef.mvc.fx.domain.IDomain;
+import org.eclipse.gef.mvc.fx.gestures.IGesture;
 import org.eclipse.gef.mvc.fx.ui.MvcFxUiBundle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
@@ -40,15 +42,9 @@ import javafx.scene.transform.TransformChangedEvent;
  */
 public class FitToViewportLockAction extends FitToViewportAction {
 
-	private boolean boundsChanged = false;
-	private boolean sizeChanged = false;
-	private boolean offsetChanged = false;
-	private double savedContentBoundsWidth = 0d;
-	private double savedContentBoundsHeight = 0d;
 	private ReadOnlyObjectProperty<Bounds> contentBoundsProperty;
 	private Affine contentTransform;
 	private InfiniteCanvas infiniteCanvas;
-	private boolean running;
 	private EventHandler<TransformChangedEvent> trafoChangeListener = new EventHandler<TransformChangedEvent>() {
 		@Override
 		public void handle(TransformChangedEvent event) {
@@ -60,46 +56,22 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
-			boundsChanged = true;
+			onContentBoundsChanged();
 		}
 	};
 	private ChangeListener<? super Number> scrollOffsetChangeListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
-			offsetChanged = true;
+			// unlock when the user manually scrolls
+			setChecked(false);
 		}
 	};
 	private ChangeListener<? super Number> sizeChangeListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
-			// fit-to-viewport when the user resizes the viewport
-			sizeChanged = true;
 			onSizeChanged();
-		}
-	};
-	private IOperationHistoryListener historyListener = new IOperationHistoryListener() {
-		@Override
-		public void historyNotification(OperationHistoryEvent event) {
-			if (event.getEventType() == OperationHistoryEvent.OPERATION_ADDED) {
-				// flush changes
-				Bounds contentBounds = infiniteCanvas.getContentBounds();
-				if (offsetChanged && (!boundsChanged || (contentBounds
-						.getWidth() == savedContentBoundsWidth
-						&& contentBounds
-								.getHeight() == savedContentBoundsHeight))) {
-					// unlock upon manual scrolling
-					setChecked(false);
-				} else if (boundsChanged && !sizeChanged) {
-					// fit-to-viewport otherwise
-					onSizeChanged();
-				}
-				// reset state
-				boundsChanged = false;
-				sizeChanged = false;
-				offsetChanged = false;
-			}
 		}
 	};
 
@@ -124,6 +96,8 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		contentTransform.removeEventHandler(
 				TransformChangedEvent.TRANSFORM_CHANGED, trafoChangeListener);
 		contentBoundsProperty.removeListener(contentBoundsChangeListener);
+		infiniteCanvas.widthProperty().removeListener(sizeChangeListener);
+		infiniteCanvas.heightProperty().removeListener(sizeChangeListener);
 	}
 
 	/**
@@ -141,10 +115,8 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		contentTransform.addEventHandler(
 				TransformChangedEvent.TRANSFORM_CHANGED, trafoChangeListener);
 		contentBoundsProperty.addListener(contentBoundsChangeListener);
-		// save content bounds to detect scrolling
-		savedContentBoundsWidth = infiniteCanvas.getContentBounds().getWidth();
-		savedContentBoundsHeight = infiniteCanvas.getContentBounds()
-				.getHeight();
+		infiniteCanvas.widthProperty().addListener(sizeChangeListener);
+		infiniteCanvas.heightProperty().addListener(sizeChangeListener);
 	}
 
 	/**
@@ -152,18 +124,39 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	 * in order to perform fit-to-viewport if the viewport size changes.
 	 */
 	protected void lock() {
-		// register history listener
-		((HistoricizingDomain) getViewer().getDomain()).getOperationHistory()
-				.addOperationHistoryListener(historyListener);
-		// register viewport size listeners
 		Parent canvas = getViewer().getCanvas();
 		if (canvas instanceof InfiniteCanvas) {
 			infiniteCanvas = (InfiniteCanvas) canvas;
 			contentTransform = infiniteCanvas.getContentTransform();
 			contentBoundsProperty = infiniteCanvas.contentBoundsProperty();
 			enableViewportListeners();
-			infiniteCanvas.widthProperty().addListener(sizeChangeListener);
-			infiniteCanvas.heightProperty().addListener(sizeChangeListener);
+		}
+	}
+
+	/**
+	 * This method is invoked in response to content bounds changes.
+	 * <p>
+	 * It either unlocks this action or performs the fit-to-viewport action
+	 * depending on whether user interaction is in progress (unlock) or not
+	 * (fit-to-viewport).
+	 *
+	 * @since 5.1
+	 */
+	protected void onContentBoundsChanged() {
+		IDomain domain = getViewer().getDomain();
+		Collection<IGesture> gestures = domain.getGestures().values();
+		boolean isTransactionOpen = false;
+		for (Iterator<IGesture> it = gestures.iterator(); !isTransactionOpen
+				&& it.hasNext();) {
+			IGesture gesture = (IGesture) it.next();
+			isTransactionOpen = domain.isExecutionTransactionOpen(gesture);
+		}
+		if (!isTransactionOpen) {
+			// fit to viewport if content (bounds) changes
+			runIfEnabled();
+		} else {
+			// manual interaction unlocks this action
+			setChecked(false);
 		}
 	}
 
@@ -172,10 +165,8 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	 * fit-to-viewport if this action is enabled.
 	 */
 	protected void onSizeChanged() {
-		// only called when locked
-		if (isEnabled()) {
-			runWithEvent(null);
-		}
+		// XXX: should only be called when locked
+		runIfEnabled();
 	}
 
 	@Override
@@ -188,20 +179,27 @@ public class FitToViewportLockAction extends FitToViewportAction {
 		}
 	}
 
+	/**
+	 * Tests if {@link #isEnabled()} returns true, and only if that is the case,
+	 * invokes {@link #runWithEvent(Event)} passing <code>null</code> for the
+	 * Event parameter.
+	 *
+	 * @since 5.1
+	 */
+	protected void runIfEnabled() {
+		// XXX: should only be called when locked
+		if (isEnabled()) {
+			runWithEvent(null);
+		}
+	}
+
 	@Override
 	public void runWithEvent(Event event) {
-		// FIXME: Prevent re-entrance by properly disabling listeners instead of
-		// guarding against re-entrance here by using the 'running' flag.
-		if (this.running) {
-			return;
-		}
-		this.running = true;
 		if (isChecked()) {
 			disableViewportListeners();
 			super.runWithEvent(event);
 			enableViewportListeners();
 		}
-		this.running = false;
 	}
 
 	@Override
@@ -222,19 +220,10 @@ public class FitToViewportLockAction extends FitToViewportAction {
 	 * the viewport size changes.
 	 */
 	protected void unlock() {
-		// remove history listener
-		((HistoricizingDomain) getViewer().getDomain()).getOperationHistory()
-				.removeOperationHistoryListener(historyListener);
-		// unregister viewport size listeners
 		if (infiniteCanvas != null) {
 			disableViewportListeners();
-			infiniteCanvas.widthProperty().removeListener(sizeChangeListener);
-			infiniteCanvas.heightProperty().removeListener(sizeChangeListener);
+
 		}
-		// reset state
-		boundsChanged = false;
-		sizeChanged = false;
-		offsetChanged = false;
 	}
 
 	@Override
