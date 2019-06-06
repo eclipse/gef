@@ -33,7 +33,7 @@
    <feature url="features/org.eclipse.gef.layout.sdk_5.0.0.qualifier.jar" id="org.eclipse.gef.layout.sdk" version="5.0.0.qualifier">
       <category name="GEF Layout"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx_5.0.1.qualifier.jar" id="org.eclipse.gef.fx" version="5.0.1.qualifier">
+   <feature url="features/org.eclipse.gef.fx_5.0.2.qualifier.jar" id="org.eclipse.gef.fx" version="5.0.2.qualifier">
       <category name="GEF FX"/>
    </feature>
    <feature url="features/org.eclipse.gef.fx.swt_5.0.2.qualifier.jar" id="org.eclipse.gef.fx.swt" version="5.0.2.qualifier">
