@@ -97,6 +97,14 @@ public class ZestProperties {
 	public static final String LABEL__NE = "element-label";
 
 	/**
+	 * This attribute stores a back-reference to the original model element from
+	 * which this {@link Graph}, {@link Node}, or {@link Edge} was constructed.
+	 *
+	 * @since 5.1
+	 */
+	public static final String MODEL__GNE = "element-model";
+
+	/**
 	 * This attribute determines the curve being used for visualization of the edge.
 	 */
 	public static final String CURVE__E = "edge-curve";
@@ -875,6 +883,42 @@ public class ZestProperties {
 			return (Boolean) ((Provider<?>) value).get();
 		}
 		return (Boolean) value;
+	}
+
+	/**
+	 * Returns the value of the {@link #MODEL__GNE} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge The {@link Edge} of which the model is determined.
+	 * @return The model of the given {@link Edge}.
+	 * @since 5.1
+	 */
+	public static Object getModel(Edge edge) {
+		return edge.attributesProperty().get(MODEL__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #MODEL__GNE} attribute of the given
+	 * {@link Graph}.
+	 *
+	 * @param graph The {@link Graph} of which the model is determined.
+	 * @return The model of the given {@link Graph}.
+	 * @since 5.1
+	 */
+	public static Object getModel(Graph graph) {
+		return graph.attributesProperty().get(MODEL__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #MODEL__GNE} attribute of the given
+	 * {@link Node}.
+	 *
+	 * @param node The {@link Node} of which the model is determined.
+	 * @return The model of the given {@link Node}.
+	 * @since 5.1
+	 */
+	public static Object getModel(Node node) {
+		return node.attributesProperty().get(MODEL__GNE);
 	}
 
 	/**
@@ -2243,6 +2287,54 @@ public class ZestProperties {
 			node.getAttributes().remove(LAYOUT_IRRELEVANT__NE);
 		} else {
 			node.attributesProperty().put(LAYOUT_IRRELEVANT__NE, layoutIrrelevantProvider);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #MODEL__GNE} attribute of the given {@link Edge}
+	 * to the given value.
+	 *
+	 * @param edge  The {@link Edge} of which the model is changed.
+	 * @param model The model for the given {@link Edge}.
+	 * @since 5.1
+	 */
+	public static void setModel(Edge edge, Object model) {
+		if (model == null) {
+			edge.getAttributes().remove(MODEL__GNE);
+		} else {
+			edge.attributesProperty().put(MODEL__GNE, model);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #MODEL__GNE} attribute of the given
+	 * {@link Graph} to the given value.
+	 *
+	 * @param graph The {@link Graph} of which the model is changed.
+	 * @param model The model for the given {@link Graph}.
+	 * @since 5.1
+	 */
+	public static void setModel(Graph graph, Object model) {
+		if (model == null) {
+			graph.getAttributes().remove(MODEL__GNE);
+		} else {
+			graph.attributesProperty().put(MODEL__GNE, model);
+		}
+	}
+
+	/**
+	 * Sets the value of the {@link #MODEL__GNE} attribute of the given {@link Node}
+	 * to the given value.
+	 *
+	 * @param node  The {@link Node} of which the model is changed.
+	 * @param model The model for the given {@link Node}.
+	 * @since 5.1
+	 */
+	public static void setModel(Node node, Object model) {
+		if (model == null) {
+			node.getAttributes().remove(MODEL__GNE);
+		} else {
+			node.attributesProperty().put(MODEL__GNE, model);
 		}
 	}
 

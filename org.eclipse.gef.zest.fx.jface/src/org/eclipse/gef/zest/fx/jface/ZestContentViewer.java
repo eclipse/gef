@@ -239,6 +239,9 @@ public class ZestContentViewer extends ContentViewer {
 		Node node = new Node();
 		contentNodeMap.put(contentNode, node);
 
+		// store back-reference to model
+		ZestProperties.setModel(node, contentNode);
+
 		// label
 		ZestProperties.setLabel(node, new Provider<String>() {
 			@Override

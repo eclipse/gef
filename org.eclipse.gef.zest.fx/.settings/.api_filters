@@ -13,6 +13,12 @@
                 <message_argument value="LABEL_TOOLTIP__E"/>
             </message_arguments>
         </filter>
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.gef.zest.fx.ZestProperties"/>
+                <message_argument value="MODEL__GNE"/>
+            </message_arguments>
+        </filter>
         <filter comment="constant added" id="336658481">
             <message_arguments>
                 <message_argument value="org.eclipse.gef.zest.fx.ZestProperties"/>

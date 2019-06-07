@@ -382,6 +382,14 @@ public class ZestContentViewerTests {
 	}
 
 	@Test
+	public void test_modelBackReference() {
+		viewer.setInput(new Object());
+		Map<Object, org.eclipse.gef.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
+		assertEquals(MyContentProvider.first(), firstNode.getAttributes().get(ZestProperties.MODEL__GNE));
+	}
+
+	@Test
 	public void test_nestedGraphContentProvider() {
 		viewer.setInput(new Object());
 		Map<Object, org.eclipse.gef.graph.Node> contentNodeMap = viewer.getContentNodeMap();
