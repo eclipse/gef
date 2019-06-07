@@ -63,6 +63,21 @@ public class GraphPart extends AbstractContentPart<Group> {
 	}
 
 	@Override
+	protected void doAddContentChild(Object contentChild, int index) {
+		if (contentChild instanceof org.eclipse.gef.graph.Node) {
+			org.eclipse.gef.graph.Node node = (org.eclipse.gef.graph.Node) contentChild;
+			getContent().getNodes().add(index, node);
+		} else if (contentChild instanceof org.eclipse.gef.graph.Edge) {
+			org.eclipse.gef.graph.Edge edge = (org.eclipse.gef.graph.Edge) contentChild;
+			getContent().getEdges().add(index - getContent().getNodes().size(), edge);
+		} else {
+			throw new IllegalArgumentException(
+					"Cannot add content child from graph: expected either Node or Edge, but got " + contentChild
+							+ " instead.");
+		}
+	}
+
+	@Override
 	protected Group doCreateVisual() {
 		Group visual = new Group();
 		visual.setAutoSizeChildren(false);
@@ -138,6 +153,21 @@ public class GraphPart extends AbstractContentPart<Group> {
 	@Override
 	protected void doRemoveChildVisual(IVisualPart<? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
+	}
+
+	@Override
+	protected void doRemoveContentChild(Object contentChild) {
+		if (contentChild instanceof org.eclipse.gef.graph.Node) {
+			org.eclipse.gef.graph.Node node = (org.eclipse.gef.graph.Node) contentChild;
+			getContent().getNodes().remove(node);
+		} else if (contentChild instanceof org.eclipse.gef.graph.Edge) {
+			org.eclipse.gef.graph.Edge edge = (org.eclipse.gef.graph.Edge) contentChild;
+			getContent().getEdges().remove(edge);
+		} else {
+			throw new IllegalArgumentException(
+					"Cannot remove content child to graph: expected either Node or Edge, but got " + contentChild
+							+ " instead.");
+		}
 	}
 
 	@Override
