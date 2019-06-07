@@ -9,11 +9,12 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG)    - initial API and implementation
  *     Tamas Miklossy  (itemis AG)    - implement additional test cases (bug #461506)
- *     Zoey Gerrit Prigge (itemis AG) - implement additional attributes (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - implement additional test cases (bugs #461506, #547809)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
+import java.util.function.Consumer
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypeFactory
@@ -56,6 +57,7 @@ import org.junit.runner.RunWith
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
 import static extension org.junit.Assert.assertEquals
+import static extension org.junit.Assert.assertFalse
 import static extension org.junit.Assert.assertNotNull
 import static extension org.junit.Assert.assertNull
 import static extension org.junit.Assert.assertTrue
@@ -2399,6 +2401,59 @@ class DotAttributesTest {
 		// test undirected graph
 		it = new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.GRAPH).build
 		GraphType.GRAPH.assertEquals(_getType)
+	}
+	
+	@Test def node_isCluster() {
+		val it = new Node.Builder().buildNode
+		//initially false
+		cluster.assertFalse
+		
+		val innerCluster = new Graph.Builder().attr([p1,p2|p1._setName(p2)], "clusterDummy").build
+		val innerNonCluster = new Graph.Builder().build
+		
+		val Runnable assertLocalBehaviour = [
+			nestedGraph = null
+			cluster.assertFalse
+			nestedGraph = innerNonCluster
+			cluster.assertFalse
+			nestedGraph = innerCluster
+			cluster.assertTrue
+		]
+		
+		val Runnable assertNoneGlobalBehaviour = [
+			nestedGraph = null
+			cluster.assertFalse
+			nestedGraph = innerNonCluster
+			cluster.assertFalse
+			nestedGraph = innerCluster
+			cluster.assertFalse
+		]
+		
+		val extension Consumer<Graph> assertAllBehaviours = [ it |
+			attributesProperty.remove(CLUSTERRANK__G)
+			assertLocalBehaviour.run
+			clusterrankParsed = ClusterMode.LOCAL
+			assertLocalBehaviour.run
+			clusterrankParsed = ClusterMode.GLOBAL
+			assertNoneGlobalBehaviour.run
+			clusterrankParsed = ClusterMode.NONE
+			assertNoneGlobalBehaviour.run
+		]
+		
+		val outerGraph = new Graph.Builder().nodes(it).build
+		outerGraph.accept
+		
+		val outerOuterGraph = new Graph.Builder().node().attr([p1, p2|p1.nestedGraph = p2], outerGraph).build
+		
+		//values set on outer graph should not change the behaviour
+		outerGraph.attributesProperty.remove(CLUSTERRANK__G)
+		outerOuterGraph.accept
+		outerGraph.clusterrankParsed = ClusterMode.LOCAL
+		outerOuterGraph.accept
+		outerGraph.clusterrankParsed = ClusterMode.GLOBAL
+		outerOuterGraph.accept
+		outerGraph.clusterrankParsed = ClusterMode.NONE
+		outerOuterGraph.accept
 	}
 
 	@Test def node_color() {

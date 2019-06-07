@@ -1905,7 +1905,6 @@ class Dot2ZestGraphCopierTest {
 	}
 
 	@Test def graph_clusterrank001() {
-		// This test shows current behaviour, it needs adaptation once the attribute is supported.
 		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
 		'''
 			digraph {
@@ -1917,12 +1916,6 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
-					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node2 {
 					element-label : 1
 					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -1932,6 +1925,7 @@ class Dot2ZestGraphCopierTest {
 	}
 
 	@Test def graph_clusterrank002() {
+		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
 		'''
 			digraph {
 				graph [clusterrank=none];
@@ -1942,12 +1936,6 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
-					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
-					node-size : Dimension(54.0, 36.0)
-				}
-				Node2 {
 					element-label : 1
 					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -1957,6 +1945,7 @@ class Dot2ZestGraphCopierTest {
 	}
 
 	@Test def graph_clusterrank003() {
+		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
 		'''
 			digraph {
 				graph [clusterrank=local];
@@ -1982,6 +1971,7 @@ class Dot2ZestGraphCopierTest {
 	}
 
 	@Test def graph_clusterrank004() {
+		// Note: clusterrank defaults to local; none and global turn the cluster processing off.
 		'''
 			digraph {
 				subgraph clusterName {

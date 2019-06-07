@@ -10,6 +10,7 @@
  *     Alexander Nyßen    (itemis AG) - initial API and implementation
  *     Tamas Miklossy     (itemis AG) - Add support for all dot attributes (bug #461506)
  *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
+ *                                    - Add clusterrank check in isCluster (bug #547809)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -144,10 +145,19 @@ class DotAttributes {
 		}
 }
 	static def boolean isCluster(Node node) {
-		if(node.nestedGraph === null) {
+		var Graph rootGraph = null;
+		for (var nestingNode = node; 
+			nestingNode !== null; 
+			nestingNode = rootGraph?.nestingNode) {
+			rootGraph = nestingNode.graph;
+		}
+		
+		if (node.nestedGraph === null || rootGraph !== null &&
+			#[ClusterMode.NONE, ClusterMode.GLOBAL].contains(rootGraph.clusterrankParsed)) {
 			return false
 		}
-		val name =  node.nestedGraph._getName
+
+		val name = node.nestedGraph._getName
 		return name !== null && name.startsWith("cluster")
 	}
 
