@@ -9,6 +9,7 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial implementation
  *     Zoey Prigge (itemis AG)    - Add cluster content assist support (bug #547639)
+ *                                - Implement subgraph template proposals (bug #547841)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -161,7 +162,19 @@ class DotContentAssist2Test extends AbstractContentAssistTest {
 			new CompletionProposal("subgraph: Subgraph", "subgraph", IMAGE_SUBGRAPH),
 			new CompletionProposal("{", "{", IMAGE_DEFAULT),
 			new CompletionProposal("}","}", IMAGE_DEFAULT),
-			new CompletionProposal("edge - Insert a template", '''source -> target''', IMAGE_DEFAULT)
+			new CompletionProposal("cluster - Insert a template", '''
+				subgraph clustername {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("edge - Insert a template", '''source -> target''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph (named) - Insert a template", '''
+				subgraph name {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph - Insert a template", '''
+				subgraph {
+					content
+				}''', IMAGE_DEFAULT)
 		])
 	}
 
@@ -181,7 +194,19 @@ class DotContentAssist2Test extends AbstractContentAssistTest {
 			new CompletionProposal("subgraph: Subgraph", "subgraph", IMAGE_SUBGRAPH),
 			new CompletionProposal("{", "{", IMAGE_DEFAULT),
 			new CompletionProposal("}","}", IMAGE_DEFAULT),
-			new CompletionProposal("edge - Insert a template", '''source -- target''', IMAGE_DEFAULT)
+			new CompletionProposal("cluster - Insert a template", '''
+				subgraph clustername {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("edge - Insert a template", '''source -- target''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph (named) - Insert a template", '''
+				subgraph name {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph - Insert a template", '''
+				subgraph {
+					content
+				}''', IMAGE_DEFAULT)
 		])
 	}
 
@@ -200,7 +225,19 @@ class DotContentAssist2Test extends AbstractContentAssistTest {
 			new CompletionProposal("subgraph: Subgraph", "subgraph", IMAGE_SUBGRAPH),
 			new CompletionProposal("{", "{", IMAGE_DEFAULT),
 			new CompletionProposal("}","}", IMAGE_DEFAULT),
-			new CompletionProposal("edge - Insert a template", '''source -> target''', IMAGE_DEFAULT)
+			new CompletionProposal("cluster - Insert a template", '''
+				subgraph clustername {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("edge - Insert a template", '''source -> target''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph (named) - Insert a template", '''
+				subgraph name {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph - Insert a template", '''
+				subgraph {
+					content
+				}''', IMAGE_DEFAULT)
 		])
 	}
 
@@ -219,8 +256,20 @@ class DotContentAssist2Test extends AbstractContentAssistTest {
 			new CompletionProposal("subgraph: Subgraph", "subgraph", IMAGE_SUBGRAPH),
 			new CompletionProposal("{", "{", IMAGE_DEFAULT),
 			new CompletionProposal("}","}", IMAGE_DEFAULT),
-			new CompletionProposal("edge - Insert a template", '''source -- target''', IMAGE_DEFAULT)
-		])
+			new CompletionProposal("cluster - Insert a template", '''
+				subgraph clustername {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("edge - Insert a template", '''source -- target''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph (named) - Insert a template", '''
+				subgraph name {
+					content
+				}''', IMAGE_DEFAULT),
+			new CompletionProposal("subgraph - Insert a template", '''
+				subgraph {
+					content
+				}''', IMAGE_DEFAULT)
+			])
 	}
 
 	@Test def html_like_label_tags() {

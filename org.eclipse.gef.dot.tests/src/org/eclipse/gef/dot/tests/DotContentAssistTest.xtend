@@ -12,6 +12,7 @@
  *                                    - Improve CA support for quoted attributes (bug #545801)
  *                                    - Add DotFontName content assist support (bug #542663)
  *                                    - Add cluster content assist support (bug #547639)
+ *                                    - Implement subgraph template proposals (bug #547841)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -226,7 +227,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				1--2«c»
 			}
-		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "{", "}"], "--", '''
+		'''.testContentAssistant(#["--", ":", ";", "[", "cluster - Insert a template", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"], "--", '''
 			graph {
 				1--2--
 			}
@@ -238,7 +239,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			digraph {
 				1->2«c»
 			}
-		'''.testContentAssistant(#["->", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "{", "}"], "->", '''
+		'''.testContentAssistant(#["->", ":", ";", "[", "cluster - Insert a template", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"], "->", '''
 			digraph {
 				1->2->
 			}
@@ -252,9 +253,9 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
 									"id", "label", "lp", "penwidth", "style", "tooltip", "edge[]", "graph[]",
-									"node[]", "subgraph", "{", "}", "edge - Insert a template"], "graph[]", '''
+									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "edge - Insert a template"], "graph[]", '''
 			graph {
 				subgraph cluster_0 {
 					graph[]
@@ -271,7 +272,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph","{","}"], "graph[]", '''
+		'''.testContentAssistant(#["--", ":", ";", "[", "cluster - Insert a template", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template","{","}"], "graph[]", '''
 			graph {
 				subgraph cluster_0 {
 					1--2
@@ -306,9 +307,9 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
 									"id", "label", "lp", "penwidth", "style", "tooltip", "edge[]", "graph[]",
-									"node[]", "subgraph", "{", "}", "edge - Insert a template"], "tooltip",
+									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "edge - Insert a template"], "tooltip",
 		'''
 			graph {
 				subgraph cluster_0 {
@@ -698,6 +699,40 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		''')
 	}
 
+	@Test def cluster_template() {
+		'''
+			graph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template",
+									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
+									"rankdir", "splines", "style", "edge - Insert a template"], "cluster - Insert a template",
+		'''
+			graph {
+				subgraph clustername {
+					content
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				1
+				«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
+									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "cluster - Insert a template",
+		'''
+			graph {
+				1
+				subgraph clustername {
+					content
+				}
+			}
+		''')
+	}
+
 	@Test def cluster_tooltip() {
 		//test global attribute value
 		'''
@@ -735,8 +770,9 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
-			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor",
+			"fontname", "fontsize", "forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines",
+			"style", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"
 		], "edge[]", '''
 			graph {
 				edge[]
@@ -750,7 +786,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2
 				«c»
 			}
-		'''.testContentAssistant(#["--", ":", ";", "[" ,"edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph","{","}"], "edge[]", '''
+		'''.testContentAssistant(#["--", ":", ";", "[", "cluster - Insert a template" ,"edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template","{","}"], "edge[]", '''
 			graph {
 				1--2
 				edge[]
@@ -1970,7 +2006,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph",
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template",
 									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
 									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -1984,8 +2020,8 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1
 				«c»
 			}
-		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
-									"node[]", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
+									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
 									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
 			graph {
@@ -1999,7 +2035,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			digraph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph",
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template",
 									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
 									"rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
@@ -2013,8 +2049,8 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1
 				«c»
 			}
-		'''.testContentAssistant(#["->", ":", ";", "=", "[", "bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "edge[]", "fontname", "fontsize", "graph[]",
-									"node[]", "subgraph", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+		'''.testContentAssistant(#["->", ":", ";", "=", "[", "bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "edge[]", "fontname", "fontsize", "graph[]",
+									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
 									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "edge - Insert a template",
 		'''
 			digraph {
@@ -2126,8 +2162,8 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
-			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
+			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"
 		], "graph[]", '''
 			graph {
 				graph[]
@@ -2141,7 +2177,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2
 				«c»
 			}
-		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph","{","}"], "graph[]", '''
+		'''.testContentAssistant(#["--", ":", ";", "[", "cluster - Insert a template", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template","{","}"], "graph[]", '''
 			graph {
 				1--2
 				graph[]
@@ -2169,8 +2205,8 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
-									"node[]",	"subgraph", "{", "}", "forcelabels", "id", "label",	"layout", "lp",
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
+									"node[]",	"subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "forcelabels", "id", "label",	"layout", "lp",
 									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "rankdir",
 		'''
 			graph {
@@ -2454,9 +2490,9 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				colorscheme=brbg11 fontcolor=1«c»
 			}
-		'''.testContentAssistant(#["1", "10", "11", ",", ";", "{", "}", "bb", "bgcolor", "colorscheme", "clusterrank",
+		'''.testContentAssistant(#["1", "10", "11", ",", ";", "{", "}", "bb", "bgcolor", "colorscheme", "cluster - Insert a template", "clusterrank",
 									"edge[]", "fontcolor", "fontname", "fontsize", "forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]",
-									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "edge - Insert a template"], "11",
+									"nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "edge - Insert a template"], "11",
 		'''
 			graph {
 				colorscheme=brbg11 fontcolor=11
@@ -2956,8 +2992,8 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				«c»
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
-			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "{", "}"
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "edge[]", "edge - Insert a template", "fontcolor", "fontname", "fontsize",
+			"forcelabels", "graph[]", "id", "label", "layout", "lp", "node[]", "nodesep", "outputorder", "pagedir", "rankdir", "splines", "style", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"
 		], "node[]", '''
 			graph {
 				node[]
@@ -2971,7 +3007,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2
 				«c»
 			}
-		'''.testContentAssistant(#["--", ":", ";", "[", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "{", "}"], "node[]", '''
+		'''.testContentAssistant(#["--", ":", ";", "[", "cluster - Insert a template", "edge[]", "edge - Insert a template", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"], "node[]", '''
 			graph {
 				1--2
 				node[]
@@ -3824,7 +3860,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
+		'''.testContentAssistant(#["cluster - Insert a template", "edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"
 		], "edge[]", '''
 			graph {
 				{
@@ -3841,7 +3877,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
+		'''.testContentAssistant(#["cluster - Insert a template", "edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"
 		], "graph[]", '''
 			graph {
 				{
@@ -3858,7 +3894,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
+		'''.testContentAssistant(#["cluster - Insert a template", "edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"
 		], "node[]", '''
 			graph {
 				{
@@ -3875,7 +3911,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "{", "}"
+		'''.testContentAssistant(#["cluster - Insert a template", "edge - Insert a template", "edge[]","graph[]", "node[]", "rank", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}"
 		], "rank", '''
 			graph {
 				{
@@ -3957,6 +3993,74 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				{
 					rank="max"
+				}
+			}
+		''')
+	}
+
+	@Test def subgraph_template() {
+		//test anonymous template
+		'''
+			graph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template",
+									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
+									"rankdir", "splines", "style", "edge - Insert a template"], "subgraph - Insert a template",
+		'''
+			graph {
+				subgraph {
+					content
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				1
+				«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
+									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "subgraph - Insert a template",
+		'''
+			graph {
+				1
+				subgraph {
+					content
+				}
+			}
+		''')
+		
+		//test named template
+		'''
+			graph {
+				«c»
+			}
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]", "node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template",
+									"{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder", "pagedir",
+									"rankdir", "splines", "style", "edge - Insert a template"], "subgraph (named) - Insert a template",
+		'''
+			graph {
+				subgraph name {
+					content
+				}
+			}
+		''')
+		
+		'''
+			graph {
+				1
+				«c»
+			}
+		'''.testContentAssistant(#["--", ":", ";", "=", "[", "bb", "bgcolor", "cluster - Insert a template", "clusterrank", "colorscheme", "fontcolor", "fontname", "fontsize", "edge[]", "graph[]",
+									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "forcelabels", "id", "label", "layout", "lp", "nodesep", "outputorder",
+									"pagedir", "rankdir", "splines", "style", "edge - Insert a template"], "subgraph (named) - Insert a template",
+		'''
+			graph {
+				1
+				subgraph name {
+					content
 				}
 			}
 		''')
