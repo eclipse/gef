@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-    Copyright (c) 2017, 2018 itemis AG and others.
+    Copyright (c) 2017, 2019 itemis AG and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
    
     Contributors:
         Tamas Miklossy (itemis AG) - initial API and implementation
+        Zoey Prigge    (itemis AG) - Implement subgraph template proposals (bug #547841)
  -->
 
 <templates>
@@ -33,4 +34,22 @@
 		id="EdgeTemplate" autoinsert="false"
 		context="org.eclipse.gef.dot.internal.language.Dot.Stmt" deleted="false"
 		description="Insert a template" enabled="true" name="edge">${source} ${op} ${target}</template>
+	<template
+		id="SubgraphTemplateSimple" autoinsert="false"
+		context="org.eclipse.gef.dot.internal.language.Dot.Stmt" deleted="false"
+		description="Insert a template" enabled="true" name="subgraph">subgraph {&#13;
+	${content}&#13;
+}</template>
+	<template
+		id="SubgraphTemplateNamed" autoinsert="false"
+		context="org.eclipse.gef.dot.internal.language.Dot.Stmt" deleted="false"
+		description="Insert a template" enabled="true" name="subgraph (named)">subgraph ${name} {&#13;
+	${content}&#13;
+}</template>
+	<template
+		id="SubgraphTemplateCluster" autoinsert="false"
+		context="org.eclipse.gef.dot.internal.language.Dot.Stmt" deleted="false"
+		description="Insert a template" enabled="true" name="cluster">subgraph cluster${name} {&#13;
+	${content}&#13;
+}</template>
 </templates>
