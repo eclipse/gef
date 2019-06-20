@@ -159,7 +159,6 @@ public class DotStyleJavaValidator extends
 		int offset = node.getTotalOffset();
 		int length = node.getLength();
 
-		String code = null;
 		// the issueData will be evaluated by the quickfixes
 		List<String> issueData = new ArrayList<>();
 		issueData.add(issueCode);
@@ -167,7 +166,7 @@ public class DotStyleJavaValidator extends
 		issueData.addAll(styleItem.getArgs());
 
 		getMessageAcceptor().acceptWarning(message, styleItem, offset, length,
-				code, issueData.toArray(new String[0]));
+				issueCode, issueData.toArray(new String[0]));
 	}
 
 	private void reportRangeBaseError(String issueCode, String message,
@@ -186,12 +185,11 @@ public class DotStyleJavaValidator extends
 		int offset = node.getTotalOffset();
 		int length = node.getLength();
 
-		String code = null;
 		// the issueData will be evaluated by the quickfixes
 		String[] issueData = { issueCode, styleItem.getName(),
 				attributeContext.toString() };
 		getMessageAcceptor().acceptError(message, styleItem, offset, length,
-				code, issueData);
+				issueCode, issueData);
 	}
 
 	private Context getAttributeContext() {
