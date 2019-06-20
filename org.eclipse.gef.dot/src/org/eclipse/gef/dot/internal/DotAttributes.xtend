@@ -742,7 +742,9 @@ class DotAttributes {
 
 				// we need a specific message acceptor
 				validator.setMessageAcceptor(
-					// TODO: reuse the ConvertingValidationMessageAcceptor here
+					/*
+					 *  TODO: reuse the {@link org.eclipse.gef.dot.internal.language.validation.DotSubgrammarValidationMessageAcceptor} here
+					 */
 					new ValidationMessageAcceptor {
 
 						override void acceptError(String message, EObject object,
