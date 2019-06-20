@@ -38,13 +38,9 @@ import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.ITextRegion;
 import org.eclipse.xtext.util.ITextRegionWithLineInformation;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
-
-	@Inject
-	private ILocationInFileProvider locationInFileProvider;
 
 	private List<ITextRegionWithLineInformation> acceptedRegions = new LinkedList<ITextRegionWithLineInformation>();
 
@@ -78,6 +74,7 @@ public class DotFoldingRegionProvider extends DefaultFoldingRegionProvider {
 	@Override
 	protected void computeObjectFolding(EObject eObject,
 			IFoldingRegionAcceptor<ITextRegion> foldingRegionAcceptor) {
+		ILocationInFileProvider locationInFileProvider = getLocationInFileProvider();
 		ITextRegion region = locationInFileProvider.getFullTextRegion(eObject);
 		ITextRegionWithLineInformation regionWithLineInformation = (ITextRegionWithLineInformation) region;
 		if (region != null) {
