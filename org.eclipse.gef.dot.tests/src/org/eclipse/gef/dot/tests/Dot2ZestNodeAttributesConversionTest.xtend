@@ -456,7 +456,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_penwidth_record001() {
 		'''
 			digraph{
@@ -468,7 +467,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 	
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_penwidth_record002() {
 		'''
 			digraph{
@@ -762,7 +760,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		'''.assertNodeStyle("")
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record001() {
 		'''
 			digraph{
@@ -773,7 +770,6 @@ class Dot2ZestNodeAttributesConversionTest {
 			''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record002() {
 		'''
 			digraph{
@@ -785,7 +781,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record003() {
 		'''
 			digraph{
@@ -797,7 +792,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record004() {
 		'''
 			digraph{
@@ -808,7 +802,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record005() {
 		'''
 			digraph{
@@ -819,7 +812,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record006() {
 		'''
 			digraph{
@@ -830,7 +822,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record007() {
 		'''
 			graph {
@@ -842,7 +833,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record008() {
 		'''
 			digraph {
@@ -853,7 +843,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_record009() {
 		'''
 			digraph {
@@ -864,7 +853,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_style_mrecord001() {
 		'''
 			digraph{
@@ -886,7 +874,6 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_fill_record001() {
 		'''
 			digraph{

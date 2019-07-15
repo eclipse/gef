@@ -20,7 +20,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
 import org.eclipse.gef.dot.internal.DotImport
 import org.eclipse.gef.dot.internal.language.dot.DotAst
-import org.eclipse.gef.dot.internal.ui.DotNodePart
+import org.eclipse.gef.dot.internal.ui.DotProperties
 import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestGraphCopier
 import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
@@ -3575,6 +3575,7 @@ class Dot2ZestGraphCopierTest {
 				}
 				Node9 {
 					element-label : plaintext
+					node-shape : DotNoneShape
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node10 {
@@ -3688,7 +3689,7 @@ class Dot2ZestGraphCopierTest {
 				}
 				Node32 {
 					element-label : none
-					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
+					node-shape : DotNoneShape
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node33 {
@@ -5116,7 +5117,7 @@ class Dot2ZestGraphCopierTest {
 	private static class NodeShapePrettyPrinter extends DotGraphPrettyPrinter {
 		override protected prettyPrint(String attrKey, Object attrValue) {
 			return if (#[
-				DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+				DotProperties.INNER_SHAPE__N,
 				ZestProperties.SHAPE__N
 			].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
 				val node = attrValue as GeometryNode<?>
@@ -5130,7 +5131,7 @@ class Dot2ZestGraphCopierTest {
 	private static class RecordBasedShapePrettyPrinter extends DotGraphPrettyPrinter {
 		override protected prettyPrint(String attrKey, Object attrValue, String startIndent) {
 			return if (#[
-				DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+				DotProperties.INNER_SHAPE__N,
 				ZestProperties.SHAPE__N
 			].contains(attrKey) && attrValue instanceof Pane) {
 				val node = attrValue as Pane
@@ -5144,7 +5145,7 @@ class Dot2ZestGraphCopierTest {
 	private static class NodeShapeWithStylePrettyPrinter extends DotGraphPrettyPrinter {
 		override protected prettyPrint(String attrKey, Object attrValue) {
 			return if (#[
-				DotNodePart.DOT_PROPERTY_INNER_SHAPE__N,
+				DotProperties.INNER_SHAPE__N,
 				ZestProperties.SHAPE__N
 			].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
 				val node = attrValue as GeometryNode<?>

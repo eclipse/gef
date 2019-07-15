@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.eclipse.gef.dot.internal.language.color.Color;
 import org.eclipse.gef.dot.internal.language.fontname.FontName;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
@@ -37,11 +38,8 @@ import org.eclipse.xtext.parser.IParseResult;
 
 import com.google.inject.Injector;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -68,43 +66,45 @@ class DotHTMLLabelJavaFxNode {
 	final private DotColorUtil colorUtil;
 	final private DotFontUtil fontUtil;
 
-	final private TagStyleContainer defaultStyle;
-	final private TagStyleContainer nodeStyle;
+	final private StyleContainer defaultStyle;
+	final private FontStyleContainer nodeStyle;
 
-	final private HtmlLabel root;
-	final private String colorscheme;
+	private HtmlLabel root = null;
+	private Pane masterFxElement = new Pane();
+	private String colorscheme = null;
+	private String label = null;
 
 	/**
 	 * Creates a DotHTMLLabelJavaNode creator with default styles
 	 * 
-	 * @param label
-	 *            HTML label attribute as string
-	 * @param face
-	 *            Default typeface
-	 * @param size
-	 *            Default font size
-	 * @param color
-	 *            Default font color
-	 * @param colorscheme
-	 *            The colorscheme in use
 	 * @param fontUtil
 	 *            A DotFontUtil instance.
 	 * @param colorUtil
 	 *            A DotColorUtil instance.
 	 */
-	public DotHTMLLabelJavaFxNode(final String label, String face, String size,
-			String color, String colorscheme, DotColorUtil colorUtil,
+	public DotHTMLLabelJavaFxNode(DotColorUtil colorUtil,
 			DotFontUtil fontUtil) {
 		this.colorUtil = colorUtil;
 		this.fontUtil = fontUtil;
 
-		this.colorscheme = colorscheme;
-
-		root = parseLabel(label);
-
-		defaultStyle = new TagStyleContainer(null, "Times-Roman", "14", //$NON-NLS-1$ //$NON-NLS-2$
+		defaultStyle = new FontStyleContainer(null, "Times-Roman", "14", //$NON-NLS-1$ //$NON-NLS-2$
 				"black"); //$NON-NLS-1$
-		nodeStyle = new TagStyleContainer(defaultStyle, face, size, color);
+		nodeStyle = new FontStyleContainer(defaultStyle, null, null, null);
+	}
+
+	public void setDefaults(FontName face, Double size, Color color,
+			String colorscheme) {
+		nodeStyle.updateTagStyle(face, size, color);
+		this.colorscheme = colorscheme;
+	}
+
+	public void setLabel(String label) {
+		root = parseLabel(label);
+		this.label = label;
+	}
+
+	public String getLabel() {
+		return label;
 	}
 
 	/**
@@ -112,24 +112,15 @@ class DotHTMLLabelJavaFxNode {
 	 * 
 	 * @return Java Fx Pane
 	 */
-	public Pane getFxElement() {
-		Pane element = drawLabel(root);
-		return element;
+	public Pane getMasterFxElement() {
+		return masterFxElement;
 	}
 
-	/**
-	 * Bounds for the JavaFxElement after CSS
-	 * 
-	 * @return Bounds
-	 */
-	public Bounds getBounds() {
-		Group fxElement = new Group(getFxElement());
-		@SuppressWarnings("unused") // group layout only works, if the group is
-									// included in a scene.
-		Scene scene = new Scene(fxElement);
-		fxElement.applyCss();
-		fxElement.layout();
-		return fxElement.getBoundsInParent();
+	public void refreshFxElement() {
+		if (root != null && fontUtil != null && colorUtil != null) {
+			masterFxElement.getChildren().clear();
+			masterFxElement.getChildren().add(drawLabel(root));
+		}
 	}
 
 	private HtmlLabel parseLabel(final String label) {
@@ -147,7 +138,7 @@ class DotHTMLLabelJavaFxNode {
 	}
 
 	private Pane drawContents(List<HtmlContent> contents,
-			TagStyleContainer parentStyle, Pos bAlign) {
+			StyleContainer parentStyle, Pos bAlign) {
 		if (contents.size() <= 0)
 			return new Pane(); // an empty HTML label, ought not to occur
 
@@ -209,7 +200,7 @@ class DotHTMLLabelJavaFxNode {
 		;
 	}
 
-	private Pane drawTableParents(HtmlTag tag, TagStyleContainer parentStyle) {
+	private Pane drawTableParents(HtmlTag tag, StyleContainer parentStyle) {
 		if (tag.getName().equalsIgnoreCase("table")) { //$NON-NLS-1$
 			return drawTable(tag, parentStyle);
 		}
@@ -218,7 +209,7 @@ class DotHTMLLabelJavaFxNode {
 	}
 
 	private Pane drawText(List<HtmlContent> contents,
-			TagStyleContainer parentStyle, Pos bAlign) {
+			StyleContainer parentStyle, Pos bAlign) {
 		TextFXBuilder builder = new TextFXBuilder(bAlign);
 		contents.forEach(
 				content -> handleTextContent(builder, content, parentStyle));
@@ -235,8 +226,8 @@ class DotHTMLLabelJavaFxNode {
 	 *            May be null
 	 */
 	private void handleTextTag(TextFXBuilder builder, HtmlTag tag,
-			TagStyleContainer parentStyle) {
-		TagStyleContainer tagStyleContainer;
+			StyleContainer parentStyle) {
+		StyleContainer tagStyleContainer;
 		switch (tag.getName().toLowerCase()) {
 		case "br": //$NON-NLS-1$
 			builder.breakLine(getPosForBr(tag));
@@ -256,8 +247,8 @@ class DotHTMLLabelJavaFxNode {
 	/*
 	 * A non-style tag supplied (cases of illegal grammar) is ignored
 	 */
-	private TagStyleContainer tagStyleContainer(HtmlTag tag,
-			TagStyleContainer parentStyle) {
+	private StyleContainer tagStyleContainer(HtmlTag tag,
+			StyleContainer parentStyle) {
 		switch (tag.getName().toLowerCase()) {
 		case "font": //$NON-NLS-1$
 			return fontTagStyleContainer(tag, parentStyle);
@@ -266,8 +257,8 @@ class DotHTMLLabelJavaFxNode {
 		}
 	}
 
-	private TagStyleContainer simpleTagStyleContainer(HtmlTag tag,
-			TagStyleContainer parentStyle) {
+	private StyleContainer simpleTagStyleContainer(HtmlTag tag,
+			StyleContainer parentStyle) {
 		TagStyle tagStyle = null;
 		try {
 			tagStyle = TagStyle.valueOf(tag.getName().toUpperCase());
@@ -277,15 +268,15 @@ class DotHTMLLabelJavaFxNode {
 		return new TagStyleContainer(parentStyle, tagStyle);
 	}
 
-	private TagStyleContainer fontTagStyleContainer(HtmlTag tag,
-			TagStyleContainer parentStyle) {
+	private StyleContainer fontTagStyleContainer(HtmlTag tag,
+			StyleContainer parentStyle) {
 		final String color = unquotedValueForAttr(
 				DotHtmlLabelHelper.getAttributeForTag(tag, "color")); //$NON-NLS-1$
 		final String face = unquotedValueForAttr(
 				DotHtmlLabelHelper.getAttributeForTag(tag, "face")); //$NON-NLS-1$
 		final String size = unquotedValueForAttr(
 				DotHtmlLabelHelper.getAttributeForTag(tag, "point-size")); //$NON-NLS-1$
-		return new TagStyleContainer(parentStyle, face, size, color);
+		return new FontStyleContainer(parentStyle, face, size, color);
 	}
 
 	/**
@@ -298,7 +289,7 @@ class DotHTMLLabelJavaFxNode {
 	 *            May be null
 	 */
 	private void handleTextContent(TextFXBuilder builder, HtmlContent content,
-			TagStyleContainer parentStyle) {
+			StyleContainer parentStyle) {
 		if (content.getTag() != null) {
 			handleTextTag(builder, content.getTag(), parentStyle);
 		} else {
@@ -337,7 +328,7 @@ class DotHTMLLabelJavaFxNode {
 		}
 	}
 
-	private Pane drawTable(HtmlTag tag, TagStyleContainer parentStyle) {
+	private Pane drawTable(HtmlTag tag, StyleContainer parentStyle) {
 		// TODO VR, HR support
 
 		GridPane fullPane = new GridPane();
@@ -353,7 +344,7 @@ class DotHTMLLabelJavaFxNode {
 
 	private void addRowToPane(HtmlTag tag,
 			Map<Integer, BitSet> rowsToFilledCellsMap, HtmlTag tr, int rowIndex,
-			GridPane fullPane, TagStyleContainer parentStyle) {
+			GridPane fullPane, StyleContainer parentStyle) {
 		for (HtmlTag td : childHtmlTagsOfKind(tr, "TD")) { //$NON-NLS-1$
 			addCellToPane(tag, rowsToFilledCellsMap, rowIndex, fullPane,
 					parentStyle, td);
@@ -362,7 +353,7 @@ class DotHTMLLabelJavaFxNode {
 
 	private void addCellToPane(HtmlTag tag,
 			Map<Integer, BitSet> rowsToFilledCellsMap, int rowIndex,
-			GridPane fullPane, TagStyleContainer parentStyle, HtmlTag td) {
+			GridPane fullPane, StyleContainer parentStyle, HtmlTag td) {
 		// "label" rule in the original graphviz grammar
 		// > cell : <TD> label </TD>
 		Pane labelPane = styledTdContent(tag, parentStyle, td);
@@ -378,7 +369,7 @@ class DotHTMLLabelJavaFxNode {
 		fullPane.add(labelPane, index, rowIndex, colspan, rowspan);
 	}
 
-	private GridPane styledTdContent(HtmlTag tag, TagStyleContainer parentStyle,
+	private GridPane styledTdContent(HtmlTag tag, StyleContainer parentStyle,
 			HtmlTag td) {
 		Pos bAlign = getPosForTdBalign(td);
 		Pane unstyled = drawContents(td.getChildren(), parentStyle, bAlign);
@@ -541,8 +532,12 @@ class DotHTMLLabelJavaFxNode {
 
 	private void appendColorAttribute(StringBuilder css, HtmlAttr bordercolor) {
 		css.append("-fx-border-color:"); //$NON-NLS-1$
-		css.append(bordercolor != null ? colorUtil.computeHtmlColor(colorscheme,
-				unquotedValueForAttr(bordercolor)) : "black"); //$NON-NLS-1$
+		css.append(
+				bordercolor != null
+						? colorUtil.computeZestColor(colorscheme,
+								colorUtil.computeHtmlColor(
+										unquotedValueForAttr(bordercolor)))
+						: "black"); //$NON-NLS-1$
 		css.append(";"); //$NON-NLS-1$
 	}
 
@@ -571,7 +566,8 @@ class DotHTMLLabelJavaFxNode {
 			css.append("-fx-background-color:"); //$NON-NLS-1$
 			List<String> colors = Arrays
 					.stream(unquotedValueForAttr(bgcolor).split(":")) //$NON-NLS-1$
-					.map(e -> colorUtil.computeHtmlColor(colorscheme, e))
+					.map(e -> colorUtil.computeZestColor(colorscheme,
+							colorUtil.computeHtmlColor(e)))
 					.collect(Collectors.toList());
 			if (colors.size() > 1) {
 				if (style != null && unquotedValueForAttr(style).toLowerCase()
@@ -713,53 +709,14 @@ class DotHTMLLabelJavaFxNode {
 		}
 	}
 
-	private class TagStyleContainer {
-		final private TagStyleContainer parent;
-		final private TagStyle style;
-		final private FontName face;
-		final private String size;
-		final private String color;
+	private abstract class StyleContainer {
+		protected abstract FontName face();
 
-		public TagStyleContainer(TagStyleContainer parent, TagStyle style) {
-			this.parent = parent;
-			this.style = style;
-			this.face = null;
-			this.size = null;
-			this.color = null;
-		}
+		protected abstract Double size();
 
-		public TagStyleContainer(TagStyleContainer parent, String face,
-				String size, String color) {
-			this.parent = parent;
-			this.style = null;
-			this.face = fontUtil.parseHtmlFontFace(face);
-			this.size = size;
-			this.color = color;
-		}
+		protected abstract Color color();
 
-		private FontName face() {
-			if (face != null)
-				return face;
-			if (parent != null)
-				return parent.face();
-			return null;
-		}
-
-		private String size() {
-			if (size != null)
-				return size;
-			if (parent != null)
-				return parent.size();
-			return null;
-		}
-
-		private String color() {
-			if (color != null)
-				return color;
-			if (parent != null)
-				return parent.color();
-			return null;
-		}
+		protected abstract Set<TagStyle> tagStyles();
 
 		private String fontCss() {
 			StringBuilder css = new StringBuilder();
@@ -781,29 +738,21 @@ class DotHTMLLabelJavaFxNode {
 				}
 			}
 
-			String size = size();
+			Double size = size();
 			if (size != null) {
 				css.append("-fx-font-size:"); //$NON-NLS-1$
 				css.append(size);
 				css.append(";"); //$NON-NLS-1$
 			}
 
-			String color = colorUtil.computeHtmlColor(colorscheme, color());
+			Color color = color();
 			if (color != null) {
 				css.append("-fx-fill:"); //$NON-NLS-1$
-				css.append(color);
+				css.append(colorUtil.computeZestColor(colorscheme, color));
 				css.append(";"); //$NON-NLS-1$
 			}
 
 			return css.toString();
-		}
-
-		private Set<TagStyle> tagStyles() {
-			Set<TagStyle> styles = parent == null ? new HashSet<TagStyle>()
-					: parent.tagStyles();
-			if (style != null)
-				styles.add(style);
-			return styles;
 		}
 
 		public String getCSS() {
@@ -815,11 +764,93 @@ class DotHTMLLabelJavaFxNode {
 		}
 	}
 
+	private class TagStyleContainer extends StyleContainer {
+		final private StyleContainer parent;
+		private TagStyle style;
+
+		public TagStyleContainer(StyleContainer parent, TagStyle style) {
+			this.parent = parent;
+			this.style = style;
+		}
+
+		protected FontName face() {
+			return parent != null ? parent.face() : null;
+		}
+
+		protected Double size() {
+			return parent != null ? parent.size() : null;
+		}
+
+		protected Color color() {
+			return parent != null ? parent.color() : null;
+		}
+
+		protected Set<TagStyle> tagStyles() {
+			Set<TagStyle> styles = parent == null ? new HashSet<TagStyle>()
+					: parent.tagStyles();
+			if (style != null)
+				styles.add(style);
+			return styles;
+		}
+
+	}
+
+	private class FontStyleContainer extends StyleContainer {
+		final private StyleContainer parent;
+		private FontName face;
+		private Double size;
+		private Color color;
+
+		public FontStyleContainer(StyleContainer parent, String face,
+				String size, String color) {
+			this.parent = parent;
+			updateTagStyle(
+					face != null ? fontUtil.parseHtmlFontFace(face) : null,
+					size != null ? Double.valueOf(size) : null,
+					color != null ? colorUtil.computeHtmlColor(color) : null);
+		}
+
+		public void updateTagStyle(FontName face, Double size, Color color) {
+			this.face = face;
+			this.size = size;
+			this.color = color;
+		}
+
+		protected FontName face() {
+			if (face != null)
+				return face;
+			if (parent != null)
+				return parent.face();
+			return null;
+		}
+
+		protected Double size() {
+			if (size != null)
+				return size;
+			if (parent != null)
+				return parent.size();
+			return null;
+		}
+
+		protected Color color() {
+			if (color != null)
+				return color;
+			if (parent != null)
+				return parent.color();
+			return null;
+		}
+
+		protected Set<TagStyle> tagStyles() {
+			return parent != null ? parent.tagStyles()
+					: new HashSet<TagStyle>();
+		}
+	}
+
 	private class FormattedString {
-		private final TagStyleContainer style;
+		private final StyleContainer style;
 		private final String text;
 
-		public FormattedString(TagStyleContainer style, String text) {
+		public FormattedString(StyleContainer style, String text) {
 			this.style = style;
 			this.text = text;
 		}

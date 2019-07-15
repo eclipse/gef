@@ -1,5 +1,5 @@
 /************************************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #538226)
  *     Zoey Prigge    (itemis AG) - DotGraphView: FontName support (bug #541056)
+ *                                - Html like content parts (bug #321775)
  *
  ***********************************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -48,7 +49,12 @@ public class DotContentPartFactory implements IContentPartFactory {
 		if (content instanceof Graph) {
 			part = new GraphPart();
 		} else if (content instanceof org.eclipse.gef.graph.Node) {
-			part = new DotNodePart();
+			if (DotProperties.getHtmlLikeLabel(
+					(org.eclipse.gef.graph.Node) content) != null) {
+				part = new DotHTMLNodePart();
+			} else {
+				part = new DotNodePart();
+			}
 		} else if (content instanceof Edge) {
 			part = new EdgePart();
 		} else if (content instanceof Pair
@@ -60,13 +66,41 @@ public class DotContentPartFactory implements IContentPartFactory {
 								.equals(((Pair) content).getValue())
 						|| ZestProperties.TARGET_LABEL__E
 								.equals(((Pair) content).getValue()))) {
-			part = new DotEdgeLabelPart();
+			if (ZestProperties.LABEL__NE.equals(((Pair) content).getValue())
+					&& DotProperties.getHtmlLikeLabel(
+							(org.eclipse.gef.graph.Edge) ((Pair) content)
+									.getKey()) != null
+					|| ZestProperties.EXTERNAL_LABEL__NE
+							.equals(((Pair) content).getValue())
+							&& DotProperties.getHtmlLikeExternalLabel(
+									(org.eclipse.gef.graph.Edge) ((Pair) content)
+											.getKey()) != null
+					|| ZestProperties.SOURCE_LABEL__E
+							.equals(((Pair) content).getValue())
+							&& DotProperties.getHtmlLikeSourceLabel(
+									(org.eclipse.gef.graph.Edge) ((Pair) content)
+											.getKey()) != null
+					|| ZestProperties.TARGET_LABEL__E
+							.equals(((Pair) content).getValue())
+							&& DotProperties.getHtmlLikeTargetLabel(
+									(org.eclipse.gef.graph.Edge) ((Pair) content)
+											.getKey()) != null) {
+				part = new DotHTMLEdgeLabelPart();
+			} else {
+				part = new DotEdgeLabelPart();
+			}
 		} else if (content instanceof Pair
 				&& ((Pair) content)
 						.getKey() instanceof org.eclipse.gef.graph.Node
 				&& ZestProperties.EXTERNAL_LABEL__NE
 						.equals(((Pair) content).getValue())) {
-			part = new DotNodeLabelPart();
+			if (DotProperties.getHtmlLikeExternalLabel(
+					(org.eclipse.gef.graph.Node) ((Pair) content)
+							.getKey()) != null) {
+				part = new DotHTMLNodeLabelPart();
+			} else {
+				part = new DotNodeLabelPart();
+			}
 		}
 		if (part != null) {
 			// TODO: use injector to create parts

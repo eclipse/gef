@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -133,6 +133,7 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 		}
 
 		// determine label for cluster
+		// TODO: respect style settings, escape sequences and HTML labels
 		String dotLabel = DotAttributes.getLabel(dotNode.getNestedGraph());
 		if ("\\G".equals(dotLabel)) { //$NON-NLS-1$
 			dotLabel = DotAttributes._getName(dotNode.getNestedGraph());
@@ -144,8 +145,9 @@ public class Dot2ZestGraphCopier extends GraphCopier {
 			// TODO: change this as soon as different label
 			// positions are supported by Zest
 			if (zestPosition != null && zestSize != null) {
-				double xOffset = 0.5 * (zestSize.width - attributesCopier
-						.computeZestLabelSize(dotLabel).width);
+				double xOffset = 0.5 * (zestSize.width
+						- attributesCopier.computeZestLabelSize(attributesCopier
+								.dummyTextNodeWithStyle(dotLabel, null)).width);
 				double yOffset = 4;
 				ZestProperties.setExternalLabelPosition(zestNode,
 						zestPosition.getTranslated(xOffset, yOffset));
