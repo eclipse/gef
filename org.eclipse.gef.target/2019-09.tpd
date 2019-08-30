@@ -1,0 +1,33 @@
+target "2019-09" with source requirements
+
+location "https://download.eclipse.org/releases/2019-09" {
+	org.eclipse.fx.runtime.min.feature.feature.group
+	org.eclipse.sdk.ide
+	org.eclipse.emf.mwe2.runtime.sdk.feature.group
+	org.eclipse.xtext.sdk.feature.group
+	org.eclipse.emf.sdk.feature.group
+}
+
+location "http://download.itemis.com/updates/releases/2.1.1" {
+	de.itemis.xtext.antlr.feature.feature.group
+}
+
+location "http://download.eclipse.org/cbi/updates/license" {
+	org.eclipse.license.feature.group [1.0.1,1.1.0)
+}
+
+location "http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository/" {
+	org.objectweb.asm
+	
+	com.google.inject.assistedinject
+	com.google.inject.assistedinject.source
+	com.google.guava
+	com.google.guava.source
+	com.google.inject
+	com.google.inject.source
+	com.google.inject.multibindings
+	com.google.inject.multibindings.source
+	javax.xml
+	org.junit
+	org.junit.source
+}
