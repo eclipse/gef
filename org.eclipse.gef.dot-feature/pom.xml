@@ -21,6 +21,6 @@
 	</parent>
 	<groupId>org.eclipse.gef.features</groupId>
 	<artifactId>org.eclipse.gef.dot</artifactId>
-	<version>5.0.300-SNAPSHOT</version>
+	<version>5.0.400-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 </project>

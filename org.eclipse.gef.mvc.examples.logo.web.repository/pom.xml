@@ -21,7 +21,7 @@
 	</parent>
 	<groupId>org.eclipse.gef.examples</groupId>
 	<artifactId>org.eclipse.gef.mvc.examples.logo.web.repository</artifactId>
-	<version>5.0.2-SNAPSHOT</version>
+	<version>5.1.1-SNAPSHOT</version>
 	<packaging>eclipse-repository</packaging>
 	<build>
 		<plugins>
