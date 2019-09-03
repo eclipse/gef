@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF Zest.FX Equinox Compatibility
 Bundle-SymbolicName: org.eclipse.gef.zest.fx.compatibility.equinox
-Bundle-Version: 5.1.1.qualifier
+Bundle-Version: 5.0.3.qualifier
 Bundle-Vendor: Eclipse GEF
 Fragment-Host: org.eclipse.gef.zest.fx;bundle-version="[5.0.0,6.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

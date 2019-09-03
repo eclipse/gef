@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.zest.fx.compatibility.equinox"
       label="GEF Zest.FX Equinox Compatibility"
-      version="5.1.1.qualifier"
+      version="5.0.3.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
