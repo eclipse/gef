@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2019 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *    Zoey Prigge (itemis AG)    - include parsedAsAttribute (bug #548911)
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -25,24 +26,72 @@ class DotAttributeActiveAnnotationTest {
 
 	@Test def subgraph_rank() {
 		'''
+			package org.eclipse.gef.dot.internal
+			
 			import org.eclipse.gef.dot.internal.generator.DotAttribute
 			import org.eclipse.gef.dot.internal.language.ranktype.RankType
+			import org.eclipse.gef.dot.internal.language.terminals.ID
 			
 			class DotAttributes {
+				static enum Context {
+					GRAPH, EDGE, NODE, SUBGRAPH, CLUSTER
+				}
+				
 				@DotAttribute(rawType="STRING", parsedType=RankType)
 				public static val String RANK__S = "rank"
+				
+				//method body is generated using @DotAttribute active annotation
+				public static def Object parsedAsAttribute(ID valueRaw, String attrName, Context context){}
 			}
 		'''.assertCompilesTo('''
+			package org.eclipse.gef.dot.internal;
+			
 			import org.eclipse.gef.dot.internal.language.ranktype.RankType;
 			import org.eclipse.gef.dot.internal.language.terminals.ID;
 			import org.eclipse.gef.graph.Graph;
 			
 			@SuppressWarnings("all")
 			public class DotAttributes {
+			  public enum Context {
+			    GRAPH,
+			    
+			    EDGE,
+			    
+			    NODE,
+			    
+			    SUBGRAPH,
+			    
+			    CLUSTER;
+			  }
+			  
 			  /**
 			   * The 'rank' attribute, which is used by: Subgraph.
 			   */
 			  public final static String RANK__S = "rank";
+			  
+			  public static Object parsedAsAttribute(final ID valueRaw, final String attrName, final DotAttributes.Context context) {
+			    switch (context) {
+			    case GRAPH:
+			      switch (attrName.toLowerCase(java.util.Locale.ENGLISH)) {
+			      case RANK__S:
+			        return parseAttributeValue(RANKTYPE_PARSER, valueRaw != null ? valueRaw.toValue() : null);
+			      }
+			    case NODE:
+			      switch (attrName.toLowerCase(java.util.Locale.ENGLISH)) {
+			      }
+			    case EDGE:
+			      switch (attrName.toLowerCase(java.util.Locale.ENGLISH)) {
+			      }
+			    case SUBGRAPH:
+			      switch (attrName.toLowerCase(java.util.Locale.ENGLISH)) {
+			      }
+			    case CLUSTER:
+			      switch (attrName.toLowerCase(java.util.Locale.ENGLISH)) {
+			      }
+			    default:
+			      return valueRaw != null ? valueRaw.toValue() : null;
+			    }
+			  }
 			  
 			  /**
 			   * Returns the (raw) value of the {@link #RANK__S} attribute of the given {@link Graph}.

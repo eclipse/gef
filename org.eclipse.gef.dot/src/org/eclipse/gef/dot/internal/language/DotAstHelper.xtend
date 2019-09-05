@@ -10,6 +10,7 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation
  *     Zoey Gerrit Prigge         - Generalized dependent attribute method 
  *                                  to use with recordBased Node shapes (bug #454629)
+ *                                - include getAllAttributesSameName/Value (bug #548911)
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language
@@ -32,6 +33,7 @@ import org.eclipse.gef.dot.internal.language.dot.Subgraph
 import org.eclipse.gef.dot.internal.language.terminals.ID
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.xtext.EcoreUtil2
 
 /**
  * This class provides helper methods for walking the DOT abstract syntax tree.
@@ -84,6 +86,36 @@ class DotAstHelper {
 			}
 		}
 
+		result
+	}
+
+	def static getAllAttributesSameValue(Attribute comparator) {
+		val result = newLinkedList
+		val dotGraph = comparator.getContainerOfType(DotGraph)
+		val comparatorParsed = DotAttributes.parsed(comparator)
+
+		for (candidate : dotGraph.getAllContentsOfType(Attribute).filter [ e |
+			val parsed = DotAttributes.parsed(e)
+			if (parsed instanceof EObject && comparatorParsed instanceof EObject) {
+				// Explicit cast necessary (presumably && not xtend supported for implicit cast)
+				EcoreUtil2.equals(parsed as EObject, comparatorParsed as EObject)
+			} else {
+				parsed == comparatorParsed
+			}
+		]) {
+			result += candidate
+		}
+		result
+	}
+
+	def static getAllAttributesSameName(Attribute comparator) {
+		val result = newLinkedList
+		val dotGraph = comparator.getContainerOfType(DotGraph)
+		val comparatorName = comparator?.name?.toValue
+
+		for (candidate : dotGraph.getAllContentsOfType(Attribute).filter[e|e?.name?.toValue == comparatorName]) {
+			result += candidate
+		}
 		result
 	}
 

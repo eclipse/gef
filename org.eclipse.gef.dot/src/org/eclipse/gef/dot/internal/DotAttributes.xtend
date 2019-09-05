@@ -11,6 +11,7 @@
  *     Tamas Miklossy     (itemis AG) - Add support for all dot attributes (bug #461506)
  *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
  *                                    - Add clusterrank check in isCluster (bug #547809)
+ *                                    - Include parsedAsAttribute (bug #548911)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -96,6 +97,7 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.gef.dot.internal.language.dot.Attribute
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
@@ -1619,4 +1621,11 @@ class DotAttributes {
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
 	public static val XLP__NE = "xlp"
+
+	//method body is generated using @DotAttribute active annotation
+	public static def Object parsedAsAttribute(ID valueRaw, String attrName, Context context){}
+	
+	public static def parsed(Attribute attr) {
+		if (attr !== null) parsedAsAttribute(attr.value, attr.name.toValue, getContext(attr))
+	}
 }

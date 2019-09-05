@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2019 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,12 +9,15 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API & implementation
  *     Tamas Miklossy  (itemis AG) - minor improvements
+ *     Zoey Prigge     (itemis AG) - include parsedAsAttribute (bug #548911)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.generator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 import org.eclipse.xtend.lib.macro.AbstractFieldProcessor;
 import org.eclipse.xtend.lib.macro.TransformationContext;
 import org.eclipse.xtend.lib.macro.declaration.AnnotationReference;
+import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy;
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
@@ -35,6 +39,34 @@ import org.eclipse.xtend.lib.macro.declaration.TypeReference;
  */
 public class DotAttributeProcessor extends AbstractFieldProcessor {
 
+	private class ParsedAsAttributeBody implements CompilationStrategy {
+		Map<Context, StringBuilder> map = new HashMap<>();
+
+		public ParsedAsAttributeBody() {
+			for (Context c : Context.values()) {
+				map.put(c, new StringBuilder());
+			}
+		}
+
+		@Override
+		public CharSequence compile(CompilationContext ctx) {
+			StringBuilder bodyBuilder = new StringBuilder();
+			bodyBuilder.append("switch (context) {\n");
+			for (Context caseContext : Context.values()) {
+				bodyBuilder.append("case " + caseContext.name() + ":\n");
+				bodyBuilder.append(
+						"  switch (attrName.toLowerCase(java.util.Locale.ENGLISH)) {\n");
+				bodyBuilder.append(map.get(caseContext));
+				bodyBuilder.append("  }\n");
+			}
+			bodyBuilder.append(
+					"default:\n  return valueRaw != null ? valueRaw.toValue() : null;\n}\n");
+			return bodyBuilder.toString();
+		}
+	}
+
+	private boolean initialized = false;
+
 	private static Pattern NAMING_PATTERN = Pattern
 			.compile("[_A-Z]*[A-Z]+__(G?)(S?)(C?)(N?)(E?)");
 	private static Pattern CAMEL_CASE_REPLACEMENT_PATTERN = Pattern
@@ -47,6 +79,8 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 	private static enum Context {
 		GRAPH, NODE, EDGE, SUBGRAPH, CLUSTER
 	}
+
+	private ParsedAsAttributeBody parsedAsAttributeBody = new ParsedAsAttributeBody();
 
 	@Override
 	public void doTransform(MutableFieldDeclaration field,
@@ -72,6 +106,17 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 										: "{@link " + paramTypeName(f) + "}")
 						.collect(Collectors.joining(", "))
 				+ ".");
+
+		// initialization
+		if (!initialized) {
+			field.getDeclaringType().findDeclaredMethod("parsedAsAttribute",
+					context.newTypeReference(
+							"org.eclipse.gef.dot.internal.language.terminals.ID"),
+					context.getString(),
+					context.newTypeReference(
+							"org.eclipse.gef.dot.internal.DotAttributes$Context"))
+					.setBody(parsedAsAttributeBody);
+		}
 
 		// XXX: Naming conventions is checked by usedBy extension
 		List<Context> contexts = uniqueGraphTypes(usedBy(field));
@@ -349,6 +394,11 @@ public class DotAttributeProcessor extends AbstractFieldProcessor {
 							context.setPrimarySourceElement(method, field);
 						});
 
+				parsedAsAttributeBody.map.get(c).append("  case "
+						+ field.getSimpleName() + ":\n    return "
+						+ parsed("valueRaw != null ? valueRaw.toValue() : null",
+								attributeParsedType)
+						+ ";\n");
 			}
 		}
 
