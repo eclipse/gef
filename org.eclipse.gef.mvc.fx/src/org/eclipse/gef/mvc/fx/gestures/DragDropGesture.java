@@ -7,17 +7,13 @@
  *
  * Contributors:
  *     Kyle Girard (KDM Analytics Inc.) - initial API and implementation
- *     Matthias Wienand (itemis AG)     - Javadoc adjustments
+ *     Matthias Wienand (itemis AG)     - Javadoc adjustments, pull up (un-)hooking
  *
  *******************************************************************************/
 
 package org.eclipse.gef.mvc.fx.gestures;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.mvc.fx.handlers.IOnDragDropHandler;
@@ -25,9 +21,6 @@ import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
-import javafx.beans.binding.ObjectExpression;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -50,15 +43,11 @@ public class DragDropGesture extends AbstractGesture {
 
 	private IViewer activeViewer;
 
-	private final Set<Scene> scenes = Collections
-			.newSetFromMap(new IdentityHashMap<>());
-
 	/**
 	 * This {@link EventHandler} is registered as an event filter on the
 	 * {@link Scene} to handle dragEntered events.
 	 */
 	private final EventHandler<DragEvent> dragEnteredFilter = new EventHandler<DragEvent>() {
-
 		@Override
 		public void handle(final DragEvent event) {
 			final EventTarget target = event.getTarget();
@@ -73,7 +62,6 @@ public class DragDropGesture extends AbstractGesture {
 	 * {@link Scene} to handle dragExited events.
 	 */
 	private final EventHandler<DragEvent> dragExitedFilter = new EventHandler<DragEvent>() {
-
 		@Override
 		public void handle(final DragEvent event) {
 			final EventTarget target = event.getTarget();
@@ -88,7 +76,6 @@ public class DragDropGesture extends AbstractGesture {
 	 * {@link Scene} to handle dragOver events.
 	 */
 	private final EventHandler<DragEvent> dragOverFilter = new EventHandler<DragEvent>() {
-
 		@Override
 		public void handle(final DragEvent event) {
 			final EventTarget target = event.getTarget();
@@ -105,78 +92,50 @@ public class DragDropGesture extends AbstractGesture {
 	 * {@link Scene} to handle dragDropped events.
 	 */
 	private final EventHandler<DragEvent> dragDroppedFilter = new EventHandler<DragEvent>() {
-
 		@Override
 		public void handle(final DragEvent event) {
 			dragDropped(event);
 		}
 	};
 
-	private final ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-
-		@Override
-		public void changed(final ObservableValue<? extends Boolean> observable,
-				final Boolean oldValue, final Boolean newValue) {
-			// cannot abort if no activeViewer
-			if (activeViewer == null) {
+	@Override
+	protected void abortPolicies(IViewer viewer) {
+		// cannot abort if no activeViewer
+		if (activeViewer == null) {
+			return;
+		}
+		// check if any viewer is focused
+		for (final IViewer v : getDomain().getViewers().values()) {
+			if (v.isViewerFocused()) {
 				return;
 			}
-			// check if any viewer is focused
-			for (final IViewer v : getDomain().getViewers().values()) {
-				if (v.isViewerFocused()) {
-					return;
-				}
-			}
-			// no viewer is focused => abort
-			// clear active policies
-			clearActiveHandlers(activeViewer);
-			activeViewer = null;
 		}
-	};
-
-	@Override
-	protected void doActivate() {
-		super.doActivate();
-
-		ChangeListener<? super Scene> sceneListener = (exp, oldScene,
-				newScene) -> {
-			if (oldScene != null) {
-				// Check that no other viewer still uses that scene before
-				// unhooking it
-				if (getDomain().getViewers().values().stream()
-						.noneMatch(v -> v.getCanvas().getScene() == oldScene)) {
-					unhookScene(oldScene);
-				}
-			}
-			if (newScene != null) {
-				hookScene(newScene);
-			}
-		};
-
-		for (final IViewer viewer : getDomain().getViewers().values()) {
-			// register a viewer focus change listener
-			viewer.viewerFocusedProperty()
-					.addListener(viewerFocusChangeListener);
-
-			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
-					.sceneProperty();
-			sceneProperty.addListener(sceneListener);
-			if (sceneProperty.get() != null) {
-				sceneListener.changed(sceneProperty, null, sceneProperty.get());
-			}
-		}
+		super.abortPolicies(viewer);
+		activeViewer = null;
 	}
 
 	@Override
-	protected void doDeactivate() {
-		for (final Scene scene : new ArrayList<>(scenes)) {
-			unhookScene(scene);
-		}
-		for (final IViewer viewer : getDomain().getViewers().values()) {
-			viewer.viewerFocusedProperty()
-					.removeListener(viewerFocusChangeListener);
-		}
-		super.doDeactivate();
+	protected void doHookScene(Scene scene) {
+		// register a drag entered filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
+		// register a drag exited filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
+		// register a drag over filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
+		// register a drag dropped filter for forwarding event to drag/drop
+		// policies
+		scene.addEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
+	}
+
+	@Override
+	protected void doUnhookScene(Scene scene) {
+		scene.removeEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
+		scene.removeEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
+		scene.removeEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
+		scene.removeEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
 	}
 
 	/**
@@ -262,7 +221,6 @@ public class DragDropGesture extends AbstractGesture {
 	 *            The original {@link DragEvent}
 	 */
 	protected void dragOver(final Node target, final DragEvent event) {
-
 		final IViewer viewer = PartUtils.retrieveViewer(getDomain(), target);
 		if (viewer == null) {
 			return;
@@ -308,34 +266,5 @@ public class DragDropGesture extends AbstractGesture {
 	@Override
 	public List<IOnDragDropHandler> getActiveHandlers(final IViewer viewer) {
 		return (List<IOnDragDropHandler>) super.getActiveHandlers(viewer);
-	}
-
-	private void hookScene(Scene scene) {
-		if (scenes.contains(scene)) {
-			// already registered for this scene
-			return;
-		}
-
-		// register a drag entered filter for forwarding event to drag/drop
-		// policies
-		scene.addEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
-		// register a drag exited filter for forwarding event to drag/drop
-		// policies
-		scene.addEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
-		// register a drag over filter for forwarding event to drag/drop
-		// policies
-		scene.addEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
-		// register a drag dropped filter for forwarding event to drag/drop
-		// policies
-		scene.addEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
-
-		scenes.add(scene);
-	}
-
-	private void unhookScene(Scene scene) {
-		scene.removeEventFilter(DragEvent.DRAG_ENTERED, dragEnteredFilter);
-		scene.removeEventFilter(DragEvent.DRAG_EXITED, dragExitedFilter);
-		scene.removeEventFilter(DragEvent.DRAG_OVER, dragOverFilter);
-		scene.removeEventFilter(DragEvent.DRAG_DROPPED, dragDroppedFilter);
 	}
 }

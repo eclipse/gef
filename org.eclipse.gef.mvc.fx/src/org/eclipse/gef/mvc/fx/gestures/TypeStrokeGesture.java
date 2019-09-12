@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.eclipse.gef.mvc.fx.handlers.IOnStrokeHandler;
 import org.eclipse.gef.mvc.fx.handlers.IOnTypeHandler;
-import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -63,12 +62,6 @@ public class TypeStrokeGesture extends AbstractGesture {
 	@Override
 	protected void doActivate() {
 		for (final IViewer viewer : getDomain().getViewers().values()) {
-			// check if we have access to a FocusModel
-			FocusModel focusModel = viewer.getAdapter(FocusModel.class);
-			if (focusModel == null) {
-				throw new IllegalStateException("Cannot find FocusModel.");
-			}
-
 			// store the key that is initially pressed so that we can wait for
 			// it to be released
 			final Set<KeyCode> pressedKeys = new HashSet<>();
@@ -116,7 +109,7 @@ public class TypeStrokeGesture extends AbstractGesture {
 					// unhooking it
 					if (getDomain().getViewers().values().stream().noneMatch(
 							v -> v.getCanvas().getScene() == oldScene)) {
-						unhookScene(oldScene);
+						unhookScene2(oldScene);
 					}
 				}
 				if (newScene != null) {
@@ -139,7 +132,7 @@ public class TypeStrokeGesture extends AbstractGesture {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 			Scene scene = viewer.getRootPart().getVisual().getScene();
-			unhookScene(scene);
+			unhookScene2(scene);
 		}
 	}
 
@@ -306,7 +299,7 @@ public class TypeStrokeGesture extends AbstractGesture {
 		scene.addEventFilter(KeyEvent.KEY_TYPED, typedFilter);
 	}
 
-	private void unhookScene(Scene scene) {
+	private void unhookScene2(Scene scene) {
 		if (pressedFilterMap.containsKey(scene)) {
 			scene.removeEventFilter(KeyEvent.KEY_PRESSED,
 					pressedFilterMap.remove(scene));

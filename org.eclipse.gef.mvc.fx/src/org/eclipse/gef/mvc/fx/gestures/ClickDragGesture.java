@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,8 @@
 package org.eclipse.gef.mvc.fx.gestures;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Dimension;
@@ -30,9 +27,6 @@ import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
-import javafx.beans.binding.ObjectExpression;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -81,8 +75,6 @@ public class ClickDragGesture extends AbstractGesture {
 	 */
 	public static final Class<IOnDragHandler> ON_DRAG_POLICY_KEY = IOnDragHandler.class;
 
-	private final Set<Scene> scenes = Collections
-			.newSetFromMap(new IdentityHashMap<>());
 	// TODO: Provide activeViewer in AbstractTool.
 	private IViewer activeViewer;
 	private Node pressed;
@@ -146,41 +138,12 @@ public class ClickDragGesture extends AbstractGesture {
 		}
 	};
 
-	private ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-		@Override
-		public void changed(ObservableValue<? extends Boolean> observable,
-				Boolean oldValue, Boolean newValue) {
-			// cannot abort if no activeViewer
-			if (activeViewer == null) {
-				return;
-			}
-			// check if any viewer is focused
-			for (IViewer v : getDomain().getViewers().values()) {
-				if (v.isViewerFocused()) {
-					return;
-				}
-			}
-			// no viewer is focused => abort
-			// cancel target policies
-			for (IHandler handler : getActiveHandlers(activeViewer)) {
-				if (handler instanceof IOnDragHandler) {
-					((IOnDragHandler) handler).abortDrag();
-				}
-			}
-			// clear active policies
-			clearActiveHandlers(activeViewer);
-			activeViewer = null;
-			// close execution transaction
-			getDomain().closeExecutionTransaction(ClickDragGesture.this);
-		}
-	};
-
 	private final IOnDragHandler indicationCursorPolicy[] = new IOnDragHandler[] {
 			null };
+
 	@SuppressWarnings("unchecked")
 	private final List<IOnDragHandler> possibleDragPolicies[] = new ArrayList[] {
 			null };
-
 	private EventHandler<MouseEvent> indicationCursorMouseMoveFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
@@ -250,48 +213,50 @@ public class ClickDragGesture extends AbstractGesture {
 	};
 
 	@Override
-	protected void doActivate() {
-		super.doActivate();
-
-		ChangeListener<? super Scene> sceneListener = (exp, oldScene,
-				newScene) -> {
-			if (oldScene != null) {
-				// Check that no other viewer still uses that scene before
-				// unhooking it
-				if (getDomain().getViewers().values().stream()
-						.noneMatch(v -> v.getCanvas().getScene() == oldScene)) {
-					unhookScene(oldScene);
-				}
+	protected void abortPolicies(IViewer viewer) {
+		// cannot abort if no activeViewer
+		if (activeViewer == null) {
+			return;
+		}
+		// check if any viewer is focused
+		for (IViewer v : getDomain().getViewers().values()) {
+			if (v.isViewerFocused()) {
+				return;
 			}
-			if (newScene != null) {
-				hookScene(newScene);
-			}
-		};
+		}
+		super.abortPolicies(viewer);
+		activeViewer = null;
+	}
 
-		for (final IViewer viewer : getDomain().getViewers().values()) {
-			// register a viewer focus change listener
-			viewer.viewerFocusedProperty()
-					.addListener(viewerFocusChangeListener);
-
-			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
-					.sceneProperty();
-			sceneProperty.addListener(sceneListener);
-			if (sceneProperty.get() != null) {
-				sceneListener.changed(sceneProperty, null, sceneProperty.get());
+	@Override
+	protected void doAbortPolicies(IViewer viewer) {
+		for (IHandler handler : getActiveHandlers(activeViewer)) {
+			if (handler instanceof IOnDragHandler) {
+				((IOnDragHandler) handler).abortDrag();
 			}
 		}
 	}
 
 	@Override
-	protected void doDeactivate() {
-		for (Scene scene : new ArrayList<>(scenes)) {
-			unhookScene(scene);
-		}
-		for (final IViewer viewer : getDomain().getViewers().values()) {
-			viewer.viewerFocusedProperty()
-					.removeListener(viewerFocusChangeListener);
-		}
-		super.doDeactivate();
+	protected void doHookScene(Scene scene) {
+		// register mouse move filter for forwarding events to drag policies
+		// that can show a mouse cursor to indicate their action
+		scene.addEventFilter(MouseEvent.MOUSE_MOVED,
+				indicationCursorMouseMoveFilter);
+		// register key event filter for forwarding events to drag policies
+		// that can show a mouse cursor to indicate their action
+		scene.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
+		// register mouse filter for forwarding press, drag, and release
+		// events
+		scene.addEventFilter(MouseEvent.ANY, mouseFilter);
+	}
+
+	@Override
+	protected void doUnhookScene(Scene scene) {
+		scene.removeEventFilter(MouseEvent.ANY, mouseFilter);
+		scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
+				indicationCursorMouseMoveFilter);
+		scene.removeEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
 	}
 
 	/**
@@ -322,25 +287,6 @@ public class ClickDragGesture extends AbstractGesture {
 	@Override
 	public List<IOnDragHandler> getActiveHandlers(IViewer viewer) {
 		return (List<IOnDragHandler>) super.getActiveHandlers(viewer);
-	}
-
-	private void hookScene(Scene scene) {
-		if (scenes.contains(scene)) {
-			// already registered for this scene
-			return;
-		}
-
-		// register mouse move filter for forwarding events to drag policies
-		// that can show a mouse cursor to indicate their action
-		scene.addEventFilter(MouseEvent.MOUSE_MOVED,
-				indicationCursorMouseMoveFilter);
-		// register key event filter for forwarding events to drag policies
-		// that can show a mouse cursor to indicate their action
-		scene.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
-		// register mouse filter for forwarding press, drag, and release
-		// events
-		scene.addEventFilter(MouseEvent.ANY, mouseFilter);
-		scenes.add(scene);
 	}
 
 	/**
@@ -503,13 +449,5 @@ public class ClickDragGesture extends AbstractGesture {
 			indicationCursorPolicy[0].hideIndicationCursor();
 			indicationCursorPolicy[0] = null;
 		}
-	}
-
-	private void unhookScene(Scene scene) {
-		scene.removeEventFilter(MouseEvent.ANY, mouseFilter);
-		scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
-				indicationCursorMouseMoveFilter);
-		scene.removeEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
-		scenes.remove(scene);
 	}
 }

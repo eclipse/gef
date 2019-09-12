@@ -26,7 +26,6 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import javafx.animation.PauseTransition;
 import javafx.beans.binding.ObjectExpression;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -68,16 +67,10 @@ public class ScrollGesture extends AbstractGesture {
 	 * @param viewer
 	 *            The {@link IViewer}
 	 */
+	@Override
 	protected void abortPolicies(final IViewer viewer) {
 		inScroll.remove(viewer);
-		// cancel target policies
-		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {
-			policy.abortScroll();
-		}
-		// clear active policies and close execution
-		// transaction
-		clearActiveHandlers(viewer);
-		getDomain().closeExecutionTransaction(ScrollGesture.this);
+		super.abortPolicies(viewer);
 	}
 
 	/**
@@ -125,21 +118,18 @@ public class ScrollGesture extends AbstractGesture {
 	}
 
 	@Override
-	protected void doActivate() {
-		super.doActivate();
+	protected void doAbortPolicies(IViewer viewer) {
+		for (IOnScrollHandler policy : getActiveHandlers(viewer)) {
+			policy.abortScroll();
+		}
+	}
 
+	@Override
+	protected void doActivate() {
 		for (final IViewer viewer : getDomain().getViewers().values()) {
 			// register a viewer focus change listener
-			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-				@Override
-				public void changed(
-						ObservableValue<? extends Boolean> observable,
-						Boolean oldValue, Boolean newValue) {
-					if (newValue == null || !newValue) {
-						abortPolicies(viewer);
-					}
-				}
-			};
+			ChangeListener<Boolean> viewerFocusChangeListener = createFocusChangeListener(
+					viewer);
 			viewer.viewerFocusedProperty()
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
@@ -175,7 +165,6 @@ public class ScrollGesture extends AbstractGesture {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 		}
-		super.doDeactivate();
 	}
 
 	@SuppressWarnings("unchecked")

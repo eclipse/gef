@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 itemis AG and others.
+ * Copyright (c) 2015, 2019 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.gestures;
 
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +21,6 @@ import org.eclipse.gef.mvc.fx.handlers.IOnRotateHandler;
 import org.eclipse.gef.mvc.fx.parts.PartUtils;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
-import javafx.beans.binding.ObjectExpression;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -49,42 +45,7 @@ public class RotateGesture extends AbstractGesture {
 	 */
 	public static final Class<IOnRotateHandler> ON_ROTATE_POLICY_KEY = IOnRotateHandler.class;
 
-	private final Map<IViewer, ChangeListener<Boolean>> viewerFocusChangeListeners = new IdentityHashMap<>();
 	private Map<Scene, EventHandler<RotateEvent>> rotateFilters = new IdentityHashMap<>();
-
-	/**
-	 * Creates a {@link ChangeListener} for the
-	 * {@link IViewer#viewerFocusedProperty() focused} property of the given
-	 * {@link IViewer}.
-	 *
-	 * @param viewer
-	 *            The {@link IViewer} for which to create a
-	 *            {@link ChangeListener} for its
-	 *            {@link IViewer#viewerFocusedProperty() focused} property.
-	 * @return The newly created {@link ChangeListener} for the
-	 *         {@link IViewer#viewerFocusedProperty() focused} property of the
-	 *         given {@link IViewer}.
-	 */
-	protected ChangeListener<Boolean> createFocusChangeListener(
-			final IViewer viewer) {
-		ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) {
-				if (newValue == null || !newValue) {
-					// cancel target policies
-					for (IOnRotateHandler policy : getActiveHandlers(viewer)) {
-						policy.abortRotate();
-					}
-					// clear active policies and close execution
-					// transaction
-					clearActiveHandlers(viewer);
-					getDomain().closeExecutionTransaction(RotateGesture.this);
-				}
-			}
-		};
-		return viewerFocusChangeListener;
-	}
 
 	/**
 	 * Creates an {@link EventHandler} for {@link RotateEvent}s that forwards
@@ -153,75 +114,20 @@ public class RotateGesture extends AbstractGesture {
 	}
 
 	@Override
-	protected void doActivate() {
-		super.doActivate();
-
-		ChangeListener<? super Scene> sceneListener = (exp, oldScene,
-				newScene) -> {
-			if (oldScene != null) {
-				// Check that no other viewer still uses that scene before
-				// unhooking it
-				if (getDomain().getViewers().values().stream()
-						.noneMatch(v -> v.getCanvas().getScene() == oldScene)) {
-					unhookScene(oldScene);
-				}
-			}
-			if (newScene != null) {
-				hookScene(newScene);
-			}
-		};
-
-		for (final IViewer viewer : getDomain().getViewers().values()) {
-			// register a viewer focus change listener
-			ChangeListener<Boolean> viewerFocusChangeListener = createFocusChangeListener(
-					viewer);
-			viewer.viewerFocusedProperty()
-					.addListener(viewerFocusChangeListener);
-			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
-
-			ObjectExpression<Scene> sceneProperty = viewer.getCanvas()
-					.sceneProperty();
-			sceneProperty.addListener(sceneListener);
-			if (sceneProperty.get() != null) {
-				sceneListener.changed(sceneProperty, null, sceneProperty.get());
-			}
-		}
+	protected void doHookScene(Scene scene) {
+		EventHandler<RotateEvent> rotateFilter = createRotateFilter(scene);
+		scene.addEventFilter(RotateEvent.ANY, rotateFilter);
+		rotateFilters.put(scene, rotateFilter);
 	}
 
 	@Override
-	protected void doDeactivate() {
-		for (Scene scene : new ArrayList<>(rotateFilters.keySet())) {
-			unhookScene(scene);
-		}
-		for (final IViewer viewer : new ArrayList<>(
-				viewerFocusChangeListeners.keySet())) {
-			viewer.viewerFocusedProperty()
-					.removeListener(viewerFocusChangeListeners.remove(viewer));
-		}
-		super.doDeactivate();
+	protected void doUnhookScene(Scene scene) {
+		scene.removeEventFilter(RotateEvent.ANY, rotateFilters.remove(scene));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<? extends IOnRotateHandler> getActiveHandlers(IViewer viewer) {
 		return (List<IOnRotateHandler>) super.getActiveHandlers(viewer);
-	}
-
-	private void hookScene(Scene scene) {
-		// check if we already registered zoom listeners at the viewer's
-		// scene (in case two viewer's share a single scene)
-		if (rotateFilters.containsKey(scene)) {
-			// we are already listening for events of this scene
-			return;
-		}
-
-		// register zoom filter
-		EventHandler<RotateEvent> rotateFilter = createRotateFilter(scene);
-		scene.addEventFilter(RotateEvent.ANY, rotateFilter);
-		rotateFilters.put(scene, rotateFilter);
-	}
-
-	private void unhookScene(Scene scene) {
-		scene.removeEventFilter(RotateEvent.ANY, rotateFilters.remove(scene));
 	}
 }
