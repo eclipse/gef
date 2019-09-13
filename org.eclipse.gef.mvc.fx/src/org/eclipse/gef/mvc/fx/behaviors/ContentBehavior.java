@@ -54,6 +54,19 @@ import javafx.scene.Node;
  */
 public class ContentBehavior extends AbstractBehavior implements IDisposable {
 
+	private static class ReorderData {
+		public IVisualPart<?> parent;
+		public IContentPart<?> child;
+		public int index;
+
+		public ReorderData(IVisualPart<?> parent, IContentPart<?> child,
+				int index) {
+			this.parent = parent;
+			this.child = child;
+			this.index = index;
+		}
+	}
+
 	private ListChangeListener<Object> contentObserver = new ListChangeListener<Object>() {
 		@Override
 		public void onChanged(
@@ -157,8 +170,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	private void addAll(IVisualPart<? extends Node> parent,
 			List<? extends Object> contentChildren,
 			List<IContentPart<? extends Node>> added,
-			LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>> addsPerParent) {
-
+			LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>> addsPerParent,
+			List<ReorderData> reorders) {
 		List<IContentPart<? extends Node>> childContentParts = PartUtils
 				.filterParts(parent.getChildrenUnmodifiable(),
 						IContentPart.class);
@@ -191,7 +204,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				// location in the children list.
 				// TODO: this is wrong, it has to take into consideration
 				// the visual parts in between
-				parent.reorderChild(contentPart, i);
+				reorders.add(new ReorderData(parent, contentPart, i));
 			} else {
 				if (contentPart.getViewer() != null) {
 					// TODO: Up to now a model element may only be
@@ -209,7 +222,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				childrenToAdd.put(i, contentPart);
 				addAll(contentPart,
 						contentPart.getContentChildrenUnmodifiable(), added,
-						addsPerParent);
+						addsPerParent, reorders);
 			}
 		}
 		if (!childrenToAdd.isEmpty()) {
@@ -471,8 +484,9 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 
 		LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>> addsPerParent = new LinkedHashMap<IVisualPart<? extends Node>, HashMultimap<Integer, IContentPart<? extends Node>>>();
-		ArrayList<IContentPart<? extends Node>> added = Lists.newArrayList();
-		addAll(parent, contentChildren, added, addsPerParent);
+		List<IContentPart<? extends Node>> added = Lists.newArrayList();
+		List<ReorderData> reorders = Lists.newArrayList();
+		addAll(parent, contentChildren, added, addsPerParent, reorders);
 
 		ArrayList<IVisualPart<? extends Node>> parents = new ArrayList<IVisualPart<? extends Node>>(
 				addsPerParent.keySet());
@@ -490,6 +504,10 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 							contentPart.getContentAnchoragesUnmodifiable());
 				});
 			});
+		}
+
+		for (ReorderData rd : reorders) {
+			rd.parent.reorderChild(rd.child, rd.index);
 		}
 	}
 }

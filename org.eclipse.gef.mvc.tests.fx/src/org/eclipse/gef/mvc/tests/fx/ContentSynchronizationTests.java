@@ -137,4 +137,104 @@ public class ContentSynchronizationTests {
 				"Located a ContentPart which controls the same (or an equal) content element but is already bound to a viewer. A content element may only be controlled by a single ContentPart.",
 				exceptionRef.get().getMessage());
 	}
+
+	/**
+	 * This scenario tests if removing the first element in a content list and
+	 * adding it again works correctly.
+	 */
+	@Test
+	public void undoRemove() throws Throwable {
+		// define data
+		Cell first = new Cell("1");
+		Cell second = new Cell("2");
+		List<Cell> both = Arrays.asList(first, second);
+
+		// no parts in the beginning
+		Map<Object, IContentPart<? extends Node>> contentPartMap = viewer.getContentPartMap();
+		assertNull(contentPartMap.get(first));
+		assertNull(contentPartMap.get(second));
+
+		// create parts
+		ctx.runAndWait(() -> {
+			viewer.getContents().setAll(both);
+		});
+		assertNotNull(contentPartMap.get(first));
+		assertNotNull(contentPartMap.get(second));
+		assertEquals(contentPartMap.get(first), viewer.getRootPart().getContentPartChildren().get(0));
+		assertEquals(contentPartMap.get(second), viewer.getRootPart().getContentPartChildren().get(1));
+
+		// remove first child from parent
+		List<Cell> onlySecond = Arrays.asList(second);
+		ctx.runAndWait(() -> {
+			viewer.getContents().setAll(onlySecond);
+		});
+		assertNull(contentPartMap.get(first));
+		assertNotNull(contentPartMap.get(second));
+
+		// add it again
+		ctx.runAndWait(() -> {
+			viewer.getContents().setAll(both);
+		});
+		assertNotNull(contentPartMap.get(first));
+		assertNotNull(contentPartMap.get(second));
+		assertEquals(contentPartMap.get(first), viewer.getRootPart().getContentPartChildren().get(0));
+		assertEquals(contentPartMap.get(second), viewer.getRootPart().getContentPartChildren().get(1));
+	}
+
+	/**
+	 * This scenario tests if removing the first element in a nested content list
+	 * and adding it again works correctly.
+	 */
+	@Test
+	public void undoRemoveNested() throws Throwable {
+		// define data
+		Cell first = new Cell("1");
+		Cell second = new Cell("2");
+		Cell container = new Cell("0", first, second);
+		List<Cell> fullContents = Arrays.asList(container);
+
+		// no parts in the beginning
+		Map<Object, IContentPart<? extends Node>> contentPartMap = viewer.getContentPartMap();
+		assertNull(contentPartMap.get(container));
+		assertNull(contentPartMap.get(first));
+		assertNull(contentPartMap.get(second));
+
+		// create parts
+		ctx.runAndWait(() -> {
+			viewer.getContents().setAll(fullContents);
+		});
+		assertNotNull(contentPartMap.get(container));
+		assertNotNull(contentPartMap.get(first));
+		assertNotNull(contentPartMap.get(second));
+
+		{
+			final IContentPart<? extends Node> firstContentPart = viewer.getRootPart().getContentPartChildren().get(0);
+			assertEquals(contentPartMap.get(container), firstContentPart);
+			assertEquals(contentPartMap.get(first), firstContentPart.getChildrenUnmodifiable().get(0));
+			assertEquals(contentPartMap.get(second), firstContentPart.getChildrenUnmodifiable().get(1));
+
+			// remove first child from parent
+			ctx.runAndWait(() -> {
+				container.children.remove(0);
+				firstContentPart.refreshContentChildren();
+			});
+			assertNotNull(contentPartMap.get(container));
+			assertNull(contentPartMap.get(first));
+			assertNotNull(contentPartMap.get(second));
+
+			// add it again
+			ctx.runAndWait(() -> {
+				container.children.add(0, first);
+				firstContentPart.refreshContentChildren();
+			});
+		}
+
+		assertNotNull(contentPartMap.get(container));
+		assertNotNull(contentPartMap.get(first));
+		assertNotNull(contentPartMap.get(second));
+		final IContentPart<? extends Node> firstContentPart = viewer.getRootPart().getContentPartChildren().get(0);
+		assertEquals(contentPartMap.get(container), firstContentPart);
+		assertEquals(contentPartMap.get(first), firstContentPart.getChildrenUnmodifiable().get(0));
+		assertEquals(contentPartMap.get(second), firstContentPart.getChildrenUnmodifiable().get(1));
+	}
 }
