@@ -14,6 +14,7 @@
  *     Zoey Prigge (itemis AG)    - Improve quoted attribute CA support (bug #545801)
  *                                - Add FontName content assist support (bug #542663)
  *                                - Add subgraph content assist support (bug #547639)
+ *                                - Add support for listed (style) attribute (bug #549393)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
@@ -169,7 +170,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				}
 			}
 
-			if (currentModel instanceof Attribute) {
+			if (context.getMatcher() instanceof AttributeValueMatcher) {
 				// avoid confusing empty proposal display string
 				if (configurableCompletionProposal.getReplacementString()
 						.length() == 0) {
@@ -204,10 +205,34 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 								if (original.startsWith("\"") //$NON-NLS-1$
 										&& (original.length() == 1
 												|| !original.endsWith("\""))) { //$NON-NLS-1$
-									proposal.setReplacementOffset(
-											replacementOffset + 1);
-									proposal.setReplacementLength(
-											replacementLength - 1);
+
+									// check if a list separator is set (list
+									// case)
+									Character listSeparator = ((AttributeValueMatcher) context
+											.getMatcher()).getListSeparator();
+									if (listSeparator != null
+											&& prefix.contains(
+													listSeparator.toString())) {
+										proposal.setReplacementOffset(
+												replacementOffset
+														+ original.lastIndexOf(
+																listSeparator,
+																prefix.length()
+																		- 1)
+														+ 1);
+										proposal.setReplacementLength(
+												replacementLength
+														- original.lastIndexOf(
+																listSeparator,
+																prefix.length()
+																		- 1)
+														- 1);
+									} else {
+										proposal.setReplacementOffset(
+												replacementOffset + 1);
+										proposal.setReplacementLength(
+												replacementLength - 1);
+									}
 								} else {
 									String idValue = ID.fromValue(replacement)
 											.toString();
@@ -234,47 +259,10 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 								}
 							}
 						});
-
-				configurableCompletionProposal.setMatcher(new PrefixMatcher() {
-					private PrefixMatcher originalMatcher = configurableCompletionProposal
-							.getMatcher();
-
-					@Override
-					public boolean isCandidateMatchingPrefix(String name,
-							String prefix) {
-						if (prefix.trim().startsWith("\"")) { //$NON-NLS-1$
-							return quoteMatch(name, prefix);
-						}
-						return standardMatch(name, prefix);
-					}
-
-					private boolean standardMatch(String name, String prefix) {
-						return originalMatcher.isCandidateMatchingPrefix(name,
-								prefix);
-					}
-
-					private boolean quoteMatch(String name, String prefix) {
-						return originalMatcher.isCandidateMatchingPrefix(name,
-								prefix.substring(1));
-					}
-				});
 			}
 		}
 
 		return completionProposal;
-	}
-
-	@Override
-	protected boolean isValidProposal(String proposal, String prefix,
-			ContentAssistContext context) {
-		// consider a double quote as a valid prefix for the attribute values
-		if (context.getCurrentModel() instanceof Attribute
-				&& prefix.startsWith("\"")) { //$NON-NLS-1$
-			return super.isValidProposal(proposal, prefix.substring(1),
-					context);
-		}
-
-		return super.isValidProposal(proposal, prefix, context);
 	}
 
 	@Override
@@ -315,6 +303,11 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
+
+			context = context.copy()
+					.setMatcher(new AttributeValueMatcher(context.getMatcher()))
+					.toContext();
+
 			if (DotAttributes.getContext(attribute) == Context.EDGE) {
 				switch (attribute.getName().toValue()) {
 				case DotAttributes.ARROWHEAD__E:
@@ -380,6 +373,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							context, acceptor);
 					break;
 				case DotAttributes.STYLE__GCNE:
+					((AttributeValueMatcher) context.getMatcher())
+							.setListSeparator(',');
 					proposeAttributeValues(EdgeStyle.VALUES, context, acceptor);
 					break;
 				default:
@@ -479,6 +474,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							context, acceptor);
 					break;
 				case DotAttributes.STYLE__GCNE:
+					((AttributeValueMatcher) context.getMatcher())
+							.setListSeparator(',');
 					proposeAttributeValues(NodeStyle.VALUES, context, acceptor);
 					break;
 				case DotAttributes.TOOLTIP__CNE:
@@ -515,6 +512,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				case DotAttributes.STYLE__GCNE:
+					((AttributeValueMatcher) context.getMatcher())
+							.setListSeparator(',');
 					proposeAttributeValues(ClusterStyle.VALUES, context,
 							acceptor);
 					break;
@@ -726,5 +725,52 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		dotAttributeNames.put(Context.NODE, nodeAttributeNames);
 		dotAttributeNames.put(Context.SUBGRAPH, subgraphAttributeNames);
 		return dotAttributeNames;
+	}
+
+	private static class AttributeValueMatcher extends PrefixMatcher {
+		private final PrefixMatcher originalMatcher;
+		private Character listSeparator = null;
+
+		public AttributeValueMatcher(PrefixMatcher originalMatcher) {
+			this.originalMatcher = originalMatcher;
+		}
+
+		@Override
+		public boolean isCandidateMatchingPrefix(String name, String prefix) {
+			if (prefix.trim().startsWith("\"")) { //$NON-NLS-1$
+				if (listSeparator != null && prefix.contains(",")) { //$NON-NLS-1$
+					return listMatch(name, prefix);
+				}
+				return quoteMatch(name, prefix);
+			}
+			return standardMatch(name, prefix);
+		}
+
+		public void setListSeparator(char listSeparator) {
+			this.listSeparator = listSeparator;
+		}
+
+		/**
+		 * Returns the character separating a list of values, not a list if null
+		 * 
+		 * @return separating character, may be null
+		 */
+		public Character getListSeparator() {
+			return listSeparator;
+		}
+
+		private boolean standardMatch(String name, String prefix) {
+			return originalMatcher.isCandidateMatchingPrefix(name, prefix);
+		}
+
+		private boolean quoteMatch(String name, String prefix) {
+			return originalMatcher.isCandidateMatchingPrefix(name,
+					prefix.substring(1));
+		}
+
+		private boolean listMatch(String name, String prefix) {
+			return originalMatcher.isCandidateMatchingPrefix(name,
+					prefix.substring(prefix.lastIndexOf(',') + 1).trim());
+		}
 	}
 }

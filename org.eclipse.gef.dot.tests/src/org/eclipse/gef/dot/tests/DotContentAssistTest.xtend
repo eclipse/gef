@@ -13,6 +13,7 @@
  *                                    - Add DotFontName content assist support (bug #542663)
  *                                    - Add cluster content assist support (bug #547639)
  *                                    - Implement subgraph template proposals (bug #547841)
+ *                                    - Implement CA support for listing styles (bug #549393)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -694,6 +695,51 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			graph {
 				subgraph cluster {
 					style = "dotted"
+				}
+			}
+		''')
+	
+		// test local attribute values with list
+		'''
+			graph {
+				subgraph cluster {
+					style = "solid,«c»"
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "striped", '''
+			graph {
+				subgraph cluster {
+					style = "solid,striped"
+				}
+			}
+		''')
+
+		// test local attribute values with list and prefix
+		'''
+			graph {
+				subgraph cluster {
+					style = "solid,s«c»"
+				}
+			}
+		'''.testContentAssistant(#["solid", "striped"], "striped", '''
+			graph {
+				subgraph cluster {
+					style = "solid,striped"
+				}
+			}
+		''')
+
+		// test local attribute values with list and following attribute
+		'''
+			graph {
+				subgraph cluster {
+					style = "solid,«c»,bold"
+				}
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped"], "striped", '''
+			graph {
+				subgraph cluster {
+					style = "solid,striped,bold"
 				}
 			}
 		''')
@@ -1881,6 +1927,39 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		'''.testContentAssistant(#["dashed", "dotted"], "dashed", '''
 			graph {
 				1--2[ style="dashed" ]
+			}
+		''')
+
+		// test local attribute values with list
+		'''
+			graph {
+				1--2[ style="solid,«c»" ]
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "invis", "solid", "tapered"], "dotted", '''
+			graph {
+				1--2[ style="solid,dotted" ]
+			}
+		''')
+
+		// test local attribute values with list and prefix
+		'''
+			graph {
+				1--2[ style="solid,d«c»" ]
+			}
+		'''.testContentAssistant(#["dashed", "dotted"], "dotted", '''
+			graph {
+				1--2[ style="solid,dotted" ]
+			}
+		''')
+
+		// test local attribute values with list and following attribute
+		'''
+			graph {
+				1--2[ style="solid,«c»,bold" ]
+			}
+		'''.testContentAssistant(#["bold", "dashed", "dotted", "invis", "solid", "tapered"], "tapered", '''
+			graph {
+				1--2[ style="solid,tapered,bold" ]
 			}
 		''')
 	}
@@ -3737,6 +3816,39 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		'''.testContentAssistant(#["solid", "striped"], "solid", '''
 			graph {
 				1[ style="solid" ]
+			}
+		''')
+
+		// test local attribute values with list
+		'''
+			graph {
+				1[ style="solid,«c»" ]
+			}
+		'''.testContentAssistant(#["bold", "dashed", "diagonals", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped", "wedged"], "striped", '''
+			graph {
+				1[ style="solid,striped" ]
+			}
+		''')
+
+		// test local attribute values with list and prefix
+		'''
+			graph {
+				1[ style="solid,s«c»" ]
+			}
+		'''.testContentAssistant(#["solid", "striped"], "striped", '''
+			graph {
+				1[ style="solid,striped" ]
+			}
+		''')
+
+		// test local attribute values with list and following attribute
+		'''
+			graph {
+				1[ style="solid,«c»,bold" ]
+			}
+		'''.testContentAssistant(#["bold", "dashed", "diagonals", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped", "wedged"], "striped", '''
+			graph {
+				1[ style="solid,striped,bold" ]
 			}
 		''')
 	}
