@@ -17,7 +17,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,6 +30,8 @@ import org.eclipse.gef.mvc.fx.behaviors.ContentBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef.mvc.tests.fx.stubs.Cell;
@@ -39,6 +43,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
 /**
@@ -74,12 +79,87 @@ public class ContentSynchronizationTests {
 		});
 	}
 
+	@Test
+	public void consecutiveAddUndoOrder() throws Throwable {
+		List<Cell> cells = new ArrayList<>();
+		setContents(cells);
+		for (int i = 0; i < 5; i++) {
+			cells.add(new Cell("C" + i));
+			setContents(cells);
+		}
+		List<Cell> copy = new ArrayList<>(cells);
+		for (int i = 4; i >= 0; i--) {
+			cells.remove(i);
+			setContents(cells);
+		}
+		for (int i = 0; i < 5; i++) {
+			cells.add(copy.get(i));
+			setContents(cells);
+		}
+	}
+
+	private List<Cell> createCells(int count) {
+		List<Cell> cells = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			cells.add(new Cell("C" + i));
+		}
+		return cells;
+	}
+
 	@After
 	public void deactivate() throws Throwable {
 		ctx.runAndWait(() -> {
 			viewer.getContents().clear();
 			domain.deactivate();
 		});
+	}
+
+	@Test
+	public void positionalRemoveUndo() throws Throwable {
+		for (int position = 0; position < 3; position++) {
+			setContents(Collections.<Cell>emptyList());
+			List<Cell> cells = createCells(3);
+			setContents(cells);
+			List<Cell> spliced = new ArrayList<>();
+			for (int i = 0; i < cells.size(); i++) {
+				if (i == position) {
+					continue;
+				}
+				spliced.add(cells.get(i));
+			}
+			setContents(spliced);
+			assertNull(viewer.getContentPartMap().get(cells.get(position)));
+			setContents(cells);
+		}
+	}
+
+	@Test
+	public void positionalRemoveUndoNested() throws Throwable {
+		for (int position = 0; position < 3; position++) {
+			setContents(Collections.<Cell>emptyList());
+			List<Cell> cells = createCells(3);
+			Cell rootCell = new Cell("0", cells.toArray(new Cell[0]));
+			setContents(Arrays.asList(rootCell));
+			List<Cell> spliced = new ArrayList<>();
+			for (int i = 0; i < cells.size(); i++) {
+				if (i == position) {
+					continue;
+				}
+				spliced.add(cells.get(i));
+			}
+			rootCell.children = spliced;
+			IContentPart<? extends Node> rootCellPart = viewer.getContentPartMap().get(rootCell);
+			ctx.runAndWait(() -> {
+				rootCellPart.refreshContentChildren();
+			});
+			verifyPartsAndOrder(Arrays.asList(rootCell));
+			assertNull(viewer.getContentPartMap().get(cells.get(position)));
+			rootCell.children = cells;
+			ctx.runAndWait(() -> {
+				rootCellPart.refreshContentChildren();
+			});
+			verifyPartsAndOrder(Arrays.asList(rootCell));
+		}
 	}
 
 	/**
@@ -136,6 +216,13 @@ public class ContentSynchronizationTests {
 		assertEquals(
 				"Located a ContentPart which controls the same (or an equal) content element but is already bound to a viewer. A content element may only be controlled by a single ContentPart.",
 				exceptionRef.get().getMessage());
+	}
+
+	private void setContents(List<Cell> cells) throws Throwable {
+		ctx.runAndWait(() -> {
+			viewer.getContents().setAll(cells);
+			verifyPartsAndOrder(cells);
+		});
 	}
 
 	/**
@@ -236,5 +323,28 @@ public class ContentSynchronizationTests {
 		assertEquals(contentPartMap.get(container), firstContentPart);
 		assertEquals(contentPartMap.get(first), firstContentPart.getChildrenUnmodifiable().get(0));
 		assertEquals(contentPartMap.get(second), firstContentPart.getChildrenUnmodifiable().get(1));
+	}
+
+	private void verifyPartsAndOrder(List<Cell> cells) {
+		Map<Object, IContentPart<? extends Node>> cpm = viewer.getContentPartMap();
+		IRootPart<? extends Node> root = viewer.getRootPart();
+
+		// test root children
+		List<IContentPart<? extends Node>> parts = root.getContentPartChildren();
+		for (int i = 0; i < cells.size(); i++) {
+			Cell c = cells.get(i);
+			IContentPart<? extends Node> cPart = cpm.get(c);
+			assertNotNull(cPart);
+			assertEquals(cPart, parts.get(i));
+
+			// test cell's children
+			ObservableList<IVisualPart<? extends Node>> cParts = cPart.getChildrenUnmodifiable();
+			for (int j = 0; j < c.children.size(); j++) {
+				Cell cc = c.children.get(j);
+				IContentPart<? extends Node> ccPart = cpm.get(cc);
+				assertNotNull(ccPart);
+				assertEquals(ccPart, cParts.get(j));
+			}
+		}
 	}
 }
