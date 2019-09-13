@@ -109,7 +109,7 @@ public class TypeStrokeGesture extends AbstractGesture {
 					// unhooking it
 					if (getDomain().getViewers().values().stream().noneMatch(
 							v -> v.getCanvas().getScene() == oldScene)) {
-						unhookScene2(oldScene);
+						unhook(oldScene);
 					}
 				}
 				if (newScene != null) {
@@ -132,7 +132,7 @@ public class TypeStrokeGesture extends AbstractGesture {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 			Scene scene = viewer.getRootPart().getVisual().getScene();
-			unhookScene2(scene);
+			unhook(scene);
 		}
 	}
 
@@ -299,7 +299,7 @@ public class TypeStrokeGesture extends AbstractGesture {
 		scene.addEventFilter(KeyEvent.KEY_TYPED, typedFilter);
 	}
 
-	private void unhookScene2(Scene scene) {
+	private void unhook(Scene scene) {
 		if (pressedFilterMap.containsKey(scene)) {
 			scene.removeEventFilter(KeyEvent.KEY_PRESSED,
 					pressedFilterMap.remove(scene));
