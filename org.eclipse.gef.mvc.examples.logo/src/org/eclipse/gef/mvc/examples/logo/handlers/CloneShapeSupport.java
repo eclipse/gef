@@ -15,6 +15,8 @@ import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 
+import com.sun.scenario.effect.EffectHelper;
+
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Paint;
 
@@ -33,8 +35,7 @@ public class CloneShapeSupport extends AbstractCloneContentSupport {
 	}
 
 	private Effect copyEffect(Effect effect) {
-		// FIXME [JDK-internal]: Do not use deprecated method to copy Effect.
-		return effect.impl_copy();
+		return EffectHelper.copy(effect);
 	}
 
 	private Paint copyPaint(Paint paint) {
