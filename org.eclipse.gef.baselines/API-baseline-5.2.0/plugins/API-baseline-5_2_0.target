@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="GEF 5.2.0 API-Baseline" sequenceNumber="1">
+<locations>
+<location path="${project_loc}/API-baseline-5.2.0/plugins" type="Directory"/>
+</locations>
+</target>
