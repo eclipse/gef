@@ -15,9 +15,6 @@ import org.eclipse.gef.geometry.planar.IShape;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 
-import com.sun.scenario.effect.EffectHelper;
-
-import javafx.scene.effect.Effect;
 import javafx.scene.paint.Paint;
 
 // only applicable for GeometricShapePart
@@ -26,16 +23,13 @@ public class CloneShapeSupport extends AbstractCloneContentSupport {
 	@Override
 	public Object cloneContent() {
 		GeometricShape originalShape = getAdaptable().getContent();
+		// It seems to be fine to not clone the effect (which is not supported
+		// via JavaFX public API)
 		GeometricShape shape = new GeometricShape((IShape) originalShape.getGeometry().getCopy(),
-				originalShape.getTransform().getCopy(), copyPaint(originalShape.getFill()),
-				copyEffect(originalShape.getEffect()));
+				originalShape.getTransform().getCopy(), copyPaint(originalShape.getFill()), originalShape.getEffect());
 		shape.setStroke(copyPaint(originalShape.getStroke()));
 		shape.setStrokeWidth(originalShape.getStrokeWidth());
 		return shape;
-	}
-
-	private Effect copyEffect(Effect effect) {
-		return EffectHelper.copy(effect);
 	}
 
 	private Paint copyPaint(Paint paint) {
