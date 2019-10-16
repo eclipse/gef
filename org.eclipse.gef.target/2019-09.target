@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde?><!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl --><target name="2019-09" sequenceNumber="1565866243">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde?><!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl --><target name="2019-09" sequenceNumber="1571237154">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.5.0.201902220600"/>
-      <unit id="org.eclipse.sdk.ide" version="4.13.0.I20190801-0600"/>
+      <unit id="org.eclipse.sdk.ide" version="4.13.0.I20190916-1045"/>
       <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.11.0.201906111547"/>
-      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.19.0.v20190805-0915"/>
-      <unit id="org.eclipse.emf.sdk.feature.group" version="2.19.0.v20190704-0632"/>
+      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.19.0.v20190902-1322"/>
+      <unit id="org.eclipse.emf.sdk.feature.group" version="2.19.0.v20190824-1315"/>
       <repository location="https://download.eclipse.org/releases/2019-09"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
