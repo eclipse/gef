@@ -21,18 +21,20 @@ In order to develop graphical applications with GEF, you should first set up a p
 
 Having accomplished that, you might want to browse our [developer documentation](https://github.com/eclipse/gef/wiki#developer-documentation) to learn about the framework components in detail. At any time, if you get stuck, feel free to [contact us](https://projects.eclipse.org/projects/tools.gef/contact).
 
-### Set up an Eclipse IDE
-1. Install a recent [Java SE Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) as a prerequisite.
+### Set up an Eclipse IDE (using OpenJDK 11 and OpenJFX 11)
+1. Install a recent [OpenJDK](http://jdk.java.net/archive/) (e.g. 11.0.2) and a matching [OpenJFX SDK](https://gluonhq.com/products/javafx/) (e.g. 11.0.2) as a prerequisite.
 
-2. Download an '[Eclipse IDE for Eclipse Committers (Neon)](http://www.eclipse.org/downloads/packages)' package and start it, pointing to an empty workspace folder. 
+2. Download a recent '[Eclipse IDE for Eclipse Committers](http://www.eclipse.org/downloads/packages)' package (e.g. 2019-09 R) and start it, pointing to an empty workspace folder. 
 
-3. Select "Help -> Install New Software...". Choose to *Work with* [http://download.eclipse.org/releases/neon](http://download.eclipse.org/releases/neon), uncheck the *Group items per category* checkbox (the feature is uncategorized), and install *e(fx)clipse - IDE - PDE*.
+3. Select "Help -> Install New Software...". Choose to *Work with* [https://download.eclipse.org/efxclipse/updates-released/3.6.0/site/](https://download.eclipse.org/efxclipse/updates-released/3.6.0/site/), uncheck the *Group items per category* checkbox (the feature is uncategorized), and install *e(fx)clipse - IDE - PDE*.
 
-4. Go to *Windows -> Preferences -> Java/Installed JREs* and ensure the installed Java SE Development Kit 8 is listed (otherwise add it manually). 
+4. Go to *Windows -> Preferences -> Java/Installed JREs* and ensure the installed OpenJDK is listed (otherwise add it manually). 
 
-5. Go to *Windows -> Preferences -> Java/Installed JREs/Execution Environments* and make sure JavaSE-1.8 is mapped to the installed Java SE Development Kit 8 (the checkbox needs to be checked, otherwise e(fx)clipse will not be able to resolve the JavaFX dependencies).<sup>2)</sup>
+5. Go to *Windows -> Preferences -> Java/Installed JREs/Execution Environments* and make sure JavaSE-1.8 is mapped to the installed OpenJDK (the checkbox needs to be checked, otherwise e(fx)clipse will not be able to resolve the JavaFX dependencies.)</sup>
 
-<sub><sup>2)</sup> If your code should still be compatible to J2SE-1.7, you will have to install a Java SE Development Kit 7 instead, performing analogeous steps for this SDK and the J2SE-1.7 execution environment. Be aware that this is only feasible when developing against the [4.x (Neon)](https://projects.eclipse.org/projects/tools.gef/releases/4.1.0-neon.1) maintenance stream, as support for J2SE-1.7 has been dropped in the current [5.x (Oxygen)](https://projects.eclipse.org/projects/tools.gef/releases/5.0.0-oxygen) development stream.</sub>
+6. Go to *Windows -> Preferences -> JavaFX* and make sure the *JavaFX 11 + SDK* setting points to the lib folder of your OpenJFX SDK.
+
+7. Make sure to close your Eclipse instance and start it again (don't use the *Restart* menu entry).
 
 ### Set up a Target Definition containing GEF (development snapshot)
 1. Go to *File -> New -> Project...* and select to create a *General/Project*. Name it `gef-integration.target` or as you like, the project is to contain only a target definition.
