@@ -77,8 +77,8 @@ Having accomplished that, you might want to browse our [developer documentation]
 As the deployed [MVC Logo](https://github.com/eclipse/gef/wiki/MVC-Logo-Example) and [Zest Graph](https://github.com/eclipse/gef/wiki/Zest-Graph-Example) examples are contained in the target definition, you only need to start a new Eclipse Runtime to run them: 
 
 1. Go to *Run -> Run Configurations...* then create a new *Eclipse Application* launch configuration.
-2. On the *Main* tab, make sure the *Execution environment* points to JavaSE-1.8.
-3. On the *Arguments* tab, add *-Dosgi.framework.extensions=org.eclipse.fx.osgi* to *VM arguments:*, so that all JavaFX dependencies can be resolved wihtin the OSGi environment.
+2. On the *Main* tab, make sure the *Execution environment* points to at least JavaSE-1.8 .
+3. On the *Arguments* tab, add *-Dosgi.framework.extensions=org.eclipse.fx.osgi* to *VM arguments:*, so that all JavaFX dependencies can be resolved wihtin the OSGi environment. If you are using OpenJDK / OpenJFX 11 or higher, further add *-Defxclipse.java-modules.dir=/Library/Java/Extensions/javafx-sdk-11.0.2/lib* (of course adjusting the path to point to your OpenJFX SDK lib folder)
 4. Click *Run*.
 5. Open the example views via *Window -> Show View -> Other...*, then selecting *Other/GEF MVC Logo Example* or *Other/GEF Zest Graph Example*.
 
