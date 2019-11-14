@@ -10,7 +10,7 @@
  *     Matthias Wienand   (itemis AG) - initial API and implementation
  *     Tamas Miklossy     (itemis AG) - improve html-label highlighting/folding/refactoring
  *     Zoey Gerrit Prigge (itemis AG) - bind double click strategy provider (bug #532244)
- *     
+ *                                    - bindings for subgrammar hovering (hover/provider) (bug #549412)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
@@ -18,10 +18,14 @@ import org.eclipse.gef.dot.internal.ui.language.doubleclicking.DotHtmlLabelDoubl
 import org.eclipse.gef.dot.internal.ui.language.editor.DotHtmlLabelTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.folding.DotHtmlLabelFoldingRegionProvider;
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotHtmlLabelSemanticHighlightingCalculator;
+import org.eclipse.gef.dot.internal.ui.language.hover.DotHtmlLabelSubgrammarEObjectHover;
+import org.eclipse.gef.dot.internal.ui.language.hover.DotHtmlLabelSubgrammarHoverProvider;
 import org.eclipse.gef.dot.internal.ui.language.renaming.DotHtmlLabelRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.doubleClicking.DoubleClickStrategyProvider;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.ITokenTypeToPartitionTypeMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.refactoring.IRenameStrategy;
@@ -55,4 +59,14 @@ public class DotHtmlLabelUiModule extends
 	public Class<? extends IRenameStrategy> bindIRenameStrategy() {
 		return DotHtmlLabelRenameStrategy.class;
 	}
+
+	@Override
+	public Class<? extends IEObjectHover> bindIEObjectHover() {
+		return DotHtmlLabelSubgrammarEObjectHover.class;
+	}
+
+	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
+		return DotHtmlLabelSubgrammarHoverProvider.class;
+	}
+
 }

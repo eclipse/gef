@@ -19,12 +19,14 @@
  *                                    - add binding for token type to partition mapper (bug #532244)
  *                                    - add binding for abstract edit strategy provider (bug #536795)
  *     Zoey Gerrit Prigge (itemis AG) - add binding for doubleClickStrategyProvider (bug #532244)
+ *                                    - add binding for DotSourceViewerConfiguration (bug #549412)
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language;
 
 import org.eclipse.gef.dot.internal.ui.language.contentassist.DotTemplateProposalProvider;
 import org.eclipse.gef.dot.internal.ui.language.doubleclicking.DotDoubleClickStrategyProvider;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditor;
+import org.eclipse.gef.dot.internal.ui.language.editor.DotSourceViewerConfiguration;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotTerminalsTokenTypeToPartitionMapper;
 import org.eclipse.gef.dot.internal.ui.language.editor.autoedit.DotAutoEditStrategyProvider;
 import org.eclipse.gef.dot.internal.ui.language.findreferences.DotFindReferencesQueryExecutor;
@@ -40,6 +42,7 @@ import org.eclipse.gef.dot.internal.ui.language.markoccurrences.DotOccurrenceCom
 import org.eclipse.gef.dot.internal.ui.language.renaming.DotRenameStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.doubleClicking.DoubleClickStrategyProvider;
@@ -132,5 +135,9 @@ public class DotUiModule
 	@Override
 	public Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
 		return DotAutoEditStrategyProvider.class;
+	}
+
+	public Class<? extends XtextSourceViewerConfiguration> bindXtextSourceViewerConfiguration() {
+		return DotSourceViewerConfiguration.class;
 	}
 }
