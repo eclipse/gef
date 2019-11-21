@@ -70,7 +70,8 @@ public class DotOccurrenceComputer extends DefaultOccurrenceComputer {
 								XtextResource resource,
 								final CancelIndicator cancelIndicator)
 								throws Exception {
-							if (resource != null) {
+							if (resource != null
+									&& resource.getContents().size() > 0) {
 								INode node = NodeModelUtils
 										.findLeafNodeAtOffset(
 												NodeModelUtils.getNode(resource

@@ -9,6 +9,7 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #530699)
  *     Zoey Prigge (itemis AG)    - implement mark occurrence support for attributes (bug #548911)
+ *                                - include test against empty document (bug #548911)
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -251,6 +252,11 @@ class DotMarkingOccurrencesTest extends AbstractEditorTest {
 			}
 		'''
 		text.verifyOccurrences("labelfontname".occurrence(1), #["labelfontname".occurrence(1)])
+	}
+
+	@Test def marking_occurrences019() {
+		val text = ''''''
+		text.verifyOccurrences("".occurrence(1), #[])
 	}
 
 	private def verifyOccurrences(String content, Pair<String, Integer> selectionOffset, List<Pair<String, Integer>> expected) {
