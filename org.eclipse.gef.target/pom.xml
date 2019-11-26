@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2016, 2017 itemis AG and others. All rights reserved. This program 
-	and the accompanying materials are made available under the terms of the 
-	Eclipse Public License v1.0 which accompanies this distribution, and is available 
-	at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Nyßen 
-	(itemis AG) - initial API and implementation -->
+<!-- Copyright (c) 2016, 2017 itemis AG and others. All rights reserved. 
+	This program and the accompanying materials are made available under the 
+	terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+	and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: 
+	Alexander Nyßen (itemis AG) - initial API and implementation -->
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eclipse.gef</groupId>
@@ -24,10 +25,74 @@
 	</properties>
 	<profiles>
 		<profile>
-			<id>PHOTON.target</id>
+			<id>2019-12.target</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>${build-helper-version}</version>
+						<executions>
+							<!-- make target file available for incremental builds -->
+							<execution>
+								<id>attach-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<!-- note: the file name must be ${classifier}.target -->
+											<file>2019-12.target</file>
+											<type>target</type>
+											<classifier>2019-12</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>2019-09.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>${build-helper-version}</version>
+						<executions>
+							<!-- make target file available for incremental builds -->
+							<execution>
+								<id>attach-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<!-- note: the file name must be ${classifier}.target -->
+											<file>2019-09.target</file>
+											<type>target</type>
+											<classifier>2019-09</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>PHOTON.target</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -60,9 +125,6 @@
 		</profile>
 		<profile>
 			<id>OXYGEN.target</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -189,6 +251,6 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 	</profiles>
 </project>

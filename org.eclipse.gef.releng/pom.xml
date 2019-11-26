@@ -18,7 +18,7 @@
 		<maven-resources-plugin.version>2.2</maven-resources-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<maven-clean-plugin.version>2.5</maven-clean-plugin.version>
-		<tycho.version>0.25.0</tycho.version>
+		<tycho.version>1.5.0</tycho.version>
 		<cbi-plugins.version>1.1.3</cbi-plugins.version>
 		<exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
 		<!-- Use Xtext generator 2.7.3, which corresponds to Luna SR2 release -->
@@ -326,10 +326,102 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>PHOTON.target</id>
+			<id>2019-12.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<!-- consider pack.gz bundles -->
+							<includePackedArtifacts>true</includePackedArtifacts>
+							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
+							<!-- add target file content to target platform -->
+							<target>
+								<artifact>
+									<groupId>org.eclipse.gef</groupId>
+									<artifactId>org.eclipse.gef.target</artifactId>
+									<version>5.0.0-SNAPSHOT</version>
+									<classifier>2019-12</classifier>
+								</artifact>
+							</target>
+							<dependency-resolution>
+								<optionalDependencies>require</optionalDependencies>
+							</dependency-resolution>
+							<environments>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>win32</os>
+									<ws>win32</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>macosx</os>
+									<ws>cocoa</ws>
+									<arch>x86_64</arch>
+								</environment>
+							</environments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>2019-09.target</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<!-- consider pack.gz bundles -->
+							<includePackedArtifacts>true</includePackedArtifacts>
+							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
+							<!-- add target file content to target platform -->
+							<target>
+								<artifact>
+									<groupId>org.eclipse.gef</groupId>
+									<artifactId>org.eclipse.gef.target</artifactId>
+									<version>5.0.0-SNAPSHOT</version>
+									<classifier>2019-09</classifier>
+								</artifact>
+							</target>
+							<dependency-resolution>
+								<optionalDependencies>require</optionalDependencies>
+							</dependency-resolution>
+							<environments>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>win32</os>
+									<ws>win32</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>macosx</os>
+									<ws>cocoa</ws>
+									<arch>x86_64</arch>
+								</environment>
+							</environments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>PHOTON.target</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -386,9 +478,6 @@
 		</profile>
 		<profile>
 			<id>OXYGEN.target</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
