@@ -84,6 +84,10 @@
             id="org.eclipse.gef.dot.internal.language.Dot"
             name="DOT Editor">
         </editor>
+        <editorContentTypeBinding
+              contentTypeId="org.eclipse.gef.dot.contenttype"
+              editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+        </editorContentTypeBinding>
     </extension>
     <extension
         point="org.eclipse.ui.handlers">
@@ -311,5 +315,15 @@
         <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
             <showInPart id="org.eclipse.gef.dot.internal.ui.DotGraphView"/>
         </perspectiveExtension>
+    </extension>
+    <extension
+          point="org.eclipse.core.contenttype.contentTypes">
+       <content-type
+             base-type="org.eclipse.core.runtime.text"
+             file-extensions="dot"
+             id="org.eclipse.gef.dot.contenttype"
+             name="DOT File"
+             priority="normal">
+       </content-type>
     </extension>
 </plugin>
