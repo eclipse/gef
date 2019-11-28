@@ -9,12 +9,16 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Tamas Miklossy   (itemis AG) - implement additional validation checks (bug #321775)
+ *     Zoey Prigge      (itemis AG) - implement duplicate attribute name error (bug #549410)
  *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,6 +68,11 @@ public class DotHtmlLabelJavaValidator extends
 	 * Issue code for an invalid html attribute value.
 	 */
 	public static final String HTML_ATTRIBUTE_INVALID_ATTRIBUTE_VALUE = "html_attribute_invalid_attribute_value";
+
+	/**
+	 * Issue code for an invalid html attribute value.
+	 */
+	public static final String HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME = "html_attribute_duplicate_attribute_name";
 
 	/**
 	 * Checks if the given {@link HtmlLabel}'s parts are valid siblings to each
@@ -261,6 +270,35 @@ public class DotHtmlLabelJavaValidator extends
 								+ ": " + message,
 						attr, HtmllabelPackage.Literals.HTML_ATTR__VALUE);
 			}
+		}
+	}
+
+	/**
+	 * Checks if a given {@link HtmlTag} has {@link HtmlAttr}s of the same name.
+	 * Generates errors if multiple {@link HtmlAttr}s have the same name as this
+	 * is not supported by Graphviz.
+	 * 
+	 * @param tag
+	 *            The {@link HtmlTag} being checked.
+	 */
+	@Check
+	public void checkAttributeNameIsNotDuplicate(HtmlTag tag) {
+		Map<String, HtmlAttr> definedAttributes = new HashMap<>();
+		Set<HtmlAttr> duplicateAttrSet = new HashSet<>();
+
+		for (HtmlAttr attr : tag.getAttributes()) {
+			String attrNameLower = attr.getName().toLowerCase(Locale.ENGLISH);
+			if (definedAttributes.putIfAbsent(attrNameLower, attr) != null) {
+				duplicateAttrSet.add(attr);
+				duplicateAttrSet.add(definedAttributes.get(attrNameLower));
+			}
+		}
+
+		for (HtmlAttr attr : duplicateAttrSet) {
+			reportRangeBasedError(HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME,
+					"The attribute '" + attr.getName()
+							+ "' is defined more than once.",
+					attr, HtmllabelPackage.Literals.HTML_ATTR__NAME);
 		}
 	}
 

@@ -9,6 +9,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Tamas Miklossy   (itemis AG) - initial API and implementation
+ *     Zoey Prigge      (itemis AG) - duplicate attr name validation (bug #549410)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -206,6 +207,19 @@ class DotHtmlLabelValidatorTest {
 		'''<TABLE/>'''.parse.assertNumberOfIssues(1).assertSelfClosingTagError
 		'''<TABLE><TR/></TABLE>'''.parse.assertNumberOfIssues(1).assertSelfClosingTagError("TR")
 		'''<TABLE><TR><TD/></TR></TABLE>'''.parse.assertNumberOfIssues(1).assertSelfClosingTagError("TD")
+	}
+
+	@Test def duplicate_attribute_name(){
+		val htmlLabel1 = '''<FONT COLOR="#EFE8FE" COLOR="#DEEED7">text</FONT>'''.parse.assertNumberOfIssues(2)
+		htmlLabel1.assertHtmlAttributeError(HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME, "The attribute 'COLOR' is defined more than once.")
+		val htmlLabel2 = '''<FONT color="#EFE8FE" COLOR="#DEEED7">text</FONT>'''.parse.assertNumberOfIssues(2)
+		htmlLabel2.assertHtmlAttributeError(HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME, "The attribute 'color' is defined more than once.")
+		htmlLabel2.assertHtmlAttributeError(HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME, "The attribute 'COLOR' is defined more than once.")
+		val htmlLabel3 ='''<FONT COLOR="#EFE8FE" color="#DEEED7">text</FONT>'''.parse.assertNumberOfIssues(2)
+		htmlLabel3.assertHtmlAttributeError(HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME, "The attribute 'COLOR' is defined more than once.")
+		htmlLabel3.assertHtmlAttributeError(HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME, "The attribute 'color' is defined more than once.")
+		val htmlLabel4 ='''<FONT color="#EFE8FE" color="#DEEED7">text</FONT>'''.parse.assertNumberOfIssues(2)
+		htmlLabel4.assertHtmlAttributeError(HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME, "The attribute 'color' is defined more than once.")
 	}
 
 	@Test def invalid_attribute_value_of_tag_BR_ALIGN() {
