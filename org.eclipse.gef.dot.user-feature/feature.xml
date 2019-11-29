@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.dot.user"
       label="GEF DOT End-User Tools"
-      version="5.0.400.qualifier"
+      version="5.0.500.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">

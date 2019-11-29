@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.dot"
       label="GEF DOT"
-      version="5.0.400.qualifier"
+      version="5.0.500.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.dot"
       license-feature="org.eclipse.license"

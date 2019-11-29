@@ -105,22 +105,22 @@
    <feature url="features/org.eclipse.gef.cloudio.user_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.user" version="5.0.2.qualifier">
       <category name="GEF Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot_5.0.400.qualifier.jar" id="org.eclipse.gef.dot" version="5.0.400.qualifier">
+   <feature url="features/org.eclipse.gef.dot_5.0.500.qualifier.jar" id="org.eclipse.gef.dot" version="5.0.500.qualifier">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.ui_5.0.400.qualifier.jar" id="org.eclipse.gef.dot.ui" version="5.0.400.qualifier">
+   <feature url="features/org.eclipse.gef.dot.ui_5.0.500.qualifier.jar" id="org.eclipse.gef.dot.ui" version="5.0.500.qualifier">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.doc_5.0.400.qualifier.jar" id="org.eclipse.gef.dot.doc" version="5.0.400.qualifier">
+   <feature url="features/org.eclipse.gef.dot.doc_5.0.500.qualifier.jar" id="org.eclipse.gef.dot.doc" version="5.0.500.qualifier">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.doc.user_5.0.400.qualifier.jar" id="org.eclipse.gef.dot.doc.user" version="5.0.400.qualifier">
+   <feature url="features/org.eclipse.gef.dot.doc.user_5.0.500.qualifier.jar" id="org.eclipse.gef.dot.doc.user" version="5.0.500.qualifier">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.sdk_5.0.400.qualifier.jar" id="org.eclipse.gef.dot.sdk" version="5.0.400.qualifier">
+   <feature url="features/org.eclipse.gef.dot.sdk_5.0.500.qualifier.jar" id="org.eclipse.gef.dot.sdk" version="5.0.500.qualifier">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.user_5.0.400.qualifier.jar" id="org.eclipse.gef.dot.user" version="5.0.400.qualifier">
+   <feature url="features/org.eclipse.gef.dot.user_5.0.500.qualifier.jar" id="org.eclipse.gef.dot.user" version="5.0.500.qualifier">
       <category name="GEF DOT"/>
    </feature>
    <feature url="features/org.eclipse.gef.fx.compatibility.equinox_5.0.3.qualifier.jar" id="org.eclipse.gef.fx.compatibility.equinox" version="5.0.3.qualifier">
