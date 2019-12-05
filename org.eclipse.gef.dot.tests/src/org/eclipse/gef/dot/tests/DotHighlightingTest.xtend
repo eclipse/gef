@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,8 @@
  * 
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *    Zoey Prigge    (itemis AG) - strikethrough/deprecation (bug #552993)
+ * 
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -152,13 +154,26 @@ class DotHighlightingTest extends AbstractEditorTest {
 		DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL.assertHighlighting("<", SWT.NORMAL, 63, 127, 127)
 	}
 
+	@Test def void deprecated_arrow_type() {
+		DotTestGraphs.DEPRECATED_ARROWTYPES => [
+			// test unquoted deprecated highlighting
+			assertHighlighting("ediamond", SWT.NORMAL, 153, 76, 0, true)
+			// test quoted deprecated highlighting
+			assertHighlighting("open", SWT.NORMAL, 255, 0, 0, true)
+		]
+	}
+
 	private def assertHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue) {
+		assertHighlighting(text, fontStyle, red, green, blue, false);
+	}
+
+	private def assertHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue, boolean strikeout) {
 		// given
 		dslFile
 		// when
 		.openInEditor
 		// then
-		.text(text).isHighlightedIn(fontStyle, red, green, blue)
+		.text(text).isHighlightedIn(fontStyle, red, green, blue, strikeout)
 	}
 
 	private def dslFile(CharSequence it) {
@@ -193,7 +208,7 @@ class DotHighlightingTest extends AbstractEditorTest {
 		elements
 	}
 
-	private def isHighlightedIn(List<Pair<String, StyleRange>> elements, int fontStyle, int red, int green, int blue) {
+	private def isHighlightedIn(List<Pair<String, StyleRange>> elements, int fontStyle, int red, int green, int blue, boolean strikeout) {
 		val expectedColor = new Color(null, red, green, blue)
 		
 		for(element : elements) {
@@ -202,11 +217,18 @@ class DotHighlightingTest extends AbstractEditorTest {
 			// skipping the whitespace characters
 			if (character != " " && character != "\t") {
 				styleRange => [
+					isStrikedout(character, strikeout)
 					hasFontStyle(character, fontStyle)
 					hasForegroundColor(character, expectedColor)
 				]
 			}
 		}
+	}
+
+	private def isStrikedout(StyleRange it, String character, boolean expected) {
+		val actual = strikeout
+		assertEquals('''Expected strikeout does not correspond to the actual strikeout on character «character»''',
+			expected, actual)
 	}
 
 	private def hasFontStyle(StyleRange it, String character, int expected) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 itemis AG and others.
+ * Copyright (c) 2016, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
  *     Zoey G. Prigge (itemis AG) - implement additional dot attributes (bug #461506)
+ *                                - deprecated dot attributes (bug #552993)
  * 
  *******************************************************************************/
 
@@ -349,6 +350,18 @@ class DotTestGraphs {
 				style="dashed, setlinewidth(4)"
 				3[style="setlinewidth(5), dotted"]
 			}
+		}
+	'''
+
+	public static val DEPRECATED_ARROWTYPES = '''
+		digraph ArrowShapes_Deprecated {
+			1-> 2[arrowhead=ediamond]
+			3-> 4[arrowhead="open"]
+			5-> 6[arrowhead=halfopen]
+			7-> 8[arrowhead=empty]
+			9->10[arrowhead=invempty]
+			11->12[arrowhead=ediamondinvempty]
+			13->14[arrowhead=openbox]
 		}
 	'''
 
