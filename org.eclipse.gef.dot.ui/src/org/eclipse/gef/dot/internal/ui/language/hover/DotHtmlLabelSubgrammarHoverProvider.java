@@ -30,8 +30,11 @@ public class DotHtmlLabelSubgrammarHoverProvider
 			switch (attribute.getName().toLowerCase(Locale.ENGLISH)) {
 			case "bgcolor": //$NON-NLS-1$
 			case "color": //$NON-NLS-1$
-				return DotHoverUtils.colorDescription(containingAttribute,
-						attribute.getValue(), attribute.getValue());
+				String quoted = attribute.getValue();
+				if (quoted != null && quoted.length() > 2) {
+					return DotHoverUtils.colorDescription(containingAttribute,
+							quoted, quoted.substring(1, quoted.length() - 1));
+				}
 			}
 		}
 		return super.getHoverInfoAsHtml(o);

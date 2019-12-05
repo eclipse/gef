@@ -64,6 +64,9 @@ public class DotHtmlLabelAdaptingTextHover extends DotEObjectHover {
 			if (hover instanceof ITextHover) {
 				IRegion htmlRegion = ((ITextHover) hover)
 						.getHoverRegion(sourceViewer, offset - html.offset);
+				if (htmlRegion == null) {
+					return null;
+				}
 				return new Region(html.offset + htmlRegion.getOffset(),
 						htmlRegion.getLength());
 			}
