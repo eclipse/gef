@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.ui.language.hover;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.DotActivator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;

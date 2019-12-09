@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF DOT User Guide
 Bundle-SymbolicName: org.eclipse.gef.dot.doc.user;singleton:=true
-Bundle-Version: 5.0.500.qualifier
+Bundle-Version: 5.1.0.qualifier
 Bundle-Vendor: Eclipse GEF

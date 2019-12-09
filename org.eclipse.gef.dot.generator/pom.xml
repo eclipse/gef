@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2016, 2017 itemis AG and others. All rights reserved. This program 
+<!-- Copyright (c) 2019 itemis AG and others. All rights reserved. This program 
 	and the accompanying materials are made available under the terms of the 
 	Eclipse Public License v1.0 which accompanies this distribution, and is available 
 	at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Nyßen 
@@ -16,6 +16,6 @@
 	</parent>
 	<groupId>org.eclipse.gef.plugins</groupId>
 	<artifactId>org.eclipse.gef.dot.generator</artifactId>
-	<version>5.0.300-SNAPSHOT</version>
+	<version>5.1.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 </project>

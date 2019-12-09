@@ -15,7 +15,7 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import java.util.List
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.gef.dot.internal.language.DotFontNameInjectorProvider
+import org.eclipse.gef.dot.tests.DotFontNameInjectorProvider
 import org.eclipse.gef.dot.internal.language.fontname.FontName
 import org.eclipse.gef.dot.internal.language.fontname.FontnameFactory
 import org.eclipse.gef.dot.internal.language.fontname.Gravity
@@ -30,10 +30,10 @@ import org.eclipse.gef.dot.internal.language.fontname.Variant
 import org.eclipse.gef.dot.internal.language.fontname.VariantOption
 import org.eclipse.gef.dot.internal.language.fontname.Weight
 import org.eclipse.gef.dot.internal.language.fontname.WeightOption
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 

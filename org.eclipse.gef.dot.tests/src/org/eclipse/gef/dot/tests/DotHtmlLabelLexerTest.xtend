@@ -14,9 +14,9 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelInjectorProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.gef.dot.tests.DotHtmlLabelInjectorProvider
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.parser.antlr.Lexer
 import org.eclipse.xtext.parser.antlr.LexerBindings
 import org.junit.runner.RunWith

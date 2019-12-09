@@ -45,7 +45,8 @@ public class DotHtmlLabelOutlineTreeProvider
 	/**
 	 * Skip the root element, represent only its children.
 	 */
-	public void _createChildren(DocumentRootNode outlineNode, HtmlLabel model) {
+	private void _createChildren(DocumentRootNode outlineNode,
+			HtmlLabel model) {
 		for (HtmlContent htmlContent : model.getParts()) {
 			if (htmlContent.getText() != null
 					&& !htmlContent.getText().trim().isEmpty()) {
@@ -62,7 +63,7 @@ public class DotHtmlLabelOutlineTreeProvider
 	 * Skip the empty (containing nothing or only white-spaces) htmlContent
 	 * elements, but process their tag children.
 	 */
-	public void _createNode(IOutlineNode parent, HtmlContent htmlContent) {
+	private void _createNode(IOutlineNode parent, HtmlContent htmlContent) {
 		if (htmlContent.getText() != null
 				&& !htmlContent.getText().trim().isEmpty()) {
 			super._createNode(parent, htmlContent);

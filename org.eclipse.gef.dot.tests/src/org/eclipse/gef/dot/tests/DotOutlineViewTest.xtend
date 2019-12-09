@@ -12,9 +12,9 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.junit.Test
 import org.junit.runner.RunWith

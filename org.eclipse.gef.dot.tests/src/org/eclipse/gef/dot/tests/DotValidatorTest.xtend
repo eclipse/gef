@@ -18,12 +18,12 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import java.util.List
-import org.eclipse.gef.dot.internal.language.DotInjectorProvider
+import org.eclipse.gef.dot.tests.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
@@ -31,8 +31,8 @@ import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.DotAttributes.*
 import static org.eclipse.gef.dot.internal.language.dot.DotPackage.Literals.*
-import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.*
-import static org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator.*
+import static org.eclipse.gef.dot.internal.language.validation.DotValidator.*
+import static org.eclipse.gef.dot.internal.language.validation.DotRecordLabelValidator.*
 import static org.eclipse.xtext.diagnostics.Diagnostic.*
 
 import static extension org.eclipse.gef.dot.tests.DotTestUtils.content

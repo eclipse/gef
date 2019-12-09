@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.gef.dot.generator" version="2">
+    <resource path="xtext-generator-extensions/org/eclipse/gef/dot/internal/generator/DotGeneratorModule.java" type="org.eclipse.gef.dot.internal.generator.DotGeneratorModule$DotNaming">
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="TypeReference"/>
+                <message_argument value="DotNaming"/>
+                <message_argument value="getEclipsePluginActivator()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

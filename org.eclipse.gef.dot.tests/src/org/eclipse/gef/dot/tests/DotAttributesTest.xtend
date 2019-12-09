@@ -16,7 +16,6 @@ package org.eclipse.gef.dot.tests
 
 import java.util.function.Consumer
 import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.gef.dot.internal.language.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypeFactory
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedShape
 import org.eclipse.gef.dot.internal.language.arrowtype.PrimitiveShape
@@ -49,8 +48,8 @@ import org.eclipse.gef.dot.internal.language.terminals.ID.Type
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

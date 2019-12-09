@@ -14,9 +14,9 @@ package org.eclipse.gef.dot.internal.ui.language.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef.dot.internal.ui.language.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.DotActivatorEx;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;

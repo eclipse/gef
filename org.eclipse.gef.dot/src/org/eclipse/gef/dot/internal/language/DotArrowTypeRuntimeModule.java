@@ -10,9 +10,18 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
-/**
- * Use this class to register components to be used at runtime / without the Equinox extension registry.
- */
-public class DotArrowTypeRuntimeModule extends org.eclipse.gef.dot.internal.language.AbstractDotArrowTypeRuntimeModule {
+import org.eclipse.gef.dot.internal.language.formatting.DotArrowTypeFormatter;
+import org.eclipse.xtext.formatting.IFormatter;
 
+/**
+ * Use this class to register components to be used at runtime / without the
+ * Equinox extension registry.
+ */
+public class DotArrowTypeRuntimeModule extends
+		org.eclipse.gef.dot.internal.language.AbstractDotArrowTypeRuntimeModule {
+
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotArrowTypeFormatter.class;
+	}
 }

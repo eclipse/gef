@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
+import org.eclipse.gef.dot.internal.language.formatting.DotPortPosFormatter;
+import org.eclipse.xtext.formatting.IFormatter;
+
 /**
  * Use this class to register components to be used at runtime / without the
  * Equinox extension registry.
@@ -19,4 +22,8 @@ package org.eclipse.gef.dot.internal.language;
 public class DotPortPosRuntimeModule extends
 		org.eclipse.gef.dot.internal.language.AbstractDotPortPosRuntimeModule {
 
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotPortPosFormatter.class;
+	}
 }

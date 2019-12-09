@@ -15,8 +15,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.quickfix;
 
-import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.INVALID_EDGE_OPERATOR;
-import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.REDUNDANT_ATTRIBUTE;
+import static org.eclipse.gef.dot.internal.language.validation.DotValidator.INVALID_EDGE_OPERATOR;
+import static org.eclipse.gef.dot.internal.language.validation.DotValidator.REDUNDANT_ATTRIBUTE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,8 +48,8 @@ import org.eclipse.gef.dot.internal.language.style.EdgeStyle;
 import org.eclipse.gef.dot.internal.language.style.NodeStyle;
 import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
-import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator;
-import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator;
+import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeValidator;
+import org.eclipse.gef.dot.internal.language.validation.DotStyleValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
@@ -217,13 +217,13 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		String issueCode = issueData[0];
 
 		switch (issueCode) {
-		case DotStyleJavaValidator.DEPRECATED_STYLE_ITEM:
+		case DotStyleValidator.DEPRECATED_STYLE_ITEM:
 			provideQuickfixesForDeprecatedStyleItem(issue, acceptor);
 			break;
-		case DotStyleJavaValidator.DUPLICATED_STYLE_ITEM:
+		case DotStyleValidator.DUPLICATED_STYLE_ITEM:
 			provideQuickfixesForDuplicatedStyleItem(issue, acceptor);
 			break;
-		case DotStyleJavaValidator.INVALID_STYLE_ITEM:
+		case DotStyleValidator.INVALID_STYLE_ITEM:
 			provideQuickfixesForInvalidStyleItem(issue, acceptor);
 		default:
 			return;
@@ -239,13 +239,13 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		String issueCode = issueData[0];
 
 		switch (issueCode) {
-		case DotArrowTypeJavaValidator.DEPRECATED_ARROW_SHAPE:
+		case DotArrowTypeValidator.DEPRECATED_ARROW_SHAPE:
 			provideQuickfixesForDeprecatedArrowShape(issue, suffix, acceptor);
 			break;
-		case DotArrowTypeJavaValidator.INVALID_ARROW_SHAPE_MODIFIER:
+		case DotArrowTypeValidator.INVALID_ARROW_SHAPE_MODIFIER:
 			provideQuickfixesInvalidArrowShapeModifier(issue, suffix, acceptor);
 			break;
-		case DotArrowTypeJavaValidator.INVALID_ARROW_SHAPE_NONE_IS_THE_LAST:
+		case DotArrowTypeValidator.INVALID_ARROW_SHAPE_NONE_IS_THE_LAST:
 			provideQuickfixesInvalidArrowShapeNoneIsTheLast(issue, suffix,
 					acceptor);
 			break;

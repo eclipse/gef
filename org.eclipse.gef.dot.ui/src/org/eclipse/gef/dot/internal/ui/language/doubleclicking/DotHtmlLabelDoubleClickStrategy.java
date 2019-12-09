@@ -14,9 +14,9 @@ package org.eclipse.gef.dot.internal.ui.language.doubleclicking;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.gef.dot.internal.ui.language.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.DotActivatorEx;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.IDocument;

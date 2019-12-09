@@ -32,7 +32,7 @@ import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.parser.antlr.DotHtmlLabelParser;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
+import org.eclipse.gef.dot.internal.ui.language.DotActivator;
 import org.eclipse.xtext.parser.IParseResult;
 
 import com.google.inject.Injector;

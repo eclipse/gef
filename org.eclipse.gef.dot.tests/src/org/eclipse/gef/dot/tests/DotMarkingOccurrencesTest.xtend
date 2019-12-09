@@ -18,11 +18,11 @@ import com.google.inject.Inject
 import java.util.List
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.core.runtime.SubMonitor
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.jface.text.Position
 import org.eclipse.jface.text.TextSelection
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.occurrences.IOccurrenceComputer

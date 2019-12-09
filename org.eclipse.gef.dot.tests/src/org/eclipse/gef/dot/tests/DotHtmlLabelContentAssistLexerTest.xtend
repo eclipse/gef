@@ -14,18 +14,18 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.ui.LexerUIBindings
-import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer
+import org.eclipse.gef.dot.tests.ui.DotHtmlLabelUiInjectorProvider
+import org.eclipse.xtext.ide.LexerIdeBindings
+import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelUiInjectorProvider)
 class DotHtmlLabelContentAssistLexerTest extends AbstractDotHtmlLabelLexerTest {
 
-	@Inject @Named(LexerUIBindings.CONTENT_ASSIST) Lexer lexer
+	@Inject @Named(LexerIdeBindings.CONTENT_ASSIST) Lexer lexer
 
 	override lexer() {
 		lexer

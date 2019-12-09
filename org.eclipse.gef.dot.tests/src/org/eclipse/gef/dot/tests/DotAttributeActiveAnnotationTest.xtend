@@ -67,7 +67,7 @@ class DotAttributeActiveAnnotationTest {
 			  /**
 			   * The 'rank' attribute, which is used by: Subgraph.
 			   */
-			  public final static String RANK__S = "rank";
+			  public static final String RANK__S = "rank";
 			  
 			  public static Object parsedAsAttribute(final ID valueRaw, final String attrName, final DotAttributes.Context context) {
 			    switch (context) {
