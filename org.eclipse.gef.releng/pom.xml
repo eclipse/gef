@@ -34,8 +34,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<javafx.version>11</javafx.version>
-		<javafx.modules.dir>/Library/Java/Extensions/javafx-sdk-11.0.2/lib</javafx.modules.dir>
-		<!--javafx.modules.dir>${javafx.home}/lib</javafx.modules.dir> -->
+		<!-- <javafx.modules.dir>/Library/Java/Extensions/javafx-sdk-11.0.2/lib</javafx.modules.dir> -->
+		<javafx.modules.dir>${javafx.home}/lib</javafx.modules.dir>
 	    <maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
