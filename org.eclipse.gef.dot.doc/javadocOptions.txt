@@ -15,17 +15,6 @@
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
 org.eclipse.gef.dot.internal
-org.eclipse.gef.dot.internal.language
-org.eclipse.gef.dot.internal.language.conversion
-org.eclipse.gef.dot.internal.language.formatting
-org.eclipse.gef.dot.internal.language.scoping
-org.eclipse.gef.dot.internal.language.validation
 org.eclipse.gef.dot.internal.ui
+org.eclipse.gef.dot.internal.ui.conversion
 org.eclipse.gef.dot.internal.ui.handlers
-org.eclipse.gef.dot.internal.ui.language
-org.eclipse.gef.dot.internal.ui.language.contentassist
-org.eclipse.gef.dot.internal.ui.language.labeling
-org.eclipse.gef.dot.internal.ui.language.outline
-org.eclipse.gef.dot.internal.ui.language.quickfix
-org.eclipse.gef.dot.internal.ui.language.highlighting
-

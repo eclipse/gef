@@ -58,6 +58,15 @@
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<extraClasspathElements>
+						<!-- jfxswt.jar for Java 1.8 -->
+					    <extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx-swt</artifactId>
+							<version>8.0.0-SNAPSHOT</version>
+							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<!-- javafx-swt.jar for Java 11 -->
 						<extraClasspathElement>
 							<groupId>com.oracle</groupId>
 							<artifactId>javafx-swt</artifactId>
