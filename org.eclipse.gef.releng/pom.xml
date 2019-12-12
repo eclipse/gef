@@ -33,8 +33,8 @@
 		<tycho.scmUrl>scm:git:https://github.com/eclipse/gef.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<javafx.version>11</javafx.version>
 		<javafx.modules.dir>${env.JAVAFX_HOME}/lib</javafx.modules.dir> 
+		<javafx.version>${java.vm.specification.version}</javafx.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
@@ -217,6 +217,7 @@
 						<phase>process-resources</phase>
 						<configuration>
 							<target>
+								<property name="javafx.modules.dir" value="${javafx.modules.dir}"/>
 								<taskdef
 									resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
