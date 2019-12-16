@@ -25,7 +25,7 @@ cache:
 
 before_script:
   - "wget https://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_linux-x64_bin-sdk.zip -O /tmp/openjfx11.zip"
-  - "unzip /tmp/openjfx11.zip"
+  - "unzip /tmp/openjfx11.zip -d /tmp"
   - "export JAVAFX_HOME=/tmp/javafx-sdk-11.0.2"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
