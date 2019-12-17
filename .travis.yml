@@ -34,4 +34,4 @@ before_script:
 script:
 - cd org.eclipse.gef.releng
 # skip wikidoc generation, which does not affect build result, but generate javadoc and ensure test failures are respected.
-- travis_wait mvn clean verify -Dmaven.test.failure.ignore=false -Dwikidoc.skip=true -P2019-03.target
+- travis_wait 30 mvn clean verify -Dmaven.test.failure.ignore=false -Dwikidoc.skip=true -P2019-03.target
