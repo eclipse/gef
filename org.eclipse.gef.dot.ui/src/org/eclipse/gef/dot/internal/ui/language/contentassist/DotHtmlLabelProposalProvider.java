@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,12 +9,14 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Tamas Miklossy   (itemis AG) - initial API and implementation
+ *     Zoey Prigge      (itemis AG) - Add ca support for html color attrs (bug #553575)
  *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +28,7 @@ import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelFactory;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
+import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
@@ -152,8 +155,17 @@ public class DotHtmlLabelProposalProvider extends
 		if (model instanceof HtmlAttr) {
 			HtmlAttr htmlAttr = (HtmlAttr) model;
 			HtmlTag htmlTag = (HtmlTag) htmlAttr.eContainer();
-			proposeHtmlAttributeValues(htmlTag.getName(), htmlAttr.getName(),
-					context, acceptor);
+			switch (htmlAttr.getName().toLowerCase(Locale.ENGLISH)) {
+			case "color": //$NON-NLS-1$
+			case "bgcolor": // TODO could also accept two colors //$NON-NLS-1$
+							// separated by colon
+				proposeHtmlColorAttributeValues(context, acceptor);
+				break;
+			default:
+				proposeHtmlAttributeValues(htmlTag.getName(),
+						htmlAttr.getName(), context, acceptor);
+				break;
+			}
 		}
 	}
 
@@ -287,6 +299,27 @@ public class DotHtmlLabelProposalProvider extends
 			default:
 				break;
 			}
+		}
+	}
+
+	private void proposeHtmlColorAttributeValues(ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		String subgrammarName = DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLOR;
+		String fullText = context.getCurrentNode().getText();
+		String text = fullText.replaceAll("['\"]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+
+		List<ConfigurableCompletionProposal> configurableCompletionProposals = new DotProposalProviderDelegator(
+				subgrammarName).computeConfigurableCompletionProposals(text,
+						text.length());
+
+		for (ConfigurableCompletionProposal configurableCompletionProposal : configurableCompletionProposals) {
+			// adapt the replacement offset determined within the
+			// sub-grammar context to be valid within the context of the
+			// original text
+			configurableCompletionProposal.setReplacementOffset(
+					context.getOffset() - configurableCompletionProposal
+							.getReplaceContextLength());
+			acceptor.accept(configurableCompletionProposal);
 		}
 	}
 
