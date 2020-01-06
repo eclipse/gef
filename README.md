@@ -26,7 +26,7 @@ Having accomplished that, you might want to browse our [developer documentation]
 
 2. Download a recent '[Eclipse IDE for Eclipse Committers](http://www.eclipse.org/downloads/packages)' package (e.g. 2019-09 R) and start it, pointing to an empty workspace folder. 
 
-3. Select "Help -> Install New Software...". Choose to *Work with* [https://download.eclipse.org/efxclipse/updates-released/3.6.0/site/](https://download.eclipse.org/efxclipse/updates-released/3.6.0/site/), uncheck the *Group items per category* checkbox (the feature is uncategorized), and install *e(fx)clipse - IDE - PDE*.
+3. Select "Help -> Install New Software...". Choose to *Work with* [https://download.eclipse.org/efxclipse/updates-nightly/site/](https://download.eclipse.org/efxclipse/updates-nightly/site/), uncheck the *Group items per category* checkbox (the feature is uncategorized), and install *e(fx)clipse - IDE - PDE*.
 
 4. Go to *Windows -> Preferences -> Java/Installed JREs* and ensure the installed OpenJDK is listed (otherwise add it manually). 
 
