@@ -67,6 +67,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.Keyword;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal.IReplacementTextApplier;
@@ -573,29 +574,41 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 	private void proposeAttributeValues(String subgrammarName,
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
+		INode currentNode = context.getCurrentNode();
+		String nodeText = currentNode.getText();
+		String prefix = context.getPrefix();
 
-		String text = context.getPrefix();
-		if (text.startsWith("\"")) { //$NON-NLS-1$
-			text = ID.fromString(text, Type.QUOTED_STRING).toValue();
-			context = context.copy().setPrefix(text).toContext();
-		}
+		int offset = currentNode.getOffset();
+		String text = nodeText.trim();
 
-		if (text.startsWith("<")) { //$NON-NLS-1$
-			text = text.substring(1);
-			context = context.copy().setPrefix(text).toContext();
+		if (!nodeText.contains(prefix)) {
+			text = prefix;
+			offset = context.getOffset() - prefix.length();
+		} else {
+			boolean quoted = text.startsWith("\"") //$NON-NLS-1$
+					&& text.endsWith("\""); //$NON-NLS-1$
+			boolean html = text.startsWith("<") && text.endsWith(">"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			if (quoted || html) {
+				if (quoted) {
+					text = ID.fromString(text, Type.QUOTED_STRING).toValue();
+				} else {
+					text = text.substring(1, text.length() - 1);
+				}
+				offset++;
+			}
 		}
 
 		List<ConfigurableCompletionProposal> configurableCompletionProposals = new DotProposalProviderDelegator(
 				subgrammarName).computeConfigurableCompletionProposals(text,
-						text.length());
+						context.getOffset() - offset);
 
 		for (ConfigurableCompletionProposal configurableCompletionProposal : configurableCompletionProposals) {
 			// adapt the replacement offset determined within the
 			// sub-grammar context to be valid within the context of the
 			// original text
-			configurableCompletionProposal.setReplacementOffset(
-					context.getOffset() - configurableCompletionProposal
-							.getReplaceContextLength());
+			configurableCompletionProposal.setReplacementOffset(offset
+					+ configurableCompletionProposal.getReplacementOffset());
 
 			acceptor.accept(configurableCompletionProposal);
 		}
