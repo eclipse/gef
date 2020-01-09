@@ -487,9 +487,42 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 		'''
 			<TABLE BGCOLOR="«c»" ></TABLE>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/"]), 
+			combine(expectedX11ColorNames, #["#", "/", ":"]), 
 			"red", '''
 				<TABLE BGCOLOR="red" ></TABLE>
+			'''
+		)
+	}
+	
+	@Test def attribute_values_of_tag_TABLE_BGCOLOR_Colon() {
+		'''
+			<TABLE BGCOLOR="red«c»" ></TABLE>
+		'''.testContentAssistant(
+			#["red", "red1", "red2", "red3", "red4", ":"], 
+			":", '''
+				<TABLE BGCOLOR="red:" ></TABLE>
+			'''
+		)
+	}
+	
+	@Test def attribute_values_of_tag_TABLE_BGCOLOR_with_Colon() {
+		'''
+			<TABLE BGCOLOR="«c»:" ></TABLE>
+		'''.testContentAssistant(
+			combine(expectedX11ColorNames, #["#", "/"]), 
+			"red", '''
+				<TABLE BGCOLOR="red:" ></TABLE>
+			'''
+		)
+	}
+	
+	@Test def attribute_values_of_tag_TABLE_BGCOLOR_after_Colon() {
+		'''
+			<TABLE BGCOLOR="blue:«c»" ></TABLE>
+		'''.testContentAssistant(
+			combine(expectedX11ColorNames, #["#", "/"]), 
+			"red", '''
+				<TABLE BGCOLOR="blue:red" ></TABLE>
 			'''
 		)
 	}
@@ -657,7 +690,7 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 		'''
 			<TD BGCOLOR="«c»" ></TD>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/"]), 
+			combine(expectedX11ColorNames, #["#", "/", ":"]), 
 			"blue", '''
 				<TD BGCOLOR="blue" ></TD>
 			'''
@@ -862,7 +895,11 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 			 * replacement strings when determining the proposed text.
 			 */
 			override protected getProposedText(ICompletionProposal proposal) {
-				return proposal.displayString.split(":").head
+				val displayString = proposal.displayString
+				if(":".equals(displayString)) {
+					displayString
+				}
+				else displayString.split(":").head
 			}
 		}
 	}

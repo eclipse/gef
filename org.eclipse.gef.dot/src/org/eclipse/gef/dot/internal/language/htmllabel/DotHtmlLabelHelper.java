@@ -235,7 +235,10 @@ public class DotHtmlLabelHelper {
 			HtmlTag tag = content.getTag();
 			String text = content.getText();
 
-			if (tag != null && ("TABLE".equals(tag.getName().toUpperCase()))) {
+			if (tag != null && tag.getName() == null) {
+				continue;
+			} else if (tag != null
+					&& ("TABLE".equals(tag.getName().toUpperCase()))) {
 				htmlTableSiblings.add(tag);
 			} else if (tag != null
 					&& ("IMG".equals(tag.getName().toUpperCase()))) {

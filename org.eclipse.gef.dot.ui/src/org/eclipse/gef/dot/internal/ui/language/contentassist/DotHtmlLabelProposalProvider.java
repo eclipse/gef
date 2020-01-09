@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
@@ -156,9 +157,10 @@ public class DotHtmlLabelProposalProvider extends
 			HtmlAttr htmlAttr = (HtmlAttr) model;
 			HtmlTag htmlTag = (HtmlTag) htmlAttr.eContainer();
 			switch (htmlAttr.getName().toLowerCase(Locale.ENGLISH)) {
+			case "bgcolor": //$NON-NLS-1$
+				proposeHtmlBgColorAttributeValues(context, acceptor);
+				break;
 			case "color": //$NON-NLS-1$
-			case "bgcolor": // TODO could also accept two colors //$NON-NLS-1$
-							// separated by colon
 				proposeHtmlColorAttributeValues(context, acceptor);
 				break;
 			default:
@@ -302,25 +304,65 @@ public class DotHtmlLabelProposalProvider extends
 		}
 	}
 
+	private void proposeHtmlBgColorAttributeValues(ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		INode currentNode = context.getCurrentNode();
+		String fullText = currentNode.getText();
+		String text = fullText;
+		int beginReplacementOffset = currentNode.getOffset();
+
+		if (context.getPrefix().contains(":")) { //$NON-NLS-1$
+			int colonOffset = fullText.indexOf(':') + 1;
+			text = fullText.substring(colonOffset);
+			beginReplacementOffset += colonOffset;
+		} else {
+			beginReplacementOffset += beginsWithQuote(text) ? 1 : 0;
+		}
+		proposeHtmlColorAttributeValues(context, acceptor,
+				text.replaceAll("['\"]", ""), //$NON-NLS-1$ //$NON-NLS-2$
+				beginReplacementOffset, context.getOffset());
+		if (!fullText.contains(":")) { //$NON-NLS-1$
+			acceptor.accept(new ConfigurableCompletionProposal(":", //$NON-NLS-1$
+					context.getOffset(), 0, 1));
+		}
+	}
+
 	private void proposeHtmlColorAttributeValues(ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
+		INode currentNode = context.getCurrentNode();
+		String text = currentNode.getText();
+		proposeHtmlColorAttributeValues(context, acceptor,
+				text.replaceAll("['\"]", ""), //$NON-NLS-1$ //$NON-NLS-2$
+				currentNode.getOffset() + (beginsWithQuote(text) ? 1 : 0),
+				context.getOffset());
+	}
+
+	private void proposeHtmlColorAttributeValues(ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor, String text,
+			int beginReplacementOffset, int contextOffset) {
 		String subgrammarName = DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLOR;
-		String fullText = context.getCurrentNode().getText();
-		String text = fullText.replaceAll("['\"]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 		List<ConfigurableCompletionProposal> configurableCompletionProposals = new DotProposalProviderDelegator(
 				subgrammarName).computeConfigurableCompletionProposals(text,
-						text.length());
+						contextOffset - beginReplacementOffset);
 
 		for (ConfigurableCompletionProposal configurableCompletionProposal : configurableCompletionProposals) {
 			// adapt the replacement offset determined within the
 			// sub-grammar context to be valid within the context of the
 			// original text
 			configurableCompletionProposal.setReplacementOffset(
-					context.getOffset() - configurableCompletionProposal
-							.getReplaceContextLength());
+					beginReplacementOffset + configurableCompletionProposal
+							.getReplacementOffset());
 			acceptor.accept(configurableCompletionProposal);
 		}
+	}
+
+	private boolean beginsWithQuote(String baseText) {
+		if (baseText.length() == 0) {
+			return false;
+		}
+		char first = baseText.charAt(0);
+		return first == '\'' || first == '"';
 	}
 
 	private void proposeHtmlAttributeValues(ContentAssistContext context,
