@@ -486,6 +486,44 @@ class DotHoverTest extends AbstractEditorTest {
 		''')
 	}
 
+	@Test def html_font_rgb_color_long() {
+		'''
+			digraph {
+				1[label=<<font color="#EFE8FE"></font>>]
+			}
+		'''.assertHoveringResult("#EFE8FE", '''
+			<table border=1>
+				<tr>
+					<td><b>color preview</b></td>
+					<td><b>color code</b></td>
+				</tr>
+				<tr>
+					<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:#EFE8FE;"</div></td>
+					<td align="center">#EFE8FE</td>
+				</tr>
+			</table>
+		''')
+	}
+
+	@Test def html_font_rgb_color_short() {
+		'''
+			digraph {
+				1[label=<<font color="#e00"></font>>]
+			}
+		'''.assertHoveringResult("#e00", '''
+			<table border=1>
+				<tr>
+					<td><b>color preview</b></td>
+					<td><b>color code</b></td>
+				</tr>
+				<tr>
+					<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:#e00;"</div></td>
+					<td align="center">#e00</td>
+				</tr>
+			</table>
+		''')
+	}
+
 	@Test def html_table_color() {
 		'''
 			digraph {
@@ -576,6 +614,13 @@ class DotHoverTest extends AbstractEditorTest {
 				</tr>
 			</table>
 		''')
+	}
+
+	@Test def html_between_attributes() {
+		//assert no exception occurs
+		'''
+			digraph{1[label=<<font      color="#e00"></font>>]}
+		'''.assertNoResult("      ")
 	}
 
 	@Test def html_edge_taillabel() {
@@ -703,6 +748,15 @@ class DotHoverTest extends AbstractEditorTest {
 		hoveringOver(textUnderHover).
 		// then
 		hoverPopupHasContent(expected)
+	}
+
+	private def assertNoResult(CharSequence it, String textUnderHover) {
+		// given
+		dslFile.
+		// when
+		hoveringOver(textUnderHover).
+		// no hover
+		assertNull
 	}
 
 	private def dslFile(CharSequence it) {

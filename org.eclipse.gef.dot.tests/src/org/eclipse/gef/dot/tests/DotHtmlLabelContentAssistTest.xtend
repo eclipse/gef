@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 itemis AG and others.
+ * Copyright (c) 2016, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial implementation (bug #321775)
+ *     Zoey Prigge    (itemis AG) - html color attr ca support (bug #553575)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -27,12 +28,12 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import static extension org.eclipse.gef.dot.tests.DotTestUtils.*
 import static org.junit.Assert.fail
 
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelUiInjectorProvider)
 class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
-
 	@Inject Injector injector
 	@Inject IResourceFactory resourceFactory
 
@@ -434,7 +435,14 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 	}
 
 	@Test def attribute_values_of_tag_FONT_COLOR() {
-		'''<FONT COLOR="«c»" ></FONT>'''.testEmptyContentAssistant // TODO implement "color"
+		'''
+			<FONT COLOR="«c»" ></FONT>
+		'''.testContentAssistant(
+			combine(expectedX11ColorNames, #["#", "/"]), 
+			"black", '''
+				<FONT COLOR="black" ></FONT>
+			'''
+		)
 	}
 
 	@Test def attribute_values_of_tag_FONT_FACE() {
@@ -476,7 +484,14 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 	}
 
 	@Test def attribute_values_of_tag_TABLE_BGCOLOR() {
-		'''<TABLE BGCOLOR="«c»" ></TABLE>'''.testEmptyContentAssistant // TODO implement "color"
+		'''
+			<TABLE BGCOLOR="«c»" ></TABLE>
+		'''.testContentAssistant(
+			combine(expectedX11ColorNames, #["#", "/"]), 
+			"red", '''
+				<TABLE BGCOLOR="red" ></TABLE>
+			'''
+		)
 	}
 
 	@Test def attribute_values_of_tag_TABLE_BORDER() {
@@ -496,7 +511,14 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 	}
 
 	@Test def attribute_values_of_tag_TABLE_COLOR() {
-		'''<TABLE COLOR="«c»" ></TABLE>"'''.testEmptyContentAssistant // TODO implement "color"
+		'''
+			<TABLE COLOR="«c»" ></TABLE>
+		'''.testContentAssistant(
+			combine(expectedX11ColorNames, #["#", "/"]), 
+			"red", '''
+				<TABLE COLOR="red" ></TABLE>
+			'''
+		)
 	}
 
 	@Test def attribute_values_of_tag_TABLE_COLUMNS() {
@@ -632,7 +654,14 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 	}
 
 	@Test def attribute_values_of_tag_TD_BGCOLOR() {
-		'''<TD BGCOLOR="«c»" ></TD>'''.testEmptyContentAssistant // TODO implement "color"
+		'''
+			<TD BGCOLOR="«c»" ></TD>
+		'''.testContentAssistant(
+			combine(expectedX11ColorNames, #["#", "/"]), 
+			"blue", '''
+				<TD BGCOLOR="blue" ></TD>
+			'''
+		)
 	}
 
 	@Test def attribute_values_of_tag_TD_BORDER() {
@@ -648,7 +677,14 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 	}
 
 	@Test def attribute_values_of_tag_TD_COLOR() {
-		'''<TD COLOR="«c»" ></TD>'''.testEmptyContentAssistant // TODO implement "color"
+		'''
+			<TD COLOR="«c»" ></TD>
+		'''.testContentAssistant(
+			combine(expectedX11ColorNames, #["#", "/"]), 
+			"blue", '''
+				<TD COLOR="blue" ></TD>
+			'''
+		)
 	}
 
 	@Test def attribute_values_of_tag_TD_COLSPAN() {

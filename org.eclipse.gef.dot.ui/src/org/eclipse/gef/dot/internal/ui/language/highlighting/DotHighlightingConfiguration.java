@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2020 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Tamas Miklossy  (itemis AG) - improve support for html-label highlighting
+ *     Zoey Prigge     (itemis AG) - implement deprecation strikethrough highlighting (bug #552993)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
 
+import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
@@ -37,6 +39,11 @@ public class DotHighlightingConfiguration
 	public static final String HTML_ATTRIBUTE_VALUE = "html_attribute_value"; //$NON-NLS-1$
 	public static final String HTML_CONTENT = "html_content"; //$NON-NLS-1$
 	public static final String HTML_COMMENT = "html_comment"; //$NON-NLS-1$
+
+	public static final String DEPRECATED_ATTRIBUTE_VALUE = "deprecated_attribute_value"; //$NON-NLS-1$
+	public static final String QUOTED_SUFFIX = "_quoted"; //$NON-NLS-1$
+	public static final String DEPRECATED_ATTRIBUTE_VALUE_QUOTED = DEPRECATED_ATTRIBUTE_VALUE
+			+ QUOTED_SUFFIX;
 
 	@Override
 	public void configure(IHighlightingConfigurationAcceptor acceptor) {
@@ -89,6 +96,14 @@ public class DotHighlightingConfiguration
 				htmlContentStyle());
 		acceptor.acceptDefaultHighlighting(HTML_COMMENT, "Html Comment", //$NON-NLS-1$
 				htmlCommentStyle());
+
+		// deprecated highlighting
+		acceptor.acceptDefaultHighlighting(DEPRECATED_ATTRIBUTE_VALUE,
+				"Deprecated Attribute Value", //$NON-NLS-1$
+				deprecatedStyle());
+		acceptor.acceptDefaultHighlighting(DEPRECATED_ATTRIBUTE_VALUE_QUOTED,
+				"Deprecated Attribute Value Quoted", //$NON-NLS-1$
+				deprecatedQuotedStyle());
 	}
 
 	public TextStyle graphIdTextStyle() {
@@ -175,4 +190,17 @@ public class DotHighlightingConfiguration
 		textStyle.setColor(new RGB(63, 95, 191)); // turquoise blue
 		return textStyle;
 	}
+
+	private TextStyle deprecatedStyle() {
+		TextStyle textStyle = stringTextStyle().copy();
+		textStyle.setStyle(TextAttribute.STRIKETHROUGH);
+		return textStyle;
+	}
+
+	private TextStyle deprecatedQuotedStyle() {
+		TextStyle textStyle = quotedStringTextStyle().copy();
+		textStyle.setStyle(TextAttribute.STRIKETHROUGH);
+		return textStyle;
+	}
+
 }

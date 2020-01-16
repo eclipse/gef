@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 itemis AG and others.
+ * Copyright (c) 2010, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,6 +15,7 @@
  *                                - Add FontName content assist support (bug #542663)
  *                                - Add subgraph content assist support (bug #547639)
  *                                - Add support for listed (style) attribute (bug #549393)
+ *                                - Add ca support for html color attrs (bug #553575)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
@@ -658,12 +659,19 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 	private void proposeHtmlLabelAttributeValues(Attribute attribute,
 			ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
+		// give the DotColorProposalProvider the necessary 'global' information
+		DotColorProposalProvider.globalColorScheme = DotAstHelper
+				.getColorSchemeAttributeValue(attribute);
+
 		if (attribute.getValue() != null
 				&& attribute.getValue().getType() == Type.HTML_STRING) {
 			proposeAttributeValues(
 					DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL,
 					context, acceptor);
 		}
+
+		// reset the state of the DotColorProposalProvider
+		DotColorProposalProvider.globalColorScheme = null;
 	}
 
 	/**

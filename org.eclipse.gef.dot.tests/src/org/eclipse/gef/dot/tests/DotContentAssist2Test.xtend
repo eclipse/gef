@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,6 +10,7 @@
  *     Tamas Miklossy (itemis AG) - initial implementation
  *     Zoey Prigge (itemis AG)    - Add cluster content assist support (bug #547639)
  *                                - Implement subgraph template proposals (bug #547841)
+ *                                - Add ca support for html color attrs (bug #553575)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -338,6 +339,80 @@ class DotContentAssist2Test extends AbstractContentAssistTest {
 					assertNotNull("Proposal image is missing for the '" + displayString + "' color!", image)
 					// verify that a color description (as additional proposal information) is provided to the color names
 					val colorScheme = "x11"
+					val colorName = displayString
+					val colorCode = DotColors.get(colorScheme, colorName)
+					val expectedAdditionalProposalInfo = '''
+						<table border=1>
+							<tr>
+								<td><b>color preview</b></td>
+								<td><b>color scheme</b></td>
+								<td><b>color name</b></td>
+								<td><b>color code</b></td>
+							</tr>
+							<tr>
+								<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:«colorCode»;"</div></td>
+								<td align="center">«colorScheme»</td>
+								<td align="center">«colorName»</td>
+								<td align="center">«colorCode»</td>
+							</tr>
+						</table>
+					'''
+					assertEquals(
+						"Color description as additional proposal information for the '" + displayString + "' color does not match!",
+						expectedAdditionalProposalInfo, additionalProposalInfo)
+				}
+		]
+	}
+
+	@Test def html_color() {
+		'''
+			graph {
+				1[label=<<font color="«c»">foo</font>>]
+			}
+		'''.computeCompletionProposals.forEach[
+				// consider only color names proposals
+				if (!"#/".contains(displayString)) {
+					// verify that an image (filled by the corresponding color) is generated to the color names
+					assertNotNull("Proposal image is missing for the '" + displayString + "' color!", image)
+					// verify that a color description (as additional proposal information) is provided to the color names
+					val colorScheme = "x11"
+					val colorName = displayString
+					val colorCode = DotColors.get(colorScheme, colorName)
+					val expectedAdditionalProposalInfo = '''
+						<table border=1>
+							<tr>
+								<td><b>color preview</b></td>
+								<td><b>color scheme</b></td>
+								<td><b>color name</b></td>
+								<td><b>color code</b></td>
+							</tr>
+							<tr>
+								<td border=0 align="center"><div style="border:1px solid black;width:50px;height:16px;background-color:«colorCode»;"</div></td>
+								<td align="center">«colorScheme»</td>
+								<td align="center">«colorName»</td>
+								<td align="center">«colorCode»</td>
+							</tr>
+						</table>
+					'''
+					assertEquals(
+						"Color description as additional proposal information for the '" + displayString + "' color does not match!",
+						expectedAdditionalProposalInfo, additionalProposalInfo)
+				}
+		]
+	}
+
+	@Test def html_colorscheme() {
+		'''
+			graph {
+				1[label=<<font color="«c»">foo</font>> colorscheme=svg]
+			}
+		'''.computeCompletionProposals.forEach[
+				// consider only color names proposals
+				if (!"#/".contains(displayString)) {
+					// verify that an image (filled by the corresponding color) is generated to the color names
+					assertNotNull("Proposal image is missing for the '" + displayString + "' color!", image)
+					// verify that a color description (as additional proposal information) is provided to the color names
+					val colorScheme = "svg"
 					val colorName = displayString
 					val colorCode = DotColors.get(colorScheme, colorName)
 					val expectedAdditionalProposalInfo = '''

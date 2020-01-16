@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,8 @@
  *
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
+ *    Zoey Prigge    (itemis AG) - strikethrough/deprecation (bug #552993)
+ * 
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -102,23 +104,31 @@ class DotHighlightingCalculatorTest implements IHighlightedPositionAcceptor {
 
 	@Test def html_label() {
 		DotTestGraphs.NODE_LABEL_HTML_LIKE(DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG).assertHightlightingIDs(
-			
 			"<" -> HTML_TAG,
-			"table" -> HTML_TAG,
-			"tr" -> HTML_TAG,
-			"td" -> HTML_TAG,
-			"</" -> HTML_TAG,
-
-			"color" -> HTML_ATTRIBUTE_NAME,
-
-			'"green"' -> HTML_ATTRIBUTE_VALUE,
-
-			"text" -> HTML_CONTENT,
-
 			'''
 			<!--
 								Html label with custom font
-							-->''' -> HTML_COMMENT
+							-->''' -> HTML_COMMENT ,
+			"color" -> HTML_ATTRIBUTE_NAME,
+			'"green"' -> HTML_ATTRIBUTE_VALUE,
+			"table" -> HTML_TAG,
+			"tr" -> HTML_TAG,
+			"td" -> HTML_TAG,
+			"text" -> HTML_CONTENT,
+			"</" -> HTML_TAG
+		)
+	}
+
+	@Test def deprecation() {
+		DotTestGraphs.DEPRECATED_ARROWTYPES.assertHightlightingIDs(
+			"ediamond" -> DEPRECATED_ATTRIBUTE_VALUE,
+			"open" -> DEPRECATED_ATTRIBUTE_VALUE_QUOTED,
+			"halfopen" -> DEPRECATED_ATTRIBUTE_VALUE,
+			"empty" -> DEPRECATED_ATTRIBUTE_VALUE,
+			"invempty" -> DEPRECATED_ATTRIBUTE_VALUE,
+			"ediamond" -> DEPRECATED_ATTRIBUTE_VALUE,
+			"invempty" -> DEPRECATED_ATTRIBUTE_VALUE,
+			"open" -> DEPRECATED_ATTRIBUTE_VALUE //openbox
 		)
 	}
 
@@ -128,12 +138,17 @@ class DotHighlightingCalculatorTest implements IHighlightedPositionAcceptor {
 		assertAllExpectedRegionsHasBeenFound
 	}
 
+	/**
+	 * Method to populate expectedRegions with expected highlighting regions;
+	 * as keywords can appear multiple times, these need to be specified in order
+	 */
 	private def expect(CharSequence it, Pair<String, String>... expectedHighlightingIDs) {
+		var offset = 0;
 		for(pair : expectedHighlightingIDs) {
 			val substring = pair.key
 			val highlightingID = pair.value
 			
-			val offset = toString.indexOf(substring)
+			offset = toString.indexOf(substring, offset)
 			val length = substring.length
 			expectedRegions.put(new TextRegion(offset, length), highlightingID)
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
+ * Copyright (c) 2014, 2020 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Tamas Miklossy  (itemis AG) - improve support for html-label highlighting
+ *     Zoey Prigge     (itemis AG) - arrowTypes subgrammar for deprecation highlighting (bug #552993)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.language.dot.DotGraph;
 import org.eclipse.gef.dot.internal.language.dot.NodeId;
@@ -44,22 +46,41 @@ public class DotSemanticHighlightingCalculator
 				EObject c = grammarElement.eContainer();
 
 				// handle ID elements specifically
-				if (r.getName().equals("ID") //$NON-NLS-1$
-						&& ((Assignment) c).getFeature().equals("name")) { //$NON-NLS-1$
+				if (r.getName().equals("ID")) { //$NON-NLS-1$
 					EObject semanticElement = node.getSemanticElement();
-					if (semanticElement instanceof DotGraph) {
-						acceptor.addPosition(node.getOffset(), node.getLength(),
-								DotHighlightingConfiguration.GRAPH_NAME_ID);
-					} else if (semanticElement instanceof NodeStmt
-							|| semanticElement instanceof NodeId) {
-						acceptor.addPosition(node.getOffset(), node.getLength(),
-								DotHighlightingConfiguration.NODE_NAME_ID);
-					} else if (semanticElement instanceof Attribute) {
-						acceptor.addPosition(node.getOffset(), node.getLength(),
-								DotHighlightingConfiguration.ATTRIBUTE_NAME_ID);
-					} else if (semanticElement instanceof Port) {
-						acceptor.addPosition(node.getOffset(), node.getLength(),
-								DotHighlightingConfiguration.PORT_NAME_ID);
+					switch (((Assignment) c).getFeature()) {
+					case "name": //$NON-NLS-1$
+						if (semanticElement instanceof DotGraph) {
+							acceptor.addPosition(node.getOffset(),
+									node.getLength(),
+									DotHighlightingConfiguration.GRAPH_NAME_ID);
+						} else if (semanticElement instanceof NodeStmt
+								|| semanticElement instanceof NodeId) {
+							acceptor.addPosition(node.getOffset(),
+									node.getLength(),
+									DotHighlightingConfiguration.NODE_NAME_ID);
+						} else if (semanticElement instanceof Attribute) {
+							acceptor.addPosition(node.getOffset(),
+									node.getLength(),
+									DotHighlightingConfiguration.ATTRIBUTE_NAME_ID);
+						} else if (semanticElement instanceof Port) {
+							acceptor.addPosition(node.getOffset(),
+									node.getLength(),
+									DotHighlightingConfiguration.PORT_NAME_ID);
+						}
+						break;
+					case "value": //$NON-NLS-1$
+						if (semanticElement instanceof Attribute) {
+							switch (((Attribute) semanticElement).getName()
+									.toValue()) {
+							case DotAttributes.ARROWHEAD__E:
+							case DotAttributes.ARROWTAIL__E:
+								provideHighlightingForArrowTypeString(node,
+										acceptor);
+								break;
+							}
+						}
+						break;
 					}
 				}
 				if (r.getName().equals("EdgeOp")) { //$NON-NLS-1$
@@ -73,9 +94,33 @@ public class DotSemanticHighlightingCalculator
 		}
 	}
 
+	private void provideHighlightingForArrowTypeString(INode node,
+			IHighlightedPositionAcceptor acceptor) {
+		String arrowTypeString = node.getText();
+		int offset = node.getOffset();
+		String suffix = null;
+
+		// quoted attribute value
+		if (arrowTypeString.length() > 0 && arrowTypeString.charAt(0) == '"') {
+			// trim the leading '"' and trailing '"' symbols
+			arrowTypeString = arrowTypeString.substring(1,
+					arrowTypeString.length() - 1);
+			// increase offset correspondingly
+			offset++;
+			// adapt highlighting to quoted style
+			suffix = DotHighlightingConfiguration.QUOTED_SUFFIX;
+		}
+
+		// delegate the highlighting of the the arrowType substring to the
+		// corresponding sub-grammar highlighter
+		DotSubgrammarHighlighter arrowTypeHighlighter = new DotSubgrammarHighlighter(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTARROWTYPE);
+		arrowTypeHighlighter.provideHightlightingFor(arrowTypeString, offset,
+				acceptor, suffix);
+	}
+
 	private void provideHighlightingForHtmlString(INode node,
 			IHighlightedPositionAcceptor acceptor) {
-
 		// highlight the leading '<' symbol
 		int openingSymbolOffset = node.getOffset();
 		acceptor.addPosition(openingSymbolOffset, 1,
@@ -97,6 +142,5 @@ public class DotSemanticHighlightingCalculator
 				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
 		htmlLabelHighlighter.provideHightlightingFor(htmlString,
 				node.getOffset() + 1, acceptor);
-
 	}
 }
