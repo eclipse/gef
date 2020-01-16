@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,13 +21,16 @@ import org.eclipse.core.runtime.SubMonitor
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.jface.text.Position
 import org.eclipse.jface.text.TextSelection
+import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
+import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.occurrences.IOccurrenceComputer
 import org.junit.Test
 import org.junit.runner.RunWith
+
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -260,7 +263,14 @@ class DotMarkingOccurrencesTest extends AbstractEditorTest {
 	}
 
 	private def verifyOccurrences(String content, Pair<String, Integer> selectionOffset, List<Pair<String, Integer>> expected) {
-		val editor = openEditor(DotTestUtils.createTestFile(content))
+		val file = DotTestUtils.createTestFile(content)
+		
+		val project = file.project
+		if(!project.hasNature(XtextProjectHelper.NATURE_ID)) {
+			project.addNature(XtextProjectHelper.NATURE_ID)
+		} 
+		
+		val editor = openEditor(file)
 		val selection = new TextSelection(content.nthOccurrence(selectionOffset.key,selectionOffset.value), selectionOffset.key.length)
 
 		val annotationMap = editor.createAnnotationMap(selection, SubMonitor.convert(new NullProgressMonitor))

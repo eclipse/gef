@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,9 @@ import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.xtext.ui.XtextProjectHelper
+
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -28,6 +31,17 @@ class DotEditorDoubleClickingTest extends AbstractEditorDoubleClickTextSelection
 	 */
 	override String c() '''<|>'''
 
+	override protected createFile(String content) {
+		val file = super.createFile(content)
+
+		val project = file.project
+		if(!project.hasNature(XtextProjectHelper.NATURE_ID)) {
+			project.addNature(XtextProjectHelper.NATURE_ID)
+		}
+
+		file
+	}
+	
 	@Test def empty_graph() {
 		'''
 			grap«c»h {
