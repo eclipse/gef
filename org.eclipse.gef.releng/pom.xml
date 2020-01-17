@@ -361,6 +361,9 @@
 					<artifactId>tycho-surefire-plugin</artifactId>
 					<version>${tycho.version}</version>
 					<configuration>
+						<systemProperties>
+							<SWT_GTK3>0</SWT_GTK3>
+						</systemProperties>
 						<includes>
 							<include>**/All*Tests.class</include>
 						</includes>
