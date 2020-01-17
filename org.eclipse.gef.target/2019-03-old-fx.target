@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="LUNA-Orbit-2019-12" sequenceNumber="1574768350">
+<target name="2019-03-old-fx" sequenceNumber="1574768350">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.sdk.ide" version="4.11.0.I20190307-0500"/>
