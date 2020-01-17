@@ -4,9 +4,13 @@
 <target name="2019-03-old-fx" sequenceNumber="1574768350">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.sdk.ide" version="4.4.2.M20150204-1700"/>
+      <repository location="http://download.eclipse.org/releases/luna/201502271000/"/>
+    </location>
+    <!-- <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.sdk.ide" version="4.8.0.I20180611-0500"/>
       <repository location="http://download.eclipse.org/releases/photon"/>
-    </location>
+    </location> -->
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.10.0"/>
       <unit id="org.eclipse.xtext.sdk.feature.group" version="2.17.0.v20190304-1445"/>
