@@ -104,7 +104,7 @@
    </feature>
    <feature url="features/org.eclipse.gef.cloudio.user_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.user" version="5.0.2.qualifier">
       <category name="GEF Cloudio"/>
-   </feature>
+   </feature> <!--
    <feature url="features/org.eclipse.gef.dot_5.1.0.qualifier.jar" id="org.eclipse.gef.dot" version="5.1.0.qualifier">
       <category name="GEF DOT"/>
    </feature>
@@ -122,7 +122,7 @@
    </feature>
    <feature url="features/org.eclipse.gef.dot.user_5.1.0.qualifier.jar" id="org.eclipse.gef.dot.user" version="5.1.0.qualifier">
       <category name="GEF DOT"/>
-   </feature>
+   </feature> -->
    <feature url="features/org.eclipse.gef.fx.compatibility.equinox_5.0.3.qualifier.jar" id="org.eclipse.gef.fx.compatibility.equinox" version="5.0.3.qualifier">
       <category name="Equinox Compatibility Patches (GEF FX, GEF MVC, GEF MVC.FX, GEF Zest.FX)"/>
    </feature>
