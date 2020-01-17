@@ -6,7 +6,8 @@
 	(itemis AG) - initial API and implementation -->
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.gef</groupId>
 	<artifactId>org.eclipse.gef.releng</artifactId>
@@ -15,14 +16,15 @@
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
 	<properties>
-		<maven-resources-plugin.version>2.2</maven-resources-plugin.version>
+		<maven-resources-plugin.version>2.4</maven-resources-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<maven-clean-plugin.version>2.5</maven-clean-plugin.version>
-		<tycho.version>0.25.0</tycho.version>
+		<tycho.version>1.5.0</tycho.version>
 		<cbi-plugins.version>1.1.3</cbi-plugins.version>
-		<exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
-		<!-- Use Xtext generator 2.7.3, which corresponds to Luna SR2 release -->
-		<xtext.version>2.7.3</xtext.version>
+		<exec-maven-plugin.version>1.4.0</exec-maven-plugin.version>
+		<xtext.version>2.17.0</xtext.version>
+		<xtext-antlr-generator-version>2.1.1</xtext-antlr-generator-version>
+		<mwe.version>2.10.0</mwe.version>
 		<wikidoc.skip>true</wikidoc.skip>
 		<os-jvm-flags></os-jvm-flags>
 		<wikidoc.base.path>../../gef.wiki</wikidoc.base.path>
@@ -31,7 +33,22 @@
 		<tycho.scmUrl>scm:git:https://github.com/eclipse/gef.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<javafx.modules.dir>${env.JAVAFX_HOME}/lib</javafx.modules.dir> 
+		<javafx.version>${java.vm.specification.version}</javafx.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+	    <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	<dependencyManagement>
+	  <dependencies>
+		  <dependency>
+		    <groupId>org.eclipse.xtext</groupId>
+		    <artifactId>xtext-dev-bom</artifactId>
+		    <version>${xtext.version}</version>
+		    <type>pom</type>
+		    <scope>import</scope>
+		  </dependency>
+	  </dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
@@ -41,11 +58,69 @@
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<extraClasspathElements>
-						<extraClasspathElement>
+						<!-- jfxswt.jar for Java 1.8 -->
+					    <extraClasspathElement>
 							<groupId>com.oracle</groupId>
-							<artifactId>javafxswt</artifactId>
+							<artifactId>javafx-swt</artifactId>
 							<version>8.0.0-SNAPSHOT</version>
 							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<!-- javafx-swt.jar for Java 11 -->
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx-swt</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx-swt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx.base</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx.base.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx.controls</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx.controls.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx.fmxl</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx.fxml.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx.graphics</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx.graphics.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx.media</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx.media.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx.swing</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx.swing.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafx.web</artifactId>
+							<version>11.0.0-SNAPSHOT</version>
+							<systemPath>${javafx.modules.dir}/javafx.web.jar</systemPath>
 							<scope>system</scope>
 						</extraClasspathElement>
 						<extraClasspathElement>
@@ -106,18 +181,20 @@
 						<phase>process-resources</phase>
 						<configuration>
 							<target>
-								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+								<taskdef
+									resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
 									<available file="about.mappings" />
 									<then>
 										<echo message="Creating backup of about.mappings." />
-										<copy file="about.mappings" tofile="about.mappings.backup"
-											overwrite="true" />
+										<copy file="about.mappings"
+											tofile="about.mappings.backup" overwrite="true" />
 										<echo
 											message="Replacing @build@ token within about.mappings with build id." />
 										<replace file="about.mappings">
-											<replacefilter token="@build@" value="${buildQualifier}" />
+											<replacefilter token="@build@"
+												value="${buildQualifier}" />
 										</replace>
 									</then>
 								</if>
@@ -129,8 +206,8 @@
 										<available file="javadocOptions.txt" />
 									</and>
 									<then>
-										<copy file="javadocOptions.txt" tofile="javadocOptions.txt.backup"
-											overwrite="true" />
+										<copy file="javadocOptions.txt"
+											tofile="javadocOptions.txt.backup" overwrite="true" />
 										<echo message="Creating backup of javadocOptions.txt" />
 										<replace file="javadocOptions.txt">
 											<replacefilter token="@build@"
@@ -149,7 +226,9 @@
 						<phase>process-resources</phase>
 						<configuration>
 							<target>
-								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+								<property name="javafx.modules.dir" value="${javafx.modules.dir}"/>
+								<taskdef
+									resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
 									<and>
@@ -188,14 +267,16 @@
 						<phase>verify</phase>
 						<configuration>
 							<target>
-								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+								<taskdef
+									resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
 									<available file="about.mappings.backup" />
 									<then>
-										<echo message="Replacing back modified about.mappings with backup." />
-										<copy file="about.mappings.backup" tofile="about.mappings"
-											overwrite="true" />
+										<echo
+											message="Replacing back modified about.mappings with backup." />
+										<copy file="about.mappings.backup"
+											tofile="about.mappings" overwrite="true" />
 										<delete file="about.mappings.backup" />
 									</then>
 								</if>
@@ -209,8 +290,8 @@
 									<then>
 										<echo
 											message="Replacing back modified javadocOptions.txt with backup." />
-										<copy file="javadocOptions.txt.backup" tofile="javadocOptions.txt"
-											overwrite="true" />
+										<copy file="javadocOptions.txt.backup"
+											tofile="javadocOptions.txt" overwrite="true" />
 										<delete file="javadocOptions.txt.backup" />
 									</then>
 								</if>
@@ -280,9 +361,6 @@
 					<artifactId>tycho-surefire-plugin</artifactId>
 					<version>${tycho.version}</version>
 					<configuration>
-						<systemProperties>
-							<SWT_GTK3>0</SWT_GTK3>
-						</systemProperties>
 						<includes>
 							<include>**/All*Tests.class</include>
 						</includes>
@@ -291,20 +369,20 @@
 						<useUIThread>false</useUIThread>
 						<useSystemClassLoader>true</useSystemClassLoader>
 						<testFailureIgnore>${maven.test.failure.ignore}</testFailureIgnore>
-						<argLine>-Xmx512m -XX:MaxPermSize=256m ${os-jvm-flags} -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+						<argLine>-Xmx512m ${os-jvm-flags} -Dosgi.framework.extensions=org.eclipse.fx.osgi -Defxclipse.java-modules.dir=${javafx.modules.dir}</argLine>
 						<frameworkExtensions>
 							<frameworkExtension>
 								<groupId>org.eclipse.fx.shared</groupId>
 								<artifactId>org.eclipse.fx.osgi</artifactId>
 								<scope>system</scope>
-								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_2.0.0.201504180501.jar</systemPath>
+								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_3.6.0.201907240103.jar</systemPath>
 								<version>1.0.0</version>
 							</frameworkExtension>
 							<frameworkExtension>
 								<groupId>org.eclipse.fx.runtime</groupId>
 								<artifactId>org.eclipse.fx.osgi.util</artifactId>
 								<scope>system</scope>
-								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_2.0.0.201504180602.jar</systemPath>
+								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_3.6.0.201907240201.jar</systemPath>
 								<version>1.0.0</version>
 							</frameworkExtension>
 						</frameworkExtensions>
@@ -326,59 +404,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>LUNA-Orbit-2019-12.target</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<!-- consider pack.gz bundles -->
-							<includePackedArtifacts>true</includePackedArtifacts>
-							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
-							<!-- add target file content to target platform -->
-							<target>
-								<artifact>
-									<groupId>org.eclipse.gef</groupId>
-									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
-									<classifier>LUNA-Orbit-2019-12</classifier>
-								</artifact>
-							</target>
-							<dependency-resolution>
-								<optionalDependencies>require</optionalDependencies>
-							</dependency-resolution>
-							<environments>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>macosx</os>
-									<ws>cocoa</ws>
-									<arch>x86_64</arch>
-								</environment>
-							</environments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 			<id>2019-12.target</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -470,233 +496,9 @@
 			</build>
 		</profile>
 		<profile>
-			<id>PHOTON.target</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<!-- consider pack.gz bundles -->
-							<includePackedArtifacts>true</includePackedArtifacts>
-							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
-							<!-- add target file content to target platform -->
-							<target>
-								<artifact>
-									<groupId>org.eclipse.gef</groupId>
-									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
-									<classifier>PHOTON</classifier>
-								</artifact>
-							</target>
-							<dependency-resolution>
-								<optionalDependencies>require</optionalDependencies>
-							</dependency-resolution>
-							<environments>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>macosx</os>
-									<ws>cocoa</ws>
-									<arch>x86_64</arch>
-								</environment>
-							</environments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>OXYGEN.target</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<!-- consider pack.gz bundles -->
-							<includePackedArtifacts>true</includePackedArtifacts>
-							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
-							<!-- add target file content to target platform -->
-							<target>
-								<artifact>
-									<groupId>org.eclipse.gef</groupId>
-									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
-									<classifier>OXYGEN</classifier>
-								</artifact>
-							</target>
-							<dependency-resolution>
-								<optionalDependencies>require</optionalDependencies>
-							</dependency-resolution>
-							<environments>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>macosx</os>
-									<ws>cocoa</ws>
-									<arch>x86_64</arch>
-								</environment>
-							</environments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>NEON.target</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<!-- consider pack.gz bundles -->
-							<includePackedArtifacts>true</includePackedArtifacts>
-							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
-							<!-- add target file content to target platform -->
-							<target>
-								<artifact>
-									<groupId>org.eclipse.gef</groupId>
-									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
-									<classifier>NEON</classifier>
-								</artifact>
-							</target>
-							<dependency-resolution>
-								<optionalDependencies>require</optionalDependencies>
-							</dependency-resolution>
-							<environments>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>macosx</os>
-									<ws>cocoa</ws>
-									<arch>x86_64</arch>
-								</environment>
-							</environments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>MARS.target</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<!-- consider pack.gz bundles -->
-							<includePackedArtifacts>true</includePackedArtifacts>
-							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
-							<!-- add target file content to target platform -->
-							<target>
-								<artifact>
-									<groupId>org.eclipse.gef</groupId>
-									<artifactId>org.eclipse.gef.target</artifactId>
-									<version>5.0.0-SNAPSHOT</version>
-									<classifier>MARS</classifier>
-								</artifact>
-							</target>
-							<dependency-resolution>
-								<optionalDependencies>require</optionalDependencies>
-							</dependency-resolution>
-							<environments>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>macosx</os>
-									<ws>cocoa</ws>
-									<arch>x86_64</arch>
-								</environment>
-							</environments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>LUNA.target</id>
+			<id>2019-03.target</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<build>
 				<plugins>
@@ -714,7 +516,7 @@
 									<groupId>org.eclipse.gef</groupId>
 									<artifactId>org.eclipse.gef.target</artifactId>
 									<version>5.0.0-SNAPSHOT</version>
-									<classifier>LUNA</classifier>
+									<classifier>2019-03</classifier>
 								</artifact>
 							</target>
 							<dependency-resolution>
@@ -724,17 +526,7 @@
 								<environment>
 									<os>linux</os>
 									<ws>gtk</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
 									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86</arch>
 								</environment>
 								<environment>
 									<os>win32</os>
@@ -828,17 +620,14 @@
 			</build>
 		</profile>
 	</profiles>
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>CBI</id>
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
 	</pluginRepositories>
-
 	<modules>
 		<module>../org.eclipse.gef.target</module>
-
 		<module>../org.eclipse.gef.common</module>
 		<module>../org.eclipse.gef.common-feature</module>
 		<module>../org.eclipse.gef.common.tests</module>
@@ -904,6 +693,7 @@
 		<module>../org.eclipse.gef.dot.generator</module>
 		<module>../org.eclipse.gef.dot</module>
 		<module>../org.eclipse.gef.dot-feature</module>
+		<module>../org.eclipse.gef.dot.ide</module>
 		<module>../org.eclipse.gef.dot.ui</module>
 		<module>../org.eclipse.gef.dot.ui-feature</module>
 		<module>../org.eclipse.gef.dot.tests</module>

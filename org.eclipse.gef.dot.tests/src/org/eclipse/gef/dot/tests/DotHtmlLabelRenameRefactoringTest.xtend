@@ -20,13 +20,13 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotHtmlLabelUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage
 import org.eclipse.ui.actions.WorkspaceModifyOperation
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.resource.FileExtensionProvider

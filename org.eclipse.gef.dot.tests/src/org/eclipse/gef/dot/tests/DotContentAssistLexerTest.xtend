@@ -14,11 +14,11 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.LexerUIBindings
-import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer
+import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)

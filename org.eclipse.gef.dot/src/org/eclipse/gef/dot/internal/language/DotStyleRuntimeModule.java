@@ -10,9 +10,18 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
-/**
- * Use this class to register components to be used at runtime / without the Equinox extension registry.
- */
-public class DotStyleRuntimeModule extends org.eclipse.gef.dot.internal.language.AbstractDotStyleRuntimeModule {
+import org.eclipse.gef.dot.internal.language.formatting.DotStyleFormatter;
+import org.eclipse.xtext.formatting.IFormatter;
 
+/**
+ * Use this class to register components to be used at runtime / without the
+ * Equinox extension registry.
+ */
+public class DotStyleRuntimeModule extends
+		org.eclipse.gef.dot.internal.language.AbstractDotStyleRuntimeModule {
+
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotStyleFormatter.class;
+	}
 }

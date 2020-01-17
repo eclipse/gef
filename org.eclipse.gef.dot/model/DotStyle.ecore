@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="style" nsURI="http://www.eclipse.org/gef/dot/internal/language/DotStyle"
+    nsPrefix="style">
+  <eClassifiers xsi:type="ecore:EClass" name="Style">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="styleItems" upperBound="-1"
+        eType="#//StyleItem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StyleItem">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="args" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="NodeStyle">
+    <eLiterals name="bold" literal="bold"/>
+    <eLiterals name="dashed" value="1" literal="dashed"/>
+    <eLiterals name="diagonals" value="2" literal="diagonals"/>
+    <eLiterals name="dotted" value="3" literal="dotted"/>
+    <eLiterals name="filled" value="4" literal="filled"/>
+    <eLiterals name="invis" value="5" literal="invis"/>
+    <eLiterals name="radial" value="6" literal="radial"/>
+    <eLiterals name="rounded" value="7" literal="rounded"/>
+    <eLiterals name="solid" value="8" literal="solid"/>
+    <eLiterals name="striped" value="9" literal="striped"/>
+    <eLiterals name="wedged" value="10" literal="wedged"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="EdgeStyle">
+    <eLiterals name="bold" literal="bold"/>
+    <eLiterals name="dashed" value="1" literal="dashed"/>
+    <eLiterals name="dotted" value="2" literal="dotted"/>
+    <eLiterals name="invis" value="3" literal="invis"/>
+    <eLiterals name="solid" value="4" literal="solid"/>
+    <eLiterals name="tapered" value="5" literal="tapered"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ClusterStyle">
+    <eLiterals name="bold" literal="bold"/>
+    <eLiterals name="dashed" value="1" literal="dashed"/>
+    <eLiterals name="dotted" value="2" literal="dotted"/>
+    <eLiterals name="filled" value="3" literal="filled"/>
+    <eLiterals name="invis" value="4" literal="invis"/>
+    <eLiterals name="radial" value="5" literal="radial"/>
+    <eLiterals name="rounded" value="6" literal="rounded"/>
+    <eLiterals name="solid" value="7" literal="solid"/>
+    <eLiterals name="striped" value="8" literal="striped"/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -13,14 +13,14 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import org.eclipse.gef.dot.internal.language.DotColorInjectorProvider
+import org.eclipse.gef.dot.tests.DotColorInjectorProvider
 import org.eclipse.gef.dot.internal.language.color.Color
 import org.eclipse.gef.dot.internal.language.color.StringColor
 import org.eclipse.gef.dot.internal.ui.conversion.DotColorUtil
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 

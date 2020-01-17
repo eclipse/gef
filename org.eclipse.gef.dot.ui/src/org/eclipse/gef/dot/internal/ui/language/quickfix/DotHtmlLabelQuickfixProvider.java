@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.ui.language.quickfix;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
-import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator;
+import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
@@ -29,7 +29,7 @@ import org.eclipse.xtext.validation.Issue;
 public class DotHtmlLabelQuickfixProvider
 		extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
 
-	@Fix(DotHtmlLabelJavaValidator.HTML_TAG_IS_NOT_PROPERLY_CLOSED)
+	@Fix(DotHtmlLabelValidator.HTML_TAG_IS_NOT_PROPERLY_CLOSED)
 	public void fixInvalidTagName(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		String[] issueData = issue.getData();

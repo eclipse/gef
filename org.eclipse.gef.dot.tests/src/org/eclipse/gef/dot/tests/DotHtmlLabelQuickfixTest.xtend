@@ -14,13 +14,13 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.emf.common.util.URI
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotHtmlLabelUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
 import org.eclipse.xtend.lib.annotations.Data
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.eclipse.xtext.ui.editor.model.IXtextDocument
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution
@@ -28,7 +28,7 @@ import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator.HTML_TAG_IS_NOT_PROPERLY_CLOSED
+import static org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator.HTML_TAG_IS_NOT_PROPERLY_CLOSED
 
 import static extension org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils.getDocument
 import static extension org.junit.Assert.assertEquals

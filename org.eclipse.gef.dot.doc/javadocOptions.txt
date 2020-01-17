@@ -1,7 +1,7 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef.dot/src@path.separator@../org.eclipse.gef.dot/src-gen@path.separator@../org.eclipse.gef.dot/xtend-gen@path.separator@../org.eclipse.gef.dot.ui/src@path.separator@../org.eclipse.gef.dot.ui/src-gen"
+-sourcepath "../org.eclipse.gef.dot/src@path.separator@../org.eclipse.gef.dot/src-gen@path.separator@../org.eclipse.gef.dot/emf-gen@path.separator@../org.eclipse.gef.dot/xtend-gen@path.separator@../org.eclipse.gef.dot.ide/src/@path.separator@../org.eclipse.gef.dot.ide/src-gen@path.separator@../org.eclipse.gef.dot.ui/src@path.separator@../org.eclipse.gef.dot.ui/src-gen"
 -d reference/api
 -classpath "@classpath@"
 -use
@@ -15,17 +15,6 @@
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
 org.eclipse.gef.dot.internal
-org.eclipse.gef.dot.internal.language
-org.eclipse.gef.dot.internal.language.conversion
-org.eclipse.gef.dot.internal.language.formatting
-org.eclipse.gef.dot.internal.language.scoping
-org.eclipse.gef.dot.internal.language.validation
 org.eclipse.gef.dot.internal.ui
+org.eclipse.gef.dot.internal.ui.conversion
 org.eclipse.gef.dot.internal.ui.handlers
-org.eclipse.gef.dot.internal.ui.language
-org.eclipse.gef.dot.internal.ui.language.contentassist
-org.eclipse.gef.dot.internal.ui.language.labeling
-org.eclipse.gef.dot.internal.ui.language.outline
-org.eclipse.gef.dot.internal.ui.language.quickfix
-org.eclipse.gef.dot.internal.ui.language.highlighting
-

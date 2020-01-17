@@ -13,7 +13,7 @@
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/8/docs/api/
 -link http://docs.oracle.com/javafx/2/api/
--link http://docs.guava-libraries.googlecode.com/git-history/v15.0/javadoc/
+-link https://guava.dev/releases/15.0/api/docs/
 -link http://google.github.io/guice/api-docs/3.0/javadoc/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef.common.doc/reference/api/ ../org.eclipse.gef.common.doc/reference/api/
@@ -25,11 +25,12 @@
 
 org.eclipse.gef.zest.fx
 org.eclipse.gef.zest.fx.behaviors
-org.eclipse.gef.zest.fx.layout
+org.eclipse.gef.zest.fx.handlers
 org.eclipse.gef.zest.fx.models
 org.eclipse.gef.zest.fx.operations
 org.eclipse.gef.zest.fx.parts
 org.eclipse.gef.zest.fx.policies
+org.eclipse.gef.zest.fx.providers
 org.eclipse.gef.zest.fx.jface
 org.eclipse.gef.zest.fx.ui
 org.eclipse.gef.zest.fx.ui.parts

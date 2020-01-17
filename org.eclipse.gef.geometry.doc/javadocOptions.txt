@@ -1,7 +1,7 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef.geometry/src"
+-sourcepath "../org.eclipse.gef.geometry/src@path.separator@../org.eclipse.gef.geometry.convert.fx/src@path.separator@../org.eclipse.gef.geometry.convert.swt/src"
 -d reference/api
 -classpath "@classpath@"
 -use
@@ -15,7 +15,6 @@
 -link http://docs.oracle.com/javafx/2/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
-org.eclipse.gef.geometry.convert.awt
 org.eclipse.gef.geometry.convert.fx
 org.eclipse.gef.geometry.convert.swt
 org.eclipse.gef.geometry.euclidean

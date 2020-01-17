@@ -14,7 +14,9 @@ package org.eclipse.gef.dot.internal.language;
 
 import org.eclipse.gef.dot.internal.language.fontname.DotFontNameConverters;
 import org.eclipse.gef.dot.internal.language.fontname.DotFontNameParserCustom;
+import org.eclipse.gef.dot.internal.language.formatting.DotFontNameFormatter;
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.formatting.IFormatter;
 import org.eclipse.xtext.parser.IParser;
 
 /**
@@ -31,5 +33,10 @@ public class DotFontNameRuntimeModule extends
 	@Override
 	public Class<? extends IParser> bindIParser() {
 		return DotFontNameParserCustom.class;
+	}
+
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotFontNameFormatter.class;
 	}
 }

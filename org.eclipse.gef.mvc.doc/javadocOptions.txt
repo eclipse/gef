@@ -13,7 +13,7 @@
 -bottom "Copyright (c) 2014, 2016 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/8/docs/api/
 -link http://docs.oracle.com/javafx/2/api/
--link http://docs.guava-libraries.googlecode.com/git-history/v15.0/javadoc/
+-link https://guava.dev/releases/15.0/api/docs/
 -link http://google.github.io/guice/api-docs/3.0/javadoc/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef.common.doc/reference/api/ ../org.eclipse.gef.common.doc/reference/api/
@@ -28,7 +28,6 @@ org.eclipse.gef.mvc.fx.operations
 org.eclipse.gef.mvc.fx.parts
 org.eclipse.gef.mvc.fx.policies
 org.eclipse.gef.mvc.fx.providers
-org.eclipse.gef.mvc.fx.tools
 org.eclipse.gef.mvc.fx.viewer
 org.eclipse.gef.mvc.fx.ui
 org.eclipse.gef.mvc.fx.ui.parts

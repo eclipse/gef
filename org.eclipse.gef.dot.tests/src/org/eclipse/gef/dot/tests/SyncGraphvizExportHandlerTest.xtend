@@ -18,7 +18,7 @@ import java.util.List
 import org.eclipse.core.commands.ExecutionEvent
 import org.eclipse.core.expressions.EvaluationContext
 import org.eclipse.core.resources.IFile
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Display
@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Link
 import org.eclipse.swt.widgets.Shell
 import org.eclipse.swt.widgets.ToolBar
 import org.eclipse.swt.widgets.ToolItem
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
 import org.eclipse.xtext.resource.FileExtensionProvider

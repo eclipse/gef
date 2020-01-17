@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,12 +16,13 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import java.lang.reflect.Method
 import org.eclipse.core.resources.IFile
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.jface.text.ITextHover
 import org.eclipse.jface.text.ITextHoverExtension2
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.ui.AbstractEditorTest
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.XtextSourceViewer
 import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControlInput
@@ -29,6 +30,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
@@ -758,7 +760,14 @@ class DotHoverTest extends AbstractEditorTest {
 	}
 
 	private def dslFile(CharSequence it) {
-		toString.createTestFile
+		val file = toString.createTestFile
+	
+		val project = file.project
+		if(!project.hasNature(XtextProjectHelper.NATURE_ID)) {
+			project.addNature(XtextProjectHelper.NATURE_ID)
+		}
+
+		file
 	}
 
 	private def hoveringOver(IFile testFile, String textUnderHover) {

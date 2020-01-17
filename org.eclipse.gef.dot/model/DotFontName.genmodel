@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.gef.dot/emf-gen" editDirectory="/org.eclipse.gef.dot.edit/src"
-    editorDirectory="/org.eclipse.gef.dot.editor/src" modelPluginID=""
-    forceOverwrite="true" modelName="DotFontName" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    editorDirectory="/org.eclipse.gef.dot.editor/src" modelPluginID="" forceOverwrite="true"
+    modelName="DotFontName" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="5.0" copyrightFields="false" editPluginID="org.eclipse.gef.dot.edit"
     editorPluginID="org.eclipse.gef.dot.editor" runtimeVersion="2.10">
   <genPackages prefix="Fontname" basePackage="org.eclipse.gef.dot.internal.language"
@@ -47,16 +47,25 @@
       <genEnumLiterals ecoreEnumLiteral="DotFontName.ecore#//Gravity/EAST"/>
       <genEnumLiterals ecoreEnumLiteral="DotFontName.ecore#//Gravity/WEST"/>
     </genEnums>
-    <genClasses ecoreClass="DotFontName.ecore#//FontName"/>
+    <genDataTypes ecoreDataType="DotFontName.ecore#//PostScriptFontAlias"/>
+    <genDataTypes ecoreDataType="DotFontName.ecore#//List">
+      <genTypeParameters ecoreTypeParameter="DotFontName.ecore#//List/T"/>
+    </genDataTypes>
+    <genClasses ecoreClass="DotFontName.ecore#//FontName">
+      <genOperations ecoreOperation="DotFontName.ecore#//FontName/getWeight"/>
+      <genOperations ecoreOperation="DotFontName.ecore#//FontName/getStyle"/>
+      <genOperations ecoreOperation="DotFontName.ecore#//FontName/getVariant"/>
+      <genOperations ecoreOperation="DotFontName.ecore#//FontName/getStretch"/>
+      <genOperations ecoreOperation="DotFontName.ecore#//FontName/getGravity"/>
+      <genOperations ecoreOperation="DotFontName.ecore#//FontName/getFontFamilies"/>
+    </genClasses>
     <genClasses ecoreClass="DotFontName.ecore#//PostScriptFontName">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute DotFontName.ecore#//PostScriptFontName/alias"/>
     </genClasses>
     <genClasses ecoreClass="DotFontName.ecore#//PangoFontName">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference DotFontName.ecore#//PangoFontName/styleOptionsList"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference DotFontName.ecore#//PangoFontName/familyList"/>
-    </genClasses>
-    <genClasses ecoreClass="DotFontName.ecore#//FamilyList">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute DotFontName.ecore#//FamilyList/families"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute DotFontName.ecore#//PangoFontName/families"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute DotFontName.ecore#//PangoFontName/finalFamily"/>
     </genClasses>
     <genClasses ecoreClass="DotFontName.ecore#//StyleOptionsElement"/>
     <genClasses ecoreClass="DotFontName.ecore#//StyleOption">

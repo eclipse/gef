@@ -14,12 +14,12 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import org.eclipse.gef.dot.internal.language.DotStyleInjectorProvider
+import org.eclipse.gef.dot.tests.DotStyleInjectorProvider
 import org.eclipse.gef.dot.internal.language.style.Style
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.eclipse.xtext.parser.antlr.Lexer
 import org.eclipse.xtext.parser.antlr.LexerBindings
 import org.junit.Test
@@ -114,7 +114,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_12() {
 		"bold, dashed".assertLexing('''
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'dashed'
 		''')
@@ -123,7 +123,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_13() {
 		"dashed,bold".assertLexing('''
 			RULE_NAME 'dashed'
-			T__6 ','
+			',' ','
 			RULE_NAME 'bold'
 		''')
 	}
@@ -131,7 +131,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_14() {
 		"bold, dotted".assertLexing('''
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'dotted'
 		''')
@@ -140,7 +140,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_15() {
 		"dotted, bold".assertLexing('''
 			RULE_NAME 'dotted'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
 		''')
@@ -149,7 +149,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_16() {
 		"filled, dashed".assertLexing('''
 			RULE_NAME 'filled'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'dashed'
 		''')
@@ -158,7 +158,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_17() {
 		"dashed, filled".assertLexing('''
 			RULE_NAME 'dashed'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'filled'
 		''')
@@ -167,7 +167,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_18() {
 		"bold, filled".assertLexing('''
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'filled'
 		''')
@@ -176,7 +176,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_19() {
 		"filled, bold".assertLexing('''
 			RULE_NAME 'filled'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
 		''')
@@ -185,7 +185,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_20() {
 		"bold, diagonals".assertLexing('''
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'diagonals'
 		''')
@@ -194,7 +194,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_21() {
 		"diagonals, bold".assertLexing('''
 			RULE_NAME 'diagonals'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
 		''')
@@ -203,7 +203,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_22() {
 		"diagonals, filled".assertLexing('''
 			RULE_NAME 'diagonals'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'filled'
 		''')
@@ -212,7 +212,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_23() {
 		"filled, diagonals".assertLexing('''
 			RULE_NAME 'filled'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'diagonals'
 		''')
@@ -221,10 +221,10 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_24() {
 		"diagonals, filled, bold".assertLexing('''
 			RULE_NAME 'diagonals'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'filled'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
 		''')
@@ -233,10 +233,10 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_25() {
 		"filled, bold, diagonals".assertLexing('''
 			RULE_NAME 'filled'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'diagonals'
 		''')
@@ -245,9 +245,9 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_node_style_26() {
 		"setlinewidth(4)".assertLexing('''
 			RULE_NAME 'setlinewidth'
-			T__7 '('
+			'(' '('
 			RULE_NAME '4'
-			T__8 ')'
+			')' ')'
 		''')
 	}
 
@@ -290,7 +290,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_edge_style_07() {
 		"bold, dashed".assertLexing('''
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'dashed'
 		''')
@@ -299,7 +299,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_edge_style_08() {
 		"dashed, bold".assertLexing('''
 			RULE_NAME 'dashed'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
 		''')
@@ -308,7 +308,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_edge_style_09() {
 		"bold, dotted".assertLexing('''
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'dotted'
 		''')
@@ -317,7 +317,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_edge_style_10() {
 		"dotted, bold".assertLexing('''
 			RULE_NAME 'dotted'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
 		''')
@@ -326,7 +326,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_edge_style_11() {
 		"bold, tapered".assertLexing('''
 			RULE_NAME 'bold'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'tapered'
 		''')
@@ -335,7 +335,7 @@ class DotStyleTest extends AbstractLexerTest {
 	@Test def lexing_edge_style_12() {
 		"tapered, bold".assertLexing('''
 			RULE_NAME 'tapered'
-			T__6 ','
+			',' ','
 			RULE_WS ' '
 			RULE_NAME 'bold'
 		''')

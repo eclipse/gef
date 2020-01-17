@@ -13,7 +13,7 @@
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/8/docs/api/
 -link http://docs.oracle.com/javafx/2/api/
--link http://docs.guava-libraries.googlecode.com/git-history/v15.0/javadoc/
+-link https://guava.dev/releases/15.0/api/docs/
 -link http://google.github.io/guice/api-docs/3.0/javadoc/
 
 org.eclipse.gef.common.activate

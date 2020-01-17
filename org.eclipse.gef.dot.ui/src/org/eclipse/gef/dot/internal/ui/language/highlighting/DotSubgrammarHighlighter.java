@@ -15,8 +15,8 @@ package org.eclipse.gef.dot.internal.ui.language.highlighting;
 
 import java.util.Arrays;
 
+import org.eclipse.gef.dot.internal.ui.language.DotActivator;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivator;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;

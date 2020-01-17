@@ -70,17 +70,17 @@ import org.eclipse.gef.dot.internal.language.splines.Splines
 import org.eclipse.gef.dot.internal.language.splinetype.SplineType
 import org.eclipse.gef.dot.internal.language.style.Style
 import org.eclipse.gef.dot.internal.language.terminals.ID
-import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotColorJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotColorListJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotEscStringJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotPointJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotPortPosJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotRectJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotShapeJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeJavaValidator
-import org.eclipse.gef.dot.internal.language.validation.DotStyleJavaValidator
+import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeValidator
+import org.eclipse.gef.dot.internal.language.validation.DotColorValidator
+import org.eclipse.gef.dot.internal.language.validation.DotColorListValidator
+import org.eclipse.gef.dot.internal.language.validation.DotEscStringValidator
+import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator
+import org.eclipse.gef.dot.internal.language.validation.DotPointValidator
+import org.eclipse.gef.dot.internal.language.validation.DotPortPosValidator
+import org.eclipse.gef.dot.internal.language.validation.DotRectValidator
+import org.eclipse.gef.dot.internal.language.validation.DotShapeValidator
+import org.eclipse.gef.dot.internal.language.validation.DotSplineTypeValidator
+import org.eclipse.gef.dot.internal.language.validation.DotStyleValidator
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
@@ -1096,7 +1096,7 @@ class DotAttributes {
 	 */
 	// TODO: move to DotJavaValidator
 	static val ARROWTYPE_VALIDATOR = new EObjectValidator<ArrowType>(arrowTypeInjector,
-		DotArrowTypeJavaValidator)
+		DotArrowTypeValidator)
 
 	/**
 	 * The parser for arrowtype attribute values.
@@ -1133,7 +1133,7 @@ class DotAttributes {
 	static val COLORLIST_SERIALIZER = new EObjectSerializer<ColorList>(colorListInjector)
 
 	static val COLORLIST_VALIDATOR = new EObjectValidator<ColorList>(colorListInjector,
-		DotColorListJavaValidator)
+		DotColorListValidator)
 
 	static val Injector htmlLabelInjector = new DotHtmlLabelStandaloneSetup().createInjectorAndDoEMFRegistration
 
@@ -1143,7 +1143,7 @@ class DotAttributes {
 	static val HTML_LABEL_PARSER = new EObjectParser<HtmlLabel>(htmlLabelInjector)
 	
 	static val HTML_LABEL_VALIDATOR = new EObjectValidator<HtmlLabel>(htmlLabelInjector,
-		DotHtmlLabelJavaValidator)
+		DotHtmlLabelValidator)
 	
 	static val Injector escStringInjector = new DotEscStringStandaloneSetup().createInjectorAndDoEMFRegistration
 
@@ -1158,7 +1158,7 @@ class DotAttributes {
 	static val ESCSTRING_SERIALIZER = new EObjectSerializer<EscString>(escStringInjector)
 	
 	static val ESCSTRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
-		DotEscStringJavaValidator)
+		DotEscStringValidator)
 
 	static val Injector fontNameInjector = new DotFontNameStandaloneSetup().createInjectorAndDoEMFRegistration
 
@@ -1236,33 +1236,33 @@ class DotAttributes {
 	/**
 	 * Validator for Color types.
 	 */
-	static val COLOR_VALIDATOR = new EObjectValidator<Color>(colorInjector, DotColorJavaValidator)
+	static val COLOR_VALIDATOR = new EObjectValidator<Color>(colorInjector, DotColorValidator)
 
 	/**
 	 * Validator for SplineType types.
 	 */
 	static val SPLINETYPE_VALIDATOR = new EObjectValidator<SplineType>(splineTypeInjector,
-		DotSplineTypeJavaValidator)
+		DotSplineTypeValidator)
 
 	/**
 	 * Validator for Point types.
 	 */
-	static val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointJavaValidator)
+	static val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointValidator)
 	
 	/**
 	 * Validator for Rect types.
 	 */
-	static val RECT_VALIDATOR = new EObjectValidator<Rect>(rectInjector, DotRectJavaValidator)
+	static val RECT_VALIDATOR = new EObjectValidator<Rect>(rectInjector, DotRectValidator)
 
 	/**
 	 * Validator for Shape types.
 	 */
-	static val SHAPE_VALIDATOR = new EObjectValidator<Shape>(shapeInjector, DotShapeJavaValidator)
+	static val SHAPE_VALIDATOR = new EObjectValidator<Shape>(shapeInjector, DotShapeValidator)
 
 	/**
 	 * Validator for Style types.
 	 */
-	static val STYLE_VALIDATOR = new EObjectValidator<Style>(styleInjector, DotStyleJavaValidator)
+	static val STYLE_VALIDATOR = new EObjectValidator<Style>(styleInjector, DotStyleValidator)
 
 	static val Injector portPosInjector = new DotPortPosStandaloneSetup().createInjectorAndDoEMFRegistration
 
@@ -1270,7 +1270,7 @@ class DotAttributes {
 	 * The validator for portpos attribute values.
 	 */
 	static val PORTPOS_VALIDATOR = new EObjectValidator<PortPos>(portPosInjector,
-		DotPortPosJavaValidator)
+		DotPortPosValidator)
 
 	/**
 	 * The parser for portpos attribute values.

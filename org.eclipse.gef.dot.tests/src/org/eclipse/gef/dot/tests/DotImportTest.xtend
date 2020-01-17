@@ -17,7 +17,7 @@ package org.eclipse.gef.dot.tests
 
 import java.io.File
 import org.eclipse.gef.dot.internal.DotImport
-import org.eclipse.gef.dot.internal.language.DotInjectorProvider
+import org.eclipse.gef.dot.tests.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.layout.Layout
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir
@@ -26,8 +26,8 @@ import org.eclipse.gef.dot.internal.language.terminals.ID.Type
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Rule

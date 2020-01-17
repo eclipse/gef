@@ -17,13 +17,13 @@ import com.google.inject.Injector
 import java.util.List
 import org.eclipse.emf.common.util.URI
 import org.eclipse.gef.dot.internal.DotAttributes
-import org.eclipse.gef.dot.internal.language.DotUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.xtend.lib.annotations.Data
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.eclipse.xtext.ui.editor.model.IXtextDocument
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution
@@ -31,8 +31,8 @@ import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.INVALID_EDGE_OPERATOR
-import static org.eclipse.gef.dot.internal.language.validation.DotJavaValidator.REDUNDANT_ATTRIBUTE
+import static org.eclipse.gef.dot.internal.language.validation.DotValidator.INVALID_EDGE_OPERATOR
+import static org.eclipse.gef.dot.internal.language.validation.DotValidator.REDUNDANT_ATTRIBUTE
 
 import static extension org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils.getDocument
 import static extension org.junit.Assert.assertEquals

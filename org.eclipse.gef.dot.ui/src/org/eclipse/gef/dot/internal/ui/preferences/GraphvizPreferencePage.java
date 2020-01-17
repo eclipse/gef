@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.ui.DotUiMessages;
-import org.eclipse.gef.dot.internal.ui.language.internal.DotActivatorEx;
+import org.eclipse.gef.dot.internal.ui.language.DotActivatorEx;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;

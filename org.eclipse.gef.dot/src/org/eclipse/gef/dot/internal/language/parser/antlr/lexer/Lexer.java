@@ -26,8 +26,7 @@ import org.antlr.runtime.Token;
 /**
  * This derived class includes the fix
  * https://github.com/eclipse/xtext-core/commit/34d61d4d80c6992045ed013a0ac4eb337a1f4e87
- * available from Xtext Version 2.9 (MARS). TODO: drop this class as soon as
- * MARS will be the minimum supported platform.
+ * available from Xtext Version 2.9 (MARS).
  */
 public abstract class Lexer extends org.eclipse.xtext.parser.antlr.Lexer {
 

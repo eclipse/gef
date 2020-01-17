@@ -17,10 +17,12 @@
 package org.eclipse.gef.dot.internal.language;
 
 import org.eclipse.gef.dot.internal.DotImport;
+import org.eclipse.gef.dot.internal.language.formatting.DotFormatter;
 import org.eclipse.gef.dot.internal.language.formatting.DotNodeModelStreamer;
 import org.eclipse.gef.dot.internal.language.naming.DotQualifiedNameProvider;
 import org.eclipse.gef.dot.internal.language.terminals.DotTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.formatting.IFormatter;
 import org.eclipse.xtext.formatting.INodeModelStreamer;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
@@ -32,6 +34,11 @@ import com.google.inject.Binder;
  */
 public class DotRuntimeModule
 		extends org.eclipse.gef.dot.internal.language.AbstractDotRuntimeModule {
+
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotFormatter.class;
+	}
 
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {

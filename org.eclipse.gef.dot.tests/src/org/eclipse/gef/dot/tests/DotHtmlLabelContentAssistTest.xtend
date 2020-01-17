@@ -17,10 +17,10 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import java.util.List
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotHtmlLabelUiInjectorProvider
 import org.eclipse.jface.text.contentassist.ICompletionProposal
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder
 import org.eclipse.xtext.resource.IResourceFactory
 import org.eclipse.xtext.xbase.junit.ui.AbstractContentAssistTest

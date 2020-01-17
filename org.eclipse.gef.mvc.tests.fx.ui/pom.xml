@@ -23,16 +23,16 @@
 	<artifactId>org.eclipse.gef.mvc.tests.fx.ui</artifactId>
 	<version>5.1.1-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
+	<properties>
+		<!-- XXX: The surefire tests block if called with the -XstartOnFirstThread argument; we thus clear it here -->
+		<os-jvm-flags></os-jvm-flags>
+	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
-				<configuration>
-					<!-- FIXME: These tests currently block if started with the -XstartOnFirstThread argument -->
-					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

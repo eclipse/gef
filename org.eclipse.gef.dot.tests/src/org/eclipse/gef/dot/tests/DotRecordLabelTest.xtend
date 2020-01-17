@@ -15,15 +15,15 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.gef.dot.internal.language.DotRecordLabelInjectorProvider
+import org.eclipse.gef.dot.tests.DotRecordLabelInjectorProvider
 import org.eclipse.gef.dot.internal.language.recordlabel.Field
 import org.eclipse.gef.dot.internal.language.recordlabel.RLabel
 import org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelFactory
-import org.eclipse.gef.dot.internal.language.validation.DotRecordLabelJavaValidator
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.gef.dot.internal.language.validation.DotRecordLabelValidator
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -364,16 +364,16 @@ class DotRecordLabelTest {
 
 	// validation tests
 	@Test def void same_name_ports_same_level() {
-		'''<here>|<here>'''.hasValidationErrorOnFieldIDinField(DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE)
+		'''<here>|<here>'''.hasValidationErrorOnFieldIDinField(DotRecordLabelValidator.PORT_NAME_DUPLICATE)
 	}
 
 	@Test def void same_name_ports_different_level() {
 		'''a | <b> c | { <d> f | <b> f } | x'''.hasValidationErrorOnFieldID(
-			DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE,
+			DotRecordLabelValidator.PORT_NAME_DUPLICATE,
 			5,
 			1
 		).hasValidationErrorOnFieldID(
-			DotRecordLabelJavaValidator.PORT_NAME_DUPLICATE,
+			DotRecordLabelValidator.PORT_NAME_DUPLICATE,
 			23,
 			1
 		)
@@ -386,14 +386,14 @@ class DotRecordLabelTest {
 	@Test def void empty_portname_warning() {
 		'''<>'''.parse.assertWarning(
 			FIELD_ID,
-			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
+			DotRecordLabelValidator.PORT_NAME_NOT_SET
 		)
 	}
 
 	@Test def complex_empty_portname_warning() {
 		'''a | <b> c | { <d> f | <> f } | x'''.parse.assertWarning(
 			FIELD_ID,
-			DotRecordLabelJavaValidator.PORT_NAME_NOT_SET
+			DotRecordLabelValidator.PORT_NAME_NOT_SET
 		)
 	}
 

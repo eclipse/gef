@@ -10,7 +10,7 @@
         Alexander Nyßen (itemis AG) - initial API and implementation
  -->
 
-<project name="GEF Geometry Documentation Build" default="generate.api" basedir=".">
+<project name="GEF Documentation Build" default="generate.api" basedir=".">
 
 	<target name="generate.api">
 		<echo message="Cleaning reference/api..." />
@@ -37,16 +37,31 @@
 		<echo message="Done: ${api.context.libs.classpath}" />
 
 		<echo message="Determining JavaFX libs for javadoc generation ..." />
-		<path id="javafx.libs">
-			<fileset dir="${java.home}/lib">
-				<!-- Add jfxrt.jar for Java 7, jfxswt.jar for Java 8 -->
-				<include name="jfxrt.jar" />
-				<include name="jfxswt.jar" />
-			</fileset>
-		</path>
+		<echo message="java.home: ${java.home}" />
+		<echo message="javafx.modules.dir: ${javafx.modules.dir}" />
+		<if>
+			<equals arg1="${java.vm.specification.version}" arg2="1.8" />
+			<then>
+				<path id="javafx.libs">
+					<fileset dir="${java.home}/lib">
+						<!-- Add jfxswt.jar for Java 8 (as javafx rt is included already) -->
+						<include name="jfxswt.jar" />
+					</fileset>
+				</path>
+			</then>
+			<else>
+				<path id="javafx.libs">
+					<fileset dir="${javafx.modules.dir}">
+						<!-- javafx javafx-swt.jar for Java 11+, as other JavaFX libs are added as modules -->
+						<include name="javafx-swt.jar" />
+					</fileset>
+				</path>
+			</else>
+		</if>
 		<pathconvert property="javafx.libs.classpath" pathsep="${path.separator}" dirsep="/">
 			<path refid="javafx.libs" />
 		</pathconvert>
+		<echo message="JavaFX libs classpath: ${javafx.libs.classpath}" />
 
 		<echo message="Replacing tokens in javadocOptions.txt" />
 		<replace file="${basedir}/javadocOptions.txt" token="@path.separator@" value="${path.separator}" />
@@ -56,18 +71,18 @@
 		<echo message="Done." />
 
 		<echo message="Generating javadoc..." />
+		<echo message="java.vm.specification.version: ${java.vm.specification.version}" />
 		<!-- Ensure API tools tags (noimplement, noextend, noreference, nooverride) and EMF tags (generated) are not reported as errors (unknown tags) -->
 		<if>
-			<equals arg1="${java.vm.specification.version}" arg2="1.7" />
+			<equals arg1="${java.vm.specification.version}" arg2="1.8" />
 			<then>
 				<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
-					<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
+					<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -javafx -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
 				</exec>
 			</then>
 			<else>
 				<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
-					<!-- add javafx option only in java 8 environment -->
-					<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -javafx -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
+					<arg line="@${basedir}/javadocOptions.txt --module-path ${javafx.modules.dir} --add-modules=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
 				</exec>
 			</else>
 		</if>

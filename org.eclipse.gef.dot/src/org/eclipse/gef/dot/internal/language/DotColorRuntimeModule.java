@@ -12,9 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
+import org.eclipse.gef.dot.internal.language.formatting.DotColorFormatter;
+import org.eclipse.xtext.formatting.IFormatter;
+
 /**
- * Use this class to register components to be used at runtime / without the Equinox extension registry.
+ * Use this class to register components to be used at runtime / without the
+ * Equinox extension registry.
  */
-public class DotColorRuntimeModule extends org.eclipse.gef.dot.internal.language.AbstractDotColorRuntimeModule {
+public class DotColorRuntimeModule extends
+		org.eclipse.gef.dot.internal.language.AbstractDotColorRuntimeModule {
+
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotColorFormatter.class;
+	}
 
 }

@@ -13,11 +13,11 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import org.eclipse.gef.dot.internal.language.DotHtmlLabelUiInjectorProvider
+import org.eclipse.gef.dot.tests.ui.DotHtmlLabelUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.language.editor.DotHtmlLabelTerminalsTokenTypeToPartitionMapper
 import org.eclipse.jface.text.IDocument
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.parser.antlr.ITokenDefProvider
 import org.eclipse.xtext.ui.editor.model.ITokenTypeToPartitionTypeMapper
 import org.eclipse.xtext.ui.editor.model.TerminalsTokenTypeToPartitionMapper

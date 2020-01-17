@@ -197,8 +197,7 @@ public abstract class AbstractDotExecutableTest {
 			if (stream == null) {
 				System.err.println(
 						"Could not load the test.properties file in directory of " //$NON-NLS-1$
-								+ DotExecutableUtilsTest.class
-										.getSimpleName());
+								+ DotExecutableUtilsTest.class.getSimpleName());
 			} else
 				try {
 					props.load(stream);

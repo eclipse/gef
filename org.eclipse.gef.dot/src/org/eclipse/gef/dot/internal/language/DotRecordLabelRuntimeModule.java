@@ -11,10 +11,18 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
+import org.eclipse.gef.dot.internal.language.formatting.DotRecordLabelFormatter;
+import org.eclipse.xtext.formatting.IFormatter;
+
 /**
  * Use this class to register components to be used at runtime / without the
  * Equinox extension registry.
  */
 public class DotRecordLabelRuntimeModule extends
 		org.eclipse.gef.dot.internal.language.AbstractDotRecordLabelRuntimeModule {
+
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotRecordLabelFormatter.class;
+	}
 }

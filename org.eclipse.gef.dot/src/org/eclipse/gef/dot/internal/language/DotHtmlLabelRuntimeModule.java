@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
+import org.eclipse.gef.dot.internal.language.formatting.DotHtmlLabelFormatter;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelValueConverterService;
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.formatting.IFormatter;
 
 /**
  * Use this class to register components to be used at runtime / without the
@@ -22,6 +24,11 @@ import org.eclipse.xtext.conversion.IValueConverterService;
  */
 public class DotHtmlLabelRuntimeModule extends
 		org.eclipse.gef.dot.internal.language.AbstractDotHtmlLabelRuntimeModule {
+
+	@Override
+	public Class<? extends IFormatter> bindIFormatter() {
+		return DotHtmlLabelFormatter.class;
+	}
 
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
