@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 itemis AG and others.
+ * Copyright (c) 2010, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,13 +12,14 @@
  *							- support for case insensitive keywords (bug #454626)
  *							- integration of attribute grammars
  *							- integration of custom lexers for DOT (bug #321775)
+ *							- migration to Xtext 2.17.0 (bug #559286)
  *		Tamas Miklossy		- support for junit test plugin generation
  *							- support for formatter API generation
  *							- support for content assistant API generation
  *							- support for rename refactoring (bug #530423)
  *							- integration of dot attribute sub-grammars (bug #461506)
  *		Zoey Gerrit Prigge	- integration of record label sub-grammar (bug #454629)
- * 							- integration of dot font name emf model and grammar (bug #542663)
+ *							- integration of dot font name emf model and grammar (bug #542663)
  *
  *******************************************************************************/
 module org.eclipse.gef.dot.internal.language.Dot
@@ -181,7 +182,7 @@ Workflow {
 		
 			junitSupport = {
 				junitVersion = "4"
-				
+				generateStub = false
 			}
 			
 			generator = { 
@@ -216,6 +217,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -282,6 +284,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -353,6 +356,7 @@ Workflow {
 			
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -388,6 +392,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -431,6 +436,7 @@ Workflow {
 				
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -502,6 +508,7 @@ Workflow {
 		
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -541,6 +548,7 @@ Workflow {
 			
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -580,6 +588,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -619,6 +628,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -658,6 +668,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -697,6 +708,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -738,6 +750,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
@@ -780,6 +793,7 @@ Workflow {
 
 			junitSupport = {
 				junitVersion = "4"
+				generateStub = false
 			}
 			
 			generator = { 
