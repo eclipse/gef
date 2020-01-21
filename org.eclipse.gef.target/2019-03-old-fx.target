@@ -4,14 +4,15 @@
 <target name="2019-03-old-fx" sequenceNumber="1574768350">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.sdk.ide" version="4.4.2.M20150204-1700"/>
-      <repository location="http://download.eclipse.org/releases/luna/201502271000/"/>
-    </location>
-    <!-- <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.3.0.201805280500"/>
       <unit id="org.eclipse.sdk.ide" version="4.8.0.I20180611-0500"/>
       <repository location="http://download.eclipse.org/releases/photon"/>
+    </location>
+    <!-- <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201506111452"/>
+      <repository location="http://download.eclipse.org/efxclipse/updates-released/2.0.0/site"/>
     </location> -->
-   <!--  <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+    <!-- <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.10.0"/>
      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.17.0.v20190304-1445"/>
       <unit id="org.eclipse.emf.sdk.feature.group" version="2.17.0.v20190301-1325"/>
@@ -39,10 +40,6 @@
       <unit id="org.junit" version="4.12.0.v201504281640"/>
       <unit id="org.junit.source" version="4.12.0.v201504281640"/>
       <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository"/>
-    </location>
-    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201506111452"/>
-      <repository location="http://download.eclipse.org/efxclipse/updates-released/2.0.0/site"/>
     </location>
   </locations>
 </target>
