@@ -4,10 +4,15 @@
 <target name="2019-03-old-fx" sequenceNumber="1574768350">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.0.0.201705220748"/>
+      <unit id="org.eclipse.sdk.ide" version="4.7.3.M20180330-0640"/>
+      <repository location="http://download.eclipse.org/releases/oxygen"/>
+    </location>
+    <!-- <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.3.0.201805280500"/>
       <unit id="org.eclipse.sdk.ide" version="4.8.0.I20180611-0500"/>
       <repository location="http://download.eclipse.org/releases/photon"/>
-    </location>
+    </location> -->
     <!-- <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201506111452"/>
       <repository location="http://download.eclipse.org/efxclipse/updates-released/2.0.0/site"/>
