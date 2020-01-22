@@ -30,14 +30,14 @@ import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
 import org.eclipse.ui.actions.WorkspaceModifyOperation
-import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
 import org.eclipse.xtext.ui.XtextProjectHelper
+import org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil
 import org.eclipse.xtext.util.StringInputStream
 
 import static extension org.eclipse.gef.dot.internal.DotAttributes.*
 import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
-import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.addNature
-import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.createProject
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.createProject
 
 /** 
  * Util class for various tests.
