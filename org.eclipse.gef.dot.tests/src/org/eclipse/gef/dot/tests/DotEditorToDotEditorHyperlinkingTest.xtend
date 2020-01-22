@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,22 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import com.google.inject.Inject
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.jface.text.IRegion
 import org.eclipse.jface.text.hyperlink.IHyperlink
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.hyperlinking.XtextHyperlink
+import org.eclipse.xtext.ui.testing.AbstractHyperlinkingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
 class DotEditorToDotEditorHyperlinkingTest extends AbstractHyperlinkingTest {
-
-	@Inject XtextEditorInfo editorInfo
 
 	@Test def hyperlink_on_the_left_side_of_an_edge() {
 		'''
@@ -126,9 +123,5 @@ class DotEditorToDotEditorHyperlinkingTest extends AbstractHyperlinkingTest {
 	override protected hyperlinkIsOffered(IHyperlink[] hyperlinks, IRegion expectedRegion, String expectedHyperlinkTarget) {
 		assertNotNull("No hyperlinks found!", hyperlinks)
 		super.hyperlinkIsOffered(hyperlinks.filter(XtextHyperlink), expectedRegion, expectedHyperlinkTarget)
-	}
-
-	override protected getEditorId() {
-		editorInfo.getEditorId
 	}
 }
