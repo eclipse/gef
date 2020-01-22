@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,17 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import java.io.IOException
-import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.xtend.core.XtendInjectorSingleton
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
-import org.eclipse.xtext.resource.XtextResourceSet
-import org.eclipse.xtext.xbase.compiler.CompilationTestHelper
 import org.junit.Test
 
 class DotAttributeActiveAnnotationTest {
 
-	extension XtendCompilerTesterEx = XtendCompilerTesterEx.newXtendCompilerTesterEx(class.classLoader)
+	extension XtendCompilerTester = XtendCompilerTester.newXtendCompilerTester(class.classLoader)
 
 	@Test def subgraph_rank() {
 		'''
@@ -176,58 +171,4 @@ class DotAttributeActiveAnnotationTest {
 			}
 		''')
 	}
-}
-
-/**
- * The following classes/methods are available from Xtext Version 2.9 (MARS).
- * As long as older platforms are supported, these extension classes should reside here.
- * TODO: drop them as soon as MARS will be the minimum supported platform.
- */
-class XtendCompilerTesterEx extends XtendCompilerTester {
-
-	var static CompilationTestHelperEx compilationTestHelperEx
-
-	def static XtendCompilerTesterEx newXtendCompilerTesterEx(
-			ClassLoader classLoader) {
-		val XtendCompilerTesterEx instance = XtendInjectorSingleton.INJECTOR
-				.getInstance(XtendCompilerTesterEx)
-		compilationTestHelperEx = XtendInjectorSingleton.INJECTOR
-				.getInstance(CompilationTestHelperEx)
-
-		instance.setJavaCompilerClassPathEx(classLoader)
-		instance
-	}
-
-	def setJavaCompilerClassPathEx(ClassLoader classPath) {
-		compilationTestHelperEx.setJavaCompilerClassPathEx(classPath)
-	}
-
-	override assertCompilesTo(CharSequence source,
-			CharSequence expected) {
-		try {
-			compilationTestHelperEx.configureFreshWorkspace();
-			compilationTestHelperEx.assertCompilesTo(source, expected);
-		} catch (IOException e) {
-			Exceptions.sneakyThrow(e);
-		}
-	}
-}
-
-class CompilationTestHelperEx extends CompilationTestHelper {
-
-	ClassLoader classpathUriContext
-
-	def setJavaCompilerClassPathEx(ClassLoader classLoader) {
-		this.classpathUriContext = classLoader
-	}
-
-	override ResourceSet resourceSet(
-			Pair<String, ? extends CharSequence>... resources)
-			throws IOException {
-		val resourceSet = super.resourceSet(
-				resources) as XtextResourceSet
-		resourceSet.setClasspathURIContext(classpathUriContext)
-		resourceSet
-	}
-
 }
