@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 itemis AG and others.
+ * Copyright (c) 2019, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,20 +20,19 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.gef.dot.tests.ui.DotHtmlLabelUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage
+import org.eclipse.gef.dot.tests.ui.DotHtmlLabelUiInjectorProvider
 import org.eclipse.ui.actions.WorkspaceModifyOperation
-import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.resource.IResourceFactory
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.ui.refactoring.impl.RenameElementProcessor
 import org.eclipse.xtext.ui.refactoring.ui.IRenameElementContext
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -48,7 +47,6 @@ import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
 @InjectWith(DotHtmlLabelUiInjectorProvider)
 class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 
-	@Inject XtextEditorInfo editorInfo
 	@Inject IResourceFactory resourceFactory
 	@Inject extension FileExtensionProvider
 	@Inject extension ParseHelper<HtmlLabel>
@@ -153,9 +151,5 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 
 	private def waitForBuild() {
 		ResourcesPlugin.workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor)
-	}
-
-	override protected getEditorId() {
-		editorInfo.editorId
 	}
 }
