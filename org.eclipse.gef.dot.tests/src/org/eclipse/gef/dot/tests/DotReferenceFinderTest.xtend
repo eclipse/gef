@@ -30,8 +30,7 @@ import org.eclipse.search.ui.ISearchResult
 import org.eclipse.search.ui.NewSearchUI
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
 import org.eclipse.xtext.ui.editor.findrefs.ReferenceQueryExecutor
 import org.eclipse.xtext.ui.editor.findrefs.ReferenceSearchResult
 import org.eclipse.xtext.ui.refactoring.ui.SyncUtil
@@ -50,7 +49,6 @@ import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
 class DotReferenceFinderTest extends AbstractEditorTest {
 
 	@Inject extension SyncUtil
-	@Inject XtextEditorInfo editorInfo
 	@Inject IResourceSetProvider resourceSetProvider
 	@Inject ReferenceQueryExecutor referenceQueryExecutor
 	
@@ -303,10 +301,6 @@ class DotReferenceFinderTest extends AbstractEditorTest {
 	 */
 	private def list(Function1<? super DotAst, ? extends EObject>... initial) {
 		Collections.<Function1<? super DotAst, ? extends EObject>>unmodifiableList(CollectionLiterals.<Function1<? super DotAst, ? extends EObject>>newArrayList(initial))
-	}
-
-	override protected getEditorId() {
-		editorInfo.editorId
 	}
 
 	@AfterClass def static void cleanup() {
