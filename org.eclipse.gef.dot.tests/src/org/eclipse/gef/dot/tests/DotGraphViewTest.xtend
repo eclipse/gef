@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 itemis AG and others.
+ * Copyright (c) 2019, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,25 +18,24 @@ import org.eclipse.core.commands.ExecutionEvent
 import org.eclipse.core.expressions.EvaluationContext
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.DotGraphView
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.ui.ISources
 import org.eclipse.ui.IWorkbenchCommandConstants
 import org.eclipse.ui.commands.ICommandService
 import org.eclipse.ui.services.IServiceLocator
+import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
-import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditor
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
+import org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.addNature
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
 /*
  * Test cases for the {@link DotGraphView} class.
@@ -47,7 +46,6 @@ class DotGraphViewTest extends AbstractEditorTest {
 
 	static val DOT_GRAPH_VIEW_ID = "org.eclipse.gef.dot.internal.ui.DotGraphView"
 
-	@Inject XtextEditorInfo editorInfo
 	@Inject extension FileExtensionProvider
 
 	@Test def show_in_dot_graph_view() {
@@ -145,10 +143,6 @@ class DotGraphViewTest extends AbstractEditorTest {
 
 	private def getFileExtension() {
 		primaryFileExtension
-	}
-
-	override protected getEditorId() {
-		editorInfo.getEditorId
 	}
 
 	override tearDown() {
