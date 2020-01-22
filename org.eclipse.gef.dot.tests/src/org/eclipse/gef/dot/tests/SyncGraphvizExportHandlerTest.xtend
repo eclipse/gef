@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 itemis AG and others.
+ * Copyright (c) 2019, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,8 +18,8 @@ import java.util.List
 import org.eclipse.core.commands.ExecutionEvent
 import org.eclipse.core.expressions.EvaluationContext
 import org.eclipse.core.resources.IFile
-import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Display
 import org.eclipse.swt.widgets.Event
@@ -27,18 +27,17 @@ import org.eclipse.swt.widgets.Link
 import org.eclipse.swt.widgets.Shell
 import org.eclipse.swt.widgets.ToolBar
 import org.eclipse.swt.widgets.ToolItem
+import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
-import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.ui.XtextProjectHelper
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
+import org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.addNature
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
 /**
  * Test cases for the {@link SyncGraphvizExportHandler} class.
@@ -47,7 +46,6 @@ import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.add
 @InjectWith(DotUiInjectorProvider)
 class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 
-	@Inject XtextEditorInfo editorInfo
 	@Inject extension FileExtensionProvider
 
 	val GRAPHVIZ_CONFIGURATION_DIALOG_TITLE = "Graphviz is not configured properly"
@@ -256,10 +254,6 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 
 	private def getFileExtension() {
 		primaryFileExtension
-	}
-
-	override protected getEditorId() {
-		editorInfo.editorId
 	}
 
 	private def flushPendingEvents() {
