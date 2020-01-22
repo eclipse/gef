@@ -13,19 +13,17 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import com.google.inject.Inject
 import java.lang.reflect.Method
 import org.eclipse.core.resources.IFile
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.jface.text.ITextHover
 import org.eclipse.jface.text.ITextHoverExtension2
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.XtextProjectHelper
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.XtextSourceViewer
 import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControlInput
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -35,8 +33,6 @@ import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.ad
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
 class DotHoverTest extends AbstractEditorTest {
-
-	@Inject XtextEditorInfo editorInfo
 
 	@Test def edge_color() {
 		'''
@@ -790,10 +786,6 @@ class DotHoverTest extends AbstractEditorTest {
 		val beginIndex = html.indexOf("<table")
 		val endIndex = html.indexOf("</body>")
 		html.substring(beginIndex, endIndex)
-	}
-
-	override protected getEditorId() {
-		editorInfo.editorId
 	}
 
 	/*
