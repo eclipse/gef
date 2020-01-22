@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -23,6 +23,12 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
 
+/**
+ * This derived class includes the fix
+ * https://github.com/eclipse/xtext-eclipse/commit/1575d2c872f7a4f8537cd52ced7a94633384f714
+ * available from Xtext Version 2.19 (Eclipse 2019-09).
+ * TODO: remove this workaround as soon as Eclipse 2019-09 will be the minimum platform supported by GEF DOT.
+ */
 public abstract class Lexer
 		extends org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer {
 
