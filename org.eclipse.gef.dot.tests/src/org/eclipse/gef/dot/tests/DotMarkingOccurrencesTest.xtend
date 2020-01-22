@@ -21,12 +21,11 @@ import org.eclipse.core.runtime.SubMonitor
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.jface.text.Position
 import org.eclipse.jface.text.TextSelection
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.XtextProjectHelper
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
 import org.eclipse.xtext.ui.editor.occurrences.IOccurrenceComputer
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -37,11 +36,6 @@ import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.ad
 class DotMarkingOccurrencesTest extends AbstractEditorTest {
 
 	@Inject extension IOccurrenceComputer
-	@Inject XtextEditorInfo editorInfo
-
-	override protected getEditorId() {
-		editorInfo.editorId
-	}
 
 	@Test def marking_occurrences001() {
 		val text = '''
