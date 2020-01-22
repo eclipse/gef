@@ -22,24 +22,25 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import com.google.inject.Injector
 import java.util.List
-import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.language.contentassist.DotProposalProvider
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.jface.text.contentassist.ICompletionProposal
 import org.eclipse.swt.widgets.Shell
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration
 import org.eclipse.xtext.ui.editor.model.IXtextDocument
-import org.eclipse.xtext.xbase.junit.ui.AbstractContentAssistTest
+import org.eclipse.xtext.ui.testing.AbstractContentAssistTest
+import org.eclipse.xtext.ui.testing.ContentAssistProcessorTestBuilder
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.tests.DotTestUtils.*
+import static org.eclipse.gef.dot.tests.DotTestUtils.*
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.fail
+
 /**
  * Test cases for the {@link DotProposalProvider} class.
  */
