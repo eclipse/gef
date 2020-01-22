@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 itemis AG and others.
+ * Copyright (c) 2019, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,20 +13,19 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditor
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
+import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
-import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
-import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditor
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
+import org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.addNature
+import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
 /*
  * Test cases for the {@link DotEditor} class.
@@ -35,7 +34,6 @@ import static extension org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil.add
 @InjectWith(DotUiInjectorProvider)
 class DotEditorTest extends AbstractEditorTest {
 	
-	@Inject XtextEditorInfo editorInfo
 	@Inject extension FileExtensionProvider
 	
 	@Test def dot_graph_view_is_present_in_the_show_in_context_menu() {
@@ -92,9 +90,4 @@ class DotEditorTest extends AbstractEditorTest {
 	private def String getFileExtension() {
 		primaryFileExtension
 	}
-	
-	override protected getEditorId() {
-		editorInfo.getEditorId
-	}
-	
 }
