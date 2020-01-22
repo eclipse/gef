@@ -11,14 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import com.google.inject.Inject
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
-import org.eclipse.xtext.junit4.ui.AbstractEditorTest
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextEditor
-import org.eclipse.xtext.ui.editor.XtextEditorInfo
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -27,8 +25,6 @@ import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.ad
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
 class DotToggleCommentTest extends AbstractEditorTest {
-
-	@Inject XtextEditorInfo xtextEditorInfo
 
 	@Test def toggling_comment_001() {
 		'''
@@ -136,9 +132,5 @@ class DotToggleCommentTest extends AbstractEditorTest {
 	private def dslFileHasContent(XtextEditor editor, CharSequence expectedContent) {
 		val actualContent = editor.document.get
 		expectedContent.assertEquals(actualContent)
-	}
-
-	override protected getEditorId() {
-		xtextEditorInfo.editorId
 	}
 }
