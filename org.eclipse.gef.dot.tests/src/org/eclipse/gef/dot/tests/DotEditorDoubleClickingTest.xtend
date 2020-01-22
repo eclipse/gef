@@ -15,9 +15,10 @@ package org.eclipse.gef.dot.tests
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.ui.XtextProjectHelper
+import org.eclipse.xtext.ui.testing.AbstractEditorDoubleClickTextSelectionTest
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.xtext.ui.XtextProjectHelper
 
 import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
