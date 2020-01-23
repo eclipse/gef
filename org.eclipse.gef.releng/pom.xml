@@ -742,7 +742,7 @@
 		<module>../org.eclipse.gef.graph.doc</module>
 		<module>../org.eclipse.gef.graph.doc-feature</module>
 		<module>../org.eclipse.gef.graph.sdk-feature</module>
-	<!--  <module>../org.eclipse.gef.dot.generator</module>
+		<module>../org.eclipse.gef.dot.generator</module>
 		<module>../org.eclipse.gef.dot</module>
 		<module>../org.eclipse.gef.dot-feature</module>
 		<module>../org.eclipse.gef.dot.ide</module>
@@ -754,7 +754,7 @@
 		<module>../org.eclipse.gef.dot.sdk-feature</module>
 		<module>../org.eclipse.gef.dot.doc.user</module>
 		<module>../org.eclipse.gef.dot.doc.user-feature</module>
-		<module>../org.eclipse.gef.dot.user-feature</module> -->
+		<module>../org.eclipse.gef.dot.user-feature</module>
 		<module>../org.eclipse.gef.layout</module>
 		<module>../org.eclipse.gef.layout-feature</module>
 		<module>../org.eclipse.gef.layout.tests</module>
