@@ -123,40 +123,5 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>2019-03-old-fx.target</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>${build-helper-version}</version>
-						<executions>
-							<!-- make target file available for incremental builds -->
-							<execution>
-								<id>attach-artifacts</id>
-								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
-								<configuration>
-									<artifacts>
-										<artifact>
-											<!-- note: the file name must be ${classifier}.target -->
-											<file>2019-03-old-fx.target</file>
-											<type>target</type>
-											<classifier>2019-03-old-fx</classifier>
-										</artifact>
-									</artifacts>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 </project>
