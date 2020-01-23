@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,7 +14,6 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import org.eclipse.gef.dot.tests.DotPortPosInjectorProvider
 import org.eclipse.gef.dot.internal.language.portpos.PortPos
 import org.eclipse.gef.dot.internal.language.portpos.PortposPackage
 import org.eclipse.xtext.diagnostics.Diagnostic

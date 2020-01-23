@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -19,7 +19,6 @@ import javafx.scene.Group
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
 import org.eclipse.gef.dot.internal.DotImport
-import org.eclipse.gef.dot.tests.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.ui.DotNodePart
 import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestGraphCopier

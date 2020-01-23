@@ -9,7 +9,6 @@
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.gef.dot.tests
 
 class DotTestHtmlLabels {

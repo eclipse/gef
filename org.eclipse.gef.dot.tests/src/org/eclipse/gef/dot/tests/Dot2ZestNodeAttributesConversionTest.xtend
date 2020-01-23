@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,7 +14,6 @@ package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.DotImport
-import org.eclipse.gef.dot.tests.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.ui.conversion.Dot2ZestAttributesConverter
 import org.eclipse.gef.fx.nodes.GeometryNode
@@ -29,13 +28,13 @@ import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.BeforeClass
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.eclipse.gef.zest.fx.ZestProperties.*
 import static extension org.junit.Assert.*
-import org.junit.Ignore
 
 /*
  * Test cases for the {@link Dot2ZestAttributesConverter#convertAttributes(Node, Node)} method.

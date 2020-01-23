@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 itemis AG and others.
+ * Copyright (c) 2009, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,7 +17,6 @@ package org.eclipse.gef.dot.tests
 
 import java.io.File
 import org.eclipse.gef.dot.internal.DotImport
-import org.eclipse.gef.dot.tests.DotInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.layout.Layout
 import org.eclipse.gef.dot.internal.language.rankdir.Rankdir

@@ -20,19 +20,19 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.language.dot.DotPackage
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.ui.actions.WorkspaceModifyOperation
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.ui.testing.AbstractEditorTest
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.ui.refactoring.impl.RenameElementProcessor
 import org.eclipse.xtext.ui.refactoring.ui.IRenameElementContext
+import org.eclipse.xtext.ui.testing.AbstractEditorTest
 import org.junit.Test
 import org.junit.runner.RunWith
 

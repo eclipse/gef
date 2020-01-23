@@ -12,7 +12,6 @@
  *                                - deprecated dot attributes (bug #552993)
  * 
  *******************************************************************************/
-
 package org.eclipse.gef.dot.tests
 
 class DotTestGraphs {

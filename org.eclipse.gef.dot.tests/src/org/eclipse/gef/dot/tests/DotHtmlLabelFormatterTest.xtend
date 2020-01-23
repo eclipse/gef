@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,13 +13,12 @@
 package org.eclipse.gef.dot.tests
 
 import com.google.inject.Inject
-import org.eclipse.gef.dot.tests.DotHtmlLabelInjectorProvider
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
 import org.eclipse.xtext.formatting.INodeModelFormatter
+import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
-import org.eclipse.xtext.resource.XtextResource
 import org.junit.Test
 import org.junit.runner.RunWith
 

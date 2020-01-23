@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 itemis AG and others.
+ * Copyright (c) 2019, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,7 +15,6 @@ package org.eclipse.gef.dot.tests
 import com.google.inject.Inject
 import java.util.List
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.gef.dot.tests.DotFontNameInjectorProvider
 import org.eclipse.gef.dot.internal.language.fontname.FontName
 import org.eclipse.gef.dot.internal.language.fontname.FontnameFactory
 import org.eclipse.gef.dot.internal.language.fontname.Gravity

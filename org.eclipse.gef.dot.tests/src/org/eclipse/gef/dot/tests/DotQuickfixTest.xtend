@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,8 +17,8 @@ import com.google.inject.Injector
 import java.util.List
 import org.eclipse.emf.common.util.URI
 import org.eclipse.gef.dot.internal.DotAttributes
-import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.gef.dot.internal.language.dot.DotAst
+import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
