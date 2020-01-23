@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 itemis AG and others.
+ * Copyright (c) 2016, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -47,6 +47,7 @@ import org.eclipse.gef.dot.internal.language.color.DotColors
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList
 import org.eclipse.gef.dot.internal.language.dir.DirType
 import org.eclipse.gef.dot.internal.language.dot.AttrStmt
+import org.eclipse.gef.dot.internal.language.dot.Attribute
 import org.eclipse.gef.dot.internal.language.dot.AttributeType
 import org.eclipse.gef.dot.internal.language.dot.EdgeOp
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode
@@ -71,8 +72,8 @@ import org.eclipse.gef.dot.internal.language.splinetype.SplineType
 import org.eclipse.gef.dot.internal.language.style.Style
 import org.eclipse.gef.dot.internal.language.terminals.ID
 import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeValidator
-import org.eclipse.gef.dot.internal.language.validation.DotColorValidator
 import org.eclipse.gef.dot.internal.language.validation.DotColorListValidator
+import org.eclipse.gef.dot.internal.language.validation.DotColorValidator
 import org.eclipse.gef.dot.internal.language.validation.DotEscStringValidator
 import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator
 import org.eclipse.gef.dot.internal.language.validation.DotPointValidator
@@ -97,7 +98,6 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import org.eclipse.gef.dot.internal.language.dot.Attribute
 
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
