@@ -139,7 +139,7 @@
 						<argument>file://${project.basedir}/src/org/eclipse/gef/dot/internal/language/GenerateDot.mwe2
 						</argument>
 						<argument>-p</argument>
-						<argument>runtimeProject=/${project.basedir}</argument>
+						<argument>rootPath=/${project.basedir}/..</argument>
 					</arguments>
 				</configuration>
 				<dependencies>
