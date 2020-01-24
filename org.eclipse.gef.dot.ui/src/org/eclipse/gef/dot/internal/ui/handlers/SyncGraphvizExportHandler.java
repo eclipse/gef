@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 itemis AG and others.
+ * Copyright (c) 2015, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -29,9 +29,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.dot.internal.DotExecutableUtils;
 import org.eclipse.gef.dot.internal.DotFileUtils;
 import org.eclipse.gef.dot.internal.ui.language.DotActivatorEx;
@@ -282,9 +280,8 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 	}
 
 	private IFile convertToEclipseFile(File file) {
-		IPath location = Path.fromOSString(file.getAbsolutePath());
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-				.findFilesForLocation(location);
+				.findFilesForLocationURI(file.toURI());
 		return files.length == 1 ? files[0] : null;
 	}
 
