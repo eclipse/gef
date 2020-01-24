@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
 import java.util.Map
+import java.util.concurrent.TimeUnit
 import org.antlr.runtime.ANTLRStringStream
 import org.antlr.runtime.Lexer
 import org.antlr.runtime.Token
@@ -33,7 +34,7 @@ import static extension org.junit.Assert.assertEquals
  */
 abstract class AbstractLexerTest {
 
-	@Rule public val timeout = new Timeout(2000)
+	@Rule public val timeout = new Timeout(2, TimeUnit.SECONDS)
 
 	@Inject extension IAntlrTokenFileProvider
 
