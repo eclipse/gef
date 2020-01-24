@@ -1623,9 +1623,9 @@ class DotAttributes {
 	public static val XLP__NE = "xlp"
 
 	//method body is generated using @DotAttribute active annotation
-	public static def Object parsedAsAttribute(ID valueRaw, String attrName, Context context){}
+	static def Object parsedAsAttribute(ID valueRaw, String attrName, Context context){}
 	
-	public static def parsed(Attribute attr) {
+	static def parsed(Attribute attr) {
 		if (attr !== null) parsedAsAttribute(attr.value, attr.name.toValue, getContext(attr))
 	}
 }
