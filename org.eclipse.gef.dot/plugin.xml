@@ -2,104 +2,104 @@
 <?eclipse version="3.0"?>
 
 <!--
-    Copyright (c) 2016, 2018 itemis AG and others.
-    All rights reserved. This program and the accompanying materials
-    are made available under the terms of the Eclipse Public License v1.0
-    which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
-   
-    Contributors:
-        Alexander Nyßen (itemis AG) - initial API and implementation
+	Copyright (c) 2016, 2020 itemis AG and others.
+	All rights reserved. This program and the accompanying materials
+	are made available under the terms of the Eclipse Public License v1.0
+	which accompanies this distribution, and is available at
+	http://www.eclipse.org/legal/epl-v10.html
+
+	Contributors:
+		Alexander Nyßen (itemis AG) - initial API and implementation
  -->
 <plugin>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/Dot" 
-       class = "org.eclipse.gef.dot.internal.language.dot.DotPackage"
-       genModel = "model/generated/Dot.genmodel" /> 
-  </extension>
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <package
-            uri="http://www.eclipse.org/gef/dot/internal/language/DotTerminals"
-            class="org.eclipse.gef.dot.internal.language.terminals.TerminalsPackage"
-            genModel="model/DotTerminals.genmodel"/>
-   </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotArrowType" 
-       class = "org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage"
-       genModel = "model/generated/DotArrowType.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotColor" 
-       class = "org.eclipse.gef.dot.internal.language.color.ColorPackage"
-       genModel = "model/generated/DotColor.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotColorList" 
-       class = "org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage"
-       genModel = "model/generated/DotColorList.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotEscString" 
-       class = "org.eclipse.gef.dot.internal.language.escstring.EscstringPackage"
-       genModel = "model/generated/DotEscString.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotHtmlLabel" 
-       class = "org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage"
-       genModel = "model/generated/DotHtmlLabel.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotPoint" 
-       class = "org.eclipse.gef.dot.internal.language.point.PointPackage"
-       genModel = "model/generated/DotPoint.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotPortPos" 
-       class = "org.eclipse.gef.dot.internal.language.portpos.PortposPackage"
-       genModel = "model/generated/DotPortPos.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotRecordLabel" 
-       class = "org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelPackage"
-       genModel = "model/generated/DotRecordLabel.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotRect" 
-       class = "org.eclipse.gef.dot.internal.language.rect.RectPackage"
-       genModel = "model/generated/DotRect.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotShape" 
-       class = "org.eclipse.gef.dot.internal.language.shape.ShapePackage"
-       genModel = "model/generated/DotShape.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotSplineType" 
-       class = "org.eclipse.gef.dot.internal.language.splinetype.SplinetypePackage"
-       genModel = "model/generated/DotSplineType.genmodel" /> 
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://www.eclipse.org/gef/dot/internal/language/DotStyle" 
-       class = "org.eclipse.gef.dot.internal.language.style.StylePackage"
-       genModel = "model/DotStyle.genmodel" /> 	
-  </extension>
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <package
-            uri="http://www.eclipse.org/gef/dot/internal/language/DotFontName"
-            class="org.eclipse.gef.dot.internal.language.fontname.FontnamePackage"
-            genModel="model/DotFontName.genmodel"/>
-   </extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/Dot"
+			class = "org.eclipse.gef.dot.internal.language.dot.DotPackage"
+			genModel = "model/generated/Dot.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri="http://www.eclipse.org/gef/dot/internal/language/DotTerminals"
+			class="org.eclipse.gef.dot.internal.language.terminals.TerminalsPackage"
+			genModel="model/DotTerminals.genmodel"/>
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotArrowType"
+			class = "org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypePackage"
+			genModel = "model/generated/DotArrowType.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotColor"
+			class = "org.eclipse.gef.dot.internal.language.color.ColorPackage"
+			genModel = "model/generated/DotColor.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotColorList"
+			class = "org.eclipse.gef.dot.internal.language.colorlist.ColorlistPackage"
+			genModel = "model/generated/DotColorList.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotEscString"
+			class = "org.eclipse.gef.dot.internal.language.escstring.EscstringPackage"
+			genModel = "model/generated/DotEscString.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotHtmlLabel"
+			class = "org.eclipse.gef.dot.internal.language.htmllabel.HtmllabelPackage"
+			genModel = "model/generated/DotHtmlLabel.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotPoint"
+			class = "org.eclipse.gef.dot.internal.language.point.PointPackage"
+			genModel = "model/generated/DotPoint.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotPortPos"
+			class = "org.eclipse.gef.dot.internal.language.portpos.PortposPackage"
+			genModel = "model/generated/DotPortPos.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotRecordLabel"
+			class = "org.eclipse.gef.dot.internal.language.recordlabel.RecordlabelPackage"
+			genModel = "model/generated/DotRecordLabel.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotRect"
+			class = "org.eclipse.gef.dot.internal.language.rect.RectPackage"
+			genModel = "model/generated/DotRect.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotShape"
+			class = "org.eclipse.gef.dot.internal.language.shape.ShapePackage"
+			genModel = "model/generated/DotShape.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotSplineType"
+			class = "org.eclipse.gef.dot.internal.language.splinetype.SplinetypePackage"
+			genModel = "model/generated/DotSplineType.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.eclipse.org/gef/dot/internal/language/DotStyle"
+			class = "org.eclipse.gef.dot.internal.language.style.StylePackage"
+			genModel = "model/DotStyle.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri="http://www.eclipse.org/gef/dot/internal/language/DotFontName"
+			class="org.eclipse.gef.dot.internal.language.fontname.FontnamePackage"
+			genModel="model/DotFontName.genmodel"/>
+	</extension>
 </plugin>
