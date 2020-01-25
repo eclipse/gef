@@ -454,12 +454,18 @@
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="dot">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.gef.dot.internal.language.Dot.contenttype"
+			contentViewerId="org.eclipse.gef.dot.internal.language.Dot.compare.contentViewers" />
 	</extension>
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="org.eclipse.gef.dot.internal.language.Dot.compare.contentMergeViewers"
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="dot" label="Dot Compare">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.gef.dot.internal.language.Dot.contenttype"
+			contentMergeViewerId="org.eclipse.gef.dot.internal.language.Dot.compare.contentMergeViewers" />
 	</extension>
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="org.eclipse.gef.dot.internal.language.Dot.editors.documentProviders"
