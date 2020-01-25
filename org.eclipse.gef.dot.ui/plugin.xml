@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <!--
-    Copyright (c) 2016, 2019 itemis AG and others.
-    All rights reserved. This program and the accompanying materials
-    are made available under the terms of the Eclipse Public License v1.0
-    which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
-   
-    Contributors:
-        Alexander Nyßen (itemis AG) - initial API and implementation
-        Tamas Miklossy  (itemis AG) - various extensions/improvements
+	Copyright (c) 2016, 2020 itemis AG and others.
+	All rights reserved. This program and the accompanying materials
+	are made available under the terms of the Eclipse Public License v1.0
+	which accompanies this distribution, and is available at
+	http://www.eclipse.org/legal/epl-v10.html
+
+	Contributors:
+		Alexander Nyßen (itemis AG) - initial API and implementation
+		Tamas Miklossy  (itemis AG) - various extensions/improvements
 -->
 <plugin>
-   	<!-- Rename Refactoring -->
+	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
@@ -24,306 +24,305 @@
 			</activeWhen>
 		</handler>
 	</extension>
-    <extension point="org.eclipse.ui.menus">
-         <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.edit">
-         <command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
-               style="push">
-            <visibleWhen checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="org.eclipse.gef.dot.internal.language.Dot"
-	        class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="org.eclipse.gef.dot.internal.language.Dot.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
-	    </page>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution
+			locationURI="popup:#TextEditorContext?after=group.edit">
+			<command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
+				style="push">
+				<visibleWhen checkEnabled="false">
+					<reference
+						definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+					</reference>
+				</visibleWhen>
+			</command>
+		</menuContribution>
 	</extension>
-    <extension point="org.eclipse.ui.activities">
-        <activity
-            description="Provides a Graphviz DOT authoring environment, consisting of an Xtext-based DOT editor, a Graphviz-based DOT export, and a DOT Graph view."
-            id="org.eclipse.gef.dot.ui.capabilities.activity"
-            name="Graphviz DOT editing/visualization support">
-        </activity>
-        <category
-            description="GEF DOT end-user features"
-            id="org.eclipse.gef.dot.ui.capabilities.category"
-            name="GEF DOT">
-        </category>
-        <categoryActivityBinding
-            activityId="org.eclipse.gef.dot.ui.capabilities.activity"
-            categoryId="org.eclipse.gef.dot.ui.capabilities.category">
-        </categoryActivityBinding>
-        <activityPatternBinding
-            activityId="org.eclipse.gef.dot.ui.capabilities.activity"
-            isEqualityPattern="false"
-            pattern="org.eclipse.gef.dot/.*">
-        </activityPatternBinding>
-        <activityPatternBinding
-            activityId="org.eclipse.gef.dot.ui.capabilities.activity"
-            isEqualityPattern="false"
-            pattern="org.eclipse.gef.dot.ui/.*">
-        </activityPatternBinding>
-        <defaultEnablement id="org.eclipse.gef.dot.ui.capabilities.activity"/>
-    </extension>
+	<extension point="org.eclipse.ui.preferencePages">
+		<page
+			category="org.eclipse.gef.dot.internal.language.Dot"
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+			id="org.eclipse.gef.dot.internal.language.Dot.refactoring"
+			name="Refactoring">
+			<keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
+		</page>
+	</extension>
+	<extension point="org.eclipse.ui.activities">
+		<activity
+			description="Provides a Graphviz DOT authoring environment, consisting of an Xtext-based DOT editor, a Graphviz-based DOT export, and a DOT Graph view."
+			id="org.eclipse.gef.dot.ui.capabilities.activity"
+			name="Graphviz DOT editing/visualization support">
+		</activity>
+		<category
+			description="GEF DOT end-user features"
+			id="org.eclipse.gef.dot.ui.capabilities.category"
+			name="GEF DOT">
+		</category>
+		<categoryActivityBinding
+			activityId="org.eclipse.gef.dot.ui.capabilities.activity"
+			categoryId="org.eclipse.gef.dot.ui.capabilities.category">
+		</categoryActivityBinding>
+		<activityPatternBinding
+			activityId="org.eclipse.gef.dot.ui.capabilities.activity"
+			isEqualityPattern="false"
+			pattern="org.eclipse.gef.dot/.*">
+		</activityPatternBinding>
+		<activityPatternBinding
+			activityId="org.eclipse.gef.dot.ui.capabilities.activity"
+			isEqualityPattern="false"
+			pattern="org.eclipse.gef.dot.ui/.*">
+		</activityPatternBinding>
+		<defaultEnablement id="org.eclipse.gef.dot.ui.capabilities.activity"/>
+	</extension>
 	<!-- DOT editor -->
-    <extension
-            point="org.eclipse.ui.editors">
-        <editor
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            default="true"
-            extensions="dot"
-            id="org.eclipse.gef.dot.internal.language.Dot"
-            name="DOT Editor">
-        </editor>
-        <editorContentTypeBinding
-              contentTypeId="org.eclipse.gef.dot.contenttype"
-              editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
-        </editorContentTypeBinding>
-    </extension>
-    <extension
-        point="org.eclipse.ui.handlers">
-        <handler
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
-            commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
-            <activeWhen>
-                <reference
-                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-                </reference>
-            </activeWhen>
-        </handler>
-        <handler
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
-            commandId="org.eclipse.gef.dot.internal.language.Dot.validate">
-         <activeWhen>
-            <reference
-                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-            </reference>
-         </activeWhen>
-        </handler>
-        <handler
-            class="org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler"
-            commandId="org.eclipse.gef.dot.ui.export">
-        </handler>
-    </extension>
-    <extension point="org.eclipse.core.expressions.definitions">
-        <definition id="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-            <and>
-                <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
-                <with variable="activeEditor">
-                    <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="org.eclipse.gef.dot.internal.language.Dot" 
-                        forcePluginActivation="true"/>
-                </with>        
-            </and>
-        </definition>
-    </extension>
-    <extension
-            point="org.eclipse.ui.preferencePages">
-        <page
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.gef.dot.internal.language.Dot"
-            name="GEF DOT">
-            <keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
-        </page>
-        <page
-            category="org.eclipse.gef.dot.internal.language.Dot"
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="org.eclipse.gef.dot.internal.language.Dot.coloring"
-            name="Syntax Coloring">
-            <keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
-        </page>
-        <page
-            category="org.eclipse.gef.dot.internal.language.Dot"
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="org.eclipse.gef.dot.internal.language.Dot.templates"
-            name="Templates">
-            <keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
-        </page>
-        <page
-              category="org.eclipse.gef.dot.internal.language.Dot"
-              class="org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage"
-              id="org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage"
-              name="Graphviz">
-              <keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
-        </page>
-    </extension>
-    <extension
-        point="org.eclipse.ui.keywords">
-        <keyword
-            id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"
-            label="GEF Dot"/>
-    </extension>
-    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            description="Trigger expensive validation"
-            id="org.eclipse.gef.dot.internal.language.Dot.validate"
-            name="Validate">
-      </command>
-      <command
-            id="org.eclipse.gef.dot.ui.export"
-            name="Sync Graphviz Export">
-      </command>
-    </extension>
-    <extension point="org.eclipse.ui.menus">
-        <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.edit">
-             <command
-                 commandId="org.eclipse.gef.dot.internal.language.Dot.validate"
-                 style="push"
-                 tooltip="Trigger expensive validation">
-            <visibleWhen checkEnabled="false">
-                <reference
-                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-                </reference>
-            </visibleWhen>
-         </command>  
-         </menuContribution>
-         <menuContribution
-              allPopups="false"
-              locationURI=" toolbar:org.eclipse.ui.main.toolbar?after=additions">
-           <toolbar
-                 id="org.eclipse.gef.dot.ui.toolbar">
-              <command
-                    commandId="org.eclipse.gef.dot.ui.export"
-                    icon="icons/graphviz_dot.png"
-                    style="toggle">
-                 <visibleWhen
-                       checkEnabled="false">
-                    <reference
-                          definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-                    </reference>
-                 </visibleWhen>
-              </command>
-           </toolbar>
-        </menuContribution>
-    </extension>
-    <extension point="org.eclipse.ui.menus">
-        <menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
-            <command commandId="org.eclipse.xtext.ui.editor.FindReferences">
-                <visibleWhen checkEnabled="false">
-                    <reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-                    </reference>
-                </visibleWhen>
-            </command>
-        </menuContribution>
-    </extension>
-    <extension point="org.eclipse.ui.handlers">
-        <handler
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
-            commandId="org.eclipse.xtext.ui.editor.FindReferences">
-            <activeWhen>
-                <reference
-                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-                </reference>
-            </activeWhen>
-        </handler>
-    </extension>
+	<extension
+		point="org.eclipse.ui.editors">
+		<editor
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+			contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+			default="true"
+			extensions="dot"
+			id="org.eclipse.gef.dot.internal.language.Dot"
+			name="DOT Editor">
+		</editor>
+		<editorContentTypeBinding
+			contentTypeId="org.eclipse.gef.dot.contenttype"
+			editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+		</editorContentTypeBinding>
+	</extension>
+	<extension
+		point="org.eclipse.ui.handlers">
+		<handler
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+			commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
+			<activeWhen>
+				<reference
+					definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+				</reference>
+			</activeWhen>
+		</handler>
+		<handler
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
+			commandId="org.eclipse.gef.dot.internal.language.Dot.validate">
+			<activeWhen>
+				<reference
+					definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+				</reference>
+			</activeWhen>
+		</handler>
+		<handler
+			class="org.eclipse.gef.dot.internal.ui.handlers.SyncGraphvizExportHandler"
+			commandId="org.eclipse.gef.dot.ui.export">
+		</handler>
+	</extension>
+	<extension point="org.eclipse.core.expressions.definitions">
+		<definition id="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+			<and>
+				<reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
+				<with variable="activeEditor">
+					<test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName"
+						value="org.eclipse.gef.dot.internal.language.Dot" 
+						forcePluginActivation="true"/>
+				</with>
+			</and>
+		</definition>
+	</extension>
+	<extension
+		point="org.eclipse.ui.preferencePages">
+		<page
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+			id="org.eclipse.gef.dot.internal.language.Dot"
+			name="GEF DOT">
+			<keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
+		</page>
+		<page
+			category="org.eclipse.gef.dot.internal.language.Dot"
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+			id="org.eclipse.gef.dot.internal.language.Dot.coloring"
+			name="Syntax Coloring">
+			<keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
+		</page>
+		<page
+			category="org.eclipse.gef.dot.internal.language.Dot"
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+			id="org.eclipse.gef.dot.internal.language.Dot.templates"
+			name="Templates">
+			<keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
+		</page>
+		<page
+			category="org.eclipse.gef.dot.internal.language.Dot"
+			class="org.eclipse.gef.dot.internal.ui.preferences.GraphvizPreferencePage"
+			id="org.eclipse.gef.dot.internal.ui.GraphvizPreferencePage"
+			name="Graphviz">
+			<keywordReference id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"/>
+		</page>
+	</extension>
+	<extension
+		point="org.eclipse.ui.keywords">
+		<keyword
+			id="org.eclipse.gef.dot.internal.ui.language.keyword_Dot"
+			label="GEF Dot"/>
+	</extension>
+	<extension
+		point="org.eclipse.ui.commands">
+		<command
+			description="Trigger expensive validation"
+			id="org.eclipse.gef.dot.internal.language.Dot.validate"
+			name="Validate">
+		</command>
+		<command
+			id="org.eclipse.gef.dot.ui.export"
+			name="Sync Graphviz Export">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution
+			locationURI="popup:#TextEditorContext?after=group.edit">
+			<command
+				commandId="org.eclipse.gef.dot.internal.language.Dot.validate"
+				style="push"
+				tooltip="Trigger expensive validation">
+			<visibleWhen checkEnabled="false">
+				<reference
+					definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+				</reference>
+			</visibleWhen>
+			</command>
+		</menuContribution>
+		<menuContribution
+			allPopups="false"
+			locationURI=" toolbar:org.eclipse.ui.main.toolbar?after=additions">
+			<toolbar
+				id="org.eclipse.gef.dot.ui.toolbar">
+				<command
+					commandId="org.eclipse.gef.dot.ui.export"
+					icon="icons/graphviz_dot.png"
+					style="toggle">
+					<visibleWhen
+						checkEnabled="false">
+						<reference
+							definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+						</reference>
+					</visibleWhen>
+				</command>
+			</toolbar>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
+			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
+				<visibleWhen checkEnabled="false">
+					<reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+					</reference>
+				</visibleWhen>
+			</command>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+			commandId="org.eclipse.xtext.ui.editor.FindReferences">
+			<activeWhen>
+				<reference
+					definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+				</reference>
+			</activeWhen>
+		</handler>
+	</extension>
 
 <!-- adding resource factories -->
 
-    <extension
-        point="org.eclipse.emf.ecore.extension_parser">
-        <parser
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
-            type="dot">
-        </parser>
-    </extension>
-    <extension point="org.eclipse.xtext.extension_resourceServiceProvider">
-        <resourceServiceProvider
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-            uriExtension="dot">
-        </resourceServiceProvider>
-    </extension>
+	<extension
+		point="org.eclipse.emf.ecore.extension_parser">
+		<parser
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			type="dot">
+		</parser>
+	</extension>
+	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
+		<resourceServiceProvider
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+			uriExtension="dot">
+		</resourceServiceProvider>
+	</extension>
 
-
-    <!-- Quick Outline -->
-    <extension
-        point="org.eclipse.ui.handlers">
-        <handler 
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
-            commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
-            <activeWhen>
-                <reference
-                    definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
-                </reference>
-            </activeWhen>
-        </handler>
-    </extension>
-    <extension
-        point="org.eclipse.ui.commands">
-        <command
-            description="Open the quick outline."
-            id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-            name="Quick Outline">
-        </command>
-    </extension>
-    <extension point="org.eclipse.ui.menus">
-        <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.open">
-            <command commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-                style="push"
-                tooltip="Open Quick Outline">
-                <visibleWhen checkEnabled="false">
-                    <reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened"/>
-                </visibleWhen>
-            </command>
-        </menuContribution>
-    </extension>
-    <!-- quickfix marker resolution generator for org.eclipse.gef.dot.internal.language.Dot -->
-    <extension
-            point="org.eclipse.ui.ide.markerResolution">
-        <markerResolutionGenerator
-            class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
-        </markerResolutionGenerator>
-    </extension>
-    <!-- DOT view -->
-    <extension
-        point="org.eclipse.ui.views">
-        <category
-            id="org.eclipse.gef"
-            name="GEF">
-        </category>
-    </extension>
-    <extension
-        point="org.eclipse.ui.views">
-        <view
-            class="org.eclipse.gef.dot.internal.ui.DotGraphView"
-            id="org.eclipse.gef.dot.internal.ui.DotGraphView"
-            icon="icons/graph_view.png"
-            category="org.eclipse.gef"
-            name="GEF DOT Graph"
-            restorable="true">
-        </view>
-    </extension>
-    <extension
-        point="org.eclipse.ui.perspectiveExtensions">
-        <!-- Add Show In -> DOT Graph View Context Menu to the Project Explorer -->
-        <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
-            <showInPart id="org.eclipse.gef.dot.internal.ui.DotGraphView"/>
-        </perspectiveExtension>
-        <!-- Add Show In -> DOT Graph View Context Menu to the Package Explorer -->
-        <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
-            <showInPart id="org.eclipse.gef.dot.internal.ui.DotGraphView"/>
-        </perspectiveExtension>
-    </extension>
-    <extension
-          point="org.eclipse.core.contenttype.contentTypes">
-       <content-type
-             base-type="org.eclipse.core.runtime.text"
-             file-extensions="dot"
-             id="org.eclipse.gef.dot.contenttype"
-             name="DOT File"
-             priority="normal">
-       </content-type>
-    </extension>
+	<!-- Quick Outline -->
+	<extension
+		point="org.eclipse.ui.handlers">
+		<handler 
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
+			<activeWhen>
+				<reference
+					definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened">
+				</reference>
+			</activeWhen>
+		</handler>
+	</extension>
+	<extension
+		point="org.eclipse.ui.commands">
+		<command
+			description="Open the quick outline."
+			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
+			name="Quick Outline">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution
+			locationURI="popup:#TextEditorContext?after=group.open">
+			<command commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
+				style="push"
+				tooltip="Open Quick Outline">
+				<visibleWhen checkEnabled="false">
+					<reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened"/>
+				</visibleWhen>
+			</command>
+		</menuContribution>
+	</extension>
+	<!-- quickfix marker resolution generator for org.eclipse.gef.dot.internal.language.Dot -->
+	<extension
+		point="org.eclipse.ui.ide.markerResolution">
+		<markerResolutionGenerator
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
+		</markerResolutionGenerator>
+	</extension>
+	<!-- DOT view -->
+	<extension
+		point="org.eclipse.ui.views">
+		<category
+			id="org.eclipse.gef"
+			name="GEF">
+		</category>
+	</extension>
+	<extension
+		point="org.eclipse.ui.views">
+		<view
+			class="org.eclipse.gef.dot.internal.ui.DotGraphView"
+			id="org.eclipse.gef.dot.internal.ui.DotGraphView"
+			icon="icons/graph_view.png"
+			category="org.eclipse.gef"
+			name="GEF DOT Graph"
+			restorable="true">
+		</view>
+	</extension>
+	<extension
+		point="org.eclipse.ui.perspectiveExtensions">
+		<!-- Add Show In -> DOT Graph View Context Menu to the Project Explorer -->
+		<perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
+			<showInPart id="org.eclipse.gef.dot.internal.ui.DotGraphView"/>
+		</perspectiveExtension>
+		<!-- Add Show In -> DOT Graph View Context Menu to the Package Explorer -->
+		<perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+			<showInPart id="org.eclipse.gef.dot.internal.ui.DotGraphView"/>
+		</perspectiveExtension>
+	</extension>
+	<extension
+		point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+			base-type="org.eclipse.core.runtime.text"
+			file-extensions="dot"
+			id="org.eclipse.gef.dot.contenttype"
+			name="DOT File"
+			priority="normal">
+		</content-type>
+	</extension>
 </plugin>
