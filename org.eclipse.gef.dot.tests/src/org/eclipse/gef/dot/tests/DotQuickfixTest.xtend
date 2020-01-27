@@ -12,39 +12,21 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import com.google.inject.Inject
-import com.google.inject.Injector
 import java.util.List
-import org.eclipse.emf.common.util.URI
 import org.eclipse.gef.dot.internal.DotAttributes
-import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
-import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.testing.util.ParseHelper
-import org.eclipse.xtext.testing.validation.ValidationTestHelper
-import org.eclipse.xtext.ui.editor.model.IXtextDocument
-import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
-import org.eclipse.xtext.ui.editor.quickfix.IssueResolution
-import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider
+import org.eclipse.xtext.ui.testing.AbstractQuickfixTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.language.validation.DotValidator.INVALID_EDGE_OPERATOR
 import static org.eclipse.gef.dot.internal.language.validation.DotValidator.REDUNDANT_ATTRIBUTE
 
-import static extension org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils.getDocument
-import static extension org.junit.Assert.assertEquals
-
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotQuickfixTest {
-
-	@Inject Injector injector
-	@Inject extension ParseHelper<DotAst>
-	@Inject extension ValidationTestHelper
-	@Inject extension IssueResolutionProvider
+class DotQuickfixTest extends AbstractQuickfixTest {
 
 	val deprecatedArrowShapes = #["ediamond", "open", "halfopen", "empty", "invempty"]
 	val validArrowShapes = #["odiamond", "vee", "lvee", "onormal", "oinv"]
@@ -224,12 +206,12 @@ class DotQuickfixTest {
 		'''))
 	}
 
-	@Test def edge_arrowhead_001() {
+	@Test def void edge_arrowhead_001() {
 		// test unquoted attribute value
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
-
+			counter = i
 			'''digraph{1->2[arrowhead=«deprecatedArrowShape»]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
 				new Quickfix(
 					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
@@ -238,14 +220,15 @@ class DotQuickfixTest {
 				)
 			)
 		}
+		counter = 0
 	}
 
-	@Test def edge_arrowhead_002() {
+	@Test def void edge_arrowhead_002() {
 		// test quoted attribute value
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
-
+			counter = i
 			'''digraph{1->2[arrowhead="«deprecatedArrowShape»"]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
 				new Quickfix(
 					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
@@ -254,14 +237,15 @@ class DotQuickfixTest {
 				)
 			)
 		}
+		counter = 0
 	}
 
-	@Test def edge_arrowhead_003() {
+	@Test def void edge_arrowhead_003() {
 		// test quoted attribute value with multiple arrowtypes (one of them is invalid)
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
-
+			counter = i
 			'''digraph{1->2[arrowhead="onormal«deprecatedArrowShape»"]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E,
 				new Quickfix(
 					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
@@ -270,6 +254,7 @@ class DotQuickfixTest {
 				)
 			)
 		}
+		counter = 0
 	}
 
 	@Test def edge_arrowhead_004() {
@@ -320,11 +305,11 @@ class DotQuickfixTest {
 		'''graph {1--2[ arrowhead="nonenone" ]}'''.testQuickfixesOn(DotAttributes.ARROWHEAD__E, new Quickfix("Remove the 'none' arrow shape.", "Remove the last 'none' arrow shape.", '''graph {1--2[ arrowhead="none" ]}'''))
 	}
 
-	@Test def edge_arrowtail_001() {
+	@Test def void edge_arrowtail_001() {
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
-
+			counter = i
 			'''digraph{1->2[arrowtail=«deprecatedArrowShape»]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
 				new Quickfix(
 					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
@@ -333,13 +318,14 @@ class DotQuickfixTest {
 				)
 			)
 		}
+		counter = 0
 	}
 
-	@Test def edge_arrowtail_002() {
+	@Test def void edge_arrowtail_002() {
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
-
+			counter = i
 			'''digraph{1->2[arrowtail="«deprecatedArrowShape»"]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
 				new Quickfix(
 					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
@@ -348,14 +334,15 @@ class DotQuickfixTest {
 				)
 			)
 		}
+		counter = 0
 	}
 
-	@Test def edge_arrowtail_003() {
+	@Test def void edge_arrowtail_003() {
 		// test quoted attribute value with multiple arrowtypes (one of them is invalid)
 		for (i : 0..< deprecatedArrowShapes.length) {
 			val deprecatedArrowShape = deprecatedArrowShapes.get(i)
 			val validArrowShape = validArrowShapes.get(i)
-
+			counter = i
 			'''digraph{1->2[arrowtail="«deprecatedArrowShape»dot"]}'''.testQuickfixesOn(DotAttributes.ARROWTAIL__E,
 				new Quickfix(
 					'''Replace '«deprecatedArrowShape»' with '«validArrowShape»'.''',
@@ -364,6 +351,7 @@ class DotQuickfixTest {
 				)
 			)
 		}
+		counter = 0
 	}
 
 	@Test def edge_arrowtail_004() {
@@ -955,74 +943,11 @@ class DotQuickfixTest {
 		'''graph{graph[label="dotted", label="dashed"]1}'''.testQuickfixesOn(REDUNDANT_ATTRIBUTE, new Quickfix("Remove 'label' attribute.", "Remove the redundant 'label' attribute.", '''graph{graph[label="dashed"]1}'''))
 	}
 
-	/**
-	  * Test that the expected quickfixes are offered on a given validation issue in a given DSL text.
-	  * 
-	  * @param it The initial DSL text.
-	  * @param expected The quickfixes that are expected to be offered on the given <code>issueCode</code>.
-	  * Each expected quickfix should be described by the following triple:
-	  * <ol>
-	  * 	<li>the quickfix label</li>
-	  * 	<li>the quickfix description</li>
-	  * 	<li>the DSL text after the quickfix application</li>
-	  * </ol>
-	  */
-	private def testQuickfixesOn(CharSequence it, String issueCode, Quickfix... expected) {
-		val issue = getValidationIssue(issueCode)
-		val actualIssueResolutions = issue.getResolutions
-		assertEquals("The number of quickfixes does not match!", expected.size, actualIssueResolutions.size)
-		for (i : 0..< actualIssueResolutions.size) {
-			val actualIssueResolution = actualIssueResolutions.get(i)
-			val expectedIssueResolution = expected.get(i)
-			expectedIssueResolution.label.assertEquals(actualIssueResolution.label)
-			expectedIssueResolution.description.assertEquals(actualIssueResolution.getDescription)
-			expectedIssueResolution.result.assertIssueResolutionResult(actualIssueResolution, toString)
-		}
-	}
-
-	private def getValidationIssue(CharSequence it, String issueCode) {
-		val issues = parse.validate
-		val issueCandidates = issues.filter[code == issueCode]
-		assertEquals("There should be one '" + issueCode + "' validation issue!", 1, issueCandidates.size)
-		issueCandidates.head
-	}
-
-	private def assertIssueResolutionResult(String expectedResult, IssueResolution actualIssueResolution, String originalText) {
+	int counter = 0
+	override protected getFileName() {
 		/*
-		 * manually create an IModificationContext with a XtextDocument and call the
-		 * apply method of the actualIssueResolution with that IModificationContext
+		 * ensure several test cases can run within one test in a for loop
 		 */
-		val document = injector.getDocument(originalText)
-		val modificationContext = new TestModificationContext
-		modificationContext.document = document
-		new IssueResolution(actualIssueResolution.label, actualIssueResolution.description,
-			actualIssueResolution.image, modificationContext, actualIssueResolution.modification,
-			actualIssueResolution.relevance).apply
-		val actualResult = document.get
-		expectedResult.assertEquals(actualResult)
-	}
-
-	private static class TestModificationContext implements IModificationContext {
-		IXtextDocument doc
-
-		override getXtextDocument() {
-			doc
-		}
-
-		override getXtextDocument(URI uri) {
-			doc
-		}
-
-		def setDocument(IXtextDocument doc) {
-			this.doc = doc
-		}
-
-	}
-
-	@Data
-	private static class Quickfix {
-		String label
-		String description
-		String result
+		super.fileName + if (counter == 0) "" else counter
 	}
 }
