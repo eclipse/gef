@@ -38,7 +38,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.tests.DotTestUtils.*
-import static org.junit.Assert.assertEquals
 import static org.junit.Assert.fail
 
 /**
@@ -4112,34 +4111,17 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		dest
 	}
 
-	// workaround for bug https://github.com/eclipse/xtext-eclipse/issues/219
 	@Inject Injector injector
 
 	override protected newBuilder() {
 		return new ContentAssistProcessorTestBuilder(injector, this) {
 
-			override protected applyProposal(ICompletionProposal proposal, IXtextDocument document) {
-				return _applyProposal(proposal, cursorPosition, document)
-			}
-
-			override applyProposal(int position, String proposalString) {
-				val document = getDocument(model)
-				val shell = new Shell
-				try {
-					val proposals = computeCompletionProposals(document, position, shell)
-					val proposal = findProposal(proposalString, proposals)
-					return _applyProposal(proposal, position, document)
-				} finally {
-					shell.dispose
-				}
-			}
-
-			protected def _applyProposal(ICompletionProposal proposal, int position, IXtextDocument document) {
+			protected override applyProposal(ICompletionProposal proposal, int position, IXtextDocument document) {
 				val shell = new Shell
 				try {
 					val configuration = injector.getInstance(XtextSourceViewerConfiguration)
 					val sourceViewer = getSourceViewer(shell, document, configuration)
-					// use appendAndApplyProposal as a workaround (also see comment above)
+					// use appendAndApplyProposal as a workaround
 					// use null model, as document already contains model
 					return appendAndApplyProposal(proposal, sourceViewer, null, position)
 				} finally {
@@ -4160,12 +4142,6 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				else displayString.split(":").head
 			}
 
-			// TODO: remove this workaround
-			override expectContent(String expectation) {
-				val actual = model.replaceAll("\r?\n", System.lineSeparator)
-				assertEquals(expectation, actual)
-				this
-			}
 		}
 	}
 }
