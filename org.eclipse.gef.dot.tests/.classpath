@@ -5,6 +5,7 @@
 		<accessrules>
 			<accessrule kind="accessible" pattern="org/eclipse/jface/internal/text/html/BrowserInformationControlInput"/>
 			<accessrule kind="accessible" pattern="org/eclipse/ui/internal/statushandlers/StatusHandlerRegistry"/>
+			<accessrule kind="accessible" pattern="org/eclipse/xtext/ide/LexerIdeBindings"/>
 			<accessrule kind="accessible" pattern="org/eclipse/xtext/ui/editor/findrefs/**"/>
 			<accessrule kind="accessible" pattern="org/eclipse/xtext/ui/refactoring/**"/>
 		</accessrules>
