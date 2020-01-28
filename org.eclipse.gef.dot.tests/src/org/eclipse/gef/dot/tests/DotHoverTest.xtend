@@ -16,23 +16,20 @@ package org.eclipse.gef.dot.tests
 import java.lang.reflect.Method
 import org.eclipse.core.resources.IFile
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
+import org.eclipse.jface.internal.text.html.BrowserInformationControlInput
+import org.eclipse.jface.text.IRegion
 import org.eclipse.jface.text.ITextHover
 import org.eclipse.jface.text.ITextHoverExtension2
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.ui.XtextProjectHelper
 import org.eclipse.xtext.ui.editor.XtextSourceViewer
-import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControlInput
-import org.eclipse.xtext.ui.testing.AbstractEditorTest
+import org.eclipse.xtext.ui.testing.AbstractHoverTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
-import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
-
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotHoverTest extends AbstractEditorTest {
+class DotHoverTest extends AbstractHoverTest {
 
 	@Test def edge_color() {
 		'''
@@ -41,7 +38,7 @@ class DotHoverTest extends AbstractEditorTest {
 					color=green4
 				]
 			}
-		'''.assertHoveringResult("green4", '''
+		'''.hasHoverOver("green4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -67,7 +64,7 @@ class DotHoverTest extends AbstractEditorTest {
 					color=2
 				]
 			}
-		'''.assertHoveringResult("2", '''
+		'''.hasHoverOver("2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -92,7 +89,7 @@ class DotHoverTest extends AbstractEditorTest {
 					color="/blues3/2"
 				]
 			}
-		'''.assertHoveringResult("2", '''
+		'''.hasHoverOver("2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -117,7 +114,7 @@ class DotHoverTest extends AbstractEditorTest {
 					color="#fdc086"
 				]
 			}
-		'''.assertHoveringResult("#fdc086", '''
+		'''.hasHoverOver("#fdc086", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -138,7 +135,7 @@ class DotHoverTest extends AbstractEditorTest {
 					fillcolor=blueviolet
 				]
 			}
-		'''.assertHoveringResult("blueviolet", '''
+		'''.hasHoverOver("blueviolet", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -164,7 +161,7 @@ class DotHoverTest extends AbstractEditorTest {
 					fontcolor=bisque2
 				]
 			}
-		'''.assertHoveringResult("bisque2", '''
+		'''.hasHoverOver("bisque2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -191,7 +188,7 @@ class DotHoverTest extends AbstractEditorTest {
 					labelfontcolor=cadetblue
 				]
 			}
-		'''.assertHoveringResult("cadetblue", '''
+		'''.hasHoverOver("cadetblue", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -215,7 +212,7 @@ class DotHoverTest extends AbstractEditorTest {
 				bgcolor=darkgoldenrod2
 				1
 			}
-		'''.assertHoveringResult("darkgoldenrod2", '''
+		'''.hasHoverOver("darkgoldenrod2", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -240,7 +237,7 @@ class DotHoverTest extends AbstractEditorTest {
 				label=graphLabel
 				1
 			}
-		'''.assertHoveringResult("firebrick", '''
+		'''.hasHoverOver("firebrick", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -263,7 +260,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[color=aquamarine4]
 			}
-		'''.assertHoveringResult("aquamarine4", '''
+		'''.hasHoverOver("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -289,7 +286,7 @@ class DotHoverTest extends AbstractEditorTest {
 					style=filled
 				]
 			}
-		'''.assertHoveringResult("yellow", '''
+		'''.hasHoverOver("yellow", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -314,7 +311,7 @@ class DotHoverTest extends AbstractEditorTest {
 					fontcolor=goldenrod
 				]
 			}
-		'''.assertHoveringResult("goldenrod", '''
+		'''.hasHoverOver("goldenrod", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -341,7 +338,7 @@ class DotHoverTest extends AbstractEditorTest {
 					color=honeydew3
 				}
 			}
-		'''.assertHoveringResult("honeydew3", '''
+		'''.hasHoverOver("honeydew3", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -369,7 +366,7 @@ class DotHoverTest extends AbstractEditorTest {
 					style=filled
 				}
 			}
-		'''.assertHoveringResult("indigo",  '''
+		'''.hasHoverOver("indigo",  '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -395,7 +392,7 @@ class DotHoverTest extends AbstractEditorTest {
 					1
 				}
 			}
-		'''.assertHoveringResult("2",  '''
+		'''.hasHoverOver("2",  '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -418,7 +415,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<font color="aquamarine4"></font>>]
 			}
-		'''.assertHoveringResult("aquamarine4", '''
+		'''.hasHoverOver("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -441,7 +438,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[colorscheme=svg,label=<<font color="aqua"></font>>]
 			}
-		'''.assertHoveringResult("aqua", '''
+		'''.hasHoverOver("aqua", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -464,7 +461,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<font color="aqua"></font>>]
 			}
-		'''.assertHoveringResult("aqua", '''
+		'''.hasHoverOver("aqua", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -487,7 +484,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<font color="#EFE8FE"></font>>]
 			}
-		'''.assertHoveringResult("#EFE8FE", '''
+		'''.hasHoverOver("#EFE8FE", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -506,7 +503,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<font color="#e00"></font>>]
 			}
-		'''.assertHoveringResult("#e00", '''
+		'''.hasHoverOver("#e00", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -525,7 +522,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<table color="green"><tr><td>foo</td></tr></table>>]
 			}
-		'''.assertHoveringResult("green", '''
+		'''.hasHoverOver("green", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -548,7 +545,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<table bgcolor="red"><tr><td>foo</td></tr></table>>]
 			}
-		'''.assertHoveringResult("red", '''
+		'''.hasHoverOver("red", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -571,7 +568,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<table><tr><td color="blue">foo</td></tr></table>>]
 			}
-		'''.assertHoveringResult("blue", '''
+		'''.hasHoverOver("blue", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -594,7 +591,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[label=<<table><tr><td bgcolor="pink">foo</td></tr></table>>]
 			}
-		'''.assertHoveringResult("pink", '''
+		'''.hasHoverOver("pink", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -616,7 +613,7 @@ class DotHoverTest extends AbstractEditorTest {
 		//assert no exception occurs
 		'''
 			digraph{1[label=<<font      color="#e00"></font>>]}
-		'''.assertNoResult("      ")
+		'''.hasHoverOver("      ", null)
 	}
 
 	@Test def html_edge_taillabel() {
@@ -624,7 +621,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1->2[taillabel=<<font color="aquamarine4"></font>>]
 			}
-		'''.assertHoveringResult("aquamarine4", '''
+		'''.hasHoverOver("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -647,7 +644,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1->2[headlabel=<<font color="aquamarine4"></font>>]
 			}
-		'''.assertHoveringResult("aquamarine4", '''
+		'''.hasHoverOver("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -670,7 +667,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1->2[xlabel=<<font color="aquamarine4"></font>>]
 			}
-		'''.assertHoveringResult("aquamarine4", '''
+		'''.hasHoverOver("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -693,7 +690,7 @@ class DotHoverTest extends AbstractEditorTest {
 			digraph {
 				1[xlabel=<<font color="aquamarine4"></font>>]
 			}
-		'''.assertHoveringResult("aquamarine4", '''
+		'''.hasHoverOver("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -719,7 +716,7 @@ class DotHoverTest extends AbstractEditorTest {
 					1
 				}
 			}
-		'''.assertHoveringResult("aquamarine4", '''
+		'''.hasHoverOver("aquamarine4", '''
 			<table border=1>
 				<tr>
 					<td><b>color preview</b></td>
@@ -737,49 +734,24 @@ class DotHoverTest extends AbstractEditorTest {
 		''')
 	}
 
-	private def assertHoveringResult(CharSequence it, String textUnderHover, String expected) {
-		// given
-		dslFile.
-		// when
-		hoveringOver(textUnderHover).
-		// then
-		hoverPopupHasContent(expected)
-	}
-
-	private def assertNoResult(CharSequence it, String textUnderHover) {
-		// given
-		dslFile.
-		// when
-		hoveringOver(textUnderHover).
-		// no hover
-		assertNull
-	}
-
-	private def dslFile(CharSequence it) {
-		val file = toString.createTestFile
-	
-		val project = file.project
-		if(!project.hasNature(XtextProjectHelper.NATURE_ID)) {
-			project.addNature(XtextProjectHelper.NATURE_ID)
-		}
-
-		file
-	}
-
-	private def hoveringOver(IFile testFile, String textUnderHover) {
-		val editor = testFile.openEditor
+	protected override hoveringOver(IFile dslFile, IRegion hoverRegion) {
+		val editor = dslFile.openEditor
 		val viewer = editor.internalSourceViewer as XtextSourceViewer
-		val offset = viewer.document.get.indexOf(textUnderHover) + textUnderHover.length/2;
+		val offset = hoverRegion.offset + hoverRegion.length/2
 		//we need to access text hover set in SourceViewerConfiguration
 		val hover = viewer.getTextHover(offset)
 		val region = hover.getHoverRegion(viewer, offset)
 		val hoverInfo = (hover as ITextHoverExtension2).getHoverInfo2(viewer, region)
-		hoverInfo as XtextBrowserInformationControlInput
+		hoverInfo as BrowserInformationControlInput
 	}
 
-	private def hoverPopupHasContent(XtextBrowserInformationControlInput hoverInfo, String expected) {
-		val actual = hoverInfo.html.table
-		expected.assertEquals(actual)
+	protected override hoverPopupHasContent(BrowserInformationControlInput hoverInfo, String expected) {
+		if (expected === null) {
+			hoverInfo.assertNull
+		} else {
+			val actual = hoverInfo.html.table
+			expected.assertEquals(actual)
+		}
 	}
 
 	private def table(String html) {
