@@ -13,11 +13,8 @@
 package org.eclipse.gef.dot.tests
 
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
-import org.eclipse.jface.text.IRegion
-import org.eclipse.jface.text.hyperlink.IHyperlink
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.ui.editor.hyperlinking.XtextHyperlink
 import org.eclipse.xtext.ui.testing.AbstractHyperlinkingTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -118,10 +115,5 @@ class DotEditorToDotEditorHyperlinkingTest extends AbstractHyperlinkingTest {
 				3->«c»4«c»
 			}
 		'''.hasHyperlinkTo("4")
-	}
-
-	override protected hyperlinkIsOffered(IHyperlink[] hyperlinks, IRegion expectedRegion, String expectedHyperlinkTarget) {
-		assertNotNull("No hyperlinks found!", hyperlinks)
-		super.hyperlinkIsOffered(hyperlinks.filter(XtextHyperlink), expectedRegion, expectedHyperlinkTarget)
 	}
 }
