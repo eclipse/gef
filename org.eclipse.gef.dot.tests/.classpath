@@ -3,10 +3,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
 		<accessrules>
-			<accessrule kind="accessible" pattern="org/eclipse/xtext/junit4/ui/**"/>
+			<accessrule kind="accessible" pattern="org/eclipse/jface/internal/text/html/BrowserInformationControlInput"/>
+			<accessrule kind="accessible" pattern="org/eclipse/ui/internal/statushandlers/StatusHandlerRegistry"/>
 			<accessrule kind="accessible" pattern="org/eclipse/xtext/ui/editor/findrefs/**"/>
 			<accessrule kind="accessible" pattern="org/eclipse/xtext/ui/refactoring/**"/>
-			<accessrule kind="accessible" pattern="org/eclipse/xtext/xbase/junit/ui/**"/>
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
