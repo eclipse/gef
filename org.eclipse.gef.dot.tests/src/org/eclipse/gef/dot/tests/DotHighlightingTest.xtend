@@ -13,180 +13,153 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
-import java.util.List
 import org.eclipse.core.resources.IFile
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.swt.SWT
 import org.eclipse.swt.custom.StyleRange
 import org.eclipse.swt.custom.StyledText
-import org.eclipse.swt.graphics.Color
 import org.eclipse.swt.widgets.Display
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.ui.testing.AbstractEditorTest
+import org.eclipse.xtext.ui.testing.AbstractHighlightingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.eclipse.gef.dot.tests.DotTestUtils.createTestFile
-
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotHighlightingTest extends AbstractEditorTest {
-
-	override setUp() {
-		super.setUp
-		DotTestUtils.createTestProjectWithXtextNature
-	}
+class DotHighlightingTest extends AbstractHighlightingTest {
 
 	// lexical highlighting test cases
 	@Test def numbers() {
-		DotTestGraphs.EDGE_ARROWSIZE_GLOBAL.assertHighlighting("1.5", SWT.NORMAL, 125, 125, 125)
+		DotTestGraphs.EDGE_ARROWSIZE_GLOBAL.testHighlighting("1.5", SWT.NORMAL, 125, 125, 125)
 	}
 
 	@Test def quoted_attribute_value() {
-		 DotTestGraphs.QUOTED_LABELS.assertHighlighting("node 1", SWT.NORMAL, 255, 0, 0)
+		 DotTestGraphs.QUOTED_LABELS.testHighlighting("node 1", SWT.NORMAL, 255, 0, 0)
 	}
 
 	@Test def unquoted_attribute_value() {
-		DotTestGraphs.GRAPH_LAYOUT_DOT.assertHighlighting("dot", SWT.NORMAL, 153, 76, 0)
+		DotTestGraphs.GRAPH_LAYOUT_DOT.testHighlighting("dot", SWT.NORMAL, 153, 76, 0)
 	}
 
 	@Test def void compass_pt() {
 		DotTestGraphs.PORTS => [
-			assertHighlighting("ne", SWT.NORMAL, 153, 76, 0)
-			assertHighlighting("_", SWT.NORMAL, 153, 76, 0)
+			testHighlighting("ne", SWT.NORMAL, 153, 76, 0)
+			testHighlighting("_", SWT.NORMAL, 153, 76, 0)
 		]
 	}
 
 	@Test def void comments() {
 		DotTestGraphs.EMPTY_WITH_COMMENTS => [
-			assertHighlighting("// This is a C++-style single line comment.", SWT.NORMAL, 63, 127, 95)
-			assertHighlighting("/*", SWT.NORMAL, 63, 127, 95)
-			assertHighlighting("* This is a C++-style", SWT.NORMAL, 63, 127, 95)
-			assertHighlighting("* multi line comment.", SWT.NORMAL, 63, 127, 95)
-			assertHighlighting("*/", SWT.NORMAL, 63, 127, 95)
-			assertHighlighting("# This is considered as a line output from C-preprocessor and discarded.", SWT.NORMAL, 63, 127, 95)
+			testHighlighting("// This is a C++-style single line comment.", SWT.NORMAL, 63, 127, 95)
+			testHighlighting("/*", SWT.NORMAL, 63, 127, 95)
+			testHighlighting("* This is a C++-style", SWT.NORMAL, 63, 127, 95)
+			testHighlighting("* multi line comment.", SWT.NORMAL, 63, 127, 95)
+			testHighlighting("*/", SWT.NORMAL, 63, 127, 95)
+			testHighlighting("# This is considered as a line output from C-preprocessor and discarded.", SWT.NORMAL, 63, 127, 95)
 		]
 	}
 
 	@Test def void keywords() {
 		DotTestGraphs.KEYWORDS => [
-			assertHighlighting("strict", SWT.BOLD, 0, 0, 0)
-			assertHighlighting("digraph", SWT.BOLD, 0, 0, 0)
-			assertHighlighting("\tgraph", SWT.BOLD, 0, 0, 0)
-			assertHighlighting("node", SWT.BOLD, 0, 0, 0)
-			assertHighlighting("edge", SWT.BOLD, 0, 0, 0)
-			assertHighlighting("subgraph", SWT.BOLD, 0, 0, 0)
+			testHighlighting("strict", SWT.BOLD, 0, 0, 0)
+			testHighlighting("digraph", SWT.BOLD, 0, 0, 0)
+			testHighlighting("\tgraph", SWT.BOLD, 0, 0, 0)
+			testHighlighting("node", SWT.BOLD, 0, 0, 0)
+			testHighlighting("edge", SWT.BOLD, 0, 0, 0)
+			testHighlighting("subgraph", SWT.BOLD, 0, 0, 0)
 		]
 	}
 
 	// semantic highlighting test cases
 	@Test def graph_name() {
-		DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME.assertHighlighting("G", SWT.NORMAL, 0, 0, 0)
+		DotTestGraphs.GLOBAL_EDGE_NODE_COLORSCHEME.testHighlighting("G", SWT.NORMAL, 0, 0, 0)
 	}
 
 	@Test def node_name() {
-		DotTestGraphs.ONE_NODE.assertHighlighting("1", SWT.NORMAL, 0, 0, 0)
+		DotTestGraphs.ONE_NODE.testHighlighting("1", SWT.NORMAL, 0, 0, 0)
 	}
 
 	@Test def void port() {
 		DotTestGraphs.PORTS => [
-			assertHighlighting("portID", SWT.NORMAL, 0, 153, 76)
-			assertHighlighting("portID2", SWT.NORMAL, 0, 153, 76)
+			testHighlighting("portID", SWT.NORMAL, 0, 153, 76)
+			testHighlighting("portID2", SWT.NORMAL, 0, 153, 76)
 		]
 	}
 
 	@Test def attribute_name() {
-		DotTestGraphs.GRAPH_LAYOUT_DOT.assertHighlighting("layout", SWT.NORMAL, 0, 76, 153)
+		DotTestGraphs.GRAPH_LAYOUT_DOT.testHighlighting("layout", SWT.NORMAL, 0, 76, 153)
 	}
 
 	@Test def edge_operator_directed() {
-		DotTestGraphs.ONE_DIRECTED_EDGE.assertHighlighting("->", SWT.NORMAL, 0, 153, 0)
+		DotTestGraphs.ONE_DIRECTED_EDGE.testHighlighting("->", SWT.NORMAL, 0, 153, 0)
 	}
 
 	@Test def edge_operator_undirected() {
-		DotTestGraphs.ONE_EDGE.assertHighlighting("--", SWT.NORMAL, 0, 153, 0)
+		DotTestGraphs.ONE_EDGE.testHighlighting("--", SWT.NORMAL, 0, 153, 0)
 	}
 
 	@Test def void html_label() {
 		DotTestGraphs.NODE_LABEL_HTML_LIKE(DotTestHtmlLabels.FONT_TAG_CONTAINS_TABLE_TAG) => [
-			
+
 			// test highlighting of Html tag
-			assertHighlighting("<", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("<font", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("<table>", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("<tr>", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("<td>", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("</td>", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("</tr>", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("</table>", SWT.NORMAL, 63, 127, 127)
-			assertHighlighting("</font>", SWT.NORMAL, 63, 127, 127)
-			
+			testHighlighting("<", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("<font", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("<table>", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("<tr>", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("<td>", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("</td>", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("</tr>", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("</table>", SWT.NORMAL, 63, 127, 127)
+			testHighlighting("</font>", SWT.NORMAL, 63, 127, 127)
+
 			// test highlighting of Html attribute name
-			assertHighlighting("color", SWT.NORMAL, 127, 0, 127)
-			
+			testHighlighting("color", SWT.NORMAL, 127, 0, 127)
+
 			// test highlighting of Html attribute equal sign
-			assertHighlighting("=", SWT.NORMAL, 0, 0, 0)
-			
+			testHighlighting("=", SWT.NORMAL, 0, 0, 0)
+
 			// test highlighting of Html attribute value
-			assertHighlighting('"green"', SWT.ITALIC, 42, 0, 255)
-			
+			testHighlighting('"green"', SWT.ITALIC, 42, 0, 255)
+
 			// test highlighting of Html content
-			assertHighlighting("text", SWT.NORMAL, 0, 0, 0)
-			
+			testHighlighting("text", SWT.NORMAL, 0, 0, 0)
+
 			// test highlighting of Html comment
-			assertHighlighting("<!--", SWT.NORMAL, 63, 95, 191)
-			assertHighlighting("Html label with custom font", SWT.NORMAL, 63, 95, 191)
-			assertHighlighting("-->", SWT.NORMAL, 63, 95, 191)
+			testHighlighting("<!--", SWT.NORMAL, 63, 95, 191)
+			testHighlighting("Html label with custom font", SWT.NORMAL, 63, 95, 191)
+			testHighlighting("-->", SWT.NORMAL, 63, 95, 191)
 		]
 	}
 
 	@Test def incomplete_html_label() {
 		// test highlighting of Html tag
-		DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL.assertHighlighting("<", SWT.NORMAL, 63, 127, 127)
+		DotTestGraphs.INCOMPLETE_HTML_LIKE_LABEL.testHighlighting("<", SWT.NORMAL, 63, 127, 127)
 	}
 
 	@Test def void deprecated_arrow_type() {
 		DotTestGraphs.DEPRECATED_ARROWTYPES => [
 			// test unquoted deprecated highlighting
-			assertHighlighting("ediamond", SWT.NORMAL, 153, 76, 0, true)
+			testHighlighting("ediamond", SWT.NORMAL, 153, 76, 0, true)
 			// test quoted deprecated highlighting
-			assertHighlighting("open", SWT.NORMAL, 255, 0, 0, true)
+			testHighlighting("open", SWT.NORMAL, 255, 0, 0, true)
 		]
 	}
 
-	private def assertHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue) {
-		assertHighlighting(text, fontStyle, red, green, blue, false);
-	}
-
-	private def assertHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue, boolean strikeout) {
+	private def testHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue, boolean strikeout) {
 		// given
 		dslFile
 		// when
 		.openInEditor
 		// then
-		.text(text).isHighlightedIn(fontStyle, red, green, blue, strikeout)
+		.testHighlighting(text, fontStyle, red, green, blue, strikeout)
 	}
 
-	private def dslFile(CharSequence it) {
-		toString.createTestFile
-	}
+	private def testHighlighting(StyledText styledText, String text, int fontStyle,
+		int foregroundR, int foregroundG, int foregroundB, boolean expectedStrikeout) {
 
-	private def openInEditor(IFile dslFile) {
-		val editor = dslFile.openEditor
-		
-		/*
-		 * wait for the Xtext framework HighlightingPresenter.updatePresentation()
-		 * to apply the semantic highlighting executed asynchronously
-		 */
-		waitForEventProcessing
+		super.testHighlighting(styledText, text, fontStyle, foregroundR, foregroundG, foregroundB, 255, 255, 255)
 
-		editor.internalSourceViewer.textWidget
-	}
-
-	private def text(StyledText styledText, String text) {
-		val List<Pair<String, StyleRange>> elements = newArrayList
-		
 		val content = styledText.text
 		val offset = content.indexOf(text)
 		assertNotEquals('''Cannot locate '«text»' in «content»''', -1, offset)
@@ -195,44 +168,32 @@ class DotHighlightingTest extends AbstractEditorTest {
 			val currentPosition = offset + i
 			val character = styledText.getTextRange(currentPosition, 1)
 			val styleRange = styledText.getStyleRangeAtOffset(currentPosition)
-			elements += character -> styleRange
-		}
-		elements
-	}
-
-	private def isHighlightedIn(List<Pair<String, StyleRange>> elements, int fontStyle, int red, int green, int blue, boolean strikeout) {
-		val expectedColor = new Color(null, red, green, blue)
-		
-		for(element : elements) {
-			val character = element.key
-			val styleRange = element.value
-			// skipping the whitespace characters
-			if (character != " " && character != "\t") {
+			if (character.isRelevant) {
 				styleRange => [
-					isStrikedout(character, strikeout)
-					hasFontStyle(character, fontStyle)
-					hasForegroundColor(character, expectedColor)
+					assertStrikedout(character, expectedStrikeout)
 				]
 			}
 		}
 	}
 
-	private def isStrikedout(StyleRange it, String character, boolean expected) {
+	private def assertStrikedout(StyleRange it, String character, boolean expected) {
 		val actual = strikeout
 		assertEquals('''Expected strikeout does not correspond to the actual strikeout on character «character»''',
 			expected, actual)
 	}
 
-	private def hasFontStyle(StyleRange it, String character, int expected) {
-		val actual = fontStyle
-		assertEquals('''Expected font style does not correspond to the actual font style on character «character»''',
-			expected, actual)
-	}
-
-	private def hasForegroundColor(StyleRange it, String character, Color expected) {
-		val actual = foreground ?: new Color(null, 0, 0, 0) // the default color is black 
-		assertEquals('''Expected foreground color does not correspond to the actual foreground color on character «character»''',
-			expected, actual)
+	/**
+	 * This derived class includes the fix
+	 * https://github.com/eclipse/xtext-eclipse/commit/9c63ca2ed24050d4fa9fba431f7442f0e903925a
+	 * available from Xtext Version 2.18 (Eclipse 2019-06).
+	 * TODO: remove this workaround as soon as Eclipse 2019-06 will be the minimum platform supported by GEF DOT.
+	 */
+	protected override openInEditor(IFile dslFile) {
+		val editor = dslFile.openEditor
+		
+		waitForEventProcessing
+	
+		editor.internalSourceViewer.textWidget
 	}
 
 	private def waitForEventProcessing() {
