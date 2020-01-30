@@ -19,11 +19,11 @@ import com.google.inject.Inject
 import org.eclipse.gef.dot.internal.language.dot.DotAst
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotSemanticHighlightingCalculator
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
+import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
-import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor
 import org.eclipse.xtext.util.TextRegion
 import org.junit.After
 import org.junit.Assert
@@ -62,7 +62,7 @@ class DotHighlightingCalculatorTest implements IHighlightedPositionAcceptor {
 
 	// semantic highlighting test cases
 	@Test def null_guard() {
-		null.provideHighlightingFor(this)
+		null.provideHighlightingFor(this, null)
 	}
 
 	@Test def graph_name() {
@@ -156,7 +156,7 @@ class DotHighlightingCalculatorTest implements IHighlightedPositionAcceptor {
 
 	private def highlight(CharSequence it) {
 		val resource = parse.eResource as XtextResource
-		resource.provideHighlightingFor(this)
+		resource.provideHighlightingFor(this, null)
 	}
 
 	private def assertAllExpectedRegionsHasBeenFound() {

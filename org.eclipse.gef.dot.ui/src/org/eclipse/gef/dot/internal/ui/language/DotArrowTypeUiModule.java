@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.ui.language;
 
 import org.eclipse.gef.dot.internal.ui.language.highlighting.DotArrowTypeSemanticHighlightingCalculator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
 /**
  * Use this class to register components to be used within the IDE.

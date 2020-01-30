@@ -17,9 +17,9 @@ import java.util.Arrays;
 
 import org.eclipse.gef.dot.internal.ui.language.DotActivator;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
 import com.google.inject.Injector;
 
@@ -61,6 +61,6 @@ public class DotSubgrammarHighlighter {
 								length, id);
 					}
 
-				});
+				}, null);
 	}
 }
