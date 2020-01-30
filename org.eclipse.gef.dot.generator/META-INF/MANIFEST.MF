@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.gef.dot.generator
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF DOT
 Bundle-SymbolicName: org.eclipse.gef.dot.generator;singleton:=true
