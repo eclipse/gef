@@ -1094,7 +1094,7 @@ class DotAttributes {
 	/**
 	 * The validator for arrowtype attribute values.
 	 */
-	// TODO: move to DotJavaValidator
+	// TODO: move to DotValidator
 	static val ARROWTYPE_VALIDATOR = new EObjectValidator<ArrowType>(arrowTypeInjector,
 		DotArrowTypeValidator)
 
