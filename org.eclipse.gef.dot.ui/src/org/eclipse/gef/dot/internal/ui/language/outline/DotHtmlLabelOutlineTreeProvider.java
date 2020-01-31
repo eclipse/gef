@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse def License v1.0
@@ -42,35 +42,47 @@ public class DotHtmlLabelOutlineTreeProvider
 		this.xtextDocument = xtextDocument;
 	}
 
-	/**
-	 * Skip the root element, represent only its children.
-	 */
-	private void _createChildren(DocumentRootNode outlineNode,
-			HtmlLabel model) {
-		for (HtmlContent htmlContent : model.getParts()) {
-			if (htmlContent.getText() != null
-					&& !htmlContent.getText().trim().isEmpty()) {
-				createNode(outlineNode, htmlContent);
-			} else {
-				if (htmlContent.getTag() != null) {
-					createNode(outlineNode, htmlContent.getTag());
+	@Override
+	protected void _createChildren(DocumentRootNode parentNode,
+			EObject modelElement) {
+		if (modelElement instanceof HtmlLabel) {
+			HtmlLabel htmlLabel = (HtmlLabel) modelElement;
+			/**
+			 * Skip the root element, represent only its children.
+			 */
+			for (HtmlContent htmlContent : htmlLabel.getParts()) {
+				if (htmlContent.getText() != null
+						&& !htmlContent.getText().trim().isEmpty()) {
+					createNode(parentNode, htmlContent);
+				} else {
+					if (htmlContent.getTag() != null) {
+						createNode(parentNode, htmlContent.getTag());
+					}
 				}
 			}
+		} else {
+			super._createChildren(parentNode, modelElement);
 		}
 	}
 
-	/**
-	 * Skip the empty (containing nothing or only white-spaces) htmlContent
-	 * elements, but process their tag children.
-	 */
-	private void _createNode(IOutlineNode parent, HtmlContent htmlContent) {
-		if (htmlContent.getText() != null
-				&& !htmlContent.getText().trim().isEmpty()) {
-			super._createNode(parent, htmlContent);
-		} else {
-			if (htmlContent.getTag() != null) {
-				super._createNode(parent, htmlContent.getTag());
+	@Override
+	protected void _createNode(IOutlineNode parentNode, EObject modelElement) {
+		if (modelElement instanceof HtmlContent) {
+			HtmlContent htmlContent = (HtmlContent) modelElement;
+			/**
+			 * Skip the empty (containing nothing or only white-spaces)
+			 * htmlContent elements, but process their tag children.
+			 */
+			if (htmlContent.getText() != null
+					&& !htmlContent.getText().trim().isEmpty()) {
+				super._createNode(parentNode, htmlContent);
+			} else {
+				if (htmlContent.getTag() != null) {
+					super._createNode(parentNode, htmlContent.getTag());
+				}
 			}
+		} else {
+			super._createNode(parentNode, modelElement);
 		}
 	}
 
