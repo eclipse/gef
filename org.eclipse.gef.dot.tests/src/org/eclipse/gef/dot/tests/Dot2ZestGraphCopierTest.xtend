@@ -26,13 +26,13 @@ import org.eclipse.gef.fx.nodes.GeometryNode
 import org.eclipse.gef.graph.Edge
 import org.eclipse.gef.graph.Graph
 import org.eclipse.gef.graph.Node
+import org.eclipse.gef.mvc.tests.fx.rules.FXNonApplicationThreadRule
 import org.eclipse.gef.zest.fx.ZestProperties
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,8 +51,8 @@ class Dot2ZestGraphCopierTest {
 	/**
 	 * Ensure the JavaFX toolkit is properly initialized.
 	 */
-	//@Rule
-	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
+	@Rule
+	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
 
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper
@@ -1098,7 +1098,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_headlp() {
 		'''
 			digraph {
@@ -1121,7 +1120,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					edge-target-label : foo
-					edge-target-label-position : Point(70.348388671875, 71.3544921875)
+					edge-target-label-position : Point(71.0908203125, 72.01953125)
 				}
 			}
 		''')
@@ -1575,7 +1574,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_lp() {
 		'''
 			digraph {
@@ -1596,7 +1594,7 @@ class Dot2ZestGraphCopierTest {
 				Edge1 from Node1 to Node2 {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
-					edge-label-position : Point(70.348388671875, 71.3544921875)
+					edge-label-position : Point(71.0908203125, 72.01953125)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : foo
 				}
@@ -1715,7 +1713,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_taillp() {
 		'''
 			digraph {
@@ -1737,7 +1734,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-source-label : foo
-					edge-source-label-position : Point(70.348388671875, 71.3544921875)
+					edge-source-label-position : Point(71.0908203125, 72.01953125)
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
@@ -1852,7 +1849,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_xlp() {
 		'''
 			digraph {
@@ -1875,7 +1871,7 @@ class Dot2ZestGraphCopierTest {
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-external-label : foo
-					element-external-label-position : Point(70.348388671875, 71.3544921875)
+					element-external-label-position : Point(71.0908203125, 72.01953125)
 				}
 			}
 		''')
@@ -3110,7 +3106,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased001() {
 		'''
 			graph {
@@ -3183,7 +3178,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased002() {
 		'''
 			graph {
@@ -3343,7 +3337,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased003() {
 		'''
 			graph {
@@ -3927,7 +3920,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_xlp() {
 		'''
 			graph {
@@ -3937,7 +3929,7 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-external-label : foo
-					element-external-label-position : Point(10.348388671875, 11.3544921875)
+					element-external-label-position : Point(11.0908203125, 12.01953125)
 					element-label : 1
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
@@ -3963,7 +3955,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_xlabel_with_layout_information() {
 		'''
 			graph {
@@ -4433,7 +4424,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def labeled_graph_with_additional_information() {
 		val dot = DotTestUtils.labeledGraphWithAdditionalInformation
 		val zest = dot.copy
@@ -4473,11 +4463,11 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(32.364, 87.115)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-label-position : Point(42.6611328125, 53.51953125)
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(48.536, 36.201)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : +1
 				}
 				Edge2 from Node1 to Node3 {
@@ -4485,11 +4475,11 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(90.433, 87.818)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-label-position : Point(79.6611328125, 53.51953125)
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(62.891, 35.793)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 					element-label : +2
 				}
 				Edge3 from Node3 to Node4 {
@@ -4497,10 +4487,10 @@ class Dot2ZestGraphCopierTest {
 					edge-curve : GeometryNode
 					edge-curve-css-style : -fx-stroke-line-cap: butt;
 					edge-end-point : Point(99.0, 159.97)
-					edge-interpolator : org.eclipse.gef.dot.internal.ui.DotBSplineInterpolator
+					edge-interpolator : org.eclipse.gef.dot.internal.ui.conversion.DotBSplineInterpolator
 					edge-router : org.eclipse.gef.fx.nodes.StraightRouter
 					edge-start-point : Point(99.0, 123.19)
-					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff, stroke=0x000000ff, strokeWidth=1.0]
+					edge-target-decoration : Polygon[points=[0.0, 0.0, 10.0, -3.3333333333333335, 10.0, 3.3333333333333335], fill=0x000000ff]
 				}
 			}
 		''')
