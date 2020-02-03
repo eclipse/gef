@@ -32,7 +32,6 @@ import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1098,7 +1097,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_headlp() {
 		'''
 			digraph {
@@ -1575,7 +1573,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_lp() {
 		'''
 			digraph {
@@ -1715,7 +1712,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_taillp() {
 		'''
 			digraph {
@@ -1852,7 +1848,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_xlp() {
 		'''
 			digraph {
@@ -3110,7 +3105,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased001() {
 		'''
 			graph {
@@ -3183,7 +3177,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased002() {
 		'''
 			graph {
@@ -3343,7 +3336,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased003() {
 		'''
 			graph {
@@ -3927,7 +3919,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_xlp() {
 		'''
 			graph {
@@ -3963,7 +3954,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_xlabel_with_layout_information() {
 		'''
 			graph {
@@ -4433,7 +4423,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def labeled_graph_with_additional_information() {
 		val dot = DotTestUtils.labeledGraphWithAdditionalInformation
 		val zest = dot.copy
