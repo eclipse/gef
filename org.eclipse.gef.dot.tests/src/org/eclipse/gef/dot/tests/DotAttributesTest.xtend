@@ -15,6 +15,8 @@
 package org.eclipse.gef.dot.tests
 
 import java.util.function.Consumer
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.resource.impl.ResourceImpl
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.gef.dot.internal.language.arrowtype.ArrowtypeFactory
 import org.eclipse.gef.dot.internal.language.arrowtype.DeprecatedShape
@@ -106,13 +108,16 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		var arrowHeadParsed = createArrowType
+		arrowHeadParsed.setResource
 		val rdiamond = createArrowShape => [open=false side="r" shape=PrimitiveShape.DIAMOND]
 		arrowHeadParsed.arrowShapes += rdiamond
 		arrowheadParsed = arrowHeadParsed
 		"rdiamond".assertEquals(arrowhead)
 		
 		// set valid values - multiple arrow shapes
-		arrowheadParsed = createArrowType => [arrowShapes += #[olBox, rdiamond]]
+		arrowHeadParsed = createArrowType => [arrowShapes += #[olBox, rdiamond]]
+		arrowHeadParsed.setResource
+		arrowheadParsed = arrowHeadParsed
 		"olboxrdiamond".assertEquals(arrowhead)
 		
 		// set deprecated (but valid) values
@@ -176,7 +181,7 @@ class DotAttributesTest {
 		// set valid string values
 		arrowtail = "olbox"
 		"olbox".assertEquals(arrowtail)
-		val arrowTail = createArrowType
+		var arrowTail = createArrowType
 		val olBox = createArrowShape => [open=true side = "l" shape = PrimitiveShape.BOX]
 		arrowTail.arrowShapes += olBox
 		EcoreUtil.equals(arrowTail, arrowtailParsed).assertTrue
@@ -188,13 +193,17 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val rdiamond = createArrowShape => [open = false side = "r" shape = PrimitiveShape.DIAMOND]
-		arrowtailParsed = createArrowType => [
+		arrowTail = createArrowType => [
 			arrowShapes += rdiamond
 		]
+		arrowTail.setResource
+		arrowtailParsed = arrowTail
 		"rdiamond".assertEquals(arrowtail)
 		
 		// set valid values - multiple arrow shapes
-		arrowtailParsed = createArrowType => [arrowShapes += #[olBox, rdiamond]]
+		arrowTail = createArrowType => [arrowShapes += #[olBox, rdiamond]]
+		arrowTail.setResource
+		arrowtailParsed = arrowTail
 		"olboxrdiamond".assertEquals(arrowtail)
 		
 		// set deprecated (but valid) values
@@ -378,10 +387,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, edgetooltipParsed).assertTrue
 		
 		// set valid parsed values
-		edgetooltipParsed = createEscString => [
+		val edgeTooltip = createEscString => [
 			lines += createJustifiedText => [ text="a" justification=Justification.LEFT	]
 			lines += createJustifiedText => [ text="b" justification=Justification.RIGHT ]
 		]
+		edgeTooltip.setResource
+		edgetooltipParsed = edgeTooltip
 		"a\\lb\\r".assertEquals(edgetooltip)
 	}
 
@@ -421,6 +432,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values - rgb format
 		rgbColor = createRGBColor => [ r="12" g="34" b="56"]
+		rgbColor.setResource
 		fillcolorParsed = rgbColor
 		"#123456".assertEquals(fillcolor)
 		EcoreUtil.equals(rgbColor, fillcolorParsed).assertTrue
@@ -432,11 +444,13 @@ class DotAttributesTest {
 		EcoreUtil.equals(rgbColor, fillcolorParsed).assertTrue
 		
 		// set valid parsed values - hsv format
+		hsvColor.setResource
 		fillcolorParsed = hsvColor
 		"0.000 0.000 0.000".assertEquals(fillcolor)
 		EcoreUtil.equals(hsvColor, fillcolorParsed).assertTrue
 		
 		// set valid parsed values - string format
+		stringColor.setResource
 		fillcolorParsed = stringColor
 		"black".assertEquals(fillcolor)
 		EcoreUtil.equals(stringColor, fillcolorParsed).assertTrue
@@ -483,6 +497,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values - rgb format
 		rgbColor = createRGBColor => [ r="ff" g="00" b="00"	]
+		rgbColor.setResource
 		fontcolorParsed = rgbColor
 		"#ff0000".assertEquals(fontcolor)
 		EcoreUtil.equals(rgbColor, fontcolorParsed).assertTrue
@@ -493,11 +508,13 @@ class DotAttributesTest {
 		EcoreUtil.equals(rgbColor, fontcolorParsed).assertTrue
 
 		// set valid parsed values - hsv format
+		hsvColor.setResource
 		fontcolorParsed = hsvColor
 		"0.000 1.000 1.000".assertEquals(fontcolor)
 		EcoreUtil.equals(hsvColor, fontcolorParsed).assertTrue
 
 		// set valid parsed values - string format
+		stringColor.setResource
 		fontcolorParsed = stringColor
 		"red".assertEquals(fontcolor)
 		EcoreUtil.equals(stringColor, fontcolorParsed).assertTrue
@@ -526,6 +543,7 @@ class DotAttributesTest {
 		validPostScriptString.assertEquals(fontname)
 		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
 		//Parsed setter
+		validPostScriptParsed.setResource
 		fontnameParsed = validPostScriptParsed
 		validPostScriptString.assertEquals(fontname)
 		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
@@ -538,6 +556,7 @@ class DotAttributesTest {
 		validPangoString.assertEquals(fontname)
 		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
 		//Parsed setter
+		validPangoParsed.setResource
 		fontnameParsed = validPangoParsed
 		validPangoString.assertEquals(fontname)
 		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
@@ -618,6 +637,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val validEdgeHeadLpParsed = createPoint => [ x=42 y=0.0 ]
+		validEdgeHeadLpParsed.setResource
 		headLpParsed = validEdgeHeadLpParsed
 		EcoreUtil.equals(validEdgeHeadLpParsed, headLpParsed).assertTrue
 		
@@ -644,10 +664,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, headportParsed).assertTrue
 
 		// set valid parsed values
-		headportParsed = createPortPos => [
+		val headPort = createPortPos => [
 			port = "nameOfThePort"
 			compassPoint = "_"
 		]
+		headPort.setResource
+		headportParsed = headPort
 		"nameOfThePort:_".assertEquals(headport)
 		
 		// set invalid string values
@@ -676,10 +698,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, headtooltipParsed).assertTrue
 
 		// set valid parsed values
-		headtooltipParsed = createEscString => [
+		val headTooltip = createEscString => [
 			lines += createJustifiedText => [ text="a" justification=Justification.LEFT ]
 			lines += createJustifiedText => [ text="b" justification=Justification.RIGHT ]
 		]
+		headTooltip.setResource
+		headtooltipParsed = headTooltip
 		"a\\lb\\r".assertEquals(headtooltip)
 	}
 
@@ -751,6 +775,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values - rgb format
 		rgbColor = createRGBColor => [ r="40" g="e0" b="d0" ]
+		rgbColor.setResource
 		labelfontcolorParsed = rgbColor
 		"#40e0d0".assertEquals(labelfontcolor)
 		EcoreUtil.equals(rgbColor, labelfontcolorParsed).assertTrue
@@ -762,11 +787,13 @@ class DotAttributesTest {
 		EcoreUtil.equals(rgbColor, labelfontcolorParsed).assertTrue
 		
 		// set valid parsed values - hsv format
+		hsvColor.setResource
 		labelfontcolorParsed = hsvColor
 		"0.482 0.714 0.878".assertEquals(labelfontcolor)
 		EcoreUtil.equals(hsvColor, labelfontcolorParsed).assertTrue
 		
 		// set valid parsed values - string format
+		stringColor.setResource
 		labelfontcolorParsed = stringColor
 		"turquoise".assertEquals(labelfontcolor)
 		EcoreUtil.equals(stringColor, labelfontcolorParsed).assertTrue
@@ -795,6 +822,7 @@ class DotAttributesTest {
 		validPostScriptString.assertEquals(labelfontname)
 		EcoreUtil.equals(validPostScriptParsed, labelfontnameParsed).assertTrue
 		//Parsed setter
+		validPostScriptParsed.setResource
 		labelfontnameParsed = validPostScriptParsed
 		validPostScriptString.assertEquals(labelfontname)
 		EcoreUtil.equals(validPostScriptParsed, labelfontnameParsed).assertTrue
@@ -807,6 +835,7 @@ class DotAttributesTest {
 		validPangoString.assertEquals(labelfontname)
 		EcoreUtil.equals(validPangoParsed, labelfontnameParsed).assertTrue
 		//Parsed setter
+		validPangoParsed.setResource
 		labelfontnameParsed = validPangoParsed
 		validPangoString.assertEquals(labelfontname)
 		EcoreUtil.equals(validPangoParsed, labelfontnameParsed).assertTrue
@@ -871,10 +900,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, labeltooltipParsed).assertTrue
 		
 		// set valid parsed values
-		labeltooltipParsed = createEscString => [
+		 val labelTooltip = createEscString => [
 			lines += createJustifiedText => [ text="a" justification=Justification.LEFT ]
 			lines += createJustifiedText => [ text="b" justification=Justification.RIGHT ]
 		]
+		labelTooltip.setResource
+		labeltooltipParsed = labelTooltip
 		"a\\lb\\r".assertEquals(labeltooltip)
 	}
 
@@ -895,6 +926,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val validEdgeLpParsed = createPoint => [ x=2.2 y=3.3 ]
+		validEdgeLpParsed.setResource
 		lpParsed = validEdgeLpParsed
 		EcoreUtil.equals(validEdgeLpParsed, lpParsed).assertTrue
 		
@@ -996,6 +1028,7 @@ class DotAttributesTest {
 				controlPoints += #[controlPoint0, controlPoint1, controlPoint2, controlPoint3]
 			]
 		]
+		validPosParsed.setResource
 		posParsed = validPosParsed
 		"0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0".assertEquals(pos)
 		EcoreUtil.equals(validPosParsed, posParsed).assertTrue
@@ -1008,6 +1041,7 @@ class DotAttributesTest {
 				controlPoints += #[controlPoint0, controlPoint1, controlPoint2, controlPoint3]
 			]
 		]
+		validPosParsed.setResource
 		posParsed = validPosParsed
 		"s,10.0,11.0 0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0".assertEquals(pos)
 		EcoreUtil.equals(validPosParsed, posParsed).assertTrue
@@ -1020,6 +1054,7 @@ class DotAttributesTest {
 				endp = endPoint
 			]
 		]
+		validPosParsed.setResource
 		posParsed = validPosParsed
 		"e,20.0,21.0 0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0".assertEquals(pos)
 		EcoreUtil.equals(validPosParsed, posParsed).assertTrue
@@ -1031,6 +1066,7 @@ class DotAttributesTest {
 				endp = endPoint
 			]
 		]
+		validPosParsed.setResource
 		posParsed = validPosParsed
 		"s,10.0,11.0 e,20.0,21.0 0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0".assertEquals(pos)
 		EcoreUtil.equals(validPosParsed, posParsed).assertTrue
@@ -1069,10 +1105,12 @@ class DotAttributesTest {
 		validEdgeStyle.assertEquals(style)
 		
 		// set valid parsed values
-		styleParsed = createStyle => [
+		val styleEObject = createStyle => [
 			styleItems += createStyleItem => [name="bold"]
 			styleItems += createStyleItem => [name="dashed"]
 		]
+		styleEObject.setResource
+		styleParsed = styleEObject
 		"bold , dashed".assertEquals(style)
 		
 		// set syntactically invalid values
@@ -1125,6 +1163,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val validEdgeTailLpParsed = createPoint => [x=42 y=0.0]
+		validEdgeTailLpParsed.setResource
 		tailLpParsed = validEdgeTailLpParsed
 		EcoreUtil.equals(validEdgeTailLpParsed, tailLpParsed).assertTrue
 		
@@ -1151,7 +1190,9 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, tailportParsed).assertTrue
 		
 		// set valid parsed values
-		tailportParsed = createPortPos => [ port="a" compassPoint="se" ]
+		val tailPort = createPortPos => [ port="a" compassPoint="se" ]
+		tailPort.setResource
+		tailportParsed = tailPort
 		"a:se".assertEquals(tailport)
 		
 		// set invalid string values
@@ -1180,10 +1221,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, tailtooltipParsed).assertTrue
 		
 		// set valid parsed values
-		tailtooltipParsed = createEscString => [
+		val tailTooltip = createEscString => [
 			lines += createJustifiedText => [text="a" justification=Justification.LEFT]
 			lines += createJustifiedText => [text="b" justification=Justification.RIGHT]
 		]
+		tailTooltip.setResource
+		tailtooltipParsed = tailTooltip
 		"a\\lb\\r".assertEquals(tailtooltip)
 	}
 
@@ -1207,10 +1250,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, tooltipParsed).assertTrue
 		
 		// set valid parsed values
-		tooltipParsed = createEscString => [
+		val toolTip = createEscString => [
 			lines += createJustifiedText => [text="a" justification=Justification.LEFT]
 			lines += createJustifiedText => [text="b" justification=Justification.RIGHT]
 		]
+		toolTip.setResource
+		tooltipParsed = toolTip
 		"a\\lb\\r".assertEquals(tooltip)
 	}
 
@@ -1245,6 +1290,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val point = createPoint => [x=33 y=54.6]
+		point.setResource
 		xlpParsed = point
 		"33.0, 54.6".assertEquals(xlp)
 		EcoreUtil.equals(point, xlpParsed).assertTrue
@@ -1274,7 +1320,9 @@ class DotAttributesTest {
 		398d.assertEquals(r.ury, 0d)
 		
 		// set valid parsed values
-		bbParsed = createRect => [llx=10.1 lly=20.2 urx=30.3 ury=40.4]
+		val bbEObject = createRect => [llx=10.1 lly=20.2 urx=30.3 ury=40.4]
+		bbEObject.setResource
+		bbParsed = bbEObject
 		"10.1 , 20.2 , 30.3 , 40.4".assertEquals(bb)
 		
 		// set invalid string values
@@ -1450,6 +1498,7 @@ class DotAttributesTest {
 			g = "ff"
 			b = "ff"
 		]
+		rgbColor.setResource
 		colorParsed = rgbColor
 		"#ffffff".assertEquals(color)
 		EcoreUtil.equals(rgbColor, colorParsed).assertTrue
@@ -1461,11 +1510,13 @@ class DotAttributesTest {
 		EcoreUtil.equals(rgbColor, colorParsed).assertTrue
 		
 		// set valid parsed values - hsv format
+		hsvColor.setResource
 		colorParsed = hsvColor
 		"0.000 0.000 1.000".assertEquals(color)
 		EcoreUtil.equals(hsvColor, colorParsed).assertTrue
 		
 		// set valid parsed values - string format
+		stringColor.setResource
 		colorParsed = stringColor
 		"white".assertEquals(color)
 		EcoreUtil.equals(stringColor, colorParsed).assertTrue
@@ -1617,6 +1668,7 @@ class DotAttributesTest {
 			g = "ff"
 			b = "ff"
 		]
+		rgbColor.setResource
 		fontcolorParsed = rgbColor
 		"#ffffff".assertEquals(fontcolor)
 		EcoreUtil.equals(rgbColor, fontcolorParsed).assertTrue
@@ -1628,11 +1680,13 @@ class DotAttributesTest {
 		EcoreUtil.equals(rgbColor, fontcolorParsed).assertTrue
 		
 		// set valid parsed values - hsv format
+		hsvColor.setResource
 		fontcolorParsed = hsvColor
 		"0.000 0.000 1.000".assertEquals(fontcolor)
 		EcoreUtil.equals(hsvColor, fontcolorParsed).assertTrue
 		
 		// set valid parsed values - string format
+		stringColor.setResource
 		fontcolorParsed = stringColor
 		"white".assertEquals(fontcolor)
 		EcoreUtil.equals(stringColor, fontcolorParsed).assertTrue
@@ -1659,6 +1713,7 @@ class DotAttributesTest {
 		validPostScriptString.assertEquals(fontname)
 		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
 		//Parsed setter
+		validPostScriptParsed.setResource
 		fontnameParsed = validPostScriptParsed
 		validPostScriptString.assertEquals(fontname)
 		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
@@ -1671,6 +1726,7 @@ class DotAttributesTest {
 		validPangoString.assertEquals(fontname)
 		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
 		//Parsed setter
+		validPangoParsed.setResource
 		fontnameParsed = validPangoParsed
 		validPangoString.assertEquals(fontname)
 		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
@@ -1910,6 +1966,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val validGraphLpParsed = createPoint => [x=2.2 y=3.3]
+		validGraphLpParsed.setResource
 		lpParsed = validGraphLpParsed
 		EcoreUtil.equals(validGraphLpParsed, lpParsed).assertTrue
 		"2.2, 3.3".assertEquals(lp)
@@ -2307,11 +2364,13 @@ class DotAttributesTest {
 			EcoreUtil.equals(expected, styleParsed).assertTrue
 		}
 		// set valid parsed values
-		styleParsed = createStyle => [
+		val validStyle = createStyle => [
 			styleItems += createStyleItem => [
 				name = "filled"
 			]
 		]
+		validStyle.setResource
+		styleParsed = validStyle
 		"filled".assertEquals(style)
 		
 		// set syntactically invalid values
@@ -2347,10 +2406,12 @@ class DotAttributesTest {
 		validEdgeStyle.assertEquals(style)
 		
 		// set valid parsed values
-		styleParsed = createStyle => [
+		val validStyle = createStyle => [
 			styleItems += createStyleItem => [name="bold"]
 			styleItems += createStyleItem => [name="dashed"]
 		]
+		validStyle.setResource 
+		styleParsed = validStyle
 		"bold , dashed".assertEquals(style)
 		
 		// set syntactically invalid values
@@ -2385,10 +2446,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, tooltipParsed).assertTrue
 		
 		// set valid parsed values
-		tooltipParsed = createEscString => [
+		val validTooltip = createEscString => [
 			lines += createJustifiedText => [text="a" justification = Justification.LEFT]
 			lines += createJustifiedText => [text="b" justification = Justification.RIGHT]
 		]
+		validTooltip.setResource
+		tooltipParsed = validTooltip
 		"a\\lb\\r".assertEquals(tooltip)
 	}
 
@@ -2504,6 +2567,7 @@ class DotAttributesTest {
 			g = "ff"
 			b = "ff"
 		]
+		rgbColor.setResource
 		colorParsed = rgbColor
 		"#ffffff".assertEquals(color)
 		EcoreUtil.equals(rgbColor, colorParsed).assertTrue
@@ -2515,11 +2579,13 @@ class DotAttributesTest {
 		EcoreUtil.equals(rgbColor, colorParsed).assertTrue
 		
 		// set valid parsed values - hsv format
+		hsvColor.setResource
 		colorParsed = hsvColor
 		"0.000 0.000 1.000".assertEquals(color)
 		EcoreUtil.equals(hsvColor, colorParsed).assertTrue
 		
 		// set valid parsed values - string format
+		stringColor.setResource
 		colorParsed = stringColor
 		"/svg/white".assertEquals(color)
 		EcoreUtil.equals(stringColor, colorParsed).assertTrue
@@ -2733,6 +2799,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values - rgb format
 		rgbColor = createRGBColor => [r="00" g="ff" b="00"]
+		rgbColor.setResource
 		fontcolorParsed = rgbColor
 		"#00ff00".assertEquals(fontcolor)
 		EcoreUtil.equals(rgbColor, fontcolorParsed).assertTrue
@@ -2744,11 +2811,13 @@ class DotAttributesTest {
 		EcoreUtil.equals(rgbColor, fontcolorParsed).assertTrue
 		
 		// set valid parsed values - hsv format
+		hsvColor.setResource
 		fontcolorParsed = hsvColor
 		"0.3 .8 .7".assertEquals(fontcolor)
 		EcoreUtil.equals(hsvColor, fontcolorParsed).assertTrue
 		
 		// set valid parsed values - string format
+		stringColor.setResource
 		fontcolorParsed = stringColor
 		"/brbg11/10".assertEquals(fontcolor)
 		EcoreUtil.equals(stringColor, fontcolorParsed).assertTrue
@@ -2775,6 +2844,7 @@ class DotAttributesTest {
 		validPostScriptString.assertEquals(fontname)
 		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
 		//Parsed setter
+		validPostScriptParsed.setResource
 		fontnameParsed = validPostScriptParsed
 		validPostScriptString.assertEquals(fontname)
 		EcoreUtil.equals(validPostScriptParsed, fontnameParsed).assertTrue
@@ -2787,6 +2857,7 @@ class DotAttributesTest {
 		validPangoString.assertEquals(fontname)
 		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
 		//Parsed setter
+		validPangoParsed.setResource
 		fontnameParsed = validPangoParsed
 		validPangoString.assertEquals(fontname)
 		EcoreUtil.equals(validPangoParsed, fontnameParsed).assertTrue
@@ -2965,6 +3036,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val point = createPoint => [x=33 y=54.6 inputOnly=true]
+		point.setResource
 		posParsed = point
 		"33.0, 54.6!".assertEquals(pos)
 		EcoreUtil.equals(posParsed, point).assertTrue
@@ -3016,11 +3088,13 @@ class DotAttributesTest {
 		}
 		
 		// set valid parsed values
-		shapeParsed = createShape => [
+		val validShape = createShape => [
 			shape = createPolygonBasedShape => [
 				shape = PolygonBasedNodeShape.BOX
 			]
 		]
+		validShape.setResource
+		shapeParsed = validShape
 		"box".assertEquals(shape)
 		
 		// set invalid string values
@@ -3135,10 +3209,12 @@ class DotAttributesTest {
 		validNodeStyle.assertEquals(style)
 		
 		// set valid parsed values
-		styleParsed = createStyle => [
+		val validStyle = createStyle => [
 			styleItems += createStyleItem => [name="bold"]
 			styleItems += createStyleItem => [name="dashed"]
 		]
+		validStyle.setResource
+		styleParsed = validStyle
 		"bold , dashed".assertEquals(style)
 		
 		// set syntactically invalid values
@@ -3174,10 +3250,12 @@ class DotAttributesTest {
 		EcoreUtil.equals(expected, tooltipParsed).assertTrue
 		
 		// set valid parsed values
-		tooltipParsed = createEscString => [
+		val toolTip = createEscString => [
 			lines += createJustifiedText => [text="a" justification=Justification.LEFT]
 			lines += createJustifiedText => [text="b" justification=Justification.RIGHT]
 		]
+		toolTip.setResource
+		tooltipParsed = toolTip
 		"a\\lb\\r".assertEquals(tooltip)
 	}
 
@@ -3253,6 +3331,7 @@ class DotAttributesTest {
 		
 		// set valid parsed values
 		val point = createPoint => [x=33 y=54.6 inputOnly=true]
+		point.setResource
 		xlpParsed = point
 		"33.0, 54.6!".assertEquals(xlp)
 		EcoreUtil.equals(xlpParsed, point).assertTrue
@@ -3327,10 +3406,16 @@ class DotAttributesTest {
 	}
 
 	private def createColorList(Color color) {
-		createColorList => [
+		val colorList = createColorList => [
 			colorValues += createWC => [
 				it.color = color
 			]
 		]
+		colorList.setResource
+		colorList
+	}
+
+	private def void setResource(EObject eObject) {
+		new ResourceImpl => [contents += eObject]
 	}
 }
