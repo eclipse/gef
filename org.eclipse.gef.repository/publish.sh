@@ -169,7 +169,7 @@ cd $tmpDir
 
 # Download and prepare Eclipse SDK, which is needed to merge update site and postprocess repository 
 echo "Downloading eclipse to $PWD"
-curl https://archive.eclipse.org/eclipse/downloads/drops4/R-4.9-201809060745/download.php?dropFile=eclipse-SDK-4.9-linux-gtk-x86_64.tar.gz | perl -ne '/automatically click <a href=([^>]+)/ && `curl -L --output eclipse-SDK.tar.gz $1`'
+curl -L --output eclipse-SDK.tar.gz https://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops4/R-4.9-201809060745/eclipse-SDK-4.9-linux-gtk-x86_64.tar.gz
 tar -xvzf eclipse-SDK.tar.gz
 cd eclipse
 chmod 700 eclipse
