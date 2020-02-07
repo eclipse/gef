@@ -11,7 +11,7 @@
  *                                    - Add support for polygon-based node shapes (bug #441352)
  *                                    - modify grammar to allow empty attribute lists (bug #461506)
  *                                    - Add support for all dot attributes (bug #461506)
- *     Zoey Gerrit Prigge (itemis AG) - implement additional attributes (bug #461506)
+ *     Zoey Gerrit Prigge (itemis AG) - implement additional test cases (bug #461506, #559031)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -268,6 +268,19 @@ class DotParserTest {
 				}
 			'''.hasNoErrors
 		}
+	}
+
+	@Test def double_values() {
+		'''
+			graph {
+				graph [bb="0x3.e,0x1.eP1,2.16e+07,36"];
+				node [label="\N"];
+				n	 [height=0.5,
+					pos="1.08e+07,18",
+					width="3E+05"];
+				p [height="0x1.fp-03", width="0x4"]
+			}
+		'''.hasNoErrors
 	}
 
 // Test cases with parameterized multi-line templates

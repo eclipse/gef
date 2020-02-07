@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 itemis AG and others.
+ * Copyright (c) 2016, 2020 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Zoey Prigge     (itemis AG) - include exp and hex in double literal grammar (bug #559031)
  *     
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotPoint hidden(WS)
@@ -18,7 +19,17 @@ Point:
 	x=DOUBLE "," y=DOUBLE ("," z=DOUBLE)? (inputOnly?="!")?;
 
 terminal DOUBLE returns ecore::EDouble:
-	('-')? (('.' ('0'..'9')+) | (('0'..'9')+ (('.') ('0'..'9')*)?));
+	//negative numbers
+	('-')? 
+	(
+		// decimal numbers
+		((('.' ('0'..'9')+) | (('0'..'9')+ (('.') ('0'..'9')*)?)) (('e'|'E') ('+'|'-')? ('0'..'9')+)?) |
+		// hexadecimal numbers
+		('0' ('x'|'X') 
+			(('.' ('0'..'9'|'a'..'f'|'A'..'F')+) | (('0'..'9'|'a'..'f'|'A'..'F')+ (('.') ('0'..'9'|'a'..'f'|'A'..'F')*)?)) 
+			(('p'|'P') ('+'|'-')? ('0'..'9')+)?
+		)
+	);
 
 terminal WS:
 	(' ' | '\t' | '\r' | '\n')+;

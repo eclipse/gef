@@ -9,7 +9,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG)    - initial API and implementation
  *     Tamas Miklossy  (itemis AG)    - implement additional test cases (bug #461506)
- *     Zoey Gerrit Prigge (itemis AG) - implement additional test cases (bugs #461506, #547809)
+ *     Zoey Gerrit Prigge (itemis AG) - implement additional test cases (bugs #461506, #547809, #559031)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -1318,6 +1318,16 @@ class DotAttributesTest {
 		558d.assertEquals(r.lly, 0d)
 		111.63d.assertEquals(r.urx, 0d)
 		398d.assertEquals(r.ury, 0d)
+		
+		// set valid string values
+		bb = "0x3.e,0x1.eP1,2.16e+07,36"
+		"0x3.e,0x1.eP1,2.16e+07,36".assertEquals(bb)
+		val s = bbParsed
+		r.assertNotNull
+		3.875d.assertEquals(s.llx, 0d)
+		3.75d.assertEquals(s.lly, 0d)
+		2.16E7d.assertEquals(s.urx, 0d)
+		36d.assertEquals(s.ury, 0d)
 		
 		// set valid parsed values
 		val bbEObject = createRect => [llx=10.1 lly=20.2 urx=30.3 ury=40.4]
@@ -3032,6 +3042,7 @@ class DotAttributesTest {
 		// set valid string values
 		pos = "47, 11"
 		pos = "34.5, 45.3!"
+		pos = "0x5p2,-12.3E+2"
 		pos = "-221.31,936.82"
 		
 		// set valid parsed values
@@ -3272,6 +3283,15 @@ class DotAttributesTest {
 		width = validNodeWidth
 		validNodeWidth.assertEquals(width)
 		validNodeWidth = "76"
+		width = validNodeWidth
+		validNodeWidth.assertEquals(width)
+		validNodeWidth = "5E5"
+		width = validNodeWidth
+		validNodeWidth.assertEquals(width)
+		validNodeWidth = "0X8"
+		width = validNodeWidth
+		validNodeWidth.assertEquals(width)
+		validNodeWidth = "3.2e-3"
 		width = validNodeWidth
 		validNodeWidth.assertEquals(width)
 

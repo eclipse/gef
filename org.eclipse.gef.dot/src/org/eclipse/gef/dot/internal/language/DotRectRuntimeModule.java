@@ -8,11 +8,14 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Zoey Prigge     (itemis AG) - bind value converter (bug #559031)
  *     
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 
+import org.eclipse.gef.dot.internal.language.doubleValues.DotDoubleOnlyGrammarConverters;
 import org.eclipse.gef.dot.internal.language.formatting.DotRectFormatter;
+import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.formatting.IFormatter;
 
 /**
@@ -21,6 +24,10 @@ import org.eclipse.xtext.formatting.IFormatter;
  */
 public class DotRectRuntimeModule extends
 		org.eclipse.gef.dot.internal.language.AbstractDotRectRuntimeModule {
+	@Override
+	public Class<? extends IValueConverterService> bindIValueConverterService() {
+		return DotDoubleOnlyGrammarConverters.class;
+	}
 
 	@Override
 	public Class<? extends IFormatter> bindIFormatter() {

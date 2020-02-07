@@ -12,6 +12,7 @@
  *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
  *                                    - Add clusterrank check in isCluster (bug #547809)
  *                                    - Include parsedAsAttribute (bug #548911)
+ *                                    - change double parsing to include all values (bug #559031)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
@@ -55,6 +56,7 @@ import org.eclipse.gef.dot.internal.language.dot.EdgeStmtSubgraph
 import org.eclipse.gef.dot.internal.language.dot.GraphType
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt
 import org.eclipse.gef.dot.internal.language.dot.Subgraph
+import org.eclipse.gef.dot.internal.language.doubleValues.DotDoubleUtil
 import org.eclipse.gef.dot.internal.language.escstring.EscString
 import org.eclipse.gef.dot.internal.language.fontname.FontName
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlLabel
@@ -976,10 +978,8 @@ class DotAttributes {
 				return null
 			}
 			try {
-
-				// TODO: check that this resembles the DOT double interpretation
-				val double parsedValue = Double.parseDouble(rawValue)
-				return new IAttributeValueParser.ParseResult<Double>(new Double(parsedValue))
+				val Double parsedValue = DotDoubleUtil.parseDotDouble(rawValue)
+				return new IAttributeValueParser.ParseResult<Double>(parsedValue)
 			} catch (NumberFormatException exception) {
 				return new IAttributeValueParser.ParseResult<Double>(
 					Collections.<Diagnostic>singletonList(
