@@ -1,3 +1,0 @@
-The publish.sh script may be used to publish the build results (update site). The script may be called
-without parameters and prompts for everything it requires for publishing an update site, or it may be 
-invoked with respective command line parameters.
