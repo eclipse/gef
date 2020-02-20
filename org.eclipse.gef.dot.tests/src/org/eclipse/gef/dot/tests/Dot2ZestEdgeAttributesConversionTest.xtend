@@ -502,12 +502,36 @@ class Dot2ZestEdgeAttributesConversionTest {
 	@Test def edge_label004() {
 		'''
 			digraph {
+				1->2[label="foo\lbar\rbaz"]
+			}
+		'''.assertEdgeLabel("foo\nbar\nbaz")
+	}
+
+	@Test def edge_label005() {
+		'''
+			digraph {
+				1->2[label="foo\nbar\nbaz\n\n"]
+			}
+		'''.assertEdgeLabel("foo\nbar\nbaz\n")
+	}
+
+	@Test def edge_label006() {
+		'''
+			digraph {
+				1->2[label="foo\nbar\nbaz\r"]
+			}
+		'''.assertEdgeLabel("foo\nbar\nbaz")
+	}
+
+	@Test def edge_label007() {
+		'''
+			digraph {
 				1->2[label="Test \E"]
 			}
 		'''.assertEdgeLabel("Test 1->2")
 	}
 
-	@Test def edge_label005() {
+	@Test def edge_label008() {
 		'''
 			digraph samplegraph {
 				1->2[label="\E \G"]
@@ -515,7 +539,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		'''.assertEdgeLabel("1->2 samplegraph")
 	}
 
-	@Test def edge_label006() {
+	@Test def edge_label009() {
 		'''
 			digraph {
 				1->2[fontcolor=red label=l]
@@ -525,7 +549,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_label007() {
+	@Test def edge_label010() {
 		'''
 			digraph {
 				edge[fontcolor=red]
@@ -536,7 +560,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_label008() {
+	@Test def edge_label011() {
 		mockAvailableFonts("Bitstream Vera Sans")
 		'''
 			digraph {
@@ -550,7 +574,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_label009() {
+	@Test def edge_label012() {
 		'''
 			digraph {
 				edge[fontsize=16]
@@ -561,7 +585,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_label010() {
+	@Test def edge_label013() {
 		mockAvailableFonts("Bitstream Vera Sans")
 		'''
 			digraph {
@@ -602,13 +626,29 @@ class Dot2ZestEdgeAttributesConversionTest {
 
 	@Test def edge_externalLabel004() {
 		'''
+			digraph {
+				1->2[xlabel="foo\lbar\rbaz"]
+			}
+		'''.assertEdgeExternalLabel("foo\nbar\nbaz")
+	}
+
+	@Test def edge_externalLabel005() {
+		'''
+			digraph {
+				1->2[xlabel="foo\lbar\nbaz\n"]
+			}
+		'''.assertEdgeExternalLabel("foo\nbar\nbaz")
+	}
+
+	@Test def edge_externalLabel006() {
+		'''
 			digraph testedGraphName {
 				1->2[xlabel="g: \G e:\E h:\H t:\T"]
 			}
 		'''.assertEdgeExternalLabel("g: testedGraphName e:1->2 h:2 t:1")
 	}
 
-	@Test def edge_externalLabel005() {
+	@Test def edge_externalLabel007() {
 		'''
 			digraph {
 				1->2[fontcolor=red xlabel=x]
@@ -618,7 +658,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_externalLabel006() {
+	@Test def edge_externalLabel008() {
 		'''
 			digraph {
 				edge[fontcolor=red]
@@ -629,7 +669,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_externalLabel007() {
+	@Test def edge_externalLabel009() {
 		mockAvailableFonts("Arial")
 		'''
 			digraph {
@@ -643,7 +683,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_externalLabel008() {
+	@Test def edge_externalLabel010() {
 		'''
 			digraph {
 				edge[fontsize=16]
@@ -654,7 +694,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		''')
 	}
 
-	@Test def edge_externalLabel009() {
+	@Test def edge_externalLabel011() {
 		mockAvailableFonts("Arial")
 		'''
 			digraph {
@@ -689,7 +729,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 	@Test def edge_sourceLabel003() {
 		'''
 			digraph {
-				1->2[taillabel="foo\nbar\nbaz"]
+				1->2[taillabel="foo\lbar\rbaz\n"]
 			}
 		'''.assertEdgeSourceLabel("foo\nbar\nbaz")
 	}
@@ -830,7 +870,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 	@Test def edge_targetLabel003() {
 		'''
 			digraph {
-				1->2[headlabel="foo\nbar\nbaz"]
+				1->2[headlabel="foo\lbar\rbaz\n"]
 			}
 		'''.assertEdgeTargetLabel("foo\nbar\nbaz")
 	}

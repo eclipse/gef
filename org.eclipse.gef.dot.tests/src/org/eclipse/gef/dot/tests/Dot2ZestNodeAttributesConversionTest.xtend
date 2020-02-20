@@ -343,9 +343,33 @@ class Dot2ZestNodeAttributesConversionTest {
 	@Test def node_label013() {
 		'''
 			graph {
-				"$"[label="\N"]
+				a[label="foo\nbar\rbaz"]
 			}
-		'''.assertNodeLabel("$")
+		'''.assertNodeLabel("foo\nbar\nbaz")
+	}
+
+	@Test def node_label014() {
+		'''
+			graph {
+				a[label="foo\lbar\rbaz\r\r"]
+			}
+		'''.assertNodeLabel("foo\nbar\nbaz\n")
+	}
+
+	@Test def node_label015() {
+		'''
+			graph {
+				a[label="foo\lbar\rbaz\r"]
+			}
+		'''.assertNodeLabel("foo\nbar\nbaz")
+	}
+
+	@Test def node_label016() {
+		'''
+			graph {
+				a[label="foo\nbar"]
+			}
+		'''.assertNodeLabel("foo\nbar")
 	}
 
 	@Test def node_id001() {
@@ -389,6 +413,22 @@ class Dot2ZestNodeAttributesConversionTest {
 	}
 
 	@Test def node_xlabel003() { 
+		'''
+			digraph {
+				1[xlabel="fantastic\rlabel"]
+			}
+		'''.assertNodeXLabel("fantastic\nlabel")
+	}
+
+	@Test def node_xlabel004() { 
+		'''
+			digraph {
+				1[xlabel="fantastic\nlabel\n\n"]
+			}
+		'''.assertNodeXLabel("fantastic\nlabel\n")
+	}
+
+	@Test def node_xlabel005() { 
 		'''
 			digraph testedGraphName {
 				1[xlabel="node:\L graph:\G"]

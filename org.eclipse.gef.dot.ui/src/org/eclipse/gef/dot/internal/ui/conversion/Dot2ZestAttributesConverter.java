@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 itemis AG and others.
+ * Copyright (c) 2015, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,6 +18,7 @@
  *                                    - Add support for labelfontcolor attribute (bug #540958)
  *                                    - Add support for (label)fontsize/name (bug #541056)
  *                                    - Add penwidth support (bug #541106)
+ *                                    - Add support for "\l", "\r" linebreaks (bug #508868)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.conversion;
@@ -712,7 +713,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXlabel(dot);
 		if (dotXLabel != null) {
-			dotXLabel = decodeEscString(dotXLabel, dot);
+			dotXLabel = decodeEscString(decodeLineBreak(dotXLabel), dot);
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 			if (zestNodeLabelCssStyle != null) {
 				ZestProperties.setExternalLabelCssStyle(zest,
@@ -833,8 +834,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	}
 
 	private String decodeLineBreak(String text) {
-		// TODO support for \l \c by better way of decoding line breaks
-		return text.replaceAll("\\\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		// TODO implement justification support
+		return text.replaceAll("\\\\[lnr]\\Z", "").replaceAll("\\\\[lnr]", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"\n"); //$NON-NLS-1$
 	}
 
 	private String decodeEscString(String escString, Edge edge) {
