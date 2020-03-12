@@ -10,6 +10,7 @@
 	Contributors:
 		Alexander Nyßen (itemis AG) - initial API and implementation
 		Tamas Miklossy  (itemis AG) - various extensions/improvements
+		Zoey Prigge     (itemis AG) - support for gv file extension
 -->
 <plugin>
 	<extension
@@ -18,7 +19,7 @@
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
 			contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
 			default="true"
-			extensions="dot"
+			extensions="dot,gv"
 			id="org.eclipse.gef.dot.internal.language.Dot"
 			name="DOT Editor">
 		</editor>
@@ -282,7 +283,7 @@
 	<extension point="org.eclipse.core.contenttype.contentTypes">
 		<content-type
 			base-type="org.eclipse.core.runtime.text"
-			file-extensions="dot"
+			file-extensions="dot,gv"
 			id="org.eclipse.gef.dot.internal.language.Dot.contenttype"
 			name="Dot File"
 			priority="normal">
@@ -300,6 +301,19 @@
 		<resourceServiceProvider
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
 			uriExtension="dot">
+		</resourceServiceProvider>
+	</extension>
+	<extension
+		point="org.eclipse.emf.ecore.extension_parser">
+		<parser
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			type="gv">
+		</parser>
+	</extension>
+	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
+		<resourceServiceProvider
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+			uriExtension="gv">
 		</resourceServiceProvider>
 	</extension>
 	<!-- marker definitions for org.eclipse.gef.dot.internal.language.Dot -->
@@ -327,7 +341,7 @@
 	<extension point="org.eclipse.xtext.builder.participant">
 		<participant
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
-			fileExtensions="dot"/>
+			fileExtensions="dot,gv"/>
 	</extension>
 	<extension point="org.eclipse.ui.propertyPages">
 		<page
@@ -452,7 +466,7 @@
 	<extension point="org.eclipse.compare.contentViewers">
 		<viewer id="org.eclipse.gef.dot.internal.language.Dot.compare.contentViewers"
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-			extensions="dot">
+			extensions="dot,gv">
 		</viewer>
 		<contentTypeBinding
 			contentTypeId="org.eclipse.gef.dot.internal.language.Dot.contenttype"
@@ -461,7 +475,7 @@
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="org.eclipse.gef.dot.internal.language.Dot.compare.contentMergeViewers"
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-			extensions="dot" label="Dot Compare">
+			extensions="dot,gv" label="Dot Compare">
 		</viewer>
 		<contentTypeBinding
 			contentTypeId="org.eclipse.gef.dot.internal.language.Dot.contenttype"
@@ -470,12 +484,16 @@
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="org.eclipse.gef.dot.internal.language.Dot.editors.documentProviders"
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-			extensions="dot">
+			extensions="dot,gv">
 		</provider>
 	</extension>
 	<extension point="org.eclipse.team.core.fileTypes">
 		<fileTypes
 			extension="dot"
+			type="text">
+		</fileTypes>
+		<fileTypes
+			extension="gv"
 			type="text">
 		</fileTypes>
 	</extension>

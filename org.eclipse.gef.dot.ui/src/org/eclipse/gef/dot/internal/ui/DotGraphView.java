@@ -13,6 +13,7 @@
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - Render embedded dot graphs in native mode (bug #493694)
  *     Zoey Prigge (itemis AG)    - Avoid NPE when setting ungrammatical bgcolor (bug #540508)
+ *                                - add support for gv file extension (bug #481267)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
@@ -23,6 +24,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -113,7 +115,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 	public static final String STYLES_CSS_FILE = DotGraphView.class
 			.getResource("styles.css") //$NON-NLS-1$
 			.toExternalForm();
-	private static final String EXTENSION = "dot"; //$NON-NLS-1$
+	private static final String[] EXTENSIONS = { "dot", "gv" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String GRAPH_NONE = DotUiMessages.DotGraphView_0;
 	private boolean listenToDotContent = false;
 	private boolean listenToSelectionChanges = false;
@@ -391,8 +393,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		}
 
 		currentFile = file;
-		boolean isEmbeddedDotFile = !currentFile.getName()
-				.endsWith("." + EXTENSION); //$NON-NLS-1$
+		boolean isEmbeddedDotFile = !hasDotFileExtension(currentFile.getName());
 
 		DotExtractor dotExtractor = null;
 		if (isEmbeddedDotFile) {
@@ -432,7 +433,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 
 	private IWorkspaceRunnable updateGraphRunnable(final File f) {
 		if (!listenToDotContent
-				&& !f.getAbsolutePath().toString().endsWith(EXTENSION)) {
+				&& !hasDotFileExtension(f.getAbsolutePath().toString())) {
 			return null;
 		}
 		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
@@ -472,7 +473,7 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			public boolean visit(final IResourceDelta delta) {
 				IResource resource = delta.getResource();
 				if (resource.getType() == IResource.FILE
-						&& ((IFile) resource).getName().endsWith(EXTENSION)) {
+						&& hasDotFileExtension(((IFile) resource).getName())) {
 					try {
 						final IFile f = (IFile) resource;
 						IWorkspaceRunnable workspaceRunnable = updateGraphRunnable(
@@ -636,14 +637,23 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 			FileDialog dialog = new FileDialog(getViewSite().getShell(),
 					SWT.OPEN);
 			dialog.setFileName(lastSelection);
-			String dotFileNamePattern = "*." + EXTENSION; //$NON-NLS-1$
-			String embeddedDotFileNamePattern = "*.*"; //$NON-NLS-1$
-			dialog.setFilterExtensions(new String[] { dotFileNamePattern,
-					embeddedDotFileNamePattern });
-			dialog.setFilterNames(new String[] {
-					String.format("DOT file (%s)", dotFileNamePattern), //$NON-NLS-1$
-					String.format("Embedded DOT Graph (%s)", //$NON-NLS-1$
-							embeddedDotFileNamePattern) });
+			String[] filterSuffixPattern = new String[EXTENSIONS.length + 1];
+			String[] filterReadableName = new String[EXTENSIONS.length + 1];
+
+			filterSuffixPattern[0] = "*.*"; //$NON-NLS-1$
+			filterReadableName[0] = String.format("Embedded DOT Graph (%s)", //$NON-NLS-1$
+					filterSuffixPattern[0]);
+
+			for (int i = 1; i <= EXTENSIONS.length; i++) {
+				String suffix = EXTENSIONS[i - 1];
+				filterSuffixPattern[i] = "*." + suffix; //$NON-NLS-1$
+				filterReadableName[i] = String.format(Locale.ENGLISH,
+						"%S file (%s)", suffix, //$NON-NLS-1$
+						filterSuffixPattern[i]);
+			}
+
+			dialog.setFilterExtensions(filterSuffixPattern);
+			dialog.setFilterNames(filterReadableName);
 			String selection = dialog.open();
 			if (selection != null) {
 				lastSelection = selection;
@@ -689,5 +699,13 @@ public class DotGraphView extends ZestFxUiView implements IShowInTarget {
 		}
 
 		return false;
+	}
+
+	private boolean hasDotFileExtension(String fileName) {
+		// matches names that end in .ext, where ext can be any of EXTENSIONS
+		// ignoring case
+		return fileName.toLowerCase(Locale.ENGLISH).matches(String.format(
+				".*\\.(%s)\\Z", //$NON-NLS-1$
+				String.join("|", EXTENSIONS).toLowerCase(Locale.ENGLISH))); //$NON-NLS-1$
 	}
 }
