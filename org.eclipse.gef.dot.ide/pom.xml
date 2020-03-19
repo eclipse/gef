@@ -24,6 +24,7 @@
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
+				<version>${xtext.version}</version>
 			</plugin>
 		</plugins>
 	</build>
