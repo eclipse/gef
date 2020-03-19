@@ -9,6 +9,7 @@
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
  *    Zoey Prigge    (itemis AG) - strikethrough/deprecation (bug #552993)
+ *    Christoph Läubrich - compatibility with later xtend version (https://github.com/eclipse/gef/issues/88)
  * 
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
@@ -191,12 +192,12 @@ class DotHighlightingTest extends AbstractHighlightingTest {
 	protected override openInEditor(IFile dslFile) {
 		val editor = dslFile.openEditor
 		
-		waitForEventProcessing
+		waitForEventProcessingWorkaround
 	
 		editor.internalSourceViewer.textWidget
 	}
 
-	private def waitForEventProcessing() {
+	protected def waitForEventProcessingWorkaround() {
 		while (Display.^default.readAndDispatch) { }
 	}
 }
