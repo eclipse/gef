@@ -43,16 +43,18 @@ Having accomplished that, you might want to browse our [developer documentation]
 	
 	```
 	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-	<?pde version="3.8"?><target name="gef-integration" sequenceNumber="1">
+	<?pde version="3.8"?>
+	<target name="gef-integration" sequenceNumber="1">
 	<locations>
-	  <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-	    <unit id="org.eclipse.xtext.sdk.feature.group" version="2.10.0.v201605250459"/>
-	    <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.4.0.201605100504"/>
-	    <unit id="org.eclipse.emf.sdk.feature.group" version="2.12.0.v20160526-0356"/>
-	    <unit id="org.eclipse.sdk.ide" version="4.6.0.I20160606-1100"/>
-	    <repository location="http://download.eclipse.org/releases/neon"/>
+	  <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+	    <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.sdk.ide" version="0.0.0"/>
+	    <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
+	    <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
+	    <repository location="https://download.eclipse.org/releases/2019-03"/>
 	  </location>
-	  <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+	  <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 	    <unit id="org.eclipse.gef.common.sdk.feature.group" version="0.0.0"/>
 	    <unit id="org.eclipse.gef.geometry.sdk.feature.group" version="0.0.0"/>
 	    <unit id="org.eclipse.gef.fx.sdk.feature.group" version="0.0.0"/>
