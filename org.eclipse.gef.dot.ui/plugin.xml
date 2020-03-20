@@ -11,6 +11,7 @@
 		Alexander Nyßen (itemis AG) - initial API and implementation
 		Tamas Miklossy  (itemis AG) - various extensions/improvements
 		Zoey Prigge     (itemis AG) - support for gv file extension
+		                            - include file/project wizard (bug #561084)
 -->
 <plugin>
 	<extension
@@ -496,6 +497,63 @@
 			extension="gv"
 			type="text">
 		</fileTypes>
+	</extension>
+	<extension
+		point="org.eclipse.ui.newWizards">
+		<category id="org.eclipse.gef.dot.internal.ui.language.category" name="Dot">
+		</category>
+		<wizard
+			category="org.eclipse.gef.dot.internal.ui.language.category"
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.wizard.template.TemplateNewProjectWizard"
+			id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewProjectWizard"
+			name="Dot Project"
+			icon="icons/new_Dot_proj.gif"
+			project="true">
+		</wizard>
+	</extension>
+	<extension
+		point="org.eclipse.xtext.ui.projectTemplate">
+		<projectTemplateProvider
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.gef.dot.internal.ui.language.wizard.DotProjectTemplateProvider"
+			grammarName="org.eclipse.gef.dot.internal.language.Dot">
+		</projectTemplateProvider>
+	</extension>
+	<extension
+		point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+			<newWizardShortcut id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewProjectWizard"/>
+		</perspectiveExtension>
+		<perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+			<newWizardShortcut id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewProjectWizard"/>
+		</perspectiveExtension>
+	</extension>
+	<extension
+		point="org.eclipse.ui.newWizards">
+		<category id="org.eclipse.gef.dot.internal.ui.language.category" name="Dot">
+		</category>
+		<wizard
+			category="org.eclipse.gef.dot.internal.ui.language.category"
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.wizard.template.TemplateNewFileWizard"
+			id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewFileWizard"
+			name="Dot File"
+			icon="icons/new_Dot_file.png">
+		</wizard>
+	</extension>
+	<extension
+		point="org.eclipse.xtext.ui.fileTemplate">
+		<fileTemplateProvider
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.gef.dot.internal.ui.language.wizard.DotFileTemplateProvider"
+			grammarName="org.eclipse.gef.dot.internal.language.Dot">
+		</fileTemplateProvider>
+	</extension>
+	<extension
+		point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+			<newWizardShortcut id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewFileWizard"/>
+		</perspectiveExtension>
+		<perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+			<newWizardShortcut id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewFileWizard"/>
+		</perspectiveExtension>
 	</extension>
 	<extension
 		point="org.eclipse.ui.views">

@@ -20,7 +20,7 @@
  *							- integration of dot attribute sub-grammars (bug #461506)
  *		Zoey Gerrit Prigge	- integration of record label sub-grammar (bug #454629)
  *							- integration of dot font name emf model and grammar (bug #542663)
- *							- gv file extension (bug #481267)
+ *							- support for file and project wizard, gv file extension
  *
  *******************************************************************************/
 module org.eclipse.gef.dot.internal.language.Dot
@@ -188,6 +188,14 @@ Workflow {
 			
 			generator = { 
 				generateStub=false
+			}
+			
+			projectWizard = {
+				generate = true
+			}
+			
+			fileWizard = {
+				generate = true
 			}
 		}
 		language = StandardLanguage {
