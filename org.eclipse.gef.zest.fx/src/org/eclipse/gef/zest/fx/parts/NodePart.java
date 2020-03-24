@@ -607,6 +607,7 @@ public class NodePart extends AbstractContentPart<Group>
 		} else {
 			if (tooltipNode != null) {
 				Tooltip.uninstall(getVisual(), tooltipNode);
+				tooltipNode = null;
 			}
 		}
 	}
