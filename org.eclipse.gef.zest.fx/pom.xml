@@ -21,6 +21,6 @@
 	</parent>
 	<groupId>org.eclipse.gef.plugins</groupId>
 	<artifactId>org.eclipse.gef.zest.fx</artifactId>
-	<version>5.1.1-SNAPSHOT</version>
+	<version>5.1.2-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 </project>

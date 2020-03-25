@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF Zest Examples
 Bundle-SymbolicName: org.eclipse.gef.zest.examples;singleton:=true
-Bundle-Version: 5.1.1.qualifier
+Bundle-Version: 5.1.2.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.zest.examples;x-friends:="org.eclipse.gef.zest.examples.graph,org.eclipse.gef.zest.examples.graph.ui"

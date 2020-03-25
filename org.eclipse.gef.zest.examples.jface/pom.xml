@@ -21,7 +21,7 @@
 	</parent>
 	<groupId>org.eclipse.gef.examples</groupId>
 	<artifactId>org.eclipse.gef.zest.examples.jface</artifactId>
-	<version>5.1.1-SNAPSHOT</version>
+	<version>5.1.2-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	<build>
 		<plugins>

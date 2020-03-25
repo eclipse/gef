@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.zest.examples"
       label="GEF Zest Examples"
-      version="5.1.1.qualifier"
+      version="5.1.2.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.zest.examples"
       license-feature="org.eclipse.license"

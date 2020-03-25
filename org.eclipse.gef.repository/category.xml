@@ -78,16 +78,16 @@
    <feature url="features/org.eclipse.gef.zest.fx.ui_5.0.3.qualifier.jar" id="org.eclipse.gef.zest.fx.ui" version="5.0.3.qualifier">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.doc_5.1.1.qualifier.jar" id="org.eclipse.gef.zest.doc" version="5.1.1.qualifier">
+   <feature url="features/org.eclipse.gef.zest.doc_5.1.2.qualifier.jar" id="org.eclipse.gef.zest.doc" version="5.1.2.qualifier">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.sdk_5.1.1.qualifier.jar" id="org.eclipse.gef.zest.sdk" version="5.1.1.qualifier">
+   <feature url="features/org.eclipse.gef.zest.sdk_5.1.2.qualifier.jar" id="org.eclipse.gef.zest.sdk" version="5.1.2.qualifier">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.fx_5.1.1.qualifier.jar" id="org.eclipse.gef.zest.fx" version="5.1.1.qualifier">
+   <feature url="features/org.eclipse.gef.zest.fx_5.1.2.qualifier.jar" id="org.eclipse.gef.zest.fx" version="5.1.2.qualifier">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.examples.source_5.1.1.qualifier.jar" id="org.eclipse.gef.zest.examples.source" version="5.1.1.qualifier">
+   <feature url="features/org.eclipse.gef.zest.examples.source_5.1.2.qualifier.jar" id="org.eclipse.gef.zest.examples.source" version="5.1.2.qualifier">
       <category name="GEF Zest"/>
    </feature>
    <feature url="features/org.eclipse.gef.cloudio.ui_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.ui" version="5.0.2.qualifier">

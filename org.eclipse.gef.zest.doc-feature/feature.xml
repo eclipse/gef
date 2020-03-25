@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.zest.doc"
       label="GEF Zest Developer Documentation"
-      version="5.1.1.qualifier"
+      version="5.1.2.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.zest.doc"
       license-feature="org.eclipse.license"

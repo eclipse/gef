@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF Zest Developer Documentation
 Bundle-SymbolicName: org.eclipse.gef.zest.doc;singleton:=true
-Bundle-Version: 5.1.1.qualifier
+Bundle-Version: 5.1.2.qualifier
 Bundle-Vendor: Eclipse GEF
 Require-Bundle: org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
  org.eclipse.ui.views;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
