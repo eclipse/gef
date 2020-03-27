@@ -30,18 +30,18 @@ class DotFileTemplateProvider implements IFileTemplateProvider {
 	}
 }
 
-@FileTemplate(label="DOT Graph", icon="file_template.png", description="Create a dot graph.")
+@FileTemplate(label="DOT Graph", icon="file_template.png", description="Create a GEF DOT graph.")
 final class ParameterisedDotFile {
 	val type = combo("Graph Type:", #["directed graph", "undirected graph"])
-	val digraphName = text("Graph name (optional):", "", "Optional name of your graph")
+	val graphName = text("Graph name (optional):", "", "Optional name of the graph")
 	val nodes = text("Number of nodes:", "1")
 	
 	override protected validate() {
-		if (digraphName.value.contains(" ")) {
-			new Status(ERROR, "Wizard", " The name'" + name + "' may not contain spaces")
+		if (graphName.value.contains(" ")) {
+			new Status(ERROR, "Wizard", " The name '" + graphName + "' may not contain spaces!")
 		}
 		else if (!nodes.value.matches("[1-9][0-9]*")) {
-			new Status(ERROR, "Wizard", " The number of nodes '" + nodes + "' is not a positive integer")
+			new Status(ERROR, "Wizard", " The number of nodes '" + nodes + "' is not a positive integer!")
 		}
 		else null
 	}
@@ -63,7 +63,7 @@ final class ParameterisedDotFile {
 			/*
 			 * This is a graph stub
 			 */
-			«type.value == "directed graph" ? "digraph" : "graph"» «digraphName» {
+			«type.value == "directed graph" ? "digraph" : "graph"» «graphName» {
 				// global attribute statement
 				node [shape="ellipse"]
 				// nodes

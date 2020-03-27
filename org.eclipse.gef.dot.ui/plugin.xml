@@ -500,13 +500,13 @@
 	</extension>
 	<extension
 		point="org.eclipse.ui.newWizards">
-		<category id="org.eclipse.gef.dot.internal.ui.language.category" name="Dot">
+		<category id="org.eclipse.gef.dot.internal.ui.language.category" name="GEF DOT">
 		</category>
 		<wizard
 			category="org.eclipse.gef.dot.internal.ui.language.category"
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.wizard.template.TemplateNewProjectWizard"
 			id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewProjectWizard"
-			name="Dot Project"
+			name="GEF DOT Project"
 			icon="icons/new_Dot_proj.gif"
 			project="true">
 		</wizard>
@@ -529,13 +529,13 @@
 	</extension>
 	<extension
 		point="org.eclipse.ui.newWizards">
-		<category id="org.eclipse.gef.dot.internal.ui.language.category" name="Dot">
+		<category id="org.eclipse.gef.dot.internal.ui.language.category" name="GEF DOT">
 		</category>
 		<wizard
 			category="org.eclipse.gef.dot.internal.ui.language.category"
 			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.wizard.template.TemplateNewFileWizard"
 			id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewFileWizard"
-			name="Dot File"
+			name="GEF DOT File"
 			icon="icons/new_Dot_file.png">
 		</wizard>
 	</extension>
