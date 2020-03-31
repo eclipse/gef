@@ -186,9 +186,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 			
 			projectWizard = {
 				generate = true
@@ -229,9 +227,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			
@@ -296,9 +292,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotColor.xtext"
@@ -368,9 +362,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotEscString.xtext"
@@ -404,9 +396,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/model/DotFontName.ecore"
@@ -448,9 +438,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotHtmlLabel"
@@ -520,9 +508,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotPoint"
@@ -560,9 +546,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotPortPos"
@@ -600,9 +584,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRecordLabel"
@@ -640,9 +622,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRect"
@@ -680,9 +660,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotShape"
@@ -720,9 +698,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotPoint.xtext"
@@ -762,9 +738,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 		language = StandardLanguage {
 			
@@ -805,9 +779,7 @@ Workflow {
 				generateStub = false
 			}
 			
-			generator = { 
-				generateStub=false
-			}
+			generator = null
 		}
 	}
 }

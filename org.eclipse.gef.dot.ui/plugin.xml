@@ -339,45 +339,6 @@
 		<super type="org.eclipse.xtext.ui.check.expensive"/>
 		<persistent value="true"/>
 	</extension>
-	<extension point="org.eclipse.xtext.builder.participant">
-		<participant
-			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
-			fileExtensions="dot,gv"/>
-	</extension>
-	<extension point="org.eclipse.ui.propertyPages">
-		<page
-			category="org.eclipse.gef.dot.internal.language.Dot"
-			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-			id="org.eclipse.gef.dot.internal.language.Dot.compiler.propertyPage"
-			name="Compiler">
-			<keywordReference id="org.eclipse.gef.dot.internal.language.ui.keyword_Dot"/>
-			<enabledWhen>
-				<adapt type="org.eclipse.core.resources.IProject"/>
-			</enabledWhen>
-			<filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
-		</page>
-	</extension>
-	<extension point="org.eclipse.ui.menus">
-		<menuContribution locationURI="popup:#TextEditorContext?after=xtext.ui.openDeclaration">
-			<command
-				commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand"
-				id="org.eclipse.gef.dot.internal.language.Dot.OpenGeneratedCode"
-				style="push">
-				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened" />
-				</visibleWhen>
-			</command>
-		</menuContribution>
-	</extension>
-	<extension point="org.eclipse.ui.handlers">
-		<handler
-			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
-			commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand">
-			<activeWhen>
-				<reference definitionId="org.eclipse.gef.dot.internal.language.Dot.Editor.opened" />
-			</activeWhen>
-		</handler>
-	</extension>
 	<!-- Quick Outline -->
 	<extension
 		point="org.eclipse.ui.handlers">
