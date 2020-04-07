@@ -750,10 +750,10 @@ public abstract class AbstractVisualPart<V extends Node>
 			throw new IllegalArgumentException("Cannot reorder child " + child
 					+ " because it is no child.");
 		}
-		// TODO: this could be made more performant (reordering the children and
-		// visuals)
-		removeChild(child);
-		addChild(child, index);
+		if (oldIndex != index) {
+			removeChild(child);
+			addChild(child, index);
+		}
 	}
 
 	@Override

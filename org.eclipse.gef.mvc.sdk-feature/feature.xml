@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.mvc.sdk"
       label="GEF MVC SDK"
-      version="5.2.0.qualifier"
+      version="5.2.1.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">

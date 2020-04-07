@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF MVC Logo Example
 Bundle-SymbolicName: org.eclipse.gef.mvc.examples.logo
-Bundle-Version: 5.1.1.qualifier
+Bundle-Version: 5.2.1.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.mvc.examples.logo;x-friends:="org.eclipse.gef.mvc.examples.logo.ui,org.eclipse.gef.mvc.examples.logo.web",

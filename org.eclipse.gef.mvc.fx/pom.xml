@@ -21,6 +21,6 @@
 	</parent>
 	<groupId>org.eclipse.gef.plugins</groupId>
 	<artifactId>org.eclipse.gef.mvc.fx</artifactId>
-	<version>5.2.0-SNAPSHOT</version>
+	<version>5.2.1-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 </project>

@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.gef.mvc.examples"
       label="GEF MVC Examples"
-      version="5.2.0.qualifier"
+      version="5.2.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.mvc.examples"
       license-feature="org.eclipse.license"
