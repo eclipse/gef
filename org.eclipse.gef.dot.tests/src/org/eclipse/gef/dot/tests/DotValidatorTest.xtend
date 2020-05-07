@@ -65,7 +65,7 @@ class DotValidatorTest {
 		dotAst.assertArrowTypeWarning("The arrowType value 'invempty' is not semantically correct: The shape 'invempty' is deprecated.")
 		dotAst.assertArrowTypeWarning("The arrowType value 'ediamondinvempty' is not semantically correct: The shape 'ediamond' is deprecated.")
 		dotAst.assertArrowTypeWarning("The arrowType value 'ediamondinvempty' is not semantically correct: The shape 'invempty' is deprecated.")
-		dotAst.assertArrowTypeWarning(1281 + 28 * l, 4, "The arrowType value 'openbox' is not semantically correct: The shape 'open' is deprecated.")
+		dotAst.assertArrowTypeWarning(1278 + 28 * l, 4, "The arrowType value 'openbox' is not semantically correct: The shape 'open' is deprecated.")
 	}
 
 	@Test def deprecated_style() {

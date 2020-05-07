@@ -1344,7 +1344,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		'''.testContentAssistant(#["HTMLLabel - Insert a template"], "HTMLLabel - Insert a template", '''
 			graph {
 				edge[ headlabel=<
-
+					
 				> ]
 			}
 		''')
