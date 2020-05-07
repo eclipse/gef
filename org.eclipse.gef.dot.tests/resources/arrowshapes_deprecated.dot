@@ -7,11 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *       Tamas Miklossy  (itemis AG) - Initial text 
+ *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
- 
+
 /*
- * The ArrowShapes_Deprecated directed graph represents the deprecated arrow shapes 
+ * The ArrowShapes_Deprecated directed graph represents the deprecated arrow shapes
  * which can not be expressed by the arrow shape sub-grammar.
  */
 digraph ArrowShapes_Deprecated {

@@ -7,11 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *       Tamas Miklossy  (itemis AG) - Initial text 
+ *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
- 
-/* 
- * The Colored directed graph represents the dot color attributes (bgcolor, color, fillcolor, 
+
+/*
+ * The Colored directed graph represents the dot color attributes (bgcolor, color, fillcolor,
  * fontcolor, labelfontcolor) given in different color formats (RBG, RGBA, HSV, String).
  */
 digraph Colored{
@@ -20,23 +20,23 @@ digraph Colored{
 
     bgcolor = "gray"                              // gray_RGB
     fontcolor = ".051 .718 .627"                  // sienna_HSV
-                                                  
+
     1[color="#ffffff"]                            // white_RGB
     2[color="#ffffffff"]                          // white_RGBA
     3[color="0.000, 0.000, 1.000"]                // white_HSV
     4[color="/svg/white"]                         // white_String with color scheme
-                                                  
+
     5[style=filled fillcolor="#00ff00"  ]         // green_RGB
     6[style=filled fillcolor="#00ff00ff"]         // green_RGBA
     7[style=filled fillcolor="0.3 .8 .7"]         // green_HSV
     8[style=filled fillcolor="/bugn9/7" ]         // green_String with color scheme
-                                                  
+
     9[fontcolor="#00ff00"     ]                   // green_RGB
     10[fontcolor="#00ff00ff"  ]                   // green_RGBA
     11[fontcolor="0.3, .8, .7"]                   // green_HSV
     12[fontcolor="/brbg11/10" ]                   // green_String with color scheme
-                                                  
-                                                  
+
+
     1->2[color="#ffffff"          ]               // white_RGB
     2->3[color="#ffffff42"        ]               // white_RGBA
     3->4[color="0.000 0.000 1.000"]               // white_HSV

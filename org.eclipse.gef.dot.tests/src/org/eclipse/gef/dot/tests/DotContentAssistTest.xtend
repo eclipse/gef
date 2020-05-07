@@ -68,7 +68,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		'''.testContentAssistant(#[ "strict", "graph", "digraph", "graph - Insert a template", "digraph - Insert a template"], "strict", '''
 			strict
 		''')
-		
+
 		'''
 			«c»
 		'''.testContentAssistant(#["strict", "graph", "digraph", "graph - Insert a template", "digraph - Insert a template"], "graph - Insert a template", '''
@@ -76,7 +76,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				
 			}
 		''')
-		
+
 		'''
 			«c»
 		'''.testContentAssistant(#["strict", "graph", "digraph", "graph - Insert a template", "digraph - Insert a template"], "digraph - Insert a template", '''
@@ -149,7 +149,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize",
 									"id", "label", "lp", "penwidth", "style", "tooltip", "edge[]", "graph[]",
 									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "edge - Insert a template"], "graph[]", '''
 			graph {
@@ -186,7 +186,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					graph[«c»]
 				}
 			}
-		'''.testContentAssistant(#["]", "bb", "bgcolor", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+		'''.testContentAssistant(#["]", "bb", "bgcolor", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize",
 									"id", "label", "lp", "penwidth", "style", "tooltip"], "fontcolor",
 		'''
 			graph {
@@ -195,7 +195,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		// test local attribute names
 		'''
 			graph {
@@ -203,7 +203,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					«c»
 				}
 			}
-		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize", 
+		'''.testContentAssistant(#["bb", "bgcolor", "cluster - Insert a template", "color", "colorscheme", "fillcolor", "fontcolor", "fontname", "fontsize",
 									"id", "label", "lp", "penwidth", "style", "tooltip", "edge[]", "graph[]",
 									"node[]", "subgraph", "subgraph (named) - Insert a template", "subgraph - Insert a template", "{", "}", "edge - Insert a template"], "tooltip",
 		'''
@@ -213,7 +213,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		// test local attribute names with prefix
 		'''
 			graph {
@@ -228,7 +228,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		'''
 			graph {
 				subgraph cluster_0 {
@@ -261,7 +261,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value
 		'''
 			graph {
@@ -297,7 +297,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value
 		'''
 			graph {
@@ -333,7 +333,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value
 		'''
 			graph {
@@ -373,7 +373,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value
 		'''
 			graph {
@@ -415,7 +415,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value
 		'''
 			graph {
@@ -455,7 +455,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value
 		'''
 			graph {
@@ -492,7 +492,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		// test html-like label attribute
 		'''
 			graph {
@@ -550,7 +550,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute values
 		'''
 			graph {
@@ -565,7 +565,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		'''
 			graph {
 				subgraph cluster {
@@ -579,7 +579,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		'''
 			graph {
 				subgraph cluster {
@@ -593,7 +593,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-	
+
 		// test local attribute values with list
 		'''
 			graph {
@@ -655,7 +655,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		'''
 			graph {
 				1
@@ -689,7 +689,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test global attribute value
 		'''
 			graph {
@@ -750,7 +750,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[arrowhead=]
 			}
 		''')
-		
+
 		// test local attribute names
 		'''
 			graph {
@@ -765,7 +765,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ arrowtail= ]
 			}
 		''')
-		
+
 		// test local attribute names with prefix
 		'''
 			graph {
@@ -789,7 +789,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ arrowhead=box ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -800,7 +800,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowhead=diamond ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes
 		'''
 			digraph {
@@ -811,7 +811,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowhead="dot" ]
 			}
 		''')
-		
+
 		// test local attribute values with prefix
 		'''
 			digraph {
@@ -822,7 +822,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowhead=crow ]
 			}
 		''')
-		
+
 		'''
 			digraph {
 				1->2[ arrowhead=o«c» ]
@@ -832,7 +832,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowhead=obox ]
 			}
 		''')
-		
+
 		'''
 			digraph {
 				1->2[ arrowhead=l«c» ]
@@ -842,7 +842,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowhead=ldiamond ]
 			}
 		''')
-		
+
 		'''
 			digraph {
 				1->2[ arrowhead=ol«c» ]
@@ -852,7 +852,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowhead=oldiamond ]
 			}
 		''')
-		
+
 		'''
 			digraph {
 				1->2[ arrowhead=ordia«c» ]
@@ -862,7 +862,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowhead=ordiamond ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes and prefix
 		'''
 			digraph {
@@ -886,7 +886,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ arrowtail=none ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -897,7 +897,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowtail=normal ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes
 		'''
 			digraph {
@@ -908,7 +908,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowtail="tee" ]
 			}
 		''')
-		
+
 		// test local attribute values with prefix
 		'''
 			digraph {
@@ -919,7 +919,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ arrowtail=diamond ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes and prefix
 		'''
 			digraph {
@@ -943,7 +943,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ color=# ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -954,7 +954,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ color=/ ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes
 		'''
 			digraph {
@@ -965,7 +965,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ color="#" ]
 			}
 		''')
-		
+
 		// test local attribute values with prefix
 		'''
 			digraph {
@@ -976,7 +976,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ color=azure1 ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes and prefix
 		'''
 			digraph {
@@ -987,7 +987,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ color="azure2" ]
 			}
 		''')
-		
+
 		// test local attribute value with local color scheme value
 		'''
 			graph {
@@ -998,7 +998,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[color=10; colorscheme=brbg10]
 			}
 		''')
-		
+
 		// test local attribute value with global color scheme value
 		'''
 			graph {
@@ -1015,7 +1015,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 
 	@Test def edge_colorscheme() {
 		val expectedDotColorSchemes = copyExpectedDotColorSchemes
-		
+
 		// test global attribute values
 		'''
 			digraph {
@@ -1026,7 +1026,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ colorscheme=x11 ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -1037,7 +1037,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ colorscheme=svg ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes
 		'''
 			digraph {
@@ -1048,7 +1048,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ colorscheme="accent3" ]
 			}
 		''')
-		
+
 		// test local attribute values with prefix
 		'''
 			digraph {
@@ -1059,7 +1059,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1->2[ colorscheme=accent4 ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes and prefix
 		'''
 			digraph {
@@ -1140,7 +1140,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ edgetooltip="\n" ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes
 		'''
 			graph {
@@ -1232,7 +1232,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ fontcolor=# ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -1289,7 +1289,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ fontname=Helvetica ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -1344,11 +1344,11 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		'''.testContentAssistant(#["HTMLLabel - Insert a template"], "HTMLLabel - Insert a template", '''
 			graph {
 				edge[ headlabel=<
-					
+
 				> ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -1389,7 +1389,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ head_lp=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// no use to test local attribute values with prefix
 	}
 
@@ -1459,7 +1459,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				> ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			graph {
@@ -1503,7 +1503,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -1613,7 +1613,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ labelfontname=Helvetica ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -1708,7 +1708,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ lp=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// no use to test local attribute values with prefix
 	}
 
@@ -1723,7 +1723,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ pos=e ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			graph {
@@ -1734,7 +1734,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ pos=s ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes
 		'''
 			graph {
@@ -1745,7 +1745,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ pos="s" ]
 			}
 		''')
-		
+
 		// test local attribute values with prefix
 		'''
 			graph {
@@ -1756,7 +1756,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ pos=e ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes and prefix
 		'''
 			graph {
@@ -1780,7 +1780,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				edge[ style=bold ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			graph {
@@ -1813,7 +1813,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ style=dotted ]
 			}
 		''')
-		
+
 		// test local attribute values with quotes and prefix
 		'''
 			graph {
@@ -1917,7 +1917,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ tail_lp=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// no use to test local attribute values with prefix
 	}
 
@@ -1935,7 +1935,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1--2[ tailport=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// no use to test local attribute values with prefix
 	}
 
@@ -1988,7 +1988,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				source -- target
 			}
 		''')
-		
+
 		'''
 			graph {
 				1
@@ -2017,7 +2017,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				source -> target
 			}
 		''')
-		
+
 		'''
 			digraph {
 				1
@@ -2173,7 +2173,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				graph[forcelabels=]
 			}
 		''')
-		
+
 		// test local attribute names
 		'''
 			graph {
@@ -2198,7 +2198,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				layout=
 			}
 		''')
-		
+
 		'''
 			digraph {
 				la«c»
@@ -2221,7 +2221,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				graph[ colorscheme=svg bgcolor=aliceblue ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			graph {
@@ -2342,7 +2342,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				clusterrank="none"
 			}
 		''')
-		
+
 		// test local attribute values with prefix
 		'''
 			graph {
@@ -2368,7 +2368,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 
 	@Test def graph_colorscheme() {
 		val expectedDotColorSchemes = copyExpectedDotColorSchemes
-		
+
 		// test global attribute values
 		'''
 			graph {
@@ -2379,7 +2379,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				graph[ colorscheme=svg ]
 			}
 		''')
-		
+
 		// test local attribute vaules
 		'''
 			graph {
@@ -2436,7 +2436,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				graph[ colorscheme=brbg11 fontcolor=1 ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			graph {
@@ -2447,7 +2447,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				colorscheme=brbg11 fontcolor=11
 			}
 		''')
-		
+
 		// test local attribute values with quotes
 		'''
 			graph {
@@ -2496,7 +2496,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				graph[ fontname=Helvetica ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -2553,7 +2553,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				graph[ forcelabels=true ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			graph {
@@ -2625,7 +2625,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				>
 			}
 		''')
-		
+
 		'''
 			graph {
 				label=<
@@ -2729,7 +2729,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				lp=«c»
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// no use to test local attribute values with prefix
 	}
 
@@ -3099,7 +3099,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				1[ color="lightskyblue" ]
 			}
 		''')
-		
+
 		// test local attribute value with local color scheme value
 		'''
 			graph {
@@ -3383,7 +3383,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				node[ fontname=Helvetica ]
 			}
 		''')
-		
+
 		// test local attribute values
 		'''
 			digraph {
@@ -3544,7 +3544,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				> ]
 			}
 		''')
-		
+
 		// test html-like label valid siblings
 		'''
 			graph {
@@ -3563,14 +3563,14 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				node[ lp=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// test local attribute values
 		'''
 			graph {
 				1[ lp=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// no use to test local attribute values with prefix
 	}
 
@@ -3809,7 +3809,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				> ]
 			}
 		''')
-		
+
 		'''
 			graph {
 				1[
@@ -3849,14 +3849,14 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				node[ xlp=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// test local attribute values
 		'''
 			graph {
 				1[ xlp=«c» ]
 			}
 		'''.testEmptyContentAssistant
-		
+
 		// no use to test local attribute values with prefix
 	}
 
@@ -3910,7 +3910,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			}
 		''')
 	}
-	
+
 	@Test def subgraph_rank001() {
 		'''
 			graph {
@@ -3927,7 +3927,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			}
 		''')
 	}
-	
+
 	@Test def subgraph_rank002() {
 		//test global attribute value
 		'''
@@ -3943,7 +3943,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value
 		'''
 			graph {
@@ -3958,7 +3958,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value with quotes
 		'''
 			graph {
@@ -3973,7 +3973,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value with prefix
 		'''
 			graph {
@@ -3988,7 +3988,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test local attribute value with prefix and quotes
 		'''
 			graph {
@@ -4021,7 +4021,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		'''
 			graph {
 				1
@@ -4038,7 +4038,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		//test named template
 		'''
 			graph {
@@ -4054,7 +4054,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 				}
 			}
 		''')
-		
+
 		'''
 			graph {
 				1
@@ -4079,26 +4079,26 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 
 	private def void testContentAssistant(CharSequence text, List<String> expectedProposals,
 		String proposalToApply, String expectedContent) {
-		
+
 		val cursorPosition = text.toString.indexOf(c)
 		if(cursorPosition == -1) {
 			fail("Can't locate cursor position symbols '" + c + "' in the input text.")
 		}
-		
+
 		val content = text.toString.replace(c, "")
-		
+
 		val builder = newBuilder.append(content).assertTextAtCursorPosition(cursorPosition, expectedProposals)
-		
+
 		if(proposalToApply !== null) {
 			builder.applyProposal(cursorPosition, proposalToApply).expectContent(expectedContent)
 		}
 	}
 
-	/** 
+	/**
 	 * Since the Content Assists Test Cases sorts the expectations array, the
 	 * array of the expected color schemes has to be copied in order to be able
 	 * to reuse that array in other test cases as well.
-	 * 
+	 *
 	 * @return The copy of the expected color schemes
 	 */
 	private def copyExpectedDotColorSchemes() {
@@ -4128,7 +4128,7 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 					shell.dispose
 				}
 			}
-			
+
 			/*
 			 * Configure the ContentAssistProcessorTestBuilder to consider only
 			 * the first part of the displayString of a proposal and ignore its

@@ -11,7 +11,7 @@
  *
  *******************************************************************************/
 
-// Sample graph from 
+// Sample graph from
 // https://github.com/ellson/graphviz/blob/master/rtest/graphs/colorscheme.gv
 
 digraph G {

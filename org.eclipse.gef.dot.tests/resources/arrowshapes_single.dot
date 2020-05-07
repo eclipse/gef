@@ -7,11 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *       Tamas Miklossy  (itemis AG) - Initial text 
+ *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
 
-/* 
- * The ArrowShapes_Single directed graph represents the 42 different arrow shapes 
+/*
+ * The ArrowShapes_Single directed graph represents the 42 different arrow shapes
  * which can be used as valid values for the arrowhead edge attribute.
  */
 digraph ArrowShapes_Single {
