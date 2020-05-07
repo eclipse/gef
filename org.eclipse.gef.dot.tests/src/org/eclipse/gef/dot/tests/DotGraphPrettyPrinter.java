@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 itemis AG and others.
+ * Copyright (c) 2018, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,6 +20,8 @@ import java.util.TreeMap;
 import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.graph.Node;
+
+import com.google.common.base.Strings;
 
 import javafx.beans.property.ReadOnlyMapProperty;
 
@@ -329,7 +331,12 @@ class DotGraphPrettyPrinter {
 	 *         the given attribute.
 	 */
 	protected String prettyPrint(String attrKey, Object attrValue) {
-		return attrKey + " : " + attrValue;
+		String result = attrKey + " :";
+		String attrValueText = attrValue.toString();
+		if (!Strings.isNullOrEmpty(attrValueText)) {
+			result += " " + attrValueText;
+		}
+		return result;
 	}
 
 	/**

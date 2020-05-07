@@ -5149,7 +5149,7 @@ class Dot2ZestGraphCopierTest {
 				ZestProperties.SHAPE__N
 			].contains(attrKey) && attrValue instanceof GeometryNode<?>) {
 				val node = attrValue as GeometryNode<?>
-				'''«attrKey» : «node.geometryProperty.get», style: «node.style»'''
+				'''«attrKey» : «node.geometryProperty.get», style: «node.style»'''.toString.trim
 			} else {
 				super.prettyPrint(attrKey, attrValue)
 			}
