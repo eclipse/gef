@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2019, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #542663)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -58,7 +58,7 @@ class DotFontNameTest {
 
 	/*
 	 * All PostScript Alias Tests
-	 */ 
+	 */
 	@Test def avantgarde_book() {
 		'''AvantGarde-Book'''.
 		assertTreeEquals(
@@ -427,8 +427,8 @@ class DotFontNameTest {
 
 	/*
 	 * Pango Tests:
-	 * 
-	 * Pango vs PS Alias tests	
+	 *
+	 * Pango vs PS Alias tests
 	 */
 	@Test def pango_vs_psalias_001() {
 		'''ZapfChancery-MediumOblique'''.

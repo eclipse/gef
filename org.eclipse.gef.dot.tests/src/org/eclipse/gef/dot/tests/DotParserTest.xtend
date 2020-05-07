@@ -119,7 +119,7 @@ class DotParserTest {
 				1
 			}
 		'''.hasNoErrors
-		
+
 		'''
 			graph {
 				colorscheme=brbg10
@@ -136,7 +136,7 @@ class DotParserTest {
 				1[color=5]
 			}
 		'''.hasNoErrors
-		
+
 		'''
 			graph {
 				1[colorscheme=brbg10 color=5]
@@ -151,7 +151,7 @@ class DotParserTest {
 				1--2[color=5]
 			}
 		'''.hasNoErrors
-		
+
 		'''
 			graph {
 				1--2[color=5 colorscheme=brbg10]
@@ -256,7 +256,7 @@ class DotParserTest {
 	}
 
 	@Test def cluster_style() {
-		
+
 		for(validClusterStyle : #["bold", "dashed", "dotted", "filled", "invis", "radial", "rounded", "solid", "striped",
 			"bold, dashed", "bold, filled", "bold, rounded", "bold, striped", "filled, dashed"]) {
 			'''

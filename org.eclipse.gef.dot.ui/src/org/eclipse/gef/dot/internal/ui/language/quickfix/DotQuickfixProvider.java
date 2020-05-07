@@ -59,7 +59,7 @@ import org.eclipse.xtext.validation.Issue;
 
 /**
  * A quick-fix provider for Dot.
- * 
+ *
  * @author anyssen
  */
 public class DotQuickfixProvider extends DefaultQuickfixProvider {

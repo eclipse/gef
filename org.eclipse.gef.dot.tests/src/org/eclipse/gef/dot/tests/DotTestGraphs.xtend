@@ -10,7 +10,7 @@
  *     Tamas Miklossy (itemis AG) - initial API and implementation
  *     Zoey G. Prigge (itemis AG) - implement additional dot attributes (bug #461506)
  *                                - deprecated dot attributes (bug #552993)
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -62,7 +62,7 @@ class DotTestGraphs {
 		graph {
 			1--2
 		}
-	'''	
+	'''
 
 	public static val ONE_DIRECTED_EDGE = '''
 		digraph {
@@ -75,7 +75,7 @@ class DotTestGraphs {
 			1--2
 			3--4
 		}
-	'''	
+	'''
 
 	public static val TWO_NODES_ONE_EDGE = '''
 		graph {
@@ -89,7 +89,7 @@ class DotTestGraphs {
 			1;2;
 			1->2
 		}
-	'''	
+	'''
 
 	public static val TWO_NODES_AND_THREE_EDGES = '''
 		graph {
@@ -134,7 +134,7 @@ class DotTestGraphs {
 		graph {
 			edge[]
 		}
-	'''	
+	'''
 
 	public static val ESCAPED_QUOTES_LABEL = '''
 		graph {
@@ -214,7 +214,7 @@ class DotTestGraphs {
 			1->2->3->4[arrowhead=ornormal]
 			1->2->3->4
 		}
-	'''	
+	'''
 
 	public static val NEW_LINES_IN_LABELS = '''
 		graph {
@@ -580,7 +580,7 @@ class DotTestGraphs {
 			}
 		}
 	'''
-	
+
 	public static val GRAPH_COLORSCHEME_SVG = '''
 		graph {
 			colorscheme=svg
@@ -1734,21 +1734,21 @@ class DotTestGraphs {
 	public static val CLUSTERS = '''
 		digraph {
 			subgraph cluster1 {
-				a; 
+				a;
 				b;
 				a -> b;
 			}
 			subgraph cluster2 {
 				p;
 				q;
-				r; 
+				r;
 				s;
 				t;
 				p -> q;
 				q -> r;
 				r -> s;
 				s -> t;
-				t -> p; 
+				t -> p;
 			}
 			b -> q;
 			t -> a;
@@ -1758,7 +1758,7 @@ class DotTestGraphs {
 	public static val CLUSTER_MERGE = '''
 		digraph {
 			subgraph cluster1 {
-				a; 
+				a;
 				b;
 				a -> b;
 			}

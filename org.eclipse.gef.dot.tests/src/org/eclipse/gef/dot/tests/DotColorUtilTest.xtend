@@ -196,10 +196,10 @@ class DotColorUtilTest {
 		// given
 		val dotColor = dotColorText.parseColor
 		val colorScheme = if (dotColor instanceof StringColor) dotColor.scheme else null
-	
+
 		// when
 		val actual = dotColorUtil.computeZestColor(colorScheme, dotColor)
-	
+
 		// then
 		expected.assertEquals(actual)
 	}

@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 
 /**
  * A terminal converter for Dot.
- * 
+ *
  * @author anyssen
  *
  */
@@ -32,7 +32,7 @@ public class DotTerminalConverters
 
 	/**
 	 * A value converter for the ID data type rule.
-	 * 
+	 *
 	 * @return A {@link DotIDValueConverter}.
 	 */
 	@ValueConverter(rule = "ID")

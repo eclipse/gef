@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2016 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,14 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #441352)
- *     
+ *
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotShape with org.eclipse.xtext.common.Terminals
 
 generate shape "http://www.eclipse.org/gef/dot/internal/language/DotShape"
 
 // XXX: While not documented explicitly, an empty color seems to be valid as well (see bug #521158)
-Shape: 
+Shape:
 	{Shape} shape = (PolygonBasedShape | RecordBasedShape)?;
 
 PolygonBasedShape:
@@ -26,10 +26,10 @@ RecordBasedShape:
 
 enum PolygonBasedNodeShape:
 	box | polygon | ellipse | oval | circle | point | egg | triangle | plaintext | plain | diamond | trapezium | parallelogram | house |
-	pentagon | hexagon | septagon | octagon | doublecircle | doubleoctagon | tripleoctagon | invtriangle | invtrapezium | invhouse | 
-	Mdiamond | Msquare | Mcircle | rect | rectangle | square | star | none | underline | cylinder | note | tab | folder | box3d | 
-	component | promoter | cds | terminator | utr | primersite | restrictionsite | fivepoverhang | threepoverhang | noverhang | 
+	pentagon | hexagon | septagon | octagon | doublecircle | doubleoctagon | tripleoctagon | invtriangle | invtrapezium | invhouse |
+	Mdiamond | Msquare | Mcircle | rect | rectangle | square | star | none | underline | cylinder | note | tab | folder | box3d |
+	component | promoter | cds | terminator | utr | primersite | restrictionsite | fivepoverhang | threepoverhang | noverhang |
 	assembly |signature | insulator | ribosite | rnastab | proteasesite | proteinstab | rpromoter | rarrow | larrow | lpromoter;
 
 enum RecordBasedNodeShape:
-	record | Mrecord; 
+	record | Mrecord;

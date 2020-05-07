@@ -8,18 +8,18 @@
  *******************************************************************************/
 digraph the_agent_likes_martini {
 	node[shape=box]
-	
+
 	// non-terminal nodes
-	S; NP1[label="NP"]; V; VP; NP2[label="NP"]; DET; N 
-	
+	S; NP1[label="NP"]; V; VP; NP2[label="NP"]; DET; N
+
 	//terminal nodes
 	the; agent;	likes; martini
-	
+
 	// "the agent"
 	S -> NP1; NP1 -> DET; NP1 -> N
 	DET -> the[style=dashed]; N -> agent[style=dashed]
-	
+
 	// "likes martini"
 	S -> VP; VP -> V; VP -> NP2
 	V -> likes[style=dashed]; NP2 -> martini[style=dashed]
-} 
+}

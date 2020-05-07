@@ -16,7 +16,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeId
 
 /**
  * A lexical highlighter that takes care of handling DOT lexer tokens properly.
- * 
+ *
  * @author anyssen
  *
  */

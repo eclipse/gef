@@ -133,7 +133,7 @@ class DotTestHtmlLabels {
 		<FONT POINT-SIZE="24.0">
 			line3
 		</FONT>
-	'''	
+	'''
 
 	public static val MIXED_LOWER_CASE_AND_UPPER_CASE = '''
 		<b>

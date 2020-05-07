@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - Refactoring of DOT Graph view live update/live export (bug #337644)
- *                                - Add 'Open the exported file automatically' option (bug #521329)                                                                
+ *                                - Add 'Open the exported file automatically' option (bug #521329)
  *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.handlers;

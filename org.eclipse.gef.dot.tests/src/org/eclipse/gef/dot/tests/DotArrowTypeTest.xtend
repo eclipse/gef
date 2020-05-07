@@ -46,28 +46,28 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"box".assertLexing('''
 			T__12 'box'
 		''')
-		
+
 		"lbox".assertLexing('''
 			T__5 'l'
 			T__12 'box'
 		''')
-		
+
 		"rbox".assertLexing('''
 			T__6 'r'
 			T__12 'box'
 		''')
-		
+
 		"obox".assertLexing('''
 			T__4 'o'
 			T__12 'box'
 		''')
-		
+
 		"olbox".assertLexing('''
 			T__4 'o'
 			T__5 'l'
 			T__12 'box'
 		''')
-		
+
 		"orbox".assertLexing('''
 			T__4 'o'
 			T__6 'r'
@@ -79,12 +79,12 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"crow".assertLexing('''
 			T__13 'crow'
 		''')
-		
+
 		"lcrow".assertLexing('''
 			T__5 'l'
 			T__13 'crow'
 		''')
-		
+
 		"rcrow".assertLexing('''
 			T__6 'r'
 			T__13 'crow'
@@ -95,12 +95,12 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"curve".assertLexing('''
 			T__14 'curve'
 		''')
-		
+
 		"lcurve".assertLexing('''
 			T__5 'l'
 			T__14 'curve'
 		''')
-		
+
 		"rcurve".assertLexing('''
 			T__6 'r'
 			T__14 'curve'
@@ -111,28 +111,28 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"diamond".assertLexing('''
 			T__16 'diamond'
 		''')
-		
+
 		"ldiamond".assertLexing('''
 			T__5 'l'
 			T__16 'diamond'
 		''')
-		
+
 		"rdiamond".assertLexing('''
 			T__6 'r'
 			T__16 'diamond'
 		''')
-		
+
 		"odiamond".assertLexing('''
 			T__4 'o'
 			T__16 'diamond'
 		''')
-		
+
 		"oldiamond".assertLexing('''
 			T__4 'o'
 			T__5 'l'
 			T__16 'diamond'
 		''')
-		
+
 		"ordiamond".assertLexing('''
 			T__4 'o'
 			T__6 'r'
@@ -144,7 +144,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"dot".assertLexing('''
 			T__17 'dot'
 		''')
-		
+
 		"odot".assertLexing('''
 			T__4 'o'
 			T__17 'dot'
@@ -155,12 +155,12 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"icurve".assertLexing('''
 			T__15 'icurve'
 		''')
-		
+
 		"licurve".assertLexing('''
 			T__5 'l'
 			T__15 'icurve'
 		''')
-		
+
 		"ricurve".assertLexing('''
 			T__6 'r'
 			T__15 'icurve'
@@ -171,28 +171,28 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"inv".assertLexing('''
 			T__18 'inv'
 		''')
-		
+
 		"linv".assertLexing('''
 			T__5 'l'
 			T__18 'inv'
 		''')
-		
+
 		"rinv".assertLexing('''
 			T__6 'r'
 			T__18 'inv'
 		''')
-		
+
 		"oinv".assertLexing('''
 			T__4 'o'
 			T__18 'inv'
 		''')
-		
+
 		"olinv".assertLexing('''
 			T__4 'o'
 			T__5 'l'
 			T__18 'inv'
 		''')
-		
+
 		"orinv".assertLexing('''
 			T__4 'o'
 			T__6 'r'
@@ -210,28 +210,28 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"normal".assertLexing('''
 			T__20 'normal'
 		''')
-		
+
 		"lnormal".assertLexing('''
 			T__5 'l'
 			T__20 'normal'
 		''')
-		
+
 		"rnormal".assertLexing('''
 			T__6 'r'
 			T__20 'normal'
 		''')
-		
+
 		"onormal".assertLexing('''
 			T__4 'o'
 			T__20 'normal'
 		''')
-		
+
 		"olnormal".assertLexing('''
 			T__4 'o'
 			T__5 'l'
 			T__20 'normal'
 		''')
-		
+
 		"ornormal".assertLexing('''
 			T__4 'o'
 			T__6 'r'
@@ -243,12 +243,12 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"tee".assertLexing('''
 			T__21 'tee'
 		''')
-		
+
 		"ltee".assertLexing('''
 			T__5 'l'
 			T__21 'tee'
 		''')
-		
+
 		"rtee".assertLexing('''
 			T__6 'r'
 			T__21 'tee'
@@ -259,12 +259,12 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"vee".assertLexing('''
 			T__22 'vee'
 		''')
-		
+
 		"lvee".assertLexing('''
 			T__5 'l'
 			T__22 'vee'
 		''')
-		
+
 		"rvee".assertLexing('''
 			T__6 'r'
 			T__22 'vee'
@@ -276,23 +276,23 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			T__18 'inv'
 			T__17 'dot'
 		''')
-		
+
 		"invodot".assertLexing('''
 			T__18 'inv'
 			T__4 'o'
 			T__17 'dot'
 		''')
-		
+
 		"boxbox".assertLexing('''
 			T__12 'box'
 			T__12 'box'
 		''')
-		
+
 		"nonenormal".assertLexing('''
 			T__19 'none'
 			T__20 'normal'
 		''')
-		
+
 		"lteeoldiamond".assertLexing('''
 			T__5 'l'
 			T__21 'tee'
@@ -300,7 +300,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			T__5 'l'
 			T__16 'diamond'
 		''')
-		
+
 		"nonedot".assertLexing('''
 			T__19 'none'
 			T__17 'dot'
@@ -314,7 +314,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			T__17 'dot'
 			T__17 'dot'
 		''')
-		
+
 		"lveerveelvee".assertLexing('''
 			T__5 'l'
 			T__22 'vee'
@@ -323,7 +323,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			T__5 'l'
 			T__22 'vee'
 		''')
-		
+
 		"nonenonedot".assertLexing('''
 			T__19 'none'
 			T__19 'none'
@@ -340,21 +340,21 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			T__20 'normal'
 			T__20 'normal'
 		''')
-		
+
 		"nonenonenonedot".assertLexing('''
 			T__19 'none'
 			T__19 'none'
 			T__19 'none'
 			T__17 'dot'
 		''')
-		
+
 		"noneboxnonedot".assertLexing('''
 			T__19 'none'
 			T__12 'box'
 			T__19 'none'
 			T__17 'dot'
 		''')
-		
+
 		"boxnonenonedot".assertLexing('''
 			T__12 'box'
 			T__19 'none'
@@ -367,28 +367,28 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		"ediamond".assertLexing('''
 			T__7 'ediamond'
 		''')
-		
+
 		"open".assertLexing('''
 			T__8 'open'
 		''')
-		
+
 		"halfopen".assertLexing('''
 			T__9 'halfopen'
 		''')
-		
+
 		"empty".assertLexing('''
 			T__10 'empty'
 		''')
-		
+
 		"invempty".assertLexing('''
 			T__11 'invempty'
 		''')
-		
+
 		"ediamondinvempty".assertLexing('''
 			T__7 'ediamond'
 			T__11 'invempty'
 		''')
-		
+
 		"openbox".assertLexing('''
 			T__8 'open'
 			T__12 'box'
@@ -407,7 +407,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"lbox".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -419,7 +419,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rbox".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -431,7 +431,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"obox".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -443,7 +443,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"olbox".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -455,7 +455,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"orbox".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -481,7 +481,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"lcrow".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -493,7 +493,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rcrow".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -519,7 +519,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"lcurve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -531,7 +531,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rcurve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -557,7 +557,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"ldiamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -569,7 +569,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rdiamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -581,7 +581,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"odiamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -593,7 +593,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"oldiamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -605,7 +605,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"ordiamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -631,7 +631,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"odot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -657,7 +657,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"licurve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -669,7 +669,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"ricurve".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -695,7 +695,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"linv".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -707,7 +707,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rinv".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -719,7 +719,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"oinv".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -731,7 +731,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"olinv".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -743,7 +743,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"orinv".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -783,7 +783,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"lnormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -795,7 +795,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rnormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -807,7 +807,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"onormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -819,7 +819,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"olnormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -831,7 +831,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"ornormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -857,7 +857,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"ltee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -869,7 +869,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rtee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -895,7 +895,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"lvee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -907,7 +907,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"rvee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -938,7 +938,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"invodot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -955,7 +955,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"boxbox".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -972,7 +972,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"nonenormal".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -989,7 +989,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"lteeoldiamond".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1006,7 +1006,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"nonedot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1047,7 +1047,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"lveerveelvee".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1069,7 +1069,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"nonenonedot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1120,7 +1120,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"nonenonenonedot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1147,7 +1147,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"noneboxnonedot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1174,7 +1174,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"boxnonenonedot".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1213,7 +1213,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"open".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1223,7 +1223,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"halfopen".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1233,7 +1233,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"empty".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1243,7 +1243,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"invempty".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1253,7 +1253,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"ediamondinvempty".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1266,7 +1266,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 				]
 			}
 		''')
-		
+
 		"openbox".assertAst('''
 			ArrowType {
 				arrowShapes = [
@@ -1288,7 +1288,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			"o",
 			"The open modifier 'o' may not be combined with primitive shape 'crow'."
 		)
-		
+
 		"lteeveeocrowdot".assertArrowShapeWarning(
 			"o",
 			"The open modifier 'o' may not be combined with primitive shape 'crow'."
@@ -1300,7 +1300,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			"r",
 			"The side modifier 'r' may not be combined with primitive shape 'dot'."
 		)
-		
+
 		"lteeveerdotbox".assertArrowShapeWarning(
 			"r",
 			"The side modifier 'r' may not be combined with primitive shape 'dot'."
@@ -1312,7 +1312,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			"open",
 			"The shape 'open' is deprecated."
 		)
-		
+
 		"lteeveeopenbox".assertDeprecatedArrowShapeWarning(
 			"open",
 			"The shape 'open' is deprecated."
@@ -1324,7 +1324,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 			"none",
 			"The shape 'none' may not be the last shape."
 		)
-		
+
 		"boxdotveenone".assertArrowShapeWarning(
 			"none",
 			"The shape 'none' may not be the last shape."
@@ -1348,7 +1348,7 @@ class DotArrowTypeTest extends AbstractLexerTest {
 		val offset = text.indexOf(errorProneText)
 		val length = errorProneText.length
 		ast.assertWarning(objectType, null, offset, length, warningMessage)
-		
+
 		// verify that this is the only reported issue
 		1.assertEquals(ast.validate.size)
 	}

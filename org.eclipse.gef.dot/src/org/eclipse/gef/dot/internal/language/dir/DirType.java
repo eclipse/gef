@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.language.dir;
 
 /**
  * Enum representing DOT dirType.
- * 
+ *
  * @author anyssen
  *
  */

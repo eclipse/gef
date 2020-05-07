@@ -27,11 +27,11 @@ import static org.junit.Assert.assertEquals
 class DotBSplineInterpolatorTest {
 
 	@Test def test_diagonal_decoration_angle() {
-		
+
 		val connection = new Connection
 		val dotStartPointHint = new Point(89.916, 71.831)
 		val dotEndPointHint = new Point(72.207, 36.413)
-		
+
 		connection => [
 			// Anchorage [+72.0 +72.0 54.0 x 36.0]
 			// Ref-Point [84.50399802398681, 61.006999862670895]
@@ -41,7 +41,7 @@ class DotBSplineInterpolatorTest {
 			// (although the DotBSplineInterpolator should overwrite the computed value).
 			startAnchor = new DynamicAnchor(new Rectangle(72, 72, 54, 36))
 			endAnchor = new DynamicAnchor(new Rectangle(36, 0, 54, 36))
-			
+
 			// Connection:
 			// sp) Point(84.50399780273438, 72.0) (hint=Point(89.916, 71.831))
 			// cp01) Point(84.50399780273438, 61.00699996948242)
@@ -57,11 +57,11 @@ class DotBSplineInterpolatorTest {
 				new Point(79.88700103759766, 51.77399826049805),
 				new Point(77.61499786376953, 47.229000091552734)
 			]
-			
+
 			// interpolate and refresh
 			interpolator = new DotBSplineInterpolator
 		]
-		
+
 		// verify that the hints determine the start and end positions of the connection geometry
 		val geometry = (connection.curve as GeometryNode<ICurve>).geometry
 		assertEquals(dotStartPointHint, geometry.p1)

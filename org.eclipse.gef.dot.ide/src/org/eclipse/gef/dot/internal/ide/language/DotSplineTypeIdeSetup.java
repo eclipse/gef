@@ -26,5 +26,5 @@ public class DotSplineTypeIdeSetup extends DotSplineTypeStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotSplineTypeRuntimeModule(), new DotSplineTypeIdeModule()));
 	}
-	
+
 }

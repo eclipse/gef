@@ -39,7 +39,7 @@ import static extension org.eclipse.gef.dot.internal.DotFileUtils.read
 import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.createProject
 
-/** 
+/**
  * Util class for various tests.
  * @author Fabian Steeg (fsteeg)
  */
@@ -61,16 +61,16 @@ final class DotTestUtils {
 		val graph = new Graph.Builder().
 			attr([p1,p2|p1._setName(p2)], "LabeledGraph").
 			attr([p1,p2|p1._setType(p2)], GraphType.DIGRAPH)
-		
+
 		val n1 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").attr([p1,p2|p1.label=p2], 'one "1"').buildNode
 		val n2 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "2").attr([p1,p2|p1.label=p2], "two").buildNode
 		val n3 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "3").buildNode
 		val n4 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "4").buildNode
-		
+
 		val e1 = new Edge.Builder(n1, n2).attr([p1,p2|p1.label=p2], "+1").buildEdge
 		val e2 = new Edge.Builder(n1, n3).attr([p1,p2|p1.label=p2], "+2").buildEdge
 		val e3 = new Edge.Builder(n3, n4).buildEdge
-		
+
 		graph.nodes(n1, n2, n3, n4).edges(e1, e2, e3).build
 	}
 
@@ -78,14 +78,14 @@ final class DotTestUtils {
 		val graph = new Graph.Builder().
 			attr([p1,p2|p1._setName(p2)], "SimpleDigraph").
 			attr([p1,p2|p1._setType(p2)], GraphType.DIGRAPH)
-		
+
 		val n1 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
 		val n2 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "2").buildNode
 		val n3 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "3").buildNode
-		
+
 		val e1 = new Edge.Builder(n1, n2).buildEdge
 		val e2 = new Edge.Builder(n2, n3).buildEdge
-		
+
 		graph.nodes(n1, n2, n3).edges(e1, e2).build
 	}
 
@@ -93,14 +93,14 @@ final class DotTestUtils {
 		val graph = new Graph.Builder().
 			attr([p1,p2|p1._setName(p2)], "SimpleGraph").
 			attr([p1,p2|p1._setType(p2)], GraphType.GRAPH)
-		
+
 		val n1 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "1").buildNode
 		val n2 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "2").buildNode
 		val n3 = new Node.Builder().attr([p1,p2|p1._setName(p2)], "3").buildNode
-		
+
 		val e1 = new Edge.Builder(n1, n2).buildEdge
 		val e2 = new Edge.Builder(n1, n3).buildEdge
-		
+
 		graph.nodes(n1, n2, n3).edges(e1, e2).build
 	}
 
@@ -152,12 +152,12 @@ final class DotTestUtils {
 		val r = new Node.Builder().attr([p1,p2|p1._setName(p2)], "r").buildNode
 		val s = new Node.Builder().attr([p1,p2|p1._setName(p2)], "s").buildNode
 		val t = new Node.Builder().attr([p1,p2|p1._setName(p2)], "t").buildNode
-		cluster2.nestedGraph = 
+		cluster2.nestedGraph =
 			new Graph.Builder().attr([p1,p2|p1._setName(p2)], "cluster2").
 			nodes(p, q, r, s, t).
 			edge(p, q).edge(q, r).edge(r, s).edge(s, t).edge(t, p).
 		build
-		
+
 		graph.nodes(cluster1, cluster2).edge(b, q).edge(t, a).build
 	}
 
@@ -187,14 +187,14 @@ final class DotTestUtils {
 			nodes(p, q, r, s, t).
 			edge(p, q).edge(q, r).edge(r, s).edge(s, t).edge(t, p).
 		build
-		
+
 		new Graph.Builder().attr([p1,p2|p1._setType(p2)], GraphType.DIGRAPH).
 			nodes(cluster1, cluster2).
 			edge(b, q).edge(t, a).
 		build
 	}
 
-	/** 
+	/**
 	 * Enhances the graph with additional Dot Attributes such as
 	 * default Dot attributes values, position, width, height, bounding box
 	 * produced by the Dot Executable.
@@ -315,7 +315,7 @@ final class DotTestUtils {
 		graph
 	}
 
-	/** 
+	/**
 	 * Enhances the graph with additional Dot Attributes such as
 	 * default Dot attributes values, position, width, height, bounding box
 	 * produced by the Dot Executable.
@@ -593,8 +593,8 @@ final class DotTestUtils {
 		"NewCenturySchlbk-Italic", "NewCenturySchlbk-Roman", "Palatino-Bold", "Palatino-BoldItalic", "Palatino-Italic",
 		"Palatino-Roman", "Symbol", "Times-Bold", "Times-BoldItalic", "Times-Italic", "Times-Roman",
 		"ZapfChancery-MediumItalic", "ZapfDingbats"]
-		
-		
+
+
 	static def String[] combine(String[] array1, String... array2) {
 		array1 + array2
 	}

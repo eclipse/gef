@@ -10,14 +10,14 @@
  *       Tamas Miklossy  (itemis AG) - Initial text (bug #441352)
  *******************************************************************************/
 
-/* 
- * The PolygonBasedNodeShapes graph represents the different polygon based node shapes 
+/*
+ * The PolygonBasedNodeShapes graph represents the different polygon based node shapes
  * that an be used as valid values for the shape node attribute.
  */
 graph PolygonBasedNodeShapes {
      rankdir=TB
      1[shape=box]
-     
+
      /* If shape="polygon", the attributes sides, skew and distortion are also used.*/
      2[shape=polygon sides=7, skew=0, distortion=0]
      3[shape=ellipse]
@@ -27,7 +27,7 @@ graph PolygonBasedNodeShapes {
      7[shape=egg]
      8[shape=triangle]
      9[shape=plaintext]
-    
+
     /*
      * The node shape=plain requires also the label attribute to be set, otherwise it will be rendered
      * as a box shape with the following warning: "Warning: using box for unknown shape plain."
@@ -82,7 +82,7 @@ graph PolygonBasedNodeShapes {
     57[shape=rarrow]
     58[shape=larrow]
     59[shape=lpromoter]
-    
+
     // define invisible edges to lay out the graph in a grid
     edge[style=invis]
     1--5-- 9--13--17--21--25--29--33--37--41--45--49--53--57

@@ -31,9 +31,9 @@ import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 
 /**
- * 
+ *
  * An {@link AbstractFieldProcessor} for {@link DotAttribute} annotations.
- * 
+ *
  * @author anyssen
  *
  */

@@ -33,7 +33,7 @@ import com.google.common.collect.Lists;
 /**
  * The implementation of this class is mainly taken from the
  * org.eclipse.xpect.xtext.lib.util.EObjectFormatter java class.
- * 
+ *
  * Modification added: usage of System.lineSeparator instead of '\n' for line
  * separation; usage of tabs instead of two spaces for indentation; format all
  * EStructuralFeatures of an EObject, not only those that are explicitly set

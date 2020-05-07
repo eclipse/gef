@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2018 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse def License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 
 /**
  * Provides labels for a EObjects.
- * 
+ *
  * see http://www.eclipse.org/Xtext/documentation.html#labelProvider
  */
 public class DotHtmlLabelLabelProvider

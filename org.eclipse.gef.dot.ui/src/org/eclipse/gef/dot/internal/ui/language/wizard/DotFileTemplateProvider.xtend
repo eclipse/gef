@@ -21,7 +21,7 @@ import static org.eclipse.core.runtime.IStatus.*
 
 /**
  * Create a list with all file templates to be shown in the template new file wizard.
- * 
+ *
  * Each template is able to generate one or more files.
  */
 class DotFileTemplateProvider implements IFileTemplateProvider {
@@ -35,7 +35,7 @@ final class ParameterisedDotFile {
 	val type = combo("Graph Type:", #["directed graph", "undirected graph"])
 	val graphName = text("Graph name (optional):", "", "Optional name of the graph")
 	val nodes = text("Number of nodes:", "1")
-	
+
 	override protected validate() {
 		if (graphName.value.contains(" ")) {
 			new Status(ERROR, "Wizard", " The name '" + graphName + "' may not contain spaces!")
@@ -45,11 +45,11 @@ final class ParameterisedDotFile {
 		}
 		else null
 	}
-	 
+
 	override generateFiles(IFileGenerator generator) {
 		val nodesBuilder = new StringBuilder
 		val edgesBuilder = new StringBuilder
-		
+
 		for (i : 0 ..< Integer.parseInt(nodes.value)) {
 			nodesBuilder.append('''«i+1» [label="label of node \N"]
 								''')
@@ -58,7 +58,7 @@ final class ParameterisedDotFile {
 									''')
 			}
 		}
-		
+
 		generator.generate('''«folder»/«name»«!name.matches(".*\\.(gv|dot)\\Z") ? ".dot"»''', '''
 			/*
 			 * This is a graph stub

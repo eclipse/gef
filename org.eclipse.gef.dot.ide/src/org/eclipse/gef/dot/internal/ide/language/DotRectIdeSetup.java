@@ -26,5 +26,5 @@ public class DotRectIdeSetup extends DotRectStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotRectRuntimeModule(), new DotRectIdeModule()));
 	}
-	
+
 }

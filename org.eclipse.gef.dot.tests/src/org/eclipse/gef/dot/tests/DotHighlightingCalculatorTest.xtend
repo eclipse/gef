@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
  *    Zoey Prigge    (itemis AG) - strikethrough/deprecation (bug #552993)
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -39,7 +39,7 @@ import static extension org.junit.Assert.*
  * The implementation of this class is mainly taken from the
  * org.eclipse.xtend.ide.tests.highlighting.XtendHighlightingCalculatorTest java
  * class.
- * 
+ *
  * @author miklossy
  *
  */
@@ -147,7 +147,7 @@ class DotHighlightingCalculatorTest implements IHighlightedPositionAcceptor {
 		for(pair : expectedHighlightingIDs) {
 			val substring = pair.key
 			val highlightingID = pair.value
-			
+
 			offset = toString.indexOf(substring, offset)
 			val length = substring.length
 			expectedRegions.put(new TextRegion(offset, length), highlightingID)

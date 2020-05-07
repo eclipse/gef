@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Tamas Miklossy  (itemis AG) - minor refactorings
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
 
@@ -25,9 +25,9 @@ import static extension org.eclipse.gef.dot.internal.DotAttributes.*
 
 /**
  * A serializer that creates a Graphviz DOT string or file from a {@link Graph} with {@link DotAttributes}.
- * 
+ *
  * @author anyssen
- * 
+ *
  */
 class DotExport {
 

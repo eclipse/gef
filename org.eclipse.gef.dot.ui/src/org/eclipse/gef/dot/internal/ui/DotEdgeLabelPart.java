@@ -23,7 +23,7 @@ import javafx.scene.Group;
 /**
  * The implementation of this class is mainly taken from the
  * org.eclipse.gef.zest.fx.parts.EdgeLabelPart java class.
- * 
+ *
  * Modification added: applying the label css style on the Text widget instead
  * of its parent Group.
  */

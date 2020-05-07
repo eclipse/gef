@@ -104,7 +104,7 @@ import static extension org.eclipse.xtext.EcoreUtil2.*
 /**
  * The {@link DotAttributes} class contains all attributes which are supported
  * by {@link DotImport} and {@link DotExport}.
- * 
+ *
  * @author anyssen
  */
 class DotAttributes {
@@ -139,7 +139,7 @@ class DotAttributes {
 		 */
 		CLUSTER
 	}
-	
+
 	private static class RangeBasedDiagnosticEx extends RangeBasedDiagnostic {
 		new(int severity, String message, EObject source,
 				int offset, int length, CheckType checkType, String issueCode,
@@ -150,12 +150,12 @@ class DotAttributes {
 }
 	static def boolean isCluster(Node node) {
 		var Graph rootGraph = null;
-		for (var nestingNode = node; 
-			nestingNode !== null; 
+		for (var nestingNode = node;
+			nestingNode !== null;
 			nestingNode = rootGraph?.nestingNode) {
 			rootGraph = nestingNode.graph;
 		}
-		
+
 		if (node.nestedGraph === null || rootGraph !== null &&
 			#[ClusterMode.NONE, ClusterMode.GLOBAL].contains(rootGraph.clusterrankParsed)) {
 			return false
@@ -167,7 +167,7 @@ class DotAttributes {
 
 	/**
 	 * Determine the context in which the given {@link EObject} is used.
-	 * 
+	 *
 	 * @param eObject
 	 *            The {@link EObject} for which the context is to be determined.
 	 * @return the context in which the given {@link EObject} is used.
@@ -175,7 +175,7 @@ class DotAttributes {
 	static def Context getContext(EObject eObject) {
 
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
-		if (eObject.getContainerOfType(EdgeStmtNode) !== null || 
+		if (eObject.getContainerOfType(EdgeStmtNode) !== null ||
 			eObject.getContainerOfType(EdgeStmtSubgraph) !== null
 		) {
 			return Context.EDGE
@@ -212,7 +212,7 @@ class DotAttributes {
 
 	/**
 	 * A validator for attribute values
-	 * 
+	 *
 	 * @param <T>
 	 *            The type of the attribute.
 	 */
@@ -220,10 +220,10 @@ class DotAttributes {
 
 		/**
 		 * Validates the given attribute value.
-		 * 
+		 *
 		 * @param attributeContext
 		 *            The context of the attribute.
-		 * 
+		 *
 		 * @param attributeValue
 		 *            The value to validate.
 		 * @return A list of {@link Diagnostic}s that represent the validation
@@ -234,7 +234,7 @@ class DotAttributes {
 
 	/**
 	 * A parser to parse a DOT primitive value type.
-	 * 
+	 *
 	 * @param <T>
 	 *            The java equivalent of the parsed DOT value.
 	 */
@@ -273,7 +273,7 @@ class DotAttributes {
 
 		/**
 		 * Parses the given raw value as a DOT primitive value.
-		 * 
+		 *
 		 * @param attributeValue
 		 *            The raw value to parse.
 		 * @return A {@link ParseResult} indicating the parse result.
@@ -289,7 +289,7 @@ class DotAttributes {
 
 	/**
 	 * A serializer to serialize a DOT primitive value type.
-	 * 
+	 *
 	 * @param <T>
 	 *            The java equivalent type to serialize.
 	 */
@@ -297,7 +297,7 @@ class DotAttributes {
 
 		/**
 		 * Serializes the given value.
-		 * 
+		 *
 		 * @param value
 		 *            The value to serialize.
 		 * @return The string representation to which the value was
@@ -308,7 +308,7 @@ class DotAttributes {
 
 	/**
 	 * Serialize the given attribute value using the given serializer.
-	 * 
+	 *
 	 * @param <T>
 	 *            The (primitive) object type of the to be serialized value.
 	 * @param serializer
@@ -324,7 +324,7 @@ class DotAttributes {
 	/**
 	 * Parses the given (unquoted) attribute, using the given
 	 * {@link IAttributeValueParser}.
-	 * 
+	 *
 	 * @param <T>
 	 *            The (primitive) object type of the parsed value.
 	 * @param parser
@@ -351,11 +351,11 @@ class DotAttributes {
 		}
 
 		// parse value first (if a parser is given); otherwise take the (String) value
-		val T parsedValue = 
+		val T parsedValue =
 			if (parser !== null) {
 				val parseResult = parser.parse(attributeValue.toValue)
 				if (parseResult.hasSyntaxErrors) {
-	
+
 					// handle syntactical problems
 					return Collections.<Diagnostic>singletonList(
 						new BasicDiagnostic(Diagnostic.ERROR, null, -1,
@@ -386,7 +386,7 @@ class DotAttributes {
 				)
 			}
 		}
-		
+
 		diagnostics
 	}
 
@@ -403,7 +403,7 @@ class DotAttributes {
 	/**
 	 * Validate the attribute determined via name and value syntactically and
 	 * semantically.
-	 * 
+	 *
 	 * @param attributeContext
 	 *            The context element the attribute is related to.
 	 * @param attributeName
@@ -444,7 +444,7 @@ class DotAttributes {
 					Collections.emptyList
 			case DISTORTION__N: validateAttributeRawValue(DOUBLE_PARSER, DISTORTION_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case EDGETOOLTIP__E: validateAttributeRawValue(ESCSTRING_PARSER, ESCSTRING_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case FILLCOLOR__CNE: 
+			case FILLCOLOR__CNE:
 				// TODO: remove "attributeContext == Context.GRAPH", since fillcolor is not a valid graph attribute
 				if(attributeContext == Context.GRAPH || attributeContext == Context.CLUSTER || attributeContext == Context.NODE)
 					validateAttributeRawValue(COLORLIST_PARSER, COLORLIST_VALIDATOR, attributeContext, attributeName, attributeValue)
@@ -452,7 +452,7 @@ class DotAttributes {
 					validateAttributeRawValue(COLOR_PARSER, COLOR_VALIDATOR, attributeContext, attributeName, attributeValue)
 				else
 					Collections.emptyList
-			case FIXEDSIZE__N: 
+			case FIXEDSIZE__N:
 				if(attributeValue!==null && !attributeValue.toValue.isEmpty){
 					validateAttributeRawValue(BOOL_PARSER, null, attributeContext, FIXEDSIZE__N, attributeValue)
 				}else
@@ -479,9 +479,9 @@ class DotAttributes {
 			case LAYOUT__G: validateAttributeRawValue(LAYOUT_PARSER, null, attributeContext, attributeName, attributeValue)
 			case LP__GCE: validateAttributeRawValue(POINT_PARSER, POINT_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case NODESEP__G: validateAttributeRawValue(DOUBLE_PARSER, NODESEP_VALIDATOR, attributeContext, attributeName, attributeValue)
-			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue) 
+			case OUTPUTORDER__G: validateAttributeRawValue(OUTPUTMODE_PARSER, null,	attributeContext, attributeName, attributeValue)
 			case PAGEDIR__G: validateAttributeRawValue(PAGEDIR_PARSER, null, attributeContext, attributeName, attributeValue)
-			case PENWIDTH__CNE: 
+			case PENWIDTH__CNE:
 				if(attributeValue!==null && !attributeValue.toValue.isEmpty) {
 					validateAttributeRawValue(DOUBLE_PARSER, PENWIDTH_VALIDATOR, attributeContext, attributeName, attributeValue)
 				} else {
@@ -496,7 +496,7 @@ class DotAttributes {
 					Collections.emptyList
 			case RANKDIR__G: validateAttributeRawValue(RANKDIR_PARSER, null, attributeContext, attributeName, attributeValue)
 			case RANK__S: validateAttributeRawValue(RANKTYPE_PARSER, null, attributeContext, attributeName, attributeValue)
-			case SHAPE__N: validateAttributeRawValue(SHAPE_PARSER, SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue) 
+			case SHAPE__N: validateAttributeRawValue(SHAPE_PARSER, SHAPE_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case SIDES__N: validateAttributeRawValue(INT_PARSER, SIDES_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case SKEW__N: validateAttributeRawValue(DOUBLE_PARSER, SKEW_VALIDATOR, attributeContext, attributeName, attributeValue)
 			case SPLINES__G: validateAttributeRawValue(SPLINES_PARSER, null, attributeContext, attributeName, attributeValue)
@@ -515,7 +515,7 @@ class DotAttributes {
 
 	/**
 	 * A generic {@link IAttributeValueParser} for enumeration values.
-	 * 
+	 *
 	 * @param <E>
 	 *            The type of enumeration to parse.
 	 */
@@ -525,7 +525,7 @@ class DotAttributes {
 
 		/**
 		 * Creates a new parser for the given enumeration definition
-		 * 
+		 *
 		 * @param attributeType
 		 *            The enumeration class.
 		 */
@@ -560,7 +560,7 @@ class DotAttributes {
 
 	/**
 	 * A generic {@link IAttributeValueSerializer} for enumeration values.
-	 * 
+	 *
 	 * @param <E>
 	 *            The type of enumeration to serialize.
 	 */
@@ -570,7 +570,7 @@ class DotAttributes {
 
 		/**
 		 * Creates a new serializer for the given enumeration definition
-		 * 
+		 *
 		 * @param definition
 		 *            The enumeration class.
 		 */
@@ -626,7 +626,7 @@ class DotAttributes {
 					System.err.println("DotAttributes: parsedType cannot be determined for grammar: " + grammarAccess.grammar.name)
 				}
 			}
-			
+
 			parsedType
 		}
 	}
@@ -649,7 +649,7 @@ class DotAttributes {
 			if (serializer === null) {
 				serializer = injector.getInstance(ISerializer)
 			}
-			
+
 			serializer
 		}
 	}
@@ -668,7 +668,7 @@ class DotAttributes {
 					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString, -1,
 						"Value may not be smaller than " + minValue + ".", #[]))
 			}
-			
+
 			Collections.emptyList
 		}
 	}
@@ -687,7 +687,7 @@ class DotAttributes {
 					new BasicDiagnostic(Diagnostic.ERROR, attributeValue.toString, -1,
 						"Value may not be smaller than " + minValue + ".", #[]))
 			}
-			
+
 			Collections.emptyList
 		}
 	}
@@ -731,7 +731,7 @@ class DotAttributes {
 			if (validator === null) {
 				validator = injector.getInstance(validatorClass)
 			}
-			
+
 			validator
 		}
 
@@ -758,7 +758,7 @@ class DotAttributes {
 
 						override void acceptError(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.ERROR, 
+							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.ERROR,
 								message, object, offset, length, CheckType.FAST, code, issueData
 							));
 						}
@@ -770,7 +770,7 @@ class DotAttributes {
 
 						override void acceptInfo(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.INFO, 
+							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.INFO,
 								message, object, offset, length, CheckType.FAST, code, issueData
 							));
 						}
@@ -782,7 +782,7 @@ class DotAttributes {
 
 						override void acceptWarning(String message, EObject object, int offset, int length,
 							String code, String... issueData) {
-							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.WARNING, 
+							diagnostics.add(new RangeBasedDiagnosticEx(Diagnostic.WARNING,
 								message, object, offset, length, CheckType.FAST, code, issueData
 							));
 						}
@@ -804,7 +804,7 @@ class DotAttributes {
 					validator.validate(iterator.next, null/* diagnostic chain */, validationContext)
 				}
 			}
-			
+
 			diagnostics
 		}
 	}
@@ -843,7 +843,7 @@ class DotAttributes {
 	 * Parses the given value as a DOT outputMode.
 	 */
 	static val OUTPUTMODE_PARSER = new EnumParser<OutputMode>(OutputMode)
-	
+
 	/**
 	 * Serializes the given {@link OutputMode} value.
 	 */
@@ -1141,22 +1141,22 @@ class DotAttributes {
 	 * The parser for (html) label attribute values.
 	 */
 	static val HTML_LABEL_PARSER = new EObjectParser<HtmlLabel>(htmlLabelInjector)
-	
+
 	static val HTML_LABEL_VALIDATOR = new EObjectValidator<HtmlLabel>(htmlLabelInjector,
 		DotHtmlLabelValidator)
-	
+
 	static val Injector escStringInjector = new DotEscStringStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
 	 * The parser for (escString) label attribute values.
 	 */
 	static val ESCSTRING_PARSER = new EObjectParser<EscString>(escStringInjector)
-	
+
 	/**
 	 * The serializer for escstring attribute values.
 	 */
 	static val ESCSTRING_SERIALIZER = new EObjectSerializer<EscString>(escStringInjector)
-	
+
 	static val ESCSTRING_VALIDATOR = new EObjectValidator<EscString>(escStringInjector,
 		DotEscStringValidator)
 
@@ -1183,7 +1183,7 @@ class DotAttributes {
 	 * The serializer for rect attribute values.
 	 */
 	static val RECT_SERIALIZER = new EObjectSerializer<Rect>(rectInjector)
-	
+
 	static val Injector pointInjector = new DotPointStandaloneSetup().createInjectorAndDoEMFRegistration
 
 	/**
@@ -1248,7 +1248,7 @@ class DotAttributes {
 	 * Validator for Point types.
 	 */
 	static val POINT_VALIDATOR = new EObjectValidator<Point>(pointInjector, DotPointValidator)
-	
+
 	/**
 	 * Validator for Rect types.
 	 */
@@ -1297,7 +1297,7 @@ class DotAttributes {
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Graph}.
-	 * 
+	 *
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1311,7 +1311,7 @@ class DotAttributes {
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Graph}.
-	 * 
+	 *
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1326,7 +1326,7 @@ class DotAttributes {
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Node}.
-	 * 
+	 *
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1340,7 +1340,7 @@ class DotAttributes {
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Node}.
-	 * 
+	 *
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1355,7 +1355,7 @@ class DotAttributes {
 	/**
 	 * Returns the value of the {@link #_TYPE__G} attribute of the given
 	 * {@link Graph}.
-	 * 
+	 *
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
 	 *            {@link #_TYPE__G} attribute.
@@ -1369,7 +1369,7 @@ class DotAttributes {
 	/**
 	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Graph} to the
 	 * given <i>name</i> value.
-	 * 
+	 *
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1383,7 +1383,7 @@ class DotAttributes {
 	/**
 	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Graph} to the
 	 * given <i>name</i> value.
-	 * 
+	 *
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1397,7 +1397,7 @@ class DotAttributes {
 	/**
 	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Node} to the
 	 * given <i>name</i> value.
-	 * 
+	 *
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1411,7 +1411,7 @@ class DotAttributes {
 	/**
 	 * Sets the {@link #_NAME__GNE} attribute of the given {@link Node} to the
 	 * given <i>name</i> value.
-	 * 
+	 *
 	 * @param node
 	 *            The {@link Node} for which to change the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1421,11 +1421,11 @@ class DotAttributes {
 	static def void _setName(Node node, String name) {
 		_setNameRaw(node, ID.fromValue(name))
 	}
-	
+
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} attribute of the given
 	 * {@link Edge}.
-	 * 
+	 *
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
 	 *            {@link #_NAME__GNE} attribute.
@@ -1446,7 +1446,7 @@ class DotAttributes {
 	/**
 	 * Sets the {@link #_TYPE__G} attribute of the given {@link Graph} to the
 	 * given <i>type</i> value.
-	 * 
+	 *
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
 	 *            {@link #_TYPE__G} attribute.
@@ -1476,8 +1476,8 @@ class DotAttributes {
 	public static val CLUSTERRANK__G = "clusterrank"
 
 	/**
-	 * color is a special case, where different parsed values for Cluster, 
-	 * Node and Edge attributes (Color, Color, ColorList) and thus different 
+	 * color is a special case, where different parsed values for Cluster,
+	 * Node and Edge attributes (Color, Color, ColorList) and thus different
 	 * parsers and serializers are required.
 	 */
 	@DotAttribute(parsedType=#[Color, Color, ColorList])
@@ -1496,8 +1496,8 @@ class DotAttributes {
 	public static val EDGETOOLTIP__E = "edgetooltip"
 
 	/**
-	 * fillcolor is a special case, where different parsed values for Cluster, 
-	 * Node and Edge attributes (ColorList, ColorList, Color) and thus different 
+	 * fillcolor is a special case, where different parsed values for Cluster,
+	 * Node and Edge attributes (ColorList, ColorList, Color) and thus different
 	 * parsers and serializers are required.
 	 */
 	@DotAttribute(parsedType=#[ColorList, ColorList, Color])
@@ -1508,10 +1508,10 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=Color)
 	public static val FONTCOLOR__GCNE = "fontcolor"
-	
+
 	@DotAttribute(parsedType=FontName)
 	public static val FONTNAME__GCNE = "fontname"
-	
+
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val FONTSIZE__GCNE = "fontsize"
 
@@ -1523,7 +1523,7 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=String) // TODO: change to lblString
 	public static val HEADLABEL__E = "headlabel"
-	
+
 	@DotAttribute(parsedType=PortPos)
 	public static val HEADPORT__E = "headport"
 
@@ -1541,13 +1541,13 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=Color)
 	public static val LABELFONTCOLOR__E = "labelfontcolor"
-	
+
 	@DotAttribute(parsedType=FontName)
 	public static val LABELFONTNAME__E = "labelfontname"
-	
+
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val LABELFONTSIZE__E = "labelfontsize"
-	
+
 	@DotAttribute(parsedType=EscString)
 	public static val LABELTOOLTIP__E = "labeltooltip"
 
@@ -1556,7 +1556,7 @@ class DotAttributes {
 
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=Point)
 	public static val LP__GCE = "lp"
-	
+
 	@DotAttribute(rawType="NUMERAL", parsedType=Double)
 	public static val NODESEP__G = "nodesep"
 
@@ -1570,13 +1570,13 @@ class DotAttributes {
 	public static val PENWIDTH__CNE = "penwidth"
 
 	/**
-	 * pos is a special case, where different parsed values for Node and Edge 
+	 * pos is a special case, where different parsed values for Node and Edge
 	 * attributes (Point, SplineType) and thus different parsers and serializers
 	 * are required.
 	 */
 	@DotAttribute(rawType="QUOTED_STRING", parsedType=#[Point, SplineType])
 	public static val POS__NE = "pos"
-	
+
 	@DotAttribute(rawType="STRING", parsedType=RankType)
 	public static val RANK__S = "rank"
 
@@ -1603,7 +1603,7 @@ class DotAttributes {
 
 	@DotAttribute(parsedType=String) // TODO: change to lblString
 	public static val TAILLABEL__E = "taillabel"
-	
+
 	@DotAttribute(parsedType=PortPos)
 	public static val TAILPORT__E = "tailport"
 
@@ -1624,7 +1624,7 @@ class DotAttributes {
 
 	//method body is generated using @DotAttribute active annotation
 	static def Object parsedAsAttribute(ID valueRaw, String attrName, Context context){}
-	
+
 	static def parsed(Attribute attr) {
 		if (attr !== null) parsedAsAttribute(attr.value, attr.name.toValue, getContext(attr))
 	}

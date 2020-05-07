@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    Tamas Miklossy (itemis AG) - initial API and implementation
  *    Zoey Prigge    (itemis AG) - strikethrough/deprecation (bug #552993)
  *    Christoph Läubrich - compatibility with later xtend version (https://github.com/eclipse/gef/issues/88)
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -164,7 +164,7 @@ class DotHighlightingTest extends AbstractHighlightingTest {
 		val content = styledText.text
 		val offset = content.indexOf(text)
 		assertNotEquals('''Cannot locate '«text»' in «content»''', -1, offset)
-		
+
 		for (var i = 0; i < text.length; i++) {
 			val currentPosition = offset + i
 			val character = styledText.getTextRange(currentPosition, 1)
@@ -191,9 +191,9 @@ class DotHighlightingTest extends AbstractHighlightingTest {
 	 */
 	protected override openInEditor(IFile dslFile) {
 		val editor = dslFile.openEditor
-		
+
 		waitForEventProcessingWorkaround
-	
+
 		editor.internalSourceViewer.textWidget
 	}
 

@@ -27,11 +27,11 @@ class DotPolygonBasedNodeShapes {
 	/**
 	 * Returns the JavaFX node corresponding to the <i>polygonShape</i>
 	 * parameter.
-	 * 
+	 *
 	 * @param polygonShape
 	 *            The polygon shape for which the JavaFX node should be
 	 *            determined.
-	 * 
+	 *
 	 * @return The JavaFX node.
 	 */
 	static Node get(PolygonBasedNodeShape polygonShape) {
@@ -159,11 +159,11 @@ class DotPolygonBasedNodeShapes {
 	/**
 	 * Returns an inner JavaFX node corresponding to the <i>polygonShape</i>
 	 * parameter.
-	 * 
+	 *
 	 * @param polygonShape
 	 *            The polygon shape for which the inner JavaFX node should be
 	 *            determined.
-	 * 
+	 *
 	 * @return The inner JavaFX node.
 	 */
 	static Node getInner(PolygonBasedNodeShape polygonShape) {
@@ -186,7 +186,7 @@ class DotPolygonBasedNodeShapes {
 	/**
 	 * Returns the distance that should be preserved between the outer and inner
 	 * shapes.
-	 * 
+	 *
 	 * @param polygonShape
 	 *            The {@link PolygonBasedNodeShape} for which to retrieve the
 	 *            inner distance.
@@ -205,11 +205,11 @@ class DotPolygonBasedNodeShapes {
 	/**
 	 * Returns the 'rounded' JavaFX node corresponding to the
 	 * <i>polygonShape</i> parameter and the style=rounded dot parameter.
-	 * 
+	 *
 	 * @param polygonShape
 	 *            The polygon shape for which the 'rounded' JavaFX node should
 	 *            be determined.
-	 * 
+	 *
 	 * @return The JavaFX node.
 	 */
 	static Node getRoundedStyled(PolygonBasedNodeShape polygonShape) {

@@ -178,7 +178,7 @@ abstract class AbstractDotLexerTest extends AbstractLexerTest {
 							</font>
 						>'
 		''')
-		
+
 		'''< <!-- This is a bold label --> <B>Bold Label</B>>'''
 		.assertLexing(
 		'''RULE_HTML_STRING '< <!-- This is a bold label --> <B>Bold Label</B>>'
@@ -200,12 +200,12 @@ abstract class AbstractDotLexerTest extends AbstractLexerTest {
 		.assertLexing('''
 			RULE_SL_COMMENT '// This is a C++-style single line comment.'
 		''')
-		
+
 		'''# This is considered as a line output from C-preprocessor and discarded.'''
 		.assertLexing('''
 			RULE_SL_COMMENT '# This is considered as a line output from C-preprocessor and discarded.'
 		''')
-		
+
 		'''
 			# This is considered as a line output from C-preprocessor and discarded.
 		'''

@@ -13,5 +13,5 @@ digraph Overview {
     zest[label="Zest\nobject model"]
     dotmm -> dotlang [label=" Xtext " dir="back"]
     dotmm -> zest [label=" EMF "]
-    zest -> dotlang[label="  JET" dir="back" constraint="false"]    
+    zest -> dotlang[label="  JET" dir="back" constraint="false"]
 }

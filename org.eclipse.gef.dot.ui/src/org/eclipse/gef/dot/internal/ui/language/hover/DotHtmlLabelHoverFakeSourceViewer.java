@@ -38,7 +38,7 @@ import org.eclipse.swt.graphics.Point;
 /**
  * Fake class to support setting a document for use in delegating hover
  * calculations to html-like label subgrammar.
- * 
+ *
  * Sole supported methods are getDocument and setDocument.
  */
 @SuppressWarnings("deprecation")

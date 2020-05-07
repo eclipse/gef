@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *		Fabian Steeg		- initial implementation (bug #277380)
  *		Alexander Nyßen		- migration to Xtext 2.7.3 (bug #478562)
  *							- support for case insensitive keywords (bug #454626)
@@ -37,7 +37,7 @@ var projectName = "org.eclipse.gef.dot"
 var runtimeProject = "${rootPath}/${projectName}"
 
 Workflow {
-	
+
 	bean = StandaloneSetup {
 		// register current projects and its siblings for platform URI map, as they are not on the classpath.
 		platformUri = "${runtimeProject}/.."
@@ -78,12 +78,12 @@ Workflow {
 		genModel = "platform:/resource/${projectName}/model/DotFontName.genmodel"
 		srcPath = "platform:/resource/${projectName}/src"
 	}
-	
+
 	component = org.eclipse.emf.mwe2.ecore.EcoreGenerator {
 		genModel = "platform:/resource/${projectName}/model/DotStyle.genmodel"
 		srcPath = "platform:/resource/${projectName}/src"
 	}
-	
+
 	component = XtextGenerator {
 		configuration = DotGeneratorModule {
 			project = StandardProjectConfig {
@@ -109,14 +109,14 @@ Workflow {
 			}
 		}
 		language = StandardLanguage {
-			
+
 			referencedResource = "platform:/resource/${projectName}/model/DotTerminals.genmodel"
 			referencedResource = "platform:/resource/${projectName}/model/DotFontName.genmodel"
 			referencedResource = "platform:/resource/${projectName}/model/DotStyle.genmodel"
-			
+
 			name = "org.eclipse.gef.dot.internal.language.Dot"
 			fileExtensions = "dot,gv"
-			
+
 			parserGenerator = {
 				combinedGrammar = false
 				options = {
@@ -125,20 +125,20 @@ Workflow {
 						backtrackLexer = false
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
@@ -146,23 +146,23 @@ Workflow {
 					runtime = true
 				}
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			labelProvider = {}
-			
+
 			outline = {}
-			
+
 			quickOutline = {}
-			
+
 			quickFixProvider = {}
-			
+
 			contentAssist = {}
-			
+
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
@@ -176,20 +176,20 @@ Workflow {
 					highlighting = true
 				}
 			}
-			
+
 			renameRefactoring = {}
-		
+
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
-			
+
 			projectWizard = {
 				generate = true
 			}
-			
+
 			fileWizard = {
 				generate = true
 			}
@@ -197,23 +197,23 @@ Workflow {
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotArrowType"
 			fileExtensions = "dotarrowtype"
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
-			
+
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
@@ -224,29 +224,29 @@ Workflow {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
-			
+
 			name = "org.eclipse.gef.dot.internal.language.DotColor"
 			fileExtensions = "dotcolor"
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
@@ -259,7 +259,7 @@ Workflow {
 						backtrackLexer = false
 					}
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
@@ -270,7 +270,7 @@ Workflow {
 			}
 
 			contentAssist = {}
-			
+
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorLexer"
@@ -289,30 +289,30 @@ Workflow {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotColor.xtext"
-			
+
 			name = "org.eclipse.gef.dot.internal.language.DotColorList"
 			fileExtensions = "dotcolorlist"
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			parserGenerator = {
 				combinedGrammar = false
 				options = {
@@ -321,7 +321,7 @@ Workflow {
 						backtrackLexer = false
 					}
 			}
-			
+
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
@@ -329,11 +329,11 @@ Workflow {
 					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorListLexer"
 					runtime = true
 				}
-			
+
 			}
 
 			contentAssist = {}
-			
+
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
@@ -350,39 +350,39 @@ Workflow {
 					highlighting = true
 				}
 			}
-			
-			serializer = { 
+
+			serializer = {
 				generateStub=false
 			}
-			
+
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotEscString.xtext"
-			
+
 			name = "org.eclipse.gef.dot.internal.language.DotEscString"
 			fileExtensions = "dotescstring"
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
@@ -393,84 +393,84 @@ Workflow {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/model/DotFontName.ecore"
-			
+
 			name = "org.eclipse.gef.dot.internal.language.DotFontName"
 			fileExtensions = "dotfontname"
-			
+
 			parserGenerator = {
-				// The language is fully case-indifferent (including terminals). 
+				// The language is fully case-indifferent (including terminals).
 				// Hence, we cannot use ignoreCase=true, because this setting only applies to keywords.
 				// Instead, we pass a modified CharStream to the lexer that returns lowercase chars only.
 				combinedGrammar = true
 			}
-		
-			
+
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
 
 			contentAssist = {}
-				
+
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotHtmlLabel"
 			fileExtensions = "dothtmllabel"
-			
+
 			parserGenerator = {
 				combinedGrammar = false
-	
+
 				options = {
 						ignoreCase = true
 						backtrack = false
 						backtrackLexer = false
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
-		
+
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotHtmlLabelLexer"
@@ -500,77 +500,77 @@ Workflow {
 			}
 
 			renameRefactoring = {}
-		
+
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotPoint"
 			fileExtensions = "dotpoint"
-			
+
 			parserGenerator = {
 				options = {
 						ignoreCase = true
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
 
 			contentAssist = {}
-			
+
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotPortPos"
 			fileExtensions = "dotportpos"
-			
+
 			parserGenerator = {
 				options = {
 						ignoreCase = true
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
@@ -581,202 +581,202 @@ Workflow {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRecordLabel"
 			fileExtensions = "dotrecordlabel"
-			
+
 			parserGenerator = {
 				options = {
 						ignoreCase = true
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
-			
+
 			contentAssist = {}
 
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRect"
 			fileExtensions = "dotrect"
-			
+
 			parserGenerator = {
 				options = {
 						ignoreCase = true
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
-			
+
 			contentAssist = {}
 
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotShape"
 			fileExtensions = "dotshape"
-			
+
 			parserGenerator = {
 				options = {
 						ignoreCase = true
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
-			
+
 			contentAssist = {}
 
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotPoint.xtext"
-			
+
 			name = "org.eclipse.gef.dot.internal.language.DotSplineType"
 			fileExtensions = "dotsplinetype"
-			
+
 			parserGenerator = {
 				options = {
 						ignoreCase = true
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
-			
+
 			contentAssist = {}
 
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 		language = StandardLanguage {
-			
+
 			referencedResource = "platform:/resource/${projectName}/model/DotStyle.ecore"
-			
+
 			name = "org.eclipse.gef.dot.internal.language.DotStyle"
 			fileExtensions = "dotstyle"
-			
+
 			parserGenerator = {
 				options = {
 						ignoreCase = true
 					}
 			}
-			
+
 			grammarAccess = {}
-			
+
 			resourceFactoryFragment = {}
-			
+
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
-			
+
 			validator = {}
-			
+
 			scopeProvider = {
 				generateStub=false
 			}
-			
+
 			serializer = {
 				generateStub = false
 			}
-			
+
 			contentAssist = {}
 
 			junitSupport = {
 				junitVersion = "4"
 				generateStub = false
 			}
-			
+
 			generator = null
 		}
 	}

@@ -255,7 +255,7 @@ class DotHtmlLabelValidatorTest {
 	@Test def invalid_attribute_value_of_tag_TABLE_ALIGN() {
 		'''<TABLE ALIGN=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeValueError("The value '' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
-		
+
 		'''<TABLE ALIGN="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeValueError("The value 'foo' is not a correct ALIGN: Value has to be one of 'CENTER', 'LEFT', 'RIGHT'.")
 	}
@@ -403,7 +403,7 @@ class DotHtmlLabelValidatorTest {
 	@Test def invalid_attribute_value_of_tag_TABLE_ROWS() {
 		'''<TABLE ROWS=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeValueError("The value '' is not a correct ROWS: Value has to be '*'.")
-		
+
 		'''<TABLE ROWS="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeValueError("The value 'foo' is not a correct ROWS: Value has to be '*'.")
 	}
@@ -411,7 +411,7 @@ class DotHtmlLabelValidatorTest {
 	@Test def invalid_attribute_value_of_tag_TABLE_SIDES() {
 		'''<TABLE SIDES=""></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeValueError("The value '' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
-		
+
 		'''<TABLE SIDES="foo"></TABLE>'''.parse.assertNumberOfIssues(1).
 		assertHtmlAttributeValueError("The value 'foo' is not a correct SIDES: Value has to contain only the 'L', 'T', 'R', 'B' characters.")
 	}
@@ -693,11 +693,11 @@ class DotHtmlLabelValidatorTest {
 	private def assertHtmlTagError(HtmlLabel htmlLabel, String message) {
 		htmlLabel.assertHtmlTagError(null, message)
 	}
-	
+
 	private def assertHtmlTagError(HtmlLabel htmlLabel, String issueCode, String message) {
 		htmlLabel.assertError(HTML_TAG, issueCode, message)
 	}
-	
+
 	private def assertHtmlAttributeValueError(HtmlLabel htmlLabel, String message) {
 		htmlLabel.assertHtmlAttributeError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_VALUE, message)
 	}

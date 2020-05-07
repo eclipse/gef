@@ -49,13 +49,13 @@ import javafx.scene.text.Text;
 
 /*
  * This class will only look into the inner HTML label (i.e. not including the shape)
- * 
+ *
  * The graphviz grammar at http://www.graphviz.org/doc/info/shapes.html#html diverges in naming
  * from the DotHtmlLabel grammar due to a choice for higher availability of syntax help in the UI
- * 
+ *
  * Hence, this class relies on validation of the model and cites the graphviz grammar to align
  * behaviour with what the graphviz grammar permits.
- * 
+ *
  * Comments will refer to the graphviz grammar at the URL above.
  *
  * Known Limitations, TODO:
@@ -76,7 +76,7 @@ class DotHTMLLabelJavaFxNode {
 
 	/**
 	 * Creates a DotHTMLLabelJavaNode creator with default styles
-	 * 
+	 *
 	 * @param fontUtil
 	 *            A DotFontUtil instance.
 	 * @param colorUtil
@@ -109,7 +109,7 @@ class DotHTMLLabelJavaFxNode {
 
 	/**
 	 * Method to retrieve the JavaFX pane
-	 * 
+	 *
 	 * @return Java Fx Pane
 	 */
 	public Pane getMasterFxElement() {
@@ -154,7 +154,7 @@ class DotHTMLLabelJavaFxNode {
 		 * (B, I, ...) to occur before tables, too.
 		 *
 		 * The table rule is as follows:
-		 * 
+		 *
 		 * table : [ <FONT> ] <TABLE> rows </TABLE> [ </FONT> ]
 		 *
 		 * We need to differentiate between the the table and textitem cases.
@@ -217,7 +217,7 @@ class DotHTMLLabelJavaFxNode {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param builder
 	 *            NOT null
 	 * @param tag
@@ -280,7 +280,7 @@ class DotHTMLLabelJavaFxNode {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param builder
 	 *            NOT null
 	 * @param content
@@ -408,11 +408,11 @@ class DotHTMLLabelJavaFxNode {
 		StringBuilder css = new StringBuilder();
 		/*
 		 * Attributes TODO
-		 * 
+		 *
 		 * Align (Note: For table ALIGN="CENTER|LEFT|RIGHT"), Cellspacing,
 		 * COLUMNS="*" for a vertical line between every column, ROWS="*" for a
 		 * horizontal line between every line, VALIGN="MIDDLE|BOTTOM|TOP"
-		 * 
+		 *
 		 */
 
 		// FIXEDSIZE="FALSE|TRUE" used in HEIGHT and WIDTH attributes
@@ -445,10 +445,10 @@ class DotHTMLLabelJavaFxNode {
 		StringBuilder css = new StringBuilder();
 		/*
 		 * TODO Cellpadding
-		 * 
+		 *
 		 * Attributes that are not relevant for layouting of the HTML label
 		 * Href, Port, Title, Tooltip
-		 * 
+		 *
 		 * Currently unsupported throughout: Gefdot, Id
 		 */
 
@@ -613,11 +613,11 @@ class DotHTMLLabelJavaFxNode {
 		 * Graphviz documentation specifies for the ALIGN attribute on cells: If
 		 * the cell does not contain text, then the contained image or table is
 		 * centered.
-		 * 
+		 *
 		 * Further, by observation, unless the fixedsize attribute is set, in
 		 * graphviz the inner table grows in both horizontal and vertical
 		 * direction.
-		 * 
+		 *
 		 * TODO: revise these settings when the align attribute on table tags is
 		 * implemented, as this may change some behaviour.
 		 */

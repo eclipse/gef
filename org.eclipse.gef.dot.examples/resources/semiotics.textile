@@ -6,6 +6,6 @@ bc. graph {
   graph[layout=sfdp]
   Symbol; Referent; Reference
   Symbol -- Referent [label="Stands for" style=dashed]
-  Referent -- Reference [label="Refers to"] 
+  Referent -- Reference [label="Refers to"]
   Reference -- Symbol [label="Symbolizes"]
 }

@@ -51,7 +51,7 @@ public enum RankType {
 	/**
 	 * Returns the '<em><b>rankType</b></em>' literal with the specified literal
 	 * value.
-	 * 
+	 *
 	 * @param literal
 	 *            the literal.
 	 * @return the matching enum or <code>null</code>.

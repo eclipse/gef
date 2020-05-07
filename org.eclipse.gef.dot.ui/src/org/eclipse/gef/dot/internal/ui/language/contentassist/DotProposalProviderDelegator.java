@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2016, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import com.google.inject.Injector;
 /**
  * The implementation of this class is mainly taken from the
  * org.eclipse.xtext.junit4.ui.ContentAssistProcessorTestBuilder java class.
- * 
+ *
  * @author miklossy
  *
  */
@@ -48,7 +48,7 @@ public class DotProposalProviderDelegator {
 	/**
 	 * Computes the configurable completion proposals considering the given text
 	 * and the given cursorPosition.
-	 * 
+	 *
 	 * @param text
 	 *            The current text to parse.
 	 * @param cursorPosition

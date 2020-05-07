@@ -113,13 +113,13 @@ class DotHtmlLabelRenameRefactoringTest extends AbstractEditorTest {
 
 	private def rename(IFile testFile, HtmlTag targetElement, Pair<String, String> names) {
 		waitForBuild
-		
+
 		// ensure the right element is selected
 		val currentName = names.key
 		assertEquals("Wrong target element is selected!", currentName, targetElement.name)
-		
+
 		val newName = names.value
-		
+
 		val targetElementFragment = targetElement.URI.fragment
 		val targetElementURI = testFile.fullPath.toString.createPlatformResourceURI(true).appendFragment(targetElementFragment)
 

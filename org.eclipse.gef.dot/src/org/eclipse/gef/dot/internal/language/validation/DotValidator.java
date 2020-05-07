@@ -77,7 +77,7 @@ public class DotValidator extends AbstractDotValidator {
 	/**
 	 * Checks that within an {@link Attribute} only valid attribute values are
 	 * used (dependent on context, in which the attribute is specified).
-	 * 
+	 *
 	 * @param attribute
 	 *            The {@link Attribute} to validate.
 	 */
@@ -180,7 +180,7 @@ public class DotValidator extends AbstractDotValidator {
 	/**
 	 * Ensures that the 'striped' node style is used only for
 	 * rectangularly-shaped nodes ('box', 'rect', 'rectangle' and 'square').
-	 * 
+	 *
 	 * @param attribute
 	 *            The node style attribute to validate.
 	 */
@@ -230,7 +230,7 @@ public class DotValidator extends AbstractDotValidator {
 	/**
 	 * Ensures that within {@link EdgeRhsNode}, '-&gt;' is used in directed
 	 * graphs, while '--' is used in undirected graphs.
-	 * 
+	 *
 	 * @param edgeRhsNode
 	 *            The EdgeRhsNode to validate.
 	 */
@@ -243,7 +243,7 @@ public class DotValidator extends AbstractDotValidator {
 	/**
 	 * Ensures that within {@link EdgeRhsSubgraph} '-&gt;' is used in directed
 	 * graphs, while '--' is used in undirected graphs.
-	 * 
+	 *
 	 * @param edgeRhsSubgraph
 	 *            The EdgeRhsSubgraph to validate.
 	 */
@@ -274,7 +274,7 @@ public class DotValidator extends AbstractDotValidator {
 	 * Ensures that the label attribute value conforms to the recordLabel
 	 * subgrammar on nodes where the shape attribute is set to a
 	 * {@link RecordBasedNodeShape}.
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute to validate.
 	 */
@@ -330,7 +330,7 @@ public class DotValidator extends AbstractDotValidator {
 	/**
 	 * Checks that attribute lists do not contain the same attribute multiple
 	 * times; issues a warning for redundant attribute values.
-	 * 
+	 *
 	 * @param attrList
 	 *            An attribute list being checked.
 	 */

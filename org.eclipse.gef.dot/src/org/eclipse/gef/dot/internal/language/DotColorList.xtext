@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #461506)
- *     
+ *
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotColorList with org.eclipse.gef.dot.internal.language.DotColor
 
@@ -15,8 +15,8 @@ generate colorlist "http://www.eclipse.org/gef/dot/internal/language/DotColorLis
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 /*
- * A colon-separated list of weighted color values: WC(:WC)* where each WC has the form C(;F)? 
- * with C a color value and the optional F a floating-point number, 0 ≤ F ≤ 1. The sum of the 
+ * A colon-separated list of weighted color values: WC(:WC)* where each WC has the form C(;F)?
+ * with C a color value and the optional F a floating-point number, 0 ≤ F ≤ 1. The sum of the
  * floating-point numbers in a colorList must sum to at most 1.
  */
 ColorList:

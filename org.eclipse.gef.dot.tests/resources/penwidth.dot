@@ -10,7 +10,7 @@
  *       Zoey Gerrit Prigge (itemis AG) - Initial text
  *
  *******************************************************************************/
- 
+
 digraph {
 	subgraph clusterName {
 		graph [penwidth=2];
@@ -18,10 +18,10 @@ digraph {
 	}
 	edge[penwidth=1.5]
 	node[penwidth=1.5]
-	
+
 	2
 	3 [penwidth=12]
-	
+
 	2->3
 	3->4
 	5->6[penwidth=1.5]

@@ -7,14 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *       Tamas Miklossy  (itemis AG) - Initial text 
+ *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
 digraph G {
 	bgcolor="purple:pink"
 
 	subgraph cluster1 {
 		bgcolor="blue:green"
-		a0[ shape=circle fillcolor="gold:brown" gradientangle=180 style=filled label= < 
+		a0[ shape=circle fillcolor="gold:brown" gradientangle=180 style=filled label= <
 			<TABLE border="10" cellspacing="10" cellpadding="10" style="rounded" bgcolor="yellow:violet" gradientangle="315">
 				<TR>
 					<TD border="3" bgcolor="yellow">00</TD>

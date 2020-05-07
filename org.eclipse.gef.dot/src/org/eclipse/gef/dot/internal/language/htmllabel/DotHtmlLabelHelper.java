@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2018 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Tamas Miklossy   (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.htmllabel;
 
@@ -126,7 +126,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Specify the valid child tags of a certain html tag.
-	 * 
+	 *
 	 * @param tag
 	 *            the parent tag to which valid child tags should be specified.
 	 * @param childTags
@@ -138,7 +138,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Specify the valid attributes of a certain html tag.
-	 * 
+	 *
 	 * @param tag
 	 *            the tag to which valid attributes should be specified.
 	 * @param attributes
@@ -150,7 +150,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Returns the key representing the root tag.
-	 * 
+	 *
 	 * @return The root tag key
 	 */
 	public static String getRootTagKey() {
@@ -159,7 +159,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Returns all allowed html tags.
-	 * 
+	 *
 	 * @return The set of all allowed html tags.
 	 */
 	public static Set<String> getAllTags() {
@@ -168,7 +168,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Returns all tags that can be self-closing.
-	 * 
+	 *
 	 * @return The set of all tags that can be self-closing.
 	 */
 	public static Set<String> getSelfClosingTags() {
@@ -177,7 +177,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Returns all tags that cannot be self-closing.
-	 * 
+	 *
 	 * @return The set of all tags that cannot be self-closing.
 	 */
 	public static Set<String> getNonSelfClosingTags() {
@@ -187,7 +187,7 @@ public class DotHtmlLabelHelper {
 	/**
 	 * Returns the valid tags that can be used as a child tag of a particular
 	 * tag.
-	 * 
+	 *
 	 * @return A map mapping a particular tag to a set of its allowed children
 	 *         tags.
 	 */
@@ -198,7 +198,7 @@ public class DotHtmlLabelHelper {
 	/**
 	 * Returns the allowed parent tags that can be used as a parent tag of a
 	 * particular tag.
-	 * 
+	 *
 	 * @return A map mapping a particular tag to a set of its allowed parent
 	 *         tags.
 	 */
@@ -208,7 +208,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Returns the valid attributes that can be used within a particular tag.
-	 * 
+	 *
 	 * @return A map mapping a particular tag to a set of its allowed
 	 *         attributes.
 	 */
@@ -219,10 +219,10 @@ public class DotHtmlLabelHelper {
 	/**
 	 * Checks if the given {@link HtmlContent} list contains only valid siblings
 	 * to each other.
-	 * 
+	 *
 	 * @param siblings
 	 *            The {@link HtmlContent} list to check.
-	 * 
+	 *
 	 * @return true if the siblings contains only valid siblings, false
 	 *         otherwise.
 	 */
@@ -265,7 +265,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Returns the description of a particular html tag.
-	 * 
+	 *
 	 * @param tagName
 	 *            The tag for which the description should be determined.
 	 * @return The description of the given html tag.
@@ -310,7 +310,7 @@ public class DotHtmlLabelHelper {
 
 	/**
 	 * Returns an Attribute or null for given HTML tag and attribute Name
-	 * 
+	 *
 	 * @param tag
 	 *            the HTML tag to be analysed
 	 * @param attributeName
@@ -329,7 +329,7 @@ public class DotHtmlLabelHelper {
 	/**
 	 * Tries to find an Attribute for given HTML tags and attribute Name Returns
 	 * first found attribute value or null
-	 * 
+	 *
 	 * @param tags
 	 *            the HTML tag to be analysed
 	 * @param attributeName

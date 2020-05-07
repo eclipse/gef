@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge  - initial API and implementation (bug #454629)
- *    
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 

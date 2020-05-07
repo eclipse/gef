@@ -26,5 +26,5 @@ public class DotRecordLabelIdeSetup extends DotRecordLabelStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotRecordLabelRuntimeModule(), new DotRecordLabelIdeModule()));
 	}
-	
+
 }

@@ -1,18 +1,18 @@
 /********************************************************************************************
  * Copyright (c) 2009, 2017 Fabian Steeg, and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Fabian Steeg                 - initial API and implementation (see bug #277380)
  *     Alexander Nyßen (itemis AG)  - Fixed NPE (see bug #473011)
  *     Tamas Miklossy (itemis AG)   - Refactoring of preferences (bug #446639)
  *                                  - Exporting *.dot files in different formats (bug #446647)
  *                                  - Naming of output file (bug #484198)
- *     Darius Jockel (itemis AG)    - Fixed problems when calling dot on windows with large 
+ *     Darius Jockel (itemis AG)    - Fixed problems when calling dot on windows with large
  *                                    files (#492395)
  *     Matthias Wienand (itemis AG) - Remove sysouts and return exception message (#521230)
  *
@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Class for drawing dot graphs by calling the dot executable.
- * 
+ *
  * @author Fabian Steeg (fsteeg)
  * @author Alexander Nyßen (anyssen)
  * @author Darius Jockel
@@ -80,7 +80,7 @@ final public class DotExecutableUtils {
 
 	/**
 	 * Calls the Graphviz 'dot' executable with the given arguments.
-	 * 
+	 *
 	 * @param dotExecutablePath
 	 *            The path of the local Graphviz 'dot' executable, e.g.
 	 *            "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe"

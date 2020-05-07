@@ -293,7 +293,7 @@ class DotGraphPrettyPrinter {
 	/**
 	 * Creates a formatted string representation of a given attribute with a
 	 * startIndent.
-	 * 
+	 *
 	 * @param attrKey
 	 *            The key of the attribute for which to create a formatted
 	 *            string representation.

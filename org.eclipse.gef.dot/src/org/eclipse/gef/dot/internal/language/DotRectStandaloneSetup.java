@@ -14,7 +14,7 @@
 package org.eclipse.gef.dot.internal.language;
 
 /**
- * Initialization support for running Xtext languages 
+ * Initialization support for running Xtext languages
  * without equinox extension registry
  */
 public class DotRectStandaloneSetup extends DotRectStandaloneSetupGenerated{

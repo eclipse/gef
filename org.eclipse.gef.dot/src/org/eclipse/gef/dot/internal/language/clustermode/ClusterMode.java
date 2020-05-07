@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.language.clustermode;
 
 /**
  * Enum representing DOT clusterMode.
- * 
+ *
  * @author miklossy
  *
  */

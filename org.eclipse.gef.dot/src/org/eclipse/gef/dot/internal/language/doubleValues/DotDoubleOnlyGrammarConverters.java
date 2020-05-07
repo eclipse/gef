@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Zoey Prigge (itemis AG) - initial API and implementation (bug #559031)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.doubleValues;
 
@@ -21,7 +21,7 @@ import org.eclipse.xtext.conversion.impl.AbstractNullSafeConverter;
 import org.eclipse.xtext.nodemodel.INode;
 
 /**
- * 
+ *
  * A class to add p0 for int hex double values to use java Double parser
  *
  */
@@ -30,7 +30,7 @@ public class DotDoubleOnlyGrammarConverters
 
 	/**
 	 * A value converter for the ID data type rule.
-	 * 
+	 *
 	 * @return A {@link DotIDValueConverter}.
 	 */
 	@ValueConverter(rule = "DOUBLE")

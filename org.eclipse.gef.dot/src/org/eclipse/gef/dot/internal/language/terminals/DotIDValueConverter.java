@@ -22,7 +22,7 @@ import org.eclipse.xtext.nodemodel.INode;
 
 /**
  * A value converter for Dot ID values.
- * 
+ *
  * @author anyssen
  *
  */

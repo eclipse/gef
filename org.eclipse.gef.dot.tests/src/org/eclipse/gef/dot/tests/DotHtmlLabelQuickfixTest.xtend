@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2019, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ class DotHtmlLabelQuickfixTest {
 
 	/**
 	  * Test that the expected quickfixes are offered on a given validation issue in a given DSL text.
-	  * 
+	  *
 	  * @param it The initial DSL text.
 	  * @param expected The quickfixes that are expected to be offered on the given <code>issueCode</code>.
 	  * Each expected quickfix should be described by the following triple:

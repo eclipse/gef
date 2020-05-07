@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2018, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #530699)
  *     Zoey Prigge (itemis AG)    - implement mark occurrence support for attributes (bug #548911)
  *                                - include test against empty document (bug #548911)
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 
@@ -258,12 +258,12 @@ class DotMarkingOccurrencesTest extends AbstractEditorTest {
 
 	private def verifyOccurrences(String content, Pair<String, Integer> selectionOffset, List<Pair<String, Integer>> expected) {
 		val file = DotTestUtils.createTestFile(content)
-		
+
 		val project = file.project
 		if(!project.hasNature(XtextProjectHelper.NATURE_ID)) {
 			project.addNature(XtextProjectHelper.NATURE_ID)
-		} 
-		
+		}
+
 		val editor = openEditor(file)
 		val selection = new TextSelection(content.nthOccurrence(selectionOffset.key,selectionOffset.value), selectionOffset.key.length)
 

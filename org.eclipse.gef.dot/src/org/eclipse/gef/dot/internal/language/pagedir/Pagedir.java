@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.language.pagedir;
 
 /**
  * Enum representing DOT pageDir.
- * 
+ *
  * @author miklossy
  *
  */

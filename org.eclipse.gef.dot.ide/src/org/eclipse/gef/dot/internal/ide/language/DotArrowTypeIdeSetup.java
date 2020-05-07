@@ -26,5 +26,5 @@ public class DotArrowTypeIdeSetup extends DotArrowTypeStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotArrowTypeRuntimeModule(), new DotArrowTypeIdeModule()));
 	}
-	
+
 }

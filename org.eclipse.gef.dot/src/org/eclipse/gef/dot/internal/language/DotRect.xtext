@@ -8,7 +8,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Zoey Prigge     (itemis AG) - include exp and hex in double literal grammar (bug #559031)
- *     
+ *
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotRect hidden(WS)
 
@@ -20,13 +20,13 @@ Rect:
 
 terminal DOUBLE returns ecore::EDouble:
 	//negative numbers
-	('-')? 
+	('-')?
 	(
 		// decimal numbers
 		((('.' ('0'..'9')+) | (('0'..'9')+ (('.') ('0'..'9')*)?)) (('e'|'E') ('+'|'-')? ('0'..'9')+)?) |
 		// hexadecimal numbers
-		('0' ('x'|'X') 
-			(('.' ('0'..'9'|'a'..'f'|'A'..'F')+) | (('0'..'9'|'a'..'f'|'A'..'F')+ (('.') ('0'..'9'|'a'..'f'|'A'..'F')*)?)) 
+		('0' ('x'|'X')
+			(('.' ('0'..'9'|'a'..'f'|'A'..'F')+) | (('0'..'9'|'a'..'f'|'A'..'F')+ (('.') ('0'..'9'|'a'..'f'|'A'..'F')*)?))
 			(('p'|'P') ('+'|'-')? ('0'..'9')+)?
 		)
 	);

@@ -27,7 +27,7 @@ import static extension org.junit.Assert.*
 
 /**
  * Tests for the {@link DotExport} class.
- * 
+ *
  * @author Fabian Steeg (fsteeg)
  */
 class DotExportTest {
@@ -58,7 +58,7 @@ class DotExportTest {
 
 	private def assertExportedTo(Graph graph, String expectedFileName) {
 		val expected = expectedFileName.content.removeMultiLineComments
-		
+
 		graph.exportDot.assertResult(expected)
 		graph.exportDotToFile.assertResult(expected)
 	}

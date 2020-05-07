@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2018, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ class DotReferenceFinderTest extends AbstractEditorTest {
 	@Inject extension SyncUtil
 	@Inject IResourceSetProvider resourceSetProvider
 	@Inject ReferenceQueryExecutor referenceQueryExecutor
-	
+
 	ISearchResult searchResult = null
 
 	override setUp() {
@@ -187,11 +187,11 @@ class DotReferenceFinderTest extends AbstractEditorTest {
 
 	private def dslFile(CharSequence it) {
 		val testFile = toString.createTestFile
-		
+
 		val project = testFile.project
 		val resourceSet = resourceSetProvider.get(project)
 		val projectFullPath = project.fullPath.toString
-		
+
 		val uri = URI.createPlatformResourceURI(projectFullPath + "/" + testFile.name , true)
 		val resource = resourceSet.createResource(uri)
 		resource.load(newHashMap)
@@ -200,36 +200,36 @@ class DotReferenceFinderTest extends AbstractEditorTest {
 
 	private def searchingReferencesOn(Resource resource, (DotAst)=>EObject elementProvider) {
 		val dotAst = resource.contents.head as DotAst
-		
+
 		val element = elementProvider.apply(dotAst)
-		
+
 		waitForBuild(new NullProgressMonitor)
-		
+
 		referenceQueryExecutor.init(element)
-		
+
 		NewSearchUI.addQueryListener( new IQueryListener() {
-			
+
 			override queryAdded(ISearchQuery query) {
 			}
-			
+
 			override queryFinished(ISearchQuery query) {
 				searchResult = query.searchResult
 			}
-			
+
 			override queryRemoved(ISearchQuery query) {
 			}
-			
+
 			override queryStarting(ISearchQuery query) {
 			}
-			
+
 		});
-		
+
 		referenceQueryExecutor.execute
-		
+
 		while(searchResult===null) {
 			Thread.sleep(100)
 		}
-		
+
 		element
 	}
 
@@ -241,13 +241,13 @@ class DotReferenceFinderTest extends AbstractEditorTest {
 
 	private def searchViewContains(EObject element, List<(DotAst)=>EObject> expectedReferences) {
 		val matchingReferences = (searchResult as ReferenceSearchResult).matchingReferences
-		
+
 		val resource = element.eResource
 		val dotAst = resource.contents.head as DotAst
-		
+
 		val actual = matchingReferences.map[sourceEObjectUri.fragment].sort.join(System.lineSeparator)
 		val expected = expectedReferences.map[resource.getURIFragment(apply(dotAst))].sort.join(System.lineSeparator)
-		
+
 		expected.assertEquals(actual)
 	}
 

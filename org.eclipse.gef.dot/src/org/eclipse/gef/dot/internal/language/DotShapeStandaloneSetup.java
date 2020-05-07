@@ -13,7 +13,7 @@ package org.eclipse.gef.dot.internal.language;
 import org.eclipse.gef.dot.internal.language.DotShapeStandaloneSetupGenerated;
 
 /**
- * Initialization support for running Xtext languages 
+ * Initialization support for running Xtext languages
  * without equinox extension registry
  */
 public class DotShapeStandaloneSetup extends DotShapeStandaloneSetupGenerated{

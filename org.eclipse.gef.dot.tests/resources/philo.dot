@@ -10,12 +10,12 @@
  *       Tamas Miklossy  (itemis AG) - Initial text (bug #521149)
  *******************************************************************************/
 
-// Sample graph from 
+// Sample graph from
 // http://www.graphviz.org/content/philo
 // http://www.graphviz.org/Gallery/undirected/philo.gv.txt
 
 ## "It encodes the so-called philosophers dilemma.  Neato pretty much approximates the way how humans would layout the graph." Contributed by Manfred Jeusfield.
-## Command to generate the layout: "neato -Tpng thisfile > thisfile.png" 
+## Command to generate the layout: "neato -Tpng thisfile > thisfile.png"
 
 digraph PhiloDilemma {
 	graph [bb="-441.78,419.3,344.16,-417.55",

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * A boolean field editor that provides access to this editors boolean button.
- * 
+ *
  * The implementation of this class is mainly taken from the
  * {@link org.eclipse.debug.internal.ui.preferences.BooleanFieldEditor2} java
  * class.

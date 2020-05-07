@@ -55,10 +55,10 @@ public class DotReferenceFinder extends ReferenceFinder {
 	 * Using the @Override notation leads to a compile error on some (e.g NEON,
 	 * OXYGEN, PHOTON, ...) platforms, since this internal Xtext API has been
 	 * changed over time.
-	 * 
+	 *
 	 * see
 	 * https://github.com/eclipse/xtext-core/commit/69064ac12f0144b60d8c7511d41c834db44a67f2
-	 * 
+	 *
 	 * This method will be invoked on ...LUNA, MARS, platforms
 	 */
 	public void findReferences(TargetURIs targetURIs, Resource resource,

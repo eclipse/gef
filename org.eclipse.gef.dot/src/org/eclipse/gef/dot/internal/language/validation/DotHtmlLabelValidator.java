@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Tamas Miklossy   (itemis AG) - implement additional validation checks (bug #321775)
  *     Zoey Prigge      (itemis AG) - implement duplicate attribute name error (bug #549410)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
@@ -76,7 +76,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	/**
 	 * Checks if the given {@link HtmlLabel}'s parts are valid siblings to each
 	 * other. Generates errors if the label's parts contains invalid siblings.
-	 * 
+	 *
 	 * @param label
 	 *            The {@link HtmlLabel} of that's parts are to be checked.
 	 */
@@ -88,7 +88,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	/**
 	 * Checks if the given {@link HtmlTag}'s children are valid siblings to each
 	 * other. Generates errors if the tag's children contains invalid siblings.
-	 * 
+	 *
 	 * @param tag
 	 *            The {@link HtmlTag} of that's children are to be checked.
 	 */
@@ -100,7 +100,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	/**
 	 * Checks if the given {@link HtmlTag} is properly closed. Generates errors
 	 * if the html's open tag does not correspond to its close tag.
-	 * 
+	 *
 	 * @param tag
 	 *            The {@link HtmlTag} to check.
 	 */
@@ -120,7 +120,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	/**
 	 * Checks if the given {@link HtmlTag} is properly closed. Generates errors
 	 * if the html tag is self-closed where self-closing is not allowed.
-	 * 
+	 *
 	 * @param tag
 	 *            The {@link HtmlTag} to check.
 	 */
@@ -141,7 +141,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	 * Checks if a string literal is allowed in the given {@link HtmlTag}.
 	 * Generates errors if the html tag is not allowed to contain a string
 	 * literal.
-	 * 
+	 *
 	 * @param tag
 	 *            The {@link HtmlTag} to check.
 	 */
@@ -173,7 +173,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	 * Checks if the given {@link HtmlTag} is valid w.r.t. its parent (not all
 	 * tags are allowed on all nesting levels). Generates errors when the given
 	 * {@link HtmlTag} is not supported by Graphviz w.r.t. its parent.
-	 * 
+	 *
 	 * @param tag
 	 *            The {@link HtmlTag} to check.
 	 */
@@ -219,7 +219,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	 * certain attributes are supported by the individual tags). Generates
 	 * errors if the {@link HtmlAttr} is not supported by Graphviz w.r.t. its
 	 * tag.
-	 * 
+	 *
 	 * @param attr
 	 *            The {@link HtmlAttr} to check.
 	 */
@@ -247,7 +247,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	 * Checks if the value of a given {@link HtmlAttr} is valid. Generates
 	 * errors if the value of a given {@link HtmlAttr} is not supported by
 	 * Graphviz.
-	 * 
+	 *
 	 * @param attr
 	 *            The {@link HtmlAttr} of that's attribute value is to check.
 	 */
@@ -276,7 +276,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	 * Checks if a given {@link HtmlTag} has {@link HtmlAttr}s of the same name.
 	 * Generates errors if multiple {@link HtmlAttr}s have the same name as this
 	 * is not supported by Graphviz.
-	 * 
+	 *
 	 * @param tag
 	 *            The {@link HtmlTag} being checked.
 	 */
@@ -331,7 +331,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 
 	/**
 	 * Determines whether the given html attribute value is valid or not.
-	 * 
+	 *
 	 * @param htmlTagName
 	 *            The html tag name
 	 * @param htmlAttributeName

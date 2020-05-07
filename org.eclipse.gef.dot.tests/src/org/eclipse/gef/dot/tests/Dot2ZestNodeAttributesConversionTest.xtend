@@ -38,7 +38,7 @@ import static extension org.junit.Assert.*
 
 /*
  * Test cases for the {@link Dot2ZestAttributesConverter#convertAttributes(Node, Node)} method.
- * 
+ *
  * TODO Implement Tests for:
  * - pos Attribute
  * - html Labels
@@ -315,7 +315,7 @@ class Dot2ZestNodeAttributesConversionTest {
 	}
 
 	@Test def node_label010() {
-		//test to ascertain no loop is reached 
+		//test to ascertain no loop is reached
 		'''
 			graph {
 				a[label="\L"]
@@ -324,7 +324,7 @@ class Dot2ZestNodeAttributesConversionTest {
 	}
 
 	@Test def node_label011() {
-		//test to ascertain no NPE is reached 
+		//test to ascertain no NPE is reached
 		'''
 			graph {
 				a[label="\G"]
@@ -404,7 +404,7 @@ class Dot2ZestNodeAttributesConversionTest {
 		'''.assertNodeXLabel(null)
 	}
 
-	@Test def node_xlabel002() { 
+	@Test def node_xlabel002() {
 		'''
 			digraph {
 				1[xlabel="fantastic label"]
@@ -412,7 +412,7 @@ class Dot2ZestNodeAttributesConversionTest {
 		'''.assertNodeXLabel("fantastic label")
 	}
 
-	@Test def node_xlabel003() { 
+	@Test def node_xlabel003() {
 		'''
 			digraph {
 				1[xlabel="fantastic\rlabel"]
@@ -420,7 +420,7 @@ class Dot2ZestNodeAttributesConversionTest {
 		'''.assertNodeXLabel("fantastic\nlabel")
 	}
 
-	@Test def node_xlabel004() { 
+	@Test def node_xlabel004() {
 		'''
 			digraph {
 				1[xlabel="fantastic\nlabel\n\n"]
@@ -428,7 +428,7 @@ class Dot2ZestNodeAttributesConversionTest {
 		'''.assertNodeXLabel("fantastic\nlabel\n")
 	}
 
-	@Test def node_xlabel005() { 
+	@Test def node_xlabel005() {
 		'''
 			digraph testedGraphName {
 				1[xlabel="node:\L graph:\G"]
@@ -445,7 +445,7 @@ class Dot2ZestNodeAttributesConversionTest {
 			-fx-stroke-width:3.0;
 		''')
 	}
-	
+
 	@Test def node_penwidth002() {
 		'''
 			digraph{
@@ -466,7 +466,7 @@ class Dot2ZestNodeAttributesConversionTest {
 			-fx-border-style:solid;
 		''')
 	}
-	
+
 	@Test def node_penwidth_record002() {
 		'''
 			digraph{
@@ -478,7 +478,7 @@ class Dot2ZestNodeAttributesConversionTest {
 		''')
 	}
 
-	@Test def node_polygonbasedshape001() { 
+	@Test def node_polygonbasedshape001() {
 		'''
 			digraph {
 				1[shape=box]
@@ -486,7 +486,7 @@ class Dot2ZestNodeAttributesConversionTest {
 		'''.assertNodePolygonBasedShape(new Rectangle)
 	}
 
-	@Test def node_polygonbasedshape002() { 
+	@Test def node_polygonbasedshape002() {
 		'''
 			digraph {
 				1[shape=rect]
@@ -751,7 +751,7 @@ class Dot2ZestNodeAttributesConversionTest {
 			}
 		'''.assertNodeStyle("")
 	}
-	
+
 	@Test def node_style009() {
 		'''
 			digraph {
@@ -1020,7 +1020,7 @@ class Dot2ZestNodeAttributesConversionTest {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = dotText.parse
 		dotAst.assertNoErrors
-		
+
 		dotAst.importDot.get(0)
 	}
 

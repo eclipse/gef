@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotSplineType with org.eclipse.gef.dot.internal.language.DotPoint
 

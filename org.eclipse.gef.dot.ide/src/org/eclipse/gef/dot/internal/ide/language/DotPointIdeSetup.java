@@ -26,5 +26,5 @@ public class DotPointIdeSetup extends DotPointStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotPointRuntimeModule(), new DotPointIdeModule()));
 	}
-	
+
 }

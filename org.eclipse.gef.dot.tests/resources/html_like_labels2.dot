@@ -50,7 +50,7 @@ digraph G {
 							</TR>
 						</TABLE>
 					</TD>
-					<TD BGCOLOR="white">penguin</TD> 
+					<TD BGCOLOR="white">penguin</TD>
 				</TR>
 				<TR>
 					<TD COLSPAN="2" BORDER="4" ALIGN="right" PORT="there">4</TD>

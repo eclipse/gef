@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2016, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #461506)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
@@ -44,7 +44,7 @@ public class DotColorValidator extends AbstractDotColorValidator {
 	 * Checks that the color scheme defined within the given <i>color</i> value
 	 * is a valid dot color scheme and that the color name also defined within
 	 * the given <i>color</i> value are consistent to the defined color scheme.
-	 * 
+	 *
 	 * @param color
 	 *            The StringColor element to check.
 	 */

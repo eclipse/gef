@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #461506)
- *     
+ *
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotPortPos
 

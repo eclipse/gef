@@ -761,7 +761,7 @@ class DotHoverTest extends AbstractHoverTest {
 	}
 
 	/*
-	 * SourceViewer getTextHover(int offset) is protected, 
+	 * SourceViewer getTextHover(int offset) is protected,
 	 * hence for testing purposes we have to use reflection for access,
 	 * as the method is accessible to subclasses, it is unlikely to be removed from API,
 	 * so this should be safe.

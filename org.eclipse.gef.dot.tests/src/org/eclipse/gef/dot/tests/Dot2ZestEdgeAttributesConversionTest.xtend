@@ -240,7 +240,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			graph {
 				1--2
 			}
-		'''.assertEdgeSourceDecoration(null) 
+		'''.assertEdgeSourceDecoration(null)
 	}
 
 	@Test def edge_sourceDecoration002() {
@@ -345,7 +345,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-stroke: #00ff00;
 			-fx-fill: #ffffff;
 			-fx-stroke-width: 0.5;
-		''') 
+		''')
 	}
 
 	@Test def edge_sourceDecorationStyle007() {
@@ -359,7 +359,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			-fx-stroke: #000000;
 			-fx-fill: #000000;
 			-fx-stroke-width: 0.5;
-		''') 
+		''')
 	}
 
 	@Test def edge_targetDecoration001() {
@@ -367,7 +367,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			graph {
 				1--2
 			}
-		'''.assertEdgeTargetDecoration(null) 
+		'''.assertEdgeTargetDecoration(null)
 	}
 
 	@Test def edge_targetDecoration002() {
@@ -389,7 +389,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 			Polygon[points=[0.0, 0.0, 25.0, -8.333333333333334, 25.0, 8.333333333333334], fill=0x000000ff]
 		''')
 	}
-	
+
 	@Test def edge_targetDecoration004() {
 		'''
 			digraph {
@@ -1128,7 +1128,7 @@ class Dot2ZestEdgeAttributesConversionTest {
 		if (expected === null) {
 			decoration.assertNull
 		} else {
-			val actual = decoration.toString 
+			val actual = decoration.toString
 			expected.trim.assertEquals(actual)
 		}
 	}

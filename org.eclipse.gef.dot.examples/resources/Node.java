@@ -9,14 +9,14 @@
  *     Fabian Steeg - initial API and implementation (see bug #277380)
  *******************************************************************************/
 /**
- * A recursive, object-oriented node in a binary tree with 
+ * A recursive, object-oriented node in a binary tree with
  * references to the parent and the children (left and right).
- <pre> 
+ <pre>
  graph {
    node[label="Node"]
    root; parent; left; right
    parent -- root[label=parent]
-   root -- left[label=left] 
+   root -- left[label=left]
    root -- right[label=right]
  } </pre> */
 class Node {

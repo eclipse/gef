@@ -26,5 +26,5 @@ public class DotIdeSetup extends DotStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotRuntimeModule(), new DotIdeModule()));
 	}
-	
+
 }

@@ -20,7 +20,7 @@ import org.eclipse.xtext.ui.wizard.template.ProjectTemplate
 
 /**
  * Create a list with all project templates to be shown in the template new project wizard.
- * 
+ *
  * Each template is able to generate one or more projects. Each project can be configured such that any number of files are included.
  */
 class DotProjectTemplateProvider implements IProjectTemplateProvider {

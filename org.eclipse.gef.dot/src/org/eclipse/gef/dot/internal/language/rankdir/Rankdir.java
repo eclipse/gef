@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.language.rankdir;
 
 /**
  * Enum representing DOT rankdir.
- * 
+ *
  * @author anyssen
  *
  */

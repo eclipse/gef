@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2019 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #541056)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui;
 
@@ -25,7 +25,7 @@ public class DotNodeLabelPart extends NodeLabelPart {
 	/**
 	 * The implementation of this class is mainly taken from the
 	 * org.eclipse.gef.zest.fx.parts.NodeLabelPart java class.
-	 * 
+	 *
 	 * Modification added: applying the external label css style on the Text
 	 * widget instead of its parent Group.
 	 */

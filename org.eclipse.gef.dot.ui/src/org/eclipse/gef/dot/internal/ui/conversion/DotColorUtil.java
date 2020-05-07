@@ -30,7 +30,7 @@ public class DotColorUtil {
 
 	/**
 	 * Returns the javafx representation of a dot color.
-	 * 
+	 *
 	 * @param colorScheme
 	 *            The colorscheme attribute value (or null if not defined)
 	 * @param dotColor
@@ -95,7 +95,7 @@ public class DotColorUtil {
 
 	/**
 	 * Returns the {@link Color} of a HTML-like label color attribute
-	 * 
+	 *
 	 * @param htmlColor
 	 *            The string attribute value.
 	 * @return The corresponding {@link Color}.

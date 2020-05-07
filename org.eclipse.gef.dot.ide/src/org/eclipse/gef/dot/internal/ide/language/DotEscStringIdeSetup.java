@@ -26,5 +26,5 @@ public class DotEscStringIdeSetup extends DotEscStringStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotEscStringRuntimeModule(), new DotEscStringIdeModule()));
 	}
-	
+
 }

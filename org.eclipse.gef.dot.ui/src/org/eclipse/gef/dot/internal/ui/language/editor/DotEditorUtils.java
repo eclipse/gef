@@ -37,7 +37,7 @@ public class DotEditorUtils {
 
 	/**
 	 * @param object
-	 * 
+	 *
 	 * @return true if the object is the DOT Editor, false otherwise
 	 */
 	public static boolean isDotEditor(Object object) {

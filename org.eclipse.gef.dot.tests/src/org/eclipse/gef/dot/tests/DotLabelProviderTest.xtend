@@ -125,13 +125,13 @@ class DotLabelProviderTest {
 
 	@Test def text_DotAst() {
 		val ast = createDotAst
-		
+
 		val resource = new XtextResource => [
 			contents += ast
 		]
-		
+
 		resource.URI = URI.createURI("test.dot")
-		
+
 		ast.hasText("test.dot: File")
 	}
 

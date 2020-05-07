@@ -33,9 +33,9 @@ import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.ad
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
 class DotEditorTest extends AbstractEditorTest {
-	
+
 	@Inject extension FileExtensionProvider
-	
+
 	@Test def dot_graph_view_is_present_in_the_show_in_context_menu() {
 		'''
 			digraph {
@@ -43,7 +43,7 @@ class DotEditorTest extends AbstractEditorTest {
 			}
 		'''.testThatShowInDotGraphContextMenuIsShown
 	}
-	
+
 	private def testThatShowInDotGraphContextMenuIsShown(CharSequence it) {
 		// given
 		dslFile.
@@ -52,7 +52,7 @@ class DotEditorTest extends AbstractEditorTest {
 		// then
 		showInDotGraphViewIsShown
 	}
-	
+
 	private def dslFile(CharSequence text) {
 		val file = IResourcesSetupUtil.createFile(projectName + "/" + fileName + "." + fileExtension, text.toString)
 
@@ -67,18 +67,18 @@ class DotEditorTest extends AbstractEditorTest {
 
 		file
 	}
-	
+
 	private def showInDotGraphViewIsShown(XtextEditor editor) {
 		val dotEditor = editor as DotEditor
 		val showInTargetIds = dotEditor.showInTargetIds
-		
+
 		val actual = showInTargetIds.sort.join(System.lineSeparator)
 		val expected = "org.eclipse.gef.dot.internal.ui.DotGraphView" // id of the GEF DOT Graph view
 		val message = "Cannot find the DOT Graph view in the 'Show In' context menu of the DOT Editor !"
-		
+
 		assertEquals(message, expected, actual)
 	}
-	
+
 	private def String getProjectName() {
 		"DOTEditorTest"
 	}

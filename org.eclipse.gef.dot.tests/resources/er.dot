@@ -10,7 +10,7 @@
  *       Tamas Miklossy  (itemis AG) - Initial text (bug #520919)
  *******************************************************************************/
 
-// Sample graph from 
+// Sample graph from
 // http://www.graphviz.org/content/ER
 // http://www.graphviz.org/Gallery/undirected/ER.gv.txt
 graph ER {

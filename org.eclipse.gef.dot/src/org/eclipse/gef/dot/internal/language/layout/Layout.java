@@ -62,7 +62,7 @@ public enum Layout {
 	/**
 	 * Returns the '<em><b>Layout</b></em>' literal with the specified literal
 	 * value.
-	 * 
+	 *
 	 * @param literal
 	 *            the literal.
 	 * @return the matching enum or <code>null</code>.

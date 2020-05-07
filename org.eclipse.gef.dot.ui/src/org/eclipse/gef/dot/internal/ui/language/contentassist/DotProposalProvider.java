@@ -79,7 +79,7 @@ import com.google.inject.Inject;
 
 /**
  * A proposal provider for Dot.
- * 
+ *
  * @author anyssen
  */
 public class DotProposalProvider extends AbstractDotProposalProvider {
@@ -689,7 +689,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 	/**
 	 * Calculates the valid dot attribute names within a given {@link Context}.
-	 * 
+	 *
 	 * @return a map mapping the {@link Context} elements such as
 	 *         {@link Context#EDGE}, {@link Context#GRAPH}, {@link Context#NODE}
 	 *         to the valid dot attribute names.
@@ -773,7 +773,7 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 
 		/**
 		 * Returns the character separating a list of values, not a list if null
-		 * 
+		 *
 		 * @return separating character, may be null
 		 */
 		public Character getListSeparator() {

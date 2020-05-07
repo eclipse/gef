@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Tamas Miklossy   (itemis AG) - initial API and implementation
  *     Zoey Prigge      (itemis AG) - Add ca support for html color attrs (bug #553575)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
 
@@ -202,7 +202,7 @@ public class DotHtmlLabelProposalProvider extends
 	/**
 	 * Checks if the html tag is a valid sibling to determine if it should be
 	 * offered as proposal
-	 * 
+	 *
 	 * @param tagName
 	 *            the name of the html tag
 	 * @param siblings
@@ -394,7 +394,7 @@ public class DotHtmlLabelProposalProvider extends
 	/**
 	 * Calculates the proposal string to a given tag. Proposes self-closing tags
 	 * whenever possible.
-	 * 
+	 *
 	 * @param tagName
 	 * @return
 	 */
@@ -421,7 +421,7 @@ public class DotHtmlLabelProposalProvider extends
 	/**
 	 * Calculates the cursor position where the cursor has to be placed after
 	 * the given proposal has been applied.
-	 * 
+	 *
 	 * @param htmlTagText
 	 *            the htmlTagText representing the proposal
 	 * @return the proper cursor position

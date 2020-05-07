@@ -26,5 +26,5 @@ public class DotPortPosIdeSetup extends DotPortPosStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotPortPosRuntimeModule(), new DotPortPosIdeModule()));
 	}
-	
+
 }

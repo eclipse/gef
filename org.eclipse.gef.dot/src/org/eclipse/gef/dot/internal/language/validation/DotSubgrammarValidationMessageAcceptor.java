@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge  - initial API and implementation (bug #454629)
- *    
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
@@ -26,7 +26,7 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
  * This class provides a ValidationMessageAcceptor to be used with sub grammars.
  * It can be used when validating the main grammar to translate validation
  * warnings/errors.
- * 
+ *
  * @author zgerritprigge
  *
  */
@@ -41,7 +41,7 @@ public class DotSubgrammarValidationMessageAcceptor
 	/**
 	 * Constructs a Validation Message acceptor to 'translate' issues while
 	 * validating a sub grammar.
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute in the main grammar that hosts the sub grammar
 	 * @param hostingFeature
@@ -70,7 +70,7 @@ public class DotSubgrammarValidationMessageAcceptor
 	 * Helper Method to allow this message acceptor to handle syntax errors
 	 * issued while parsing the sub grammar as validation issues of the main
 	 * grammar.
-	 * 
+	 *
 	 * @param error
 	 *            Error node from parsing.
 	 */

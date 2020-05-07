@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2016 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,14 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 lexer grammar CustomInternalDotLexer;
 
 @header {
 package org.eclipse.gef.dot.internal.language.parser.antlr.lexer;
 
-	// Hack: Use our own Lexer superclass by means of import. 
+	// Hack: Use our own Lexer superclass by means of import.
 	// Currently there is no other way to specify the superclass for the lexer.
 	import org.eclipse.xtext.parser.antlr.Lexer;
 }
@@ -78,5 +78,5 @@ RULE_ML_COMMENT : { !htmlMode }?=> '/*' ( options {greedy=false;} : . )* '*/';
 RULE_SL_COMMENT : { !htmlMode }?=> ('//'|'#') ~(('\n'|'\r'))* ('\r'? '\n')?;
 
 RULE_WS : { !htmlMode }?=> (' '|'\t'|'\r'|'\n'|'\f')+;
- 
+
 RULE_ANY_OTHER : .;

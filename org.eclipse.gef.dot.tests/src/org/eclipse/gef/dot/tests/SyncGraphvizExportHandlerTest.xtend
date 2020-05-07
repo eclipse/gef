@@ -119,14 +119,14 @@ class SyncGraphvizExportHandlerTest extends AbstractEditorTest {
 
 	private def syncGraphvizExport(boolean openGraphvizPreferencePage) {
 		val dialogContent = newArrayList
-	
+
 		waitForTheGraphvizConfigurationDialog(dialogContent, openGraphvizPreferencePage)
-	
+
 		val result = new SyncGraphvizExportHandler().execute(syncGraphvizExportExecutionEvent)
 		result.assertNull
-	
+
 		flushPendingEvents
-	
+
 		dialogContent
 	}
 

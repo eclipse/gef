@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2018 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse def License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ import com.google.inject.Inject;
 
 /**
  * Provides labels and icons for the different DOT EObjects.
- * 
+ *
  * See
  * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  */

@@ -34,7 +34,7 @@ import org.eclipse.xtext.validation.Check;
  *
  * See
  * https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
- * 
+ *
  */
 public class DotStyleValidator extends AbstractDotStyleValidator {
 

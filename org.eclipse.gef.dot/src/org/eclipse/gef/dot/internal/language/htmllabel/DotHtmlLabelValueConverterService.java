@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2019 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 
 /**
  * A value converter service for the Dot HTML-Like Labels subgrammar.
- * 
+ *
  */
 public class DotHtmlLabelValueConverterService
 		extends AbstractDeclarativeValueConverterService {
@@ -28,7 +28,7 @@ public class DotHtmlLabelValueConverterService
 
 	/**
 	 * A value converter for the ID terminal rule.
-	 * 
+	 *
 	 * @return A {@link DotHtmlLabelIDValueConverter}
 	 */
 	@ValueConverter(rule = "ID")

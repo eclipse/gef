@@ -26,5 +26,5 @@ public class DotColorListIdeSetup extends DotColorListStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotColorListRuntimeModule(), new DotColorListIdeModule()));
 	}
-	
+
 }

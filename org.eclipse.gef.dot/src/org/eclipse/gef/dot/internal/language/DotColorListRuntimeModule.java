@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #461506)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language;
 

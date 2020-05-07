@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: 
+ * Contributors:
  *     Fabian Steeg - initial API and implementation; see bug 277380
  *     Alexander Nyßen (itemis AG) - rename refactoring
  *     Tamas Miklossy  (itemis AG) - minor refactoring
@@ -20,21 +20,21 @@ import org.junit.Test
 
 /**
  * Tests for the {@link DotExtractor}.
- * 
+ *
  * @author Fabian Steeg (fsteeg)
  */
 class DotExtractorTest {
 
 	@Test def dot_extraction_01() {
 		'''
-			/** 
-				Javadoc stuff 
+			/**
+				Javadoc stuff
 					graph name {
 						a;
 						b;
 						a--b
-					} 
-				and more 
+					}
+				and more
 			*/
 	 	'''.assertExtractedTo('''
 			graph name {
@@ -47,7 +47,7 @@ class DotExtractorTest {
 
 	@Test def dot_extraction_02() {
 		'''
-			/** Javadoc stuff 
+			/** Javadoc stuff
 			graph long_name {
 				a;
 				b;
@@ -64,8 +64,8 @@ class DotExtractorTest {
 
 	@Test def dot_extraction_03() {
 		'''
-			/* Java block comment 
-				stuff 
+			/* Java block comment
+				stuff
 			digraph {
 				a;
 				b;
@@ -82,12 +82,12 @@ class DotExtractorTest {
 
 	@Test def dot_extraction_04() {
 		'''
-			Stuff about a graph and then 
+			Stuff about a graph and then
 			graph {
 				a;
 				b;
 				a--b
-			} and more 
+			} and more
 		'''.assertExtractedTo('''
 			graph {
 				a;
@@ -99,12 +99,12 @@ class DotExtractorTest {
 
 	@Test def dot_extraction_05() {
 		'''
-			Stuff about a graph and then with breaks 
+			Stuff about a graph and then with breaks
 				graph{
 					a
 					b
 					a--b
-				} and more 
+				} and more
 		'''.assertExtractedTo('''
 			graph{
 					a
@@ -116,7 +116,7 @@ class DotExtractorTest {
 
 	@Test def dot_extraction_06() {
 		'''
-			Stuff about a graph and then digraph{a;b;a->b} and more 
+			Stuff about a graph and then digraph{a;b;a->b} and more
 		'''.assertExtractedTo('''
 			digraph{a;b;a->b}
 		''')
@@ -124,18 +124,18 @@ class DotExtractorTest {
 
 	@Test def dot_extraction_07() {
 		'''
-			Stuff about a graph and then 
+			Stuff about a graph and then
 			digraph {
 				subgraph cluster_0 {
 					1->2
-				}; 
+				};
 				1->3
-			} and more 
+			} and more
 		'''.assertExtractedTo('''
 			digraph {
 				subgraph cluster_0 {
 					1->2
-				}; 
+				};
 				1->3
 			}
 		''')
@@ -143,7 +143,7 @@ class DotExtractorTest {
 
 	@Test def dot_extraction_08() {
 		'''
-			Stuff about a graph then 
+			Stuff about a graph then
 				graph {
 					node[shape=record];
 					1[label="{Text|Text}"]

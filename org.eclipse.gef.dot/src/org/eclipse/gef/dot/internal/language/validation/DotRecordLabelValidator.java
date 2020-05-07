@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge  - initial API and implementation (bug #454629)
- *    
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.validation;
 
@@ -70,7 +70,7 @@ public class DotRecordLabelValidator extends AbstractDotRecordLabelValidator {
 	/**
 	 * Checks that if a record based label has multiple ports none have the same
 	 * name
-	 * 
+	 *
 	 * @param label
 	 *            RecordLabel to be checked.
 	 */

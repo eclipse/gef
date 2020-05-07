@@ -9,8 +9,8 @@
  * Contributors:
  *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
- 
-/* 
+
+/*
  * The StyledGraph2 directed graph represents the different node and egde styles.
  */
 digraph StyledGraph2{

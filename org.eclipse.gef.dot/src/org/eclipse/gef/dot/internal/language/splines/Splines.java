@@ -82,7 +82,7 @@ public enum Splines {
 	/**
 	 * Returns the '<em><b>Splines</b></em>' literal with the specified literal
 	 * value.
-	 * 
+	 *
 	 * @param literal
 	 *            the literal.
 	 * @return the matching enum or <code>null</code>.

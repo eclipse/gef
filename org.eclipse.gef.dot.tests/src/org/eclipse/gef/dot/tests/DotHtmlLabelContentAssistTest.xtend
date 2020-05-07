@@ -438,7 +438,7 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 		'''
 			<FONT COLOR="«c»" ></FONT>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/"]), 
+			combine(expectedX11ColorNames, #["#", "/"]),
 			"black", '''
 				<FONT COLOR="black" ></FONT>
 			'''
@@ -487,40 +487,40 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 		'''
 			<TABLE BGCOLOR="«c»" ></TABLE>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/", ":"]), 
+			combine(expectedX11ColorNames, #["#", "/", ":"]),
 			"red", '''
 				<TABLE BGCOLOR="red" ></TABLE>
 			'''
 		)
 	}
-	
+
 	@Test def attribute_values_of_tag_TABLE_BGCOLOR_Colon() {
 		'''
 			<TABLE BGCOLOR="red«c»" ></TABLE>
 		'''.testContentAssistant(
-			#["red", "red1", "red2", "red3", "red4", ":"], 
+			#["red", "red1", "red2", "red3", "red4", ":"],
 			":", '''
 				<TABLE BGCOLOR="red:" ></TABLE>
 			'''
 		)
 	}
-	
+
 	@Test def attribute_values_of_tag_TABLE_BGCOLOR_with_Colon() {
 		'''
 			<TABLE BGCOLOR="«c»:" ></TABLE>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/"]), 
+			combine(expectedX11ColorNames, #["#", "/"]),
 			"red", '''
 				<TABLE BGCOLOR="red:" ></TABLE>
 			'''
 		)
 	}
-	
+
 	@Test def attribute_values_of_tag_TABLE_BGCOLOR_after_Colon() {
 		'''
 			<TABLE BGCOLOR="blue:«c»" ></TABLE>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/"]), 
+			combine(expectedX11ColorNames, #["#", "/"]),
 			"red", '''
 				<TABLE BGCOLOR="blue:red" ></TABLE>
 			'''
@@ -547,7 +547,7 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 		'''
 			<TABLE COLOR="«c»" ></TABLE>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/"]), 
+			combine(expectedX11ColorNames, #["#", "/"]),
 			"red", '''
 				<TABLE COLOR="red" ></TABLE>
 			'''
@@ -690,7 +690,7 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 		'''
 			<TD BGCOLOR="«c»" ></TD>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/", ":"]), 
+			combine(expectedX11ColorNames, #["#", "/", ":"]),
 			"blue", '''
 				<TD BGCOLOR="blue" ></TD>
 			'''
@@ -713,7 +713,7 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 		'''
 			<TD COLOR="«c»" ></TD>
 		'''.testContentAssistant(
-			combine(expectedX11ColorNames, #["#", "/"]), 
+			combine(expectedX11ColorNames, #["#", "/"]),
 			"blue", '''
 				<TD COLOR="blue" ></TD>
 			'''
@@ -830,7 +830,7 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 	@Test def sibling_of_text_on_the_root_level() {
 		val testData = #["text", "<B>b</B>", "<BR/>", "<FONT>font</FONT>", "<I>i</I>",
 			"<O>o</O>", "<S>s</S>", "<SUB>sub</SUB>", "<SUP>sup</SUP>", "<U>u</U>"]
-		
+
 		// do not offer the TABLE tag
 		val expectations = #["<B></B>", "<BR/>", "<FONT></FONT>", "<I></I>",
 			"<O></O>", "<S></S>", "<SUB></SUB>", "<SUP></SUP>", "<U></U>"]
@@ -844,11 +844,11 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 	@Test def sibling_of_text_on_a_nested_level() {
 		val testData = #["text", "<B>b</B>", "<BR/>", "<FONT>font</FONT>", "<I>i</I>",
 			"<O>o</O>", "<S>s</S>", "<SUB>sub</SUB>", "<SUP>sup</SUP>", "<U>u</U>"]
-		
+
 		// do not offer the TABLE tag
 		val expectations = #["<B></B>", "<BR/>", "<FONT></FONT>", "<I></I>",
 			"<O></O>", "<S></S>", "<SUB></SUB>", "<SUP></SUP>", "<U></U>"]
-		
+
 		testData.forEach[htmlLabel|
 			'''
 				<TABLE><TR><TD>«c»«htmlLabel»</TD></TR></TABLE>
@@ -870,17 +870,17 @@ class DotHtmlLabelContentAssistTest extends AbstractContentAssistTest {
 
 	private def void testContentAssistant(CharSequence text, List<String> expectedProposals,
 		String proposalToApply, String expectedContent) {
-		
+
 		val cursorPosition = text.toString.indexOf(c)
 		if(cursorPosition == -1) {
 			fail('''Can't locate cursor position symbols '«c»' in the input text.''')
 		}
-		
+
 		val content = text.toString.replace(c, "")
-		
+
 		val builder = newBuilder.append(content).
 		assertTextAtCursorPosition(cursorPosition, expectedProposals)
-		
+
 		if(proposalToApply!==null) {
 			builder.applyProposal(cursorPosition, proposalToApply).
 			expectContent(expectedContent)

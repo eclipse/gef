@@ -63,7 +63,7 @@ class Dot2ZestGraphCopierTest {
 	@BeforeClass
 	def static void beforeClass() {
 		dotImport = new DotImport
-		
+
 		dot2ZestGraphCopier = new Dot2ZestGraphCopier
 		dot2ZestGraphCopier.attributeCopier.options.emulateLayout = false
 	}
@@ -79,7 +79,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-fill: #ffff00;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -104,7 +104,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-fill: #ffff00;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -129,7 +129,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke: #ffff00;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -155,7 +155,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke: #00ffff;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -180,7 +180,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-fill: #00ff00;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -205,7 +205,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-fill: #00ff00;
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
@@ -232,8 +232,8 @@ class Dot2ZestGraphCopierTest {
 				Node1 {
 					element-external-label : foo
 					element-external-label-css-style : -fx-fill: #00ff00;
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -262,8 +262,8 @@ class Dot2ZestGraphCopierTest {
 				Node1 {
 					element-external-label : foo
 					element-external-label-css-style : -fx-font-family: "Times New Roman";-fx-font-weight: 700;-fx-font-style: normal;
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -296,8 +296,8 @@ class Dot2ZestGraphCopierTest {
 				Node1 {
 					element-external-label : foo
 					element-external-label-css-style : -fx-font-size: 4.0;
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -327,8 +327,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -353,8 +353,8 @@ class Dot2ZestGraphCopierTest {
 			Graph {
 				Node1 {
 					element-external-label : green
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -380,8 +380,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -405,7 +405,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke-width:2.0;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -431,7 +431,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke-width:2.0;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -457,7 +457,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke-width:2.0;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -482,7 +482,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke-dash-array: 7 7;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -507,7 +507,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke-dash-array: 1 6;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -532,7 +532,7 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
+					element-label :
 					node-rect-css-style : -fx-stroke-width:2;
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
@@ -558,8 +558,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -584,8 +584,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -1955,8 +1955,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -1980,8 +1980,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion(new NodeShapePrettyPrinter, '''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : Rectangle: (0.0, 0.0, 0.0, 0.0)
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -2090,7 +2090,7 @@ class Dot2ZestGraphCopierTest {
 	}
 
 	@Test def graph_forcelabels002() {
-		
+
 		'''
 			digraph {
 				subgraph {
@@ -2521,7 +2521,7 @@ class Dot2ZestGraphCopierTest {
 
 	@Test def graph_splines001() {
 		// This test shows current behaviour, it needs adaptation once the attribute is supported.
-		
+
 		'''
 			digraph {
 				graph [splines=""];
@@ -2881,7 +2881,7 @@ class Dot2ZestGraphCopierTest {
 				Node1 {
 					element-label : 1
 					element-label-css-style : -fx-fill: #00ffff;
-					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style: 
+					node-shape : Ellipse (0.0, 0.0, 0.0, 0.0), style:
 					node-size : Dimension(54.0, 36.0)
 				}
 			}
@@ -3365,19 +3365,19 @@ class Dot2ZestGraphCopierTest {
 						VBox {
 							HBox {
 								Text {
-									text : Test 
+									text : Test
 								}
 							}
 							HBox {
 								alignment : CENTER_RIGHT
 								Text {
-									text :  Right 
+									text :  Right
 								}
 							}
 							HBox {
 								alignment : CENTER_LEFT
 								Text {
-									text :  Left 
+									text :  Left
 								}
 							}
 							HBox {
@@ -4026,10 +4026,10 @@ class Dot2ZestGraphCopierTest {
 
 	@Test def simple_graph() {
 		val dotGraphPrettyPrinter = new DotGraphPrettyPrinter
-		
+
 		val dot = DotTestUtils.simpleGraph
 		val zest = dot.copy
-		
+
 		// test graph
 		zest.test(dotGraphPrettyPrinter, '''
 			Graph {
@@ -4058,7 +4058,7 @@ class Dot2ZestGraphCopierTest {
 				}
 			}
 		''')
-		
+
 		// test node
 		zest.nodes.get(0).test(dotGraphPrettyPrinter, '''
 			Node1 {
@@ -4067,7 +4067,7 @@ class Dot2ZestGraphCopierTest {
 				node-size : Dimension(54.0, 36.0)
 			}
 		''')
-		
+
 		// test edge
 		zest.edges.get(0).test(dotGraphPrettyPrinter, '''
 			Edge1 from Node1 to Node2 {
@@ -4648,8 +4648,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4734,8 +4734,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4816,8 +4816,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4865,8 +4865,8 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -4914,14 +4914,14 @@ class Dot2ZestGraphCopierTest {
 		'''.assertZestConversion('''
 			Graph {
 				Node1 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
 				Node2 {
-					element-label : 
-					node-rect-css-style : 
+					element-label :
+					node-rect-css-style :
 					node-shape : GeometryNode
 					node-size : Dimension(54.0, 36.0)
 				}
@@ -5077,7 +5077,7 @@ class Dot2ZestGraphCopierTest {
 		// ensure that the input text can be parsed and the ast can be created
 		val dotAst = parse
 		dotAst.assertNoErrors
-		
+
 		val dotGraph = dotAst.importDot.get(0)
 		val zestGraph = dotGraph.copy
 		zestGraph.test(prettyPrinter, expectedZestGraphText)
@@ -5106,7 +5106,7 @@ class Dot2ZestGraphCopierTest {
 		// recognize substrings between '@' and the end of the line
 		val nl = System.lineSeparator
 		val regex = '''(@[^\\«nl»]*)'''
-		
+
 		text.replaceAll(regex, "")
 	}
 
@@ -5158,14 +5158,14 @@ class Dot2ZestGraphCopierTest {
 
 	private static class EdgeDecorationPrettyPrinter extends DotGraphPrettyPrinter {
 		String startIndent
-		
+
 		override protected String prettyPrint(
 			ReadOnlyMapProperty<String, Object> attributesProperty,
 			String startIndent) {
 				this.startIndent = startIndent
 				super.prettyPrint(attributesProperty, startIndent)
 		}
-		
+
 		override protected prettyPrint(String attrKey, Object attrValue) {
 			return if (#[
 				ZestProperties.SOURCE_DECORATION__E,
@@ -5173,13 +5173,13 @@ class Dot2ZestGraphCopierTest {
 			].contains(attrKey)) {
 				switch attrValue {
 					Shape : '''«super.prettyPrint(attrKey, attrValue)», style: «attrValue.style»'''
-					Group : '''«attrKey» : «attrValue.prettyPrint»''' 
+					Group : '''«attrKey» : «attrValue.prettyPrint»'''
 				}
 			} else {
 				super.prettyPrint(attrKey, attrValue)
 			}
 		}
-		
+
 		private def prettyPrint(Group it) '''
 			Group[
 				«FOR child : children»

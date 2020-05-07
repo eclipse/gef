@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *       Tamas Miklossy  (itemis AG) - Initial text 
+ *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
 digraph G {
   bgcolor=blue
   node [shape = circle,style=filled,fillcolor="white:black"]
-  subgraph cluster_1 { 
+  subgraph cluster_1 {
     fontcolor="white"
 		n9 [gradientangle=360 label="n8:360"]
 		n8 [gradientangle=315 label="n8:315"]

@@ -93,12 +93,12 @@ class DotGraphViewTest extends AbstractEditorTest {
 		val parameters = new HashMap<String, String> => [
 			put(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET, DOT_GRAPH_VIEW_ID)
 		]
-		
+
 		val context = new EvaluationContext(null, new Object) => [
 			addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, workbenchWindow)
 			addVariable(ISources.SHOW_IN_INPUT, dotEditor.editorInput)
 		]
-		
+
 		new ExecutionEvent( null, parameters, null, context )
 	}
 
@@ -122,9 +122,9 @@ class DotGraphViewTest extends AbstractEditorTest {
 	private def assertPresenceOfDotGraphView(boolean expected) {
 		val views = activePage.viewReferences
 		val viewIDs = views.map[id]
-		
-		val actual = viewIDs.contains(DOT_GRAPH_VIEW_ID) 
-		var message = "The available views are: " + System.lineSeparator + viewIDs.sort.join(System.lineSeparator) 
+
+		val actual = viewIDs.contains(DOT_GRAPH_VIEW_ID)
+		var message = "The available views are: " + System.lineSeparator + viewIDs.sort.join(System.lineSeparator)
 		if(expected) {
 			message = "The DOT Graph view is not present, but it should be. " + message
 		} else {
@@ -147,7 +147,7 @@ class DotGraphViewTest extends AbstractEditorTest {
 
 	override tearDown() {
 		activePage.resetPerspective
-		
+
 		dotGraphViewIsNotPresent
 		/**
 		 * The Eclipse workspace needs to be explicitly saved after the test execution

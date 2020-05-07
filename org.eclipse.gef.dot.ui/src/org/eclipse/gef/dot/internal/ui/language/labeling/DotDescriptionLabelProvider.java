@@ -24,9 +24,9 @@ import org.eclipse.xtext.resource.IReferenceDescription;
 
 /**
  * Provides labels for IEObjectDescriptions and IResourceDescriptions.
- * 
+ *
  * Used e.g. as a label provider displaying the 'Find References' Search Result.
- * 
+ *
  * See
  * https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
  */

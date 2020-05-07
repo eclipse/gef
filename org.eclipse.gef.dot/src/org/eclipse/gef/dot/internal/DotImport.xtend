@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen    (itemis AG) - initial API and implementation
  *     Tamas Miklossy     (itemis AG) - Merge DotInterpreter into DotImport (bug #491261)
  *                                    - Add support for all dot attributes (bug #461506)
  *     Zoey Gerrit Prigge (itemis AG) - Add support for all dot attributes (bug #461506)
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal
 
@@ -44,19 +44,19 @@ import static extension org.eclipse.gef.dot.internal.language.DotAstHelper.*
 
 /**
  * A parser that creates a {@link Graph} with {@link DotAttributes} from a Graphviz DOT string or file.
- * The created {@link Graph} follows the structure of the DOT input very closely. 
- * Subgraphs (including clusters) are represented by a {@link Node} with a nested {@link Graph}, 
- * where the graph holds all attributes (like the name). If a node is used in multiple (sub-)graphs, 
+ * The created {@link Graph} follows the structure of the DOT input very closely.
+ * Subgraphs (including clusters) are represented by a {@link Node} with a nested {@link Graph},
+ * where the graph holds all attributes (like the name). If a node is used in multiple (sub-)graphs,
  * it will be contained in the graph where it is defined (first occurrence).
- * 
+ *
  * @author anyssen
- * 
+ *
  */
 class DotImport {
 
 	@Inject
 	var static IParser dotParser
-	
+
 	private static def IParser getDotParser() {
 		if (dotParser === null) {
 
@@ -81,7 +81,7 @@ class DotImport {
 
 		(parseResult.rootASTElement as DotAst).importDot
 	}
-	
+
 	def List<Graph> importDot(DotAst dotAst) {
 		// TODO: use validator to semantically validate
 		dotAst.graphs.map[transformDotGraph].filterNull.toList
@@ -106,7 +106,7 @@ class DotImport {
 		// clear the nodes and subgraphs create caches
 		_createCache_createNode.clear
 		_createCache_createSubgraph.clear
-		
+
 		// create a new graph builder
 		val graphBuilder = new Graph.Builder
 
@@ -150,7 +150,7 @@ class DotImport {
 		setter.apply(PAGEDIR__G, [g, value|g.setPagedirRaw(value)])
 		setter.apply(RANKDIR__G, [g, value|g.setRankdirRaw(value)])
 		setter.apply(SPLINES__G, [g, value|g.setSplinesRaw(value)])
-		
+
 		graph
 	}
 
@@ -206,7 +206,7 @@ class DotImport {
 
 	/*
 	********************************************************************************************************************************
-	*  dynamic dispatch methods 
+	*  dynamic dispatch methods
 	********************************************************************************************************************************
 	*/
 	private def dispatch void transformStmt(Stmt it, Graph.Builder graphBuilder) {
@@ -277,12 +277,12 @@ class DotImport {
 			subgraphBuilder.attr(_NAME__GNE, name)
 		}
 
-		// We evaluate global attributes from 'outer' scopes, by transferring global graph (applicable to subgraph, cluster), 
+		// We evaluate global attributes from 'outer' scopes, by transferring global graph (applicable to subgraph, cluster),
 		// node, and edge attributes as initial global attributes of the nested graph process all statements.
 		globalGraphAttributes(subgraphBuilder).putAll(globalGraphAttributes(graphBuilder))
 		globalNodeAttributes(subgraphBuilder).putAll(globalNodeAttributes(graphBuilder))
 		globalEdgeAttributes(subgraphBuilder).putAll(globalEdgeAttributes(graphBuilder))
-		
+
 		// process all statements except for subgraph/cluster attributes, they will be processed later
 		stmts.filter[!(it instanceof Attribute)].forEach[transformStmt(subgraphBuilder)]
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2018 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,14 @@ public class DotTerminalsTokenTypeToPartitionMapper
 		 * The DOT grammar uses the 'terminal STRING' rule for unquoted text
 		 * (that is usually used for quoted text) and uses the 'terminal
 		 * QUOTED_STRING' rule for quoted text.
-		 * 
+		 *
 		 * With the default TerminalsTokenTypeToPartitionMapper, the double
 		 * click text selection does not work as expected. It recognizes the
 		 * unquoted text as quoted text (the first and the last letter will be
 		 * stripped where they should not be stripped) and does not recognize
 		 * the quoted text (the first and the last letter will not be stripped
 		 * where they should be stripped).
-		 * 
+		 *
 		 * To fix this problem, assign the DEFAULT_CONTENT_TYPE to the 'terminal
 		 * STRING' rule (identified by the 'RULE_STRING' token name) and the
 		 * STRING_LITERAL_PARTITION to the 'terminal QUOTED_STRING' rule

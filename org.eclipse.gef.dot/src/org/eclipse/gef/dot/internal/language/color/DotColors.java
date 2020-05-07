@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2016, 2018 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #461506)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language.color;
 
@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * The color information contained by this class has been taken from the
  * graphviz website: http://www.graphviz.org/content/color-names
- * 
+ *
  * @author miklossy
  *
  */
@@ -29,7 +29,7 @@ public class DotColors {
 
 	/**
 	 * Returns the valid dot color scheme names.
-	 * 
+	 *
 	 * @return The list of valid dot color scheme names.
 	 */
 	public static List<String> getColorSchemes() {
@@ -45,7 +45,7 @@ public class DotColors {
 	/**
 	 * Returns the valid dot color names defined within the given
 	 * <i>colorScheme</i>.
-	 * 
+	 *
 	 * @param colorScheme
 	 *            The name of the color scheme.
 	 * @return The list of valid dot color names defined within the given
@@ -76,16 +76,16 @@ public class DotColors {
 	/**
 	 * Calculates the detailed description in html form providing more
 	 * information about the given color.
-	 * 
+	 *
 	 * @param colorScheme
 	 *            The name of the color scheme, can be null.
-	 * 
+	 *
 	 * @param colorName
 	 *            The name of the color, can be null.
-	 * 
+	 *
 	 * @param colorCode
 	 *            The hex code of the color, should not be null.
-	 * 
+	 *
 	 * @return the detailed description in html form
 	 */
 	public static String getColorDescription(String colorScheme,
@@ -127,7 +127,7 @@ public class DotColors {
 	 * Returns the color code (in hexadecimal form) of the given
 	 * <i>colorName</i> considering the given <i>colorScheme</i>, or null if the
 	 * color code cannot be determined.
-	 * 
+	 *
 	 * @param colorScheme
 	 *            The name of the color scheme.
 	 *

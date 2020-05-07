@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2009, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - conversion from Java to Xtend
  *                                - minor refactorings
- *     Darius Jockel (itemis AG)  - Added tests for calling dot with large 
+ *     Darius Jockel (itemis AG)  - Added tests for calling dot with large
  *                                  input files #492395
  *
  *******************************************************************************/
@@ -31,7 +31,7 @@ import static extension org.junit.Assert.*
 
 /**
  * Tests for the {@link DotExecutableUtils} class.
- * 
+ *
  * @author Fabian Steeg (fsteeg)
  * @author Tamas Miklossy
  * @author Darius Jockel

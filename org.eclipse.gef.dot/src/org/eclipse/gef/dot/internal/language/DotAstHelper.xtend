@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (c) 2017, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation
- *     Zoey Gerrit Prigge         - Generalized dependent attribute method 
+ *     Zoey Gerrit Prigge         - Generalized dependent attribute method
  *                                  to use with recordBased Node shapes (bug #454629)
  *                                - include getAllAttributesSameName/Value (bug #548911)
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.language
 
@@ -122,7 +122,7 @@ class DotAstHelper {
 	/**
 	 * Returns the color scheme attribute value that is set for the given
 	 * attribute.
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute to determine the color scheme attribute value
 	 *            for.
@@ -134,9 +134,9 @@ class DotAstHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns an attribute value specified by attributeName that is set for given attribute
-	 * 
+	 *
 	 * @param dependentAttribute
 	 * 			The attribute to determine a depending value for.
 	 * @param attributeName
@@ -288,7 +288,7 @@ class DotAstHelper {
 	/**
 	 * Returns the value of the first attribute with the give name or
 	 * <code>null</code> if no attribute could be found.
-	 * 
+	 *
 	 * @param attrLists
 	 *            The {@link AttrList}s to search.
 	 * @param name

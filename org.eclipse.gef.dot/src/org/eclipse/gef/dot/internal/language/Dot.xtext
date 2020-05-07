@@ -10,19 +10,19 @@
  *    Michael Clay    - initial API and implementation (bug #277380)
  *    Fabian Steeg    - updates for current Xtext and minor tweaks
  *    Alexander Nyßen - fixed generation problems w.r.t. terminals (bug #429512)
- *                    - fixed problems resulting from non-optional subgraph names 
+ *                    - fixed problems resulting from non-optional subgraph names
  *                      and shadowing of IDs by CompassPt literals (bug #430132)
- *                    - completely refactored grammar to be more consistent to 
+ *                    - completely refactored grammar to be more consistent to
  *                      Dot language definition (bug #451097)
  *                    - transferred CompassPt into terminal rule to realize case
  *                      insensitive keywords properly (bug #454626)
- *                    - refactored grammar to be unambiguous (not relying on 
+ *                    - refactored grammar to be unambiguous (not relying on
  *                      backtracking)
  *                    - integration of HTML-string terminals (bug #321775)
  *                    - introduction of ID for terminals (bug #507413)
  *     Tamas Miklossy - modify grammar to allow empty attribute lists (bug #461506)
  *                    - modify grammar to allow compassPt as port name (bug #526814)
- * 
+ *
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.Dot hidden(WS, ML_COMMENT, SL_COMMENT)
 
@@ -112,7 +112,7 @@ terminal STRING:
 
 terminal QUOTED_STRING:
 	('"' ('\\' '"' | !('"'))* '"');
-	
+
 terminal HTML_STRING : '<' (HTML_TAG_OPEN | HTML_TAG_CLOSE | HTML_CHARS)* '>';
 terminal fragment HTML_TAG_OPEN : '<';
 terminal fragment HTML_TAG_CLOSE : '>';
@@ -126,6 +126,6 @@ terminal SL_COMMENT:
 
 terminal WS:
 	(' ' | '\t' | '\r' | '\n' | '\f')+;
-	
+
 terminal ANY_OTHER:
 	.;

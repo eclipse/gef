@@ -55,7 +55,7 @@ public class DotArrowTypeValidator extends AbstractDotArrowTypeValidator {
 	/**
 	 * Checks that the open modifier is not used in combination with illegal
 	 * primitive shapes.
-	 * 
+	 *
 	 * @param arrowShape
 	 *            The arrowShape element to check.
 	 */
@@ -78,7 +78,7 @@ public class DotArrowTypeValidator extends AbstractDotArrowTypeValidator {
 	/**
 	 * Checks that the side modifier is not used in combination with illegal
 	 * primitive shapes.
-	 * 
+	 *
 	 * @param arrowShape
 	 *            The arrowShape element to check.
 	 */
@@ -97,7 +97,7 @@ public class DotArrowTypeValidator extends AbstractDotArrowTypeValidator {
 
 	/**
 	 * Checks that no deprecated arrow shapes are used
-	 * 
+	 *
 	 * @param arrowShape
 	 *            The arrowShape element to check.
 	 */
@@ -112,7 +112,7 @@ public class DotArrowTypeValidator extends AbstractDotArrowTypeValidator {
 	/**
 	 * Checks whether none is the last arrow shape, since this would create a
 	 * redundant shape
-	 * 
+	 *
 	 * @param arrowType
 	 *            The arrowType element to check.
 	 */

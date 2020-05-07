@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #454629)
- *    
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.conversion;
 
@@ -60,7 +60,7 @@ class DotRecordBasedJavaFxNode {
 	/**
 	 * Constructor for record based node shapes. Requires the string
 	 * representation of the record shape label.
-	 * 
+	 *
 	 * @param dotLabel
 	 *            The string representation of the record shape label.
 	 * @param rankdir
@@ -81,7 +81,7 @@ class DotRecordBasedJavaFxNode {
 
 	/**
 	 * Returns the wrapped JavaFX Pane
-	 * 
+	 *
 	 * @return the wrapped JavaFX pane for this node shape
 	 */
 	public Pane getFxElement() {
@@ -90,7 +90,7 @@ class DotRecordBasedJavaFxNode {
 
 	/**
 	 * Applies CSS and returns the calculated bounds for the FX Pane
-	 * 
+	 *
 	 * @return Bounds of the JavaFX pane after CSS/layout run.
 	 */
 	public Bounds getBounds() {
@@ -261,7 +261,7 @@ class DotRecordBasedJavaFxNode {
 		/**
 		 * Used to initialize this text line with the first line of a record
 		 * based label
-		 * 
+		 *
 		 * @param lines
 		 *            label of which this object should represent the first line
 		 * @return remaining string with the first line removed

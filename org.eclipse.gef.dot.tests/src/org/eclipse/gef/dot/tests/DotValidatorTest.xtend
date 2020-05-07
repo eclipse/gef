@@ -450,7 +450,7 @@ class DotValidatorTest {
 		'''graph {1[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth",
 		'''The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.''')
 
-		'''graph {1[style="dashed, foo"]}'''.assertStyleError("foo", 
+		'''graph {1[style="dashed, foo"]}'''.assertStyleError("foo",
 		'''The style value 'dashed, foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'diagonals', 'dotted', 'filled', 'invis', 'radial', 'rounded', 'solid', 'striped', 'wedged'.'''
 		)
 	}
@@ -459,7 +459,7 @@ class DotValidatorTest {
 		'''graph {1--2[style="dashed, setlinewidth(4)"]}'''.assertStyleWarning("setlinewidth",
 		'''The style value 'dashed, setlinewidth(4)' is not semantically correct: The usage of setlinewidth is deprecated, use the penwidth attribute instead.''')
 
-		'''graph {1--2[style="dashed, foo"]}'''.assertStyleError("foo", 
+		'''graph {1--2[style="dashed, foo"]}'''.assertStyleError("foo",
 		'''The style value 'dashed, foo' is not semantically correct: Value should be one of 'bold', 'dashed', 'dotted', 'invis', 'solid', 'tapered'.''')
 	}
 

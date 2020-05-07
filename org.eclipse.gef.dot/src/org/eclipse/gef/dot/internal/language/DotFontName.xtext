@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Zoey Gerrit Prigge (itemis AG) - initial API and implementation (bug #542663)
- *     
+ *
  *******************************************************************************/
 grammar org.eclipse.gef.dot.internal.language.DotFontName hidden(OTHER_WS, SPACE)
 
@@ -27,24 +27,24 @@ PostScriptFontName:
  */
 PangoFontName:
 	=>(
-		(families+=PangoFamily ',' )+ 
-			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)* 
-			finalFamily+=(NAME|PSALIAS) 
-		| finalFamily+=(INT|NAME|PSALIAS|StyleOptionString) 
-			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)* 
+		(families+=PangoFamily ',' )+
+			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)*
+			finalFamily+=(NAME|PSALIAS)
+		| finalFamily+=(INT|NAME|PSALIAS|StyleOptionString)
+			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)*
 			finalFamily+=(NAME|PSALIAS)
 		| finalFamily+=NAME
 	)
 	| =>(
-		(families+=PangoFamily ',' )* 
-			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)* 
-			finalFamily+=(INT|NAME|PSALIAS) 
-			styleOptionsList+=StyleOptionsElement* 
+		(families+=PangoFamily ',' )*
+			finalFamily+=(/* SPACE | */INT|NAME|PSALIAS|StyleOptionString)*
+			finalFamily+=(INT|NAME|PSALIAS)
+			styleOptionsList+=StyleOptionsElement*
 			(styleOptionsList+=StyleOptionsElement|INT)
-	) 
+	)
 	| {PangoFontName} =>(
-		(families+=PangoFamily ',')* 
-			styleOptionsList+=StyleOptionsElement* 
+		(families+=PangoFamily ',')*
+			styleOptionsList+=StyleOptionsElement*
 			INT?
 	);
 
@@ -95,40 +95,40 @@ terminal WEIGHT_KEY:
 
 Stretch returns Stretch:
 	STRETCH_KEY;
-	
+
 terminal STRETCH_KEY:
 	"ultra-condensed" | "extra-condensed" | "condensed" | "semi-condensed"
 	| "semi-expanded" | "expanded" | "extra-expanded" | "ultra-expanded";
 
-Gravity returns Gravity: 
+Gravity returns Gravity:
 	GRAVITY_KEY;
 
 terminal GRAVITY_KEY:
-	"not-rotated" | "south" | 
-	"upside-down" | "north" | 
-	"rotated-left" | "east" | 
+	"not-rotated" | "south" |
+	"upside-down" | "north" |
+	"rotated-left" | "east" |
 	"rotated-right" | "west";
 
 PostScriptAlias returns PostScriptFontAlias:
 	PSALIAS;
 
 terminal PSALIAS:
-	"avantgarde-book" | "avantgarde-bookoblique" | "avantgarde-demi" | "avantgarde-demioblique" | "bookman-demi" | "bookman-demiitalic" | 
-	"bookman-light" | "bookman-lightitalic" | "courier" | "courier-bold" | "courier-boldoblique" | "courier-oblique" | "helvetica" | 
+	"avantgarde-book" | "avantgarde-bookoblique" | "avantgarde-demi" | "avantgarde-demioblique" | "bookman-demi" | "bookman-demiitalic" |
+	"bookman-light" | "bookman-lightitalic" | "courier" | "courier-bold" | "courier-boldoblique" | "courier-oblique" | "helvetica" |
 	"helvetica-bold" | "helvetica-boldoblique" | "helvetica-narrow" | "helvetica-narrow-bold" | "helvetica-narrow-boldoblique" |
-	"helvetica-narrow-oblique" | "helvetica-oblique" | "newcenturyschlbk-bold" | "newcenturyschlbk-bolditalic" | "newcenturyschlbk-italic" | 
-	"newcenturyschlbk-roman" | "palatino-bold" | "palatino-bolditalic" | "palatino-italic" | "palatino-roman" | "symbol" | "times-bold" | 
+	"helvetica-narrow-oblique" | "helvetica-oblique" | "newcenturyschlbk-bold" | "newcenturyschlbk-bolditalic" | "newcenturyschlbk-italic" |
+	"newcenturyschlbk-roman" | "palatino-bold" | "palatino-bolditalic" | "palatino-italic" | "palatino-roman" | "symbol" | "times-bold" |
 	"times-bolditalic" | "times-italic" | "times-roman" | "zapfchancery-mediumitalic" | "zapfdingbats";
 
 StyleOptionString:
 	STYLE_KEY | VARIANT_KEY | WEIGHT_KEY | STRETCH_KEY | GRAVITY_KEY;
-	
+
 terminal SPACE:
 	(' ');
-	
+
 terminal OTHER_WS:
 	('\t' | '\r' | '\n' | '\f');
-	
+
 terminal INT:
 	(('0'..'9')+ ('.' ('0'..'9')*)? | '.' ('0'..'9')+) "px"?;
 

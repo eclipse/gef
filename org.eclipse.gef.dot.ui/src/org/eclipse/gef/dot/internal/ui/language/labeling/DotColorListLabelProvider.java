@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 
 /**
  * Provides labels for EObjects.
- * 
+ *
  * See
  * https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
  */

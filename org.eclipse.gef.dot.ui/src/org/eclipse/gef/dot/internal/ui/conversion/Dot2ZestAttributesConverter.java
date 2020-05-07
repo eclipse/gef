@@ -80,7 +80,7 @@ import javafx.scene.text.Text;
  * A converter that transforms a {@link Graph} that is attributed with
  * {@link DotAttributes} into a {@link Graph} that is attributed with
  * {@link ZestProperties}.
- * 
+ *
  * @author anyssen
  *
  */
@@ -974,7 +974,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		 * \L is replaced first using the raw Label, such that we can avoid a
 		 * loop if a label contains \L. As such, we need to double all
 		 * backslashes as single backslashes are consumed by replace all.
-		 * 
+		 *
 		 * Graphviz behaviour differs slightly for unset names and error
 		 * handling, however we cannot reproduce this (i.e. an internally used
 		 * variable is produced and for escape sequences invalid in this
@@ -1001,9 +1001,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		 * \L is replaced first using the raw Label, such that we can avoid a
 		 * loop if a label contains \L. As such, we need to double all
 		 * backslashes as single backslashes are consumed by replace all.
-		 * 
+		 *
 		 * For a node, the label defaults to \N.
-		 * 
+		 *
 		 * Graphviz behaviour differs slightly for unset names and error
 		 * handling, however we cannot reproduce this (i.e. an internally used
 		 * variable is produced and for escape sequences invalid in this

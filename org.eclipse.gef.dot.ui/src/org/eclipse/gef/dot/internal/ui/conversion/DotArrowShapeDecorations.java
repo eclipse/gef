@@ -37,10 +37,10 @@ class DotArrowShapeDecorations {
 	 *
 	 * @param arrowSize
 	 *            The size of the arrow shape decoration.
-	 * 
+	 *
 	 * @param isGraphDirected
 	 *            true if the graph is directed, false otherwise
-	 * 
+	 *
 	 * @param penwidth
 	 *            The (pen)width of the shape's drawn lines.
 	 *
@@ -63,7 +63,7 @@ class DotArrowShapeDecorations {
 	/**
 	 * Returns the dot arrow shape decoration corresponding to the
 	 * <i>arrowType</i> parameter.
-	 * 
+	 *
 	 * @param arrowType
 	 *            The arrow type for which the dot edge decoration should be
 	 *            determined.
@@ -73,13 +73,13 @@ class DotArrowShapeDecorations {
 	 *
 	 * @param penwidth
 	 *            The (pen)width of the shape's drawn lines.
-	 * 
+	 *
 	 * @param color
 	 *            The color to use for the arrow shape decoration outline.
 	 *
 	 * @param fillColor
 	 *            The color to use for the arrow shape decoration background.
-	 * 
+	 *
 	 * @return The dot arrow shape decoration.
 	 */
 	static Node get(ArrowType arrowType, double arrowSize, Double penwidth,

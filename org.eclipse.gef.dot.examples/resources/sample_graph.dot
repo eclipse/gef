@@ -8,7 +8,7 @@
  *******************************************************************************/
 digraph SampleGraph {
    	/*-------------------------------------------------------------------------*/
-	/* Specify global attributes for nodes and edges, 
+	/* Specify global attributes for nodes and edges,
        override these in individual nodes or edges (see below): */
    	node[label="Node"]
    	edge[label="Edge", style=dashed]
@@ -23,7 +23,7 @@ digraph SampleGraph {
 	/* Edges can have optional labels and styles: */
 	1->2
 	1->3[label="Dashed" style=dashed]
-	/* Zest supports dashed-dotted style, so we map to that (this 
+	/* Zest supports dashed-dotted style, so we map to that (this
 	   is not supported by Graphviz, which renders the line solid). */
 	3->4[style="dotted"]
 	/*-------------------------------------------------------------------------*/

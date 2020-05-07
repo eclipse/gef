@@ -48,7 +48,7 @@ import com.google.inject.Injector;
 
 /**
  * Customization of the default outline structure.
- * 
+ *
  */
 public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
@@ -56,7 +56,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	/**
 	 * Treat node statements as leafs if they have no attributes.
-	 * 
+	 *
 	 * @param node
 	 *            The 'NodeStmt' model element
 	 * @return true if this node contains no attributes
@@ -67,7 +67,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	/**
 	 * 'EdgeRhs' elements are displayed as leafs and not expandable.
-	 * 
+	 *
 	 * @param edge
 	 *            The 'EdgeRhs' model element
 	 * @return true
@@ -78,7 +78,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	/**
 	 * Consider an attribute having an HTML_STRING value as non-leaf.
-	 * 
+	 *
 	 * @param attribute
 	 * @return
 	 */
@@ -110,7 +110,7 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	/**
 	 * Create proper outline subtree from the dot attribute value if possible.
-	 * 
+	 *
 	 * @param parent
 	 * @param attribute
 	 */

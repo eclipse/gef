@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2019 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  * Contributors:
  *     Zoey Gerrit Prigge (itemis AG) - original implementation, refactoring and initial API
  *     Tamas Miklossy     (itemis AG) - original implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.conversion;
 

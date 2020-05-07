@@ -14,7 +14,7 @@ package org.eclipse.gef.dot.internal.language.outputmode;
 
 /**
  * Enum representing DOT outputMode.
- * 
+ *
  * @author miklossy
  *
  */

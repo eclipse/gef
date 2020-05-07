@@ -33,7 +33,7 @@ import javafx.util.Pair;
 /**
  * The implementation of this class is mainly taken from the
  * org.eclipse.gef.zest.fx.parts.ZestFxContentPartFactory java class.
- * 
+ *
  * Modification added: usage of DotEdgeLabelPart instead of EdgeLabelPart.
  */
 public class DotContentPartFactory implements IContentPartFactory {

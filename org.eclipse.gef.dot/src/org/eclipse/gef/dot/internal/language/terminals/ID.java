@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 /**
  * A representation of a Dot ID according to the Graphviz DOT grammar.
- * 
+ *
  * @author anyssen
  */
 public class ID {
@@ -40,7 +40,7 @@ public class ID {
 
 		/**
 		 * A numeral ID that complies with the NUMERAL terminal rule:
-		 * 
+		 *
 		 * <pre>
 		* terminal NUMERAL:
 		* ('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)?;
@@ -49,16 +49,16 @@ public class ID {
 		NUMERAL,
 		/**
 		 * A string ID that complies with the STRING terminal rule:
-		 * 
+		 *
 		 * <pre>
-		* terminal STRING: 
+		* terminal STRING:
 		* ('a'..'z' | 'A'..'Z' | '\u0080'..'\u00FF' | '_') ('a'..'z' | 'A'..'Z' | '\u0080'..'\u00FF' | '_' | '0'..'9')*;
 		 * </pre>
 		 */
 		STRING,
 		/**
 		 * A quoted string ID that complies to the QUOTED_STRING terminal rule:
-		 * 
+		 *
 		 * <pre>
 		* terminal QUOTED_STRING:
 		* ('"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | "'" | '\\') | !('\\' | '"'))* '"');
@@ -68,7 +68,7 @@ public class ID {
 		/**
 		 * A html string ID that complies to the HTML_STRING terminal rule (and
 		 * its fragments):
-		 * 
+		 *
 		 * <pre>
 		 * HTML_STRING : '<' HTML_CONTENT* '>' ;
 		 * fragment HTML_CONTENT : (HTML_TAG | HTML_PCDATA) ;
@@ -92,7 +92,7 @@ public class ID {
 	/**
 	 * Constructs a new ID of the given type from the given (encoded) raw string
 	 * value.
-	 * 
+	 *
 	 * @param string
 	 *            The (encoded) raw string to create an ID for. Maybe
 	 *            <code>null</code>.
@@ -111,7 +111,7 @@ public class ID {
 	/**
 	 * Constructs a new ID from the given (encoded) raw value, inferring the
 	 * 'best matching' type.
-	 * 
+	 *
 	 * @param string
 	 *            The (encoded) raw string to create an ID for. Maybe
 	 *            <code>null</code>.
@@ -147,7 +147,7 @@ public class ID {
 	/**
 	 * Constructs a new ID from the given (decoded) value, inferring the 'best
 	 * matching' type.
-	 * 
+	 *
 	 * @param value
 	 *            The (decoded) value to create an ID for. Maybe
 	 *            <code>null</code>.
@@ -187,7 +187,7 @@ public class ID {
 
 	/**
 	 * Constructs a new ID of the given type from the given (decoded) value.
-	 * 
+	 *
 	 * @param value
 	 *            The (decoded) value to create an ID for. Maybe
 	 *            <code>null</code>.
@@ -252,7 +252,7 @@ public class ID {
 
 	/**
 	 * Returns the type of the ID.
-	 * 
+	 *
 	 * @return The {@link Type} of this ID.
 	 */
 	public Type getType() {
@@ -261,7 +261,7 @@ public class ID {
 
 	/**
 	 * Returns the (encoded) raw string.
-	 * 
+	 *
 	 * @return The (encoded) raw string.
 	 */
 	@Override
@@ -271,7 +271,7 @@ public class ID {
 
 	/**
 	 * Returns the (decoded) value.
-	 * 
+	 *
 	 * @return The (decoded) value.
 	 */
 	public String toValue() {
@@ -289,7 +289,7 @@ public class ID {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

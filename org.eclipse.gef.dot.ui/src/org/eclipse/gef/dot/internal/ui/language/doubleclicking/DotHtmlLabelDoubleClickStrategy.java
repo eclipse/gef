@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2018, 2020 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,9 +125,9 @@ public class DotHtmlLabelDoubleClickStrategy
 	/**
 	 * Returns a Method Object encapsulating the protected findWord Method
 	 * inherited from DefaultTextDoubleClickStrategy.
-	 * 
+	 *
 	 * The method object is set to be accessible.
-	 * 
+	 *
 	 * @param strategyClass
 	 *            may not be null
 	 * @return
@@ -140,9 +140,9 @@ public class DotHtmlLabelDoubleClickStrategy
 	 * Returns a Method Object encapsulating the protected
 	 * findExtendedDoubleClickSelection Method inherited from
 	 * DefaultTextDoubleClickStrategy.
-	 * 
+	 *
 	 * The method object is set to be accessible.
-	 * 
+	 *
 	 * @param strategyClass
 	 *            may not be null
 	 * @return

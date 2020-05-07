@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Zoey Gerrit Prigge  - initial API and implementation (bug #454629)
  *     Tamas Miklossy (itemis AG) - minor refactorings
- *    
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.tests
 

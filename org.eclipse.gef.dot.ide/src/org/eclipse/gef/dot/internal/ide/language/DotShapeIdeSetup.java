@@ -26,5 +26,5 @@ public class DotShapeIdeSetup extends DotShapeStandaloneSetup {
 	public Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new DotShapeRuntimeModule(), new DotShapeIdeModule()));
 	}
-	
+
 }

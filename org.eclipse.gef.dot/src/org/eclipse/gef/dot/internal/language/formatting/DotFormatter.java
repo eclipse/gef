@@ -181,7 +181,7 @@ public class DotFormatter extends AbstractDeclarativeFormatter {
 
 		/**
 		 * Adds a new line to the stream
-		 * 
+		 *
 		 * @throws IOException
 		 *             exception may occur from the Xtext framework
 		 */

@@ -27,7 +27,7 @@ import java.net.URL;
 
 /**
  * Static helper methods for working with files.
- * 
+ *
  * @author Fabian Steeg (fsteeg)
  */
 public final class DotFileUtils {
@@ -111,7 +111,7 @@ public final class DotFileUtils {
 
 	/**
 	 * Reads a string from the given input stream.
-	 * 
+	 *
 	 * @param is
 	 *            The input stream to read.
 	 * @return The contents of the input stream as a {@link String}

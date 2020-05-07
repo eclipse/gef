@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial API and implementation (bug #321775)
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
 

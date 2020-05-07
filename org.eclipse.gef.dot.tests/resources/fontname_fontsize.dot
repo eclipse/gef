@@ -11,8 +11,8 @@
  *                                      - Add pango font name (bug #542663)
  *
  *******************************************************************************/
- 
-// Sample graph from 
+
+// Sample graph from
 // https://gitlab.com/graphviz/graphviz/raw/master/rtest/graphs/Courier.gv
 // with added fontsize, labelfontname and labelfontsize attributes
 

@@ -12,9 +12,9 @@ digraph M1{
 	zestCode[label="Zest\ngraph"]
 	zestVis[label="SWT\napp"]
 	image[label="Image\nfile"]
-	
+
 	dot->image//[label=" Graphviz"]
 	dot->zestCode[constraint=false color=black style=dashed label="            " dir=both]
 	zestCode->zestVis//[label=" Zest"]
-	
+
 }
