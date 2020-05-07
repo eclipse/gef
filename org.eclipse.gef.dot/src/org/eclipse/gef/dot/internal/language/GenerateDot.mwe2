@@ -17,7 +17,7 @@
  *							- support for formatter API generation
  *							- support for content assistant API generation
  *							- support for rename refactoring (bug #530423)
- *							- integration of dot attribute sub-grammars (bug #461506)
+ *							- support for attribute sub-grammars (bug #461506)
  *		Zoey Gerrit Prigge	- integration of record label sub-grammar (bug #454629)
  *							- integration of dot font name emf model and grammar (bug #542663)
  *							- support for file and project wizard, gv file extension
