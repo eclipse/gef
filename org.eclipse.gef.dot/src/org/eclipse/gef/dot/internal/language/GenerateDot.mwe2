@@ -202,7 +202,6 @@ Workflow {
 
 			resourceFactoryFragment = {}
 
-
 			emfGenerator = {
 				// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
@@ -232,6 +231,10 @@ Workflow {
 			}
 
 			outline = {
+				generateStub = false
+			}
+
+			labelProvider = {
 				generateStub = false
 			}
 		}
@@ -305,6 +308,10 @@ Workflow {
 			}
 
 			outline = {
+				generateStub = false
+			}
+
+			labelProvider = {
 				generateStub = false
 			}
 		}
@@ -385,6 +392,10 @@ Workflow {
 			outline = {
 				generateStub = false
 			}
+
+			labelProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotEscString.xtext"
@@ -425,6 +436,10 @@ Workflow {
 			}
 
 			outline = {
+				generateStub = false
+			}
+
+			labelProvider = {
 				generateStub = false
 			}
 		}
@@ -474,6 +489,10 @@ Workflow {
 			}
 
 			outline = {
+				generateStub = false
+			}
+
+			labelProvider = {
 				generateStub = false
 			}
 		}
@@ -591,6 +610,10 @@ Workflow {
 			outline = {
 				generateStub = false
 			}
+
+			labelProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotPortPos"
@@ -635,6 +658,10 @@ Workflow {
 			}
 
 			outline = {
+				generateStub = false
+			}
+
+			labelProvider = {
 				generateStub = false
 			}
 		}
@@ -683,6 +710,10 @@ Workflow {
 			outline = {
 				generateStub = false
 			}
+
+			labelProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRect"
@@ -729,6 +760,10 @@ Workflow {
 			outline = {
 				generateStub = false
 			}
+
+			labelProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotShape"
@@ -773,6 +808,10 @@ Workflow {
 			}
 
 			outline = {
+				generateStub = false
+			}
+
+			labelProvider = {
 				generateStub = false
 			}
 		}
@@ -823,6 +862,10 @@ Workflow {
 			outline = {
 				generateStub = false
 			}
+
+			labelProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 
@@ -870,6 +913,10 @@ Workflow {
 			}
 
 			outline = {
+				generateStub = false
+			}
+
+			labelProvider = {
 				generateStub = false
 			}
 		}
