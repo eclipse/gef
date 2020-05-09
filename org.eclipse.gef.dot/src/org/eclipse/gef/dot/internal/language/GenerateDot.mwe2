@@ -226,6 +226,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 
@@ -291,6 +295,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotColor.xtext"
@@ -361,6 +369,11 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
+
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotEscString.xtext"
@@ -395,6 +408,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/model/DotFontName.ecore"
@@ -437,6 +454,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotHtmlLabel"
@@ -545,6 +566,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotPortPos"
@@ -583,6 +608,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRecordLabel"
@@ -621,6 +650,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRect"
@@ -659,6 +692,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotShape"
@@ -697,6 +734,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotPoint.xtext"
@@ -737,6 +778,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 
@@ -778,6 +823,10 @@ Workflow {
 			}
 
 			generator = null
+
+			quickFixProvider = {
+				generateStub = false
+			}
 		}
 	}
 }
