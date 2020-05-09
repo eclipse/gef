@@ -21,8 +21,10 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.gef.dot.internal.ui.DotGraphView
 import org.eclipse.gef.dot.tests.ui.DotUiInjectorProvider
 import org.eclipse.ui.ISources
+import org.eclipse.ui.IViewReference
 import org.eclipse.ui.IWorkbenchCommandConstants
 import org.eclipse.ui.commands.ICommandService
+import org.eclipse.ui.internal.ErrorViewPart
 import org.eclipse.ui.services.IServiceLocator
 import org.eclipse.xtext.resource.FileExtensionProvider
 import org.eclipse.xtext.testing.InjectWith
@@ -127,10 +129,20 @@ class DotGraphViewTest extends AbstractEditorTest {
 		var message = "The available views are: " + System.lineSeparator + viewIDs.sort.join(System.lineSeparator)
 		if(expected) {
 			message = "The DOT Graph view is not present, but it should be. " + message
+			views.doesNotContainErrorView
 		} else {
 			message = "The DOT Graph view is present, but it should not be. " + message
 		}
 		Assert.assertEquals(message, expected, actual)
+	}
+
+	private def doesNotContainErrorView(IViewReference[] viewReferences) {
+		val dotGraphViewReference = viewReferences.findFirst[id == DOT_GRAPH_VIEW_ID]
+		val dotGraphView = dotGraphViewReference.getView(false)
+		dotGraphView.assertNotNull
+		if (dotGraphView instanceof ErrorViewPart) {
+			fail("ErrorViewPart is presented instead of the DOT Graph View")
+		}
 	}
 
 	private def getProjectName() {
