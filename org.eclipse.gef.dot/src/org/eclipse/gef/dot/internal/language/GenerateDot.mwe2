@@ -355,7 +355,9 @@ Workflow {
 
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
 				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
@@ -422,7 +424,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -475,7 +479,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -594,7 +600,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -644,7 +652,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -694,7 +704,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -744,7 +756,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -794,7 +808,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -846,7 +862,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
@@ -899,7 +917,9 @@ Workflow {
 				generateStub = false
 			}
 
-			contentAssist = {}
+			contentAssist = {
+				generateStub = false
+			}
 
 			junitSupport = {
 				junitVersion = "4"
