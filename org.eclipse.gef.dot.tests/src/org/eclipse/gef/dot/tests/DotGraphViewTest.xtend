@@ -107,7 +107,7 @@ class DotGraphViewTest extends AbstractEditorTest {
 		 * See https://stackoverflow.com/questions/34182727/how-can-i-unit-test-eclipse-command-handlers
 		 */
 		val IServiceLocator serviceLocator = workbench
-		val ICommandService commandService = serviceLocator.getService(ICommandService) as ICommandService
+		val ICommandService commandService = serviceLocator.getService(ICommandService)
 		commandService.getCommand(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN)
 	}
 
