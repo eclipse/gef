@@ -230,6 +230,10 @@ Workflow {
 			quickFixProvider = {
 				generateStub = false
 			}
+
+			outline = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 
@@ -297,6 +301,10 @@ Workflow {
 			generator = null
 
 			quickFixProvider = {
+				generateStub = false
+			}
+
+			outline = {
 				generateStub = false
 			}
 		}
@@ -374,6 +382,9 @@ Workflow {
 				generateStub = false
 			}
 
+			outline = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/src/org/eclipse/gef/dot/internal/language/DotEscString.xtext"
@@ -412,6 +423,10 @@ Workflow {
 			quickFixProvider = {
 				generateStub = false
 			}
+
+			outline = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			referencedResource = "platform:/resource/${projectName}/model/DotFontName.ecore"
@@ -425,7 +440,6 @@ Workflow {
 				// Instead, we pass a modified CharStream to the lexer that returns lowercase chars only.
 				combinedGrammar = true
 			}
-
 
 			grammarAccess = {}
 
@@ -456,6 +470,10 @@ Workflow {
 			generator = null
 
 			quickFixProvider = {
+				generateStub = false
+			}
+
+			outline = {
 				generateStub = false
 			}
 		}
@@ -500,7 +518,6 @@ Workflow {
 			}
 
 			contentAssist = {}
-
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
@@ -570,6 +587,10 @@ Workflow {
 			quickFixProvider = {
 				generateStub = false
 			}
+
+			outline = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotPortPos"
@@ -610,6 +631,10 @@ Workflow {
 			generator = null
 
 			quickFixProvider = {
+				generateStub = false
+			}
+
+			outline = {
 				generateStub = false
 			}
 		}
@@ -654,6 +679,10 @@ Workflow {
 			quickFixProvider = {
 				generateStub = false
 			}
+
+			outline = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotRect"
@@ -696,6 +725,10 @@ Workflow {
 			quickFixProvider = {
 				generateStub = false
 			}
+
+			outline = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.gef.dot.internal.language.DotShape"
@@ -736,6 +769,10 @@ Workflow {
 			generator = null
 
 			quickFixProvider = {
+				generateStub = false
+			}
+
+			outline = {
 				generateStub = false
 			}
 		}
@@ -782,6 +819,10 @@ Workflow {
 			quickFixProvider = {
 				generateStub = false
 			}
+
+			outline = {
+				generateStub = false
+			}
 		}
 		language = StandardLanguage {
 
@@ -825,6 +866,10 @@ Workflow {
 			generator = null
 
 			quickFixProvider = {
+				generateStub = false
+			}
+
+			outline = {
 				generateStub = false
 			}
 		}
