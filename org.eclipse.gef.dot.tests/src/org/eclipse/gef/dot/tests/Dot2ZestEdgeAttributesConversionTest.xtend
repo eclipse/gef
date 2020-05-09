@@ -42,7 +42,8 @@ class Dot2ZestEdgeAttributesConversionTest {
 	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
 
 	/**
-	 * Ensure the JavaFX toolkit is properly initialized.
+	 * Ensure the JavaFX toolkit is properly initialized, needed only on Windows.
+	 * See https://stackoverflow.com/questions/46026733/javafx-test-that-fails-in-windows-and-works-in-osx-and-linux
 	 */
 	//@Rule
 	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
