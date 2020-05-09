@@ -51,6 +51,7 @@ import org.eclipse.gef.dot.internal.language.terminals.ID.Type;
 import org.eclipse.gef.dot.internal.language.validation.DotArrowTypeValidator;
 import org.eclipse.gef.dot.internal.language.validation.DotStyleValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
+import org.eclipse.xtext.ui.editor.model.edit.IMultiModification;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
@@ -75,21 +76,16 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			EdgeOp validEdgeOperator = invalidEdgeOperator
 					.equals(EdgeOp.DIRECTED.toString()) ? EdgeOp.UNDIRECTED
 							: EdgeOp.DIRECTED;
-			provideQuickfix(invalidEdgeOperator, validEdgeOperator.toString(),
-					"edge operator", //$NON-NLS-1$
-					issue, acceptor, new ISemanticModification() {
-
-						@Override
-						public void apply(EObject element,
-								IModificationContext context) {
-							if (element instanceof EdgeRhsNode) {
-								EdgeRhsNode edge = (EdgeRhsNode) element;
-								edge.setOp(validEdgeOperator);
-							}
-							if (element instanceof EdgeRhsSubgraph) {
-								EdgeRhsSubgraph edge = (EdgeRhsSubgraph) element;
-								edge.setOp(validEdgeOperator);
-							}
+			provideMultiQuickfix(invalidEdgeOperator,
+					validEdgeOperator.toString(), "edge operator", //$NON-NLS-1$
+					issue, acceptor, (EObject element) -> {
+						if (element instanceof EdgeRhsNode) {
+							EdgeRhsNode edge = (EdgeRhsNode) element;
+							edge.setOp(validEdgeOperator);
+						}
+						if (element instanceof EdgeRhsSubgraph) {
+							EdgeRhsSubgraph edge = (EdgeRhsSubgraph) element;
+							edge.setOp(validEdgeOperator);
 						}
 					});
 		}
@@ -483,6 +479,17 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 				"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
 						+ invalidValue + "' " + suffix + ".", //$NON-NLS-1$ //$NON-NLS-2$
 				null, semanticModification);
+	}
+
+	private void provideMultiQuickfix(String invalidValue, String validValue,
+			String suffix, Issue issue, IssueResolutionAcceptor acceptor,
+			IMultiModification<EObject> multiModification) {
+		acceptor.acceptMulti(issue,
+				"Replace '" + invalidValue + "' with '" + validValue //$NON-NLS-1$ //$NON-NLS-2$
+						+ "'.", //$NON-NLS-1$
+				"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
+						+ invalidValue + "' " + suffix + ".", //$NON-NLS-1$ //$NON-NLS-2$
+				null, multiModification);
 	}
 
 	private abstract class ChangingDotAttributeValueSemanticModification

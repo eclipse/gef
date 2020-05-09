@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 itemis AG and others.
+ * Copyright (c) 2015, 2020 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -52,9 +52,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotHtmlLabelRenameRefactoringTest.class,
 		DotHtmlLabelTokenTypeToPartitionMapperTest.class,
 		DotLabelProviderTest.class, DotMarkingOccurrencesTest.class,
-		DotOutlineViewTest.class, DotQuickfixTest.class,
-		DotReferenceFinderTest.class, DotRenameRefactoringTest.class,
-		DotToggleCommentTest.class, DotTokenTypeToPartitionMapperTest.class,
+		DotMultiQuickfixTest.class, DotOutlineViewTest.class,
+		DotQuickfixTest.class, DotReferenceFinderTest.class,
+		DotRenameRefactoringTest.class, DotToggleCommentTest.class,
+		DotTokenTypeToPartitionMapperTest.class,
 		SyncGraphvizExportHandlerTest.class })
 public class AllUiTests {
 }
