@@ -32,7 +32,6 @@ import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1099,7 +1098,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_headlp() {
 		'''
 			digraph {
@@ -1576,7 +1574,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_lp() {
 		'''
 			digraph {
@@ -1716,7 +1713,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_taillp() {
 		'''
 			digraph {
@@ -1853,7 +1849,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def edge_xlp() {
 		'''
 			digraph {
@@ -3111,7 +3106,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased001() {
 		'''
 			graph {
@@ -3184,7 +3178,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased002() {
 		'''
 			graph {
@@ -3344,11 +3337,10 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_label_recordbased003() {
 		'''
 			graph {
-				1[shape=record label=" Hi | Test \n Right \r Left \l Center | Section 2"]
+				1[shape=record label=" Hi | Test\nRight\rLeft\lCenter | Section 2"]
 			}
 		'''.assertZestConversion(new RecordBasedShapePrettyPrinter,'''
 			Graph {
@@ -3372,18 +3364,18 @@ class Dot2ZestGraphCopierTest {
 							HBox {
 								alignment : CENTER_RIGHT
 								Text {
-									text :  Right
+									text : Right
 								}
 							}
 							HBox {
 								alignment : CENTER_LEFT
 								Text {
-									text :  Left
+									text : Left
 								}
 							}
 							HBox {
 								Text {
-									text :  Center
+									text : Center
 								}
 							}
 						}
@@ -3396,7 +3388,7 @@ class Dot2ZestGraphCopierTest {
 							}
 						}
 					}
-					node-size : Dimension(152.0, 69.0)
+					node-size : Dimension(149.0, 69.0)
 				}
 			}
 		''')
@@ -3929,7 +3921,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_xlp() {
 		'''
 			graph {
@@ -3965,7 +3956,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def node_xlabel_with_layout_information() {
 		'''
 			graph {
@@ -4435,7 +4425,6 @@ class Dot2ZestGraphCopierTest {
 		''')
 	}
 
-	@Ignore("Failing on Travis/Jenkins")
 	@Test def labeled_graph_with_additional_information() {
 		val dot = DotTestUtils.labeledGraphWithAdditionalInformation
 		val zest = dot.copy
