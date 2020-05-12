@@ -49,6 +49,10 @@ final class DotTestUtils {
 		/* Enforce non-instantiability */
 	}
 
+	def static boolean runningOnWindows() {
+		System.getProperty("os.name").toLowerCase.contains("win")
+	}
+
 	def static content(String fileName) {
 		fileName.file.read
 	}

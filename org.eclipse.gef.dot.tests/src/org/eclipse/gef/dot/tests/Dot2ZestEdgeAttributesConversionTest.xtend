@@ -24,6 +24,8 @@ import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
+import org.junit.Assume
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,6 +48,10 @@ class Dot2ZestEdgeAttributesConversionTest {
 	 */
 	//@Rule
 	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
+	@BeforeClass
+	def static void setup() {
+		Assume.assumeTrue(!DotTestUtils.runningOnWindows)
+	}
 
 	@Inject extension ParseHelper<DotAst>
 	@Inject extension ValidationTestHelper

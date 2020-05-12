@@ -27,6 +27,7 @@ import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
+import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
@@ -53,6 +54,10 @@ class Dot2ZestNodeAttributesConversionTest {
 	 */
 	//@Rule
 	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
+	@BeforeClass
+	def static void setup() {
+		Assume.assumeTrue(!DotTestUtils.runningOnWindows)
+	}
 
 	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
 
