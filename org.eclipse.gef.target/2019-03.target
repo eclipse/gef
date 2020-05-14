@@ -13,7 +13,7 @@
       <repository location="http://download.itemis.com/updates/releases/2.1.1"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
+      <unit id="org.eclipse.license.feature.group" version="2.0.2.v20181016-2210"/>
       <repository location="http://download.eclipse.org/cbi/updates/license"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
