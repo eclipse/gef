@@ -17,7 +17,7 @@
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.fx.swt"
       license-feature="org.eclipse.license"
-      license-feature-version="1.0.1">
+      license-feature-version="2.0.2.v20181016-2210">
 
    <description>
       %description

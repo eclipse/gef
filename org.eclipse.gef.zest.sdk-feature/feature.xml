@@ -16,7 +16,7 @@
       version="5.1.2.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
-      license-feature-version="1.0.1">
+      license-feature-version="2.0.2.v20181016-2210">
 
    <description>
       %description
