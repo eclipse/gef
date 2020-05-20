@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -13,9 +13,9 @@
 package org.eclipse.gef.dot.internal.ui.language.labeling;
 
 /**
- * Provides labels for a IEObjectDescriptions and IResourceDescriptions.
+ * Provides labels for IEObjectDescriptions and IResourceDescriptions.
  *
- * see http://www.eclipse.org/Xtext/documentation.html#labelProvider
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  */
 public class DotHtmlLabelDescriptionLabelProvider
 		extends org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider {

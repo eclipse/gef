@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 itemis AG and others.
+ * Copyright (c) 2016, 2020 itemis AG and others.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
@@ -26,10 +26,9 @@ import org.eclipse.xtext.resource.IReferenceDescription;
 /**
  * Provides labels for IEObjectDescriptions and IResourceDescriptions.
  *
- * Used e.g. as a label provider displaying the 'Find References' Search Result.
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  *
- * See
- * https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
+ * Used e.g. as a label provider displaying the 'Find References' Search Result.
  */
 public class DotDescriptionLabelProvider
 		extends org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider {

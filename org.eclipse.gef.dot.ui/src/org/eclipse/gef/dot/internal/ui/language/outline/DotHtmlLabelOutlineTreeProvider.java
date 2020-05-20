@@ -28,6 +28,9 @@ import org.eclipse.xtext.util.TextRegion;
 
 /**
  * Customization of the default outline structure.
+ *
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#outline
  */
 public class DotHtmlLabelOutlineTreeProvider
 		extends DefaultOutlineTreeProvider {

@@ -79,9 +79,9 @@ import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 import com.google.inject.Inject;
 
 /**
- * A proposal provider for Dot.
- *
- * @author anyssen
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#content-assist
+ * on how to customize the content assistant.
  */
 public class DotProposalProvider extends AbstractDotProposalProvider {
 

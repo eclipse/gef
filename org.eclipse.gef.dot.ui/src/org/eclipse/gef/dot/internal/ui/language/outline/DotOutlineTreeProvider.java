@@ -50,6 +50,8 @@ import com.google.inject.Injector;
 /**
  * Customization of the default outline structure.
  *
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#outline
  */
 public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 

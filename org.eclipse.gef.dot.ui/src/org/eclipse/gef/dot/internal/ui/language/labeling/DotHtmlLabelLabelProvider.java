@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 itemis AG and others.
+ * Copyright (c) 2017, 2020 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -20,9 +20,10 @@ import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
 import com.google.inject.Inject;
 
 /**
- * Provides labels for a EObjects.
+ * Provides labels for EObjects.
  *
- * see http://www.eclipse.org/Xtext/documentation.html#labelProvider
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  */
 public class DotHtmlLabelLabelProvider
 		extends org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider {

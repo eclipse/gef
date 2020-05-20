@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 itemis AG and others.
+ * Copyright (c) 2010, 2020 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -42,7 +42,7 @@ import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import com.google.inject.Inject;
 
 /**
- * Provides labels and icons for the different DOT EObjects.
+ * Provides labels for EObjects.
  *
  * See
  * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider

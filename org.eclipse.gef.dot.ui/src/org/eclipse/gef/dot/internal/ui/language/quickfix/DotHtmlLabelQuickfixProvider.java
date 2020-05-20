@@ -23,9 +23,8 @@ import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
 
 /**
- * Custom quickfixes.
- *
- * see http://www.eclipse.org/Xtext/documentation.html#quickfixes
+ * Custom quickfixes. See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#quick-fixes
  */
 public class DotHtmlLabelQuickfixProvider
 		extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
