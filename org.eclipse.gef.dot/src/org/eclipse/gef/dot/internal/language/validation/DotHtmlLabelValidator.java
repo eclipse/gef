@@ -70,7 +70,7 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 	public static final String HTML_ATTRIBUTE_INVALID_ATTRIBUTE_VALUE = "html_attribute_invalid_attribute_value";
 
 	/**
-	 * Issue code for an invalid html attribute value.
+	 * Issue code for a duplicated html attribute name.
 	 */
 	public static final String HTML_ATTRIBUTE_DUPLICATE_ATTRIBUTE_NAME = "html_attribute_duplicate_attribute_name";
 
