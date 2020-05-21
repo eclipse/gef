@@ -239,7 +239,8 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 				reportRangeBasedError(HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME,
 						"Attribute '" + attrName + "' is not allowed inside '<"
 								+ tagName + ">'.",
-						attr, HtmllabelPackage.Literals.HTML_ATTR__NAME);
+						attr, HtmllabelPackage.Literals.HTML_ATTR__NAME,
+						new String[] { tagName, attrName });
 			}
 		}
 	}

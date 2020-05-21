@@ -13,7 +13,14 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.quickfix;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
+import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlTag;
 import org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
@@ -69,5 +76,37 @@ public class DotHtmlLabelQuickfixProvider
 						}
 					}
 				});
+	}
+
+	@Fix(DotHtmlLabelValidator.HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME)
+	public void fixInvalidAttributeName(final Issue issue,
+			IssueResolutionAcceptor acceptor) {
+		String[] issueData = issue.getData();
+		String tagName = issueData[0];
+		String invalidAttribute = issueData[1];
+
+		Set<String> validAttributes = DotHtmlLabelHelper.getValidAttributes()
+				.get(tagName.toUpperCase());
+
+		List<String> validAttributesSorted = new ArrayList<>(validAttributes);
+		Collections.sort(validAttributesSorted);
+
+		for (String validAttribute : validAttributesSorted) {
+			String label = "Change to '" + validAttribute + "'."; //$NON-NLS-1$ //$NON-NLS-2$
+			String description = "Change '" //$NON-NLS-1$
+					+ invalidAttribute + "' to '" + validAttribute + "'."; //$NON-NLS-1$ //$NON-NLS-2$
+			acceptor.accept(issue, label, description, null,
+					new ISemanticModification() {
+
+						@Override
+						public void apply(EObject element,
+								IModificationContext context) throws Exception {
+							if (element instanceof HtmlAttr) {
+								HtmlAttr htmlAttr = (HtmlAttr) element;
+								htmlAttr.setName(validAttribute);
+							}
+						}
+					});
+		}
 	}
 }
