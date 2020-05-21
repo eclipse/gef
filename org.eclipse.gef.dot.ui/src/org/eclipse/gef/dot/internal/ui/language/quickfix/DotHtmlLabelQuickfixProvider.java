@@ -40,8 +40,8 @@ public class DotHtmlLabelQuickfixProvider
 	public void fixInvalidTagName(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		String[] issueData = issue.getData();
-		String openingTagName = issueData[0];
-		String closingTagName = issueData[1];
+		String openingTagName = issueData[2];
+		String closingTagName = issueData[3];
 
 		// change the opening tag name
 		String label = "Change the opening tag to '" + closingTagName + "'."; //$NON-NLS-1$ //$NON-NLS-2$
@@ -82,8 +82,8 @@ public class DotHtmlLabelQuickfixProvider
 	public void fixInvalidAttributeName(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		String[] issueData = issue.getData();
-		String tagName = issueData[0];
-		String invalidAttribute = issueData[1];
+		String tagName = issueData[2];
+		String invalidAttribute = issueData[3];
 
 		Set<String> validAttributes = DotHtmlLabelHelper.getValidAttributes()
 				.get(tagName.toUpperCase());

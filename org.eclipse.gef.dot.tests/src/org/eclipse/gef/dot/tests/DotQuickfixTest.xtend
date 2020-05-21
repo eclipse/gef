@@ -470,6 +470,76 @@ class DotQuickfixTest extends AbstractQuickfixTest {
 		'''graph{node[colorscheme=foo]}'''.testQuickfixesOn(DotAttributes.COLORSCHEME__GCNE, expectedQuickfixes)
 	}
 
+	@Test def node_html_like_label_001() {
+		'''
+			graph {
+				1[label = <<I>text</B>>]
+			}
+		'''.testQuickfixesOn(DotAttributes.LABEL__GCNE,
+			new Quickfix("Change the opening tag to 'B'.", "Change the opening tag from 'I' to 'B'.", '''
+			graph {
+				1[label = <<B>text</B>>]
+			}
+			'''),
+			new Quickfix("Change the closing tag to 'I'.", "Change the closing tag from 'B' to 'I'.", '''
+			graph {
+				1[label = <<I>text</I>>]
+			}
+			''')
+		)
+	}
+
+	@Test def node_html_like_label_002() {
+		'''
+			graph {
+				1[label = <<SUB>text</SUP>>]
+			}
+		'''.testQuickfixesOn(DotAttributes.LABEL__GCNE,
+			new Quickfix("Change the opening tag to 'SUP'.", "Change the opening tag from 'SUB' to 'SUP'.", '''
+			graph {
+				1[label = <<SUP>text</SUP>>]
+			}
+			'''),
+			new Quickfix("Change the closing tag to 'SUB'.", "Change the closing tag from 'SUP' to 'SUB'.", '''
+			graph {
+				1[label = <<SUB>text</SUB>>]
+			}
+			''')
+		)
+	}
+
+	@Test def node_html_like_label_003() {
+		'''
+			graph {
+				1[label = <
+					<FONT FOO=""></FONT>
+				>]
+			}
+		'''.testQuickfixesOn(DotAttributes.LABEL__GCNE,
+			new Quickfix("Change to 'COLOR'.", "Change 'FOO' to 'COLOR'.", '''
+				graph {
+					1[label = <
+						<FONT COLOR=""></FONT>
+					>]
+				}
+			'''),
+			new Quickfix("Change to 'FACE'.", "Change 'FOO' to 'FACE'.", '''
+				graph {
+					1[label = <
+						<FONT FACE=""></FONT>
+					>]
+				}
+			'''),
+			new Quickfix("Change to 'POINT-SIZE'.", "Change 'FOO' to 'POINT-SIZE'.", '''
+				graph {
+					1[label = <
+						<FONT POINT-SIZE=""></FONT>
+					>]
+				}
+			''')
+		)
+	}
+
 	@Test def node_shape_001() {
 		val List<Quickfix> expectedQuickfixes = newArrayList
 		for (validNodeShape : validNodeShapes) {

@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.language.htmllabel.DotHtmlLabelHelper;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlAttr;
 import org.eclipse.gef.dot.internal.language.htmllabel.HtmlContent;
@@ -114,7 +115,9 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 							+ tag.getName() + ">' but got '</"
 							+ tag.getCloseName() + ">').",
 					tag, HtmllabelPackage.Literals.HTML_TAG__CLOSE_NAME,
-					new String[] { tag.getName(), tag.getCloseName() });
+					new String[] { HTML_TAG_IS_NOT_PROPERLY_CLOSED,
+							EcoreUtil.getURI(tag).toString(), tag.getName(),
+							tag.getCloseName() });
 		}
 	}
 
@@ -240,7 +243,9 @@ public class DotHtmlLabelValidator extends AbstractDotHtmlLabelValidator {
 						"Attribute '" + attrName + "' is not allowed inside '<"
 								+ tagName + ">'.",
 						attr, HtmllabelPackage.Literals.HTML_ATTR__NAME,
-						new String[] { tagName, attrName });
+						new String[] { HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME,
+								EcoreUtil.getURI(attr).toString(),
+								tagName, attrName });
 			}
 		}
 	}

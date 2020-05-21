@@ -22,6 +22,7 @@ import static org.eclipse.gef.dot.internal.language.validation.DotValidator.REDU
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.DotAttributes;
@@ -148,6 +149,26 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 		String invalidValue = issue.getData()[0];
 		provideQuickfixes(invalidValue, DirType.values(), "edge dir", issue, //$NON-NLS-1$
 				acceptor);
+	}
+
+	@Fix(DotAttributes.LABEL__GCNE)
+	public void fixHtmlLabelAttributeValue(final Issue issue,
+			IssueResolutionAcceptor acceptor) {
+		String[] data = issue.getData();
+		if (data == null || data.length < 4) {
+			return;
+		}
+
+		String htmlLabelIssueCode = data[0];
+		String htmlLabelUriToProblem = data[1];
+
+		Issue.IssueImpl htmlLabelIssue = new Issue.IssueImpl();
+		htmlLabelIssue.setCode(htmlLabelIssueCode);
+		htmlLabelIssue.setData(data);
+		htmlLabelIssue.setUriToProblem(URI.createURI(htmlLabelUriToProblem));
+
+		new DotHtmlLabelQuickfixDelegator().provideQuickfixes(issue,
+				htmlLabelIssue, acceptor);
 	}
 
 	@Fix(DotAttributes.LAYOUT__G)
