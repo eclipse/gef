@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-class DotEditorToDotEditorHyperlinkingTest extends AbstractHyperlinkingTest {
+class DotHyperlinkingTest extends AbstractHyperlinkingTest {
 
 	@Test def hyperlink_on_the_left_side_of_an_edge() {
 		'''
