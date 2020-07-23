@@ -54,9 +54,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotHtmlLabelTokenTypeToPartitionMapperTest.class,
 		DotHyperlinkingTest.class, DotLabelProviderTest.class,
 		DotMarkingOccurrencesTest.class, DotMultiQuickfixTest.class,
-		DotOutlineViewTest.class, DotQuickfixTest.class,
-		DotReferenceFinderTest.class, DotRenameRefactoringTest.class,
-		DotToggleCommentTest.class, DotTokenTypeToPartitionMapperTest.class,
+		DotNewProjectWizardTest.class, DotOutlineViewTest.class,
+		DotQuickfixTest.class, DotReferenceFinderTest.class,
+		DotRenameRefactoringTest.class, DotToggleCommentTest.class,
+		DotTokenTypeToPartitionMapperTest.class,
 		SyncGraphvizExportHandlerTest.class })
 public class AllUiTests {
 }

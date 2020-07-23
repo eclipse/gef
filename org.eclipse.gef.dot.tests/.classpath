@@ -8,6 +8,7 @@
 			<accessrule kind="accessible" pattern="org/eclipse/xtext/ide/LexerIdeBindings"/>
 			<accessrule kind="accessible" pattern="org/eclipse/xtext/ui/editor/findrefs/**"/>
 			<accessrule kind="accessible" pattern="org/eclipse/xtext/ui/refactoring/**"/>
+			<accessrule kind="accessible" pattern="org/eclipse/xtext/ui/wizard/template/**"/>
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>

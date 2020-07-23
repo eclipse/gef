@@ -55,16 +55,16 @@ final class ParameterisedDotFile {
 			nodesBuilder.append('''«i+1» [label="label of node \N"]
 								''')
 			if (i > 0) {
-				edgesBuilder.append('''«i»«type.value == "directed graph" ? "->" : "--"»«i+1» [label="an edge between nodes \T and \H" fontcolor="red"]
+				edgesBuilder.append('''«i» «IF type.value == "directed graph"»"->"«ELSE»"--"«ENDIF» «i+1» [label="an edge between nodes \T and \H" fontcolor="red"]
 									''')
 			}
 		}
 
-		generator.generate('''«folder»/«name»«!name.matches(".*\\.(gv|dot)\\Z") ? ".dot"»''', '''
+		generator.generate('''«folder»/«name»«IF !name.matches(".*\\.(gv|dot)\\Z")».dot«ENDIF»''', '''
 			/*
 			 * This is a graph stub
 			 */
-			«type.value == "directed graph" ? "digraph" : "graph"» «graphName» {
+			«IF type.value == "directed graph"»"digraph"«ELSE»"graph"«ENDIF» «graphName» {
 				// global attribute statement
 				node [shape="ellipse"]
 				// nodes
