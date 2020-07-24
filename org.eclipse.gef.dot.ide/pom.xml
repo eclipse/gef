@@ -23,7 +23,7 @@
 	</parent>
 	<groupId>org.eclipse.gef.plugins</groupId>
 	<artifactId>org.eclipse.gef.dot.ide</artifactId>
-	<version>5.1.0-SNAPSHOT</version>
+	<version>5.1.1-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	<build>
 		<plugins>
