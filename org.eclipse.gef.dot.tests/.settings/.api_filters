@@ -134,15 +134,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="xtend-gen/org/eclipse/gef/dot/tests/Dot2ZestGraphCopierTest.java" type="org.eclipse.gef.dot.tests.Dot2ZestGraphCopierTest">
-        <filter id="627060751">
-            <message_arguments>
-                <message_argument value="FXNonApplicationThreadRule"/>
-                <message_argument value="Dot2ZestGraphCopierTest"/>
-                <message_argument value="ctx"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="xtend-gen/org/eclipse/gef/dot/tests/DotHoverTest.java" type="org.eclipse.gef.dot.tests.DotHoverTest">
         <filter id="643842064">
             <message_arguments>
