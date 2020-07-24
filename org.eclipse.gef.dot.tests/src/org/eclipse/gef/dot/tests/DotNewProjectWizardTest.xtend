@@ -21,7 +21,6 @@ import org.eclipse.jface.wizard.WizardDialog
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.testing.AbstractWorkbenchTest
-import org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil
 import org.eclipse.xtext.ui.wizard.IExtendedProjectInfo
 import org.eclipse.xtext.ui.wizard.template.TemplateNewProjectWizard
 import org.junit.Test
@@ -38,9 +37,8 @@ import static org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.*
 @InjectWith(DotUiInjectorProvider)
 class DotNewProjectWizardTest extends AbstractWorkbenchTest {
 
-	@Inject extension IResourcesSetupUtil
 	@Inject Provider<DotTestableNewProjectWizard> wizardProvider
-	
+
 	val static TEST_PROJECT_NAME = "DotTestProject"
 
 	@Test def new_project_wizard() {
@@ -83,11 +81,11 @@ class DotNewProjectWizardTest extends AbstractWorkbenchTest {
 							Thread.sleep(5000)
 						}
 					}
-				};
+				}
 				thread.start
 				super.open
 			}
-		};
+		}
 
 		dialog.open
 	}
@@ -95,12 +93,12 @@ class DotNewProjectWizardTest extends AbstractWorkbenchTest {
 	private def assertWorkspaceIsEmpty() {
 		root.projects.isEmpty.assertTrue
 	}
-	
+
 	/**
 	 * Manually set the project name (usually set in the dialog text edit)
 	 */
 	static class DotTestableNewProjectWizard extends TemplateNewProjectWizard {
-	
+
 		override IExtendedProjectInfo getProjectInfo() {
 			val projectInfo = super.projectInfo
 			projectInfo.setProjectName(TEST_PROJECT_NAME)
