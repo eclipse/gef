@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 itemis AG and others.
+ * Copyright (c) 2019, 2020 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -23,7 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-/*
+/**
  * Test cases for the {@link Dot2ZestAttributesConverter#copy(IAttributeStore, IAttributeStore)} method.
  */
 class Dot2ZestAttributesConverterTest {

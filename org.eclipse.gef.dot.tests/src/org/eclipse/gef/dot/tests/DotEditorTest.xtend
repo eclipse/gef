@@ -28,7 +28,7 @@ import org.junit.runner.RunWith
 
 import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.addNature
 
-/*
+/**
  * Test cases for the {@link DotEditor} class.
  */
 @RunWith(XtextRunner)

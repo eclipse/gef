@@ -27,7 +27,7 @@ import org.junit.runner.RunWith
 import static extension org.junit.Assert.assertEquals
 import static extension org.junit.Assert.assertNull
 
-/*
+/**
  * Test cases for the {@link DotColorUtil} class.
  */
 @RunWith(XtextRunner)

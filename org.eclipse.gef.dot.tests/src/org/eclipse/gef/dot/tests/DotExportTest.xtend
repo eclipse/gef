@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 itemis AG and others.
+ * Copyright (c) 2009, 2020 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -27,7 +27,7 @@ import static extension org.eclipse.gef.dot.tests.DotTestUtils.content
 import static extension org.junit.Assert.*
 
 /**
- * Tests for the {@link DotExport} class.
+ * Test cases for the {@link DotExport} class.
  *
  * @author Fabian Steeg (fsteeg)
  */

@@ -40,7 +40,7 @@ import static extension org.junit.Assert.assertEquals
 import static extension org.junit.Assert.assertNotNull
 
 /**
- * Tests for the {@link DotImport} class.
+ * Test cases for the {@link DotImport} class.
  * @author Fabian Steeg (fsteeg)
  */
 @RunWith(XtextRunner)

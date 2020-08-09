@@ -41,7 +41,7 @@ import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
 
-/*
+/**
  * Test class containing test cases for the {@link Dot2ZestGraphCopier} class.
  */
 @RunWith(XtextRunner)

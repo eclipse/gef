@@ -65,6 +65,9 @@ import static extension org.junit.Assert.assertNull
 import static extension org.junit.Assert.assertTrue
 import static extension org.junit.Assert.fail
 
+/**
+ * Test cases for the {@link org.eclipse.gef.dot.internal.DotAttributes} class.
+ */
 @RunWith(XtextRunner)
 @InjectWith(DotInjectorProvider)
 class DotAttributesTest {

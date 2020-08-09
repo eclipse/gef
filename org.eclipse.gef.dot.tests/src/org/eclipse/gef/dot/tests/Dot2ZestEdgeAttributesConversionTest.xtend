@@ -34,7 +34,7 @@ import org.junit.runner.RunWith
 import static extension org.eclipse.gef.zest.fx.ZestProperties.*
 import static extension org.junit.Assert.*
 
-/*
+/**
  * Test cases for the {@link Dot2ZestAttributesConverter#convertAttributes(Edge, Edge)} method.
  */
 @RunWith(XtextRunner)

@@ -31,7 +31,7 @@ import org.junit.Test
 import static extension org.junit.Assert.*
 
 /**
- * Tests for the {@link DotExecutableUtils} class.
+ * Test cases for the {@link DotExecutableUtils} class.
  *
  * @author Fabian Steeg (fsteeg)
  * @author Tamas Miklossy

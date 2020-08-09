@@ -41,7 +41,7 @@ import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.ad
 import static extension org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil.createProject
 
 /**
- * Util class for various tests.
+ * Utility class for the test cases.
  * @author Fabian Steeg (fsteeg)
  */
 final class DotTestUtils {

@@ -30,7 +30,6 @@ import javafx.beans.property.ReadOnlyMapProperty;
  * A Pretty Printer providing formatted string representations (with line
  * separation and indentation) for {@link Graph}, {@link Node} and {@link Edge}
  * objects.
- *
  */
 class DotGraphPrettyPrinter {
 
