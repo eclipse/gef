@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 itemis AG and others.
+ * Copyright (c) 2016, 2020 itemis AG and others.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
@@ -368,8 +368,10 @@ public interface IBendableContentPart<V extends Node>
 		 */
 		@Override
 		public String toString() {
-			return "BendPoint [" + (contentAnchorage != null
-					? "contentAnchorage=" + contentAnchorage + ", " : "")
+			return "BendPoint ["
+					+ (contentAnchorage != null
+							? "contentAnchorage=" + contentAnchorage + ", "
+							: "")
 					+ (position != null ? "position=" + position : "") + "]";
 		}
 	}
@@ -393,9 +395,20 @@ public interface IBendableContentPart<V extends Node>
 	 * Returns the visual to bend.
 	 *
 	 * @return The visual to bend.
+	 *
+	 * @deprecated This method is no longer used as part of the
+	 *             {@link IBendableContentPart} contract. Reason is that
+	 *             IBendableContentPart is no longer bound to a
+	 *             {@link Connection} visual, while it still provides default
+	 *             behavior for that specific case.
 	 */
+	@Deprecated
 	public default Connection getBendableVisual() {
-		return (Connection) getVisual();
+		if (this.getVisual() instanceof Connection) {
+			return (Connection) this.getVisual();
+		}
+		throw new IllegalStateException(
+				"This operation should never be called");
 	}
 
 	/**
@@ -452,39 +465,45 @@ public interface IBendableContentPart<V extends Node>
 	 */
 	public default List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> getVisualBendPoints() {
 		List<BendPoint> bendPoints = new ArrayList<>();
-		Connection connection = getBendableVisual();
 		IViewer viewer = getRoot().getViewer();
-		List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
-		for (int i = 0; i < anchors.size(); i++) {
-			IAnchor anchor = anchors.get(i);
-			if (!connection.getRouter().wasInserted(anchor)) {
-				if (connection.isConnected(i)) {
-					// provide a position hint for a connected bend point
-					Point positionHint = connection.getPoint(i);
-					if (i == 0 && connection.getStartPointHint() != null) {
-						positionHint = connection.getStartPointHint();
+		Node bendableVisual = getVisual();
+		if (bendableVisual instanceof Connection) {
+			Connection connection = (Connection) bendableVisual;
+			List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
+			for (int i = 0; i < anchors.size(); i++) {
+				IAnchor anchor = anchors.get(i);
+				if (!connection.getRouter().wasInserted(anchor)) {
+					if (connection.isConnected(i)) {
+						// provide a position hint for a connected bend point
+						Point positionHint = connection.getPoint(i);
+						if (i == 0 && connection.getStartPointHint() != null) {
+							positionHint = connection.getStartPointHint();
+						}
+						if (i == anchors.size() - 1
+								&& connection.getEndPointHint() != null) {
+							positionHint = connection.getEndPointHint();
+						}
+						// determine anchorage content
+						Node anchorageNode = anchor.getAnchorage();
+						IVisualPart<? extends Node> part = PartUtils
+								.retrieveVisualPart(viewer, anchorageNode);
+						Object anchorageContent = null;
+						if (part instanceof IContentPart) {
+							anchorageContent = ((IContentPart<? extends Node>) part)
+									.getContent();
+						}
+						bendPoints.add(
+								new BendPoint(anchorageContent, positionHint));
+					} else {
+						bendPoints.add(new BendPoint(connection.getPoint(i)));
 					}
-					if (i == anchors.size() - 1
-							&& connection.getEndPointHint() != null) {
-						positionHint = connection.getEndPointHint();
-					}
-					// determine anchorage content
-					Node anchorageNode = anchor.getAnchorage();
-					IVisualPart<? extends Node> part = PartUtils
-							.retrieveVisualPart(viewer, anchorageNode);
-					Object anchorageContent = null;
-					if (part instanceof IContentPart) {
-						anchorageContent = ((IContentPart<? extends Node>) part)
-								.getContent();
-					}
-					bendPoints
-							.add(new BendPoint(anchorageContent, positionHint));
-				} else {
-					bendPoints.add(new BendPoint(connection.getPoint(i)));
 				}
 			}
+			return bendPoints;
+		} else {
+			throw new UnsupportedOperationException(
+					"Default behavior only covers parts with a Connection visual. Please implement specific behavior for this implementation.");
 		}
-		return bendPoints;
 	}
 
 	@Override
@@ -536,47 +555,54 @@ public interface IBendableContentPart<V extends Node>
 					"Not enough bend points supplied!");
 		}
 
-		// compute anchors for the given bend points
-		List<IAnchor> newAnchors = new ArrayList<>();
-		for (int i = 0; i < bendPoints.size(); i++) {
-			BendPoint bp = bendPoints.get(i);
-			if (bp.isAttached()) {
-				// create anchor
-				IAnchorProvider anchorProvider = getRoot().getViewer()
-						.getContentPartMap().get(bp.getContentAnchorage())
-						.getAdapter(IAnchorProvider.class);
-				if (anchorProvider == null) {
-					throw new IllegalStateException(
-							"Anchorage does not provide anchor!");
-				}
-				// TODO: the role needs to be properly defined
-				IAnchor anchor = anchorProvider.get(this,
-						getRole(bendPoints, i));
-				if (anchor == null) {
-					throw new IllegalStateException(
-							"AnchorProvider does not provide anchor!");
-				}
-				newAnchors.add(anchor);
+		Node bendableVisual = getVisual();
+		if (bendableVisual instanceof Connection) {
+			Connection connection = (Connection) bendableVisual;
+			// compute anchors for the given bend points
+			List<IAnchor> newAnchors = new ArrayList<>();
+			for (int i = 0; i < bendPoints.size(); i++) {
+				BendPoint bp = bendPoints.get(i);
+				if (bp.isAttached()) {
+					// create anchor
+					IAnchorProvider anchorProvider = getRoot().getViewer()
+							.getContentPartMap().get(bp.getContentAnchorage())
+							.getAdapter(IAnchorProvider.class);
+					if (anchorProvider == null) {
+						throw new IllegalStateException(
+								"Anchorage does not provide anchor!");
+					}
+					// TODO: the role needs to be properly defined
+					IAnchor anchor = anchorProvider.get(this,
+							getRole(bendPoints, i));
+					if (anchor == null) {
+						throw new IllegalStateException(
+								"AnchorProvider does not provide anchor!");
+					}
+					newAnchors.add(anchor);
 
-				// update hints
-				if (i == 0) {
-					// update start point hint
-					getBendableVisual()
-							.setStartPointHint(bendPoints.get(0).getPosition());
+					// update hints
+					if (i == 0) {
+						// update start point hint
+						connection.setStartPointHint(
+								bendPoints.get(0).getPosition());
+					}
+					if (i == bendPoints.size() - 1) {
+						// update end point hint
+						connection.setEndPointHint(bendPoints
+								.get(bendPoints.size() - 1).getPosition());
+					}
+				} else {
+					newAnchors.add(
+							new StaticAnchor(connection, bp.getPosition()));
 				}
-				if (i == bendPoints.size() - 1) {
-					// update end point hint
-					getBendableVisual().setEndPointHint(bendPoints
-							.get(bendPoints.size() - 1).getPosition());
-				}
-			} else {
-				newAnchors.add(new StaticAnchor(getBendableVisual(),
-						bp.getPosition()));
 			}
-		}
 
-		// update anchors
-		getBendableVisual().setAnchors(newAnchors);
+			// update anchors
+			connection.setAnchors(newAnchors);
+		} else {
+			throw new UnsupportedOperationException(
+					"Default behavior only covers IBendableContentParts with a Connection visual. Please implement specific behavior for this implementation.");
+		}
 	}
 
 	@Override
