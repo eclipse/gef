@@ -167,6 +167,10 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		}
 	};
 
+	private IContentPartFactory contentPartFactory = null;
+	private ContentPartPool contentPartPool = null;
+	private Map<Object, IContentPart<? extends Node>> contentPartMap = null;
+
 	@SuppressWarnings("unchecked")
 	private void addAll(IVisualPart<? extends Node> parent,
 			List<? extends Object> contentChildren,
@@ -221,6 +225,8 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				contentPart.setParent(parent);
 				added.add(contentPart);
 				childrenToAdd.put(i, contentPart);
+				synchronizeContentPartAnchorages(contentPart,
+						contentPart.getContentAnchoragesUnmodifiable());
 				addAll(contentPart,
 						contentPart.getContentChildrenUnmodifiable(), added,
 						addsPerParent, reorders);
@@ -261,11 +267,14 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 
 	@Override
 	public void dispose() {
-		// the content part pool is shared by all content behaviors of a viewer,
-		// so the viewer disposes it.
 		contentObserver = null;
 		contentChildrenObserver = null;
 		contentAnchoragesObserver = null;
+		// the content part pool is shared by all content behaviors of a viewer,
+		// so the viewer disposes it.
+		contentPartPool = null;
+		contentPartFactory = null;
+
 	}
 
 	/**
@@ -293,19 +302,19 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 		if (host != host.getRoot()) {
 			throw new IllegalArgumentException();
 		}
-		IViewer viewer = host.getRoot().getViewer();
+		IViewer viewer = host.getViewer();
+		synchronizeContentPartChildren(host, viewer.getContents());
 		viewer.contentPartMapProperty().addListener(contentPartMapObserver);
-		synchronizeContentPartChildren(getHost(), viewer.getContents());
-		viewer.getContents().addListener(contentObserver);
+		viewer.contentsProperty().addListener(contentObserver);
 	}
 
 	@Override
 	protected void doDeactivate() {
 		IVisualPart<? extends Node> host = getHost();
-		IViewer viewer = host.getRoot().getViewer();
-		viewer.getContents().removeListener(contentObserver);
-		synchronizeContentPartChildren(getHost(), Collections.emptyList());
+		IViewer viewer = host.getViewer();
+		viewer.contentsProperty().removeListener(contentObserver);
 		viewer.contentPartMapProperty().removeListener(contentPartMapObserver);
+		synchronizeContentPartChildren(host, Collections.emptyList());
 	}
 
 	/**
@@ -325,8 +334,7 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 *         <i>content</i> {@link Object}.
 	 */
 	protected IContentPart<? extends Node> findOrCreatePartFor(Object content) {
-		Map<Object, IContentPart<? extends Node>> contentPartMap = getHost()
-				.getRoot().getViewer().getContentPartMap();
+		Map<Object, IContentPart<? extends Node>> contentPartMap = getContentPartMap();
 		if (contentPartMap.containsKey(content)) {
 			// System.out.println("FOUND " + content);
 			return contentPartMap.get(content);
@@ -362,8 +370,20 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * @return the {@link IContentPartFactory} of the current viewer.
 	 */
 	protected IContentPartFactory getContentPartFactory() {
-		return getHost().getRoot().getViewer()
-				.getAdapter(IContentPartFactory.class);
+		if (contentPartFactory == null) {
+			contentPartFactory = getHost().getRoot().getViewer()
+					.getAdapter(IContentPartFactory.class);
+		}
+		return contentPartFactory;
+	}
+
+	// TODO: We should make this API as well
+	private Map<Object, IContentPart<? extends Node>> getContentPartMap() {
+		if (contentPartMap == null) {
+			contentPartMap = getHost().getRoot().getViewer()
+					.getContentPartMap();
+		}
+		return contentPartMap;
 	}
 
 	/**
@@ -373,8 +393,11 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 	 * @return The {@link ContentPartPool} of the {@link IViewer}.
 	 */
 	protected ContentPartPool getContentPartPool() {
-		return getHost().getRoot().getViewer()
-				.getAdapter(ContentPartPool.class);
+		if (contentPartPool == null) {
+			contentPartPool = getHost().getRoot().getViewer()
+					.getAdapter(ContentPartPool.class);
+		}
+		return contentPartPool;
 	}
 
 	/**
@@ -511,4 +534,5 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 			rd.parent.reorderChild(rd.child, rd.index);
 		}
 	}
+
 }
