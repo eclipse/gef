@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef.fx.utils.NodeUtils;
+import org.eclipse.gef.geometry.planar.Ellipse;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.IShape;
@@ -136,41 +137,54 @@ public class ChopBoxStrategy extends ProjectionStrategy {
 					parameters);
 		}
 
-		IGeometry anchorageGeometryInScene = NodeUtils.localToScene(anchorage,
-				anchorageReferenceGeometryInLocal);
-		List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
-				anchorageGeometryInScene);
-
 		Line referenceLineInScene = new Line(anchorageReferencePointInScene,
 				anchoredReferencePointInScene);
 
-		Point nearestProjectionInScene = null;
-		double nearestDistance = 0d;
-		for (ICurve anchorageOutlineInScene : anchorageOutlinesInScene) {
-			// if the reference point is already on the outline, we may
-			// directly use it
-			if (anchorageOutlineInScene
-					.contains(anchoredReferencePointInScene)) {
-				return anchoredReferencePointInScene;
-			}
-			Point[] intersections = anchorageOutlineInScene
+		IGeometry anchorageGeometryInScene = NodeUtils.localToScene(anchorage,
+				anchorageReferenceGeometryInLocal);
+
+		if (anchorageGeometryInScene instanceof Ellipse) {
+			// we optimize for Ellipse here, as its computation can be
+			// significantly speeded up
+			Point[] intersections = ((Ellipse) anchorageGeometryInScene)
 					.getIntersections(referenceLineInScene);
 			if (intersections.length > 0) {
-				Point nearestIntersection = Point
-						.nearest(anchoredReferencePointInScene, intersections);
-				double distance = anchoredReferencePointInScene
-						.getDistance(nearestIntersection);
-				if (nearestProjectionInScene == null
-						|| distance < nearestDistance) {
-					nearestProjectionInScene = nearestIntersection;
-					nearestDistance = distance;
+				return Point.nearest(anchoredReferencePointInScene,
+						intersections);
+			} else {
+				return intersections[0];
+			}
+		} else {
+			List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
+					anchorageGeometryInScene);
+			Point nearestProjectionInScene = null;
+			double nearestDistance = 0d;
+			for (ICurve anchorageOutlineInScene : anchorageOutlinesInScene) {
+				// if the reference point is already on the outline, we may
+				// directly use it
+				if (anchorageOutlineInScene
+						.contains(anchoredReferencePointInScene)) {
+					return anchoredReferencePointInScene;
 				}
+				Point[] intersections = anchorageOutlineInScene
+						.getIntersections(referenceLineInScene);
+				if (intersections.length > 0) {
+					Point nearestIntersection = Point.nearest(
+							anchoredReferencePointInScene, intersections);
+					double distance = anchoredReferencePointInScene
+							.getDistance(nearestIntersection);
+					if (nearestProjectionInScene == null
+							|| distance < nearestDistance) {
+						nearestProjectionInScene = nearestIntersection;
+						nearestDistance = distance;
+					}
+				}
+			}
+			if (nearestProjectionInScene != null) {
+				return nearestProjectionInScene;
 			}
 		}
 
-		if (nearestProjectionInScene != null) {
-			return nearestProjectionInScene;
-		}
 		return super.computePositionInScene(anchorage, anchored, parameters);
 	}
 }
