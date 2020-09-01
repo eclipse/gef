@@ -45,25 +45,7 @@ import javafx.scene.transform.Transform;
 public abstract class VisualChangeListener {
 
 	private Node observed;
-	private Node parent;
 	private HashMap<ChangeListener<Transform>, Node> localToParentTransformListeners = new HashMap<>();
-	private boolean layoutBoundsChanged = false;
-	private boolean boundsInLocalChanged = false;
-	private boolean boundsInParentChanged = false;
-	private Bounds oldBoundsInLocal = null;
-	private Bounds newBoundsInLocal = null;
-
-	private ChangeListener<? super Bounds> layoutBoundsListener = new ChangeListener<Bounds>() {
-		@Override
-		public void changed(ObservableValue<? extends Bounds> observable,
-				Bounds oldValue, Bounds newValue) {
-			// only fire a visual change event if the new bounds are valid
-			if (isValidBounds(newValue)) {
-				layoutBoundsChanged = true;
-				onBoundsChanged();
-			}
-		}
-	};
 
 	private final ChangeListener<? super Bounds> boundsInLocalListener = new ChangeListener<Bounds>() {
 		@Override
@@ -71,21 +53,7 @@ public abstract class VisualChangeListener {
 				Bounds oldValue, Bounds newValue) {
 			// only fire a visual change event if the new bounds are valid
 			if (isValidBounds(newValue)) {
-				oldBoundsInLocal = oldValue;
-				newBoundsInLocal = newValue;
-				boundsInLocalChanged = true;
-				onBoundsChanged();
-			}
-		}
-	};
-
-	private ChangeListener<? super Bounds> boundsInParentListener = new ChangeListener<Bounds>() {
-		@Override
-		public void changed(ObservableValue<? extends Bounds> observable,
-				Bounds oldValue, Bounds newValue) {
-			// only fire a visual change event if the new bounds are valid
-			if (isValidBounds(newValue)) {
-				boundsInParentChanged = true;
+				boundsInLocalChanged(oldValue, newValue);
 				onBoundsChanged();
 			}
 		}
@@ -145,7 +113,7 @@ public abstract class VisualChangeListener {
 	 *         currently registered, otherwise <code>false</code>.
 	 */
 	public boolean isRegistered() {
-		return parent != null;
+		return observed != null;
 	}
 
 	/**
@@ -233,19 +201,12 @@ public abstract class VisualChangeListener {
 			Transform oldTransform, Transform newTransform);
 
 	/**
-	 * Called upon changes to any of the following properties: "layout-bounds",
-	 * "bounds-in-local", and "bounds-in-parent". Calls the
-	 * {@link #boundsInLocalChanged(Bounds, Bounds)} method if all bounds
-	 * properties are changed.
+	 * Called upon changes to the "bounds-in-local" or any of the
+	 * local-to-parent-transform up to the common ancestor of observer and
+	 * observed {@link Node}.
 	 */
 	protected void onBoundsChanged() {
-		if (layoutBoundsChanged && boundsInLocalChanged
-				&& boundsInParentChanged) {
-			layoutBoundsChanged = false;
-			boundsInLocalChanged = false;
-			boundsInParentChanged = false;
-			boundsInLocalChanged(oldBoundsInLocal, newBoundsInLocal);
-		}
+		// nothing by default
 	}
 
 	/**
@@ -283,45 +244,37 @@ public abstract class VisualChangeListener {
 	 *            the common parent of observed and observer.
 	 */
 	public void register(Node observed, Node observer) {
+		if (isRegistered()) {
+			unregister();
+		}
+
 		if (observed == null) {
 			throw new IllegalArgumentException("Observed may not be null.");
 		}
 		if (observer == null) {
 			throw new IllegalArgumentException("Observer not be null.");
 		}
-
 		Node commonAncestor = getNearestCommonAncestor(observed, observer);
 		if (commonAncestor == null) {
 			throw new IllegalArgumentException(
 					"Source and target do not share a common ancestor.");
 		}
 
-		Node tmp = observed;
-		while (tmp != null && tmp != commonAncestor) {
-			tmp = tmp.getParent();
-		}
-		if (tmp == null) {
-			throw new IllegalArgumentException(
-					"TransformReference needs to be ancestor of the given observed node.");
-		}
-
-		// unregister old listeners
-		if (this.observed != null) {
-			unregister();
-		}
-
 		// assign new nodes
 		this.observed = observed;
-		parent = commonAncestor;
 
 		// add bounds listeners
-		observed.layoutBoundsProperty().addListener(layoutBoundsListener);
 		observed.boundsInLocalProperty().addListener(boundsInLocalListener);
-		observed.boundsInParentProperty().addListener(boundsInParentListener);
 
 		// add transform listeners
-		tmp = observed;
-		while (tmp != null && tmp != parent) {
+		registerTransformChangeListeners(observed, commonAncestor);
+		registerTransformChangeListeners(observer, commonAncestor);
+	}
+
+	private void registerTransformChangeListeners(Node startingPoint,
+			Node root) {
+		Node tmp = startingPoint;
+		while (tmp != null && tmp != root) {
 			final Node current = tmp;
 			ChangeListener<Transform> transformChangeListener = new ChangeListener<Transform>() {
 				@Override
@@ -333,30 +286,7 @@ public abstract class VisualChangeListener {
 					if (isValidTransform(newValue)) {
 						localToParentTransformChanged(current, oldValue,
 								newValue);
-					}
-				}
-			};
-			tmp.localToParentTransformProperty()
-					.addListener(transformChangeListener);
-			localToParentTransformListeners.put(transformChangeListener, tmp);
-			tmp = tmp.getParent();
-		}
-
-		// add transform listeners
-		// FIXME: Duplicate code!
-		tmp = observer;
-		while (tmp != null && tmp != parent) {
-			final Node current = tmp;
-			ChangeListener<Transform> transformChangeListener = new ChangeListener<Transform>() {
-				@Override
-				public void changed(
-						ObservableValue<? extends Transform> observable,
-						Transform oldValue, Transform newValue) {
-					// only fire a visual change event if the new transform is
-					// valid
-					if (isValidTransform(newValue)) {
-						localToParentTransformChanged(current, oldValue,
-								newValue);
+						onBoundsChanged();
 					}
 				}
 			};
@@ -376,10 +306,7 @@ public abstract class VisualChangeListener {
 		}
 
 		// remove bounds listener
-		observed.layoutBoundsProperty().removeListener(layoutBoundsListener);
 		observed.boundsInLocalProperty().removeListener(boundsInLocalListener);
-		observed.boundsInParentProperty()
-				.removeListener(boundsInParentListener);
 
 		// remove transform listeners
 		for (ChangeListener<Transform> l : localToParentTransformListeners
@@ -389,7 +316,6 @@ public abstract class VisualChangeListener {
 		}
 
 		// reset fields
-		parent = null;
 		observed = null;
 		localToParentTransformListeners.clear();
 	}
