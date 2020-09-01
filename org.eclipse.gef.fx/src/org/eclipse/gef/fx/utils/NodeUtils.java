@@ -26,6 +26,7 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.IGeometry;
+import org.eclipse.gef.geometry.planar.IScalable;
 import org.eclipse.gef.geometry.planar.ITranslatable;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -389,6 +390,32 @@ public class NodeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private static IGeometry getTransformed(IGeometry g, AffineTransform a) {
+		// optimize
+		if (a.getM10() == 0 && a.getM01() == 0) {
+			// no shearing means no rotation
+			if (g instanceof ITranslatable && a.getM00() == 1.0
+					&& a.getM11() == 1.0) {
+				return ((ITranslatable<? extends IGeometry>) g)
+						.getTranslated(a.getTranslateX(), a.getTranslateY());
+			} else if (g instanceof IScalable && a.getTranslateX() == 0
+					&& a.getTranslateY() == 0) {
+				return ((IScalable<? extends IGeometry>) g)
+						.getScaled(a.getScaleX(), a.getScaleY());
+			} else if (g instanceof ITranslatable) {
+				IGeometry g2 = ((ITranslatable<? extends IGeometry>) g)
+						.getTranslated(a.getTranslateX(), a.getTranslateY());
+				if (g2 instanceof IScalable) {
+					return ((IScalable<? extends IGeometry>) g2)
+							.getScaled(a.getScaleX(), a.getScaleY());
+				}
+			}
+		}
+		return g.getTransformed(a);
+
+	}
+
 	/**
 	 * Returns true if the given {@link Node} is contained within the visual
 	 * hierarchy of the given {@link Parent}.
@@ -424,7 +451,7 @@ public class NodeUtils {
 	public static IGeometry localToParent(Node n, IGeometry g) {
 		AffineTransform localToParentTx = FX2Geometry
 				.toAffineTransform(n.getLocalToParentTransform());
-		return g.getTransformed(localToParentTx);
+		return getTransformed(g, localToParentTx);
 	}
 
 	/**
@@ -456,7 +483,7 @@ public class NodeUtils {
 	 */
 	public static IGeometry localToScene(Node n, IGeometry g) {
 		AffineTransform localToSceneTx = getLocalToSceneTx(n);
-		return g.getTransformed(localToSceneTx);
+		return getTransformed(g, localToSceneTx);
 	}
 
 	/**
@@ -497,7 +524,7 @@ public class NodeUtils {
 			// TODO: How do we recover from this?!
 			throw new IllegalStateException(e);
 		}
-		return g.getTransformed(parentToLocalTx);
+		return getTransformed(g, parentToLocalTx);
 	}
 
 	/**
@@ -540,7 +567,7 @@ public class NodeUtils {
 		// retrieve transform from scene to target parent, by inverting target
 		// parent to scene
 		AffineTransform sceneToLocalTx = getSceneToLocalTx(n);
-		return g.getTransformed(sceneToLocalTx);
+		return getTransformed(g, sceneToLocalTx);
 	}
 
 	/**
