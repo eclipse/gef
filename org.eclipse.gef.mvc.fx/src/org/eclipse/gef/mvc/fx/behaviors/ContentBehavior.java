@@ -225,8 +225,6 @@ public class ContentBehavior extends AbstractBehavior implements IDisposable {
 				contentPart.setParent(parent);
 				added.add(contentPart);
 				childrenToAdd.put(i, contentPart);
-				synchronizeContentPartAnchorages(contentPart,
-						contentPart.getContentAnchoragesUnmodifiable());
 				addAll(contentPart,
 						contentPart.getContentChildrenUnmodifiable(), added,
 						addsPerParent, reorders);
