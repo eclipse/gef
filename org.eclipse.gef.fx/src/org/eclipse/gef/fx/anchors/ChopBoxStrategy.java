@@ -151,8 +151,6 @@ public class ChopBoxStrategy extends ProjectionStrategy {
 			if (intersections.length > 0) {
 				return Point.nearest(anchoredReferencePointInScene,
 						intersections);
-			} else {
-				return intersections[0];
 			}
 		} else {
 			List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
