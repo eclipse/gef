@@ -48,6 +48,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	// XXX: We keep a sorted map of adapters to have a deterministic order
 	private ObservableMap<AdapterKey<?>, Object> adapters = FXCollections
 			.observableMap(new TreeMap<AdapterKey<?>, Object>());
+	// XXX: We keep a reverse map to speed up key retrieval
+	private Map<Object, AdapterKey<?>> keys = new HashMap<>();
 	private ObservableMap<AdapterKey<?>, Object> adaptersUnmodifiable;
 	private ReadOnlyMapWrapperEx<AdapterKey<?>, Object> adaptersUnmodifiableProperty;
 	private A source;
@@ -217,12 +219,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> AdapterKey<T> getAdapterKey(T adapter) {
-		for (AdapterKey<?> key : adapters.keySet()) {
-			if (adapters.get(key) == adapter) {
-				return (AdapterKey<T>) key;
-			}
-		}
-		return null;
+		return (AdapterKey<T>) keys.get(adapter);
 	}
 
 	/**
@@ -316,7 +313,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 				if (Types.isAssignable(typeKey, k.getKey())) {
 					typeSafeAdapters.put((AdapterKey<? extends T>) k,
 							(T) adapters.get(k));
-
 				}
 			}
 		}
@@ -428,6 +424,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 
 		adapters.put(key, adapter);
+		keys.put(adapter, key);
 
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(source);
@@ -454,12 +451,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(null);
 		}
 
-		// process all keys and remove those pointing to the given adapter
-		for (AdapterKey<?> key : new HashMap<>(adapters).keySet()) {
-			if (adapters.get(key) == adapter) {
-				adapters.remove(key);
-			}
-		}
+		adapters.remove(keys.remove(adapter));
 	}
 
 }
