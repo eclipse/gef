@@ -431,10 +431,13 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	}
 
 	private PathElement[] getPathElements() {
-		return Geometry2Shape.toPathElements(geometryProperty.get()
-				.getTransformed(new AffineTransform()
-						.setToTranslation(-getLayoutX(), -getLayoutY()))
-				.toPath());
+		@SuppressWarnings("unchecked")
+		IGeometry g = geometryProperty.get() instanceof ITranslatable
+				? ((ITranslatable<? extends IGeometry>) geometryProperty.get())
+						.getTranslated(-getLayoutX(), -getLayoutY())
+				: geometryProperty.get().getTransformed(new AffineTransform()
+						.setToTranslation(-getLayoutX(), -getLayoutY()));
+		return Geometry2Shape.toPathElements(g.toPath());
 	}
 
 	/**
