@@ -71,18 +71,16 @@ public class SelectionBehavior extends AbstractBehavior {
 	protected void addFeedbackAndHandles(
 			List<? extends IContentPart<? extends Node>> selected) {
 		if (!selected.isEmpty()) {
-			// add feedback individually for the selected parts
-			for (IContentPart<? extends Node> sel : selected) {
-				addFeedback(sel);
-			}
-			// XXX: For a multi selection, handles are generated for the whole
-			// selection and not for each part individually. For a single
-			// selection, handles are generated for the only selected part.
+			// XXX: For a multi selection, feedback and handles are generated
+			// for the whole selection at once, so the factories can decide how
+			// to generate feedback.
 			if (selected.size() == 1) {
 				// add handles for the single selection
+				addFeedback(selected.get(0));
 				addHandles(selected.get(0));
 			} else {
 				// add handles for the whole multi selection
+				addFeedback(selected);
 				addHandles(selected);
 			}
 		}
@@ -142,19 +140,16 @@ public class SelectionBehavior extends AbstractBehavior {
 	protected void removeFeedbackAndHandles(
 			List<? extends IContentPart<? extends Node>> selected) {
 		if (!selected.isEmpty()) {
-			// remove feedback individually for all parts
-			for (IContentPart<? extends Node> sel : selected) {
-				removeFeedback(sel);
-			}
-			// XXX: For a multi selection, handles are generated for the whole
-			// selection and not for each part individually. For a single
-			// selection, handles are generated for the only selected part.
+			// XXX: For a multi selection, feedback and handles are handled for
+			// the whole selection
 			if (selected.size() == 1) {
 				// remove handles for the single selection
 				removeHandles(selected.get(0));
+				removeFeedback(selected.get(0));
 			} else {
 				// remove handles for the multi selection
 				removeHandles(selected);
+				removeFeedback(selected);
 			}
 		}
 	}

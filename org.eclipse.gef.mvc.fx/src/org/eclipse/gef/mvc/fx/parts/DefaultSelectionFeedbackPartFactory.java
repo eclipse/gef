@@ -98,29 +98,29 @@ public class DefaultSelectionFeedbackPartFactory
 		List<IFeedbackPart<? extends Node>> feedbackParts = new ArrayList<>();
 
 		// selection outline feedback
-		final IVisualPart<? extends Node> target = targets.iterator().next();
-		final Provider<? extends IGeometry> selectionFeedbackGeometryProvider = target
-				.getAdapter(AdapterKey
-						.get(new TypeToken<Provider<? extends IGeometry>>() {
-						}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
-		if (selectionFeedbackGeometryProvider != null) {
-			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
-				@Override
-				public IGeometry get() {
-					return NodeUtils.localToScene(target.getVisual(),
-							selectionFeedbackGeometryProvider.get());
-				}
-			};
-			SelectionFeedbackPart selectionFeedbackPart = injector
-					.getInstance(SelectionFeedbackPart.class);
-			selectionFeedbackPart.setGeometryProvider(geometryInSceneProvider);
-			feedbackParts.add(selectionFeedbackPart);
-		}
+		for (IVisualPart<? extends Node> target : targets) {
+			final Provider<? extends IGeometry> selectionFeedbackGeometryProvider = target
+					.getAdapter(AdapterKey.get(
+							new TypeToken<Provider<? extends IGeometry>>() {
+							}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
+			if (selectionFeedbackGeometryProvider != null) {
+				Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
+					@Override
+					public IGeometry get() {
+						return NodeUtils.localToScene(target.getVisual(),
+								selectionFeedbackGeometryProvider.get());
+					}
+				};
+				SelectionFeedbackPart selectionFeedbackPart = injector
+						.getInstance(SelectionFeedbackPart.class);
+				selectionFeedbackPart
+						.setGeometryProvider(geometryInSceneProvider);
+				feedbackParts.add(selectionFeedbackPart);
+			}
 
-		// selection link feedback parts
-		for (IVisualPart<? extends Node> t : targets) {
-			if (!t.getAnchoragesUnmodifiable().isEmpty()) {
-				for (Entry<IVisualPart<? extends Node>, String> entry : t
+			// selection link feedback parts
+			if (!target.getAnchoragesUnmodifiable().isEmpty()) {
+				for (Entry<IVisualPart<? extends Node>, String> entry : target
 						.getAnchoragesUnmodifiable().entries()) {
 					IVisualPart<? extends Node> anchorage = entry.getKey();
 					String role = entry.getValue();
@@ -130,7 +130,7 @@ public class DefaultSelectionFeedbackPartFactory
 										new TypeToken<Provider<? extends IGeometry>>() {
 										},
 										SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
-						final Provider<? extends IGeometry> anchoredGeometryProvider = t
+						final Provider<? extends IGeometry> anchoredGeometryProvider = target
 								.getAdapter(AdapterKey.get(
 										new TypeToken<Provider<? extends IGeometry>>() {
 										},
@@ -140,8 +140,8 @@ public class DefaultSelectionFeedbackPartFactory
 							// show link feedback if geometry providers can be
 							// retrieved for both.
 							IFeedbackPart<? extends Node> anchorLinkFeedbackPart = createLinkFeedbackPart(
-									anchorage, anchorageGeometryProvider, t,
-									anchoredGeometryProvider, role);
+									anchorage, anchorageGeometryProvider,
+									target, anchoredGeometryProvider, role);
 							if (anchorLinkFeedbackPart != null) {
 								feedbackParts.add(anchorLinkFeedbackPart);
 							}
