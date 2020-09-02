@@ -90,9 +90,10 @@ public abstract class AbstractBehavior implements IBehavior {
 				for (IVisualPart<? extends Node> anchorage : targets) {
 					// XXX: When adding feedback and handles, the anchorage
 					// should not need to refresh its visuals
+					boolean refreshVisual = anchorage.isRefreshVisual();
 					anchorage.setRefreshVisual(false);
 					anchored.attachToAnchorage(anchorage);
-					anchorage.setRefreshVisual(true);
+					anchorage.setRefreshVisual(refreshVisual);
 				}
 			}
 		}
@@ -122,9 +123,10 @@ public abstract class AbstractBehavior implements IBehavior {
 				for (IVisualPart<? extends Node> anchorage : targets) {
 					// XXX: When adding feedback and handles, the anchorage
 					// should not need to refresh its visuals
+					boolean refreshVisual = anchorage.isRefreshVisual();
 					anchorage.setRefreshVisual(false);
 					anchored.attachToAnchorage(anchorage);
-					anchorage.setRefreshVisual(true);
+					anchorage.setRefreshVisual(refreshVisual);
 				}
 			}
 		}
@@ -571,9 +573,10 @@ public abstract class AbstractBehavior implements IBehavior {
 				for (IVisualPart<? extends Node> anchorage : targets) {
 					// XXX: When removing feedback and handles, the anchorage
 					// should not need to refresh its visuals
+					boolean refreshVisual = anchorage.isRefreshVisual();
 					anchorage.setRefreshVisual(false);
 					anchored.detachFromAnchorage(anchorage);
-					anchorage.setRefreshVisual(true);
+					anchorage.setRefreshVisual(refreshVisual);
 				}
 			}
 			anchoreds.iterator().next().getRoot().removeChildren(anchoreds);
