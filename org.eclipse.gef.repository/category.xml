@@ -9,7 +9,7 @@
    <feature url="features/org.eclipse.gef.common.sdk_5.0.1.qualifier.jar" id="org.eclipse.gef.common.sdk" version="5.0.1.qualifier">
       <category name="GEF Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry_5.0.0.qualifier.jar" id="org.eclipse.gef.geometry" version="5.0.0.qualifier">
+   <feature url="features/org.eclipse.gef.geometry_5.0.1.qualifier.jar" id="org.eclipse.gef.geometry" version="5.0.1.qualifier">
       <category name="GEF Geometry"/>
    </feature>
    <feature url="features/org.eclipse.gef.geometry.convert.fx_5.0.0.qualifier.jar" id="org.eclipse.gef.geometry.convert.fx" version="5.0.0.qualifier">
@@ -18,10 +18,10 @@
    <feature url="features/org.eclipse.gef.geometry.convert.swt_5.0.2.qualifier.jar" id="org.eclipse.gef.geometry.convert.swt" version="5.0.2.qualifier">
       <category name="GEF Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry.doc_5.0.2.qualifier.jar" id="org.eclipse.gef.geometry.doc" version="5.0.2.qualifier">
+   <feature url="features/org.eclipse.gef.geometry.doc_5.0.3.qualifier.jar" id="org.eclipse.gef.geometry.doc" version="5.0.3.qualifier">
       <category name="GEF Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry.sdk_5.0.2.qualifier.jar" id="org.eclipse.gef.geometry.sdk" version="5.0.2.qualifier">
+   <feature url="features/org.eclipse.gef.geometry.sdk_5.0.3.qualifier.jar" id="org.eclipse.gef.geometry.sdk" version="5.0.3.qualifier">
       <category name="GEF Geometry"/>
    </feature>
    <feature url="features/org.eclipse.gef.layout_5.0.0.qualifier.jar" id="org.eclipse.gef.layout" version="5.0.0.qualifier">
@@ -33,7 +33,7 @@
    <feature url="features/org.eclipse.gef.layout.sdk_5.0.0.qualifier.jar" id="org.eclipse.gef.layout.sdk" version="5.0.0.qualifier">
       <category name="GEF Layout"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx_5.0.3.qualifier.jar" id="org.eclipse.gef.fx" version="5.0.3.qualifier">
+   <feature url="features/org.eclipse.gef.fx_5.0.4.qualifier.jar" id="org.eclipse.gef.fx" version="5.0.4.qualifier">
       <category name="GEF FX"/>
    </feature>
    <feature url="features/org.eclipse.gef.fx.swt_5.0.2.qualifier.jar" id="org.eclipse.gef.fx.swt" version="5.0.2.qualifier">
@@ -42,10 +42,10 @@
    <feature url="features/org.eclipse.gef.fx.jface_5.0.2.qualifier.jar" id="org.eclipse.gef.fx.jface" version="5.0.2.qualifier">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx.doc_5.0.3.qualifier.jar" id="org.eclipse.gef.fx.doc" version="5.0.3.qualifier">
+   <feature url="features/org.eclipse.gef.fx.doc_5.0.4.qualifier.jar" id="org.eclipse.gef.fx.doc" version="5.0.4.qualifier">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx.sdk_5.0.3.qualifier.jar" id="org.eclipse.gef.fx.sdk" version="5.0.3.qualifier">
+   <feature url="features/org.eclipse.gef.fx.sdk_5.0.4.qualifier.jar" id="org.eclipse.gef.fx.sdk" version="5.0.4.qualifier">
       <category name="GEF FX"/>
    </feature>
    <feature url="features/org.eclipse.gef.graph_5.1.0.qualifier.jar" id="org.eclipse.gef.graph" version="5.1.0.qualifier">

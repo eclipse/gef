@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.gef.geometry"
       label="GEF Geometry"
-      version="5.0.0.qualifier"
+      version="5.0.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.geometry"
       license-feature="org.eclipse.license"

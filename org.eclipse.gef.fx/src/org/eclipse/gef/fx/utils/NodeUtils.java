@@ -26,6 +26,7 @@ import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
 import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.IGeometry;
+import org.eclipse.gef.geometry.planar.IScalable;
 import org.eclipse.gef.geometry.planar.ITranslatable;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
@@ -391,10 +392,27 @@ public class NodeUtils {
 
 	@SuppressWarnings("unchecked")
 	private static IGeometry getTransformed(IGeometry g, AffineTransform a) {
+		// XXX: Preserve the original geometry kind, where possible, by applying
+		// the individual transform components via dedicated transformation
+		// interfaces.
 		if (g instanceof ITranslatable && a.getM00() == 1.0 && a.getM11() == 1.0
 				&& a.getM10() == 0 && a.getM01() == 0) {
 			return ((ITranslatable<? extends IGeometry>) g)
 					.getTranslated(a.getTranslateX(), a.getTranslateY());
+		}
+		if (g instanceof IScalable && a.getM01() == 0 && a.getM10() == 0
+				&& a.getTranslateX() == 0 && a.getTranslateY() == 0) {
+			return ((IScalable<? extends IGeometry>) g).getScaled(a.getScaleX(),
+					a.getScaleY(), 0, 0);
+		}
+		if (g instanceof ITranslatable && g instanceof IScalable
+				&& a.getM01() == 0 && a.getM10() == 0) {
+			IGeometry g2 = g.getCopy();
+			((IScalable<? extends IGeometry>) g2).scale(a.getScaleX(),
+					a.getScaleY(), 0, 0);
+			((ITranslatable<? extends IGeometry>) g2)
+					.translate(a.getTranslateX(), a.getTranslateY());
+			return g2;
 		}
 		return g.getTransformed(a);
 	}

@@ -223,6 +223,18 @@ public class PolyBezier extends AbstractGeometry
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o instanceof PolyBezier) {
+			PolyBezier p = (PolyBezier) o;
+			return toPath().equals(p.toPath());
+		}
+		return false;
+	}
+
+	@Override
 	public Rectangle getBounds() {
 		if (beziers == null || beziers.length == 0) {
 			return new Rectangle();

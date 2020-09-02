@@ -193,6 +193,18 @@ public class CurvedPolygon extends AbstractGeometry
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o instanceof CurvedPolygon) {
+			CurvedPolygon p = (CurvedPolygon) o;
+			return getOutline().equals(p.getOutline());
+		}
+		return false;
+	}
+
+	@Override
 	public Rectangle getBounds() {
 		if (edges == null || edges.length == 0) {
 			return new Rectangle();

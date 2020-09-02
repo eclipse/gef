@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF Geometry Developer Documentation
 Bundle-SymbolicName: org.eclipse.gef.geometry.doc;singleton:=true
-Bundle-Version: 5.0.2.qualifier
+Bundle-Version: 5.0.3.qualifier
 Bundle-Vendor: Eclipse GEF
 Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)";resolution:=optional,
  org.eclipse.platform.doc.isv;bundle-version="[3.0.0,5.0.0)"

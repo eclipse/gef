@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF FX Examples
 Bundle-SymbolicName: org.eclipse.gef.fx.examples
-Bundle-Version: 5.0.3.qualifier
+Bundle-Version: 5.0.4.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.gef.common;bundle-version="[5.0.0,6.0.0)",

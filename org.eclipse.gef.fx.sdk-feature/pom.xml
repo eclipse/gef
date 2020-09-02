@@ -22,7 +22,7 @@
 	</parent>
 	<groupId>org.eclipse.gef.features</groupId>
 	<artifactId>org.eclipse.gef.fx.sdk</artifactId>
-	<version>5.0.3-SNAPSHOT</version>
+	<version>5.0.4-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 	<build>
 		<plugins>
