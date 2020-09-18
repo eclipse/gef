@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF FX
 Bundle-SymbolicName: org.eclipse.gef.fx
-Bundle-Version: 5.0.4.qualifier
+Bundle-Version: 5.0.5.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.fx,
  org.eclipse.gef.fx.anchors;uses:="com.google.common.collect",
+ org.eclipse.gef.fx.internal.nodes;x-internal:=true,
  org.eclipse.gef.fx.listeners,
  org.eclipse.gef.fx.nodes,
  org.eclipse.gef.fx.utils

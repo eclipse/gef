@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.gef.fx"
       label="GEF FX"
-      version="5.0.4.qualifier"
+      version="5.0.5.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.fx"
       license-feature="org.eclipse.license"

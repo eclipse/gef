@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef.fx.internal.nodes.Traverse;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
@@ -127,8 +128,14 @@ public class NodeUtils {
 	 */
 	public static IGeometry getGeometricOutline(Node visual) {
 		if (visual instanceof Connection) {
-			Node curveNode = ((Connection) visual).getCurve();
-			return localToParent(curveNode, getGeometricOutline(curveNode));
+			Node curve = ((Connection) visual).getCurve();
+			return localToParent(curve, getGeometricOutline(curve));
+		} else if (visual instanceof Traverse) {
+			Polyline curve = ((Traverse) visual).getCurve();
+			double[] coordinates = curve.getPoints().stream()
+					.mapToDouble(Double::doubleValue).toArray();
+			return NodeUtils.localToParent(curve,
+					new org.eclipse.gef.geometry.planar.Polyline(coordinates));
 		} else if (visual instanceof GeometryNode) {
 			// XXX: The geometry's position is specified relative to the
 			// GeometryNode's layout bounds (which are fixed as (0, 0, width,
