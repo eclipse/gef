@@ -21,7 +21,7 @@ import org.eclipse.jface.wizard.WizardDialog
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.testing.AbstractWorkbenchTest
-import org.eclipse.xtext.ui.wizard.IExtendedProjectInfo
+import org.eclipse.xtext.ui.wizard.template.NewProjectWizardTemplateSelectionPage
 import org.eclipse.xtext.ui.wizard.template.TemplateNewProjectWizard
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,28 +39,36 @@ class DotNewProjectWizardTest extends AbstractWorkbenchTest {
 
 	@Inject Provider<DotTestableNewProjectWizard> wizardProvider
 
-	val static TEST_PROJECT_NAME = "DotTestProject"
+	val static PROJECT_NAME = "DotTest"
 
-	@Test def new_project_wizard() {
+	val TIMEOUT = 500
+
+	@Test def creating_a_new_empty_dot_project_without_selecting_a_template() {
 		// Given
 		assertWorkspaceIsEmpty
 		
 		// When
 		val wizard = wizardProvider.get
 		wizard.init(workbench, new StructuredSelection)
-		createAndFinishWizardDialog(wizard)
+		wizard.createAndFinishWizardDialog
 		
 		// Then
-		val project = root.getProject(TEST_PROJECT_NAME)
+		val project = root.getProject(PROJECT_NAME)
 		assertTrue(project.exists)
 		waitForBuild
 		assertNoErrorsInWorkspace
 	}
 
+	@Test def empty_project_template() {
+		val wizard = wizardProvider.get
+		wizard.init(workbench, new StructuredSelection)
+		wizard.assertTemplate("Empty Project", "<p><b>Create an empty GEF DOT project.</b></p> <p>This wizard creates an empty GEF DOT project.</p>")
+	}
+
 	/**
 	 * Create the wizard dialog, open it and press Finish.
 	 */
-	private def int createAndFinishWizardDialog(Wizard wizard) {
+	private def createAndFinishWizardDialog(Wizard wizard) {
 		val dialog = new WizardDialog(wizard.shell, wizard) {
 			override open() {
 				val thread = new Thread("Press Finish") {
@@ -69,7 +77,7 @@ class DotNewProjectWizardTest extends AbstractWorkbenchTest {
 						var attempt = 0
 						while (shell === null && (attempt++) < 5) {
 							println("Waiting for shell to become active")
-							Thread.sleep(5000)
+							Thread.sleep(TIMEOUT)
 						}
 						shell.display.syncExec[
 							wizard.performFinish
@@ -78,7 +86,7 @@ class DotNewProjectWizardTest extends AbstractWorkbenchTest {
 						attempt = 0
 						while (shell !== null && (attempt++) < 5) {
 							println("Waiting for shell to be disposed")
-							Thread.sleep(5000)
+							Thread.sleep(TIMEOUT)
 						}
 					}
 				}
@@ -90,18 +98,61 @@ class DotNewProjectWizardTest extends AbstractWorkbenchTest {
 		dialog.open
 	}
 
+	/**
+	 * Create the wizard dialog, open it, press Next to navigate to the template selection page, verifies its label and description and press Finish.
+	 */
+	var actualTemplateLabel = null
+	var actualTemplateDescription = null
+	private def assertTemplate(Wizard wizard, String expectedTemplateLabel, String expectedTemplateDescription) {
+		val dialog = new WizardDialog(wizard.shell, wizard) {
+			override open() {
+				val thread = new Thread("Press Finish") {
+					override run() {
+						// wait for the shell to become active
+						var attempt = 0
+						while (shell === null && (attempt++) < 5) {
+							println("Waiting for shell to become active")
+							Thread.sleep(TIMEOUT)
+						}
+						shell.display.syncExec[
+							val templateSelectionPage = wizard.getNextPage(wizard.startingPage) as NewProjectWizardTemplateSelectionPage
+							templateSelectionPage.showPage
+							val selectedTemplate = templateSelectionPage.selectedTemplate
+							actualTemplateLabel = selectedTemplate.label
+							actualTemplateDescription = selectedTemplate.description
+							wizard.performFinish
+							shell.close
+						]
+						attempt = 0
+						while (shell !== null && (attempt++) < 5) {
+							println("Waiting for shell to be disposed")
+							Thread.sleep(TIMEOUT)
+						}
+					}
+				}
+				thread.start
+				super.open
+			}
+		}
+
+		dialog.open
+
+		assertEquals(expectedTemplateLabel, actualTemplateLabel)
+		assertEquals(expectedTemplateDescription, actualTemplateDescription)
+	}
+
 	private def assertWorkspaceIsEmpty() {
 		root.projects.isEmpty.assertTrue
 	}
 
 	/**
-	 * Manually set the project name (usually set in the dialog text edit)
+	 * Manually set the project name (usually set in the wizard dialog)
 	 */
 	static class DotTestableNewProjectWizard extends TemplateNewProjectWizard {
 
-		override IExtendedProjectInfo getProjectInfo() {
+		override getProjectInfo() {
 			val projectInfo = super.projectInfo
-			projectInfo.setProjectName(TEST_PROJECT_NAME)
+			projectInfo.setProjectName(PROJECT_NAME)
 			projectInfo
 		}
 	}

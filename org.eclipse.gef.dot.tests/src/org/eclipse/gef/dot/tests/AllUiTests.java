@@ -31,12 +31,14 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotColorListLexerTest.class, DotColorListTest.class,
 		DotColorUtilTest.class, DotEscStringTest.class,
 		DotExecutableUtilsTest.class, DotExportTest.class,
-		DotExtractorTest.class, DotFontNameTest.class, DotFormatterTest.class,
+		DotExtractorTest.class, DotFileTemplateProviderTest.class,
+		DotFontNameTest.class, DotFormatterTest.class,
 		DotHtmlLabelFormatterTest.class, DotHtmlLabelLexerTest.class,
 		DotHtmlLabelParserTest.class, DotHtmlLabelValidatorTest.class,
 		DotImportTest.class, DotLexerTest.class, DotParserTest.class,
-		DotPortPosTest.class, DotQualifiedNameProviderTest.class,
-		DotRecordLabelTest.class, DotStyleTest.class, DotValidatorTest.class,
+		DotPortPosTest.class, DotProjectTemplateProviderTest.class,
+		DotQualifiedNameProviderTest.class, DotRecordLabelTest.class,
+		DotStyleTest.class, DotValidatorTest.class,
 		GraphvizConfigurationDialogTest.class,
 
 		// JUnit Plug-in Tests
@@ -54,10 +56,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotHtmlLabelTokenTypeToPartitionMapperTest.class,
 		DotHyperlinkingTest.class, DotLabelProviderTest.class,
 		DotMarkingOccurrencesTest.class, DotMultiQuickfixTest.class,
-		DotNewProjectWizardTest.class, DotOutlineViewTest.class,
-		DotQuickfixTest.class, DotReferenceFinderTest.class,
-		DotRenameRefactoringTest.class, DotToggleCommentTest.class,
-		DotTokenTypeToPartitionMapperTest.class,
+		DotNewFileWizardTest.class, DotNewProjectWizardTest.class,
+		DotOutlineViewTest.class, DotQuickfixTest.class,
+		DotReferenceFinderTest.class, DotRenameRefactoringTest.class,
+		DotToggleCommentTest.class, DotTokenTypeToPartitionMapperTest.class,
 		SyncGraphvizExportHandlerTest.class })
 public class AllUiTests {
 }

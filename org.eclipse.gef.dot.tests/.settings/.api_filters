@@ -134,6 +134,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="xtend-gen/org/eclipse/gef/dot/tests/DotFileTemplateProviderTest.java" type="org.eclipse.gef.dot.tests.DotFileTemplateProviderTest$TestFileGenerator">
+        <filter id="576725006">
+            <message_arguments>
+                <message_argument value="IFileGenerator"/>
+                <message_argument value="TestFileGenerator"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="xtend-gen/org/eclipse/gef/dot/tests/DotHoverTest.java" type="org.eclipse.gef.dot.tests.DotHoverTest">
         <filter id="643842064">
             <message_arguments>
@@ -150,11 +158,34 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="xtend-gen/org/eclipse/gef/dot/tests/DotNewFileWizardTest.java" type="org.eclipse.gef.dot.tests.DotNewFileWizardTest$DotTestableNewFileWizard">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="TemplateNewFileWizard"/>
+                <message_argument value="DotTestableNewFileWizard"/>
+            </message_arguments>
+        </filter>
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="TemplateFileInfo"/>
+                <message_argument value="DotTestableNewFileWizard"/>
+                <message_argument value="getFileInfo()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="xtend-gen/org/eclipse/gef/dot/tests/DotNewProjectWizardTest.java" type="org.eclipse.gef.dot.tests.DotNewProjectWizardTest$DotTestableNewProjectWizard">
         <filter id="576720909">
             <message_arguments>
                 <message_argument value="TemplateNewProjectWizard"/>
                 <message_argument value="DotTestableNewProjectWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="xtend-gen/org/eclipse/gef/dot/tests/DotProjectTemplateProviderTest.java" type="org.eclipse.gef.dot.tests.DotProjectTemplateProviderTest$TestProjectGenerator">
+        <filter id="576725006">
+            <message_arguments>
+                <message_argument value="IProjectGenerator"/>
+                <message_argument value="TestProjectGenerator"/>
             </message_arguments>
         </filter>
     </resource>

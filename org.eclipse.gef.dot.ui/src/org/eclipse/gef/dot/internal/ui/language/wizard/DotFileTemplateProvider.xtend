@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status
 import org.eclipse.xtext.ui.wizard.template.FileTemplate
 import org.eclipse.xtext.ui.wizard.template.IFileGenerator
 import org.eclipse.xtext.ui.wizard.template.IFileTemplateProvider
+import org.eclipse.xtext.ui.wizard.template.StringTemplateVariable
 
 import static org.eclipse.core.runtime.IStatus.*
 
@@ -55,7 +56,7 @@ final class ParameterisedDotFile {
 			nodesBuilder.append('''«i+1» [label="label of node \N"]
 								''')
 			if (i > 0) {
-				edgesBuilder.append('''«i» «IF type.value == "directed graph"»"->"«ELSE»"--"«ENDIF» «i+1» [label="an edge between nodes \T and \H" fontcolor="red"]
+				edgesBuilder.append('''«i» «IF type.value == "directed graph"»->«ELSE»--«ENDIF» «i+1» [label="an edge between nodes \T and \H" fontcolor="red"]
 									''')
 			}
 		}
@@ -64,7 +65,7 @@ final class ParameterisedDotFile {
 			/*
 			 * This is a graph stub
 			 */
-			«IF type.value == "directed graph"»"digraph"«ELSE»"graph"«ENDIF» «graphName» {
+			«IF type.value == "directed graph"»digraph«ELSE»graph«ENDIF»«graphName.printGraphName» {
 				// global attribute statement
 				node [shape="ellipse"]
 				// nodes
@@ -74,4 +75,7 @@ final class ParameterisedDotFile {
 			}
 		''')
 	}
+
+	private def printGraphName(StringTemplateVariable graphNameVariable)
+		'''«IF graphNameVariable.value.isEmpty»«ELSE» «graphNameVariable.value»«ENDIF»'''
 }
