@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eclipse.gef.dot.examples
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF DOT Examples
 Bundle-SymbolicName: org.eclipse.gef.dot.examples
-Bundle-Version: 5.1.1.qualifier
+Bundle-Version: 5.1.2.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.8.0,4.0.0)",
